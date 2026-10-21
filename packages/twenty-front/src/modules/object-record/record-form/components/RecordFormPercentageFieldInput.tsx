@@ -14,7 +14,6 @@ type RecordFormPercentageFieldInputProps = {
   >;
   defaultValue?: number | null;
   onChange: (value: number | null) => void;
-  onValidityChange?: (isValid: boolean) => void;
   readonly?: boolean;
 };
 
@@ -22,7 +21,6 @@ export const RecordFormPercentageFieldInput = ({
   field,
   defaultValue,
   onChange,
-  onValidityChange,
   readonly,
 }: RecordFormPercentageFieldInputProps) => {
   const [inputText, setInputText] = useState(
@@ -49,12 +47,10 @@ export const RecordFormPercentageFieldInput = ({
 
     if (!percentageValueResult.success) {
       setErrorMessage(t`Invalid number`);
-      onValidityChange?.(false);
       return;
     }
 
     setErrorMessage(undefined);
-    onValidityChange?.(true);
     onChange(percentageValueResult.value);
   };
 

@@ -37,7 +37,7 @@ import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -136,9 +136,6 @@ const SidePanelRecordCreationForm = ({
     useState<ValidationRuleViolation[]>([]);
   const [serverValidationRuleViolations, setServerValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
-  const [invalidFieldMetadataIds, setInvalidFieldMetadataIds] = useState<
-    string[]
-  >([]);
 
   const { validationRules } = useValidationRules({ objectMetadataId });
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
@@ -221,46 +218,6 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
-  const handleFieldValidityChange = ({
-    fieldMetadataId,
-    isValid,
-  }: {
-    fieldMetadataId: string;
-    isValid: boolean;
-  }) => {
-    setInvalidFieldMetadataIds((previousInvalidFieldMetadataIds) => {
-      const otherInvalidFieldMetadataIds =
-        previousInvalidFieldMetadataIds.filter(
-          (invalidFieldMetadataId) =>
-            invalidFieldMetadataId !== fieldMetadataId,
-        );
-
-      return isValid
-        ? otherInvalidFieldMetadataIds
-        : [...otherInvalidFieldMetadataIds, fieldMetadataId];
-    });
-  };
-
-  const handleHiddenFieldsToggle = () => {
-    if (recordCreationFormAreHiddenFieldsShown) {
-      // Collapsed inputs unmount with their typed text, so they cannot stay invalid.
-      const hiddenFieldMetadataIds = hiddenFieldMetadataItems.map(
-        (fieldMetadataItem) => fieldMetadataItem.id,
-      );
-
-      setInvalidFieldMetadataIds((previousInvalidFieldMetadataIds) =>
-        previousInvalidFieldMetadataIds.filter(
-          (fieldMetadataId) =>
-            !hiddenFieldMetadataIds.includes(fieldMetadataId),
-        ),
-      );
-    }
-
-    setRecordCreationFormAreHiddenFieldsShown(
-      !recordCreationFormAreHiddenFieldsShown,
-    );
-  };
-
   const revealHiddenFieldsIfTargeted = (
     targetedFieldMetadataIds: (string | null)[],
   ) => {
@@ -290,11 +247,6 @@ const SidePanelRecordCreationForm = ({
     }
 
     setServerValidationRuleViolations([]);
-
-    if (isNonEmptyArray(invalidFieldMetadataIds)) {
-      scrollToFirstFieldViolation();
-      return;
-    }
 
     if (validationRules.length > 0) {
       const draftViolations = computeViolations(draftRecord);
@@ -329,7 +281,6 @@ const SidePanelRecordCreationForm = ({
         if (shouldKeepOpen) {
           setRecordCreationFormDraft(null);
           setDraftValidationRuleViolations([]);
-          setInvalidFieldMetadataIds([]);
           setRecordCreationFormAreHiddenFieldsShown(false);
           setFormResetCount(
             (previousFormResetCount) => previousFormResetCount + 1,
@@ -407,7 +358,6 @@ const SidePanelRecordCreationForm = ({
           }
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
-          onFieldValidityChange={handleFieldValidityChange}
         />
         {hiddenFieldsCount > 0 && (
           <StyledHiddenFieldsToggle>
@@ -419,7 +369,11 @@ const SidePanelRecordCreationForm = ({
                   <IconChevronDown />
                 )
               }
-              onClick={handleHiddenFieldsToggle}
+              onClick={() =>
+                setRecordCreationFormAreHiddenFieldsShown(
+                  !recordCreationFormAreHiddenFieldsShown,
+                )
+              }
             >
               {recordCreationFormAreHiddenFieldsShown
                 ? t`Hide fields`
@@ -437,7 +391,6 @@ const SidePanelRecordCreationForm = ({
             }
             onFieldValueChange={handleFieldValueChange}
             onFieldValueClear={handleFieldValueClear}
-            onFieldValidityChange={handleFieldValidityChange}
           />
         )}
       </StyledContent>

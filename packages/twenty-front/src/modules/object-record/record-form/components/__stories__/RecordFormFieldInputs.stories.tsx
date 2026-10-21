@@ -47,17 +47,12 @@ type RecordFormFieldInputsWithDraftProps = {
   fieldMetadataItems: FieldMetadataItem[];
   initialDraftRecord?: Partial<ObjectRecord>;
   onFieldValueChange: (gqlFieldName: string, value: JsonValue) => void;
-  onFieldValidityChange: (change: {
-    fieldMetadataId: string;
-    isValid: boolean;
-  }) => void;
 };
 
 const RecordFormFieldInputsWithDraft = ({
   fieldMetadataItems,
   initialDraftRecord = {},
   onFieldValueChange,
-  onFieldValidityChange,
 }: RecordFormFieldInputsWithDraftProps) => {
   const [draftRecord, setDraftRecord] =
     useState<Partial<ObjectRecord>>(initialDraftRecord);
@@ -87,7 +82,6 @@ const RecordFormFieldInputsWithDraft = ({
       onFieldValueClear={(gqlFieldName) =>
         writeDraft({ gqlFieldName, value: null })
       }
-      onFieldValidityChange={onFieldValidityChange}
     />
   );
 };
@@ -99,7 +93,6 @@ const meta: Meta<typeof RecordFormFieldInputsWithDraft> = {
   args: {
     fieldMetadataItems: [percentageFieldMetadataItem, booleanFieldMetadataItem],
     onFieldValueChange: fn(),
-    onFieldValidityChange: fn(),
   },
 };
 
@@ -146,20 +139,12 @@ export const InvalidPercentage: Story = {
     await userEvent.type(input, 'abc');
 
     await expect(canvas.getByRole('alert')).toHaveTextContent('Invalid number');
-    await expect(args.onFieldValidityChange).toHaveBeenLastCalledWith({
-      fieldMetadataId: percentageFieldMetadataItem.id,
-      isValid: false,
-    });
     await expect(args.onFieldValueChange).not.toHaveBeenCalled();
 
     await userEvent.clear(input);
     await userEvent.type(input, '12');
 
     await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
-    await expect(args.onFieldValidityChange).toHaveBeenLastCalledWith({
-      fieldMetadataId: percentageFieldMetadataItem.id,
-      isValid: true,
-    });
     await expect(args.onFieldValueChange).toHaveBeenLastCalledWith(
       'conversionRate',
       0.12,
@@ -240,9 +225,5 @@ export const Currency: Story = {
     await userEvent.type(input, 'abc');
 
     await expect(canvas.getByRole('alert')).toHaveTextContent('Invalid number');
-    await expect(args.onFieldValidityChange).toHaveBeenLastCalledWith({
-      fieldMetadataId: currencyFieldMetadataItem.id,
-      isValid: false,
-    });
   },
 };

@@ -33,7 +33,6 @@ type RecordFormFieldInputProps = {
   defaultValue: JsonValue;
   onChange: (value: JsonValue) => void;
   onClear?: () => void;
-  onValidityChange?: (isValid: boolean) => void;
   readonly?: boolean;
   placeholder?: string;
   subFieldPlaceholders?: FormFieldInputSubFieldPlaceholders;
@@ -44,7 +43,6 @@ export const RecordFormFieldInput = ({
   defaultValue,
   onChange,
   onClear,
-  onValidityChange,
   readonly,
   placeholder,
   subFieldPlaceholders,
@@ -90,7 +88,6 @@ export const RecordFormFieldInput = ({
           getRecordFormCurrencyFieldDefaultValue(field)?.currencyCode
         }
         onChange={onChange}
-        onValidityChange={onValidityChange}
         readonly={readonly}
         placeholder={subFieldPlaceholders?.amountMicros}
       />
@@ -105,7 +102,6 @@ export const RecordFormFieldInput = ({
           isFieldNumberValue(defaultValue) ? defaultValue : undefined
         }
         onChange={onChange}
-        onValidityChange={onValidityChange}
         readonly={readonly}
       />
     );
