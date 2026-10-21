@@ -21,7 +21,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewType } from '@/views/types/ViewType';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export type UseRecordDataOptions = {
   delayMs: number;
@@ -172,7 +172,7 @@ export const useRecordIndexLazyFetchRecords = ({
 
       if (firstPage.hasNextPage) {
         await onMoreRecords();
-      } else if (isDefined(firstPage.records) && firstPage.records.length > 0) {
+      } else if (isNonEmptyArray(firstPage.records)) {
         await callback({ rows: firstPage.records, columns: finalColumns });
       }
 
@@ -180,7 +180,7 @@ export const useRecordIndexLazyFetchRecords = ({
     }
 
     const result = await fetchAllRecords();
-    if (result.length > 0) {
+    if (isNonEmptyArray(result)) {
       await callback({ rows: result, columns: finalColumns });
     }
   };

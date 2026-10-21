@@ -1,4 +1,5 @@
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/constants/CompositeFieldSubFieldLabels';
+import { doNotTranslate } from '@/i18n/do-not-translate';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type RecordExportColumn } from '@/types/RecordExportColumn';
 import { RelationType } from '@/types/RelationType';
@@ -18,7 +19,11 @@ export const buildRecordExportColumns = (
     subFieldLabels?: Record<string, string>;
   }[],
 ): RecordExportColumn[] => [
-  { fieldName: 'id', label: 'Id', type: FieldMetadataType.UUID },
+  {
+    fieldName: 'id',
+    label: doNotTranslate('Id'),
+    type: FieldMetadataType.UUID,
+  },
   ...fields
     .filter((field) => field.name !== 'id')
     .flatMap((field): RecordExportColumn[] => {
@@ -33,7 +38,7 @@ export const buildRecordExportColumns = (
         return [
           {
             fieldName: computeRelationGqlFieldJoinColumnName(field),
-            label: `${field.label} Id`,
+            label: `${field.label} ${doNotTranslate('Id')}`,
             type: FieldMetadataType.UUID,
           },
         ];
