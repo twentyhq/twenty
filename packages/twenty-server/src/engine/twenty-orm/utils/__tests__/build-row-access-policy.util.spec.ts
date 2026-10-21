@@ -423,12 +423,15 @@ describe('buildRowAccessPolicy', () => {
       readability: MetadataReadability.OPEN,
     });
 
-    const buildChain = (inheritedObjectCount: number) => {
+    const buildChain = (
+      inheritedObjectCount: number,
+      { idPrefix = 'level', joinColumnName = 'parentId' } = {},
+    ) => {
       const inheritedObjects = Array.from(
         { length: inheritedObjectCount },
         (_, index) =>
           buildObject({
-            id: `level${index}`,
+            id: `${idPrefix}${index}`,
             readability: MetadataReadability.INHERITED,
           }),
       );
@@ -449,7 +452,7 @@ describe('buildRowAccessPolicy', () => {
             {
               kind: 'column',
               fieldMetadataId: `parent-field-id-${index}`,
-              joinColumnName: 'parentId',
+              joinColumnName,
               parentFlatObjectMetadata: objects[index + 1],
             },
           ];
@@ -482,6 +485,26 @@ describe('buildRowAccessPolicy', () => {
 
       expect(sql).not.toContain(`FROM "workspace"."root"`);
       expect(sql).toContain('recordShare');
+    });
+
+    it('keeps every alias within the Postgres identifier limit at the maximum depth', () => {
+      const sql = gatedSql(
+        rootFilteredSubject,
+        buildChain(MAX_INHERITED_READABILITY_DEPTH + 1, {
+          idPrefix: 'record',
+          joinColumnName: 'parentGroupId',
+        }),
+      );
+      const identifiers = [...sql.matchAll(/"([^"]+)"/g)].map(
+        ([, identifier]) => identifier,
+      );
+
+      expect(sql).toContain(`FROM "workspace"."root"`);
+      expect(
+        identifiers.filter(
+          (identifier) => Buffer.byteLength(identifier, 'utf8') > 63,
+        ),
+      ).toEqual([]);
     });
   });
   it.each([MetadataWritability.SYSTEM, MetadataWritability.APPLICATION])(
