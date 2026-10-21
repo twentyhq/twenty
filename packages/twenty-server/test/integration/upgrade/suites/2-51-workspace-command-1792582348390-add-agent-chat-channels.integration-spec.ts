@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -54,25 +55,27 @@ describe('2-51 workspace command - add agent chat channels (integration)', () =>
     return {
       fieldCount: THREAD_FIELD_UNIVERSAL_IDENTIFIERS.filter(
         (universalIdentifier) =>
-          findFlatEntityByUniversalIdentifier({
-            flatEntityMaps: flatFieldMetadataMaps,
-            universalIdentifier,
-          }) !== undefined,
+          isDefined(
+            findFlatEntityByUniversalIdentifier({
+              flatEntityMaps: flatFieldMetadataMaps,
+              universalIdentifier,
+            }),
+          ),
       ).length,
-      hasThreadIndex:
+      hasThreadIndex: isDefined(
         findFlatEntityByUniversalIdentifier({
           flatEntityMaps: flatIndexMaps,
           universalIdentifier:
             STANDARD_OBJECTS.agentChatThread.indexes.channelLastActivityIndex
               .universalIdentifier,
-        }) !== undefined,
-      generalChannel:
-        generalChannel === undefined
-          ? null
-          : {
-              name: generalChannel.name,
-              isCustom: generalChannel.isCustom,
-            },
+        }),
+      ),
+      generalChannel: isDefined(generalChannel)
+        ? {
+            name: generalChannel.name,
+            isCustom: generalChannel.isCustom,
+          }
+        : null,
     };
   };
 

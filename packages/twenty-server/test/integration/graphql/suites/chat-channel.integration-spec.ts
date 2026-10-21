@@ -1,10 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
+import { type AgentChatInboxAction } from 'twenty-shared/ai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { findNavigationMenuItems } from 'test/integration/metadata/suites/navigation-menu-item/utils/find-navigation-menu-items.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
@@ -13,7 +13,9 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 
+import { type UpdateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/update-agent-chat-channel.input';
 import { type AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -36,12 +38,9 @@ type ChannelThreadsFilter = {
   assignment?: 'ANY' | 'UNASSIGNED' | 'ASSIGNED_TO_ME';
 };
 
-type InboxAction =
-  | 'READ'
-  | 'ARCHIVE'
-  | 'SNOOZE'
-  | 'MOVE_TO_INBOX'
-  | 'SUBSCRIBE';
+type ChannelThreadMutationName =
+  | 'markAgentChatThreadAsDoneInChannel'
+  | 'reopenAgentChatThreadInChannel';
 
 const CREATE_CHANNEL = parse(
   `mutation CreateChannel($input: CreateAgentChatChannelInput!) { createAgentChatChannel(input: $input) { id name icon color roleIds isCustom } }`,
@@ -71,7 +70,7 @@ const MOVE_THREAD = parse(
   `mutation Move($threadId: UUID!, $channelId: UUID) { moveAgentChatThreadToChannel(threadId: $threadId, channelId: $channelId) }`,
 );
 
-const THREAD_MUTATION = (name: string) =>
+const THREAD_MUTATION = (name: ChannelThreadMutationName) =>
   parse(`mutation Run($threadId: UUID!) { ${name}(threadId: $threadId) }`);
 
 const UPDATE_INBOX_STATE = parse(
@@ -102,11 +101,8 @@ const OPEN_THREADS_SUMMARY = parse(
 const buildFutureSnoozedUntil = () =>
   new Date(Date.now() + 30_000).toISOString();
 
-const expectNoErrors = (response: { body: { errors?: unknown } }) =>
-  expect(response.body.errors).toBeUndefined();
-
 const runThreadMutation = (
-  name: string,
+  name: ChannelThreadMutationName,
   threadId: string,
   token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ) =>
@@ -116,7 +112,7 @@ const runThreadMutation = (
   );
 
 const runInboxAction = (
-  action: InboxAction,
+  action: AgentChatInboxAction,
   threadId: string,
   token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
   snoozedUntil: string | null = null,
@@ -147,7 +143,7 @@ const findChannelThreadIds = async (
     token,
   );
 
-  expectNoErrors(response);
+  assertGraphQLSuccessfulResponse(response);
 
   return response.body.data.agentChatChannelThreadIds;
 };
@@ -162,7 +158,7 @@ const getChannelSummaries = async (
     token,
   );
 
-  expectNoErrors(response);
+  assertGraphQLSuccessfulResponse(response);
 
   return response.body.data.agentChatChannelSummaries;
 };
@@ -175,12 +171,11 @@ const getOpenThreadCount = async (
     token,
   );
 
-  expectNoErrors(response);
+  assertGraphQLSuccessfulResponse(response);
 
   return response.body.data.agentChatOpenThreadsSummary.openThreadCount;
 };
 
-// The member's own copy: null when they have no row yet
 const readMemberCopy = async (threadId: string, workspaceMemberId: string) => {
   const [row]: {
     isSubscribed: boolean;
@@ -194,24 +189,6 @@ const readMemberCopy = async (threadId: string, workspaceMemberId: string) => {
   );
 
   return row ?? null;
-};
-
-const listReadableThreadIds = async (token: string): Promise<string[]> => {
-  const response = await makeGraphqlApiRequest(
-    findManyOperationFactory({
-      objectMetadataSingularName: 'agentChatThread',
-      objectMetadataPluralName: 'agentChatThreads',
-      gqlFields: 'id',
-      first: 200,
-    }),
-    token,
-  );
-
-  expectNoErrors(response);
-
-  return response.body.data.agentChatThreads.edges.map(
-    ({ node }: { node: { id: string } }) => node.id,
-  );
 };
 
 const readChannelState = async (threadId: string) => {
@@ -240,13 +217,14 @@ const listChannels = async (
 > => {
   const response = await makeMetadataApiRequest({ query: CHANNELS }, token);
 
-  expectNoErrors(response);
+  assertGraphQLSuccessfulResponse(response);
 
   return response.body.data.agentChatChannels;
 };
 
-// The grants a chat carries from its channel, one row per kind of principal
-const readChannelGrants = async (threadId: string) =>
+const readChannelGrants = async (
+  threadId: string,
+): Promise<{ principalType: string; sourceId: string }[]> =>
   global.testDataSource.query(
     `SELECT DISTINCT "principalType", "sourceId" FROM ${SCHEMA}."recordShare"
      WHERE "recordId" = $1 AND "rowCause" = 'RULE' AND "deletedAt" IS NULL
@@ -279,8 +257,7 @@ const setRoleAllChannelsAccess = async (
   expect(errors).toBeUndefined();
 };
 
-// Stands in for a message landing in the chat
-const touchThread = (threadId: string) =>
+const simulateNewMessageActivity = (threadId: string) =>
   global.testDataSource.query(
     `UPDATE ${SCHEMA}."agentChatThread" SET "lastActivityAt" = clock_timestamp() WHERE id = $1`,
     [threadId],
@@ -307,7 +284,7 @@ describe('Chat channels through the authenticated API', () => {
       token,
     );
 
-    expectNoErrors(response);
+    assertGraphQLSuccessfulResponse(response);
 
     const channelId = response.body.data.createAgentChatChannel.id;
 
@@ -318,7 +295,7 @@ describe('Chat channels through the authenticated API', () => {
 
   const updateChannel = (
     channelId: string,
-    input: Record<string, unknown>,
+    input: UpdateAgentChatChannelInput,
     token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
   ) =>
     makeMetadataApiRequest(
@@ -335,7 +312,7 @@ describe('Chat channels through the authenticated API', () => {
       token,
     );
 
-    expectNoErrors(response);
+    assertGraphQLSuccessfulResponse(response);
 
     const threadId = response.body.data.createChatThread.id;
 
@@ -344,29 +321,25 @@ describe('Chat channels through the authenticated API', () => {
     return threadId;
   };
 
+  const roleIdsToReopenToAllChannels = new Set<string>();
+
   // Jony holds Member, which reaches every channel unless a test closes it
   const closeMemberAllChannelsAccess = async (): Promise<string> => {
     const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
 
     await setRoleAllChannelsAccess(memberRoleId, false);
-    isMemberAllChannelsAccessClosed = true;
+    roleIdsToReopenToAllChannels.add(memberRoleId);
 
     return memberRoleId;
   };
 
-  let isMemberAllChannelsAccessClosed = false;
-
   afterEach(async () => {
     jest.restoreAllMocks();
 
-    if (isMemberAllChannelsAccessClosed) {
-      const { id: memberRoleId } = await findOneRoleByLabel({
-        label: 'Member',
-      });
-
-      await setRoleAllChannelsAccess(memberRoleId, true);
-      isMemberAllChannelsAccessClosed = false;
+    for (const roleId of roleIdsToReopenToAllChannels) {
+      await setRoleAllChannelsAccess(roleId, true);
     }
+    roleIdsToReopenToAllChannels.clear();
 
     for (const threadId of createdThreadIds.splice(0)) {
       await destroyAgentChatThread({ threadId });
@@ -450,17 +423,20 @@ describe('Chat channels through the authenticated API', () => {
   });
 
   it('keeps General and its chats, as the standard sync would bring it back', async () => {
-    const general = (await listChannels()).find(({ isCustom }) => !isCustom);
+    const [general] = await listChannels();
+
+    expect(general).toMatchObject({ name: 'General', isCustom: false });
+
     const destinationChannelId = await createChannel();
-    const threadId = await createThreadInChannel(general?.id ?? null);
+    const threadId = await createThreadInChannel(general.id);
 
     const response = await makeMetadataApiRequest({
       query: DELETE_CHANNEL,
-      variables: { channelId: general?.id, destinationChannelId },
+      variables: { channelId: general.id, destinationChannelId },
     });
 
     expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
-    expect((await readChannelState(threadId)).channelId).toBe(general?.id);
+    expect((await readChannelState(threadId)).channelId).toBe(general.id);
   });
 
   it('lets the roles with access to all channels read and reply in its chats', async () => {
@@ -475,9 +451,9 @@ describe('Chat channels through the authenticated API', () => {
     expect(await readChannelGrantRoleIds(threadId)).toEqual(
       expect.arrayContaining([adminRoleId, memberRoleId]),
     );
-    expect(
-      await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toContain(threadId);
+    expect(await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toContain(
+      threadId,
+    );
     expect(
       (
         await findChannelThreadIds(
@@ -488,7 +464,7 @@ describe('Chat channels through the authenticated API', () => {
       ).threadIds,
     ).toEqual([threadId]);
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runInboxAction(
         'SUBSCRIBE',
         threadId,
@@ -504,7 +480,7 @@ describe('Chat channels through the authenticated API', () => {
     const threadId = await createThreadInChannel(channelId);
 
     expect(
-      await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).not.toContain(threadId);
     expect(
       (await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN)).map(({ id }) => id),
@@ -527,23 +503,25 @@ describe('Chat channels through the authenticated API', () => {
       roleIds: [adminRoleId, memberRoleId],
     });
 
-    expectNoErrors(openResponse);
+    assertGraphQLSuccessfulResponse(openResponse);
     expect(
       [...openResponse.body.data.updateAgentChatChannel.roleIds].sort(),
     ).toEqual([adminRoleId, memberRoleId].sort());
-    expect(
-      await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toContain(threadId);
+    expect(await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toContain(
+      threadId,
+    );
     expect(
       (await getChannelSummaries(APPLE_JONY_MEMBER_ACCESS_TOKEN)).find(
         (summary) => summary.channelId === channelId,
       ),
     ).toEqual({ channelId, openCount: 1, hasUnreadOpen: true });
 
-    expectNoErrors(await updateChannel(channelId, { roleIds: [adminRoleId] }));
+    assertGraphQLSuccessfulResponse(
+      await updateChannel(channelId, { roleIds: [adminRoleId] }),
+    );
 
     expect(
-      await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).not.toContain(threadId);
     expect(
       (await getChannelSummaries(APPLE_JONY_MEMBER_ACCESS_TOKEN)).map(
@@ -559,16 +537,16 @@ describe('Chat channels through the authenticated API', () => {
 
     await expectEventually(async () =>
       expect(
-        await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+        await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
       ).not.toContain(threadId),
     );
 
     await setRoleAllChannelsAccess(memberRoleId, true);
 
     await expectEventually(async () =>
-      expect(
-        await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
-      ).toContain(threadId),
+      expect(await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toContain(
+        threadId,
+      ),
     );
     expect(
       (await listChannels(APPLE_JONY_MEMBER_ACCESS_TOKEN)).find(
@@ -580,7 +558,7 @@ describe('Chat channels through the authenticated API', () => {
 
     await expectEventually(async () =>
       expect(
-        await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+        await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
       ).not.toContain(threadId),
     );
   });
@@ -606,7 +584,7 @@ describe('Chat channels through the authenticated API', () => {
     );
     const threadId = await createThreadInChannel(channelId);
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runInboxAction('READ', threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     );
 
@@ -618,7 +596,7 @@ describe('Chat channels through the authenticated API', () => {
     );
 
     // Filing it follows it, so new activity brings it back to his inbox
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runInboxAction('ARCHIVE', threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     );
 
@@ -626,7 +604,7 @@ describe('Chat channels through the authenticated API', () => {
       isSubscribed: true,
     });
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runInboxAction(
         'MOVE_TO_INBOX',
         threadId,
@@ -648,7 +626,7 @@ describe('Chat channels through the authenticated API', () => {
     const channelId = await createChannel();
     const threadId = await createThreadInChannel(channelId);
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runThreadMutation(
         'markAgentChatThreadAsDoneInChannel',
         threadId,
@@ -669,16 +647,18 @@ describe('Chat channels through the authenticated API', () => {
       (await readMemberCopy(threadId, JONY))?.archivedAt ?? null,
     ).toBeNull();
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runThreadMutation('reopenAgentChatThreadInChannel', threadId),
     );
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runThreadMutation('markAgentChatThreadAsDoneInChannel', threadId),
     );
 
-    expect((await readMemberCopy(threadId, JANE))?.archivedAt).not.toBeNull();
+    expect(await readMemberCopy(threadId, JANE)).toMatchObject({
+      archivedAt: expect.any(Date),
+    });
 
-    await touchThread(threadId);
+    await simulateNewMessageActivity(threadId);
 
     expect(
       (await findChannelThreadIds(channelId, { status: 'OPEN' })).threadIds,
@@ -699,7 +679,7 @@ describe('Chat channels through the authenticated API', () => {
     const channelId = await createChannel();
     const threadId = await createThreadInChannel(channelId);
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
         query: ASSIGN,
         variables: { threadId, assigneeWorkspaceMemberId: JONY },
@@ -720,13 +700,13 @@ describe('Chat channels through the authenticated API', () => {
       ).threadIds,
     ).toEqual([threadId]);
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runInboxAction('ARCHIVE', threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     );
 
     expect((await readChannelState(threadId)).channelArchivedAt).not.toBeNull();
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runInboxAction(
         'SNOOZE',
         threadId,
@@ -739,7 +719,7 @@ describe('Chat channels through the authenticated API', () => {
       (await readChannelState(threadId)).channelSnoozedUntil,
     ).not.toBeNull();
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runInboxAction(
         'MOVE_TO_INBOX',
         threadId,
@@ -751,19 +731,19 @@ describe('Chat channels through the authenticated API', () => {
       channelArchivedAt: null,
       channelSnoozedUntil: null,
     });
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runInboxAction('ARCHIVE', threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     );
 
     // Anyone else filing their own copy leaves the channel's alone
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runThreadMutation(
         'reopenAgentChatThreadInChannel',
         threadId,
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       ),
     );
-    expectNoErrors(await runInboxAction('ARCHIVE', threadId));
+    assertGraphQLSuccessfulResponse(await runInboxAction('ARCHIVE', threadId));
 
     expect((await readChannelState(threadId)).channelArchivedAt).toBeNull();
   });
@@ -782,7 +762,7 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(pastResponse.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
         query: SNOOZE_IN_CHANNEL,
         variables: { threadId, snoozedUntil: buildFutureSnoozedUntil() },
@@ -793,7 +773,9 @@ describe('Chat channels through the authenticated API', () => {
       (await findChannelThreadIds(channelId, { status: 'SNOOZED' })).threadIds,
     ).toEqual([threadId]);
     // The creator follows it, so their own copy is snoozed too
-    expect((await readMemberCopy(threadId, JANE))?.snoozedUntil).not.toBeNull();
+    expect(await readMemberCopy(threadId, JANE)).toMatchObject({
+      snoozedUntil: expect.any(Date),
+    });
 
     const snoozedUntil = new Date(Date.now() - 1000);
 
@@ -807,11 +789,12 @@ describe('Chat channels through the authenticated API', () => {
         'AgentChatThreadTriageService',
       );
 
-    // A snooze replaced since has nothing to end
+    const replacedSnoozedUntil = new Date(Date.now() - 5000).toISOString();
+
     await triageService.endChannelSnooze({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       threadId,
-      snoozedUntil: new Date(Date.now() - 5000).toISOString(),
+      snoozedUntil: replacedSnoozedUntil,
     });
 
     expect((await readChannelState(threadId)).channelArchivedAt).not.toBeNull();
@@ -840,7 +823,7 @@ describe('Chat channels through the authenticated API', () => {
     });
     const threadId = await createThreadInChannel(sourceChannelId);
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runThreadMutation('markAgentChatThreadAsDoneInChannel', threadId),
     );
 
@@ -855,7 +838,7 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(refusedResponse.body.errors[0].extensions.code).toBe('NOT_FOUND');
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
         query: MOVE_THREAD,
         variables: { threadId, channelId: destinationChannelId },
@@ -871,10 +854,10 @@ describe('Chat channels through the authenticated API', () => {
       { principalType: 'ROLE', sourceId: destinationChannelId },
     ]);
     expect(
-      await listReadableThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).not.toContain(threadId);
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
         query: MOVE_THREAD,
         variables: { threadId, channelId: null },
@@ -909,7 +892,7 @@ describe('Chat channels through the authenticated API', () => {
       'emitDatabaseBatchEvent',
     );
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
         query: DELETE_CHANNEL,
         variables: { channelId, destinationChannelId },
@@ -956,7 +939,7 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(data.createNavigationMenuItem.agentChatChannelId).toBe(channelId);
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
         query: DELETE_CHANNEL,
         variables: { channelId },
@@ -982,13 +965,13 @@ describe('Chat channels through the authenticated API', () => {
     const threadId = await createThreadInChannel(channelId);
     const doneThreadId = await createThreadInChannel(channelId);
 
-    expectNoErrors(
+    assertGraphQLSuccessfulResponse(
       await runThreadMutation(
         'markAgentChatThreadAsDoneInChannel',
         doneThreadId,
       ),
     );
-    await touchThread(threadId);
+    await simulateNewMessageActivity(threadId);
 
     for (const token of [
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -1048,6 +1031,13 @@ describe('Chat channels through the authenticated API', () => {
       ].sort((threadA, threadB) => threadA.id.localeCompare(threadB.id)),
     );
 
+    const leaveResponse = await makeMetadataApiRequest({
+      query: MOVE_THREAD,
+      variables: { threadId: channelThreadId, channelId: null },
+    });
+
+    expect(leaveResponse.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
+
     // Neither chat is Jane's to destroy any more
     await global.testDataSource.query(
       `DELETE FROM ${SCHEMA}."agentChatThread" WHERE id = ANY($1::uuid[])`,
@@ -1067,7 +1057,7 @@ describe('Chat channels through the authenticated API', () => {
     const olderThreadId = await createThreadInChannel(channelId);
     const newerThreadId = await createThreadInChannel(channelId);
 
-    await touchThread(newerThreadId);
+    await simulateNewMessageActivity(newerThreadId);
 
     const firstPage = await findChannelThreadIds(
       channelId,
