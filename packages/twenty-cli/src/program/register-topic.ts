@@ -1,8 +1,9 @@
 import { type Command } from 'commander';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type CommandTopicDefinition } from '@/catalog/types/command-topic-definition.type';
 import { getCommandByPath } from '@/program/find-command-by-path';
+import { formatExamples } from '@/program/format-examples';
 import { throwParseErrorOnExit } from '@/program/throw-parse-error-on-exit';
 
 export const registerTopic = ({
@@ -19,6 +20,14 @@ export const registerTopic = ({
 
   if (isDefined(topic.helpGroup)) {
     topicCommand.helpGroup(topic.helpGroup);
+  }
+
+  if (isDefined(topic.helpHint)) {
+    topicCommand.addHelpText('after', `\n${topic.helpHint}`);
+  }
+
+  if (isNonEmptyArray(topic.examples)) {
+    topicCommand.addHelpText('after', formatExamples(topic.examples));
   }
 
   throwParseErrorOnExit(topicCommand, topic.path.join(' '));

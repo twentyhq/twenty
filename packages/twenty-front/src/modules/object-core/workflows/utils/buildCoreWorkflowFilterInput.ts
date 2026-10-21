@@ -6,8 +6,9 @@ import {
 } from 'twenty-shared/utils';
 
 import { CORE_WORKFLOW_FILTER_OPERAND_BY_VIEW_FILTER_OPERAND } from '@/object-core/workflows/constants/CoreWorkflowFilterOperandByViewFilterOperand';
-import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
-import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
+import { findCoreObjectFilterField } from '@/object-core/filters/utils/findCoreObjectFilterField';
+import { isUsableCoreObjectFilterRule } from '@/object-core/filters/utils/isUsableCoreObjectFilterRule';
+import { CORE_WORKFLOW_FILTER_FIELDS } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import {
   CoreWorkflowFilterLogicalOperator,
@@ -22,7 +23,10 @@ const toCoreWorkflowFilterRule = ({
   stepFilter: StepFilter;
   timezone: string | undefined;
 }): CoreWorkflowFilterRuleInput | undefined => {
-  const selectedField = findCoreWorkflowFilterField(stepFilter.stepOutputKey);
+  const selectedField = findCoreObjectFilterField({
+    filterFields: CORE_WORKFLOW_FILTER_FIELDS,
+    fieldKey: stepFilter.stepOutputKey,
+  });
   const operand =
     CORE_WORKFLOW_FILTER_OPERAND_BY_VIEW_FILTER_OPERAND[stepFilter.operand];
 
@@ -51,7 +55,12 @@ export const buildCoreWorkflowFilterInput = ({
   timezone?: string;
 }): CoreWorkflowFilterInput | undefined => {
   const rules = (filterSettings.stepFilters ?? [])
-    .filter(isUsableCoreWorkflowFilterRule)
+    .filter((stepFilter) =>
+      isUsableCoreObjectFilterRule({
+        stepFilter,
+        filterFields: CORE_WORKFLOW_FILTER_FIELDS,
+      }),
+    )
     .slice(0, MAX_CORE_WORKFLOW_FILTER_RULES)
     .map((stepFilter) => toCoreWorkflowFilterRule({ stepFilter, timezone }))
     .filter(isDefined);
