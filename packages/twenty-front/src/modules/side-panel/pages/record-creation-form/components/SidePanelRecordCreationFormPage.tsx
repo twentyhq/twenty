@@ -136,6 +136,9 @@ const SidePanelRecordCreationForm = ({
     useState<ValidationRuleViolation[]>([]);
   const [serverValidationRuleViolations, setServerValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
+  const [invalidFieldMetadataIds, setInvalidFieldMetadataIds] = useState<
+    string[]
+  >([]);
 
   const { validationRules } = useValidationRules({ objectMetadataId });
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
@@ -218,6 +221,46 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
+  const handleFieldValidityChange = ({
+    fieldMetadataId,
+    isValid,
+  }: {
+    fieldMetadataId: string;
+    isValid: boolean;
+  }) => {
+    setInvalidFieldMetadataIds((previousInvalidFieldMetadataIds) => {
+      const otherInvalidFieldMetadataIds =
+        previousInvalidFieldMetadataIds.filter(
+          (invalidFieldMetadataId) =>
+            invalidFieldMetadataId !== fieldMetadataId,
+        );
+
+      return isValid
+        ? otherInvalidFieldMetadataIds
+        : [...otherInvalidFieldMetadataIds, fieldMetadataId];
+    });
+  };
+
+  const handleHiddenFieldsToggle = () => {
+    if (recordCreationFormAreHiddenFieldsShown) {
+      // Collapsed inputs unmount with their typed text, so they cannot stay invalid.
+      const hiddenFieldMetadataIds = hiddenFieldMetadataItems.map(
+        (fieldMetadataItem) => fieldMetadataItem.id,
+      );
+
+      setInvalidFieldMetadataIds((previousInvalidFieldMetadataIds) =>
+        previousInvalidFieldMetadataIds.filter(
+          (fieldMetadataId) =>
+            !hiddenFieldMetadataIds.includes(fieldMetadataId),
+        ),
+      );
+    }
+
+    setRecordCreationFormAreHiddenFieldsShown(
+      !recordCreationFormAreHiddenFieldsShown,
+    );
+  };
+
   const revealHiddenFieldsIfTargeted = (
     targetedFieldMetadataIds: (string | null)[],
   ) => {
@@ -247,6 +290,11 @@ const SidePanelRecordCreationForm = ({
     }
 
     setServerValidationRuleViolations([]);
+
+    if (invalidFieldMetadataIds.length > 0) {
+      scrollToFirstFieldViolation();
+      return;
+    }
 
     if (validationRules.length > 0) {
       const draftViolations = computeViolations(draftRecord);
@@ -281,6 +329,7 @@ const SidePanelRecordCreationForm = ({
         if (shouldKeepOpen) {
           setRecordCreationFormDraft(null);
           setDraftValidationRuleViolations([]);
+          setInvalidFieldMetadataIds([]);
           setRecordCreationFormAreHiddenFieldsShown(false);
           setFormResetCount(
             (previousFormResetCount) => previousFormResetCount + 1,
@@ -358,6 +407,7 @@ const SidePanelRecordCreationForm = ({
           }
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
+          onFieldValidityChange={handleFieldValidityChange}
         />
         {hiddenFieldsCount > 0 && (
           <StyledHiddenFieldsToggle>
@@ -369,11 +419,7 @@ const SidePanelRecordCreationForm = ({
                   <IconChevronDown />
                 )
               }
-              onClick={() =>
-                setRecordCreationFormAreHiddenFieldsShown(
-                  !recordCreationFormAreHiddenFieldsShown,
-                )
-              }
+              onClick={handleHiddenFieldsToggle}
             >
               {recordCreationFormAreHiddenFieldsShown
                 ? t`Hide fields`
@@ -391,6 +437,7 @@ const SidePanelRecordCreationForm = ({
             }
             onFieldValueChange={handleFieldValueChange}
             onFieldValueClear={handleFieldValueClear}
+            onFieldValidityChange={handleFieldValidityChange}
           />
         )}
       </StyledContent>

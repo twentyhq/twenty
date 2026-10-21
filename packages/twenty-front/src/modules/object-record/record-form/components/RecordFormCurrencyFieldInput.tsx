@@ -2,7 +2,7 @@ import {
   type FieldCurrencyValue,
   type FormFieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RecordFormPickerFieldInput } from '@/object-record/record-form/components/RecordFormPickerFieldInput';
+import { RecordFormTextInput } from '@/object-record/record-form/components/RecordFormTextInput';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -23,6 +23,7 @@ type RecordFormCurrencyFieldInputProps = {
   defaultValue?: FieldCurrencyValue;
   defaultCurrencyCode?: CurrencyCode;
   onChange: (value: FormFieldCurrencyValue) => void;
+  onValidityChange?: (isValid: boolean) => void;
   readonly?: boolean;
   placeholder?: string;
 };
@@ -32,6 +33,7 @@ export const RecordFormCurrencyFieldInput = ({
   defaultValue,
   defaultCurrencyCode,
   onChange,
+  onValidityChange,
   readonly,
   placeholder,
 }: RecordFormCurrencyFieldInputProps) => {
@@ -73,10 +75,12 @@ export const RecordFormCurrencyFieldInput = ({
 
     if (!canBeCastAsNumberOrNull(trimmedAmountText)) {
       setErrorMessage(t`Invalid number`);
+      onValidityChange?.(false);
       return;
     }
 
     setErrorMessage(undefined);
+    onValidityChange?.(true);
 
     const amount = castAsNumberOrNull(trimmedAmountText);
 
@@ -87,7 +91,7 @@ export const RecordFormCurrencyFieldInput = ({
   };
 
   return (
-    <RecordFormPickerFieldInput
+    <RecordFormTextInput
       label={label}
       value={amountText}
       onChange={handleAmountTextChange}

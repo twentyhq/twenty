@@ -167,6 +167,7 @@ jest.mock(
         draftRecord,
         validationRuleViolationsByFieldMetadataId = {},
         onFieldValueChange,
+        onFieldValidityChange,
       }: {
         fieldMetadataItems: { id: string; name: string; label: string }[];
         draftRecord: Record<string, unknown>;
@@ -175,6 +176,10 @@ jest.mock(
           { ruleId: string; message: string }[]
         >;
         onFieldValueChange: (gqlFieldName: string, value: string) => void;
+        onFieldValidityChange?: (change: {
+          fieldMetadataId: string;
+          isValid: boolean;
+        }) => void;
       }) =>
         ReactForMock.createElement(
           ReactForMock.Fragment,
@@ -190,12 +195,26 @@ jest.mock(
               ReactForMock.createElement('input', {
                 'aria-label': fieldMetadataItem.label,
                 value: (draftRecord[fieldMetadataItem.name] as string) ?? '',
-                onChange: (event: { target: { value: string } }) =>
+                onChange: (event: { target: { value: string } }) => {
                   onFieldValueChange(
                     fieldMetadataItem.name,
                     event.target.value,
-                  ),
+                  );
+                  onFieldValidityChange?.({
+                    fieldMetadataId: fieldMetadataItem.id,
+                    isValid: !event.target.value.startsWith('invalid'),
+                  });
+                },
               }),
+              String(draftRecord[fieldMetadataItem.name] ?? '').startsWith(
+                'invalid',
+              )
+                ? ReactForMock.createElement(
+                    'div',
+                    { role: 'alert' },
+                    'Invalid value',
+                  )
+                : null,
               (
                 validationRuleViolationsByFieldMetadataId[
                   fieldMetadataItem.id
@@ -350,6 +369,42 @@ describe('SidePanelRecordCreationFormPage', () => {
       draftRecord: { nickname: 'Apple' },
       shouldKeepOpen: false,
     });
+  });
+
+  it('keeps Create from submitting while a field holds an invalid value', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.type(screen.getByLabelText('Domain'), 'invalid');
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).not.toHaveBeenCalled();
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    expect(scrollIntoView.mock.contexts[0]).toBe(
+      within(screen.getByRole('group', { name: 'Domain field' })).getByRole(
+        'alert',
+      ),
+    );
+
+    await user.clear(screen.getByLabelText('Domain'));
+    await user.type(screen.getByLabelText('Domain'), 'apple.com');
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+  });
+
+  it('lets Create submit again once an invalid hidden field is collapsed', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: /All fields/ }));
+    await user.type(screen.getByLabelText('Nickname'), 'invalid');
+    await user.click(screen.getByRole('button', { name: 'Hide fields' }));
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
   });
 
   it('restores the draft and revealed fields when the form is shown again', async () => {

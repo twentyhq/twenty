@@ -4,6 +4,7 @@ import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/util
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { RecordFormFieldInput } from '@/object-record/record-form/components/RecordFormFieldInput';
 import { RecordFormFieldInputsEffect } from '@/object-record/record-form/components/RecordFormFieldInputsEffect';
+import { getRecordFormBooleanFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormBooleanFieldDefaultValue';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { getRecordFormFieldPlaceholders } from '@/object-record/record-form/utils/getRecordFormFieldPlaceholders';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -29,6 +30,13 @@ type RecordFormFieldInputsProps = {
   >;
   onFieldValueChange: (gqlFieldName: string, value: JsonValue) => void;
   onFieldValueClear: (gqlFieldName: string) => void;
+  onFieldValidityChange?: ({
+    fieldMetadataId,
+    isValid,
+  }: {
+    fieldMetadataId: string;
+    isValid: boolean;
+  }) => void;
 };
 
 export const RecordFormFieldInputs = ({
@@ -38,6 +46,7 @@ export const RecordFormFieldInputs = ({
   validationRuleViolationsByFieldMetadataId = {},
   onFieldValueChange,
   onFieldValueClear,
+  onFieldValidityChange,
 }: RecordFormFieldInputsProps) => {
   return (
     <>
@@ -64,10 +73,19 @@ export const RecordFormFieldInputs = ({
                 defaultValue={
                   Object.hasOwn(draftRecord, gqlFieldName)
                     ? draftRecord[gqlFieldName]
-                    : getRecordFormCurrencyFieldDefaultValue(fieldMetadataItem)
+                    : (getRecordFormCurrencyFieldDefaultValue(
+                        fieldMetadataItem,
+                      ) ??
+                      getRecordFormBooleanFieldDefaultValue(fieldMetadataItem))
                 }
                 onChange={(value) => onFieldValueChange(gqlFieldName, value)}
                 onClear={() => onFieldValueClear(gqlFieldName)}
+                onValidityChange={(isValid) =>
+                  onFieldValidityChange?.({
+                    fieldMetadataId: fieldMetadataItem.id,
+                    isValid,
+                  })
+                }
                 placeholder={placeholder}
                 subFieldPlaceholders={subFieldPlaceholders}
               />
