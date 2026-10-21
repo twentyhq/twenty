@@ -10,10 +10,9 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { findFlatFieldMetadataByName } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadata-by-name.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 // Number types share one family since Postgres compares them across types
@@ -25,28 +24,6 @@ const COMPARISON_FAMILY_BY_FIELD_TYPE: Partial<
   [FieldMetadataType.NUMBER]: 'NUMBER',
   [FieldMetadataType.NUMERIC]: 'NUMBER',
   [FieldMetadataType.POSITION]: 'NUMBER',
-};
-
-const findFieldByName = ({
-  fieldName,
-  flatObjectMetadata,
-  flatFieldMetadataMaps,
-}: {
-  fieldName: string;
-  flatObjectMetadata: FlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): OrmFlatFieldMetadata | undefined => {
-  const fieldMetadataId = buildFieldMapsFromFlatObjectMetadata(
-    flatFieldMetadataMaps,
-    flatObjectMetadata,
-  ).fieldIdByName[fieldName];
-
-  return isDefined(fieldMetadataId)
-    ? findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
-        flatEntityId: fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      })
-    : undefined;
 };
 
 export const validateFieldReferenceFilterValueOrThrow = ({
@@ -88,7 +65,7 @@ export const validateFieldReferenceFilterValueOrThrow = ({
   let referencedFlatObjectMetadata = flatObjectMetadata;
 
   if (isDefined(relationFieldName)) {
-    const relationFieldMetadata = findFieldByName({
+    const relationFieldMetadata = findFlatFieldMetadataByName({
       fieldName: relationFieldName,
       flatObjectMetadata,
       flatFieldMetadataMaps,
@@ -112,7 +89,7 @@ export const validateFieldReferenceFilterValueOrThrow = ({
     referencedFlatObjectMetadata = parentFlatObjectMetadata;
   }
 
-  const referencedFieldMetadata = findFieldByName({
+  const referencedFieldMetadata = findFlatFieldMetadataByName({
     fieldName: referencedFieldName,
     flatObjectMetadata: referencedFlatObjectMetadata,
     flatFieldMetadataMaps,
