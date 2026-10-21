@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { formatBytes, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconDownload, IconFileExport } from 'twenty-ui/icon';
@@ -11,6 +11,7 @@ import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminWorkspaceDataExportPollingEffect } from '@/settings/admin-panel/components/SettingsAdminWorkspaceDataExportPollingEffect';
 import { CREATE_WORKSPACE_DATA_EXPORT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceDataExport';
 import { WORKSPACE_DATA_EXPORTS } from '@/settings/admin-panel/graphql/queries/workspaceDataExports';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
@@ -72,107 +73,106 @@ export const SettingsAdminWorkspaceDataExportSection = ({
     (row) => row.status === WorkspaceDataExportStatus.PENDING,
   );
 
-  useEffect(() => {
-    if (!hasPendingExport) {
-      return;
-    }
-
-    startPolling(PENDING_EXPORT_POLL_INTERVAL_MS);
-
-    return () => stopPolling();
-  }, [hasPendingExport, startPolling, stopPolling]);
-
   return (
-    <SettingsTableListSection<WorkspaceDataExportRow>
-      title={t`Data export`}
-      description={t`Every object of this workspace as CSV files in one zip, kept for 7 days. Works for suspended workspaces.`}
-      headerAdornment={
-        <Button
-          startIcon={<IconFileExport />}
-          size="sm"
-          variant="outline"
-          disabled={isCreating || hasPendingExport}
-          onClick={() => createWorkspaceDataExport()}
-        >{t`Export data`}</Button>
-      }
-      items={rows}
-      columns={[
-        {
-          label: t`Created`,
-          Cell: ({ item }) => (
-            <>
-              {formatDateTimeString({
-                value: item.createdAt,
-                timeZone,
-                dateFormat,
-                timeFormat,
-                localeCatalog,
-              })}
-            </>
-          ),
-        },
-        {
-          label: t`Size`,
-          Cell: ({ item }) => (
-            <>
-              {item.status === WorkspaceDataExportStatus.COMPLETED
-                ? formatBytes(item.sizeInBytes)
-                : '-'}
-            </>
-          ),
-        },
-        {
-          label: t`Status`,
-          Cell: ({ item }) => {
-            if (item.status === WorkspaceDataExportStatus.COMPLETED) {
-              return <Tag color="green">{t`Ready`}</Tag>;
-            }
-
-            if (item.status === WorkspaceDataExportStatus.FAILED) {
-              return <Tag color="red">{t`Failed`}</Tag>;
-            }
-
-            const progress =
-              isDefined(item.completedObjectCount) &&
-              isDefined(item.totalObjectCount)
-                ? ` ${item.completedObjectCount}/${item.totalObjectCount}`
-                : '';
-
-            return (
-              <Tag color="orange">
-                {t`In progress`}
-                {progress}
-              </Tag>
-            );
+    <>
+      {hasPendingExport && (
+        <SettingsAdminWorkspaceDataExportPollingEffect
+          pollIntervalMs={PENDING_EXPORT_POLL_INTERVAL_MS}
+          startPolling={startPolling}
+          stopPolling={stopPolling}
+        />
+      )}
+      <SettingsTableListSection<WorkspaceDataExportRow>
+        title={t`Data export`}
+        description={t`Every object of this workspace as CSV files in one zip, kept for 7 days. Works for suspended workspaces.`}
+        headerAdornment={
+          <Button
+            startIcon={<IconFileExport />}
+            size="sm"
+            variant="outline"
+            disabled={isCreating || hasPendingExport}
+            onClick={() => createWorkspaceDataExport()}
+          >{t`Export data`}</Button>
+        }
+        items={rows}
+        columns={[
+          {
+            label: t`Created`,
+            Cell: ({ item }) => (
+              <>
+                {formatDateTimeString({
+                  value: item.createdAt,
+                  timeZone,
+                  dateFormat,
+                  timeFormat,
+                  localeCatalog,
+                })}
+              </>
+            ),
           },
-        },
-        {
-          label: '',
-          align: 'right',
-          Cell: ({ item }) => {
-            const { downloadUrl } = item;
-
-            if (!isDefined(downloadUrl)) {
-              return null;
-            }
-
-            return (
-              <Button
-                startIcon={<IconDownload />}
-                size="sm"
-                variant="outline"
-                onClick={() =>
-                  downloadFile(
-                    downloadUrl,
-                    `${workspaceName}-export-${item.id}.zip`,
-                  )
-                }
-              >{t`Download`}</Button>
-            );
+          {
+            label: t`Size`,
+            Cell: ({ item }) => (
+              <>
+                {item.status === WorkspaceDataExportStatus.COMPLETED
+                  ? formatBytes(item.sizeInBytes)
+                  : '-'}
+              </>
+            ),
           },
-        },
-      ]}
-      gridAutoColumns="2fr 1fr 1fr 140px"
-    />
+          {
+            label: t`Status`,
+            Cell: ({ item }) => {
+              if (item.status === WorkspaceDataExportStatus.COMPLETED) {
+                return <Tag color="green">{t`Ready`}</Tag>;
+              }
+
+              if (item.status === WorkspaceDataExportStatus.FAILED) {
+                return <Tag color="red">{t`Failed`}</Tag>;
+              }
+
+              const progress =
+                isDefined(item.completedObjectCount) &&
+                isDefined(item.totalObjectCount)
+                  ? ` ${item.completedObjectCount}/${item.totalObjectCount}`
+                  : '';
+
+              return (
+                <Tag color="orange">
+                  {t`In progress`}
+                  {progress}
+                </Tag>
+              );
+            },
+          },
+          {
+            label: '',
+            align: 'right',
+            Cell: ({ item }) => {
+              const { downloadUrl } = item;
+
+              if (!isDefined(downloadUrl)) {
+                return null;
+              }
+
+              return (
+                <Button
+                  startIcon={<IconDownload />}
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    downloadFile(
+                      downloadUrl,
+                      `${workspaceName}-export-${item.id}.zip`,
+                    )
+                  }
+                >{t`Download`}</Button>
+              );
+            },
+          },
+        ]}
+        gridAutoColumns="2fr 1fr 1fr 140px"
+      />
+    </>
   );
 };
