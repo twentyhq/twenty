@@ -6,7 +6,8 @@ export const CORE_WORKFLOWS_FILTER_INSTANCE_ID = 'core-workflows-filters';
 
 export const coreWorkflowsFilterSettingsState = createAtomState<FilterSettings>(
   {
-    key: 'coreWorkflowsFilterSettingsState',
+    // Renamed so filters saved before the IS_SYSTEM default rule are dropped
+    key: 'coreWorkflowsFilterSettingsWithSystemRuleState',
     defaultValue: CORE_WORKFLOWS_DEFAULT_FILTER_SETTINGS,
     useLocalStorage: true,
     localStorageOptions: { getOnInit: true },

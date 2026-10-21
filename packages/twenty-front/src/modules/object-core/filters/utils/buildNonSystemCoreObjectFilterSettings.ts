@@ -3,15 +3,15 @@ import {
   ViewFilterOperand,
   type StepFilterGroup,
 } from 'twenty-shared/types';
-import { v4 } from 'uuid';
 
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
 export const buildNonSystemCoreObjectFilterSettings = (
   isSystemFieldKey: string,
 ): FilterSettings => {
+  // Stable ids keep a persisted default deeply equal to a freshly built one
   const rootStepFilterGroup: StepFilterGroup = {
-    id: v4(),
+    id: `${isSystemFieldKey}-default-group`,
     logicalOperator: StepLogicalOperator.AND,
   };
 
@@ -19,7 +19,7 @@ export const buildNonSystemCoreObjectFilterSettings = (
     stepFilterGroups: [rootStepFilterGroup],
     stepFilters: [
       {
-        id: v4(),
+        id: `${isSystemFieldKey}-default-rule`,
         type: 'BOOLEAN',
         stepOutputKey: isSystemFieldKey,
         operand: ViewFilterOperand.IS,
