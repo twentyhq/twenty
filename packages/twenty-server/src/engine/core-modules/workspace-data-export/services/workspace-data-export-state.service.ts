@@ -41,7 +41,10 @@ export class WorkspaceDataExportStateService {
     }
   }
 
-  async set(key: StateKey, state: WorkspaceDataExportState): Promise<void> {
+  async set({
+    state,
+    ...key
+  }: StateKey & { state: WorkspaceDataExportState }): Promise<void> {
     await this.fileStorageService.writeFileStream({
       ...buildWorkspaceDataExportStateResource(key),
       stream: Readable.from([Buffer.from(JSON.stringify(state), 'utf8')]),

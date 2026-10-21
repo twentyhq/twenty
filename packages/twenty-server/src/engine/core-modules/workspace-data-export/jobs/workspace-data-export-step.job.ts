@@ -17,9 +17,6 @@ export class WorkspaceDataExportStepJob {
     data: WorkspaceDataExportJobData,
     { abortSignal }: MessageQueueJobContext,
   ): Promise<void> {
-    await this.workspaceDataExportStepService.runStep(
-      data,
-      abortSignal ?? new AbortController().signal,
-    );
+    await this.workspaceDataExportStepService.runStep({ ...data, abortSignal });
   }
 }

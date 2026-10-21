@@ -19,7 +19,7 @@ import { WorkspaceDataExportStateService } from 'src/engine/core-modules/workspa
 import { WorkspaceDataExportStepService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-step.service';
 import { WorkspaceDataExportStorageService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-storage.service';
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
-import { buildWorkspaceDataExportProgress } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-progress.util';
+import { buildWorkspaceDataExportObjects } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-objects.util';
 import { buildWorkspaceDataExportArchiveResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
 import { buildWorkspaceDataExportTables } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-tables.util';
 import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
@@ -68,10 +68,11 @@ export class WorkspaceDataExportService {
       workspaceName: workspace.displayName ?? '',
     });
 
-    await this.workspaceDataExportStateService.set(
-      { workspaceId, exportId },
+    await this.workspaceDataExportStateService.set({
+      workspaceId,
+      exportId,
       state,
-    );
+    });
     await this.workspaceDataExportStepService.enqueue({
       workspaceId,
       exportId,
@@ -205,9 +206,6 @@ export class WorkspaceDataExportService {
     state: WorkspaceDataExportState | undefined;
   }): Promise<WorkspaceDataExportDTO> {
     const status = this.getStatus({ file, state });
-    const progress = isDefined(state)
-      ? buildWorkspaceDataExportProgress(state)
-      : null;
 
     return {
       id: file.id,
@@ -215,10 +213,7 @@ export class WorkspaceDataExportService {
       status,
       sizeInBytes: Number(file.size),
       createdAt: file.createdAt,
-      objectCount: progress?.objectCount ?? null,
-      exportedObjectCount: progress?.exportedObjectCount ?? null,
-      columnCount: progress?.columnCount ?? null,
-      exportedRowCount: progress?.exportedRowCount ?? null,
+      objects: isDefined(state) ? buildWorkspaceDataExportObjects(state) : [],
       downloadUrl:
         status === WorkspaceDataExportStatus.COMPLETED
           ? await this.fileUrlService.signFileByIdUrl({

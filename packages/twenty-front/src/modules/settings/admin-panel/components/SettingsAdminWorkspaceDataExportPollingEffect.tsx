@@ -6,7 +6,6 @@ type SettingsAdminWorkspaceDataExportPollingEffectProps = {
   stopPolling: () => void;
 };
 
-// Mounted only while an export is pending, so polling stops with the unmount.
 export const SettingsAdminWorkspaceDataExportPollingEffect = ({
   pollIntervalMs,
   startPolling,

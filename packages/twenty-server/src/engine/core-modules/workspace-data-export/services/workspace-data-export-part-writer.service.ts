@@ -45,7 +45,7 @@ export class WorkspaceDataExportPartWriterService {
     exportId: string;
     cursor: WorkspaceDataExportCursor;
     table: WorkspaceDataExportTable;
-    abortSignal: AbortSignal;
+    abortSignal?: AbortSignal;
   }): Promise<WorkspaceDataExportPart> {
     const part: WorkspaceDataExportPart = {
       partName: buildWorkspaceDataExportPartName({
@@ -89,7 +89,7 @@ export class WorkspaceDataExportPartWriterService {
     table: WorkspaceDataExportTable;
     includeHeader: boolean;
     part: WorkspaceDataExportPart;
-    abortSignal: AbortSignal;
+    abortSignal?: AbortSignal;
   }): AsyncGenerator<string> {
     if (includeHeader) {
       yield formatWorkspaceDataExportCsvHeader(table.columns);
@@ -101,7 +101,7 @@ export class WorkspaceDataExportPartWriterService {
     const qualifiedTable = `${escapeIdentifier(schemaName)}.${escapeIdentifier(table.tableName)}`;
 
     while (true) {
-      abortSignal.throwIfAborted();
+      abortSignal?.throwIfAborted();
 
       const rows: ({ id: string } & Record<string, unknown>)[] =
         await this.dataSource.query(

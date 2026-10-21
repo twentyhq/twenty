@@ -53,10 +53,14 @@ export class WorkspaceDataExportStepService {
     );
   }
 
-  async runStep(
-    { workspaceId, exportId, cursor }: WorkspaceDataExportJobData,
-    abortSignal: AbortSignal,
-  ): Promise<void> {
+  async runStep({
+    workspaceId,
+    exportId,
+    cursor,
+    abortSignal,
+  }: WorkspaceDataExportJobData & {
+    abortSignal?: AbortSignal;
+  }): Promise<void> {
     const file = await this.fileRepository.findOne(workspaceId, {
       where: { id: exportId, status: FILE_STATUS.PENDING },
     });
@@ -90,9 +94,10 @@ export class WorkspaceDataExportStepService {
       });
       const partNames = state.partNamesByTable[table.nameSingular] ?? [];
 
-      await this.workspaceDataExportStateService.set(
-        { workspaceId, exportId },
-        {
+      await this.workspaceDataExportStateService.set({
+        workspaceId,
+        exportId,
+        state: {
           ...state,
           partNamesByTable: {
             ...state.partNamesByTable,
@@ -109,7 +114,7 @@ export class WorkspaceDataExportStepService {
             : state.completedTableCount,
           heartbeatAt: Date.now(),
         },
-      );
+      });
       await this.enqueue({
         workspaceId,
         exportId,

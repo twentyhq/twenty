@@ -4,9 +4,12 @@ export const WORKSPACE_DATA_EXPORT_FIELDS = `
   status
   sizeInBytes
   createdAt
-  objectCount
-  exportedObjectCount
-  columnCount
-  exportedRowCount
+  objects {
+    nameSingular
+    labelSingular
+    columnCount
+    rowCount
+    isExported
+  }
   downloadUrl
 `;

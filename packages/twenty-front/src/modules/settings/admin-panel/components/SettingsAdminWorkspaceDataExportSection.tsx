@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { formatBytes, isDefined } from 'twenty-shared/utils';
+import { formatBytes, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { IconDownload, IconFileExport } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
@@ -15,6 +15,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminWorkspaceDataExportPollingEffect } from '@/settings/admin-panel/components/SettingsAdminWorkspaceDataExportPollingEffect';
 import { CREATE_WORKSPACE_DATA_EXPORT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceDataExport';
 import { WORKSPACE_DATA_EXPORTS } from '@/settings/admin-panel/graphql/queries/workspaceDataExports';
+import { getWorkspaceDataExportSummary } from '@/settings/admin-panel/utils/getWorkspaceDataExportSummary';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -114,20 +115,27 @@ export const SettingsAdminWorkspaceDataExportSection = ({
           },
           {
             label: t`Objects`,
-            Cell: ({ item }) => (
-              <>
-                {isDefined(item.objectCount) && isDefined(item.columnCount)
-                  ? t`${formatNumber(item.objectCount)} objects, ${formatNumber(item.columnCount)} columns`
-                  : '-'}
-              </>
-            ),
+            Cell: ({ item }) => {
+              if (!isNonEmptyArray(item.objects)) {
+                return <>-</>;
+              }
+
+              const { objectCount, columnCount } =
+                getWorkspaceDataExportSummary(item.objects);
+
+              return (
+                <>{t`${formatNumber(objectCount)} objects, ${formatNumber(columnCount)} columns`}</>
+              );
+            },
           },
           {
             label: t`Rows`,
             Cell: ({ item }) => (
               <>
-                {isDefined(item.exportedRowCount)
-                  ? formatNumber(item.exportedRowCount)
+                {isNonEmptyArray(item.objects)
+                  ? formatNumber(
+                      getWorkspaceDataExportSummary(item.objects).rowCount,
+                    )
                   : '-'}
               </>
             ),
@@ -153,11 +161,10 @@ export const SettingsAdminWorkspaceDataExportSection = ({
                 return <Tag color="red">{t`Failed`}</Tag>;
               }
 
+              const { objectCount, exportedObjectCount } =
+                getWorkspaceDataExportSummary(item.objects);
               const progress =
-                isDefined(item.exportedObjectCount) &&
-                isDefined(item.objectCount)
-                  ? ` ${item.exportedObjectCount}/${item.objectCount}`
-                  : '';
+                objectCount > 0 ? ` ${exportedObjectCount}/${objectCount}` : '';
 
               return (
                 <Tag color="orange">

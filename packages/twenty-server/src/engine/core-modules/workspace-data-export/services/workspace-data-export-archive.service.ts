@@ -6,10 +6,16 @@ import { Readable } from 'stream';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
+import { buildWorkspaceDataExportObjects } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-objects.util';
 import {
   buildWorkspaceDataExportArchiveResource,
   buildWorkspaceDataExportPartResource,
 } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+
+type ArchiveState = Pick<
+  WorkspaceDataExportState,
+  'workspaceName' | 'tables' | 'partNamesByTable' | 'rowCountByPart'
+>;
 
 @Injectable()
 export class WorkspaceDataExportArchiveService {
@@ -22,7 +28,7 @@ export class WorkspaceDataExportArchiveService {
   }: {
     workspaceId: string;
     exportId: string;
-    state: WorkspaceDataExportState;
+    state: ArchiveState;
   }): Promise<number> {
     const archive = archiver('zip', { zlib: { level: 1 } });
     const upload = this.fileStorageService.writeFileStream({
@@ -78,20 +84,18 @@ export class WorkspaceDataExportArchiveService {
     state,
   }: {
     workspaceId: string;
-    state: WorkspaceDataExportState;
+    state: ArchiveState;
   }) {
     return {
       workspaceId,
       workspaceName: state.workspaceName,
       exportedAt: new Date().toISOString(),
-      objects: state.tables.map((table) => ({
-        nameSingular: table.nameSingular,
-        labelSingular: table.labelSingular,
-        file: `${table.nameSingular}.csv`,
-        rowCount: (state.partNamesByTable[table.nameSingular] ?? []).reduce(
-          (total, partName) => total + (state.rowCountByPart[partName] ?? 0),
-          0,
-        ),
+      objects: buildWorkspaceDataExportObjects({
+        ...state,
+        completedTableCount: state.tables.length,
+      }).map(({ isExported: _isExported, ...object }) => ({
+        ...object,
+        file: `${object.nameSingular}.csv`,
       })),
     };
   }
