@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { formatBytes, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -12,11 +12,13 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SettingsAdminWorkspaceDataExportPollingEffect } from '@/settings/admin-panel/components/SettingsAdminWorkspaceDataExportPollingEffect';
+import { SettingsAdminWorkspaceDataExportsFetchEffect } from '@/settings/admin-panel/components/SettingsAdminWorkspaceDataExportsFetchEffect';
 import { CREATE_WORKSPACE_DATA_EXPORT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceDataExport';
 import { WORKSPACE_DATA_EXPORTS } from '@/settings/admin-panel/graphql/queries/workspaceDataExports';
+import { adminPanelWorkspaceDataExportsFamilyState } from '@/settings/admin-panel/states/adminPanelWorkspaceDataExportsFamilyState';
 import { getWorkspaceDataExportSummary } from '@/settings/admin-panel/utils/getWorkspaceDataExportSummary';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
 import {
@@ -33,8 +35,6 @@ type SettingsAdminWorkspaceDataExportSectionProps = {
 type WorkspaceDataExportRow =
   WorkspaceDataExportsQuery['workspaceDataExports'][number];
 
-const PENDING_EXPORT_POLL_INTERVAL_MS = 3000;
-
 export const SettingsAdminWorkspaceDataExportSection = ({
   workspaceId,
   workspaceName,
@@ -46,12 +46,10 @@ export const SettingsAdminWorkspaceDataExportSection = ({
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const { data, startPolling, stopPolling } =
-    useQuery<WorkspaceDataExportsQuery>(WORKSPACE_DATA_EXPORTS, {
-      client: apolloAdminClient,
-      variables: { workspaceId },
-      fetchPolicy: 'network-only',
-    });
+  const adminPanelWorkspaceDataExports = useAtomFamilyStateValue(
+    adminPanelWorkspaceDataExportsFamilyState,
+    workspaceId,
+  );
 
   const [createWorkspaceDataExport, { loading: isCreating }] =
     useMutation<CreateWorkspaceDataExportMutation>(
@@ -71,20 +69,14 @@ export const SettingsAdminWorkspaceDataExportSection = ({
       },
     );
 
-  const rows = data?.workspaceDataExports ?? [];
-  const hasPendingExport = rows.some(
-    (row) => row.status === WorkspaceDataExportStatus.PENDING,
+  const hasPendingExport = adminPanelWorkspaceDataExports.some(
+    (workspaceDataExport) =>
+      workspaceDataExport.status === WorkspaceDataExportStatus.PENDING,
   );
 
   return (
     <>
-      {hasPendingExport && (
-        <SettingsAdminWorkspaceDataExportPollingEffect
-          pollIntervalMs={PENDING_EXPORT_POLL_INTERVAL_MS}
-          startPolling={startPolling}
-          stopPolling={stopPolling}
-        />
-      )}
+      <SettingsAdminWorkspaceDataExportsFetchEffect />
       <SettingsTableListSection<WorkspaceDataExportRow>
         title={t`Data export`}
         description={t`Every object of this workspace as CSV files in one zip, kept for 7 days. Works for suspended workspaces.`}
@@ -97,7 +89,7 @@ export const SettingsAdminWorkspaceDataExportSection = ({
             onClick={() => createWorkspaceDataExport()}
           >{t`Export data`}</Button>
         }
-        items={rows}
+        items={adminPanelWorkspaceDataExports}
         columns={[
           {
             label: t`Created`,
@@ -120,21 +112,22 @@ export const SettingsAdminWorkspaceDataExportSection = ({
                 return <>-</>;
               }
 
-              const { objectCount, columnCount } =
-                getWorkspaceDataExportSummary(item.objects);
+              const { objectCount, fieldCount } = getWorkspaceDataExportSummary(
+                item.objects,
+              );
 
               return (
-                <>{t`${formatNumber(objectCount)} objects, ${formatNumber(columnCount)} columns`}</>
+                <>{t`${formatNumber(objectCount)} objects, ${formatNumber(fieldCount)} fields`}</>
               );
             },
           },
           {
-            label: t`Rows`,
+            label: t`Records`,
             Cell: ({ item }) => (
               <>
                 {isNonEmptyArray(item.objects)
                   ? formatNumber(
-                      getWorkspaceDataExportSummary(item.objects).rowCount,
+                      getWorkspaceDataExportSummary(item.objects).recordCount,
                     )
                   : '-'}
               </>

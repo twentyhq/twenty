@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Readable } from 'stream';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FileStorageException,
@@ -9,18 +10,21 @@ import {
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
-import { buildWorkspaceDataExportStateResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+import { buildWorkspaceDataExportResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+import { parseWorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/utils/parse-workspace-data-export-state.util';
 
 type StateKey = { workspaceId: string; exportId: string };
 
 @Injectable()
 export class WorkspaceDataExportStateService {
+  private readonly logger = new Logger(WorkspaceDataExportStateService.name);
+
   constructor(private readonly fileStorageService: FileStorageService) {}
 
   async get(key: StateKey): Promise<WorkspaceDataExportState | undefined> {
     try {
       const stream = await this.fileStorageService.readFile(
-        buildWorkspaceDataExportStateResource(key),
+        buildWorkspaceDataExportResource({ ...key, file: { type: 'state' } }),
       );
       const chunks: Buffer[] = [];
 
@@ -28,7 +32,17 @@ export class WorkspaceDataExportStateService {
         chunks.push(Buffer.from(chunk));
       }
 
-      return JSON.parse(Buffer.concat(chunks).toString('utf8'));
+      const state = parseWorkspaceDataExportState(
+        Buffer.concat(chunks).toString('utf8'),
+      );
+
+      if (!isDefined(state)) {
+        this.logger.warn(
+          `Workspace ${key.workspaceId}: export ${key.exportId} has an unreadable state file`,
+        );
+      }
+
+      return state;
     } catch (error) {
       if (
         error instanceof FileStorageException &&
@@ -46,7 +60,7 @@ export class WorkspaceDataExportStateService {
     ...key
   }: StateKey & { state: WorkspaceDataExportState }): Promise<void> {
     await this.fileStorageService.writeFileStream({
-      ...buildWorkspaceDataExportStateResource(key),
+      ...buildWorkspaceDataExportResource({ ...key, file: { type: 'state' } }),
       stream: Readable.from([Buffer.from(JSON.stringify(state), 'utf8')]),
       mimeType: 'application/json',
     });

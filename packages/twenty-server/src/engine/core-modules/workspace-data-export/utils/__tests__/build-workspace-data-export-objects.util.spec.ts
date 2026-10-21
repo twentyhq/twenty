@@ -9,26 +9,27 @@ describe('buildWorkspaceDataExportObjects', () => {
             nameSingular: 'company',
             labelSingular: 'Company',
             tableName: 'company',
+            fieldCount: 2,
             columns: [
               { name: 'id', isText: false },
               { name: 'name', isText: true },
+              { name: 'addressCity', isText: true },
             ],
           },
           {
             nameSingular: 'person',
             labelSingular: 'Person',
             tableName: 'person',
+            fieldCount: 1,
             columns: [{ name: 'id', isText: false }],
           },
         ],
-        partNamesByTable: {
-          company: ['company-00000.csv', 'company-00001.csv'],
-          person: ['person-00000.csv'],
-        },
-        rowCountByPart: {
-          'company-00000.csv': 1000,
-          'company-00001.csv': 7,
-          'person-00000.csv': 12,
+        partsByTable: {
+          company: [
+            { name: 'company-00000.csv', recordCount: 1000 },
+            { name: 'company-00001.csv', recordCount: 7 },
+          ],
+          person: [{ name: 'person-00000.csv', recordCount: 12 }],
         },
         completedTableCount: 1,
       }),
@@ -36,15 +37,15 @@ describe('buildWorkspaceDataExportObjects', () => {
       {
         nameSingular: 'company',
         labelSingular: 'Company',
-        columnCount: 2,
-        rowCount: 1007,
+        fieldCount: 2,
+        recordCount: 1007,
         isExported: true,
       },
       {
         nameSingular: 'person',
         labelSingular: 'Person',
-        columnCount: 1,
-        rowCount: 12,
+        fieldCount: 1,
+        recordCount: 12,
         isExported: false,
       },
     ]);

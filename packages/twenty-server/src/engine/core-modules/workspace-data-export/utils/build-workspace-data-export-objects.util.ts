@@ -4,15 +4,15 @@ import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace
 export const buildWorkspaceDataExportObjects = (
   state: Pick<
     WorkspaceDataExportState,
-    'tables' | 'partNamesByTable' | 'rowCountByPart' | 'completedTableCount'
+    'tables' | 'partsByTable' | 'completedTableCount'
   >,
 ): WorkspaceDataExportObjectDTO[] =>
   state.tables.map((table, tableIndex) => ({
     nameSingular: table.nameSingular,
     labelSingular: table.labelSingular,
-    columnCount: table.columns.length,
-    rowCount: (state.partNamesByTable[table.nameSingular] ?? []).reduce(
-      (total, partName) => total + (state.rowCountByPart[partName] ?? 0),
+    fieldCount: table.fieldCount,
+    recordCount: state.partsByTable[table.nameSingular].reduce(
+      (total, part) => total + part.recordCount,
       0,
     ),
     isExported: tableIndex < state.completedTableCount,

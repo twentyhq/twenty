@@ -4,5 +4,6 @@ export type WorkspaceDataExportTable = {
   nameSingular: string;
   labelSingular: string;
   tableName: string;
+  fieldCount: number;
   columns: WorkspaceDataExportColumn[];
 };

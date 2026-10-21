@@ -9,10 +9,10 @@ export class WorkspaceDataExportObjectDTO {
   labelSingular: string;
 
   @Field(() => Int)
-  columnCount: number;
+  fieldCount: number;
 
   @Field(() => Int)
-  rowCount: number;
+  recordCount: number;
 
   @Field(() => Boolean)
   isExported: boolean;

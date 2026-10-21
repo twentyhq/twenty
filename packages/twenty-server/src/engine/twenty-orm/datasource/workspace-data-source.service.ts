@@ -83,19 +83,6 @@ export class WorkspaceDataSourceService
     }
   }
 
-  getReadPoolOrThrow(): Pool {
-    const pool = this.replicaPool ?? this.primaryPool;
-
-    if (!isDefined(pool)) {
-      throw new TwentyOrmException(
-        'WorkspaceDataSourceService has not been initialized. Make sure the module has been initialized.',
-        TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
-      );
-    }
-
-    return pool;
-  }
-
   getDataSource({ useReplica }: { useReplica: boolean }): WorkspaceDataSource {
     const pool = useReplica
       ? (this.replicaPool ?? this.primaryPool)

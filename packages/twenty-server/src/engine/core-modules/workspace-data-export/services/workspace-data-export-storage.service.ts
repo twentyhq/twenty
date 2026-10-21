@@ -2,11 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import {
-  buildWorkspaceDataExportArchiveResource,
-  buildWorkspaceDataExportFolder,
-  buildWorkspaceDataExportPartsFolder,
-} from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+import { buildWorkspaceDataExportFolder } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-folder.util';
+import { buildWorkspaceDataExportResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
 
 type ExportKey = { workspaceId: string; exportId: string };
 
@@ -16,13 +13,13 @@ export class WorkspaceDataExportStorageService {
 
   async deleteParts(key: ExportKey): Promise<void> {
     await this.fileStorageService.deleteFolder(
-      buildWorkspaceDataExportPartsFolder(key),
+      buildWorkspaceDataExportFolder({ ...key, folder: 'parts' }),
     );
   }
 
   async deleteExportFolder(key: ExportKey): Promise<void> {
     await this.fileStorageService.deleteFolder(
-      buildWorkspaceDataExportFolder(key),
+      buildWorkspaceDataExportFolder({ ...key, folder: 'export' }),
     );
   }
 
@@ -35,9 +32,10 @@ export class WorkspaceDataExportStorageService {
   }): Promise<void> {
     await this.deleteExportFolder({ workspaceId, exportId: file.id });
     await this.fileStorageService.deleteFile({
-      ...buildWorkspaceDataExportArchiveResource({
+      ...buildWorkspaceDataExportResource({
         workspaceId,
         exportId: file.id,
+        file: { type: 'archive' },
       }),
       applicationId: file.applicationId,
     });

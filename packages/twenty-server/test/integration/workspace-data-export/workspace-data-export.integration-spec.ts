@@ -145,16 +145,19 @@ describe('workspace data export (integration)', () => {
       manifest.objects.find(
         (object: { nameSingular: string }) => object.nameSingular === 'company',
       ),
-    ).toMatchObject({ file: 'company.csv', rowCount: companyLines.length });
-    expect(
-      completedExport.objects.find(
-        (object) => object.nameSingular === 'company',
-      ),
-    ).toMatchObject({
-      rowCount: companyLines.length,
-      columnCount: companyColumns.length,
+    ).toMatchObject({ file: 'company.csv', recordCount: companyLines.length });
+    const companyObject = completedExport.objects.find(
+      (object) => object.nameSingular === 'company',
+    );
+
+    expect(companyObject).toMatchObject({
+      recordCount: companyLines.length,
       isExported: true,
     });
+    expect(companyObject?.fieldCount).toBeGreaterThan(0);
+    expect(companyObject?.fieldCount).toBeLessThanOrEqual(
+      companyColumns.length,
+    );
 
     await setWorkspaceActivationStatus(WorkspaceActivationStatus.SUSPENDED);
 

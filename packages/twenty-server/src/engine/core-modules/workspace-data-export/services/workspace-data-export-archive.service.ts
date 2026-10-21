@@ -3,18 +3,17 @@ import { Injectable } from '@nestjs/common';
 import archiver, { type Archiver } from 'archiver';
 import { once } from 'events';
 import { Readable } from 'stream';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
 import { buildWorkspaceDataExportObjects } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-objects.util';
-import {
-  buildWorkspaceDataExportArchiveResource,
-  buildWorkspaceDataExportPartResource,
-} from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+import { buildWorkspaceDataExportResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
 
 type ArchiveState = Pick<
   WorkspaceDataExportState,
-  'workspaceName' | 'tables' | 'partNamesByTable' | 'rowCountByPart'
+  'workspaceName' | 'tables' | 'partsByTable'
 >;
 
 @Injectable()
@@ -32,7 +31,11 @@ export class WorkspaceDataExportArchiveService {
   }): Promise<number> {
     const archive = archiver('zip', { zlib: { level: 1 } });
     const upload = this.fileStorageService.writeFileStream({
-      ...buildWorkspaceDataExportArchiveResource({ workspaceId, exportId }),
+      ...buildWorkspaceDataExportResource({
+        workspaceId,
+        exportId,
+        file: { type: 'archive' },
+      }),
       stream: archive,
       mimeType: 'application/zip',
     });
@@ -45,6 +48,15 @@ export class WorkspaceDataExportArchiveService {
 
     try {
       for (const table of state.tables) {
+        const parts = state.partsByTable[table.nameSingular];
+
+        if (!isNonEmptyArray(parts)) {
+          throw new WorkspaceDataExportException({
+            message: `Export ${exportId} has no part for ${table.nameSingular}`,
+            code: 'EXPORT_INCOMPLETE',
+          });
+        }
+
         await this.appendEntry({
           archive,
           failure,
@@ -53,7 +65,7 @@ export class WorkspaceDataExportArchiveService {
             this.readParts({
               workspaceId,
               exportId,
-              partNames: state.partNamesByTable[table.nameSingular] ?? [],
+              partNames: parts.map((part) => part.name),
             }),
           ),
         });
@@ -111,10 +123,10 @@ export class WorkspaceDataExportArchiveService {
   }): AsyncGenerator<Buffer> {
     for (const partName of partNames) {
       const stream = await this.fileStorageService.readFile(
-        buildWorkspaceDataExportPartResource({
+        buildWorkspaceDataExportResource({
           workspaceId,
           exportId,
-          partName,
+          file: { type: 'part', partName },
         }),
       );
 

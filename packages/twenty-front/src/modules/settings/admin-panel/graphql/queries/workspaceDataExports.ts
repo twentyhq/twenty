@@ -11,8 +11,8 @@ export const WORKSPACE_DATA_EXPORTS = gql`
       objects {
         nameSingular
         labelSingular
-        columnCount
-        rowCount
+        fieldCount
+        recordCount
         isExported
       }
       downloadUrl

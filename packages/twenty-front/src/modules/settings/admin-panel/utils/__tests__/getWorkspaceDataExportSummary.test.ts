@@ -4,14 +4,14 @@ describe('getWorkspaceDataExportSummary', () => {
   it('sums objects, columns and rows and counts exported objects', () => {
     expect(
       getWorkspaceDataExportSummary([
-        { columnCount: 12, rowCount: 599, isExported: true },
-        { columnCount: 30, rowCount: 1200, isExported: false },
+        { fieldCount: 12, recordCount: 599, isExported: true },
+        { fieldCount: 30, recordCount: 1200, isExported: false },
       ]),
     ).toEqual({
       objectCount: 2,
       exportedObjectCount: 1,
-      columnCount: 42,
-      rowCount: 1799,
+      fieldCount: 42,
+      recordCount: 1799,
     });
   });
 
@@ -19,8 +19,8 @@ describe('getWorkspaceDataExportSummary', () => {
     expect(getWorkspaceDataExportSummary([])).toEqual({
       objectCount: 0,
       exportedObjectCount: 0,
-      columnCount: 0,
-      rowCount: 0,
+      fieldCount: 0,
+      recordCount: 0,
     });
   });
 });

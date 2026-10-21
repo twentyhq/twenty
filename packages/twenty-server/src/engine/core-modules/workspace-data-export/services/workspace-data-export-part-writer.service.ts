@@ -13,7 +13,7 @@ import {
 import { type WorkspaceDataExportCursor } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-cursor.type';
 import { type WorkspaceDataExportTable } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-table.type';
 import { buildWorkspaceDataExportPartName } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-part-name.util';
-import { buildWorkspaceDataExportPartResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+import { buildWorkspaceDataExportResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
 import { formatWorkspaceDataExportCsvHeader } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-header.util';
 import { formatWorkspaceDataExportCsvRow } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-row.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -21,7 +21,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 export type WorkspaceDataExportPart = {
   partName: string;
-  rowCount: number;
+  recordCount: number;
   lastId: string | null;
   isTableExhausted: boolean;
 };
@@ -52,16 +52,16 @@ export class WorkspaceDataExportPartWriterService {
         nameSingular: table.nameSingular,
         partIndex: cursor.partIndex,
       }),
-      rowCount: 0,
+      recordCount: 0,
       lastId: cursor.lastId,
       isTableExhausted: false,
     };
 
     await this.fileStorageService.writeFileStream({
-      ...buildWorkspaceDataExportPartResource({
+      ...buildWorkspaceDataExportResource({
         workspaceId,
         exportId,
-        partName: part.partName,
+        file: { type: 'part', partName: part.partName },
       }),
       stream: Readable.from(
         this.streamCsv({
@@ -113,7 +113,7 @@ export class WorkspaceDataExportPartWriterService {
 
       for (const row of rows) {
         yield formatWorkspaceDataExportCsvRow({ columns: table.columns, row });
-        part.rowCount++;
+        part.recordCount++;
       }
 
       if (rows.length > 0) {
@@ -126,7 +126,7 @@ export class WorkspaceDataExportPartWriterService {
         return;
       }
 
-      if (part.rowCount >= WORKSPACE_DATA_EXPORT_STEP_MAX_ROWS) {
+      if (part.recordCount >= WORKSPACE_DATA_EXPORT_STEP_MAX_ROWS) {
         return;
       }
     }

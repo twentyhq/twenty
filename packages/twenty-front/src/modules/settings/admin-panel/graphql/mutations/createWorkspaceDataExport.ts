@@ -11,8 +11,8 @@ export const CREATE_WORKSPACE_DATA_EXPORT = gql`
       objects {
         nameSingular
         labelSingular
-        columnCount
-        rowCount
+        fieldCount
+        recordCount
         isExported
       }
       downloadUrl

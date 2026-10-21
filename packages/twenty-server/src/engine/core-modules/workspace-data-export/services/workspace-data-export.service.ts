@@ -20,7 +20,7 @@ import { WorkspaceDataExportStepService } from 'src/engine/core-modules/workspac
 import { WorkspaceDataExportStorageService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-storage.service';
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
 import { buildWorkspaceDataExportObjects } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-objects.util';
-import { buildWorkspaceDataExportArchiveResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+import { buildWorkspaceDataExportResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
 import { buildWorkspaceDataExportTables } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-tables.util';
 import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -57,7 +57,11 @@ export class WorkspaceDataExportService {
 
     const exportId = v4();
     const file = await this.fileStorageService.createPendingFile({
-      ...buildWorkspaceDataExportArchiveResource({ workspaceId, exportId }),
+      ...buildWorkspaceDataExportResource({
+        workspaceId,
+        exportId,
+        file: { type: 'archive' },
+      }),
       fileId: exportId,
       size: 0,
       mimeType: 'application/octet-stream',
@@ -155,17 +159,19 @@ export class WorkspaceDataExportService {
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
       ]);
+    const tables = buildWorkspaceDataExportTables({
+      workspaceId,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
     const now = Date.now();
 
     return {
       workspaceName,
-      tables: buildWorkspaceDataExportTables({
-        workspaceId,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      }),
-      partNamesByTable: {},
-      rowCountByPart: {},
+      tables,
+      partsByTable: Object.fromEntries(
+        tables.map((table) => [table.nameSingular, []]),
+      ),
       completedTableCount: 0,
       startedAt: now,
       heartbeatAt: now,

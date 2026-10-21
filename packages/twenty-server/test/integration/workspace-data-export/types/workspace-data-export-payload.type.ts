@@ -1,8 +1,8 @@
 export type WorkspaceDataExportObjectPayload = {
   nameSingular: string;
   labelSingular: string;
-  columnCount: number;
-  rowCount: number;
+  fieldCount: number;
+  recordCount: number;
   isExported: boolean;
 };
 

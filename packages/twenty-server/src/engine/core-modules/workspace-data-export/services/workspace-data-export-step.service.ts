@@ -20,7 +20,7 @@ import { WorkspaceDataExportStorageService } from 'src/engine/core-modules/works
 import { type WorkspaceDataExportJobData } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-job-data.type';
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
 import { buildNextWorkspaceDataExportCursor } from 'src/engine/core-modules/workspace-data-export/utils/build-next-workspace-data-export-cursor.util';
-import { buildWorkspaceDataExportArchiveResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
+import { buildWorkspaceDataExportResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -92,22 +92,20 @@ export class WorkspaceDataExportStepService {
         table,
         abortSignal,
       });
-      const partNames = state.partNamesByTable[table.nameSingular] ?? [];
 
       await this.workspaceDataExportStateService.set({
         workspaceId,
         exportId,
         state: {
           ...state,
-          partNamesByTable: {
-            ...state.partNamesByTable,
-            [table.nameSingular]: partNames.includes(part.partName)
-              ? partNames
-              : [...partNames, part.partName],
-          },
-          rowCountByPart: {
-            ...state.rowCountByPart,
-            [part.partName]: part.rowCount,
+          partsByTable: {
+            ...state.partsByTable,
+            [table.nameSingular]: [
+              ...state.partsByTable[table.nameSingular].filter(
+                (existingPart) => existingPart.name !== part.partName,
+              ),
+              { name: part.partName, recordCount: part.recordCount },
+            ],
           },
           completedTableCount: part.isTableExhausted
             ? cursor.tableIndex + 1
@@ -182,7 +180,11 @@ export class WorkspaceDataExportStepService {
         `Workspace ${workspaceId}: export ${exportId} row is gone, dropping its archive`,
       );
       await this.fileStorageService.deleteFileObject(
-        buildWorkspaceDataExportArchiveResource({ workspaceId, exportId }),
+        buildWorkspaceDataExportResource({
+          workspaceId,
+          exportId,
+          file: { type: 'archive' },
+        }),
       );
 
       return;

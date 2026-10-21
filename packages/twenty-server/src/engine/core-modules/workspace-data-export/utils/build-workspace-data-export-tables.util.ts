@@ -17,22 +17,26 @@ const buildColumns = ({
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadatas: FlatFieldMetadata[];
-}): WorkspaceDataExportColumn[] => {
+}): { columns: WorkspaceDataExportColumn[]; fieldCount: number } => {
   const columnsByName = new Map<string, WorkspaceDataExportColumn>();
+  let fieldCount = 0;
 
   for (const flatFieldMetadata of flatFieldMetadatas) {
-    for (const columnDefinition of generateColumnDefinitions({
+    const exportableColumnDefinitions = generateColumnDefinitions({
       flatFieldMetadata,
       flatObjectMetadata,
       workspaceId,
-    })) {
-      if (
-        isDefined(columnDefinition.generatedType) ||
-        columnDefinition.type === 'tsvector'
-      ) {
-        continue;
-      }
+    }).filter(
+      (columnDefinition) =>
+        !isDefined(columnDefinition.generatedType) &&
+        columnDefinition.type !== 'tsvector',
+    );
 
+    if (isNonEmptyArray(exportableColumnDefinitions)) {
+      fieldCount++;
+    }
+
+    for (const columnDefinition of exportableColumnDefinitions) {
       columnsByName.set(columnDefinition.name, {
         name: columnDefinition.name,
         isText: columnDefinition.type === 'text',
@@ -43,12 +47,12 @@ const buildColumns = ({
   const idColumn = columnsByName.get('id');
 
   if (!isDefined(idColumn)) {
-    return [];
+    return { columns: [], fieldCount: 0 };
   }
 
   columnsByName.delete('id');
 
-  return [idColumn, ...columnsByName.values()];
+  return { columns: [idColumn, ...columnsByName.values()], fieldCount };
 };
 
 export const buildWorkspaceDataExportTables = ({
@@ -92,7 +96,7 @@ export const buildWorkspaceDataExportTables = ({
       nameSingular: flatObjectMetadata.nameSingular,
       labelSingular: flatObjectMetadata.labelSingular,
       tableName: computeObjectTargetTable(flatObjectMetadata),
-      columns: buildColumns({
+      ...buildColumns({
         workspaceId,
         flatObjectMetadata,
         flatFieldMetadatas:

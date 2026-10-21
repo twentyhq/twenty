@@ -7,8 +7,8 @@ export const WORKSPACE_DATA_EXPORT_FIELDS = `
   objects {
     nameSingular
     labelSingular
-    columnCount
-    rowCount
+    fieldCount
+    recordCount
     isExported
   }
   downloadUrl

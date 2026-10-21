@@ -17,6 +17,7 @@ import {
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { buildWorkspaceDataExportFolder } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-folder.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -78,7 +79,13 @@ export class PendingFileCleanupService {
 
         if (isDefined(expiredExportFolder) && isDefined(file.workspaceId)) {
           if (expiredExportFolder === FileFolder.WorkspaceDataExport) {
-            await this.deleteWorkspaceDataExportFolder(file);
+            await this.fileStorageService.deleteFolder(
+              buildWorkspaceDataExportFolder({
+                workspaceId: file.workspaceId,
+                exportId: file.id,
+                folder: 'export',
+              }),
+            );
           }
 
           await this.fileStorageService.deleteByFileId({
@@ -121,30 +128,6 @@ export class PendingFileCleanupService {
     }
 
     return deletedCount;
-  }
-
-  private async deleteWorkspaceDataExportFolder(
-    file: FileEntity,
-  ): Promise<void> {
-    if (!isDefined(file.workspaceId)) {
-      return;
-    }
-
-    const application = await this.applicationRepository.findOne(
-      file.workspaceId,
-      { where: { id: file.applicationId } },
-    );
-
-    if (!isDefined(application)) {
-      return;
-    }
-
-    await this.fileStorageService.deleteFolder({
-      workspaceId: file.workspaceId,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      fileFolder: FileFolder.WorkspaceDataExport,
-      folderPath: file.id,
-    });
   }
 
   // The row is already gone, so a failure here only leaks bytes and is logged rather than retried.
