@@ -81,8 +81,12 @@ export class UserSessionService {
       throw new Error('Cannot issue a user session without an HTTP response');
     }
 
+    // Returning instead would hand out tokens with no session row, audit event or origin check.
     if (this.userSessionCookieService.isSessionCookieIgnored(request)) {
-      return;
+      throw new AuthException(
+        'Requests that ignore the session cookie cannot sign in',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
     // Not in the CSRF middleware, which cannot know a request is about to issue a cookie.

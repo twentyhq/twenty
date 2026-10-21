@@ -4,7 +4,7 @@ import { IGNORE_SESSION_COOKIE_HEADER_NAME } from 'twenty-shared/constants';
 
 import {
   extractSessionCookie,
-  hasClearingCookie,
+  getSetCookieHeaders,
   postMetadataOperationWithHeaders,
   signInWithCookieCapture,
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/sign-in-with-cookie-capture.util';
@@ -45,7 +45,7 @@ describe('ignored session cookie (integration)', () => {
 
     expect(ignoredResponse.body.data?.currentUser).toBeUndefined();
     expect(ignoredResponse.body.errors).toBeDefined();
-    expect(hasClearingCookie(ignoredResponse)).toBe(false);
+    expect(getSetCookieHeaders(ignoredResponse)).toEqual([]);
 
     const unmarkedResponse = await postMetadataOperationWithHeaders(
       currentUserIdentityQueryFactory(),
@@ -92,7 +92,7 @@ describe('ignored session cookie (integration)', () => {
     );
 
     expect(signOutResponse.body.data.signOut).toBe(true);
-    expect(hasClearingCookie(signOutResponse)).toBe(false);
+    expect(getSetCookieHeaders(signOutResponse)).toEqual([]);
 
     const sessionRow = await getCoreRepository<UserSessionEntity>(
       UserSessionEntity,
@@ -103,12 +103,14 @@ describe('ignored session cookie (integration)', () => {
     expect(sessionRow?.revokedAt).toBeNull();
   });
 
-  it('should not issue a session cookie when signing in with the ignore header', async () => {
+  it('should refuse to sign in, issuing neither tokens nor a session cookie, when the request carries the ignore header', async () => {
     const signInResponse = await signInWithCookieCapture({
       originHeader: ALLOWED_ORIGIN,
       ignoreSessionCookie: true,
     });
 
-    expect(extractSessionCookie(signInResponse)).toBeUndefined();
+    expect(signInResponse.body.errors).toBeDefined();
+    expect(signInResponse.body.data?.getAuthTokensFromLoginToken).toBeFalsy();
+    expect(getSetCookieHeaders(signInResponse)).toEqual([]);
   });
 });
