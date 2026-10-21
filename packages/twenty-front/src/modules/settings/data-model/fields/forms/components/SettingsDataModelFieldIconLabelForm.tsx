@@ -212,10 +212,8 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           delay={TooltipDelay.shortDelay}
                         >
                           <IconInfoCircle
-                            id="info-circle-id-name"
                             size={theme.icon.size.md}
                             color={theme.font.color.tertiary}
-                            style={{ outline: 'none' }}
                           />
                         </Tooltip>
                       )}
