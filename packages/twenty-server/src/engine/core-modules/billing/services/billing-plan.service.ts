@@ -16,6 +16,7 @@ import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import { assertPlanIsSellableOrThrow } from 'src/engine/core-modules/billing/utils/assert-plan-is-sellable-or-throw.util';
 import { getBillingPlanSwitch } from 'src/engine/core-modules/billing/utils/get-billing-plan-switch.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -75,13 +76,20 @@ export class BillingPlanService {
     });
   }
 
-  async getPricesPerPlanByInterval({
+  async getSellablePlanPricesByIntervalOrThrow({
     planKey,
     interval,
   }: {
     planKey: BillingPlanKey;
     interval: SubscriptionInterval;
   }): Promise<BillingGetPricesPerPlanResult> {
+    assertPlanIsSellableOrThrow({
+      planKey,
+      sellablePlanKeys: this.twentyConfigService.get(
+        'BILLING_SELLABLE_PLAN_KEYS',
+      ),
+    });
+
     const plans = await this.listPlans();
     const plan = plans.find((plan) => plan.planKey === planKey);
 
