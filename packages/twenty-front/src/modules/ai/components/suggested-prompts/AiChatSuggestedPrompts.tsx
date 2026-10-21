@@ -38,7 +38,8 @@ const StyledTitle = styled.h2<{ isCentered: boolean }>`
       ? themeCssVariables.font.weight.semiBold
       : themeCssVariables.font.weight.medium};
   height: ${({ isCentered }) => (isCentered ? 'auto' : '24px')};
-  line-height: ${({ isCentered }) => (isCentered ? '1.2' : 'inherit')};
+  line-height: ${({ isCentered }) =>
+    isCentered ? themeCssVariables.text.lineHeight.md : 'inherit'};
   margin: 0;
   padding: 0 ${themeCssVariables.spacing[2]};
   text-align: ${({ isCentered }) => (isCentered ? 'center' : 'left')};
