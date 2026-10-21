@@ -31,12 +31,15 @@ import { formatWorkspaceDataExportCsvHeader } from 'src/engine/core-modules/work
 import { formatWorkspaceDataExportCsvRow } from 'src/engine/core-modules/workspace-data-export/utils/format-workspace-data-export-csv-row.util';
 import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 
 export type WorkspaceDataExportJobData = {
   workspaceId: string;
@@ -50,14 +53,12 @@ type ExportedObject = {
   rowCount: number;
 };
 
-type InformationSchemaColumn = {
-  table_name: string;
-  column_name: string;
-  data_type: string;
-  is_generated: string;
+type ExportableTable = {
+  nameSingular: string;
+  labelSingular: string;
+  tableName: string;
+  columns: WorkspaceDataExportColumn[];
 };
-
-const TEXT_COLUMN_TYPES = new Set(['text', 'character varying', 'character']);
 
 @Injectable()
 export class WorkspaceDataExportService {
@@ -68,12 +69,11 @@ export class WorkspaceDataExportService {
     private readonly dataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileStorageService: FileStorageService,
     private readonly fileUrlService: FileUrlService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectMessageQueue(MessageQueue.workspaceDataExportQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -190,10 +190,7 @@ export class WorkspaceDataExportService {
   }): Promise<number> {
     const workspace = await this.findWorkspaceOrThrow(workspaceId);
     const schemaName = getWorkspaceSchemaName(workspaceId);
-    const objectMetadatas = await this.objectMetadataRepository.find(
-      workspaceId,
-      { where: { isActive: true }, relations: { application: true } },
-    );
+    const tables = await this.findExportableTables(workspaceId);
     const queryRunner = this.dataSource.createQueryRunner();
     const archive = archiver('zip', { zlib: { level: 6 } });
     const exportedObjects: ExportedObject[] = [];
@@ -210,39 +207,11 @@ export class WorkspaceDataExportService {
     failure.catch(() => undefined);
 
     try {
-      const columnsByTableName = await this.findExportableColumnsByTableName({
-        queryRunner,
-        schemaName,
-      });
-
-      for (const objectMetadata of objectMetadatas) {
-        const applicationUniversalIdentifier =
-          objectMetadata.application?.universalIdentifier;
-
-        if (!isDefined(applicationUniversalIdentifier)) {
-          this.logger.warn(
-            `Workspace ${workspaceId}: ${objectMetadata.nameSingular} has no application, skipped`,
-          );
-          continue;
-        }
-
-        const tableName = computeObjectTargetTable({
-          nameSingular: objectMetadata.nameSingular,
-          applicationUniversalIdentifier,
-        });
-        const columns = columnsByTableName.get(tableName);
-
-        if (!isNonEmptyArray(columns)) {
-          this.logger.warn(
-            `Workspace ${workspaceId}: ${objectMetadata.nameSingular} has no table ${tableName}, skipped`,
-          );
-          continue;
-        }
-
+      for (const table of tables) {
         const exportedObject: ExportedObject = {
-          nameSingular: objectMetadata.nameSingular,
-          labelSingular: objectMetadata.labelSingular,
-          file: `${objectMetadata.nameSingular}.csv`,
+          nameSingular: table.nameSingular,
+          labelSingular: table.labelSingular,
+          file: `${table.nameSingular}.csv`,
           rowCount: 0,
         };
 
@@ -255,8 +224,8 @@ export class WorkspaceDataExportService {
             this.streamCsv({
               queryRunner,
               schemaName,
-              tableName,
-              columns,
+              tableName: table.tableName,
+              columns: table.columns,
               abortSignal,
               onRow: () => exportedObject.rowCount++,
             }),
@@ -315,37 +284,101 @@ export class WorkspaceDataExportService {
     await Promise.race([entryWritten, failure]);
   }
 
-  private async findExportableColumnsByTableName({
-    queryRunner,
-    schemaName,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-  }): Promise<Map<string, WorkspaceDataExportColumn[]>> {
-    const rows: InformationSchemaColumn[] = await queryRunner.query(
-      `SELECT table_name, column_name, data_type, is_generated
-       FROM information_schema.columns
-       WHERE table_schema = $1
-       ORDER BY table_name, ordinal_position`,
-      [schemaName],
-    );
-    const columnsByTableName = new Map<string, WorkspaceDataExportColumn[]>();
+  // Metadata cache, not information_schema: the production catalog is too large to query in time.
+  private async findExportableTables(
+    workspaceId: string,
+  ): Promise<ExportableTable[]> {
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
+    const fieldsByObjectUniversalIdentifier = new Map<
+      string,
+      FlatFieldMetadata[]
+    >();
 
-    for (const row of rows) {
-      if (row.is_generated === 'ALWAYS' || row.data_type === 'tsvector') {
+    for (const flatFieldMetadata of Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    )) {
+      if (!isDefined(flatFieldMetadata)) {
         continue;
       }
 
-      const columns = columnsByTableName.get(row.table_name) ?? [];
+      const fields =
+        fieldsByObjectUniversalIdentifier.get(
+          flatFieldMetadata.objectMetadataUniversalIdentifier,
+        ) ?? [];
 
-      columns.push({
-        name: row.column_name,
-        isText: TEXT_COLUMN_TYPES.has(row.data_type),
-      });
-      columnsByTableName.set(row.table_name, columns);
+      fields.push(flatFieldMetadata);
+      fieldsByObjectUniversalIdentifier.set(
+        flatFieldMetadata.objectMetadataUniversalIdentifier,
+        fields,
+      );
     }
 
-    return columnsByTableName;
+    return Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter((flatObjectMetadata) => flatObjectMetadata.isActive)
+      .sort((left, right) =>
+        left.nameSingular.localeCompare(right.nameSingular),
+      )
+      .map((flatObjectMetadata) => ({
+        nameSingular: flatObjectMetadata.nameSingular,
+        labelSingular: flatObjectMetadata.labelSingular,
+        tableName: computeObjectTargetTable(flatObjectMetadata),
+        columns: this.buildColumns({
+          workspaceId,
+          flatObjectMetadata,
+          flatFieldMetadatas:
+            fieldsByObjectUniversalIdentifier.get(
+              flatObjectMetadata.universalIdentifier,
+            ) ?? [],
+        }),
+      }))
+      .filter((table) => isNonEmptyArray(table.columns));
+  }
+
+  private buildColumns({
+    workspaceId,
+    flatObjectMetadata,
+    flatFieldMetadatas,
+  }: {
+    workspaceId: string;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadatas: FlatFieldMetadata[];
+  }): WorkspaceDataExportColumn[] {
+    const columnsByName = new Map<string, WorkspaceDataExportColumn>();
+
+    for (const flatFieldMetadata of flatFieldMetadatas) {
+      for (const columnDefinition of generateColumnDefinitions({
+        flatFieldMetadata,
+        flatObjectMetadata,
+        workspaceId,
+      })) {
+        if (
+          isDefined(columnDefinition.generatedType) ||
+          columnDefinition.type === 'tsvector'
+        ) {
+          continue;
+        }
+
+        columnsByName.set(columnDefinition.name, {
+          name: columnDefinition.name,
+          isText: columnDefinition.type === 'text',
+        });
+      }
+    }
+
+    const idColumn = columnsByName.get('id');
+
+    if (!isDefined(idColumn)) {
+      return [];
+    }
+
+    columnsByName.delete('id');
+
+    return [idColumn, ...columnsByName.values()];
   }
 
   private async *streamCsv({
