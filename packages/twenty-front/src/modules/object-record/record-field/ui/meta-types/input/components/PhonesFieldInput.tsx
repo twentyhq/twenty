@@ -41,6 +41,11 @@ const StyledCustomPhoneInputContainer = styled.div<{
       : 'none'};
   border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
   height: ${({ hasItem }) => (hasItem ? '30px' : 'auto')};
+
+  &[data-in-row='true'] {
+    flex: 1;
+    min-width: 0;
+  }
 `;
 
 const StyledCustomPhoneInputWrapper = styled.div`
@@ -232,6 +237,7 @@ export const PhonesFieldInput = () => {
           <StyledCustomPhoneInputContainer
             hasItem={!!phones.length}
             hasError={hasError}
+            data-in-row={isInRow}
           >
             <StyledCustomPhoneInputWrapper data-in-row={isInRow}>
               <ReactPhoneNumberInput

@@ -10,7 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledFilesFieldLabelInputContainer = styled.div`
   align-items: center;
   display: flex;
-  height: 32px;
+  height: ${themeCssVariables.spacing[8]};
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[8]};
 
@@ -21,8 +21,10 @@ const StyledFilesFieldLabelInputContainer = styled.div`
     min-width: 0;
     padding-right: 0;
   }
+`;
 
-  &[data-in-row='true'] input {
+const StyledLabelInput = styled(StyledTextInput)`
+  &[data-in-row='true'] {
     padding-left: ${themeCssVariables.spacing[1]};
   }
 `;
@@ -52,7 +54,8 @@ export const FilesFieldLabelInput = ({
         thumbnailUrl={file.url}
       />
     )}
-    <StyledTextInput
+    <StyledLabelInput
+      data-in-row={isInRow}
       autoComplete="off"
       autoFocus={autoFocus}
       placeholder={placeholder}

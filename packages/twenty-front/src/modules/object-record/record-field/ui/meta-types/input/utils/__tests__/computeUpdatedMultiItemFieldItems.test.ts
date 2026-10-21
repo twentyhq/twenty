@@ -65,11 +65,7 @@ describe('computeUpdatedMultiItemFieldItems', () => {
         formatInput,
       });
 
-      expect(formatInput).toHaveBeenCalledWith(
-        'example.com',
-        undefined,
-        undefined,
-      );
+      expect(formatInput).toHaveBeenCalledWith('example.com', undefined);
       expect(result).toEqual([{ url: 'example.com', label: 'example.com' }]);
     });
   });
@@ -86,7 +82,7 @@ describe('computeUpdatedMultiItemFieldItems', () => {
       expect(result).toEqual(['a', 'x', 'c']);
     });
 
-    it('should pass editingIndex and the edited item to formatInput', () => {
+    it('should pass editingIndex to formatInput', () => {
       const formatInput = jest.fn((input: string) => input);
 
       computeUpdatedMultiItemFieldItems({
@@ -97,7 +93,7 @@ describe('computeUpdatedMultiItemFieldItems', () => {
         formatInput,
       });
 
-      expect(formatInput).toHaveBeenCalledWith('edited', 2, 'c');
+      expect(formatInput).toHaveBeenCalledWith('edited', 2);
     });
   });
 });

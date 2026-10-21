@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
+import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 import { Chip } from 'twenty-ui/primitives/data-display';
 
 const MAX_WIDTH = 120;
@@ -22,8 +22,7 @@ export const FileChip = ({
   const isDeleted = file.isDeleted === true;
   const isClickable = forceDisableClick !== true && !isDeleted;
 
-  const fileCategory =
-    file.fileCategory ?? getFileCategoryFromExtension(file.extension ?? '');
+  const fileCategory = getFieldFilesValueCategory(file);
 
   const label = isNonEmptyString(file.label) ? file.label : t`Untitled file`;
 

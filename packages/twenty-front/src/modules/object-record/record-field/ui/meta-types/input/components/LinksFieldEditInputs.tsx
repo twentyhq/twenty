@@ -2,7 +2,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type KeyboardEvent, useEffect, useRef } from 'react';
+import { type KeyboardEvent, useCallback } from 'react';
 import { Key } from 'ts-key-enum';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -32,10 +32,8 @@ export const LinksFieldEditInputs = ({
   onLabelChange,
   onEnter,
 }: LinksFieldEditInputsProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    containerRef.current?.scrollIntoView({ block: 'nearest' });
+  const scrollIntoViewOnMount = useCallback((node: HTMLDivElement | null) => {
+    node?.scrollIntoView({ block: 'nearest' });
   }, []);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -52,7 +50,7 @@ export const LinksFieldEditInputs = ({
   };
 
   return (
-    <StyledLinksFieldEditInputsContainer ref={containerRef}>
+    <StyledLinksFieldEditInputsContainer ref={scrollIntoViewOnMount}>
       <TextInput
         label={t`URL`}
         value={url}

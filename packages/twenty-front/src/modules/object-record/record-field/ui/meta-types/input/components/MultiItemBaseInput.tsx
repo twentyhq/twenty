@@ -50,6 +50,7 @@ const StyledInput = styled.input<{
   width: 100%;
 
   &[data-in-row='true'] {
+    flex: 1;
     height: 100%;
     padding-left: ${themeCssVariables.spacing[1]};
     padding-right: ${themeCssVariables.spacing[2]};
@@ -70,21 +71,13 @@ const StyledInputContainer = styled.div`
     align-items: center;
     display: flex;
     gap: ${themeCssVariables.spacing[1]};
-    height: 32px;
+    height: ${themeCssVariables.spacing[8]};
     padding: 0 ${themeCssVariables.spacing[1]} 0 0;
   }
 
   &[data-in-row='true'][data-has-error='true'] input {
     color: ${themeCssVariables.color.red};
   }
-`;
-
-const StyledInputRowContent = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  flex: 1;
-  min-width: 0;
 `;
 
 const StyledRightContainer = styled.div`
@@ -200,6 +193,12 @@ export const MultiItemBaseInput = ({
     />
   );
 
+  const rightContent = isInRow ? (
+    rightComponent
+  ) : (
+    <StyledRightContainer>{rightComponent}</StyledRightContainer>
+  );
+
   return (
     <>
       <StyledInputContainer
@@ -207,17 +206,8 @@ export const MultiItemBaseInput = ({
         data-in-row={isInRow}
         data-has-error={hasError}
       >
-        {isInRow ? (
-          <StyledInputRowContent>{input}</StyledInputRowContent>
-        ) : (
-          input
-        )}
-        {isDefined(rightComponent) &&
-          (isInRow ? (
-            rightComponent
-          ) : (
-            <StyledRightContainer>{rightComponent}</StyledRightContainer>
-          ))}
+        {input}
+        {isDefined(rightComponent) && rightContent}
       </StyledInputContainer>
       {isNonEmptyString(error) && <StyledErrorDiv>{error}</StyledErrorDiv>}
     </>

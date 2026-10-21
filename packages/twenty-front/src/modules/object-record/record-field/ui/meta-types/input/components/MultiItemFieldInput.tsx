@@ -61,7 +61,7 @@ type MultiItemFieldInputProps<T> = {
   onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
-  formatInput?: (input: string, itemIndex?: number, item?: T) => T;
+  formatInput?: (input: string, itemIndex?: number) => T;
   renderItem: (props: {
     value: T;
     index: number;
@@ -428,33 +428,68 @@ export const MultiItemFieldInput = <T,>({
       </>
     ) : undefined;
 
+  const renderFooterContent = () => {
+    if (shouldShowInputInFooter) {
+      if (!isInputInRow) {
+        return itemInput;
+      }
+
+      return (
+        <StyledFooterInputRowContainer>
+          {itemInput}
+        </StyledFooterInputRowContainer>
+      );
+    }
+
+    if (!shouldShowAddButton) {
+      return null;
+    }
+
+    return (
+      <StyledAddItemContainer>
+        <ListItemButton onClick={handleAddButtonClick} startIcon={<IconPlus />}>
+          <OverflowingTextWithTooltip
+            text={newItemLabel || t`Add ${placeholder}`}
+          />
+        </ListItemButton>
+      </StyledAddItemContainer>
+    );
+  };
+
   const footer = (
     <>
       {shouldShowItems && (shouldShowInputInFooter || shouldShowAddButton) && (
         <OverlayMenuListSeparator />
       )}
-      {shouldShowInputInFooter ? (
-        isInputInRow ? (
-          <StyledFooterInputRowContainer>
-            {itemInput}
-          </StyledFooterInputRowContainer>
-        ) : (
-          itemInput
-        )
-      ) : shouldShowAddButton ? (
-        <StyledAddItemContainer>
-          <ListItemButton
-            onClick={handleAddButtonClick}
-            startIcon={<IconPlus />}
-          >
-            <OverflowingTextWithTooltip
-              text={newItemLabel || t`Add ${placeholder}`}
-            />
-          </ListItemButton>
-        </StyledAddItemContainer>
-      ) : null}
+      {renderFooterContent()}
     </>
   );
+
+  const renderListItem = (item: T, index: number) => {
+    if (!isEditingItemInPlace || index !== itemToEditIndex) {
+      return renderItem({
+        value: item,
+        index,
+        handleEdit: () => handleEditButtonClick(index),
+        handleSetPrimary: () => handleSetPrimaryItem(index),
+        handleDelete: () => handleDeleteItem(index),
+      });
+    }
+
+    if (isDefined(renderEditedItem)) {
+      return renderEditedItem({
+        index,
+        inputValue,
+        hasError: !errorData.isValid,
+        saveButton: inputButton,
+        separator: itemSeparator,
+        onInputChange: handleItemInputChange,
+        onEnter: handleEnter,
+      });
+    }
+
+    return <StyledItemInputContainer>{itemInput}</StyledItemInputContainer>;
+  };
 
   return (
     <OverlayMenuList ref={containerRef} header={header} footer={footer}>
@@ -471,29 +506,7 @@ export const MultiItemFieldInput = <T,>({
                   !isDefined(renderEditedItem) &&
                   !isFirstItem &&
                   itemSeparator}
-                {!isEditedItem ? (
-                  renderItem({
-                    value: item,
-                    index,
-                    handleEdit: () => handleEditButtonClick(index),
-                    handleSetPrimary: () => handleSetPrimaryItem(index),
-                    handleDelete: () => handleDeleteItem(index),
-                  })
-                ) : isDefined(renderEditedItem) ? (
-                  renderEditedItem({
-                    index,
-                    inputValue,
-                    hasError: !errorData.isValid,
-                    saveButton: inputButton,
-                    separator: itemSeparator,
-                    onInputChange: handleItemInputChange,
-                    onEnter: handleEnter,
-                  })
-                ) : (
-                  <StyledItemInputContainer>
-                    {itemInput}
-                  </StyledItemInputContainer>
-                )}
+                {renderListItem(item, index)}
                 {isEditedItem && !isLastItem && itemSeparator}
               </Fragment>
             );

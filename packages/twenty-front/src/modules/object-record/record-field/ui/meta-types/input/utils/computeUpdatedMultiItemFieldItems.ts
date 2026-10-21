@@ -13,7 +13,7 @@ export const computeUpdatedMultiItemFieldItems = <T>({
   items: T[];
   editingIndex: number | null;
   singleItemMode: boolean;
-  formatInput?: (input: string, itemIndex?: number, item?: T) => T;
+  formatInput?: (input: string, itemIndex?: number) => T;
 }): T[] => {
   const isAdding = !isDefined(editingIndex);
 
@@ -28,11 +28,7 @@ export const computeUpdatedMultiItemFieldItems = <T>({
   }
 
   const newItem = isDefined(formatInput)
-    ? formatInput(
-        sanitizedInput,
-        isAdding ? undefined : editingIndex,
-        isAdding ? undefined : items[editingIndex],
-      )
+    ? formatInput(sanitizedInput, isAdding ? undefined : editingIndex)
     : (sanitizedInput as unknown as T);
 
   return isAdding
