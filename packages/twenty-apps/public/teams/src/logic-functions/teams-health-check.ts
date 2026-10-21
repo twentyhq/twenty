@@ -26,7 +26,7 @@ export const teamsHealthCheckHandler =
         status: 'WARNING',
         title: 'Microsoft Teams is not connected',
         description:
-          'No working Microsoft Teams connection was found in this workspace, so the app cannot reach Teams. Add a connection to start importing meeting transcripts.',
+          'No working Microsoft Teams connection was found in this workspace, so the app cannot reach Teams. Add a Microsoft Teams connection to use the app.',
         action: { label: 'Add connection', location: '#general' },
       };
     }
@@ -36,7 +36,7 @@ export const teamsHealthCheckHandler =
         status: 'ERROR',
         title: 'Microsoft Teams connection needs to be reconnected',
         description:
-          'Microsoft rejected the stored credentials, so meeting transcripts are no longer imported. Remove the Microsoft Teams connection and add it again.',
+          'Microsoft rejected the stored credentials, so the app can no longer reach Teams. Remove the Microsoft Teams connection and add it again.',
         action: { label: 'Manage connection', location: '#general' },
       };
     }
