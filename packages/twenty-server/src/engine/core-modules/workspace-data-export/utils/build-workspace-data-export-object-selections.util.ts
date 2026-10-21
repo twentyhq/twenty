@@ -30,7 +30,7 @@ export const buildWorkspaceDataExportObjectSelections = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  flatObjectMetadataMaps: FlatObjectMetadataMaps;
+  flatObjectMetadataMaps: Pick<FlatObjectMetadataMaps, 'byUniversalIdentifier'>;
   flatFieldMetadataMaps: FlatFieldMetadataMaps;
 }): WorkspaceDataExportObjectSelection[] =>
   Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
