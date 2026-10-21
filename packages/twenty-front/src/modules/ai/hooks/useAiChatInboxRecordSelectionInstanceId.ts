@@ -1,25 +1,24 @@
 import { useId, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { getAiChatInboxRecordSelectionScope } from '@/ai/utils/getAiChatInboxRecordSelectionScope';
 
 export const useAiChatInboxRecordSelectionInstanceId = () => {
   const baseInstanceId = useId();
   const { threadId } = useParams();
   const { key: locationKey } = useLocation();
-  const routeSelectionKey =
-    threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT ? locationKey : threadId;
-  const [selectionScope, setSelectionScope] = useState({
-    routeSelectionKey,
-    generation: 0,
+  const [selectionScope, setSelectionScope] = useState(() =>
+    getAiChatInboxRecordSelectionScope({ threadId, locationKey }),
+  );
+  const nextSelectionScope = getAiChatInboxRecordSelectionScope({
+    threadId,
+    locationKey,
+    previousScope: selectionScope,
   });
 
-  if (selectionScope.routeSelectionKey !== routeSelectionKey) {
-    setSelectionScope({
-      routeSelectionKey,
-      generation: selectionScope.generation + 1,
-    });
+  if (nextSelectionScope !== selectionScope) {
+    setSelectionScope(nextSelectionScope);
   }
 
-  return `${baseInstanceId}-${selectionScope.generation}`;
+  return `${baseInstanceId}-${nextSelectionScope.generation}`;
 };
