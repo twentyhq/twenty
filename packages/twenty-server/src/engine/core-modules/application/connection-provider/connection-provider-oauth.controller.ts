@@ -62,7 +62,7 @@ export class ConnectionProviderOAuthController {
     @Query('redirectLocation') redirectLocation: string | undefined,
     @Res() res: Response,
   ) {
-    // Captured early so error redirects land on the user's subdomain (another cookie domain logs them out)
+    // Captured early so error redirects land on the workspace's own domain (another cookie domain logs them out)
     let workspace: WorkspaceEntity | null = null;
 
     try {
@@ -216,9 +216,12 @@ export class ConnectionProviderOAuthController {
         );
       }
 
+      const hasRedirectLocation = isNonEmptyString(redirectLocation);
+
       const { pathname, searchParams, hash } = this.parseRedirectLocation(
-        redirectLocation ||
-          getSettingsPath(SettingsPath.ApplicationDetail, { applicationId }),
+        hasRedirectLocation
+          ? redirectLocation
+          : getSettingsPath(SettingsPath.ApplicationDetail, { applicationId }),
       );
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
@@ -229,7 +232,7 @@ export class ConnectionProviderOAuthController {
       });
 
       // Frontend tab list reads the URL hash to pick the active tab.
-      if (!redirectLocation) {
+      if (!hasRedirectLocation) {
         url.hash = 'settings';
       }
 
@@ -288,7 +291,9 @@ export class ConnectionProviderOAuthController {
     redirectLocation: string | null;
   }) {
     const { pathname, searchParams, hash } = this.parseRedirectLocation(
-      redirectLocation || getSettingsPath(SettingsPath.Accounts),
+      isNonEmptyString(redirectLocation)
+        ? redirectLocation
+        : getSettingsPath(SettingsPath.Accounts),
     );
 
     return res.redirect(
@@ -300,6 +305,7 @@ export class ConnectionProviderOAuthController {
             workspace?.subdomain ??
             this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
           customDomain: workspace?.customDomain ?? null,
+          isCustomDomainEnabled: workspace?.isCustomDomainEnabled ?? false,
         },
         pathname,
         searchParams,
