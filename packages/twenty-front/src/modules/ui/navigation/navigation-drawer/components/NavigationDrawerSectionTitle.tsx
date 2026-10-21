@@ -12,6 +12,10 @@ const StyledDisplayLabel = styled(Text)`
   color: var(--t-font-color-light);
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: var(--t-font-weight-semi-bold);
+
+  .section-title-container:hover & {
+    color: ${themeCssVariables.font.color.tertiary};
+  }
 `;
 
 const StyledTitle = styled.div`
@@ -28,10 +32,6 @@ const StyledTitle = styled.div`
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
     cursor: pointer;
-
-    ${StyledDisplayLabel} {
-      color: ${themeCssVariables.font.color.tertiary};
-    }
   }
 `;
 
