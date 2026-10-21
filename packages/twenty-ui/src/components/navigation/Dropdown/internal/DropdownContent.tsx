@@ -8,6 +8,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
 import { type DropdownContentProps } from '../types/DropdownContentProps';
+import { DropdownContext } from './DropdownContext';
 import { DropdownPageFocusEffect } from './DropdownPageFocusEffect';
 import { DropdownRowsEffect } from './DropdownRowsEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
@@ -43,6 +44,7 @@ export const DropdownContent = ({
   ref,
   ...props
 }: DropdownContentProps) => {
+  const context = useDropdownContext();
   const {
     type,
     isPageActive,
@@ -54,7 +56,7 @@ export const DropdownContent = ({
     triggerId,
     titleId,
     setSearchTargetId,
-  } = useDropdownContext();
+  } = context;
   const contentRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState<HTMLDivElement | null>(null);
   const mergedRef = useMergedRefs(contentRef, ref, setContent);
@@ -150,7 +152,11 @@ export const DropdownContent = ({
               onPointerDown?.(event);
             }}
           >
-            <Fragment key={sessionId}>{children}</Fragment>
+            <DropdownContext.Provider
+              value={{ ...context, isInsideContent: true }}
+            >
+              <Fragment key={sessionId}>{children}</Fragment>
+            </DropdownContext.Provider>
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>

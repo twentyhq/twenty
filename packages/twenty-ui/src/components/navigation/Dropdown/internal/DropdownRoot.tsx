@@ -45,7 +45,8 @@ export const DropdownRoot = ({
   }, []);
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const isPageActive =
-    !isDefined(parent) || (parent.isPageActive && parent.open);
+    !isDefined(parent) ||
+    (parent.isPageActive && (!parent.isInsideContent || parent.open));
   const open = isPageActive && (controlledOpen ?? uncontrolledOpen);
   const [previousOpen, setPreviousOpen] = useState(open);
   const [sessionId, setSessionId] = useState(0);
@@ -247,6 +248,7 @@ export const DropdownRoot = ({
           rootType: type,
           open,
           isPageActive,
+          isInsideContent: false,
           sessionId,
           multiple,
           selections,
