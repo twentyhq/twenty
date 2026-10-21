@@ -93,6 +93,7 @@ describe('front component runtime preservation', () => {
               applicationUniversalIdentifier: APPLICATION_ID,
             },
             additionalCacheDataMaps: {
+              billingEntitlements: {},
               featureFlagsMap:
                 {} as WorkspaceMigrationBuilderAdditionalCacheDataMaps['featureFlagsMap'],
             },

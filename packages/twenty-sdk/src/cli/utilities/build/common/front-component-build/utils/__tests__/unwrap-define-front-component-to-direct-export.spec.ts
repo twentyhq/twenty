@@ -49,7 +49,15 @@ export default defineSettingsFrontComponent({
 });
 `;
 
-const loadRenderer = (render: (element: unknown) => void) => {
+type RenderedElement = {
+  component: (props: object) => unknown;
+  props: object;
+};
+
+const loadRenderer = (
+  render: (element: RenderedElement) => void,
+  useEffect: (effect: () => void) => void = () => {},
+) => {
   const source = unwrapDefineFrontComponentToDirectExport(`
     import { defineFrontComponent } from 'twenty-sdk/define';
     export default defineFrontComponent({ component: () => null });
@@ -57,6 +65,9 @@ const loadRenderer = (render: (element: unknown) => void) => {
   const { code } = transformSync(source, { format: 'cjs' });
   const bundleModule = { exports: {} };
   const requireModule = (specifier: string) => {
+    if (specifier === 'react') {
+      return { useEffect };
+    }
     if (specifier === 'react-dom/client') {
       return { createRoot: () => ({ render }) };
     }
@@ -74,7 +85,9 @@ const loadRenderer = (render: (element: unknown) => void) => {
     requireModule,
   );
 
-  return bundleModule.exports as { default: (container: object) => unknown };
+  return bundleModule.exports as {
+    default: (container: object, props?: object) => Promise<void>;
+  };
 };
 
 describe('unwrapDefineFrontComponentToDirectExport', () => {
@@ -87,7 +100,7 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
       'component: createSummarizeRecordEffect(SUMMARIZE_TARGETS.company),',
     );
     expect(output).toContain(
-      '__frontComponentJsx(__frontComponentDefinition.component, {})',
+      '__frontComponentJsx(__frontComponentDefinition.component, __props)',
     );
     expect(output).not.toContain('defineFrontComponent');
   });
@@ -99,7 +112,7 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
 
     expect(output).toContain('component: SummarizeRecordEffect,');
     expect(output).toContain(
-      '__frontComponentJsx(__frontComponentDefinition.component, {})',
+      '__frontComponentJsx(__frontComponentDefinition.component, __props)',
     );
     expect(output).not.toContain('defineFrontComponent');
   });
@@ -113,7 +126,7 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
     );
 
     const renderer =
-      '\nexport default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(__frontComponentDefinition.component, {})); }\n';
+      'export default function __renderFrontComponent(__container, __props = {})';
 
     expect(inlineOutput).toContain(renderer);
     expect(identifierOutput).toContain(renderer);
@@ -126,7 +139,7 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
 
     expect(output).toContain('component: AppSettings,');
     expect(output).toContain(
-      '__frontComponentJsx(__frontComponentDefinition.component, {})',
+      '__frontComponentJsx(__frontComponentDefinition.component, __props)',
     );
     expect(output).not.toContain('defineSettingsFrontComponent');
   });
@@ -140,22 +153,35 @@ export const createSummarizeRecordEffect = () => () => null;
     expect(unwrapDefineFrontComponentToDirectExport(source)).toBe(source);
   });
 
-  it('keeps the synchronous renderer contract for existing callers', () => {
+  it('passes data props and waits for the initial commit', async () => {
     const renderedElements: unknown[] = [];
-    const renderer = loadRenderer((element) => renderedElements.push(element));
+    const effects: (() => void)[] = [];
+    const props = { records: [{ id: 'sample', name: 'Example' }] };
+    const renderer = loadRenderer(
+      (element) => renderedElements.push(element.component(element.props)),
+      (effect) => effects.push(effect),
+    );
+    let ready = false;
+    const result = renderer.default({}, props).then(() => {
+      ready = true;
+    });
 
-    expect(renderer.default({})).toBeUndefined();
+    await Promise.resolve();
+    expect(ready).toBe(false);
     expect(renderedElements).toEqual([
-      { component: expect.any(Function), props: {} },
+      { component: expect.any(Function), props },
     ]);
+    effects.forEach((effect) => effect());
+    await result;
+    expect(ready).toBe(true);
   });
 
-  it('propagates synchronous rendering failures to the caller', () => {
+  it('rejects the initial render when mounting fails', async () => {
     const error = new Error('Cannot mount component');
     const renderer = loadRenderer(() => {
       throw error;
     });
 
-    expect(() => renderer.default({})).toThrow(error);
+    await expect(renderer.default({})).rejects.toThrow(error);
   });
 });
