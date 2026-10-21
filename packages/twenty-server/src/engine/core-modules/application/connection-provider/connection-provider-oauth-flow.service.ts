@@ -327,6 +327,23 @@ export class ConnectionProviderOAuthFlowService {
     });
   }
 
+  async findErrorRedirectTargetFromState(state: string): Promise<{
+    workspaceId: string;
+    redirectLocation: string | null;
+  } | null> {
+    try {
+      const { workspaceId, redirectLocation } = await this.verifyState(state);
+
+      return { workspaceId, redirectLocation };
+    } catch (error) {
+      this.logger.warn(
+        `Could not read the OAuth state for the error redirect: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return null;
+    }
+  }
+
   private async verifyState(state: string): Promise<AppOAuthStateJwtPayload> {
     try {
       const verified = (await this.jwtWrapperService.verifyJwtToken(state)) as
@@ -428,6 +445,7 @@ export class ConnectionProviderOAuthFlowService {
       lastCredentialsRefreshedAt: new Date(),
       authFailedAt: null,
       authFailedReason: null,
+      archivedAt: null,
       scope,
       handle,
       externalAccountId: identifiedAccount?.externalAccountId ?? null,
