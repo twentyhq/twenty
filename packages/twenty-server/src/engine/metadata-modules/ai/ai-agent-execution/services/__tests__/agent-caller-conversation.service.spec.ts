@@ -215,7 +215,6 @@ describe('AgentCallerConversationService', () => {
         agentRunSuspensionService.findConversationWait,
       ).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
-        threadId: 'waiting-thread-id',
         thread: waitingThread,
       });
     });
@@ -229,12 +228,12 @@ describe('AgentCallerConversationService', () => {
         isCreated: false,
       });
       agentRunSuspensionService.findConversationWait.mockImplementation(
-        async ({ threadId }: { threadId: string }) => ({
+        async ({ thread }: { thread: { id: string } }) => ({
           pendingQuestionMessageId: null,
           suspendedRun:
-            threadId === 'suspended-thread-id' ? { id: 'wake-up-id' } : null,
+            thread.id === 'suspended-thread-id' ? { id: 'wake-up-id' } : null,
           hasPostedCall: false,
-          isWaiting: threadId === 'suspended-thread-id',
+          isWaiting: thread.id === 'suspended-thread-id',
         }),
       );
 

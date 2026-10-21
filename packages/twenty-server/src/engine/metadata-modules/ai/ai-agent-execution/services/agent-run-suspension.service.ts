@@ -101,27 +101,18 @@ export class AgentRunSuspensionService {
   // a caller such as a workflow step posted there waits on its own answer
   async findConversationWait({
     workspaceId,
-    threadId,
-    thread,
+    thread: { id: threadId, pendingQuestionMessageId },
   }: {
     workspaceId: string;
-    threadId: string;
-    // the conversation as the caller already read it, so it is not read again
-    thread?: Pick<AgentChatThreadWorkspaceEntity, 'pendingQuestionMessageId'>;
+    thread: Pick<
+      AgentChatThreadWorkspaceEntity,
+      'id' | 'pendingQuestionMessageId'
+    >;
   }): Promise<AgentConversationWait> {
-    const [pendingQuestionMessageId, wakeUps] = await Promise.all([
-      isDefined(thread)
-        ? thread.pendingQuestionMessageId
-        : this.threadRepository
-            .findOne(workspaceId, {
-              where: { id: threadId },
-              select: ['id', 'pendingQuestionMessageId'],
-            })
-            .then(
-              (foundThread) => foundThread?.pendingQuestionMessageId ?? null,
-            ),
-      this.findConversationWakeUps({ workspaceId, threadId }),
-    ]);
+    const wakeUps = await this.findConversationWakeUps({
+      workspaceId,
+      threadId,
+    });
 
     return {
       pendingQuestionMessageId,

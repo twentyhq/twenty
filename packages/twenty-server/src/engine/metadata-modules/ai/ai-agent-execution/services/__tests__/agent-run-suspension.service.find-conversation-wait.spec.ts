@@ -5,21 +5,12 @@ const THREAD_ID = 'thread-id';
 
 const buildService = ({
   wakeUps = [],
-  pendingQuestionMessageId = null,
 }: {
   wakeUps?: { id: string; ownerType: string; ownerId: string }[];
-  pendingQuestionMessageId?: string | null;
-} = {}) => {
-  const wakeUpRepository = { find: jest.fn().mockResolvedValue(wakeUps) };
-  const threadRepository = {
-    findOne: jest
-      .fn()
-      .mockResolvedValue({ id: THREAD_ID, pendingQuestionMessageId }),
-  };
-
-  const service = new AgentRunSuspensionService(
-    wakeUpRepository as never,
-    threadRepository as never,
+} = {}) =>
+  new AgentRunSuspensionService(
+    { find: jest.fn().mockResolvedValue(wakeUps) } as never,
+    {} as never,
     {} as never,
     {} as never,
     {} as never,
@@ -28,8 +19,10 @@ const buildService = ({
     {} as never,
   );
 
-  return { service, threadRepository };
-};
+const buildThread = (pendingQuestionMessageId: string | null = null) => ({
+  id: THREAD_ID,
+  pendingQuestionMessageId,
+});
 
 const SUSPENDED_RUN = {
   id: 'run-wake-up-id',
@@ -44,12 +37,10 @@ const POSTED_CALL = {
 
 describe('AgentRunSuspensionService findConversationWait', () => {
   it('reads a conversation with nothing pending as not waiting', async () => {
-    const { service } = buildService();
-
     await expect(
-      service.findConversationWait({
+      buildService().findConversationWait({
         workspaceId: 'workspace-id',
-        threadId: THREAD_ID,
+        thread: buildThread(),
       }),
     ).resolves.toEqual({
       pendingQuestionMessageId: null,
@@ -60,14 +51,10 @@ describe('AgentRunSuspensionService findConversationWait', () => {
   });
 
   it('reads a pending question as waiting', async () => {
-    const { service } = buildService({
-      pendingQuestionMessageId: 'question-message-id',
-    });
-
     await expect(
-      service.findConversationWait({
+      buildService().findConversationWait({
         workspaceId: 'workspace-id',
-        threadId: THREAD_ID,
+        thread: buildThread('question-message-id'),
       }),
     ).resolves.toMatchObject({
       pendingQuestionMessageId: 'question-message-id',
@@ -76,12 +63,12 @@ describe('AgentRunSuspensionService findConversationWait', () => {
   });
 
   it('reads a suspended run or a posted call as waiting', async () => {
-    const { service } = buildService({ wakeUps: [SUSPENDED_RUN, POSTED_CALL] });
-
     await expect(
-      service.findConversationWait({
+      buildService({
+        wakeUps: [SUSPENDED_RUN, POSTED_CALL],
+      }).findConversationWait({
         workspaceId: 'workspace-id',
-        threadId: THREAD_ID,
+        thread: buildThread(),
       }),
     ).resolves.toMatchObject({
       suspendedRun: { id: 'run-wake-up-id' },
@@ -89,40 +76,21 @@ describe('AgentRunSuspensionService findConversationWait', () => {
       isWaiting: true,
     });
   });
-
-  it('takes the pending question from a conversation the caller already read', async () => {
-    const { service, threadRepository } = buildService();
-
-    await expect(
-      service.findConversationWait({
-        workspaceId: 'workspace-id',
-        threadId: THREAD_ID,
-        thread: { pendingQuestionMessageId: 'question-message-id' },
-      }),
-    ).resolves.toMatchObject({ isWaiting: true });
-    expect(threadRepository.findOne).not.toHaveBeenCalled();
-  });
 });
 
 describe('AgentRunSuspensionService assertConversationNotSuspended', () => {
   it('refuses a run while a wake-up holds the conversation', async () => {
-    const { service } = buildService({ wakeUps: [POSTED_CALL] });
-
     await expect(
-      service.assertConversationNotSuspended({
+      buildService({ wakeUps: [POSTED_CALL] }).assertConversationNotSuspended({
         workspaceId: 'workspace-id',
         threadId: THREAD_ID,
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_AWAITING_ANSWER });
   });
 
-  it('lets a run in while only a question waits on the member', async () => {
-    const { service } = buildService({
-      pendingQuestionMessageId: 'question-message-id',
-    });
-
+  it('lets a run in while no wake-up holds the conversation', async () => {
     await expect(
-      service.assertConversationNotSuspended({
+      buildService().assertConversationNotSuspended({
         workspaceId: 'workspace-id',
         threadId: THREAD_ID,
       }),

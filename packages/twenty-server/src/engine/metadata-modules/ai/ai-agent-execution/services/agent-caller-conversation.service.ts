@@ -127,7 +127,6 @@ export class AgentCallerConversationService {
       (
         await this.agentRunSuspensionService.findConversationWait({
           workspaceId,
-          threadId: keyedConversation.thread.id,
           thread: keyedConversation.thread,
         })
       ).isWaiting;

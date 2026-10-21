@@ -118,7 +118,6 @@ export class AgentChatStreamingService {
     const [conversationWait, hasQueuedBacklog] = await Promise.all([
       this.agentRunSuspensionService.findConversationWait({
         workspaceId,
-        threadId,
         thread,
       }),
       this.agentChatQueueService.hasQueuedMessages({ threadId, workspaceId }),
@@ -533,7 +532,6 @@ export class AgentChatStreamingService {
         this.agentChatQueueService.getQueuedMessages({ threadId, workspaceId }),
         this.agentRunSuspensionService.findConversationWait({
           workspaceId,
-          threadId,
           thread: threadStatus,
         }),
       ]);
