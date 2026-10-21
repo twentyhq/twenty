@@ -4,7 +4,11 @@ import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout
 import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
-import { PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 const WIDGET_OVERRIDE_GQL_FIELDS = `
   id
@@ -212,9 +216,14 @@ describe('Page layout widget override behavior', () => {
   it('should override conditionalDisplay independently from title', async () => {
     const overriddenTitle = `Multi Override ${Date.now()}`;
     const overriddenConditionalDisplay = {
-      fieldMetadataId: '00000000-0000-0000-0000-000000000001',
-      operator: 'is',
-      value: 'test',
+      recordFilters: [
+        {
+          id: '0',
+          contextKey: 'device' as const,
+          operand: ViewFilterOperand.IS,
+          value: '["MOBILE"]',
+        },
+      ],
     };
 
     const { data: titleData } = await updateOnePageLayoutWidget({

@@ -4,10 +4,12 @@ import {
   IsBoolean,
   IsEnum,
   IsNumber,
+  IsObject,
   IsOptional,
   IsUUID,
 } from 'class-validator';
-import { AggregateOperations } from 'twenty-shared/types';
+import { GraphQLJSON } from 'graphql-type-json';
+import { AggregateOperations, ConditionalDisplay } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -50,6 +52,11 @@ export class CreateViewFieldInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   viewFieldGroupId?: string;
+
+  @IsOptional()
+  @IsObject()
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: ConditionalDisplay | null;
 
   @HideField()
   universalIdentifier?: string;

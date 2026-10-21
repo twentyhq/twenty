@@ -16,6 +16,8 @@ const FLAT_NAVIGATION_MENU_ITEM_ROWS_REQUIREMENT = {
   objectMetadata: ['id', 'universalIdentifier'],
   view: ['id', 'universalIdentifier'],
   pageLayout: ['id', 'universalIdentifier'],
+  fieldMetadata: ['id', 'universalIdentifier'],
+  role: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -35,6 +37,8 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends MetadataFlat
       objectMetadata: objectMetadatas,
       view: views,
       pageLayout: pageLayouts,
+      fieldMetadata: fieldMetadatas,
+      role: roles,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -47,6 +51,12 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends MetadataFlat
       createIdToUniversalIdentifierMap(views);
     const pageLayoutIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(pageLayouts);
+    const fieldMetadataUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(fieldMetadatas),
+    );
+    const roleUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(roles),
+    );
 
     const flatNavigationMenuItemMaps = {
       ...createEmptyFlatEntityMaps(),
@@ -62,6 +72,8 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends MetadataFlat
           navigationMenuItemIdToUniversalIdentifierMap,
           viewIdToUniversalIdentifierMap,
           pageLayoutIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          roleUniversalIdentifierById,
         });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({

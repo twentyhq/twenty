@@ -15,6 +15,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { resolveUpdateConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/resolve-update-conditional-display.util';
 
 @Injectable()
 export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -62,16 +63,24 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
               }),
           };
 
+    const updateWithConditionalDisplay = resolveUpdateConditionalDisplay({
+      update: updateWithConfiguration,
+      flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+      flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+    });
+
     const update =
       universalOverrides === undefined
-        ? updateWithConfiguration
+        ? updateWithConditionalDisplay
         : universalOverrides === null
-          ? { ...updateWithConfiguration, overrides: null }
+          ? { ...updateWithConditionalDisplay, overrides: null }
           : {
-              ...updateWithConfiguration,
+              ...updateWithConditionalDisplay,
               overrides: fromUniversalOverridesToPageLayoutWidgetOverrides({
                 universalOverrides,
                 flatPageLayoutTabMaps: allFlatEntityMaps.flatPageLayoutTabMaps,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
               }),
             };
 

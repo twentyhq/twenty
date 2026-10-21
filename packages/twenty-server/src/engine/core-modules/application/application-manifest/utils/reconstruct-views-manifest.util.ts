@@ -26,6 +26,7 @@ import {
 } from 'src/engine/core-modules/application/application-manifest/utils/create-child-decider.util';
 import { getUnexportedViewFieldGroupReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unexported-view-field-group-reason.util';
 import { getUnresolvableFieldReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-field-reason.util';
+import { getUnsupportedConditionalDisplayReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-conditional-display-reason.util';
 import { getUnsupportedViewFilterReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-view-filter-reason.util';
 import { getUnsupportedViewReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-view-reason.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
@@ -142,6 +143,11 @@ export const reconstructViewsManifest = ({
           fieldMetadataUniversalIdentifier:
             flatViewField.fieldMetadataUniversalIdentifier,
           allFlatEntityMaps,
+        }) ??
+        getUnsupportedConditionalDisplayReason({
+          entityLabel: 'view field',
+          universalConditionalDisplay:
+            flatViewField.universalConditionalDisplay,
         }),
       canStandAlone: true,
     });

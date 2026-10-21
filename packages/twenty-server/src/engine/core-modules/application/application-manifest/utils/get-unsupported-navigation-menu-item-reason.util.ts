@@ -1,4 +1,5 @@
 import { getUnresolvableReferenceReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-reference-reason.util';
+import { getUnsupportedConditionalDisplayReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unsupported-conditional-display-reason.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 
@@ -17,6 +18,11 @@ export const getUnsupportedNavigationMenuItemReason = ({
   resolvableViewUniversalIdentifiers: ReadonlySet<string>;
   resolvablePageLayoutUniversalIdentifiers: ReadonlySet<string>;
 }): string | undefined =>
+  getUnsupportedConditionalDisplayReason({
+    entityLabel: 'navigation menu item',
+    universalConditionalDisplay:
+      flatNavigationMenuItem.universalConditionalDisplay,
+  }) ??
   getUnresolvableReferenceReason({
     metadataName: 'navigationMenuItem',
     referenceMetadataName: 'objectMetadata',

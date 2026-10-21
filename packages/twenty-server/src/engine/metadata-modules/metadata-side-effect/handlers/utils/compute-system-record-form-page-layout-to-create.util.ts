@@ -53,7 +53,8 @@ export const computeSystemRecordFormPageLayoutToCreate = ({
     deletedAt: null,
     icon: RECORD_FORM_TAB_PROPS.icon,
     layoutMode: RECORD_FORM_TAB_PROPS.layoutMode,
-    overrides: null,
+    universalConditionalDisplay: null,
+    universalOverrides: null,
   };
 
   const pageLayout: UniversalFlatPageLayout = {

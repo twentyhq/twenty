@@ -1,5 +1,42 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`Page layout tab creation should fail when conditional display matches two devices at once 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutTab": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_TAB_DATA",
+              "message": "Value "["MOBILE","DESKTOP"]" of conditional display context key "device" must be a JSON array with exactly one of: DESKTOP, MOBILE",
+              "userFriendlyMessage": "Conditional display device value is not valid",
+              "value": "["MOBILE","DESKTOP"]",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "title": "Tab With Two Devices",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutTab",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutTab",
+    "summary": {
+      "pageLayoutTab": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Conditional display device value is not valid",
+  },
+  "message": "Multiple validation errors occurred while creating page layout tab",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Page layout tab creation should fail when pageLayoutId references non-existent layout 1`] = `
 {
   "extensions": {

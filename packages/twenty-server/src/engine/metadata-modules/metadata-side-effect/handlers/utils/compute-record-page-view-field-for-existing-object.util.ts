@@ -145,6 +145,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
     size: DEFAULT_VIEW_FIELD_SIZE,
     position,
     aggregateOperation: null,
+    universalConditionalDisplay: null,
     isActive: true,
     isSystemSideEffect: true,
     universalOverrides: null,

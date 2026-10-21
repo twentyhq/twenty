@@ -43,8 +43,8 @@ export const fromFlatPageLayoutWidgetToPageLayoutWidgetManifest = ({
           flatPageLayoutWidget.objectMetadataUniversalIdentifier,
       }
     : {}),
-  ...(isDefined(flatPageLayoutWidget.conditionalDisplay)
-    ? { conditionalDisplay: flatPageLayoutWidget.conditionalDisplay }
+  ...(isDefined(flatPageLayoutWidget.universalConditionalDisplay)
+    ? { conditionalDisplay: flatPageLayoutWidget.universalConditionalDisplay }
     : {}),
   ...getPositionProperties({
     position: flatPageLayoutWidget.position,

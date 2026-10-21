@@ -101,6 +101,7 @@ export const buildObjectNavigationUniversalFlatCommandMenuItem = ({
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression,
     conditionalPinnedExpression: null,
+    universalConditionalDisplay: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     payload: null,

@@ -1,5 +1,6 @@
 import {
   CommandMenuItemAvailabilityType,
+  type ConditionalDisplay,
   type SerializedRelation,
 } from 'twenty-shared/types';
 import {
@@ -19,6 +20,7 @@ import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/com
 import { ADD_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-35/add-command-menu-item-target-object-metadata-upgrade-command-name.constant';
 import { ADD_COMMAND_MENU_ITEM_CONDITIONAL_PINNED_EXPRESSION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-39/add-command-menu-item-conditional-pinned-expression-upgrade-command-name.constant';
 import { ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-core-version-pointers-upgrade-command-name.constant';
+import { ADD_CONDITIONAL_DISPLAY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/constants/add-conditional-display-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type PathCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/path-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -26,6 +28,7 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 export type CommandMenuItemOverrides = {
   isActive?: boolean;
@@ -39,6 +42,7 @@ export type CommandMenuItemOverrides = {
   availabilityObjectMetadataId?: SerializedRelation | null;
   engineComponentKey?: EngineComponentKey;
   pageLayoutId?: SerializedRelation | null;
+  conditionalDisplay?: ConditionalDisplay | null;
 };
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
@@ -132,6 +136,12 @@ export class CommandMenuItemEntity
   })
   @Column({ nullable: true, type: 'varchar' })
   conditionalPinnedExpression: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CONDITIONAL_DISPLAY_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  conditionalDisplay: JsonbProperty<ConditionalDisplay | null>;
 
   @Column({ nullable: true, type: 'uuid' })
   availabilityObjectMetadataId: string | null;

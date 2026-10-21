@@ -18,14 +18,23 @@ export type MetadataSerializedRelatedMetadataName<T extends AllMetadataName> =
 export const ALL_METADATA_SERIALIZED_RELATION = {
   agent: {},
   skill: {},
-  commandMenuItem: {},
-  navigationMenuItem: {},
+  commandMenuItem: {
+    fieldMetadata: true,
+    role: true,
+  },
+  navigationMenuItem: {
+    fieldMetadata: true,
+    role: true,
+  },
   fieldMetadata: {
     fieldMetadata: true,
   },
   objectMetadata: {},
   view: {},
-  viewField: {},
+  viewField: {
+    fieldMetadata: true,
+    role: true,
+  },
   viewFieldGroup: {},
   viewFilter: {},
   viewGroup: {},
@@ -38,12 +47,16 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   objectPermission: {},
   fieldPermission: {},
   pageLayout: {},
-  pageLayoutTab: {},
+  pageLayoutTab: {
+    fieldMetadata: true,
+    role: true,
+  },
   pageLayoutWidget: {
     fieldMetadata: true,
     view: true,
     viewFieldGroup: true,
     frontComponent: true,
+    role: true,
   },
   rowLevelPermissionPredicate: {},
   rowLevelPermissionPredicateGroup: {},

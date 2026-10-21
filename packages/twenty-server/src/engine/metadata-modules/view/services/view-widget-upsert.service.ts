@@ -12,6 +12,9 @@ import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { getConditionalDisplayUpdate } from 'src/engine/metadata-modules/flat-conditional-display/utils/get-conditional-display-update.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -22,6 +25,7 @@ import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
@@ -115,6 +119,7 @@ export class ViewWidgetUpsertService {
       flatViewSortMaps,
       flatViewMaps,
       flatViewGroupMaps,
+      flatRoleMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -128,6 +133,7 @@ export class ViewWidgetUpsertService {
             'flatViewSortMaps',
             'flatViewMaps',
             'flatViewGroupMaps',
+            'flatRoleMaps',
           ],
         },
       );
@@ -272,6 +278,7 @@ export class ViewWidgetUpsertService {
           ...upsertContext,
           flatFieldMetadataMaps,
           flatViewMaps,
+          flatRoleMaps,
         })
       : EMPTY_FIELD_OPS;
 
@@ -447,6 +454,7 @@ export class ViewWidgetUpsertService {
     now,
     flatFieldMetadataMaps,
     flatViewMaps,
+    flatRoleMaps,
   }: {
     inputFields: UpsertViewWidgetViewFieldInput[];
     existingViewFields: FlatViewField[];
@@ -457,6 +465,7 @@ export class ViewWidgetUpsertService {
     now: string;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatViewMaps: FlatViewMaps;
+    flatRoleMaps: FlatRoleMaps;
   }): {
     fieldsToCreate: FlatViewField[];
     fieldsToUpdate: FlatViewField[];
@@ -486,6 +495,11 @@ export class ViewWidgetUpsertService {
           flatEntity: existingField,
         });
 
+        const conditionalDisplayUpdate = getConditionalDisplayUpdate({
+          inputField,
+          existingField: effectiveExistingField,
+        });
+
         const hasChanged =
           effectiveExistingField.isVisible !== inputField.isVisible ||
           effectiveExistingField.position !== inputField.position ||
@@ -493,7 +507,8 @@ export class ViewWidgetUpsertService {
             effectiveExistingField.size !== inputField.size) ||
           (inputField.aggregateOperation !== undefined &&
             effectiveExistingField.aggregateOperation !==
-              inputField.aggregateOperation);
+              inputField.aggregateOperation) ||
+          conditionalDisplayUpdate.hasChanged;
 
         if (!hasChanged) {
           continue;
@@ -519,6 +534,7 @@ export class ViewWidgetUpsertService {
               ...(inputField.aggregateOperation !== undefined
                 ? { aggregateOperation: inputField.aggregateOperation }
                 : {}),
+              ...conditionalDisplayUpdate.editableProperties,
             },
             shouldOverride,
             callerApplicationUniversalIdentifier:
@@ -534,11 +550,24 @@ export class ViewWidgetUpsertService {
           updatedAt: now,
         };
 
+        if (sanitizedFieldProps.conditionalDisplay !== undefined) {
+          updatedField.universalConditionalDisplay =
+            fromConditionalDisplayToUniversalConditionalDisplay({
+              conditionalDisplay: updatedField.conditionalDisplay,
+              fieldMetadataUniversalIdentifierById:
+                flatFieldMetadataMaps.universalIdentifierById,
+              roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+            });
+        }
+
         if (isDefined(overrides)) {
           updatedField.universalOverrides =
             fromViewFieldOverridesToUniversalOverrides({
               overrides,
               viewFieldGroupUniversalIdentifierById: {},
+              fieldMetadataUniversalIdentifierById:
+                flatFieldMetadataMaps.universalIdentifierById,
+              roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
             });
         } else {
           updatedField.universalOverrides = null;
@@ -574,6 +603,10 @@ export class ViewWidgetUpsertService {
           },
         });
 
+      const conditionalDisplay = normalizeConditionalDisplay(
+        inputField.conditionalDisplay,
+      );
+
       fieldsToCreate.push({
         id: v4(),
         workspaceId,
@@ -590,6 +623,14 @@ export class ViewWidgetUpsertService {
         size: inputField.size ?? DEFAULT_VIEW_FIELD_SIZE,
         position: inputField.position,
         aggregateOperation: inputField.aggregateOperation ?? null,
+        conditionalDisplay,
+        universalConditionalDisplay:
+          fromConditionalDisplayToUniversalConditionalDisplay({
+            conditionalDisplay,
+            fieldMetadataUniversalIdentifierById:
+              flatFieldMetadataMaps.universalIdentifierById,
+            roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+          }),
         overrides: null,
         universalOverrides: null,
         isActive: true,

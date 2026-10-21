@@ -3,6 +3,7 @@ import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphq
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { type CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 
@@ -40,6 +41,28 @@ describe('Page layout tab creation should fail', () => {
       input: {
         title: 'Tab With Non-Existent Layout',
         pageLayoutId: faker.string.uuid(),
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('when conditional display matches two devices at once', async () => {
+    const { errors } = await createOnePageLayoutTab({
+      expectToFail: true,
+      input: {
+        title: 'Tab With Two Devices',
+        pageLayoutId: testPageLayoutId,
+        conditionalDisplay: {
+          recordFilters: [
+            {
+              id: '0',
+              contextKey: 'device',
+              operand: ViewFilterOperand.IS,
+              value: '["MOBILE","DESKTOP"]',
+            },
+          ],
+        },
       },
     });
 

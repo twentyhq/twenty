@@ -12,15 +12,18 @@ import {
 } from 'typeorm';
 import {
   AggregateOperations,
+  type ConditionalDisplay,
   type SerializedRelation,
 } from 'twenty-shared/types';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { ADD_CONDITIONAL_DISPLAY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/constants/add-conditional-display-upgrade-command-name.constant';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 export type ViewFieldOverrides = {
   isActive?: boolean;
@@ -29,6 +32,7 @@ export type ViewFieldOverrides = {
   position?: number;
   aggregateOperation?: AggregateOperations | null;
   viewFieldGroupId?: SerializedRelation | null;
+  conditionalDisplay?: ConditionalDisplay | null;
 };
 
 @Entity({ name: 'viewField', schema: 'core' })
@@ -77,6 +81,12 @@ export class ViewFieldEntity
     default: null,
   })
   aggregateOperation: AggregateOperations | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CONDITIONAL_DISPLAY_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  conditionalDisplay: JsonbProperty<ConditionalDisplay | null>;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;

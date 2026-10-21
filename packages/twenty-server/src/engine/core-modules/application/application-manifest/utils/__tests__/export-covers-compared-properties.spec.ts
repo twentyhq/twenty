@@ -26,6 +26,7 @@ import {
   PageLayoutType,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
+  type UniversalConditionalDisplay,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -92,6 +93,17 @@ const VIEW_FIELD_GROUP_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const VIEW_SORT_UID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
 const NOW = '2026-09-08T00:00:00.000Z';
 
+const DESKTOP_CONDITIONAL_DISPLAY: UniversalConditionalDisplay = {
+  recordFilters: [
+    {
+      id: '0',
+      contextKey: 'device',
+      operand: ViewFilterOperand.IS,
+      value: '["DESKTOP"]',
+    },
+  ],
+};
+
 const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
   universalIdentifier: VIEW_FIELD_UID,
   fieldMetadataUniversalIdentifier: FIELD_UID,
@@ -100,6 +112,7 @@ const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
   position: 0,
   aggregateOperation: AggregateOperations.COUNT,
   viewFieldGroupUniversalIdentifier: VIEW_FIELD_GROUP_UID,
+  conditionalDisplay: DESKTOP_CONDITIONAL_DISPLAY,
 };
 
 const STANDALONE_VIEW_FIELD_MANIFEST: StandaloneViewFieldManifest = {
@@ -183,7 +196,7 @@ const PAGE_LAYOUT_WIDGET_MANIFEST: NormalizedPageLayoutWidgetManifest = {
   title: 'Fields',
   type: WidgetType.FIELDS,
   objectUniversalIdentifier: OBJECT_UID,
-  conditionalDisplay: { device: 'DESKTOP' },
+  conditionalDisplay: DESKTOP_CONDITIONAL_DISPLAY,
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
   configuration: {
     configurationType: 'FIELDS',
@@ -198,6 +211,7 @@ const PAGE_LAYOUT_TAB_MANIFEST: NormalizedPageLayoutTabManifest = {
   position: 0,
   icon: 'IconHome',
   layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  conditionalDisplay: DESKTOP_CONDITIONAL_DISPLAY,
   widgets: [PAGE_LAYOUT_WIDGET_MANIFEST],
 };
 
@@ -223,6 +237,7 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
   pageLayoutUniversalIdentifier: '99999999-9999-4999-8999-999999999999',
+  conditionalDisplay: DESKTOP_CONDITIONAL_DISPLAY,
 };
 
 const PAGE_LAYOUT_KIND_GAPS = {
@@ -445,7 +460,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
         }),
       }),
     ),
-    renamedProperties: {},
+    renamedProperties: { universalConditionalDisplay: 'conditionalDisplay' },
     workspaceLocalProperties: ['isActive', 'universalOverrides'],
     knownGaps: VIEW_KIND_GAPS,
   },
@@ -533,7 +548,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
           }),
       }),
     ),
-    renamedProperties: {},
+    renamedProperties: { universalConditionalDisplay: 'conditionalDisplay' },
     workspaceLocalProperties: [],
     knownGaps: {},
   },
@@ -569,8 +584,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         widgets: [PAGE_LAYOUT_WIDGET_MANIFEST],
       }),
     ),
-    renamedProperties: {},
-    workspaceLocalProperties: ['isActive', 'overrides'],
+    renamedProperties: { universalConditionalDisplay: 'conditionalDisplay' },
+    workspaceLocalProperties: ['isActive', 'universalOverrides'],
     knownGaps: PAGE_LAYOUT_KIND_GAPS,
   },
   {
@@ -593,6 +608,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {
       objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
       universalConfiguration: 'configuration',
+      universalConditionalDisplay: 'conditionalDisplay',
     },
     workspaceLocalProperties: ['isActive', 'universalOverrides'],
     knownGaps: {

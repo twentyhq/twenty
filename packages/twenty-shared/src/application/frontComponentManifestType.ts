@@ -1,6 +1,9 @@
 import { type FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from '@/application/constants/FrontComponentWidgetPageLayoutTypes';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
-import { type CommandMenuItemAvailabilityType } from '@/types';
+import {
+  type CommandMenuItemAvailabilityType,
+  type UniversalConditionalDisplay,
+} from '@/types';
 import { type PageLayoutType } from '@/types/page-layout/PageLayoutType';
 
 export type CommandMenuItemManifest = SyncableEntityOptions & {
@@ -14,6 +17,7 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   frontComponentUniversalIdentifier: string;
   conditionalAvailabilityExpression?: string;
   conditionalPinnedExpression?: string;
+  conditionalDisplay?: UniversalConditionalDisplay;
 };
 
 export type FrontComponentWidgetPageLayoutType =

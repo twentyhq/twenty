@@ -2,6 +2,7 @@ import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutWidgetVerticalListHeightBehavior,
+  ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
 
@@ -24,7 +25,16 @@ const WIDGET_MANIFEST: Required<
   title: 'Fields',
   type: WidgetType.FIELDS,
   objectUniversalIdentifier: OBJECT_UID,
-  conditionalDisplay: { device: 'DESKTOP' },
+  conditionalDisplay: {
+    recordFilters: [
+      {
+        id: '0',
+        contextKey: 'device',
+        operand: ViewFilterOperand.IS,
+        value: '["DESKTOP"]',
+      },
+    ],
+  },
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 2 },
   configuration: {
     configurationType: 'FIELDS',
@@ -151,6 +161,43 @@ describe('fromFlatPageLayoutWidgetToPageLayoutWidgetManifest', () => {
         flatPageLayoutWidget: forward(viewlessFieldsWidgetManifest),
       }).configuration,
     ).toEqual(viewlessFieldsWidgetManifest.configuration);
+  });
+
+  it('should rewrite a legacy json-logic device rule to a device leaf', () => {
+    const legacyDeviceWidgetManifest = {
+      ...MINIMAL_WIDGET_MANIFEST,
+      conditionalDisplay: {
+        and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+      },
+    } as unknown as PageLayoutWidgetManifest;
+
+    expect(
+      fromFlatPageLayoutWidgetToPageLayoutWidgetManifest({
+        flatPageLayoutWidget: forward(legacyDeviceWidgetManifest),
+      }).conditionalDisplay,
+    ).toEqual({
+      recordFilters: [
+        {
+          id: '0',
+          contextKey: 'device',
+          operand: ViewFilterOperand.IS,
+          value: '["MOBILE"]',
+        },
+      ],
+    });
+  });
+
+  it('should keep any other json-logic rule for the validator to reject', () => {
+    const foreignJsonLogic = {
+      '==': [{ var: 'objectMetadataItem.nameSingular' }, 'company'],
+    };
+
+    expect(
+      forward({
+        ...MINIMAL_WIDGET_MANIFEST,
+        conditionalDisplay: foreignJsonLogic,
+      } as unknown as PageLayoutWidgetManifest).universalConditionalDisplay,
+    ).toEqual(foreignJsonLogic);
   });
 
   it('should reproduce the flat entity after an inverse then a forward conversion', () => {

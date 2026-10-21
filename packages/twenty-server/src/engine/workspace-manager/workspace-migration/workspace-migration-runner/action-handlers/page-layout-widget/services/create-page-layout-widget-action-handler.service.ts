@@ -21,6 +21,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fromUniversalConditionalDisplayToConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-conditional-display-to-conditional-display.util';
 
 const DEFAULT_LEGACY_GRID_POSITION: GridPosition = {
   row: 0,
@@ -60,10 +61,20 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
         flatViewFieldGroupMaps: allFlatEntityMaps.flatViewFieldGroupMaps,
       });
 
+    const conditionalDisplay =
+      fromUniversalConditionalDisplayToConditionalDisplay({
+        universalConditionalDisplay:
+          action.flatEntity.universalConditionalDisplay,
+        flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+      });
+
     const overrides = isDefined(action.flatEntity.universalOverrides)
       ? fromUniversalOverridesToPageLayoutWidgetOverrides({
           universalOverrides: action.flatEntity.universalOverrides,
           flatPageLayoutTabMaps: allFlatEntityMaps.flatPageLayoutTabMaps,
+          flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+          flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
         })
       : null;
 
@@ -77,6 +88,7 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
       flatEntity: {
         ...action.flatEntity,
         configuration,
+        conditionalDisplay,
         overrides,
         pageLayoutTabId,
         objectMetadataId,

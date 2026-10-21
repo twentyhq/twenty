@@ -3,6 +3,8 @@ import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'tw
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -12,13 +14,18 @@ export type FromCreatePageLayoutTabInputToFlatPageLayoutTabToCreateArgs = {
   createPageLayoutTabInput: CreatePageLayoutTabInput;
   workspaceId: string;
   flatApplication: FlatApplication;
-} & Pick<AllFlatEntityMaps, 'flatPageLayoutMaps'>;
+} & Pick<
+  AllFlatEntityMaps,
+  'flatPageLayoutMaps' | 'flatFieldMetadataMaps' | 'flatRoleMaps'
+>;
 
 export const fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate = ({
   createPageLayoutTabInput: rawCreatePageLayoutTabInput,
   workspaceId,
   flatApplication,
   flatPageLayoutMaps,
+  flatFieldMetadataMaps,
+  flatRoleMaps,
 }: FromCreatePageLayoutTabInputToFlatPageLayoutTabToCreateArgs): FlatPageLayoutTab => {
   const createPageLayoutTabInput =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -40,6 +47,10 @@ export const fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate = ({
       metadataName: 'pageLayoutTab',
     });
 
+  const conditionalDisplay = normalizeConditionalDisplay(
+    createPageLayoutTabInput.conditionalDisplay,
+  );
+
   return {
     id: pageLayoutTabId,
     title: createPageLayoutTabInput.title,
@@ -60,6 +71,15 @@ export const fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate = ({
     icon: null,
     layoutMode:
       createPageLayoutTabInput.layoutMode ?? PageLayoutTabLayoutMode.GRID,
+    conditionalDisplay,
+    universalConditionalDisplay:
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+      }),
     overrides: null,
+    universalOverrides: null,
   };
 };

@@ -4,6 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { validateUniversalFlatEntityConditionalDisplays } from 'src/engine/metadata-modules/flat-conditional-display/utils/validate-universal-flat-entity-conditional-displays.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { validateNavigationMenuItemTypeRequiredProperties } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
@@ -123,12 +124,34 @@ export class FlatNavigationMenuItemValidatorService {
     return errors;
   }
 
+  private validateConditionalDisplay({
+    flatNavigationMenuItem,
+    flatFieldMetadataMaps,
+    flatRoleMaps,
+  }: {
+    flatNavigationMenuItem: MetadataUniversalFlatEntity<'navigationMenuItem'>;
+    flatFieldMetadataMaps: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
+    flatRoleMaps: MetadataUniversalFlatEntityMaps<'role'>;
+  }): FlatEntityValidationError[] {
+    return validateUniversalFlatEntityConditionalDisplays({
+      flatEntity: flatNavigationMenuItem,
+      surface: 'navigationMenuItem',
+      objectMetadataUniversalIdentifier: null,
+      invalidDataCode:
+        NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    });
+  }
+
   public validateFlatNavigationMenuItemCreation({
     flatEntityToValidate: flatNavigationMenuItem,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
     },
     remainingFlatEntityMapsToValidate,
   }: UniversalFlatEntityValidationArgs<
@@ -163,6 +186,11 @@ export class FlatNavigationMenuItemValidatorService {
         flatNavigationMenuItem,
         flatObjectMetadataMaps,
         flatViewMaps,
+      }),
+      ...this.validateConditionalDisplay({
+        flatNavigationMenuItem,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
       }),
     );
 
@@ -244,6 +272,8 @@ export class FlatNavigationMenuItemValidatorService {
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.navigationMenuItem
@@ -291,6 +321,11 @@ export class FlatNavigationMenuItemValidatorService {
     validationResult.errors.push(
       ...validateNavigationMenuItemTypeRequiredProperties({
         flatNavigationMenuItem: toFlatNavigationMenuItem,
+      }),
+      ...this.validateConditionalDisplay({
+        flatNavigationMenuItem: toFlatNavigationMenuItem,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
       }),
     );
 

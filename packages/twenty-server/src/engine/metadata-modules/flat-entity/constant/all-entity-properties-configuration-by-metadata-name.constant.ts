@@ -556,6 +556,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    conditionalDisplay: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalConditionalDisplay',
+      isOverridable: true,
+    },
     size: {
       toCompare: true,
       toStringify: false,
@@ -1110,7 +1116,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     conditionalDisplay: {
       toCompare: true,
       toStringify: true,
-      universalProperty: undefined,
+      universalProperty: 'universalConditionalDisplay',
       isOverridable: true,
     },
     conditionalAvailabilityExpression: {
@@ -1180,6 +1186,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    conditionalDisplay: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalConditionalDisplay',
+      isOverridable: true,
+    },
     isActive: {
       isOverridable: true,
       toCompare: true,
@@ -1189,7 +1201,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     overrides: {
       toCompare: true,
       toStringify: true,
-      universalProperty: undefined,
+      universalProperty: 'universalOverrides',
     },
   },
   skill: {
@@ -1331,6 +1343,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    conditionalDisplay: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalConditionalDisplay',
+      isOverridable: true,
+    },
     workflowVersionId: {
       toCompare: false,
       toStringify: false,
@@ -1374,6 +1392,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'folderUniversalIdentifier',
+    },
+    conditionalDisplay: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalConditionalDisplay',
     },
     name: {
       toCompare: true,

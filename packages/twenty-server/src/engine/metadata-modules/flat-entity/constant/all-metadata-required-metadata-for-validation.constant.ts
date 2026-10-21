@@ -32,6 +32,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     fieldMetadata: true,
     objectMetadata: true,
     viewFieldGroup: true,
+    role: true,
   },
   viewFieldGroup: {
     view: true,
@@ -70,11 +71,15 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     frontComponent: true,
     pageLayout: true,
+    fieldMetadata: true,
+    role: true,
   },
   navigationMenuItem: {
     objectMetadata: true,
     view: true,
     pageLayout: true,
+    fieldMetadata: true,
+    role: true,
   },
   rolePermissionFlag: {
     permissionFlag: true,
@@ -98,6 +103,8 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   pageLayoutTab: {
     pageLayout: true,
+    fieldMetadata: true,
+    role: true,
   },
   pageLayoutWidget: {
     objectMetadata: true,
@@ -105,6 +112,8 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     frontComponent: true,
     fieldMetadata: true,
     commandMenuItem: true,
+    pageLayout: true,
+    role: true,
   },
   rowLevelPermissionPredicate: {
     fieldMetadata: true,

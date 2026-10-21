@@ -106,6 +106,8 @@ export class CommandMenuItemService {
       flatObjectMetadataMaps,
       flatFrontComponentMaps,
       flatPageLayoutMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -114,6 +116,8 @@ export class CommandMenuItemService {
             'flatObjectMetadataMaps',
             'flatFrontComponentMaps',
             'flatPageLayoutMaps',
+            'flatFieldMetadataMaps',
+            'flatRoleMaps',
           ],
         },
       );
@@ -131,6 +135,8 @@ export class CommandMenuItemService {
         flatObjectMetadataMaps,
         flatFrontComponentMaps,
         flatPageLayoutMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
       });
 
     const validateAndBuildResult =
@@ -186,6 +192,8 @@ export class CommandMenuItemService {
       flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatRoleMaps: existingFlatRoleMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -193,6 +201,8 @@ export class CommandMenuItemService {
           'flatCommandMenuItemMaps',
           'flatObjectMetadataMaps',
           'flatPageLayoutMaps',
+          'flatFieldMetadataMaps',
+          'flatRoleMaps',
         ],
       },
     );
@@ -203,6 +213,8 @@ export class CommandMenuItemService {
         updateCommandMenuItemInput: input,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        flatRoleMaps: existingFlatRoleMaps,
         callerApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:

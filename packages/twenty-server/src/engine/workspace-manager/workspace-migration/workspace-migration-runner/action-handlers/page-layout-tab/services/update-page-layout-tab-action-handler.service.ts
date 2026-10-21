@@ -9,10 +9,12 @@ import {
   FlatUpdatePageLayoutTabAction,
   UniversalUpdatePageLayoutTabAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
+import { fromUniversalOverridesToPageLayoutTabOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-tab/services/utils/from-universal-overrides-to-page-layout-tab-overrides.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { resolveUpdateConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/resolve-update-conditional-display.util';
 
 @Injectable()
 export class UpdatePageLayoutTabActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -29,11 +31,32 @@ export class UpdatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
       universalIdentifier: action.universalIdentifier,
     });
 
-    const update = resolveUniversalUpdateRelationIdentifiersToIds({
-      metadataName: 'pageLayoutTab',
-      universalUpdate: action.update,
-      allFlatEntityMaps,
+    const { universalOverrides, ...updateWithResolvedForeignKeys } =
+      resolveUniversalUpdateRelationIdentifiersToIds({
+        metadataName: 'pageLayoutTab',
+        universalUpdate: action.update,
+        allFlatEntityMaps,
+      });
+
+    const updateWithConditionalDisplay = resolveUpdateConditionalDisplay({
+      update: updateWithResolvedForeignKeys,
+      flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+      flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
     });
+
+    const update =
+      universalOverrides === undefined
+        ? updateWithConditionalDisplay
+        : universalOverrides === null
+          ? { ...updateWithConditionalDisplay, overrides: null }
+          : {
+              ...updateWithConditionalDisplay,
+              overrides: fromUniversalOverridesToPageLayoutTabOverrides({
+                universalOverrides,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+              }),
+            };
 
     return {
       type: 'update',

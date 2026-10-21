@@ -10,12 +10,6 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import {
-  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
-  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
-  CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
-  CONDITIONAL_DISPLAY_DEVICE_MOBILE,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -26,6 +20,19 @@ jest.mock(
 const computeTwentyStandardApplicationAllFlatEntityMapsMock = jest.mocked(
   computeTwentyStandardApplicationAllFlatEntityMaps,
 );
+
+const CONDITIONAL_DISPLAY_DEVICE_MOBILE = {
+  and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+};
+
+const CONDITIONAL_DISPLAY_DEVICE_DESKTOP = {
+  and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
+};
+
+const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE = 'device == "MOBILE"';
+
+const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
+  'device == "DESKTOP"';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const STANDARD_APPLICATION = {

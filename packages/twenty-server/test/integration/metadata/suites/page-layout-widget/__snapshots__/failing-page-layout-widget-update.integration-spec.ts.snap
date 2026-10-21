@@ -44,6 +44,43 @@ exports[`Page layout widget update should fail Widget configuration validation f
 }
 `;
 
+exports[`Page layout widget update should fail Widget configuration validation failures on update Conditional display validation failures when updating conditional display to match two devices at once 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "Value "["MOBILE","DESKTOP"]" of conditional display context key "device" must be a JSON array with exactly one of: DESKTOP, MOBILE",
+              "userFriendlyMessage": "Conditional display device value is not valid",
+              "value": "["MOBILE","DESKTOP"]",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Conditional display device value is not valid",
+  },
+  "message": "Multiple validation errors occurred while updating page layout widget",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Page layout widget update should fail Widget configuration validation failures on update Edge case configuration validation failures when updating configuration to null 1`] = `
 {
   "extensions": {

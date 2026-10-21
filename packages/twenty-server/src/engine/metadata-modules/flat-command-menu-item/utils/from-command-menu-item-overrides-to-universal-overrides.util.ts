@@ -2,6 +2,8 @@ import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/typ
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { mapOverridesEntryConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/map-overrides-entry-conditional-display.util';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -29,18 +31,33 @@ const fromCommandMenuItemOverridesToUniversalOverridesEntry = ({
   overrides,
   objectMetadataUniversalIdentifierById,
   pageLayoutUniversalIdentifierById,
+  fieldMetadataUniversalIdentifierById,
+  roleUniversalIdentifierById,
   shouldThrowOnMissingIdentifier = true,
 }: {
   overrides: CommandMenuItemOverrides;
   objectMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   pageLayoutUniversalIdentifierById: Partial<Record<string, string>>;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  roleUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): UniversalCommandMenuItemOverrides => {
   const {
     availabilityObjectMetadataId: _availabilityObjectMetadataId,
     pageLayoutId: _pageLayoutId,
-    ...scalarOverrides
+    ...otherOverrides
   } = overrides;
+
+  const scalarOverrides: UniversalCommandMenuItemOverrides =
+    mapOverridesEntryConditionalDisplay({
+      overridesEntry: otherOverrides,
+      mapConditionalDisplay: (conditionalDisplay) =>
+        fromConditionalDisplayToUniversalConditionalDisplay({
+          conditionalDisplay,
+          fieldMetadataUniversalIdentifierById,
+          roleUniversalIdentifierById,
+        }),
+    });
 
   const universalIdentifierByIdByMapName = {
     objectMetadata: objectMetadataUniversalIdentifierById,
@@ -83,11 +100,15 @@ export const fromCommandMenuItemOverridesToUniversalOverrides = ({
   overrides,
   objectMetadataUniversalIdentifierById,
   pageLayoutUniversalIdentifierById,
+  fieldMetadataUniversalIdentifierById,
+  roleUniversalIdentifierById,
   shouldThrowOnMissingIdentifier,
 }: {
   overrides: AuthoredOverrides<CommandMenuItemOverrides>;
   objectMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   pageLayoutUniversalIdentifierById: Partial<Record<string, string>>;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  roleUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): AuthoredOverrides<UniversalCommandMenuItemOverrides> =>
   mapAuthoredOverrideEntries({
@@ -98,6 +119,8 @@ export const fromCommandMenuItemOverridesToUniversalOverrides = ({
         overrides: entry,
         objectMetadataUniversalIdentifierById,
         pageLayoutUniversalIdentifierById,
+        fieldMetadataUniversalIdentifierById,
+        roleUniversalIdentifierById,
         shouldThrowOnMissingIdentifier,
       }),
   });

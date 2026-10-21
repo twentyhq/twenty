@@ -9,6 +9,9 @@ import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { getConditionalDisplayUpdate } from 'src/engine/metadata-modules/flat-conditional-display/utils/get-conditional-display-update.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -19,6 +22,7 @@ import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatViewFieldGroupMaps } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group-maps.type';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
@@ -83,6 +87,7 @@ export class FieldsWidgetUpsertService {
       flatViewFieldGroupMaps,
       flatViewFieldMaps,
       flatViewMaps,
+      flatRoleMaps,
     } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -94,6 +99,7 @@ export class FieldsWidgetUpsertService {
             'flatViewFieldGroupMaps',
             'flatViewFieldMaps',
             'flatViewMaps',
+            'flatRoleMaps',
           ],
         },
       );
@@ -181,6 +187,7 @@ export class FieldsWidgetUpsertService {
         flatFieldMetadataMaps,
         flatViewMaps,
         flatViewFieldGroupMaps,
+        flatRoleMaps,
       });
     } else {
       await this.upsertFieldsWidgetWithFields({
@@ -195,6 +202,7 @@ export class FieldsWidgetUpsertService {
         labelIdentifierFieldMetadataId,
         flatFieldMetadataMaps,
         flatViewMaps,
+        flatRoleMaps,
       });
     }
 
@@ -224,6 +232,7 @@ export class FieldsWidgetUpsertService {
     flatFieldMetadataMaps,
     flatViewMaps,
     flatViewFieldGroupMaps,
+    flatRoleMaps,
   }: {
     inputGroups: UpsertFieldsWidgetGroupInput[];
     existingGroups: FlatViewFieldGroup[];
@@ -236,6 +245,7 @@ export class FieldsWidgetUpsertService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatViewMaps: FlatViewMaps;
     flatViewFieldGroupMaps: FlatViewFieldGroupMaps;
+    flatRoleMaps: FlatRoleMaps;
   }): Promise<void> {
     const now = new Date().toISOString();
     const inputGroupIds = new Set(inputGroups.map((g) => g.id));
@@ -336,10 +346,16 @@ export class FieldsWidgetUpsertService {
         flatEntity: existingField,
       });
 
+      const conditionalDisplayUpdate = getConditionalDisplayUpdate({
+        inputField,
+        existingField: effectiveExistingField,
+      });
+
       const hasChanged =
         effectiveExistingField.isVisible !== inputField.isVisible ||
         effectiveExistingField.position !== inputField.position ||
-        effectiveExistingField.viewFieldGroupId !== newViewFieldGroupId;
+        effectiveExistingField.viewFieldGroupId !== newViewFieldGroupId ||
+        conditionalDisplayUpdate.hasChanged;
 
       if (!hasChanged) {
         return [];
@@ -374,6 +390,7 @@ export class FieldsWidgetUpsertService {
             isVisible: inputField.isVisible,
             position: inputField.position,
             viewFieldGroupId: newViewFieldGroupId,
+            ...conditionalDisplayUpdate.editableProperties,
           },
           shouldOverride,
           callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
@@ -387,6 +404,16 @@ export class FieldsWidgetUpsertService {
         overrides,
         updatedAt: now,
       };
+
+      if (sanitizedFieldProps.conditionalDisplay !== undefined) {
+        updatedField.universalConditionalDisplay =
+          fromConditionalDisplayToUniversalConditionalDisplay({
+            conditionalDisplay: updatedField.conditionalDisplay,
+            fieldMetadataUniversalIdentifierById:
+              flatFieldMetadataMaps.universalIdentifierById,
+            roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+          });
+      }
 
       if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
         const resolved = resolveEntityRelationUniversalIdentifiers({
@@ -409,6 +436,9 @@ export class FieldsWidgetUpsertService {
             overrides,
             viewFieldGroupUniversalIdentifierById:
               optimisticFlatViewFieldGroupMaps.universalIdentifierById,
+            fieldMetadataUniversalIdentifierById:
+              flatFieldMetadataMaps.universalIdentifierById,
+            roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
           });
       } else {
         updatedField.universalOverrides = null;
@@ -456,6 +486,11 @@ export class FieldsWidgetUpsertService {
             isSystemSideEffect: existingField.isSystemSideEffect,
           });
 
+          const conditionalDisplayUpdate = getConditionalDisplayUpdate({
+            inputField,
+            existingField,
+          });
+
           const { overrides, updatedEditableProperties: sanitizedFieldProps } =
             sanitizeOverridableEntityInput({
               metadataName: 'viewField',
@@ -464,6 +499,7 @@ export class FieldsWidgetUpsertService {
                 isVisible: inputField.isVisible,
                 position: inputField.position,
                 viewFieldGroupId: inputGroup.id,
+                ...conditionalDisplayUpdate.editableProperties,
               },
               shouldOverride,
               callerApplicationUniversalIdentifier:
@@ -479,6 +515,17 @@ export class FieldsWidgetUpsertService {
             updatedAt: now,
           };
 
+          if (sanitizedFieldProps.conditionalDisplay !== undefined) {
+            updatedField.universalConditionalDisplay =
+              fromConditionalDisplayToUniversalConditionalDisplay({
+                conditionalDisplay: updatedField.conditionalDisplay,
+                fieldMetadataUniversalIdentifierById:
+                  flatFieldMetadataMaps.universalIdentifierById,
+                roleUniversalIdentifierById:
+                  flatRoleMaps.universalIdentifierById,
+              });
+          }
+
           if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
             updatedField.viewFieldGroupUniversalIdentifier =
               newViewFieldGroupUniversalIdentifier;
@@ -490,6 +537,10 @@ export class FieldsWidgetUpsertService {
                 overrides,
                 viewFieldGroupUniversalIdentifierById:
                   optimisticFlatViewFieldGroupMaps.universalIdentifierById,
+                fieldMetadataUniversalIdentifierById:
+                  flatFieldMetadataMaps.universalIdentifierById,
+                roleUniversalIdentifierById:
+                  flatRoleMaps.universalIdentifierById,
               });
           } else {
             updatedField.universalOverrides = null;
@@ -534,6 +585,10 @@ export class FieldsWidgetUpsertService {
           },
         });
 
+        const conditionalDisplay = normalizeConditionalDisplay(
+          inputField.conditionalDisplay,
+        );
+
         viewFieldsToCreate.push({
           id: v4(),
           workspaceId,
@@ -550,6 +605,14 @@ export class FieldsWidgetUpsertService {
           size: DEFAULT_VIEW_FIELD_SIZE,
           position: inputField.position,
           aggregateOperation: null,
+          conditionalDisplay,
+          universalConditionalDisplay:
+            fromConditionalDisplayToUniversalConditionalDisplay({
+              conditionalDisplay,
+              fieldMetadataUniversalIdentifierById:
+                flatFieldMetadataMaps.universalIdentifierById,
+              roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+            }),
           overrides: null,
           universalOverrides: null,
           isActive: true,
@@ -615,6 +678,7 @@ export class FieldsWidgetUpsertService {
     labelIdentifierFieldMetadataId,
     flatFieldMetadataMaps,
     flatViewMaps,
+    flatRoleMaps,
   }: {
     inputFields: UpsertFieldsWidgetFieldInput[];
     existingGroups: FlatViewFieldGroup[];
@@ -626,6 +690,7 @@ export class FieldsWidgetUpsertService {
     labelIdentifierFieldMetadataId: string | null;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatViewMaps: FlatViewMaps;
+    flatRoleMaps: FlatRoleMaps;
   }): Promise<void> {
     const now = new Date().toISOString();
 
@@ -645,10 +710,16 @@ export class FieldsWidgetUpsertService {
         flatEntity: existingField,
       });
 
+      const conditionalDisplayUpdate = getConditionalDisplayUpdate({
+        inputField,
+        existingField: effectiveExistingField,
+      });
+
       const hasChanged =
         effectiveExistingField.isVisible !== inputField.isVisible ||
         effectiveExistingField.position !== inputField.position ||
-        effectiveExistingField.viewFieldGroupId !== null;
+        effectiveExistingField.viewFieldGroupId !== null ||
+        conditionalDisplayUpdate.hasChanged;
 
       if (!hasChanged) {
         return [];
@@ -671,6 +742,7 @@ export class FieldsWidgetUpsertService {
             isVisible: inputField.isVisible,
             position: inputField.position,
             viewFieldGroupId: null as string | null,
+            ...conditionalDisplayUpdate.editableProperties,
           },
           shouldOverride,
           callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
@@ -685,6 +757,16 @@ export class FieldsWidgetUpsertService {
         updatedAt: now,
       };
 
+      if (sanitizedFieldProps.conditionalDisplay !== undefined) {
+        updatedField.universalConditionalDisplay =
+          fromConditionalDisplayToUniversalConditionalDisplay({
+            conditionalDisplay: updatedField.conditionalDisplay,
+            fieldMetadataUniversalIdentifierById:
+              flatFieldMetadataMaps.universalIdentifierById,
+            roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+          });
+      }
+
       if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
         updatedField.viewFieldGroupUniversalIdentifier = null;
       }
@@ -694,6 +776,9 @@ export class FieldsWidgetUpsertService {
           fromViewFieldOverridesToUniversalOverrides({
             overrides,
             viewFieldGroupUniversalIdentifierById: {},
+            fieldMetadataUniversalIdentifierById:
+              flatFieldMetadataMaps.universalIdentifierById,
+            roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
           });
       } else {
         updatedField.universalOverrides = null;
@@ -726,6 +811,11 @@ export class FieldsWidgetUpsertService {
           isSystemSideEffect: existingField.isSystemSideEffect,
         });
 
+        const conditionalDisplayUpdate = getConditionalDisplayUpdate({
+          inputField,
+          existingField,
+        });
+
         const { overrides, updatedEditableProperties: sanitizedFieldProps } =
           sanitizeOverridableEntityInput({
             metadataName: 'viewField',
@@ -734,6 +824,7 @@ export class FieldsWidgetUpsertService {
               isVisible: inputField.isVisible,
               position: inputField.position,
               viewFieldGroupId: null,
+              ...conditionalDisplayUpdate.editableProperties,
             },
             shouldOverride,
             callerApplicationUniversalIdentifier:
@@ -749,6 +840,16 @@ export class FieldsWidgetUpsertService {
           updatedAt: now,
         };
 
+        if (sanitizedFieldProps.conditionalDisplay !== undefined) {
+          updatedField.universalConditionalDisplay =
+            fromConditionalDisplayToUniversalConditionalDisplay({
+              conditionalDisplay: updatedField.conditionalDisplay,
+              fieldMetadataUniversalIdentifierById:
+                flatFieldMetadataMaps.universalIdentifierById,
+              roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+            });
+        }
+
         if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
           updatedField.viewFieldGroupUniversalIdentifier = null;
         }
@@ -758,6 +859,9 @@ export class FieldsWidgetUpsertService {
             fromViewFieldOverridesToUniversalOverrides({
               overrides,
               viewFieldGroupUniversalIdentifierById: {},
+              fieldMetadataUniversalIdentifierById:
+                flatFieldMetadataMaps.universalIdentifierById,
+              roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
             });
         } else {
           updatedField.universalOverrides = null;
@@ -797,6 +901,10 @@ export class FieldsWidgetUpsertService {
           },
         });
 
+      const conditionalDisplay = normalizeConditionalDisplay(
+        inputField.conditionalDisplay,
+      );
+
       viewFieldsToCreate.push({
         id: v4(),
         workspaceId,
@@ -813,6 +921,14 @@ export class FieldsWidgetUpsertService {
         size: DEFAULT_VIEW_FIELD_SIZE,
         position: inputField.position,
         aggregateOperation: null,
+        conditionalDisplay,
+        universalConditionalDisplay:
+          fromConditionalDisplayToUniversalConditionalDisplay({
+            conditionalDisplay,
+            fieldMetadataUniversalIdentifierById:
+              flatFieldMetadataMaps.universalIdentifierById,
+            roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+          }),
         overrides: null,
         universalOverrides: null,
         isActive: true,

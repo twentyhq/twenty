@@ -2,10 +2,10 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 import {
   type PageLayoutTabLayoutMode,
   type PageLayoutType,
-  type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
   type PageLayoutWidgetUniversalConfiguration,
   type PageLayoutWidgetVerticalListHeightBehavior,
+  type UniversalConditionalDisplay,
   type WidgetType,
 } from '@/types';
 
@@ -13,7 +13,7 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   title: string;
   type: WidgetType;
   objectUniversalIdentifier?: string;
-  conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
+  conditionalDisplay?: UniversalConditionalDisplay;
   position?: PageLayoutWidgetPosition;
   heightBehavior?: PageLayoutWidgetVerticalListHeightBehavior;
   configuration: PageLayoutWidgetUniversalConfiguration;
@@ -29,6 +29,7 @@ export type PageLayoutTabManifest = SyncableEntityOptions & {
   position: number;
   icon?: string;
   layoutMode?: PageLayoutTabLayoutMode;
+  conditionalDisplay?: UniversalConditionalDisplay;
   widgets?: PageLayoutWidgetManifest[];
   pageLayoutUniversalIdentifier?: string;
 };

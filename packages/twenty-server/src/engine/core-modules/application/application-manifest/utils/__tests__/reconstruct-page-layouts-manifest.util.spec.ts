@@ -222,6 +222,8 @@ const buildFlatPageLayoutTab = ({
   applicationId: APP_ID,
   pageLayoutId: `${pageLayoutUniversalIdentifier}-id`,
   widgetIds: [],
+  conditionalDisplay: null,
+  overrides: null,
   ...flatPageLayoutTabProperties,
 });
 
@@ -256,6 +258,7 @@ const buildFlatPageLayoutWidget = ({
   pageLayoutTabId: `${pageLayoutTabUniversalIdentifier}-id`,
   objectMetadataId: null,
   configuration: { configurationType: WidgetConfigurationType.NOTES },
+  conditionalDisplay: null,
   overrides: null,
   ...flatPageLayoutWidgetProperties,
 });

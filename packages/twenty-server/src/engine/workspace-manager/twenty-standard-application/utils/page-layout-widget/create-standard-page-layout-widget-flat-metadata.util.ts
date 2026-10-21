@@ -1,6 +1,6 @@
 import {
+  type ConditionalDisplay,
   PageLayoutType,
-  type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
   type WidgetType,
 } from 'twenty-shared/types';
@@ -28,7 +28,8 @@ export type CreateStandardPageLayoutWidgetContext = {
   configuration: AllPageLayoutWidgetConfiguration;
   universalConfiguration: MetadataUniversalFlatEntity<'pageLayoutWidget'>['universalConfiguration'];
   objectMetadataId: string | null;
-  conditionalDisplay: PageLayoutWidgetConditionalDisplay | null;
+  conditionalDisplay: ConditionalDisplay | null;
+  universalConditionalDisplay: MetadataUniversalFlatEntity<'pageLayoutWidget'>['universalConditionalDisplay'];
   conditionalAvailabilityExpression: string | null;
 };
 
@@ -53,6 +54,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     universalConfiguration,
     objectMetadataId,
     conditionalDisplay,
+    universalConditionalDisplay,
     conditionalAvailabilityExpression,
   },
   workspaceId,
@@ -110,6 +112,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     updatedAt: now,
     deletedAt: null,
     conditionalDisplay: conditionalDisplay ?? null,
+    universalConditionalDisplay,
     conditionalAvailabilityExpression:
       conditionalAvailabilityExpression ?? null,
     overrides: null,

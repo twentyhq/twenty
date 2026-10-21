@@ -6,12 +6,17 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { GraphQLJSON } from 'graphql-type-json';
+import {
+  ConditionalDisplay,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
@@ -44,6 +49,11 @@ export class UpdatePageLayoutTabWithWidgetsInput {
   @IsEnum(PageLayoutTabLayoutMode)
   @IsOptional()
   layoutMode?: PageLayoutTabLayoutMode;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  conditionalDisplay?: ConditionalDisplay | null;
 
   @Field(() => [UpdatePageLayoutWidgetWithIdInput])
   @IsArray()

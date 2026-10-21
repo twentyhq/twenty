@@ -5,6 +5,7 @@ import {
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  ViewFilterOperand,
   WidgetType,
 } from 'twenty-shared/types';
 
@@ -36,6 +37,16 @@ const TAB_MANIFEST: Required<
   position: 10,
   icon: 'IconHome',
   layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  conditionalDisplay: {
+    recordFilters: [
+      {
+        id: '0',
+        contextKey: 'device',
+        operand: ViewFilterOperand.IS,
+        value: '["MOBILE"]',
+      },
+    ],
+  },
 };
 
 const MINIMAL_TAB_MANIFEST: PageLayoutTabManifest = {

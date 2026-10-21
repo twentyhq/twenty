@@ -115,6 +115,7 @@ export class CompleteViewUpsertService {
       flatViewSortMaps,
       flatViewFieldGroupMaps,
       flatViewFilterGroupMaps,
+      flatRoleMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -129,6 +130,7 @@ export class CompleteViewUpsertService {
             'flatViewSortMaps',
             'flatViewFieldGroupMaps',
             'flatViewFilterGroupMaps',
+            'flatRoleMaps',
           ],
         },
       );
@@ -188,6 +190,7 @@ export class CompleteViewUpsertService {
       flatViewSortMaps,
       flatViewFieldGroupMaps,
       flatViewFilterGroupMaps,
+      flatRoleMaps,
       fields,
       filters,
       sorts,

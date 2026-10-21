@@ -8,4 +8,5 @@ export const FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES = [
   'icon',
   'color',
   'pageLayoutId',
+  'conditionalDisplay',
 ] as const satisfies MetadataEntityPropertyName<'navigationMenuItem'>[];

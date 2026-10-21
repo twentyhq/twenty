@@ -45,7 +45,7 @@ export const buildSystemFormFieldPageLayoutWidget = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
-    conditionalDisplay: null,
+    universalConditionalDisplay: null,
     conditionalAvailabilityExpression: null,
     universalOverrides: null,
   };

@@ -14,6 +14,7 @@ export const ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME = {
   },
   viewField: {
     overrides: 'overrides',
+    conditionalDisplay: 'conditionalDisplay',
   },
   viewGroup: {},
   viewFieldGroup: {},
@@ -30,15 +31,22 @@ export const ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME = {
   agent: {},
   skill: {},
   pageLayout: {},
-  pageLayoutTab: {},
+  pageLayoutTab: {
+    overrides: 'overrides',
+    conditionalDisplay: 'conditionalDisplay',
+  },
   pageLayoutWidget: {
     configuration: 'configuration',
     overrides: 'overrides',
+    conditionalDisplay: 'conditionalDisplay',
   },
   commandMenuItem: {
     overrides: 'overrides',
+    conditionalDisplay: 'conditionalDisplay',
   },
-  navigationMenuItem: {},
+  navigationMenuItem: {
+    conditionalDisplay: 'conditionalDisplay',
+  },
   rolePermissionFlag: {},
   permissionFlag: {},
   objectPermission: {},

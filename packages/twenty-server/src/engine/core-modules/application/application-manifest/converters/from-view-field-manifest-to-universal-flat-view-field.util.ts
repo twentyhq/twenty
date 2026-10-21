@@ -1,5 +1,6 @@
 import { type ViewFieldManifest } from 'twenty-shared/application';
 
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 export const fromViewFieldManifestToUniversalFlatViewField = ({
@@ -27,6 +28,9 @@ export const fromViewFieldManifestToUniversalFlatViewField = ({
     size: viewFieldManifest.size ?? 0,
     position: viewFieldManifest.position,
     aggregateOperation: viewFieldManifest.aggregateOperation ?? null,
+    universalConditionalDisplay: normalizeConditionalDisplay(
+      viewFieldManifest.conditionalDisplay,
+    ),
     universalOverrides: null,
     createdAt: now,
     updatedAt: now,

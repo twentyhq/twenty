@@ -18,6 +18,7 @@ const FLAT_PAGE_LAYOUT_WIDGET_ROWS_REQUIREMENT = {
   fieldMetadata: ['id', 'universalIdentifier'],
   frontComponent: ['id', 'universalIdentifier'],
   view: ['id', 'universalIdentifier'],
+  role: ['id', 'universalIdentifier'],
 } as const;
 
 @Injectable()
@@ -38,6 +39,7 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends MetadataFlatEn
       fieldMetadata: fieldMetadatas,
       frontComponent: frontComponents,
       view: views,
+      role: roles,
     } = rows;
 
     const applicationIdToUniversalIdentifierMap =
@@ -58,6 +60,9 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends MetadataFlatEn
     const viewUniversalIdentifierById = Object.fromEntries(
       createIdToUniversalIdentifierMap(views),
     );
+    const roleUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(roles),
+    );
 
     const flatPageLayoutWidgetMaps = createEmptyFlatEntityMaps();
 
@@ -70,6 +75,7 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends MetadataFlatEn
           objectMetadataIdToUniversalIdentifierMap,
           fieldMetadataUniversalIdentifierById,
           pageLayoutTabUniversalIdentifierById,
+          roleUniversalIdentifierById,
           frontComponentUniversalIdentifierById,
           viewUniversalIdentifierById,
         });

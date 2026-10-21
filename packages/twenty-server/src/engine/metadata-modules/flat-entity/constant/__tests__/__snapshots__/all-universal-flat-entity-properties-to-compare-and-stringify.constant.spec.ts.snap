@@ -53,12 +53,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "engineComponentKey",
       "payload",
       "hotKeys",
+      "universalConditionalDisplay",
       "isActive",
       "universalOverrides",
     ],
     "propertiesToStringify": [
       "payload",
       "hotKeys",
+      "universalConditionalDisplay",
       "universalOverrides",
     ],
   },
@@ -175,12 +177,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "type",
       "position",
       "folderUniversalIdentifier",
+      "universalConditionalDisplay",
       "name",
       "link",
       "icon",
       "color",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "universalConditionalDisplay",
+    ],
   },
   "objectMetadata": {
     "propertiesToCompare": [
@@ -239,11 +244,13 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "deletedAt",
       "icon",
       "layoutMode",
+      "universalConditionalDisplay",
       "isActive",
-      "overrides",
+      "universalOverrides",
     ],
     "propertiesToStringify": [
-      "overrides",
+      "universalConditionalDisplay",
+      "universalOverrides",
     ],
   },
   "pageLayoutWidget": {
@@ -255,7 +262,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalConfiguration",
       "deletedAt",
       "pageLayoutTabUniversalIdentifier",
-      "conditionalDisplay",
+      "universalConditionalDisplay",
       "conditionalAvailabilityExpression",
       "isActive",
       "universalOverrides",
@@ -263,7 +270,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToStringify": [
       "position",
       "universalConfiguration",
-      "conditionalDisplay",
+      "universalConditionalDisplay",
       "universalOverrides",
     ],
   },
@@ -428,6 +435,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   "viewField": {
     "propertiesToCompare": [
       "isVisible",
+      "universalConditionalDisplay",
       "size",
       "position",
       "aggregateOperation",
@@ -438,6 +446,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalOverrides",
     ],
     "propertiesToStringify": [
+      "universalConditionalDisplay",
       "universalOverrides",
     ],
   },

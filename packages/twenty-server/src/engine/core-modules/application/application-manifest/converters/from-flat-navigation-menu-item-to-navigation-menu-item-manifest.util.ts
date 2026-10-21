@@ -46,4 +46,9 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemManifest = ({
           flatNavigationMenuItem.pageLayoutUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatNavigationMenuItem.universalConditionalDisplay)
+    ? {
+        conditionalDisplay: flatNavigationMenuItem.universalConditionalDisplay,
+      }
+    : {}),
 });

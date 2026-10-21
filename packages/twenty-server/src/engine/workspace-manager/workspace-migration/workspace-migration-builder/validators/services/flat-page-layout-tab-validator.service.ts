@@ -4,9 +4,15 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { validateUniversalFlatEntityConditionalDisplays } from 'src/engine/metadata-modules/flat-conditional-display/utils/validate-universal-flat-entity-conditional-displays.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { PageLayoutExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
-import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
+import {
+  type FailedFlatEntityValidation,
+  type FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
@@ -19,7 +25,7 @@ const PAGE_LAYOUT_TAB_EXCEPTION_CODE = {
 export class FlatPageLayoutTabValidatorService {
   public validateFlatPageLayoutTabCreation({
     flatEntityToValidate: flatPageLayoutTab,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatPageLayoutMaps },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutTab
   >): FailedFlatEntityValidation<'pageLayoutTab', 'create'> {
@@ -34,7 +40,8 @@ export class FlatPageLayoutTabValidatorService {
 
     const referencedPageLayout = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatPageLayoutTab.pageLayoutUniversalIdentifier,
-      flatEntityMaps: flatPageLayoutMaps,
+      flatEntityMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutMaps,
     });
 
     if (!isDefined(referencedPageLayout)) {
@@ -44,6 +51,13 @@ export class FlatPageLayoutTabValidatorService {
         userFriendlyMessage: msg`Page layout not found`,
       });
     }
+
+    validationResult.errors.push(
+      ...this.validateConditionalDisplay({
+        flatPageLayoutTab,
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+      }),
+    );
 
     return validationResult;
   }
@@ -85,15 +99,15 @@ export class FlatPageLayoutTabValidatorService {
 
   public validateFlatPageLayoutTabUpdate({
     universalIdentifier,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatPageLayoutTabMaps: optimisticFlatPageLayoutTabMaps,
-    },
+    flatEntityUpdate,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutTab
   >): FailedFlatEntityValidation<'pageLayoutTab', 'update'> {
     const fromFlatPageLayoutTab = findFlatEntityByUniversalIdentifier({
       universalIdentifier,
-      flatEntityMaps: optimisticFlatPageLayoutTabMaps,
+      flatEntityMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
@@ -114,6 +128,42 @@ export class FlatPageLayoutTabValidatorService {
       return validationResult;
     }
 
+    validationResult.errors.push(
+      ...this.validateConditionalDisplay({
+        flatPageLayoutTab: { ...fromFlatPageLayoutTab, ...flatEntityUpdate },
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+      }),
+    );
+
     return validationResult;
+  }
+
+  private validateConditionalDisplay({
+    flatPageLayoutTab,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatPageLayoutMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    },
+  }: {
+    flatPageLayoutTab: UniversalFlatPageLayoutTab;
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.pageLayoutTab
+    >['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'];
+  }): FlatEntityValidationError[] {
+    const pageLayout = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatPageLayoutTab.pageLayoutUniversalIdentifier,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
+
+    return validateUniversalFlatEntityConditionalDisplays({
+      flatEntity: flatPageLayoutTab,
+      surface: 'pageLayoutTab',
+      objectMetadataUniversalIdentifier:
+        pageLayout?.objectMetadataUniversalIdentifier ?? null,
+      invalidDataCode: PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    });
   }
 }

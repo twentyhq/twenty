@@ -3,10 +3,13 @@ import { Field, InputType } from '@nestjs/graphql';
 import {
   IsEnum,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
+import { ConditionalDisplay } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
@@ -76,4 +79,9 @@ export class CreateNavigationMenuItemInput {
   @IsOptional()
   @Field({ nullable: true })
   position?: number;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: ConditionalDisplay | null;
 }

@@ -20,7 +20,11 @@ import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layo
 
 import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  ViewFilterOperand,
+  WidgetType,
+} from 'twenty-shared/types';
 
 const DEFAULT_GRID_POSITION = {
   layoutMode: PageLayoutTabLayoutMode.GRID as const,
@@ -213,6 +217,29 @@ describe('Page layout widget update should fail', () => {
             id: testPageLayoutWidgetId,
             configuration:
               INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY as unknown as UpdatePageLayoutWidgetInput['configuration'],
+          },
+        });
+
+        expectOneNotInternalServerErrorSnapshot({ errors });
+      });
+    });
+
+    describe('Conditional display validation failures', () => {
+      it('when updating conditional display to match two devices at once', async () => {
+        const { errors } = await updateOnePageLayoutWidget({
+          expectToFail: true,
+          input: {
+            id: testPageLayoutWidgetId,
+            conditionalDisplay: {
+              recordFilters: [
+                {
+                  id: '0',
+                  contextKey: 'device',
+                  operand: ViewFilterOperand.IS,
+                  value: '["MOBILE","DESKTOP"]',
+                },
+              ],
+            },
           },
         });
 
