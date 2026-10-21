@@ -65,6 +65,7 @@ import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
+import { REACTION_BUTTON_PROP_DESCRIPTIONS } from './reactionButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
@@ -331,6 +332,14 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'components/input/light-button',
     propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
     propDefaults: { variant: 'ghost', size: 'sm' },
+  },
+  {
+    name: 'ReactionButton',
+    source: 'components/input/ReactionButton/ReactionButton.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/reaction-button',
+    propDescriptions: REACTION_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { loading: 'false', disabled: 'false' },
   },
   {
     name: 'Button',

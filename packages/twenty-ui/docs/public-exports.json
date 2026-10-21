@@ -97,6 +97,7 @@
       "MainButton": "components/input/MainButton/MainButton",
       "NumberStepper": "components/input/NumberStepper/NumberStepper",
       "PhoneCountryPicker": "components/input/PhoneCountryPicker/PhoneCountryPicker",
+      "ReactionButton": "components/input/ReactionButton/ReactionButton",
       "SearchInput": "components/input/SearchInput/SearchInput",
       "SegmentedControl": "components/input/SegmentedControl/SegmentedControl"
     },
@@ -125,6 +126,7 @@
       "PhoneCountryPickerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerProps",
       "PhoneCountryPickerRootProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerRootProps",
       "PhoneCountryPickerTriggerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerTriggerProps",
+      "ReactionButtonProps": "components/input/ReactionButton/types/ReactionButtonProps",
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
       "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
