@@ -1,4 +1,5 @@
 import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
+import { GettingStartedStepRewardChip } from '@/getting-started/components/GettingStartedStepRewardChip';
 import { GETTING_STARTED_STEP_CONTENT } from '@/getting-started/constants/GettingStartedStepContent';
 import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStartedSteps';
 import { styled } from '@linaria/react';
@@ -8,17 +9,19 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { type GettingStartedStep } from '~/generated-metadata/graphql';
 
 const StyledStack = styled.div`
-  padding-left: ${themeCssVariables.spacing[5]};
+  padding-left: ${themeCssVariables.spacing[8]};
   position: relative;
 `;
 
 const StyledSteps = styled.nav`
+  align-items: flex-end;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing['1.5']};
-  left: calc(-1 * ${themeCssVariables.spacing[2]});
+  gap: ${themeCssVariables.spacing[2]};
+  left: 0;
   position: absolute;
-  top: ${themeCssVariables.spacing[4]};
+  top: ${themeCssVariables.spacing[6]};
+  width: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledTick = styled.button`
@@ -26,31 +29,35 @@ const StyledTick = styled.button`
   border: 0;
   border-radius: ${themeCssVariables.border.radius.xs};
   cursor: pointer;
-  height: ${themeCssVariables.spacing[5]};
-  outline-offset: ${themeCssVariables.spacing[1]};
+  height: ${themeCssVariables.spacing[0.5]};
   padding: 0;
-  width: ${themeCssVariables.spacing[1]};
+  width: ${themeCssVariables.spacing[2]};
 
   &[data-completed] {
-    background: ${themeCssVariables.color.green};
+    background: ${themeCssVariables.font.color.tertiary};
+    width: ${themeCssVariables.spacing[3]};
   }
 
   &[aria-current='step'] {
     background: ${themeCssVariables.font.color.primary};
+    width: ${themeCssVariables.spacing[4]};
   }
 
   &::after {
     content: '';
     display: block;
-    height: 100%;
-    margin-left: calc(-1 * ${themeCssVariables.spacing['1.5']});
-    width: ${themeCssVariables.spacing[4]};
+    height: ${themeCssVariables.spacing[2]};
+    margin-top: calc(-1 * ${themeCssVariables.spacing[1]});
+    width: 100%;
   }
 `;
 
 const StyledStackedStep = styled.button<{ depth: number }>`
   align-items: center;
-  background: ${themeCssVariables.background.secondary};
+  background: ${({ depth }) =>
+    depth > 1
+      ? themeCssVariables.background.tertiary
+      : themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.md}
     ${themeCssVariables.border.radius.md} 0 0;
@@ -68,6 +75,11 @@ const StyledStackedStep = styled.button<{ depth: number }>`
   &:hover {
     color: ${themeCssVariables.font.color.primary};
   }
+`;
+
+const StyledStackedStepTitle = styled.span`
+  flex: 1;
+  text-align: left;
 `;
 
 type GettingStartedStepStackProps = {
@@ -121,7 +133,13 @@ export const GettingStartedStepStack = ({
             onClick={() => onSelectStep(step)}
           >
             <StepIcon size={theme.icon.size.sm} />
-            {t(GETTING_STARTED_STEP_CONTENT[step].title)}
+            <StyledStackedStepTitle>
+              {t(GETTING_STARTED_STEP_CONTENT[step].title)}
+            </StyledStackedStepTitle>
+            <GettingStartedStepRewardChip
+              step={step}
+              isCompleted={completedSteps.includes(step)}
+            />
           </StyledStackedStep>
         );
       })}

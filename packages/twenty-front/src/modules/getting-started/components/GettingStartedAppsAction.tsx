@@ -1,21 +1,23 @@
-import { GettingStartedAppRow } from '@/getting-started/components/GettingStartedAppRow';
-import { styled } from '@linaria/react';
+import { GettingStartedAppInstallButton } from '@/getting-started/components/GettingStartedAppInstallButton';
+import { GETTING_STARTED_APP_CONTENT } from '@/getting-started/constants/GettingStartedAppContent';
+import { SettingsListCard } from '@/settings/components/SettingsListCard';
+import { useLingui } from '@lingui/react/macro';
 import { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
-import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-`;
+export const GettingStartedAppsAction = () => {
+  const { t } = useLingui();
 
-export const GettingStartedAppsAction = () => (
-  <StyledColumn>
-    {GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS.map((universalIdentifier) => (
-      <GettingStartedAppRow
-        key={universalIdentifier}
-        universalIdentifier={universalIdentifier}
-      />
-    ))}
-  </StyledColumn>
-);
+  return (
+    <SettingsListCard
+      items={GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS.map(
+        (universalIdentifier) => ({ id: universalIdentifier }),
+      )}
+      getItemLabel={({ id }) => t(GETTING_STARTED_APP_CONTENT[id].label)}
+      getItemDescription={({ id }) =>
+        t(GETTING_STARTED_APP_CONTENT[id].description)
+      }
+      RowIconFn={({ id }) => GETTING_STARTED_APP_CONTENT[id].Icon}
+      RowRightComponent={GettingStartedAppInstallButton}
+    />
+  );
+};
