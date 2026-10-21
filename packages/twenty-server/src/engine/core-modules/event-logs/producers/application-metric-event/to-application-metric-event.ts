@@ -15,4 +15,5 @@ export const toApplicationMetricEvent = (
   level: entry.level,
   errorCode: entry.errorCode ?? '',
   durationMs: 0,
+  occurrenceCount: 1,
 });

@@ -113,14 +113,33 @@ export const ApplicationMonitoring = ({
           ) : (
             <ApplicationMonitoringLineChart
               data={activityChartData}
-              series={[
-                { key: 'errorCount', label: t`Errors`, color: 'red' },
-                { key: 'warningCount', label: t`Warnings`, color: 'orange' },
-              ]}
+              series={[{ key: 'errorCount', label: t`Errors`, color: 'red' }]}
               axisLabel={chartAxisLabel}
             />
           )}
         </StyledHealth>
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
+          title={t`Rate limits`}
+          description={t`API requests rejected and trigger jobs skipped`}
+        />
+        {monitoring.rateLimitEventCount === 0 ? (
+          <SettingsEmptyPlaceholder>{t`No rate limit hit in this period`}</SettingsEmptyPlaceholder>
+        ) : (
+          <ApplicationMonitoringLineChart
+            data={activityChartData}
+            series={[
+              {
+                key: 'rateLimitedRequestCount',
+                label: t`API requests`,
+                color: 'orange',
+              },
+              { key: 'rateLimitedJobCount', label: t`Jobs`, color: 'blue' },
+            ]}
+            axisLabel={chartAxisLabel}
+          />
+        )}
       </Section.Root>
       {isBillingEnabled && (
         <Section.Root>

@@ -532,8 +532,8 @@ type ApplicationMonitoring {
 type ApplicationMonitoringActivityBucket {
   bucketStart: DateTime!
   errorCount: Int!
-  infoCount: Int!
-  warningCount: Int!
+  rateLimitedJobCount: Int!
+  rateLimitedRequestCount: Int!
 }
 
 type ApplicationMonitoringCreditBucket {

@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type SelectQueryBuilder } from 'typeorm';
 
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
-import { ApplicationLogDeduplicationService } from 'src/engine/core-modules/event-logs/emit/application-log-deduplication.service';
+import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
@@ -66,7 +66,7 @@ export class ServerRouteTriggerService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly serverRouteAuthorizationHeaderService: ServerRouteAuthorizationHeaderService,
-    private readonly applicationLogDeduplicationService: ApplicationLogDeduplicationService,
+    private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
   ) {}
 
   async handle({
@@ -195,7 +195,7 @@ export class ServerRouteTriggerService {
       return;
     }
 
-    this.applicationLogDeduplicationService.recordOncePerWindow(
+    this.applicationRepeatedEventRecorderService.record(
       buildServerRouteFailureLogEntry({
         resolver,
         applicationRegistrationId,

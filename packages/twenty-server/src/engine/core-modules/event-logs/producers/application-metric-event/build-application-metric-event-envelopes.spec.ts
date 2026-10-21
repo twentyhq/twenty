@@ -13,6 +13,7 @@ const EVENT: ApplicationMetricEvent = {
   level: 'ERROR',
   errorCode: 'TypeError',
   durationMs: 1240.6,
+  occurrenceCount: 1,
 };
 
 describe('buildApplicationMetricEventEnvelopes', () => {

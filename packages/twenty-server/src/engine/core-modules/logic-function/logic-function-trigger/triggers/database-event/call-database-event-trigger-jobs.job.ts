@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
-import { ApplicationLogDeduplicationService } from 'src/engine/core-modules/event-logs/emit/application-log-deduplication.service';
+import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -37,7 +37,7 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
-    private readonly applicationLogDeduplicationService: ApplicationLogDeduplicationService,
+    private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
@@ -149,12 +149,13 @@ export class CallDatabaseEventTriggerJobsJob {
             `Enqueue throttled for application ${applicationId} (registration ${applicationRegistrationId}) in workspace ${workspaceEventBatch.workspaceId}: skipping ${logicFunctionPayloads.length} logic function trigger(s)`,
           );
 
-          this.applicationLogDeduplicationService.recordOncePerWindow(
+          this.applicationRepeatedEventRecorderService.record(
             buildApplicationJobThrottledLogEntry({
               workspaceId: workspaceEventBatch.workspaceId,
               application,
               skippedJobCount: logicFunctionPayloads.length,
             }),
+            logicFunctionPayloads.length,
           );
 
           continue;

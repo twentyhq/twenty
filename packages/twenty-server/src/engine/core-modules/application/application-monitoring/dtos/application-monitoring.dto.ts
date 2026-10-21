@@ -9,10 +9,10 @@ export class ApplicationMonitoringActivityBucketDTO {
   errorCount: number;
 
   @Field(() => Int)
-  warningCount: number;
+  rateLimitedRequestCount: number;
 
   @Field(() => Int)
-  infoCount: number;
+  rateLimitedJobCount: number;
 }
 
 @ObjectType('ApplicationMonitoringLifecycleBucket')

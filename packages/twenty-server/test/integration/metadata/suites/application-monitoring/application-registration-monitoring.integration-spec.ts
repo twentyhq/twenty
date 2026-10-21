@@ -28,6 +28,7 @@ const buildMetricEvent = ({
   errorCode = '',
   applicationVersion = '1.2.3',
   logicFunctionName = 'syncContacts',
+  occurrenceCount = 1,
 }: {
   applicationRegistrationId: string;
   workspaceId: string;
@@ -37,6 +38,7 @@ const buildMetricEvent = ({
   errorCode?: string;
   applicationVersion?: string;
   logicFunctionName?: string;
+  occurrenceCount?: number;
 }) => ({
   timestamp: formatDateTimeForClickHouse(
     new Date(Date.now() - minutesAgo * 60_000),
@@ -51,6 +53,7 @@ const buildMetricEvent = ({
   level,
   errorCode,
   durationMs: 120,
+  occurrenceCount,
 });
 
 describe('Application registration monitoring (integration)', () => {
@@ -108,6 +111,17 @@ describe('Application registration monitoring (integration)', () => {
           level: 'WARN',
           errorCode: 'RATE_LIMITED',
           logicFunctionName: '',
+          occurrenceCount: 40,
+        }),
+        buildMetricEvent({
+          applicationRegistrationId: ownedApplicationRegistrationId,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          minutesAgo: 30,
+          source: 'JOB_RATE_LIMIT',
+          level: 'WARN',
+          errorCode: 'LIMIT_REACHED',
+          logicFunctionName: '',
+          occurrenceCount: 3,
         }),
       ],
     });
@@ -139,7 +153,7 @@ describe('Application registration monitoring (integration)', () => {
       runCount: 3,
       failedRunCount: 2,
       lifecycleFailureCount: 1,
-      rateLimitEventCount: 1,
+      rateLimitEventCount: 43,
     });
     expect(monitoring.issues).toContainEqual(
       expect.objectContaining({
@@ -162,6 +176,31 @@ describe('Application registration monitoring (integration)', () => {
     expect(JSON.stringify(monitoring)).not.toContain(SEED_APPLE_WORKSPACE_ID);
     expect(JSON.stringify(monitoring)).not.toContain(
       OTHER_INSTALL_WORKSPACE_ID,
+    );
+  });
+
+  it('counts every rejected request and skipped job, apart from errors', async () => {
+    const { data } = await findApplicationRegistrationMonitoring({
+      input: { id: ownedApplicationRegistrationId },
+      expectToFail: false,
+    });
+
+    const { activity, issues } = data.findApplicationRegistrationMonitoring;
+
+    const sumActivity = (
+      key: 'errorCount' | 'rateLimitedRequestCount' | 'rateLimitedJobCount',
+    ) => activity.reduce((total, bucket) => total + bucket[key], 0);
+
+    expect(sumActivity('errorCount')).toBe(3);
+    expect(sumActivity('rateLimitedRequestCount')).toBe(40);
+    expect(sumActivity('rateLimitedJobCount')).toBe(3);
+    expect(issues).toContainEqual(
+      expect.objectContaining({
+        source: 'API_RATE_LIMIT',
+        errorCode: 'RATE_LIMITED',
+        eventCount: 40,
+        affectedInstallCount: 1,
+      }),
     );
   });
 

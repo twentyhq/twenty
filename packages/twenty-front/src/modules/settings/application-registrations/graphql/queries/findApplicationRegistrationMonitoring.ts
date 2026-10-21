@@ -23,8 +23,8 @@ export const FIND_APPLICATION_REGISTRATION_MONITORING = gql`
       activity {
         bucketStart
         errorCount
-        warningCount
-        infoCount
+        rateLimitedRequestCount
+        rateLimitedJobCount
       }
       lifecycle {
         bucketStart

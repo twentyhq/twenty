@@ -27,4 +27,5 @@ export const buildLogicFunctionRunMetricEvent = ({
     result.status === LogicFunctionExecutionStatus.ERROR ? 'ERROR' : 'INFO',
   errorCode: result.error?.errorType ?? '',
   durationMs: result.duration,
+  occurrenceCount: 1,
 });

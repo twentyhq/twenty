@@ -98,9 +98,9 @@ export const ApplicationMonitoringKpis = ({
       isAlert: monitoring.lifecycleFailureCount > 0,
     },
     {
-      label: t`Rate limit events`,
+      label: t`Rate limited`,
       value: i18n.number(monitoring.rateLimitEventCount),
-      description: t`Times an install hit a rate limit, counted at most once per minute per install`,
+      description: t`API requests rejected and trigger jobs skipped because the app hit a rate limit`,
       isAlert: false,
     },
   ];

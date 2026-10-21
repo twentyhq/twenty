@@ -45,7 +45,7 @@ import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-q
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { ApplicationLogDeduplicationService } from 'src/engine/core-modules/event-logs/emit/application-log-deduplication.service';
+import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -109,7 +109,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly metricsService: MetricsService;
   @Inject()
-  protected readonly applicationLogDeduplicationService: ApplicationLogDeduplicationService;
+  protected readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -597,7 +597,7 @@ export abstract class CommonBaseQueryRunnerService<
         buildApplicationApiRateLimitedLogLine({ authContext, exhaustedScope }),
       );
 
-      this.applicationLogDeduplicationService.recordOncePerWindow(
+      this.applicationRepeatedEventRecorderService.record(
         buildApplicationApiRateLimitedLogEntry({ authContext, exhaustedScope }),
       );
     }

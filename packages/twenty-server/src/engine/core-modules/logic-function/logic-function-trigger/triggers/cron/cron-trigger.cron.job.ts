@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import { ApplicationLogDeduplicationService } from 'src/engine/core-modules/event-logs/emit/application-log-deduplication.service';
+import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -41,7 +41,7 @@ export class CronTriggerCronJob {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
-    private readonly applicationLogDeduplicationService: ApplicationLogDeduplicationService,
+    private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -112,7 +112,7 @@ export class CronTriggerCronJob {
             });
           } catch (error) {
             if (error instanceof ThrottlerException && isDefined(application)) {
-              this.applicationLogDeduplicationService.recordOncePerWindow(
+              this.applicationRepeatedEventRecorderService.record(
                 buildApplicationJobThrottledLogEntry({
                   workspaceId: activeWorkspace.id,
                   application,

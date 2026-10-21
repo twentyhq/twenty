@@ -31,6 +31,7 @@ describe('toApplicationMetricEvent', () => {
       level: 'WARN',
       errorCode: 'RATE_LIMITED',
       durationMs: 0,
+      occurrenceCount: 1,
     });
   });
 });

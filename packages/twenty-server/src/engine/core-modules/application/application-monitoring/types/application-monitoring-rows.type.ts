@@ -10,8 +10,8 @@ export type ApplicationMonitoringTotalsRow = {
 export type ApplicationMonitoringActivityRow = {
   bucketStart: string;
   errorCount: ClickHouseCount;
-  warningCount: ClickHouseCount;
-  infoCount: ClickHouseCount;
+  rateLimitedRequestCount: ClickHouseCount;
+  rateLimitedJobCount: ClickHouseCount;
 };
 
 export type ApplicationMonitoringLifecycleRow = {

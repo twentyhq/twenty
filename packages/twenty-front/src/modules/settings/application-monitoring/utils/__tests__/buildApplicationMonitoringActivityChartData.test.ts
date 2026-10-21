@@ -11,16 +11,16 @@ describe('buildApplicationMonitoringActivityChartData', () => {
           {
             bucketStart: '2026-10-17T00:00:00.000Z',
             errorCount: 41,
-            warningCount: 33,
-            infoCount: 1100,
+            rateLimitedRequestCount: 33,
+            rateLimitedJobCount: 4,
           },
         ],
       }),
     ).toEqual([
-      { errorCount: 0, warningCount: 0 },
-      { errorCount: 41, warningCount: 33 },
-      { errorCount: 0, warningCount: 0 },
-      { errorCount: 0, warningCount: 0 },
+      { errorCount: 0, rateLimitedRequestCount: 0, rateLimitedJobCount: 0 },
+      { errorCount: 41, rateLimitedRequestCount: 33, rateLimitedJobCount: 4 },
+      { errorCount: 0, rateLimitedRequestCount: 0, rateLimitedJobCount: 0 },
+      { errorCount: 0, rateLimitedRequestCount: 0, rateLimitedJobCount: 0 },
     ]);
   });
 });
