@@ -1,3 +1,4 @@
+import { getChartSettingsStoryConfiguration } from '@/side-panel/pages/page-layout/components/__stories__/getChartSettingsStoryConfiguration';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import {
@@ -10,13 +11,7 @@ import { CHART_SETTINGS_STORY_DATA } from '@/side-panel/pages/page-layout/compon
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import {
-  AggregateOperations,
-  BarChartLayout,
-  GraphOrderBy,
-  WidgetConfigurationType,
-  WidgetType,
-} from '~/generated-metadata/graphql';
+import { WidgetType } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 
@@ -37,24 +32,11 @@ export const initializeChartSettingsStory = ({
     objectMetadataItem,
     fieldName: objectName === 'opportunity' ? 'amount' : 'employees',
   });
-  const configuration =
-    chartType === 'aggregate'
-      ? {
-          __typename: 'AggregateChartConfiguration' as const,
-          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-          aggregateFieldMetadataId: groupField.id,
-          aggregateOperation: AggregateOperations.COUNT,
-        }
-      : {
-          __typename: 'BarChartConfiguration' as const,
-          configurationType: WidgetConfigurationType.BAR_CHART,
-          layout: BarChartLayout.VERTICAL,
-          aggregateFieldMetadataId: aggregateField.id,
-          aggregateOperation: AggregateOperations.SUM,
-          primaryAxisGroupByFieldMetadataId: groupField.id,
-          primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
-          color: 'auto',
-        };
+  const configuration = getChartSettingsStoryConfiguration({
+    chartType,
+    groupFieldMetadataId: groupField.id,
+    aggregateFieldMetadataId: aggregateField.id,
+  });
   jotaiStore.set(
     pageLayoutDraftComponentState.atomFamily({ instanceId: pageLayoutId }),
     makeDraft([

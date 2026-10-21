@@ -6,7 +6,7 @@ import { ChartSettingItem } from '@/side-panel/pages/page-layout/components/char
 import { CHART_SETTINGS_STORY_DATA } from '@/side-panel/pages/page-layout/components/__stories__/chartSettingsStoryData';
 import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
+import { assertChartWidgetOrThrow } from '@/side-panel/pages/page-layout/utils/assertChartWidgetOrThrow';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
@@ -43,9 +43,11 @@ export const ChartSettingsStory = ({
     callback: onBackgroundClickOutside,
   });
 
-  if (!isDefined(widgetInEditMode?.objectMetadataId)) {
+  if (!isDefined(widgetInEditMode)) {
     return null;
   }
+
+  assertChartWidgetOrThrow(widgetInEditMode);
 
   return (
     <SidePanelPageComponentInstanceContext.Provider
@@ -73,10 +75,8 @@ export const ChartSettingsStory = ({
                 <ChartSettingItem
                   key={item.id}
                   item={item}
-                  objectMetadataId={widgetInEditMode.objectMetadataId ?? ''}
-                  configuration={
-                    widgetInEditMode.configuration as ChartConfiguration
-                  }
+                  objectMetadataId={widgetInEditMode.objectMetadataId}
+                  configuration={widgetInEditMode.configuration}
                 />
               ))}
               {children}
