@@ -4,10 +4,12 @@ import { type FieldNumberMetadata } from '@/object-record/record-field/ui/types/
 import { computeDraftValueFromFieldValue } from '@/object-record/record-field/ui/utils/computeDraftValueFromFieldValue';
 import { RecordFormTextInput } from '@/object-record/record-form/components/RecordFormTextInput';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { isDefined } from 'twenty-shared/utils';
 
-type RecordFormPercentageFieldInputProps = {
+type RecordFormNumberFieldInputProps = {
   field: Pick<
     FieldDefinition<FieldNumberMetadata>,
     'type' | 'label' | 'metadata'
@@ -15,43 +17,48 @@ type RecordFormPercentageFieldInputProps = {
   defaultValue?: number | null;
   onChange: (value: number | null) => void;
   readonly?: boolean;
+  placeholder?: string;
 };
 
-export const RecordFormPercentageFieldInput = ({
+export const RecordFormNumberFieldInput = ({
   field,
   defaultValue,
   onChange,
   readonly,
-}: RecordFormPercentageFieldInputProps) => {
-  const [inputText, setInputText] = useState(
-    String(
-      computeDraftValueFromFieldValue({
-        fieldDefinition: field,
-        fieldValue: defaultValue ?? null,
-      }),
-    ),
-  );
+  placeholder,
+}: RecordFormNumberFieldInputProps) => {
+  const numberType = field.metadata.settings?.type;
+  const isPercentage = numberType === 'percentage';
+
+  const [inputText, setInputText] = useState(() => {
+    const draftValue = computeDraftValueFromFieldValue({
+      fieldDefinition: field,
+      fieldValue: defaultValue ?? null,
+    });
+
+    return isDefined(draftValue) ? String(draftValue) : '';
+  });
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   );
 
   const handleChange = (newText: string) => {
-    const percentageText = newText.replace(/%\s*$/, '');
+    const numberText = isPercentage ? newText.replace(/%\s*$/, '') : newText;
 
-    setInputText(percentageText);
+    setInputText(numberText);
 
-    const percentageValueResult = getNumberValueToPersist({
-      newValue: percentageText.trim(),
-      numberType: 'percentage',
+    const numberValueResult = getNumberValueToPersist({
+      newValue: numberText.trim(),
+      numberType,
     });
 
-    if (!percentageValueResult.success) {
+    if (!numberValueResult.success) {
       setErrorMessage(t`Invalid number`);
       return;
     }
 
     setErrorMessage(undefined);
-    onChange(percentageValueResult.value);
+    onChange(numberValueResult.value);
   };
 
   return (
@@ -60,8 +67,12 @@ export const RecordFormPercentageFieldInput = ({
       value={inputText}
       onChange={handleChange}
       readonly={readonly}
-      placeholder={t`Enter a number`}
-      suffix={doNotTranslate('%')}
+      placeholder={
+        !isPercentage && isNonEmptyString(placeholder)
+          ? placeholder
+          : t`Enter a number`
+      }
+      suffix={isPercentage ? doNotTranslate('%') : undefined}
       error={errorMessage}
     />
   );
