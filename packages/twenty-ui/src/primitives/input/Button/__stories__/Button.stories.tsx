@@ -475,6 +475,7 @@ const BUTTON_CATALOG_GROUPS: {
       { label: 'Accent', props: { color: 'accent', variant: 'solid' } },
       { label: 'Danger', props: { color: 'danger', variant: 'solid' } },
       { label: 'Success', props: { color: 'success', variant: 'solid' } },
+      { label: 'Inherited', props: { color: 'inherit', variant: 'outline' } },
     ],
   },
   {

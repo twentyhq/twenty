@@ -5,15 +5,16 @@ import { isUndefined } from '@sniptt/guards';
 import {
   useSelectedObjectMetadata,
   useSelectedRecordIds,
+  useTranslate,
 } from 'twenty-sdk/front-component';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CallParticipantChip } from 'src/front-components/components/CallParticipantChip';
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
 import { StyledWidgetContainer } from 'src/front-components/components/StyledWidgetContainer';
+import { StyledChipSkeleton } from 'src/front-components/components/StyledChipSkeleton';
 import { useCallParticipants } from 'src/front-components/hooks/use-call-participants';
 import { buildCallParticipantDisplayItems } from 'src/front-components/utils/build-call-participant-display-items.util';
-import { isShowUnmatchedAttendeesEnabled } from 'src/front-components/utils/is-show-unmatched-attendees-enabled.util';
 
 const StyledChipList = styled.div`
   display: flex;
@@ -26,16 +27,26 @@ type CallParticipantListProps = {
 };
 
 const CallParticipantList = ({ callRecordingId }: CallParticipantListProps) => {
+  const { t } = useTranslate();
   const callParticipantsState = useCallParticipants(callRecordingId);
 
-  if (callParticipantsState.status !== 'loaded') {
+  if (callParticipantsState.status === 'loading') {
+    return (
+      <StyledChipSkeleton
+        aria-busy
+        aria-label={t('Loading call participants')}
+        $width={themeCssVariables.spacing[24]}
+      />
+    );
+  }
+
+  if (callParticipantsState.status === 'error') {
     return null;
   }
 
   const { items } = buildCallParticipantDisplayItems({
     participants: callParticipantsState.participants,
     areRelationsLoaded: callParticipantsState.areRelationsLoaded,
-    showUnmatchedAttendees: isShowUnmatchedAttendeesEnabled(),
   });
 
   if (items.length === 0) {

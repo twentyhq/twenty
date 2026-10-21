@@ -565,7 +565,7 @@ msgstr "يرغب {appDisplayName} في:"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "{appName} preferences"
 msgstr "تفضيلات {appName}"
 
@@ -1571,7 +1571,7 @@ msgstr "الوصول إلى بيانات مساحة العمل من عميل MCP
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "الحساب"
 
@@ -3430,7 +3430,9 @@ msgid "Apostrophe and dot"
 msgstr "الفاصلة العليا والنقطة"
 
 #. js-lingui-id: LMUw1U
+#: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -3459,8 +3461,10 @@ msgstr "سجلات التطبيق"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "App preferences"
 msgstr "تفضيلات التطبيق"
 
@@ -3512,6 +3516,7 @@ msgstr "تطبيق"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 msgid "Application details"
 msgstr "تفاصيل التطبيق"
 
@@ -3622,6 +3627,7 @@ msgstr "النطاقات المعتمدة"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Apps"
 msgstr "التطبيقات"
@@ -4632,6 +4638,11 @@ msgstr "تصفح سوق التطبيقات"
 msgid "BTREE (default, good for sorting and equality)"
 msgstr "BTREE (افتراضي، جيد للفرز والمساواة)"
 
+#. js-lingui-id: 3+uH0v
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Build an app"
+msgstr ""
+
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Build and runtime metadata for this component"
@@ -4813,7 +4824,7 @@ msgstr "caldav.example.com"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Calendar"
 msgstr "تقويم"
 
@@ -5285,6 +5296,11 @@ msgstr "القنوات"
 msgid "Chart"
 msgstr "الرسم البياني"
 
+#. js-lingui-id: kSRPkz
+#: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Chart type"
+msgstr "نوع المخطط"
+
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -5647,6 +5663,11 @@ msgstr "مسح القيمة المخزنة"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "إفراغ الحقل أو \"X\" للعودة إلى قيمة البيئة/القيمة الافتراضية."
+
+#. js-lingui-id: vPeGqc
+#: src/pages/settings/developers/SettingsDevelopers.tsx
+msgid "CLI"
+msgstr ""
 
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -6012,6 +6033,11 @@ msgstr "عنصر قائمة الأوامر"
 msgid "Command menu items"
 msgstr "عناصر قائمة الأوامر"
 
+#. js-lingui-id: 6anYzO
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Command reference"
+msgstr ""
+
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Commands"
@@ -6019,6 +6045,7 @@ msgstr "أوامر"
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "تم نسخ الأوامر إلى الحافظة"
 
@@ -6190,9 +6217,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "تهيئة نوع نشاط الجدول الزمني هذا"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "تكوين"
 
@@ -6392,6 +6419,11 @@ msgstr "اربط عملاء MCP إضافيين باستخدام روابط ال�
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "اربط Google أو Microsoft أو CalDAV وفعّل مزامنة التقويم قبل إنشاء حدث."
+
+#. js-lingui-id: u6ylxz
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Connect to this workspace"
+msgstr ""
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -6698,6 +6730,7 @@ msgstr "نسخ الأمر"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Copy commands"
 msgstr "نسخ الأوامر"
 
@@ -7430,11 +7463,6 @@ msgstr "بيانات الاعتماد والنطاقات لتدفقات تفوي
 msgid "Credit balance"
 msgstr "رصيد الاعتمادات"
 
-#. js-lingui-id: XLyliv
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Credit consumption"
-msgstr "استهلاك الأرصدة"
-
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit consumption for the current period"
@@ -7545,9 +7573,13 @@ msgstr "أرصدة مستخدمة"
 
 #. js-lingui-id: yLljbQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used"
 msgstr "أرصدة مستخدمة"
+
+#. js-lingui-id: biuDTg
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Credits used this month"
+msgstr "الأرصدة المستخدمة هذا الشهر"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -8051,7 +8083,6 @@ msgid "Data on display"
 msgstr "البيانات المعروضة"
 
 #. js-lingui-id: /qrjU8
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -9262,6 +9293,7 @@ msgstr "تنزيل نموذج"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
+#: src/modules/ai/components/AiChatThreadSubtitle.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps.ts
@@ -9889,7 +9921,7 @@ msgstr "الرسائل الإلكترونية"
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "رسائل البريد الإلكتروني"
@@ -10150,6 +10182,7 @@ msgstr "أدخل قيمة سرية جديدة"
 #. js-lingui-id: u2fAme
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Enter a number"
 msgstr "أدخل رقمًا"
 
@@ -10745,6 +10778,49 @@ msgstr "كل ساعة"
 msgid "every minute"
 msgstr "كل دقيقة"
 
+#. js-lingui-id: SpXUci
+#: src/modules/applications/utils/getStandardApplicationReadme.ts
+msgid ""
+"Every Twenty workspace starts with this app. It defines the shape of your CRM: the core objects, how they relate to each other, and the views and record pages your team works in. Marketplace apps, AI agents and your own customizations all build on top of it.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **People & Companies**: your contacts and the accounts they belong to\n"
+"- **Opportunities**: your sales pipeline, stage by stage\n"
+"- **Notes & Tasks**: activity and follow-ups attached to any record\n"
+"- **Emails & Calendar events**: synced from your connected accounts and linked to the right records\n"
+"- **Workflows & Dashboards**: automation and reporting on top of your data\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Installed on every workspace and maintained by Twenty\n"
+"- Cannot be uninstalled: the rest of the workspace is built on it\n"
+"- Your own objects, fields and layouts live in the **Custom** app\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"تبدأ كل مساحة عمل في Twenty بهذا التطبيق. وهو يحدد هيكل نظام CRM لديك: الكائنات الأساسية، وكيف ترتبط ببعضها، وطرق العرض وصفحات السجلات التي يعمل فيها فريقك. تستند إليه تطبيقات Marketplace ووكلاء الذكاء الاصطناعي وتخصيصاتك الخاصة جميعًا.\n"
+"\n"
+"## ✨ ما الذي تحصل عليه\n"
+"\n"
+"- **الأشخاص والشركات**: جهات اتصالك والحسابات التي تنتمي إليها\n"
+"- **الفرص**: مسار مبيعاتك، مرحلة تلو الأخرى\n"
+"- **الملاحظات والمهام**: النشاطات والمتابعات المرفقة بأي سجل\n"
+"- **رسائل البريد الإلكتروني وأحداث التقويم**: تُزامَن من حساباتك المتصلة وتُربَط بالسجلات المناسبة\n"
+"- **سير العمل ولوحات المعلومات**: الأتمتة وإعداد التقارير استنادًا إلى بياناتك\n"
+"\n"
+"## 📌 من المفيد معرفته\n"
+"\n"
+"- مثبّت على كل مساحة عمل وتتم صيانته بواسطة Twenty\n"
+"- لا يمكن إلغاء تثبيته: إذ تستند إليه بقية مساحة العمل\n"
+"- توجد الكائنات والحقول والتخطيطات الخاصة بك في تطبيق **Custom**\n"
+"\n"
+"## 💳 الفوترة\n"
+"\n"
+"**مجاني**: بلا أرصدة ولا قياس للاستخدام."
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10763,6 +10839,45 @@ msgstr "كل من لديه حق الوصول إلى {objectLabelPlural}"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Everything"
 msgstr "كل شيء"
+
+#. js-lingui-id: BnV3Mw
+#: src/modules/applications/utils/getCustomApplicationReadme.ts
+msgid ""
+"Everything you build directly in this workspace lives here. Every object, field, view or automation you add on top of the Standard app is grouped under Custom, so your schema changes, interface changes and workspace-specific logic stay in one place.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **Custom objects and fields**: your own data model, next to the standard objects\n"
+"- **Views, navigation items and record layouts**: the screens that shape how your team works\n"
+"- **Logic functions, front components and agents**: automation and extensions specific to this workspace\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Created with your workspace and unique to it\n"
+"- Cannot be uninstalled: it holds your workspace's customizations\n"
+"- Customizations you make from the Twenty interface are saved here automatically\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"كل ما تنشئه مباشرةً في مساحة العمل هذه يوجد هنا. يُجمَّع كل كائن أو حقل أو عرض أو أتمتة تضيفها إلى تطبيق Standard ضمن Custom، بحيث تبقى تغييرات المخطط وتغييرات الواجهة والمنطق الخاص بمساحة العمل في مكان واحد.\n"
+"\n"
+"## ✨ ما الذي تحصل عليه\n"
+"\n"
+"- **الكائنات والحقول المخصصة**: نموذج بياناتك الخاص، إلى جانب الكائنات القياسية\n"
+"- **العروض وعناصر التنقل وتخطيطات السجلات**: الشاشات التي تشكل طريقة عمل فريقك\n"
+"- **دوال المنطق ومكونات الواجهة والوكلاء**: الأتمتة والامتدادات الخاصة بمساحة العمل هذه\n"
+"\n"
+"## 📌 من المفيد معرفته\n"
+"\n"
+"- يُنشأ مع مساحة عملك ويكون فريدًا لها\n"
+"- لا يمكن إلغاء تثبيته: فهو يحتوي على تخصيصات مساحة عملك\n"
+"- تُحفظ التخصيصات التي تجريها من واجهة Twenty هنا تلقائيًا\n"
+"\n"
+"## 💳 الفوترة\n"
+"\n"
+"**مجاني**: بلا أرصدة أو قياس للاستخدام."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -10808,7 +10923,6 @@ msgid "Executed copies"
 msgstr "النسخ المنفَّذة"
 
 #. js-lingui-id: t+R8+P
-#: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
 msgstr "التنفيذ"
@@ -10976,6 +11090,11 @@ msgstr "اشرح سير العمل هذا"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "اشرح ما يفعله سير العمل هذا، خطوة بخطوة."
+
+#. js-lingui-id: xQlpmk
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Explore your data"
+msgstr ""
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -11602,6 +11721,7 @@ msgstr "القيمة الاحتياطية"
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
@@ -12455,11 +12575,12 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -12597,7 +12718,7 @@ msgid "Global search"
 msgstr "بحث عام"
 
 #. js-lingui-id: z9H6KR
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Gmail and Calendar"
 msgstr "Gmail والتقويم"
 
@@ -13037,7 +13158,7 @@ msgstr "إخفاء الحقول"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Hide group {0}"
 msgstr "إخفاء المجموعة {0}"
 
@@ -13093,56 +13214,10 @@ msgstr "مخطط أعمدة أفقية"
 msgid "Horizontal separator line"
 msgstr "خط فاصل أفقي"
 
-#. js-lingui-id: WOXdI6
+#. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
-"#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
-"- Custom objects and fields for your own data model\n"
-"- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
-"#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"استضِف تخصيصات وتجاوزات مساحة العمل لديك.\n"
-"\n"
-"#### ما الذي يتضمنه\n"
-"يتم تجميع كل إضافة تنشئها فوق التطبيق القياسي ضمن مخصص. ويحتفظ بتغييرات المخطط، وتغييرات الواجهة، والمنطق الخاص بمساحة العمل في مكان واحد.\n"
-"\n"
-"- كائنات وحقول مخصصة لنموذج البيانات الخاص بك\n"
-"- العروض، وعناصر التنقل، ومخططات السجلات التي تشكّل أسلوب عمل فريقك\n"
-"- دوال المنطق، ومكوّنات الواجهة الأمامية، والوكلاء الذين يقومون بأتمتة مساحة العمل أو توسيعها\n"
-"\n"
-"#### لماذا يوجد\n"
-"استخدم هذا التطبيق للتخصيصات الخاصة بمساحة العمل التي ينبغي أن تبقى محليّة ضمن هذه المساحة.\n"
-"\n"
-"إذا كنت تهيّئ مساحة عمل واحدة لنشاط تجاري واحد، فاحتفظ بها هنا. أمّا إذا كنت تبني تطبيقًا تجاريًا قابلًا لإعادة الاستخدام وله نموذج بيانات وواجهة مستخدم وأتمتة خاصة به، ويتعيّن إصداره ومشاركته أو تثبيته عبر مساحات عمل متعددة، فأنشئ تطبيقًا مخصصًا مستقلًا بدلًا من ذلك.\n"
-"\n"
-"#### أنشئ تطبيقك الخاص\n"
-"\n"
-"ولّد هيكل تطبيق جديد بأمر واحد:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"اطّلع على [دليل البدء](https://twenty.com/developers/extend/apps/getting-started) للاطلاع على الشرح الكامل، وعلى [بناء التطبيقات](https://twenty.com/developers/extend/apps/building) لواجهات برمجة التطبيقات `defineApplication` / `defineEntity`."
+msgid "Host your workspace's customizations and overrides."
+msgstr "استضف تخصيصات مساحة عملك وتجاوزاتها."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -13410,7 +13485,7 @@ msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "الصورة \"{fileName}\" تتجاوز {maxUploadSize}"
 
 #. js-lingui-id: Grur3I
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "IMAP"
 msgstr "IMAP"
 
@@ -13810,6 +13885,11 @@ msgstr "رؤى: اتجاهات الصناعة وأفضل الممارسات"
 msgid "Insights: The latest in industrial equipment and tools"
 msgstr "رؤى: أحدث ما في المعدات والأدوات الصناعية"
 
+#. js-lingui-id: IaiiK0
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Inspect the data model, query records and send raw API requests."
+msgstr ""
+
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13848,11 +13928,6 @@ msgstr "رابط التثبيت"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Install shared tarball app"
 msgstr "تثبيت تطبيق tarball مشترك"
-
-#. js-lingui-id: Ajf8Sb
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Install statistics"
-msgstr "إحصاءات التثبيت"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14077,6 +14152,7 @@ msgstr "قيمة الدقيقة غير صحيحة \"{newMinute}\". يجب أن �
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Invalid number"
 msgstr "رقم غير صالح"
 
@@ -15480,11 +15556,6 @@ msgstr "يتم الاحتفاظ بالسجلات لمدة {proPlanEventLogRetent
 msgid "Logs are kept {retentionLabel}."
 msgstr "يتم الاحتفاظ بالسجلات لمدة {retentionLabel}."
 
-#. js-lingui-id: vOd7ZN
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Logs console"
-msgstr "وحدة تحكم السجلات"
-
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -15599,8 +15670,8 @@ msgid "Manage connections used by this app to call {0}."
 msgstr "أدر الاتصالات التي يستخدمها هذا التطبيق لاستدعاء {0}."
 
 #. js-lingui-id: bjuasY
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Manage events"
 msgstr "إدارة الأحداث"
 
@@ -16158,8 +16229,13 @@ msgstr "رابط التفويض مفقود"
 msgid "Missing calendar permission."
 msgstr "إذن التقويم غير متوفر."
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "التكوين مفقود"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "تكوين مفقود: {missingLabels}"
 
@@ -19006,7 +19082,7 @@ msgid "Outcome"
 msgstr "النتيجة"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Outlook"
 msgstr "أوتلوك"
 
@@ -20273,12 +20349,13 @@ msgstr "اطّلع على سجلّ التغييرات"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Read documentation"
 msgstr "اقرأ الوثائق"
 
 #. js-lingui-id: BksH/i
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Read emails"
 msgstr "قراءة رسائل البريد الإلكتروني"
 
@@ -21442,12 +21519,12 @@ msgstr "الاحتفاظ"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "إعادة المحاولة"
 
@@ -21886,6 +21963,11 @@ msgstr "احفظ السجل قبل إرفاق ملف"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "احفظ تغييراتك أولاً"
+
+#. js-lingui-id: w9O5DJ
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
+msgstr ""
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -22913,8 +22995,8 @@ msgid "Send Email"
 msgstr "إرسال البريد الإلكتروني"
 
 #. js-lingui-id: YUviZE
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Send emails"
 msgstr "إرسال رسائل البريد الإلكتروني"
 
@@ -23385,11 +23467,6 @@ msgstr "إظهار {0}"
 msgid "Show {hiddenOptionalCount} optional arguments"
 msgstr "إظهار {hiddenOptionalCount} وسيطة اختيارية"
 
-#. js-lingui-id: 3MO9Sa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr "إظهار وحدة تحكم للسجلات في أسفل التطبيق في الوضع المتقدم."
-
 #. js-lingui-id: lZw9AX
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show all"
@@ -23431,7 +23508,7 @@ msgstr "إظهار الحقل"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Show group {0}"
 msgstr "إظهار المجموعة {0}"
 
@@ -23509,6 +23586,11 @@ msgstr "عناصر الشريط الجانبي"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "تسجيل الدخول"
+
+#. js-lingui-id: A/eMZx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
+msgstr ""
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -24469,6 +24551,9 @@ msgid "Suggested"
 msgstr "مقترح"
 
 #. js-lingui-id: 8J32PY
+#: src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+#: src/modules/ui/suggestion/components/SuggestionMenu.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
 msgstr "اقتراحات"
@@ -24595,6 +24680,21 @@ msgstr "مزامنة"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "مزامنة الكتالوج"
+
+#. js-lingui-id: btyblj
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
+msgstr "زامن رسائل البريد الإلكتروني وأحداث التقويم من أي خادم IMAP أو SMTP أو CalDAV."
+
+#. js-lingui-id: iC1LmN
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Google accounts."
+msgstr "زامن رسائل البريد الإلكتروني وأحداث التقويم من حسابات Google الخاصة بك."
+
+#. js-lingui-id: yHdFOB
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Microsoft accounts."
+msgstr "زامن رسائل البريد الإلكتروني وأحداث التقويم من حسابات Microsoft الخاصة بك."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24931,70 +25031,10 @@ msgstr "نقطة نهاية واجهة برمجة التطبيقات لمزود�
 msgid "The AWS region for Bedrock"
 msgstr "منطقة AWS الخاصة بـ Bedrock"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
-"#### Included objects\n"
-"- **People & Companies**: contact and account records\n"
-"- **Opportunities**: your sales pipeline\n"
-"- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"نموذج البيانات الأساسي الذي تعمل عليه كل مساحة عمل في Twenty.\n"
-"\n"
-"#### معنى \"الأساس\"\n"
-"\n"
-"كل مساحة عمل في Twenty تبدأ بهذه المجموعة من العناصر. تحدّد شكل CRM الخاص بك، بما في ذلك العلاقات والنشاط والتقارير. كل شيء آخر — بما في ذلك تطبيقات السوق ووكلاء الذكاء الاصطناعي والعناصر المخصصة — يندمج معها.\n"
-"\n"
-"#### العناصر المتضمنة\n"
-"- **الأشخاص والشركات**: سجلات جهات الاتصال والحسابات\n"
-"- **الفرص**: خط مبيعاتك\n"
-"- **الملاحظات والمهام**: النشاط والمتابعات\n"
-"- **سير العمل ولوحات القيادة**: الأتمتة والتقارير\n"
-"\n"
-"أزل هذا التطبيق وباقي Twenty لن يكون له ما يبنى عليه.\n"
-"\n"
-"#### ابنِ تطبيقك الخاص\n"
-"\n"
-"وسّع Twenty بعناصرك وحقولك ودوال المنطق أو مهارات الذكاء الاصطناعي الخاصة بك. أنشئ هيكل تطبيق جديد بأمر واحد:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"ثم داخل المجلد:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"راجع [دليل البدء](https://twenty.com/developers/extend/apps/getting-started) للشرح الكامل، و[بناء التطبيقات](https://twenty.com/developers/extend/apps/building) لواجهات `defineApplication` / `defineEntity`."
+msgid "The base data model every Twenty workspace runs on."
+msgstr "نموذج البيانات الأساسي الذي تعمل عليه كل مساحة عمل في Twenty."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25045,6 +25085,11 @@ msgstr "رمز البلد الافتراضي للأرقام الهاتفية ا�
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "البلد الافتراضي للعناوين الجديدة"
+
+#. js-lingui-id: 5n5DR8
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
+msgstr "لا يمكن تعيين الدور الافتراضي لمفاتيح API أو الوكلاء الخاصين بهذا الدور. أعد تعيينهم إلى دور آخر أولًا"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -25431,7 +25476,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "تعذّر العثور على هذا التطبيق. قد أُزيل من كتالوج السوق."
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "تعذر تحميل هذا التطبيق. تحقق من اتصالك وحاول مرة أخرى."
 
@@ -26055,6 +26100,12 @@ msgstr "عدد المستلمين كبير جدًا ({0}/{1})."
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "عدد كبير جدًا من السجلات. يُسمح بما يصل إلى {maxRecordsString}"
 
+#. js-lingui-id: sjgzcA
+#: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+msgid "Tool call details"
+msgstr "تفاصيل استدعاء الأداة"
+
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -26128,11 +26179,6 @@ msgstr "الإجمالي"
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "Total Count"
 msgstr "العدد الإجمالي"
-
-#. js-lingui-id: TwCQ5l
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Total credits used"
-msgstr "إجمالي الأرصدة المستخدمة"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -26340,12 +26386,18 @@ msgstr "يُشغِّل الوظيفة عبر طلب HTTP"
 #. js-lingui-id: c+xCSz
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 msgid "True"
 msgstr "صحيح"
+
+#. js-lingui-id: qaK9ds
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
+msgid "True or false"
+msgstr ""
 
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -27537,10 +27589,10 @@ msgstr "تحليلات الاستخدام تتطلب ClickHouse. تواصل مع
 msgid "Usage analytics will appear here once you start using credits."
 msgstr "ستظهر هنا تحليلات الاستخدام بمجرد أن تبدأ في استخدام الأرصدة."
 
-#. js-lingui-id: h4601z
+#. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr "الاستخدام المنسوب إلى هذا التطبيق في مساحات العمل التي ثبّتته حاليًا خلال الفترة المحددة. يُحدَّث كل عشر دقائق."
+msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
+msgstr "الاستخدام المنسوب إلى هذا التطبيق في مساحات العمل الحالية التي تم تثبيته فيها منذ بداية الشهر (UTC). يُحدَّث كل عشر دقائق."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27690,8 +27742,9 @@ msgstr "مفيد لجداول الربط/المحورية"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -28884,6 +28937,7 @@ msgstr "سير العمل"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29377,6 +29431,11 @@ msgstr "يتلقّى المعالج لديك هذا الكائن. يحتوي \"b
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "يتلقّى المعالج لديك هذا الكائن. يكون \"body\" فارغًا لأن طلبات GET لا تحمل حمولة."
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "تعذر تحميل تطبيقاتك المثبتة. تحقق من اتصالك وحاول مرة أخرى."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx

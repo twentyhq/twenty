@@ -565,7 +565,7 @@ msgstr "{appDisplayName} muốn:"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "{appName} preferences"
 msgstr "Tùy chọn {appName}"
 
@@ -1571,7 +1571,7 @@ msgstr "Truy cập dữ liệu không gian làm việc của bạn từ ứng d�
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Account"
 msgstr "Tài khoản"
 
@@ -3430,7 +3430,9 @@ msgid "Apostrophe and dot"
 msgstr "Dấu nháy đơn và dấu chấm"
 
 #. js-lingui-id: LMUw1U
+#: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -3459,8 +3461,10 @@ msgstr "Nhật ký ứng dụng"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "App preferences"
 msgstr "Tùy chọn ứng dụng"
 
@@ -3512,6 +3516,7 @@ msgstr "Ứng dụng"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 msgid "Application details"
 msgstr "Chi tiết ứng dụng"
 
@@ -3622,6 +3627,7 @@ msgstr "Miền Đã Được Phê Duyệt"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Apps"
 msgstr "Ứng dụng"
@@ -4632,6 +4638,11 @@ msgstr "Duyệt chợ ứng dụng"
 msgid "BTREE (default, good for sorting and equality)"
 msgstr "BTREE (mặc định, tốt cho sắp xếp và so sánh bằng)"
 
+#. js-lingui-id: 3+uH0v
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Build an app"
+msgstr ""
+
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Build and runtime metadata for this component"
@@ -4813,7 +4824,7 @@ msgstr "caldav.example.com"
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/views/types/ViewType.ts
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 msgid "Calendar"
 msgstr "Lịch"
 
@@ -5285,6 +5296,11 @@ msgstr "Kênh"
 msgid "Chart"
 msgstr "Biểu đồ"
 
+#. js-lingui-id: kSRPkz
+#: src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx
+msgid "Chart type"
+msgstr "Loại biểu đồ"
+
 #. js-lingui-id: rlwve5
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
@@ -5647,6 +5663,11 @@ msgstr "Xóa giá trị đã lưu"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Xóa trường hoặc \"X\" để quay về giá trị môi trường/mặc định."
+
+#. js-lingui-id: vPeGqc
+#: src/pages/settings/developers/SettingsDevelopers.tsx
+msgid "CLI"
+msgstr ""
 
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -6012,6 +6033,11 @@ msgstr "Mục menu lệnh"
 msgid "Command menu items"
 msgstr "Các mục menu lệnh"
 
+#. js-lingui-id: 6anYzO
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Command reference"
+msgstr ""
+
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Commands"
@@ -6019,6 +6045,7 @@ msgstr "Lệnh"
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "Đã sao chép lệnh vào bảng tạm"
 
@@ -6190,9 +6217,9 @@ msgid "Configuration of this timeline activity type"
 msgstr "Cấu hình của loại hoạt động dòng thời gian này"
 
 #. js-lingui-id: iAL9tI
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues.tsx
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Configure"
 msgstr "Cấu hình"
 
@@ -6392,6 +6419,11 @@ msgstr "Kết nối thêm các máy khách MCP bằng liên kết cài đặt ho
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Kết nối Google, Microsoft hoặc CalDAV và bật đồng bộ hóa lịch trước khi tạo sự kiện."
+
+#. js-lingui-id: u6ylxz
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Connect to this workspace"
+msgstr ""
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -6698,6 +6730,7 @@ msgstr "Sao chép lệnh"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Copy commands"
 msgstr "Sao chép lệnh"
 
@@ -7430,11 +7463,6 @@ msgstr "Thông tin xác thực và phạm vi cho các luồng ủy quyền OAuth
 msgid "Credit balance"
 msgstr "Số dư tín dụng"
 
-#. js-lingui-id: XLyliv
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Credit consumption"
-msgstr "Tiêu thụ tín dụng"
-
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit consumption for the current period"
@@ -7545,9 +7573,13 @@ msgstr "tín dụng đã sử dụng"
 
 #. js-lingui-id: yLljbQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used"
 msgstr "Tín dụng đã sử dụng"
+
+#. js-lingui-id: biuDTg
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Credits used this month"
+msgstr "Tín dụng đã sử dụng trong tháng này"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -8051,7 +8083,6 @@ msgid "Data on display"
 msgstr "Dữ liệu hiển thị"
 
 #. js-lingui-id: /qrjU8
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -9262,6 +9293,7 @@ msgstr "Tải tệp mẫu"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
+#: src/modules/ai/components/AiChatThreadSubtitle.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps.ts
@@ -9889,7 +9921,7 @@ msgstr "emails"
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Emails"
 msgstr "Thư điện tử"
@@ -10150,6 +10182,7 @@ msgstr "Nhập giá trị secret mới"
 #. js-lingui-id: u2fAme
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Enter a number"
 msgstr "Nhập một số"
 
@@ -10745,6 +10778,49 @@ msgstr "mỗi giờ"
 msgid "every minute"
 msgstr "mỗi phút"
 
+#. js-lingui-id: SpXUci
+#: src/modules/applications/utils/getStandardApplicationReadme.ts
+msgid ""
+"Every Twenty workspace starts with this app. It defines the shape of your CRM: the core objects, how they relate to each other, and the views and record pages your team works in. Marketplace apps, AI agents and your own customizations all build on top of it.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **People & Companies**: your contacts and the accounts they belong to\n"
+"- **Opportunities**: your sales pipeline, stage by stage\n"
+"- **Notes & Tasks**: activity and follow-ups attached to any record\n"
+"- **Emails & Calendar events**: synced from your connected accounts and linked to the right records\n"
+"- **Workflows & Dashboards**: automation and reporting on top of your data\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Installed on every workspace and maintained by Twenty\n"
+"- Cannot be uninstalled: the rest of the workspace is built on it\n"
+"- Your own objects, fields and layouts live in the **Custom** app\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Mọi không gian làm việc Twenty đều bắt đầu với ứng dụng này. Ứng dụng này xác định cấu trúc CRM của bạn: các đối tượng cốt lõi, cách chúng liên kết với nhau và các chế độ xem cũng như trang bản ghi mà nhóm của bạn làm việc. Các ứng dụng Marketplace, tác nhân AI và các tùy chỉnh riêng của bạn đều được xây dựng trên nền tảng này.\n"
+"\n"
+"## ✨ Những gì bạn nhận được\n"
+"\n"
+"- **Cá nhân & Công ty**: các liên hệ của bạn và các tài khoản mà họ thuộc về\n"
+"- **Cơ hội**: quy trình bán hàng của bạn, theo từng giai đoạn\n"
+"- **Ghi chú & Nhiệm vụ**: hoạt động và các lần theo dõi được đính kèm với bất kỳ bản ghi nào\n"
+"- **Email & Sự kiện lịch**: được đồng bộ từ các tài khoản đã kết nối của bạn và liên kết với đúng bản ghi\n"
+"- **Quy trình công việc & Bảng điều khiển**: tự động hóa và báo cáo dựa trên dữ liệu của bạn\n"
+"\n"
+"## 📌 Thông tin cần biết\n"
+"\n"
+"- Được cài đặt trên mọi không gian làm việc và do Twenty duy trì\n"
+"- Không thể gỡ cài đặt: phần còn lại của không gian làm việc được xây dựng dựa trên ứng dụng này\n"
+"- Các đối tượng, trường và bố cục riêng của bạn nằm trong ứng dụng **Tùy chỉnh**\n"
+"\n"
+"## 💳 Thanh toán\n"
+"\n"
+"**Miễn phí**: không có credit, không tính phí theo mức sử dụng."
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-core/workflows/constants/CoreWorkflowVisibilityOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -10763,6 +10839,45 @@ msgstr "Mọi người có quyền truy cập vào {objectLabelPlural}"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 msgid "Everything"
 msgstr "Mọi thứ"
+
+#. js-lingui-id: BnV3Mw
+#: src/modules/applications/utils/getCustomApplicationReadme.ts
+msgid ""
+"Everything you build directly in this workspace lives here. Every object, field, view or automation you add on top of the Standard app is grouped under Custom, so your schema changes, interface changes and workspace-specific logic stay in one place.\n"
+"\n"
+"## ✨ What you get\n"
+"\n"
+"- **Custom objects and fields**: your own data model, next to the standard objects\n"
+"- **Views, navigation items and record layouts**: the screens that shape how your team works\n"
+"- **Logic functions, front components and agents**: automation and extensions specific to this workspace\n"
+"\n"
+"## 📌 Good to know\n"
+"\n"
+"- Created with your workspace and unique to it\n"
+"- Cannot be uninstalled: it holds your workspace's customizations\n"
+"- Customizations you make from the Twenty interface are saved here automatically\n"
+"\n"
+"## 💳 Billing\n"
+"\n"
+"**Free**: no credits, no metering."
+msgstr ""
+"Mọi thứ bạn xây dựng trực tiếp trong không gian làm việc này đều nằm ở đây. Mọi đối tượng, trường, chế độ xem hoặc tự động hóa bạn thêm vào ứng dụng Standard đều được nhóm trong Custom, để các thay đổi về schema, thay đổi giao diện và logic dành riêng cho không gian làm việc của bạn ở cùng một nơi.\n"
+"\n"
+"## ✨ Những gì bạn nhận được\n"
+"\n"
+"- **Đối tượng và trường Custom**: mô hình dữ liệu riêng của bạn, bên cạnh các đối tượng tiêu chuẩn\n"
+"- **Chế độ xem, mục điều hướng và bố cục bản ghi**: các màn hình định hình cách nhóm của bạn làm việc\n"
+"- **Hàm logic, thành phần front và tác nhân**: tự động hóa và phần mở rộng dành riêng cho không gian làm việc này\n"
+"\n"
+"## 📌 Điều cần biết\n"
+"\n"
+"- Được tạo cùng với không gian làm việc của bạn và chỉ dành riêng cho không gian đó\n"
+"- Không thể gỡ cài đặt: đây là nơi chứa các tùy chỉnh của không gian làm việc\n"
+"- Các tùy chỉnh bạn thực hiện từ giao diện Twenty sẽ được tự động lưu ở đây\n"
+"\n"
+"## 💳 Thanh toán\n"
+"\n"
+"**Miễn phí**: không có credit, không đo lường mức sử dụng."
 
 #. js-lingui-id: LG6l5T
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UserTableColumn.tsx
@@ -10808,7 +10923,6 @@ msgid "Executed copies"
 msgstr "Các bản sao đã được ký kết"
 
 #. js-lingui-id: t+R8+P
-#: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
 msgstr "Thực thi"
@@ -10976,6 +11090,11 @@ msgstr "Giải thích quy trình công việc này"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Giải thích từng bước quy trình công việc này thực hiện những gì."
+
+#. js-lingui-id: xQlpmk
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Explore your data"
+msgstr ""
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -11602,6 +11721,7 @@ msgstr "Giá trị dự phòng"
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
@@ -12455,11 +12575,12 @@ msgstr "Gemini CLI"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/general/SettingsGeneral.tsx
@@ -12597,7 +12718,7 @@ msgid "Global search"
 msgstr "Tìm kiếm toàn hệ thống"
 
 #. js-lingui-id: z9H6KR
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Gmail and Calendar"
 msgstr "Gmail và Lịch"
 
@@ -13037,7 +13158,7 @@ msgstr "Ẩn trường"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Hide group {0}"
 msgstr "Ẩn nhóm {0}"
 
@@ -13093,56 +13214,10 @@ msgstr ""
 msgid "Horizontal separator line"
 msgstr "Đường phân cách ngang"
 
-#. js-lingui-id: WOXdI6
+#. js-lingui-id: 9MHiye
 #: src/modules/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
-"#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
-"- Custom objects and fields for your own data model\n"
-"- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
-"#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Lưu trữ các tùy chỉnh và ghi đè của không gian làm việc của bạn.\n"
-"\n"
-"#### Bao gồm những gì\n"
-"Mọi tiện ích mở rộng bạn tạo trên nền ứng dụng tiêu chuẩn đều được nhóm dưới mục Custom. Nó giữ các thay đổi về schema, thay đổi giao diện và logic dành riêng cho không gian làm việc của bạn ở một nơi.\n"
-"\n"
-"- Đối tượng và trường tùy chỉnh cho mô hình dữ liệu riêng của bạn\n"
-"- Chế độ xem, mục điều hướng và bố cục bản ghi định hình cách đội ngũ của bạn làm việc\n"
-"- Hàm logic, các thành phần front-end và tác tử giúp tự động hóa hoặc mở rộng không gian làm việc\n"
-"\n"
-"#### Vì sao có ứng dụng này\n"
-"Hãy dùng ứng dụng này cho các tùy chỉnh dành riêng cho không gian làm việc nên chỉ lưu cục bộ trong không gian này.\n"
-"\n"
-"Nếu bạn đang định hình một không gian làm việc cho một doanh nghiệp, hãy giữ nó ở đây. Nếu bạn đang xây dựng một ứng dụng doanh nghiệp có thể tái sử dụng với mô hình dữ liệu, giao diện người dùng (UI) và tự động hóa riêng cần được quản lý phiên bản, chia sẻ hoặc cài đặt trên nhiều không gian làm việc, hãy tạo một ứng dụng riêng biệt.\n"
-"\n"
-"#### Tự xây dựng ứng dụng của bạn\n"
-"\n"
-"Tạo khung một ứng dụng mới chỉ với một lệnh:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Xem [Hướng dẫn Bắt đầu](https://twenty.com/developers/extend/apps/getting-started) để biết quy trình chi tiết, và [Xây dựng Ứng dụng](https://twenty.com/developers/extend/apps/building) cho các API `defineApplication` / `defineEntity`."
+msgid "Host your workspace's customizations and overrides."
+msgstr "Lưu trữ các tùy chỉnh và ghi đè của không gian làm việc của bạn."
 
 #. js-lingui-id: yY8wAv
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -13410,7 +13485,7 @@ msgid "Image \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Hình ảnh \"{fileName}\" vượt quá {maxUploadSize}"
 
 #. js-lingui-id: Grur3I
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "IMAP"
 msgstr "IMAP"
 
@@ -13810,6 +13885,11 @@ msgstr "Thông tin chuyên sâu: Xu hướng ngành và các phương pháp hay 
 msgid "Insights: The latest in industrial equipment and tools"
 msgstr "Thông tin chuyên sâu: Thiết bị và công cụ công nghiệp mới nhất"
 
+#. js-lingui-id: IaiiK0
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Inspect the data model, query records and send raw API requests."
+msgstr ""
+
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13848,11 +13928,6 @@ msgstr "Liên kết cài đặt"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Install shared tarball app"
 msgstr "Cài đặt ứng dụng tarball được chia sẻ"
-
-#. js-lingui-id: Ajf8Sb
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Install statistics"
-msgstr "Thống kê cài đặt"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14077,6 +14152,7 @@ msgstr "Giá trị phút \"{newMinute}\" không hợp lệ. Phải là số nguy
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Invalid number"
 msgstr "Số không hợp lệ"
 
@@ -15480,11 +15556,6 @@ msgstr "Nhật ký được lưu giữ trong {proPlanEventLogRetentionInHours} g
 msgid "Logs are kept {retentionLabel}."
 msgstr "Nhật ký được lưu giữ trong {retentionLabel}."
 
-#. js-lingui-id: vOd7ZN
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Logs console"
-msgstr "Bảng điều khiển nhật ký"
-
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -15599,8 +15670,8 @@ msgid "Manage connections used by this app to call {0}."
 msgstr "Quản lý các kết nối mà ứng dụng này sử dụng để gọi {0}."
 
 #. js-lingui-id: bjuasY
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Manage events"
 msgstr "Quản lý sự kiện"
 
@@ -16158,8 +16229,13 @@ msgstr "Thiếu URL ủy quyền"
 msgid "Missing calendar permission."
 msgstr "Thiếu quyền truy cập lịch."
 
+#. js-lingui-id: XLNNcv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppStatusCell.tsx
+msgid "Missing configuration"
+msgstr "Thiếu cấu hình"
+
 #. js-lingui-id: kgDu74
-#: src/pages/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
 msgid "Missing configuration: {missingLabels}"
 msgstr "Thiếu cấu hình: {missingLabels}"
 
@@ -19006,7 +19082,7 @@ msgid "Outcome"
 msgstr "Kết quả"
 
 #. js-lingui-id: gdC3cZ
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Outlook"
 msgstr "Outlook"
 
@@ -20273,12 +20349,13 @@ msgstr "Xem nhật ký thay đổi"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Read documentation"
 msgstr "Đọc tài liệu"
 
 #. js-lingui-id: BksH/i
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Read emails"
 msgstr "Đọc email"
 
@@ -21442,12 +21519,12 @@ msgstr "Thời gian lưu giữ"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingVideoPlayer.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 #: src/pages/onboarding/PaymentSuccess.tsx
 #: src/pages/onboarding/WorkspaceActivation.tsx
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "Retry"
 msgstr "Thử lại"
 
@@ -21886,6 +21963,11 @@ msgstr "Lưu bản ghi trước khi đính kèm tệp"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "Trước tiên, hãy lưu các thay đổi của bạn"
+
+#. js-lingui-id: w9O5DJ
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
+msgstr ""
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -22913,8 +22995,8 @@ msgid "Send Email"
 msgstr "Gửi Email"
 
 #. js-lingui-id: YUviZE
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
-#: src/modules/settings/app-preferences/constants/NativeAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
 msgid "Send emails"
 msgstr "Gửi email"
 
@@ -23385,11 +23467,6 @@ msgstr "Hiển thị {0}"
 msgid "Show {hiddenOptionalCount} optional arguments"
 msgstr "Hiển thị {hiddenOptionalCount} đối số không bắt buộc"
 
-#. js-lingui-id: 3MO9Sa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr "Hiển thị bảng điều khiển nhật ký ở cuối ứng dụng trong chế độ Nâng cao."
-
 #. js-lingui-id: lZw9AX
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show all"
@@ -23431,7 +23508,7 @@ msgstr "Hiển thị trường"
 
 #. js-lingui-id: JObkI8
 #. placeholder {0}: groupValue ?? ''
-#: src/modules/object-record/record-group/components/RecordGroupMenuItemDraggable.tsx
+#: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
 msgid "Show group {0}"
 msgstr "Hiện nhóm {0}"
 
@@ -23509,6 +23586,11 @@ msgstr "Các mục thanh bên"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Đăng nhập"
+
+#. js-lingui-id: A/eMZx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
+msgstr ""
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -24469,6 +24551,9 @@ msgid "Suggested"
 msgstr "Đề xuất"
 
 #. js-lingui-id: 8J32PY
+#: src/modules/blocknote-editor/components/CustomMentionMenu.tsx
+#: src/modules/blocknote-editor/components/CustomSlashMenu.tsx
+#: src/modules/ui/suggestion/components/SuggestionMenu.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleHelperPanel.tsx
 msgid "Suggestions"
 msgstr "Đề xuất"
@@ -24595,6 +24680,21 @@ msgstr "Đồng bộ hóa"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Đồng bộ danh mục"
+
+#. js-lingui-id: btyblj
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from any IMAP, SMTP and CalDAV server."
+msgstr "Đồng bộ email và sự kiện lịch từ bất kỳ máy chủ IMAP, SMTP và CalDAV nào."
+
+#. js-lingui-id: iC1LmN
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Google accounts."
+msgstr "Đồng bộ email và sự kiện lịch từ các tài khoản Google của bạn."
+
+#. js-lingui-id: yHdFOB
+#: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
+msgid "Sync emails and calendar events from your Microsoft accounts."
+msgstr "Đồng bộ email và sự kiện lịch từ các tài khoản Microsoft của bạn."
 
 #. js-lingui-id: phtAw0
 #: src/modules/settings/components/__stories__/SettingsRadioCards.stories.tsx
@@ -24931,70 +25031,10 @@ msgstr "API endpoint cho nhà cung cấp tương thích OpenAI của bạn"
 msgid "The AWS region for Bedrock"
 msgstr "Khu vực AWS cho Bedrock"
 
-#. js-lingui-id: HP7per
+#. js-lingui-id: bEyeZg
 #: src/modules/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
-"#### Included objects\n"
-"- **People & Companies**: contact and account records\n"
-"- **Opportunities**: your sales pipeline\n"
-"- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Mô hình dữ liệu cơ sở làm nền cho mọi không gian làm việc Twenty.\n"
-"\n"
-"#### \\\"Nền tảng\\\" nghĩa là gì\n"
-"\n"
-"Mỗi không gian làm việc Twenty bắt đầu với tập hợp đối tượng này. Chúng xác định hình hài CRM của bạn, bao gồm mối quan hệ, hoạt động và báo cáo. Mọi thứ khác, bao gồm các ứng dụng marketplace, tác tử AI và đối tượng tùy chỉnh, đều tích hợp vào chúng.\n"
-"\n"
-"#### Các đối tượng đi kèm\n"
-"- **Người & Công ty**: bản ghi liên hệ và tài khoản\n"
-"- **Cơ hội**: pipeline bán hàng của bạn\n"
-"- **Ghi chú & Nhiệm vụ**: hoạt động và các bước theo dõi\n"
-"- **Quy trình công việc & Bảng điều khiển**: tự động hóa và báo cáo\n"
-"\n"
-"Gỡ ứng dụng này đi thì phần còn lại của Twenty sẽ không còn gì để dựa vào.\n"
-"\n"
-"#### Tự xây dựng ứng dụng của bạn\n"
-"\n"
-"Mở rộng Twenty với các đối tượng, trường, hàm logic hoặc kỹ năng AI của riêng bạn. Tạo khung một ứng dụng mới chỉ với một lệnh:\n"
-"\n"
-"```bash\n"
-"npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Sau đó, trong thư mục:\n"
-"\n"
-"```bash\n"
-"cd my-twenty-app\n"
-"yarn twenty dev\n"
-"```\n"
-"\n"
-"Xem [Hướng dẫn Bắt đầu](https://twenty.com/developers/extend/apps/getting-started) để biết quy trình chi tiết, và [Xây dựng Ứng dụng](https://twenty.com/developers/extend/apps/building) cho các API `defineApplication` / `defineEntity`."
+msgid "The base data model every Twenty workspace runs on."
+msgstr "Mô hình dữ liệu cơ sở mà mọi không gian làm việc Twenty đều vận hành trên đó."
 
 #. js-lingui-id: 832YJ9
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -25045,6 +25085,11 @@ msgstr "Mã quốc gia mặc định cho số điện thoại mới."
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "The default country for new addresses"
 msgstr "Quốc gia mặc định cho địa chỉ mới"
+
+#. js-lingui-id: 5n5DR8
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
+msgid "The default role cannot be assigned to this role's API keys or agents. Reassign them to another role first"
+msgstr "Không thể gán vai trò mặc định cho khóa API hoặc tác nhân của vai trò này. Hãy gán lại chúng cho một vai trò khác trước"
 
 #. js-lingui-id: GXzV9K
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -25431,7 +25476,7 @@ msgid "This application could not be found. It may have been removed from the ma
 msgstr "Không thể tìm thấy ứng dụng này. Có thể nó đã bị xóa khỏi danh mục marketplace."
 
 #. js-lingui-id: TtWqER
-#: src/pages/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
+#: src/modules/settings/applications/components/SettingsApplicationLoadErrorBanner.tsx
 msgid "This application could not be loaded. Check your connection and try again."
 msgstr "Không thể tải ứng dụng này. Hãy kiểm tra kết nối của bạn và thử lại."
 
@@ -26055,6 +26100,12 @@ msgstr "Quá nhiều người nhận ({0}/{1})."
 msgid "Too many records. Up to {maxRecordsString} allowed"
 msgstr "Quá nhiều bản ghi. Cho phép tối đa {maxRecordsString}"
 
+#. js-lingui-id: sjgzcA
+#: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
+msgid "Tool call details"
+msgstr "Chi tiết lệnh gọi công cụ"
+
 #. js-lingui-id: YDLN0O
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -26128,11 +26179,6 @@ msgstr ""
 #: src/modules/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema.ts
 msgid "Total Count"
 msgstr "Tổng số lượng"
-
-#. js-lingui-id: TwCQ5l
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Total credits used"
-msgstr "Tổng tín dụng đã sử dụng"
 
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
@@ -26340,12 +26386,18 @@ msgstr "Kích hoạt hàm bằng yêu cầu HTTP"
 #. js-lingui-id: c+xCSz
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 msgid "True"
 msgstr "Đúng"
+
+#. js-lingui-id: qaK9ds
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
+msgid "True or false"
+msgstr ""
 
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -27537,10 +27589,10 @@ msgstr "Phân tích mức sử dụng yêu cầu ClickHouse. Hãy liên hệ qu�
 msgid "Usage analytics will appear here once you start using credits."
 msgstr "Phân tích sử dụng sẽ xuất hiện ở đây khi bạn bắt đầu sử dụng credit."
 
-#. js-lingui-id: h4601z
+#. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr "Mức sử dụng được phân bổ cho ứng dụng này trong các không gian làm việc hiện đang cài đặt ứng dụng, cho khoảng thời gian đã chọn. Cập nhật mỗi mười phút."
+msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
+msgstr "Mức sử dụng được phân bổ cho ứng dụng này trong các không gian làm việc hiện đang cài đặt ứng dụng kể từ đầu tháng (UTC). Cập nhật mỗi mười phút."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -27690,8 +27742,9 @@ msgstr "Hữu ích cho các bảng trung gian/liên kết"
 #: src/pages/settings/accounts/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/pages/settings/accounts/SettingsApplicationPreferences.tsx
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
-#: src/pages/settings/accounts/SettingsNativeAccountApp.tsx
+#: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -28884,6 +28937,7 @@ msgstr "Quy Trình Làm Việc"
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsBuiltInAccountAppDetails.tsx
 #: src/pages/settings/billing/SettingsBillingNewLimit.tsx
 #: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
@@ -29377,6 +29431,11 @@ msgstr "Trình xử lý của bạn nhận đối tượng này. Phần body ch�
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
 msgstr "Trình xử lý của bạn nhận đối tượng này. Phần body trống vì các yêu cầu GET không mang payload."
+
+#. js-lingui-id: RVi4Cv
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
+msgid "Your installed apps could not be loaded. Check your connection and try again."
+msgstr "Không thể tải các ứng dụng bạn đã cài đặt. Kiểm tra kết nối của bạn và thử lại."
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/profile/SettingsProfile.tsx
