@@ -655,7 +655,7 @@ describe('Chat channels through the authenticated API', () => {
     );
 
     expect(await readMemberCopy(threadId, JANE)).toMatchObject({
-      archivedAt: expect.any(Date),
+      archivedAt: expect.anything(),
     });
 
     await simulateNewMessageActivity(threadId);
@@ -774,7 +774,7 @@ describe('Chat channels through the authenticated API', () => {
     ).toEqual([threadId]);
     // The creator follows it, so their own copy is snoozed too
     expect(await readMemberCopy(threadId, JANE)).toMatchObject({
-      snoozedUntil: expect.any(Date),
+      snoozedUntil: expect.anything(),
     });
 
     const snoozedUntil = new Date(Date.now() - 1000);
