@@ -7,13 +7,9 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import {
-  ConflictError,
-  NotFoundError,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceDataExportDTO } from 'src/engine/core-modules/workspace-data-export/dtos/workspace-data-export.dto';
+import { WorkspaceDataExportGraphqlApiExceptionFilter } from 'src/engine/core-modules/workspace-data-export/filters/workspace-data-export-graphql-api-exception.filter';
 import { WorkspaceDataExportService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export.service';
-import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -24,13 +20,14 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 @UseFilters(
   AuthGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
+  WorkspaceDataExportGraphqlApiExceptionFilter,
 )
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {
       standard: true,
       impersonated: true,
-      playground: true,
+      playground: false,
       workspaceAgnostic: false,
     },
     apiKey: false,
@@ -57,19 +54,9 @@ export class AdminPanelWorkspaceDataExportResolver {
     @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
     @AuthUser() actor: AuthContextUser,
   ): Promise<WorkspaceDataExportDTO> {
-    try {
-      return await this.workspaceDataExportService.create({
-        workspaceId,
-        actorUserId: actor.id,
-      });
-    } catch (error) {
-      if (error instanceof WorkspaceDataExportException) {
-        throw error.code === 'WORKSPACE_NOT_FOUND'
-          ? new NotFoundError(error)
-          : new ConflictError(error);
-      }
-
-      throw error;
-    }
+    return this.workspaceDataExportService.create({
+      workspaceId,
+      actorUserId: actor.id,
+    });
   }
 }

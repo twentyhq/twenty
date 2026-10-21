@@ -15,7 +15,7 @@ const workspaceDataExportStateSchema: z.ZodType<WorkspaceDataExportState> =
           z.object({
             fieldName: z.string(),
             label: z.string(),
-            type: z.nativeEnum(FieldMetadataType),
+            type: z.enum(FieldMetadataType),
             subFieldName: z.string().optional(),
           }),
         ),
