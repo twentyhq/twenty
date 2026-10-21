@@ -1,6 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isNonEmptyString } from '@sniptt/guards';
-import { graphql, HttpResponse, type GraphQLQuery } from 'msw';
+import {
+  graphql,
+  HttpResponse,
+  type GraphQLQuery,
+  type GraphQLResponseBody,
+} from 'msw';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
@@ -18,6 +23,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { SidePanelSearchAiChatsPage } from '@/side-panel/pages/search-ai-chats/components/SidePanelSearchAiChatsPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -48,9 +54,16 @@ const SECOND_THREAD_ID = '20202020-3398-4a80-9e74-000000000005';
 const SEARCH_THREAD_ID = '20202020-3398-4a80-9e74-000000000006';
 const FIRST_PAGE_CURSOR = 'first-chat-page';
 const PRESERVED_DRAFT = '<p>Keep this unsent reply</p>';
+const SELECTED_THREAD_UPDATED_AT = '2026-10-21T11:00:00.000Z';
 const findChats = fn();
 let pendingSelectedThreadResponse: Promise<void> | undefined;
 let releaseSelectedThreadResponse: (() => void) | undefined;
+let pendingSearchResponse: Promise<void> | undefined;
+let releaseSearchResponse: (() => void) | undefined;
+let pendingNextPageResponse: Promise<void> | undefined;
+let releaseNextPageResponse: (() => void) | undefined;
+let shouldFailSearch = false;
+let shouldFailSelection = false;
 
 const chatThreads = [
   { id: FIRST_THREAD_ID, title: 'Recent company research' },
@@ -70,12 +83,14 @@ const getChatPageResponse = ({
   threads,
   hasNextPage = false,
   totalCount = threads.length,
+  updatedAt = '2026-10-21T10:00:00.000Z',
 }: {
   threads: typeof chatThreads;
   hasNextPage?: boolean;
   totalCount?: number;
+  updatedAt?: string;
 }) =>
-  HttpResponse.json({
+  HttpResponse.json<GraphQLResponseBody<GraphQLQuery>>({
     data: {
       agentChatThreads: {
         __typename: 'AgentChatThreadConnection',
@@ -85,7 +100,7 @@ const getChatPageResponse = ({
             __typename: 'AgentChatThread',
             ...thread,
             createdAt: '2026-10-01T10:00:00.000Z',
-            updatedAt: '2026-10-21T10:00:00.000Z',
+            updatedAt,
             deletedAt: null,
           },
           cursor: thread.id,
@@ -125,11 +140,13 @@ const SearchAiChatsStory = ({
       {hasBackControl && (
         <Button onClick={() => navigate(-1)}>Browser Back</Button>
       )}
-      <SidePanelTopBar />
       {isChatOpen ? (
         <Text>Conversation opened in the side panel</Text>
       ) : (
-        <SidePanelSearchAiChatsPage />
+        <>
+          <SidePanelTopBar />
+          <SidePanelSearchAiChatsPage />
+        </>
       )}
     </SidePanelPageComponentInstanceContext.Provider>
   );
@@ -165,10 +182,25 @@ const meta = {
             if (isDefined(selectedThreadId)) {
               await pendingSelectedThreadResponse;
 
+              if (shouldFailSelection) {
+                return HttpResponse.json<GraphQLResponseBody<GraphQLQuery>>({
+                  errors: [{ message: 'Could not load the selected chat' }],
+                });
+              }
+
               return getChatPageResponse({
                 threads: chatThreads.filter(
                   (thread) => thread.id === selectedThreadId,
                 ),
+                updatedAt: SELECTED_THREAD_UPDATED_AT,
+              });
+            }
+
+            await pendingSearchResponse;
+
+            if (shouldFailSearch) {
+              return HttpResponse.json<GraphQLResponseBody<GraphQLQuery>>({
+                errors: [{ message: 'Could not search chats' }],
               });
             }
 
@@ -185,6 +217,8 @@ const meta = {
             }
 
             if (variables.lastCursor === FIRST_PAGE_CURSOR) {
+              await pendingNextPageResponse;
+
               return getChatPageResponse({
                 threads: chatThreads.filter(
                   (thread) => thread.id !== FIRST_THREAD_ID,
@@ -203,7 +237,7 @@ const meta = {
           },
         ),
         graphql.query('GetRecordPermissions', () =>
-          HttpResponse.json({
+          HttpResponse.json<GraphQLResponseBody<GraphQLQuery>>({
             data: {
               recordPermissions: [
                 {
@@ -228,6 +262,16 @@ const meta = {
     findChats.mockClear();
     pendingSelectedThreadResponse = undefined;
     releaseSelectedThreadResponse = undefined;
+    pendingSearchResponse = undefined;
+    releaseSearchResponse = undefined;
+    pendingNextPageResponse = undefined;
+    releaseNextPageResponse = undefined;
+    shouldFailSearch = false;
+    shouldFailSelection = false;
+
+    for (const { id } of chatThreads) {
+      jotaiStore.set(recordStoreFamilyState.atomFamily(id), null);
+    }
 
     const noteMetadata = getMockObjectMetadataItemOrThrow(
       CoreObjectNameSingular.Note,
@@ -277,6 +321,12 @@ const meta = {
         pageId: PICKER_PAGE_ID,
       },
     ]);
+
+    return () => {
+      releaseSearchResponse?.();
+      releaseNextPageResponse?.();
+      releaseSelectedThreadResponse?.();
+    };
   },
 } satisfies Meta<typeof SearchAiChatsStory>;
 
@@ -315,9 +365,21 @@ export const SearchPaginationAndSelection: Story = {
     ).toBeVisible();
 
     await userEvent.clear(searchInput);
+    pendingNextPageResponse = new Promise<void>((resolve) => {
+      releaseNextPageResponse = resolve;
+    });
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Load more chats' }),
     );
+    await expect(
+      await canvas.findByRole('button', { name: 'Loading more chats...' }),
+    ).toBeDisabled();
+    await expect(
+      canvas.getByRole('button', { name: 'Recent company research' }),
+    ).toBeVisible();
+
+    releaseNextPageResponse?.();
+
     await expect(
       await canvas.findByRole('button', { name: 'Next page conversation' }),
     ).toBeVisible();
@@ -364,6 +426,19 @@ export const BackDuringPendingSelection: Story = {
       await canvas.findByRole('button', { name: 'Recent company research' }),
     );
     await expect(await canvas.findByText('Opening chat...')).toBeVisible();
+    const selectedChat = canvas.getByRole('button', {
+      name: 'Recent company research',
+    });
+    const numberOfRequestsBeforeRepeatedSelection = findChats.mock.calls.length;
+
+    await expect(selectedChat).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(selectedChat);
+    selectedChat.focus();
+    await userEvent.keyboard('{Enter}');
+
+    await expect(findChats).toHaveBeenCalledTimes(
+      numberOfRequestsBeforeRepeatedSelection,
+    );
 
     await userEvent.click(canvas.getByRole('button', { name: 'Browser Back' }));
     await waitFor(() =>
@@ -379,7 +454,10 @@ export const BackDuringPendingSelection: Story = {
         jotaiStore.get(
           agentChatThreadRecordFamilySelector.selectorFamily(FIRST_THREAD_ID),
         ),
-      ).toMatchObject({ id: FIRST_THREAD_ID }),
+      ).toMatchObject({
+        id: FIRST_THREAD_ID,
+        updatedAt: SELECTED_THREAD_UPDATED_AT,
+      }),
     );
     await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
       CURRENT_THREAD_ID,
@@ -390,5 +468,102 @@ export const BackDuringPendingSelection: Story = {
     await expect(
       canvas.queryByText('Conversation opened in the side panel'),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const SelectChatWithKeyboard: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const chat = await canvas.findByRole('button', {
+      name: 'Recent company research',
+    });
+
+    chat.focus();
+    await userEvent.keyboard('{Enter}');
+
+    await expect(
+      await canvas.findByText('Conversation opened in the side panel'),
+    ).toBeVisible();
+    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+      FIRST_THREAD_ID,
+    );
+  },
+};
+
+export const Searching: Story = {
+  beforeEach: () => {
+    pendingSearchResponse = new Promise<void>((resolve) => {
+      releaseSearchResponse = resolve;
+    });
+
+    return () => releaseSearchResponse?.();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Searching chats...')).toBeVisible();
+    await expect(
+      canvas.queryByText('No chats match your search'),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByRole('button', { name: 'Recent company research' }),
+    ).not.toBeInTheDocument();
+
+    releaseSearchResponse?.();
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Recent company research' }),
+    ).toBeVisible();
+  },
+};
+
+export const FailedSearch: Story = {
+  beforeEach: () => {
+    shouldFailSearch = true;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('Could not load chats')).toBeVisible();
+    await expect(
+      canvas.queryByText('No chats match your search'),
+    ).not.toBeInTheDocument();
+
+    shouldFailSearch = false;
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Recent company research' }),
+    ).toBeVisible();
+  },
+};
+
+export const FailedOpen: Story = {
+  beforeEach: () => {
+    shouldFailSelection = true;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Recent company research' }),
+    );
+    await expect(
+      await canvas.findByText(
+        'This chat could not be opened. Try selecting it again.',
+      ),
+    ).toBeVisible();
+    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+      CURRENT_THREAD_ID,
+    );
+
+    shouldFailSelection = false;
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Recent company research' }),
+    );
+
+    await expect(
+      await canvas.findByText('Conversation opened in the side panel'),
+    ).toBeVisible();
   },
 };

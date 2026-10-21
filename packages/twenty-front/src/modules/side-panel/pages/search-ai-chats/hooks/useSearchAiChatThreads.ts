@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { escapeForIlike } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
@@ -10,7 +13,10 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-const CHAT_PICKER_RECORD_GQL_FIELDS = { id: true, title: true };
+const CHAT_PICKER_RECORD_GQL_FIELDS = {
+  id: true,
+  title: true,
+} satisfies RecordGqlFields;
 const CHAT_PICKER_SEARCH_DEBOUNCE_DELAY_IN_MS = 300;
 
 export const useSearchAiChatThreads = () => {

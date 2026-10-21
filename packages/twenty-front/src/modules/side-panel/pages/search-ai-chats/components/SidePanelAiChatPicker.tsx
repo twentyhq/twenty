@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconMessage } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
@@ -8,24 +9,13 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SidePanelAiChatPickerRequestCleanupEffect } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRequestCleanupEffect';
+import { useOpenAiChatFromPicker } from '@/side-panel/pages/search-ai-chats/hooks/useOpenAiChatFromPicker';
+import { useSearchAiChatThreads } from '@/side-panel/pages/search-ai-chats/hooks/useSearchAiChatThreads';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-
-type SidePanelAiChatPickerProps = {
-  threads: Pick<AgentChatThreadRecord, 'id' | 'title'>[];
-  isLoading: boolean;
-  isFetchingMore: boolean;
-  hasNextPage: boolean;
-  hasError: boolean;
-  openingThreadId: string | null;
-  hasOpenError: boolean;
-  onSelectThread: (threadId: string) => void;
-  onLoadMore: () => void;
-  onRetry: () => void;
-};
 
 const StyledStatus = styled.div`
   align-items: center;
@@ -40,19 +30,22 @@ const StyledFooter = styled.div`
   padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
-export const SidePanelAiChatPicker = ({
-  threads,
-  isLoading,
-  isFetchingMore,
-  hasNextPage,
-  hasError,
-  openingThreadId,
-  hasOpenError,
-  onSelectThread,
-  onLoadMore,
-  onRetry,
-}: SidePanelAiChatPickerProps) => {
+export const SidePanelAiChatPicker = () => {
   const { t } = useLingui();
+  const [pendingOpenRequests] = useState(() => new Set<AbortController>());
+  const {
+    threads,
+    isLoading,
+    isFetchingMore,
+    hasNextPage,
+    error,
+    fetchMoreRecords,
+    refetch,
+  } = useSearchAiChatThreads();
+  const { openThread, openingThreadId, hasOpenError } = useOpenAiChatFromPicker(
+    { pendingOpenRequests },
+  );
+  const hasError = isDefined(error);
   const isOpeningThread = isDefined(openingThreadId);
   const canShowThreads = !isLoading && !hasError;
   const hasThreads = isNonEmptyArray(threads);
@@ -66,6 +59,9 @@ export const SidePanelAiChatPicker = ({
       noResults={canShowThreads && !hasThreads}
       noResultsText={t`No chats match your search`}
     >
+      <SidePanelAiChatPickerRequestCleanupEffect
+        pendingOpenRequests={pendingOpenRequests}
+      />
       {isLoading && (
         <StyledStatus role="status">
           <Loader aria-hidden="true" />
@@ -75,7 +71,11 @@ export const SidePanelAiChatPicker = ({
       {!isLoading && hasError && (
         <StyledStatus role="alert">
           <Text color="secondary">{t`Could not load chats`}</Text>
-          <Button size="sm" variant="outline" onClick={onRetry}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => void refetch().catch(() => undefined)}
+          >
             {t`Retry`}
           </Button>
         </StyledStatus>
@@ -100,7 +100,7 @@ export const SidePanelAiChatPicker = ({
               key={thread.id}
               itemId={thread.id}
               onEnter={
-                isOpeningThread ? undefined : () => onSelectThread(thread.id)
+                isOpeningThread ? undefined : () => void openThread(thread.id)
               }
             >
               <CommandMenuItem
@@ -110,7 +110,7 @@ export const SidePanelAiChatPicker = ({
                   isNonEmptyString(thread.title) ? thread.title : t`New chat`
                 }
                 disabled={isOpeningThread}
-                onClick={() => onSelectThread(thread.id)}
+                onClick={() => void openThread(thread.id)}
               />
             </SelectableListItem>
           ))}
@@ -123,7 +123,7 @@ export const SidePanelAiChatPicker = ({
             variant="ghost"
             loading={isFetchingMore}
             disabled={isFetchingMore || isOpeningThread}
-            onClick={onLoadMore}
+            onClick={() => void fetchMoreRecords()}
           >
             {isFetchingMore ? t`Loading more chats...` : t`Load more chats`}
           </Button>

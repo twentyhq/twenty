@@ -1,9 +1,9 @@
 import { useLocation } from 'react-router-dom';
 
-import { SidePanelSearchAiChatsContent } from '@/side-panel/pages/search-ai-chats/components/SidePanelSearchAiChatsContent';
+import { SidePanelAiChatPicker } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPicker';
 
 export const SidePanelSearchAiChatsPage = () => {
   const { key } = useLocation();
 
-  return <SidePanelSearchAiChatsContent key={key} />;
+  return <SidePanelAiChatPicker key={key} />;
 };
