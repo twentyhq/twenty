@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type ConnectionProviderScope } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -222,11 +221,9 @@ export class ConnectionProviderService {
   async findManyDtosByApplications({
     applicationIds,
     workspaceId,
-    scope,
   }: {
     applicationIds: string[];
     workspaceId: string;
-    scope?: ConnectionProviderScope;
   }): Promise<ApplicationConnectionProviderDTO[]> {
     if (applicationIds.length === 0) {
       return [];
@@ -234,12 +231,7 @@ export class ConnectionProviderService {
 
     const providers = await this.connectionProviderRepository.find(
       workspaceId,
-      {
-        where: {
-          applicationId: In(applicationIds),
-          ...(isDefined(scope) ? { scope } : {}),
-        },
-      },
+      { where: { applicationId: In(applicationIds) } },
     );
 
     const credentialsConfiguredByProviderId =

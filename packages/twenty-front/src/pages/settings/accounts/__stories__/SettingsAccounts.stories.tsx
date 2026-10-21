@@ -479,6 +479,15 @@ export const AppOnlyAccountNeedingReconnectIsFlagged: Story = {
         text: 'old@linear.app',
       }).getByText('Reconnect needed'),
     ).toBeVisible();
+    expect(
+      withinTableRowOrThrow({
+        canvasElement,
+        text: 'legacy@linear.app',
+      }).getByText('Reconnect needed'),
+    ).toBeVisible();
+    expect(
+      canvas.getByRole('link', { name: /legacy@linear\.app/ }),
+    ).toHaveAttribute('href', LINEAR_CONNECTIONS_REDIRECT_LOCATION);
 
     await userEvent.click(
       reconnectNeededRow.getByRole('button', { name: 'More options' }),

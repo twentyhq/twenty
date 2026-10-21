@@ -33,8 +33,10 @@ import {
   LINEAR_APPLICATION_ID,
   LINEAR_CONNECTIONS_REDIRECT_LOCATION,
   LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
+  LINEAR_LEGACY_PERSONAL_ACCOUNT_ID,
   MOCKED_TRANSIENT_TOKEN,
   generateTransientToken,
+  removeLegacyLinearPersonalConnection,
   unconfigureLinearClientCredentials,
 } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
@@ -484,7 +486,101 @@ export const UnconfiguredProviderExplainsWhoMustSetItUp: Story = {
       canvas.queryByRole('button', { name: 'Add connection' }),
     ).not.toBeInTheDocument();
     expect(
-      canvas.queryByRole('button', { name: 'Reconnect' }),
+      withinTableRowOrThrow({
+        canvasElement,
+        text: 'tim.cook@linear.app',
+      }).queryByRole('button', { name: 'Reconnect' }),
+    ).not.toBeInTheDocument();
+
+    expect(
+      canvas.getByText(/Linear workspace OAuth is not yet set up/),
+    ).toBeVisible();
+
+    const legacyRow = withinTableRowOrThrow({
+      canvasElement,
+      text: 'legacy@linear.app',
+    });
+
+    expect(legacyRow.getByRole('button', { name: 'Disconnect' })).toBeVisible();
+    expect(
+      legacyRow.queryByRole('button', { name: 'Reconnect' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const WorkspaceProviderListsMyLegacyConnection: Story = {
+  args: {
+    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'New connections for this app are shared with the workspace by an admin.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(canvas.getByText('Linear workspace')).toBeVisible();
+    expect(
+      canvas.getAllByRole('button', { name: 'Add connection' }),
+    ).toHaveLength(1);
+
+    const legacyRow = withinTableRowOrThrow({
+      canvasElement,
+      text: 'legacy@linear.app',
+    });
+
+    expect(legacyRow.getByText('Reconnect needed')).toBeVisible();
+    expect(legacyRow.getByRole('button', { name: 'Disconnect' })).toBeVisible();
+    expect(
+      canvas.queryByText('workspace-shared@linear.app'),
+    ).not.toBeInTheDocument();
+    expect(
+      canvas.queryByText(/Linear workspace OAuth is not yet set up/),
+    ).not.toBeInTheDocument();
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(
+      legacyRow.getByRole('button', { name: 'Reconnect' }),
+    );
+
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(
+      `${REACT_APP_SERVER_BASE_URL}/auth/apps/authorize`,
+    );
+    expect(Object.fromEntries(redirectUrl.searchParams)).toEqual({
+      applicationId: LINEAR_APPLICATION_ID,
+      providerName: 'linear-workspace',
+      transientToken: MOCKED_TRANSIENT_TOKEN,
+      scope: 'USER',
+      visibility: 'user',
+      reconnectingConnectedAccountId: LINEAR_LEGACY_PERSONAL_ACCOUNT_ID,
+      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+    });
+  },
+};
+
+export const WorkspaceProviderWithoutPersonalConnectionIsHidden: Story = {
+  args: {
+    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
+  },
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    removeLegacyLinearPersonalConnection();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('tim.cook@linear.app', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(canvas.queryByText('Linear workspace')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByText(
+        'New connections for this app are shared with the workspace by an admin.',
+      ),
     ).not.toBeInTheDocument();
   },
 };
@@ -531,6 +627,9 @@ export const UnconfiguredProviderWithoutConnectionsShowsOnlyTheBanner: Story = {
     ).toBeVisible();
     expect(
       canvas.queryByText('You have no Linear connection yet.'),
+    ).not.toBeInTheDocument();
+    expect(
+      canvas.queryByText(/Linear workspace OAuth is not yet set up/),
     ).not.toBeInTheDocument();
   },
 };

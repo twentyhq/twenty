@@ -8,6 +8,7 @@ import { ConnectedAccountScope } from '~/generated-metadata/graphql';
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const mockTriggerAppOAuth = jest.fn();
 
@@ -25,11 +26,17 @@ jest.mock(
   }),
 );
 
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: jest.fn(() => false),
+}));
+
 jest.mock('@/settings/applications/hooks/useTriggerAppOAuth', () => ({
   useTriggerAppOAuth: jest.fn(() => ({
     triggerAppOAuth: mockTriggerAppOAuth,
   })),
 }));
+
+const mockedUseIsFeatureEnabled = jest.mocked(useIsFeatureEnabled);
 
 const mockedUseFindApplicationConnectionProviders =
   useFindApplicationConnectionProviders as jest.MockedFunction<
@@ -44,6 +51,7 @@ const mockedUseApplicationConnectedAccounts =
 describe('SettingsApplicationConnectionsSection', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedUseIsFeatureEnabled.mockReturnValue(false);
   });
 
   it('renders app connection rows as links to the connection detail page', () => {
@@ -160,19 +168,19 @@ describe('SettingsApplicationConnectionsSection', () => {
     });
   });
 
-  const USER_SCOPED_PROVIDER = {
+  const buildProvider = (scope: 'USER' | 'WORKSPACE') => ({
     id: 'provider-1',
     applicationId: 'app-1',
     type: 'oauth' as const,
     name: 'google-calendar',
     displayName: 'Google Calendar',
-    scope: 'USER' as const,
+    scope,
     logoUrl: null,
     oauth: {
       scopes: ['calendar.readonly'],
-      isClientCredentialsConfigured: false,
+      isClientCredentialsConfigured: true,
     },
-  };
+  });
 
   const buildAccount = ({
     id,
@@ -197,7 +205,39 @@ describe('SettingsApplicationConnectionsSection', () => {
     updatedAt: '2026-05-01T00:00:00.000Z',
   });
 
-  const renderSection = () =>
+  const SHARED_ACCOUNT = buildAccount({
+    id: 'shared-account',
+    name: 'Team calendar',
+    scope: ConnectedAccountScope.WORKSPACE,
+  });
+
+  const PERSONAL_ACCOUNT = buildAccount({
+    id: 'personal-account',
+    name: 'My calendar',
+    scope: ConnectedAccountScope.USER,
+  });
+
+  const renderSection = ({
+    providerScope,
+    accounts,
+    isAppPreferencesEnabled,
+  }: {
+    providerScope: 'USER' | 'WORKSPACE';
+    accounts: ReturnType<typeof buildAccount>[];
+    isAppPreferencesEnabled: boolean;
+  }) => {
+    mockedUseIsFeatureEnabled.mockReturnValue(isAppPreferencesEnabled);
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      connectionProviders: [buildProvider(providerScope)],
+      loading: false,
+      refetch: jest.fn(),
+    });
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
+      accounts,
+      loading: false,
+      refetch: jest.fn(),
+    });
+
     render(
       <I18nProvider i18n={i18n}>
         <MemoryRouter>
@@ -205,69 +245,70 @@ describe('SettingsApplicationConnectionsSection', () => {
         </MemoryRouter>
       </I18nProvider>,
     );
+  };
 
-  it('hides a provider scoped to each member when it has only personal connections', () => {
-    mockedUseFindApplicationConnectionProviders.mockReturnValue({
-      connectionProviders: [USER_SCOPED_PROVIDER],
-      loading: false,
-      refetch: jest.fn(),
-    });
+  describe.each([
+    { isAppPreferencesEnabled: false, isPersonalRowListed: true },
+    { isAppPreferencesEnabled: true, isPersonalRowListed: false },
+  ])(
+    'with App preferences enabled: $isAppPreferencesEnabled',
+    ({ isAppPreferencesEnabled, isPersonalRowListed }) => {
+      it('lists the shared row of a workspace provider, and the personal one only without App preferences', () => {
+        renderSection({
+          providerScope: 'WORKSPACE',
+          accounts: [SHARED_ACCOUNT, PERSONAL_ACCOUNT],
+          isAppPreferencesEnabled,
+        });
 
-    mockedUseApplicationConnectedAccounts.mockReturnValue({
-      accounts: [
-        buildAccount({
-          id: 'account-1',
-          name: 'My calendar',
-          scope: ConnectedAccountScope.USER,
-        }),
-      ],
-      loading: false,
-      refetch: jest.fn(),
-    });
+        expect(
+          screen.getByRole('link', { name: /Team calendar/i }),
+        ).toBeVisible();
+        if (isPersonalRowListed) {
+          expect(screen.getByText('My calendar')).toBeVisible();
+        } else {
+          expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
+        }
+        expect(
+          screen.getByRole('button', { name: /Add connection/i }),
+        ).toBeVisible();
+      });
 
-    renderSection();
+      it('shows a member-scoped provider with only personal rows only without App preferences', () => {
+        renderSection({
+          providerScope: 'USER',
+          accounts: [PERSONAL_ACCOUNT],
+          isAppPreferencesEnabled,
+        });
 
-    expect(screen.queryByText('Google Calendar')).not.toBeInTheDocument();
-    expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /Add connection/i }),
-    ).not.toBeInTheDocument();
-  });
+        if (isPersonalRowListed) {
+          expect(screen.getByText('Google Calendar')).toBeVisible();
+          expect(screen.getByText('My calendar')).toBeVisible();
+        } else {
+          expect(screen.queryByText('Google Calendar')).not.toBeInTheDocument();
+          expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
+        }
+        expect(
+          screen.queryByRole('button', { name: /Add connection/i }),
+        ).not.toBeInTheDocument();
+      });
 
-  it('lists only the workspace shared connections of a provider scoped to each member, without offering to add one', () => {
-    mockedUseFindApplicationConnectionProviders.mockReturnValue({
-      connectionProviders: [USER_SCOPED_PROVIDER],
-      loading: false,
-      refetch: jest.fn(),
-    });
+      it('lists the shared row of a member-scoped provider without offering to add one', () => {
+        renderSection({
+          providerScope: 'USER',
+          accounts: [SHARED_ACCOUNT],
+          isAppPreferencesEnabled,
+        });
 
-    mockedUseApplicationConnectedAccounts.mockReturnValue({
-      accounts: [
-        buildAccount({
-          id: 'account-1',
-          name: 'My calendar',
-          scope: ConnectedAccountScope.USER,
-        }),
-        buildAccount({
-          id: 'account-2',
-          name: 'Team calendar',
-          scope: ConnectedAccountScope.WORKSPACE,
-        }),
-      ],
-      loading: false,
-      refetch: jest.fn(),
-    });
-
-    renderSection();
-
-    expect(screen.getByRole('link', { name: /Team calendar/i })).toBeVisible();
-    expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
-    expect(screen.queryByText('Just for me')).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /Add connection/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText(/OAuth is not yet set up/),
-    ).not.toBeInTheDocument();
-  });
+        expect(
+          screen.getByRole('link', { name: /Team calendar/i }),
+        ).toBeVisible();
+        expect(
+          screen.queryByRole('button', { name: /Add connection/i }),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(/OAuth is not yet set up/),
+        ).not.toBeInTheDocument();
+      });
+    },
+  );
 });

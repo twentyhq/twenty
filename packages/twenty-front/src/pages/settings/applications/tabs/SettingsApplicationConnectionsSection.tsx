@@ -10,9 +10,11 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 
@@ -26,6 +28,9 @@ export const SettingsApplicationConnectionsSection = ({
 }) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
   const { connectionProviders, loading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts, loading: accountsLoading } =
@@ -42,11 +47,11 @@ export const SettingsApplicationConnectionsSection = ({
           provider.oauth?.isClientCredentialsConfigured ?? false;
         const canAddConnection = provider.scope === 'WORKSPACE';
 
-        // Personal connections are managed from App preferences
+        // With App preferences on, personal connections are managed there instead
         const providerConnections = connectedAccounts.filter(
           (account) =>
             account.connectionProviderId === provider.id &&
-            account.scope === 'WORKSPACE',
+            (!isAppPreferencesEnabled || account.scope === 'WORKSPACE'),
         );
 
         if (!canAddConnection && providerConnections.length === 0) {
