@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
@@ -45,28 +46,18 @@ export class GetViewsTool extends BaseTool<typeof getViewsInputSchema> {
     input,
     context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof getViewsInputSchema>): Promise<ToolOutput> {
-    let views;
-
-    if (input.objectNameSingular) {
-      const objectMetadataId =
-        await this.viewToolIdentifierService.resolveObjectMetadataId({
+    const views = isNonEmptyString(input.objectNameSingular)
+      ? await this.viewService.findByObjectMetadataId(
           workspaceId,
-          objectNameSingular: input.objectNameSingular,
-        });
+          await this.viewToolIdentifierService.resolveObjectMetadataId({
+            workspaceId,
+            objectNameSingular: input.objectNameSingular,
+          }),
+          userWorkspaceId,
+        )
+      : await this.viewService.findByWorkspaceId(workspaceId, userWorkspaceId);
 
-      views = await this.viewService.findByObjectMetadataId(
-        workspaceId,
-        objectMetadataId,
-        userWorkspaceId,
-      );
-    } else {
-      views = await this.viewService.findByWorkspaceId(
-        workspaceId,
-        userWorkspaceId,
-      );
-    }
-
-    const limitedViews = views.slice(0, input.limit ?? 50);
+    const limitedViews = views.slice(0, input.limit);
 
     return {
       success: true,

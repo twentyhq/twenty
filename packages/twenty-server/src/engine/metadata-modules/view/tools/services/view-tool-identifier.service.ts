@@ -55,7 +55,7 @@ export class ViewToolIdentifierService {
 
     const objectMetadataId = idByNameSingular[objectNameSingular];
 
-    if (!objectMetadataId) {
+    if (!isDefined(objectMetadataId)) {
       throw new ViewException(
         `Object "${objectNameSingular}" not found. Use get_object_metadata to list available objects.`,
         ViewExceptionCode.INVALID_VIEW_DATA,
@@ -90,7 +90,7 @@ export class ViewToolIdentifierService {
         field?.objectMetadataId === objectMetadataId,
     );
 
-    if (!fieldMetadata) {
+    if (!isDefined(fieldMetadata)) {
       throw new ViewException(
         `Field "${fieldName}" not found on this object. Use get_field_metadata to list available fields.`,
         ViewExceptionCode.INVALID_VIEW_DATA,
@@ -169,7 +169,7 @@ export class ViewToolIdentifierService {
         workspaceId,
       );
 
-      if (!existingView) {
+      if (!isDefined(existingView)) {
         throw new ViewException(
           `View with id ${input.id} not found`,
           ViewExceptionCode.VIEW_NOT_FOUND,
@@ -223,20 +223,21 @@ export class ViewToolIdentifierService {
       );
     }
 
-    if (input.type === ViewType.CALENDAR) {
-      if (!isDefined(input.calendarFieldName)) {
-        throw new ViewException(
-          'CALENDAR views require calendarFieldName (a DATE or DATE_TIME field name).',
-          ViewExceptionCode.INVALID_VIEW_DATA,
-        );
-      }
+    if (
+      input.type === ViewType.CALENDAR &&
+      !isDefined(input.calendarFieldName)
+    ) {
+      throw new ViewException(
+        'CALENDAR views require calendarFieldName (a DATE or DATE_TIME field name).',
+        ViewExceptionCode.INVALID_VIEW_DATA,
+      );
+    }
 
-      if (!isDefined(input.calendarLayout)) {
-        throw new ViewException(
-          'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
-          ViewExceptionCode.INVALID_VIEW_DATA,
-        );
-      }
+    if (input.type === ViewType.CALENDAR && !isDefined(input.calendarLayout)) {
+      throw new ViewException(
+        'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
+        ViewExceptionCode.INVALID_VIEW_DATA,
+      );
     }
 
     const mainGroupByFieldMetadataId = isDefined(input.mainGroupByFieldName)

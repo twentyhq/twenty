@@ -35,14 +35,14 @@ describe('View tools', () => {
 
   const mockWorkspaceId = 'workspace-id';
   const mockUserWorkspaceId = 'user-workspace-id';
-  const mockViewId = 'view-id';
+  const mockViewId = 'c1f4b2a0-7d3e-4a8b-9c1d-2e3f4a5b6c7d';
   const mockObjectMetadataId = 'object-metadata-id';
   const mockObjectNameSingular = 'company';
-  const mockCalendarFieldMetadataId = 'calendar-field-metadata-id';
-  const mockCalendarEndFieldMetadataId = 'calendar-end-field-metadata-id';
+  const mockCalendarFieldMetadataId = 'f4c7e5d3-0a6b-4dbe-af4a-5b6c7d8e9fa0';
+  const mockCalendarEndFieldMetadataId = 'a5d8f6e4-1b7c-4ecf-b05b-6c7d8e9fa0b1';
 
-  const mockNameFieldMetadataId = 'name-field-metadata-id';
-  const mockStageFieldMetadataId = 'stage-field-metadata-id';
+  const mockNameFieldMetadataId = 'd2a5c3b1-8e4f-4b9c-8d2e-3f4a5b6c7d8e';
+  const mockStageFieldMetadataId = 'e3b6d4c2-9f5a-4cad-9e3f-4a5b6c7d8e9f';
 
   const mockFlatFieldMetadataMaps = {
     byUniversalIdentifier: {
@@ -186,19 +186,30 @@ describe('View tools', () => {
     viewQueryParamsService = module.get(ViewQueryParamsService);
   });
 
-  const toToolExecutor = <TTool extends BaseTool>(
-    tool: TTool,
-    context: ToolProviderContext,
-  ) => ({
-    execute: (input: Parameters<TTool['execute']>[0]['input']) =>
-      tool.execute({ input, context }),
+  // Parses like the registry does, so schema defaults reach execute
+  const toToolExecutor = ({
+    tool,
+    context,
+  }: {
+    tool: BaseTool;
+    context: ToolProviderContext;
+  }) => ({
+    execute: async (input: unknown) =>
+      tool.execute({
+        input: await tool.inputSchema.parseAsync(input),
+        context,
+      }),
   });
 
-  const buildViewTools = (
-    workspaceId: string,
-    userWorkspaceId?: string,
-    workspaceMemberId?: string,
-  ) => {
+  const buildViewTools = ({
+    workspaceId,
+    userWorkspaceId,
+    workspaceMemberId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+    workspaceMemberId?: string;
+  }) => {
     const context: ToolProviderContext = {
       workspaceId,
       userWorkspaceId,
@@ -214,18 +225,30 @@ describe('View tools', () => {
     };
 
     return {
-      get_views: toToolExecutor(testingModule.get(GetViewsTool), context),
-      get_view_query_parameters: toToolExecutor(
-        testingModule.get(GetViewQueryParametersTool),
+      get_views: toToolExecutor({
+        tool: testingModule.get(GetViewsTool),
         context,
-      ),
-      upsert_complete_view: toToolExecutor(
-        testingModule.get(UpsertCompleteViewTool),
+      }),
+      get_view_query_parameters: toToolExecutor({
+        tool: testingModule.get(GetViewQueryParametersTool),
         context,
-      ),
-      create_view: toToolExecutor(testingModule.get(CreateViewTool), context),
-      update_view: toToolExecutor(testingModule.get(UpdateViewTool), context),
-      delete_view: toToolExecutor(testingModule.get(DeleteViewTool), context),
+      }),
+      upsert_complete_view: toToolExecutor({
+        tool: testingModule.get(UpsertCompleteViewTool),
+        context,
+      }),
+      create_view: toToolExecutor({
+        tool: testingModule.get(CreateViewTool),
+        context,
+      }),
+      update_view: toToolExecutor({
+        tool: testingModule.get(UpdateViewTool),
+        context,
+      }),
+      delete_view: toToolExecutor({
+        tool: testingModule.get(DeleteViewTool),
+        context,
+      }),
     };
   };
 
@@ -236,7 +259,10 @@ describe('View tools', () => {
 
         viewService.findByWorkspaceId.mockResolvedValue(mockViews as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         const { result } = await callExecute(tools['get_views'], {
           limit: 50,
@@ -263,7 +289,10 @@ describe('View tools', () => {
 
         viewService.findByObjectMetadataId.mockResolvedValue(mockViews as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         const { result } = await callExecute(tools['get_views'], {
           objectNameSingular: mockObjectNameSingular,
@@ -287,7 +316,7 @@ describe('View tools', () => {
 
         viewService.findByWorkspaceId.mockResolvedValue(mockViews as any);
 
-        const tools = buildViewTools(mockWorkspaceId);
+        const tools = buildViewTools({ workspaceId: mockWorkspaceId });
 
         const { result } = await callExecute(tools['get_views'], {
           limit: 2,
@@ -311,11 +340,11 @@ describe('View tools', () => {
           mockQueryParams,
         );
 
-        const tools = buildViewTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-          'workspace-member-id',
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+          workspaceMemberId: 'workspace-member-id',
+        });
 
         const { result } = await callExecute(
           tools['get_view_query_parameters'],
@@ -351,7 +380,10 @@ describe('View tools', () => {
 
         viewService.createOne.mockResolvedValue(createdView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         const { result } = await callExecute(tools['create_view'], {
           name: 'New View',
@@ -392,7 +424,10 @@ describe('View tools', () => {
 
         viewService.createOne.mockResolvedValue(createdView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await callExecute(tools['create_view'], {
           name: 'Kanban View',
@@ -425,7 +460,10 @@ describe('View tools', () => {
       });
 
       it('should throw when KANBAN view missing mainGroupByFieldName', async () => {
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
           callExecute(tools['create_view'], {
@@ -437,7 +475,10 @@ describe('View tools', () => {
       });
 
       it('should throw when CALENDAR view missing calendarFieldName', async () => {
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
           callExecute(tools['create_view'], {
@@ -450,7 +491,10 @@ describe('View tools', () => {
       });
 
       it('should throw when CALENDAR view missing calendarLayout', async () => {
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
           callExecute(tools['create_view'], {
@@ -474,7 +518,10 @@ describe('View tools', () => {
 
         viewService.createOne.mockResolvedValue(createdView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await callExecute(tools['create_view'], {
           name: 'New View',
@@ -497,7 +544,10 @@ describe('View tools', () => {
 
         viewService.createOne.mockResolvedValue(createdView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         const { result } = await callExecute(tools['create_view'], {
           name: 'Calendar View',
@@ -546,7 +596,10 @@ describe('View tools', () => {
         viewService.findById.mockResolvedValue(existingView as any);
         viewService.updateOne.mockResolvedValue(updatedView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         const { result } = await callExecute(tools['update_view'], {
           id: mockViewId,
@@ -571,7 +624,10 @@ describe('View tools', () => {
         viewService.findById.mockResolvedValue(existingView as any);
         viewService.updateOne.mockResolvedValue(updatedView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         const { result } = await callExecute(tools['update_view'], {
           id: mockViewId,
@@ -590,7 +646,10 @@ describe('View tools', () => {
 
         viewService.findById.mockResolvedValue(existingView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
           callExecute(tools['update_view'], {
@@ -603,14 +662,16 @@ describe('View tools', () => {
       it('should throw error when view not found', async () => {
         viewService.findById.mockResolvedValue(null);
 
-        const tools = buildViewTools(mockWorkspaceId);
+        const tools = buildViewTools({ workspaceId: mockWorkspaceId });
 
         await expect(
           callExecute(tools['update_view'], {
-            id: 'non-existent-id',
+            id: 'b6e9a7f5-2c8d-4fd0-8c6c-7d8e9fa0b1c2',
             name: 'Updated Name',
           }),
-        ).rejects.toThrow('View with id non-existent-id not found');
+        ).rejects.toThrow(
+          'View with id b6e9a7f5-2c8d-4fd0-8c6c-7d8e9fa0b1c2 not found',
+        );
       });
     });
 
@@ -628,7 +689,10 @@ describe('View tools', () => {
           viewSorts: [{}],
         } as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         const { result } = await callExecute(tools['upsert_complete_view'], {
           objectNameSingular: mockObjectNameSingular,
@@ -699,7 +763,10 @@ describe('View tools', () => {
           viewFields: [{}],
         } as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await callExecute(tools['upsert_complete_view'], {
           objectNameSingular: mockObjectNameSingular,
@@ -723,7 +790,10 @@ describe('View tools', () => {
       });
 
       it('should require objectNameSingular when creating', async () => {
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
           callExecute(tools['upsert_complete_view'], {
@@ -745,7 +815,10 @@ describe('View tools', () => {
           viewFilters: [{}],
         } as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await callExecute(tools['upsert_complete_view'], {
           id: mockViewId,
@@ -784,7 +857,10 @@ describe('View tools', () => {
           calendarEndFieldMetadataId: mockCalendarEndFieldMetadataId,
         } as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await callExecute(tools['upsert_complete_view'], {
           id: mockViewId,
@@ -814,7 +890,10 @@ describe('View tools', () => {
           viewSorts: [],
         } as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await callExecute(tools['upsert_complete_view'], {
           id: mockViewId,
@@ -840,7 +919,10 @@ describe('View tools', () => {
 
         viewService.findById.mockResolvedValue(existingView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
           callExecute(tools['upsert_complete_view'], {
@@ -865,7 +947,10 @@ describe('View tools', () => {
         viewService.findById.mockResolvedValue(existingView as any);
         viewService.deleteOne.mockResolvedValue(deletedView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         const { result } = await callExecute(tools['delete_view'], {
           id: mockViewId,
@@ -891,7 +976,10 @@ describe('View tools', () => {
 
         viewService.findById.mockResolvedValue(existingView as any);
 
-        const tools = buildViewTools(mockWorkspaceId, mockUserWorkspaceId);
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
           callExecute(tools['delete_view'], {

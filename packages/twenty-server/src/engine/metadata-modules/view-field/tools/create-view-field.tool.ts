@@ -64,9 +64,9 @@ export class CreateViewFieldTool extends BaseTool<
       createViewFieldInput: {
         viewId: input.viewId,
         fieldMetadataId: input.fieldMetadataId,
-        isVisible: input.isVisible ?? true,
-        size: input.size ?? 150,
-        position: input.position ?? 0,
+        isVisible: input.isVisible,
+        size: input.size,
+        position: input.position,
         aggregateOperation: input.aggregateOperation,
       },
       workspaceId,

@@ -43,9 +43,9 @@ export class CreateManyViewFieldsTool extends BaseTool<
       createViewFieldInputs: input.viewFields.map((viewField) => ({
         viewId: viewField.viewId,
         fieldMetadataId: viewField.fieldMetadataId,
-        isVisible: viewField.isVisible ?? true,
-        size: viewField.size ?? 150,
-        position: viewField.position ?? 0,
+        isVisible: viewField.isVisible,
+        size: viewField.size,
+        position: viewField.position,
         aggregateOperation: viewField.aggregateOperation,
       })),
       workspaceId,

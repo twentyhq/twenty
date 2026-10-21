@@ -41,56 +41,33 @@ export class GetViewFieldsTool extends BaseTool<
     input,
     context: { workspaceId },
   }: ToolExecuteArgs<typeof getViewFieldsInputSchema>): Promise<ToolOutput> {
-    const viewFields = await this.viewFieldService.findByViewId(
-      workspaceId,
-      input.viewId,
-    );
-
-    const viewFieldsWithNames = await Promise.all(
-      viewFields.map(async (viewField) => {
-        const fieldName = await this.resolveFieldName({
-          workspaceId,
-          fieldMetadataId: viewField.fieldMetadataId,
-        });
-
-        return {
-          id: viewField.id,
-          fieldMetadataId: viewField.fieldMetadataId,
-          fieldName: fieldName ?? null,
-          viewId: viewField.viewId,
-          isVisible: viewField.isVisible,
-          size: viewField.size,
-          position: viewField.position,
-          aggregateOperation: viewField.aggregateOperation,
-        };
+    const [viewFields, { flatFieldMetadataMaps }] = await Promise.all([
+      this.viewFieldService.findByViewId(workspaceId, input.viewId),
+      this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatFieldMetadataMaps'],
       }),
-    );
+    ]);
+
+    const viewFieldsWithNames = viewFields.map((viewField) => ({
+      id: viewField.id,
+      fieldMetadataId: viewField.fieldMetadataId,
+      fieldName:
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityMaps: flatFieldMetadataMaps,
+          flatEntityId: viewField.fieldMetadataId,
+        })?.name ?? null,
+      viewId: viewField.viewId,
+      isVisible: viewField.isVisible,
+      size: viewField.size,
+      position: viewField.position,
+      aggregateOperation: viewField.aggregateOperation,
+    }));
 
     return {
       success: true,
       message: `Found ${viewFieldsWithNames.length} view field(s)`,
       result: { viewFields: viewFieldsWithNames },
     };
-  }
-
-  private async resolveFieldName({
-    workspaceId,
-    fieldMetadataId,
-  }: {
-    workspaceId: string;
-    fieldMetadataId: string;
-  }): Promise<string | undefined> {
-    const { flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
-        },
-      );
-
-    return findFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: fieldMetadataId,
-    })?.name;
   }
 }

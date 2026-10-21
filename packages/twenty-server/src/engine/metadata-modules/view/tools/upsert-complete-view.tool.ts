@@ -223,8 +223,8 @@ export class UpsertCompleteViewTool extends BaseTool<
                 objectMetadataId,
                 reference: field,
               }),
-            isVisible: field.isVisible ?? true,
-            size: field.size ?? 150,
+            isVisible: field.isVisible,
+            size: field.size,
           })),
         )
       : undefined;
@@ -254,7 +254,7 @@ export class UpsertCompleteViewTool extends BaseTool<
                 objectMetadataId,
                 reference: sort,
               }),
-            direction: sort.direction ?? ViewSortDirection.ASC,
+            direction: sort.direction,
           })),
         )
       : undefined;

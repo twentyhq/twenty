@@ -1,6 +1,7 @@
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ViewVisibility } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -36,7 +37,7 @@ export class DeleteViewTool extends BaseTool<typeof deleteViewInputSchema> {
   }: ToolExecuteArgs<typeof deleteViewInputSchema>): Promise<ToolOutput> {
     const existingView = await this.viewService.findById(input.id, workspaceId);
 
-    if (!existingView) {
+    if (!isDefined(existingView)) {
       throw new ViewException(
         `View with id ${input.id} not found`,
         ViewExceptionCode.VIEW_NOT_FOUND,

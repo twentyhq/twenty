@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import {
@@ -6,7 +7,7 @@ import {
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -122,7 +123,10 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
         objectNameSingular: input.objectNameSingular,
       });
 
-    if (input.type === ViewType.KANBAN && !input.mainGroupByFieldName) {
+    if (
+      input.type === ViewType.KANBAN &&
+      !isNonEmptyString(input.mainGroupByFieldName)
+    ) {
       throw new ViewException(
         'KANBAN views require mainGroupByFieldName. Provide a SELECT or many-to-one relation field name (e.g., "stage", "status") to group records into columns.',
         ViewExceptionCode.INVALID_VIEW_DATA,
@@ -130,14 +134,14 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
     }
 
     if (input.type === ViewType.CALENDAR) {
-      if (!input.calendarFieldName) {
+      if (!isNonEmptyString(input.calendarFieldName)) {
         throw new ViewException(
           'CALENDAR views require calendarFieldName. Provide a DATE or DATE_TIME field name (e.g., "dueAt", "createdAt").',
           ViewExceptionCode.INVALID_VIEW_DATA,
         );
       }
 
-      if (!input.calendarLayout) {
+      if (!isDefined(input.calendarLayout)) {
         throw new ViewException(
           'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
           ViewExceptionCode.INVALID_VIEW_DATA,
@@ -150,7 +154,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
     let calendarFieldMetadataId: string | undefined;
     let calendarEndFieldMetadataId: string | undefined;
 
-    if (input.mainGroupByFieldName) {
+    if (isNonEmptyString(input.mainGroupByFieldName)) {
       mainGroupByFieldMetadataId =
         await this.viewToolIdentifierService.resolveFieldMetadataId({
           workspaceId,
@@ -159,7 +163,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
         });
     }
 
-    if (input.kanbanAggregateOperationFieldName) {
+    if (isNonEmptyString(input.kanbanAggregateOperationFieldName)) {
       kanbanAggregateOperationFieldMetadataId =
         await this.viewToolIdentifierService.resolveFieldMetadataId({
           workspaceId,
@@ -168,7 +172,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
         });
     }
 
-    if (input.calendarFieldName) {
+    if (isNonEmptyString(input.calendarFieldName)) {
       calendarFieldMetadataId =
         await this.viewToolIdentifierService.resolveFieldMetadataId({
           workspaceId,
@@ -177,7 +181,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
         });
     }
 
-    if (input.calendarEndFieldName) {
+    if (isNonEmptyString(input.calendarEndFieldName)) {
       calendarEndFieldMetadataId =
         await this.viewToolIdentifierService.resolveFieldMetadataId({
           workspaceId,
@@ -190,9 +194,9 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
       createViewInput: {
         name: input.name,
         objectMetadataId,
-        icon: input.icon ?? 'IconList',
-        type: input.type ?? ViewType.TABLE,
-        visibility: input.visibility ?? ViewVisibility.WORKSPACE,
+        icon: input.icon,
+        type: input.type,
+        visibility: input.visibility,
         mainGroupByFieldMetadataId,
         kanbanAggregateOperation: input.kanbanAggregateOperation,
         kanbanAggregateOperationFieldMetadataId,
