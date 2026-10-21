@@ -7,6 +7,7 @@ import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isAiChatPickerRequestCurrent } from '@/side-panel/pages/search-ai-chats/utils/isAiChatPickerRequestCurrent';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
@@ -40,10 +41,14 @@ export const useOpenAiChatFromPicker = ({
     const pickerPage = store.get(sidePanelNavigationStackState.atom).at(-1);
     const workspaceId = store.get(currentWorkspaceState.atom)?.id;
     const isPickerStillOpen = () =>
-      !request.signal.aborted &&
-      store.get(isSidePanelOpenedState.atom) &&
-      store.get(sidePanelNavigationStackState.atom).at(-1) === pickerPage &&
-      store.get(currentWorkspaceState.atom)?.id === workspaceId;
+      isAiChatPickerRequestCurrent({
+        isRequestAborted: request.signal.aborted,
+        isSidePanelOpened: store.get(isSidePanelOpenedState.atom),
+        initialPage: pickerPage,
+        currentPage: store.get(sidePanelNavigationStackState.atom).at(-1),
+        initialWorkspaceId: workspaceId,
+        currentWorkspaceId: store.get(currentWorkspaceState.atom)?.id,
+      });
 
     setOpeningThreadId(threadId);
     setHasOpenError(false);
