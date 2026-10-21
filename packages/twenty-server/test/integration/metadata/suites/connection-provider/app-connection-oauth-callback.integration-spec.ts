@@ -492,6 +492,18 @@ export const handler = ({ connectedAccountId }) => {
         expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
       },
     );
+
+    it.each(['http://', '//'])(
+      'falls back to the accounts page when redirectLocation is the malformed %s',
+      async (redirectLocation) => {
+        const fallbackRedirect = await authorizeUnknownProvider();
+        const redirect = await authorizeUnknownProvider(redirectLocation);
+
+        expect(redirect.origin).toBe(fallbackRedirect.origin);
+        expect(redirect.pathname).toBe('/settings/accounts');
+        expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
+      },
+    );
   });
 
   it('completes the callback for a state signed before visibility was renamed to scope', async () => {

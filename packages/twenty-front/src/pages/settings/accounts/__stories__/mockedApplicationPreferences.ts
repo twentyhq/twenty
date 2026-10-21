@@ -337,7 +337,6 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
 ];
 
-// Opt-in: on the account list these show up as account groups
 export const APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS = [
   graphql.query('MyConnectedAccounts', () =>
     HttpResponse.json({

@@ -20,7 +20,6 @@ export const SettingsAppPreferencesAppStatusCell = ({
     const { missingRequiredVariables, connectionProviders } =
       item.applicationWithPreferences;
 
-    // A missing variable breaks the whole app, a failed connection only itself
     if (isNonEmptyArray(missingRequiredVariables)) {
       return <Status color="red">{t`Missing configuration`}</Status>;
     }

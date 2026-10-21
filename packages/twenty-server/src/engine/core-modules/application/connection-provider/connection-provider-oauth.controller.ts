@@ -1,6 +1,7 @@
 import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isConnectionProviderScope } from 'twenty-shared/application';
@@ -18,6 +19,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { parseRelativeUrlOrNull } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url-or-null.util';
 import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
@@ -214,7 +216,7 @@ export class ConnectionProviderOAuthController {
         );
       }
 
-      const { pathname, searchParams, hash } = parseRelativeUrl(
+      const { pathname, searchParams, hash } = this.parseRedirectLocation(
         redirectLocation ||
           getSettingsPath(SettingsPath.ApplicationDetail, { applicationId }),
       );
@@ -246,7 +248,7 @@ export class ConnectionProviderOAuthController {
     state: string | undefined;
     error: unknown;
   }) {
-    const errorRedirectTarget = state
+    const errorRedirectTarget = isNonEmptyString(state)
       ? await this.oauthProviderFlowService.findErrorRedirectTargetFromState(
           state,
         )
@@ -266,6 +268,14 @@ export class ConnectionProviderOAuthController {
     });
   }
 
+  // redirectLocation is a raw query param, so a malformed one must not turn the redirect into a 500
+  private parseRedirectLocation(redirectLocation: string) {
+    return (
+      parseRelativeUrlOrNull(redirectLocation) ??
+      parseRelativeUrl(getSettingsPath(SettingsPath.Accounts))
+    );
+  }
+
   private redirectToError({
     res,
     error,
@@ -277,7 +287,7 @@ export class ConnectionProviderOAuthController {
     workspace: WorkspaceEntity | null;
     redirectLocation: string | null;
   }) {
-    const { pathname, searchParams, hash } = parseRelativeUrl(
+    const { pathname, searchParams, hash } = this.parseRedirectLocation(
       redirectLocation || getSettingsPath(SettingsPath.Accounts),
     );
 

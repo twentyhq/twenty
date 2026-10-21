@@ -103,18 +103,20 @@ export class GuardRedirectService {
   }) {
     this.captureException(error, workspace.id);
 
-    return this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl(
-      errorMessage ??
+    return this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl({
+      errorMessage:
+        errorMessage ??
         (error instanceof AuthException
           ? error.message
           : `Authentication error: ${error instanceof Error ? error.message : String(error)}`),
-      {
+      workspace: {
         subdomain: workspace.subdomain,
         customDomain: workspace.customDomain,
         isCustomDomainEnabled: workspace.isCustomDomainEnabled ?? false,
       },
       pathname,
-      { searchParams, hash },
-    );
+      searchParams,
+      hash,
+    });
   }
 }

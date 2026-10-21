@@ -55,12 +55,17 @@ export const isRouteParams = (obj: any): obj is RouteParams => {
   return Object.keys(obj).every((key) => typeof obj[key] === 'string');
 };
 
-export const computeLocation = (
-  routePath: string,
-  routeParams?: RouteParams,
-  searchParams?: RouteParams,
-  hash = '',
-) => {
+export const computeLocation = ({
+  routePath,
+  routeParams,
+  searchParams,
+  routeHash = '',
+}: {
+  routePath: string;
+  routeParams?: RouteParams;
+  searchParams?: RouteParams;
+  routeHash?: string;
+}) => {
   const search = searchParams
     ? `?${new URLSearchParams(searchParams).toString()}`
     : '';
@@ -71,7 +76,7 @@ export const computeLocation = (
       (paramName) => routeParams?.[paramName] ?? '',
     ),
     search,
-    hash,
+    hash: routeHash,
   };
 };
 
@@ -181,12 +186,12 @@ export const PageDecorator: Decorator<{
     Story,
     args,
     initialEntries: [
-      computeLocation(
-        args.routePath,
-        args.routeParams,
-        args.searchParams,
-        args.routeHash,
-      ),
+      computeLocation({
+        routePath: args.routePath,
+        routeParams: args.routeParams,
+        searchParams: args.searchParams,
+        routeHash: args.routeHash,
+      }),
     ],
   });
 

@@ -33,6 +33,34 @@ const SYNC_STATUSES_NEEDING_ACTION: ReadonlySet<SyncStatus> = new Set([
   SyncStatus.PENDING_CONFIGURATION,
 ]);
 
+const getAccountGroupSettingsPath = ({
+  groupId,
+  hasBuiltInAccount,
+  hasSettingsChannel,
+  appOnlyConnectionsApplicationId,
+}: {
+  groupId: string;
+  hasBuiltInAccount: boolean;
+  hasSettingsChannel: boolean;
+  appOnlyConnectionsApplicationId: string | undefined;
+}): string | undefined => {
+  if (hasBuiltInAccount) {
+    return hasSettingsChannel
+      ? getSettingsPath(SettingsPath.AccountDetail, {
+          connectedAccountId: groupId,
+        })
+      : undefined;
+  }
+
+  if (isDefined(appOnlyConnectionsApplicationId)) {
+    return getApplicationPreferencesConnectionsPath(
+      appOnlyConnectionsApplicationId,
+    );
+  }
+
+  return undefined;
+};
+
 type SettingsAccountGroupTableRowProps = {
   group: ConnectedAccountGroup;
   gridTemplateColumns: string;
@@ -55,7 +83,6 @@ export const SettingsAccountGroupTableRow = ({
   });
   const { messageChannel, calendarChannel } =
     getConnectedAccountSettingsChannels(builtInAccount);
-  // Only apps listing connection providers have a Connections tab to land on
   const applicationIdsWithConnectionsTab = new Set(
     applicationsWithPreferences
       .filter(({ connectionProviders }) => isNonEmptyArray(connectionProviders))
@@ -75,17 +102,12 @@ export const SettingsAccountGroupTableRow = ({
     : (appOnlyConnectionsApplicationId ??
       group.appAccounts[0]?.applicationId ??
       undefined);
-  const settingsPath = isDefined(builtInAccount)
-    ? isDefined(messageChannel) || isDefined(calendarChannel)
-      ? getSettingsPath(SettingsPath.AccountDetail, {
-          connectedAccountId: group.id,
-        })
-      : undefined
-    : isDefined(appOnlyConnectionsApplicationId)
-      ? getApplicationPreferencesConnectionsPath(
-          appOnlyConnectionsApplicationId,
-        )
-      : undefined;
+  const settingsPath = getAccountGroupSettingsPath({
+    groupId: group.id,
+    hasBuiltInAccount: isDefined(builtInAccount),
+    hasSettingsChannel: isDefined(messageChannel) || isDefined(calendarChannel),
+    appOnlyConnectionsApplicationId,
+  });
   const isAppOnlyReconnectNeeded =
     !isDefined(builtInAccount) &&
     group.appAccounts.some(isApplicationConnectionReconnectNeeded);

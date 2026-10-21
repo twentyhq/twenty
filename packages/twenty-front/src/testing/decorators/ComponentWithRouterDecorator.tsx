@@ -56,7 +56,12 @@ export const ComponentWithRouterDecorator: Decorator = (Story, { args }) => {
       args.routePath &&
       typeof args.routePath === 'string' &&
       (args.routeParams === undefined || isRouteParams(args.routeParams))
-        ? [computeLocation(args.routePath, args.routeParams)]
+        ? [
+            computeLocation({
+              routePath: args.routePath,
+              routeParams: args.routeParams,
+            }),
+          ]
         : [{ pathname: '/' }],
   });
 

@@ -36,7 +36,6 @@ export const SettingsAppPreferencesAppAccountsRowDropdownMenu = ({
     ({ connectionProviders }) => connectionProviders,
   );
 
-  // With several apps on one handle, each action has to say which app it acts on
   const isLabelledByApplication = appAccounts.length > 1;
 
   const accountActions = appAccounts.map((account) => {
