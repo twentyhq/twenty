@@ -27,15 +27,12 @@ export const teamsHealthCheckHandler =
       providerName: TEAMS_PROVIDER_NAME,
     });
 
-    // A connection whose token refresh fails is left out of the list, so it
-    // reads as missing here.
     if (connections.length === 0) {
       return {
         status: 'WARNING',
         title: 'Microsoft Teams is not connected',
         description:
           'No working Microsoft Teams connection was found in this workspace, so the app cannot reach Teams. Add a connection to start importing meeting transcripts.',
-        // Connections are managed in the General tab, not the tab the banner is read from.
         action: { label: 'Add connection', location: '#general' },
       };
     }
