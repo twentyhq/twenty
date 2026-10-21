@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Custom role assignment without the custom roles entitlement should refuse a custom role as the workspace default role 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "CUSTOM_ROLES_NOT_ENTITLED",
+    "userFriendlyMessage": "Custom roles are part of the Organization plan. Upgrade to assign "Entitlement gated role".",
+  },
+  "message": "Role "Entitlement gated role" cannot be assigned: custom roles require the Organization plan",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Custom role assignment without the custom roles entitlement should refuse a role that cannot be assigned to users as the workspace default role 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "ROLE_CANNOT_BE_ASSIGNED_TO_USERS",
+    "userFriendlyMessage": "This role cannot be assigned to users.",
+  },
+  "message": "Role cannot be assigned to users",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Custom role assignment without the custom roles entitlement should refuse assigning a custom role to a workspace member 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "CUSTOM_ROLES_NOT_ENTITLED",
+    "userFriendlyMessage": "Custom roles are part of the Organization plan. Upgrade to assign "Entitlement gated role".",
+  },
+  "message": "Role "Entitlement gated role" cannot be assigned: custom roles require the Organization plan",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Custom role assignment without the custom roles entitlement should refuse creating an API key with a custom role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "roleTarget": [
+        {
+          "errors": [
+            {
+              "code": "CUSTOM_ROLES_NOT_ENTITLED",
+              "message": "Role "Entitlement gated role" cannot be assigned: custom roles require the Organization plan",
+              "userFriendlyMessage": "Custom roles are part of the Organization plan. Upgrade to assign "Entitlement gated role".",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "roleTarget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 roleTarget",
+    "summary": {
+      "roleTarget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Custom roles are part of the Organization plan. Upgrade to assign "Entitlement gated role".",
+  },
+  "message": "Multiple validation errors occurred while creating role targets",
+  "name": "GraphQLError",
+}
+`;

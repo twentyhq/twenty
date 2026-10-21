@@ -128,7 +128,8 @@
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
       "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
-      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize"
+      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize",
+      "SegmentedControlVariant": "components/input/SegmentedControl/types/SegmentedControlVariant"
     }
   },
   "components/layout": {
@@ -627,6 +628,7 @@
       "IconTarget": "icon/components/TablerIcons",
       "IconTargetArrow": "icon/components/TablerIcons",
       "IconTerminal": "icon/components/TablerIcons",
+      "IconTerminal2": "icon/components/TablerIcons",
       "IconTestPipe": "icon/components/TablerIcons",
       "IconTextCaption": "icon/components/TablerIcons",
       "IconTextSize": "icon/components/TablerIcons",

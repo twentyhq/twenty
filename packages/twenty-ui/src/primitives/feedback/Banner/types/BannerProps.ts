@@ -15,4 +15,6 @@ export type BannerProps = Omit<
   color?: BannerColor;
   icon?: ReactNode;
   action?: ReactNode;
+  onDismiss?: () => void;
+  closeLabel?: string;
 };
