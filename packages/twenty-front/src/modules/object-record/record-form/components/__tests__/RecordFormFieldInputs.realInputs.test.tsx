@@ -1,4 +1,3 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -10,7 +9,8 @@ import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { type JsonValue } from 'type-fest';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 jest.mock(
   '@/object-record/record-field/ui/form-types/components/VariableChipStandalone',
@@ -38,33 +38,35 @@ jest.mock(
   }),
 );
 
-const currencyFieldMetadataItem = {
-  id: 'amount-field-id',
-  name: 'amount',
-  label: 'Amount',
-  type: FieldMetadataType.CURRENCY,
-  defaultValue: { amountMicros: null, currencyCode: "'USD'" },
-} as unknown as FieldMetadataItem;
+const objectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
-const percentageFieldMetadataItem = {
-  id: 'rate-field-id',
+const currencyFieldMetadataItem: FieldMetadataItem = {
+  ...getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: getMockObjectMetadataItemOrThrow('opportunity'),
+    fieldName: 'amount',
+  }),
+  defaultValue: { amountMicros: null, currencyCode: "'USD'" },
+};
+
+const percentageFieldMetadataItem: FieldMetadataItem = {
+  ...getMockFieldMetadataItemOrThrow({
+    objectMetadataItem,
+    fieldName: 'employees',
+  }),
   name: 'rate',
   label: 'Rate',
-  type: FieldMetadataType.NUMBER,
   settings: { type: 'percentage' },
-} as unknown as FieldMetadataItem;
+};
 
-const booleanFieldMetadataItem = {
-  id: 'active-field-id',
+const booleanFieldMetadataItem: FieldMetadataItem = {
+  ...getMockFieldMetadataItemOrThrow({
+    objectMetadataItem,
+    fieldName: 'idealCustomerProfile',
+  }),
   name: 'active',
   label: 'Active',
-  type: FieldMetadataType.BOOLEAN,
-} as unknown as FieldMetadataItem;
-
-const objectMetadataItem = {
-  id: 'opportunity-object-id',
-  nameSingular: 'opportunity',
-} as unknown as EnrichedObjectMetadataItem;
+  defaultValue: null,
+};
 
 const renderInputs = ({
   fieldMetadataItem = currencyFieldMetadataItem,
@@ -78,8 +80,6 @@ const renderInputs = ({
   const onFieldValidityChange = jest.fn();
   const store = createStore();
 
-  // Mirrors how the record creation form keeps the draft: a change writes the
-  // value under the field name, a clear writes null.
   const Form = () => {
     const [draftRecord, setDraftRecord] =
       useState<Partial<ObjectRecord>>(initialDraftRecord);

@@ -37,7 +37,7 @@ import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -291,7 +291,7 @@ const SidePanelRecordCreationForm = ({
 
     setServerValidationRuleViolations([]);
 
-    if (invalidFieldMetadataIds.length > 0) {
+    if (isNonEmptyArray(invalidFieldMetadataIds)) {
       scrollToFirstFieldViolation();
       return;
     }

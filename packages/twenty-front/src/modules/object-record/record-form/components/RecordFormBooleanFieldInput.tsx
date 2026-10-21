@@ -24,8 +24,7 @@ export const RecordFormBooleanFieldInput = ({
 }: RecordFormBooleanFieldInputProps) => {
   const { t } = useLingui();
 
-  // SegmentedControl is uncontrolled: a default that only settles after the
-  // first render would switch the selection under the user.
+  // SegmentedControl is uncontrolled, so a default settling later would switch the selection.
   const [initialValue] = useState(defaultValue);
 
   const instanceId = useId();
