@@ -6,7 +6,6 @@ import {
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,7 +16,7 @@ import { type IconComponent } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const SWITCH_CONTENT_CLASS_NAME = css`
+const StyledSettingsCardSwitchContent = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[3]};
@@ -56,46 +55,48 @@ export const SettingsOptionCardContentSwitch = ({
 
   return (
     <>
-      <Card.Content className={SWITCH_CONTENT_CLASS_NAME}>
+      <Card.Content>
         <Card.Action
           disabled={disabled}
           render={<label htmlFor={switchId} aria-labelledby={titleId} />}
         />
-        {isDefined(Icon) && (
-          <StyledSettingsCardIcon>
-            <SettingsOptionIconCustomizer Icon={Icon} />
-          </StyledSettingsCardIcon>
-        )}
-        <StyledSettingsCardTextContainer>
-          <StyledSettingsCardTitle id={titleId}>
-            <label htmlFor={switchId}>{title}</label>
-          </StyledSettingsCardTitle>
-          {hasDescription && (
-            <StyledSettingsCardDescription id={descriptionId}>
-              <Card.Control
-                render={
-                  <label htmlFor={switchId} aria-labelledby={descriptionId} />
-                }
-              >
-                <OverflowingTextWithTooltip
-                  text={description}
-                  render={<span />}
-                />
-              </Card.Control>
-            </StyledSettingsCardDescription>
+        <StyledSettingsCardSwitchContent>
+          {isDefined(Icon) && (
+            <StyledSettingsCardIcon>
+              <SettingsOptionIconCustomizer Icon={Icon} />
+            </StyledSettingsCardIcon>
           )}
-        </StyledSettingsCardTextContainer>
-        <Card.Control render={<StyledSettingsCardSwitchButtonContainer />}>
-          <Switch
-            id={switchId}
-            aria-labelledby={titleId}
-            aria-describedby={hasDescription ? descriptionId : undefined}
-            checked={checked}
-            onCheckedChange={onChange}
-            disabled={disabled}
-            size="sm"
-          />
-        </Card.Control>
+          <StyledSettingsCardTextContainer>
+            <StyledSettingsCardTitle id={titleId}>
+              <label htmlFor={switchId}>{title}</label>
+            </StyledSettingsCardTitle>
+            {hasDescription && (
+              <StyledSettingsCardDescription id={descriptionId}>
+                <Card.Control
+                  render={
+                    <label htmlFor={switchId} aria-labelledby={descriptionId} />
+                  }
+                >
+                  <OverflowingTextWithTooltip
+                    text={description}
+                    render={<span />}
+                  />
+                </Card.Control>
+              </StyledSettingsCardDescription>
+            )}
+          </StyledSettingsCardTextContainer>
+          <Card.Control render={<StyledSettingsCardSwitchButtonContainer />}>
+            <Switch
+              id={switchId}
+              aria-labelledby={titleId}
+              aria-describedby={hasDescription ? descriptionId : undefined}
+              checked={checked}
+              onCheckedChange={onChange}
+              disabled={disabled}
+              size="sm"
+            />
+          </Card.Control>
+        </StyledSettingsCardSwitchContent>
       </Card.Content>
       {divider && <SettingsCardSeparator />}
     </>
