@@ -1250,6 +1250,13 @@
         "description": "Class merged onto the root div or composed element."
       },
       {
+        "name": "closeLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Close",
+        "description": "Accessible label for the close control. Defaults to Close; supply localized text when needed."
+      },
+      {
         "name": "color",
         "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
         "required": false,
@@ -1262,6 +1269,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Optional leading ReactNode. The caller supplies decorative or accessible icon semantics."
+      },
+      {
+        "name": "onDismiss",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Renders a 24px ghost close control and calls this callback when activated. The caller owns visibility."
       },
       {
         "name": "ref",
@@ -2100,6 +2114,13 @@
         "required": false,
         "defaultValue": null,
         "description": "The controlled value of the radio item that should be currently selected.\n\nTo render an uncontrolled radio group, use the `defaultValue` prop instead."
+      },
+      {
+        "name": "variant",
+        "type": "\"rectangle\" | \"round\"",
+        "required": false,
+        "defaultValue": "round",
+        "description": "Shape: `round` is a pill, `rectangle` fills its container with form-field corners."
       }
     ]
   },

@@ -25,15 +25,9 @@ const StyledYear = styled.span`
   color: ${themeCssVariables.font.color.light};
 `;
 
-const StyledTitleContainer = styled.div`
+const StyledMonthHeading = styled(Heading)`
+  font-weight: ${themeCssVariables.font.weight.regular};
   margin-bottom: ${themeCssVariables.spacing[2]};
-
-  h3 {
-    color: ${themeCssVariables.font.color.secondary};
-    font-size: ${themeCssVariables.font.size.md};
-    font-weight: ${themeCssVariables.font.weight.regular};
-    line-height: inherit;
-  }
 `;
 
 type CalendarEventsCardContentProps = {
@@ -98,12 +92,10 @@ export const CalendarEventsCardContent = ({
 
           return (
             <Section.Root key={monthTime}>
-              <StyledTitleContainer>
-                <Heading level={3} size="lg">
-                  {monthLabel}
-                  {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
-                </Heading>
-              </StyledTitleContainer>
+              <StyledMonthHeading level={3} size="md" color="secondary">
+                {monthLabel}
+                {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
+              </StyledMonthHeading>
               <CalendarMonthCard dayTimes={monthDayTimes} />
             </Section.Root>
           );

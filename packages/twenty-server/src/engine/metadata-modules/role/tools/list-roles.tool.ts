@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { toRoleSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
@@ -40,11 +40,11 @@ export class ListRolesTool extends BaseTool<typeof listRolesInputSchema> {
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof listRolesInputSchema>,
-    { workspaceId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
-    if (!parameters.includeRowLevelPermissionRules) {
+  async execute({
+    input,
+    context: { workspaceId },
+  }: ToolExecuteArgs<typeof listRolesInputSchema>): Promise<ToolOutput> {
+    if (!input.includeRowLevelPermissionRules) {
       const roles = await this.roleService.getWorkspaceRoles(workspaceId);
 
       return {
