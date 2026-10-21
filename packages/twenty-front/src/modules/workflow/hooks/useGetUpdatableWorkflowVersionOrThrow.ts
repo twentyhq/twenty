@@ -19,26 +19,26 @@ export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
     instanceId,
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
-  const flowAtom = useAtomComponentStateCallbackState(
+  const flowState = useAtomComponentStateCallbackState(
     flowComponentState,
     instanceId,
   );
-  const saveDraftVersionIdAtom = useAtomComponentStateCallbackState(
+  const saveDraftVersionIdState = useAtomComponentStateCallbackState(
     workflowFlowSaveDraftVersionIdComponentState,
     instanceId,
   );
-  const draftVersionCreationAtom = useAtomComponentStateCallbackState(
+  const draftVersionCreationState = useAtomComponentStateCallbackState(
     workflowDraftVersionCreationComponentState,
     instanceId,
   );
 
   const getUpdatableWorkflowVersion = async (): Promise<string> => {
-    const saveDraftVersionId = store.get(saveDraftVersionIdAtom);
+    const saveDraftVersionId = store.get(saveDraftVersionIdState);
 
     // The caller may run on a stale render that has not seen a draft created by an earlier save
     if (
       isDefined(saveDraftVersionId) &&
-      saveDraftVersionId === store.get(flowAtom)?.workflowVersionId
+      saveDraftVersionId === store.get(flowState)?.workflowVersionId
     ) {
       return saveDraftVersionId;
     }
@@ -50,20 +50,20 @@ export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
     }
 
     if (workflow.currentVersion.status === 'DRAFT') {
-      store.set(saveDraftVersionIdAtom, workflow.currentVersion.id);
+      store.set(saveDraftVersionIdState, workflow.currentVersion.id);
 
       return workflow.currentVersion.id;
     }
 
     // A second draft creation would overwrite the first draft with the copied version
     const draftVersionCreation =
-      store.get(draftVersionCreationAtom) ??
+      store.get(draftVersionCreationState) ??
       createDraftFromWorkflowVersion({
         workflowId: workflowVisualizerWorkflowId,
         workflowVersionIdToCopy: workflow.currentVersion.id,
-      }).finally(() => store.set(draftVersionCreationAtom, undefined));
+      }).finally(() => store.set(draftVersionCreationState, undefined));
 
-    store.set(draftVersionCreationAtom, draftVersionCreation);
+    store.set(draftVersionCreationState, draftVersionCreation);
 
     const draftVersionId = await draftVersionCreation;
 
@@ -71,7 +71,7 @@ export const useGetUpdatableWorkflowVersionOrThrow = (instanceId?: string) => {
       throw new Error(doNotTranslate('Failed to create draft version'));
     }
 
-    store.set(saveDraftVersionIdAtom, draftVersionId);
+    store.set(saveDraftVersionIdState, draftVersionId);
 
     return draftVersionId;
   };
