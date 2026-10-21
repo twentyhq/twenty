@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { isAxiosError } from 'axios';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { SearchHelpCenterInputZodSchema } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
+import {
+  type SearchHelpCenterInput,
+  SearchHelpCenterInputZodSchema,
+} from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
 import { buildHelpCenterErrorDetail } from 'src/engine/core-modules/tool/tools/search-help-center-tool/utils/build-help-center-error-detail.util';
 import { extractHelpCenterResults } from 'src/engine/core-modules/tool/tools/search-help-center-tool/utils/extract-help-center-results.util';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -33,7 +36,7 @@ export class SearchHelpCenterTool implements Tool {
     parameters: ToolInput,
     _context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { query } = parameters;
+    const { query } = parameters as SearchHelpCenterInput;
 
     try {
       const httpClient = this.secureHttpClientService.getHttpClient({
