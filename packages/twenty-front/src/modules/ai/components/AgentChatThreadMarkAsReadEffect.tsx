@@ -66,8 +66,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
         visit?.threadId === threadId ? null : visit,
       );
 
-      // Filed on leaving rather than on reading, so the chat stays where the
-      // member is reading it
+      // Filed on leave, not on read, so the chat stays put while being read
       const thread = store.get(
         agentChatThreadRecordFamilySelector.selectorFamily(threadId),
       );

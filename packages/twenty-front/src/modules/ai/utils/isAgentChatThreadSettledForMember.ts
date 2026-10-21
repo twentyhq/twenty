@@ -4,9 +4,6 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
-// A member's own chat waits on nobody once the agent had the last word, asked
-// nothing and the member read it. Chats where someone else wrote last, or that
-// are assigned to the member, keep the usual inbox rules.
 export const isAgentChatThreadSettledForMember = ({
   thread,
   participant,
