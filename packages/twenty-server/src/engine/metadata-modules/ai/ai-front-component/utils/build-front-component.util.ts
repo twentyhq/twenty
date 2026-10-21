@@ -1,13 +1,14 @@
-import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { createHash } from 'crypto';
 import { dirname, join } from 'path';
 import {
   createJsxRuntimeRemoteWrapperPlugin,
   cssInjectionPlugin,
+  getCommonFrontComponentBuildOptions,
   unwrapDefineFrontComponentToDirectExport,
 } from 'twenty-shared/front-component-build';
 
 import { FRONT_COMPONENT_ALLOWED_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-allowed-imports.constant';
+import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { frontComponentQuerySchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-query.schema';
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
@@ -29,20 +30,15 @@ export const buildFrontComponent = async (
   });
   const sourceFile = join(__dirname, 'component.front-component.tsx');
   const result = await buildFrontComponentWithLimits({
+    ...getCommonFrontComponentBuildOptions(),
     stdin: {
       contents: unwrapDefineFrontComponentToDirectExport(source),
       sourcefile: sourceFile,
       resolveDir: dirname(sourceFile),
       loader: 'tsx',
     },
-    bundle: true,
     write: false,
-    format: 'esm',
     platform: 'browser',
-    jsx: 'automatic',
-    minify: true,
-    logLevel: 'silent',
-    define: { 'process.env.NODE_ENV': '"production"' },
     plugins: [
       {
         name: 'front-component-imports',

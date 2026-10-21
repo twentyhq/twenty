@@ -11,5 +11,6 @@ export {
   createCssInjectionPlugin,
   cssInjectionPlugin,
 } from './css-injection-plugin';
+export { getCommonFrontComponentBuildOptions } from './get-common-front-component-build-options';
 export { createJsxRuntimeRemoteWrapperPlugin } from './jsx-runtime-remote-wrapper-plugin';
 export { unwrapDefineFrontComponentToDirectExport } from './unwrap-define-front-component-to-direct-export';

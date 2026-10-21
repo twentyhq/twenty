@@ -1,4 +1,5 @@
 import { context, type BuildOptions } from 'esbuild';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FrontComponentException,
@@ -10,20 +11,20 @@ const MAX_BUILD_OUTPUT_BYTES = 5 * 1024 * 1024;
 
 export const buildFrontComponentWithLimits = async (options: BuildOptions) => {
   const buildContext = await context({ ...options, write: false });
-  let timedOut = false;
+  let timeoutError: FrontComponentException | undefined;
   const timeout = setTimeout(() => {
-    timedOut = true;
+    timeoutError = new FrontComponentException(
+      'Component build exceeded the 10 second time limit.',
+      FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
+    );
     void buildContext.cancel().catch(() => undefined);
   }, BUILD_TIMEOUT_MS);
 
   try {
     const result = await buildContext.rebuild();
 
-    if (timedOut) {
-      throw new FrontComponentException(
-        'Component build exceeded the 10 second time limit.',
-        FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
-      );
+    if (isDefined(timeoutError)) {
+      throw timeoutError;
     }
     if (
       result.outputFiles.reduce(
@@ -39,11 +40,8 @@ export const buildFrontComponentWithLimits = async (options: BuildOptions) => {
 
     return result;
   } catch (error) {
-    if (timedOut) {
-      throw new FrontComponentException(
-        'Component build exceeded the 10 second time limit.',
-        FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
-      );
+    if (isDefined(timeoutError)) {
+      throw timeoutError;
     }
     throw error;
   } finally {
