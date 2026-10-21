@@ -1,4 +1,4 @@
-import { CHART_SETTINGS_DROPDOWN_MAX_HEIGHT } from '@/side-panel/pages/page-layout/constants/ChartSettingsDropdownMaxHeight';
+import { PAGE_LAYOUT_DROPDOWN_CONTENT_MAX_HEIGHT } from '@/side-panel/pages/page-layout/constants/PageLayoutDropdownContentMaxHeight';
 import { type ReactNode } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
@@ -11,7 +11,7 @@ export const ChartSettingsDropdownSection = ({
 }: ChartSettingsDropdownSectionProps) => (
   <Dropdown.Section
     scrollable
-    style={{ maxHeight: CHART_SETTINGS_DROPDOWN_MAX_HEIGHT }}
+    style={{ maxHeight: PAGE_LAYOUT_DROPDOWN_CONTENT_MAX_HEIGHT }}
   >
     {children}
   </Dropdown.Section>
