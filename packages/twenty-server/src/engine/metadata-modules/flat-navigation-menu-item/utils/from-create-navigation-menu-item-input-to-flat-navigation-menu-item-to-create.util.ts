@@ -2,6 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
@@ -17,6 +19,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     flatObjectMetadataMaps,
     flatViewMaps,
     flatPageLayoutMaps,
+    flatFieldMetadataMaps,
+    flatRoleMaps,
   }: {
     createNavigationMenuItemInput: CreateNavigationMenuItemInput;
     workspaceId: string;
@@ -24,7 +28,11 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
   } & Pick<
     AllFlatEntityMaps,
-    'flatObjectMetadataMaps' | 'flatViewMaps' | 'flatPageLayoutMaps'
+    | 'flatObjectMetadataMaps'
+    | 'flatViewMaps'
+    | 'flatPageLayoutMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatRoleMaps'
   >): FlatNavigationMenuItem => {
     const id = createNavigationMenuItemInput.id ?? uuidv4();
     const now = new Date().toISOString();
@@ -71,6 +79,10 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       },
     });
 
+    const conditionalDisplay = normalizeConditionalDisplay(
+      createNavigationMenuItemInput.conditionalDisplay,
+    );
+
     return {
       id,
       type: createNavigationMenuItemInput.type,
@@ -91,6 +103,14 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       icon: createNavigationMenuItemInput.icon ?? null,
       color: createNavigationMenuItemInput.color ?? null,
       position,
+      conditionalDisplay,
+      universalConditionalDisplay:
+        fromConditionalDisplayToUniversalConditionalDisplay({
+          conditionalDisplay,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+          roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+        }),
       workspaceId,
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,

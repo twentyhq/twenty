@@ -87,6 +87,8 @@ export const prefillFrontComponentCommandMenuItems = async ({
         availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
         conditionalAvailabilityExpression: null,
         conditionalPinnedExpression: null,
+        conditionalDisplay: null,
+        universalConditionalDisplay: null,
         availabilityObjectMetadataId: null,
         availabilityObjectMetadataUniversalIdentifier: null,
         navigationTargetObjectMetadataId: null,

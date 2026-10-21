@@ -16,6 +16,7 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { resolveUpdateConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/resolve-update-conditional-display.util';
 
 @Injectable()
 export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -39,18 +40,26 @@ export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigratio
         allFlatEntityMaps,
       });
 
+    const updateWithConditionalDisplay = resolveUpdateConditionalDisplay({
+      update: updateWithResolvedForeignKeys,
+      flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+      flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+    });
+
     const update =
       universalOverrides === undefined
-        ? updateWithResolvedForeignKeys
+        ? updateWithConditionalDisplay
         : universalOverrides === null
-          ? { ...updateWithResolvedForeignKeys, overrides: null }
+          ? { ...updateWithConditionalDisplay, overrides: null }
           : {
-              ...updateWithResolvedForeignKeys,
+              ...updateWithConditionalDisplay,
               overrides: fromUniversalOverridesToCommandMenuItemOverrides({
                 universalOverrides,
                 flatObjectMetadataMaps:
                   allFlatEntityMaps.flatObjectMetadataMaps,
                 flatPageLayoutMaps: allFlatEntityMaps.flatPageLayoutMaps,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+                flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
               }),
             };
 

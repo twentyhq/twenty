@@ -2,6 +2,8 @@ import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'tw
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
@@ -13,7 +15,10 @@ export type FromCreateViewFieldInputToFlatViewFieldToCreateArgs = {
   flatApplication: FlatApplication;
 } & Pick<
   AllFlatEntityMaps,
-  'flatFieldMetadataMaps' | 'flatViewMaps' | 'flatViewFieldGroupMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatViewMaps'
+  | 'flatViewFieldGroupMaps'
+  | 'flatRoleMaps'
 >;
 
 export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
@@ -22,6 +27,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
   flatFieldMetadataMaps,
   flatViewMaps,
   flatViewFieldGroupMaps,
+  flatRoleMaps,
 }: FromCreateViewFieldInputToFlatViewFieldToCreateArgs): UniversalFlatViewField & {
   id: string;
 } => {
@@ -68,6 +74,15 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     aggregateOperation: createViewFieldInput.aggregateOperation ?? null,
     isActive: true,
     isSystemSideEffect: false,
+    universalConditionalDisplay:
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay: normalizeConditionalDisplay(
+          createViewFieldInput.conditionalDisplay,
+        ),
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+      }),
     universalOverrides: null,
     viewFieldGroupUniversalIdentifier,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,

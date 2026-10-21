@@ -1,5 +1,6 @@
 import { type NormalizedPageLayoutTabManifest } from 'twenty-shared/application';
 
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 
 export const fromPageLayoutTabManifestToUniversalFlatPageLayoutTab = ({
@@ -21,12 +22,15 @@ export const fromPageLayoutTabManifestToUniversalFlatPageLayoutTab = ({
     pageLayoutUniversalIdentifier,
     icon: pageLayoutTabManifest.icon ?? null,
     layoutMode: pageLayoutTabManifest.layoutMode,
+    universalConditionalDisplay: normalizeConditionalDisplay(
+      pageLayoutTabManifest.conditionalDisplay,
+    ),
     isActive: true,
     isSystemSideEffect: false,
     widgetUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
-    overrides: null,
+    universalOverrides: null,
   };
 };

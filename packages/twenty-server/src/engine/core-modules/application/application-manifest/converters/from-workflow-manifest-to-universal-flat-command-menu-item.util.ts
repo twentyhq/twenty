@@ -45,6 +45,7 @@ export const fromWorkflowManifestToUniversalFlatCommandMenuItem = ({
       : CommandMenuItemAvailabilityType.GLOBAL,
     conditionalAvailabilityExpression: null,
     conditionalPinnedExpression: null,
+    universalConditionalDisplay: null,
     frontComponentUniversalIdentifier: null,
     availabilityObjectMetadataUniversalIdentifier: isRecordSelection
       ? availability.objectUniversalIdentifier

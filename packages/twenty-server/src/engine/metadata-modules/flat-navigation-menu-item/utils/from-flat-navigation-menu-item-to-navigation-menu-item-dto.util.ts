@@ -20,6 +20,7 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemDto = (
   position: flatNavigationMenuItem.position,
   workspaceId: flatNavigationMenuItem.workspaceId,
   applicationId: flatNavigationMenuItem.applicationId ?? undefined,
+  conditionalDisplay: flatNavigationMenuItem.conditionalDisplay ?? undefined,
   createdAt: new Date(flatNavigationMenuItem.createdAt),
   updatedAt: new Date(flatNavigationMenuItem.updatedAt),
 });

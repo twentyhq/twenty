@@ -2,6 +2,7 @@ import { type CommandMenuItemManifest } from 'twenty-shared/application';
 
 import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
@@ -28,6 +29,9 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
       commandMenuItemManifest.conditionalAvailabilityExpression ?? null,
     conditionalPinnedExpression:
       commandMenuItemManifest.conditionalPinnedExpression ?? null,
+    universalConditionalDisplay: normalizeConditionalDisplay(
+      commandMenuItemManifest.conditionalDisplay,
+    ),
     frontComponentUniversalIdentifier:
       commandMenuItemManifest.frontComponentUniversalIdentifier,
     availabilityObjectMetadataUniversalIdentifier:

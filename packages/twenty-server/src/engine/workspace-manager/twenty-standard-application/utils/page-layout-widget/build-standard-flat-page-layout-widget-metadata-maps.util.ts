@@ -1,10 +1,13 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'twenty-shared/types';
@@ -25,6 +28,10 @@ export type BuildStandardFlatPageLayoutWidgetMetadataMapsArgs = Omit<
   'context'
 > & {
   excludedWidgetTypes: WidgetType[];
+  dependencyFlatEntityMaps: {
+    flatFieldMetadataMaps: FlatFieldMetadataMaps;
+    flatRoleMaps: FlatRoleMaps;
+  };
 };
 
 const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
@@ -340,6 +347,7 @@ const computeRecordPageWidgets = ({
   standardObjectMetadataRelatedEntityIds,
   standardPageLayoutMetadataRelatedEntityIds,
   excludedWidgetTypes,
+  dependencyFlatEntityMaps: { flatFieldMetadataMaps, flatRoleMaps },
 }: BuildStandardFlatPageLayoutWidgetMetadataMapsArgs): FlatPageLayoutWidget[] => {
   const allWidgets: FlatPageLayoutWidget[] = [];
 
@@ -383,6 +391,8 @@ const computeRecordPageWidgets = ({
           ? (layout.objectUniversalIdentifier ?? null)
           : null;
 
+        const conditionalDisplay = widget.conditionalDisplay ?? null;
+
         const { configuration, universalConfiguration } =
           buildRecordPageWidgetConfigurations({
             widgetType: widget.type,
@@ -412,7 +422,15 @@ const computeRecordPageWidgets = ({
               configuration,
               universalConfiguration,
               objectMetadataId,
-              conditionalDisplay: widget.conditionalDisplay ?? null,
+              conditionalDisplay,
+              universalConditionalDisplay:
+                fromConditionalDisplayToUniversalConditionalDisplay({
+                  conditionalDisplay,
+                  fieldMetadataUniversalIdentifierById:
+                    flatFieldMetadataMaps.universalIdentifierById,
+                  roleUniversalIdentifierById:
+                    flatRoleMaps.universalIdentifierById,
+                }),
               conditionalAvailabilityExpression:
                 widget.conditionalAvailabilityExpression ?? null,
             },

@@ -55,6 +55,7 @@ export class PageLayoutDuplicationService {
       flatFrontComponentMaps,
       flatViewFieldGroupMaps,
       flatViewMaps,
+      flatRoleMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
     const originalFlatLayout = this.findOriginalLayoutOrThrow(
@@ -98,6 +99,8 @@ export class PageLayoutDuplicationService {
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatPageLayoutMaps: optimisticFlatPageLayoutMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
       });
 
     const optimisticFlatPageLayoutTabMaps = newFlatTabs.reduce(
@@ -190,6 +193,7 @@ export class PageLayoutDuplicationService {
           'flatFrontComponentMaps',
           'flatViewFieldGroupMaps',
           'flatViewMaps',
+          'flatRoleMaps',
         ],
       },
     );
@@ -258,12 +262,16 @@ export class PageLayoutDuplicationService {
     workspaceId,
     flatApplication,
     flatPageLayoutMaps,
+    flatFieldMetadataMaps,
+    flatRoleMaps,
   }: {
     originalTabs: FlatPageLayoutTab[];
     newPageLayoutId: string;
     workspaceId: string;
     flatApplication: FlatApplication;
     flatPageLayoutMaps: AllFlatEntityMaps['flatPageLayoutMaps'];
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatRoleMaps: AllFlatEntityMaps['flatRoleMaps'];
   }): {
     newFlatTabs: FlatPageLayoutTab[];
     originalTabIdToNewTabIdMap: Map<string, string>;
@@ -281,6 +289,8 @@ export class PageLayoutDuplicationService {
           workspaceId,
           flatApplication,
           flatPageLayoutMaps,
+          flatFieldMetadataMaps,
+          flatRoleMaps,
         });
 
       originalTabIdToNewTabIdMap.set(originalTab.id, newFlatTab.id);

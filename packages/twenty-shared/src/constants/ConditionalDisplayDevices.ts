@@ -1,0 +1,1 @@
+export const CONDITIONAL_DISPLAY_DEVICES = ['DESKTOP', 'MOBILE'] as const;

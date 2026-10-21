@@ -38,7 +38,7 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     expect(result.title).toBe('My Widget');
     expect(result.type).toBe(WidgetType.VIEW);
     expect(result.objectMetadataUniversalIdentifier).toBeNull();
-    expect(result.conditionalDisplay).toBeNull();
+    expect(result.universalConditionalDisplay).toBeNull();
     expect(result.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,

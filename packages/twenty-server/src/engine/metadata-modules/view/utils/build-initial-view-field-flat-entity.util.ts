@@ -40,6 +40,7 @@ export const buildInitialViewFieldFlatEntity = ({
   size,
   position,
   aggregateOperation,
+  universalConditionalDisplay: null,
   isActive,
   isSystemSideEffect: false,
   universalOverrides: null,

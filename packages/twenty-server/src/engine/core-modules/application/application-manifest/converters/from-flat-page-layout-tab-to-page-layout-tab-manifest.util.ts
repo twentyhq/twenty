@@ -20,5 +20,8 @@ export const fromFlatPageLayoutTabToPageLayoutTabManifest = ({
     ? { icon: flatPageLayoutTab.icon }
     : {}),
   layoutMode: flatPageLayoutTab.layoutMode,
+  ...(isDefined(flatPageLayoutTab.universalConditionalDisplay)
+    ? { conditionalDisplay: flatPageLayoutTab.universalConditionalDisplay }
+    : {}),
   ...(isNonEmptyArray(widgets) ? { widgets } : {}),
 });

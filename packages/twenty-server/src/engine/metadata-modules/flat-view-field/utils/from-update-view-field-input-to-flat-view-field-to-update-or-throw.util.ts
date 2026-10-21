@@ -5,6 +5,8 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -25,6 +27,8 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   updateViewFieldInput: rawUpdateViewFieldInput,
   flatViewFieldMaps,
   flatViewFieldGroupMaps,
+  flatFieldMetadataMaps,
+  flatRoleMaps,
   callerApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
 }: {
@@ -34,7 +38,7 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   workspaceCustomApplicationUniversalIdentifier: string;
 } & Pick<
   AllFlatEntityMaps,
-  'flatViewFieldGroupMaps'
+  'flatViewFieldGroupMaps' | 'flatFieldMetadataMaps' | 'flatRoleMaps'
 >): UniversalFlatViewField => {
   const { id: viewFieldToUpdateId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -58,6 +62,12 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
     rawUpdateViewFieldInput.update,
     FLAT_VIEW_FIELD_EDITABLE_PROPERTIES,
   );
+
+  if (editableProperties.conditionalDisplay !== undefined) {
+    editableProperties.conditionalDisplay = normalizeConditionalDisplay(
+      editableProperties.conditionalDisplay,
+    );
+  }
 
   const shouldOverride = isCallerOverridingEntity({
     callerApplicationUniversalIdentifier,
@@ -102,12 +112,25 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
       viewFieldGroupUniversalIdentifier;
   }
 
+  if (updatedEditableProperties.conditionalDisplay !== undefined) {
+    flatViewFieldToUpdate.universalConditionalDisplay =
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay: mergedRecord.conditionalDisplay,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+      });
+  }
+
   if (isDefined(overrides)) {
     flatViewFieldToUpdate.universalOverrides =
       fromViewFieldOverridesToUniversalOverrides({
         overrides,
         viewFieldGroupUniversalIdentifierById:
           flatViewFieldGroupMaps.universalIdentifierById,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
       });
   } else {
     flatViewFieldToUpdate.universalOverrides = null;

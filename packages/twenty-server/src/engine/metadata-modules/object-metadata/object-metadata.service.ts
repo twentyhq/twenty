@@ -650,6 +650,8 @@ export class ObjectMetadataService {
       icon: null,
       color: null,
       position: nextPosition,
+      conditionalDisplay: null,
+      universalConditionalDisplay: null,
       workspaceId,
       applicationId: workspaceCustomApplicationId,
       applicationUniversalIdentifier:

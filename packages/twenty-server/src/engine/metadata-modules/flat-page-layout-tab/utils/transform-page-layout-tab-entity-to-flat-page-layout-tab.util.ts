@@ -1,17 +1,27 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
+import { fromPageLayoutTabOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-page-layout-tab-overrides-to-universal-overrides.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+
+type TransformPageLayoutTabEntityToFlatPageLayoutTabArgs =
+  FromEntityToFlatEntityArgs<'pageLayoutTab'> & {
+    fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+    roleUniversalIdentifierById: Partial<Record<string, string>>;
+  };
 
 export const transformPageLayoutTabEntityToFlatPageLayoutTab = ({
   entity: pageLayoutTabEntity,
   applicationIdToUniversalIdentifierMap,
   pageLayoutIdToUniversalIdentifierMap,
-}: FromEntityToFlatEntityArgs<'pageLayoutTab'>): FlatPageLayoutTab => {
+  fieldMetadataUniversalIdentifierById,
+  roleUniversalIdentifierById,
+}: TransformPageLayoutTabEntityToFlatPageLayoutTabArgs): FlatPageLayoutTab => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(
       pageLayoutTabEntity.applicationId,
@@ -34,6 +44,9 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = ({
     );
   }
 
+  const conditionalDisplay = pageLayoutTabEntity.conditionalDisplay ?? null;
+  const overrides = pageLayoutTabEntity.overrides ?? null;
+
   return {
     createdAt: pageLayoutTabEntity.createdAt.toISOString(),
     deletedAt: pageLayoutTabEntity.deletedAt?.toISOString() ?? null,
@@ -50,11 +63,25 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = ({
     widgetIds: pageLayoutTabEntity.widgets.map((widget) => widget.id),
     icon: pageLayoutTabEntity.icon,
     layoutMode: pageLayoutTabEntity.layoutMode,
+    conditionalDisplay,
+    universalConditionalDisplay:
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay,
+        fieldMetadataUniversalIdentifierById,
+        roleUniversalIdentifierById,
+      }),
     applicationUniversalIdentifier,
     pageLayoutUniversalIdentifier,
     widgetUniversalIdentifiers: pageLayoutTabEntity.widgets.map(
       (widget) => widget.universalIdentifier,
     ),
-    overrides: pageLayoutTabEntity.overrides ?? null,
+    overrides,
+    universalOverrides: isDefined(overrides)
+      ? fromPageLayoutTabOverridesToUniversalOverrides({
+          overrides,
+          fieldMetadataUniversalIdentifierById,
+          roleUniversalIdentifierById,
+        })
+      : null,
   };
 };

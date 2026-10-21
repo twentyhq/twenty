@@ -143,13 +143,20 @@ export class PageLayoutTabService {
         { workspaceId },
       );
 
-    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatPageLayoutMaps'],
-        },
-      );
+    const {
+      flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatPageLayoutMaps',
+          'flatFieldMetadataMaps',
+          'flatRoleMaps',
+        ],
+      },
+    );
 
     const flatPageLayoutTabToCreate =
       fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate({
@@ -157,6 +164,8 @@ export class PageLayoutTabService {
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
       });
 
     const validateAndBuildResult =
@@ -219,13 +228,20 @@ export class PageLayoutTabService {
         { workspaceId },
       );
 
-    const { flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatPageLayoutTabMaps'],
-        },
-      );
+    const {
+      flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatPageLayoutTabMaps',
+          'flatFieldMetadataMaps',
+          'flatRoleMaps',
+        ],
+      },
+    );
 
     const updatePageLayoutTabInput: UpdatePageLayoutTabInputWithId = {
       id,
@@ -236,6 +252,8 @@ export class PageLayoutTabService {
       fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow({
         updatePageLayoutTabInput,
         flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
+        flatFieldMetadataMaps,
+        flatRoleMaps,
         callerApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:

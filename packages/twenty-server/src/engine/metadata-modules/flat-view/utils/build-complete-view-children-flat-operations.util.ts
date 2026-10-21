@@ -46,6 +46,7 @@ type BuildCompleteViewChildrenFlatOperationsArgs = {
   | 'flatViewSortMaps'
   | 'flatViewFieldGroupMaps'
   | 'flatViewFilterGroupMaps'
+  | 'flatRoleMaps'
 >;
 
 type CompleteViewChildrenFlatOperations = {
@@ -64,6 +65,7 @@ export const buildCompleteViewChildrenFlatOperations = ({
   flatViewSortMaps,
   flatViewFieldGroupMaps,
   flatViewFilterGroupMaps,
+  flatRoleMaps,
   fields,
   filters,
   sorts,
@@ -90,6 +92,7 @@ export const buildCompleteViewChildrenFlatOperations = ({
         flatFieldMetadataMaps,
         flatViewMaps,
         flatViewFieldGroupMaps,
+        flatRoleMaps,
       }),
     );
 

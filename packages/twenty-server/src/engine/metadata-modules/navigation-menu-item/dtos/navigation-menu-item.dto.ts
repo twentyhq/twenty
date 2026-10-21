@@ -4,9 +4,12 @@ import {
   IsDateString,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsUUID,
 } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
+import { ConditionalDisplay } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -75,6 +78,11 @@ export class NavigationMenuItemDTO {
   @IsNotEmpty()
   @Field()
   position: number;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: ConditionalDisplay | null;
 
   @HideField()
   workspaceId: string;

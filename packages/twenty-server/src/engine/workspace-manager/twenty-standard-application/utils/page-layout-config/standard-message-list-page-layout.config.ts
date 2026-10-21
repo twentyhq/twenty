@@ -8,8 +8,6 @@ import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget
 import {
   CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
   CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
-  CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
-  CONDITIONAL_DISPLAY_DEVICE_MOBILE,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -49,7 +47,6 @@ const MESSAGE_LIST_PAGE_TABS = {
             .home.widgets.members.universalIdentifier,
         ...MEMBERS_WIDGET_PROPS,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
-        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
         conditionalAvailabilityExpression:
           CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
       },
@@ -67,7 +64,6 @@ const MESSAGE_LIST_PAGE_TABS = {
             .members.widgets.members.universalIdentifier,
         ...MEMBERS_WIDGET_PROPS,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
         conditionalAvailabilityExpression:
           CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
       },

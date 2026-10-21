@@ -244,6 +244,7 @@ export {
   WidgetType,
 } from 'twenty-shared/types';
 export type {
+  ConditionalDisplay,
   PageLayoutWidgetCanvasPosition,
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetGridPosition,

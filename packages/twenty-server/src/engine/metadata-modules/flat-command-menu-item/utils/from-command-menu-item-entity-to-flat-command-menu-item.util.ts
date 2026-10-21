@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
 import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -10,6 +11,8 @@ type FromCommandMenuItemEntityToFlatCommandMenuItemArgs =
   FromEntityToFlatEntityArgs<'commandMenuItem'> & {
     objectMetadataUniversalIdentifierById: Partial<Record<string, string>>;
     pageLayoutUniversalIdentifierById: Partial<Record<string, string>>;
+    fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+    roleUniversalIdentifierById: Partial<Record<string, string>>;
   };
 
 export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
@@ -19,6 +22,8 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
     entity: commandMenuItemEntity,
     objectMetadataUniversalIdentifierById,
     pageLayoutUniversalIdentifierById,
+    fieldMetadataUniversalIdentifierById,
+    roleUniversalIdentifierById,
   } = args;
 
   const commandMenuItemScalarEntity = fromEntityToScalarEntity({
@@ -32,11 +37,20 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
       ...args,
     });
 
+  const universalConditionalDisplay =
+    fromConditionalDisplayToUniversalConditionalDisplay({
+      conditionalDisplay: commandMenuItemScalarEntity.conditionalDisplay,
+      fieldMetadataUniversalIdentifierById,
+      roleUniversalIdentifierById,
+    });
+
   const universalOverrides = isDefined(commandMenuItemEntity.overrides)
     ? fromCommandMenuItemOverridesToUniversalOverrides({
         overrides: commandMenuItemEntity.overrides,
         objectMetadataUniversalIdentifierById,
         pageLayoutUniversalIdentifierById,
+        fieldMetadataUniversalIdentifierById,
+        roleUniversalIdentifierById,
         shouldThrowOnMissingIdentifier: false,
       })
     : null;
@@ -44,6 +58,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = (
   return {
     ...commandMenuItemScalarEntity,
     ...relationUniversalIdentifiers,
+    universalConditionalDisplay,
     universalOverrides,
   };
 };

@@ -138,25 +138,26 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     workspaceId,
   });
 
-  const flatViewFieldMaps = buildStandardFlatViewFieldMetadataMaps({
-    dependencyFlatEntityMaps: {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatViewMaps,
-      flatViewFieldGroupMaps,
-    },
-    now,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    workspaceId,
-  });
-
   const flatRoleMaps = buildStandardFlatRoleMetadataMaps({
     now,
     workspaceId,
     twentyStandardApplicationId,
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps: undefined,
+  });
+
+  const flatViewFieldMaps = buildStandardFlatViewFieldMetadataMaps({
+    dependencyFlatEntityMaps: {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatViewMaps,
+      flatViewFieldGroupMaps,
+      flatRoleMaps,
+    },
+    now,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    workspaceId,
   });
 
   const flatPermissionFlagMaps = buildStandardFlatPermissionFlagMetadataMaps({
@@ -214,6 +215,10 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       standardObjectMetadataRelatedEntityIds,
       standardPageLayoutMetadataRelatedEntityIds,
       excludedWidgetTypes,
+      dependencyFlatEntityMaps: {
+        flatFieldMetadataMaps,
+        flatRoleMaps,
+      },
     });
 
   const standardRecordFormFlatEntities = computeStandardRecordFormFlatEntities({

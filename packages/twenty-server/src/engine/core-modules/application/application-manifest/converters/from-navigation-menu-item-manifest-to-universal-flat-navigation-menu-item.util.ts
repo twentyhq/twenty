@@ -1,5 +1,6 @@
 import { type NavigationMenuItemManifest } from 'twenty-shared/application';
 
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
 
 export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
@@ -20,6 +21,9 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       icon: navigationMenuItemManifest.icon ?? null,
       color: navigationMenuItemManifest.color ?? null,
       position: navigationMenuItemManifest.position,
+      universalConditionalDisplay: normalizeConditionalDisplay(
+        navigationMenuItemManifest.conditionalDisplay,
+      ),
       viewUniversalIdentifier:
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,
       link: navigationMenuItemManifest.link ?? null,

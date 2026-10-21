@@ -67,6 +67,7 @@ const buildFlatNavigationMenuItem = ({
   folderId: null,
   targetObjectMetadataId: null,
   pageLayoutId: null,
+  conditionalDisplay: null,
   ...flatNavigationMenuItemProperties,
 });
 

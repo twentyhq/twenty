@@ -236,6 +236,7 @@ const createWelcomeRichText = ({
       universalConfiguration: configuration,
       objectMetadataId: null,
       conditionalDisplay: null,
+      universalConditionalDisplay: null,
       conditionalAvailabilityExpression: null,
     },
   });
@@ -300,6 +301,7 @@ const createDealsByCompany = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
+      universalConditionalDisplay: null,
       conditionalAvailabilityExpression: null,
     },
   });
@@ -377,6 +379,7 @@ const createPipelineValueByStage = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
+      universalConditionalDisplay: null,
       conditionalAvailabilityExpression: null,
     },
   });
@@ -443,6 +446,7 @@ const createRevenueTimeline = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
+      universalConditionalDisplay: null,
       conditionalAvailabilityExpression: null,
     },
   });
@@ -520,6 +524,7 @@ const createOpportunitiesByOwner = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
+      universalConditionalDisplay: null,
       conditionalAvailabilityExpression: null,
     },
   });
@@ -555,6 +560,7 @@ const createStockMarketIframe = ({
       universalConfiguration: configuration,
       objectMetadataId: null,
       conditionalDisplay: null,
+      universalConditionalDisplay: null,
       conditionalAvailabilityExpression: null,
     },
   });
@@ -620,6 +626,7 @@ const createDealsCreatedThisMonth = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
+      universalConditionalDisplay: null,
       conditionalAvailabilityExpression: null,
     },
   });
@@ -685,6 +692,7 @@ const createDealValueCreatedThisMonth = ({
       },
       objectMetadataId: opportunityObjectId,
       conditionalDisplay: null,
+      universalConditionalDisplay: null,
       conditionalAvailabilityExpression: null,
     },
   });

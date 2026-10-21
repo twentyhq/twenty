@@ -4,6 +4,8 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
@@ -38,6 +40,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     flatViewFieldGroupMaps,
     flatViewMaps,
     flatPageLayoutTabMaps,
+    flatRoleMaps,
     callerApplicationUniversalIdentifier,
     workspaceCustomApplicationUniversalIdentifier,
   }: {
@@ -53,6 +56,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     | 'flatViewFieldGroupMaps'
     | 'flatViewMaps'
     | 'flatPageLayoutTabMaps'
+    | 'flatRoleMaps'
   >): FlatPageLayoutWidget => {
     const { id: pageLayoutWidgetToUpdateId } =
       extractAndSanitizeObjectStringFields(rawUpdatePageLayoutWidgetInput, [
@@ -76,6 +80,12 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
       rawUpdatePageLayoutWidgetInput.update,
       FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
     );
+
+    if (editableProperties.conditionalDisplay !== undefined) {
+      editableProperties.conditionalDisplay = normalizeConditionalDisplay(
+        editableProperties.conditionalDisplay,
+      );
+    }
 
     if (
       Object.prototype.hasOwnProperty.call(editableProperties, 'configuration')
@@ -155,12 +165,25 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
         });
     }
 
+    if (updatedEditableProperties.conditionalDisplay !== undefined) {
+      flatPageLayoutWidgetToUpdate.universalConditionalDisplay =
+        fromConditionalDisplayToUniversalConditionalDisplay({
+          conditionalDisplay: flatPageLayoutWidgetToUpdate.conditionalDisplay,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+          roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+        });
+    }
+
     if (isDefined(overrides)) {
       flatPageLayoutWidgetToUpdate.universalOverrides =
         fromPageLayoutWidgetOverridesToUniversalOverrides({
           overrides,
           pageLayoutTabUniversalIdentifierById:
             flatPageLayoutTabMaps.universalIdentifierById,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+          roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
         });
     } else {
       flatPageLayoutWidgetToUpdate.universalOverrides = null;

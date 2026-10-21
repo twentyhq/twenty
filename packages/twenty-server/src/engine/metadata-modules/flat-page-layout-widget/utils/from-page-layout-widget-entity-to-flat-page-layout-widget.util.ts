@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
 import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
@@ -11,6 +12,7 @@ type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
   FromEntityToFlatEntityArgs<'pageLayoutWidget'> & {
     fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
     pageLayoutTabUniversalIdentifierById: Partial<Record<string, string>>;
+    roleUniversalIdentifierById: Partial<Record<string, string>>;
     frontComponentUniversalIdentifierById?: Partial<Record<string, string>>;
     viewFieldGroupUniversalIdentifierById?: Partial<Record<string, string>>;
     viewUniversalIdentifierById?: Partial<Record<string, string>>;
@@ -23,6 +25,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
     entity: pageLayoutWidgetEntity,
     fieldMetadataUniversalIdentifierById,
     pageLayoutTabUniversalIdentifierById,
+    roleUniversalIdentifierById,
     frontComponentUniversalIdentifierById,
     viewFieldGroupUniversalIdentifierById,
     viewUniversalIdentifierById,
@@ -48,10 +51,19 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
       viewUniversalIdentifierById,
     });
 
+  const universalConditionalDisplay =
+    fromConditionalDisplayToUniversalConditionalDisplay({
+      conditionalDisplay: pageLayoutWidgetScalarEntity.conditionalDisplay,
+      fieldMetadataUniversalIdentifierById,
+      roleUniversalIdentifierById,
+    });
+
   const universalOverrides = isDefined(pageLayoutWidgetEntity.overrides)
     ? fromPageLayoutWidgetOverridesToUniversalOverrides({
         overrides: pageLayoutWidgetEntity.overrides,
         pageLayoutTabUniversalIdentifierById,
+        fieldMetadataUniversalIdentifierById,
+        roleUniversalIdentifierById,
         shouldThrowOnMissingIdentifier: false,
       })
     : null;
@@ -60,6 +72,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = (
     ...pageLayoutWidgetScalarEntity,
     ...relationUniversalIdentifiers,
     universalConfiguration: configurationWithUniversalIdentifiers,
+    universalConditionalDisplay,
     universalOverrides,
   };
 };

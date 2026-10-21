@@ -5,7 +5,11 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import GraphQLJSON from 'graphql-type-json';
+import {
+  ConditionalDisplay,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -56,6 +60,9 @@ export class PageLayoutTabDTO {
     defaultValue: PageLayoutTabLayoutMode.GRID,
   })
   layoutMode: PageLayoutTabLayoutMode;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: ConditionalDisplay | null;
 
   @Field()
   createdAt: Date;

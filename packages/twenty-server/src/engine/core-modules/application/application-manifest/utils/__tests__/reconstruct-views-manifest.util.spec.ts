@@ -222,6 +222,7 @@ const buildFlatViewField = ({
   fieldMetadataId: `${viewFieldManifest.fieldMetadataUniversalIdentifier}-id`,
   viewId: `${viewUniversalIdentifier}-id`,
   viewFieldGroupId: null,
+  conditionalDisplay: null,
   overrides: null,
   ...flatViewFieldProperties,
 });

@@ -219,6 +219,8 @@ export class NavigationMenuItemService {
       flatObjectMetadataMaps,
       flatViewMaps,
       flatPageLayoutMaps,
+      flatFieldMetadataMaps,
+      flatRoleMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -227,6 +229,8 @@ export class NavigationMenuItemService {
           'flatObjectMetadataMaps',
           'flatViewMaps',
           'flatPageLayoutMaps',
+          'flatFieldMetadataMaps',
+          'flatRoleMaps',
         ],
       },
     );
@@ -265,6 +269,8 @@ export class NavigationMenuItemService {
           flatObjectMetadataMaps,
           flatViewMaps,
           flatPageLayoutMaps,
+          flatFieldMetadataMaps,
+          flatRoleMaps,
         });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({
@@ -384,13 +390,19 @@ export class NavigationMenuItemService {
     const {
       flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
       flatPageLayoutMaps,
-    } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatNavigationMenuItemMaps', 'flatPageLayoutMaps'],
-        },
-      );
+      flatFieldMetadataMaps,
+      flatRoleMaps,
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatNavigationMenuItemMaps',
+          'flatPageLayoutMaps',
+          'flatFieldMetadataMaps',
+          'flatRoleMaps',
+        ],
+      },
+    );
 
     const flatNavigationMenuItemsToUpdate: FlatNavigationMenuItem[] = [];
 
@@ -423,6 +435,8 @@ export class NavigationMenuItemService {
           {
             flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
             flatPageLayoutMaps,
+            flatFieldMetadataMaps,
+            flatRoleMaps,
             updateNavigationMenuItemInput: updateInput,
           },
         ),

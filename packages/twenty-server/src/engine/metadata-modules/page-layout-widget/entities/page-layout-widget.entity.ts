@@ -1,8 +1,8 @@
 import { ObjectType } from '@nestjs/graphql';
 
 import {
+  ConditionalDisplay,
   type GridPosition,
-  PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
   type SerializedRelation,
   WidgetType,
@@ -34,7 +34,7 @@ export type PageLayoutWidgetOverrides = {
   isActive?: boolean;
   title?: string;
   position?: PageLayoutWidgetPosition | null;
-  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+  conditionalDisplay?: ConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   pageLayoutTabId?: SerializedRelation;
 };
@@ -90,7 +90,7 @@ export class PageLayoutWidgetEntity<
   objectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  conditionalDisplay: JsonbProperty<PageLayoutWidgetConditionalDisplay | null>;
+  conditionalDisplay: JsonbProperty<ConditionalDisplay | null>;
 
   @Column({ type: 'varchar', nullable: true })
   conditionalAvailabilityExpression: string | null;

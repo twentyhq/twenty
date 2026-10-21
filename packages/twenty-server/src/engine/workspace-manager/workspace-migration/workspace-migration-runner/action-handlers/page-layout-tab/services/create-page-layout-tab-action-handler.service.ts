@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -10,10 +11,12 @@ import {
   FlatCreatePageLayoutTabAction,
   UniversalCreatePageLayoutTabAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
+import { fromUniversalOverridesToPageLayoutTabOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-tab/services/utils/from-universal-overrides-to-page-layout-tab-overrides.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fromUniversalConditionalDisplayToConditionalDisplay } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-conditional-display-to-conditional-display.util';
 
 @Injectable()
 export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -36,6 +39,22 @@ export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
       universalForeignKeyValues: action.flatEntity,
     });
 
+    const conditionalDisplay =
+      fromUniversalConditionalDisplayToConditionalDisplay({
+        universalConditionalDisplay:
+          action.flatEntity.universalConditionalDisplay,
+        flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+      });
+
+    const overrides = isDefined(action.flatEntity.universalOverrides)
+      ? fromUniversalOverridesToPageLayoutTabOverrides({
+          universalOverrides: action.flatEntity.universalOverrides,
+          flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+          flatRoleMaps: allFlatEntityMaps.flatRoleMaps,
+        })
+      : null;
+
     const emptyUniversalForeignKeyAggregators =
       getUniversalFlatEntityEmptyForeignKeyAggregators({
         metadataName: 'pageLayoutTab',
@@ -46,6 +65,8 @@ export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
       flatEntity: {
         ...action.flatEntity,
         pageLayoutId,
+        conditionalDisplay,
+        overrides,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

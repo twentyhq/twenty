@@ -1,6 +1,8 @@
 import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { mapOverridesEntryConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/map-overrides-entry-conditional-display.util';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -15,13 +17,28 @@ type UniversalViewFieldOverrides =
 const fromViewFieldOverridesToUniversalOverridesEntry = ({
   overrides,
   viewFieldGroupUniversalIdentifierById,
+  fieldMetadataUniversalIdentifierById,
+  roleUniversalIdentifierById,
   shouldThrowOnMissingIdentifier = true,
 }: {
   overrides: ViewFieldOverrides;
   viewFieldGroupUniversalIdentifierById: Partial<Record<string, string>>;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  roleUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): UniversalViewFieldOverrides => {
-  const { viewFieldGroupId, ...scalarOverrides } = overrides;
+  const { viewFieldGroupId, ...otherOverrides } = overrides;
+
+  const scalarOverrides: UniversalViewFieldOverrides =
+    mapOverridesEntryConditionalDisplay({
+      overridesEntry: otherOverrides,
+      mapConditionalDisplay: (conditionalDisplay) =>
+        fromConditionalDisplayToUniversalConditionalDisplay({
+          conditionalDisplay,
+          fieldMetadataUniversalIdentifierById,
+          roleUniversalIdentifierById,
+        }),
+    });
 
   if (!isDefined(viewFieldGroupId)) {
     return {
@@ -58,10 +75,14 @@ const fromViewFieldOverridesToUniversalOverridesEntry = ({
 export const fromViewFieldOverridesToUniversalOverrides = ({
   overrides,
   viewFieldGroupUniversalIdentifierById,
+  fieldMetadataUniversalIdentifierById,
+  roleUniversalIdentifierById,
   shouldThrowOnMissingIdentifier,
 }: {
   overrides: AuthoredOverrides<ViewFieldOverrides>;
   viewFieldGroupUniversalIdentifierById: Partial<Record<string, string>>;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  roleUniversalIdentifierById: Partial<Record<string, string>>;
   shouldThrowOnMissingIdentifier?: boolean;
 }): AuthoredOverrides<UniversalViewFieldOverrides> =>
   mapAuthoredOverrideEntries({
@@ -71,6 +92,8 @@ export const fromViewFieldOverridesToUniversalOverrides = ({
       fromViewFieldOverridesToUniversalOverridesEntry({
         overrides: entry,
         viewFieldGroupUniversalIdentifierById,
+        fieldMetadataUniversalIdentifierById,
+        roleUniversalIdentifierById,
         shouldThrowOnMissingIdentifier,
       }),
   });

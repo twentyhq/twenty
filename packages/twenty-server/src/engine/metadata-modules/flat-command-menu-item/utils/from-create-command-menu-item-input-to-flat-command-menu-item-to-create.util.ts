@@ -6,6 +6,8 @@ import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { fromConditionalDisplayToUniversalConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/from-conditional-display-to-universal-conditional-display.util';
+import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
@@ -17,13 +19,19 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   flatObjectMetadataMaps,
   flatFrontComponentMaps,
   flatPageLayoutMaps,
+  flatFieldMetadataMaps,
+  flatRoleMaps,
 }: {
   createCommandMenuItemInput: CreateCommandMenuItemInput;
   workspaceId: string;
   flatApplication: FlatApplication;
 } & Pick<
   AllFlatEntityMaps,
-  'flatObjectMetadataMaps' | 'flatFrontComponentMaps' | 'flatPageLayoutMaps'
+  | 'flatObjectMetadataMaps'
+  | 'flatFrontComponentMaps'
+  | 'flatPageLayoutMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatRoleMaps'
 >): FlatCommandMenuItem => {
   const id = uuidv4();
   const now = new Date().toISOString();
@@ -67,6 +75,10 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     },
   });
 
+  const conditionalDisplay = normalizeConditionalDisplay(
+    createCommandMenuItemInput.conditionalDisplay,
+  );
+
   return {
     id,
     universalIdentifier: id,
@@ -92,6 +104,14 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
       createCommandMenuItemInput.conditionalAvailabilityExpression ?? null,
     conditionalPinnedExpression:
       createCommandMenuItemInput.conditionalPinnedExpression ?? null,
+    conditionalDisplay,
+    universalConditionalDisplay:
+      fromConditionalDisplayToUniversalConditionalDisplay({
+        conditionalDisplay,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+        roleUniversalIdentifierById: flatRoleMaps.universalIdentifierById,
+      }),
     availabilityObjectMetadataUniversalIdentifier,
     navigationTargetObjectMetadataId,
     navigationTargetObjectMetadataUniversalIdentifier,

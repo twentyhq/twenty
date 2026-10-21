@@ -22,6 +22,8 @@ export type CommandMenuItemConfig =
   LooseEnumValues<StrictCommandMenuItemConfig>;
 export type CommandMenuItemManifest =
   LooseEnumValues<SharedApplication.CommandMenuItemManifest>;
+export type ConditionalDisplay =
+  LooseEnumValues<SharedTypes.UniversalConditionalDisplay>;
 export type FrontComponentConfig = LooseEnumValues<StrictFrontComponentConfig>;
 export type HealthCheckLogicFunctionConfig =
   LooseEnumValues<StrictHealthCheckLogicFunctionConfig>;
@@ -44,8 +46,7 @@ export type PageLayoutTabManifest =
   LooseEnumValues<SharedApplication.PageLayoutTabManifest>;
 export type PageLayoutWidgetCanvasPosition =
   LooseEnumValues<SharedTypes.PageLayoutWidgetCanvasPosition>;
-export type PageLayoutWidgetConditionalDisplay =
-  LooseEnumValues<SharedTypes.PageLayoutWidgetConditionalDisplay>;
+export type PageLayoutWidgetConditionalDisplay = ConditionalDisplay;
 export type PageLayoutWidgetGridPosition =
   LooseEnumValues<SharedTypes.PageLayoutWidgetGridPosition>;
 export type PageLayoutWidgetManifest =
