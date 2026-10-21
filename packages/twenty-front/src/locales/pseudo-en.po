@@ -2213,8 +2213,8 @@ msgid "Add route"
 msgstr ""
 
 #. js-lingui-id: O8tK4v
-#: src/modules/object-core/workflows/components/CoreWorkflowFilterAddRuleButton.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowFilterAddRuleButton.tsx
+#: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
+#: src/modules/object-core/filters/components/CoreObjectFilterAddRuleButton.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
@@ -3829,19 +3829,14 @@ msgstr ""
 msgid "Ask an admin to raise the limit."
 msgstr ""
 
-#. js-lingui-id: cmkudK
-#: src/modules/ai/hooks/useAiChatEditor.ts
-msgid "Ask anything, @ a record or / a skill..."
-msgstr ""
-
-#. js-lingui-id: OF5WZ/
-#: src/modules/ai/hooks/useAiChatEditor.ts
-msgid "Ask anything, @ a teammate or record, / a skill..."
-msgstr ""
-
 #. js-lingui-id: g8Yo6T
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptTab.tsx
 msgid "Ask for human input"
+msgstr ""
+
+#. js-lingui-id: mc9nK2
+#: src/modules/ai/hooks/useAiChatEditor.ts
+msgid "Ask, search or make anything..."
 msgstr ""
 
 #. js-lingui-id: QVL/hg
@@ -4283,6 +4278,7 @@ msgid "Back to content"
 msgstr ""
 
 #. js-lingui-id: dGEega
+#: src/pages/ai-chat/AiChatInboxPage.tsx
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Back to inbox"
 msgstr ""
@@ -6190,7 +6186,7 @@ msgid "Conditional availability"
 msgstr ""
 
 #. js-lingui-id: 0CuAor
-#: src/modules/object-core/workflows/components/CoreWorkflowFiltersBuilder.tsx
+#: src/modules/object-core/filters/components/CoreObjectFiltersBuilder.tsx
 #: src/modules/side-panel/pages/page-layout/components/ChartFiltersSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilters.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder.tsx
@@ -10446,7 +10442,7 @@ msgid "Enter valid JSON."
 msgstr ""
 
 #. js-lingui-id: pubQie
-#: src/modules/object-core/workflows/components/CoreWorkflowFilterValueInput.tsx
+#: src/modules/object-core/filters/components/CoreObjectFilterValueInput.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownTextInput.tsx
 #: src/modules/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput.tsx
@@ -12014,7 +12010,8 @@ msgstr ""
 #. js-lingui-id: o7J4JM
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
 #: src/modules/log-console/components/LogConsoleToolbar.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowsFilterBar.tsx
+#: src/modules/object-core/agents/hooks/useOpenCoreAgentFiltersSidePanel.ts
+#: src/modules/object-core/filters/components/CoreObjectFilterButton.tsx
 #: src/modules/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel.ts
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/settings/components/SettingsSearchFilterTrigger.tsx
@@ -13160,6 +13157,11 @@ msgstr ""
 msgid "Hide hidden groups"
 msgstr ""
 
+#. js-lingui-id: L/mb70
+#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+msgid "Hide inbox"
+msgstr ""
+
 #. js-lingui-id: 2ouyMV
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
 msgid "Hide label"
@@ -13191,6 +13193,7 @@ msgid "Hire a partner to help you implement and customize Twenty."
 msgstr ""
 
 #. js-lingui-id: i0qMbr
+#: src/modules/ai/components/AiChatNewThreadPageActions.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 msgid "Home"
@@ -13221,6 +13224,11 @@ msgstr ""
 #. js-lingui-id: N0Yhtw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Hours between triggers"
+msgstr ""
+
+#. js-lingui-id: 3WYTm2
+#: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
+msgid "How can I help you?"
 msgstr ""
 
 #. js-lingui-id: xUNmcx
@@ -16599,6 +16607,7 @@ msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
+#: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
@@ -17146,6 +17155,16 @@ msgstr ""
 #. js-lingui-id: 2jU+NX
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents available"
+msgstr ""
+
+#. js-lingui-id: YUKCH8
+#: src/pages/object-core/AgentCoreIndexPage.tsx
+msgid "No Agents found"
+msgstr ""
+
+#. js-lingui-id: FZpUJg
+#: src/pages/object-core/AgentCoreIndexPage.tsx
+msgid "No Agents match your filters. Try removing some of them."
 msgstr ""
 
 #. js-lingui-id: mU1OkO
@@ -18130,11 +18149,6 @@ msgstr ""
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
-msgstr ""
-
-#. js-lingui-id: 2QZy/z
-#: src/modules/object-core/components/CoreObjectSystemFilterChip.tsx
-msgid "Not system"
 msgstr ""
 
 #. js-lingui-id: KiJn9B
@@ -22678,7 +22692,7 @@ msgid "Select a date and time"
 msgstr ""
 
 #. js-lingui-id: 1YV5aa
-#: src/modules/object-core/workflows/components/CoreWorkflowFilterFieldSelect.tsx
+#: src/modules/object-core/filters/components/CoreObjectFilterFieldSelect.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field"
@@ -23514,6 +23528,11 @@ msgstr ""
 #. js-lingui-id: eOY8jq
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "Show hidden objects"
+msgstr ""
+
+#. js-lingui-id: 5S6Ndm
+#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+msgid "Show inbox"
 msgstr ""
 
 #. js-lingui-id: dlzDxE
@@ -24756,6 +24775,8 @@ msgstr ""
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem.tsx
 #: src/modules/navigation-menu-item/display/object/components/NavigationDrawerItemForObjectMetadataItem.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
+#: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
+#: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 msgid "System"
 msgstr ""

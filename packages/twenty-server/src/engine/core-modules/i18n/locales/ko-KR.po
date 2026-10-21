@@ -6515,6 +6515,16 @@ msgstr "잘못된 필터 매개변수입니다."
 msgid "Invalid filter value"
 msgstr "잘못된 필터 값"
 
+#. js-lingui-id: ys8v/n
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{fieldName}\" and \"{referencedFieldName}\" cannot be compared"
+msgstr "잘못된 필터: \"{fieldName}\" 및 \"{referencedFieldName}\"은 비교할 수 없음"
+
+#. js-lingui-id: 8Ng76x
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" expects a field name"
+msgstr "잘못된 필터: \"{operator}\"에는 필드 이름이 필요함"
+
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires a String"
@@ -6525,10 +6535,26 @@ msgstr "잘못된 필터: \"{operator}\" 연산자에는 문자열이 필요합�
 msgid "Invalid filter: \"{operator}\" operator requires an array"
 msgstr "잘못된 필터: \"{operator}\" 연산자에는 배열이 필요합니다."
 
+#. js-lingui-id: xxcw3g
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
+msgstr "잘못된 필터: \"{relationFieldName}\"은 관계 필터가 시작되는 레코드만 참조할 수 있음"
+
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "잘못된 필터: \"isEmptyArray\" 연산자에는 불리언 값이 필요합니다."
+
+#. js-lingui-id: S8iHKo
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: {nameSingular} object doesn't have any \"{referencedFieldName}\" field."
+msgstr "잘못된 필터: {nameSingular} 객체에 \"{referencedFieldName}\" 필드가 없습니다."
+
+#. js-lingui-id: OyCWdj
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: composite fields cannot be compared with another field"
+msgstr "잘못된 필터: 복합 필드는 다른 필드와 비교할 수 없음"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
@@ -6544,6 +6570,11 @@ msgstr "잘못된 필터: 필터 값은 객체여야 합니다"
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "잘못된 필터: 관계 필드 \"{key}\"로 필터링하는 것은 지원되지 않습니다."
+
+#. js-lingui-id: wi8qrB
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: the field to compare with was not found"
+msgstr "잘못된 필터: 비교할 필드를 찾을 수 없음"
 
 #. js-lingui-id: bNNDED
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts

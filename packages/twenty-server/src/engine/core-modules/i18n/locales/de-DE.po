@@ -6515,6 +6515,16 @@ msgstr "Ungültiger Filterparameter."
 msgid "Invalid filter value"
 msgstr "Ungültiger Filterwert"
 
+#. js-lingui-id: ys8v/n
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{fieldName}\" and \"{referencedFieldName}\" cannot be compared"
+msgstr "Ungültiger Filter: \"{fieldName}\" und \"{referencedFieldName}\" können nicht verglichen werden"
+
+#. js-lingui-id: 8Ng76x
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" expects a field name"
+msgstr "Ungültiger Filter: \"{operator}\" erwartet einen Feldnamen"
+
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires a String"
@@ -6525,10 +6535,26 @@ msgstr "Ungültiger Filter: Der Operator \"{operator}\" erfordert einen String."
 msgid "Invalid filter: \"{operator}\" operator requires an array"
 msgstr "Ungültiger Filter: Der Operator \"{operator}\" erfordert ein Array."
 
+#. js-lingui-id: xxcw3g
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
+msgstr "Ungültiger Filter: \"{relationFieldName}\" kann nur auf den Datensatz verweisen, von dem der Relationsfilter ausgeht"
+
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "Ungültiger Filter: Der Operator \"isEmptyArray\" erfordert einen booleschen Wert."
+
+#. js-lingui-id: S8iHKo
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: {nameSingular} object doesn't have any \"{referencedFieldName}\" field."
+msgstr "Ungültiger Filter: Das Objekt {nameSingular} hat kein Feld \"{referencedFieldName}\"."
+
+#. js-lingui-id: OyCWdj
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: composite fields cannot be compared with another field"
+msgstr "Ungültiger Filter: Zusammengesetzte Felder können nicht mit einem anderen Feld verglichen werden"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
@@ -6544,6 +6570,11 @@ msgstr "Ungültiger Filter: Der Filterwert muss ein Objekt sein."
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Ungültiger Filter: Das Filtern nach dem Relationsfeld \"{key}\" wird nicht unterstützt."
+
+#. js-lingui-id: wi8qrB
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: the field to compare with was not found"
+msgstr "Ungültiger Filter: Das zu vergleichende Feld wurde nicht gefunden"
 
 #. js-lingui-id: bNNDED
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
