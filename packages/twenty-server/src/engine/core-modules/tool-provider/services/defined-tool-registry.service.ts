@@ -75,19 +75,25 @@ export class DefinedToolRegistryService implements OnModuleInit {
 
     return requestedTools
       .filter((_, index) => isAvailableByTool[index])
-      .map(({ options: { name, description, category }, inputJsonSchema }) => {
-        const entry: ToolIndexEntry = {
-          name,
-          label: humanizeToolName(name),
-          description,
-          category,
-          executionRef: { kind: 'static', toolId: name },
-        };
+      .map(
+        ({
+          options: { name, description, category, icon },
+          inputJsonSchema,
+        }) => {
+          const entry: ToolIndexEntry = {
+            name,
+            label: humanizeToolName(name),
+            description,
+            category,
+            executionRef: { kind: 'static', toolId: name },
+            ...(isDefined(icon) && { icon }),
+          };
 
-        return includeSchemas
-          ? { ...entry, inputSchema: inputJsonSchema }
-          : entry;
-      });
+          return includeSchemas
+            ? { ...entry, inputSchema: inputJsonSchema }
+            : entry;
+        },
+      );
   }
 
   async execute({

@@ -6,4 +6,5 @@ export type DefineToolOptions = {
   category: ToolCategory;
   description: string;
   requiredPermissionFlags: PermissionFlagType[];
+  icon?: string;
 };
