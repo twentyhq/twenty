@@ -60,12 +60,10 @@ export const computeLocation = ({
   routeParams,
   searchParams,
   routeHash = '',
-}: {
-  routePath: string;
-  routeParams?: RouteParams;
-  searchParams?: RouteParams;
-  routeHash?: string;
-}) => {
+}: Pick<PageDecoratorArgs, 'routePath'> &
+  Partial<
+    Pick<PageDecoratorArgs, 'routeParams' | 'searchParams' | 'routeHash'>
+  >) => {
   const search = searchParams
     ? `?${new URLSearchParams(searchParams).toString()}`
     : '';
