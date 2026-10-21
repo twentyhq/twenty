@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import {
+  FieldActorSource,
   FieldMetadataType,
   OrderByDirection,
   ViewCalendarLayout,
@@ -8,6 +9,8 @@ import {
   ViewVisibility,
 } from 'twenty-shared/types';
 
+import { type BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
@@ -15,10 +18,17 @@ import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
+import { CreateViewTool } from 'src/engine/metadata-modules/view/tools/create-view.tool';
+import { DeleteViewTool } from 'src/engine/metadata-modules/view/tools/delete-view.tool';
+import { GetViewQueryParametersTool } from 'src/engine/metadata-modules/view/tools/get-view-query-parameters.tool';
+import { GetViewsTool } from 'src/engine/metadata-modules/view/tools/get-views.tool';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
+import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
+import { UpdateViewTool } from 'src/engine/metadata-modules/view/tools/update-view.tool';
+import { UpsertCompleteViewTool } from 'src/engine/metadata-modules/view/tools/upsert-complete-view.tool';
 
-describe('ViewToolsFactory', () => {
-  let viewToolsFactory: ViewToolsFactory;
+describe('View tools', () => {
+  let testingModule: TestingModule;
   let viewService: jest.Mocked<ViewService>;
   let completeViewUpsertService: jest.Mocked<CompleteViewUpsertService>;
   let viewFieldService: jest.Mocked<ViewFieldService>;
@@ -26,14 +36,14 @@ describe('ViewToolsFactory', () => {
 
   const mockWorkspaceId = 'workspace-id';
   const mockUserWorkspaceId = 'user-workspace-id';
-  const mockViewId = 'view-id';
+  const mockViewId = 'c1f4b2a0-7d3e-4a8b-9c1d-2e3f4a5b6c7d';
   const mockObjectMetadataId = 'object-metadata-id';
   const mockObjectNameSingular = 'company';
-  const mockCalendarFieldMetadataId = 'calendar-field-metadata-id';
-  const mockCalendarEndFieldMetadataId = 'calendar-end-field-metadata-id';
+  const mockCalendarFieldMetadataId = 'f4c7e5d3-0a6b-4dbe-af4a-5b6c7d8e9fa0';
+  const mockCalendarEndFieldMetadataId = 'a5d8f6e4-1b7c-4ecf-b05b-6c7d8e9fa0b1';
 
-  const mockNameFieldMetadataId = 'name-field-metadata-id';
-  const mockStageFieldMetadataId = 'stage-field-metadata-id';
+  const mockNameFieldMetadataId = 'd2a5c3b1-8e4f-4b9c-8d2e-3f4a5b6c7d8e';
+  const mockStageFieldMetadataId = 'e3b6d4c2-9f5a-4cad-9e3f-4a5b6c7d8e9f';
 
   const mockFlatFieldMetadataMaps = {
     byUniversalIdentifier: {
@@ -96,14 +106,17 @@ describe('ViewToolsFactory', () => {
     universalIdentifiersByApplicationId: {},
   };
 
-  const callExecute = async (tool: any, input: any) => {
-    return tool.execute(input);
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ViewToolsFactory,
+        GetViewsTool,
+        GetViewQueryParametersTool,
+        UpsertCompleteViewTool,
+        CreateViewTool,
+        UpdateViewTool,
+        DeleteViewTool,
+        ViewToolAccessService,
+        ViewToolIdentifierService,
         {
           provide: ViewService,
           useValue: {
@@ -164,43 +177,92 @@ describe('ViewToolsFactory', () => {
       ],
     }).compile();
 
-    viewToolsFactory = module.get<ViewToolsFactory>(ViewToolsFactory);
+    testingModule = module;
     viewService = module.get(ViewService);
     completeViewUpsertService = module.get(CompleteViewUpsertService);
     viewFieldService = module.get(ViewFieldService);
     viewQueryParamsService = module.get(ViewQueryParamsService);
   });
 
-  it('should be defined', () => {
-    expect(viewToolsFactory).toBeDefined();
+  // Parses like the registry does, so schema defaults reach execute
+  const toToolExecutor = ({
+    tool,
+    context,
+  }: {
+    tool: BaseTool;
+    context: ToolProviderContext;
+  }) => ({
+    execute: async (input: unknown) =>
+      tool.execute({
+        input: await tool.inputSchema.parseAsync(input),
+        context,
+      }),
   });
 
-  describe('generateReadTools', () => {
-    it('should generate get-views and get-view-query-parameters tools', () => {
-      const tools = viewToolsFactory.generateReadTools(mockWorkspaceId);
+  const buildViewTools = ({
+    workspaceId,
+    userWorkspaceId,
+    workspaceMemberId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+    workspaceMemberId?: string;
+  }) => {
+    const context: ToolProviderContext = {
+      workspaceId,
+      userWorkspaceId,
+      rolePermissionConfig: { shouldBypassPermissionChecks: true },
+      actorContext: workspaceMemberId
+        ? {
+            source: FieldActorSource.MANUAL,
+            workspaceMemberId,
+            name: 'Member',
+            context: {},
+          }
+        : undefined,
+    };
 
-      expect(tools).toHaveProperty('get_views');
-      expect(tools).toHaveProperty('get_view_query_parameters');
-      expect(tools['get_views']).toHaveProperty('description');
-      expect(tools['get_views']).toHaveProperty('inputSchema');
-      expect(tools['get_views']).toHaveProperty('execute');
-      expect(tools['get_view_query_parameters']).toHaveProperty('description');
-      expect(tools['get_view_query_parameters']).toHaveProperty('inputSchema');
-      expect(tools['get_view_query_parameters']).toHaveProperty('execute');
-    });
+    return {
+      get_views: toToolExecutor({
+        tool: testingModule.get(GetViewsTool),
+        context,
+      }),
+      get_view_query_parameters: toToolExecutor({
+        tool: testingModule.get(GetViewQueryParametersTool),
+        context,
+      }),
+      upsert_complete_view: toToolExecutor({
+        tool: testingModule.get(UpsertCompleteViewTool),
+        context,
+      }),
+      create_view: toToolExecutor({
+        tool: testingModule.get(CreateViewTool),
+        context,
+      }),
+      update_view: toToolExecutor({
+        tool: testingModule.get(UpdateViewTool),
+        context,
+      }),
+      delete_view: toToolExecutor({
+        tool: testingModule.get(DeleteViewTool),
+        context,
+      }),
+    };
+  };
 
+  describe('read tools', () => {
     describe('get_views tool', () => {
       it('should return all views when no objectNameSingular filter', async () => {
         const mockViews = [mockView];
 
         viewService.findByWorkspaceId.mockResolvedValue(mockViews as any);
 
-        const tools = viewToolsFactory.generateReadTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        const result = await callExecute(tools['get_views'], {
+        const { result } = await tools.get_views.execute({
           limit: 50,
         });
 
@@ -208,15 +270,18 @@ describe('ViewToolsFactory', () => {
           mockWorkspaceId,
           mockUserWorkspaceId,
         );
-        expect(result).toHaveLength(1);
-        expect(result[0]).toEqual({
-          id: mockViewId,
-          name: 'All Companies',
-          objectMetadataId: mockObjectMetadataId,
-          type: ViewType.TABLE,
-          icon: 'IconBuilding',
-          visibility: ViewVisibility.WORKSPACE,
-          position: 0,
+        expect(result).toEqual({
+          views: [
+            {
+              id: mockViewId,
+              name: 'All Companies',
+              objectMetadataId: mockObjectMetadataId,
+              type: ViewType.TABLE,
+              icon: 'IconBuilding',
+              visibility: ViewVisibility.WORKSPACE,
+              position: 0,
+            },
+          ],
         });
       });
 
@@ -225,12 +290,12 @@ describe('ViewToolsFactory', () => {
 
         viewService.findByObjectMetadataId.mockResolvedValue(mockViews as any);
 
-        const tools = viewToolsFactory.generateReadTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        const result = await callExecute(tools['get_views'], {
+        const { result } = await tools.get_views.execute({
           objectNameSingular: mockObjectNameSingular,
           limit: 50,
         });
@@ -240,7 +305,7 @@ describe('ViewToolsFactory', () => {
           mockObjectMetadataId,
           mockUserWorkspaceId,
         );
-        expect(result).toHaveLength(1);
+        expect(result).toHaveProperty('views.length', 1);
       });
 
       it('should respect limit parameter', async () => {
@@ -252,13 +317,13 @@ describe('ViewToolsFactory', () => {
 
         viewService.findByWorkspaceId.mockResolvedValue(mockViews as any);
 
-        const tools = viewToolsFactory.generateReadTools(mockWorkspaceId);
+        const tools = buildViewTools({ workspaceId: mockWorkspaceId });
 
-        const result = await callExecute(tools['get_views'], {
+        const { result } = await tools.get_views.execute({
           limit: 2,
         });
 
-        expect(result).toHaveLength(2);
+        expect(result).toHaveProperty('views.length', 2);
       });
     });
 
@@ -276,13 +341,13 @@ describe('ViewToolsFactory', () => {
           mockQueryParams,
         );
 
-        const tools = viewToolsFactory.generateReadTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-          'workspace-member-id',
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+          workspaceMemberId: 'workspace-member-id',
+        });
 
-        const result = await callExecute(tools['get_view_query_parameters'], {
+        const { result } = await tools.get_view_query_parameters.execute({
           viewId: mockViewId,
         });
 
@@ -299,15 +364,7 @@ describe('ViewToolsFactory', () => {
     });
   });
 
-  describe('generateWriteTools', () => {
-    it('should generate create-view, update-view, and delete-view tools', () => {
-      const tools = viewToolsFactory.generateWriteTools(mockWorkspaceId);
-
-      expect(tools).toHaveProperty('create_view');
-      expect(tools).toHaveProperty('update_view');
-      expect(tools).toHaveProperty('delete_view');
-    });
-
+  describe('write tools', () => {
     describe('create_view tool', () => {
       it('should create a new view', async () => {
         const createdView = {
@@ -321,12 +378,12 @@ describe('ViewToolsFactory', () => {
 
         viewService.createOne.mockResolvedValue(createdView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        const result = await callExecute(tools['create_view'], {
+        const { result } = await tools.create_view.execute({
           name: 'New View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconTable',
@@ -365,12 +422,12 @@ describe('ViewToolsFactory', () => {
 
         viewService.createOne.mockResolvedValue(createdView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        await callExecute(tools['create_view'], {
+        await tools.create_view.execute({
           name: 'Kanban View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconLayoutKanban',
@@ -401,13 +458,13 @@ describe('ViewToolsFactory', () => {
       });
 
       it('should throw when KANBAN view missing mainGroupByFieldName', async () => {
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
-          callExecute(tools['create_view'], {
+          tools.create_view.execute({
             name: 'Kanban View',
             objectNameSingular: mockObjectNameSingular,
             type: ViewType.KANBAN,
@@ -416,13 +473,13 @@ describe('ViewToolsFactory', () => {
       });
 
       it('should throw when CALENDAR view missing calendarFieldName', async () => {
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
-          callExecute(tools['create_view'], {
+          tools.create_view.execute({
             name: 'Calendar View',
             objectNameSingular: mockObjectNameSingular,
             type: ViewType.CALENDAR,
@@ -432,13 +489,13 @@ describe('ViewToolsFactory', () => {
       });
 
       it('should throw when CALENDAR view missing calendarLayout', async () => {
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
-          callExecute(tools['create_view'], {
+          tools.create_view.execute({
             name: 'Calendar View',
             objectNameSingular: mockObjectNameSingular,
             type: ViewType.CALENDAR,
@@ -459,12 +516,12 @@ describe('ViewToolsFactory', () => {
 
         viewService.createOne.mockResolvedValue(createdView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        await callExecute(tools['create_view'], {
+        await tools.create_view.execute({
           name: 'New View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconTable',
@@ -485,12 +542,12 @@ describe('ViewToolsFactory', () => {
 
         viewService.createOne.mockResolvedValue(createdView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        const result = await callExecute(tools['create_view'], {
+        const { result } = await tools.create_view.execute({
           name: 'Calendar View',
           objectNameSingular: mockObjectNameSingular,
           icon: 'IconCalendar',
@@ -537,18 +594,18 @@ describe('ViewToolsFactory', () => {
         viewService.findById.mockResolvedValue(existingView as any);
         viewService.updateOne.mockResolvedValue(updatedView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        const result = await callExecute(tools['update_view'], {
+        const { result } = await tools.update_view.execute({
           id: mockViewId,
           name: 'Updated Name',
         });
 
         expect(viewService.updateOne).toHaveBeenCalled();
-        expect(result.name).toBe('Updated Name');
+        expect(result).toMatchObject({ name: 'Updated Name' });
       });
 
       it('should allow updating own unlisted view', async () => {
@@ -565,17 +622,17 @@ describe('ViewToolsFactory', () => {
         viewService.findById.mockResolvedValue(existingView as any);
         viewService.updateOne.mockResolvedValue(updatedView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        const result = await callExecute(tools['update_view'], {
+        const { result } = await tools.update_view.execute({
           id: mockViewId,
           name: 'Updated Name',
         });
 
-        expect(result.name).toBe('Updated Name');
+        expect(result).toMatchObject({ name: 'Updated Name' });
       });
 
       it('should reject updating another users unlisted view', async () => {
@@ -587,13 +644,13 @@ describe('ViewToolsFactory', () => {
 
         viewService.findById.mockResolvedValue(existingView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
-          callExecute(tools['update_view'], {
+          tools.update_view.execute({
             id: mockViewId,
             name: 'Updated Name',
           }),
@@ -603,27 +660,20 @@ describe('ViewToolsFactory', () => {
       it('should throw error when view not found', async () => {
         viewService.findById.mockResolvedValue(null);
 
-        const tools = viewToolsFactory.generateWriteTools(mockWorkspaceId);
+        const tools = buildViewTools({ workspaceId: mockWorkspaceId });
 
         await expect(
-          callExecute(tools['update_view'], {
-            id: 'non-existent-id',
+          tools.update_view.execute({
+            id: 'b6e9a7f5-2c8d-4fd0-8c6c-7d8e9fa0b1c2',
             name: 'Updated Name',
           }),
-        ).rejects.toThrow('View with id non-existent-id not found');
+        ).rejects.toThrow(
+          'View with id b6e9a7f5-2c8d-4fd0-8c6c-7d8e9fa0b1c2 not found',
+        );
       });
     });
 
     describe('upsert_complete_view tool', () => {
-      it('should be generated alongside the other write tools', () => {
-        const tools = viewToolsFactory.generateWriteTools(mockWorkspaceId);
-
-        expect(tools).toHaveProperty('upsert_complete_view');
-        expect(tools['upsert_complete_view']).toHaveProperty('description');
-        expect(tools['upsert_complete_view']).toHaveProperty('inputSchema');
-        expect(tools['upsert_complete_view']).toHaveProperty('execute');
-      });
-
       it('should create a view with fields, filters, and sorts referenced by name in a single upsert call', async () => {
         completeViewUpsertService.upsertCompleteView.mockResolvedValue({
           id: 'new-view-id',
@@ -637,12 +687,12 @@ describe('ViewToolsFactory', () => {
           viewSorts: [{}],
         } as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        const result = await callExecute(tools['upsert_complete_view'], {
+        const { result } = await tools.upsert_complete_view.execute({
           objectNameSingular: mockObjectNameSingular,
           name: 'Pipeline',
           type: ViewType.TABLE,
@@ -711,12 +761,12 @@ describe('ViewToolsFactory', () => {
           viewFields: [{}],
         } as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        await callExecute(tools['upsert_complete_view'], {
+        await tools.upsert_complete_view.execute({
           objectNameSingular: mockObjectNameSingular,
           name: 'By Id',
           fields: [{ fieldMetadataId: mockStageFieldMetadataId }],
@@ -738,13 +788,13 @@ describe('ViewToolsFactory', () => {
       });
 
       it('should require objectNameSingular when creating', async () => {
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
-          callExecute(tools['upsert_complete_view'], {
+          tools.upsert_complete_view.execute({
             name: 'Missing object',
             fields: [{ fieldName: 'name' }],
           }),
@@ -763,12 +813,12 @@ describe('ViewToolsFactory', () => {
           viewFilters: [{}],
         } as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        await callExecute(tools['upsert_complete_view'], {
+        await tools.upsert_complete_view.execute({
           id: mockViewId,
           filters: [{ fieldName: 'stage', operand: 'IS', value: ['WON'] }],
         });
@@ -805,12 +855,12 @@ describe('ViewToolsFactory', () => {
           calendarEndFieldMetadataId: mockCalendarEndFieldMetadataId,
         } as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        await callExecute(tools['upsert_complete_view'], {
+        await tools.upsert_complete_view.execute({
           id: mockViewId,
           calendarEndFieldName: 'endsAt',
         });
@@ -838,12 +888,12 @@ describe('ViewToolsFactory', () => {
           viewSorts: [],
         } as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        await callExecute(tools['upsert_complete_view'], {
+        await tools.upsert_complete_view.execute({
           id: mockViewId,
           sorts: [],
         });
@@ -867,13 +917,13 @@ describe('ViewToolsFactory', () => {
 
         viewService.findById.mockResolvedValue(existingView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
-          callExecute(tools['upsert_complete_view'], {
+          tools.upsert_complete_view.execute({
             id: mockViewId,
             name: 'Updated',
           }),
@@ -895,12 +945,12 @@ describe('ViewToolsFactory', () => {
         viewService.findById.mockResolvedValue(existingView as any);
         viewService.deleteOne.mockResolvedValue(deletedView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
-        const result = await callExecute(tools['delete_view'], {
+        const { result } = await tools.delete_view.execute({
           id: mockViewId,
         });
 
@@ -924,13 +974,13 @@ describe('ViewToolsFactory', () => {
 
         viewService.findById.mockResolvedValue(existingView as any);
 
-        const tools = viewToolsFactory.generateWriteTools(
-          mockWorkspaceId,
-          mockUserWorkspaceId,
-        );
+        const tools = buildViewTools({
+          workspaceId: mockWorkspaceId,
+          userWorkspaceId: mockUserWorkspaceId,
+        });
 
         await expect(
-          callExecute(tools['delete_view'], {
+          tools.delete_view.execute({
             id: mockViewId,
           }),
         ).rejects.toThrow('You can only delete your own unlisted views');

@@ -965,6 +965,76 @@
     ]
   },
   {
+    "name": "DetailsRow",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/details-row",
+    "props": [
+      {
+        "name": "action",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional action content beside the value. The caller supplies controls, accessible names, and handlers."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Value content rendered in the description definition. Text and multiple items wrap within the available space."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the row root."
+      },
+      {
+        "name": "label",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Visible label rendered as the description term."
+      },
+      {
+        "name": "labelWidth",
+        "type": "Width<string | number>",
+        "required": false,
+        "defaultValue": "7rem",
+        "description": "Preferred label column width. Numbers use pixels. The column is capped at 40% of the row width; use the same width for aligned sibling rows."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the row root div."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the row root. Preserve a div directly inside a dl and forward its props and ref to retain valid description-list grouping."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative node before the label. The caller controls icon dimensions."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the row root."
+      }
+    ]
+  },
+  {
     "name": "MetricRow",
     "entryPoint": "twenty-ui/components/data-display",
     "slug": "components/data-display/metric-row",
@@ -3762,6 +3832,13 @@
         "required": false,
         "defaultValue": null,
         "description": "The value of the input. Use when controlled."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"plain\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding and uses natural height. Its outline follows native :focus-visible, including pointer focus or autofocus on text inputs; invalid state uses a danger outline. InputGroup always owns the grouped frame."
       }
     ]
   },
@@ -4455,7 +4532,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Measures committed controlled values or uncontrolled edits, form resets, row and size changes, and width changes. Overrides blockSize while enabled."
+        "description": "Measures committed controlled values or uncontrolled edits, form resets, row, size and variant changes, and width changes. Overrides blockSize while enabled."
       },
       {
         "name": "className",
@@ -4498,6 +4575,13 @@
         "required": false,
         "defaultValue": "md",
         "description": "Visual size of the textarea."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"plain\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding while retaining rows, automatic sizing and maximum rows. Its outline follows native :focus-visible, including pointer focus or autofocus on textareas; invalid state uses a danger outline."
       }
     ]
   },
