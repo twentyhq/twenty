@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, spyOn, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -7,18 +7,24 @@ import {
 } from '~/testing/decorators/PageDecorator';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
+import { useLocation } from 'react-router-dom';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
+import { Toaster } from 'twenty-ui/components/feedback';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SettingsApplicationPreferences } from '~/pages/settings/accounts/SettingsApplicationPreferences';
 import {
   FATHOM_APPLICATION_ID,
   GRANOLA_APPLICATION_ID,
+  deleteConnectedAccount,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 import {
   APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
+  APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
   GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
   LINEAR_APPLICATION_ID,
+  LINEAR_CONNECTIONS_REDIRECT_LOCATION,
   LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
   MOCKED_TRANSIENT_TOKEN,
   failNextApplicationPreferencesRequest,
@@ -29,7 +35,8 @@ import {
   unconfigureLinearClientCredentials,
   updateMyUserApplicationVariable,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
-import { getTableRow } from '~/pages/settings/accounts/__stories__/getTableRow';
+import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
+import { getTableRowOrThrow } from '~/pages/settings/accounts/__stories__/getTableRowOrThrow';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsApplicationPreferences',
@@ -307,12 +314,12 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
 
     expect(await canvas.findByText('Work Linear')).toBeVisible();
     expect(
-      getTableRow({ canvasElement, text: 'Work Linear' }).getByText(
+      getTableRowOrThrow({ canvasElement, text: 'Work Linear' }).getByText(
         'Connected',
       ),
     ).toBeVisible();
     expect(
-      getTableRow({ canvasElement, text: 'Work Linear' }).queryByRole(
+      getTableRowOrThrow({ canvasElement, text: 'Work Linear' }).queryByRole(
         'button',
         {
           name: 'Reconnect',
@@ -320,7 +327,7 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
       ),
     ).not.toBeInTheDocument();
 
-    const reconnectNeededRow = getTableRow({
+    const reconnectNeededRow = getTableRowOrThrow({
       canvasElement,
       text: 'tim.cook@linear.app',
     });
@@ -330,7 +337,10 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
       reconnectNeededRow.getByRole('button', { name: 'Reconnect' }),
     ).toBeVisible();
 
-    const archivedRow = getTableRow({ canvasElement, text: 'old@linear.app' });
+    const archivedRow = getTableRowOrThrow({
+      canvasElement,
+      text: 'old@linear.app',
+    });
 
     expect(archivedRow.getByText('Reconnect needed')).toBeVisible();
     expect(
@@ -341,26 +351,6 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
     expect(canvas.queryByText('teammate@linear.app')).not.toBeInTheDocument();
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
   },
-};
-
-const LINEAR_CONNECTIONS_REDIRECT_LOCATION = `/settings/accounts/applications/${LINEAR_APPLICATION_ID}#connections`;
-
-// window.open is the redirect useTriggerAppOAuth performs; stubbing it keeps the story on the page
-const clickAndCaptureOAuthRedirect = async (button: HTMLElement) => {
-  const openWindow = spyOn(window, 'open').mockImplementation(() => null);
-
-  try {
-    await userEvent.click(button);
-    await waitFor(() => expect(openWindow).toHaveBeenCalledTimes(1));
-
-    const [redirectUrl, target] = openWindow.mock.calls[0];
-
-    expect(target).toBe('_self');
-
-    return new URL(String(redirectUrl));
-  } finally {
-    openWindow.mockRestore();
-  }
 };
 
 export const AddConnectionStartsTheOAuthFlow: Story = {
@@ -405,10 +395,10 @@ export const ReconnectStartsTheOAuthFlow: Story = {
     });
 
     const redirectUrl = await clickAndCaptureOAuthRedirect(
-      getTableRow({ canvasElement, text: 'tim.cook@linear.app' }).getByRole(
-        'button',
-        { name: 'Reconnect' },
-      ),
+      getTableRowOrThrow({
+        canvasElement,
+        text: 'tim.cook@linear.app',
+      }).getByRole('button', { name: 'Reconnect' }),
     );
 
     expect(generateTransientToken).toHaveBeenCalledTimes(1);
@@ -424,6 +414,47 @@ export const ReconnectStartsTheOAuthFlow: Story = {
       reconnectingConnectedAccountId: LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
       redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
     });
+  },
+};
+
+export const RowDisconnectRemovesTheConnection: Story = {
+  args: {
+    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('tim.cook@linear.app', undefined, {
+      timeout: 3000,
+    });
+
+    await userEvent.click(
+      getTableRowOrThrow({
+        canvasElement,
+        text: 'tim.cook@linear.app',
+      }).getByRole('button', { name: 'Disconnect' }),
+    );
+    await userEvent.click(
+      await within(
+        await body.findByRole('dialog', { name: 'Disconnect connection?' }),
+      ).findByRole('button', { name: 'Disconnect' }),
+    );
+
+    await waitFor(() =>
+      expect(deleteConnectedAccount.mock.calls).toEqual([
+        [LINEAR_RECONNECT_NEEDED_ACCOUNT_ID],
+      ]),
+    );
+    await waitFor(() =>
+      expect(canvas.queryByText('tim.cook@linear.app')).not.toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Disconnect connection?' }),
+      ).not.toBeInTheDocument(),
+    );
+    expect(canvas.getByText('Work Linear')).toBeVisible();
   },
 };
 
@@ -451,6 +482,101 @@ export const UnconfiguredProviderExplainsWhoMustSetItUp: Story = {
     expect(
       canvas.queryByRole('button', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const ProviderWithoutConnectionsSaysSo: Story = {
+  args: {
+    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
+  },
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('You have no Linear connection yet.', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(
+      canvas.getByRole('button', { name: 'Add connection' }),
+    ).toBeVisible();
+  },
+};
+
+export const UnconfiguredProviderWithoutConnectionsShowsOnlyTheBanner: Story = {
+  args: {
+    routeParams: { ':applicationId': LINEAR_APPLICATION_ID },
+  },
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    unconfigureLinearClientCredentials();
+  },
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(/Linear OAuth is not yet set up/, undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText('You have no Linear connection yet.'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+const FAILED_OAUTH_ERROR_MESSAGE =
+  'Failed to exchange the authorization code for an access token.';
+
+const LocationProbe = () => {
+  const { search, hash } = useLocation();
+
+  return <div data-testid="location-probe">{`${search}${hash}`}</div>;
+};
+
+export const FailedOAuthReturnShowsItsMessage: Story = {
+  args: {
+    routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
+    searchParams: { errorMessage: FAILED_OAUTH_ERROR_MESSAGE },
+    routeHash: '#connections',
+  },
+  decorators: [
+    (Story) => (
+      <>
+        <ErrorMessageEffect />
+        <LocationProbe />
+        <Story />
+        <Toaster getToastProps={() => ({ progress: 100 })} />
+      </>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(
+      await body.findByText(FAILED_OAUTH_ERROR_MESSAGE, undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByTestId('location-probe')).toHaveTextContent(
+        /^#connections$/,
+      ),
+    );
+    expect(
+      await canvas.findByText(
+        'Connect your own Fathom account for this app to use on your behalf.',
+      ),
+    ).toBeVisible();
+    expect(canvas.queryByText('Record my meetings')).not.toBeInTheDocument();
+    expect(canvas.getByRole('link', { name: 'Variables' })).toBeVisible();
   },
 };
 

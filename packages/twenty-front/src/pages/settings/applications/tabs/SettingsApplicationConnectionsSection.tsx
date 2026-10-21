@@ -42,8 +42,11 @@ export const SettingsApplicationConnectionsSection = ({
           provider.oauth?.isClientCredentialsConfigured ?? false;
         const canAddConnection = provider.scope === 'WORKSPACE';
 
+        // Personal connections are managed from App preferences
         const providerConnections = connectedAccounts.filter(
-          (account) => account.connectionProviderId === provider.id,
+          (account) =>
+            account.connectionProviderId === provider.id &&
+            account.scope === 'WORKSPACE',
         );
 
         if (!canAddConnection && providerConnections.length === 0) {

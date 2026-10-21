@@ -2,6 +2,7 @@ import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Response } from 'express';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isConnectionProviderScope } from 'twenty-shared/application';
 import { CONNECTION_SCOPE_BY_LEGACY_VISIBILITY } from 'twenty-shared/application-runtime';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
@@ -20,6 +21,7 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -38,6 +40,7 @@ export class ConnectionProviderOAuthController {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly i18nService: I18nService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -156,7 +159,12 @@ export class ConnectionProviderOAuthController {
         error instanceof Error ? error.stack : undefined,
       );
 
-      return this.redirectToError(res, error, workspace);
+      return this.redirectToError({
+        res,
+        error,
+        workspace,
+        redirectLocation: redirectLocation ?? null,
+      });
     }
   }
 
@@ -168,26 +176,24 @@ export class ConnectionProviderOAuthController {
     @Query('error_description') errorDescription: string | undefined,
     @Res() res: Response,
   ) {
-    let workspace: WorkspaceEntity | null = null;
-
     if (errorParam) {
-      return this.redirectToError(
+      return this.redirectToErrorFromState({
         res,
-        new Error(
+        state,
+        error: new Error(
           `OAuth provider returned error: ${errorParam}${errorDescription ? `: ${errorDescription}` : ''}`,
         ),
-        workspace,
-      );
+      });
     }
 
     if (!code || !state) {
-      return this.redirectToError(
+      return this.redirectToErrorFromState({
         res,
-        new Error(
+        state,
+        error: new Error(
           'OAuth callback is missing the `code` or `state` query parameter',
         ),
-        workspace,
-      );
+      });
     }
 
     try {
@@ -197,7 +203,7 @@ export class ConnectionProviderOAuthController {
           state,
         });
 
-      workspace = await this.workspaceRepository.findOneBy({
+      const workspace = await this.workspaceRepository.findOneBy({
         id: workspaceId,
       });
 
@@ -227,15 +233,54 @@ export class ConnectionProviderOAuthController {
 
       return res.redirect(url.toString());
     } catch (error) {
-      return this.redirectToError(res, error, workspace);
+      return this.redirectToErrorFromState({ res, state, error });
     }
   }
 
-  private redirectToError(
-    res: Response,
-    error: unknown,
-    workspace: WorkspaceEntity | null,
-  ) {
+  private async redirectToErrorFromState({
+    res,
+    state,
+    error,
+  }: {
+    res: Response;
+    state: string | undefined;
+    error: unknown;
+  }) {
+    const errorRedirectTarget = state
+      ? await this.oauthProviderFlowService.findErrorRedirectTargetFromState(
+          state,
+        )
+      : null;
+
+    const workspace = isDefined(errorRedirectTarget)
+      ? await this.workspaceRepository.findOneBy({
+          id: errorRedirectTarget.workspaceId,
+        })
+      : null;
+
+    return this.redirectToError({
+      res,
+      error,
+      workspace,
+      redirectLocation: errorRedirectTarget?.redirectLocation ?? null,
+    });
+  }
+
+  private redirectToError({
+    res,
+    error,
+    workspace,
+    redirectLocation,
+  }: {
+    res: Response;
+    error: unknown;
+    workspace: WorkspaceEntity | null;
+    redirectLocation: string | null;
+  }) {
+    const { pathname, searchParams, hash } = parseRelativeUrl(
+      redirectLocation || getSettingsPath(SettingsPath.Accounts),
+    );
+
     return res.redirect(
       this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
         error: error instanceof Error ? error : new Error(String(error)),
@@ -246,7 +291,17 @@ export class ConnectionProviderOAuthController {
             this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
           customDomain: workspace?.customDomain ?? null,
         },
-        pathname: getSettingsPath(SettingsPath.Accounts),
+        pathname,
+        searchParams,
+        hash,
+        // A failed token exchange's message echoes the provider's raw response body
+        errorMessage:
+          error instanceof ConnectionProviderException &&
+          error.code === ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED
+            ? this.i18nService
+                .getI18nInstance(SOURCE_LOCALE)
+                ._(error.userFriendlyMessage)
+            : undefined,
       }),
     );
   }

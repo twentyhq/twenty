@@ -40,6 +40,7 @@ export type PageDecoratorArgs = {
   routeParams: RouteParams;
   additionalRoutes?: string[];
   searchParams?: RouteParams;
+  routeHash?: string;
 };
 
 export type RouteParams = {
@@ -58,6 +59,7 @@ export const computeLocation = (
   routePath: string,
   routeParams?: RouteParams,
   searchParams?: RouteParams,
+  hash = '',
 ) => {
   const search = searchParams
     ? `?${new URLSearchParams(searchParams).toString()}`
@@ -69,6 +71,7 @@ export const computeLocation = (
       (paramName) => routeParams?.[paramName] ?? '',
     ),
     search,
+    hash,
   };
 };
 
@@ -138,6 +141,8 @@ const createRouter = ({
   };
   initialEntries?: {
     pathname: string;
+    search?: string;
+    hash?: string;
   }[];
   initialIndex?: number;
 }) => {
@@ -170,12 +175,18 @@ export const PageDecorator: Decorator<{
   routeParams: RouteParams;
   additionalRoutes?: string[];
   searchParams?: RouteParams;
+  routeHash?: string;
 }> = (Story, { args }) => {
   const router = createRouter({
     Story,
     args,
     initialEntries: [
-      computeLocation(args.routePath, args.routeParams, args.searchParams),
+      computeLocation(
+        args.routePath,
+        args.routeParams,
+        args.searchParams,
+        args.routeHash,
+      ),
     ],
   });
 

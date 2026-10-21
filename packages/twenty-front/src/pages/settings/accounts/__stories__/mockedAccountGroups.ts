@@ -220,7 +220,12 @@ export const CALENDAR_CHANNELS = [
 
 const deletedAccountIds = new Set<string>();
 
+export const withoutDeletedAccounts = <TAccount extends { id: string }>(
+  accounts: TAccount[],
+) => accounts.filter((account) => !deletedAccountIds.has(account.id));
+
 export const deleteConnectedAccount = fn();
+export const myApplicationPreferencesRequested = fn();
 
 export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
   graphql.query('MyConnectedAccounts', () =>
@@ -263,9 +268,11 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
       },
     });
   }),
-  graphql.query('MyApplicationPreferences', () =>
-    HttpResponse.json({ data: { myApplicationPreferences: [] } }),
-  ),
+  graphql.query('MyApplicationPreferences', () => {
+    myApplicationPreferencesRequested();
+
+    return HttpResponse.json({ data: { myApplicationPreferences: [] } });
+  }),
   graphql.query('FindManyBlocklists', () =>
     HttpResponse.json({
       data: {
@@ -284,6 +291,7 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
 export const seedAccountGroupsStory = async () => {
   deletedAccountIds.clear();
   deleteConnectedAccount.mockClear();
+  myApplicationPreferencesRequested.mockClear();
   await mockedApolloClient.clearStore();
 
   jotaiStore.set(isGoogleMessagingEnabledState.atom, true);

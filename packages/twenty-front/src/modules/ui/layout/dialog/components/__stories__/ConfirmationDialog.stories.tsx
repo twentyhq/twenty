@@ -316,3 +316,44 @@ export const PreventConfirmationWhileLoading: Story = {
     expect(dialog).toBeInTheDocument();
   },
 };
+
+let resolvePendingConfirm: () => void = () => {};
+
+export const WaitsForConfirmBeforeClosing: Story = {
+  args: {
+    ...Default.args,
+    shouldWaitForConfirmBeforeClosing: true,
+    onConfirmClick: fn(
+      () =>
+        new Promise<void>((resolve) => {
+          resolvePendingConfirm = resolve;
+        }),
+    ),
+  },
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const dialog = await body.findByRole('dialog', {
+      name: 'Pariatur labore.',
+    });
+    const confirmButton = within(dialog).getByTestId(
+      'confirmation-modal-confirm-button',
+    );
+
+    await userEvent.click(confirmButton);
+
+    await waitFor(() =>
+      expect(confirmButton).toHaveAttribute('aria-busy', 'true'),
+    );
+    expect(confirmButton).toBeDisabled();
+    expect(args.onConfirmClick).toHaveBeenCalledTimes(1);
+    expect(dialog).toBeInTheDocument();
+
+    resolvePendingConfirm();
+
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Pariatur labore.' }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};

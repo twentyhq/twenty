@@ -14,7 +14,9 @@ import {
   MY_USER_WORKSPACE_ID,
   TEAMMATE_USER_WORKSPACE_ID,
   buildConnectedAccount,
+  myApplicationPreferencesRequested,
   seedAccountGroupsStory,
+  withoutDeletedAccounts,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 
 export const GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID =
@@ -23,6 +25,7 @@ const NOT_INSTALLED_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000023';
 const GRANOLA_USER_SETTINGS_MENU_ITEM_ID =
   '20202020-1a2b-4c3d-8e4f-000000000062';
 export const LINEAR_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000024';
+export const LINEAR_CONNECTIONS_REDIRECT_LOCATION = `/settings/accounts/applications/${LINEAR_APPLICATION_ID}#connections`;
 const LINEAR_CONNECTION_PROVIDER_ID = '20202020-1a2b-4c3d-8e4f-000000000071';
 export const LINEAR_RECONNECT_NEEDED_ACCOUNT_ID =
   '20202020-1a2b-4c3d-8e4f-000000000081';
@@ -82,6 +85,22 @@ const buildSettingsMenuItem = ({
 
 const savedValueByKey = new Map<string, string>();
 let isLinearClientCredentialsConfigured = true;
+
+const FATHOM_CONNECTION_PROVIDER = {
+  __typename: 'ApplicationConnectionProvider',
+  id: '20202020-1a2b-4c3d-8e4f-000000000072',
+  applicationId: FATHOM_APPLICATION_ID,
+  type: 'oauth',
+  name: 'fathom',
+  displayName: 'Fathom',
+  scope: 'USER',
+  logoUrl: null,
+  oauth: {
+    __typename: 'ApplicationConnectionProviderOAuthConfig',
+    scopes: ['read'],
+    isClientCredentialsConfigured: true,
+  },
+};
 
 const buildLinearConnectionProvider = () => ({
   __typename: 'ApplicationConnectionProvider',
@@ -172,7 +191,7 @@ const buildApplicationPreferences = () => [
   {
     __typename: 'ApplicationPreferences',
     applicationId: FATHOM_APPLICATION_ID,
-    connectionProviders: [],
+    connectionProviders: [FATHOM_CONNECTION_PROVIDER],
     settingsMenuItems: [],
     variables: [
       buildUserApplicationVariable({
@@ -267,6 +286,8 @@ export const failNextApplicationPreferencesRequest = () => {
 
 export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   graphql.query('MyApplicationPreferences', () => {
+    myApplicationPreferencesRequested();
+
     return HttpResponse.json({
       data: { myApplicationPreferences: buildApplicationPreferences() },
     });
@@ -316,15 +337,15 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
 ];
 
-// Kept off the account list stories, where these would show up as account groups
+// Opt-in: on the account list these show up as account groups
 export const APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS = [
   graphql.query('MyConnectedAccounts', () =>
     HttpResponse.json({
       data: {
-        myConnectedAccounts: [
+        myConnectedAccounts: withoutDeletedAccounts([
           ...CONNECTED_ACCOUNTS,
           ...LINEAR_CONNECTED_ACCOUNTS,
-        ],
+        ]),
       },
     }),
   ),

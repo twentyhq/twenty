@@ -8,7 +8,9 @@ export type ConfirmationDialogProps = {
   isConfirmButtonDisabled?: boolean;
   subtitle: ReactNode;
   onClose?: () => void;
-  onConfirmClick: () => void;
+  onConfirmClick: () => void | Promise<void>;
+  // Keeps the dialog open, with a loading confirm button, until onConfirmClick settles
+  shouldWaitForConfirmBeforeClosing?: boolean;
   confirmButtonText?: string;
   confirmationPlaceholder?: string;
   confirmationValue?: string;

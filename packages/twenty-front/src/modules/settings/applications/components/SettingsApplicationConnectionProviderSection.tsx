@@ -49,6 +49,7 @@ export const SettingsApplicationConnectionProviderSection = ({
         <InlineBanner
           layout="compact"
           status="error"
+          fullWidth
         >{t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}</InlineBanner>
       )}
       {children}

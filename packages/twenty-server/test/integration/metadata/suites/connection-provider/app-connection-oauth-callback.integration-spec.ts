@@ -65,6 +65,13 @@ describe('app connection OAuth callback', () => {
 
       tokenExchanges.push(code);
 
+      if (code.startsWith('rejected:')) {
+        return HttpResponse.json(
+          { error: 'invalid_client', error_description: 'Bad client secret' },
+          { status: 401 },
+        );
+      }
+
       return HttpResponse.json({
         access_token: code,
         refresh_token: `refresh-${code}`,
@@ -99,8 +106,10 @@ describe('app connection OAuth callback', () => {
 
   const authorize = async ({
     reconnectingConnectedAccountId,
+    redirectLocation,
   }: {
     reconnectingConnectedAccountId?: string;
+    redirectLocation?: string;
   } = {}): Promise<string> => {
     const transient = await generateTransientTokenResponse({
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -117,6 +126,7 @@ describe('app connection OAuth callback', () => {
           transient.data.generateTransientToken.transientToken.token,
         scope: 'WORKSPACE',
         reconnectingConnectedAccountId,
+        redirectLocation,
       });
 
     expect(response.status).toBe(302);
@@ -428,6 +438,62 @@ export const handler = ({ connectedAccountId }) => {
     expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
   });
 
+  it('returns to where the flow started with a short message when the token exchange fails', async () => {
+    const redirectLocation = `/settings/accounts/applications/${provider.applicationId}#connections`;
+
+    const redirect = await callback(
+      await authorize({ redirectLocation }),
+      'rejected:first',
+    );
+
+    expect(redirect.pathname).toBe(
+      `/settings/accounts/applications/${provider.applicationId}`,
+    );
+    expect(redirect.hash).toBe('#connections');
+    expect(redirect.searchParams.get('errorMessage')).toBe(
+      'Failed to exchange the authorization code for an access token.',
+    );
+    expect(tokenExchanges).toEqual(['rejected:first']);
+    expect(await readAccounts()).toEqual([]);
+  });
+
+  describe('error redirect target on authorize', () => {
+    const authorizeUnknownProvider = async (
+      redirectLocation?: string,
+    ): Promise<URL> => {
+      const transient = await generateTransientTokenResponse({
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      const response = await request(`http://localhost:${APP_PORT}`)
+        .get('/auth/apps/authorize')
+        .query({
+          applicationId: provider.applicationId,
+          providerName: 'unknown-provider',
+          transientToken:
+            transient.data.generateTransientToken.transientToken.token,
+          scope: 'WORKSPACE',
+          redirectLocation,
+        });
+
+      expect(response.status).toBe(302);
+
+      return new URL(response.headers.location);
+    };
+
+    it.each(['https://evil.com/x', '//evil.com/x', '/\\evil.com'])(
+      'stays on the workspace URL when redirectLocation is %s',
+      async (redirectLocation) => {
+        const fallbackRedirect = await authorizeUnknownProvider();
+        const redirect = await authorizeUnknownProvider(redirectLocation);
+
+        expect(redirect.origin).toBe(fallbackRedirect.origin);
+        expect(redirect.hostname).not.toContain('evil.com');
+        expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
+      },
+    );
+  });
+
   it('completes the callback for a state signed before visibility was renamed to scope', async () => {
     const legacyStatePayload: LegacyAppOAuthStateJwtPayload = {
       sub: provider.id,
@@ -462,6 +528,7 @@ export const handler = ({ connectedAccountId }) => {
     expect(redirect.searchParams.get('errorMessage')).toContain(
       'invalid or expired',
     );
+    expect(redirect.pathname).toBe('/settings/accounts');
     expect(tokenExchanges).toEqual([]);
     expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
     expect(await readAccounts()).toEqual([]);

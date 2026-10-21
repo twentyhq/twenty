@@ -7,7 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFooter = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 

@@ -85,6 +85,9 @@ export class GuardRedirectService {
     error,
     workspace,
     pathname,
+    searchParams,
+    hash,
+    errorMessage,
   }: {
     error: Error | AuthException;
     workspace: {
@@ -94,22 +97,24 @@ export class GuardRedirectService {
       isCustomDomainEnabled?: boolean;
     };
     pathname: string;
+    searchParams?: Record<string, string>;
+    hash?: string;
+    errorMessage?: string;
   }) {
     this.captureException(error, workspace.id);
 
-    const errorMessage =
-      error instanceof AuthException
-        ? error.message
-        : `Authentication error: ${error instanceof Error ? error.message : String(error)}`;
-
     return this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl(
-      errorMessage,
+      errorMessage ??
+        (error instanceof AuthException
+          ? error.message
+          : `Authentication error: ${error instanceof Error ? error.message : String(error)}`),
       {
         subdomain: workspace.subdomain,
         customDomain: workspace.customDomain,
         isCustomDomainEnabled: workspace.isCustomDomainEnabled ?? false,
       },
       pathname,
+      { searchParams, hash },
     );
   }
 }

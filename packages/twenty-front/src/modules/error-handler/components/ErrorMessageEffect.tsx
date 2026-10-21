@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 export const ErrorMessageEffect = () => {
   const { enqueueToast } = useToast();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const { hash } = useLocation();
+  const navigate = useNavigate();
   const errorMessage = searchParams.get('errorMessage');
 
   useEffect(() => {
@@ -18,9 +20,10 @@ export const ErrorMessageEffect = () => {
       });
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('errorMessage');
-      setSearchParams(newSearchParams);
+      // setSearchParams would drop the hash, which picks the settings tab to land on
+      navigate({ search: newSearchParams.toString(), hash }, { replace: true });
     }
-  }, [enqueueToast, errorMessage, searchParams, setSearchParams]);
+  }, [enqueueToast, errorMessage, hash, navigate, searchParams]);
 
   return <></>;
 };

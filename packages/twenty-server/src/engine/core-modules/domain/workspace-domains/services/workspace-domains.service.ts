@@ -54,11 +54,16 @@ export class WorkspaceDomainsService {
     errorMessage: string,
     workspace: WorkspaceDomainConfig,
     pathname: string,
+    {
+      searchParams,
+      hash,
+    }: { searchParams?: Record<string, string>; hash?: string } = {},
   ) {
     const url = this.buildWorkspaceURL({
       workspace,
       pathname,
-      searchParams: { errorMessage },
+      searchParams: { ...searchParams, errorMessage },
+      hash,
     });
 
     return url.toString();

@@ -21,17 +21,28 @@ import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
   CONNECTED_ACCOUNTS,
   FATHOM_APPLICATION_ID,
+  FATHOM_ONLY_ACCOUNT_ID,
   GOOGLE_ACCOUNT_ID,
+  GRANOLA_APPLICATION_ID,
+  MY_USER_WORKSPACE_ID,
+  buildConnectedAccount,
   MICROSOFT_ACCOUNT_ID,
   deleteConnectedAccount,
+  myApplicationPreferencesRequested,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 import {
+  APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
   APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+  LINEAR_APPLICATION_ID,
+  LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+  LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
+  MOCKED_TRANSIENT_TOKEN,
   failNextApplicationPreferencesRequest,
   seedApplicationPreferencesStory,
 } from '~/pages/settings/accounts/__stories__/mockedApplicationPreferences';
-import { getTableRow } from '~/pages/settings/accounts/__stories__/getTableRow';
+import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
+import { getTableRowOrThrow } from '~/pages/settings/accounts/__stories__/getTableRowOrThrow';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccounts',
@@ -82,7 +93,7 @@ export const AccountsGroupedByEmail: Story = {
     expect(canvas.getAllByText('App preferences').length).toBeGreaterThan(0);
     expect(canvas.queryByText('Connected accounts')).not.toBeInTheDocument();
 
-    const timRow = getTableRow({ canvasElement, text: 'tim@apple.dev' });
+    const timRow = getTableRowOrThrow({ canvasElement, text: 'tim@apple.dev' });
 
     expect(
       timRow.getAllByRole('img', { name: 'Gmail and Calendar' }),
@@ -97,22 +108,26 @@ export const AccountsGroupedByEmail: Story = {
     );
     expect(canvas.queryByText('Tim@Apple.dev')).not.toBeInTheDocument();
 
-    const outlookRow = getTableRow({ canvasElement, text: 'tim@outlook.com' });
+    const outlookRow = getTableRowOrThrow({
+      canvasElement,
+      text: 'tim@outlook.com',
+    });
 
     expect(outlookRow.getAllByRole('img', { name: 'Outlook' })).toHaveLength(1);
 
-    const notesRow = getTableRow({ canvasElement, text: 'notes@apple.dev' });
+    const notesRow = getTableRowOrThrow({
+      canvasElement,
+      text: 'notes@apple.dev',
+    });
 
     expect(notesRow.getByRole('img', { name: 'Fathom' })).toBeVisible();
     expect(
       notesRow.queryByRole('img', { name: 'Gmail and Calendar' }),
     ).not.toBeInTheDocument();
     expect(
-      notesRow.queryByRole('button', { name: 'More options' }),
-    ).not.toBeInTheDocument();
-    expect(
-      canvas.queryByRole('link', { name: 'notes@apple.dev' }),
-    ).not.toBeInTheDocument();
+      notesRow.getByRole('button', { name: 'More options' }),
+    ).toBeVisible();
+    expect(notesRow.queryByText('Reconnect needed')).not.toBeInTheDocument();
 
     expect(canvas.queryByText('support@apple.dev')).not.toBeInTheDocument();
   },
@@ -127,9 +142,12 @@ export const WorkspaceSharedAppConnectionsStayOff: Story = {
 
     expect(canvas.queryByText('sales@apple.dev')).not.toBeInTheDocument();
     expect(
-      getTableRow({ canvasElement, text: 'tim@apple.dev' }).queryByRole('img', {
-        name: 'Granola',
-      }),
+      getTableRowOrThrow({ canvasElement, text: 'tim@apple.dev' }).queryByRole(
+        'img',
+        {
+          name: 'Granola',
+        },
+      ),
     ).not.toBeInTheDocument();
   },
 };
@@ -203,9 +221,12 @@ export const RowOpensAccountPage: Story = {
 
     await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
     await userEvent.click(
-      getTableRow({ canvasElement, text: 'tim@apple.dev' }).getByRole('img', {
-        name: 'Gmail and Calendar',
-      }),
+      getTableRowOrThrow({ canvasElement, text: 'tim@apple.dev' }).getByRole(
+        'img',
+        {
+          name: 'Gmail and Calendar',
+        },
+      ),
     );
 
     expect(
@@ -226,7 +247,7 @@ export const DeleteKeepsAppConnections: Story = {
 
     const openDeleteDialog = async () => {
       await userEvent.click(
-        getTableRow({ canvasElement, text: 'tim@apple.dev' }).getByRole(
+        getTableRowOrThrow({ canvasElement, text: 'tim@apple.dev' }).getByRole(
           'button',
           {
             name: 'More options',
@@ -250,16 +271,228 @@ export const DeleteKeepsAppConnections: Story = {
     );
 
     const remainingRow = await waitFor(() =>
-      getTableRow({ canvasElement, text: 'Tim@Apple.dev' }),
+      getTableRowOrThrow({ canvasElement, text: 'Tim@Apple.dev' }),
     );
 
     expect(remainingRow.getByRole('img', { name: 'Fathom' })).toBeVisible();
     expect(
-      remainingRow.queryByRole('button', { name: 'More options' }),
-    ).not.toBeInTheDocument();
+      remainingRow.getByRole('button', { name: 'More options' }),
+    ).toBeVisible();
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
     expect(deleteConnectedAccount.mock.calls).toEqual([[GOOGLE_ACCOUNT_ID]]);
     expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
+  },
+};
+
+export const AppOnlyAccountRowOpensItsAppConnections: Story = {
+  ...accountGroupsStory,
+  args: {
+    additionalRoutes: ['/settings/accounts/applications/:applicationId'],
+  },
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole(
+        'link',
+        { name: /notes@apple\.dev/ },
+        { timeout: 3000 },
+      ),
+    ).toHaveAttribute(
+      'href',
+      `/settings/accounts/applications/${FATHOM_APPLICATION_ID}#connections`,
+    );
+
+    await userEvent.click(
+      getTableRowOrThrow({ canvasElement, text: 'notes@apple.dev' }).getByText(
+        'notes@apple.dev',
+      ),
+    );
+
+    expect(
+      await canvas.findByText(
+        'Navigated to /settings/accounts/applications/:applicationId',
+      ),
+    ).toBeVisible();
+  },
+};
+
+const GRANOLA_ONLY_ACCOUNT_HANDLE = 'notes@granola.so';
+
+export const AppOnlyAccountWithoutConnectionsTabHasNoLink: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', () =>
+          HttpResponse.json({
+            data: {
+              myConnectedAccounts: [
+                ...CONNECTED_ACCOUNTS,
+                buildConnectedAccount({
+                  id: '20202020-1a2b-4c3d-8e4f-000000000019',
+                  handle: GRANOLA_ONLY_ACCOUNT_HANDLE,
+                  provider: 'app',
+                  userWorkspaceId: MY_USER_WORKSPACE_ID,
+                  applicationId: GRANOLA_APPLICATION_ID,
+                }),
+              ],
+            },
+          }),
+        ),
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText(GRANOLA_ONLY_ACCOUNT_HANDLE, undefined, {
+      timeout: 3000,
+    });
+    await waitFor(() =>
+      expect(myApplicationPreferencesRequested).toHaveBeenCalled(),
+    );
+    // Granola is listed only once its preferences, which carry no connection provider, have loaded
+    await canvas.findByText('Granola');
+
+    expect(
+      getTableRowOrThrow({
+        canvasElement,
+        text: GRANOLA_ONLY_ACCOUNT_HANDLE,
+      }).getByRole('button', { name: 'More options' }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('link', { name: /notes@granola\.so/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      canvas.getByRole('link', { name: /notes@apple\.dev/ }),
+    ).toHaveAttribute(
+      'href',
+      `/settings/accounts/applications/${FATHOM_APPLICATION_ID}#connections`,
+    );
+  },
+};
+
+export const AppOnlyAccountRowMenuDisconnects: Story = {
+  ...accountGroupsStory,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('notes@apple.dev', undefined, { timeout: 3000 });
+
+    await userEvent.click(
+      getTableRowOrThrow({ canvasElement, text: 'notes@apple.dev' }).getByRole(
+        'button',
+        { name: 'More options' },
+      ),
+    );
+
+    expect(
+      body.queryByRole('menuitem', { name: 'Reconnect' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Disconnect' }),
+    );
+
+    const requestsBeforeDisconnect =
+      myApplicationPreferencesRequested.mock.calls.length;
+
+    await userEvent.click(
+      await body.findByRole('button', { name: /^Disconnect$/ }),
+    );
+
+    await waitFor(() =>
+      expect(deleteConnectedAccount.mock.calls).toEqual([
+        [FATHOM_ONLY_ACCOUNT_ID],
+      ]),
+    );
+    // The row unmounts before the second refetch lands; waiting for it keeps the next story's store reset from racing it
+    await waitFor(() =>
+      expect(
+        myApplicationPreferencesRequested.mock.calls.length,
+      ).toBeGreaterThan(requestsBeforeDisconnect),
+    );
+    await waitFor(() =>
+      expect(canvas.queryByText('notes@apple.dev')).not.toBeInTheDocument(),
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByRole('button', { name: /^Disconnect$/ }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const AppOnlyAccountNeedingReconnectIsFlagged: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('tim.cook@linear.app', undefined, {
+      timeout: 3000,
+    });
+
+    expect(
+      getTableRowOrThrow({ canvasElement, text: 'Linear' }).getByText(
+        'Reconnect needed',
+      ),
+    ).toBeVisible();
+    expect(
+      getTableRowOrThrow({ canvasElement, text: 'Fathom' }).getByText(
+        'Missing configuration',
+      ),
+    ).toBeVisible();
+    expect(
+      getTableRowOrThrow({ canvasElement, text: 'tim@linear.app' }).queryByText(
+        'Reconnect needed',
+      ),
+    ).not.toBeInTheDocument();
+
+    const reconnectNeededRow = getTableRowOrThrow({
+      canvasElement,
+      text: 'tim.cook@linear.app',
+    });
+
+    expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
+    expect(
+      getTableRowOrThrow({ canvasElement, text: 'old@linear.app' }).getByText(
+        'Reconnect needed',
+      ),
+    ).toBeVisible();
+
+    await userEvent.click(
+      reconnectNeededRow.getByRole('button', { name: 'More options' }),
+    );
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(
+      await body.findByRole('menuitem', { name: 'Reconnect' }),
+    );
+
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(
+      `${REACT_APP_SERVER_BASE_URL}/auth/apps/authorize`,
+    );
+    expect(Object.fromEntries(redirectUrl.searchParams)).toEqual({
+      applicationId: LINEAR_APPLICATION_ID,
+      providerName: 'linear',
+      transientToken: MOCKED_TRANSIENT_TOKEN,
+      scope: 'USER',
+      visibility: 'user',
+      reconnectingConnectedAccountId: LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
+      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+    });
   },
 };
 
@@ -293,14 +526,15 @@ export const AppsWithoutAccountShowMissingAccount: Story = {
     );
 
     expect(
-      await getTableRow({ canvasElement, text: 'Outlook' }).findByText(
+      await getTableRowOrThrow({ canvasElement, text: 'Outlook' }).findByText(
         'Missing account',
       ),
     ).toBeVisible();
     expect(
-      getTableRow({ canvasElement, text: 'Gmail and Calendar' }).queryByText(
-        'Missing account',
-      ),
+      getTableRowOrThrow({
+        canvasElement,
+        text: 'Gmail and Calendar',
+      }).queryByText('Missing account'),
     ).not.toBeInTheDocument();
   },
 };
@@ -402,17 +636,19 @@ export const AppPreferencesListFlagsMissingConfiguration: Story = {
     });
 
     expect(
-      getTableRow({ canvasElement, text: 'Fathom' }).getByText(
+      getTableRowOrThrow({ canvasElement, text: 'Fathom' }).getByText(
         'Missing configuration',
       ),
     ).toBeVisible();
     expect(
-      getTableRow({ canvasElement, text: 'Granola' }).queryByText(
+      getTableRowOrThrow({ canvasElement, text: 'Granola' }).queryByText(
         'Missing configuration',
       ),
     ).not.toBeInTheDocument();
     expect(
-      getTableRow({ canvasElement, text: 'Linear' }).queryByText(/Missing/),
+      getTableRowOrThrow({ canvasElement, text: 'Linear' }).queryByText(
+        /Missing/,
+      ),
     ).not.toBeInTheDocument();
   },
 };

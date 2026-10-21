@@ -327,6 +327,19 @@ export class ConnectionProviderOAuthFlowService {
     });
   }
 
+  async findErrorRedirectTargetFromState(state: string): Promise<{
+    workspaceId: string;
+    redirectLocation: string | null;
+  } | null> {
+    try {
+      const { workspaceId, redirectLocation } = await this.verifyState(state);
+
+      return { workspaceId, redirectLocation };
+    } catch {
+      return null;
+    }
+  }
+
   private async verifyState(state: string): Promise<AppOAuthStateJwtPayload> {
     try {
       const verified = (await this.jwtWrapperService.verifyJwtToken(state)) as
