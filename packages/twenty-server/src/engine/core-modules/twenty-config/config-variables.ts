@@ -28,7 +28,6 @@ import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { IsBillingPlanSwitches } from 'src/engine/core-modules/billing/decorators/is-billing-plan-switches.decorator';
 import { type BillingPlanSwitches } from 'src/engine/core-modules/billing/types/billing-plan-switches.type';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
@@ -975,16 +974,13 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Plans each billing plan can switch to, as {"PRO":{"upgradePlanKeys":["ENTERPRISE"]},"ENTERPRISE":{"downgradePlanKeys":["PRO"]}}. Upgrades apply now with proration, downgrades at period end. A plan left out has no switch. The plans some plan can switch to are the two plans on sale, and the one of them without a downgrade is the default plan at signup',
+      'Required when billing is enabled. Plans each billing plan can switch to, as {"PRO":{"upgradePlanKeys":["ENTERPRISE"]},"ENTERPRISE":{"downgradePlanKeys":["PRO"]}}. Upgrades apply now with proration, downgrades at period end. A plan left out has no switch. The plans some plan can switch to are the two plans on sale, and the one of them without a downgrade is the default plan at signup',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.JSON,
   })
   @IsBillingPlanSwitches()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_PLAN_SWITCHES: BillingPlanSwitches = {
-    [BillingPlanKey.PRO]: { upgradePlanKeys: [BillingPlanKey.ENTERPRISE] },
-    [BillingPlanKey.ENTERPRISE]: { downgradePlanKeys: [BillingPlanKey.PRO] },
-  };
+  BILLING_PLAN_SWITCHES: BillingPlanSwitches = {};
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
