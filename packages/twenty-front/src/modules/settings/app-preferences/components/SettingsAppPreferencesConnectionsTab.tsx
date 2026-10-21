@@ -52,7 +52,9 @@ export const SettingsAppPreferencesConnectionsTab = ({
         return (
           <SettingsApplicationConnectionProviderSection
             key={provider.id}
-            provider={provider}
+            providerDisplayName={provider.displayName}
+            providerLogoUrl={provider.logoUrl}
+            isClientCredentialsConfigured={isClientCredentialsConfigured}
             description={t`Connect your own ${provider.displayName} account for this app to use on your behalf.`}
             shouldShowMissingCredentialsBanner
           >

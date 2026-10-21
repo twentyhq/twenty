@@ -7,50 +7,46 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SettingsApplicationConnectionProviderSectionProps = {
-  provider: {
-    displayName: string;
-    logoUrl?: string | null;
-    oauth?: { isClientCredentialsConfigured: boolean } | null;
-  };
+  providerDisplayName: string;
+  providerLogoUrl?: string | null;
+  isClientCredentialsConfigured: boolean;
   description: string;
   shouldShowMissingCredentialsBanner: boolean;
   children: ReactNode;
 };
 
 export const SettingsApplicationConnectionProviderSection = ({
-  provider,
+  providerDisplayName,
+  providerLogoUrl,
+  isClientCredentialsConfigured,
   description,
   shouldShowMissingCredentialsBanner,
   children,
 }: SettingsApplicationConnectionProviderSectionProps) => {
   const { t } = useLingui();
 
-  const isMissingClientCredentials = !(
-    provider.oauth?.isClientCredentialsConfigured ?? false
-  );
-
   return (
     <Section.Root>
       <Section.Header
-        title={provider.displayName}
+        title={providerDisplayName}
         description={description}
         actions={
-          isNonEmptyString(provider.logoUrl) ? (
+          isNonEmptyString(providerLogoUrl) ? (
             <Avatar
               shape="square"
               variant="outline"
-              src={getAbsoluteImageUrl(provider.logoUrl)}
-              name={provider.displayName}
+              src={getAbsoluteImageUrl(providerLogoUrl)}
+              name={providerDisplayName}
             />
           ) : undefined
         }
       />
-      {shouldShowMissingCredentialsBanner && isMissingClientCredentials && (
+      {shouldShowMissingCredentialsBanner && !isClientCredentialsConfigured && (
         <InlineBanner
           layout="compact"
           status="error"
           fullWidth
-        >{t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}</InlineBanner>
+        >{t`${providerDisplayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}</InlineBanner>
       )}
       {children}
     </Section.Root>
