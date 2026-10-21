@@ -7,7 +7,7 @@ const StyledAvatar = styled.div`
   border-radius: 50%;
   display: flex;
   flex-shrink: 0;
-  gap: 5px;
+  gap: ${themeCssVariables.spacing[1]};
   height: 40px;
   justify-content: center;
   width: 40px;
@@ -18,7 +18,7 @@ const StyledAvatar = styled.div`
     border-radius: ${themeCssVariables.border.radius.pill};
     content: '';
     height: 10px;
-    width: 5px;
+    width: ${themeCssVariables.spacing[1]};
   }
 `;
 
