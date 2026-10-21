@@ -192,6 +192,23 @@ const loadChatRecordMetadata = () => {
   ]);
 };
 
+const getThreadRow = ({
+  canvasElement,
+  title,
+}: {
+  canvasElement: HTMLElement;
+  title: string;
+}) => {
+  const row = within(canvasElement)
+    .getAllByText(title)
+    .map((element) => element.closest<HTMLDivElement>('[data-selectable-id]'))
+    .find(isDefined);
+
+  assertIsDefinedOrThrow(row);
+
+  return row;
+};
+
 const meta = {
   title: 'Pages/AiChat/AiChatInboxPage',
   component: AiChatInboxPage,
@@ -294,18 +311,8 @@ export const NewChatClearsSelection: Story = {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
 
-    const getThreadRow = (title: string) => {
-      const row = canvas
-        .getByText(title)
-        .closest<HTMLDivElement>('[data-selectable-id]');
-
-      assertIsDefinedOrThrow(row);
-
-      return row;
-    };
-
     const selectThread = async (title: string) => {
-      const row = getThreadRow(title);
+      const row = getThreadRow({ canvasElement, title });
 
       await user.keyboard('{Control>}');
       await user.click(within(row).getByText(title));
@@ -316,7 +323,7 @@ export const NewChatClearsSelection: Story = {
     };
 
     const expectThreadUnchecked = async (title: string) => {
-      const row = getThreadRow(title);
+      const row = getThreadRow({ canvasElement, title });
 
       await expect(within(row).getByLabelText('Select chat')).not.toBeChecked();
     };
@@ -350,7 +357,10 @@ export const NewChatClearsSelection: Story = {
     );
     await expect(await canvas.findByRole('textbox')).toBeVisible();
     await user.click(canvas.getByRole('button', { name: 'Show inbox' }));
-    const firstThreadRow = getThreadRow(FIRST_THREAD_TITLE);
+    const firstThreadRow = getThreadRow({
+      canvasElement,
+      title: FIRST_THREAD_TITLE,
+    });
 
     await selectThread(FIRST_THREAD_TITLE);
     await expect(canvas.getByText('1 chat selected')).toBeVisible();
@@ -360,7 +370,9 @@ export const NewChatClearsSelection: Story = {
     );
     await expect(await canvas.findByRole('textbox')).toBeVisible();
     await expectThreadUnchecked(FIRST_THREAD_TITLE);
-    await expect(getThreadRow(FIRST_THREAD_TITLE)).toBe(firstThreadRow);
+    await expect(
+      getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
+    ).toBe(firstThreadRow);
   },
 };
 
@@ -377,20 +389,14 @@ export const SavedChatNavigationClearsSelection: Story = {
     );
     await canvas.findByRole('button', { name: 'Chat details' });
 
-    const getThreadRow = (title: string) => {
-      const row = canvas
-        .getAllByText(title)
-        .map((element) =>
-          element.closest<HTMLDivElement>('[data-selectable-id]'),
-        )
-        .find(isDefined);
-
-      assertIsDefinedOrThrow(row);
-
-      return row;
-    };
-    const firstThreadRow = getThreadRow(FIRST_THREAD_TITLE);
-    const secondThreadRow = getThreadRow(SECOND_THREAD_TITLE);
+    const firstThreadRow = getThreadRow({
+      canvasElement,
+      title: FIRST_THREAD_TITLE,
+    });
+    const secondThreadRow = getThreadRow({
+      canvasElement,
+      title: SECOND_THREAD_TITLE,
+    });
 
     await user.keyboard('{Control>}');
     await user.click(within(secondThreadRow).getByText(SECOND_THREAD_TITLE));
@@ -424,7 +430,11 @@ export const SavedChatNavigationClearsSelection: Story = {
     await expect(
       within(secondThreadRow).getByLabelText('Select chat'),
     ).not.toBeChecked();
-    await expect(getThreadRow(FIRST_THREAD_TITLE)).toBe(firstThreadRow);
-    await expect(getThreadRow(SECOND_THREAD_TITLE)).toBe(secondThreadRow);
+    await expect(
+      getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
+    ).toBe(firstThreadRow);
+    await expect(
+      getThreadRow({ canvasElement, title: SECOND_THREAD_TITLE }),
+    ).toBe(secondThreadRow);
   },
 };
