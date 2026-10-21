@@ -2,19 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type FindOptionsWhere, IsNull } from 'typeorm';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
-import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
-import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
-import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
-import { AgentChatParkedRunsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-parked-runs.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
+import { AgentChatWaitingLineService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-line.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -37,12 +30,8 @@ export class AgentChatStreamRecoveryService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentMessage')
-    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
-    @InjectMessageQueue(MessageQueue.aiStreamQueue)
-    private readonly chatMessageQueueService: MessageQueueService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
-    private readonly parkedRunsService: AgentChatParkedRunsService,
+    private readonly waitingLineService: AgentChatWaitingLineService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
     private readonly turnRecorderService: AgentTurnRecorderService,
@@ -94,11 +83,17 @@ export class AgentChatStreamRecoveryService {
       await this.publishStreamError({ threadId, workspaceId, turnError });
     }
 
-    if (shouldFlush) {
-      await this.flushQueuedMessages({ threadId, workspaceId });
-    }
-
-    await this.parkedRunsService.wake({ workspaceId, threadId });
+    await this.waitingLineService
+      .wakeNext({
+        workspaceId,
+        threadId,
+        shouldHoldQueuedMessages: !shouldFlush,
+      })
+      .catch((error: unknown) =>
+        this.logger.error(
+          `Failed to wake what waits on thread ${threadId} in workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
 
     return true;
   }
@@ -174,32 +169,6 @@ export class AgentChatStreamRecoveryService {
     );
 
     return interruptedError;
-  }
-
-  private async flushQueuedMessages({
-    threadId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    try {
-      const hasQueuedMessages = await this.messageRepository.existsBy(
-        workspaceId,
-        { threadId, status: AgentMessageStatus.QUEUED },
-      );
-
-      if (hasQueuedMessages) {
-        await this.chatMessageQueueService.add<FlushQueuedAgentChatMessagesJobData>(
-          FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME,
-          { workspaceId, threadId },
-        );
-      }
-    } catch (error) {
-      this.logger.error(
-        `Failed to send the messages queued in thread ${threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
-      );
-    }
   }
 
   private async publishStreamError({

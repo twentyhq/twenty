@@ -33,12 +33,12 @@ import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AgentChatParkedRunsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-parked-runs.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import {
   type AgentChatStreamClaim,
   AgentChatStreamRecoveryService,
 } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AgentChatWaitingLineService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-line.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
@@ -79,7 +79,7 @@ export class AgentRunnerService {
     private readonly turnStreamService: AgentTurnStreamService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
-    private readonly parkedRunsService: AgentChatParkedRunsService,
+    private readonly waitingLineService: AgentChatWaitingLineService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectWorkspaceScopedRepository(AgentEntity)
@@ -94,16 +94,7 @@ export class AgentRunnerService {
   }
 
   async runStarted(jobData: RunAgentJobData): Promise<void> {
-    const { workspaceId, conversation, caller, parkId } = jobData;
-
-    if (
-      !(await this.parkedRunsService.shouldRunParkedJob({
-        threadId: conversation.threadId,
-        parkId,
-      }))
-    ) {
-      return;
-    }
+    const { workspaceId, conversation, caller } = jobData;
 
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
@@ -130,11 +121,10 @@ export class AgentRunnerService {
     }
 
     if (result === CONVERSATION_BUSY) {
-      await this.parkedRunsService.park({
+      await this.waitingLineService.waitWithRun({
         workspaceId,
         threadId: conversation.threadId,
-        jobName: RUN_AGENT_JOB_NAME,
-        jobData,
+        run: { jobName: RUN_AGENT_JOB_NAME, jobData },
       });
 
       return;
@@ -221,13 +211,7 @@ export class AgentRunnerService {
   // died or failed midway finds it again, and a pause the run made again replaced it with another
   // id, so each pause goes on once
   async continue(jobData: ContinueAgentRunJobData): Promise<void> {
-    const { workspaceId, threadId, wakeUpId, outcome, parkId } = jobData;
-
-    if (
-      !(await this.parkedRunsService.shouldRunParkedJob({ threadId, parkId }))
-    ) {
-      return;
-    }
+    const { workspaceId, threadId, wakeUpId, outcome } = jobData;
 
     const wakeUp = await this.pendingWakeUpService.find({
       workspaceId,
@@ -270,11 +254,10 @@ export class AgentRunnerService {
     });
 
     if (continued === CONVERSATION_BUSY) {
-      await this.parkedRunsService.park({
+      await this.waitingLineService.waitWithRun({
         workspaceId,
         threadId,
-        jobName: CONTINUE_AGENT_RUN_JOB_NAME,
-        jobData,
+        run: { jobName: CONTINUE_AGENT_RUN_JOB_NAME, jobData },
       });
 
       return;

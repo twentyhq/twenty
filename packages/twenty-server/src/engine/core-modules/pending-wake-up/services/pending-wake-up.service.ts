@@ -27,6 +27,13 @@ type ScheduledWakeUp = Pick<
   'id' | 'workspaceId' | 'ownerType' | 'ownerId'
 >;
 
+const findResumeAt = (condition: PendingWakeUpCondition): Date | null =>
+  condition.type === 'TIME'
+    ? new Date(condition.resumeAt)
+    : condition.type === 'EVENT' && isDefined(condition.expiresAt)
+      ? new Date(condition.expiresAt)
+      : null;
+
 @Injectable()
 export class PendingWakeUpService {
   constructor(
@@ -48,12 +55,7 @@ export class PendingWakeUpService {
     condition: PendingWakeUpCondition;
     payload?: object | null;
   }): Promise<void> {
-    const resumeAt =
-      condition.type === 'TIME'
-        ? new Date(condition.resumeAt)
-        : condition.type === 'EVENT' && isDefined(condition.expiresAt)
-          ? new Date(condition.expiresAt)
-          : null;
+    const resumeAt = findResumeAt(condition);
 
     // An owner waiting again, in a loop or a retry, replaces its previous wake-up in one statement.
     // The fresh id leaves stale jobs of the previous wake-up nothing to claim
@@ -85,6 +87,39 @@ export class PendingWakeUpService {
         ownerType: owner.type,
         ownerId: owner.id,
       },
+      delayMs: resumeAt.getTime() - Date.now(),
+    });
+  }
+
+  // Unlike arm, a wake-up claimed meanwhile stays claimed, and one still pending keeps its createdAt.
+  // The fresh id leaves stale jobs of the previous arming nothing to resolve
+  async rearm({
+    wakeUp,
+    condition,
+  }: {
+    wakeUp: ScheduledWakeUp;
+    condition: PendingWakeUpCondition;
+  }): Promise<void> {
+    const resumeAt = findResumeAt(condition);
+    const wakeUpId = v4();
+
+    const { affected } = await this.pendingWakeUpRepository.update(
+      wakeUp.workspaceId,
+      { id: wakeUp.id },
+      {
+        id: wakeUpId,
+        condition,
+        eventName: condition.type === 'EVENT' ? condition.eventName : null,
+        resumeAt,
+      },
+    );
+
+    if (!affected || !isDefined(resumeAt)) {
+      return;
+    }
+
+    await this.scheduleResolution({
+      wakeUp: { ...wakeUp, id: wakeUpId },
       delayMs: resumeAt.getTime() - Date.now(),
     });
   }
