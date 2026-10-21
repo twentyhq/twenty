@@ -133,20 +133,21 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
       );
     }
 
-    if (input.type === ViewType.CALENDAR) {
-      if (!isNonEmptyString(input.calendarFieldName)) {
-        throw new ViewException(
-          'CALENDAR views require calendarFieldName. Provide a DATE or DATE_TIME field name (e.g., "dueAt", "createdAt").',
-          ViewExceptionCode.INVALID_VIEW_DATA,
-        );
-      }
+    if (
+      input.type === ViewType.CALENDAR &&
+      !isNonEmptyString(input.calendarFieldName)
+    ) {
+      throw new ViewException(
+        'CALENDAR views require calendarFieldName. Provide a DATE or DATE_TIME field name (e.g., "dueAt", "createdAt").',
+        ViewExceptionCode.INVALID_VIEW_DATA,
+      );
+    }
 
-      if (!isDefined(input.calendarLayout)) {
-        throw new ViewException(
-          'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
-          ViewExceptionCode.INVALID_VIEW_DATA,
-        );
-      }
+    if (input.type === ViewType.CALENDAR && !isDefined(input.calendarLayout)) {
+      throw new ViewException(
+        'CALENDAR views require calendarLayout. Provide one of: "DAY", "WEEK", "MONTH".',
+        ViewExceptionCode.INVALID_VIEW_DATA,
+      );
     }
 
     let mainGroupByFieldMetadataId: string | undefined;

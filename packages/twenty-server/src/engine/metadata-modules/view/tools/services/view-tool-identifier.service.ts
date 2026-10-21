@@ -200,7 +200,6 @@ export class ViewToolIdentifierService {
     workspaceId,
   }: {
     input: {
-      id?: string;
       objectNameSingular?: string;
       type?: ViewType;
       mainGroupByFieldName?: string;
