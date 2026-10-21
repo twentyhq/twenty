@@ -125,11 +125,6 @@ select {
 .notice {
   flex-shrink: 0;
 }
-.notice-actions {
-  align-items: center;
-  display: flex;
-  gap: var(--t-spacing-2);
-}
 .preview-label {
   background: var(--t-background-secondary);
   border-bottom: 1px solid var(--t-border-color-medium);

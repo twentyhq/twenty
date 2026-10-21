@@ -1,3 +1,5 @@
+import { isDefined } from '@/utils/validation/isDefined';
+
 const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
   /import\s*\{\s*define(?:Settings)?FrontComponent\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
 
@@ -30,7 +32,7 @@ export const unwrapDefineFrontComponentToDirectExport = (
     IDENTIFIER_COMPONENT_VALUE_PATTERN,
   );
 
-  if (identifierComponentMatch) {
+  if (isDefined(identifierComponentMatch)) {
     const wrappedComponentName = identifierComponentMatch[1];
 
     transformedSource = transformedSource.replace(

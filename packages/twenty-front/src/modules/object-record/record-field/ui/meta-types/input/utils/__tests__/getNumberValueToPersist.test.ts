@@ -19,6 +19,15 @@ describe('getNumberValueToPersist', () => {
     ).toEqual({ success: true, value: 0.5 });
   });
 
+  it('should persist a decimal percentage without float noise', () => {
+    expect(
+      getNumberValueToPersist({
+        newValue: '33.3',
+        numberType: 'percentage',
+      }),
+    ).toEqual({ success: true, value: 0.333 });
+  });
+
   it('should persist an empty percentage as null', () => {
     expect(
       getNumberValueToPersist({

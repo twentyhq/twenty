@@ -1,3 +1,5 @@
+import { transformSync } from 'esbuild';
+
 import { unwrapDefineFrontComponentToDirectExport } from '@/cli/utilities/build/common/front-component-build/utils/unwrap-define-front-component-to-direct-export';
 
 const INLINE_EXPRESSION_COMPONENT_SOURCE = `import { defineFrontComponent } from 'twenty-sdk/define';
@@ -46,6 +48,47 @@ export default defineSettingsFrontComponent({
   component: AppSettings,
 });
 `;
+
+type RenderedElement = {
+  component: (props: object) => unknown;
+  props: object;
+};
+
+const loadRenderer = (
+  render: (element: RenderedElement) => void,
+  useEffect: (effect: () => void) => void = () => {},
+) => {
+  const source = unwrapDefineFrontComponentToDirectExport(`
+    import { defineFrontComponent } from 'twenty-sdk/define';
+    export default defineFrontComponent({ component: () => null });
+  `);
+  const { code } = transformSync(source, { format: 'cjs' });
+  const bundleModule = { exports: {} };
+  const requireModule = (specifier: string) => {
+    if (specifier === 'react') {
+      return { useEffect };
+    }
+    if (specifier === 'react-dom/client') {
+      return { createRoot: () => ({ render }) };
+    }
+    if (specifier === 'react/jsx-runtime') {
+      return {
+        jsx: (component: unknown, props: unknown) => ({ component, props }),
+      };
+    }
+    throw new Error(`Unexpected import: ${specifier}`);
+  };
+
+  new Function('module', 'exports', 'require', code)(
+    bundleModule,
+    bundleModule.exports,
+    requireModule,
+  );
+
+  return bundleModule.exports as {
+    default: (container: object, props?: object) => Promise<void>;
+  };
+};
 
 describe('unwrapDefineFrontComponentToDirectExport', () => {
   it('renders the component when component is an inline factory call', () => {
@@ -108,5 +151,37 @@ export const createSummarizeRecordEffect = () => () => null;
 `;
 
     expect(unwrapDefineFrontComponentToDirectExport(source)).toBe(source);
+  });
+
+  it('passes data props and waits for the initial commit', async () => {
+    const renderedElements: unknown[] = [];
+    const effects: (() => void)[] = [];
+    const props = { records: [{ id: 'sample', name: 'Example' }] };
+    const renderer = loadRenderer(
+      (element) => renderedElements.push(element.component(element.props)),
+      (effect) => effects.push(effect),
+    );
+    let ready = false;
+    const result = renderer.default({}, props).then(() => {
+      ready = true;
+    });
+
+    await Promise.resolve();
+    expect(ready).toBe(false);
+    expect(renderedElements).toEqual([
+      { component: expect.any(Function), props },
+    ]);
+    effects.forEach((effect) => effect());
+    await result;
+    expect(ready).toBe(true);
+  });
+
+  it('rejects the initial render when mounting fails', async () => {
+    const error = new Error('Cannot mount component');
+    const renderer = loadRenderer(() => {
+      throw error;
+    });
+
+    await expect(renderer.default({})).rejects.toThrow(error);
   });
 });
