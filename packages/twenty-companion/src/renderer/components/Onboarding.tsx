@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { useState } from 'react';
 import { type CompanionState } from '../../shared/types/CompanionState';
-import { Field, Button } from 'twenty-ui/primitives/input';
+import { Field, Button, Input } from 'twenty-ui/primitives/input';
 import { MainButton } from 'twenty-ui/components/input';
 import { IconArrowUpRight, IconRefresh } from 'twenty-ui/icon';
 import { type ActionProps } from '../types/ActionProps';
@@ -28,7 +28,7 @@ const Welcome = ({ state, isPending, command }: ActionProps) => {
         }}
       >
         <Field.Root className="workspace-url-field">
-          <Field.Control
+          <Input
             id="workspace-url"
             aria-label={i18n._('Workspace URL')}
             value={serverUrl}

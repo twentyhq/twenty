@@ -3,5 +3,6 @@
   border: 0.75px solid var(--t-border-color-medium);
   border-radius: var(--t-border-radius-md);
   display: flex;
+  flex-shrink: 0;
   justify-content: center;
 }
