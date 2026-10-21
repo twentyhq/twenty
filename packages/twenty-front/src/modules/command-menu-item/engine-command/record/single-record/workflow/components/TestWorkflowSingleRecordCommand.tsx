@@ -33,18 +33,26 @@ export const TestWorkflowSingleRecordCommand = () => {
       return;
     }
 
-    const { currentVersion } = workflowWithCurrentVersion;
+    const { isSaved, savedDraftFlow } = await savePendingWorkflowFlow();
 
-    if (!isDefined(content) || !isDefined(content.trigger)) {
+    if (!isSaved) {
       return;
     }
 
-    await savePendingWorkflowFlow();
+    const trigger = isDefined(savedDraftFlow)
+      ? savedDraftFlow.trigger
+      : content?.trigger;
+
+    if (!isDefined(trigger)) {
+      return;
+    }
 
     return runWorkflowVersion({
-      workflowVersionId: currentVersion.id,
+      workflowVersionId:
+        savedDraftFlow?.workflowVersionId ??
+        workflowWithCurrentVersion.currentVersion.id,
       workflowId: workflowWithCurrentVersion.id,
-      payload: getTestPayloadFromTrigger(content.trigger),
+      payload: getTestPayloadFromTrigger(trigger),
     });
   };
 

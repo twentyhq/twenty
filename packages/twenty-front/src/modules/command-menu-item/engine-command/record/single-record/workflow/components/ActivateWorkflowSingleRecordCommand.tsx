@@ -30,10 +30,16 @@ export const ActivateWorkflowSingleRecordCommand = () => {
       return;
     }
 
-    await savePendingWorkflowFlow();
+    const { isSaved, savedDraftFlow } = await savePendingWorkflowFlow();
+
+    if (!isSaved) {
+      return;
+    }
 
     return activateWorkflowVersion({
-      workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+      workflowVersionId:
+        savedDraftFlow?.workflowVersionId ??
+        workflowWithCurrentVersion.currentVersion.id,
     });
   };
 

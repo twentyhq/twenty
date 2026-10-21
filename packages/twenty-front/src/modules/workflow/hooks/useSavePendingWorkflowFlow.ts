@@ -88,18 +88,9 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
 
   const saveFlowKeys = useCallback(
     async (flowKeys: string[]): Promise<string[]> => {
-      const flowVersionId = store.get(flowAtom)?.workflowVersionId;
-      const saveDraftVersionId = store.get(saveDraftVersionIdAtom);
+      const workflowVersionId = await getUpdatableWorkflowVersion();
 
-      // A save can run on a stale render that has not seen the draft created by an earlier save
-      const workflowVersionId =
-        isDefined(saveDraftVersionId) && saveDraftVersionId === flowVersionId
-          ? saveDraftVersionId
-          : await getUpdatableWorkflowVersion();
-
-      store.set(saveDraftVersionIdAtom, workflowVersionId);
-
-      if (flowVersionId !== workflowVersionId) {
+      if (store.get(flowAtom)?.workflowVersionId !== workflowVersionId) {
         await moveFlowToWorkflowVersionOrThrow({ workflowVersionId, flowKeys });
       }
 
@@ -140,65 +131,95 @@ export const useSavePendingWorkflowFlow = (instanceId?: string) => {
       flowAtom,
       getUpdatableWorkflowVersion,
       moveFlowToWorkflowVersionOrThrow,
-      saveDraftVersionIdAtom,
       store,
       updateWorkflowVersionStep,
       updateWorkflowVersionTrigger,
     ],
   );
 
-  const savePendingWorkflowFlow = useCallback(async () => {
-    let saveInProgress = store.get(saveInProgressAtom);
+  const saveFlow = useCallback(
+    async ({
+      shouldRetryFailedFlowKeys,
+    }: {
+      shouldRetryFailedFlowKeys: boolean;
+    }): Promise<boolean> => {
+      let saveInProgress = store.get(saveInProgressAtom);
 
-    while (isDefined(saveInProgress)) {
-      await saveInProgress.promise.catch(() => undefined);
-      saveInProgress = store.get(saveInProgressAtom);
-    }
+      while (isDefined(saveInProgress)) {
+        await saveInProgress.promise.catch(() => undefined);
+        saveInProgress = store.get(saveInProgressAtom);
+      }
 
-    const pendingFlowKeys = store.get(pendingFlowKeysAtom);
-    const flowKeys = [
-      ...store
+      const pendingFlowKeys = store.get(pendingFlowKeysAtom);
+      const previouslyFailedFlowKeys = store
         .get(failedFlowKeysAtom)
-        .filter((flowKey) => !pendingFlowKeys.includes(flowKey)),
-      ...pendingFlowKeys,
-    ];
+        .filter((flowKey) => !pendingFlowKeys.includes(flowKey));
 
-    if (flowKeys.length === 0) {
-      return;
-    }
+      // Failed keys ride along with new edits so waiters on a failed save do not each retry it
+      if (
+        pendingFlowKeys.length === 0 &&
+        (!shouldRetryFailedFlowKeys || previouslyFailedFlowKeys.length === 0)
+      ) {
+        return previouslyFailedFlowKeys.length === 0;
+      }
 
-    store.set(pendingFlowKeysAtom, []);
-    store.set(failedFlowKeysAtom, []);
+      const flowKeys = [...previouslyFailedFlowKeys, ...pendingFlowKeys];
 
-    const failedFlowKeysPromise = saveFlowKeys(flowKeys).catch(
-      (error: unknown) => {
-        logError(error);
+      store.set(pendingFlowKeysAtom, []);
+      store.set(failedFlowKeysAtom, []);
 
-        return flowKeys;
-      },
-    );
+      const failedFlowKeysPromise = saveFlowKeys(flowKeys).catch(
+        (error: unknown) => {
+          logError(error);
 
-    store.set(saveInProgressAtom, {
-      flowKeys,
-      promise: failedFlowKeysPromise.then(() => undefined),
-    });
+          return flowKeys;
+        },
+      );
 
-    const failedFlowKeys = await failedFlowKeysPromise;
+      store.set(saveInProgressAtom, {
+        flowKeys,
+        promise: failedFlowKeysPromise.then(() => undefined),
+      });
 
-    store.set(failedFlowKeysAtom, (currentFailedFlowKeys) => [
-      ...currentFailedFlowKeys.filter(
-        (flowKey) => !failedFlowKeys.includes(flowKey),
-      ),
-      ...failedFlowKeys,
-    ]);
-    store.set(saveInProgressAtom, undefined);
-  }, [
-    failedFlowKeysAtom,
-    saveFlowKeys,
-    saveInProgressAtom,
-    store,
-    pendingFlowKeysAtom,
-  ]);
+      const failedFlowKeys = await failedFlowKeysPromise;
 
-  return { savePendingWorkflowFlow };
+      store.set(failedFlowKeysAtom, (currentFailedFlowKeys) => [
+        ...currentFailedFlowKeys.filter(
+          (flowKey) => !failedFlowKeys.includes(flowKey),
+        ),
+        ...failedFlowKeys,
+      ]);
+      store.set(saveInProgressAtom, undefined);
+
+      return failedFlowKeys.length === 0;
+    },
+    [
+      failedFlowKeysAtom,
+      saveFlowKeys,
+      saveInProgressAtom,
+      store,
+      pendingFlowKeysAtom,
+    ],
+  );
+
+  const saveWorkflowFlowEdits = useCallback(
+    () => saveFlow({ shouldRetryFailedFlowKeys: false }),
+    [saveFlow],
+  );
+
+  const savePendingWorkflowFlow = useCallback(async () => {
+    const isSaved = await saveFlow({ shouldRetryFailedFlowKeys: true });
+    const flow = store.get(flowAtom);
+
+    return {
+      isSaved,
+      savedDraftFlow:
+        isDefined(flow) &&
+        flow.workflowVersionId === store.get(saveDraftVersionIdAtom)
+          ? flow
+          : undefined,
+    };
+  }, [flowAtom, saveDraftVersionIdAtom, saveFlow, store]);
+
+  return { savePendingWorkflowFlow, saveWorkflowFlowEdits };
 };

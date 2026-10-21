@@ -20,7 +20,8 @@ export const useUpdateTrigger = (instanceId?: string) => {
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
   const { updateWorkflowVersionTrigger } =
     useUpdateWorkflowVersionTrigger(instanceId);
-  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(instanceId);
+  const { savePendingWorkflowFlow, saveWorkflowFlowEdits } =
+    useSavePendingWorkflowFlow(instanceId);
 
   const writeTriggerToFlow = useCallback(
     (trigger: WorkflowTrigger) => {
@@ -39,7 +40,7 @@ export const useUpdateTrigger = (instanceId?: string) => {
       TRIGGER_STEP_ID,
     ]);
 
-    return savePendingWorkflowFlow();
+    return saveWorkflowFlowEdits();
   };
 
   const updateTriggerNow = async (updatedTrigger: WorkflowTrigger) => {

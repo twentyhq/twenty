@@ -20,7 +20,8 @@ export const useUpdateStep = (instanceId?: string) => {
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
   const { updateWorkflowVersionStep } =
     useUpdateWorkflowVersionStep(instanceId);
-  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow(instanceId);
+  const { savePendingWorkflowFlow, saveWorkflowFlowEdits } =
+    useSavePendingWorkflowFlow(instanceId);
 
   const writeStepToFlow = useCallback(
     (step: WorkflowAction) => {
@@ -37,7 +38,7 @@ export const useUpdateStep = (instanceId?: string) => {
       updatedStep.id,
     ]);
 
-    return savePendingWorkflowFlow();
+    return saveWorkflowFlowEdits();
   };
 
   const updateStepNow = async (updatedStep: WorkflowAction) => {

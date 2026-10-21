@@ -36,11 +36,16 @@ export const DuplicateWorkflowSingleRecordCommand = () => {
       return;
     }
 
-    await savePendingWorkflowFlow();
+    const { isSaved, savedDraftFlow } = await savePendingWorkflowFlow();
+
+    if (!isSaved) {
+      return;
+    }
 
     const result = await duplicateWorkflow({
       workflowIdToDuplicate: workflow.id,
-      workflowVersionIdToCopy: workflow.currentVersion.id,
+      workflowVersionIdToCopy:
+        savedDraftFlow?.workflowVersionId ?? workflow.currentVersion.id,
     });
 
     if (isDefined(result) && isNonEmptyString(result.workflowId)) {
