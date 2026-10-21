@@ -121,10 +121,6 @@ export class GuardRedirectService {
       return error.message;
     }
 
-    if (error instanceof Error) {
-      return `Authentication error: ${error.message}`;
-    }
-
-    return `Authentication error: ${String(error)}`;
+    return `Authentication error: ${error.message}`;
   }
 }
