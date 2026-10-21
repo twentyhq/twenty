@@ -190,6 +190,18 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
         });
     }
 
+    const fieldMetadataIds = isNonEmptyArray(input.fieldNames)
+      ? await Promise.all(
+          input.fieldNames.map((fieldName) =>
+            this.viewToolIdentifierService.resolveFieldMetadataId({
+              workspaceId,
+              objectMetadataId,
+              fieldName,
+            }),
+          ),
+        )
+      : [];
+
     const view = await this.viewService.createOne({
       createViewInput: {
         name: input.name,
@@ -208,19 +220,9 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
       createdByUserWorkspaceId: userWorkspaceId,
     });
 
-    if (isNonEmptyArray(input.fieldNames)) {
-      const resolvedFieldMetadataIds = await Promise.all(
-        input.fieldNames.map((fieldName) =>
-          this.viewToolIdentifierService.resolveFieldMetadataId({
-            workspaceId,
-            objectMetadataId,
-            fieldName,
-          }),
-        ),
-      );
-
+    if (isNonEmptyArray(fieldMetadataIds)) {
       await this.viewFieldService.createMany({
-        createViewFieldInputs: resolvedFieldMetadataIds.map(
+        createViewFieldInputs: fieldMetadataIds.map(
           (fieldMetadataId, index) => ({
             viewId: view.id,
             fieldMetadataId,

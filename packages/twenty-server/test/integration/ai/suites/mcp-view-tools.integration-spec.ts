@@ -489,6 +489,31 @@ describe('MCP view tools (integration)', () => {
     });
   });
 
+  it('should create no view when a field name is unknown', async () => {
+    const viewName = `${VIEW_NAME_PREFIX} companies with an unknown field`;
+
+    expect(
+      await runFailingViewTool({
+        toolName: 'create_view',
+        toolArguments: {
+          name: viewName,
+          objectNameSingular: 'company',
+          fieldNames: ['name', 'unknownField'],
+        },
+      }),
+    ).toEqual({
+      success: false,
+      message: 'Failed to execute create_view',
+      error:
+        'Field "unknownField" not found on this object. Use get_field_metadata to list available fields.',
+    });
+    expect(
+      (await listViews({ objectNameSingular: 'company' })).map(
+        ({ name }) => name,
+      ),
+    ).not.toContain(viewName);
+  });
+
   it('should only let the creator of an unlisted view edit or delete it', async () => {
     const unlistedView = await runViewTool<ViewSummary>({
       toolName: 'create_view',
