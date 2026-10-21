@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { IGNORE_SESSION_COOKIE_HEADER_NAME } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   extractSessionCookie,
@@ -23,7 +24,7 @@ const signInAndGetSessionCookie = async () => {
     await signInWithCookieCapture({ originHeader: ALLOWED_ORIGIN }),
   );
 
-  if (!sessionCookie) {
+  if (!isDefined(sessionCookie)) {
     throw new Error('Expected a session cookie from sign-in');
   }
 

@@ -34,7 +34,7 @@ export const postMetadataOperationWithHeaders = (
     graphqlRequest.set('Cookie', cookieHeader);
   }
 
-  if (ignoreSessionCookie === true) {
+  if (ignoreSessionCookie) {
     graphqlRequest.set(IGNORE_SESSION_COOKIE_HEADER_NAME, '1');
   }
 
