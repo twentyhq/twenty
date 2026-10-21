@@ -10,6 +10,7 @@ import { isDefined, normalizeAllowedIframeOrigin } from 'twenty-shared/utils';
 
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES } from 'src/engine/core-modules/frontend/constants/document-content-security-policy-directives.constant';
 import { isFrontendDocumentRequest } from 'src/engine/core-modules/frontend/utils/is-frontend-document-request.util';
 import { renderFrontendHtml } from 'src/engine/core-modules/frontend/utils/render-frontend-html.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -18,10 +19,6 @@ import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const MAX_FRONTEND_HTML_SIZE_BYTES = 1024 * 1024;
-
-// manifest-src keeps the credentialed manifest fetch (index.html) on our own origin, redirects included.
-const DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES =
-  "object-src 'none'; base-uri 'self'; manifest-src 'self'";
 
 @Injectable()
 export class FrontendService {
