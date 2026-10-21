@@ -1,9 +1,17 @@
 import * as typescript from 'typescript';
 import { isDefined } from 'twenty-shared/utils';
 
-import { frontComponentQuerySchema } from './ai-front-component.schemas';
+import { frontComponentQuerySchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-query.schema';
 
-export const readFrontComponentQuery = (source: string) => {
+import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
+import {
+  FrontComponentException,
+  FrontComponentExceptionCode,
+} from 'src/engine/metadata-modules/front-component/front-component.exception';
+
+export const readFrontComponentQuery = (
+  source: string,
+): FrontComponentQuery => {
   const sourceFile = typescript.createSourceFile(
     'component.front-component.tsx',
     source,
@@ -31,7 +39,10 @@ export const readFrontComponentQuery = (source: string) => {
     !isDefined(initializer) ||
     !typescript.isObjectLiteralExpression(initializer)
   ) {
-    throw new Error('Component query must be a static object literal.');
+    throw new FrontComponentException(
+      'Component query must be a static object literal.',
+      FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+    );
   }
 
   const query = Object.fromEntries(
@@ -41,8 +52,9 @@ export const readFrontComponentQuery = (source: string) => {
         (!typescript.isIdentifier(property.name) &&
           !typescript.isStringLiteral(property.name))
       ) {
-        throw new Error(
+        throw new FrontComponentException(
           'Component query must contain only literal properties.',
+          FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
         );
       }
       const value = property.initializer;
@@ -58,15 +70,19 @@ export const readFrontComponentQuery = (source: string) => {
           property.name.text,
           value.elements.map((element) => {
             if (!typescript.isStringLiteral(element)) {
-              throw new Error(
+              throw new FrontComponentException(
                 'Component query arrays must contain only strings.',
+                FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
               );
             }
             return element.text;
           }),
         ];
       }
-      throw new Error('Component query must contain only literal values.');
+      throw new FrontComponentException(
+        'Component query must contain only literal values.',
+        FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+      );
     }),
   );
 

@@ -1,6 +1,6 @@
 import { context } from 'esbuild';
 
-import { buildFrontComponentWithLimits } from '../build-front-component-with-limits.util';
+import { buildFrontComponentWithLimits } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits.util';
 
 jest.mock('esbuild', () => ({ context: jest.fn() }));
 

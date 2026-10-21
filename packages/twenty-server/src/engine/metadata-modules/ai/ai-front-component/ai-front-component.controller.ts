@@ -19,7 +19,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
-import { frontComponentDiagnosticSchema } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.schemas';
+import { frontComponentDiagnosticSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-diagnostic.schema';
 
 @Controller(`${ApiPath.Rest}/ai-front-components`)
 export class AiFrontComponentController {

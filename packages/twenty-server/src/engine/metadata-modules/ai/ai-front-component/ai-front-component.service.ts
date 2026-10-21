@@ -31,14 +31,12 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import {
-  type FrontComponentDiagnostic,
-  type FrontComponentDraft,
-  type FrontComponentDraftInput,
-  type FrontComponentQuery,
-} from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.schemas';
-import { AiFrontComponentBuildService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component-build.service';
-import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/read-front-component-query.util';
+import { type FrontComponentDiagnostic } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-diagnostic.type';
+import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft.type';
+import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
+import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
+import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
+import { buildFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
 
 const DRAFT_TTL = 24 * 60 * 60 * 1000;
 
@@ -58,7 +56,6 @@ export class AiFrontComponentService {
     private readonly records: FindRecordsService,
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
     private readonly componentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
-    private readonly builder: AiFrontComponentBuildService,
   ) {}
 
   private isEnabled(workspaceId: string) {
@@ -210,11 +207,7 @@ export class AiFrontComponentService {
       : undefined;
     const id = v4();
     const rootId = previous?.rootId ?? id;
-    const built = await this.builder.build({
-      workspaceId: context.workspaceId,
-      componentId: id,
-      input,
-    });
+    const built = await buildFrontComponent({ ...input, componentId: id });
 
     return this.locks.withLock(
       async () => {
