@@ -11,18 +11,26 @@ import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseC
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 // Changes come in bursts, as a message updates a chat and its members' rows
 const AGENT_CHAT_CHANNELS_REFRESH_DEBOUNCE_MS = 1000;
 
 export const AgentChatChannelsEffect = () => {
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
-  const isEnabled = hasAiPermission && !isWorkspaceSuspended;
+  const isEnabled =
+    isAiChatInboxEnabled && hasAiPermission && !isWorkspaceSuspended;
 
   const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
   const { refreshAgentChatChannelSummaries } =
