@@ -3842,7 +3842,7 @@ msgstr "人による入力を求める"
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
-msgstr ""
+msgstr "質問、検索、作成など、何でも..."
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -13201,7 +13201,7 @@ msgstr "隠されたグループを非表示"
 #. js-lingui-id: L/mb70
 #: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
 msgid "Hide inbox"
-msgstr ""
+msgstr "受信トレイを非表示"
 
 #. js-lingui-id: 2ouyMV
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -13270,7 +13270,7 @@ msgstr "トリガー間の時間"
 #. js-lingui-id: 3WYTm2
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
-msgstr ""
+msgstr "どのようにお手伝いできますか？"
 
 #. js-lingui-id: xUNmcx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -17201,12 +17201,12 @@ msgstr "利用可能なエージェントはありません"
 #. js-lingui-id: YUKCH8
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "No Agents found"
-msgstr ""
+msgstr "エージェントが見つかりません"
 
 #. js-lingui-id: FZpUJg
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "No Agents match your filters. Try removing some of them."
-msgstr ""
+msgstr "フィルターに一致するエージェントはありません。一部を削除してみてください。"
 
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -23574,7 +23574,7 @@ msgstr "隠されたオブジェクトを表示"
 #. js-lingui-id: 5S6Ndm
 #: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
 msgid "Show inbox"
-msgstr ""
+msgstr "受信トレイを表示"
 
 #. js-lingui-id: dlzDxE
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts

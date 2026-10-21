@@ -3842,7 +3842,7 @@ msgstr "Запитати введення людиною"
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
-msgstr ""
+msgstr "Запитуйте, шукайте або створюйте що завгодно..."
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -13201,7 +13201,7 @@ msgstr "Приховати приховані групи"
 #. js-lingui-id: L/mb70
 #: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
 msgid "Hide inbox"
-msgstr ""
+msgstr "Приховати вхідні"
 
 #. js-lingui-id: 2ouyMV
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -13270,7 +13270,7 @@ msgstr "Години між запуском"
 #. js-lingui-id: 3WYTm2
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
-msgstr ""
+msgstr "Чим я можу вам допомогти?"
 
 #. js-lingui-id: xUNmcx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -17201,12 +17201,12 @@ msgstr "Немає доступних агентів"
 #. js-lingui-id: YUKCH8
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "No Agents found"
-msgstr ""
+msgstr "Агентів не знайдено"
 
 #. js-lingui-id: FZpUJg
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "No Agents match your filters. Try removing some of them."
-msgstr ""
+msgstr "Жоден агент не відповідає вашим фільтрам. Спробуйте видалити деякі з них."
 
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -23574,7 +23574,7 @@ msgstr "Показати приховані об'єкти"
 #. js-lingui-id: 5S6Ndm
 #: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
 msgid "Show inbox"
-msgstr ""
+msgstr "Показати вхідні"
 
 #. js-lingui-id: dlzDxE
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts

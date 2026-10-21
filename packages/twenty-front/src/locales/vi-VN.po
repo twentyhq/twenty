@@ -3842,7 +3842,7 @@ msgstr "Yêu cầu thông tin nhập từ con người"
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
-msgstr ""
+msgstr "Hỏi, tìm kiếm hoặc tạo bất cứ điều gì..."
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -13201,7 +13201,7 @@ msgstr "Ẩn nhóm ẩn"
 #. js-lingui-id: L/mb70
 #: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
 msgid "Hide inbox"
-msgstr ""
+msgstr "Ẩn hộp thư đến"
 
 #. js-lingui-id: 2ouyMV
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -13270,7 +13270,7 @@ msgstr "Số giờ giữa các kích hoạt"
 #. js-lingui-id: 3WYTm2
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
-msgstr ""
+msgstr "Tôi có thể giúp gì cho bạn?"
 
 #. js-lingui-id: xUNmcx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -17201,12 +17201,12 @@ msgstr "Không có tác nhân nào có sẵn"
 #. js-lingui-id: YUKCH8
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "No Agents found"
-msgstr ""
+msgstr "Không tìm thấy Agent"
 
 #. js-lingui-id: FZpUJg
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "No Agents match your filters. Try removing some of them."
-msgstr ""
+msgstr "Không có Agent nào khớp với bộ lọc của bạn. Hãy thử xóa một số bộ lọc."
 
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -23574,7 +23574,7 @@ msgstr "Hiện đối tượng ẩn"
 #. js-lingui-id: 5S6Ndm
 #: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
 msgid "Show inbox"
-msgstr ""
+msgstr "Hiện hộp thư đến"
 
 #. js-lingui-id: dlzDxE
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts

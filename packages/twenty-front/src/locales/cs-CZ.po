@@ -3842,7 +3842,7 @@ msgstr "Požádat o lidský vstup"
 #. js-lingui-id: mc9nK2
 #: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
-msgstr ""
+msgstr "Ptejte se, hledejte nebo vytvořte cokoli..."
 
 #. js-lingui-id: QVL/hg
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -13201,7 +13201,7 @@ msgstr "Skrýt skryté skupiny"
 #. js-lingui-id: L/mb70
 #: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
 msgid "Hide inbox"
-msgstr ""
+msgstr "Skrýt doručenou poštu"
 
 #. js-lingui-id: 2ouyMV
 #: src/modules/command-menu-item/edit/components/CommandMenuItemOptionsDropdown.tsx
@@ -13270,7 +13270,7 @@ msgstr "Hodiny mezi spouštěči"
 #. js-lingui-id: 3WYTm2
 #: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
-msgstr ""
+msgstr "Jak vám mohu pomoci?"
 
 #. js-lingui-id: xUNmcx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -17201,12 +17201,12 @@ msgstr "Žádní agenti nejsou k dispozici"
 #. js-lingui-id: YUKCH8
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "No Agents found"
-msgstr ""
+msgstr "Nebyli nalezeni žádní agenti"
 
 #. js-lingui-id: FZpUJg
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "No Agents match your filters. Try removing some of them."
-msgstr ""
+msgstr "Žádní agenti neodpovídají vašim filtrům. Zkuste některé z nich odstranit."
 
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
@@ -23574,7 +23574,7 @@ msgstr "Zobrazit skryté objekty"
 #. js-lingui-id: 5S6Ndm
 #: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
 msgid "Show inbox"
-msgstr ""
+msgstr "Zobrazit doručenou poštu"
 
 #. js-lingui-id: dlzDxE
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
