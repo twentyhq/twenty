@@ -64,9 +64,6 @@ import {
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledFeatureFlagName = styled(OverflowingTextWithTooltip)`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
   min-width: 0;
 `;
 
@@ -256,6 +253,9 @@ export const SettingsAdminWorkspaceDetail = () => {
       overflow: 'hidden',
       Cell: ({ item }) => (
         <StyledFeatureFlagName
+          size="md"
+          weight="regular"
+          color="primary"
           text={<>{item.label}</>}
           tooltipContent={item.id}
           tooltipPlace="top"
