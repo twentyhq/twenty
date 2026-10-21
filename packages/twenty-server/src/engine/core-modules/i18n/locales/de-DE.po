@@ -3646,12 +3646,12 @@ msgstr "Beim benutzerdefinierten Objekt fehlt ein Label-Identifikatorfeld."
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Custom roles are part of the Organization plan."
-msgstr ""
+msgstr "Benutzerdefinierte Rollen sind Teil des Organisationsplans."
 
 #. js-lingui-id: bO/Qn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan. Upgrade to assign \"{roleLabel}\"."
-msgstr ""
+msgstr "Benutzerdefinierte Rollen sind Teil des Organisationsplans. Führen Sie ein Upgrade durch, um \"{roleLabel}\" zuzuweisen."
 
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
@@ -10868,7 +10868,7 @@ msgstr ""
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
-msgstr ""
+msgstr "Die Rolle \"{roleLabel}\" kann nicht zugewiesen werden: Benutzerdefinierte Rollen erfordern den Organisationsplan"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts

@@ -4641,7 +4641,7 @@ msgstr "BTREE (par défaut, adapté au tri et aux tests d’égalité)"
 #. js-lingui-id: 3+uH0v
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Build an app"
-msgstr ""
+msgstr "Créer une application"
 
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -5667,7 +5667,7 @@ msgstr "Effacez le champ ou \"X\" pour revenir à la valeur par défaut de l'env
 #. js-lingui-id: vPeGqc
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "CLI"
-msgstr ""
+msgstr "CLI"
 
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -5824,8 +5824,7 @@ msgid "Close page"
 msgstr "Fermer la page"
 
 #. js-lingui-id: fJGhA7
-#: src/modules/activities/files/components/AttachmentList.tsx
-#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
 msgid "Close preview"
 msgstr "Fermer l’aperçu"
 
@@ -6036,7 +6035,7 @@ msgstr "Éléments du menu de commande"
 #. js-lingui-id: 6anYzO
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Command reference"
-msgstr ""
+msgstr "Référence des commandes"
 
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -6423,7 +6422,7 @@ msgstr "Connectez Google, Microsoft ou CalDAV et activez la synchronisation du c
 #. js-lingui-id: u6ylxz
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Connect to this workspace"
-msgstr ""
+msgstr "Se connecter à cet espace de travail"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -11094,7 +11093,7 @@ msgstr "Expliquez ce que fait ce workflow, étape par étape."
 #. js-lingui-id: xQlpmk
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Explore your data"
-msgstr ""
+msgstr "Explorez vos données"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -13888,7 +13887,7 @@ msgstr "Perspectives : les dernières nouveautés en matière d'équipements et 
 #. js-lingui-id: IaiiK0
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Inspect the data model, query records and send raw API requests."
-msgstr ""
+msgstr "Inspectez le modèle de données, interrogez les enregistrements et envoyez des requêtes API brutes."
 
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
@@ -21967,7 +21966,7 @@ msgstr "Enregistrez d'abord vos modifications"
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
-msgstr ""
+msgstr "Créez la structure d'une application, enregistrez-la dans cet espace de travail et synchronisez vos modifications au fur et à mesure que vous codez."
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -23590,7 +23589,7 @@ msgstr "Se connecter"
 #. js-lingui-id: A/eMZx
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
-msgstr ""
+msgstr "Connectez-vous depuis votre navigateur et définissez cet espace de travail comme votre connexion par défaut. Nécessite Node.js 24.5 ou version ultérieure."
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -26399,7 +26398,7 @@ msgstr "Vrai"
 #. js-lingui-id: qaK9ds
 #: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 msgid "True or false"
-msgstr ""
+msgstr "Vrai ou faux"
 
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts

@@ -4641,7 +4641,7 @@ msgstr "BTREE (기본값, 정렬과 동등 비교에 적합)"
 #. js-lingui-id: 3+uH0v
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Build an app"
-msgstr ""
+msgstr "앱 빌드"
 
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -5667,7 +5667,7 @@ msgstr "필드를 지우거나 환경/기본값으로 되돌리기 위해 \"X\"�
 #. js-lingui-id: vPeGqc
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "CLI"
-msgstr ""
+msgstr "CLI"
 
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -5824,8 +5824,7 @@ msgid "Close page"
 msgstr "페이지 닫기"
 
 #. js-lingui-id: fJGhA7
-#: src/modules/activities/files/components/AttachmentList.tsx
-#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
 msgid "Close preview"
 msgstr "미리보기 닫기"
 
@@ -6036,7 +6035,7 @@ msgstr "명령 메뉴 항목"
 #. js-lingui-id: 6anYzO
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Command reference"
-msgstr ""
+msgstr "명령어 참조"
 
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -6423,7 +6422,7 @@ msgstr "이벤트를 만들기 전에 Google, Microsoft 또는 CalDAV를 연결�
 #. js-lingui-id: u6ylxz
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Connect to this workspace"
-msgstr ""
+msgstr "이 작업공간에 연결"
 
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -11094,7 +11093,7 @@ msgstr "이 워크플로가 수행하는 작업을 단계별로 설명해 줘."
 #. js-lingui-id: xQlpmk
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Explore your data"
-msgstr ""
+msgstr "데이터 탐색"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -13888,7 +13887,7 @@ msgstr "인사이트: 산업 장비 및 도구 최신 정보"
 #. js-lingui-id: IaiiK0
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Inspect the data model, query records and send raw API requests."
-msgstr ""
+msgstr "데이터 모델을 검사하고, 레코드를 쿼리하며, 원시 API 요청을 전송합니다."
 
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
@@ -21967,7 +21966,7 @@ msgstr "먼저 변경 사항을 저장하세요"
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
-msgstr ""
+msgstr "앱의 기본 구조를 만들고 이 작업공간에 등록한 후, 코딩하면서 변경 사항을 동기화합니다."
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -23590,7 +23589,7 @@ msgstr "로그인"
 #. js-lingui-id: A/eMZx
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
-msgstr ""
+msgstr "브라우저에서 로그인하고 이 작업공간을 기본 연결로 설정합니다. Node.js 24.5 이상이 필요합니다."
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -26397,7 +26396,7 @@ msgstr "참"
 #. js-lingui-id: qaK9ds
 #: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 msgid "True or false"
-msgstr ""
+msgstr "참 또는 거짓"
 
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
