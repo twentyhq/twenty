@@ -55,6 +55,10 @@ const StyledInput = styled.input<{
     padding-left: ${themeCssVariables.spacing[1]};
     padding-right: ${themeCssVariables.spacing[2]};
   }
+
+  &[data-in-row='true'][data-has-error='true'] {
+    color: ${themeCssVariables.color.red};
+  }
 `;
 
 const StyledInputContainer = styled.div`
@@ -73,10 +77,6 @@ const StyledInputContainer = styled.div`
     gap: ${themeCssVariables.spacing[1]};
     height: ${themeCssVariables.spacing[8]};
     padding: 0 ${themeCssVariables.spacing[1]} 0 0;
-  }
-
-  &[data-in-row='true'][data-has-error='true'] input {
-    color: ${themeCssVariables.color.red};
   }
 `;
 
@@ -187,6 +187,7 @@ export const MultiItemBaseInput = ({
       withRightComponent={isDefined(rightComponent) && !isInRow}
       hasItem={hasItem}
       data-in-row={isInRow}
+      data-has-error={hasError}
       onFocus={onFocus}
       onBlur={onBlur}
       onKeyDown={handleKeyDown}
@@ -201,11 +202,7 @@ export const MultiItemBaseInput = ({
 
   return (
     <>
-      <StyledInputContainer
-        className={className}
-        data-in-row={isInRow}
-        data-has-error={hasError}
-      >
+      <StyledInputContainer className={className} data-in-row={isInRow}>
         {input}
         {isDefined(rightComponent) && rightContent}
       </StyledInputContainer>
