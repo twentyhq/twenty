@@ -6,6 +6,7 @@ import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/conn
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SendEmailResolver } from 'src/modules/messaging/message-outbound-manager/resolvers/send-email.resolver';
 import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbound-manager/messaging-send-manager.module';
+import { SentMessageRecordLinkService } from 'src/modules/messaging/message-outbound-manager/services/sent-message-record-link.service';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
     ConnectedAccountMetadataModule,
     PermissionsModule,
   ],
-  providers: [SendEmailResolver],
+  providers: [SendEmailResolver, SentMessageRecordLinkService],
 })
 export class SendEmailModule {}

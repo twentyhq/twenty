@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { type EmailAttachment } from 'twenty-shared/types';
 
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
+import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { t } from '@lingui/core/macro';
@@ -28,6 +29,7 @@ type SendEmailParams = {
   inReplyTo?: string;
   draftMessageId?: string;
   files?: EmailAttachment[];
+  targetRecord?: EmailComposerContextRecord;
 };
 
 export const useSendEmail = () => {
@@ -56,6 +58,7 @@ export const useSendEmail = () => {
               inReplyTo: params.inReplyTo,
               draftMessageId: params.draftMessageId,
               files: params.files,
+              targetRecord: params.targetRecord,
             },
           },
         });

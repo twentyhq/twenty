@@ -6443,6 +6443,7 @@ export type SendEmailInput = {
   fromHandle?: InputMaybe<Scalars['String']['input']>;
   inReplyTo?: InputMaybe<Scalars['String']['input']>;
   subject: Scalars['String']['input'];
+  targetRecord?: InputMaybe<SendEmailTargetRecordInput>;
   to: Scalars['String']['input'];
 };
 
@@ -6451,6 +6452,11 @@ export type SendEmailOutput = {
   error?: Maybe<Scalars['String']['output']>;
   messageThreadId?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
+};
+
+export type SendEmailTargetRecordInput = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 export type SendEmailViaDomainOutput = {

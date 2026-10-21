@@ -34,6 +34,7 @@ describe('SendEmailResolver errors', () => {
       { composeEmail } as never,
       {} as never,
       {} as never,
+      {} as never,
       i18nService as never,
     );
 
@@ -94,5 +95,109 @@ describe('SendEmailResolver errors', () => {
     );
 
     expect(result).toStrictEqual({ success: false });
+  });
+});
+
+describe('SendEmailResolver target record linking', () => {
+  const workspace = { id: WORKSPACE_ID } as WorkspaceEntity;
+  const context: I18nContext = { req: { locale: 'en' } };
+  const baseInput = {
+    connectedAccountId: 'connected-account-id',
+    to: 'recipient@example.com',
+    subject: 'Subject',
+    body: '<p>body</p>',
+  } as SendEmailInput;
+
+  const buildResolver = ({
+    persistedMessageThreadId,
+  }: {
+    persistedMessageThreadId?: string;
+  }) => {
+    const linkSentMessageThreadToRecord = jest.fn();
+
+    const resolver = new SendEmailResolver(
+      { verifyUsableByCaller: jest.fn() } as never,
+      {
+        composeEmail: jest.fn().mockResolvedValue({
+          success: true,
+          data: { shouldPersistMessage: true },
+        }),
+      } as never,
+      { deleteFiles: jest.fn() } as never,
+      {
+        sendComposedEmail: jest.fn().mockResolvedValue({}),
+        persistSentMessage: jest
+          .fn()
+          .mockResolvedValue(
+            persistedMessageThreadId
+              ? {
+                  messageId: 'message-id',
+                  messageThreadId: persistedMessageThreadId,
+                }
+              : undefined,
+          ),
+      } as never,
+      { linkSentMessageThreadToRecord } as never,
+      {} as never,
+    );
+
+    return { resolver, linkSentMessageThreadToRecord };
+  };
+
+  it('links the sent thread to the record the email was sent from', async () => {
+    const { resolver, linkSentMessageThreadToRecord } = buildResolver({
+      persistedMessageThreadId: 'message-thread-id',
+    });
+
+    const result = await resolver.sendEmail(
+      {
+        ...baseInput,
+        targetRecord: {
+          objectNameSingular: 'opportunity',
+          recordId: 'opportunity-id',
+        },
+      },
+      workspace,
+      USER_WORKSPACE_ID,
+      context,
+    );
+
+    expect(result).toEqual({ success: true, messageThreadId: undefined });
+    expect(linkSentMessageThreadToRecord).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: USER_WORKSPACE_ID,
+      messageThreadId: 'message-thread-id',
+      objectNameSingular: 'opportunity',
+      recordId: 'opportunity-id',
+    });
+  });
+
+  it('does not link anything without a target record', async () => {
+    const { resolver, linkSentMessageThreadToRecord } = buildResolver({
+      persistedMessageThreadId: 'message-thread-id',
+    });
+
+    await resolver.sendEmail(baseInput, workspace, USER_WORKSPACE_ID, context);
+
+    expect(linkSentMessageThreadToRecord).not.toHaveBeenCalled();
+  });
+
+  it('does not link anything when the sent message could not be persisted', async () => {
+    const { resolver, linkSentMessageThreadToRecord } = buildResolver({});
+
+    await resolver.sendEmail(
+      {
+        ...baseInput,
+        targetRecord: {
+          objectNameSingular: 'opportunity',
+          recordId: 'opportunity-id',
+        },
+      },
+      workspace,
+      USER_WORKSPACE_ID,
+      context,
+    );
+
+    expect(linkSentMessageThreadToRecord).not.toHaveBeenCalled();
   });
 });

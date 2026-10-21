@@ -9,6 +9,7 @@ import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parse
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
+import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 
 type UseEmailComposerStateArgs = {
   connectedAccountId: string;
@@ -16,6 +17,7 @@ type UseEmailComposerStateArgs = {
   defaultTo?: string;
   defaultSubject?: string;
   defaultInReplyTo?: string;
+  contextRecord?: EmailComposerContextRecord | null;
   onSent?: (messageThreadId: string | null) => void;
 };
 
@@ -30,6 +32,7 @@ export const useEmailComposerState = ({
   defaultTo = '',
   defaultSubject = '',
   defaultInReplyTo,
+  contextRecord,
   onSent,
 }: UseEmailComposerStateArgs) => {
   const initialTo = draftPrefill?.to ?? defaultTo;
@@ -107,6 +110,7 @@ export const useEmailComposerState = ({
       inReplyTo: defaultInReplyTo,
       draftMessageId: draftPrefill?.messageId,
       files: files.length > 0 ? files : undefined,
+      targetRecord: contextRecord ?? undefined,
     });
 
     if (success) {
@@ -124,6 +128,7 @@ export const useEmailComposerState = ({
     defaultInReplyTo,
     draftPrefill?.messageId,
     files,
+    contextRecord,
     sendEmail,
     onSent,
   ]);
