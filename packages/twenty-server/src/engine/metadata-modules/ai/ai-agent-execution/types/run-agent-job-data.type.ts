@@ -4,4 +4,7 @@ import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agen
 export type RunAgentJobData = Omit<
   AgentRunnerRunInput,
   'agent' | 'executionContext'
->;
+> & {
+  // only on a delayed copy parked in Redis by the previous release
+  parkId?: string;
+};

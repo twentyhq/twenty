@@ -11,6 +11,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
+import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type PendingWakeUpOwnerHandler } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
 import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
 import { AGENT_CHAT_WAITING_RUN_RECHECK_DELAY_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-recheck-delay-ms.constant';
@@ -37,6 +38,7 @@ export class AgentChatWaitingRunService
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly redisClientService: RedisClientService,
   ) {}
 
   onModuleInit(): void {
@@ -81,11 +83,29 @@ export class AgentChatWaitingRunService
     }
   }
 
+  // a run the previous release parked in Redis runs from its delayed copy only if no release woke it first
+  async shouldRunLegacyParkedCopy({
+    threadId,
+    parkId,
+  }: {
+    threadId: string;
+    parkId?: string;
+  }): Promise<boolean> {
+    if (!isDefined(parkId)) {
+      return true;
+    }
+
+    const removedCount = await this.redisClientService
+      .getClient()
+      .hdel(`agent-chat-parked-runs:${threadId}`, parkId);
+
+    return removedCount === 1;
+  }
+
   async getOwnerState(wakeUp: PendingWakeUpEntity) {
     return { status: 'WAITING' as const, owner: wakeUp };
   }
 
-  // no record event wakes a waiting run up
   async getReadPermissions(): Promise<never> {
     throw new Error('A waiting run reads no event record');
   }

@@ -32,6 +32,8 @@ import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-m
 import { type AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { type AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-run.service';
+import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AgentTriggerRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-runner.service';
@@ -110,7 +112,6 @@ const findUserMessageTexts = async (threadId: string) =>
     )
   ).map(({ text }: { text: string }) => text);
 
-// a live stream, such as a member's chat reply, holds the conversation
 const holdConversation = async (threadId: string): Promise<string> => {
   const streamId = randomUUID();
 
@@ -197,10 +198,13 @@ describe('agent runs that wait (integration)', () => {
     });
   };
 
-  const buildRunOnThread = async (
+  const buildRunOnThread = async ({
     threadKey = `lead:${randomUUID()}`,
-    waitForCompletion?: boolean,
-  ) => {
+    waitForCompletion,
+  }: {
+    threadKey?: string;
+    waitForCompletion?: boolean;
+  } = {}) => {
     const agentRunService =
       getAppProviderByClassName<AgentRunService>('AgentRunService');
     const workspace = fromWorkspaceEntityToFlat(
@@ -515,7 +519,9 @@ describe('agent runs that wait (integration)', () => {
 
   it('waits in line for a busy conversation and starts the run once it is released', async () => {
     const runTurn = mockAgent(replyingResult, replyingResult);
-    const runOnSameThread = await buildRunOnThread(undefined, false);
+    const runOnSameThread = await buildRunOnThread({
+      waitForCompletion: false,
+    });
 
     const { threadId } = await runOnSameThread('Follow up tomorrow');
 
@@ -546,7 +552,9 @@ describe('agent runs that wait (integration)', () => {
 
   it('starts the runs waiting on a conversation one at a time, in the order they started waiting', async () => {
     mockAgent(replyingResult, replyingResult, replyingResult);
-    const runOnSameThread = await buildRunOnThread(undefined, false);
+    const runOnSameThread = await buildRunOnThread({
+      waitForCompletion: false,
+    });
 
     const { threadId } = await runOnSameThread('Follow up tomorrow');
 
@@ -586,7 +594,9 @@ describe('agent runs that wait (integration)', () => {
 
   it('checks a busy conversation again and reaps a holder whose worker died', async () => {
     const runTurn = mockAgent(replyingResult, replyingResult);
-    const runOnSameThread = await buildRunOnThread(undefined, false);
+    const runOnSameThread = await buildRunOnThread({
+      waitForCompletion: false,
+    });
     const resolver = getAppProviderByClassName<PendingWakeUpResolverService>(
       'PendingWakeUpResolverService',
     );
@@ -607,7 +617,6 @@ describe('agent runs that wait (integration)', () => {
 
     const [{ id: firstWakeUpId }] = await findWaiters(threadId);
 
-    // a live holder keeps the run waiting, under a fresh wake-up
     await resolver.resolve({ workspaceId, wakeUpId: firstWakeUpId });
 
     const [{ id: secondWakeUpId }] = await findWaiters(threadId);
@@ -638,7 +647,10 @@ describe('agent runs that wait (integration)', () => {
       agentId,
       threadKey,
     });
-    const runOnSameThread = await buildRunOnThread(threadKey, false);
+    const runOnSameThread = await buildRunOnThread({
+      threadKey,
+      waitForCompletion: false,
+    });
     const aiModelRegistryService =
       getAppProviderByClassName<AiModelRegistryService>(
         'AiModelRegistryService',
@@ -735,5 +747,28 @@ describe('agent runs that wait (integration)', () => {
     } finally {
       await destroyAgentChatThread({ threadId });
     }
+  });
+
+  it('runs a delayed copy the previous release parked in Redis only when no release woke it', async () => {
+    const threadId = randomUUID();
+    const parkId = randomUUID();
+    const waitingRunService =
+      getAppProviderByClassName<AgentChatWaitingRunService>(
+        'AgentChatWaitingRunService',
+      );
+
+    await getAppProviderByClassName<RedisClientService>('RedisClientService')
+      .getClient()
+      .hset(`agent-chat-parked-runs:${threadId}`, parkId, '{}');
+
+    expect(
+      await waitingRunService.shouldRunLegacyParkedCopy({ threadId, parkId }),
+    ).toBe(true);
+    expect(
+      await waitingRunService.shouldRunLegacyParkedCopy({ threadId, parkId }),
+    ).toBe(false);
+    expect(
+      await waitingRunService.shouldRunLegacyParkedCopy({ threadId }),
+    ).toBe(true);
   });
 });

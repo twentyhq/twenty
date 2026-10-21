@@ -94,7 +94,16 @@ export class AgentRunnerService {
   }
 
   async runStarted(jobData: RunAgentJobData): Promise<void> {
-    const { workspaceId, conversation, caller } = jobData;
+    const { workspaceId, conversation, caller, parkId } = jobData;
+
+    if (
+      !(await this.waitingRunService.shouldRunLegacyParkedCopy({
+        threadId: conversation.threadId,
+        parkId,
+      }))
+    ) {
+      return;
+    }
 
     const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
 
@@ -124,7 +133,10 @@ export class AgentRunnerService {
       await this.waitingRunService.wait({
         workspaceId,
         threadId: conversation.threadId,
-        run: { jobName: RUN_AGENT_JOB_NAME, jobData },
+        run: {
+          jobName: RUN_AGENT_JOB_NAME,
+          jobData: { ...jobData, parkId: undefined },
+        },
       });
 
       return;
@@ -211,7 +223,16 @@ export class AgentRunnerService {
   // died or failed midway finds it again, and a pause the run made again replaced it with another
   // id, so each pause goes on once
   async continue(jobData: ContinueAgentRunJobData): Promise<void> {
-    const { workspaceId, threadId, wakeUpId, outcome } = jobData;
+    const { workspaceId, threadId, wakeUpId, outcome, parkId } = jobData;
+
+    if (
+      !(await this.waitingRunService.shouldRunLegacyParkedCopy({
+        threadId,
+        parkId,
+      }))
+    ) {
+      return;
+    }
 
     const wakeUp = await this.pendingWakeUpService.find({
       workspaceId,
@@ -257,7 +278,10 @@ export class AgentRunnerService {
       await this.waitingRunService.wait({
         workspaceId,
         threadId,
-        run: { jobName: CONTINUE_AGENT_RUN_JOB_NAME, jobData },
+        run: {
+          jobName: CONTINUE_AGENT_RUN_JOB_NAME,
+          jobData: { ...jobData, parkId: undefined },
+        },
       });
 
       return;
