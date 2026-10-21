@@ -282,8 +282,7 @@ export class UserWorkspaceService {
     }
 
     await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-      resolvedRoleId,
-      workspace.id,
+      { roleId: resolvedRoleId, workspaceId: workspace.id },
     );
 
     return resolvedRoleId;

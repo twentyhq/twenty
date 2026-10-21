@@ -377,8 +377,7 @@ export class WorkspaceService {
       workspace.defaultRoleId !== payload.defaultRoleId
     ) {
       await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-        payload.defaultRoleId,
-        workspace.id,
+        { roleId: payload.defaultRoleId, workspaceId: workspace.id },
       );
     }
 

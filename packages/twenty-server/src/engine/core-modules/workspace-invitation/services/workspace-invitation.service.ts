@@ -306,8 +306,7 @@ export class WorkspaceInvitationService {
 
     if (isDefined(roleId)) {
       await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-        roleId,
-        workspace.id,
+        { roleId, workspaceId: workspace.id },
       );
     }
 

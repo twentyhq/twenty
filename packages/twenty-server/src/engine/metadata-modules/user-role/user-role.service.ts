@@ -84,8 +84,7 @@ export class UserRoleService {
     }
 
     await this.roleAssignmentValidationService.validateRoleAssignableToUsersOrThrow(
-      roleId,
-      workspaceId,
+      { roleId, workspaceId },
     );
 
     await this.assignRoleToManyUserWorkspace({

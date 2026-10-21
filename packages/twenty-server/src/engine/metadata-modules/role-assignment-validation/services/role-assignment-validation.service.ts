@@ -15,10 +15,13 @@ import { validateFlatRoleTargetRoleIsEntitled } from 'src/engine/workspace-manag
 export class RoleAssignmentValidationService {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
-  async validateRoleAssignableToUsersOrThrow(
-    roleId: string,
-    workspaceId: string,
-  ): Promise<void> {
+  async validateRoleAssignableToUsersOrThrow({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }): Promise<void> {
     const { flatRoleMaps, billingEntitlements } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatRoleMaps',
