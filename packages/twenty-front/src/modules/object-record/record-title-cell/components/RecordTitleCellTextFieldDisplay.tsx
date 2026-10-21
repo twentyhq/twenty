@@ -1,4 +1,5 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
@@ -8,6 +9,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
+import { isFieldValueRestricted } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -46,6 +48,10 @@ export const RecordTitleCellSingleTextDisplayMode = ({
   const isEmpty = !isNonEmptyString(fieldValue) || fieldValue.trim() === '';
 
   const { openRecordTitleCell } = useRecordTitleCell();
+
+  if (isFieldValueRestricted(fieldValue)) {
+    return <ForbiddenFieldDisplay />;
+  }
 
   return (
     <StyledDiv
