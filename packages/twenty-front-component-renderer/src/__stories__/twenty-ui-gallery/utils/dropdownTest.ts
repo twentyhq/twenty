@@ -211,7 +211,13 @@ export const dropdownTest: TwentyUiGalleryPlayFunction = async ({
   const defaultPageOpener = await page.findByRole('menuitem', {
     name: /^Assign person/,
   });
-  expect(page.getByRole('menu', { name: 'Assignee actions' })).toBeVisible();
+  await waitFor(
+    () =>
+      expect(
+        page.getByRole('menu', { name: 'Assignee actions' }),
+      ).toBeVisible(),
+    { timeout: INTERACTION_TIMEOUT },
+  );
   expect(page.queryByRole('searchbox', { name: 'Search people' })).toBeNull();
   await userEvent.click(defaultPageOpener);
   reopenedSearch = await page.findByRole('searchbox', {
