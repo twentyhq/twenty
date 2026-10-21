@@ -19,7 +19,8 @@ import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory'
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { flatObjectMetadataItemsSelector } from '@/object-metadata/states/flatObjectMetadataItemsSelector';
 import { recordPermissionsFamilyState } from '@/object-record/record-sharing/states/recordPermissionsFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AiChatPage } from '~/pages/ai-chat/AiChatPage';
@@ -30,6 +31,7 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const EXISTING_THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const NEXT_DRAFT_THREAD_ID = '20202020-0000-4000-8000-0000000000bb';
+const CHAT_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000cc';
 const DRAFT_TEXT = 'Draft for the new conversation';
 const CONTINUED_DRAFT_TEXT = ' with more details';
 
@@ -53,25 +55,44 @@ const allowSelectedConversationUpdates = () => {
   const workspace = jotaiStore.get(currentWorkspaceState.atom);
   const workspaceMember = jotaiStore.get(currentWorkspaceMemberState.atom);
   const threadId = jotaiStore.get(currentAiChatThreadState.atom);
-  const objectMetadataItem = jotaiStore.get(
-    objectMetadataItemFamilySelector.selectorFamily({
-      objectName: CoreObjectNameSingular.AgentChatThread,
-      objectNameType: 'singular',
-    }),
-  );
+  const objectMetadataTemplate = jotaiStore
+    .get(flatObjectMetadataItemsSelector.atom)
+    .find(({ nameSingular }) => nameSingular === CoreObjectNameSingular.Note);
 
   if (
     !isDefined(workspace) ||
     !isDefined(workspaceMember) ||
     !isDefined(threadId) ||
-    !isDefined(objectMetadataItem)
+    !isDefined(objectMetadataTemplate)
   ) {
     throw new Error('The conversation metadata must be loaded.');
   }
 
+  const chatObjectMetadataItem = {
+    ...objectMetadataTemplate,
+    id: CHAT_OBJECT_METADATA_ID,
+    universalIdentifier: CHAT_OBJECT_METADATA_ID,
+    nameSingular: CoreObjectNameSingular.AgentChatThread,
+    namePlural: 'agentChatThreads',
+    labelSingular: 'Chat',
+    labelPlural: 'Chats',
+    labelIdentifierFieldMetadataId: '',
+    isSystem: true,
+    isSearchable: false,
+    searchFieldMetadatas: [],
+  };
+
+  jotaiStore.set(
+    metadataStoreState.atomFamily('objectMetadataItems'),
+    (metadataStore) => ({
+      ...metadataStore,
+      current: [...metadataStore.current, chatObjectMetadataItem],
+    }),
+  );
+
   jotaiStore.set(
     recordPermissionsFamilyState.atomFamily({
-      objectMetadataId: objectMetadataItem.id,
+      objectMetadataId: CHAT_OBJECT_METADATA_ID,
       recordId: threadId,
       workspaceId: workspace.id,
       workspaceMemberId: workspaceMember.id,
@@ -138,7 +159,12 @@ export const NewChatDraftSelection: Story = {
     allowSelectedConversationUpdates();
     jotaiStore.set(newAiChatThreadIdState.atom, NEXT_DRAFT_THREAD_ID);
 
-    await userEvent.type(editor, `{End}${CONTINUED_DRAFT_TEXT}`);
+    await userEvent.click(editor);
+    const selection = editor.ownerDocument.getSelection();
+    selection?.selectAllChildren(editor);
+    selection?.collapseToEnd();
+
+    await userEvent.type(editor, CONTINUED_DRAFT_TEXT, { skipClick: true });
     await expect(editor).toHaveTextContent(
       `${DRAFT_TEXT}${CONTINUED_DRAFT_TEXT}`,
     );
