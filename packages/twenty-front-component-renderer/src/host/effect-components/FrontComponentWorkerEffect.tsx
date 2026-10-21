@@ -175,6 +175,12 @@ export const FrontComponentWorkerEffect = ({
               mediaSessionHost?.getRecorderCapabilities(),
           },
         );
+
+        // The receiver buffers the tree, so mounting it only once the component
+        // has rendered keeps the loading fallback up instead of an empty frame.
+        if (!isCancelled) {
+          setReceiver(newReceiver);
+        }
       } catch (error) {
         if (!isCancelled) {
           setError(error instanceof Error ? error : new Error(String(error)));
@@ -184,7 +190,6 @@ export const FrontComponentWorkerEffect = ({
 
     resolveComponentSourceAndRender();
 
-    setReceiver(newReceiver);
     isInitializedRef.current = true;
 
     return () => {

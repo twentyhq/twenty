@@ -14,7 +14,10 @@ const MAX_UNLINKED_RESULTS = 20;
 
 export const slackListUnlinkedUsersHandler =
   async (): Promise<SlackUnlinkedUsersResult> => {
-    const isAllowed = await currentUserHasRolesPermission();
+    const [isAllowed, slackClientResult] = await Promise.all([
+      currentUserHasRolesPermission(),
+      getSlackClient(),
+    ]);
 
     if (!isAllowed) {
       return {
@@ -24,8 +27,6 @@ export const slackListUnlinkedUsersHandler =
           'Only members with the roles permission can list unlinked Slack users.',
       };
     }
-
-    const slackClientResult = await getSlackClient();
 
     if (!slackClientResult.success) {
       return {

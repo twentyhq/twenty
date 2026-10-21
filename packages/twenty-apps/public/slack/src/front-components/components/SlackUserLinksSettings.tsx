@@ -15,6 +15,7 @@ import { H2Title } from 'twenty-ui/typography';
 
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
+import { SlackUserLinksSettingsSkeleton } from 'src/front-components/components/SlackUserLinksSettingsSkeleton';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
 import { useCanManageSlackUserLinks } from 'src/front-components/hooks/use-can-manage-slack-user-links';
 import { useMatchSlackUserLinks } from 'src/front-components/hooks/use-match-slack-user-links';
@@ -89,7 +90,7 @@ const SlackUserLinksSettingsContent = () => {
     isUnlinkedSlackUsersLoading,
     unlinkedErrorMessage,
     refetchUnlinkedSlackUsers,
-  } = useUnlinkedSlackUsers({ isEnabled: canManage && isSlackConnected });
+  } = useUnlinkedSlackUsers({ isEnabled: canManage });
   const { matchSlackUserLinks, isMatching } = useMatchSlackUserLinks();
   const [matchSummary, setMatchSummary] = useState<string | undefined>(
     undefined,
@@ -174,14 +175,14 @@ const SlackUserLinksSettingsContent = () => {
     isDefined(connectionHealth) &&
     connectionHealth !== SLACK_CONNECTION_HEALTH.OK;
 
-  // A broken connection is reported by the app health banner, which stays
-  // visible next to the connection itself; the tools below need a working one.
-  if (isConnectionStatusLoading || !isSlackConnected || isConnectionBroken) {
-    return null;
+  if (isConnectionStatusLoading || isPermissionLoading) {
+    return <SlackUserLinksSettingsSkeleton />;
   }
 
-  if (isPermissionLoading) {
-    return <StyledCenteredState>Loading Slack user links…</StyledCenteredState>;
+  // A broken connection is reported by the app health banner, which stays
+  // visible next to the connection itself; the tools below need a working one.
+  if (!isSlackConnected || isConnectionBroken) {
+    return null;
   }
 
   const shouldWarnAboutRosterMatch =

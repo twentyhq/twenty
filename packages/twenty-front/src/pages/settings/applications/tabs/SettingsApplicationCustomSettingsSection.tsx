@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { Suspense, lazy } from 'react';
 
-import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
 import { Section } from 'twenty-ui/components/layout';
+
+import { SettingsApplicationCustomSettingsSkeletonLoader } from '~/pages/settings/applications/components/SettingsApplicationCustomSettingsSkeletonLoader';
 
 const FrontComponentRenderer = lazy(() =>
   import('@/front-components/components/FrontComponentRenderer').then(
@@ -26,10 +27,14 @@ export const SettingsApplicationCustomSettingsSection = ({
   return (
     <Section.Root>
       <StyledRendererContainer>
-        <Suspense fallback={<FrontComponentSkeletonLoader />}>
+        <Suspense
+          fallback={<SettingsApplicationCustomSettingsSkeletonLoader />}
+        >
           <FrontComponentRenderer
             frontComponentId={frontComponentId}
-            loadingFallback={<FrontComponentSkeletonLoader />}
+            loadingFallback={
+              <SettingsApplicationCustomSettingsSkeletonLoader />
+            }
           />
         </Suspense>
       </StyledRendererContainer>
