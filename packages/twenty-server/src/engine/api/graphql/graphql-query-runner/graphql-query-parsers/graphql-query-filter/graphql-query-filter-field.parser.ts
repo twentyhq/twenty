@@ -31,6 +31,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { findFlatFieldMetadataByName } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadata-by-name.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -42,7 +43,6 @@ import {
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
-// The record a relation filter starts from, which "relation.field" references compare with
 export type ParentFilterScope = {
   flatObjectMetadata: FlatObjectMetadata;
   alias: string;
@@ -334,8 +334,7 @@ export class GraphqlQueryFilterFieldParser {
     }
   }
 
-  // Column names come from metadata, never from the filter value, so the
-  // value cannot reach the SQL
+  // Column names come from metadata, so the filter value never reaches the SQL
   private computeFieldReferenceCondition({
     outerQueryBuilder,
     objectNameSingular,
@@ -364,10 +363,11 @@ export class GraphqlQueryFilterFieldParser {
         };
 
     const referencedFieldMetadata = isDefined(fieldReference)
-      ? this.findFieldMetadataByName(
-          referencedScope.flatObjectMetadata,
-          fieldReference.fieldName,
-        )
+      ? findFlatFieldMetadataByName({
+          fieldName: fieldReference.fieldName,
+          flatObjectMetadata: referencedScope.flatObjectMetadata,
+          flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+        })
       : undefined;
 
     if (!isDefined(referencedFieldMetadata)) {
@@ -396,8 +396,7 @@ export class GraphqlQueryFilterFieldParser {
     return `${fieldColumnReference} ${SQL_COMPARISON_OPERATORS[FIELD_REFERENCE_FILTER_OPERATORS[operator]]} ${referencedColumnReference}`;
   }
 
-  // Only the relation back to the parent is supported, since the parent row is
-  // already in scope and needs no extra join
+  // Only the parent is supported: its row is already in scope, with no extra join
   private findParentFilterScopeOrThrow({
     operator,
     relationFieldName,
@@ -407,10 +406,11 @@ export class GraphqlQueryFilterFieldParser {
     relationFieldName: string;
     useDirectTableReference: boolean;
   }): ParentFilterScope {
-    const relationFieldMetadata = this.findFieldMetadataByName(
-      this.flatObjectMetadata,
-      relationFieldName,
-    );
+    const relationFieldMetadata = findFlatFieldMetadataByName({
+      fieldName: relationFieldName,
+      flatObjectMetadata: this.flatObjectMetadata,
+      flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+    });
 
     if (
       !isDefined(this.parentFilterScope) ||
@@ -428,23 +428,6 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     return this.parentFilterScope;
-  }
-
-  private findFieldMetadataByName(
-    flatObjectMetadata: FlatObjectMetadata,
-    fieldName: string,
-  ): OrmFlatFieldMetadata | undefined {
-    const fieldMetadataId = buildFieldMapsFromFlatObjectMetadata(
-      this.flatFieldMetadataMaps,
-      flatObjectMetadata,
-    ).fieldIdByName[fieldName];
-
-    return isDefined(fieldMetadataId)
-      ? findFlatEntityByIdInFlatEntityMaps<OrmFlatFieldMetadata>({
-          flatEntityId: fieldMetadataId,
-          flatEntityMaps: this.flatFieldMetadataMaps,
-        })
-      : undefined;
   }
 
   private parseCompositeFieldForFilter(

@@ -8,7 +8,7 @@ import { isDefined, parseFieldReferenceFilterValue } from 'twenty-shared/utils';
 const toComparableValue = (value: unknown, fieldType: FieldMetadataType) =>
   fieldType === FieldMetadataType.DATE ||
   fieldType === FieldMetadataType.DATE_TIME
-    ? new Date(value as string).getTime()
+    ? new Date(String(value)).getTime()
     : Number(value);
 
 export const isMatchingFieldReferenceFilter = ({
@@ -37,8 +37,7 @@ export const isMatchingFieldReferenceFilter = ({
     ? referencedRecord?.[fieldReference.fieldName]
     : undefined;
 
-  // A field that was not fetched cannot be compared, so the record keeps the
-  // negation parity to stay excluded, as an unloaded relation does
+  // An unfetched field keeps the negation parity, as an unloaded relation does
   if (value === undefined || referencedValue === undefined) {
     return isWithinNegatedFilter;
   }

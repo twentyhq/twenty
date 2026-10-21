@@ -1,5 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { isDefined } from '@/utils/validation/isDefined';
+
 export const parseFieldReferenceFilterValue = (
   value: unknown,
 ): { relationFieldName?: string; fieldName: string } | undefined => {
@@ -13,7 +15,7 @@ export const parseFieldReferenceFilterValue = (
     return undefined;
   }
 
-  if (secondSegment === undefined) {
+  if (!isDefined(secondSegment)) {
     return { fieldName: firstSegment };
   }
 
