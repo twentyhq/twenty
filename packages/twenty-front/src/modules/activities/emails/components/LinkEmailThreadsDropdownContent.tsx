@@ -1,7 +1,8 @@
 import { LinkEmailThreadOptionItem } from '@/activities/emails/components/LinkEmailThreadOptionItem';
 import { searchTimelineThreads } from '@/activities/emails/graphql/queries/searchTimelineThreads';
-import { type EmailThreadLinkConfig } from '@/activities/emails/hooks/useEmailThreadLinkConfig';
-import { useToggleEmailThreadLink } from '@/activities/emails/hooks/useToggleEmailThreadLink';
+import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
+import { type ActivityLinkConfig } from '@/activities/hooks/useActivityLinkConfig';
+import { useToggleActivityLink } from '@/activities/hooks/useToggleActivityLink';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useQuery } from '@apollo/client/react';
@@ -19,12 +20,12 @@ const LINK_EMAIL_THREADS_SEARCH_LIMIT = 20;
 
 type LinkEmailThreadsDropdownContentProps = {
   targetRecord: ActivityTargetableObject;
-  emailThreadLinkConfig: EmailThreadLinkConfig;
+  activityLinkConfig: ActivityLinkConfig;
 };
 
 export const LinkEmailThreadsDropdownContent = ({
   targetRecord,
-  emailThreadLinkConfig,
+  activityLinkConfig,
 }: LinkEmailThreadsDropdownContentProps) => {
   const { t } = useLingui();
   const apolloCoreClient = useApolloCoreClient();
@@ -32,8 +33,7 @@ export const LinkEmailThreadsDropdownContent = ({
   const trimmedSearch = search.trim();
   const [debouncedSearch] = useDebounce(trimmedSearch, 300);
 
-  const { relatedCompany, messageThreadTargetJoinColumnName } =
-    emailThreadLinkConfig;
+  const { relatedCompany } = activityLinkConfig;
 
   const { data, loading } = useQuery<
     SearchTimelineThreadsQuery,
@@ -52,15 +52,13 @@ export const LinkEmailThreadsDropdownContent = ({
     data?.searchTimelineThreads.recordTimelineThreads ?? [];
   const otherThreads = data?.searchTimelineThreads.otherTimelineThreads ?? [];
 
-  const {
-    linkedMessageThreadIds,
-    pendingMessageThreadIds,
-    toggleEmailThreadLink,
-  } = useToggleEmailThreadLink({
-    targetRecord,
-    messageThreadTargetJoinColumnName,
-    messageThreadIds: [...companyThreads, ...otherThreads].map(({ id }) => id),
-  });
+  const { linkedActivityIds, pendingActivityIds, toggleActivityLink } =
+    useToggleActivityLink({
+      targetRecord,
+      activityLinkConfig,
+      activityIds: [...companyThreads, ...otherThreads].map(({ id }) => id),
+      timelineQuery: getTimelineThreadsFromObjectRecord,
+    });
 
   const areThreadsStale = loading || debouncedSearch !== trimmedSearch;
 
@@ -78,11 +76,9 @@ export const LinkEmailThreadsDropdownContent = ({
           <LinkEmailThreadOptionItem
             key={thread.id}
             thread={thread}
-            isLinked={linkedMessageThreadIds.has(thread.id)}
-            disabled={
-              areThreadsStale || pendingMessageThreadIds.includes(thread.id)
-            }
-            onToggle={toggleEmailThreadLink}
+            isLinked={linkedActivityIds.has(thread.id)}
+            disabled={areThreadsStale || pendingActivityIds.includes(thread.id)}
+            onToggle={toggleActivityLink}
           />
         ))}
         {companyThreads.length === 0 &&
@@ -100,11 +96,11 @@ export const LinkEmailThreadsDropdownContent = ({
               <LinkEmailThreadOptionItem
                 key={thread.id}
                 thread={thread}
-                isLinked={linkedMessageThreadIds.has(thread.id)}
+                isLinked={linkedActivityIds.has(thread.id)}
                 disabled={
-                  areThreadsStale || pendingMessageThreadIds.includes(thread.id)
+                  areThreadsStale || pendingActivityIds.includes(thread.id)
                 }
-                onToggle={toggleEmailThreadLink}
+                onToggle={toggleActivityLink}
               />
             ))}
           </Dropdown.Section>

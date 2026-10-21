@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
+import { gql } from '@apollo/client';
 
-import { useToggleEmailThreadLink } from '@/activities/emails/hooks/useToggleEmailThreadLink';
+import { useToggleActivityLink } from '@/activities/hooks/useToggleActivityLink';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 const mockCreateOneRecord = jest.fn();
@@ -25,6 +26,12 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ refetchQueries: mockRefetchQueries }),
 }));
 
+const TIMELINE_QUERY = gql`
+  query Timeline {
+    timeline
+  }
+`;
+
 const targetRecord = {
   id: 'opportunity-id',
   targetObjectNameSingular: CoreObjectNameSingular.Opportunity,
@@ -32,14 +39,19 @@ const targetRecord = {
 
 const renderToggleHook = () =>
   renderHook(() =>
-    useToggleEmailThreadLink({
+    useToggleActivityLink({
       targetRecord,
-      messageThreadTargetJoinColumnName: 'targetOpportunityId',
-      messageThreadIds: ['linked-thread-id', 'unlinked-thread-id'],
+      activityLinkConfig: {
+        junctionObjectNameSingular: CoreObjectNameSingular.MessageThreadTarget,
+        activityJoinColumnName: 'messageThreadId',
+        targetJoinColumnName: 'targetOpportunityId',
+      },
+      activityIds: ['linked-thread-id', 'unlinked-thread-id'],
+      timelineQuery: TIMELINE_QUERY,
     }),
   );
 
-describe('useToggleEmailThreadLink', () => {
+describe('useToggleActivityLink', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -49,7 +61,7 @@ describe('useToggleEmailThreadLink', () => {
     });
   });
 
-  it('should only look up links between this record and the displayed threads', () => {
+  it('should only look up links between this record and the displayed activities', () => {
     renderToggleHook();
 
     expect(mockUseFindManyRecords).toHaveBeenCalledWith(
@@ -63,21 +75,19 @@ describe('useToggleEmailThreadLink', () => {
     );
   });
 
-  it('should expose linked threads', () => {
+  it('should expose linked activities', () => {
     const { result } = renderToggleHook();
 
-    expect(result.current.linkedMessageThreadIds.has('linked-thread-id')).toBe(
-      true,
+    expect(result.current.linkedActivityIds.has('linked-thread-id')).toBe(true);
+    expect(result.current.linkedActivityIds.has('unlinked-thread-id')).toBe(
+      false,
     );
-    expect(
-      result.current.linkedMessageThreadIds.has('unlinked-thread-id'),
-    ).toBe(false);
   });
 
-  it('should link an unlinked thread to the record', async () => {
+  it('should link an unlinked activity to the record and refresh the timeline', async () => {
     const { result } = renderToggleHook();
 
-    await act(() => result.current.toggleEmailThreadLink('unlinked-thread-id'));
+    await act(() => result.current.toggleActivityLink('unlinked-thread-id'));
 
     expect(mockCreateOneRecord).toHaveBeenCalledWith({
       messageThreadId: 'unlinked-thread-id',
@@ -85,13 +95,15 @@ describe('useToggleEmailThreadLink', () => {
     });
     expect(mockDeleteOneRecord).not.toHaveBeenCalled();
     expect(mockRefetch).toHaveBeenCalled();
-    expect(mockRefetchQueries).toHaveBeenCalled();
+    expect(mockRefetchQueries).toHaveBeenCalledWith({
+      include: [TIMELINE_QUERY],
+    });
   });
 
-  it('should unlink a linked thread from the record', async () => {
+  it('should unlink a linked activity from the record', async () => {
     const { result } = renderToggleHook();
 
-    await act(() => result.current.toggleEmailThreadLink('linked-thread-id'));
+    await act(() => result.current.toggleActivityLink('linked-thread-id'));
 
     expect(mockDeleteOneRecord).toHaveBeenCalledWith('target-id');
     expect(mockCreateOneRecord).not.toHaveBeenCalled();

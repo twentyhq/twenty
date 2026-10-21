@@ -1,11 +1,13 @@
-import { LinkEmailThreadsDropdown } from '@/activities/emails/components/LinkEmailThreadsDropdown';
+import { LinkActivitiesDropdown } from '@/activities/components/LinkActivitiesDropdown';
+import { LinkEmailThreadsDropdownContent } from '@/activities/emails/components/LinkEmailThreadsDropdownContent';
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
-import { useEmailThreadLinkConfig } from '@/activities/emails/hooks/useEmailThreadLinkConfig';
+import { useActivityLinkConfig } from '@/activities/hooks/useActivityLinkConfig';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLink, IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -23,7 +25,10 @@ export const EmptyInboxPlaceholder = () => {
   const targetRecord = useTargetRecord();
   const { openComposer, loading } =
     useComposeEmailForTargetRecord(targetRecord);
-  const emailThreadLinkConfig = useEmailThreadLinkConfig(targetRecord);
+  const activityLinkConfig = useActivityLinkConfig({
+    targetRecord,
+    activityObjectNameSingular: CoreObjectNameSingular.MessageThread,
+  });
 
   return (
     <EmptyState.Root>
@@ -37,17 +42,21 @@ export const EmptyInboxPlaceholder = () => {
         </EmptyState.Description>
       </EmptyState.Content>
       <StyledButtons>
-        {isDefined(emailThreadLinkConfig) && (
-          <LinkEmailThreadsDropdown
+        {isDefined(activityLinkConfig) && (
+          <LinkActivitiesDropdown
             dropdownId={`empty-inbox-link-email-threads-${targetRecord.id}`}
-            targetRecord={targetRecord}
-            emailThreadLinkConfig={emailThreadLinkConfig}
+            ariaLabel={t`Link email threads`}
             trigger={
               <Button startIcon={<IconLink />} variant="outline">
                 {t`Link email threads`}
               </Button>
             }
-          />
+          >
+            <LinkEmailThreadsDropdownContent
+              targetRecord={targetRecord}
+              activityLinkConfig={activityLinkConfig}
+            />
+          </LinkActivitiesDropdown>
         )}
         <Button
           startIcon={<IconMail />}
