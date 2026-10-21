@@ -26,13 +26,14 @@ export const WorkflowNodeLabel = ({
 
   return (
     <StyledNodeLabelWrapper className={className}>
-      <StyledDisplayLabel color={labelColor}>{children}</StyledDisplayLabel>
+      <Text
+        size="xs"
+        weight="semibold"
+        color="light"
+        style={{ color: labelColor }}
+      >
+        {children}
+      </Text>
     </StyledNodeLabelWrapper>
   );
 };
-
-const StyledDisplayLabel = styled(Text)<{ color: string }>`
-  color: ${({ color }) => color};
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

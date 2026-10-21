@@ -2489,6 +2489,13 @@
         "description": "Allows the tooltip even when the text is not truncated."
       },
       {
+        "name": "color",
+        "type": "\"light\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic text color. Omitted values inherit; native style supports runtime colors."
+      },
+      {
         "name": "isFocusable",
         "type": "boolean",
         "required": false,
@@ -2515,6 +2522,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Replaces the default div. Native props, styles, handlers and ref target the displayed text, not the popup."
+      },
+      {
+        "name": "size",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\" | \"xxs\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Font size from the theme scale. Omitted values inherit; this does not set height."
       },
       {
         "name": "text",
@@ -2550,6 +2564,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
+      },
+      {
+        "name": "weight",
+        "type": "\"medium\" | \"regular\" | \"semibold\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Theme font weight. Omitted values inherit."
       }
     ]
   },
@@ -10667,6 +10688,13 @@
     "slug": "typography/text",
     "props": [
       {
+        "name": "color",
+        "type": "\"light\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic text color. Omitted values inherit; native style supports runtime colors."
+      },
+      {
         "name": "lineClamp",
         "type": "number",
         "required": false,
@@ -10681,11 +10709,25 @@
         "description": "Replaces the default div. Native props and the ref target the rendered text element."
       },
       {
+        "name": "size",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\" | \"xxs\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Font size from the theme scale. Omitted values inherit; this does not set height."
+      },
+      {
         "name": "truncate",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
         "description": "Truncates one line with an ellipsis. Cannot be combined with `lineClamp`."
+      },
+      {
+        "name": "weight",
+        "type": "\"medium\" | \"regular\" | \"semibold\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Theme font weight. Omitted values inherit."
       }
     ]
   },
