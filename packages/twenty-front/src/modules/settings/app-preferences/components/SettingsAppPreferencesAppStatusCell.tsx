@@ -3,7 +3,7 @@ import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPref
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 
 type SettingsAppPreferencesAppStatusCellProps = {
@@ -17,25 +17,17 @@ export const SettingsAppPreferencesAppStatusCell = ({
   const { groups, loading } = useMyAccountGroups();
 
   if (item.type === 'installed') {
-    const { missingRequiredVariables, connectionProviders } =
+    const { missingRequiredVariables, application } =
       item.applicationWithPreferences;
 
     if (isNonEmptyArray(missingRequiredVariables)) {
       return <Status color="red">{t`Missing configuration`}</Status>;
     }
 
-    // Matches the Connections tab, which only offers Reconnect once OAuth is set up
-    const reconnectableProviderIds = new Set(
-      connectionProviders
-        .filter(({ oauth }) => oauth?.isClientCredentialsConfigured ?? false)
-        .map(({ id }) => id),
-    );
-
     const hasConnectionNeedingReconnect = groups.some((group) =>
       group.appAccounts.some(
         (account) =>
-          isDefined(account.connectionProviderId) &&
-          reconnectableProviderIds.has(account.connectionProviderId) &&
+          account.applicationId === application.id &&
           isApplicationConnectionReconnectNeeded(account),
       ),
     );

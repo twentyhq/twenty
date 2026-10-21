@@ -1,11 +1,11 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsAppPreferencesDisconnectConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesDisconnectConnectionDialog';
+import { SettingsAppPreferencesRemoveConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
 import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
-import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
+import { canReconnectApplicationConnection } from '@/settings/applications/utils/canReconnectApplicationConnection';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -15,7 +15,7 @@ import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconDotsVertical, IconRefresh, IconUnlink } from 'twenty-ui/icon';
+import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
 
 type SettingsAppPreferencesAppAccountsRowDropdownMenuProps = {
   groupId: string;
@@ -60,24 +60,23 @@ export const SettingsAppPreferencesAppAccountsRowDropdownMenu = ({
       applicationName,
       connectionLabel,
       hasOtherConnectionForApplication,
-      disconnectDialogId: `disconnect-app-account-modal-${account.id}`,
-      canReconnect:
-        isDefined(provider) &&
-        isDefined(account.applicationId) &&
-        (provider.oauth?.isClientCredentialsConfigured ?? false) &&
-        isApplicationConnectionReconnectNeeded(account),
+      removeDialogId: `remove-app-account-modal-${account.id}`,
+      canReconnect: canReconnectApplicationConnection({
+        connection: account,
+        provider,
+      }),
       reconnect: () => {
-        if (!isDefined(provider) || !isDefined(account.applicationId)) {
+        if (!isDefined(provider)) {
           return;
         }
 
         triggerAppOAuth({
-          applicationId: account.applicationId,
+          applicationId: provider.applicationId,
           providerName: provider.name,
           scope: 'USER',
           reconnectingConnectedAccountId: account.id,
           redirectLocation: getApplicationPreferencesConnectionsPath(
-            account.applicationId,
+            provider.applicationId,
           ),
         });
       },
@@ -105,7 +104,7 @@ export const SettingsAppPreferencesAppAccountsRowDropdownMenu = ({
                 applicationName,
                 connectionLabel,
                 hasOtherConnectionForApplication,
-                disconnectDialogId,
+                removeDialogId,
                 canReconnect,
                 reconnect,
               }) => (
@@ -123,14 +122,15 @@ export const SettingsAppPreferencesAppAccountsRowDropdownMenu = ({
                     </Dropdown.ActionItem>
                   )}
                   <Dropdown.ActionItem
-                    startIcon={<IconUnlink />}
-                    onClick={() => openDialog(disconnectDialogId)}
+                    color="danger"
+                    startIcon={<IconTrash />}
+                    onClick={() => openDialog(removeDialogId)}
                   >
                     {hasOtherConnectionForApplication
-                      ? t`Disconnect ${applicationName} (${connectionLabel})`
+                      ? t`Remove ${applicationName} (${connectionLabel})`
                       : isLabelledByApplication
-                        ? t`Disconnect ${applicationName}`
-                        : t`Disconnect`}
+                        ? t`Remove ${applicationName}`
+                        : t`Remove`}
                   </Dropdown.ActionItem>
                 </Fragment>
               ),
@@ -138,16 +138,14 @@ export const SettingsAppPreferencesAppAccountsRowDropdownMenu = ({
           </Dropdown.Section>
         </DropdownContent>
       </DropdownRoot>
-      {accountActions.map(
-        ({ account, connectionLabel, disconnectDialogId }) => (
-          <SettingsAppPreferencesDisconnectConnectionDialog
-            key={account.id}
-            dialogId={disconnectDialogId}
-            connectedAccountId={account.id}
-            connectionLabel={connectionLabel}
-          />
-        ),
-      )}
+      {accountActions.map(({ account, connectionLabel, removeDialogId }) => (
+        <SettingsAppPreferencesRemoveConnectionDialog
+          key={account.id}
+          dialogId={removeDialogId}
+          connectedAccountId={account.id}
+          connectionLabel={connectionLabel}
+        />
+      ))}
     </>
   );
 };

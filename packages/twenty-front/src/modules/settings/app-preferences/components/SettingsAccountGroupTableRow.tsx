@@ -111,6 +111,10 @@ export const SettingsAccountGroupTableRow = ({
   const isAppOnlyReconnectNeeded =
     !isDefined(builtInAccount) &&
     group.appAccounts.some(isApplicationConnectionReconnectNeeded);
+  const isAppOnlyDisconnected =
+    !isDefined(builtInAccount) &&
+    isNonEmptyArray(group.appAccounts) &&
+    group.appAccounts.every(({ archivedAt }) => isDefined(archivedAt));
   const needsAction =
     isDefined(builtInAccount) &&
     (isDefined(builtInAccount.archivedAt) ||
@@ -138,6 +142,9 @@ export const SettingsAccountGroupTableRow = ({
       )}
       {isAppOnlyReconnectNeeded && (
         <Status color="red" weight="medium">{t`Reconnect needed`}</Status>
+      )}
+      {isAppOnlyDisconnected && (
+        <Status color="gray" weight="medium">{t`Disconnected`}</Status>
       )}
     </TableCell>
   );

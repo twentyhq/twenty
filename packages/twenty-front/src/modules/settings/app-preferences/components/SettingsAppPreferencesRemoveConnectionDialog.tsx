@@ -5,36 +5,33 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useToast } from 'twenty-ui/components/feedback';
-import { MyApplicationPreferencesDocument } from '~/generated-metadata/graphql';
 
-type SettingsAppPreferencesDisconnectConnectionDialogProps = {
+type SettingsAppPreferencesRemoveConnectionDialogProps = {
   dialogId: string;
   connectedAccountId: string;
   connectionLabel: string;
 };
 
-export const SettingsAppPreferencesDisconnectConnectionDialog = ({
+export const SettingsAppPreferencesRemoveConnectionDialog = ({
   dialogId,
   connectedAccountId,
   connectionLabel,
-}: SettingsAppPreferencesDisconnectConnectionDialogProps) => {
+}: SettingsAppPreferencesRemoveConnectionDialogProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const [deleteConnectedAccount] = useMutation(DELETE_CONNECTED_ACCOUNT, {
-    refetchQueries: [
-      { query: GET_MY_CONNECTED_ACCOUNTS },
-      { query: MyApplicationPreferencesDocument },
-    ],
+    refetchQueries: [{ query: GET_MY_CONNECTED_ACCOUNTS }],
     awaitRefetchQueries: true,
   });
 
   return (
     <ConfirmationDialog
       dialogId={dialogId}
-      title={t`Disconnect connection?`}
+      title={t`Remove connection?`}
       subtitle={
         <Trans>
-          This will disconnect {connectionLabel} from this application.
+          This permanently removes {connectionLabel}. The app loses access to
+          it.
         </Trans>
       }
       onConfirmClick={async () => {
@@ -46,7 +43,7 @@ export const SettingsAppPreferencesDisconnectConnectionDialog = ({
           enqueueToast(getToastOptionsFromError({ error }));
         }
       }}
-      confirmButtonText={t`Disconnect`}
+      confirmButtonText={t`Remove`}
       shouldWaitForConfirmBeforeClosing
     />
   );

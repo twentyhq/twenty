@@ -42,6 +42,7 @@ import {
   LINEAR_CONNECTIONS_REDIRECT_LOCATION,
   LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
   MOCKED_TRANSIENT_TOKEN,
+  unconfigureLinearClientCredentials,
 } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
 import { withinTableRowOrThrow } from '~/pages/settings/accounts/__stories__/withinTableRowOrThrow';
@@ -384,7 +385,7 @@ export const AppOnlyAccountWithoutConnectionsTabHasNoLink: Story = {
   },
 };
 
-export const AppOnlyAccountRowMenuDisconnects: Story = {
+export const AppOnlyAccountRowMenuRemoves: Story = {
   ...accountGroupsStory,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -399,19 +400,19 @@ export const AppOnlyAccountRowMenuDisconnects: Story = {
       }).getByRole('button', { name: 'More options' }),
     );
 
+    const removeMenuItem = await body.findByRole('menuitem', {
+      name: 'Remove',
+    });
+
     expect(
       body.queryByRole('menuitem', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();
 
+    await userEvent.click(removeMenuItem);
     await userEvent.click(
-      await body.findByRole('menuitem', { name: 'Disconnect' }),
-    );
-
-    const requestsBeforeDisconnect =
-      myApplicationPreferencesRequested.mock.calls.length;
-
-    await userEvent.click(
-      await body.findByRole('button', { name: /^Disconnect$/ }),
+      await within(
+        await body.findByRole('dialog', { name: 'Remove connection?' }),
+      ).findByRole('button', { name: 'Remove' }),
     );
 
     await waitFor(() =>
@@ -419,18 +420,12 @@ export const AppOnlyAccountRowMenuDisconnects: Story = {
         [FATHOM_ONLY_ACCOUNT_ID],
       ]),
     );
-    // The row unmounts before the second refetch lands; waiting for it keeps the next story's store reset from racing it
-    await waitFor(() =>
-      expect(
-        myApplicationPreferencesRequested.mock.calls.length,
-      ).toBeGreaterThan(requestsBeforeDisconnect),
-    );
     await waitFor(() =>
       expect(canvas.queryByText('notes@apple.dev')).not.toBeInTheDocument(),
     );
     await waitFor(() =>
       expect(
-        body.queryByRole('button', { name: /^Disconnect$/ }),
+        body.queryByRole('dialog', { name: 'Remove connection?' }),
       ).not.toBeInTheDocument(),
     );
   },
@@ -449,7 +444,14 @@ export const AppOnlyAccountNeedingReconnectIsFlagged: Story = {
     await canvas.findByText('tim.cook@linear.app', undefined, {
       timeout: 3000,
     });
+    await canvas.findByText('Linear', undefined, { timeout: 3000 });
 
+    const reconnectNeededRow = withinTableRowOrThrow({
+      canvasElement,
+      text: 'tim.cook@linear.app',
+    });
+
+    expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
     expect(
       withinTableRowOrThrow({ canvasElement, text: 'Linear' }).getByText(
         'Reconnect needed',
@@ -466,27 +468,14 @@ export const AppOnlyAccountNeedingReconnectIsFlagged: Story = {
         text: 'tim@linear.app',
       }).queryByText('Reconnect needed'),
     ).not.toBeInTheDocument();
-
-    const reconnectNeededRow = withinTableRowOrThrow({
-      canvasElement,
-      text: 'tim.cook@linear.app',
-    });
-
-    expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
     expect(
       withinTableRowOrThrow({
         canvasElement,
-        text: 'old@linear.app',
-      }).getByText('Reconnect needed'),
-    ).toBeVisible();
+        text: 'tim@linear.app',
+      }).queryByText('Disconnected'),
+    ).not.toBeInTheDocument();
     expect(
-      withinTableRowOrThrow({
-        canvasElement,
-        text: 'legacy@linear.app',
-      }).getByText('Reconnect needed'),
-    ).toBeVisible();
-    expect(
-      canvas.getByRole('link', { name: /legacy@linear\.app/ }),
+      canvas.getByRole('link', { name: /tim\.cook@linear\.app/ }),
     ).toHaveAttribute('href', LINEAR_CONNECTIONS_REDIRECT_LOCATION);
 
     await userEvent.click(
@@ -509,6 +498,149 @@ export const AppOnlyAccountNeedingReconnectIsFlagged: Story = {
       reconnectingConnectedAccountId: LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
       redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
     });
+  },
+};
+
+export const ArchivedAppOnlyAccountsShowDisconnected: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('left@linear.app', undefined, { timeout: 3000 });
+    // The Linear app row means the providers have loaded, so a missing Reconnect below is not a loading artifact
+    await canvas.findByText('Linear', undefined, { timeout: 3000 });
+
+    for (const handle of ['old@linear.app', 'left@linear.app']) {
+      const archivedRow = withinTableRowOrThrow({
+        canvasElement,
+        text: handle,
+      });
+
+      expect(archivedRow.getByText('Disconnected')).toBeVisible();
+      expect(
+        archivedRow.queryByText('Reconnect needed'),
+      ).not.toBeInTheDocument();
+    }
+
+    await userEvent.click(
+      withinTableRowOrThrow({
+        canvasElement,
+        text: 'left@linear.app',
+      }).getByRole('button', { name: 'More options' }),
+    );
+
+    expect(await body.findByRole('menuitem', { name: 'Remove' })).toBeVisible();
+    expect(
+      body.queryByRole('menuitem', { name: /Reconnect/ }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const AppOnlyAccountNeedingReconnectWithoutOAuthIsFlaggedOnly: Story = {
+  ...accountGroupsStory,
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    unconfigureLinearClientCredentials();
+  },
+  parameters: {
+    msw: { handlers: APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('tim.cook@linear.app', undefined, {
+      timeout: 3000,
+    });
+    await canvas.findByText('Linear', undefined, { timeout: 3000 });
+
+    const reconnectNeededRow = withinTableRowOrThrow({
+      canvasElement,
+      text: 'tim.cook@linear.app',
+    });
+
+    expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
+    expect(
+      withinTableRowOrThrow({ canvasElement, text: 'Linear' }).getByText(
+        'Reconnect needed',
+      ),
+    ).toBeVisible();
+
+    await userEvent.click(
+      reconnectNeededRow.getByRole('button', { name: 'More options' }),
+    );
+
+    expect(await body.findByRole('menuitem', { name: 'Remove' })).toBeVisible();
+    expect(
+      body.queryByRole('menuitem', { name: /Reconnect/ }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+const LEGACY_PROVIDER_ACCOUNT_HANDLE = 'workspace-provider@linear.app';
+
+export const AppOnlyAccountOnUnlistedProviderIsFlaggedEverywhere: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', () =>
+          HttpResponse.json({
+            data: {
+              myConnectedAccounts: [
+                ...CONNECTED_ACCOUNTS,
+                buildConnectedAccount({
+                  id: '20202020-1a2b-4c3d-8e4f-000000000087',
+                  handle: LEGACY_PROVIDER_ACCOUNT_HANDLE,
+                  provider: 'app',
+                  userWorkspaceId: MY_USER_WORKSPACE_ID,
+                  applicationId: LINEAR_APPLICATION_ID,
+                  connectionProviderId: '20202020-1a2b-4c3d-8e4f-000000000079',
+                  authFailedAt: '2026-09-02T00:00:00.000Z',
+                }),
+              ],
+            },
+          }),
+        ),
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText(LEGACY_PROVIDER_ACCOUNT_HANDLE, undefined, {
+      timeout: 3000,
+    });
+    await canvas.findByText('Linear', undefined, { timeout: 3000 });
+
+    const legacyRow = withinTableRowOrThrow({
+      canvasElement,
+      text: LEGACY_PROVIDER_ACCOUNT_HANDLE,
+    });
+
+    expect(legacyRow.getByText('Reconnect needed')).toBeVisible();
+    expect(
+      withinTableRowOrThrow({ canvasElement, text: 'Linear' }).getByText(
+        'Reconnect needed',
+      ),
+    ).toBeVisible();
+
+    await userEvent.click(
+      legacyRow.getByRole('button', { name: 'More options' }),
+    );
+
+    expect(await body.findByRole('menuitem', { name: 'Remove' })).toBeVisible();
+    expect(
+      body.queryByRole('menuitem', { name: /Reconnect/ }),
+    ).not.toBeInTheDocument();
   },
 };
 
