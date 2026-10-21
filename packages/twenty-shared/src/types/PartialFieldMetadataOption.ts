@@ -3,4 +3,5 @@ export type PartialFieldMetadataItemOption = {
   label: string;
   position: number;
   value: string;
+  description?: string | null;
 };

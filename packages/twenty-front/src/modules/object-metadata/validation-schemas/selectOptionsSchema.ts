@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { t } from '@lingui/core/macro';
 
+import { OPTION_DESCRIPTION_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { themeColorSchema } from 'twenty-ui/utilities';
 import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
 
@@ -11,6 +12,11 @@ const selectOptionSchema = z
     label: z.string().trim().min(1),
     position: z.number(),
     value: z.string(),
+    description: z
+      .string()
+      .max(OPTION_DESCRIPTION_MAX_CHAR_LENGTH)
+      .nullable()
+      .optional(),
   })
   .refine(
     (option) => {

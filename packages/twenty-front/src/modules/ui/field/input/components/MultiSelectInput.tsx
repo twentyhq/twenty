@@ -1,5 +1,7 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { AddSelectOptionDropdownSection } from '@/ui/input/components/AddSelectOptionDropdownSection';
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
+import { type SelectOptionWithDescription } from '@/ui/input/types/SelectOptionWithDescription';
 import { filterSelectOptionsBySearch } from '@/ui/input/utils/filterSelectOptionsBySearch';
 import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { t } from '@lingui/core/macro';
@@ -9,12 +11,11 @@ import { Key } from 'ts-key-enum';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { type SelectOption } from 'twenty-ui/primitives/input';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
   values: FieldMultiSelectValue;
-  options: SelectOption[];
+  options: SelectOptionWithDescription[];
   onOptionSelected: (value: FieldMultiSelectValue) => void;
   onEnter?: () => void;
   onAddSelectOption?: (optionName: string) => void;
@@ -69,22 +70,28 @@ export const MultiSelectInput = ({
       <Dropdown.Separator />
       <Dropdown.Section scrollable>
         {filteredOptions.map((option) => (
-          <Dropdown.OptionItem
+          <SelectOptionDescriptionTooltip
             key={option.value}
-            onSelect={() => toggleOption(option.value)}
-            selected={values?.includes(option.value) ?? false}
-            closeOnSelect={false}
-            indicator="checkbox"
+            description={option.description}
           >
-            <Tag
-              color={option.color ?? 'transparent'}
-              startIcon={
-                isDefined(option.Icon) ? createElement(option.Icon) : undefined
-              }
+            <Dropdown.OptionItem
+              onSelect={() => toggleOption(option.value)}
+              selected={values?.includes(option.value) ?? false}
+              closeOnSelect={false}
+              indicator="checkbox"
             >
-              {option.label}
-            </Tag>
-          </Dropdown.OptionItem>
+              <Tag
+                color={option.color ?? 'transparent'}
+                startIcon={
+                  isDefined(option.Icon)
+                    ? createElement(option.Icon)
+                    : undefined
+                }
+              >
+                {option.label}
+              </Tag>
+            </Dropdown.OptionItem>
+          </SelectOptionDescriptionTooltip>
         ))}
         {!isNonEmptyArray(filteredOptions) && (
           <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>

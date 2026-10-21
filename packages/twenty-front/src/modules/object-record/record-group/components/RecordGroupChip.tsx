@@ -5,6 +5,7 @@ import {
   type RecordGroupDefinition,
   RecordGroupDefinitionType,
 } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
@@ -37,13 +38,18 @@ export const RecordGroupChip = ({
   }
 
   return (
-    <Tag
-      variant={isValueGroup ? 'soft' : 'outline'}
-      borderStyle="dashed"
-      color={isValueGroup ? recordGroupDefinition.color : 'transparent'}
-      weight={isValueGroup ? valueTagWeight : 'medium'}
+    <SelectOptionDescriptionTooltip
+      description={recordGroupDefinition.description}
+      side="bottom"
     >
-      {recordGroupDefinition.title}
-    </Tag>
+      <Tag
+        variant={isValueGroup ? 'soft' : 'outline'}
+        borderStyle="dashed"
+        color={isValueGroup ? recordGroupDefinition.color : 'transparent'}
+        weight={isValueGroup ? valueTagWeight : 'medium'}
+      >
+        {recordGroupDefinition.title}
+      </Tag>
+    </SelectOptionDescriptionTooltip>
   );
 };

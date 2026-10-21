@@ -7,6 +7,7 @@ export class FieldMetadataDefaultOption {
   position: number;
   label: string;
   value: string;
+  description?: string | null;
 }
 
 export class FieldMetadataComplexOption extends FieldMetadataDefaultOption {

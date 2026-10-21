@@ -66,10 +66,10 @@ const extractAllowedValuesFromPredicate = (
   }
 };
 
-const filterOptionsByPredicates = (
-  options: SelectOption[],
+const filterOptionsByPredicates = <TOption extends SelectOption>(
+  options: TOption[],
   predicates: RowLevelPermissionPredicate[],
-): SelectOption[] => {
+): TOption[] => {
   if (predicates.length === 0) {
     return options;
   }
@@ -97,15 +97,17 @@ const filterOptionsByPredicates = (
   return filteredOptions;
 };
 
-export const useFilteredSelectOptionsFromRLSPredicates = ({
+export const useFilteredSelectOptionsFromRLSPredicates = <
+  TOption extends SelectOption,
+>({
   fieldMetadataId,
   objectMetadataNameSingular,
   options,
 }: {
   fieldMetadataId: string;
   objectMetadataNameSingular: string | undefined;
-  options: SelectOption[];
-}): { filteredOptions: SelectOption[]; canSelectEmpty: boolean } => {
+  options: TOption[];
+}): { filteredOptions: TOption[]; canSelectEmpty: boolean } => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const objectMetadataId = objectMetadataNameSingular
