@@ -8,8 +8,7 @@ export type AgentChatThreadFilterStatusPage = {
   totalCount: number;
 };
 
-// Pages of a single inbox tab add its chats to the list. They live on the
-// list, so a refresh that replaces it starts the tabs over as well
+// Tab pages live on the list, so a refresh that replaces it starts the tabs over
 export type AgentChatThreadList = {
   threadIds: string[];
   hasNextPage: boolean;

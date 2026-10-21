@@ -36,7 +36,7 @@ export const AiChatInboxThreadPagination = ({
 
   const hasMoreThreads =
     agentChatThreadList?.filterStatusPages?.[agentChatThreadFilterStatus]
-      ?.hasNextPage === true;
+      ?.hasNextPage ?? false;
   const previousThreadId = index > 0 ? threads[index - 1].id : undefined;
   const nextThreadId =
     index < threads.length - 1 ? threads[index + 1].id : undefined;

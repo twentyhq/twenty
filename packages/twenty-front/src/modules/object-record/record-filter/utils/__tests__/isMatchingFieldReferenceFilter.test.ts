@@ -36,6 +36,50 @@ describe('isMatchingFieldReferenceFilter', () => {
     ).toBe(true);
   });
 
+  it('excludes a NULL comparison under a negation too, as SQL does', () => {
+    const matchesWithNullArchivedAt = (isWithinNegatedFilter: boolean) =>
+      isMatchingFieldReferenceFilter({
+        value: null,
+        fieldType: FieldMetadataType.DATE_TIME,
+        operator: 'ltField',
+        fieldReferenceValue: 'thread.lastActivityAt',
+        record: { archivedAt: null },
+        parentRecord: thread,
+        isWithinNegatedFilter,
+      });
+
+    expect(matchesWithNullArchivedAt(false)).toBe(false);
+    expect(matchesWithNullArchivedAt(true)).toBe(true);
+  });
+
+  it('compares timestamps down to the microsecond', () => {
+    expect(
+      isMatchingFieldReferenceFilter({
+        value: '2026-10-10T10:00:00.000002Z',
+        fieldType: FieldMetadataType.DATE_TIME,
+        operator: 'gtField',
+        fieldReferenceValue: 'lastActivityAt',
+        record: { lastActivityAt: '2026-10-10T10:00:00.000001Z' },
+        parentRecord: undefined,
+        isWithinNegatedFilter: false,
+      }),
+    ).toBe(true);
+  });
+
+  it('compares big integers without rounding them', () => {
+    expect(
+      isMatchingFieldReferenceFilter({
+        value: '9007199254740993',
+        fieldType: FieldMetadataType.NUMERIC,
+        operator: 'gtField',
+        fieldReferenceValue: 'target',
+        record: { target: '9007199254740992' },
+        parentRecord: undefined,
+        isWithinNegatedFilter: false,
+      }),
+    ).toBe(true);
+  });
+
   it('keeps the negation parity when the referenced field was not fetched', () => {
     const matchesWithoutParent = (isWithinNegatedFilter: boolean) =>
       isMatchingFieldReferenceFilter({

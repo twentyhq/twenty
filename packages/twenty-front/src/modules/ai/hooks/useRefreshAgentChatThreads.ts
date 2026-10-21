@@ -50,10 +50,13 @@ type AgentChatThreadsPage = {
   totalCount: number;
 };
 
-const appendThreadIds = (
-  threadIds: string[],
-  threads: Pick<AgentChatThreadRecord, 'id'>[],
-) => [
+const appendThreadIds = ({
+  threadIds,
+  threads,
+}: {
+  threadIds: string[];
+  threads: Pick<AgentChatThreadRecord, 'id'>[];
+}) => [
   ...threadIds,
   ...threads
     .map(({ id }) => id)
@@ -175,7 +178,10 @@ export const useRefreshAgentChatThreads = () => {
         | undefined;
       buildNextList: (
         list: AgentChatThreadList | null,
-        page: AgentChatThreadsPage,
+        page: Pick<
+          AgentChatThreadsPage,
+          'threads' | 'hasNextPage' | 'endCursor' | 'totalCount'
+        >,
       ) => AgentChatThreadList;
     }) => {
       const workspaceId = store.get(currentWorkspaceState.atom)?.id;
@@ -259,25 +265,30 @@ export const useRefreshAgentChatThreads = () => {
             ? { lastCursor: list.endCursor ?? null }
             : undefined;
         },
-        buildNextList: (list, page) =>
-          mode === 'refresh'
-            ? {
-                threadIds: page.threads.map(({ id }) => id),
-                hasNextPage: page.hasNextPage,
-                endCursor: page.endCursor,
-              }
-            : {
-                ...list,
-                threadIds: appendThreadIds(list?.threadIds ?? [], page.threads),
-                hasNextPage: page.hasNextPage,
-                endCursor: page.endCursor,
-              },
+        buildNextList: (list, page) => {
+          if (mode === 'refresh') {
+            return {
+              threadIds: page.threads.map(({ id }) => id),
+              hasNextPage: page.hasNextPage,
+              endCursor: page.endCursor,
+            };
+          }
+
+          return {
+            ...list,
+            threadIds: appendThreadIds({
+              threadIds: list?.threadIds ?? [],
+              threads: page.threads,
+            }),
+            hasNextPage: page.hasNextPage,
+            endCursor: page.endCursor,
+          };
+        },
       }),
     [loadAgentChatThreadsPage],
   );
 
-  // Adds the chats of one inbox tab, which the pages of every chat may only
-  // reach after many pages of chats filed long ago
+  // The pages of every chat may only reach a tab's chats after many filed long ago
   const loadAgentChatThreadsInFilterStatus = useCallback(
     (filterStatus: AgentChatThreadFilterStatus, mode: 'first' | 'next') =>
       loadAgentChatThreadsPage({
@@ -290,7 +301,7 @@ export const useRefreshAgentChatThreads = () => {
           if (
             !isDefined(list) ||
             !isDefined(workspaceMemberId) ||
-            (mode === 'next' && filterStatusPage?.hasNextPage !== true)
+            (mode === 'next' && !filterStatusPage?.hasNextPage)
           ) {
             return undefined;
           }
@@ -310,7 +321,10 @@ export const useRefreshAgentChatThreads = () => {
           };
         },
         buildNextList: (list, page) => ({
-          threadIds: appendThreadIds(list?.threadIds ?? [], page.threads),
+          threadIds: appendThreadIds({
+            threadIds: list?.threadIds ?? [],
+            threads: page.threads,
+          }),
           hasNextPage: list?.hasNextPage ?? false,
           endCursor: list?.endCursor ?? null,
           filterStatusPages: {
@@ -342,10 +356,30 @@ export const useRefreshAgentChatThreads = () => {
     [loadAgentChatThreadsInFilterStatus],
   );
 
+  // A page of chats the list already holds adds no row, so the scroll trigger would not fire again
   const fetchMoreAgentChatThreadsInFilterStatus = useCallback(
-    (filterStatus: AgentChatThreadFilterStatus) =>
-      loadAgentChatThreadsInFilterStatus(filterStatus, 'next'),
-    [loadAgentChatThreadsInFilterStatus],
+    async (filterStatus: AgentChatThreadFilterStatus) => {
+      let isPageAlreadyListed = true;
+
+      while (isPageAlreadyListed) {
+        const listedThreadIds = new Set(
+          store.get(agentChatThreadListState.atom)?.threadIds ?? [],
+        );
+        const threads = await loadAgentChatThreadsInFilterStatus(
+          filterStatus,
+          'next',
+        );
+
+        if (!isDefined(threads)) {
+          return;
+        }
+
+        isPageAlreadyListed = threads.every(({ id }) =>
+          listedThreadIds.has(id),
+        );
+      }
+    },
+    [loadAgentChatThreadsInFilterStatus, store],
   );
 
   // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
