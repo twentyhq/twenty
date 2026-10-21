@@ -50,7 +50,7 @@ export const EventRowGenericLinked = ({
     linkedObjectMetadataItem?.labelSingular?.toLowerCase() ?? t`record`;
 
   const linkedRecordName = getAuthorizedLinkedRecordName(
-    linkedRecordIdentifier?.name,
+    linkedRecordIdentifier,
   );
 
   const linkedRecord =

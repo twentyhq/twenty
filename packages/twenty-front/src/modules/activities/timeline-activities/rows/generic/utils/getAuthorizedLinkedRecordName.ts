@@ -1,10 +1,15 @@
+import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isFieldValueRestricted } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getAuthorizedLinkedRecordName = (
-  recordIdentifierName: string | undefined,
+  recordIdentifier:
+    | Pick<ObjectRecordIdentifier, 'name' | 'isNameRestricted'>
+    | null
+    | undefined,
 ): string | undefined =>
-  isNonEmptyString(recordIdentifierName) &&
-  !isFieldValueRestricted(recordIdentifierName)
-    ? recordIdentifierName
+  isDefined(recordIdentifier) &&
+  isNonEmptyString(recordIdentifier.name) &&
+  recordIdentifier.isNameRestricted !== true
+    ? recordIdentifier.name
     : undefined;

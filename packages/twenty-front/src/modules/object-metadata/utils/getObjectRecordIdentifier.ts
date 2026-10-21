@@ -3,6 +3,7 @@ import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { isDefined, isFieldValueRestricted } from 'twenty-shared/utils';
 
 import { getAvatarShape } from './getAvatarShape';
 import { getAvatarUrl } from './getAvatarUrl';
@@ -32,6 +33,10 @@ export const getObjectRecordIdentifier = ({
     labelIdentifierFieldMetadataItem,
   );
 
+  const isNameRestricted =
+    isDefined(labelIdentifierFieldMetadataItem) &&
+    isFieldValueRestricted(record[labelIdentifierFieldMetadataItem.name]);
+
   const imageIdentifierFieldMetadata =
     getImageIdentifierFieldMetadataItem(objectMetadataItem);
 
@@ -52,6 +57,7 @@ export const getObjectRecordIdentifier = ({
   return {
     id: record.id,
     name: `${labelIdentifierFieldValue}`,
+    isNameRestricted,
     avatarUrl,
     avatarShape,
     linkToShowPage,
