@@ -305,7 +305,6 @@ export const HoverOwners: Story = {
 const independentControlClick = fn();
 
 export const StretchedActions: ActionStory = {
-  tags: ['!dev'],
   render: (args) => (
     <div style={{ width: '100%' }}>
       <Text>Outside stretched cards</Text>
@@ -337,6 +336,11 @@ export const StretchedActions: ActionStory = {
       </Card.Root>
     </div>
   ),
+};
+
+export const StretchedActionsInteractions: ActionStory = {
+  ...StretchedActions,
+  tags: ['!dev'],
   play: async ({ canvasElement, args }) => {
     const { userEvent: trustedUserEvent } = await import('vitest/browser');
     const canvas = within(canvasElement);
