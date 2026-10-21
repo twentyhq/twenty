@@ -1,9 +1,14 @@
 import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/useLinksField';
+import { LinksFieldEditInputs } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditInputs';
+import { LinksFieldEditPreview } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditPreview';
 import { LinksFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldMenuItem';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
+import { useLinksLabelEditing } from '@/object-record/record-field/ui/meta-types/input/hooks/useLinksLabelEditing';
+import { type LinkRecord } from '@/object-record/record-field/ui/meta-types/input/types/LinkRecord';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
+import { getLinkLabelFromDraft } from '@/object-record/record-field/ui/meta-types/input/utils/getLinkLabelFromDraft';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { linksFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/linksFieldValueSchema';
@@ -18,11 +23,6 @@ import {
 } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
-
-type LinkRecord = {
-  url: string | null;
-  label: string | null;
-};
 
 export const LinksFieldInput = () => {
   const { t } = useLingui();
@@ -51,14 +51,20 @@ export const LinksFieldInput = () => {
     }
   };
 
-  const handleChange = (
-    updatedLinks: { url: string | null; label: string | null }[],
-  ) => {
+  const handleChange = (updatedLinks: LinkRecord[]) => {
     const nextValue = parseArrayToLinksValue(updatedLinks);
 
     if (isDefined(nextValue)) {
       setDraftValue(nextValue);
     }
+  };
+
+  const { labelDraft, setLabelDraft, startEditing, stopEditing, getLinkLabel } =
+    useLinksLabelEditing({ links });
+
+  const withEditingStopped = (action: () => void) => () => {
+    stopEditing();
+    action();
   };
 
   const getShowPrimaryIcon = (index: number) => index === 0 && links.length > 1;
@@ -68,7 +74,7 @@ export const LinksFieldInput = () => {
     recordFieldInputIsFieldInErrorComponentState,
   );
 
-  const handleError = (hasError: boolean, values: any[]) => {
+  const handleError = (hasError: boolean, values: LinkRecord[]) => {
     setRecordFieldInputIsFieldInError(hasError && values.length === 0);
   };
 
@@ -124,7 +130,10 @@ export const LinksFieldInput = () => {
         errorMessage: '',
       })}
       onError={handleError}
-      formatInput={(input) => ({ url: input, label: null })}
+      formatInput={(input, index) => ({
+        url: input,
+        label: getLinkLabel(index),
+      })}
       renderItem={({
         value: link,
         index,
@@ -138,12 +147,44 @@ export const LinksFieldInput = () => {
           showPrimaryIcon={getShowPrimaryIcon(index)}
           showSetAsPrimaryButton={getShowSetAsPrimaryButton(index)}
           label={link.label}
-          onEdit={handleEdit}
-          onSetAsPrimary={handleSetPrimary}
-          onDelete={handleDelete}
+          onEdit={() => {
+            startEditing(index);
+            handleEdit();
+          }}
+          onSetAsPrimary={withEditingStopped(handleSetPrimary)}
+          onDelete={withEditingStopped(handleDelete)}
           url={link.url}
         />
       )}
+      renderEditedItem={
+        isDomainField
+          ? undefined
+          : ({
+              inputValue,
+              hasError,
+              saveButton,
+              separator,
+              onInputChange,
+              onEnter,
+            }) => (
+              <>
+                <LinksFieldEditPreview
+                  url={inputValue}
+                  label={getLinkLabelFromDraft(labelDraft)}
+                  saveButton={saveButton}
+                />
+                {separator}
+                <LinksFieldEditInputs
+                  url={inputValue}
+                  label={labelDraft}
+                  hasError={hasError}
+                  onUrlChange={onInputChange}
+                  onLabelChange={setLabelDraft}
+                  onEnter={onEnter}
+                />
+              </>
+            )
+      }
       maxItemCount={maxNumberOfValues}
     />
   );

@@ -40,6 +40,7 @@ const StyledInput = styled.input<{
   font-weight: ${themeCssVariables.font.weight.medium};
   font-weight: inherit;
   height: 32px;
+  min-width: 0;
   outline: none;
   padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
   padding-right: ${({ withRightComponent }) =>
@@ -47,6 +48,12 @@ const StyledInput = styled.input<{
   position: relative;
 
   width: 100%;
+
+  &[data-in-row='true'] {
+    height: 100%;
+    padding-left: ${themeCssVariables.spacing[1]};
+    padding-right: ${themeCssVariables.spacing[2]};
+  }
 `;
 
 const StyledInputContainer = styled.div`
@@ -58,6 +65,26 @@ const StyledInputContainer = styled.div`
   &:not(:first-of-type) {
     padding: ${themeCssVariables.spacing[1]};
   }
+
+  &[data-in-row='true'] {
+    align-items: center;
+    display: flex;
+    gap: ${themeCssVariables.spacing[1]};
+    height: 32px;
+    padding: 0 ${themeCssVariables.spacing[1]} 0 0;
+  }
+
+  &[data-in-row='true'][data-has-error='true'] input {
+    color: ${themeCssVariables.color.red};
+  }
+`;
+
+const StyledInputRowContent = styled.div`
+  align-items: center;
+  align-self: stretch;
+  display: flex;
+  flex: 1;
+  min-width: 0;
 `;
 
 const StyledRightContainer = styled.div`
@@ -91,6 +118,7 @@ export const MultiItemBaseInput = ({
   error = '',
   hasError = false,
   hasItem,
+  isInRow = false,
   instanceId,
   ref,
 }: MultiItemBaseInputProps & { ref?: Ref<HTMLInputElement> }) => {
@@ -143,38 +171,53 @@ export const MultiItemBaseInput = ({
     handler();
   };
 
+  const input = isDefined(renderInput) ? (
+    renderInput({
+      value,
+      onChange,
+      autoFocus,
+      placeholder,
+      hasError,
+      isInRow,
+      onKeyDown: handleKeyDown,
+      onFocus,
+      onBlur,
+    })
+  ) : (
+    <StyledInput
+      hasError={hasError}
+      autoFocus={autoFocus}
+      value={value}
+      placeholder={placeholder}
+      onChange={(event) => onChange(event.target.value)}
+      ref={combinedRef}
+      withRightComponent={isDefined(rightComponent) && !isInRow}
+      hasItem={hasItem}
+      data-in-row={isInRow}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onKeyDown={handleKeyDown}
+    />
+  );
+
   return (
     <>
-      <StyledInputContainer className={className}>
-        {isDefined(renderInput) ? (
-          renderInput({
-            value,
-            onChange,
-            autoFocus,
-            placeholder,
-            hasError,
-            onKeyDown: handleKeyDown,
-            onFocus,
-            onBlur,
-          })
+      <StyledInputContainer
+        className={className}
+        data-in-row={isInRow}
+        data-has-error={hasError}
+      >
+        {isInRow ? (
+          <StyledInputRowContent>{input}</StyledInputRowContent>
         ) : (
-          <StyledInput
-            hasError={hasError}
-            autoFocus={autoFocus}
-            value={value}
-            placeholder={placeholder}
-            onChange={(event) => onChange(event.target.value)}
-            ref={combinedRef}
-            withRightComponent={isDefined(rightComponent)}
-            hasItem={hasItem}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            onKeyDown={handleKeyDown}
-          />
+          input
         )}
-        {isDefined(rightComponent) && (
-          <StyledRightContainer>{rightComponent}</StyledRightContainer>
-        )}
+        {isDefined(rightComponent) &&
+          (isInRow ? (
+            rightComponent
+          ) : (
+            <StyledRightContainer>{rightComponent}</StyledRightContainer>
+          ))}
       </StyledInputContainer>
       {isNonEmptyString(error) && <StyledErrorDiv>{error}</StyledErrorDiv>}
     </>

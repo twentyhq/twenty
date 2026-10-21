@@ -3,6 +3,7 @@ import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useFilesField } from '@/object-record/record-field/ui/meta-types/hooks/useFilesField';
 import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile';
+import { FilesFieldLabelInput } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldLabelInput';
 import { FilesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
@@ -28,6 +29,7 @@ export const FilesFieldInput = () => {
   const { openFileUpload } = useFileUpload();
   const { t } = useLingui();
   const [isUploading, setIsUploading] = useState(false);
+  const [editedFileIndex, setEditedFileIndex] = useState<number | null>(null);
   const { enqueueToast } = useToast();
   const setFilePreview = useSetAtomState(filePreviewState);
   const isAttachmentPreviewEnabled = useAtomStateValue(
@@ -211,9 +213,34 @@ export const FilesFieldInput = () => {
           key={file.fileId}
           dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
           file={file}
-          onEdit={handleEdit}
+          onEdit={() => {
+            setEditedFileIndex(index);
+            handleEdit();
+          }}
           onDelete={handleDelete}
           onClick={() => handlePreview(file)}
+        />
+      )}
+      renderInput={({
+        value: label,
+        onChange: onLabelChange,
+        onKeyDown,
+        onFocus,
+        onBlur,
+        autoFocus,
+        placeholder,
+        isInRow,
+      }) => (
+        <FilesFieldLabelInput
+          file={isDefined(editedFileIndex) ? files[editedFileIndex] : undefined}
+          value={label}
+          onChange={onLabelChange}
+          onKeyDown={onKeyDown}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          autoFocus={autoFocus}
+          placeholder={placeholder}
+          isInRow={isInRow}
         />
       )}
       newItemLabel={isUploading ? t`Uploading...` : t`Upload file`}

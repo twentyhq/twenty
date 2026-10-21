@@ -53,6 +53,10 @@ const StyledCustomPhoneInputWrapper = styled.div`
   height: 100%;
   width: calc(100% - ${themeCssVariables.spacing[8]});
 
+  &[data-in-row='true'] {
+    width: 100%;
+  }
+
   .PhoneInput {
     height: 100%;
   }
@@ -222,13 +226,14 @@ export const PhonesFieldInput = () => {
         autoFocus,
         placeholder,
         hasError,
+        isInRow,
       }) => {
         return (
           <StyledCustomPhoneInputContainer
             hasItem={!!phones.length}
             hasError={hasError}
           >
-            <StyledCustomPhoneInputWrapper>
+            <StyledCustomPhoneInputWrapper data-in-row={isInRow}>
               <ReactPhoneNumberInput
                 autoFocus={autoFocus}
                 placeholder={placeholder}

@@ -20,11 +20,13 @@ export type MultiItemBaseInputProps = Pick<
     > & {
       onChange: (value: string) => void;
       hasError?: boolean;
+      isInRow?: boolean;
     },
   ) => ReactNode;
   error?: string | null;
   hasError?: boolean;
   hasItem: boolean;
+  isInRow?: boolean;
   onChange: (value: string) => void;
   instanceId: string;
 };

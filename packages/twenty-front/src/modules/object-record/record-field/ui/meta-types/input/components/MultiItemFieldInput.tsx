@@ -17,7 +17,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -37,6 +37,20 @@ const StyledAddItemContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledItemInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledFooterInputRowContainer = styled.div`
+  padding: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledItemSeparator = styled.div`
+  margin: ${themeCssVariables.betweenSiblingsGap}
+    calc(-1 * ${themeCssVariables.spacing[1]});
+`;
+
 type MultiItemFieldInputProps<T> = {
   items: T[];
   onChange: (newItemsValue: T[]) => void;
@@ -47,13 +61,22 @@ type MultiItemFieldInputProps<T> = {
   onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
-  formatInput?: (input: string, itemIndex?: number) => T;
+  formatInput?: (input: string, itemIndex?: number, item?: T) => T;
   renderItem: (props: {
     value: T;
     index: number;
     handleEdit: () => void;
     handleSetPrimary: () => void;
     handleDelete: () => void;
+  }) => React.ReactNode;
+  renderEditedItem?: (props: {
+    index: number;
+    inputValue: string;
+    hasError: boolean;
+    saveButton: React.ReactNode;
+    separator: React.ReactNode;
+    onInputChange: (value: string) => void;
+    onEnter: () => void;
   }) => React.ReactNode;
   newItemLabel?: string;
   onAddClick?: () => void;
@@ -74,6 +97,7 @@ export const MultiItemFieldInput = <T,>({
   validateInput,
   formatInput,
   renderItem,
+  renderEditedItem,
   newItemLabel,
   onAddClick,
   fieldMetadataType,
@@ -153,15 +177,15 @@ export const MultiItemFieldInput = <T,>({
   const shouldAutoEnterBecauseOnlyOneItemIsAllowed = maxItemCount === 1;
   const shouldAutoEditFirstItemOnOpen =
     items.length === 0 || maxItemCount === 1;
+  const shouldEditFirstItemOnMount =
+    shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick);
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(
-    shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick),
+    shouldEditFirstItemOnMount,
   );
 
   const [inputValue, setInputValue] = useState(
-    shouldAutoEditFirstItemOnOpen && !isDefined(onAddClick)
-      ? getItemValueAsString(0)
-      : '',
+    shouldEditFirstItemOnMount ? getItemValueAsString(0) : '',
   );
 
   const [itemToEditIndex, setItemToEditIndex] = useState(0);
@@ -177,12 +201,14 @@ export const MultiItemFieldInput = <T,>({
 
   const shouldShowSearch = items.length > 3;
 
-  const filteredItems = useMemo(() => {
+  const filteredItemEntries = useMemo(() => {
+    const itemEntries = items.map((item, index) => ({ item, index }));
+
     if (!shouldShowSearch || !debouncedSearchFilter) {
-      return items;
+      return itemEntries;
     }
     const searchTerm = normalizeSearchText(debouncedSearchFilter);
-    return items.filter((_item, index) => {
+    return itemEntries.filter(({ index }) => {
       const itemText = getItemValueAsString(index);
       return normalizeSearchText(itemText).includes(searchTerm);
     });
@@ -190,6 +216,12 @@ export const MultiItemFieldInput = <T,>({
 
   const isLimitReached =
     typeof maxItemCount === 'number' && items.length >= maxItemCount;
+
+  const isEditingItemInPlace =
+    isInputDisplayed &&
+    !isAddingNewItem &&
+    !shouldAutoEnterBecauseOnlyOneItemIsAllowed &&
+    itemToEditIndex < items.length;
 
   const handleInputChange = (value: string) => {
     setInputValue(value);
@@ -208,7 +240,23 @@ export const MultiItemFieldInput = <T,>({
       return;
     }
 
+    if (isEditingItemInPlace) {
+      const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+
+      if (!isValid) {
+        return;
+      }
+
+      onChange(updatedItems);
+
+      if (!isDeeplyEqual(items, updatedItems)) {
+        onSubmit(updatedItems);
+      }
+    }
+
     if (isDefined(onAddClick)) {
+      setIsInputDisplayed(false);
+      setInputValue('');
       onAddClick();
       return;
     }
@@ -316,90 +364,139 @@ export const MultiItemFieldInput = <T,>({
   });
 
   const shouldShowItems =
-    isNonEmptyArray(filteredItems) &&
+    isNonEmptyArray(filteredItemEntries) &&
     (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed);
 
-  return (
-    <OverlayMenuList
-      ref={containerRef}
-      header={
-        shouldShowSearch && !isInputDisplayed ? (
-          <>
-            <OverlayMenuListSearchRow
-              value={searchFilter}
-              onChange={(event) =>
-                setSearchFilter(
-                  turnIntoEmptyStringIfWhitespacesOnly(
-                    event.currentTarget.value,
-                  ),
-                )
-              }
-            />
-            <OverlayMenuListSeparator />
-          </>
-        ) : undefined
-      }
-      footer={
-        <>
-          {shouldShowItems && (isInputDisplayed || !isLimitReached) && (
-            <OverlayMenuListSeparator />
-          )}
-          {isInputDisplayed ? (
-            <MultiItemBaseInput
-              instanceId={instanceId}
-              autoFocus={!shouldShowSearch}
-              placeholder={placeholder}
-              value={inputValue}
-              hasError={!errorData.isValid}
-              renderInput={renderInput}
-              onEscape={handleEscape}
-              onChange={(value) => {
-                value
-                  ? handleInputChange(
-                      turnIntoEmptyStringIfWhitespacesOnly(value),
-                    )
-                  : handleInputChange('');
-              }}
-              onEnter={handleEnter}
-              preventTabNavigation
-              hasItem={isNonEmptyArray(items)}
-              rightComponent={
-                isNonEmptyArray(items) ? (
-                  <LightIconButton
-                    onClick={handleEnter}
-                    aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
-                  >
-                    {isAddingNewItem ? <IconPlus /> : <IconCheck />}
-                  </LightIconButton>
-                ) : null
-              }
-            />
-          ) : !isLimitReached ? (
-            <StyledAddItemContainer>
-              <ListItemButton
-                onClick={handleAddButtonClick}
-                startIcon={<IconPlus />}
-              >
-                <OverflowingTextWithTooltip
-                  text={newItemLabel || t`Add ${placeholder}`}
-                />
-              </ListItemButton>
-            </StyledAddItemContainer>
-          ) : null}
-        </>
-      }
-    >
-      {shouldShowItems
-        ? filteredItems.map((item) => {
-            const originalIndex = items.indexOf(item);
+  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
+  const isInputInRow =
+    isNonEmptyArray(items) && !shouldAutoEnterBecauseOnlyOneItemIsAllowed;
 
-            return renderItem({
-              value: item,
-              index: originalIndex,
-              handleEdit: () => handleEditButtonClick(originalIndex),
-              handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
-              handleDelete: () => handleDeleteItem(originalIndex),
-            });
+  const handleItemInputChange = (value: string) =>
+    handleInputChange(
+      isNonEmptyString(value)
+        ? turnIntoEmptyStringIfWhitespacesOnly(value)
+        : '',
+    );
+
+  const inputButton = isNonEmptyArray(items) ? (
+    <LightIconButton
+      onClick={handleEnter}
+      aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
+      tabIndex={-1}
+    >
+      {isAddingNewItem ? <IconPlus /> : <IconCheck />}
+    </LightIconButton>
+  ) : null;
+
+  const itemInput = (
+    <MultiItemBaseInput
+      instanceId={instanceId}
+      autoFocus={isEditingItemInPlace || isAddingNewItem || !shouldShowSearch}
+      placeholder={placeholder}
+      value={inputValue}
+      hasError={!errorData.isValid}
+      renderInput={renderInput}
+      onEscape={handleEscape}
+      onChange={handleItemInputChange}
+      onEnter={handleEnter}
+      preventTabNavigation
+      hasItem={isNonEmptyArray(items)}
+      isInRow={isInputInRow}
+      rightComponent={inputButton}
+    />
+  );
+
+  const itemSeparator = (
+    <StyledItemSeparator>
+      <OverlayMenuListSeparator />
+    </StyledItemSeparator>
+  );
+
+  const header =
+    shouldShowSearch && !isInputDisplayed ? (
+      <>
+        <OverlayMenuListSearchRow
+          value={searchFilter}
+          onChange={(event) =>
+            setSearchFilter(
+              turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
+            )
+          }
+        />
+        <OverlayMenuListSeparator />
+      </>
+    ) : undefined;
+
+  const footer = (
+    <>
+      {shouldShowItems && (shouldShowInputInFooter || shouldShowAddButton) && (
+        <OverlayMenuListSeparator />
+      )}
+      {shouldShowInputInFooter ? (
+        isInputInRow ? (
+          <StyledFooterInputRowContainer>
+            {itemInput}
+          </StyledFooterInputRowContainer>
+        ) : (
+          itemInput
+        )
+      ) : shouldShowAddButton ? (
+        <StyledAddItemContainer>
+          <ListItemButton
+            onClick={handleAddButtonClick}
+            startIcon={<IconPlus />}
+          >
+            <OverflowingTextWithTooltip
+              text={newItemLabel || t`Add ${placeholder}`}
+            />
+          </ListItemButton>
+        </StyledAddItemContainer>
+      ) : null}
+    </>
+  );
+
+  return (
+    <OverlayMenuList ref={containerRef} header={header} footer={footer}>
+      {shouldShowItems
+        ? filteredItemEntries.map(({ item, index }, position) => {
+            const isEditedItem =
+              isEditingItemInPlace && index === itemToEditIndex;
+            const isFirstItem = position === 0;
+            const isLastItem = position === filteredItemEntries.length - 1;
+
+            return (
+              <Fragment key={index}>
+                {isEditedItem &&
+                  !isDefined(renderEditedItem) &&
+                  !isFirstItem &&
+                  itemSeparator}
+                {!isEditedItem ? (
+                  renderItem({
+                    value: item,
+                    index,
+                    handleEdit: () => handleEditButtonClick(index),
+                    handleSetPrimary: () => handleSetPrimaryItem(index),
+                    handleDelete: () => handleDeleteItem(index),
+                  })
+                ) : isDefined(renderEditedItem) ? (
+                  renderEditedItem({
+                    index,
+                    inputValue,
+                    hasError: !errorData.isValid,
+                    saveButton: inputButton,
+                    separator: itemSeparator,
+                    onInputChange: handleItemInputChange,
+                    onEnter: handleEnter,
+                  })
+                ) : (
+                  <StyledItemInputContainer>
+                    {itemInput}
+                  </StyledItemInputContainer>
+                )}
+                {isEditedItem && !isLastItem && itemSeparator}
+              </Fragment>
+            );
           })
         : undefined}
     </OverlayMenuList>
