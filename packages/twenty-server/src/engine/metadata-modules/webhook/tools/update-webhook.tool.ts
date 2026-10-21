@@ -1,5 +1,6 @@
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -50,16 +51,16 @@ export class UpdateWebhookTool extends BaseTool<
       secret?: string;
     } = {};
 
-    if (input.targetUrl !== undefined) {
+    if (isDefined(input.targetUrl)) {
       update.targetUrl = input.targetUrl;
     }
-    if (input.operations !== undefined) {
+    if (isDefined(input.operations)) {
       update.operations = compileWebhookOperations(input.operations);
     }
-    if (input.description !== undefined) {
+    if (isDefined(input.description)) {
       update.description = input.description;
     }
-    if (input.secret !== undefined) {
+    if (isDefined(input.secret)) {
       update.secret = input.secret;
     }
 
