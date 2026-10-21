@@ -2,9 +2,11 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getCurrentHistoryEntryState } from '~/utils/getCurrentHistoryEntryState';
+import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useProjectAiChatThreadToUrl = () => {
@@ -13,16 +15,22 @@ export const useProjectAiChatThreadToUrl = () => {
 
   const projectAiChatThreadToUrl = useCallback(
     (threadId: string) => {
-      if (!isCurrentPathAiChatPage()) {
+      const isOnInboxPage = isAiChatInboxPath(window.location.pathname);
+
+      if (!isCurrentPathAiChatPage() && !isOnInboxPage) {
         return;
       }
 
-      // The new chat has no thread to open yet, so its URL carries no id
       const isNewChat = threadId === store.get(newAiChatThreadIdState.atom);
+      const newThreadPathSegment = isOnInboxPage
+        ? AI_CHAT_NEW_THREAD_PATH_SEGMENT
+        : null;
 
       navigateApp(
-        AppPath.AiChat,
-        { threadId: isNewChat ? null : threadId },
+        isOnInboxPage ? AppPath.AiChatInbox : AppPath.AiChat,
+        {
+          threadId: isNewChat ? newThreadPathSegment : threadId,
+        },
         undefined,
         { replace: true, state: getCurrentHistoryEntryState() },
       );
