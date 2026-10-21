@@ -74,6 +74,15 @@ export class UserRoleService {
       actingUserWorkspaceId,
     });
 
+    const { userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+      ]);
+
+    if (userWorkspaceRoleMap[userWorkspace.id] === roleId) {
+      return { workspaceMember, userWorkspaceId: userWorkspace.id };
+    }
+
     await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
       roleId,
       workspaceId,

@@ -247,7 +247,17 @@ describe('Custom role assignment without the custom roles entitlement', () => {
     expect(memberErrors).toBeUndefined();
   });
 
-  it('should keep existing custom role assignments', async () => {
+  it('should keep a member on their existing custom role when it is saved again', async () => {
+    const { errors } = await updateWorkspaceMemberRole({
+      expectToFail: false,
+      input: {
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+        roleId: guestRoleId,
+      },
+    });
+
+    expect(errors).toBeUndefined();
+
     const roleTargets: { roleId: string }[] = await global.testDataSource.query(
       `SELECT "roleId" FROM core."roleTarget" WHERE "workspaceId" = $1 AND "userWorkspaceId" = $2`,
       [SEED_APPLE_WORKSPACE_ID, USER_WORKSPACE_DATA_SEED_IDS.PHIL],
