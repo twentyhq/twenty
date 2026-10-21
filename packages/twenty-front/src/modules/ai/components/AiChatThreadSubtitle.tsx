@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
-import { IconHandClick, IconPencil } from 'twenty-ui/icon';
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
 import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
 import { agentChatDraftPreviewTextFamilySelector } from '@/ai/states/selectors/agentChatDraftPreviewTextFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -17,26 +17,19 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledSubtitle = styled.div`
+const StyledSubtitle = styled.div<{ $isUnread: boolean }>`
   align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${({ $isUnread }) => ($isUnread ? themeCssVariables.font.color.secondary : themeCssVariables.font.color.tertiary)};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
-  min-height: ${themeCssVariables.spacing[4]};
+  line-height: calc(
+    ${themeCssVariables.spacing[4]} - ${themeCssVariables.spacing['0.5']}
+  );
+  min-height: calc(
+    ${themeCssVariables.spacing[4]} - ${themeCssVariables.spacing['0.5']}
+  );
   min-width: 0;
-`;
-
-const StyledStatus = styled.div<{ $isHighlighted: boolean }>`
-  align-items: center;
-  color: ${({ $isHighlighted }) =>
-    $isHighlighted
-      ? themeCssVariables.color.blue
-      : themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledPreview = styled.div`
@@ -58,7 +51,6 @@ type AiChatThreadSubtitleProps = {
 
 export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const isUnread = useIsAgentChatThreadShownAsUnread(thread);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
@@ -86,20 +78,12 @@ export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
       });
 
   return (
-    <StyledSubtitle>
+    <StyledSubtitle $isUnread={isUnread}>
       {isAwaitingAnswer && (
-        <StyledStatus $isHighlighted={isUnread}>
-          <IconHandClick size={theme.icon.size.sm} />
-          {t`Needs input`}
-        </StyledStatus>
+        <AiChatThreadReasonBadge reason="needsInput" isUnread={isUnread} />
       )}
       {isAwaitingAnswer && hasDraft && <span aria-hidden>·</span>}
-      {hasDraft && (
-        <StyledStatus $isHighlighted={false}>
-          <IconPencil size={theme.icon.size.sm} />
-          {t`Draft`}
-        </StyledStatus>
-      )}
+      {hasDraft && <AiChatThreadReasonBadge reason="draft" />}
       {(isAwaitingAnswer || hasDraft) && isNonEmptyString(previewText) && (
         <span aria-hidden>·</span>
       )}

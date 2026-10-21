@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -9,8 +10,8 @@ import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadL
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
-const StyledActivityTime = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
+const StyledActivityTime = styled.div<{ $isUnread: boolean }>`
+  color: ${({ $isUnread }) => ($isUnread ? themeCssVariables.font.color.primary : themeCssVariables.font.color.tertiary)};
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
 `;
@@ -23,6 +24,7 @@ export const AiChatThreadActivityTime = ({
   thread,
 }: AiChatThreadActivityTimeProps) => {
   const { t } = useLingui();
+  const isUnread = useIsAgentChatThreadShownAsUnread(thread);
   const { event } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
     thread.id,
@@ -55,5 +57,9 @@ export const AiChatThreadActivityTime = ({
     }
   };
 
-  return <StyledActivityTime>{getActivityTimeLabel()}</StyledActivityTime>;
+  return (
+    <StyledActivityTime $isUnread={isUnread}>
+      {getActivityTimeLabel()}
+    </StyledActivityTime>
+  );
 };

@@ -8,16 +8,14 @@ import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThre
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const StyledTitle = styled.div<{ $isUnread: boolean }>`
-  color: ${({ $isUnread }) =>
-    $isUnread
-      ? themeCssVariables.font.color.primary
-      : themeCssVariables.font.color.secondary};
+  color: ${themeCssVariables.font.color.primary};
   flex: 1;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${({ $isUnread }) =>
     $isUnread
       ? themeCssVariables.font.weight.semiBold
-      : themeCssVariables.font.weight.medium};
+      : themeCssVariables.font.weight.regular};
+  line-height: ${themeCssVariables.spacing[4]};
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
