@@ -83,8 +83,7 @@ export class WorkspaceDataSourceService
     }
   }
 
-  // Raw read access for long sequential scans that bypass the ORM, such as exports.
-  getReadPool(): Pool {
+  getReadPoolOrThrow(): Pool {
     const pool = this.replicaPool ?? this.primaryPool;
 
     if (!isDefined(pool)) {

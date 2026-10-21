@@ -7,6 +7,7 @@ import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve
 import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 import { Injectable, type Type } from '@nestjs/common';
 
+import { type Pool } from 'pg';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecord } from 'twenty-shared/types';
@@ -110,6 +111,11 @@ export class WorkspaceOrmManager {
     return convertClassNameToObjectMetadataName(
       workspaceEntityOrObjectMetadataName.name,
     );
+  }
+
+  // Raw read access for long sequential scans that bypass the ORM, such as exports.
+  getReadPoolOrThrow(): Pool {
+    return this.workspaceDataSourceService.getReadPoolOrThrow();
   }
 
   async runInWorkspaceTransaction<T>(

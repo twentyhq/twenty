@@ -40,7 +40,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
@@ -76,7 +76,7 @@ export class WorkspaceDataExportService {
     private readonly fileStorageService: FileStorageService,
     private readonly fileUrlService: FileUrlService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly eventLogEmitterService: EventLogEmitterService,
     @InjectMessageQueue(MessageQueue.workspaceDataExportQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -208,8 +208,8 @@ export class WorkspaceDataExportService {
     const workspace = await this.findWorkspaceOrThrow(workspaceId);
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const tables = await this.findExportableTables(workspaceId);
-    const client = await this.workspaceDataSourceService
-      .getReadPool()
+    const client = await this.workspaceOrmManager
+      .getReadPoolOrThrow()
       .connect();
     // CSV compresses well at level 1; the worker CPU matters more than the zip size.
     const archive = archiver('zip', { zlib: { level: 1 } });
