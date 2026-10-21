@@ -4,7 +4,6 @@ import { type FieldMetadataConnectionLoaderPayload } from 'src/engine/dataloader
 import { type IndexMetadataConnectionLoaderPayload } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
 import {
   type AgentsByRoleIdLoaderPayload,
-  type ApplicationListRelationsLoaderPayload,
   type ApiKeysByRoleIdLoaderPayload,
   type ApplicationRegistrationConfigurationIssuesLoaderPayload,
   type ApplicationRegistrationInstallCountLoaderPayload,
@@ -27,7 +26,6 @@ import {
   type ViewSortsByViewIdLoaderPayload,
   type WorkspaceMembersByRoleIdLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
-import { type ApplicationListRelations } from 'src/engine/core-modules/application/types/application-list-relations.type';
 import { type ApplicationRegistrationConfigurationIssue } from 'src/engine/core-modules/application/application-registration/enums/application-registration-configuration-issue.enum';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
@@ -126,11 +124,6 @@ export interface IDataloaders {
   viewFilterGroupsByViewIdLoader: DataLoader<
     ViewFilterGroupsByViewIdLoaderPayload,
     ViewFilterGroupDTO[]
-  >;
-
-  applicationListRelationsLoader: DataLoader<
-    ApplicationListRelationsLoaderPayload,
-    ApplicationListRelations
   >;
 
   applicationRegistrationConfigurationIssuesLoader: DataLoader<

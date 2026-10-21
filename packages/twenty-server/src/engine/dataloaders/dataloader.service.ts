@@ -8,9 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type ApplicationListRelationProperties } from 'src/engine/core-modules/application/types/application-list-relation-properties.type';
-import { type ApplicationListRelations } from 'src/engine/core-modules/application/types/application-list-relations.type';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type ApplicationRegistrationConfigurationIssue } from 'src/engine/core-modules/application/application-registration/enums/application-registration-configuration-issue.enum';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -157,12 +154,6 @@ export type RowLevelPermissionsByRoleIdLoaderPayload = {
   roleId: string;
 };
 
-export type ApplicationListRelationsLoaderPayload = {
-  workspaceId: string;
-  applicationId: string;
-  listRelation: ApplicationListRelationProperties;
-};
-
 export type ApplicationRegistrationConfigurationIssuesLoaderPayload = {
   applicationRegistrationId: string;
 };
@@ -192,7 +183,6 @@ export class DataloaderService {
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
-    private readonly applicationService: ApplicationService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -217,8 +207,6 @@ export class DataloaderService {
     const viewGroupsByViewIdLoader = this.createViewGroupsByViewIdLoader();
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
-    const applicationListRelationsLoader =
-      this.createApplicationListRelationsLoader();
     const applicationRegistrationConfigurationIssuesLoader =
       this.createApplicationRegistrationConfigurationIssuesLoader();
     const applicationRegistrationInstallCountLoader =
@@ -251,7 +239,6 @@ export class DataloaderService {
       viewSortsByViewIdLoader,
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
-      applicationListRelationsLoader,
       applicationRegistrationConfigurationIssuesLoader,
       applicationRegistrationInstallCountLoader,
       applicationAuthorIdentifiersLoader,
@@ -864,28 +851,6 @@ export class DataloaderService {
           )
           .map(fromFlatViewFilterGroupToViewFilterGroupDto);
       });
-    });
-  }
-
-  private createApplicationListRelationsLoader() {
-    return new DataLoader<
-      ApplicationListRelationsLoaderPayload,
-      ApplicationListRelations
-    >(async (params: ApplicationListRelationsLoaderPayload[]) => {
-      const listRelationsByApplicationId =
-        await this.applicationService.findListRelationsByApplicationId({
-          workspaceId: params[0].workspaceId,
-          applicationIds: [
-            ...new Set(params.map((param) => param.applicationId)),
-          ],
-          listRelations: [
-            ...new Set(params.map((param) => param.listRelation)),
-          ],
-        });
-
-      return params.map(
-        (param) => listRelationsByApplicationId.get(param.applicationId) ?? {},
-      );
     });
   }
 
