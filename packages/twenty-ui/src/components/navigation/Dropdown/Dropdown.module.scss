@@ -12,8 +12,16 @@
   }
 }
 
+.inactivePositioner {
+  display: none;
+}
+
 .page {
   display: contents;
+
+  &[hidden] {
+    display: none;
+  }
 }
 
 .selectionGroup {

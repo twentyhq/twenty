@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { rolePermissionsSchema } from 'src/engine/metadata-modules/role/tools/schemas/role-permissions.schema';
@@ -37,15 +37,15 @@ export class UpdateRoleTool extends BaseTool<typeof updateRoleInputSchema> {
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof updateRoleInputSchema>,
-    { workspaceId, rolePermissionConfig }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId, rolePermissionConfig },
+  }: ToolExecuteArgs<typeof updateRoleInputSchema>): Promise<ToolOutput> {
     const role = await this.roleService.updateRole({
       workspaceId,
       input: {
-        id: parameters.roleId,
-        update: parameters.update,
+        id: input.roleId,
+        update: input.update,
       },
       actingRoleIds: getRoleIdsFromRolePermissionConfig(rolePermissionConfig),
     });

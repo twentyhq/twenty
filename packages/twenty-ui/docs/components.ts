@@ -188,7 +188,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/banner',
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
-    propDefaults: { color: 'status palette', status: 'info', variant: 'solid' },
+    propDefaults: {
+      color: 'status palette',
+      status: 'info',
+      variant: 'solid',
+      closeLabel: 'Close',
+    },
     parts: ['Action'],
     partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
   },

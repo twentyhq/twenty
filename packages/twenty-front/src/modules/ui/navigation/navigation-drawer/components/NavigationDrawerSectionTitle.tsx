@@ -8,6 +8,12 @@ import { IconChevronRight } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
+const StyledDisplayLabel = styled(Text)`
+  .section-title-container:hover & {
+    color: ${themeCssVariables.font.color.tertiary};
+  }
+`;
+
 const StyledTitle = styled.div`
   align-items: center;
   border-radius: ${themeCssVariables.border.radius.md};
@@ -22,10 +28,6 @@ const StyledTitle = styled.div`
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
     cursor: pointer;
-
-    .section-title-label {
-      color: ${themeCssVariables.font.color.tertiary};
-    }
   }
 `;
 
@@ -92,14 +94,9 @@ export const NavigationDrawerSectionTitle = ({
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
-        <Text
-          size="xs"
-          weight="semibold"
-          color="light"
-          className="section-title-label"
-        >
+        <StyledDisplayLabel size="xs" weight="semibold" color="light">
           {label}
-        </Text>
+        </StyledDisplayLabel>
         {isOpen !== undefined && (
           <StyledChevron>
             <MotionIconChevronRight

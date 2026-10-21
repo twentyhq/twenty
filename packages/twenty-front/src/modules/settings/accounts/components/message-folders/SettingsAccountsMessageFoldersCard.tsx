@@ -53,7 +53,6 @@ const StyledSectionHeader = styled.div`
 
 const StyledLabelContainer = styled.span`
   align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   margin-bottom: ${themeCssVariables.spacing[2]};
   margin-top: ${themeCssVariables.spacing[2]};

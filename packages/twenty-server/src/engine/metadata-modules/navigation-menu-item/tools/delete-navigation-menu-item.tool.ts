@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 
@@ -28,13 +28,15 @@ export class DeleteNavigationMenuItemTool extends BaseTool<
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof deleteNavigationMenuItemInputSchema>,
-    { workspaceId, userWorkspaceId, application, agentId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId, application, agentId },
+  }: ToolExecuteArgs<
+    typeof deleteNavigationMenuItemInputSchema
+  >): Promise<ToolOutput> {
     try {
       const deleted = await this.navigationMenuItemService.delete({
-        id: parameters.id,
+        id: input.id,
         workspaceId,
         authUserWorkspaceId: userWorkspaceId,
         authApplicationId: application?.id,

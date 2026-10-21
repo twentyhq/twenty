@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 
@@ -132,24 +132,24 @@ export class UpsertRowLevelPermissionRulesTool extends BaseTool<
     super();
   }
 
-  async execute(
-    parameters: z.infer<typeof upsertRowLevelPermissionRulesInputSchema>,
-    { workspaceId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input,
+    context: { workspaceId },
+  }: ToolExecuteArgs<
+    typeof upsertRowLevelPermissionRulesInputSchema
+  >): Promise<ToolOutput> {
     const { predicates, predicateGroups } =
       await this.rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates(
         {
           workspaceId,
           input: {
-            roleId: parameters.roleId,
-            objectMetadataId: parameters.objectMetadataId,
-            predicates: parameters.predicates,
-            predicateGroups: parameters.predicateGroups.map(
-              (predicateGroup) => ({
-                ...predicateGroup,
-                objectMetadataId: parameters.objectMetadataId,
-              }),
-            ),
+            roleId: input.roleId,
+            objectMetadataId: input.objectMetadataId,
+            predicates: input.predicates,
+            predicateGroups: input.predicateGroups.map((predicateGroup) => ({
+              ...predicateGroup,
+              objectMetadataId: input.objectMetadataId,
+            })),
           },
         },
       );

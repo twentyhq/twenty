@@ -1,3 +1,4 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
@@ -36,15 +37,6 @@ const StyledSourceRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledDownloadLink = styled.a`
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  text-decoration: underline;
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
 `;
 
 const StyledGeneralContainer = styled.div`
@@ -161,12 +153,20 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           ) ? (
             <StyledSourceRow>
               <span>{t`Tarball`}</span>
-              <StyledDownloadLink
-                href={tarballUrlData.applicationRegistrationTarballUrl}
-                download
+              <Button
+                variant="link"
+                size="sm"
+                nativeButton={false}
+                role="link"
+                render={
+                  <a
+                    href={tarballUrlData.applicationRegistrationTarballUrl}
+                    download
+                  />
+                }
               >
                 <Trans>Download</Trans>
-              </StyledDownloadLink>
+              </Button>
             </StyledSourceRow>
           ) : (
             t`Tarball`
