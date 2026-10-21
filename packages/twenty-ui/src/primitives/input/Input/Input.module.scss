@@ -38,7 +38,8 @@
     cursor: not-allowed;
   }
 
-  &[data-variant='plain'] {
+  &[data-variant='plain'],
+  &[data-grouped] {
     background-color: transparent;
     block-size: auto;
     border: 0;
