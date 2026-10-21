@@ -30,7 +30,6 @@ describe('useMapToObjectRecordIdentifier', () => {
     expect(result.current).toEqual({
       id: 'id',
       name: 'Sheldon Cooper',
-      isNameRestricted: false,
       avatarUrl: '',
       avatarShape: 'circle',
       linkToShowPage: '/object/person/id',

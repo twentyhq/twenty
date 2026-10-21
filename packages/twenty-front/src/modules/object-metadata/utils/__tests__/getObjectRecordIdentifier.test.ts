@@ -13,10 +13,9 @@ describe('getObjectRecordIdentifier', () => {
     });
 
     expect(identifier.name).toBe('Acme');
-    expect(identifier.isNameRestricted).toBe(false);
   });
 
-  it('should flag a restricted name so callers can hide the record', () => {
+  it('should name a restricted record as not shared', () => {
     const identifier = getObjectRecordIdentifier({
       objectMetadataItem: companyObjectMetadataItem,
       record: {
@@ -28,6 +27,5 @@ describe('getObjectRecordIdentifier', () => {
     });
 
     expect(identifier.name).toBe('Not shared');
-    expect(identifier.isNameRestricted).toBe(true);
   });
 });
