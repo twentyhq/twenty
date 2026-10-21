@@ -50,15 +50,6 @@ const AUTH_CONTEXT = {
   type: 'user',
   workspace: { id: WORKSPACE_ID },
 } as ToolProviderContext['authContext'];
-const CONTEXT: ToolProviderContext = {
-  workspaceId: WORKSPACE_ID,
-  userWorkspaceId: 'author',
-  threadId: 'thread',
-  rolePermissionConfig: {
-    intersectionOf: { userWorkspaceRoleId: 'author-role' },
-  },
-  authContext: AUTH_CONTEXT,
-};
 const INPUT: FrontComponentDraftInput = {
   pageLayoutType: PageLayoutType.RECORD_PAGE,
   name: 'Renewals',
