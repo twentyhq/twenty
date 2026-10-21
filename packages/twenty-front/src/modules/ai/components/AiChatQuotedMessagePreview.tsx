@@ -30,14 +30,6 @@ const StyledHeader = styled.div`
 
 const StyledExcerpt = styled.div`
   overflow-wrap: anywhere;
-
-  .markdown-section {
-    margin: 0;
-  }
-
-  p {
-    margin: 0;
-  }
 `;
 
 const StyledNavigation = styled.div`
