@@ -6,7 +6,7 @@ import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace
 const workspaceDataExportStateSchema: z.ZodType<WorkspaceDataExportState> =
   z.object({
     workspaceName: z.string(),
-    tables: z.array(
+    objects: z.array(
       z.object({
         objectMetadataId: z.string(),
         nameSingular: z.string(),
@@ -22,11 +22,11 @@ const workspaceDataExportStateSchema: z.ZodType<WorkspaceDataExportState> =
         fieldCount: z.number(),
       }),
     ),
-    partsByTable: z.record(
+    partsByObject: z.record(
       z.string(),
       z.array(z.object({ name: z.string(), recordCount: z.number() })),
     ),
-    completedTableCount: z.number(),
+    completedObjectCount: z.number(),
     startedAt: z.number(),
     heartbeatAt: z.number(),
   });

@@ -14,7 +14,7 @@ import { formatRecordExportHeader } from 'src/engine/core-modules/record-export/
 import { formatRecordExportRow } from 'src/engine/core-modules/record-export/utils/format-record-export-row.util';
 import { WORKSPACE_DATA_EXPORT_STEP_MAX_RECORDS } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
 import { type WorkspaceDataExportCursor } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-cursor.type';
-import { type WorkspaceDataExportTable } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-table.type';
+import { type WorkspaceDataExportObject } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-object.type';
 import { buildWorkspaceDataExportPartName } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-part-name.util';
 import { buildWorkspaceDataExportResource } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-resource.util';
 import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.exception';
@@ -26,7 +26,7 @@ export type WorkspaceDataExportPart = {
   partName: string;
   recordCount: number;
   after: string | null;
-  isTableExhausted: boolean;
+  isLastPart: boolean;
 };
 
 @Injectable()
@@ -42,13 +42,13 @@ export class WorkspaceDataExportPartWriterService {
     workspaceId,
     exportId,
     cursor,
-    table,
+    object,
     abortSignal,
   }: {
     workspaceId: string;
     exportId: string;
     cursor: WorkspaceDataExportCursor;
-    table: WorkspaceDataExportTable;
+    object: WorkspaceDataExportObject;
     abortSignal?: AbortSignal;
   }): Promise<WorkspaceDataExportPart> {
     const workspace = await this.coreEntityCacheService.get(
@@ -69,18 +69,18 @@ export class WorkspaceDataExportPartWriterService {
       ]);
     const isObjectStillDefined = isDefined(
       findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: table.objectMetadataId,
+        flatEntityId: object.objectMetadataId,
         flatEntityMaps: flatObjectMetadataMaps,
       }),
     );
     const part: WorkspaceDataExportPart = {
       partName: buildWorkspaceDataExportPartName({
-        nameSingular: table.nameSingular,
+        nameSingular: object.nameSingular,
         partIndex: cursor.partIndex,
       }),
       recordCount: 0,
       after: cursor.after,
-      isTableExhausted: false,
+      isLastPart: false,
     };
 
     await this.fileStorageService.writeFileStream({
@@ -91,7 +91,7 @@ export class WorkspaceDataExportPartWriterService {
       }),
       stream: Readable.from(
         this.streamCsv({
-          table,
+          object,
           authContext: buildSystemAuthContext({ workspace }),
           shouldIncludeHeader: cursor.partIndex === 0,
           shouldReadRecords: isObjectStillDefined,
@@ -106,29 +106,26 @@ export class WorkspaceDataExportPartWriterService {
   }
 
   private async *streamCsv({
-    table,
+    object,
     authContext,
     shouldIncludeHeader,
     shouldReadRecords,
     part,
     abortSignal,
   }: {
-    table: Pick<WorkspaceDataExportTable, 'nameSingular' | 'columns'>;
+    object: Pick<WorkspaceDataExportObject, 'nameSingular' | 'columns'>;
     authContext: WorkspaceAuthContext;
     shouldIncludeHeader: boolean;
     shouldReadRecords: boolean;
-    part: Pick<
-      WorkspaceDataExportPart,
-      'after' | 'recordCount' | 'isTableExhausted'
-    >;
+    part: Pick<WorkspaceDataExportPart, 'after' | 'recordCount' | 'isLastPart'>;
     abortSignal?: AbortSignal;
   }): AsyncGenerator<string> {
     if (shouldIncludeHeader) {
-      yield formatRecordExportHeader(table.columns);
+      yield formatRecordExportHeader(object.columns);
     }
 
     if (!shouldReadRecords) {
-      part.isTableExhausted = true;
+      part.isLastPart = true;
 
       return;
     }
@@ -141,7 +138,7 @@ export class WorkspaceDataExportPartWriterService {
         () =>
           this.workspaceOrmManager
             .getRepository<ObjectRecord>(
-              table.nameSingular,
+              object.nameSingular,
               { shouldBypassPermissionChecks: true },
               { useReplica: true },
             )
@@ -155,7 +152,7 @@ export class WorkspaceDataExportPartWriterService {
       );
 
       for (const record of records) {
-        yield formatRecordExportRow({ columns: table.columns, record });
+        yield formatRecordExportRow({ columns: object.columns, record });
         part.recordCount++;
       }
 
@@ -166,7 +163,7 @@ export class WorkspaceDataExportPartWriterService {
       }
 
       if (records.length < RECORD_EXPORT_PAGE_SIZE) {
-        part.isTableExhausted = true;
+        part.isLastPart = true;
 
         return;
       }

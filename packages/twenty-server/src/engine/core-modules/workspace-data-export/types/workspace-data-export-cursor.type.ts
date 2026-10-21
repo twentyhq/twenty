@@ -1,5 +1,5 @@
 export type WorkspaceDataExportCursor = {
-  tableIndex: number;
+  objectIndex: number;
   after: string | null;
   partIndex: number;
   stepIndex: number;

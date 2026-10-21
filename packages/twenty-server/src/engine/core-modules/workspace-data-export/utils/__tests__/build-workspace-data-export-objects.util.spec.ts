@@ -3,10 +3,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { buildWorkspaceDataExportObjects } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-objects.util';
 
 describe('buildWorkspaceDataExportObjects', () => {
-  it('reports columns, rows summed across parts, and export status per object', () => {
+  it('reports fields, records summed across parts, and export status per object', () => {
     expect(
       buildWorkspaceDataExportObjects({
-        tables: [
+        objects: [
           {
             nameSingular: 'company',
             labelSingular: 'Company',
@@ -31,14 +31,14 @@ describe('buildWorkspaceDataExportObjects', () => {
             fieldCount: 1,
           },
         ],
-        partsByTable: {
+        partsByObject: {
           company: [
             { name: 'company-00000.csv', recordCount: 1000 },
             { name: 'company-00001.csv', recordCount: 7 },
           ],
           person: [{ name: 'person-00000.csv', recordCount: 12 }],
         },
-        completedTableCount: 1,
+        completedObjectCount: 1,
       }),
     ).toEqual([
       {

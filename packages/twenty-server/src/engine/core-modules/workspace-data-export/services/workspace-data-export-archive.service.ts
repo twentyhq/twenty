@@ -13,7 +13,7 @@ import { WorkspaceDataExportException } from 'src/engine/core-modules/workspace-
 
 type ArchiveState = Pick<
   WorkspaceDataExportState,
-  'workspaceName' | 'tables' | 'partsByTable'
+  'workspaceName' | 'objects' | 'partsByObject'
 >;
 
 @Injectable()
@@ -47,12 +47,12 @@ export class WorkspaceDataExportArchiveService {
     failure.catch(() => undefined);
 
     try {
-      for (const table of state.tables) {
-        const parts = state.partsByTable[table.nameSingular];
+      for (const object of state.objects) {
+        const parts = state.partsByObject[object.nameSingular];
 
         if (!isNonEmptyArray(parts)) {
           throw new WorkspaceDataExportException({
-            message: `Export ${exportId} has no part for ${table.nameSingular}`,
+            message: `Export ${exportId} has no part for ${object.nameSingular}`,
             code: 'EXPORT_INCOMPLETE',
           });
         }
@@ -60,7 +60,7 @@ export class WorkspaceDataExportArchiveService {
         await this.appendEntry({
           archive,
           failure,
-          name: `${table.nameSingular}.csv`,
+          name: `${object.nameSingular}.csv`,
           source: Readable.from(
             this.readParts({
               workspaceId,
@@ -104,7 +104,7 @@ export class WorkspaceDataExportArchiveService {
       exportedAt: new Date().toISOString(),
       objects: buildWorkspaceDataExportObjects({
         ...state,
-        completedTableCount: state.tables.length,
+        completedObjectCount: state.objects.length,
       }).map(({ isExported: _isExported, ...object }) => ({
         ...object,
         file: `${object.nameSingular}.csv`,

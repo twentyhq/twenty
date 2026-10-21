@@ -1,7 +1,7 @@
 import { buildNextWorkspaceDataExportCursor } from 'src/engine/core-modules/workspace-data-export/utils/build-next-workspace-data-export-cursor.util';
 
 const cursor = {
-  tableIndex: 2,
+  objectIndex: 2,
   after: 'aaa',
   partIndex: 3,
   stepIndex: 7,
@@ -9,15 +9,15 @@ const cursor = {
 };
 
 describe('buildNextWorkspaceDataExportCursor', () => {
-  it('moves to the next part of the same table when rows remain', () => {
+  it('moves to the next part of the same object when records remain', () => {
     expect(
       buildNextWorkspaceDataExportCursor({
         cursor,
         after: 'bbb',
-        isTableExhausted: false,
+        isLastPart: false,
       }),
     ).toEqual({
-      tableIndex: 2,
+      objectIndex: 2,
       after: 'bbb',
       partIndex: 4,
       stepIndex: 8,
@@ -25,15 +25,15 @@ describe('buildNextWorkspaceDataExportCursor', () => {
     });
   });
 
-  it('moves to the first part of the next table once exhausted', () => {
+  it('moves to the first part of the next object once exhausted', () => {
     expect(
       buildNextWorkspaceDataExportCursor({
         cursor,
         after: 'bbb',
-        isTableExhausted: true,
+        isLastPart: true,
       }),
     ).toEqual({
-      tableIndex: 3,
+      objectIndex: 3,
       after: null,
       partIndex: 0,
       stepIndex: 8,

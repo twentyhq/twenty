@@ -3,18 +3,18 @@ import { type WorkspaceDataExportCursor } from 'src/engine/core-modules/workspac
 export const buildNextWorkspaceDataExportCursor = ({
   cursor,
   after,
-  isTableExhausted,
+  isLastPart,
 }: {
   cursor: Pick<
     WorkspaceDataExportCursor,
-    'tableIndex' | 'partIndex' | 'stepIndex'
+    'objectIndex' | 'partIndex' | 'stepIndex'
   >;
   after: string | null;
-  isTableExhausted: boolean;
+  isLastPart: boolean;
 }): WorkspaceDataExportCursor => {
-  if (isTableExhausted) {
+  if (isLastPart) {
     return {
-      tableIndex: cursor.tableIndex + 1,
+      objectIndex: cursor.objectIndex + 1,
       after: null,
       partIndex: 0,
       stepIndex: cursor.stepIndex + 1,
@@ -23,7 +23,7 @@ export const buildNextWorkspaceDataExportCursor = ({
   }
 
   return {
-    tableIndex: cursor.tableIndex,
+    objectIndex: cursor.objectIndex,
     after,
     partIndex: cursor.partIndex + 1,
     stepIndex: cursor.stepIndex + 1,

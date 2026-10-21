@@ -4,7 +4,7 @@ import { parseWorkspaceDataExportState } from 'src/engine/core-modules/workspace
 
 const validState = {
   workspaceName: 'Acme',
-  tables: [
+  objects: [
     {
       objectMetadataId: 'company-object-id',
       nameSingular: 'company',
@@ -13,8 +13,8 @@ const validState = {
       fieldCount: 1,
     },
   ],
-  partsByTable: { company: [{ name: 'company-00000.csv', recordCount: 3 }] },
-  completedTableCount: 1,
+  partsByObject: { company: [{ name: 'company-00000.csv', recordCount: 3 }] },
+  completedObjectCount: 1,
   startedAt: 1,
   heartbeatAt: 2,
 };
@@ -28,11 +28,11 @@ describe('parseWorkspaceDataExportState', () => {
 
   it('reports why a state written in another shape is rejected', () => {
     const { state, error } = parseWorkspaceDataExportState(
-      JSON.stringify({ ...validState, partsByTable: undefined }),
+      JSON.stringify({ ...validState, partsByObject: undefined }),
     );
 
     expect(state).toBeUndefined();
-    expect(error).toContain('partsByTable');
+    expect(error).toContain('partsByObject');
   });
 
   it('reports content that is not JSON', () => {

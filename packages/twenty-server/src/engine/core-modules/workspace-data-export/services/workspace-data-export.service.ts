@@ -82,7 +82,7 @@ export class WorkspaceDataExportService {
       workspaceId,
       exportId,
       cursor: {
-        tableIndex: 0,
+        objectIndex: 0,
         after: null,
         partIndex: 0,
         stepIndex: 0,
@@ -159,7 +159,7 @@ export class WorkspaceDataExportService {
     const authContext = buildSystemAuthContext({
       workspace: fromWorkspaceEntityToFlat(workspace),
     });
-    const tables = await Promise.all(
+    const objects = await Promise.all(
       buildWorkspaceDataExportObjectSelections({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -183,11 +183,11 @@ export class WorkspaceDataExportService {
 
     return {
       workspaceName: workspace.displayName ?? '',
-      tables,
-      partsByTable: Object.fromEntries(
-        tables.map((table) => [table.nameSingular, []]),
+      objects,
+      partsByObject: Object.fromEntries(
+        objects.map((object) => [object.nameSingular, []]),
       ),
-      completedTableCount: 0,
+      completedObjectCount: 0,
       startedAt: now,
       heartbeatAt: now,
     };

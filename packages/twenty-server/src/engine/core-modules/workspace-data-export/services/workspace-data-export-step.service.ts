@@ -78,18 +78,18 @@ export class WorkspaceDataExportStepService {
     }
 
     try {
-      if (cursor.tableIndex >= state.tables.length) {
+      if (cursor.objectIndex >= state.objects.length) {
         await this.finalize({ workspaceId, exportId, state });
 
         return;
       }
 
-      const table = state.tables[cursor.tableIndex];
+      const object = state.objects[cursor.objectIndex];
       const part = await this.workspaceDataExportPartWriterService.writePart({
         workspaceId,
         exportId,
         cursor,
-        table,
+        object,
         abortSignal,
       });
 
@@ -98,18 +98,18 @@ export class WorkspaceDataExportStepService {
         exportId,
         state: {
           ...state,
-          partsByTable: {
-            ...state.partsByTable,
-            [table.nameSingular]: [
-              ...state.partsByTable[table.nameSingular].filter(
+          partsByObject: {
+            ...state.partsByObject,
+            [object.nameSingular]: [
+              ...state.partsByObject[object.nameSingular].filter(
                 (existingPart) => existingPart.name !== part.partName,
               ),
               { name: part.partName, recordCount: part.recordCount },
             ],
           },
-          completedTableCount: part.isTableExhausted
-            ? cursor.tableIndex + 1
-            : state.completedTableCount,
+          completedObjectCount: part.isLastPart
+            ? cursor.objectIndex + 1
+            : state.completedObjectCount,
           heartbeatAt: Date.now(),
         },
       });
@@ -119,7 +119,7 @@ export class WorkspaceDataExportStepService {
         cursor: buildNextWorkspaceDataExportCursor({
           cursor,
           after: part.after,
-          isTableExhausted: part.isTableExhausted,
+          isLastPart: part.isLastPart,
         }),
       });
     } catch (error) {
@@ -177,7 +177,7 @@ export class WorkspaceDataExportStepService {
 
     if (affected === 0) {
       this.logger.warn(
-        `Workspace ${workspaceId}: export ${exportId} row is gone, dropping its archive`,
+        `Workspace ${workspaceId}: export ${exportId} file is gone, dropping its archive`,
       );
       await this.fileStorageService.deleteFileObject(
         buildWorkspaceDataExportResource({

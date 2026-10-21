@@ -1,4 +1,4 @@
-import { type WorkspaceDataExportTable } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-table.type';
+import { type WorkspaceDataExportObject } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-object.type';
 
 export type WorkspaceDataExportStatePart = {
   name: string;
@@ -7,9 +7,9 @@ export type WorkspaceDataExportStatePart = {
 
 export type WorkspaceDataExportState = {
   workspaceName: string;
-  tables: WorkspaceDataExportTable[];
-  partsByTable: Record<string, WorkspaceDataExportStatePart[]>;
-  completedTableCount: number;
+  objects: WorkspaceDataExportObject[];
+  partsByObject: Record<string, WorkspaceDataExportStatePart[]>;
+  completedObjectCount: number;
   startedAt: number;
   heartbeatAt: number;
 };
