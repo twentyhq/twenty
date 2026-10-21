@@ -43,6 +43,9 @@ export class ConnectedAccountDTO {
   @Field(() => Date, { nullable: true })
   lastCredentialsRefreshedAt: Date | null;
 
+  @HideField()
+  accessTokenExpiresAt: Date | null;
+
   @IsDateString()
   @IsOptional()
   @Field(() => Date, { nullable: true })

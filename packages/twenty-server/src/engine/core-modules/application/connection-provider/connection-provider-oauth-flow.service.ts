@@ -426,6 +426,9 @@ export class ConnectionProviderOAuthFlowService {
       refreshToken: encryptedRefreshToken,
       scopes: tokenResponse.scopes ?? provider.oauthConfig.scopes,
       lastCredentialsRefreshedAt: new Date(),
+      accessTokenExpiresAt: isDefined(tokenResponse.expiresIn)
+        ? new Date(Date.now() + tokenResponse.expiresIn * 1000)
+        : null,
       authFailedAt: null,
       authFailedReason: null,
       scope,

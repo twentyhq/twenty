@@ -77,6 +77,13 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   lastCredentialsRefreshedAt: Date | null;
 
   @Column({ type: 'timestamptz', nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.51.0_AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand_1792526732371',
+  })
+  accessTokenExpiresAt: Date | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
   authFailedAt: Date | null;
 
   @Column({ type: 'varchar', nullable: true })

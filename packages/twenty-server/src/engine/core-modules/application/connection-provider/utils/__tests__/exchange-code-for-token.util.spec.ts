@@ -44,6 +44,7 @@ describe('exchangeCodeForToken', () => {
       refreshToken: 'lin_refresh',
       idToken: null,
       scopes: ['read', 'write'],
+      expiresIn: 315360000,
     });
 
     const init = (
@@ -143,6 +144,7 @@ describe('exchangeRefreshTokenForToken', () => {
       refreshToken: 'new_refresh',
       idToken: null,
       scopes: null,
+      expiresIn: null,
     });
 
     const init = (
