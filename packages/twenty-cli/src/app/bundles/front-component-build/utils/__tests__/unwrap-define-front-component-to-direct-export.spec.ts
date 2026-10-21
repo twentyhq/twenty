@@ -59,7 +59,7 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
       'component: createSummarizeRecordEffect(SUMMARIZE_TARGETS.company),',
     );
     expect(output).toContain(
-      '__frontComponentJsx(__frontComponentDefinition.component, {})',
+      '__frontComponentJsx(__frontComponentDefinition.component, __props)',
     );
     expect(output).not.toContain('defineFrontComponent');
   });
@@ -71,7 +71,7 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
 
     expect(output).toContain('component: SummarizeRecordEffect,');
     expect(output).toContain(
-      '__frontComponentJsx(__frontComponentDefinition.component, {})',
+      '__frontComponentJsx(__frontComponentDefinition.component, __props)',
     );
     expect(output).not.toContain('defineFrontComponent');
   });
@@ -85,7 +85,7 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
     );
 
     const renderer =
-      '\nexport default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(__frontComponentDefinition.component, {})); }\n';
+      'export default function __renderFrontComponent(__container, __props = {})';
 
     expect(inlineOutput).toContain(renderer);
     expect(identifierOutput).toContain(renderer);
@@ -98,7 +98,7 @@ describe('unwrapDefineFrontComponentToDirectExport', () => {
 
     expect(output).toContain('component: AppSettings,');
     expect(output).toContain(
-      '__frontComponentJsx(__frontComponentDefinition.component, {})',
+      '__frontComponentJsx(__frontComponentDefinition.component, __props)',
     );
     expect(output).not.toContain('defineSettingsFrontComponent');
   });
