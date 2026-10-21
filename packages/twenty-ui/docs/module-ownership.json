@@ -54,6 +54,7 @@
     "CommandBlock",
     "CountrySelect",
     "CurrencyPicker",
+    "DetailsRow",
     "Dropdown",
     "IconButton",
     "ImageInput",
