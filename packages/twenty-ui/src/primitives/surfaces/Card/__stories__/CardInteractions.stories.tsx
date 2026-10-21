@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { createRef, useId, useState } from 'react';
+import { type ComponentProps, createRef, useId, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -9,11 +9,16 @@ import { ComponentDecorator } from '@ui/testing';
 
 import { Card } from '../Card';
 
-const SeparateCardControls = () => {
+const SeparateCardControls = ({
+  onClick,
+}: Pick<ComponentProps<typeof Card.Root>, 'onClick'>) => {
   const [imported, setImported] = useState(false);
 
   return (
-    <Card.Root render={<article aria-label="Customer import" />}>
+    <Card.Root
+      onClick={onClick}
+      render={<article aria-label="Customer import" />}
+    >
       <Card.Header>Customer import</Card.Header>
       <Card.Content
         render={<a href="#card-report" aria-label="Open the report" />}
@@ -41,30 +46,69 @@ export default meta;
 type Story = StoryObj<typeof Card.Root>;
 type ActionStory = StoryObj<typeof Card.Action>;
 
+const nativePartClick = fn();
+
 export const ButtonOwner: Story = {
   render: (args) => (
-    <Card.Root {...args} render={<button type="button" />}>
-      <Card.Content render={<span />}>Review import</Card.Content>
-    </Card.Root>
+    <div style={{ width: '100%' }}>
+      <Card.Root
+        {...args}
+        render={<button type="button" onClick={nativePartClick} />}
+      >
+        <Card.Content render={<span />}>Review import</Card.Content>
+      </Card.Root>
+      <Card.Header
+        onClick={args.onClick}
+        render={<button type="button" onClick={nativePartClick} />}
+      >
+        Review header
+      </Card.Header>
+      <Card.Content
+        onClick={args.onClick}
+        render={<button type="button" onClick={nativePartClick} />}
+      >
+        Review content
+      </Card.Content>
+      <Card.Footer
+        onClick={args.onClick}
+        render={<button type="button" onClick={nativePartClick} />}
+      >
+        Review footer
+      </Card.Footer>
+    </div>
   ),
   play: async ({ canvasElement, args }) => {
-    const button = within(canvasElement).getByRole('button', {
-      name: 'Review import',
-    });
+    const canvas = within(canvasElement);
+    let expectedActivations = 0;
 
-    button.focus();
-    await userEvent.keyboard('{Enter}');
-    await userEvent.keyboard(' ');
+    nativePartClick.mockClear();
 
-    await expect(args.onClick).toHaveBeenCalledTimes(2);
-    await expect(button).toHaveFocus();
-    await expect(button).toHaveAttribute('type', 'button');
-    await expect(button).toHaveStyle({
-      cursor: 'pointer',
-      display: 'block',
-      outlineWidth: '2px',
-      outlineStyle: 'solid',
-    });
+    for (const name of [
+      'Review import',
+      'Review header',
+      'Review content',
+      'Review footer',
+    ]) {
+      const button = canvas.getByRole('button', { name });
+
+      await userEvent.click(button);
+      button.focus();
+      await userEvent.keyboard('{Enter}');
+      await userEvent.keyboard(' ');
+
+      expectedActivations += 3;
+
+      await expect(args.onClick).toHaveBeenCalledTimes(expectedActivations);
+      await expect(nativePartClick).toHaveBeenCalledTimes(expectedActivations);
+      await expect(button).toHaveFocus();
+      await expect(button).toHaveAttribute('type', 'button');
+      await expect(button).toHaveStyle({
+        cursor: 'pointer',
+        display: 'block',
+        outlineWidth: '2px',
+        outlineStyle: 'solid',
+      });
+    }
   },
 };
 
@@ -148,12 +192,15 @@ export const DisabledOwner: Story = {
 };
 
 export const SeparateControls: Story = {
-  render: () => <SeparateCardControls />,
-  play: async ({ canvasElement }) => {
+  render: (args) => <SeparateCardControls onClick={args.onClick} />,
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const article = canvas.getByRole('article', { name: 'Customer import' });
     const link = canvas.getByRole('link', { name: 'Open the report' });
     const action = canvas.getByRole('button', { name: 'Import customers' });
+
+    await userEvent.click(canvas.getByText('Customer import'));
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
 
     link.focus();
     await userEvent.tab();
@@ -161,6 +208,7 @@ export const SeparateControls: Story = {
 
     await expect(action).toHaveFocus();
     await expect(action).toHaveAccessibleName('Customers imported');
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
     await expect(article).not.toHaveAttribute('tabindex');
     await expect(article).not.toHaveAttribute('role');
     await expect(link).not.toContainElement(action);

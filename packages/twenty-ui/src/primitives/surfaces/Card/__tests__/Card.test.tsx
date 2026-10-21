@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
@@ -39,24 +38,14 @@ for (const { name, Component, ownClassName } of [
     refInstanceOf: HTMLDivElement,
   });
 
-  it(`composes Card.${name} with a native button's attributes, handlers and ref`, async () => {
-    const user = userEvent.setup();
+  it(`composes Card.${name} with a native button's attributes and ref`, () => {
     const nativeRef = createRef<HTMLButtonElement>();
-    const onCardClick = vi.fn();
-    const onButtonClick = vi.fn();
 
     render(
       <Component
         aria-describedby="import-description"
-        onClick={onCardClick}
         render={
-          <button
-            type="button"
-            name="import"
-            value="ready"
-            ref={nativeRef}
-            onClick={onButtonClick}
-          />
+          <button type="button" name="import" value="ready" ref={nativeRef} />
         }
       >
         Import records
@@ -70,11 +59,6 @@ for (const { name, Component, ownClassName } of [
     expect(button).toHaveAttribute('name', 'import');
     expect(button).toHaveAttribute('value', 'ready');
     expect(button).toHaveAttribute('aria-describedby', 'import-description');
-
-    await user.click(button);
-
-    expect(onCardClick).toHaveBeenCalledTimes(1);
-    expect(onButtonClick).toHaveBeenCalledTimes(1);
   });
 }
 
@@ -194,12 +178,9 @@ describe('Card rendering', () => {
     );
   });
 
-  it('keeps display cards presentational when they observe click events', async () => {
-    const user = userEvent.setup();
-    const onClick = vi.fn();
-
+  it('keeps display cards presentational with an onClick prop', () => {
     render(
-      <Card.Root onClick={onClick}>
+      <Card.Root onClick={() => undefined}>
         <Card.Content>Import summary</Card.Content>
       </Card.Root>,
     );
@@ -212,9 +193,5 @@ describe('Card rendering', () => {
     expect(root).not.toHaveAttribute('tabindex');
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
-
-    await user.click(content);
-
-    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });
