@@ -19,7 +19,7 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
     metadataName: 'fieldMetadata',
     name: 'fieldSearchFieldMetadataOnUpdate',
     description:
-      "Keep a field's searchFieldMetadata row in sync when its `isSearchable` flag flips: create the row appended at the end of the object's search vector when it is turned on, delete every row indexing the field when it is turned off. A flag that stays true is a no-op, so the existing row keeps its position and any future per-row settings.",
+      "Keep a field's searchFieldMetadata row in sync with its `isSearchable` flag, read against the rows themselves rather than the cached flag: create the row appended at the end of the object's search vector when a searchable field has none, delete every row indexing the field when it is turned off. A searchable field that already has a row is a no-op, so the existing row keeps its position and any future per-row settings.",
   },
 ) {
   buildSideEffects({
@@ -36,10 +36,16 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
       return { status: 'noop' };
     }
 
-    const searchabilityHasFlipped =
-      existingFlatFieldMetadata.isSearchable !== flatFieldMetadata.isSearchable;
+    const hasSearchFieldMetadata =
+      existingFlatFieldMetadata.searchFieldMetadataUniversalIdentifiers.some(
+        (searchFieldMetadataUniversalIdentifier) =>
+          isDefined(
+            relatedFlatEntityMaps.flatSearchFieldMetadataMaps
+              .byUniversalIdentifier[searchFieldMetadataUniversalIdentifier],
+          ),
+      );
 
-    if (!searchabilityHasFlipped) {
+    if (hasSearchFieldMetadata === flatFieldMetadata.isSearchable) {
       return { status: 'noop' };
     }
 
