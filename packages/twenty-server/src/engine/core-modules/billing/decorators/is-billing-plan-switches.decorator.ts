@@ -11,12 +11,12 @@ import { isPlainObject } from 'twenty-shared/utils';
 
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 
-const BILLING_PLAN_KEYS: unknown[] = Object.values(BillingPlanKey);
+const BILLING_PLAN_KEYS = Object.values(BillingPlanKey);
 
 const SWITCH_LIST_KEYS = ['upgradePlanKeys', 'downgradePlanKeys'];
 
-const isBillingPlanKey = (value: unknown): boolean =>
-  BILLING_PLAN_KEYS.includes(value);
+const isBillingPlanKey = (value: unknown): value is BillingPlanKey =>
+  BILLING_PLAN_KEYS.some((planKey) => planKey === value);
 
 @ValidatorConstraint({ async: false })
 export class IsBillingPlanSwitchesValidator implements ValidatorConstraintInterface {
