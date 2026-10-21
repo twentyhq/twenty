@@ -1,6 +1,7 @@
 import { type NormalizedPageLayoutWidgetManifest } from 'twenty-shared/application';
 
 import { normalizeConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/normalize-conditional-display.util';
+import { rewriteLegacyDeviceConditionalDisplay } from 'src/engine/metadata-modules/flat-conditional-display/utils/rewrite-legacy-device-conditional-display.util';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
@@ -25,7 +26,9 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
     universalConditionalDisplay: normalizeConditionalDisplay(
-      pageLayoutWidgetManifest.conditionalDisplay,
+      rewriteLegacyDeviceConditionalDisplay(
+        pageLayoutWidgetManifest.conditionalDisplay,
+      ),
     ),
     position: pageLayoutWidgetManifest.position,
     universalConfiguration:

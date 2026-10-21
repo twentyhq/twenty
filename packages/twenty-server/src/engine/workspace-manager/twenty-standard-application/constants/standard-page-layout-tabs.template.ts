@@ -8,12 +8,6 @@ import {
 
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
-export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE =
-  'device == "MOBILE"';
-
-export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
-  'device == "DESKTOP"';
-
 export const GRID_LAYOUT_POSITIONS = {
   FULL_WIDTH: {
     layoutMode: PageLayoutTabLayoutMode.GRID,

@@ -163,6 +163,30 @@ describe('fromFlatPageLayoutWidgetToPageLayoutWidgetManifest', () => {
     ).toEqual(viewlessFieldsWidgetManifest.configuration);
   });
 
+  it('should rewrite a legacy json-logic device rule to a device leaf', () => {
+    const legacyDeviceWidgetManifest = {
+      ...MINIMAL_WIDGET_MANIFEST,
+      conditionalDisplay: {
+        and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+      },
+    } as unknown as PageLayoutWidgetManifest;
+
+    expect(
+      fromFlatPageLayoutWidgetToPageLayoutWidgetManifest({
+        flatPageLayoutWidget: forward(legacyDeviceWidgetManifest),
+      }).conditionalDisplay,
+    ).toEqual({
+      recordFilters: [
+        {
+          id: '0',
+          contextKey: 'device',
+          operand: ViewFilterOperand.IS,
+          value: '["MOBILE"]',
+        },
+      ],
+    });
+  });
+
   it('should keep any other json-logic rule for the validator to reject', () => {
     const foreignJsonLogic = {
       '==': [{ var: 'objectMetadataItem.nameSingular' }, 'company'],
