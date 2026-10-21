@@ -64,8 +64,13 @@ const StyledInputBox = styled.div<{
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: ${({ isMobile, isCentered }) =>
-    isMobile ? 'auto' : isCentered ? '80px' : '140px'};
+  min-height: ${({ isMobile, isCentered }) => {
+    if (isMobile) {
+      return 'auto';
+    }
+
+    return isCentered ? themeCssVariables.spacing[20] : '140px';
+  }};
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 
@@ -94,8 +99,15 @@ const StyledEditorWrapper = styled.div<{
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
     max-height: ${({ isMobile }) => (isMobile ? '160px' : '320px')};
-    min-height: ${({ isMobile, isCentered }) =>
-      isMobile ? 'auto' : isCentered ? '24px' : '48px'};
+    min-height: ${({ isMobile, isCentered }) => {
+      if (isMobile) {
+        return 'auto';
+      }
+
+      return isCentered
+        ? themeCssVariables.spacing[6]
+        : themeCssVariables.spacing[12];
+    }};
     outline: none;
     overflow-y: auto;
     padding: 0;
