@@ -38,7 +38,6 @@ export const SettingsRolePermissions = ({
     roleId,
   );
 
-  // Channels are read by workspace members, not agents
   const shouldShowAgentChatChannelsSection =
     isAiChatInboxEnabled &&
     settingsDraftRole.canBeAssignedToUsers &&

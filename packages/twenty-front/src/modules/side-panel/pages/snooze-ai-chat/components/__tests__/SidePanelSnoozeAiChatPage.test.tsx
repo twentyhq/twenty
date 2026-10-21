@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
-import { snoozeAiChatIsInChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatIsInChannelComponentState';
+import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import {
@@ -79,7 +79,9 @@ describe('SidePanelSnoozeAiChatPage', () => {
 
   it('snoozes the chats for their channel from a channel view', () => {
     jotaiStore.set(
-      snoozeAiChatIsInChannelComponentState.atomFamily({ instanceId: PAGE_ID }),
+      isSnoozeAiChatForChannelComponentState.atomFamily({
+        instanceId: PAGE_ID,
+      }),
       true,
     );
 

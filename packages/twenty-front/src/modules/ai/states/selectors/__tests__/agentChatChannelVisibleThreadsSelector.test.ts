@@ -18,10 +18,13 @@ const CHANNEL_VIEW = {
   assignment: AgentChatChannelAssignmentFilter.ANY,
 };
 
-const buildThread = (
-  id: string,
-  lastActivityAt: string,
-): AgentChatThreadRecord => ({
+const buildThread = ({
+  id,
+  lastActivityAt,
+}: {
+  id: string;
+  lastActivityAt: string;
+}): AgentChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -38,8 +41,14 @@ const buildThread = (
 describe('agentChatChannelVisibleThreadsSelector', () => {
   it('keeps the chats of the channel pages loaded so far when the main list is refreshed', () => {
     const store = createStore();
-    const recentThread = buildThread('recent', '2026-10-02T10:00:00.000Z');
-    const olderThread = buildThread('older', '2026-10-01T10:00:00.000Z');
+    const recentThread = buildThread({
+      id: 'recent',
+      lastActivityAt: '2026-10-02T10:00:00.000Z',
+    });
+    const olderThread = buildThread({
+      id: 'older',
+      lastActivityAt: '2026-10-01T10:00:00.000Z',
+    });
 
     store.set(agentChatChannelViewState.atom, CHANNEL_VIEW);
     store.set(recordStoreFamilyState.atomFamily('older'), olderThread);

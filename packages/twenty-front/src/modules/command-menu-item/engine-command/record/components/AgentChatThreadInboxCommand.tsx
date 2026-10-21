@@ -31,7 +31,6 @@ export const AgentChatThreadInboxCommand = ({
       return;
     }
 
-    // A channel's view files its chats for the whole channel
     const isInChannel = selectedRecords.every(
       (record) => record.inboxStatus?.isChannelCopy ?? false,
     );
@@ -44,18 +43,14 @@ export const AgentChatThreadInboxCommand = ({
       return openAssignAiChatInSidePanel(threadIds);
     }
 
-    if (
-      isInChannel &&
-      (action === AgentChatInboxAction.ARCHIVE ||
-        action === AgentChatInboxAction.MOVE_TO_INBOX)
-    ) {
-      await Promise.all(
-        threadIds.map(
-          action === AgentChatInboxAction.ARCHIVE
-            ? markAgentChatThreadAsDoneInChannel
-            : reopenAgentChatThreadInChannel,
-        ),
-      );
+    if (isInChannel && action === AgentChatInboxAction.ARCHIVE) {
+      await Promise.all(threadIds.map(markAgentChatThreadAsDoneInChannel));
+
+      return;
+    }
+
+    if (isInChannel && action === AgentChatInboxAction.MOVE_TO_INBOX) {
+      await Promise.all(threadIds.map(reopenAgentChatThreadInChannel));
 
       return;
     }

@@ -16,9 +16,9 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatThreadChannelPicker } from '@/ai/components/AiChatThreadChannelPicker';
 import { AiChatThreadDetailsRow } from '@/ai/components/AiChatThreadDetailsRow';
-import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
@@ -88,7 +88,6 @@ export const AiChatThreadDetailsDropdown = ({
   const channel = useAtomStateValue(agentChatChannelsState)?.find(
     ({ id }) => id === thread?.channelId,
   );
-  const ChannelIcon = useAgentChatChannelIcon(channel?.icon);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -212,7 +211,10 @@ export const AiChatThreadDetailsDropdown = ({
                 >
                   {isDefined(channel) ? (
                     <StyledChannel>
-                      <ChannelIcon size={theme.icon.size.sm} />
+                      <AgentChatChannelIcon
+                        channel={channel}
+                        size={theme.icon.size.sm}
+                      />
                       {channel.name}
                     </StyledChannel>
                   ) : (

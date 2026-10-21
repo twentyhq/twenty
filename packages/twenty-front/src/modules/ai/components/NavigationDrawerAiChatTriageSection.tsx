@@ -15,8 +15,7 @@ import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
 const AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID = 'AiChatTriage';
 
-// Needs input, Mentions and Assigned narrow Open, so they hang under it and
-// only show while Open or one of them is shown
+// Needs input, Mentions and Assigned narrow Open, so they hang under it
 const OPEN_SUB_FILTER_STATUSES = [
   AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
   AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,

@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -44,7 +45,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
   }
 
   // Listed only for who manages channels, so they keep a way to set them up
-  const otherChannels = agentChatChannels.filter(
+  const inaccessibleChannels = agentChatChannels.filter(
     ({ isAccessible }) => !isAccessible,
   );
 
@@ -58,7 +59,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
 
     const trimmedName = name.trim();
 
-    if (trimmedName.length === 0) {
+    if (!isNonEmptyString(trimmedName)) {
       return;
     }
 
@@ -97,7 +98,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
           canManage={canManageChannels}
         />
       ))}
-      {otherChannels.map((channel) => (
+      {inaccessibleChannels.map((channel) => (
         <NavigationDrawerAiChatChannelItem
           key={channel.id}
           channel={channel}

@@ -7,10 +7,13 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 
-const buildThread = (
-  id: string,
-  channelId: string | null,
-): AgentChatThreadRecord => ({
+const buildThread = ({
+  id,
+  channelId,
+}: {
+  id: string;
+  channelId: string | null;
+}): AgentChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -26,9 +29,9 @@ describe('agentChatRecentThreadsSelector', () => {
     const store = createStore();
 
     setAgentChatThreadList(store, [
-      buildThread('own', null),
-      buildThread('followed-channel-chat', 'channel'),
-      buildThread('read-channel-chat', 'channel'),
+      buildThread({ id: 'own', channelId: null }),
+      buildThread({ id: 'followed-channel-chat', channelId: 'channel' }),
+      buildThread({ id: 'read-channel-chat', channelId: 'channel' }),
     ]);
     store.set(agentChatThreadParticipantsState.atom, {
       'followed-channel-chat': {

@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type MouseEvent, useId, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,7 +8,6 @@ import { parseThemeColor } from 'twenty-ui/utilities';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { NavigationDrawerAiChatChannelActionsDropdown } from '@/ai/components/NavigationDrawerAiChatChannelActionsDropdown';
-import { AGENT_CHAT_CHANNEL_DEFAULT_COLOR } from '@/ai/constants/AgentChatChannelDefaultColor';
 import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { useDeleteAgentChatChannel } from '@/ai/hooks/useDeleteAgentChatChannel';
 import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
@@ -78,7 +78,7 @@ export const NavigationDrawerAiChatChannelItem = ({
 
     const trimmedName = name.trim();
 
-    if (trimmedName.length > 0 && trimmedName !== channel.name) {
+    if (isNonEmptyString(trimmedName) && trimmedName !== channel.name) {
       void updateAgentChatChannel({
         channelId: channel.id,
         input: { name: trimmedName },
@@ -109,7 +109,6 @@ export const NavigationDrawerAiChatChannelItem = ({
   const secondaryLabel = channel.isAccessible
     ? openCountLabel
     : t`Not open to you`;
-  const channelColor = channel.color ?? AGENT_CHAT_CHANNEL_DEFAULT_COLOR;
   const coloredIcon = <AgentChatChannelIcon channel={channel} />;
 
   const icon = canManage ? (
@@ -127,7 +126,7 @@ export const NavigationDrawerAiChatChannelItem = ({
           })
         }
         iconColorPicker={{
-          selectedColor: parseThemeColor(channelColor),
+          selectedColor: parseThemeColor(channel.color),
           onColorChange: (color) =>
             void updateAgentChatChannel({
               channelId: channel.id,

@@ -1,4 +1,3 @@
-import { AGENT_CHAT_CHANNEL_DEFAULT_COLOR } from '@/ai/constants/AgentChatChannelDefaultColor';
 import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { type AgentChatChannel } from '~/generated-metadata/graphql';
@@ -14,11 +13,5 @@ export const AgentChatChannelIcon = ({
 }: AgentChatChannelIconProps) => {
   const ChannelIcon = useAgentChatChannelIcon(channel.icon);
 
-  return (
-    <ColoredIcon
-      Icon={ChannelIcon}
-      color={channel.color ?? AGENT_CHAT_CHANNEL_DEFAULT_COLOR}
-      size={size}
-    />
-  );
+  return <ColoredIcon Icon={ChannelIcon} color={channel.color} size={size} />;
 };

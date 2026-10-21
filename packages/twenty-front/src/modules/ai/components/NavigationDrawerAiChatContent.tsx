@@ -43,7 +43,6 @@ const StyledSectionsContainer = styled.div`
 
 const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
-// Triage and channels open the inbox page; the drawer itself only lists recent chats
 export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();

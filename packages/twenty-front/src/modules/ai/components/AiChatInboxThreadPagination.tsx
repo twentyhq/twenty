@@ -42,7 +42,6 @@ export const AiChatInboxThreadPagination = ({
   const hasMoreThreads = isDefined(agentChatShownChannelView)
     ? (agentChatShownChannelThreadList?.hasNextPage ?? false)
     : isDefined(agentChatThreadList) && agentChatThreadList.hasNextPage;
-  // A channel view pages through its own list
   const fetchMoreThreads = () =>
     isDefined(agentChatShownChannelView)
       ? loadAgentChatChannelThreads('fetch-more')

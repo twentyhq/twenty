@@ -10,7 +10,15 @@ export const isAgentChatThreadInChannelView = ({
   channelView,
   currentWorkspaceMemberId,
 }: {
-  thread: AgentChatThreadRecord;
+  thread: Pick<
+    AgentChatThreadRecord,
+    | 'deletedAt'
+    | 'channelId'
+    | 'assigneeId'
+    | 'lastActivityAt'
+    | 'channelArchivedAt'
+    | 'channelSnoozedUntil'
+  >;
   channelView: AgentChatChannelView;
   currentWorkspaceMemberId: string | undefined;
 }): boolean => {

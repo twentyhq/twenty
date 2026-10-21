@@ -1,12 +1,15 @@
+import { useStore } from 'jotai';
+
 import { useSnoozeAgentChatThreadsInChannel } from '@/ai/hooks/useSnoozeAgentChatThreadsInChannel';
 import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
-import { snoozeAiChatIsInChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatIsInChannelComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 export const useSnoozeAiChatThreads = () => {
-  const snoozeAiChatIsInChannel = useAtomComponentStateValue(
-    snoozeAiChatIsInChannelComponentState,
+  const store = useStore();
+  const isSnoozeAiChatForChannelState = useAtomComponentStateCallbackState(
+    isSnoozeAiChatForChannelComponentState,
   );
   const { updateAgentChatThreadInboxState } =
     useUpdateAgentChatThreadInboxState();
@@ -20,7 +23,7 @@ export const useSnoozeAiChatThreads = () => {
     threadIds: string[];
     snoozedUntil: Date;
   }) =>
-    snoozeAiChatIsInChannel
+    store.get(isSnoozeAiChatForChannelState)
       ? snoozeAgentChatThreadsInChannel({ threadIds, snoozedUntil })
       : updateAgentChatThreadInboxState({
           threadIds,

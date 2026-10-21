@@ -6,7 +6,7 @@ import { IconZzz } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { snoozeAiChatIsInChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatIsInChannelComponentState';
+import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 
 export const useOpenSnoozeAiChatInSidePanel = () => {
@@ -17,10 +17,10 @@ export const useOpenSnoozeAiChatInSidePanel = () => {
   const openSnoozeAiChatInSidePanel = useCallback(
     ({
       threadIds,
-      isInChannel = false,
+      isInChannel,
     }: {
       threadIds: string[];
-      isInChannel?: boolean;
+      isInChannel: boolean;
     }) => {
       const pageId = v4();
 
@@ -29,7 +29,7 @@ export const useOpenSnoozeAiChatInSidePanel = () => {
         threadIds,
       );
       store.set(
-        snoozeAiChatIsInChannelComponentState.atomFamily({
+        isSnoozeAiChatForChannelComponentState.atomFamily({
           instanceId: pageId,
         }),
         isInChannel,
