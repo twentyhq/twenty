@@ -164,6 +164,12 @@ export class WorkspaceDataExportStepService {
         workspaceId,
         exportId,
         state,
+        onPartAdded: () =>
+          this.workspaceDataExportStateService.set({
+            workspaceId,
+            exportId,
+            state: { ...state, heartbeatAt: Date.now() },
+          }),
       });
     const { affected } = await this.fileRepository.update(
       workspaceId,

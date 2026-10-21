@@ -25,10 +25,12 @@ export class WorkspaceDataExportArchiveService {
     workspaceId,
     exportId,
     state,
+    onPartAdded,
   }: {
     workspaceId: string;
     exportId: string;
     state: ArchiveState;
+    onPartAdded: () => Promise<void>;
   }): Promise<number> {
     const archive = archiver('zip', { zlib: { level: 1 } });
     const upload = this.fileStorageService.writeFileStream({
@@ -76,6 +78,7 @@ export class WorkspaceDataExportArchiveService {
               }),
             ),
           });
+          await onPartAdded();
         }
       }
 
