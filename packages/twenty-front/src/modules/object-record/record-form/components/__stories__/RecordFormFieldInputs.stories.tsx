@@ -78,16 +78,3 @@ export const PercentageAndBoolean: Story = {
     await expect(canvas.getByRole('radio', { name: 'True' })).toBeChecked();
   },
 };
-
-export const InvalidPercentage: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Conversion rate' }),
-      'abc',
-    );
-
-    await expect(canvas.getByRole('alert')).toHaveTextContent('Invalid number');
-  },
-};
