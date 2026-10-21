@@ -46,3 +46,4 @@ export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export type { SegmentedControlOption } from './SegmentedControl/types/SegmentedControlOption';
 export type { SegmentedControlProps } from './SegmentedControl/types/SegmentedControlProps';
 export type { SegmentedControlSize } from './SegmentedControl/types/SegmentedControlSize';
+export type { SegmentedControlVariant } from './SegmentedControl/types/SegmentedControlVariant';

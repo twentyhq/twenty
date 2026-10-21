@@ -2100,6 +2100,13 @@
         "required": false,
         "defaultValue": null,
         "description": "The controlled value of the radio item that should be currently selected.\n\nTo render an uncontrolled radio group, use the `defaultValue` prop instead."
+      },
+      {
+        "name": "variant",
+        "type": "\"rectangle\" | \"round\"",
+        "required": false,
+        "defaultValue": "round",
+        "description": "Shape: `round` is a pill, `rectangle` fills its container with form-field corners."
       }
     ]
   },
