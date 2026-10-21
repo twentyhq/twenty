@@ -28,7 +28,9 @@ export const validateFlatRoleTargetRoleIsEntitled = ({
   flatRoleTarget,
   billingEntitlements,
   buildOptions,
-}: ValidateFlatRoleTargetRoleIsEntitledArgs): FlatEntityValidationError[] => {
+}: ValidateFlatRoleTargetRoleIsEntitledArgs):
+  | FlatEntityValidationError
+  | undefined => {
   if (
     buildOptions.isSystemBuild ||
     isDefined(flatRoleTarget.agentUniversalIdentifier) ||
@@ -37,16 +39,14 @@ export const validateFlatRoleTargetRoleIsEntitled = ({
     ) ||
     billingEntitlements[BillingEntitlementKey.CUSTOM_ROLES]
   ) {
-    return [];
+    return undefined;
   }
 
   const roleLabel = flatRole.label;
 
-  return [
-    {
-      code: RoleTargetExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
-      message: t`Role "${roleLabel}" cannot be assigned: custom roles require the Organization plan`,
-      userFriendlyMessage: msg`Custom roles are part of the Organization plan. Upgrade to assign "${roleLabel}".`,
-    },
-  ];
+  return {
+    code: RoleTargetExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
+    message: t`Role "${roleLabel}" cannot be assigned: custom roles require the Organization plan`,
+    userFriendlyMessage: msg`Custom roles are part of the Organization plan. Upgrade to assign "${roleLabel}".`,
+  };
 };

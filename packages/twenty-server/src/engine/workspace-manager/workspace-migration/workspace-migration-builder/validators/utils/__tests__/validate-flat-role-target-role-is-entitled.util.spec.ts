@@ -31,7 +31,7 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
           billingEntitlements: {},
           buildOptions: USER_BUILD_OPTIONS,
         }),
-      ).toEqual([]);
+      ).toBeUndefined();
     },
   );
 
@@ -43,7 +43,7 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
         billingEntitlements: { [BillingEntitlementKey.CUSTOM_ROLES]: true },
         buildOptions: USER_BUILD_OPTIONS,
       }),
-    ).toEqual([]);
+    ).toBeUndefined();
   });
 
   it('should allow a custom role in a system build', () => {
@@ -54,7 +54,7 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
         billingEntitlements: {},
         buildOptions: { ...USER_BUILD_OPTIONS, isSystemBuild: true },
       }),
-    ).toEqual([]);
+    ).toBeUndefined();
   });
 
   it('should allow a custom role on an agent without the entitlement', () => {
@@ -65,7 +65,7 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
         billingEntitlements: {},
         buildOptions: USER_BUILD_OPTIONS,
       }),
-    ).toEqual([]);
+    ).toBeUndefined();
   });
 
   it.each([
@@ -74,17 +74,14 @@ describe('validateFlatRoleTargetRoleIsEntitled', () => {
   ])(
     'should refuse a custom role when the entitlement is %s',
     (_, billingEntitlements) => {
-      const errors = validateFlatRoleTargetRoleIsEntitled({
-        flatRole: CUSTOM_ROLE,
-        flatRoleTarget: USER_ROLE_TARGET,
-        billingEntitlements,
-        buildOptions: USER_BUILD_OPTIONS,
-      });
-
-      expect(errors).toHaveLength(1);
-      expect(errors[0].code).toBe(
-        RoleTargetExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
-      );
+      expect(
+        validateFlatRoleTargetRoleIsEntitled({
+          flatRole: CUSTOM_ROLE,
+          flatRoleTarget: USER_ROLE_TARGET,
+          billingEntitlements,
+          buildOptions: USER_BUILD_OPTIONS,
+        })?.code,
+      ).toBe(RoleTargetExceptionCode.CUSTOM_ROLES_NOT_ENTITLED);
     },
   );
 });

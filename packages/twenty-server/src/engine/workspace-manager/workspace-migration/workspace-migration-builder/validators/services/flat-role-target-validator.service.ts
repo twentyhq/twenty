@@ -71,13 +71,18 @@ export class FlatRoleTargetValidatorService {
           flatRole: referencedRole,
           flatRoleTarget: flatRoleTargetToValidate,
         }),
-        ...validateFlatRoleTargetRoleIsEntitled({
-          flatRole: referencedRole,
-          flatRoleTarget: flatRoleTargetToValidate,
-          billingEntitlements,
-          buildOptions,
-        }),
       );
+
+      const entitlementError = validateFlatRoleTargetRoleIsEntitled({
+        flatRole: referencedRole,
+        flatRoleTarget: flatRoleTargetToValidate,
+        billingEntitlements,
+        buildOptions,
+      });
+
+      if (isDefined(entitlementError)) {
+        validationResult.errors.push(entitlementError);
+      }
     }
 
     return validationResult;
@@ -186,17 +191,21 @@ export class FlatRoleTargetValidatorService {
     );
 
     if (
-      updatedFlatRoleTarget.roleUniversalIdentifier !==
+      updatedFlatRoleTarget.roleUniversalIdentifier ===
       existingRoleTarget.roleUniversalIdentifier
     ) {
-      validationResult.errors.push(
-        ...validateFlatRoleTargetRoleIsEntitled({
-          flatRole: referencedRole,
-          flatRoleTarget: updatedFlatRoleTarget,
-          billingEntitlements,
-          buildOptions,
-        }),
-      );
+      return validationResult;
+    }
+
+    const entitlementError = validateFlatRoleTargetRoleIsEntitled({
+      flatRole: referencedRole,
+      flatRoleTarget: updatedFlatRoleTarget,
+      billingEntitlements,
+      buildOptions,
+    });
+
+    if (isDefined(entitlementError)) {
+      validationResult.errors.push(entitlementError);
     }
 
     return validationResult;
