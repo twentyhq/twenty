@@ -11,11 +11,7 @@ const createFolder = ({
   id,
   name,
   parentFolderId,
-}: {
-  id: string;
-  name: string;
-  parentFolderId: string | null;
-}): MessageFolder => ({
+}: Pick<MessageFolder, 'id' | 'name' | 'parentFolderId'>): MessageFolder => ({
   id,
   name,
   parentFolderId,
