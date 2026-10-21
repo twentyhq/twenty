@@ -434,7 +434,6 @@ export class FileStorageService {
     existingFile,
     contentSha256,
     mimeType,
-    size,
   }: {
     driver: StorageDriver;
     onStorageFilePath: string;
@@ -444,7 +443,6 @@ export class FileStorageService {
     > | null;
     contentSha256: string;
     mimeType: string;
-    size: number;
   }): Promise<boolean> {
     if (
       !isDefined(existingFile) ||
@@ -456,11 +454,7 @@ export class FileStorageService {
       return false;
     }
 
-    const storedFileMetadata = await driver.getFileMetadata({
-      filePath: onStorageFilePath,
-    });
-
-    return storedFileMetadata?.size === size;
+    return driver.checkFileExists({ filePath: onStorageFilePath });
   }
 
   async writeFile({
@@ -541,7 +535,6 @@ export class FileStorageService {
             existingFile,
             contentSha256,
             mimeType,
-            size,
           }));
 
         if (!isStoredContentUnchanged) {
