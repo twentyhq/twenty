@@ -5,8 +5,9 @@ import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CoreWorkflowFilterAddRuleButton } from '@/object-core/workflows/components/CoreWorkflowFilterAddRuleButton';
-import { CoreWorkflowFilterColumn } from '@/object-core/workflows/components/CoreWorkflowFilterColumn';
+import { CoreObjectFilterAddRuleButton } from '@/object-core/filters/components/CoreObjectFilterAddRuleButton';
+import { CoreObjectFilterColumn } from '@/object-core/filters/components/CoreObjectFilterColumn';
+import { type CoreObjectFilterField } from '@/object-core/filters/types/CoreObjectFilterField';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { WorkflowEditActionFilterBodyEffect } from '@/workflow/workflow-steps/filters/components/WorkflowEditActionFilterBodyEffect';
 import { WorkflowStepFilterAddRootStepFilterButton } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterAddRootStepFilterButton';
@@ -38,13 +39,18 @@ const StyledConditions = styled.div`
   row-gap: ${themeCssVariables.spacing[0]};
 `;
 
-type CoreWorkflowFiltersBuilderProps = {
+type CoreObjectFiltersBuilderProps = {
   instanceId: string;
+  filterFields: CoreObjectFilterField[];
   defaultValue?: FilterSettings;
   onFilterSettingsUpdate: (filterSettings: FilterSettings) => void;
 };
 
-const CoreWorkflowFiltersBuilderConditions = () => {
+const CoreObjectFiltersBuilderConditions = ({
+  filterFields,
+}: {
+  filterFields: CoreObjectFilterField[];
+}) => {
   const rootStepFilterGroup = useAtomComponentSelectorValue(
     rootLevelStepFilterGroupComponentSelector,
   );
@@ -66,15 +72,16 @@ const CoreWorkflowFiltersBuilderConditions = () => {
                   !isStepFilterGroupChildAStepFilterGroup(stepFilterGroupChild),
               )
               .map((stepFilter, stepFilterIndex) => (
-                <CoreWorkflowFilterColumn
+                <CoreObjectFilterColumn
                   key={stepFilter.id}
+                  filterFields={filterFields}
                   stepFilterGroup={rootStepFilterGroup}
                   stepFilter={stepFilter}
                   stepFilterIndex={stepFilterIndex}
                 />
               ))}
           </StyledChildContainer>
-          <CoreWorkflowFilterAddRuleButton
+          <CoreObjectFilterAddRuleButton
             stepFilterGroup={rootStepFilterGroup}
           />
         </StyledContainer>
@@ -85,11 +92,12 @@ const CoreWorkflowFiltersBuilderConditions = () => {
   );
 };
 
-export const CoreWorkflowFiltersBuilder = ({
+export const CoreObjectFiltersBuilder = ({
   instanceId,
+  filterFields,
   defaultValue,
   onFilterSettingsUpdate,
-}: CoreWorkflowFiltersBuilderProps) => {
+}: CoreObjectFiltersBuilderProps) => {
   return (
     <StepFiltersComponentInstanceContext.Provider value={{ instanceId }}>
       <StepFilterGroupsComponentInstanceContext.Provider value={{ instanceId }}>
@@ -99,7 +107,7 @@ export const CoreWorkflowFiltersBuilder = ({
             onFilterSettingsUpdate,
           }}
         >
-          <CoreWorkflowFiltersBuilderConditions />
+          <CoreObjectFiltersBuilderConditions filterFields={filterFields} />
         </WorkflowStepFilterContext.Provider>
         <WorkflowEditActionFilterBodyEffect defaultValue={defaultValue} />
       </StepFilterGroupsComponentInstanceContext.Provider>

@@ -3,15 +3,17 @@ import { useContext } from 'react';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CoreWorkflowFilterFieldSelect } from '@/object-core/workflows/components/CoreWorkflowFilterFieldSelect';
-import { CoreWorkflowFilterValueInput } from '@/object-core/workflows/components/CoreWorkflowFilterValueInput';
+import { CoreObjectFilterFieldSelect } from '@/object-core/filters/components/CoreObjectFilterFieldSelect';
+import { CoreObjectFilterValueInput } from '@/object-core/filters/components/CoreObjectFilterValueInput';
+import { type CoreObjectFilterField } from '@/object-core/filters/types/CoreObjectFilterField';
 import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
 import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell';
 import { WorkflowStepFilterOperandSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOperandSelect';
 import { WorkflowStepFilterOptionsDropdown } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterOptionsDropdown';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 
-type CoreWorkflowFilterColumnProps = {
+type CoreObjectFilterColumnProps = {
+  filterFields: CoreObjectFilterField[];
   stepFilterGroup: StepFilterGroup;
   stepFilter: StepFilter;
   stepFilterIndex: number;
@@ -24,11 +26,12 @@ const StyledContainer = styled.div`
   justify-content: space-between;
 `;
 
-export const CoreWorkflowFilterColumn = ({
+export const CoreObjectFilterColumn = ({
+  filterFields,
   stepFilterGroup,
   stepFilter,
   stepFilterIndex,
-}: CoreWorkflowFilterColumnProps) => {
+}: CoreObjectFilterColumnProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   return (
@@ -42,9 +45,15 @@ export const CoreWorkflowFilterColumn = ({
           <WorkflowStepFilterOptionsDropdown stepFilterId={stepFilter.id} />
         )}
       </StyledContainer>
-      <CoreWorkflowFilterFieldSelect stepFilter={stepFilter} />
+      <CoreObjectFilterFieldSelect
+        filterFields={filterFields}
+        stepFilter={stepFilter}
+      />
       <WorkflowStepFilterOperandSelect stepFilter={stepFilter} />
-      <CoreWorkflowFilterValueInput stepFilter={stepFilter} />
+      <CoreObjectFilterValueInput
+        filterFields={filterFields}
+        stepFilter={stepFilter}
+      />
     </AdvancedFilterSidePanelColumn>
   );
 };
