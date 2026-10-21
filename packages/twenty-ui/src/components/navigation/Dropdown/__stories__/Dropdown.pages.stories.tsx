@@ -13,6 +13,7 @@ import { DropdownPageSessionExample } from './DropdownPageSessionExample';
 import { DropdownPickerPageSessionExample } from './DropdownPickerPageSessionExample';
 import { DropdownNestedPageSessionExample } from './DropdownNestedPageSessionExample';
 import { DropdownControlledPageSessionExample } from './DropdownControlledPageSessionExample';
+import { DropdownPageActivityExample } from './DropdownPageActivityExample';
 import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
 type FilterAction = { label: string; page?: string; id?: string };
@@ -1137,5 +1138,46 @@ export const UnpagedContentResetsWithEachSession: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const PageActivityTracksNavigationAndClosing: Story = {
+  render: () => <DropdownPageActivityExample />,
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Page activity',
+    });
+
+    await userEvent.click(trigger);
+    const rootActivity = await body.findByRole('status', {
+      name: 'Root page activity',
+    });
+
+    expect(rootActivity).toHaveTextContent(/^Active$/);
+    await userEvent.click(body.getByRole('button', { name: 'Open details' }));
+    const detailsActivity = await body.findByRole('status', {
+      name: 'Details page activity',
+    });
+
+    expect(detailsActivity).toHaveTextContent(/^Active$/);
+    expect(rootActivity).toBeInTheDocument();
+    expect(rootActivity).not.toBeVisible();
+    expect(rootActivity).toHaveTextContent(/^Inactive$/);
+    await userEvent.click(
+      body.getByRole('button', { name: 'Back to activity' }),
+    );
+    expect(rootActivity).toHaveTextContent(/^Active$/);
+    expect(detailsActivity).toBeInTheDocument();
+    expect(detailsActivity).not.toBeVisible();
+    expect(detailsActivity).toHaveTextContent(/^Inactive$/);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(trigger).toHaveAttribute('aria-expanded', 'false'),
+    );
+    expect(rootActivity).toBeInTheDocument();
+    expect(rootActivity).toHaveTextContent(/^Inactive$/);
+    expect(detailsActivity).toHaveTextContent(/^Inactive$/);
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };

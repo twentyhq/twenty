@@ -325,7 +325,7 @@ export const FilterMenu = () => (
 );
 ```
 
-To navigate from code, call `useDropdownPage` in a component rendered inside the root. It returns the current `page`, `goToPage(page)`, `goBack()` and `canGoBack`. If a page renders its own portaled popup, show that popup only while `page` matches the owning page. For example, an option can return to the previous page after a selection while the popup stays open:
+To navigate from code, call `useDropdownPage` in a component rendered inside the root. It returns the current `page`, `goToPage(page)`, `goBack()`, `canGoBack` and `isActive`. Inside a page, `isActive` is true only while that page is active and its dropdown is open. Use `isActive` to show a page's custom portaled popups so they disappear when the page becomes inactive or the dropdown closes. For example, an option can return to the previous page after a selection while the popup stays open:
 
 ```tsx
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
