@@ -12,7 +12,7 @@ export const fetchJavaScriptModuleSourceText = async (
   let response: Response;
 
   try {
-    response = await fetch(url, { headers, credentials: 'omit' });
+    response = await fetch(url, { headers, credentials: 'same-origin' });
   } catch (error) {
     throw new CustomError(
       `Failed to fetch SDK client module ${url}: ${

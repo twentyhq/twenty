@@ -1,0 +1,60 @@
+.row {
+  align-items: start;
+  color: var(--t-font-color-primary);
+  display: flex;
+  font-size: var(--t-font-size-sm);
+  gap: var(--t-spacing-1);
+  line-height: var(--t-spacing-6);
+  min-inline-size: 0;
+}
+
+.label {
+  align-items: start;
+  color: var(--t-font-color-tertiary);
+  display: flex;
+  flex-shrink: 0;
+  inline-size: var(--details-row-label-width);
+  max-inline-size: 40%;
+  gap: var(--t-spacing-1);
+  min-inline-size: 0;
+}
+
+.labelText {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.icon {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  min-block-size: var(--t-spacing-6);
+}
+
+.description {
+  align-items: start;
+  display: flex;
+  flex: 1;
+  gap: var(--t-spacing-1);
+  margin: 0;
+  min-inline-size: 0;
+}
+
+.value {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: var(--t-spacing-1);
+  min-block-size: var(--t-spacing-6);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.action {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--t-spacing-1);
+  min-block-size: var(--t-spacing-6);
+}

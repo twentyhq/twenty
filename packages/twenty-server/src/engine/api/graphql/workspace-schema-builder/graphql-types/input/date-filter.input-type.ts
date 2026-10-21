@@ -1,5 +1,6 @@
 import { GraphQLInputObjectType, GraphQLList, GraphQLNonNull } from 'graphql';
 
+import { FIELD_REFERENCE_FILTER_INPUT_FIELDS } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/field-reference-filter.input-fields';
 import { FilterIs } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/filter-is.input-type';
 import { DateScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -14,5 +15,6 @@ export const DateFilterType = new GraphQLInputObjectType({
     lte: { type: DateScalarType },
     neq: { type: DateScalarType },
     is: { type: FilterIs },
+    ...FIELD_REFERENCE_FILTER_INPUT_FIELDS,
   },
 });

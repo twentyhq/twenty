@@ -2688,6 +2688,11 @@ msgstr "Potrošnja AI u svim radnim prostorima."
 msgid "AI consumption over time."
 msgstr "Potrošnja AI tokom vremena."
 
+#. js-lingui-id: geU85/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "AI credits"
+msgstr "AI krediti"
+
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
@@ -3430,7 +3435,9 @@ msgid "Apostrophe and dot"
 msgstr "Apostrof i tačka"
 
 #. js-lingui-id: LMUw1U
+#: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
+#: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -4636,6 +4643,11 @@ msgstr "Pregledajte marketplejs"
 msgid "BTREE (default, good for sorting and equality)"
 msgstr "BTREE (podrazumevano, dobro za sortiranje i jednakost)"
 
+#. js-lingui-id: 3+uH0v
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Build an app"
+msgstr "Izgradite aplikaciju"
+
 #. js-lingui-id: pN5hZf
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Build and runtime metadata for this component"
@@ -5148,6 +5160,26 @@ msgstr "Nije moguće vratiti zapise bez važećeg filtera"
 msgid "Cannot upload more than {maxNumberOfValues} files"
 msgstr "Nije moguće otpremiti više od {maxNumberOfValues} datoteka"
 
+#. js-lingui-id: bu8rgN
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap how many emails the workspace sends each month."
+msgstr "Ograničite broj e-poruka koje radni prostor šalje svakog meseca."
+
+#. js-lingui-id: 5BXEOk
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what the workspace spends on AI each month."
+msgstr "Ograničite koliko radni prostor troši na AI svakog meseca."
+
+#. js-lingui-id: 5kJRV/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what your workflows spend each month."
+msgstr "Ograničite koliko vaši tokovi rada mogu da potroše svakog meseca."
+
+#. js-lingui-id: dF2FZ3
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Cap what your workspace can spend. Start from a common limit or build your own."
+msgstr "Ograničite koliko vaš radni prostor može da potroši. Počnite od uobičajenog ograničenja ili napravite sopstveno."
+
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Caps on what your workspace can spend and who they apply to"
@@ -5440,6 +5472,11 @@ msgstr "Izaberite vrednost"
 msgid "Choose a Workspace"
 msgstr "Izaberite radni prostor"
 
+#. js-lingui-id: 9fscAB
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Choose any usage, who it applies to and how often it resets."
+msgstr "Izaberite bilo koju upotrebu, na koga se odnosi i koliko često se resetuje."
+
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Choose automatically"
@@ -5657,6 +5694,11 @@ msgstr "Obriši sačuvanu vrednost"
 msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Očistite polje ili \"X\" da se vratite na podrazumevanu vrednost okruženja."
 
+#. js-lingui-id: vPeGqc
+#: src/pages/settings/developers/SettingsDevelopers.tsx
+msgid "CLI"
+msgstr "CLI"
+
 #. js-lingui-id: 7P8Mbj
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -5812,8 +5854,7 @@ msgid "Close page"
 msgstr "Zatvori stranicu"
 
 #. js-lingui-id: fJGhA7
-#: src/modules/activities/files/components/AttachmentList.tsx
-#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
 msgid "Close preview"
 msgstr "Zatvori pregled"
 
@@ -6021,6 +6062,11 @@ msgstr "Stavka menija komande"
 msgid "Command menu items"
 msgstr "Stavke menija komande"
 
+#. js-lingui-id: 6anYzO
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Command reference"
+msgstr "Referenca komandi"
+
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Commands"
@@ -6028,6 +6074,7 @@ msgstr "Komande"
 
 #. js-lingui-id: 4XlFx/
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "Komande kopirane u klipbord"
 
@@ -6402,6 +6449,11 @@ msgstr "Povežite dodatne MCP klijente pomoću linkova za instalaciju ili dokume
 msgid "Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event."
 msgstr "Povežite Google, Microsoft ili CalDAV i omogućite sinhronizaciju kalendara pre kreiranja događaja."
 
+#. js-lingui-id: u6ylxz
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Connect to this workspace"
+msgstr "Povežite se sa ovim radnim prostorom"
+
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard.tsx
@@ -6707,6 +6759,7 @@ msgstr "Kopiraj komandu"
 
 #. js-lingui-id: Es0ros
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Copy commands"
 msgstr "Kopiraj komande"
 
@@ -7439,11 +7492,6 @@ msgstr "Akreditivi i opsezi za OAuth tokove autorizacije"
 msgid "Credit balance"
 msgstr "Stanje kredita"
 
-#. js-lingui-id: XLyliv
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Credit consumption"
-msgstr "Potrošnja kredita"
-
 #. js-lingui-id: Woqoyp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Credit consumption for the current period"
@@ -7554,9 +7602,13 @@ msgstr "iskorišćeni krediti"
 
 #. js-lingui-id: yLljbQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
 msgid "Credits used"
 msgstr "Iskorišćeni krediti"
+
+#. js-lingui-id: biuDTg
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
+msgid "Credits used this month"
+msgstr "Krediti iskorišćeni ovog meseca"
 
 #. js-lingui-id: e73uuf
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -8060,7 +8112,6 @@ msgid "Data on display"
 msgstr "Prikaz podataka"
 
 #. js-lingui-id: /qrjU8
-#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Data Processing Agreement"
@@ -9271,6 +9322,7 @@ msgstr "Preuzmi primer"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
+#: src/modules/ai/components/AiChatThreadSubtitle.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowStatusFilterOptions.ts
 #: src/modules/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps.ts
@@ -9929,6 +9981,11 @@ msgstr "Imejlovi sa liste blokiranih adresa biće ignorisani bez obzira na ovo p
 msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
 msgstr "Emejlovi sa liste blokiranih adresa biće ignorisani. Upravljajte listom blokiranih adresa na stranici podešavanja „Nalozi“."
 
+#. js-lingui-id: wG9D72
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Emails sent"
+msgstr "Poslati imejlovi"
+
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Emails settings"
@@ -10159,6 +10216,7 @@ msgstr "Unesite novu vrednost tajne"
 #. js-lingui-id: u2fAme
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Enter a number"
 msgstr "Unesite broj"
 
@@ -10899,7 +10957,6 @@ msgid "Executed copies"
 msgstr "Potpisane kopije"
 
 #. js-lingui-id: t+R8+P
-#: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "Execution"
 msgstr "Izvršavanje"
@@ -11067,6 +11124,11 @@ msgstr "Objasni ovaj tok rada"
 #: src/modules/ai/components/suggested-prompts/contextual-suggested-prompts.ts
 msgid "Explain what this workflow does, step by step."
 msgstr "Objasni šta ovaj tok rada radi, korak po korak."
+
+#. js-lingui-id: xQlpmk
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Explore your data"
+msgstr "Istražite svoje podatke"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -11693,6 +11755,7 @@ msgstr "Rezervna vrednost"
 #. js-lingui-id: ocUvR+
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
@@ -13856,6 +13919,11 @@ msgstr "Uvidi: Trendovi u industriji i najbolje prakse"
 msgid "Insights: The latest in industrial equipment and tools"
 msgstr "Uvidi: Najnovije informacije o industrijskoj opremi i alatima"
 
+#. js-lingui-id: IaiiK0
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Inspect the data model, query records and send raw API requests."
+msgstr "Pregledajte model podataka, postavljajte upite za zapise i šaljite sirove API zahteve."
+
 #. js-lingui-id: TKQ7K+
 #: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -13894,11 +13962,6 @@ msgstr "Link za instalaciju"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Install shared tarball app"
 msgstr "Instalirajte deljenu tarball aplikaciju"
-
-#. js-lingui-id: Ajf8Sb
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Install statistics"
-msgstr "Statistika instalacija"
 
 #. js-lingui-id: lD6WqE
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -14123,6 +14186,7 @@ msgstr "Nevažeća vrednost minuta \"{newMinute}\". Trebalo bi da bude ceo broj 
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormNumberFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormCurrencyFieldInput.tsx
+#: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Invalid number"
 msgstr "Nevažeći broj"
 
@@ -15093,6 +15157,7 @@ msgstr "Ograničenje je ažurirano."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingTabBar.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -15525,11 +15590,6 @@ msgstr "Dnevnici se čuvaju {proPlanEventLogRetentionInHours} sati u okviru vaš
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
 msgid "Logs are kept {retentionLabel}."
 msgstr "Dnevnici se čuvaju {retentionLabel}."
-
-#. js-lingui-id: vOd7ZN
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Logs console"
-msgstr "Konzola dnevnika"
 
 #. js-lingui-id: MspNoT
 #: src/modules/log-console/components/LogConsole.tsx
@@ -20324,6 +20384,7 @@ msgstr "Pročitajte dnevnik izmena"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
 msgid "Read documentation"
 msgstr "Pročitajte dokumentaciju"
 
@@ -21938,6 +21999,11 @@ msgstr "Sačuvajte zapis pre prilaganja datoteke"
 msgid "Save your changes first"
 msgstr "Prvo sačuvajte izmene"
 
+#. js-lingui-id: w9O5DJ
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Scaffold an app, register it in this workspace and sync your changes as you code."
+msgstr "Napravite osnovu aplikacije, registrujte je u ovom radnom prostoru i sinhronizujte izmene tokom programiranja."
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -23436,11 +23502,6 @@ msgstr "Prikaži {0}"
 msgid "Show {hiddenOptionalCount} optional arguments"
 msgstr "Prikaži {hiddenOptionalCount} opcionih argumenata"
 
-#. js-lingui-id: 3MO9Sa
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show a logs console at the bottom of the app in Advanced mode."
-msgstr "Prikaži konzolu dnevnika na dnu aplikacije u naprednom režimu."
-
 #. js-lingui-id: lZw9AX
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show all"
@@ -23560,6 +23621,11 @@ msgstr "Stavke bočne trake"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
 msgstr "Prijavite se"
+
+#. js-lingui-id: A/eMZx
+#: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
+msgid "Sign in from your browser and make this workspace your default connection. Requires Node.js 24.5 or later."
+msgstr "Prijavite se iz pregledača i postavite ovaj radni prostor kao podrazumevanu vezu. Zahteva Node.js 24.5 ili noviju verziju."
 
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
@@ -24091,6 +24157,11 @@ msgstr "Datum početka"
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
 msgid "Start dictation"
 msgstr "Pokreni diktiranje"
+
+#. js-lingui-id: p6oHQh
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Start from scratch"
+msgstr "Počnite od početka"
 
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
@@ -26149,11 +26220,6 @@ msgstr "Ukupno"
 msgid "Total Count"
 msgstr "Ukupan broj"
 
-#. js-lingui-id: TwCQ5l
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Total credits used"
-msgstr "Ukupno iskorišćenih kredita"
-
 #. js-lingui-id: /H9dXa
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsPopoverContent.tsx
 msgid "Total earned"
@@ -26360,12 +26426,18 @@ msgstr "Aktivira funkciju HTTP zahtevom"
 #. js-lingui-id: c+xCSz
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 msgid "True"
 msgstr "Istina"
+
+#. js-lingui-id: qaK9ds
+#: src/modules/object-record/record-form/components/RecordFormBooleanFieldInput.tsx
+msgid "True or false"
+msgstr "Tačno ili netačno"
 
 #. js-lingui-id: EsFbDC
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -27557,10 +27629,10 @@ msgstr "Analitika korišćenja zahteva ClickHouse. Kontaktirajte administratora.
 msgid "Usage analytics will appear here once you start using credits."
 msgstr "Analitika korišćenja će se pojaviti ovde kada počnete da koristite kredite."
 
-#. js-lingui-id: h4601z
+#. js-lingui-id: o5dGi6
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
-msgid "Usage attributed to this application in its current installing workspaces for the selected period. Updated every ten minutes."
-msgstr "Upotreba pripisana ovoj aplikaciji u njenim trenutnim radnim prostorima u kojima je instalirana za izabrani period. Ažurira se svakih deset minuta."
+msgid "Usage attributed to this application in its current installing workspaces since the start of the month (UTC). Updated every ten minutes."
+msgstr "Upotreba pripisana ovoj aplikaciji u njenim trenutnim radnim prostorima u kojima je instalirana od početka meseca (UTC). Ažurira se svakih deset minuta."
 
 #. js-lingui-id: hYXHVl
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
@@ -28810,6 +28882,11 @@ msgstr "Akcija toka rada"
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup.tsx
 msgid "Workflow connection controls"
 msgstr "Kontrole veza radnog procesa"
+
+#. js-lingui-id: /TGSus
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Workflow credits"
+msgstr "Krediti tokova rada"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx

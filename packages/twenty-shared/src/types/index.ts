@@ -278,6 +278,8 @@ export type {
   FloatFilter,
   DateFilter,
   DateTimeFilter,
+  FieldReferenceFilterOperator,
+  FieldReferenceFilter,
   CurrencyFilter,
   UrlFilter,
   FullNameFilter,

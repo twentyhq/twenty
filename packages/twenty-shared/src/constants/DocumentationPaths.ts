@@ -138,6 +138,8 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/data-display/avatar-group',
   UI_COMPONENTS_DATA_DISPLAY_COMMAND_BLOCK:
     '/ui/components/data-display/command-block',
+  UI_COMPONENTS_DATA_DISPLAY_DETAILS_ROW:
+    '/ui/components/data-display/details-row',
   UI_COMPONENTS_DATA_DISPLAY_JSON_TREE: '/ui/components/data-display/json-tree',
   UI_COMPONENTS_DATA_DISPLAY_METRIC_ROW:
     '/ui/components/data-display/metric-row',
@@ -159,6 +161,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_INPUT_NUMBER_STEPPER: '/ui/components/input/number-stepper',
   UI_COMPONENTS_INPUT_PHONE_COUNTRY_PICKER:
     '/ui/components/input/phone-country-picker',
+  UI_COMPONENTS_INPUT_REACTION_BUTTON: '/ui/components/input/reaction-button',
   UI_COMPONENTS_INPUT_SEARCH_INPUT: '/ui/components/input/search-input',
   UI_COMPONENTS_INPUT_SEGMENTED_CONTROL:
     '/ui/components/input/segmented-control',
