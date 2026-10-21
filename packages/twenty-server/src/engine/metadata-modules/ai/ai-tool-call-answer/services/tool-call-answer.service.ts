@@ -353,15 +353,17 @@ export class ToolCallAnswerService {
         return { streamId: null, turnId: answerMessage.turnId };
       }
 
-      await this.agentChatStreamingService.enqueueResumeStream({
+      await this.agentChatStreamingService.enqueueStreamJob({
         threadId,
+        workspaceId,
         userWorkspaceId,
         workspaceMemberId: args.workspaceMemberId,
-        workspace,
         turnId: answerMessage.turnId,
         streamId,
         modelId: args.modelId,
         messageId: answerMessage.id,
+        // the answer resumes the turn rather than opens the thread, so it never titles it
+        lastUserMessageText: '',
       });
 
       return { streamId, turnId: answerMessage.turnId };
