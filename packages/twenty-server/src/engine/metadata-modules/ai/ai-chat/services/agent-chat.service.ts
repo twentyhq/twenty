@@ -21,6 +21,7 @@ import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { findTurnIdsActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/find-turn-ids-acted-by-others.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -246,7 +247,7 @@ export class AgentChatService {
     });
 
     // contexts are given to the model, never shown
-    return this.messageRepository.find(workspaceId, {
+    const messages = await this.messageRepository.find(workspaceId, {
       where: {
         threadId,
         role: Not(AgentMessageRole.SYSTEM),
@@ -254,6 +255,19 @@ export class AgentChatService {
       order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
       relations: ['parts', 'parts.file'],
     });
+    const turnIdsActedByOthers = findTurnIdsActedByOthers({
+      messages,
+      actor: { type: 'user', workspaceMemberId },
+    });
+
+    return messages.map((message) =>
+      isDefined(message.turnId) && turnIdsActedByOthers.has(message.turnId)
+        ? {
+            ...message,
+            parts: (message.parts ?? []).filter(({ type }) => type === 'text'),
+          }
+        : message,
+    );
   }
 
   async notifyThreadUsageUpdated({
