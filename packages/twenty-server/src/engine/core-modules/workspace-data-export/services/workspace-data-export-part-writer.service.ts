@@ -86,7 +86,7 @@ export class WorkspaceDataExportPartWriterService {
       stream: Readable.from(
         this.streamCsv({
           context,
-          includeHeader: cursor.partIndex === 0,
+          shouldIncludeHeader: cursor.partIndex === 0,
           part,
           abortSignal,
         }),
@@ -99,16 +99,16 @@ export class WorkspaceDataExportPartWriterService {
 
   private async *streamCsv({
     context,
-    includeHeader,
+    shouldIncludeHeader,
     part,
     abortSignal,
   }: {
     context: RecordExportQueryContext;
-    includeHeader: boolean;
+    shouldIncludeHeader: boolean;
     part: WorkspaceDataExportPart;
     abortSignal?: AbortSignal;
   }): AsyncGenerator<string> {
-    if (includeHeader) {
+    if (shouldIncludeHeader) {
       yield formatRecordExportHeader(context.columns);
     }
 

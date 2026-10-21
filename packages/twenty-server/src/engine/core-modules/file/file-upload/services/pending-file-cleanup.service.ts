@@ -12,19 +12,12 @@ import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
   PENDING_FILE_MAX_AGE_MS,
   RECORD_EXPORT_FILE_MAX_AGE_MS,
-  WORKSPACE_DATA_EXPORT_FILE_MAX_AGE_MS,
 } from 'src/engine/core-modules/file/file-upload/crons/constants/pending-file-cleanup.constants';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { buildWorkspaceDataExportFolder } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-folder.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-const EXPIRING_EXPORT_FOLDERS = [
-  FileFolder.RecordExport,
-  FileFolder.WorkspaceDataExport,
-];
 
 @Injectable()
 export class PendingFileCleanupService {
@@ -44,9 +37,6 @@ export class PendingFileCleanupService {
     const exportThreshold = new Date(
       Date.now() - RECORD_EXPORT_FILE_MAX_AGE_MS,
     );
-    const workspaceDataExportThreshold = new Date(
-      Date.now() - WORKSPACE_DATA_EXPORT_FILE_MAX_AGE_MS,
-    );
 
     const staleFiles = await this.fileRepository.find({
       where: [
@@ -60,11 +50,6 @@ export class PendingFileCleanupService {
           createdAt: LessThan(exportThreshold),
           workspaceId: Not(IsNull()),
         },
-        {
-          path: Like(`${FileFolder.WorkspaceDataExport}/%`),
-          createdAt: LessThan(workspaceDataExportThreshold),
-          workspaceId: Not(IsNull()),
-        },
       ],
       take: PENDING_FILE_CLEANUP_BATCH_SIZE,
     });
@@ -73,25 +58,14 @@ export class PendingFileCleanupService {
 
     for (const file of staleFiles) {
       try {
-        const expiredExportFolder = EXPIRING_EXPORT_FOLDERS.find((folder) =>
-          file.path.startsWith(`${folder}/`),
-        );
-
-        if (isDefined(expiredExportFolder) && isDefined(file.workspaceId)) {
-          if (expiredExportFolder === FileFolder.WorkspaceDataExport) {
-            await this.fileStorageService.deleteFolder(
-              buildWorkspaceDataExportFolder({
-                workspaceId: file.workspaceId,
-                exportId: file.id,
-                folder: 'export',
-              }),
-            );
-          }
-
+        if (
+          file.path.startsWith(`${FileFolder.RecordExport}/`) &&
+          isDefined(file.workspaceId)
+        ) {
           await this.fileStorageService.deleteByFileId({
             fileId: file.id,
             workspaceId: file.workspaceId,
-            fileFolder: expiredExportFolder,
+            fileFolder: FileFolder.RecordExport,
           });
           deletedCount++;
 

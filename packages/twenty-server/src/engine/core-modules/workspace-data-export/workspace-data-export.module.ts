@@ -6,8 +6,11 @@ import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/e
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
+import { WorkspaceDataExportCleanupCronCommand } from 'src/engine/core-modules/workspace-data-export/crons/commands/workspace-data-export-cleanup.cron.command';
+import { WorkspaceDataExportCleanupCronJob } from 'src/engine/core-modules/workspace-data-export/crons/jobs/workspace-data-export-cleanup.cron.job';
 import { WorkspaceDataExportStepJob } from 'src/engine/core-modules/workspace-data-export/jobs/workspace-data-export-step.job';
 import { WorkspaceDataExportArchiveService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-archive.service';
+import { WorkspaceDataExportCleanupService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-cleanup.service';
 import { WorkspaceDataExportPartWriterService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-part-writer.service';
 import { WorkspaceDataExportStateService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-state.service';
 import { WorkspaceDataExportStepService } from 'src/engine/core-modules/workspace-data-export/services/workspace-data-export-step.service';
@@ -34,8 +37,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceDataExportPartWriterService,
     WorkspaceDataExportArchiveService,
     WorkspaceDataExportStepJob,
+    WorkspaceDataExportCleanupService,
+    WorkspaceDataExportCleanupCronJob,
+    WorkspaceDataExportCleanupCronCommand,
     provideWorkspaceScopedRepository(FileEntity),
   ],
-  exports: [WorkspaceDataExportService],
+  exports: [WorkspaceDataExportService, WorkspaceDataExportCleanupCronCommand],
 })
 export class WorkspaceDataExportModule {}
