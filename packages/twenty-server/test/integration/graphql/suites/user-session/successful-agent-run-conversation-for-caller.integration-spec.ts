@@ -2,11 +2,13 @@ import { type StepResult, type ToolSet } from 'ai';
 import { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { randomUUID } from 'node:crypto';
+import { parse } from 'graphql';
 import {
   type AgentRunExecution,
   captureAgentRunExecution,
 } from 'test/integration/graphql/suites/user-session/utils/capture-agent-run-execution.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   type ApplicationWithResources,
   setupApplicationWithResources,
@@ -497,5 +499,45 @@ describe('Agent run conversation should be recorded for the caller', () => {
 
     expect(partTypes).toContain('text');
     expect(partTypes).not.toContain('tool-probe');
+  });
+
+  it('should show the owner only the text of a turn another member sent in their thread', async () => {
+    const threadKey = randomUUID();
+    const { threadId } = await runAgent({
+      token: globalTestContext.jonyApplicationToken,
+      threadKey,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    await runAgent({
+      token: globalTestContext.janeApplicationToken,
+      threadKey,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    const response = await makeMetadataApiRequest(
+      {
+        query: parse(
+          'query($threadId: UUID!) { chatMessages(threadId: $threadId) { senderWorkspaceMemberId parts { type } } }',
+        ),
+        variables: { threadId },
+      },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const messages: {
+      senderWorkspaceMemberId: string | null;
+      parts: { type: string }[];
+    }[] = response.body.data.chatMessages;
+    const partTypes = messages.flatMap(({ parts }) =>
+      parts.map(({ type }) => type),
+    );
+
+    expect(
+      messages.map(({ senderWorkspaceMemberId }) => senderWorkspaceMemberId),
+    ).toContain(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
+    expect(partTypes.filter((type) => type === 'tool-probe')).toHaveLength(1);
   });
 });

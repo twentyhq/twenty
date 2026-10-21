@@ -118,7 +118,7 @@ export class WorkspaceSetupChatService {
 
     if (isDefined(thread)) {
       if (isDefined(thread.deletedAt)) {
-        thread = await this.agentChatService.restoreThread({
+        thread = await this.threadService.restoreThread({
           threadId,
           workspaceMemberId,
           workspaceId: workspace.id,
