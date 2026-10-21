@@ -2688,6 +2688,11 @@ msgstr "全ワークスペースの AI 消費。"
 msgid "AI consumption over time."
 msgstr "AI 消費の推移。"
 
+#. js-lingui-id: geU85/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "AI credits"
+msgstr "AI クレジット"
+
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
@@ -5155,6 +5160,26 @@ msgstr "有効なフィルターなしではレコードを復元できません
 msgid "Cannot upload more than {maxNumberOfValues} files"
 msgstr "{maxNumberOfValues} 個を超えるファイルはアップロードできません"
 
+#. js-lingui-id: bu8rgN
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap how many emails the workspace sends each month."
+msgstr "ワークスペースが毎月送信するメール数の上限を設定します。"
+
+#. js-lingui-id: 5BXEOk
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what the workspace spends on AI each month."
+msgstr "ワークスペースが毎月 AI に費やす金額の上限を設定します。"
+
+#. js-lingui-id: 5kJRV/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what your workflows spend each month."
+msgstr "ワークフローが毎月使用できる上限を設定します。"
+
+#. js-lingui-id: dF2FZ3
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Cap what your workspace can spend. Start from a common limit or build your own."
+msgstr "ワークスペースが使用できる上限を設定します。一般的な上限から選択するか、独自の上限を作成します。"
+
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Caps on what your workspace can spend and who they apply to"
@@ -5446,6 +5471,11 @@ msgstr "値を選択"
 #: src/pages/auth/SignInUp.tsx
 msgid "Choose a Workspace"
 msgstr "ワークスペースを選択"
+
+#. js-lingui-id: 9fscAB
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Choose any usage, who it applies to and how often it resets."
+msgstr "使用量、適用対象、リセット頻度を選択します。"
 
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -9950,6 +9980,11 @@ msgstr "ブロックリストに登録されたメールアドレスからのメ
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
 msgstr "ブロックリストに登録されたメールアドレスからのメールは無視されます。「アカウント」設定ページでブロックリストを管理できます。"
+
+#. js-lingui-id: wG9D72
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Emails sent"
+msgstr "送信したメール"
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -15122,6 +15157,7 @@ msgstr "上限を更新しました。"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingTabBar.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -24122,6 +24158,11 @@ msgstr "開始日"
 msgid "Start dictation"
 msgstr "音声入力を開始"
 
+#. js-lingui-id: p6oHQh
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Start from scratch"
+msgstr "ゼロから作成"
+
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Start with your whole network"
@@ -28841,6 +28882,11 @@ msgstr "ワークフローアクション"
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup.tsx
 msgid "Workflow connection controls"
 msgstr "ワークフロー接続コントロール"
+
+#. js-lingui-id: /TGSus
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Workflow credits"
+msgstr "ワークフロークレジット"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx

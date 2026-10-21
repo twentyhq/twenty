@@ -2688,6 +2688,11 @@ msgstr "AI-forbrug på tværs af alle arbejdsområder."
 msgid "AI consumption over time."
 msgstr "AI-forbrug over tid."
 
+#. js-lingui-id: geU85/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "AI credits"
+msgstr "AI-kreditter"
+
 #. js-lingui-id: Bkwb5U
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "AI settings"
@@ -5155,6 +5160,26 @@ msgstr "Kan ikke gendanne poster uden et gyldigt filter"
 msgid "Cannot upload more than {maxNumberOfValues} files"
 msgstr "Du kan ikke uploade mere end {maxNumberOfValues} filer"
 
+#. js-lingui-id: bu8rgN
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap how many emails the workspace sends each month."
+msgstr "Begræns, hvor mange e-mails arbejdsområdet sender hver måned."
+
+#. js-lingui-id: 5BXEOk
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what the workspace spends on AI each month."
+msgstr "Begræns, hvad arbejdsområdet bruger på AI hver måned."
+
+#. js-lingui-id: 5kJRV/
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Cap what your workflows spend each month."
+msgstr "Sæt en grænse for, hvad dine arbejdsgange bruger hver måned."
+
+#. js-lingui-id: dF2FZ3
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Cap what your workspace can spend. Start from a common limit or build your own."
+msgstr "Sæt en grænse for, hvad dit arbejdsområde kan bruge. Start med en almindelig grænse, eller opret din egen."
+
 #. js-lingui-id: n1zTaJ
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 msgid "Caps on what your workspace can spend and who they apply to"
@@ -5446,6 +5471,11 @@ msgstr "Vælg en værdi"
 #: src/pages/auth/SignInUp.tsx
 msgid "Choose a Workspace"
 msgstr "Vælg et arbejdsområde"
+
+#. js-lingui-id: 9fscAB
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Choose any usage, who it applies to and how often it resets."
+msgstr "Vælg et vilkårligt forbrug, hvem det gælder for, og hvor ofte det nulstilles."
 
 #. js-lingui-id: KsP4Tg
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -9950,6 +9980,11 @@ msgstr "E-mails fra blokeringslisten ignoreres uanset denne indstilling."
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Emails from the blocklist will be ignored. Manage blocklist on the \"Accounts\" setting page."
 msgstr "E-mails på blokeringslisten ignoreres. Administrer blokeringslisten på indstillingssiden \"Accounts\"."
+
+#. js-lingui-id: wG9D72
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Emails sent"
+msgstr "Sendte e-mails"
 
 #. js-lingui-id: Ww/M6X
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -15122,6 +15157,7 @@ msgstr "Grænse opdateret."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsContent.tsx
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingTabBar.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -24122,6 +24158,11 @@ msgstr "Startdato"
 msgid "Start dictation"
 msgstr "Start diktering"
 
+#. js-lingui-id: p6oHQh
+#: src/modules/settings/billing/components/SettingsBillingLimitsEmptyState.tsx
+msgid "Start from scratch"
+msgstr "Start fra bunden"
+
 #. js-lingui-id: c3uca5
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Start with your whole network"
@@ -28843,6 +28884,11 @@ msgstr "Arbejdsforløbshandling"
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup.tsx
 msgid "Workflow connection controls"
 msgstr "Kontrolelementer for arbejdsgangsforbindelse"
+
+#. js-lingui-id: /TGSus
+#: src/modules/settings/billing/constants/UsageLimitPresets.ts
+msgid "Workflow credits"
+msgstr "Arbejdsgangskreditter"
 
 #. js-lingui-id: 2jzcC5
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand.tsx
