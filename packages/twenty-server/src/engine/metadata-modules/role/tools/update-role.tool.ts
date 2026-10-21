@@ -1,11 +1,17 @@
+import { ToolCategory } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { rolePermissionsSchema } from 'src/engine/metadata-modules/role/tools/schemas/role-permissions.schema';
-import { type RoleToolContext } from 'src/engine/metadata-modules/role/tools/types/role-tool-context.type';
-import { type RoleToolDependencies } from 'src/engine/metadata-modules/role/tools/types/role-tool-dependencies.type';
 import { toRoleSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 
-const updateRoleSchema = z.object({
+const updateRoleInputSchema = z.object({
   roleId: z.uuid().describe('Id of the role to update'),
   update: rolePermissionsSchema
     .extend({
@@ -16,25 +22,32 @@ const updateRoleSchema = z.object({
     .describe('Fields to change; omitted fields are left untouched'),
 });
 
-type UpdateRoleParams = z.infer<typeof updateRoleSchema>;
-
-export const createUpdateRoleTool = (
-  deps: Pick<RoleToolDependencies, 'roleService'>,
-  context: RoleToolContext,
-) => ({
-  name: 'update_role' as const,
+@DefineTool({
+  name: 'update_role',
+  category: ToolCategory.ROLE,
+  requiredPermissionFlags: [PermissionFlagType.ROLES],
   description: `Update an existing role's label, description, icon, global record permissions, settings access, or assignability.
 
 System-managed roles (isEditable=false, like Admin) cannot be updated. Updates that would remove your own access to role management are rejected.`,
-  inputSchema: updateRoleSchema,
-  execute: async (parameters: UpdateRoleParams) => {
-    const role = await deps.roleService.updateRole({
-      workspaceId: context.workspaceId,
+})
+export class UpdateRoleTool extends BaseTool<typeof updateRoleInputSchema> {
+  readonly inputSchema = updateRoleInputSchema;
+
+  constructor(private readonly roleService: RoleService) {
+    super();
+  }
+
+  async execute(
+    parameters: z.infer<typeof updateRoleInputSchema>,
+    { workspaceId, rolePermissionConfig }: ToolProviderContext,
+  ): Promise<ToolOutput> {
+    const role = await this.roleService.updateRole({
+      workspaceId,
       input: {
         id: parameters.roleId,
         update: parameters.update,
       },
-      actingRoleIds: context.callerRoleIds,
+      actingRoleIds: getRoleIdsFromRolePermissionConfig(rolePermissionConfig),
     });
 
     return {
@@ -42,5 +55,5 @@ System-managed roles (isEditable=false, like Admin) cannot be updated. Updates t
       message: `Role "${role.label}" updated`,
       result: toRoleSummary(role),
     };
-  },
-});
+  }
+}
