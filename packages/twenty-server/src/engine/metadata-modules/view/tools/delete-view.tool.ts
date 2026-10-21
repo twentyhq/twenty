@@ -1,7 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { ViewVisibility } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -9,10 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import {
-  ViewException,
-  ViewExceptionCode,
-} from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 const deleteViewInputSchema = z.object({
   id: z.string().uuid().describe('View ID to delete'),
@@ -27,7 +22,10 @@ const deleteViewInputSchema = z.object({
 export class DeleteViewTool extends BaseTool<typeof deleteViewInputSchema> {
   readonly inputSchema = deleteViewInputSchema;
 
-  constructor(private readonly viewService: ViewService) {
+  constructor(
+    private readonly viewService: ViewService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
@@ -35,24 +33,12 @@ export class DeleteViewTool extends BaseTool<typeof deleteViewInputSchema> {
     input,
     context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof deleteViewInputSchema>): Promise<ToolOutput> {
-    const existingView = await this.viewService.findById(input.id, workspaceId);
-
-    if (!isDefined(existingView)) {
-      throw new ViewException(
-        `View with id ${input.id} not found`,
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    if (
-      existingView.visibility === ViewVisibility.UNLISTED &&
-      existingView.createdByUserWorkspaceId !== userWorkspaceId
-    ) {
-      throw new ViewException(
-        'You can only delete your own unlisted views',
-        ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED,
-      );
-    }
+    await this.viewToolAccessService.findViewEditableByUserOrThrow({
+      viewId: input.id,
+      workspaceId,
+      userWorkspaceId,
+      operation: 'delete',
+    });
 
     const view = await this.viewService.deleteOne({
       deleteViewInput: { id: input.id },

@@ -108,14 +108,21 @@ const listViewFields = async (viewId: string): Promise<ViewFieldSummary[]> =>
   )?.viewFields ?? [];
 
 describe('MCP view tools (integration)', () => {
+  // Unlisted views are only listed to their creator, so the admin cleans up its own
   afterAll(async () => {
-    for (const objectNameSingular of ['company', 'opportunity']) {
-      const leakedViews = (await listViews({ objectNameSingular })).filter(
-        ({ name }) => name.startsWith(VIEW_NAME_PREFIX),
-      );
+    for (const token of [API_KEY_ACCESS_TOKEN, APPLE_JANE_ADMIN_ACCESS_TOKEN]) {
+      for (const objectNameSingular of ['company', 'opportunity']) {
+        const leakedViews = (
+          await listViews({ objectNameSingular, token })
+        ).filter(({ name }) => name.startsWith(VIEW_NAME_PREFIX));
 
-      for (const { id } of leakedViews) {
-        await runViewTool({ toolName: 'delete_view', toolArguments: { id } });
+        for (const { id } of leakedViews) {
+          await runViewTool({
+            toolName: 'delete_view',
+            toolArguments: { id },
+            token,
+          });
+        }
       }
     }
   });
@@ -480,6 +487,72 @@ describe('MCP view tools (integration)', () => {
       message: `Failed to execute ${toolName}`,
       error,
     });
+  });
+
+  it('should only let the creator of an unlisted view edit or delete it', async () => {
+    const unlistedView = await runViewTool<ViewSummary>({
+      toolName: 'create_view',
+      toolArguments: {
+        name: `${VIEW_NAME_PREFIX} private companies`,
+        objectNameSingular: 'company',
+        visibility: 'UNLISTED',
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    jestExpectToBeDefined(unlistedView);
+    expect(
+      (
+        await listViews({
+          objectNameSingular: 'company',
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        })
+      ).map(({ id }) => id),
+    ).not.toContain(unlistedView.id);
+
+    for (const { toolName, toolArguments, operation } of [
+      {
+        toolName: 'update_view',
+        toolArguments: {
+          id: unlistedView.id,
+          name: `${VIEW_NAME_PREFIX} renamed private companies`,
+        },
+        operation: 'update',
+      },
+      {
+        toolName: 'upsert_complete_view',
+        toolArguments: {
+          id: unlistedView.id,
+          name: `${VIEW_NAME_PREFIX} renamed private companies`,
+        },
+        operation: 'update',
+      },
+      {
+        toolName: 'delete_view',
+        toolArguments: { id: unlistedView.id },
+        operation: 'delete',
+      },
+    ]) {
+      expect(
+        await runFailingViewTool({
+          toolName,
+          toolArguments,
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        }),
+      ).toEqual({
+        success: false,
+        message: `Failed to execute ${toolName}`,
+        error: `You can only ${operation} your own unlisted views`,
+      });
+    }
+
+    expect(
+      await runViewTool({
+        toolName: 'delete_view',
+        toolArguments: { id: unlistedView.id },
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      }),
+    ).toMatchObject({ id: unlistedView.id, deleted: true });
   });
 
   // The seeded guest role cannot access tools, so it lacks VIEWS

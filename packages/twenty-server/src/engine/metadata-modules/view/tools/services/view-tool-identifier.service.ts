@@ -4,7 +4,6 @@ import {
   FieldMetadataType,
   ViewCalendarLayout,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
@@ -15,7 +14,7 @@ import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 type FieldReference = { fieldName?: string; fieldMetadataId?: string };
 
@@ -31,7 +30,7 @@ type UpsertCompleteViewIdentifiers = {
 @Injectable()
 export class ViewToolIdentifierService {
   constructor(
-    private readonly viewService: ViewService,
+    private readonly viewToolAccessService: ViewToolAccessService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -215,27 +214,13 @@ export class ViewToolIdentifierService {
     userWorkspaceId?: string;
   }): Promise<UpsertCompleteViewIdentifiers> {
     if (isDefined(input.id)) {
-      const existingView = await this.viewService.findById(
-        input.id,
-        workspaceId,
-      );
-
-      if (!isDefined(existingView)) {
-        throw new ViewException(
-          `View with id ${input.id} not found`,
-          ViewExceptionCode.VIEW_NOT_FOUND,
-        );
-      }
-
-      if (
-        existingView.visibility === ViewVisibility.UNLISTED &&
-        existingView.createdByUserWorkspaceId !== userWorkspaceId
-      ) {
-        throw new ViewException(
-          'You can only update your own unlisted views',
-          ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED,
-        );
-      }
+      const existingView =
+        await this.viewToolAccessService.findViewEditableByUserOrThrow({
+          viewId: input.id,
+          workspaceId,
+          userWorkspaceId,
+          operation: 'update',
+        });
 
       const calendarEndFieldMetadataId = isDefined(input.calendarEndFieldName)
         ? await this.resolveCalendarFieldMetadataId({

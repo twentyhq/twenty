@@ -22,6 +22,7 @@ import { CreateViewTool } from 'src/engine/metadata-modules/view/tools/create-vi
 import { DeleteViewTool } from 'src/engine/metadata-modules/view/tools/delete-view.tool';
 import { GetViewQueryParametersTool } from 'src/engine/metadata-modules/view/tools/get-view-query-parameters.tool';
 import { GetViewsTool } from 'src/engine/metadata-modules/view/tools/get-views.tool';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 import { UpdateViewTool } from 'src/engine/metadata-modules/view/tools/update-view.tool';
 import { UpsertCompleteViewTool } from 'src/engine/metadata-modules/view/tools/upsert-complete-view.tool';
@@ -118,6 +119,7 @@ describe('View tools', () => {
         CreateViewTool,
         UpdateViewTool,
         DeleteViewTool,
+        ViewToolAccessService,
         ViewToolIdentifierService,
         {
           provide: ViewService,
