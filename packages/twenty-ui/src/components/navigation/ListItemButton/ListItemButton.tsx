@@ -7,6 +7,7 @@ import { type ListItemButtonProps } from './types/ListItemButtonProps';
 export const ListItemButton = ({
   color,
   selected,
+  active,
   focused,
   indicator,
   startIcon,
@@ -24,6 +25,7 @@ export const ListItemButton = ({
   <ListItem
     color={color}
     selected={selected}
+    active={active}
     focused={focused}
     indicator={indicator}
     startIcon={startIcon}

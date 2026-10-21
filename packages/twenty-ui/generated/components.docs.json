@@ -5907,7 +5907,7 @@
             "type": "\"end\" | \"inline\"",
             "required": false,
             "defaultValue": "inline",
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Where the description renders: inline after the content or at the end of the row."
           },
           {
             "name": "disabled",
@@ -7721,6 +7721,13 @@
         "description": "When trailing actions are visible: on hover and focus, or always."
       },
       {
+        "name": "active",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Marks the open or current item independently of selection and focus. Does not add accessible state or activate the item."
+      },
+      {
         "name": "color",
         "type": "\"danger\" | \"neutral\"",
         "required": false,
@@ -7736,10 +7743,10 @@
       },
       {
         "name": "descriptionPlacement",
-        "type": "\"end\" | \"inline\"",
+        "type": "\"below\" | \"end\" | \"inline\"",
         "required": false,
         "defaultValue": "inline",
-        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+        "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
       },
       {
         "name": "disabled",
@@ -12250,10 +12257,10 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
+            "type": "\"below\" | \"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
           },
           {
             "name": "endIcon",
@@ -12374,10 +12381,10 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
+            "type": "\"below\" | \"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
           },
           {
             "name": "endIcon",
@@ -12696,10 +12703,10 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
+            "type": "\"below\" | \"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
           },
           {
             "name": "endIcon",
@@ -12853,10 +12860,10 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
+            "type": "\"below\" | \"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
           },
           {
             "name": "endIcon",
@@ -13487,6 +13494,13 @@
     "slug": "components/navigation/list-item-button",
     "props": [
       {
+        "name": "active",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Marks the open or current item independently of selection and focus. The caller supplies accessible state."
+      },
+      {
         "name": "color",
         "type": "\"danger\" | \"neutral\"",
         "required": false,
@@ -13502,10 +13516,10 @@
       },
       {
         "name": "descriptionPlacement",
-        "type": "\"end\" | \"inline\"",
+        "type": "\"below\" | \"end\" | \"inline\"",
         "required": false,
         "defaultValue": null,
-        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+        "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
       },
       {
         "name": "disabled",
