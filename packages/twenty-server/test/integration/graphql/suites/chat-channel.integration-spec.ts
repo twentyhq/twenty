@@ -4,6 +4,7 @@ import { parse } from 'graphql';
 import { type AgentChatInboxAction } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
@@ -17,15 +18,21 @@ import { expectEventually } from 'test/integration/utils/expect-eventually.util'
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 
+import { type AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type UpdateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/update-agent-chat-channel.input';
+import { type AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { type AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
+import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { buildAgentChatChannelGrantLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-grant-lock-key.util';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
+import { lockAgentChatChannelForDeletionOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-deletion-or-throw.util';
+import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -268,7 +275,7 @@ const waitForMetadataEventListeners = () =>
     'MetadataEventEmitter',
   ).drain();
 
-const waitForBlockedChannelGrantLock = (channelId: string) =>
+const waitForBlockedAdvisoryLock = (lockKey: string) =>
   expectEventually(async () => {
     const [{ count }]: { count: number }[] = await global.testDataSource.query(
       `WITH lock_key AS (SELECT hashtextextended($1, 0) AS value)
@@ -278,16 +285,106 @@ const waitForBlockedChannelGrantLock = (channelId: string) =>
          AND pg_locks.database = (SELECT oid FROM pg_database WHERE datname = current_database())
          AND pg_locks.classid = ((lock_key.value >> 32) & 4294967295)::oid
          AND pg_locks.objid = (lock_key.value & 4294967295)::oid`,
-      [
-        buildAgentChatChannelGrantLockKey({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          channelId,
-        }),
-      ],
+      [lockKey],
     );
 
     expect(count).toBeGreaterThanOrEqual(1);
   });
+
+const waitForBlockedChannelGrantLock = (channelId: string) =>
+  waitForBlockedAdvisoryLock(
+    buildAgentChatChannelGrantLockKey({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      channelId,
+    }),
+  );
+
+const waitForBlockedChannelDeletionLock = (channelId: string) =>
+  waitForBlockedAdvisoryLock(
+    buildAgentChatChannelDeletionLockKey({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      channelId,
+    }),
+  );
+
+const isChannelInCore = async (channelId: string): Promise<boolean> =>
+  isNonEmptyArray(
+    await global.testDataSource.query(
+      `SELECT id FROM core."agentChatChannel" WHERE id = $1`,
+      [channelId],
+    ),
+  );
+
+const countThreadsInChannel = async (channelId: string): Promise<number> => {
+  const [{ count }]: { count: number }[] = await global.testDataSource.query(
+    `SELECT count(*)::int AS count FROM ${SCHEMA}."agentChatThread" WHERE "channelId" = $1`,
+    [channelId],
+  );
+
+  return count;
+};
+
+const countThreadsInDeletedChannels = async (
+  channelIds: string[],
+): Promise<number> => {
+  const [{ count }]: { count: number }[] = await global.testDataSource.query(
+    `SELECT count(*)::int AS count FROM ${SCHEMA}."agentChatThread" thread
+     WHERE thread."channelId" = ANY($1::uuid[])
+       AND NOT EXISTS (
+         SELECT 1 FROM core."agentChatChannel" channel
+         WHERE channel.id = thread."channelId"
+       )`,
+    [channelIds],
+  );
+
+  return count;
+};
+
+const watchThreadEvents = () => {
+  const eventSpy = jest.spyOn(
+    getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter'),
+    'emitDatabaseBatchEvent',
+  );
+
+  return {
+    hasEmittedThreadEvent: (threadId: string) =>
+      eventSpy.mock.calls.some(
+        ([batchEvent]) =>
+          batchEvent?.objectMetadataNameSingular === 'agentChatThread' &&
+          batchEvent.events.some(
+            (event) => 'recordId' in event && event.recordId === threadId,
+          ),
+      ),
+  };
+};
+
+const getChannelMetadataService = () =>
+  getAppProviderByClassName<AgentChatChannelMetadataService>(
+    'AgentChatChannelMetadataService',
+  );
+
+const deleteChannelBehindStaleCache = async (channelId: string) => {
+  const staleChannel = await getChannelMetadataService().findChannelOrThrow({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    channelId,
+  });
+
+  assertGraphQLSuccessfulResponse(
+    await makeMetadataApiRequest({
+      query: DELETE_CHANNEL,
+      variables: { channelId },
+    }),
+  );
+
+  jest
+    .spyOn(
+      getAppProviderByClassName<AgentChatChannelAccessService>(
+        'AgentChatChannelAccessService',
+      ),
+      'assertChannelAccess',
+    )
+    .mockResolvedValue(staleChannel);
+};
 
 const insertChannelGrant = ({
   queryRunner,
@@ -405,6 +502,51 @@ describe('Chat channels through the authenticated API', () => {
     return queryRunner;
   };
 
+  const holdChannelDeletionLock = async ({
+    channelId,
+    mode,
+  }: {
+    channelId: string;
+    mode: 'shared' | 'exclusive';
+  }): Promise<QueryRunner> => {
+    const queryRunner = global.testDataSource.createQueryRunner();
+    const lockChannel =
+      mode === 'shared'
+        ? lockAgentChatChannelForThreadWriteOrThrow
+        : lockAgentChatChannelForDeletionOrThrow;
+
+    await queryRunner.connect();
+    heldQueryRunners.push(queryRunner);
+    await queryRunner.startTransaction();
+    await lockChannel({
+      manager: queryRunner.manager,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      channelId,
+    });
+
+    return queryRunner;
+  };
+
+  const fileThreadIntoHeldChannel = async ({
+    threadId,
+    channelId,
+  }: {
+    threadId: string;
+    channelId: string;
+  }): Promise<QueryRunner> => {
+    const queryRunner = await holdChannelDeletionLock({
+      channelId,
+      mode: 'shared',
+    });
+
+    await queryRunner.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "channelId" = $1 WHERE id = $2`,
+      [channelId, threadId],
+    );
+
+    return queryRunner;
+  };
+
   // Jony holds Member, which reaches every channel unless a test closes it
   const closeMemberAllChannelsAccess = async (): Promise<string> => {
     const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
@@ -418,6 +560,9 @@ describe('Chat channels through the authenticated API', () => {
 
   afterEach(async () => {
     jest.restoreAllMocks();
+
+    const orphanedThreadCount =
+      await countThreadsInDeletedChannels(createdChannelIds);
 
     for (const queryRunner of heldQueryRunners.splice(0)) {
       if (queryRunner.isTransactionActive) {
@@ -452,6 +597,8 @@ describe('Chat channels through the authenticated API', () => {
         variables: { channelId },
       });
     }
+
+    expect(orphanedThreadCount).toBe(0);
   });
 
   it('creates a channel under a trimmed name, after General', async () => {
@@ -1199,10 +1346,7 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(selfResponse.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
 
-    const eventSpy = jest.spyOn(
-      getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter'),
-      'emitDatabaseBatchEvent',
-    );
+    const { hasEmittedThreadEvent } = watchThreadEvents();
 
     assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
@@ -1219,15 +1363,274 @@ describe('Chat channels through the authenticated API', () => {
     ]);
     expect((await listChannels()).map(({ id }) => id)).not.toContain(channelId);
     // Moved in SQL, so the move is sent for clients watching the chat
+    expect(hasEmittedThreadEvent(threadId)).toBe(true);
+  });
+
+  it('refuses chats in a channel while it is being deleted', async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(null);
+    const channelMetadataService = getChannelMetadataService();
+    const deleteChannelMetadata = channelMetadataService.deleteChannel.bind(
+      channelMetadataService,
+    );
+    const writeIntoChannel = jest.fn(() =>
+      Promise.all([
+        makeMetadataApiRequest({
+          query: CREATE_THREAD,
+          variables: { channelId },
+        }),
+        makeMetadataApiRequest({
+          query: MOVE_THREAD,
+          variables: { threadId, channelId },
+        }),
+        getAppProviderByClassName<AgentChatThreadService>(
+          'AgentChatThreadService',
+        )
+          .createThreadIfMissing({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            workspaceMemberId: JANE,
+            threadId: randomUUID(),
+            channelId,
+          })
+          .catch((error: unknown) => error),
+      ]),
+    );
+
+    jest
+      .spyOn(channelMetadataService, 'deleteChannel')
+      .mockImplementationOnce(async (args) => {
+        await writeIntoChannel();
+
+        return deleteChannelMetadata(args);
+      });
+
+    assertGraphQLSuccessfulResponse(
+      await makeMetadataApiRequest({
+        query: DELETE_CHANNEL,
+        variables: { channelId },
+      }),
+    );
+
+    const [createResponse, moveResponse, createThreadIfMissingError] =
+      await writeIntoChannel.mock.results[0].value;
+
+    expect(createResponse.body.errors[0].extensions).toMatchObject({
+      code: 'CONFLICT',
+      subCode: AiExceptionCode.CHAT_CHANNEL_BUSY,
+    });
+    expect(moveResponse.body.errors[0].extensions).toMatchObject({
+      code: 'CONFLICT',
+      subCode: AiExceptionCode.CHAT_CHANNEL_BUSY,
+    });
+    expect(createThreadIfMissingError).toMatchObject({
+      code: AiExceptionCode.CHAT_CHANNEL_BUSY,
+    });
+    expect((await readChannelState(threadId)).channelId).toBeNull();
+    expect(await countThreadsInChannel(channelId)).toBe(0);
+    expect(await isChannelInCore(channelId)).toBe(false);
+  });
+
+  it('moves a chat filed into a channel while it is being deleted', async () => {
+    const channelId = await createChannel();
+    const destinationChannelId = await createChannel();
+    const threadId = await createThreadInChannel(null);
+    const queryRunner = await fileThreadIntoHeldChannel({
+      threadId,
+      channelId,
+    });
+
+    const pendingDeleteResponse = Promise.resolve(
+      makeMetadataApiRequest({
+        query: DELETE_CHANNEL,
+        variables: { channelId, destinationChannelId },
+      }),
+    );
+
+    await waitForBlockedChannelDeletionLock(channelId);
+    await queryRunner.commitTransaction();
+
+    assertGraphQLSuccessfulResponse(await pendingDeleteResponse);
+    expect((await readChannelState(threadId)).channelId).toBe(
+      destinationChannelId,
+    );
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: destinationChannelId },
+    ]);
+    expect(await isChannelInCore(channelId)).toBe(false);
+  });
+
+  it('keeps a channel a chat is filed into while it is being deleted with nowhere to go', async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(null);
+    const queryRunner = await fileThreadIntoHeldChannel({
+      threadId,
+      channelId,
+    });
+
+    const pendingDeleteResponse = Promise.resolve(
+      makeMetadataApiRequest({
+        query: DELETE_CHANNEL,
+        variables: { channelId },
+      }),
+    );
+
+    await waitForBlockedChannelDeletionLock(channelId);
+    await queryRunner.commitTransaction();
+
     expect(
-      eventSpy.mock.calls.some(
-        ([batchEvent]) =>
-          batchEvent?.objectMetadataNameSingular === 'agentChatThread' &&
-          batchEvent.events.some(
-            (event) => 'recordId' in event && event.recordId === threadId,
-          ),
-      ),
-    ).toBe(true);
+      (await pendingDeleteResponse).body.errors[0].extensions,
+    ).toMatchObject({
+      code: 'CONFLICT',
+      subCode: AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
+    });
+    expect(await isChannelInCore(channelId)).toBe(true);
+    expect((await readChannelState(threadId)).channelId).toBe(channelId);
+  });
+
+  it('refuses chats in a deleted channel that a stale cache still lists', async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(null);
+
+    await deleteChannelBehindStaleCache(channelId);
+
+    const createResponse = await makeMetadataApiRequest({
+      query: CREATE_THREAD,
+      variables: { channelId },
+    });
+    const moveResponse = await makeMetadataApiRequest({
+      query: MOVE_THREAD,
+      variables: { threadId, channelId },
+    });
+
+    expect(createResponse.body.errors[0].extensions).toMatchObject({
+      code: 'NOT_FOUND',
+      subCode: AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
+    });
+    expect(moveResponse.body.errors[0].extensions).toMatchObject({
+      code: 'NOT_FOUND',
+      subCode: AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
+    });
+    expect(await countThreadsInChannel(channelId)).toBe(0);
+    expect((await readChannelState(threadId)).channelId).toBeNull();
+  });
+
+  it('keeps chats out of a deleted destination that a stale cache still lists', async () => {
+    const channelId = await createChannel();
+    const destinationChannelId = await createChannel();
+    const threadId = await createThreadInChannel(channelId);
+
+    await deleteChannelBehindStaleCache(destinationChannelId);
+
+    const deleteResponse = await makeMetadataApiRequest({
+      query: DELETE_CHANNEL,
+      variables: { channelId, destinationChannelId },
+    });
+
+    expect(deleteResponse.body.errors[0].extensions).toMatchObject({
+      code: 'NOT_FOUND',
+      subCode: AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
+    });
+    expect(await isChannelInCore(channelId)).toBe(true);
+    expect((await readChannelState(threadId)).channelId).toBe(channelId);
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: channelId },
+    ]);
+  });
+
+  it('refuses to move chats into a channel that is being deleted', async () => {
+    const channelId = await createChannel();
+    const destinationChannelId = await createChannel();
+    const threadId = await createThreadInChannel(channelId);
+
+    await holdChannelDeletionLock({
+      channelId: destinationChannelId,
+      mode: 'exclusive',
+    });
+
+    const deleteResponse = await makeMetadataApiRequest({
+      query: DELETE_CHANNEL,
+      variables: { channelId, destinationChannelId },
+    });
+
+    expect(deleteResponse.body.errors[0].extensions).toMatchObject({
+      code: 'CONFLICT',
+      subCode: AiExceptionCode.CHAT_CHANNEL_BUSY,
+    });
+    expect(await isChannelInCore(channelId)).toBe(true);
+    expect((await readChannelState(threadId)).channelId).toBe(channelId);
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: channelId },
+    ]);
+  });
+
+  it('announces the chats it moved when the channel cannot be deleted afterwards', async () => {
+    const channelId = await createChannel();
+    const destinationChannelId = await createChannel();
+    const threadId = await createThreadInChannel(channelId);
+    const { hasEmittedThreadEvent } = watchThreadEvents();
+
+    jest
+      .spyOn(getChannelMetadataService(), 'deleteChannel')
+      .mockRejectedValueOnce(new Error('Metadata delete failed'));
+
+    const deleteResponse = await makeMetadataApiRequest({
+      query: DELETE_CHANNEL,
+      variables: { channelId, destinationChannelId },
+    });
+
+    expect(deleteResponse.body.errors).toBeDefined();
+    expect((await readChannelState(threadId)).channelId).toBe(
+      destinationChannelId,
+    );
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: destinationChannelId },
+    ]);
+    expect(await isChannelInCore(channelId)).toBe(true);
+    expect(hasEmittedThreadEvent(threadId)).toBe(true);
+
+    await createThreadInChannel(channelId);
+  });
+
+  it('deletes two channels into each other without leaving a chat behind', async () => {
+    const firstChannelId = await createChannel();
+    const secondChannelId = await createChannel();
+    const firstThreadId = await createThreadInChannel(firstChannelId);
+    const secondThreadId = await createThreadInChannel(secondChannelId);
+
+    const deleteResponses = await Promise.all([
+      makeMetadataApiRequest({
+        query: DELETE_CHANNEL,
+        variables: {
+          channelId: firstChannelId,
+          destinationChannelId: secondChannelId,
+        },
+      }),
+      makeMetadataApiRequest({
+        query: DELETE_CHANNEL,
+        variables: {
+          channelId: secondChannelId,
+          destinationChannelId: firstChannelId,
+        },
+      }),
+    ]);
+    const failedDeleteResponses = deleteResponses.filter(({ body }) =>
+      isDefined(body.errors),
+    );
+
+    expect(failedDeleteResponses.length).toBeGreaterThanOrEqual(1);
+    for (const { body } of failedDeleteResponses) {
+      expect([
+        AiExceptionCode.CHAT_CHANNEL_BUSY,
+        AiExceptionCode.CHAT_CHANNEL_NOT_FOUND,
+      ]).toContain(body.errors[0].extensions.subCode);
+    }
+    for (const threadId of [firstThreadId, secondThreadId]) {
+      const { channelId } = await readChannelState(threadId);
+
+      expect(isDefined(channelId) && (await isChannelInCore(channelId))).toBe(
+        true,
+      );
+    }
   });
 
   it('pins a channel to the sidebar until the channel is deleted', async () => {

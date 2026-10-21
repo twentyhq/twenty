@@ -8,7 +8,10 @@ import { type AgentChatChannelRoleDTO } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { assertAgentChatChannelExists } from 'src/engine/metadata-modules/ai/ai-chat/utils/assert-agent-chat-channel-exists.util';
 import { isAgentChatChannelOpenToRole } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-channel-open-to-role.util';
+import { lockAgentChatChannelForDeletionOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-deletion-or-throw.util';
+import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatChannelsUnavailable } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channels-unavailable.util';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -159,27 +162,28 @@ export class AgentChatChannelService {
       });
     }
 
-    const movedThreads = await this.moveChannelThreads({
-      workspaceId,
-      channelId,
-      destinationChannelId,
-    });
+    await this.threadRepository.query(workspaceId, async ({ manager }) => {
+      await lockAgentChatChannelForDeletionOrThrow({
+        manager,
+        workspaceId,
+        channelId,
+      });
 
-    await this.channelMetadataService.deleteChannel({
-      workspaceId,
-      channelId,
-    });
+      const movedThreads = await this.moveChannelThreads({
+        workspaceId,
+        channelId,
+        destinationChannelId,
+      });
 
-    // A chat moved in while the channel was going is moved after it
-    const lateMovedThreads = await this.moveChannelThreads({
-      workspaceId,
-      channelId,
-      destinationChannelId,
-    });
+      await this.threadRecordEventService.emitThreadsUpdated({
+        workspaceId,
+        threads: movedThreads,
+      });
 
-    await this.threadRecordEventService.emitThreadsUpdated({
-      workspaceId,
-      threads: [...movedThreads, ...lateMovedThreads],
+      await this.channelMetadataService.deleteChannel({
+        workspaceId,
+        channelId,
+      });
     });
   }
 
@@ -222,6 +226,8 @@ export class AgentChatChannelService {
     return this.threadRepository.query(
       workspaceId,
       async ({ manager, table }) => {
+        await assertAgentChatChannelExists({ manager, workspaceId, channelId });
+
         const threadsBefore = await manager.query<
           AgentChatThreadWorkspaceEntity[]
         >(
@@ -240,6 +246,12 @@ export class AgentChatChannelService {
             AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY,
           );
         }
+
+        await lockAgentChatChannelForThreadWriteOrThrow({
+          manager,
+          workspaceId,
+          channelId: destinationChannelId,
+        });
 
         const threadsAfter = await manager.query<
           AgentChatThreadWorkspaceEntity[]

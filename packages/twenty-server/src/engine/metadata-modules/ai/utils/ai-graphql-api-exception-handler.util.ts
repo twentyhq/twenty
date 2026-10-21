@@ -48,6 +48,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.THREAD_AWAITING_ANSWER:
       case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
       case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
+      case AiExceptionCode.CHAT_CHANNEL_BUSY:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
