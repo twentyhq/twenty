@@ -13,10 +13,11 @@ export class ConnectedAccountOwnershipTransferService {
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
-  // Reassigns app connections owned by a departing member to another member
-  // instead of leaving them orphaned against a userWorkspaceId that's about
-  // to be deleted. Every path that removes a member from a workspace while
-  // it stays active must call this before deleting the userWorkspace.
+  // Reassigns a departing member's connections to a custodian instead of
+  // orphaning them; personal app connections are someone else's credential,
+  // which no custodian can legitimately reconnect, so they are deleted. Every
+  // path removing a member from a still-active workspace must call this
+  // before deleting the userWorkspace.
   async transferConnectedAccountsOwnershipToCustodian({
     removedUserWorkspace,
     actingUserWorkspaceId,
@@ -24,6 +25,13 @@ export class ConnectedAccountOwnershipTransferService {
     removedUserWorkspace: UserWorkspaceEntity;
     actingUserWorkspaceId?: string;
   }) {
+    await this.connectedAccountMetadataService.deletePersonalAppConnectedAccounts(
+      {
+        userWorkspaceId: removedUserWorkspace.id,
+        workspaceId: removedUserWorkspace.workspaceId,
+      },
+    );
+
     const custodianUserWorkspace =
       await this.userRoleService.resolveCustodianUserWorkspace({
         removedUserWorkspace,

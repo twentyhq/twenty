@@ -380,9 +380,16 @@ export class ConnectedAccountMetadataService {
     toUserWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const connectedAccounts = await this.repository.find({
-      where: { userWorkspaceId: fromUserWorkspaceId, workspaceId },
-    });
+    // Guard: personal app connections are deleted, never transferred.
+    const connectedAccounts = (
+      await this.repository.find({
+        where: { userWorkspaceId: fromUserWorkspaceId, workspaceId },
+      })
+    ).filter(
+      (connectedAccount) =>
+        connectedAccount.provider !== ConnectedAccountProvider.APP ||
+        connectedAccount.scope !== 'USER',
+    );
 
     if (connectedAccounts.length === 0) {
       return;
@@ -465,6 +472,28 @@ export class ConnectedAccountMetadataService {
 
     for (const connectedAccount of connectedAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+    }
+  }
+
+  async deletePersonalAppConnectedAccounts({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const personalAppConnectedAccounts = await this.repository.find({
+      where: {
+        userWorkspaceId,
+        workspaceId,
+        provider: ConnectedAccountProvider.APP,
+        scope: 'USER',
+      },
+      select: { id: true },
+    });
+
+    for (const { id } of personalAppConnectedAccounts) {
+      await this.delete({ id, workspaceId });
     }
   }
 
