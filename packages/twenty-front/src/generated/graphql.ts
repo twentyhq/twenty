@@ -92,6 +92,7 @@ export type CoreWorkflowEdge = {
 };
 
 export enum CoreWorkflowFilterFieldKey {
+  IS_SYSTEM = 'IS_SYSTEM',
   NAME = 'NAME',
   STATUSES = 'STATUSES',
   UPDATED_AT = 'UPDATED_AT'

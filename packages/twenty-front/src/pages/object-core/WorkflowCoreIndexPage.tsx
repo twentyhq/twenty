@@ -14,10 +14,13 @@ import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTab
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
+import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
-import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
+import { CoreObjectFilterButton } from '@/object-core/filters/components/CoreObjectFilterButton';
+import { hasAppliedCoreObjectFilters } from '@/object-core/filters/utils/hasAppliedCoreObjectFilters';
+import { CORE_WORKFLOW_FILTER_FIELDS } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
+import { CORE_WORKFLOWS_DEFAULT_FILTER_SETTINGS } from '@/object-core/workflows/constants/CoreWorkflowsDefaultFilterSettings';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
@@ -63,13 +66,18 @@ const WorkflowCoreIndexContent = () => {
 
   useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
 
+  const { openCoreWorkflowFiltersSidePanel } =
+    useOpenCoreWorkflowFiltersSidePanel();
+
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
   );
 
-  const hasAppliedFilters = (
-    coreWorkflowsFilterSettings.stepFilters ?? []
-  ).some(isUsableCoreWorkflowFilterRule);
+  const hasAppliedFilters = hasAppliedCoreObjectFilters({
+    filterSettings: coreWorkflowsFilterSettings,
+    defaultFilterSettings: CORE_WORKFLOWS_DEFAULT_FILTER_SETTINGS,
+    filterFields: CORE_WORKFLOW_FILTER_FIELDS,
+  });
 
   const hasError = isDefined(error);
 
@@ -98,7 +106,10 @@ const WorkflowCoreIndexContent = () => {
               <PinnedCommandMenuItemButtons />
             </CommandMenuContextProvider>
           </CommandMenuComponentInstanceContext.Provider>
-          <CoreWorkflowsFilterBar />
+          <CoreObjectFilterButton
+            isFilterActive={hasAppliedFilters}
+            onClick={openCoreWorkflowFiltersSidePanel}
+          />
           <SidePanelToggleButton />
         </>
       }

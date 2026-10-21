@@ -3,26 +3,28 @@ import { useContext } from 'react';
 import { ViewFilterOperand, type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CORE_WORKFLOW_FILTER_FIELDS } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
-import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
+import { type CoreObjectFilterField } from '@/object-core/filters/types/CoreObjectFilterField';
+import { findCoreObjectFilterField } from '@/object-core/filters/utils/findCoreObjectFilterField';
 import { Select } from '@/ui/input/components/Select';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { getStepFilterOperands } from '@/workflow/workflow-steps/filters/utils/getStepFilterOperands';
 
-type CoreWorkflowFilterFieldSelectProps = {
+type CoreObjectFilterFieldSelectProps = {
+  filterFields: CoreObjectFilterField[];
   stepFilter: StepFilter;
 };
 
-export const CoreWorkflowFilterFieldSelect = ({
+export const CoreObjectFilterFieldSelect = ({
+  filterFields,
   stepFilter,
-}: CoreWorkflowFilterFieldSelectProps) => {
+}: CoreObjectFilterFieldSelectProps) => {
   const { t } = useLingui();
   const { readonly } = useContext(WorkflowStepFilterContext);
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
   const handleFieldChange = (fieldKey: string) => {
-    const selectedField = findCoreWorkflowFilterField(fieldKey);
+    const selectedField = findCoreObjectFilterField({ filterFields, fieldKey });
 
     if (!isDefined(selectedField)) {
       return;
@@ -46,8 +48,8 @@ export const CoreWorkflowFilterFieldSelect = ({
 
   return (
     <Select
-      dropdownId={`core-workflow-filter-field-${stepFilter.id}`}
-      options={CORE_WORKFLOW_FILTER_FIELDS.map((field) => ({
+      dropdownId={`core-object-filter-field-${stepFilter.id}`}
+      options={filterFields.map((field) => ({
         value: field.key,
         label: t(field.label),
         Icon: field.Icon,

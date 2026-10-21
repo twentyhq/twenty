@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { ViewFilterOperand, type StepFilter } from 'twenty-shared/types';
 import {
@@ -8,7 +9,9 @@ import {
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 
-import { findCoreWorkflowFilterField } from '@/object-core/workflows/utils/findCoreWorkflowFilterField';
+import { type CoreObjectFilterField } from '@/object-core/filters/types/CoreObjectFilterField';
+import { findCoreObjectFilterField } from '@/object-core/filters/utils/findCoreObjectFilterField';
+import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormRelativeDatePicker } from '@/object-record/record-field/ui/form-types/components/FormRelativeDatePicker';
@@ -17,13 +20,15 @@ import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/str
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/filters/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 
-type CoreWorkflowFilterValueInputProps = {
+type CoreObjectFilterValueInputProps = {
+  filterFields: CoreObjectFilterField[];
   stepFilter: StepFilter;
 };
 
-export const CoreWorkflowFilterValueInput = ({
+export const CoreObjectFilterValueInput = ({
+  filterFields,
   stepFilter,
-}: CoreWorkflowFilterValueInputProps) => {
+}: CoreObjectFilterValueInputProps) => {
   const { t } = useLingui();
   const { readonly } = useContext(WorkflowStepFilterContext);
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
@@ -34,13 +39,31 @@ export const CoreWorkflowFilterValueInput = ({
     });
   };
 
-  const selectedField = findCoreWorkflowFilterField(stepFilter.stepOutputKey);
+  const selectedField = findCoreObjectFilterField({
+    filterFields,
+    fieldKey: stepFilter.stepOutputKey,
+  });
 
   if (
     !isDefined(selectedField) ||
     !isRecordFilterOperandExpectingValue(stepFilter.operand)
   ) {
     return null;
+  }
+
+  if (selectedField.filterType === 'BOOLEAN') {
+    return (
+      <FormBooleanFieldInput
+        key={`${stepFilter.id}-${stepFilter.operand}`}
+        defaultValue={
+          isNonEmptyString(stepFilter.value)
+            ? stepFilter.value === 'true'
+            : undefined
+        }
+        onChange={(value) => persistValue(String(value))}
+        readonly={readonly}
+      />
+    );
   }
 
   if (selectedField.filterType === 'MULTI_SELECT') {

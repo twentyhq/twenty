@@ -5,13 +5,13 @@ import { IconPlus } from 'twenty-ui/icon';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { useAddStepFilterToGroup } from '@/workflow/workflow-steps/filters/hooks/useAddStepFilterToGroup';
 
-type CoreWorkflowFilterAddRuleButtonProps = {
+type CoreObjectFilterAddRuleButtonProps = {
   stepFilterGroup: StepFilterGroup;
 };
 
-export const CoreWorkflowFilterAddRuleButton = ({
+export const CoreObjectFilterAddRuleButton = ({
   stepFilterGroup,
-}: CoreWorkflowFilterAddRuleButtonProps) => {
+}: CoreObjectFilterAddRuleButtonProps) => {
   const { addStepFilterToGroup } = useAddStepFilterToGroup({
     stepFilterGroup,
   });
