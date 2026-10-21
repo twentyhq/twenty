@@ -13,7 +13,6 @@ export const IllustrationIconCurrency = (
   return (
     <IllustrationIconWrapper>
       <IllustrationIconCurrencyRaw
-        data-twenty-icon=""
         height={size}
         width={size}
         fill={theme.accent.accent3}

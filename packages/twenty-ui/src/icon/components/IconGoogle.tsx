@@ -8,5 +8,5 @@ export const IconGoogle = (props: IconGoogleProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconGoogleRaw data-twenty-icon="" height={size} width={size} />;
+  return <IconGoogleRaw height={size} width={size} />;
 };

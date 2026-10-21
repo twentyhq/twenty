@@ -13,7 +13,6 @@ export const IllustrationIconCalendarEvent = (
   return (
     <IllustrationIconWrapper>
       <IllustrationIconCalendarEventRaw
-        data-twenty-icon=""
         fill={theme.accent.accent3}
         color={theme.accent.accent8}
         height={size}

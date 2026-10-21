@@ -8,5 +8,5 @@ export const IconBrandMistral = (props: IconBrandMistralProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconBrandMistralRaw data-twenty-icon="" height={size} width={size} />;
+  return <IconBrandMistralRaw height={size} width={size} />;
 };

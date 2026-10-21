@@ -9,12 +9,5 @@ export const IconTrashXOff = (props: IconTrashXOffProps) => {
   const size = props.size ?? theme.icon.size.lg;
   const stroke = props.stroke ?? theme.icon.stroke.md;
 
-  return (
-    <IconTrashXOffRaw
-      data-twenty-icon=""
-      height={size}
-      width={size}
-      strokeWidth={stroke}
-    />
-  );
+  return <IconTrashXOffRaw height={size} width={size} strokeWidth={stroke} />;
 };

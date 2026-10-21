@@ -14,7 +14,6 @@ export const IllustrationIconSetting = (
   return (
     <IllustrationIconWrapper>
       <IllustrationIconSettingRaw
-        data-twenty-icon=""
         height={size}
         width={size}
         fill={theme.accent.accent3}

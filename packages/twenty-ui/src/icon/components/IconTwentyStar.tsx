@@ -9,12 +9,5 @@ export const IconTwentyStar = (props: IconTwentyStarProps) => {
   const size = props.size ?? 24;
   const stroke = props.stroke ?? theme.icon.stroke.md;
 
-  return (
-    <IconTwentyStarRaw
-      data-twenty-icon=""
-      height={size}
-      width={size}
-      strokeWidth={stroke}
-    />
-  );
+  return <IconTwentyStarRaw height={size} width={size} strokeWidth={stroke} />;
 };

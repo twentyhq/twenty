@@ -12,7 +12,6 @@ export const IllustrationIconStar = (props: IllustrationIconStarProps) => {
   return (
     <IllustrationIconWrapper>
       <IllustrationIconStarRaw
-        data-twenty-icon=""
         height={size}
         width={size}
         fill={theme.accent.accent3}

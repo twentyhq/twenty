@@ -10,7 +10,6 @@ export const IconBrandXai = (props: IconBrandXaiProps) => {
 
   return (
     <IconBrandXaiRaw
-      data-twenty-icon=""
       height={size}
       width={size}
       color={props.color ?? 'currentColor'}

@@ -11,7 +11,6 @@ export const IllustrationIconMail = (props: IllustrationIconMailProps) => {
   return (
     <IllustrationIconWrapper>
       <IllustrationIconMailRaw
-        data-twenty-icon=""
         height={size}
         width={size}
         fill={theme.accent.accent3}

@@ -12,7 +12,6 @@ export const IllustrationIconPhone = (props: IllustrationIconPhoneProps) => {
   return (
     <IllustrationIconWrapper>
       <IllustrationIconPhoneRaw
-        data-twenty-icon=""
         height={size}
         width={size}
         fill={theme.accent.accent3}

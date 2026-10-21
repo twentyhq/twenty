@@ -8,5 +8,5 @@ export const IconLockCustom = (props: IconLockCustomProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconLockRaw data-twenty-icon="" height={size} width={size} />;
+  return <IconLockRaw height={size} width={size} />;
 };

@@ -8,5 +8,5 @@ export const IconGmail = (props: IconGmailProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
-  return <IconGmailRaw data-twenty-icon="" height={size} width={size} />;
+  return <IconGmailRaw height={size} width={size} />;
 };

@@ -13,7 +13,6 @@ export const IconSparkle2 = ({
   'aria-hidden': ariaHidden,
 }: IconSparkle2Props) => (
   <svg
-    data-twenty-icon=""
     xmlns="http://www.w3.org/2000/svg"
     width={size}
     height={size}
