@@ -5,8 +5,10 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -27,6 +29,7 @@ import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -42,7 +45,10 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
   }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@UseInterceptors(AiGraphqlApiExceptionInterceptor)
+@UseInterceptors(
+  WorkspaceMigrationGraphqlApiExceptionInterceptor,
+  AiGraphqlApiExceptionInterceptor,
+)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @MetadataResolver(() => AgentChatChannelDTO)
 export class AgentChatChannelResolver {
@@ -99,13 +105,15 @@ export class AgentChatChannelResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<AgentChatChannelDTO[]> {
     const canManageChannels =
       await this.permissionsService.userHasWorkspaceSettingPermission({
         workspaceId,
         userWorkspaceId,
         setting: PermissionFlagType.AI_SETTINGS,
-        applicationId: undefined,
+        applicationId: callingApplication?.id,
         agentId: undefined,
       });
 

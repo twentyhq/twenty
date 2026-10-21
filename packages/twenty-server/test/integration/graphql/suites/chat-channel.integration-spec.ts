@@ -413,7 +413,9 @@ describe('Chat channels through the authenticated API', () => {
       variables: { input: { name: 'General' } },
     });
 
-    expect(duplicateResponse.body.errors).toBeDefined();
+    expect(duplicateResponse.body.errors[0].extensions.code).toBe(
+      'METADATA_VALIDATION_FAILED',
+    );
   });
 
   it('leaves setting channels up to who manages AI settings', async () => {

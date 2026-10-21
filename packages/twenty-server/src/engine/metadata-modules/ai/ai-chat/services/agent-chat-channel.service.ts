@@ -150,7 +150,7 @@ export class AgentChatChannelService {
     if (!channel.isCustom) {
       throw new AiException(
         'A standard channel cannot be deleted',
-        AiExceptionCode.CHAT_CHANNEL_MANAGEMENT_FORBIDDEN,
+        AiExceptionCode.CHAT_CHANNEL_IS_STANDARD,
       );
     }
 

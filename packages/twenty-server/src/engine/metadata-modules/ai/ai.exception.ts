@@ -23,7 +23,7 @@ export enum AiExceptionCode {
   CHAT_CHANNEL_NOT_FOUND = 'CHAT_CHANNEL_NOT_FOUND',
   CHAT_CHANNELS_UNAVAILABLE = 'CHAT_CHANNELS_UNAVAILABLE',
   CHAT_CHANNEL_NOT_EMPTY = 'CHAT_CHANNEL_NOT_EMPTY',
-  CHAT_CHANNEL_MANAGEMENT_FORBIDDEN = 'CHAT_CHANNEL_MANAGEMENT_FORBIDDEN',
+  CHAT_CHANNEL_IS_STANDARD = 'CHAT_CHANNEL_IS_STANDARD',
   INVALID_CHAT_CHANNEL_NAME = 'INVALID_CHAT_CHANNEL_NAME',
   INVALID_CHAT_CHANNEL_ROLE = 'INVALID_CHAT_CHANNEL_ROLE',
   INVALID_CHAT_CHANNEL_DESTINATION = 'INVALID_CHAT_CHANNEL_DESTINATION',
@@ -85,8 +85,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Channels are not available yet. Try again in a few minutes.`;
     case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
       return msg`Move this channel's chats to another channel before deleting it.`;
-    case AiExceptionCode.CHAT_CHANNEL_MANAGEMENT_FORBIDDEN:
-      return msg`Only the people who manage this channel can do this.`;
+    case AiExceptionCode.CHAT_CHANNEL_IS_STANDARD:
+      return msg`Standard channels cannot be deleted.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:
       return msg`A channel needs a name.`;
     case AiExceptionCode.INVALID_CHAT_CHANNEL_ROLE:
