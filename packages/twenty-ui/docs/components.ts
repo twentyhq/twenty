@@ -10,6 +10,7 @@ import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartProp
 import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
+import { DETAILS_ROW_PROP_DESCRIPTIONS } from './detailsRowPropDescriptions';
 import { PROGRESS_PART_PROP_DESCRIPTIONS } from './progressPartPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
@@ -133,6 +134,14 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/progress-ring',
     propDescriptions: PROGRESS_RING_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'DetailsRow',
+    source: 'components/data-display/DetailsRow/DetailsRow.tsx',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/details-row',
+    propDescriptions: DETAILS_ROW_PROP_DESCRIPTIONS,
+    propDefaults: { labelWidth: '7rem' },
   },
   {
     name: 'MetricRow',
