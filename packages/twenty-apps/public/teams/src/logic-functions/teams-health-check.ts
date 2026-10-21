@@ -1,0 +1,50 @@
+import {
+  type ApplicationHealthCheckResult,
+  defineHealthCheck,
+} from 'twenty-sdk/define';
+import { listConnections } from 'twenty-sdk/logic-function';
+
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
+import { HEALTH_CHECK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
+import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
+import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
+import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
+
+export const teamsHealthCheckHandler =
+  async (): Promise<ApplicationHealthCheckResult> => {
+    const isChatEnabled = isFeatureEnabled({
+      isAvailable: RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED,
+      settingValue: process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY],
+    });
+
+    if (!isChatEnabled && !isTeamsTranscriptImportEnabled()) {
+      return { status: 'OK' };
+    }
+
+    const connections = await listConnections({
+      providerName: TEAMS_PROVIDER_NAME,
+    });
+
+    if (connections.length > 0) {
+      return { status: 'OK' };
+    }
+
+    return {
+      status: 'WARNING',
+      title: 'Microsoft Teams is not connected',
+      description:
+        'No Microsoft Teams account is connected to this workspace, so the app cannot reach Teams. Add a connection to start importing meeting transcripts.',
+      // Connections are managed in the General tab, not the tab the banner is read from.
+      action: { label: 'Add connection', location: '#general' },
+    };
+  };
+
+export default defineHealthCheck({
+  universalIdentifier: HEALTH_CHECK_UNIVERSAL_IDENTIFIER,
+  name: 'teams-health-check',
+  description:
+    'Warns on the app settings page when no Microsoft Teams account is connected, since transcripts and chat both rely on a connection.',
+  timeoutSeconds: 30,
+  handler: teamsHealthCheckHandler,
+});
