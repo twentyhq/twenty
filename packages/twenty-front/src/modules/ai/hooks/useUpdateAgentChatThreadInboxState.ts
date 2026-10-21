@@ -40,7 +40,13 @@ const OPTIMISTIC_VISIT_BY_ACTION: Partial<
   },
 };
 
-const isSameThreadIdSet = (threadIds: string[], otherThreadIds: string[]) =>
+const isSameThreadIdSet = ({
+  threadIds,
+  otherThreadIds,
+}: {
+  threadIds: string[];
+  otherThreadIds: string[];
+}) =>
   threadIds.length === otherThreadIds.length &&
   threadIds.every((threadId) => otherThreadIds.includes(threadId));
 
@@ -60,7 +66,10 @@ const findTabSelectionCoveringThreads = ({
     return undefined;
   }
 
-  return isSameThreadIdSet(inboxTabSelection.selectedThreadIds, threadIds)
+  return isSameThreadIdSet({
+    threadIds: inboxTabSelection.selectedThreadIds,
+    otherThreadIds: threadIds,
+  })
     ? inboxTabSelection
     : undefined;
 };

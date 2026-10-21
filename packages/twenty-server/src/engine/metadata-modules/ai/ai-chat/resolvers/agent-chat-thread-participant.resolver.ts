@@ -32,7 +32,7 @@ registerEnumType(AGENT_CHAT_THREAD_FILTER_STATUS, {
   name: 'AgentChatThreadFilterStatus',
 });
 
-const assertSnoozeTimeIsValid = ({
+const validateSnoozeTimeOrThrow = ({
   action,
   snoozedUntil,
 }: {
@@ -94,7 +94,7 @@ export class AgentChatThreadParticipantResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadParticipantDTO[]> {
-    assertSnoozeTimeIsValid({ action, snoozedUntil });
+    validateSnoozeTimeOrThrow({ action, snoozedUntil });
 
     return this.participantService.updateInboxState({
       threadIds,
@@ -105,7 +105,6 @@ export class AgentChatThreadParticipantResolver {
     });
   }
 
-  // For a selection that reaches past the chats the member has loaded
   @Mutation(() => [AgentChatThreadParticipantDTO])
   async updateAgentChatThreadInboxStateInFilterStatus(
     @Args('filterStatus', { type: () => AGENT_CHAT_THREAD_FILTER_STATUS })
@@ -126,7 +125,7 @@ export class AgentChatThreadParticipantResolver {
       );
     }
 
-    assertSnoozeTimeIsValid({ action, snoozedUntil });
+    validateSnoozeTimeOrThrow({ action, snoozedUntil });
 
     return this.participantService.updateInboxStateInFilterStatus({
       filterStatus,

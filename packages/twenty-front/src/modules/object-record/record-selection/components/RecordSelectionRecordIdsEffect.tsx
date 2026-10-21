@@ -35,24 +35,21 @@ export const RecordSelectionRecordIdsEffect = ({
     const recordIdSet = new Set(recordIds);
     const previousRecordIds = store.get(recordIdsAtom);
 
-    if (
-      store.get(
-        hasUserSelectedAllRecordsComponentState.atomFamily({ instanceId }),
-      )
-    ) {
-      const previousRecordIdSet = new Set(previousRecordIds);
+    const previousRecordIdSet = new Set(previousRecordIds);
+    const addedRecordIds = store.get(
+      hasUserSelectedAllRecordsComponentState.atomFamily({ instanceId }),
+    )
+      ? recordIds.filter((recordId) => !previousRecordIdSet.has(recordId))
+      : [];
 
-      for (const recordId of recordIds) {
-        if (!previousRecordIdSet.has(recordId)) {
-          store.set(
-            isRecordSelectedComponentFamilyState.atomFamily({
-              instanceId,
-              familyKey: recordId,
-            }),
-            true,
-          );
-        }
-      }
+    for (const recordId of addedRecordIds) {
+      store.set(
+        isRecordSelectedComponentFamilyState.atomFamily({
+          instanceId,
+          familyKey: recordId,
+        }),
+        true,
+      );
     }
 
     // A record that leaves the list leaves the selection too, so it is not

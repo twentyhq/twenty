@@ -11,7 +11,6 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// Without more chats to load, the loaded chats are the whole tab
 export const useAiChatInboxTabSelection = (
   threads: Pick<AgentChatThreadRecord, 'id'>[],
 ) => {
@@ -30,7 +29,7 @@ export const useAiChatInboxTabSelection = (
   const isTabSelection =
     hasUserSelectedAllRecords &&
     selectedRecordIds.length > 0 &&
-    filterStatusPage?.hasNextPage === true;
+    (filterStatusPage?.hasNextPage ?? false);
 
   const tabSelection = useMemo((): AgentChatInboxTabSelection | null => {
     if (!isTabSelection) {
