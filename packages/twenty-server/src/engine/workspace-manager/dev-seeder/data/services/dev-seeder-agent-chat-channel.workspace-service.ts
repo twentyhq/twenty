@@ -107,9 +107,9 @@ export class DevSeederAgentChatChannelWorkspaceService {
       });
     }
 
-    await this.channelGrantService.rewriteGrants({
+    await this.channelGrantService.rewriteChannelGrants({
       workspaceId,
-      channelIds: [generalChannelId],
+      channelId: generalChannelId,
     });
   }
 

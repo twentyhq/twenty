@@ -2,7 +2,9 @@ import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
 import { type AgentChatInboxAction } from 'twenty-shared/ai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { type QueryRunner } from 'typeorm';
 
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
@@ -17,10 +19,14 @@ import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.u
 
 import { type UpdateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/update-agent-chat-channel.input';
 import { type AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
+import { buildAgentChatChannelGrantLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-grant-lock-key.util';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -257,6 +263,58 @@ const setRoleAllChannelsAccess = async (
   expect(errors).toBeUndefined();
 };
 
+const waitForMetadataEventListeners = () =>
+  getAppProviderByClassName<MetadataEventEmitter>(
+    'MetadataEventEmitter',
+  ).drain();
+
+const waitForBlockedChannelGrantLock = (channelId: string) =>
+  expectEventually(async () => {
+    const [{ count }]: { count: number }[] = await global.testDataSource.query(
+      `WITH lock_key AS (SELECT hashtextextended($1, 0) AS value)
+       SELECT count(*)::int AS count FROM pg_locks, lock_key
+       WHERE pg_locks.locktype = 'advisory' AND NOT pg_locks.granted
+         AND pg_locks.objsubid = 1
+         AND pg_locks.database = (SELECT oid FROM pg_database WHERE datname = current_database())
+         AND pg_locks.classid = ((lock_key.value >> 32) & 4294967295)::oid
+         AND pg_locks.objid = (lock_key.value & 4294967295)::oid`,
+      [
+        buildAgentChatChannelGrantLockKey({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          channelId,
+        }),
+      ],
+    );
+
+    expect(count).toBeGreaterThanOrEqual(1);
+  });
+
+const insertChannelGrant = ({
+  queryRunner,
+  threadId,
+  roleId,
+  channelId,
+}: {
+  queryRunner: QueryRunner;
+  threadId: string;
+  roleId: string;
+  channelId: string;
+}) =>
+  queryRunner.query(
+    `INSERT INTO ${SCHEMA}."recordShare"
+       ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
+     SELECT metadata.id, $1, $2, 'ROLE', 'READ_WRITE', 'RULE', $3
+     FROM core."objectMetadata" metadata
+     WHERE metadata."workspaceId" = $4 AND metadata."universalIdentifier" = $5`,
+    [
+      threadId,
+      roleId,
+      channelId,
+      SEED_APPLE_WORKSPACE_ID,
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    ],
+  );
+
 const simulateNewMessageActivity = (threadId: string) =>
   global.testDataSource.query(
     `UPDATE ${SCHEMA}."agentChatThread" SET "lastActivityAt" = clock_timestamp() WHERE id = $1`,
@@ -322,6 +380,30 @@ describe('Chat channels through the authenticated API', () => {
   };
 
   const roleIdsToReopenToAllChannels = new Set<string>();
+  const heldQueryRunners: QueryRunner[] = [];
+  let isChannelCacheStale = false;
+
+  const holdChannelGrantLock = async ({
+    channelId,
+    mode,
+  }: {
+    channelId: string;
+    mode: 'shared' | 'exclusive';
+  }): Promise<QueryRunner> => {
+    const queryRunner = global.testDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    heldQueryRunners.push(queryRunner);
+    await queryRunner.startTransaction();
+    await acquireAgentChatChannelGrantLocks({
+      manager: queryRunner.manager,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      channelIds: [channelId],
+      mode,
+    });
+
+    return queryRunner;
+  };
 
   // Jony holds Member, which reaches every channel unless a test closes it
   const closeMemberAllChannelsAccess = async (): Promise<string> => {
@@ -329,6 +411,7 @@ describe('Chat channels through the authenticated API', () => {
 
     await setRoleAllChannelsAccess(memberRoleId, false);
     roleIdsToReopenToAllChannels.add(memberRoleId);
+    await waitForMetadataEventListeners();
 
     return memberRoleId;
   };
@@ -336,10 +419,29 @@ describe('Chat channels through the authenticated API', () => {
   afterEach(async () => {
     jest.restoreAllMocks();
 
+    for (const queryRunner of heldQueryRunners.splice(0)) {
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
+      await queryRunner.release();
+    }
+
+    if (isChannelCacheStale) {
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'flatAgentChatChannelMaps',
+        'flatAgentChatChannelRoleMaps',
+        'flatRoleMaps',
+      ]);
+      isChannelCacheStale = false;
+    }
+
     for (const roleId of roleIdsToReopenToAllChannels) {
       await setRoleAllChannelsAccess(roleId, true);
     }
     roleIdsToReopenToAllChannels.clear();
+    await waitForMetadataEventListeners();
 
     for (const threadId of createdThreadIds.splice(0)) {
       await destroyAgentChatThread({ threadId });
@@ -561,6 +663,216 @@ describe('Chat channels through the authenticated API', () => {
         await listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN),
       ).not.toContain(threadId),
     );
+  });
+
+  it('removes a role taken off a channel from a chat filed into it meanwhile', async () => {
+    const memberRoleId = await closeMemberAllChannelsAccess();
+    const channelId = await createChannel({ roleIds: [memberRoleId] });
+    const threadId = await createThreadInChannel(null);
+    const queryRunner = await holdChannelGrantLock({
+      channelId,
+      mode: 'shared',
+    });
+
+    await queryRunner.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "channelId" = $1 WHERE id = $2`,
+      [channelId, threadId],
+    );
+    await insertChannelGrant({
+      queryRunner,
+      threadId,
+      roleId: memberRoleId,
+      channelId,
+    });
+
+    const pendingUpdateResponse = Promise.resolve(
+      updateChannel(channelId, { roleIds: [] }),
+    );
+
+    await waitForBlockedChannelGrantLock(channelId);
+    await queryRunner.commitTransaction();
+
+    assertGraphQLSuccessfulResponse(await pendingUpdateResponse);
+    expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
+  });
+
+  it('grants a chat created in a channel the roles the channel has once it may write them', async () => {
+    const memberRoleId = await closeMemberAllChannelsAccess();
+    const channelId = await createChannel({ roleIds: [memberRoleId] });
+    const queryRunner = await holdChannelGrantLock({
+      channelId,
+      mode: 'exclusive',
+    });
+
+    await queryRunner.query(
+      `DELETE FROM core."agentChatChannelRole" WHERE "channelId" = $1 AND "roleId" = $2`,
+      [channelId, memberRoleId],
+    );
+    isChannelCacheStale = true;
+
+    const pendingCreateResponse = Promise.resolve(
+      makeMetadataApiRequest({
+        query: CREATE_THREAD,
+        variables: { channelId },
+      }),
+    );
+
+    await waitForBlockedChannelGrantLock(channelId);
+    await queryRunner.commitTransaction();
+
+    const createResponse = await pendingCreateResponse;
+
+    assertGraphQLSuccessfulResponse(createResponse);
+
+    const threadId = createResponse.body.data.createChatThread.id;
+
+    createdThreadIds.push(threadId);
+
+    expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: channelId },
+    ]);
+  });
+
+  it('drops the roles of the channel a chat leaves while that channel is rewritten', async () => {
+    const memberRoleId = await closeMemberAllChannelsAccess();
+    const sourceChannelId = await createChannel();
+    const destinationChannelId = await createChannel();
+    const threadId = await createThreadInChannel(sourceChannelId);
+    const queryRunner = await holdChannelGrantLock({
+      channelId: sourceChannelId,
+      mode: 'exclusive',
+    });
+
+    const pendingMoveResponse = Promise.resolve(
+      makeMetadataApiRequest({
+        query: MOVE_THREAD,
+        variables: { threadId, channelId: destinationChannelId },
+      }),
+    );
+
+    await waitForBlockedChannelGrantLock(sourceChannelId);
+    await insertChannelGrant({
+      queryRunner,
+      threadId,
+      roleId: memberRoleId,
+      channelId: sourceChannelId,
+    });
+    await queryRunner.commitTransaction();
+
+    assertGraphQLSuccessfulResponse(await pendingMoveResponse);
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: destinationChannelId },
+    ]);
+    expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
+  });
+
+  it("makes a chat moved into a channel wait for that channel's rewrite", async () => {
+    const sourceChannelId = await createChannel();
+    const destinationChannelId = await createChannel();
+    const threadId = await createThreadInChannel(sourceChannelId);
+    const queryRunner = await holdChannelGrantLock({
+      channelId: destinationChannelId,
+      mode: 'exclusive',
+    });
+
+    const pendingMoveResponse = Promise.resolve(
+      makeMetadataApiRequest({
+        query: MOVE_THREAD,
+        variables: { threadId, channelId: destinationChannelId },
+      }),
+    );
+
+    await waitForBlockedChannelGrantLock(destinationChannelId);
+    await queryRunner.commitTransaction();
+
+    assertGraphQLSuccessfulResponse(await pendingMoveResponse);
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: destinationChannelId },
+    ]);
+  });
+
+  it("removes a role's access to all channels from a chat filed under the old access", async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(null);
+    const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
+    const queryRunner = await holdChannelGrantLock({
+      channelId,
+      mode: 'shared',
+    });
+
+    await queryRunner.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "channelId" = $1 WHERE id = $2`,
+      [channelId, threadId],
+    );
+    await insertChannelGrant({
+      queryRunner,
+      threadId,
+      roleId: memberRoleId,
+      channelId,
+    });
+
+    roleIdsToReopenToAllChannels.add(memberRoleId);
+    await setRoleAllChannelsAccess(memberRoleId, false);
+
+    await waitForBlockedChannelGrantLock(channelId);
+    await queryRunner.commitTransaction();
+    await waitForMetadataEventListeners();
+
+    expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
+  });
+
+  it("restores a channel's grants when its unchanged access is saved again", async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(channelId);
+
+    await global.testDataSource.query(
+      `DELETE FROM ${SCHEMA}."recordShare" WHERE "recordId" = $1 AND "rowCause" = 'RULE'`,
+      [threadId],
+    );
+
+    assertGraphQLSuccessfulResponse(
+      await updateChannel(channelId, { roleIds: [] }),
+    );
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: channelId },
+    ]);
+  });
+
+  it("creates a chat under a destroyed chat's id while its channel is rewritten", async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(channelId);
+
+    createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
+    await destroyAgentChatThread({ threadId });
+
+    const queryRunner = await holdChannelGrantLock({
+      channelId,
+      mode: 'exclusive',
+    });
+
+    const pendingCreate = getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    ).createThreadIfMissing({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: JANE,
+      threadId,
+      channelId,
+    });
+
+    await waitForBlockedChannelGrantLock(channelId);
+    await queryRunner.query(
+      `DELETE FROM ${SCHEMA}."recordShare" WHERE "rowCause" = 'RULE' AND "sourceId" = $1`,
+      [channelId],
+    );
+    await queryRunner.commitTransaction();
+    await pendingCreate;
+    createdThreadIds.push(threadId);
+
+    expect((await readChannelState(threadId)).channelId).toBe(channelId);
+    expect(await readChannelGrants(threadId)).toEqual([
+      { principalType: 'ROLE', sourceId: channelId },
+    ]);
   });
 
   it('refuses a role from outside the workspace', async () => {

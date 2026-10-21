@@ -18,6 +18,7 @@ import { RecordShareStorageService } from 'src/engine/core-modules/record-share/
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
+import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -235,6 +236,12 @@ export class AgentChatSharingService {
     return this.threadRepository.query(
       args.workspaceId,
       async ({ manager, table }) => {
+        await acquireAgentChatChannelGrantLocks({
+          manager,
+          workspaceId: args.workspaceId,
+          channelIds: [args.channelId],
+          mode: 'shared',
+        });
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
           `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${isDefined(args.channelId) ? ', "channelId"' : ''})
            VALUES ($1, $2, $3${isDefined(args.channelId) ? ', $4' : ''}) RETURNING *`,
@@ -265,10 +272,11 @@ export class AgentChatSharingService {
           );
         }
         if (isDefined(args.channelId)) {
-          await this.channelGrantService.rewriteGrantsInTransaction({
+          await this.channelGrantService.rewriteThreadGrantsInTransaction({
             manager,
             workspaceId: args.workspaceId,
             threadIds: [record.id],
+            affectedChannelIds: [args.channelId],
           });
         }
         const [setUpRecord] = await this.setUpCreatedThreadsInboxState({

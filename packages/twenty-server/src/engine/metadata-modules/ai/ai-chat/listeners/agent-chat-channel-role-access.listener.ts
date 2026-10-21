@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
@@ -27,7 +26,6 @@ const isAllChannelsAccessChanged = (event: MetadataEvent): boolean => {
 @Injectable()
 export class AgentChatChannelRoleAccessListener {
   constructor(
-    private readonly channelMetadataService: AgentChatChannelMetadataService,
     private readonly channelGrantService: AgentChatChannelGrantService,
   ) {}
 
@@ -54,12 +52,6 @@ export class AgentChatChannelRoleAccessListener {
       return;
     }
 
-    const channels =
-      await this.channelMetadataService.findChannels(workspaceId);
-
-    await this.channelGrantService.rewriteGrants({
-      workspaceId,
-      channelIds: channels.map(({ id }) => id),
-    });
+    await this.channelGrantService.rewriteAllChannelGrants({ workspaceId });
   }
 }

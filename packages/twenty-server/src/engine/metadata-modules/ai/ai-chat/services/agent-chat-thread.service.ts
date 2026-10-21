@@ -377,6 +377,17 @@ export class AgentChatThreadService {
     const movedThreadIds = await this.threadRepository.query(
       args.workspaceId,
       async ({ manager, table }) => {
+        const [lockedThread] = await manager.query<
+          { channelId: string | null }[]
+        >(
+          `SELECT "channelId" FROM ${table('agentChatThread')} WHERE id = $1 FOR NO KEY UPDATE`,
+          [args.threadId],
+        );
+
+        if (!isDefined(lockedThread)) {
+          return throwAgentChatThreadNotFound();
+        }
+
         const movedThreads = await manager.query<{ id: string }[]>(
           `WITH moved_thread AS (
              UPDATE ${table('agentChatThread')}
@@ -392,10 +403,11 @@ export class AgentChatThreadService {
           [args.threadId, channelId],
         );
 
-        await this.channelGrantService.rewriteGrantsInTransaction({
+        await this.channelGrantService.rewriteThreadGrantsInTransaction({
           manager,
           workspaceId: args.workspaceId,
           threadIds: movedThreads.map(({ id }) => id),
+          affectedChannelIds: [lockedThread.channelId, channelId],
         });
 
         return movedThreads;

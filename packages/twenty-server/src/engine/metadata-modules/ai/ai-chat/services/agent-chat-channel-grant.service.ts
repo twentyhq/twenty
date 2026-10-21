@@ -1,109 +1,161 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
-import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
-import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
-import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
+import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
+import { buildAgentChatChannelAccessQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-access-query.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-type GrantScope =
-  | { threadIds: string[]; channelIds?: never }
-  | { channelIds: string[]; threadIds?: never };
+type AgentChatChannelGrantScope =
+  | { threadIds: string[] }
+  | { channelId: string };
 
-// A chat's only RULE grants, so each rewrite deletes every RULE grant in its scope
+// A chat's only RULE grants, so each rewrite owns every RULE grant in its scope
 @Injectable()
 export class AgentChatChannelGrantService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly channelMetadataService: AgentChatChannelMetadataService,
   ) {}
 
-  async rewriteGrants({
-    workspaceId,
-    ...scope
-  }: GrantScope & { workspaceId: string }): Promise<void> {
-    await this.threadRepository.query(workspaceId, ({ manager }) =>
-      this.rewriteGrantsInTransaction({ manager, workspaceId, ...scope }),
-    );
-  }
-
-  async rewriteGrantsInTransaction({
+  async rewriteThreadGrantsInTransaction({
     manager,
     workspaceId,
     threadIds,
-    channelIds,
-  }: GrantScope & {
+    affectedChannelIds,
+  }: {
     manager: EntityManager;
     workspaceId: string;
+    threadIds: string[];
+    affectedChannelIds: (string | null | undefined)[];
   }): Promise<void> {
-    const scopeIds = threadIds ?? channelIds;
-
-    if (!isNonEmptyArray(scopeIds)) {
+    if (!isNonEmptyArray(threadIds)) {
       return;
     }
 
-    const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-    const { flatObjectMetadataMaps, flatRoleMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatRoleMaps',
-      ]);
-    const threadObjectMetadataId = (
-      findAgentChatFlatObjectMetadata(
-        flatObjectMetadataMaps,
-        'agentChatThread',
-      ) ?? throwAgentChatThreadNotFound()
-    ).id;
-    const channels =
-      await this.channelMetadataService.findChannels(workspaceId);
+    await acquireAgentChatChannelGrantLocks({
+      manager,
+      workspaceId,
+      channelIds: affectedChannelIds,
+      mode: 'shared',
+    });
 
-    const allChannelsRoleIds = Object.values(flatRoleMaps.byUniversalIdentifier)
-      .filter(isDefined)
-      .filter((role) => role.canAccessAllAgentChatChannels)
-      .map(({ id }) => id);
+    await this.replaceGrantsInTransaction({
+      manager,
+      workspaceId,
+      scope: { threadIds },
+    });
+  }
 
-    const roleGrants = channels.flatMap(({ id, roleIds }) =>
-      [...new Set([...roleIds, ...allChannelsRoleIds])].map((roleId) => ({
-        channelId: id,
-        roleId,
-      })),
+  async rewriteChannelGrants({
+    workspaceId,
+    channelId,
+  }: {
+    workspaceId: string;
+    channelId: string;
+  }): Promise<void> {
+    await this.threadRepository.query(workspaceId, async ({ manager }) => {
+      await acquireAgentChatChannelGrantLocks({
+        manager,
+        workspaceId,
+        channelIds: [channelId],
+        mode: 'exclusive',
+      });
+
+      await this.replaceGrantsInTransaction({
+        manager,
+        workspaceId,
+        scope: { channelId },
+      });
+    });
+  }
+
+  async rewriteAllChannelGrants({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<void> {
+    const channels = await this.threadRepository.query(
+      workspaceId,
+      ({ manager }) =>
+        manager.query<{ id: string }[]>(
+          `SELECT id FROM core."agentChatChannel" WHERE "workspaceId" = $1 ORDER BY id`,
+          [workspaceId],
+        ),
     );
 
-    const scopeCondition = isNonEmptyArray(threadIds)
-      ? `thread.id = ANY($2::uuid[])`
-      : `thread."channelId" = ANY($2::uuid[])`;
+    for (const { id: channelId } of channels) {
+      await this.rewriteChannelGrants({ workspaceId, channelId });
+    }
+  }
+
+  private async replaceGrantsInTransaction({
+    manager,
+    workspaceId,
+    scope,
+  }: {
+    manager: EntityManager;
+    workspaceId: string;
+    scope: AgentChatChannelGrantScope;
+  }): Promise<void> {
+    const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
+    const isThreadScope = 'threadIds' in scope;
+    const threadScopeCondition = isThreadScope
+      ? 'thread.id = ANY($3::uuid[])'
+      : 'thread."channelId" = $3::uuid';
+    const recordShareScopeCondition = isThreadScope
+      ? 'record_share."recordId" = ANY($3::uuid[])'
+      : 'record_share."sourceId" = $3::uuid';
+    const channelAccessQuery = buildAgentChatChannelAccessQuery({
+      workspaceIdParameter: '$1',
+    });
+    const parameters = [
+      workspaceId,
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+      isThreadScope ? scope.threadIds : scope.channelId,
+    ];
 
     await manager.query(
-      `DELETE FROM ${schema}."recordShare"
-       WHERE "objectMetadataId" = $1 AND "rowCause" = 'RULE'
-         AND ${isNonEmptyArray(threadIds) ? `"recordId"` : `"sourceId"`} = ANY($2::uuid[])`,
-      [threadObjectMetadataId, scopeIds],
+      `DELETE FROM ${schema}."recordShare" record_share
+       USING core."objectMetadata" thread_object
+       WHERE thread_object."workspaceId" = $1
+         AND thread_object."universalIdentifier" = $2
+         AND record_share."objectMetadataId" = thread_object.id
+         AND record_share."rowCause" = 'RULE'
+         AND ${recordShareScopeCondition}
+         AND NOT EXISTS (
+           SELECT 1
+           FROM ${schema}."agentChatThread" thread
+           JOIN (${channelAccessQuery}) channel_access
+             ON channel_access.channel_id = thread."channelId"
+           WHERE ${threadScopeCondition}
+             AND thread.id = record_share."recordId"
+             AND thread."channelId" = record_share."sourceId"
+             AND channel_access.role_id = record_share."principalId"
+             AND record_share."deletedAt" IS NULL
+         )`,
+      parameters,
     );
 
     await manager.query(
       `INSERT INTO ${schema}."recordShare"
          ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-       SELECT $1, thread.id, channel_role.role_id, 'ROLE', 'READ_WRITE', 'RULE', thread."channelId"
+       SELECT thread_object.id, thread.id, channel_access.role_id, 'ROLE', 'READ_WRITE', 'RULE', thread."channelId"
        FROM ${schema}."agentChatThread" thread
-       JOIN unnest($3::uuid[], $4::uuid[]) AS channel_role(channel_id, role_id)
-         ON channel_role.channel_id = thread."channelId"
-       WHERE ${scopeCondition}
+       JOIN (${channelAccessQuery}) channel_access
+         ON channel_access.channel_id = thread."channelId"
+       JOIN core."objectMetadata" thread_object
+         ON thread_object."workspaceId" = $1
+         AND thread_object."universalIdentifier" = $2
+       WHERE ${threadScopeCondition}
        ON CONFLICT DO NOTHING`,
-      [
-        threadObjectMetadataId,
-        scopeIds,
-        roleGrants.map(({ channelId }) => channelId),
-        roleGrants.map(({ roleId }) => roleId),
-      ],
+      parameters,
     );
   }
 }

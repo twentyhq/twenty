@@ -101,29 +101,21 @@ export class AgentChatChannelService {
     channelId: string;
     changes: ChannelChanges;
   }): Promise<FlatAgentChatChannelWithRoleIds> {
-    const before = await this.channelMetadataService.findChannelOrThrow({
-      workspaceId,
-      channelId,
-    });
-    const after = await this.channelMetadataService.updateChannel({
+    const channel = await this.channelMetadataService.updateChannel({
       workspaceId,
       channelId,
       changes,
       roleIds,
     });
 
-    const isAccessChanged =
-      before.roleIds.length !== after.roleIds.length ||
-      before.roleIds.some((roleId) => !after.roleIds.includes(roleId));
-
-    if (isAccessChanged) {
-      await this.channelGrantService.rewriteGrants({
+    if (isDefined(roleIds)) {
+      await this.channelGrantService.rewriteChannelGrants({
         workspaceId,
-        channelIds: [channelId],
+        channelId,
       });
     }
 
-    return after;
+    return channel;
   }
 
   // A channel's chats would read through nothing once it is gone, so they
@@ -234,7 +226,7 @@ export class AgentChatChannelService {
           AgentChatThreadWorkspaceEntity[]
         >(
           `SELECT * FROM ${table('agentChatThread')}
-           WHERE "channelId" = $1 FOR UPDATE`,
+           WHERE "channelId" = $1 FOR NO KEY UPDATE`,
           [channelId],
         );
 
@@ -262,10 +254,11 @@ export class AgentChatChannelService {
           [threadsBefore.map(({ id }) => id), destinationChannelId],
         );
 
-        await this.channelGrantService.rewriteGrantsInTransaction({
+        await this.channelGrantService.rewriteThreadGrantsInTransaction({
           manager,
           workspaceId,
           threadIds: threadsAfter.map(({ id }) => id),
+          affectedChannelIds: [channelId, destinationChannelId],
         });
 
         const threadBeforeById = new Map(
