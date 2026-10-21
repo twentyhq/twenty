@@ -14,7 +14,7 @@ import { type FieldLinksValue } from '@/object-record/record-field/ui/types/Fiel
 import { linksFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/linksFieldValueSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo } from 'react';
+import { type ReactNode, useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import {
   absoluteUrlSchema,
@@ -115,6 +115,39 @@ export const LinksFieldInput = () => {
       ? isValidDomain(input)
       : absoluteUrlSchema.safeParse(input).success;
 
+  const renderEditedLink = ({
+    inputValue,
+    hasError,
+    saveButton,
+    separator,
+    onInputChange,
+    onEnter,
+  }: {
+    inputValue: string;
+    hasError: boolean;
+    saveButton: ReactNode;
+    separator: ReactNode;
+    onInputChange: (value: string) => void;
+    onEnter: () => void;
+  }) => (
+    <>
+      <LinksFieldEditPreview
+        url={inputValue}
+        label={getLinkLabelFromDraft(labelDraft)}
+        saveButton={saveButton}
+      />
+      {separator}
+      <LinksFieldEditInputs
+        url={inputValue}
+        label={labelDraft}
+        hasError={hasError}
+        onUrlChange={onInputChange}
+        onLabelChange={setLabelDraft}
+        onEnter={onEnter}
+      />
+    </>
+  );
+
   return (
     <MultiItemFieldInput
       items={links}
@@ -156,35 +189,7 @@ export const LinksFieldInput = () => {
           url={link.url}
         />
       )}
-      renderEditedItem={
-        isDomainField
-          ? undefined
-          : ({
-              inputValue,
-              hasError,
-              saveButton,
-              separator,
-              onInputChange,
-              onEnter,
-            }) => (
-              <>
-                <LinksFieldEditPreview
-                  url={inputValue}
-                  label={getLinkLabelFromDraft(labelDraft)}
-                  saveButton={saveButton}
-                />
-                {separator}
-                <LinksFieldEditInputs
-                  url={inputValue}
-                  label={labelDraft}
-                  hasError={hasError}
-                  onUrlChange={onInputChange}
-                  onLabelChange={setLabelDraft}
-                  onEnter={onEnter}
-                />
-              </>
-            )
-      }
+      renderEditedItem={isDomainField ? undefined : renderEditedLink}
       maxItemCount={maxNumberOfValues}
     />
   );

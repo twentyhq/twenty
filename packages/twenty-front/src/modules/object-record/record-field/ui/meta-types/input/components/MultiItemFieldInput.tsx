@@ -449,7 +449,11 @@ export const MultiItemFieldInput = <T,>({
       <StyledAddItemContainer>
         <ListItemButton onClick={handleAddButtonClick} startIcon={<IconPlus />}>
           <OverflowingTextWithTooltip
-            text={newItemLabel || t`Add ${placeholder}`}
+            text={
+              isNonEmptyString(newItemLabel)
+                ? newItemLabel
+                : t`Add ${placeholder}`
+            }
           />
         </ListItemButton>
       </StyledAddItemContainer>
