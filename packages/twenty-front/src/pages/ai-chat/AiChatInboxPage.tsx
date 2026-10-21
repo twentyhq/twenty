@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent, useId, useRef } from 'react';
+import { type MouseEvent, useRef } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
@@ -14,13 +14,13 @@ import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThrea
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
 import { AiChatInboxListHeader } from '@/ai/components/AiChatInboxListHeader';
-import { AiChatInboxNewThreadSelectionEffect } from '@/ai/components/AiChatInboxNewThreadSelectionEffect';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
 import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
 import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
@@ -182,7 +182,6 @@ const AiChatInboxPageContent = () => {
 
   return (
     <StyledInbox>
-      {isNewThreadRoute && <AiChatInboxNewThreadSelectionEffect />}
       <RecordSelectionRecordIdsEffect records={threads} />
       <AiChatInboxSelectionEffect
         selectedThreadId={selectedThreadId}
@@ -320,7 +319,7 @@ const AiChatInboxPageContent = () => {
 
 export const AiChatInboxPage = () => {
   // A new instance per visit, so a selection does not outlive the inbox
-  const recordSelectionInstanceId = useId();
+  const recordSelectionInstanceId = useAiChatInboxRecordSelectionInstanceId();
   const { threadId } = useParams();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,

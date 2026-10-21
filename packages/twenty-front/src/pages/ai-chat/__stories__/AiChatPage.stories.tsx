@@ -4,10 +4,11 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -31,25 +32,66 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const EXISTING_THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const NEXT_DRAFT_THREAD_ID = '20202020-0000-4000-8000-0000000000bb';
+const RETURNED_DRAFT_THREAD_ID = '20202020-0000-4000-8000-0000000000dd';
 const CHAT_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000cc';
 const DRAFT_TEXT = 'Draft for the new conversation';
+const NEXT_DRAFT_TEXT = 'Draft selected when opening the new chat route';
+const RETURNED_DRAFT_TEXT = 'Draft selected when returning through history';
 const CONTINUED_DRAFT_TEXT = ' with more details';
+const OTHER_PAGE_PATH = '/new-chat-story-other-page';
 
-const NewChatRouteDecorator: Decorator = (Story) => (
-  <MemoryRouter
-    initialEntries={[
-      getAppPath(AppPath.AiChat, {
-        threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT,
-      }),
-    ]}
-  >
-    <MemoryRouterAppNavigatorProvider>
-      <Routes>
-        <Route path={AppPath.AiChat} element={<Story />} />
-      </Routes>
-    </MemoryRouterAppNavigatorProvider>
-  </MemoryRouter>
-);
+const ChatRouteNavigation = () => {
+  const navigate = useNavigate();
+
+  return (
+    <>
+      <Button
+        onClick={() =>
+          navigate(
+            getAppPath(AppPath.AiChat, {
+              threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT,
+            }),
+          )
+        }
+      >
+        Open new chat
+      </Button>
+      <Button onClick={() => navigate(OTHER_PAGE_PATH)}>Leave chat</Button>
+      <Button onClick={() => navigate(-1)}>Back through history</Button>
+      <Button onClick={() => navigate(1)}>Forward through history</Button>
+    </>
+  );
+};
+
+const createChatRouteDecorator =
+  ({
+    initialPath,
+    showNavigation = false,
+  }: {
+    initialPath: string;
+    showNavigation?: boolean;
+  }): Decorator =>
+  (Story) => (
+    <MemoryRouter initialEntries={[initialPath]}>
+      <MemoryRouterAppNavigatorProvider>
+        {showNavigation && <ChatRouteNavigation />}
+        <Routes>
+          <Route path={AppPath.AiChat} element={<Story />} />
+          <Route path={OTHER_PAGE_PATH} element={<div>Outside chat</div>} />
+        </Routes>
+      </MemoryRouterAppNavigatorProvider>
+    </MemoryRouter>
+  );
+
+const initializeChatPageStory = () => {
+  initializeNewAiChatStory({ isInboxEnabled: false });
+  const draftThreadId = jotaiStore.get(newAiChatThreadIdState.atom);
+
+  jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
+    [draftThreadId]: serializePlainTextAsAdvancedTextEditorDocument(DRAFT_TEXT),
+  });
+  jotaiStore.set(currentAiChatThreadState.atom, EXISTING_THREAD_ID);
+};
 
 const allowSelectedConversationUpdates = () => {
   const workspace = jotaiStore.get(currentWorkspaceState.atom);
@@ -118,18 +160,8 @@ const meta = {
     ObjectMetadataItemsDecorator,
     RootDecorator,
     ToastDecorator,
-    NewChatRouteDecorator,
   ],
-  beforeEach: () => {
-    initializeNewAiChatStory({ isInboxEnabled: false });
-    const draftThreadId = jotaiStore.get(newAiChatThreadIdState.atom);
-
-    jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
-      [draftThreadId]:
-        serializePlainTextAsAdvancedTextEditorDocument(DRAFT_TEXT),
-    });
-    jotaiStore.set(currentAiChatThreadState.atom, EXISTING_THREAD_ID);
-  },
+  beforeEach: initializeChatPageStory,
   parameters: {
     container: { width: 1000, height: 784 },
     msw: {
@@ -146,6 +178,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const NewChatDraftSelection: Story = {
+  decorators: [
+    createChatRouteDecorator({
+      initialPath: getAppPath(AppPath.AiChat, {
+        threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT,
+      }),
+    }),
+  ],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const editor = await canvas.findByRole('textbox');
@@ -170,6 +209,75 @@ export const NewChatDraftSelection: Story = {
     );
     await waitFor(() =>
       expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(draftThreadId),
+    );
+  },
+};
+
+export const NewChatRouteHistory: Story = {
+  decorators: [
+    createChatRouteDecorator({
+      initialPath: getAppPath(AppPath.AiChat, { threadId: null }),
+      showNavigation: true,
+    }),
+  ],
+  beforeEach: () => {
+    initializeChatPageStory();
+    jotaiStore.set(currentAiChatThreadState.atom, null);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByRole('textbox')).toHaveTextContent(
+      DRAFT_TEXT,
+    );
+
+    jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+      ...drafts,
+      [NEXT_DRAFT_THREAD_ID]:
+        serializePlainTextAsAdvancedTextEditorDocument(NEXT_DRAFT_TEXT),
+    }));
+    jotaiStore.set(newAiChatThreadIdState.atom, NEXT_DRAFT_THREAD_ID);
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Open new chat' }),
+    );
+    await expect(await canvas.findByRole('textbox')).toHaveTextContent(
+      NEXT_DRAFT_TEXT,
+    );
+    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+      NEXT_DRAFT_THREAD_ID,
+    );
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Leave chat' }));
+    await expect(await canvas.findByText('Outside chat')).toBeVisible();
+
+    jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+      ...drafts,
+      [RETURNED_DRAFT_THREAD_ID]:
+        serializePlainTextAsAdvancedTextEditorDocument(RETURNED_DRAFT_TEXT),
+    }));
+    jotaiStore.set(newAiChatThreadIdState.atom, RETURNED_DRAFT_THREAD_ID);
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Back through history' }),
+    );
+    await expect(await canvas.findByRole('textbox')).toHaveTextContent(
+      RETURNED_DRAFT_TEXT,
+    );
+    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+      RETURNED_DRAFT_THREAD_ID,
+    );
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Forward through history' }),
+    );
+    await expect(await canvas.findByText('Outside chat')).toBeVisible();
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Back through history' }),
+    );
+    await expect(await canvas.findByRole('textbox')).toHaveTextContent(
+      RETURNED_DRAFT_TEXT,
     );
   },
 };
