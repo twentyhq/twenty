@@ -14,6 +14,7 @@ import { CommandMenuContextProvider } from '@/command-menu-item/contexts/Command
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { RecordIndexPageHeaderTitle } from '@/object-record/record-index/components/RecordIndexPageHeaderTitle';
+import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -36,6 +37,14 @@ export const AiChatInboxListHeader = ({
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
+  const { resetRecordSelection } = useResetRecordSelection();
+
+  const handleNewChat = () => {
+    resetRecordSelection();
+    switchToNewChat({
+      channelId: agentChatShownChannelView?.channelId ?? null,
+    });
+  };
 
   return (
     <PageCardHeader
@@ -67,11 +76,7 @@ export const AiChatInboxListHeader = ({
               variant="solid"
               color="accent"
               startIcon={<IconPlus />}
-              onClick={() =>
-                switchToNewChat({
-                  channelId: agentChatShownChannelView?.channelId ?? null,
-                })
-              }
+              onClick={handleNewChat}
             >
               {t`New chat`}
             </Button>

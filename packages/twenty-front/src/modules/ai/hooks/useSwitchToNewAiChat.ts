@@ -6,6 +6,7 @@ import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThread
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
+import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
 type UseSwitchToNewAiChatParams = {
   shouldOpenInFullPage?: boolean;
@@ -22,12 +23,18 @@ export const useSwitchToNewAiChat = ({
   const switchToNewChat = ({
     channelId = null,
   }: { channelId?: string | null } = {}) => {
+    const isOnInboxPage = isAiChatInboxPath(window.location.pathname);
+
     store.set(agentChatNewThreadChannelIdState.atom, channelId);
     selectAiChatThread(store.get(newAiChatThreadIdState.atom));
 
-    if (shouldOpenInFullPage) {
+    const shouldNavigateToChatPage = shouldOpenInFullPage && !isOnInboxPage;
+
+    if (shouldNavigateToChatPage) {
       navigateToAiChatPage();
-    } else {
+    }
+
+    if (!shouldOpenInFullPage && !isOnInboxPage) {
       openAskAiPage();
     }
 

@@ -7,6 +7,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
+import { AiChatWelcomeAvatar } from '@/ai/components/AiChatWelcomeAvatar';
 import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
 import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
@@ -17,24 +18,29 @@ const StyledContainer = styled.div<{ isCentered: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ isCentered }) =>
-    isCentered ? themeCssVariables.spacing[4] : themeCssVariables.spacing[2]};
+    isCentered ? themeCssVariables.spacing[6] : themeCssVariables.spacing[2]};
   padding: ${({ isCentered }) =>
-    isCentered ? themeCssVariables.spacing[4] : themeCssVariables.spacing[2]};
+    isCentered
+      ? `0 0 ${themeCssVariables.spacing[4]}`
+      : themeCssVariables.spacing[2]};
 `;
 
-const StyledTitle = styled.div<{ isCentered: boolean }>`
+const StyledTitle = styled.h2<{ isCentered: boolean }>`
   align-content: center;
   color: ${themeCssVariables.font.color.primary};
   display: grid;
   font-size: ${({ isCentered }) =>
     isCentered
-      ? themeCssVariables.font.size.xl
+      ? themeCssVariables.font.size.xxl
       : themeCssVariables.font.size.sm};
   font-weight: ${({ isCentered }) =>
     isCentered
       ? themeCssVariables.font.weight.semiBold
       : themeCssVariables.font.weight.medium};
   height: ${({ isCentered }) => (isCentered ? 'auto' : '24px')};
+  line-height: ${({ isCentered }) =>
+    isCentered ? themeCssVariables.text.lineHeight.md : 'inherit'};
+  margin: 0;
   padding: 0 ${themeCssVariables.spacing[2]};
   text-align: ${({ isCentered }) => (isCentered ? 'center' : 'left')};
 `;
@@ -77,8 +83,9 @@ export const AiChatSuggestedPrompts = ({
 
   return (
     <StyledContainer isCentered={isCentered}>
+      {isCentered && <AiChatWelcomeAvatar />}
       <StyledTitle isCentered={isCentered}>
-        {t`What can I help you with?`}
+        {isCentered ? t`How can I help you?` : t`What can I help you with?`}
       </StyledTitle>
       <StyledPromptList isCentered={isCentered}>
         {suggestedPrompts.map((suggestedPrompt) => {
