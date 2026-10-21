@@ -17,26 +17,24 @@ import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory'
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const StyledPageChat = styled.div`
-  --ai-chat-content-max-width: 768px;
-
+  display: flex;
   height: 100%;
   width: 100%;
 `;
 
 const NewChatStory = () => (
   <StyledPageChat>
-    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
-      <Suspense fallback={null}>
-        <AiChatTab />
-        <AgentChatPrepromptEffect />
-      </Suspense>
-    </AiChatSurfaceContext.Provider>
+    <Suspense fallback={null}>
+      <AiChatNewThreadPageContent showInformationBanner={false} />
+      <AgentChatPrepromptEffect />
+    </Suspense>
   </StyledPageChat>
 );
 
