@@ -1,14 +1,14 @@
-import { settingsDraftRoleAgentChatChannelIdsFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelIdsFamilyState';
+import { settingsDraftRoleAgentChatChannelAccessFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelAccessFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 export const useResetRoleAgentChatChannelAccess = (roleId: string) => {
-  const setSettingsDraftRoleAgentChatChannelIds = useSetAtomFamilyState(
-    settingsDraftRoleAgentChatChannelIdsFamilyState,
+  const setSettingsDraftRoleAgentChatChannelAccess = useSetAtomFamilyState(
+    settingsDraftRoleAgentChatChannelAccessFamilyState,
     roleId,
   );
 
   const resetRoleAgentChatChannelAccess = () =>
-    setSettingsDraftRoleAgentChatChannelIds(null);
+    setSettingsDraftRoleAgentChatChannelAccess({});
 
   return { resetRoleAgentChatChannelAccess };
 };

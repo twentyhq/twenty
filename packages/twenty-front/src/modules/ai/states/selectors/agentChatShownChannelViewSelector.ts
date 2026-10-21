@@ -15,7 +15,10 @@ export const agentChatShownChannelViewSelector =
       if (
         !isDefined(channelView) ||
         (isDefined(channels) &&
-          !channels.some(({ id }) => id === channelView.channelId))
+          !channels.some(
+            ({ id, isAccessible }) =>
+              isAccessible && id === channelView.channelId,
+          ))
       ) {
         return null;
       }

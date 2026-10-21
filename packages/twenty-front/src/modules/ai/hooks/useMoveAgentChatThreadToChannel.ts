@@ -26,15 +26,20 @@ export const useMoveAgentChatThreadToChannel = () => {
       threadId: string;
       channelId: string | null;
     }) => {
-      const previousChannelId = store.get(
+      const previousThread = store.get(
         agentChatThreadRecordFamilySelector.selectorFamily(threadId),
-      )?.channelId;
+      );
 
-      if (!isDefined(previousChannelId) && !isDefined(channelId)) {
+      if (!isDefined(previousThread?.channelId) && !isDefined(channelId)) {
         return;
       }
 
-      applyAgentChatThreadUpdate({ id: threadId, channelId });
+      applyAgentChatThreadUpdate({
+        id: threadId,
+        channelId,
+        channelArchivedAt: null,
+        channelSnoozedUntil: null,
+      });
 
       try {
         await client.mutate({
@@ -52,7 +57,9 @@ export const useMoveAgentChatThreadToChannel = () => {
         ) {
           applyAgentChatThreadUpdate({
             id: threadId,
-            channelId: previousChannelId ?? null,
+            channelId: previousThread?.channelId ?? null,
+            channelArchivedAt: previousThread?.channelArchivedAt ?? null,
+            channelSnoozedUntil: previousThread?.channelSnoozedUntil ?? null,
           });
         }
       }

@@ -60,6 +60,7 @@ const SALES_CHANNEL = {
   color: 'green',
   position: 1,
   isCustom: true,
+  isAccessible: true,
   roleIds: [],
 };
 

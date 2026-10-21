@@ -1,23 +1,22 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { useSettingsAgentChatChannels } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSettingsAgentChatChannels';
-import { settingsDraftRoleAgentChatChannelIdsFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelIdsFamilyState';
+import { settingsDraftRoleAgentChatChannelAccessFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelAccessFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const useRoleAgentChatChannelsWithChangedAccess = (roleId: string) => {
   const settingsAgentChatChannels = useSettingsAgentChatChannels();
-  const settingsDraftRoleAgentChatChannelIds = useAtomFamilyStateValue(
-    settingsDraftRoleAgentChatChannelIdsFamilyState,
+  const settingsDraftRoleAgentChatChannelAccess = useAtomFamilyStateValue(
+    settingsDraftRoleAgentChatChannelAccessFamilyState,
     roleId,
   );
 
-  if (!isDefined(settingsDraftRoleAgentChatChannelIds)) {
-    return [];
-  }
+  return settingsAgentChatChannels.filter((channel) => {
+    const hasDraftAccess = settingsDraftRoleAgentChatChannelAccess[channel.id];
 
-  return settingsAgentChatChannels.filter(
-    (channel) =>
-      settingsDraftRoleAgentChatChannelIds.includes(channel.id) !==
-      channel.roleIds.includes(roleId),
-  );
+    return (
+      isDefined(hasDraftAccess) &&
+      hasDraftAccess !== channel.roleIds.includes(roleId)
+    );
+  });
 };
