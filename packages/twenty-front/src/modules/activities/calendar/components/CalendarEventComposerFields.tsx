@@ -3,7 +3,6 @@ import { CalendarEventLocationInput } from '@/activities/calendar/components/Cal
 import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
-import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
 import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
@@ -23,7 +22,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
-import { Switch } from 'twenty-ui/primitives/input';
+import { Input, Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFieldsContainer = styled.div`
@@ -127,7 +126,8 @@ export const CalendarEventComposerFields = ({
               </ComposerFieldRow>
             )}
             <ComposerFieldRow label={t`Title`}>
-              <StyledComposerTextInput
+              <Input
+                variant="plain"
                 type="text"
                 aria-label={t`Title`}
                 placeholder={t`Add an event title`}

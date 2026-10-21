@@ -2,7 +2,7 @@ import { Text } from '@ui/primitives/typography';
 import { type ComponentProps } from 'react';
 import { Field } from '@ui/primitives/input';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -166,4 +166,42 @@ export const CatalogDark: CatalogStory<Story, typeof InputGroup> = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
+};
+
+export const SharedPlainFrame: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <>
+      <InputGroup size="sm" role="group" aria-label="Compact frame">
+        <Input variant="plain" aria-label="Compact input" />
+      </InputGroup>
+      <Field.Root invalid>
+        <InputGroup role="group" aria-label="Invalid frame">
+          <Input aria-label="Invalid grouped input" />
+        </InputGroup>
+      </Field.Root>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const group = canvas.getByRole('group', { name: 'Compact frame' });
+    const input = canvas.getByRole('textbox', { name: 'Compact input' });
+    const invalidGroup = canvas.getByRole('group', { name: 'Invalid frame' });
+    const invalidInput = canvas.getByRole('textbox', {
+      name: 'Invalid grouped input',
+    });
+
+    await expect(group.getBoundingClientRect().height).toBe(24);
+    await expect(invalidGroup.getBoundingClientRect().height).toBe(32);
+    await expect(input).toHaveAttribute('data-variant', 'plain');
+    await expect(getComputedStyle(input).borderWidth).toBe('0px');
+    await userEvent.tab();
+    await expect(input).toHaveFocus();
+    await expect(getComputedStyle(input).outlineStyle).toBe('none');
+    await expect(getComputedStyle(invalidInput).outlineStyle).toBe('none');
+    await expect(getComputedStyle(group).borderWidth).toBe('1px');
+    await expect(getComputedStyle(invalidGroup).borderColor).not.toBe(
+      getComputedStyle(group).borderColor,
+    );
+  },
 };

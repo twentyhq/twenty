@@ -111,14 +111,10 @@
   display: flex;
   flex: none;
   min-block-size: 36px;
-  padding-block: var(--t-spacing-2);
+  padding: var(--t-spacing-2);
 }
 
 .search[data-dropdown-search] {
-  background: transparent;
-  block-size: auto;
-  border: none;
-  border-radius: 0;
   font-size: var(--t-font-size-sm);
 }
 
