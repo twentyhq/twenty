@@ -6,15 +6,16 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
+import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
+import { AGENT_CHAT_WAITING_RUN_OWNER_TYPE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-waiting-run-owner-type.constant';
 import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
 import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
-import { AgentChatParkedRunsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-parked-runs.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
@@ -43,7 +44,7 @@ export class AgentChatStreamRecoveryService {
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
     private readonly chatMessageQueueService: MessageQueueService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
-    private readonly parkedRunsService: AgentChatParkedRunsService,
+    private readonly pendingWakeUpService: PendingWakeUpService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly metricsService: MetricsService,
     private readonly turnRecorderService: AgentTurnRecorderService,
@@ -95,11 +96,7 @@ export class AgentChatStreamRecoveryService {
       await this.publishStreamError({ threadId, workspaceId, turnError });
     }
 
-    if (shouldFlush) {
-      await this.flushQueuedMessages({ threadId, workspaceId });
-    }
-
-    await this.parkedRunsService.wake({ workspaceId, threadId });
+    await this.wakeNext({ threadId, workspaceId, shouldFlush });
 
     return true;
   }
@@ -226,28 +223,45 @@ export class AgentChatStreamRecoveryService {
     return interruptedError;
   }
 
-  private async flushQueuedMessages({
+  // the oldest queued message is the queue's place in line, so it and the runs go in the order they came
+  async wakeNext({
     threadId,
     workspaceId,
+    shouldFlush,
   }: {
     threadId: string;
     workspaceId: string;
+    shouldFlush: boolean;
   }): Promise<void> {
     try {
-      const hasQueuedMessages = await this.messageRepository.existsBy(
-        workspaceId,
-        { threadId, status: AgentMessageStatus.QUEUED },
-      );
+      const [nextRun, oldestQueuedMessage] = await Promise.all([
+        this.pendingWakeUpService.findOldest({
+          workspaceId,
+          owner: { type: AGENT_CHAT_WAITING_RUN_OWNER_TYPE, id: threadId },
+        }),
+        shouldFlush
+          ? this.messageRepository.findOne(workspaceId, {
+              where: { threadId, status: AgentMessageStatus.QUEUED },
+              order: { createdAt: 'ASC' },
+            })
+          : null,
+      ]);
 
-      if (hasQueuedMessages) {
+      if (
+        isDefined(oldestQueuedMessage) &&
+        (!isDefined(nextRun) ||
+          new Date(oldestQueuedMessage.createdAt) <= nextRun.createdAt)
+      ) {
         await this.chatMessageQueueService.add<FlushQueuedAgentChatMessagesJobData>(
           FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME,
           { workspaceId, threadId },
         );
+      } else if (isDefined(nextRun)) {
+        await this.pendingWakeUpService.scheduleResolution({ wakeUp: nextRun });
       }
     } catch (error) {
       this.logger.error(
-        `Failed to send the messages queued in thread ${threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
+        `Failed to wake what waits on thread ${threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
       );
     }
   }
