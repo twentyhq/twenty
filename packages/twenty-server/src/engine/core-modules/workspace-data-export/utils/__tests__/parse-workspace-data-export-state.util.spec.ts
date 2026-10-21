@@ -19,20 +19,24 @@ const validState = {
 
 describe('parseWorkspaceDataExportState', () => {
   it('returns the state when it matches the schema', () => {
-    expect(parseWorkspaceDataExportState(JSON.stringify(validState))).toEqual(
-      validState,
+    expect(parseWorkspaceDataExportState(JSON.stringify(validState))).toEqual({
+      state: validState,
+    });
+  });
+
+  it('reports why a state written in another shape is rejected', () => {
+    const { state, error } = parseWorkspaceDataExportState(
+      JSON.stringify({ ...validState, partsByTable: undefined }),
     );
+
+    expect(state).toBeUndefined();
+    expect(error).toContain('partsByTable');
   });
 
-  it('returns undefined for a state written in another shape', () => {
-    expect(
-      parseWorkspaceDataExportState(
-        JSON.stringify({ ...validState, partsByTable: undefined }),
-      ),
-    ).toBeUndefined();
-  });
+  it('reports content that is not JSON', () => {
+    const { state, error } = parseWorkspaceDataExportState('not json');
 
-  it('returns undefined for content that is not JSON', () => {
-    expect(parseWorkspaceDataExportState('not json')).toBeUndefined();
+    expect(state).toBeUndefined();
+    expect(error).toContain('invalid JSON');
   });
 });

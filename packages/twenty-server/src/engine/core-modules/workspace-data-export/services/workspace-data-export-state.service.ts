@@ -32,13 +32,13 @@ export class WorkspaceDataExportStateService {
         chunks.push(Buffer.from(chunk));
       }
 
-      const state = parseWorkspaceDataExportState(
+      const { state, error } = parseWorkspaceDataExportState(
         Buffer.concat(chunks).toString('utf8'),
       );
 
-      if (!isDefined(state)) {
+      if (isDefined(error)) {
         this.logger.warn(
-          `Workspace ${key.workspaceId}: export ${key.exportId} has an unreadable state file`,
+          `Workspace ${key.workspaceId}: export ${key.exportId} has an unreadable state file: ${error}`,
         );
       }
 

@@ -105,7 +105,10 @@ export class WorkspaceDataExportPartWriterService {
   }: {
     context: RecordExportQueryContext;
     shouldIncludeHeader: boolean;
-    part: WorkspaceDataExportPart;
+    part: Pick<
+      WorkspaceDataExportPart,
+      'after' | 'recordCount' | 'isTableExhausted'
+    >;
     abortSignal?: AbortSignal;
   }): AsyncGenerator<string> {
     if (shouldIncludeHeader) {

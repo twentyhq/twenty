@@ -25,10 +25,22 @@ const workspaceDataExportStateSchema: z.ZodType<WorkspaceDataExportState> =
 
 export const parseWorkspaceDataExportState = (
   content: string,
-): WorkspaceDataExportState | undefined => {
+):
+  | { state: WorkspaceDataExportState; error?: undefined }
+  | { state?: undefined; error: string } => {
+  let json: unknown;
+
   try {
-    return workspaceDataExportStateSchema.parse(JSON.parse(content));
-  } catch {
-    return undefined;
+    json = JSON.parse(content);
+  } catch (error) {
+    return {
+      error: `invalid JSON: ${error instanceof Error ? error.message : String(error)}`,
+    };
   }
+
+  const result = workspaceDataExportStateSchema.safeParse(json);
+
+  return result.success
+    ? { state: result.data }
+    : { error: result.error.message };
 };
