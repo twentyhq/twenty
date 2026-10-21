@@ -244,8 +244,10 @@ export class LambdaLayerManagerService {
     lambdaExecutor,
     flatApplication,
     applicationUniversalIdentifier,
-  }: LayerAppContext & {
+  }: {
     lambdaExecutor: GetFunctionCommandOutput;
+    flatApplication: Pick<FlatApplication, 'workspaceId'>;
+    applicationUniversalIdentifier: string;
   }): Promise<boolean> {
     const latestSdkLayerArn = await this.awsClient.getExistingLayerArn(
       getLambdaSdkLayerName({

@@ -172,10 +172,12 @@ export class LambdaExecutorManagerService {
           }
 
           await this.ensureExecutor({ ...refreshedContext, lambdaExecutor });
-          await this.markExecutorReady(
-            refreshedContext,
-            lambdaExecutor?.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null,
-          );
+          await this.markExecutorReady({
+            ...refreshedContext,
+            bundleChecksum:
+              lambdaExecutor?.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ??
+              null,
+          });
         },
         lockKey,
         {
@@ -301,7 +303,10 @@ export class LambdaExecutorManagerService {
             }),
           );
 
-          await this.markExecutorReady(context, checksum);
+          await this.markExecutorReady({
+            ...context,
+            bundleChecksum: checksum,
+          });
         } catch (error) {
           this.logger.error(
             `Failed to install prebuilt bundle for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
@@ -345,23 +350,37 @@ export class LambdaExecutorManagerService {
   ): Promise<void> {
     await this.cacheStorageService
       .del(this.getExecutorReadyMarkerKey(flatLogicFunction))
-      .catch(() => undefined);
+      .catch((error) =>
+        this.warnExecutorReadyMarkerFailure({
+          action: 'clear',
+          flatLogicFunction,
+          error,
+        }),
+      );
   }
 
   private async readExecutorReadyMarker(
-    flatLogicFunction: FlatLogicFunction,
+    flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
   ): Promise<ExecutorReadyMarker | undefined> {
     return this.cacheStorageService
       .get<ExecutorReadyMarker>(
         this.getExecutorReadyMarkerKey(flatLogicFunction),
       )
-      .catch(() => undefined);
+      .catch((error) => {
+        this.warnExecutorReadyMarkerFailure({
+          action: 'read',
+          flatLogicFunction,
+          error,
+        });
+
+        return undefined;
+      });
   }
 
-  private async markExecutorReady(
-    context: ExecutorBuildContext,
-    bundleChecksum: string | null,
-  ): Promise<void> {
+  private async markExecutorReady({
+    bundleChecksum,
+    ...context
+  }: ExecutorBuildContext & { bundleChecksum: string | null }): Promise<void> {
     const executorReadyMarker: ExecutorReadyMarker = {
       executorFingerprint: this.computeExecutorFingerprint(context),
       bundleChecksum,
@@ -373,7 +392,27 @@ export class LambdaExecutorManagerService {
         executorReadyMarker,
         LAMBDA_EXECUTOR_READY_MARKER_TTL_MS,
       )
-      .catch(() => undefined);
+      .catch((error) =>
+        this.warnExecutorReadyMarkerFailure({
+          action: 'write',
+          flatLogicFunction: context.flatLogicFunction,
+          error,
+        }),
+      );
+  }
+
+  private warnExecutorReadyMarkerFailure({
+    action,
+    flatLogicFunction,
+    error,
+  }: {
+    action: 'read' | 'write' | 'clear';
+    flatLogicFunction: Pick<FlatLogicFunction, 'id'>;
+    error: unknown;
+  }): void {
+    this.logger.warn(
+      `Failed to ${action} executor ready marker for function ${flatLogicFunction.id}, falling back to GetFunction: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   private getExecutorReadyMarkerKey(
@@ -442,10 +481,11 @@ export class LambdaExecutorManagerService {
       }));
 
     if (canSkip) {
-      await this.markExecutorReady(
-        context,
-        lambdaExecutor?.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null,
-      );
+      await this.markExecutorReady({
+        ...context,
+        bundleChecksum:
+          lambdaExecutor?.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null,
+      });
     }
 
     return { canSkip, lambdaExecutor };
