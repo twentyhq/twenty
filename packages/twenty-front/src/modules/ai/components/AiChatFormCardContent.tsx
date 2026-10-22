@@ -7,14 +7,11 @@ import { IconForms } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';
+import { StyledAiChatAskCard } from '@/ai/components/StyledAiChatAskCard';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { WorkflowFormFields } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFields';
 
-const StyledCard = styled(StyledAiChatAskCard)`
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
-`;
+const AI_CHAT_FORM_FIELD_MIN_WIDTH_PX = 240;
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -23,14 +20,17 @@ const StyledHeader = styled.div`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
-  min-height: 24px;
+  min-height: ${themeCssVariables.spacing[6]};
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledFields = styled.div`
   display: grid;
   gap: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, ${AI_CHAT_FORM_FIELD_MIN_WIDTH_PX}px), 1fr)
+  );
   padding: 0 ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]};
 
   > :last-child:nth-child(odd) {
@@ -90,7 +90,7 @@ export const AiChatFormCardContent = ({
   const fieldCount = fields.length;
 
   return (
-    <StyledCard>
+    <StyledAiChatAskCard isPadded>
       <StyledHeader>
         <IconForms size={16} />
         {title ?? t`Form`}
@@ -132,6 +132,6 @@ export const AiChatFormCardContent = ({
           {t`Submit`}
         </Button>
       </StyledActions>
-    </StyledCard>
+    </StyledAiChatAskCard>
   );
 };

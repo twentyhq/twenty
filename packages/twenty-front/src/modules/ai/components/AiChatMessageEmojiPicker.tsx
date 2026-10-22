@@ -5,11 +5,13 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AGENT_CHAT_EMOJIBASE_URL } from '@/ai/constants/AgentChatEmojibaseUrl';
 
+const AI_CHAT_EMOJI_PICKER_HEIGHT_PX = 280;
+
 const StyledEmojiPicker = styled.div`
   [frimousse-root] {
     display: flex;
     flex-direction: column;
-    height: 280px;
+    height: ${AI_CHAT_EMOJI_PICKER_HEIGHT_PX}px;
   }
 
   [frimousse-search] {
