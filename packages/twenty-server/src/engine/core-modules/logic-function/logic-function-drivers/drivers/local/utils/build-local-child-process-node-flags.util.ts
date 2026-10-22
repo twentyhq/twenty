@@ -8,7 +8,7 @@ export const buildLocalChildProcessNodeFlags = ({
   allowNetwork: boolean;
 }): string[] => [
   '--permission',
-  // Published apps ship prebuilt native addons (e.g. sharp).
+  // Published apps ship prebuilt native addons (e.g. sharp); addons are not covered by the permission model.
   '--allow-addons',
   '--disable-warning=SecurityWarning',
   ...(allowNetwork
