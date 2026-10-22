@@ -61,7 +61,7 @@ export class ConnectionProviderOAuthController {
     @Query('redirectLocation') redirectLocation: string | undefined,
     @Res() res: Response,
   ) {
-    // Captured early so error redirects land on the workspace's own domain (another cookie domain logs them out)
+    // Captured early so error redirects land on the user's subdomain (another cookie domain logs them out)
     let workspace: WorkspaceEntity | null = null;
 
     try {
@@ -297,7 +297,6 @@ export class ConnectionProviderOAuthController {
     );
   }
 
-  // The internal message echoes the provider's raw response body
   private getTokenExchangeFailureMessage(error: unknown): string | undefined {
     if (
       !(error instanceof ConnectionProviderException) ||

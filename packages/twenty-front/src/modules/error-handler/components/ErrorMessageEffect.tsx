@@ -20,7 +20,6 @@ export const ErrorMessageEffect = () => {
       });
       const newSearchParams = new URLSearchParams(searchParams);
       newSearchParams.delete('errorMessage');
-      // setSearchParams would drop the hash, which picks the settings tab to land on
       navigate({ search: newSearchParams.toString(), hash }, { replace: true });
     }
   }, [enqueueToast, errorMessage, hash, navigate, searchParams]);
