@@ -67,23 +67,6 @@ describe('applyScrollRequest', () => {
     },
   );
 
-  it('should not scroll and return no node when the node has no scrollTo function', () => {
-    const node = document.createElement('div');
-
-    Object.defineProperty(node, 'scrollTo', {
-      value: undefined,
-      configurable: true,
-    });
-
-    expect(
-      applyScrollRequest({
-        node,
-        request: { method: 'scrollTo', top: 40 },
-        isOwnedNode: jest.fn(),
-      }),
-    ).toEqual([]);
-  });
-
   it('should delegate a scrollIntoView request to the owned ancestors walk and return its scrolled containers', () => {
     const { node, scrollTo } = createNodeWithScrollTo();
     const scrolledAncestors = [document.createElement('div')];

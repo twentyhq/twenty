@@ -1,4 +1,3 @@
-import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { scrollOwnedAncestorsIntoView } from '@/host/scroll/utils/scrollOwnedAncestorsIntoView';
@@ -20,10 +19,6 @@ export const applyScrollRequest = ({
       inline: request.inline,
       isOwnedNode,
     });
-  }
-
-  if (!isFunction(node.scrollTo)) {
-    return [];
   }
 
   node.scrollTo({

@@ -24,10 +24,10 @@ export const resolveScrollportBox = ({
   >;
   scale: ElementScale;
 }): ScrollBox => {
-  const rect = scrollContainer.getBoundingClientRect();
+  const borderBoxRectangle = scrollContainer.getBoundingClientRect();
   const { clientLeft, clientTop, clientWidth, clientHeight } = scrollContainer;
-  const left = rect.left + clientLeft * scale.x;
-  const top = rect.top + clientTop * scale.y;
+  const left = borderBoxRectangle.left + clientLeft * scale.x;
+  const top = borderBoxRectangle.top + clientTop * scale.y;
   const readBlockScrollPadding = (length: string): number =>
     resolveScrollLengthInPixels({ length, referenceSize: clientHeight }) *
     scale.y;

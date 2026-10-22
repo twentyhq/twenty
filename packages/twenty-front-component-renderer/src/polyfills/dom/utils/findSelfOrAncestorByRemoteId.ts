@@ -11,7 +11,7 @@ export const findSelfOrAncestorByRemoteId = ({
   remoteElementId: string;
   rootElement: object | null;
 }): Element | null => {
-  let currentNode: unknown = element;
+  let currentNode: object | null = element;
 
   while (isElementNode(currentNode) && currentNode !== rootElement) {
     if (remoteId(currentNode) === remoteElementId) {
