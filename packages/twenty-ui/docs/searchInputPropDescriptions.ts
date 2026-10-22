@@ -8,6 +8,8 @@ export const SEARCH_INPUT_PROP_DESCRIPTIONS = {
   onChange: 'Native input change event handler.',
   ref: 'Ref to the native input element.',
   size: 'Visual size of the input group.',
+  focusRing:
+    'Shows the group focus border. Defaults to false. Error styling remains visible.',
   placeholder:
     'Hint shown when the input is empty. Also used as the accessible name if no explicit label is supplied.',
   actions:

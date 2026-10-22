@@ -6,4 +6,5 @@ import { type InputVariant } from '@ui/primitives/input/types/InputVariant';
 export type InputProps = Omit<InputPrimitive.Props, 'size'> & {
   size?: InputSize;
   variant?: InputVariant;
+  focusRing?: boolean;
 };

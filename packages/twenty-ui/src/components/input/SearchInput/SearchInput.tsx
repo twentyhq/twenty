@@ -13,6 +13,7 @@ export const SearchInput = ({
   placeholder,
   actions,
   size = 'md',
+  focusRing = false,
   id,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledby,
@@ -27,6 +28,7 @@ export const SearchInput = ({
       <InputGroup
         className={styles.inputGroup}
         size={size}
+        focusRing={focusRing}
         startElement={
           <IconSearch
             className={styles.searchIcon}
