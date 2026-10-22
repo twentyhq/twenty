@@ -13,7 +13,9 @@ import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import { buildSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
 import { removeBuiltSharedDependenciesBundle } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/__tests__/utils/remove-built-shared-dependencies-bundle';
-import { type SharedDependenciesBuildContext } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
+import {
+  type SharedDependenciesBuildContext,
+} from 'twenty-shared/front-component-build';
 
 const REACT_BUNDLED_MARKER = '@license React';
 
