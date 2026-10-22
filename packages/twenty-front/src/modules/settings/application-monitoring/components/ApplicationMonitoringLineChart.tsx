@@ -1,9 +1,12 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { ResponsiveLine } from '@nivo/line';
+import { isDefined } from 'twenty-shared/utils';
 import { type ThemeColor, themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { SettingsAdminWorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsTooltip';
+import { ApplicationMonitoringChartTooltip } from '@/settings/application-monitoring/components/ApplicationMonitoringChartTooltip';
 import { type ApplicationMonitoringChartDatum } from '@/settings/application-monitoring/types/ApplicationMonitoringChartDatum';
+import { getApplicationMonitoringChartIntegerTickValues } from '@/settings/application-monitoring/utils/getApplicationMonitoringChartIntegerTickValues';
 
 const StyledGraphContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -36,8 +39,8 @@ const StyledLegendItem = styled.div`
 const StyledLegendDot = styled.div<{ color: string }>`
   background-color: ${({ color }) => color};
   border-radius: 50%;
-  height: 4px;
-  width: 4px;
+  height: ${themeCssVariables.spacing[1]};
+  width: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledChart = styled.div`
@@ -57,16 +60,33 @@ export const ApplicationMonitoringLineChart = <TSeriesKey extends string>({
   axisLabel,
 }: ApplicationMonitoringLineChartProps<TSeriesKey>) => {
   const theme = useTheme();
+  const { i18n } = useLingui();
 
-  const lineData = series.map(({ key, label }) => ({
-    id: label,
-    data: data.map((datum, index) => ({ x: index, y: datum[key] })),
-  }));
+  const lineData: { id: string; data: { x: number; y: number }[] }[] =
+    series.map(({ key, label }) => ({
+      id: label,
+      data: data.map((datum, index) => ({ x: index, y: datum[key] })),
+    }));
 
-  const maxValue = Math.max(
-    0,
-    ...data.flatMap((datum) => series.map(({ key }) => datum[key])),
-  );
+  const values = data.flatMap((datum) => series.map(({ key }) => datum[key]));
+  const maxValue = Math.max(0, ...values);
+  const integerTickValues = values.every(Number.isInteger)
+    ? getApplicationMonitoringChartIntegerTickValues(maxValue)
+    : undefined;
+
+  const formatBucketStart = (bucketIndex: number | string | Date) => {
+    const bucketStart =
+      typeof bucketIndex === 'number'
+        ? data[bucketIndex]?.bucketStart
+        : undefined;
+
+    return isDefined(bucketStart)
+      ? i18n.date(new Date(bucketStart), {
+          dateStyle: 'medium',
+          timeStyle: 'short',
+        })
+      : '';
+  };
 
   return (
     <StyledGraphContainer>
@@ -123,10 +143,14 @@ export const ApplicationMonitoringLineChart = <TSeriesKey extends string>({
           yScale={{
             type: 'linear',
             min: 0,
-            max: maxValue === 0 ? 2 : maxValue * 1.1,
+            max: isDefined(integerTickValues)
+              ? integerTickValues[integerTickValues.length - 1]
+              : maxValue === 0
+                ? 2
+                : maxValue * 1.1,
             stacked: false,
           }}
-          yFormat=">-,.2~f"
+          yFormat={isDefined(integerTickValues) ? '>-,.0f' : '>-,.2~f'}
           axisBottom={{
             legend: axisLabel,
             legendOffset: 20,
@@ -139,14 +163,17 @@ export const ApplicationMonitoringLineChart = <TSeriesKey extends string>({
           axisLeft={{
             tickSize: 6,
             tickPadding: 5,
-            tickValues: 4,
+            tickValues: integerTickValues ?? 4,
           }}
           enableGridX={false}
-          gridYValues={4}
+          gridYValues={integerTickValues ?? 4}
           pointSize={0}
           enableSlices="x"
           sliceTooltip={({ slice }) => (
-            <SettingsAdminWorkerMetricsTooltip slice={slice} />
+            <ApplicationMonitoringChartTooltip
+              title={formatBucketStart(slice.points[0]?.data.x ?? '')}
+              points={slice.points}
+            />
           )}
           useMesh={true}
         />

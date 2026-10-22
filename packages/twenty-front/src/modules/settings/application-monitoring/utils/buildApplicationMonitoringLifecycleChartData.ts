@@ -22,6 +22,7 @@ export const buildApplicationMonitoringLifecycleChartData = (
       const bucket = lifecycleByBucketStart.get(bucketStart);
 
       return {
+        bucketStart,
         failedCount: bucket?.failedCount ?? 0,
         installCount: bucket?.installCount ?? 0,
         upgradeCount: bucket?.upgradeCount ?? 0,

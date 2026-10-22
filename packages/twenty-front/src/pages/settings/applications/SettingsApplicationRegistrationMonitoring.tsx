@@ -10,7 +10,9 @@ import { ApplicationMonitoring } from '@/settings/application-monitoring/compone
 import { ApplicationMonitoringFallback } from '@/settings/application-monitoring/components/ApplicationMonitoringFallback';
 import { buildApplicationMonitoringPeriodRange } from '@/settings/application-monitoring/utils/buildApplicationMonitoringPeriodRange';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -32,10 +34,14 @@ export const SettingsApplicationRegistrationMonitoring = () => {
   }>();
 
   const [periodRange, setPeriodRange] = useState(() =>
-    buildApplicationMonitoringPeriodRange('7d'),
+    buildApplicationMonitoringPeriodRange({ period: '7d' }),
   );
+  const [
+    refreshedApplicationRegistrationId,
+    setRefreshedApplicationRegistrationId,
+  ] = useState<string | null>(null);
 
-  const { data: registrationData } = useQuery(
+  const { data: registrationData, loading: isRegistrationLoading } = useQuery(
     FindOneApplicationRegistrationDocument,
     {
       variables: { id: applicationRegistrationId },
@@ -59,11 +65,47 @@ export const SettingsApplicationRegistrationMonitoring = () => {
   );
 
   const registration = registrationData?.findOneApplicationRegistration;
-  const monitoring = (data ?? previousData)
-    ?.findApplicationRegistrationMonitoring;
+  const isRefreshOfSameApplication =
+    refreshedApplicationRegistrationId === applicationRegistrationId;
+  const monitoring = (
+    data ?? (isRefreshOfSameApplication ? previousData : undefined)
+  )?.findApplicationRegistrationMonitoring;
 
-  if (!isApplicationMonitoringEnabled || !isDefined(registration)) {
+  const developersLinks = [
+    {
+      children: t`Workspace`,
+      href: getSettingsPath(SettingsPath.General),
+    },
+    {
+      children: t`Developers`,
+      href: getSettingsPath(
+        SettingsPath.Developers,
+        undefined,
+        undefined,
+        SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS,
+      ),
+    },
+  ];
+
+  if (!isApplicationMonitoringEnabled) {
     return null;
+  }
+
+  if (!isDefined(registration)) {
+    if (isRegistrationLoading) {
+      return <SettingsSkeletonLoader />;
+    }
+
+    return (
+      <SettingsPageLayout
+        title={t`Monitoring`}
+        links={[...developersLinks, { children: t`Monitoring` }]}
+      >
+        <SettingsPageContainer>
+          <SettingsEmptyPlaceholder>{t`This app could not be found`}</SettingsEmptyPlaceholder>
+        </SettingsPageContainer>
+      </SettingsPageLayout>
+    );
   }
 
   const renderContent = () => {
@@ -81,14 +123,18 @@ export const SettingsApplicationRegistrationMonitoring = () => {
         instanceId={`application-registration-monitoring-${registration.id}`}
         monitoring={monitoring}
         selectedPeriod={periodRange.period}
-        onPeriodChange={(period) =>
-          setPeriodRange(buildApplicationMonitoringPeriodRange(period))
-        }
-        onRefresh={() =>
+        onPeriodChange={(period) => {
+          setRefreshedApplicationRegistrationId(null);
+          setPeriodRange(buildApplicationMonitoringPeriodRange({ period }));
+        }}
+        onRefresh={() => {
+          setRefreshedApplicationRegistrationId(applicationRegistrationId);
           setPeriodRange(
-            buildApplicationMonitoringPeriodRange(periodRange.period),
-          )
-        }
+            buildApplicationMonitoringPeriodRange({
+              period: periodRange.period,
+            }),
+          );
+        }}
         isRefreshing={loading}
       />
     );
@@ -98,19 +144,7 @@ export const SettingsApplicationRegistrationMonitoring = () => {
     <SettingsPageLayout
       title={t`Monitoring`}
       links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.General),
-        },
-        {
-          children: t`Developers`,
-          href: getSettingsPath(
-            SettingsPath.Developers,
-            undefined,
-            undefined,
-            SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS,
-          ),
-        },
+        ...developersLinks,
         {
           children: registration.name,
           href: getSettingsPath(SettingsPath.ApplicationRegistrationDetail, {
