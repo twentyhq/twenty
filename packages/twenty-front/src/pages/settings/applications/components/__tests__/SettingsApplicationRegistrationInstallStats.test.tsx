@@ -36,11 +36,15 @@ const STATS: ApplicationRegistrationStats = {
   ],
 };
 
-const renderStats = (
+const renderStats = ({
   stats = STATS,
   isAdminView = false,
   isBillingEnabled = true,
-) => {
+}: {
+  stats?: ApplicationRegistrationStats;
+  isAdminView?: boolean;
+  isBillingEnabled?: boolean;
+} = {}) => {
   const store = createStore();
 
   store.set(billingState.atom, { isBillingEnabled } as Billing);
@@ -90,7 +94,7 @@ describe('Application registration statistics', () => {
   it.each([false, true])(
     'shows this month credit consumption for owner/admin view: %s',
     async (isAdminView) => {
-      renderStats(STATS, isAdminView);
+      renderStats({ isAdminView });
 
       expect(await screen.findByText('1,172')).toBeVisible();
       expect(screen.getByText('Credits used this month')).toBeVisible();
@@ -108,9 +112,11 @@ describe('Application registration statistics', () => {
     'distinguishes unavailable usage from zero: %s',
     async (totalCreditsUsed) => {
       renderStats({
-        ...STATS,
-        totalCreditsUsed,
-        creditsUsedBreakdown: totalCreditsUsed === null ? null : [],
+        stats: {
+          ...STATS,
+          totalCreditsUsed,
+          creditsUsedBreakdown: totalCreditsUsed === null ? null : [],
+        },
       });
 
       await screen.findByText('1.2.3');
@@ -121,7 +127,7 @@ describe('Application registration statistics', () => {
   );
 
   it('hides credit consumption when billing is disabled', async () => {
-    renderStats(STATS, false, false);
+    renderStats({ isBillingEnabled: false });
 
     await screen.findByText('1.2.3');
     expect(
