@@ -65,6 +65,32 @@ export class McpServerToolSyncService {
     ]);
   }
 
+  // Runs after an app install or upgrade; one unreachable server must not block the others
+  async syncToolsOfApplication({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { flatMcpServerMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatMcpServerMaps'] },
+      );
+
+    const applicationMcpServers = Object.values(
+      flatMcpServerMaps.byUniversalIdentifier,
+    ).filter(
+      (flatMcpServer): flatMcpServer is FlatMcpServer =>
+        isDefined(flatMcpServer) &&
+        flatMcpServer.applicationId === applicationId,
+    );
+
+    for (const flatMcpServer of applicationMcpServers) {
+      await this.syncTools({ mcpServerId: flatMcpServer.id, workspaceId });
+    }
+  }
+
   private async fetchToolsUpdate(
     flatMcpServer: FlatMcpServer,
   ): Promise<ToolsSyncUpdate> {

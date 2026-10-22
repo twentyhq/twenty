@@ -15,12 +15,12 @@ describe('buildMcpServerInstructions', () => {
   it('should render the ACTION line from the tools the caller can reach', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies, people',
-      actionToolNames: ['send_email', 'search_help_center'],
+      actionToolNames: ['send_email', 'create_calendar_event'],
       isDirectMode: false,
     });
 
     expect(getActionLine(instructions)).toContain(
-      'send_email | search_help_center',
+      'send_email | create_calendar_event',
     );
     expect(instructions).not.toContain('create_file_upload');
     expect(instructions).not.toContain('http_request');

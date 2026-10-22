@@ -17,6 +17,7 @@ export enum TargetFunction {
   DefineAgent = 'defineAgent',
   DefineWorkflow = 'defineWorkflow',
   DefineConnectionProvider = 'defineConnectionProvider',
+  DefineMcpServer = 'defineMcpServer',
   DefineFrontComponent = 'defineFrontComponent',
   DefineSettingsFrontComponent = 'defineSettingsFrontComponent',
   DefineView = 'defineView',
@@ -42,6 +43,7 @@ export enum ManifestEntityKey {
   Agents = 'agents',
   Workflows = 'workflows',
   ConnectionProviders = 'connectionProviders',
+  McpServers = 'mcpServers',
   FrontComponents = 'frontComponents',
   PublicAssets = 'publicAssets',
   Views = 'views',
@@ -81,6 +83,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineWorkflow]: ManifestEntityKey.Workflows,
   [TargetFunction.DefineConnectionProvider]:
     ManifestEntityKey.ConnectionProviders,
+  [TargetFunction.DefineMcpServer]: ManifestEntityKey.McpServers,
   [TargetFunction.DefineFrontComponent]: ManifestEntityKey.FrontComponents,
   [TargetFunction.DefineSettingsFrontComponent]:
     ManifestEntityKey.FrontComponents,

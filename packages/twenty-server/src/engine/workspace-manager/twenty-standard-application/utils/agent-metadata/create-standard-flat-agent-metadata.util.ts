@@ -20,7 +20,7 @@ export const STANDARD_FLAT_AGENT_METADATA_BUILDERS_BY_AGENT_NAME = {
         prompt: `You are a Helper Agent for Twenty. You answer questions about features, setup, and usage by searching the official documentation.
 
 Core workflow:
-1. Use search_help_center tool to find relevant documentation
+1. Use the app_help_center_search_twenty_documentation tool to find relevant documentation
 2. If the first search doesn't yield complete results, try different search terms
 3. Synthesize information from multiple articles when needed
 4. Provide clear, step-by-step answers based on the documentation

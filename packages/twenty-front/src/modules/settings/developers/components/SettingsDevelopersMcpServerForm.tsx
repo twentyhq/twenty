@@ -66,6 +66,7 @@ export const SettingsDevelopersMcpServerForm = ({
     error,
     canSave,
     isCreationMode,
+    isReadonly,
     isSyncingTools,
     handleSave,
     handleDelete,
@@ -117,27 +118,33 @@ export const SettingsDevelopersMcpServerForm = ({
           { children: isCreationMode ? t`New` : title },
         ]}
         actionButton={
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            isCancelDisabled={formConfig.formState.isSubmitting}
-            onCancel={() =>
-              navigate(
-                SettingsPath.Developers,
-                undefined,
-                undefined,
-                undefined,
-                SETTINGS_DEVELOPERS_TABS.TABS_IDS.MCP_SERVERS,
-              )
-            }
-            onSave={formConfig.handleSubmit(handleSave)}
-          />
+          isReadonly ? undefined : (
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              isCancelDisabled={formConfig.formState.isSubmitting}
+              onCancel={() =>
+                navigate(
+                  SettingsPath.Developers,
+                  undefined,
+                  undefined,
+                  undefined,
+                  SETTINGS_DEVELOPERS_TABS.TABS_IDS.MCP_SERVERS,
+                )
+              }
+              onSave={formConfig.handleSubmit(handleSave)}
+            />
+          )
         }
       >
         <SettingsPageContainer>
           <Section.Root>
             <Section.Header
               title={t`Server`}
-              description={t`The name prefixes every tool of this server in the AI chat, the label is what people see.`}
+              description={
+                isReadonly
+                  ? t`This server is declared by an installed app and follows its manifest.`
+                  : t`The name prefixes every tool of this server in the AI chat, the label is what people see.`
+              }
             />
             <StyledInputsContainer>
               <Controller
@@ -156,6 +163,7 @@ export const SettingsDevelopersMcpServerForm = ({
                     error={error?.message}
                     fullWidth
                     autoFocus={isCreationMode}
+                    disabled={isReadonly}
                   />
                 )}
               />
@@ -174,6 +182,7 @@ export const SettingsDevelopersMcpServerForm = ({
                     onChange={onChange}
                     error={error?.message}
                     fullWidth
+                    disabled={isReadonly}
                   />
                 )}
               />
@@ -192,6 +201,7 @@ export const SettingsDevelopersMcpServerForm = ({
                     onChange={onChange}
                     error={error?.message}
                     fullWidth
+                    disabled={isReadonly}
                   />
                 )}
               />
@@ -229,10 +239,12 @@ export const SettingsDevelopersMcpServerForm = ({
                         }}
                         fullWidth
                         ignorePasswordManagers
+                        disabled={isReadonly}
                       />
                     </StyledAuthorizationInput>
                     {hasStoredAuthorizationHeader &&
-                      !isAuthorizationHeaderCleared && (
+                      !isAuthorizationHeaderCleared &&
+                      !isReadonly && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -273,6 +285,7 @@ export const SettingsDevelopersMcpServerForm = ({
                     description={t`Offer this server's tools in the AI chat`}
                     checked={value}
                     onChange={onChange}
+                    disabled={isReadonly}
                   />
                 </Card.Root>
               )}
@@ -285,7 +298,7 @@ export const SettingsDevelopersMcpServerForm = ({
               onSync={handleSyncTools}
             />
           )}
-          {!isCreationMode && (
+          {!isCreationMode && !isReadonly && (
             <Section.Root>
               <Section.Header
                 title={t`Danger zone`}

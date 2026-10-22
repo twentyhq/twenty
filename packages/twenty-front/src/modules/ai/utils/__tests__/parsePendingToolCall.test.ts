@@ -62,7 +62,7 @@ describe('parsePendingToolCall', () => {
     ],
     [
       'a tool that does not pause',
-      toolPart({ toolName: 'search_help_center', input: {} }),
+      toolPart({ toolName: 'http_request', input: {} }),
     ],
     [
       'a question without options',

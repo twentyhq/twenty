@@ -53,6 +53,7 @@ export const sanitizeMcpServerTools = ({
   const seenToolNames = new Set<string>();
 
   for (const remoteTool of remoteTools) {
+    // Both prefixes are the same length, so one check covers hand-added and app-owned servers
     const isNameValid = MCP_TOOL_NAME_PATTERN.test(
       buildMcpToolName({ mcpServerName, toolName: remoteTool.name }),
     );

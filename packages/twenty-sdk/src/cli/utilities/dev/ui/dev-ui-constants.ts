@@ -98,6 +98,7 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.PageLayoutWidget]: 'Page layout widgets',
   [SyncableEntity.Agent]: 'Agents',
   [SyncableEntity.ConnectionProvider]: 'Connection providers',
+  [SyncableEntity.McpServer]: 'MCP servers',
   [SyncableEntity.TimelineActivityType]: 'Timeline activity types',
   [SyncableEntity.SettingsMenuItem]: 'Settings menu items',
 };

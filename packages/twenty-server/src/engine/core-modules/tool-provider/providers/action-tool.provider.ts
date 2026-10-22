@@ -32,7 +32,6 @@ import { CreateFileUploadTool } from 'src/engine/core-modules/tool/tools/file-up
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
-import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
@@ -51,7 +50,6 @@ export class ActionToolProvider implements ToolProvider {
     private readonly draftEmailTool: DraftEmailTool,
     private readonly findConnectedAccountsTool: FindConnectedAccountsTool,
     private readonly createCalendarEventTool: CreateCalendarEventTool,
-    private readonly searchHelpCenterTool: SearchHelpCenterTool,
     private readonly createFileUploadTool: CreateFileUploadTool,
     private readonly completeFileUploadTool: CompleteFileUploadTool,
     private readonly codeInterpreterTool: CodeInterpreterTool,
@@ -69,7 +67,6 @@ export class ActionToolProvider implements ToolProvider {
       ['draft_email', this.draftEmailTool],
       ['find_connected_accounts', this.findConnectedAccountsTool],
       ['create_calendar_event', this.createCalendarEventTool],
-      ['search_help_center', this.searchHelpCenterTool],
       ['create_file_upload', this.createFileUploadTool],
       ['complete_file_upload', this.completeFileUploadTool],
       ['code_interpreter', this.codeInterpreterTool],
@@ -188,15 +185,6 @@ export class ActionToolProvider implements ToolProvider {
         ),
       );
     }
-
-    descriptors.push(
-      this.buildDescriptor(
-        'search_help_center',
-        this.searchHelpCenterTool,
-        includeSchemas,
-        context.locale,
-      ),
-    );
 
     descriptors.push(
       this.buildDescriptor(

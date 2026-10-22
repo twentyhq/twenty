@@ -186,6 +186,7 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
+export type { McpServerManifest } from './mcpServerManifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type {
   NormalizedPageLayoutWidgetManifest,

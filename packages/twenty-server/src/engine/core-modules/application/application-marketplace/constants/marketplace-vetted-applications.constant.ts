@@ -36,4 +36,9 @@ export const MARKETPLACE_VETTED_APPLICATIONS: {
     sourcePackage: '@twentyhq/teams',
     position: 6,
   },
+  {
+    universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.HELP_CENTER,
+    sourcePackage: '@twentyhq/help-center',
+    position: 7,
+  },
 ];

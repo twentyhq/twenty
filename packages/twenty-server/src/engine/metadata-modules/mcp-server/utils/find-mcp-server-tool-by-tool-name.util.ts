@@ -9,9 +9,11 @@ import { buildMcpToolName } from 'src/engine/metadata-modules/mcp-server/utils/b
 export const findMcpServerToolByToolName = ({
   flatMcpServerMaps,
   toolName,
+  workspaceCustomApplicationId,
 }: {
   flatMcpServerMaps: FlatMcpServerMaps;
   toolName: string;
+  workspaceCustomApplicationId: string;
 }): { flatMcpServer: FlatMcpServer; tool: McpServerTool } | undefined => {
   for (const flatMcpServer of Object.values(
     flatMcpServerMaps.byUniversalIdentifier,
@@ -25,6 +27,8 @@ export const findMcpServerToolByToolName = ({
         buildMcpToolName({
           mcpServerName: flatMcpServer.name,
           toolName: candidate.name,
+          isApplicationOwned:
+            flatMcpServer.applicationId !== workspaceCustomApplicationId,
         }) === toolName,
     );
 

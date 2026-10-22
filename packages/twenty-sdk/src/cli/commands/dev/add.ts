@@ -30,6 +30,7 @@ import { getRecordPageLayoutBaseFile } from '@/cli/utilities/entity/entity-recor
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
 import { getConnectionProviderBaseFile } from '@/cli/utilities/entity/entity-connection-provider-template';
+import { getMcpServerBaseFile } from '@/cli/utilities/entity/entity-mcp-server-template';
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import { getViewFieldBaseFile } from '@/cli/utilities/entity/entity-view-field-template';
@@ -199,6 +200,16 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getConnectionProviderBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.McpServer: {
+        const name = await this.getEntityName(entity);
+
+        const file = getMcpServerBaseFile({
           name,
         });
 

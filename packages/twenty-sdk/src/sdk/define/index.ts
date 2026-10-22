@@ -144,6 +144,8 @@ export type { InputJsonSchema } from 'twenty-shared/logic-function';
 export { defineConnectionProvider } from '@/sdk/define/connection-providers/define-connection-provider';
 export type { ConnectionProviderScope } from 'twenty-shared/application';
 
+export { defineMcpServer } from '@/sdk/define/mcp-servers/define-mcp-server';
+
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
 export { defineObject } from '@/sdk/define/objects/define-object';

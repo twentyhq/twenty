@@ -8,6 +8,8 @@ import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-pro
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -30,6 +32,7 @@ export class McpToolProvider implements ToolProvider {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly mcpServerClientService: McpServerClientService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
@@ -45,8 +48,11 @@ export class McpToolProvider implements ToolProvider {
     options?: GenerateDescriptorOptions,
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
-    const flatMcpServerMaps = await this.getFlatMcpServerMaps(
-      context.workspaceId,
+    const [flatMcpServerMaps, workspaceCustomApplicationId] = await Promise.all(
+      [
+        this.getFlatMcpServerMaps(context.workspaceId),
+        this.getWorkspaceCustomApplicationId(context.workspaceId),
+      ],
     );
 
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
@@ -54,7 +60,14 @@ export class McpToolProvider implements ToolProvider {
     for (const flatMcpServer of Object.values(
       flatMcpServerMaps.byUniversalIdentifier,
     )) {
-      if (!isDefined(flatMcpServer) || !flatMcpServer.isEnabled) {
+      if (
+        !isDefined(flatMcpServer) ||
+        !flatMcpServer.isEnabled ||
+        !canCallerReachApplication({
+          callingApplication: context.application,
+          applicationId: flatMcpServer.applicationId,
+        })
+      ) {
         continue;
       }
 
@@ -62,6 +75,8 @@ export class McpToolProvider implements ToolProvider {
         const toolName = buildMcpToolName({
           mcpServerName: flatMcpServer.name,
           toolName: tool.name,
+          isApplicationOwned:
+            flatMcpServer.applicationId !== workspaceCustomApplicationId,
         });
 
         if (isDefined(options?.toolNames) && !options.toolNames.has(toolName)) {
@@ -87,12 +102,26 @@ export class McpToolProvider implements ToolProvider {
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
+    const [flatMcpServerMaps, workspaceCustomApplicationId] = await Promise.all(
+      [
+        this.getFlatMcpServerMaps(context.workspaceId),
+        this.getWorkspaceCustomApplicationId(context.workspaceId),
+      ],
+    );
+
     const match = findMcpServerToolByToolName({
-      flatMcpServerMaps: await this.getFlatMcpServerMaps(context.workspaceId),
+      flatMcpServerMaps,
       toolName,
+      workspaceCustomApplicationId,
     });
 
-    if (!isDefined(match)) {
+    if (
+      !isDefined(match) ||
+      !canCallerReachApplication({
+        callingApplication: context.application,
+        applicationId: match.flatMcpServer.applicationId,
+      })
+    ) {
       return {
         success: false,
         message: `${toolName} is not available`,
@@ -116,6 +145,17 @@ export class McpToolProvider implements ToolProvider {
         error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
+  }
+
+  private async getWorkspaceCustomApplicationId(
+    workspaceId: string,
+  ): Promise<string> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    return workspaceCustomFlatApplication.id;
   }
 
   private async getFlatMcpServerMaps(workspaceId: string) {

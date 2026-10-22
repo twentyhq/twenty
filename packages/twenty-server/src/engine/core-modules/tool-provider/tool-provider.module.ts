@@ -3,6 +3,7 @@ import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
@@ -47,6 +48,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
   imports: [
     DiscoveryModule,
     AiAgentModule,
+    ApplicationModule,
     ApplicationTranslationCatalogModule,
     ToolModule,
     RecordCrudModule,

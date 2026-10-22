@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
@@ -38,6 +38,7 @@ import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/meta
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
+import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -64,6 +65,7 @@ export class ApplicationSyncService {
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
     private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly mcpServerToolSyncService: McpServerToolSyncService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -122,6 +124,20 @@ export class ApplicationSyncService {
         );
     } catch (error) {
       throw enrichApplicationManifestSyncError({ error, manifest });
+    }
+
+    if (!dryRun && isNonEmptyArray(manifest.mcpServers)) {
+      // Failures are recorded on each server, so the install goes on without its tools
+      try {
+        await this.mcpServerToolSyncService.syncToolsOfApplication({
+          applicationId: ownerFlatApplication.id,
+          workspaceId,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to sync MCP server tools for application ${ownerFlatApplication.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     }
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {

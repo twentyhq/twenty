@@ -13,7 +13,6 @@ import { type CreateFileUploadTool } from 'src/engine/core-modules/tool/tools/fi
 import { type HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { type ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { type SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
-import { type SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { type ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
@@ -56,7 +55,6 @@ const buildProvider = ({
     buildTool<DraftEmailTool>(),
     buildTool<FindConnectedAccountsTool>(),
     buildTool<CreateCalendarEventTool>(),
-    buildTool<SearchHelpCenterTool>(),
     buildTool<CreateFileUploadTool>(),
     buildTool<CompleteFileUploadTool>(),
     buildTool<CodeInterpreterTool>(),

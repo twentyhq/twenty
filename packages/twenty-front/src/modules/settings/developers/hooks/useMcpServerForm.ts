@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { McpServerFormMode } from '@/settings/developers/constants/McpServerFormMode';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
@@ -13,6 +14,7 @@ import {
   getMcpServerFormSchema,
   type McpServerFormValues,
 } from '@/settings/developers/validation-schemas/mcpServerFormSchema';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -48,6 +50,7 @@ export const useMcpServerForm = ({
 }: UseMcpServerFormProps) => {
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isCreationMode = mode === McpServerFormMode.Create;
 
@@ -79,6 +82,14 @@ export const useMcpServerForm = ({
 
   const mcpServer = mcpServerData?.mcpServer ?? null;
 
+  // Servers declared by an installed app are managed by that app's manifest
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
+  const isReadonly =
+    isDefined(mcpServer) &&
+    isDefined(workspaceCustomApplicationId) &&
+    mcpServer.applicationId !== workspaceCustomApplicationId;
+
   useEffect(() => {
     if (!isDefined(mcpServer)) {
       return;
@@ -95,9 +106,11 @@ export const useMcpServerForm = ({
   }, [mcpServer, formConfig]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
-  const canSave = isCreationMode
-    ? isValid && !isSubmitting
-    : isDirty && isValid && !isSubmitting;
+  const canSave =
+    !isReadonly &&
+    (isCreationMode
+      ? isValid && !isSubmitting
+      : isDirty && isValid && !isSubmitting);
 
   const handleCreate = async (formValues: McpServerFormValues) => {
     try {
@@ -224,6 +237,7 @@ export const useMcpServerForm = ({
     error,
     canSave,
     isCreationMode,
+    isReadonly,
     isSyncingTools,
     handleSave,
     handleDelete,

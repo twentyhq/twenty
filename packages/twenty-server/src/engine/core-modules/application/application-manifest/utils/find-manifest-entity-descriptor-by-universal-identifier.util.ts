@@ -269,7 +269,8 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   },
   mcpServer: {
     entityKind: 'MCP server',
-    getCandidates: () => NO_MANIFEST_CANDIDATES,
+    getCandidates: (manifest) =>
+      toCandidates(manifest.mcpServers, (mcpServer) => mcpServer.label),
   },
   applicationVariable: {
     entityKind: 'application variable',

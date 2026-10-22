@@ -86,7 +86,7 @@ describe('findAwaitingPausingToolParts', () => {
   it('ignores tools that do not pause, whatever they return', () => {
     expect(
       findAwaitingPausingToolParts([
-        toolPart({ toolName: 'search_help_center', status: 'pending' }),
+        toolPart({ toolName: 'http_request', status: 'pending' }),
       ]),
     ).toEqual([]);
   });

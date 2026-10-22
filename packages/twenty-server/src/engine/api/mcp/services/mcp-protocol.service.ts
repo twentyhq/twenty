@@ -46,6 +46,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
+import { HELP_CENTER_SEARCH_TOOL_NAME } from 'src/engine/core-modules/tool-provider/constants/help-center-search-tool-name.constant';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
@@ -78,7 +79,7 @@ import { handleException } from 'src/engine/utils/global-exception-handler.util'
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const MCP_PRELOADED_TOOL_ANNOTATIONS: Record<string, McpToolAnnotations> = {
-  search_help_center: MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+  [HELP_CENTER_SEARCH_TOOL_NAME]: MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
 };
 
 const annotatePreloadedMcpTools = (toolSet: ToolSet): McpToolSet =>

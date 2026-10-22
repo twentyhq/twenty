@@ -1,3 +1,6 @@
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { McpToolProvider } from 'src/engine/core-modules/tool-provider/providers/mcp-tool.provider';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
@@ -9,6 +12,8 @@ import { type McpServerClientService } from 'src/engine/metadata-modules/mcp-ser
 import { type McpServerTool } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-tool.type';
 
 const WORKSPACE_ID = 'workspace-id';
+const WORKSPACE_CUSTOM_APPLICATION_ID = 'workspace-custom-application-id';
+const HELP_CENTER_APPLICATION_ID = 'help-center-application-id';
 const CONTEXT = {
   workspaceId: WORKSPACE_ID,
   rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: 'role-id' } },
@@ -41,6 +46,7 @@ const createFlatMcpServer = (
     isEnabled: true,
     tools: [SEARCH_TOOL],
     workspaceId: WORKSPACE_ID,
+    applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
     ...overrides,
   }) as FlatMcpServer;
 
@@ -76,10 +82,21 @@ const buildProvider = ({
     callTool,
   } as unknown as McpServerClientService;
 
+  const applicationService = {
+    findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+      .fn()
+      .mockResolvedValue({
+        workspaceCustomFlatApplication: {
+          id: WORKSPACE_CUSTOM_APPLICATION_ID,
+        },
+      }),
+  } as unknown as ApplicationService;
+
   return new McpToolProvider(
     flatEntityMapsCacheService,
     featureFlagService,
     mcpServerClientService,
+    applicationService,
   );
 };
 
@@ -145,6 +162,47 @@ describe('McpToolProvider', () => {
     expect(descriptors).toHaveLength(1);
     expect(descriptors[0].name).toBe('mcp_docs_delete_page');
     expect('inputSchema' in descriptors[0]).toBe(false);
+  });
+
+  it('names app-declared server tools like other app tools and scopes them to their app', async () => {
+    const helpCenterServer = createFlatMcpServer({
+      name: 'help_center',
+      applicationId: HELP_CENTER_APPLICATION_ID,
+    });
+    const provider = buildProvider({
+      mcpServers: [createFlatMcpServer({ name: 'docs' }), helpCenterServer],
+    });
+
+    const sessionDescriptors = await provider.generateDescriptors(CONTEXT);
+
+    expect(sessionDescriptors.map(({ name }) => name)).toEqual([
+      'mcp_docs_search_docs',
+      'app_help_center_search_docs',
+    ]);
+
+    const otherApplicationDescriptors = await provider.generateDescriptors({
+      ...CONTEXT,
+      application: {
+        id: 'other-application-id',
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      } as FlatApplication,
+    });
+
+    expect(otherApplicationDescriptors).toEqual([]);
+
+    const output = await provider.executeStaticTool(
+      'app_help_center_search_docs',
+      {},
+      {
+        ...CONTEXT,
+        application: {
+          id: 'other-application-id',
+          sourceType: ApplicationRegistrationSourceType.NPM,
+        } as FlatApplication,
+      },
+    );
+
+    expect(output.success).toBe(false);
   });
 
   it('calls the remote tool and converts its content', async () => {

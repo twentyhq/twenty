@@ -15,10 +15,6 @@ export const ACTION_TOOL_STATUS_LABELS: Record<string, ToolStatusLabels> = {
     loading: msg`Finding connected accounts`,
     completed: msg`Found connected accounts`,
   },
-  search_help_center: {
-    loading: msg`Searching the help center`,
-    completed: msg`Searched the help center`,
-  },
   share_record: {
     loading: msg`Sharing record`,
     completed: msg`Shared record`,
