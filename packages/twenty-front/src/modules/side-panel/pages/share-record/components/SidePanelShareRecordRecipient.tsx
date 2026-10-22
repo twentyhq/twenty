@@ -3,11 +3,11 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock, IconUsers } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { RecordSharingAccessLevelOptions } from '@/object-record/record-sharing/components/RecordSharingAccessLevelOptions';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
@@ -52,6 +52,7 @@ export const SidePanelShareRecordRecipient = ({
   removeShare,
 }: SidePanelShareRecordRecipientProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
@@ -91,19 +92,24 @@ export const SidePanelShareRecordRecipient = ({
   const getRecipientItem = () => {
     if (!isEditable) {
       return (
-        <CommandMenuItem
-          id={share.id}
-          label={label}
-          Icon={Icon}
-          LeftComponent={avatar}
+        <ListItem
+          startIcon={
+            avatar ?? (
+              <ListItemIconContainer>
+                <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+              </ListItemIconContainer>
+            )
+          }
           description={
             share.rowCause === RecordShareRowCause.OWNER
               ? t`Owner`
               : t`Managed access`
           }
-          contextualTextPosition="right"
+          descriptionPlacement="end"
           disabled
-        />
+        >
+          {label}
+        </ListItem>
       );
     }
 

@@ -1,19 +1,18 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLink, IconRefresh } from 'twenty-ui/icon';
+import { IconLink } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelShareRecordAddPeopleItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordAddPeopleItem';
 import { SidePanelShareRecordGeneralAccessItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem';
 import { SidePanelShareRecordRecipient } from '@/side-panel/pages/share-record/components/SidePanelShareRecordRecipient';
+import { SidePanelShareRecordRetryItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordRetryItem';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import {
   ObjectSharingReach,
   RecordSharePrincipalType,
@@ -110,21 +109,10 @@ export const SidePanelShareRecordContent = ({
           {isDefined(error) ? (
             <>
               <StyledDescription role="alert">{t`Sharing settings could not be loaded.`}</StyledDescription>
-              <SelectableListItem
+              <SidePanelShareRecordRetryItem
                 itemId={RETRY_ITEM_ID}
-                onEnter={() => {
-                  void refetch().catch(() => {});
-                }}
-              >
-                <CommandMenuItem
-                  id={RETRY_ITEM_ID}
-                  label={t`Try again`}
-                  Icon={IconRefresh}
-                  onClick={() => {
-                    void refetch().catch(() => {});
-                  }}
-                />
-              </SelectableListItem>
+                refetch={refetch}
+              />
             </>
           ) : (
             isDefined(sharing) &&

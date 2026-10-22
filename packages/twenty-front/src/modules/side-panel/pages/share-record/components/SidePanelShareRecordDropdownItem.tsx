@@ -12,11 +12,8 @@ import { useSidePanelListItemFocus } from '@/side-panel/hooks/useSidePanelListIt
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
-import { ListItemSubmenuIndicator } from '@/ui/navigation/list-item/components/ListItemSubmenuIndicator';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type SidePanelShareRecordDropdownItemProps = {
   itemId: string;
@@ -43,10 +40,6 @@ export const SidePanelShareRecordDropdownItem = ({
 }: SidePanelShareRecordDropdownItemProps) => {
   const theme = useTheme();
   const dropdownId = useId();
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
   const { openDropdown } = useOpenDropdown();
   const { nativeItemRef, isSelectedItemId, handleFocus } =
     useSidePanelListItemFocus(itemId);
@@ -78,11 +71,7 @@ export const SidePanelShareRecordDropdownItem = ({
               }
               description={description}
               descriptionPlacement="end"
-              endIcon={
-                !disabled && (
-                  <ListItemSubmenuIndicator isOpen={isDropdownOpen} />
-                )
-              }
+              hasSubmenu={!disabled}
               focused={!disabled && isSelectedItemId}
               focusableWhenDisabled
             >

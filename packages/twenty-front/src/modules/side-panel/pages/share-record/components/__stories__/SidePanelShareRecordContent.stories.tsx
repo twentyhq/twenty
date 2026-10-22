@@ -297,7 +297,13 @@ export const LoadError: Story = {
     await expect(await page.findByRole('alert')).toHaveTextContent(
       'Sharing settings could not be loaded.',
     );
-    await expect(page.getByText('Try again')).toBeVisible();
+    const retry = page.getByRole('button', { name: 'Try again' });
+    await userEvent.tab();
+    await expect(retry).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(refetch).toHaveBeenCalledTimes(1);
+    await userEvent.click(retry);
+    await expect(refetch).toHaveBeenCalledTimes(2);
   },
 };
 
