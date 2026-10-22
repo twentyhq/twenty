@@ -3,17 +3,14 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectElementToReceivePointer } from '@/__stories__/shared/test-utils/matchers/expectElementToReceivePointer';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { waitForAnimationFrames } from '@/__stories__/shared/test-utils/waitForAnimationFrames';
 import { MAXIMUM_DROPDOWN_TRIGGER_GAP } from '@/__stories__/twenty-ui-gallery/constants/MaximumDropdownTriggerGap';
+import { WIDGET_SCROLL_FRAME_LABEL } from '@/__stories__/twenty-ui-gallery/constants/WidgetScrollFrameLabel';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { computePopupAnchorGapAndOverlap } from '@/__stories__/twenty-ui-gallery/utils/computePopupAnchorGapAndOverlap';
+import { waitForGeometryTrackerToIdle } from '@/__stories__/twenty-ui-gallery/utils/waitForGeometryTrackerToIdle';
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
-import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/geometry/constants/GeometryIdleFrameThreshold';
 
 const WIDGET_SCROLL_OFFSET = 40;
-
-const waitForGeometryTrackerToIdle = () =>
-  waitForAnimationFrames(GEOMETRY_IDLE_FRAME_THRESHOLD * 2);
 
 const expectPortalActionAtOwnerBottom = ({
   portalAction,
@@ -137,7 +134,7 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
   );
 
   const scrollFrame = canvas.getByRole('region', {
-    name: 'Widget scroll frame',
+    name: WIDGET_SCROLL_FRAME_LABEL,
   });
   await waitForGeometryTrackerToIdle();
   scrollFrame.scrollTop = WIDGET_SCROLL_OFFSET;
