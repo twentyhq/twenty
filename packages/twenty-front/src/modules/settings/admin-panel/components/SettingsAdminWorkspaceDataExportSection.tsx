@@ -79,7 +79,7 @@ export const SettingsAdminWorkspaceDataExportSection = ({
       <SettingsAdminWorkspaceDataExportsFetchEffect />
       <SettingsTableListSection<WorkspaceDataExportRow>
         title={t`Data export`}
-        description={t`Every object of this workspace as CSV files in one zip, kept for 7 days. Works for suspended workspaces.`}
+        description={t`Every object of this workspace as CSV files in one zip, kept for 1 day. Works for suspended workspaces.`}
         headerAdornment={
           <Button
             startIcon={<IconFileExport />}

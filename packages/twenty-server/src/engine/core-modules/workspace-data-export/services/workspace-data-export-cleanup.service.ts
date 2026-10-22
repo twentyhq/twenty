@@ -36,7 +36,8 @@ export class WorkspaceDataExportCleanupService {
         {
           path: exportPath,
           workspaceId: Not(IsNull()),
-          createdAt: LessThan(
+          status: FILE_STATUS.UPLOADED,
+          updatedAt: LessThan(
             new Date(now - WORKSPACE_DATA_EXPORT_RETENTION_MS),
           ),
         },
@@ -90,16 +91,14 @@ export class WorkspaceDataExportCleanupService {
     workspaceId,
     now,
   }: {
-    file: Pick<FileEntity, 'id' | 'createdAt' | 'status'>;
+    file: Pick<FileEntity, 'id' | 'updatedAt' | 'status'>;
     workspaceId: string;
     now: number;
   }): Promise<boolean> {
-    if (file.createdAt.getTime() < now - WORKSPACE_DATA_EXPORT_RETENTION_MS) {
-      return true;
-    }
-
-    if (file.status !== FILE_STATUS.PENDING) {
-      return false;
+    if (file.status === FILE_STATUS.UPLOADED) {
+      return (
+        file.updatedAt.getTime() < now - WORKSPACE_DATA_EXPORT_RETENTION_MS
+      );
     }
 
     return isWorkspaceDataExportStale(

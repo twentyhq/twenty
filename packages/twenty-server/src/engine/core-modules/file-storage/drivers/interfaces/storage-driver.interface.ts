@@ -22,6 +22,7 @@ export interface StorageDriver {
     filePath: string;
     stream: Readable;
     mimeType: string | undefined;
+    tags?: Record<string, string>;
   }): Promise<void>;
 
   getFileMetadata(params: {

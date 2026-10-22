@@ -41,6 +41,7 @@ export class ValidatedStorageDriver implements StorageDriver {
     filePath: string;
     stream: Readable;
     mimeType: string | undefined;
+    tags?: Record<string, string>;
   }): Promise<void> {
     assertStoragePathIsSafe(params.filePath);
 
