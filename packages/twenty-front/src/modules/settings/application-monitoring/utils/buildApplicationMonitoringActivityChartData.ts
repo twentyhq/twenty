@@ -17,6 +17,7 @@ export const buildApplicationMonitoringActivityChartData = (
 
   return listApplicationMonitoringBucketStarts(monitoring).map(
     (bucketStart) => ({
+      bucketStart,
       errorCount: activityByBucketStart.get(bucketStart)?.errorCount ?? 0,
       warningCount: activityByBucketStart.get(bucketStart)?.warningCount ?? 0,
     }),
