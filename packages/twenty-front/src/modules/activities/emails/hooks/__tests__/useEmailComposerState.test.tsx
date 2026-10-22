@@ -197,4 +197,34 @@ describe('useEmailComposerState', () => {
 
     expect(result.current.fromHandle).toBe('jane@example.com');
   });
+
+  it('keeps a sender the user picked when the resolved from handle changes', () => {
+    const { result, rerender } = renderHook(
+      ({ initialFromHandle }: { initialFromHandle?: string }) =>
+        useEmailComposerState({
+          connectedAccountId: 'account-1',
+          initialFromHandle,
+        }),
+      {
+        initialProps: { initialFromHandle: undefined } as {
+          initialFromHandle?: string;
+        },
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <MockedProvider mocks={[]}>{children}</MockedProvider>
+        ),
+      },
+    );
+
+    act(() => {
+      result.current.setSender({
+        connectedAccountId: 'account-2',
+        fromHandle: 'sales@example.com',
+      });
+    });
+
+    rerender({ initialFromHandle: 'jane@example.com' });
+
+    expect(result.current.connectedAccountId).toBe('account-2');
+    expect(result.current.fromHandle).toBe('sales@example.com');
+  });
 });

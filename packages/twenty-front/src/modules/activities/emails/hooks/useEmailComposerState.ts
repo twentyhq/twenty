@@ -40,27 +40,41 @@ export const useEmailComposerState = ({
   const initialSubject = draftPrefill?.subject ?? defaultSubject;
   const initialBody = draftPrefill?.body ?? '';
 
-  const [sender, setSender] = useState<ConnectedAccountSender>({
+  const [sender, setSenderState] = useState<ConnectedAccountSender>({
     connectedAccountId: initialConnectedAccountId,
     fromHandle: initialFromHandle,
   });
+  const [isSenderChosenByUser, setIsSenderChosenByUser] = useState(false);
   const [previousConnectedAccountId, setPreviousConnectedAccountId] = useState(
     initialConnectedAccountId,
   );
   const [previousFromHandle, setPreviousFromHandle] =
     useState(initialFromHandle);
 
-  if (
-    previousConnectedAccountId !== initialConnectedAccountId ||
-    previousFromHandle !== initialFromHandle
-  ) {
-    setPreviousConnectedAccountId(initialConnectedAccountId);
-    setPreviousFromHandle(initialFromHandle);
-    setSender({
+  const resetSender = () => {
+    setSenderState({
       connectedAccountId: initialConnectedAccountId,
       fromHandle: initialFromHandle,
     });
+  };
+
+  if (previousConnectedAccountId !== initialConnectedAccountId) {
+    setPreviousConnectedAccountId(initialConnectedAccountId);
+    setPreviousFromHandle(initialFromHandle);
+    setIsSenderChosenByUser(false);
+    resetSender();
+  } else if (previousFromHandle !== initialFromHandle) {
+    setPreviousFromHandle(initialFromHandle);
+
+    if (!isSenderChosenByUser) {
+      resetSender();
+    }
   }
+
+  const setSender = useCallback((nextSender: ConnectedAccountSender) => {
+    setIsSenderChosenByUser(true);
+    setSenderState(nextSender);
+  }, []);
 
   const { connectedAccountId, fromHandle } = sender;
   const [to, setTo] = useState<EmailRecipient[]>(() =>
