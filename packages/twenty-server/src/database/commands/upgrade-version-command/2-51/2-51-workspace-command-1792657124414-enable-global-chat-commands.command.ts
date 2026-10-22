@@ -47,7 +47,9 @@ export class EnableGlobalChatCommandsCommand extends ProvisionedWorkspaceCommand
     workspaceId,
     options,
     direction,
-  }: RunOnWorkspaceArgs & { direction: 'up' | 'down' }): Promise<void> {
+  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'> & {
+    direction: 'up' | 'down';
+  }): Promise<void> {
     const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
