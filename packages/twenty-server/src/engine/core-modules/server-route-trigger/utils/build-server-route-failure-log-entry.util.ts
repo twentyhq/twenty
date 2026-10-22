@@ -1,8 +1,8 @@
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { type ApplicationLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/application-log-entry.interface';
 import { buildApplicationPlatformLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-platform-log-entry';
-import { ServerRouteTriggerException } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
+import { ServerRouteTriggerExceptionCode } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
+import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 export const buildServerRouteFailureLogEntry = ({
@@ -26,9 +26,14 @@ export const buildServerRouteFailureLogEntry = ({
     logicFunctionId: resolver.id,
     logicFunctionName: resolver.name,
     level: 'ERROR',
-    message: `Server route request failed: ${error instanceof Error ? error.message : String(error)}`,
-    errorCode:
-      error instanceof ServerRouteTriggerException || isUsageRefusedError(error)
-        ? error.code
-        : 'UNKNOWN',
+    ...(isAppFacingServerRouteError(error)
+      ? {
+          message: `Server route request failed: ${error.message}`,
+          errorCode: error.code,
+        }
+      : {
+          message: 'Server route request failed because of a platform error.',
+          errorCode:
+            ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
+        }),
   });

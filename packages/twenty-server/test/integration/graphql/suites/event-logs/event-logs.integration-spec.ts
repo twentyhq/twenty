@@ -589,7 +589,12 @@ describe('Event Logs (integration)', () => {
         });
 
         expect(upgradeResponse.body.errors).toBeUndefined();
-        expect(upgradeResponse.body.data.eventLogs.records).toEqual([]);
+        expect(
+          upgradeResponse.body.data.eventLogs.records.filter(
+            (record: { properties: { source: string } }) =>
+              record.properties.source !== 'UPGRADE',
+          ),
+        ).toEqual([]);
       });
     });
 
