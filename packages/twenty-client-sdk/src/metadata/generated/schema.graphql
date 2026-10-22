@@ -3760,7 +3760,6 @@ type PreviewMessageCampaignSendOutputDTO {
 
 type PublicApplicationRegistration {
   id: UUID!
-  isVetted: Boolean!
   logoUrl: String
   name: String!
   oAuthScopes: [String!]!

@@ -2,11 +2,13 @@ import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
@@ -14,10 +16,8 @@ import {
   isDefined,
   isValidUrl,
 } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/components/feedback';
 import {
   type IconComponent,
-  IconAlertTriangle,
   IconDatabase,
   IconUserCircle,
 } from 'twenty-ui/icon';
@@ -125,10 +125,6 @@ const StyledScopeIcon = styled.div`
   display: flex;
   flex-shrink: 0;
   justify-content: center;
-`;
-
-const StyledUnverifiedCallout = styled.div`
-  margin-top: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledRedirectNotice = styled.p`
@@ -242,6 +238,33 @@ export const Authorize = () => {
     }
   };
 
+  useGlobalHotkeys({
+    keys: [Key.Enter],
+    callback: (keyboardEvent) => {
+      if (
+        keyboardEvent.target instanceof HTMLButtonElement ||
+        loading ||
+        isAuthorizing ||
+        !isDefined(applicationRegistration)
+      ) {
+        return;
+      }
+
+      handleAuthorize();
+    },
+    containsModifier: false,
+    dependencies: [
+      loading,
+      isAuthorizing,
+      applicationRegistration,
+      clientId,
+      redirectUrl,
+    ],
+    options: {
+      preventDefault: false,
+    },
+  });
+
   if (isDefined(queryError)) {
     return (
       <StyledAuthContent>
@@ -308,17 +331,6 @@ export const Authorize = () => {
                 })}
               </StyledScopeList>
             </StyledPermissionSection>
-          )}
-          {!applicationRegistration.isVetted && (
-            <StyledUnverifiedCallout>
-              <Callout
-                status="warning"
-                fullWidth
-                icon={<IconAlertTriangle size={theme.icon.size.md} />}
-                title={t`Twenty hasn't verified this app`}
-                description={t`Anyone can register an app under any name. Only connect it if you started this connection yourself and trust where it sends you.`}
-              />
-            </StyledUnverifiedCallout>
           )}
           {isDefined(redirectHost) && (
             <StyledRedirectNotice>

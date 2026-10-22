@@ -472,7 +472,6 @@ export class ApplicationRegistrationService {
         'latestAvailableVersion',
         'websiteUrl',
         'oAuthScopes',
-        'isVetted',
       ],
     });
 
@@ -483,13 +482,10 @@ export class ApplicationRegistrationService {
     return {
       id: registration.id,
       name: registration.name,
-      // Anyone can register a client with any logo, so only vetted apps get to show one
-      logoUrl: registration.isVetted
-        ? this.applicationRegistrationAssetUrlService.buildLogoUrl(registration)
-        : null,
+      logoUrl:
+        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       websiteUrl: registration.websiteUrl,
       oAuthScopes: registration.oAuthScopes,
-      isVetted: registration.isVetted,
     };
   }
 
@@ -1088,7 +1084,6 @@ export class ApplicationRegistrationService {
         oAuthScopes: TWENTY_CLI_APPLICATION_REGISTRATION.oAuthScopes,
         ownerWorkspaceId: null,
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-        isVetted: true,
         createdByUserId: null,
       })
       .orIgnore()

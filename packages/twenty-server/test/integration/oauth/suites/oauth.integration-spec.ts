@@ -273,67 +273,6 @@ describe('OAuth (integration)', () => {
     });
   });
 
-  describe('Public client lookup (findApplicationRegistrationByClientId)', () => {
-    const findByClientIdQuery = gql`
-      query FindApplicationRegistrationByClientId($clientId: String!) {
-        findApplicationRegistrationByClientId(clientId: $clientId) {
-          logoUrl
-          isVetted
-        }
-      }
-    `;
-
-    const findByClientId = async (clientId: string) => {
-      const response = await makeMetadataApiRequest(
-        { query: findByClientIdQuery, variables: { clientId } },
-        null,
-      );
-
-      return response.body.data.findApplicationRegistrationByClientId;
-    };
-
-    let dynamicClientId: string;
-
-    beforeAll(async () => {
-      const registerResponse = await request(baseUrl)
-        .post('/oauth/register')
-        .send({
-          client_name: 'Twenty',
-          redirect_uris: ['https://example.com/callback'],
-          logo_uri: 'https://example.com/logo.png',
-        })
-        .expect(201);
-
-      dynamicClientId = registerResponse.body.client_id;
-
-      const rows = await ds.query(
-        `SELECT id FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
-        [dynamicClientId],
-      );
-
-      createdEntityIds.registrations.push(rows[0].id);
-    });
-
-    it('should flag a dynamically registered client as not vetted and hide its logo', async () => {
-      expect(await findByClientId(dynamicClientId)).toEqual({
-        logoUrl: null,
-        isVetted: false,
-      });
-    });
-
-    it('should show the logo once the registration is vetted', async () => {
-      await ds.query(
-        `UPDATE core."applicationRegistration" SET "isVetted" = true WHERE "oAuthClientId" = $1`,
-        [dynamicClientId],
-      );
-
-      expect(await findByClientId(dynamicClientId)).toEqual({
-        logoUrl: 'https://example.com/logo.png',
-        isVetted: true,
-      });
-    });
-  });
-
   describe('Authorization endpoint (authorizeApp)', () => {
     const authorizeAppMutation = gql`
       mutation AuthorizeApp(

@@ -23,7 +23,6 @@ const buildHandlers = (
     logoUrl: string | null;
     oAuthScopes: string[];
     websiteUrl: string | null;
-    isVetted: boolean;
   } | null,
 ) => [
   graphql.query(
@@ -94,7 +93,6 @@ export const Default: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
-        isVetted: true,
       }),
     },
   },
@@ -103,6 +101,7 @@ export const Default: Story = {
     await canvas.findByText('Connect ChatGPT to your account', undefined, {
       timeout: 5000,
     });
+    await canvas.findByText('chatgpt.com');
   },
 };
 
@@ -121,7 +120,6 @@ export const WithApiScopeOnly: Story = {
         logoUrl: null,
         oAuthScopes: ['api'],
         websiteUrl: null,
-        isVetted: true,
       }),
     },
   },
@@ -150,7 +148,6 @@ export const WithLongAppName: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
-        isVetted: true,
       }),
     },
   },
@@ -161,33 +158,5 @@ export const WithLongAppName: Story = {
       undefined,
       { timeout: 5000 },
     );
-  },
-};
-
-export const Unverified: Story = {
-  args: {
-    searchParams: {
-      client_id: 'unverified-client-id',
-      redirect_uri: 'https://unknown-app.example.com/callback',
-    },
-  },
-  parameters: {
-    msw: {
-      handlers: buildHandlers({
-        id: 'application-id-unverified',
-        name: 'Unknown App',
-        logoUrl: null,
-        oAuthScopes: ['api', 'profile'],
-        websiteUrl: null,
-        isVetted: false,
-      }),
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await canvas.findByText("Twenty hasn't verified this app", undefined, {
-      timeout: 5000,
-    });
-    await canvas.findByText('unknown-app.example.com');
   },
 };

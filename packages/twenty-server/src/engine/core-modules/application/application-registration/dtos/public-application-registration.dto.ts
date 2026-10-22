@@ -18,7 +18,4 @@ export class PublicApplicationRegistrationDTO {
 
   @Field(() => [String])
   oAuthScopes: string[];
-
-  @Field()
-  isVetted: boolean;
 }

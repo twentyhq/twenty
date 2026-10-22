@@ -9743,9 +9743,6 @@ export default {
             "id": [
                 501
             ],
-            "isVetted": [
-                4
-            ],
             "logoUrl": [
                 1
             ],
