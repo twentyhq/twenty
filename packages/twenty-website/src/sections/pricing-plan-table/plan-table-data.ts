@@ -283,6 +283,15 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       },
       type: 'row',
     },
+    {
+      appliesTo: 'cloud',
+      featureLabel: msg`Data Processing Agreement (DPA)`,
+      tiers: {
+        organization: { kind: 'yes', label: msg`Yes` },
+        pro: { kind: 'yes', label: msg`Yes` },
+      },
+      type: 'row',
+    },
     { title: msg`Support`, type: 'category' },
     {
       featureLabel: msg`Community`,
@@ -497,7 +506,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
-      featureLabel: msg`Security review & tailored DPA`,
+      featureLabel: msg`Security reviews & custom contracts`,
       tiers: {
         enterprise: { kind: 'yes', label: msg`Yes` },
         organization: { kind: 'dash' },

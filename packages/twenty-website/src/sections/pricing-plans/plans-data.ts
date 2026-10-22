@@ -224,8 +224,8 @@ const ENTERPRISE_FEATURES_CLOUD: PlanFeature[] = [
     visual: { kind: 'icon', icon: IconUsers },
   },
   {
-    title: msg`Sail through procurement`,
-    description: msg`Security review and DPA`,
+    title: msg`Enterprise procurement support`,
+    description: msg`Security reviews and custom contracts`,
     visual: { kind: 'icon', icon: IconFileCertificate },
   },
   {
