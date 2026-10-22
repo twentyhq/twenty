@@ -60,6 +60,11 @@ const HeadCell = styled.div`
   &[data-tier] {
     border-left: 1px solid ${semanticColor.line};
   }
+
+  &[data-highlighted] {
+    background-color: ${color('white-5')};
+    box-shadow: inset 0 2px 0 ${color('blue')};
+  }
 `;
 
 const FeatureLabel = styled.div`
@@ -84,10 +89,37 @@ const TierCell = styled.div`
   line-height: ${spacing(5.5)};
   min-height: ${spacing(16)};
   padding: ${spacing(4)};
+
+  &[data-highlighted] {
+    background-color: ${color('white-5')};
+  }
 `;
 
 const TierText = styled.span`
   color: ${semanticColor.ink};
+`;
+
+const MetricLine = styled.span`
+  align-items: baseline;
+  column-gap: ${spacing(1)};
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const MetricValue = styled.span`
+  color: ${semanticColor.ink};
+  font-size: ${fontSize(4.5)};
+  font-weight: ${FONT_WEIGHT.medium};
+`;
+
+const MetricUnit = styled.span`
+  color: ${semanticColor.inkMuted};
+`;
+
+const MetricDetail = styled.span`
+  color: ${semanticColor.inkSubtle};
+  font-size: ${fontSize(3.5)};
+  line-height: ${spacing(5)};
 `;
 
 const CellMark = styled.span`
@@ -158,6 +190,23 @@ function CellValue({ cell }: { cell: PlanTableCellType }) {
     return <TierText>{i18n._(cell.text)}</TierText>;
   }
 
+  if (cell.kind === 'metric') {
+    return (
+      <>
+        <MetricLine>
+          {cell.prefix !== undefined ? (
+            <MetricUnit>{i18n._(cell.prefix)}</MetricUnit>
+          ) : null}
+          <MetricValue>{i18n._(cell.value)}</MetricValue>
+          <MetricUnit>{i18n._(cell.unit)}</MetricUnit>
+        </MetricLine>
+        {cell.detail !== undefined ? (
+          <MetricDetail>{i18n._(cell.detail)}</MetricDetail>
+        ) : null}
+      </>
+    );
+  }
+
   if (cell.kind === 'dash') {
     return (
       <CellMark>
@@ -202,7 +251,10 @@ function FeatureRow({
         ) : null}
       </FeatureLabel>
       {tierColumns.map((column) => (
-        <TierCell key={column.id}>
+        <TierCell
+          data-highlighted={column.highlighted ? '' : undefined}
+          key={column.id}
+        >
           <CellValue cell={resolveCell(row, column.id)} />
         </TierCell>
       ))}
@@ -270,7 +322,11 @@ export function PlanTableContent() {
       <GridRow>
         <HeadCell>{i18n._(PLAN_TABLE_DATA.featureColumnLabel)}</HeadCell>
         {PLAN_TABLE_DATA.tierColumns.map((column) => (
-          <HeadCell data-tier key={column.id}>
+          <HeadCell
+            data-highlighted={column.highlighted ? '' : undefined}
+            data-tier
+            key={column.id}
+          >
             {i18n._(column.label[hosting])}
           </HeadCell>
         ))}

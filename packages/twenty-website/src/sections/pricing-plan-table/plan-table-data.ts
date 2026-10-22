@@ -6,17 +6,36 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
   featureColumnLabel: msg`Name`,
   initialVisibleRowCount: 15,
   rows: [
+    { title: msg`Plan essentials`, type: 'category' },
     {
       featureLabel: msg`Price`,
       selfHostTiers: {
-        enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$19/user/month` },
-        pro: { kind: 'text', text: msg`$0/user/month` },
+        enterprise: {
+          kind: 'metric',
+          prefix: msg`From`,
+          unit: msg`/year`,
+          value: msg`$50k`,
+        },
+        organization: {
+          kind: 'metric',
+          unit: msg`/user/month`,
+          value: msg`$19`,
+        },
+        pro: { kind: 'metric', unit: msg`/user/month`, value: msg`$0` },
       },
       tiers: {
-        enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$39/user/month` },
-        pro: { kind: 'text', text: msg`$9/user/month` },
+        enterprise: {
+          kind: 'metric',
+          prefix: msg`From`,
+          unit: msg`/year`,
+          value: msg`$50k`,
+        },
+        organization: {
+          kind: 'metric',
+          unit: msg`/user/month`,
+          value: msg`$39`,
+        },
+        pro: { kind: 'metric', unit: msg`/user/month`, value: msg`$9` },
       },
       type: 'row',
     },
@@ -25,8 +44,18 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: msg`Personal AI usage`,
       tiers: {
         enterprise: { kind: 'text', text: msg`Custom` },
-        organization: { kind: 'text', text: msg`≈ 500 AI tasks/week` },
-        pro: { kind: 'text', text: msg`≈ 100 AI tasks/week` },
+        organization: {
+          detail: msg`per member`,
+          kind: 'metric',
+          unit: msg`AI tasks/week`,
+          value: msg`≈ 500`,
+        },
+        pro: {
+          detail: msg`per member`,
+          kind: 'metric',
+          unit: msg`AI tasks/week`,
+          value: msg`≈ 100`,
+        },
       },
       tooltip: msg`Each member's own AI allowance, renewed every Monday. An AI task is one chat request, estimated with the default model; smarter models use more. When it runs out, chat continues on workspace credits unless an admin turns that off.`,
       type: 'row',
@@ -36,8 +65,18 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: msg`Workspace credits`,
       tiers: {
         enterprise: { kind: 'text', text: msg`Custom` },
-        organization: { kind: 'text', text: msg`4 credits/user/month` },
-        pro: { kind: 'text', text: msg`1 credit/user/month` },
+        organization: {
+          detail: msg`≈ 40,000 workflow steps`,
+          kind: 'metric',
+          unit: msg`credits/user/month`,
+          value: msg`4`,
+        },
+        pro: {
+          detail: msg`≈ 10,000 workflow steps`,
+          kind: 'metric',
+          unit: msg`credit/user/month`,
+          value: msg`1`,
+        },
       },
       tooltip: msg`Monthly credits shared by the workspace for workflows, AI agents and apps. 1 credit covers 10,000 workflow steps.`,
       type: 'row',
@@ -65,7 +104,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       tiers: {
         enterprise: { kind: 'text', text: msg`SAML/OIDC + SCIM` },
         organization: { kind: 'text', text: msg`SAML/OIDC` },
-        pro: { kind: 'dash' },
+        pro: { kind: 'text', text: msg`No` },
       },
       type: 'row',
     },
@@ -556,6 +595,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
   tierColumns: [
     { id: 'pro', label: { cloud: msg`Pro`, selfHost: msg`Pro` } },
     {
+      highlighted: true,
       id: 'organization',
       label: { cloud: msg`Organization`, selfHost: msg`Organization` },
     },

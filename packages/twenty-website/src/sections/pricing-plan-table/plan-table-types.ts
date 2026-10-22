@@ -6,11 +6,19 @@ export type PlanTableTierId = 'enterprise' | 'organization' | 'pro';
 
 export type PlanTableCellType =
   | { kind: 'dash' }
+  | {
+      detail?: MessageDescriptor;
+      kind: 'metric';
+      prefix?: MessageDescriptor;
+      unit: MessageDescriptor;
+      value: MessageDescriptor;
+    }
   | { kind: 'text'; text: MessageDescriptor }
   | { kind: 'unlimited' }
   | { kind: 'yes'; label?: MessageDescriptor };
 
 export type PlanTableTierColumnType = {
+  highlighted?: boolean;
   id: PlanTableTierId;
   label: Record<PlansHostingMode, MessageDescriptor>;
 };
