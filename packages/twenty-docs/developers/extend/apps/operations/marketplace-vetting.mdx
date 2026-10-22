@@ -5,75 +5,44 @@ icon: 'shield-halved'
 ---
 
 <Warning>
-  **Work in progress.** This page and the proposed requirements may evolve as we
-  develop the review process. Third-party vetting is not available yet. See
+  **Work in progress.** This page and its requirements may evolve. Third-party
+  vetting is not available yet. See
   [Publishing](/developers/extend/apps/operations/publishing#marketplace-visibility-and-vetting)
   for current marketplace behavior.
 </Warning>
 
-## What a vetted version means
-
-Under this proposal, a vetted version has passed Twenty's security, functionality,
-UX, and operational review. Approval applies to the exact published version and
-package; each update requires a new review.
+Vetting applies to an exact app version and package. Each update needs a new
+review and approval from Twenty.
 
 ## Vetting checklist
 
-This is the complete publisher checklist for the proposed V1. Every applicable
-requirement must pass. Provide documentation and test evidence for the checks
-below, and explain any that do not apply to your app.
+This is the complete proposed V1 checklist. All applicable items must pass.
 
-- [ ] **Publisher and source.** [Claim your app](/developers/extend/apps/operations/publishing#claiming-your-app)
+- [ ] **Publisher.** [Claim your app](/developers/extend/apps/operations/publishing#claiming-your-app)
   and [publish with provenance](/developers/extend/apps/operations/publishing#ci-publishing).
-  Provide the npm package/version, matching source commit, readable source, and
-  dependency lockfile.
-- [ ] **Security review.** The submitted version must pass Twenty's internal
-  security review, with all blocking findings resolved.
-- [ ] **Permissions.** Request only the object/field access, system capabilities,
-  roles, AI agent permissions, and external OAuth scopes needed for documented
-  features. Test both user and application execution identities. See
-  [Roles & Permissions](/developers/extend/apps/config/roles).
-- [ ] **Functionality.** A user must be able to install, configure, and use the
-  advertised features in a fresh workspace without developer intervention.
-  Handle missing permissions, expired credentials, API failures, and retries.
-- [ ] **Installation lifecycle.** Test package installation, upgrade from the
-  previous vetted version when available, and uninstall, including
-  [install hooks](/developers/extend/apps/config/install-hooks). Preserve data
-  during non-destructive upgrades, disclose destructive changes, and prevent
-  duplicate side effects. Uninstall must stop ongoing work and attempt external
-  cleanup, with recovery instructions if cleanup fails.
-- [ ] **UI and accessibility.** Follow the
-  [front-component guidelines](/developers/extend/apps/layout/front-components#using-twenty-ui-components):
-  use supported `twenty-ui` controls, theme tokens, imports, and host APIs with
-  compatible SDK/UI versions. Support light/dark themes, keyboard access, labels,
-  input validation, and loading, empty, success, and error states. Confirm
-  destructive actions.
-- [ ] **Workspace changes.** List each added object, field, view, workflow, agent,
-  and navigation item with its purpose. Reuse existing entities where appropriate;
-  avoid duplicate CRM objects, unnecessary navigation, and user-facing technical
-  clutter.
-- [ ] **Compatibility.** Declare supported Twenty versions, preserve entity
-  identifiers across releases, and avoid hardcoded workspace, record, or user IDs.
-- [ ] **Performance.** Respect API and job limits across installations. Provide an
-  estimate of API calls/jobs at the expected installation scale and a burst/retry
-  test showing bounded work and recovery. Follow the
-  [good practices](/developers/extend/apps/getting-started/good-practices) for
-  batching, pagination, caching, scheduling, deduplication, loop prevention, and
-  bounded retries. Make workspace-specific settings configurable with defaults.
+- [ ] **Security.** Pass Twenty's internal security review and resolve blocking
+  findings.
+- [ ] **Permissions.** Request only the
+  [permissions](/developers/extend/apps/config/roles) needed for the app's features.
+- [ ] **Functionality.** The app works as advertised and is easy to install,
+  configure, and use.
+- [ ] **UI, if present.** Use
+  [`twenty-ui`](/developers/extend/apps/layout/front-components#using-twenty-ui-components)
+  and follow Twenty's design and accessibility conventions.
+- [ ] **Compatibility.** Declare supported Twenty versions and keep entity
+  identifiers stable across updates.
+- [ ] **Performance.** Respect shared API/job limits and follow the
+  [app development good practices](/developers/extend/apps/getting-started/good-practices).
 - [ ] **Shared routes, if used.** Complete
-  [server-route setup](/developers/extend/apps/operations/publishing#setting-up-server-routes)
-  and test routing to the correct installed workspace. Document how the owner
-  installation is maintained: removing it interrupts shared webhooks.
-- [ ] **Documentation and support.** Provide setup instructions, a support
-  contact, release notes, and reproducible tests with safe setup instructions.
-  Explain what data the app sends externally, where and why, its retention and
-  deletion, and the data consequences of uninstalling.
-
-## Review and updates
-
-A Twenty reviewer checks the submission and returns approval or findings to
-address. Updates do not inherit approval; the previous vetted version remains
-available while its replacement is reviewed. Expanded permissions or data access
-require renewed administrator consent. Approval may be revoked if a version no
-longer meets the requirements.
+  [setup](/developers/extend/apps/operations/publishing#setting-up-server-routes)
+  and verify events reach the correct workspace.
+- [ ] **Logo and gallery.** Provide a recognizable logo and polished gallery
+  images that showcase the app. Follow the
+  [image guidelines](/developers/extend/apps/operations/publishing#marketplace-metadata).
+- [ ] **README.** Provide a short, well-formatted README that clearly sells the
+  app's value and highlights its main features.
+- [ ] **Pricing.** Clearly state whether the app is free or paid, plan prices,
+  billing frequency, and any required paid third-party services.
+- [ ] **Documentation and support.** Provide clear setup instructions and a
+  support contact.
 
