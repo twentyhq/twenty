@@ -6,15 +6,15 @@ import { DATE_CALENDAR_CONSTANTS } from './dateCalendarConstants';
 import { parseDateCalendarDate } from './parseDateCalendarDate';
 import { shiftDateCalendarDate } from './shiftDateCalendarDate';
 
-type GetDateCalendarWeeksArgs = {
+type GetDateCalendarWeeksOrThrowArgs = {
   viewedMonth: string;
   weekStart: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 };
 
-export const getDateCalendarWeeks = ({
+export const getDateCalendarWeeksOrThrow = ({
   viewedMonth,
   weekStart,
-}: GetDateCalendarWeeksArgs): (string | null)[][] => {
+}: GetDateCalendarWeeksOrThrowArgs): (string | null)[][] => {
   if (
     !isInteger(weekStart) ||
     weekStart < 0 ||

@@ -8,7 +8,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../DateCalendar.module.scss';
 import { type DateCalendarProps } from '../types/DateCalendarProps';
 import { DATE_CALENDAR_CONSTANTS } from './dateCalendarConstants';
-import { getDateCalendarWeeks } from './getDateCalendarWeeks';
+import { getDateCalendarWeeksOrThrow } from './getDateCalendarWeeksOrThrow';
 import { parseDateCalendarDate } from './parseDateCalendarDate';
 
 const REFERENCE_SUNDAY = '2023-01-01';
@@ -55,7 +55,7 @@ export const DateCalendarGrid = ({
   }) => void;
 }) => {
   const headingId = useId();
-  const weeks = getDateCalendarWeeks({ viewedMonth, weekStart });
+  const weeks = getDateCalendarWeeksOrThrow({ viewedMonth, weekStart });
   const dateFormatter = new Intl.DateTimeFormat(locale, {
     dateStyle: 'full',
     calendar: 'gregory',
