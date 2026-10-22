@@ -43943,7 +43943,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:8.5.23, postcss@npm:^8.4.38, postcss@npm:^8.4.47, postcss@npm:^8.5.15":
+"postcss@npm:8.5.23":
   version: 8.5.23
   resolution: "postcss@npm:8.5.23"
   dependencies:
@@ -43954,7 +43954,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.5.27, postcss@npm:^8.5.29":
+"postcss@npm:^8.4.38, postcss@npm:^8.4.47, postcss@npm:^8.5.15, postcss@npm:^8.5.27, postcss@npm:^8.5.29":
   version: 8.5.31
   resolution: "postcss@npm:8.5.31"
   dependencies:
