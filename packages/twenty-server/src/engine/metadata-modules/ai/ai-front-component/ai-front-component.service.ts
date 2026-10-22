@@ -1,3 +1,5 @@
+import { getFrontComponentSharedDependenciesPath } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-shared-dependencies-path.util';
+import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
 import {
   BadRequestException,
   ForbiddenException,
@@ -192,13 +194,23 @@ export class AiFrontComponentService {
         FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
       )
     ) {
-      const fullApplication =
-        await this.applications.findOneApplicationWithRelationsOrThrow({
-          id: application.id,
-          workspaceId: authContext.workspace.id,
-        });
+      const pinnedChecksum =
+        readFrontComponentSharedDependenciesChecksum(componentSource);
+      const applicationDependencies = isDefined(pinnedChecksum)
+        ? {
+            frontComponentSharedDependenciesBuiltPath:
+              getFrontComponentSharedDependenciesPath(pinnedChecksum),
+            frontComponentSharedDependenciesChecksum: pinnedChecksum,
+          }
+        : await this.applications.findOneApplicationWithRelationsOrThrow({
+            id: application.id,
+            workspaceId: authContext.workspace.id,
+          });
+
       if (
-        !isDefined(fullApplication.frontComponentSharedDependenciesBuiltPath)
+        !isDefined(
+          applicationDependencies.frontComponentSharedDependenciesBuiltPath,
+        )
       ) {
         throw new BadRequestException(
           doNotTranslate('Component shared dependencies are missing.'),
@@ -210,12 +222,12 @@ export class AiFrontComponentService {
           applicationUniversalIdentifier: application.universalIdentifier,
           fileFolder: FileFolder.BuiltFrontComponent,
           resourcePath:
-            fullApplication.frontComponentSharedDependenciesBuiltPath,
+            applicationDependencies.frontComponentSharedDependenciesBuiltPath,
         }),
       );
       if (
         createHash('sha256').update(sharedDependenciesSource).digest('hex') !==
-        fullApplication.frontComponentSharedDependenciesChecksum
+        applicationDependencies.frontComponentSharedDependenciesChecksum
       ) {
         throw new BadRequestException(
           doNotTranslate('Component shared dependencies checksum mismatch.'),

@@ -1,3 +1,5 @@
+import { createHash } from 'crypto';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { PageLayoutType } from 'twenty-shared/types';
 import { Test } from '@nestjs/testing';
 import { Readable } from 'stream';
@@ -87,6 +89,7 @@ describe('AI front component lifecycle', () => {
       userHasWorkspaceSettingPermission: jest.fn(),
     },
     applications: {
+      findOneApplicationWithRelationsOrThrow: jest.fn(),
       findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest.fn(),
     },
     files: { writeFile: jest.fn(), readFile: jest.fn(), deleteFile: jest.fn() },
@@ -165,6 +168,79 @@ describe('AI front component lifecycle', () => {
 
     service = module.get(AiFrontComponentService);
   });
+
+  it.each(['inline', 'application', 'pinned'] as const)(
+    'loads %s components with their own shared dependencies',
+    async (kind) => {
+      const sharedDependenciesSource = 'export const dependency = true;';
+      const checksum = createHash('sha256')
+        .update(sharedDependenciesSource)
+        .digest('hex');
+      const componentSource =
+        (kind === 'pinned'
+          ? `// twenty-ai-shared-dependencies: ${checksum}\n`
+          : '') +
+        (kind === 'inline'
+          ? 'export default () => {};'
+          : `import '${FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER}';`);
+      const vendorPath =
+        kind === 'pinned'
+          ? `ai-front-component-shared-dependencies/${checksum}.mjs`
+          : 'app-vendor.mjs';
+      jest
+        .spyOn(service, 'getRecords')
+        .mockResolvedValue({ records: [], count: 0, hasNextPage: false });
+      dependencies.components.findById.mockResolvedValue({
+        sourceComponentPath:
+          'src/ai-front-components/component.front-component.tsx',
+        builtComponentPath: 'component.mjs',
+        builtComponentChecksum: createHash('sha256')
+          .update(componentSource)
+          .digest('hex'),
+      });
+      dependencies.applications.findOneApplicationWithRelationsOrThrow.mockResolvedValue(
+        {
+          frontComponentSharedDependenciesBuiltPath: 'app-vendor.mjs',
+          frontComponentSharedDependenciesChecksum: checksum,
+        },
+      );
+      dependencies.files.readFile.mockImplementation(
+        async ({ resourcePath }) => {
+          if (resourcePath === 'component.mjs')
+            return Readable.from(componentSource);
+          if (resourcePath === vendorPath)
+            return Readable.from(sharedDependenciesSource);
+          throw new Error('Unexpected file: ' + resourcePath);
+        },
+      );
+      const runtime = await service.getRuntime('component', AUTH_CONTEXT!);
+      expect(runtime.sharedDependenciesSource).toBe(
+        kind === 'inline' ? undefined : sharedDependenciesSource,
+      );
+      expect(
+        dependencies.applications.findOneApplicationWithRelationsOrThrow,
+      ).toHaveBeenCalledTimes(kind === 'application' ? 1 : 0);
+      if (kind !== 'inline') {
+        dependencies.files.readFile.mockImplementation(
+          async ({ resourcePath }) =>
+            Readable.from(
+              resourcePath === 'component.mjs'
+                ? componentSource
+                : 'changed vendor',
+            ),
+        );
+        await expect(
+          service.getRuntime('component', AUTH_CONTEXT!),
+        ).rejects.toThrow('shared dependencies checksum mismatch');
+      }
+      dependencies.files.readFile.mockResolvedValue(
+        Readable.from('changed component'),
+      );
+      await expect(
+        service.getRuntime('component', AUTH_CONTEXT!),
+      ).rejects.toThrow('Component source checksum mismatch');
+    },
+  );
 
   it('reads live data with current viewer permissions', async () => {
     const viewerContext = {
