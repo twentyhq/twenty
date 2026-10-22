@@ -74,10 +74,10 @@ export function PricingBoard() {
   const [billing, setBilling] = useState<PlansBillingPeriod>('yearly');
   const { hosting, setHosting } = usePricingState();
 
-  const maxBullets = Math.max(
-    PLANS_DATA.pro.cells[hosting][billing].featureBullets.length,
-    PLANS_DATA.organization.cells[hosting][billing].featureBullets.length,
-    PLANS_DATA.enterprise.cells[hosting][billing].featureBullets.length,
+  const maxFeatures = Math.max(
+    PLANS_DATA.pro.cells[hosting][billing].features.length,
+    PLANS_DATA.organization.cells[hosting][billing].features.length,
+    PLANS_DATA.enterprise.cells[hosting][billing].features.length,
   );
 
   return (
@@ -94,20 +94,20 @@ export function PricingBoard() {
         <PlanCard
           billing={billing}
           hosting={hosting}
-          maxBullets={maxBullets}
+          maxFeatures={maxFeatures}
           tierId="pro"
         />
         <PlanCard
           billing={billing}
           highlighted
           hosting={hosting}
-          maxBullets={maxBullets}
+          maxFeatures={maxFeatures}
           tierId="organization"
         />
         <PlanCard
           billing={billing}
           hosting={hosting}
-          maxBullets={maxBullets}
+          maxFeatures={maxFeatures}
           tierId="enterprise"
         />
       </CardsGrid>

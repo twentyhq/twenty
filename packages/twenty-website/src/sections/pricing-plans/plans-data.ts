@@ -1,6 +1,27 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import {
+  IconClock,
+  IconCloudOff,
+  IconCpu,
+  IconFileCertificate,
+  IconGauge,
+  IconHeadset,
+  IconHeartHandshake,
+  IconHierarchy,
+  IconKey,
+  IconLock,
+  IconMessages,
+  IconServer,
+  IconSettingsAutomation,
+  IconSparkles,
+  IconStack2,
+  IconUsers,
+  IconVersions,
+} from '@tabler/icons-react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
+import { type IconComponent } from '@/icons';
 import { SITE_URLS } from '@/platform/site-urls';
 import { type PlansHostingMode } from '@/pricing-state';
 
@@ -9,13 +30,30 @@ export type PlansTierId = 'enterprise' | 'organization' | 'pro';
 
 export type PlanPrice = {
   prefix: string;
+  qualifier?: MessageDescriptor;
   suffix: MessageDescriptor;
   value: number;
   valueSuffix?: string;
 };
 
+export type PlanFeatureLogo = {
+  alt: string;
+  shape: 'circle' | 'square';
+  src: string;
+};
+
+export type PlanFeatureVisual =
+  | { icon: IconComponent; kind: 'icon' }
+  | { kind: 'logos'; logos: PlanFeatureLogo[] };
+
+export type PlanFeature = {
+  description: MessageDescriptor;
+  title: MessageDescriptor;
+  visual: PlanFeatureVisual;
+};
+
 type PlansTierCell = {
-  featureBullets: MessageDescriptor[];
+  features: PlanFeature[];
   price: PlanPrice;
 };
 
@@ -28,61 +66,203 @@ type PlansTierCta = {
 type PlansTier = {
   cells: Record<PlansHostingMode, Record<PlansBillingPeriod, PlansTierCell>>;
   cta: Record<PlansHostingMode, PlansTierCta>;
+  featuresIntro: MessageDescriptor;
   heading: Record<PlansHostingMode, MessageDescriptor>;
   icon: { alt: string; src: string; widthPx?: number };
   tagline: Record<PlansHostingMode, MessageDescriptor>;
 };
 
-const PRO_BULLETS_CLOUD = [
-  msg`Your sales process, your data model`,
-  msg`Limited personal AI usage`,
-  msg`Agentic workflows`,
-  msg`Email and calendar sync`,
-  msg`Build custom apps`,
+const PLAN_LOGOS = {
+  callRecorder: {
+    alt: doNotTranslate('Call Recorder'),
+    shape: 'square',
+    src: '/images/pricing/plans/apps/call-recorder.svg',
+  },
+  google: {
+    alt: doNotTranslate('Google'),
+    shape: 'circle',
+    src: '/images/shared/companies/logos/google.webp',
+  },
+  microsoft: {
+    alt: doNotTranslate('Microsoft'),
+    shape: 'square',
+    src: '/images/shared/companies/logos/microsoft.svg',
+  },
+  peopleDataLabs: {
+    alt: doNotTranslate('People Data Labs'),
+    shape: 'square',
+    src: '/images/pricing/plans/apps/people-data-labs.webp',
+  },
+  slack: {
+    alt: doNotTranslate('Slack'),
+    shape: 'square',
+    src: '/images/shared/companies/logos/slack.webp',
+  },
+} satisfies Record<string, PlanFeatureLogo>;
+
+const PRO_FEATURES_CLOUD: PlanFeature[] = [
+  {
+    title: msg`Emails and meetings log themselves`,
+    description: msg`Google and Microsoft email and calendar sync`,
+    visual: {
+      kind: 'logos',
+      logos: [PLAN_LOGOS.google, PLAN_LOGOS.microsoft],
+    },
+  },
+  {
+    title: msg`Calls recorded, leads enriched`,
+    description: msg`Apps like Call Recorder, People Data Labs and more`,
+    visual: {
+      kind: 'logos',
+      logos: [
+        PLAN_LOGOS.callRecorder,
+        PLAN_LOGOS.peopleDataLabs,
+        PLAN_LOGOS.slack,
+      ],
+    },
+  },
+  {
+    title: msg`Shaped around how you sell`,
+    description: msg`Custom data model, apps and automations`,
+    visual: { kind: 'icon', icon: IconHierarchy },
+  },
+  {
+    title: msg`Automate the busywork`,
+    description: msg`Agentic workflows`,
+    visual: { kind: 'icon', icon: IconSettingsAutomation },
+  },
+  {
+    title: msg`Delegate the CRM chores to AI`,
+    description: msg`Limited personal AI usage`,
+    visual: { kind: 'icon', icon: IconSparkles },
+  },
 ];
 
-const PRO_BULLETS_SELF_HOST = [
-  msg`Full customization`,
-  msg`Create custom apps`,
-  msg`Up to 5 workspaces`,
-  msg`Community support`,
+const PRO_FEATURES_SELF_HOST: PlanFeature[] = [
+  {
+    title: msg`Shaped around how you sell`,
+    description: msg`Full customization and custom apps`,
+    visual: { kind: 'icon', icon: IconHierarchy },
+  },
+  {
+    title: msg`Room for several teams`,
+    description: msg`Up to 5 workspaces`,
+    visual: { kind: 'icon', icon: IconStack2 },
+  },
+  {
+    title: msg`Help from the community`,
+    description: msg`Community support`,
+    visual: { kind: 'icon', icon: IconMessages },
+  },
 ];
 
-const ORGANIZATION_BULLETS_CLOUD = [
-  msg`Everything in Pro`,
-  msg`*5x more personal AI usage*`,
-  msg`Custom permissions`,
-  msg`Priority support`,
-  msg`SAML/OIDC SSO and audit logs`,
+const ORGANIZATION_FEATURES_CLOUD: PlanFeature[] = [
+  {
+    title: msg`Control who can do what, and how much`,
+    description: msg`Custom roles, permissions and usage limits`,
+    visual: { kind: 'icon', icon: IconLock },
+  },
+  {
+    title: msg`Ready for your security review`,
+    description: msg`SAML/OIDC SSO and audit logs`,
+    visual: { kind: 'icon', icon: IconKey },
+  },
+  {
+    title: msg`Faster answers from our team`,
+    description: msg`Priority support`,
+    visual: { kind: 'icon', icon: IconHeadset },
+  },
+  {
+    title: msg`Find experts to roll it out`,
+    description: msg`Access to our implementation partner network`,
+    visual: { kind: 'icon', icon: IconHeartHandshake },
+  },
+  {
+    title: msg`Delegate 5x more to AI`,
+    description: msg`5x more personal AI usage`,
+    visual: { kind: 'icon', icon: IconSparkles },
+  },
 ];
 
-const ORGANIZATION_BULLETS_SELF_HOST = [
-  msg`Everything in Pro`,
-  msg`Custom AI models`,
-  msg`Row-level permissions`,
-  msg`SAML/OIDC SSO`,
-  msg`Twenty team support`,
+const ORGANIZATION_FEATURES_SELF_HOST: PlanFeature[] = [
+  {
+    title: msg`Bring your own AI models`,
+    description: msg`Custom AI models`,
+    visual: { kind: 'icon', icon: IconCpu },
+  },
+  {
+    title: msg`Control who can see what`,
+    description: msg`Row-level permissions`,
+    visual: { kind: 'icon', icon: IconLock },
+  },
+  {
+    title: msg`Ready for your security review`,
+    description: msg`SAML/OIDC SSO`,
+    visual: { kind: 'icon', icon: IconKey },
+  },
+  {
+    title: msg`Answers from the team that builds it`,
+    description: msg`Twenty team support`,
+    visual: { kind: 'icon', icon: IconHeadset },
+  },
 ];
 
-const ENTERPRISE_BULLETS_CLOUD = [
-  msg`Everything in Organization`,
-  msg`Dedicated compute for your CRM data and syncs`,
-  msg`Single-tenant isolation`,
-  msg`Dedicated support & SLA`,
+const ENTERPRISE_FEATURES_CLOUD: PlanFeature[] = [
+  {
+    title: msg`Room to grow, without slowdowns`,
+    description: msg`Dedicated compute, custom API rates and usage limits`,
+    visual: { kind: 'icon', icon: IconGauge },
+  },
+  {
+    title: msg`Your data, fully isolated`,
+    description: msg`Single-tenant isolation`,
+    visual: { kind: 'icon', icon: IconServer },
+  },
+  {
+    title: msg`Access follows your directory`,
+    description: msg`SCIM provisioning`,
+    visual: { kind: 'icon', icon: IconUsers },
+  },
+  {
+    title: msg`Sail through procurement`,
+    description: msg`Security review and DPA`,
+    visual: { kind: 'icon', icon: IconFileCertificate },
+  },
+  {
+    title: msg`Response times you can count on`,
+    description: msg`Dedicated support & SLA`,
+    visual: { kind: 'icon', icon: IconClock },
+  },
 ];
 
-const ENTERPRISE_BULLETS_SELF_HOST = [
-  msg`Everything in Organization`,
-  msg`SCIM provisioning`,
-  msg`Air-gapped deployment`,
-  msg`LTS releases`,
-  msg`Dedicated support & SLA`,
+const ENTERPRISE_FEATURES_SELF_HOST: PlanFeature[] = [
+  {
+    title: msg`Access follows your directory`,
+    description: msg`SCIM provisioning`,
+    visual: { kind: 'icon', icon: IconUsers },
+  },
+  {
+    title: msg`Runs fully offline`,
+    description: msg`Air-gapped deployment`,
+    visual: { kind: 'icon', icon: IconCloudOff },
+  },
+  {
+    title: msg`Upgrade on your schedule`,
+    description: msg`LTS releases`,
+    visual: { kind: 'icon', icon: IconVersions },
+  },
+  {
+    title: msg`Response times you can count on`,
+    description: msg`Dedicated support & SLA`,
+    visual: { kind: 'icon', icon: IconClock },
+  },
 ];
 
-const ENTERPRISE_PRICE = {
+const ENTERPRISE_PRICE: PlanPrice = {
   value: 50,
   valueSuffix: 'k',
-  prefix: 'from $',
+  prefix: '$',
+  qualifier: msg`from`,
   suffix: msg`/year`,
 };
 
@@ -91,21 +271,21 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     cells: {
       cloud: {
         monthly: {
-          featureBullets: ENTERPRISE_BULLETS_CLOUD,
+          features: ENTERPRISE_FEATURES_CLOUD,
           price: ENTERPRISE_PRICE,
         },
         yearly: {
-          featureBullets: ENTERPRISE_BULLETS_CLOUD,
+          features: ENTERPRISE_FEATURES_CLOUD,
           price: ENTERPRISE_PRICE,
         },
       },
       selfHost: {
         monthly: {
-          featureBullets: ENTERPRISE_BULLETS_SELF_HOST,
+          features: ENTERPRISE_FEATURES_SELF_HOST,
           price: ENTERPRISE_PRICE,
         },
         yearly: {
-          featureBullets: ENTERPRISE_BULLETS_SELF_HOST,
+          features: ENTERPRISE_FEATURES_SELF_HOST,
           price: ENTERPRISE_PRICE,
         },
       },
@@ -114,6 +294,7 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
       cloud: { label: msg`Talk to sales` },
       selfHost: { label: msg`Talk to sales` },
     },
+    featuresIntro: msg`Everything in Organization, plus`,
     heading: { cloud: msg`Enterprise`, selfHost: msg`Enterprise` },
     icon: {
       alt: 'Enterprise plan icon',
@@ -128,21 +309,21 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     cells: {
       cloud: {
         monthly: {
-          featureBullets: ORGANIZATION_BULLETS_CLOUD,
+          features: ORGANIZATION_FEATURES_CLOUD,
           price: { value: 52, prefix: '$', suffix: msg`/user/month` },
         },
         yearly: {
-          featureBullets: ORGANIZATION_BULLETS_CLOUD,
+          features: ORGANIZATION_FEATURES_CLOUD,
           price: { value: 39, prefix: '$', suffix: msg`/user/month` },
         },
       },
       selfHost: {
         monthly: {
-          featureBullets: ORGANIZATION_BULLETS_SELF_HOST,
+          features: ORGANIZATION_FEATURES_SELF_HOST,
           price: { value: 25, prefix: '$', suffix: msg`/user/month` },
         },
         yearly: {
-          featureBullets: ORGANIZATION_BULLETS_SELF_HOST,
+          features: ORGANIZATION_FEATURES_SELF_HOST,
           price: { value: 19, prefix: '$', suffix: msg`/user/month` },
         },
       },
@@ -157,6 +338,7 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
         label: msg`Start for free`,
       },
     },
+    featuresIntro: msg`Everything in Pro, plus`,
     heading: { cloud: msg`Organization`, selfHost: msg`Organization` },
     icon: {
       alt: 'Organization plan icon',
@@ -171,21 +353,21 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     cells: {
       cloud: {
         monthly: {
-          featureBullets: PRO_BULLETS_CLOUD,
+          features: PRO_FEATURES_CLOUD,
           price: { value: 12, prefix: '$', suffix: msg`/user/month` },
         },
         yearly: {
-          featureBullets: PRO_BULLETS_CLOUD,
+          features: PRO_FEATURES_CLOUD,
           price: { value: 9, prefix: '$', suffix: msg`/user/month` },
         },
       },
       selfHost: {
         monthly: {
-          featureBullets: PRO_BULLETS_SELF_HOST,
+          features: PRO_FEATURES_SELF_HOST,
           price: { value: 0, prefix: '$', suffix: msg`/user/month` },
         },
         yearly: {
-          featureBullets: PRO_BULLETS_SELF_HOST,
+          features: PRO_FEATURES_SELF_HOST,
           price: { value: 0, prefix: '$', suffix: msg`/user/month` },
         },
       },
@@ -200,6 +382,7 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
         label: msg`Start for free`,
       },
     },
+    featuresIntro: msg`Includes`,
     heading: { cloud: msg`Pro`, selfHost: msg`Pro` },
     icon: {
       alt: 'Pro plan icon',
