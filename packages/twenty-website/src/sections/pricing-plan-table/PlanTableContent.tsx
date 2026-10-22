@@ -32,6 +32,7 @@ import {
 import { resolveVisibleRows } from './plan-table-visible-rows';
 
 const CheckMark = INFORMATIVE_MARKS.check;
+const CrossMark = INFORMATIVE_MARKS.cross;
 
 const TableScope = styled.div`
   align-items: center;
@@ -88,7 +89,7 @@ const TierText = styled.span`
   color: ${semanticColor.ink};
 `;
 
-const YesMark = styled.span`
+const CellMark = styled.span`
   align-items: center;
   display: flex;
   height: ${spacing(5.5)};
@@ -153,7 +154,11 @@ function CellValue({ cell }: { cell: PlanTableCellType }) {
   const { i18n } = useLingui();
 
   if (cell.kind === 'dash') {
-    return <TierText>{i18n._(msg`No`)}</TierText>;
+    return (
+      <CellMark aria-label={i18n._(msg`No`)} role="img">
+        <CrossMark color={semanticColor.inkSubtle} sizePx={16} />
+      </CellMark>
+    );
   }
 
   if (cell.kind === 'text') {
@@ -161,9 +166,9 @@ function CellValue({ cell }: { cell: PlanTableCellType }) {
   }
 
   return (
-    <YesMark aria-label={i18n._(cell.label ?? msg`Yes`)} role="img">
+    <CellMark aria-label={i18n._(cell.label ?? msg`Yes`)} role="img">
       <CheckMark color={color('blue')} sizePx={16} />
-    </YesMark>
+    </CellMark>
   );
 }
 
