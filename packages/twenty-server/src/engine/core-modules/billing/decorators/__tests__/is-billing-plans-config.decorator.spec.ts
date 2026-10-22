@@ -27,6 +27,10 @@ describe('IsBillingPlansConfig', () => {
       PRO_V2: { isDefault: true, upgradePlanKeys: ['ORGANIZATION_V2'] },
       ORGANIZATION_V2: { isDefault: false, downgradePlanKeys: ['PRO_V2'] },
     },
+    {
+      ORGANIZATION_V2: { isDefault: true, downgradePlanKeys: ['PRO_V2'] },
+      PRO_V2: { upgradePlanKeys: ['ORGANIZATION_V2'] },
+    },
   ])('accepts %j', (plansConfig) => {
     expect(validate(plansConfig)).toHaveLength(0);
   });
@@ -76,6 +80,13 @@ describe('IsBillingPlansConfig', () => {
       ENTERPRISE: { downgradePlanKeys: ['PRO'] },
     },
     { PRO: ['ENTERPRISE'], ENTERPRISE: { downgradePlanKeys: ['PRO'] } },
+    {
+      ORGANIZATION_V2: {
+        isDefault: true,
+        downgradePlanKeys: ['PRO_V2', 'ORGANIZATION_V2'],
+      },
+      PRO_V2: { upgradePlanKeys: ['ORGANIZATION_V2'] },
+    },
     {
       PRO: {
         isDefault: true,

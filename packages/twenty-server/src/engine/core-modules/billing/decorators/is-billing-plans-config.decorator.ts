@@ -16,6 +16,7 @@ import {
   type BillingPlansConfig,
 } from 'src/engine/core-modules/billing/types/billing-plans-config.type';
 import { findDefaultPlanKey } from 'src/engine/core-modules/billing/utils/find-default-plan-key.util';
+import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 import { getSellablePlanKeys } from 'src/engine/core-modules/billing/utils/get-sellable-plan-keys.util';
 
 const BILLING_PLAN_KEYS = Object.values(BillingPlanKey);
@@ -65,12 +66,14 @@ export class IsBillingPlansConfigValidator implements ValidatorConstraintInterfa
     return (
       sellablePlanKeys.length === 2 &&
       isDefined(defaultPlanKey) &&
-      sellablePlanKeys.includes(defaultPlanKey)
+      sellablePlanKeys.includes(defaultPlanKey) &&
+      getBillingPlanConfig({ plansConfig, planKey: defaultPlanKey })
+        .downgradePlanKeys.length <= 1
     );
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${args.property} must map billing plan keys to { isDefault?, upgradePlanKeys?, downgradePlanKeys? }, with exactly two plans reachable by a switch and exactly one of them marked isDefault`;
+    return `${args.property} must map billing plan keys to { isDefault?, upgradePlanKeys?, downgradePlanKeys? }, with exactly two plans reachable by a switch, exactly one of them marked isDefault, and at most one downgrade target on the isDefault plan`;
   }
 }
 

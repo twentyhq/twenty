@@ -7,12 +7,22 @@ import {
 
 describe('isBillingSubscriptionChangeImmediate', () => {
   const proPlan = {
+    planKey: BillingPlanKey.PRO,
+    isCheckoutDefault: true,
     upgradePlanKeys: [BillingPlanKey.ENTERPRISE],
     downgradePlanKeys: [],
   };
   const enterprisePlan = {
+    planKey: BillingPlanKey.ENTERPRISE,
+    isCheckoutDefault: false,
     upgradePlanKeys: [],
     downgradePlanKeys: [BillingPlanKey.PRO],
+  };
+  const reverseTrialOrganizationPlan = {
+    planKey: BillingPlanKey.ORGANIZATION_V2,
+    isCheckoutDefault: true,
+    upgradePlanKeys: [],
+    downgradePlanKeys: [BillingPlanKey.PRO_V2],
   };
 
   it('applies upgrades immediately and downgrades at period end', () => {
@@ -57,6 +67,8 @@ describe('isBillingSubscriptionChangeImmediate', () => {
 
   it('defers a plan switch only when the target is a downgrade of the current plan', () => {
     const legacyEnterprisePlan = {
+      planKey: BillingPlanKey.ENTERPRISE,
+      isCheckoutDefault: false,
       upgradePlanKeys: [BillingPlanKey.ORGANIZATION_V2],
       downgradePlanKeys: [BillingPlanKey.PRO_V2],
     };
@@ -80,7 +92,17 @@ describe('isBillingSubscriptionChangeImmediate', () => {
     ).toBe(false);
   });
 
-  it('applies every change immediately while trialing', () => {
+  it('applies every change immediately while trialing with the legacy config', () => {
+    expect(
+      isBillingSubscriptionChangeImmediate({
+        change: {
+          type: 'SWITCH_PLAN',
+          targetPlanKey: BillingPlanKey.ENTERPRISE,
+        },
+        currentPlan: proPlan,
+        subscriptionStatus: SubscriptionStatus.Trialing,
+      }),
+    ).toBe(true);
     expect(
       isBillingSubscriptionChangeImmediate({
         change: { type: 'SWITCH_PLAN', targetPlanKey: BillingPlanKey.PRO },
@@ -95,6 +117,46 @@ describe('isBillingSubscriptionChangeImmediate', () => {
           targetInterval: SubscriptionInterval.Month,
         },
         currentPlan: enterprisePlan,
+        subscriptionStatus: SubscriptionStatus.Trialing,
+      }),
+    ).toBe(true);
+  });
+
+  it('schedules the reverse trial downgrade at trial end', () => {
+    expect(
+      isBillingSubscriptionChangeImmediate({
+        change: { type: 'SWITCH_PLAN', targetPlanKey: BillingPlanKey.PRO_V2 },
+        currentPlan: reverseTrialOrganizationPlan,
+        subscriptionStatus: SubscriptionStatus.Trialing,
+      }),
+    ).toBe(false);
+  });
+
+  it('applies other changes immediately during a reverse trial', () => {
+    expect(
+      isBillingSubscriptionChangeImmediate({
+        change: { type: 'CANCEL_PLAN_SWITCH' },
+        currentPlan: reverseTrialOrganizationPlan,
+        subscriptionStatus: SubscriptionStatus.Trialing,
+      }),
+    ).toBe(true);
+    expect(
+      isBillingSubscriptionChangeImmediate({
+        change: {
+          type: 'SWITCH_INTERVAL',
+          targetInterval: SubscriptionInterval.Month,
+        },
+        currentPlan: reverseTrialOrganizationPlan,
+        subscriptionStatus: SubscriptionStatus.Trialing,
+      }),
+    ).toBe(true);
+    expect(
+      isBillingSubscriptionChangeImmediate({
+        change: { type: 'SWITCH_PLAN', targetPlanKey: BillingPlanKey.PRO_V2 },
+        currentPlan: {
+          ...reverseTrialOrganizationPlan,
+          isCheckoutDefault: false,
+        },
         subscriptionStatus: SubscriptionStatus.Trialing,
       }),
     ).toBe(true);

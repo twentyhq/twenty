@@ -1,5 +1,7 @@
+import { useTrialScheduledPlanLabel } from '@/settings/billing/hooks/useTrialScheduledPlanLabel';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 type StartSubscriptionConfirmationModalProps = {
   modalInstanceId: string;
@@ -15,6 +17,15 @@ export const StartSubscriptionConfirmationModal = ({
   loading,
 }: StartSubscriptionConfirmationModalProps) => {
   const needsCreditCard = hasPaymentMethod === false;
+  const { trialScheduledPlanLabel } = useTrialScheduledPlanLabel();
+
+  const subtitle = isDefined(trialScheduledPlanLabel)
+    ? needsCreditCard
+      ? t`You will be redirected to add your credit card. Once added, your trial ends and your ${trialScheduledPlanLabel} plan starts now.`
+      : t`Your trial ends and your ${trialScheduledPlanLabel} plan starts now. Do you want to proceed?`
+    : needsCreditCard
+      ? t`You will be redirected to add your credit card. Once added, your subscription will start automatically.`
+      : t`We will activate your paid plan. Do you want to proceed?`;
 
   return (
     <ConfirmationDialog
@@ -22,11 +33,7 @@ export const StartSubscriptionConfirmationModal = ({
       title={
         needsCreditCard ? t`Add your credit card` : t`Start Your Subscription`
       }
-      subtitle={
-        needsCreditCard
-          ? t`You will be redirected to add your credit card. Once added, your subscription will start automatically.`
-          : t`We will activate your paid plan. Do you want to proceed?`
-      }
+      subtitle={subtitle}
       onConfirmClick={onConfirmClick}
       confirmButtonText={needsCreditCard ? t`Add credit card` : t`Confirm`}
       confirmButtonColor="accent"

@@ -4,6 +4,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SettingsBillingSubscriptionInfoCard } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard';
 import { SettingsBillingSubscriptionInfoCardHeaderActions } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions';
 import { SettingsBillingSubscriptionInfoModals } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals';
+import { SettingsBillingKeepTrialPlanSwitch } from '@/settings/billing/components/SettingsBillingKeepTrialPlanSwitch';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useApplyBillingSubscriptionChange } from '@/settings/billing/hooks/useApplyBillingSubscriptionChange';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
@@ -18,6 +19,7 @@ import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResour
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextInterval } from '@/settings/billing/hooks/useNextInterval';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
+import { useReverseTrialPlanKeys } from '@/settings/billing/hooks/useReverseTrialPlanKeys';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { isSendInvoiceBillingSubscription } from '@/settings/billing/utils/isSendInvoiceBillingSubscription';
@@ -35,6 +37,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
 import {
+  type BillingPlanKey,
   CancelSwitchResourceCreditPriceDocument,
   PermissionFlagType,
   SubscriptionInterval,
@@ -79,6 +82,9 @@ export const SettingsBillingSubscriptionInfo = ({
   const { nextBillingPhase } = useNextBillingPhase();
   const { nextPlan } = useNextPlan();
   const { nextInterval } = useNextInterval();
+  const { reverseTrialPlanKeys } = useReverseTrialPlanKeys();
+  const upcomingPlanKey = nextPlan?.planKey ?? currentPlan.planKey;
+  const isPlanSwitchScheduled = upcomingPlanKey !== currentPlan.planKey;
   const nextResourceCreditPrice =
     splitedPhaseItemsInPrices.nextResourceCreditPrice;
   const subscriptionStatus = useSubscriptionStatus();
@@ -162,7 +168,6 @@ export const SettingsBillingSubscriptionInfo = ({
         )
       : undefined;
 
-  const perSeatPriceDisplay = formatCentsToDisplay(perSeatAmountCents);
   const displayedPerSeatPrice =
     formatBillingPeriodCentsToMonthlyDisplay(perSeatAmountCents);
 
@@ -195,10 +200,24 @@ export const SettingsBillingSubscriptionInfo = ({
           : t`Next charge ${totalRenewDate}. Invoice amount may vary if you add members or credits between periods`
         : t`Invoice amount may vary if you add members or credits between periods`;
 
-  const billingPlanLabel = getBillingPlanLabel(currentPlan.planKey);
-  const planLabel = t`${billingPlanLabel} plan`;
+  const getPlanLabel = (planKey: BillingPlanKey) => {
+    const billingPlanLabel = getBillingPlanLabel(planKey);
+
+    return t`${billingPlanLabel} plan`;
+  };
+  const currentPlanLabel = getPlanLabel(currentPlan.planKey);
+
+  const upcomingBasePrice = isPlanSwitchScheduled
+    ? splitedPhaseItemsInPrices.nextBasePrice
+    : undefined;
+  const planLabel = getPlanLabel(upcomingPlanKey);
+  const perSeatPriceDisplay = formatCentsToDisplay(
+    upcomingBasePrice?.unitAmount ?? perSeatAmountCents,
+  );
+  const upcomingInterval =
+    upcomingBasePrice?.recurringInterval ?? currentInterval;
   const intervalUnit =
-    currentInterval === SubscriptionInterval.Month ? t`month` : t`year`;
+    upcomingInterval === SubscriptionInterval.Month ? t`month` : t`year`;
   const startSubscriptionSubtitle = isSendInvoice
     ? t`We will activate your ${planLabel} and email your invoice now. Do you want to proceed?`
     : isDefined(perSeatPriceDisplay)
@@ -282,16 +301,21 @@ export const SettingsBillingSubscriptionInfo = ({
   const canCancelIntervalSwitch =
     isDefined(nextInterval) && currentInterval !== nextInterval;
   const canStartSubscription = isTrialPeriod && hasPermissionToEndTrialPeriod;
+  const canDisplayKeepTrialPlanSwitch =
+    isTrialPeriod &&
+    !isCancellationScheduled &&
+    isDefined(reverseTrialPlanKeys) &&
+    reverseTrialPlanKeys.trialPlanKey === currentPlan.planKey;
   const canCancelPlanSwitch =
-    isDefined(nextPlan) && currentPlan.planKey !== nextPlan.planKey;
+    isPlanSwitchScheduled && !canDisplayKeepTrialPlanSwitch;
 
   const scheduledChangeItems = [
-    ...(nextPlan && currentPlan.planKey !== nextPlan.planKey
+    ...(isPlanSwitchScheduled
       ? [
           {
             Icon: IconTag,
             label: t`Plan`,
-            value: getBillingPlanLabel(nextPlan.planKey),
+            value: getBillingPlanLabel(upcomingPlanKey),
           },
         ]
       : []),
@@ -437,7 +461,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onSwitchToYearly={() =>
           openDialog(BILLING_MODAL_IDS.switchBillingIntervalToYearly)
         }
-        planLabel={planLabel}
+        planLabel={currentPlanLabel}
         scheduledChangeItems={scheduledChangeItems}
         scheduledChangeStartDate={scheduledChangeStartDate}
         seatsSubtotalDetails={seatsSubtotalDetails}
@@ -450,6 +474,15 @@ export const SettingsBillingSubscriptionInfo = ({
         workspaceMemberDefaultName={t`Workspace member`}
         workspaceMembers={currentWorkspaceMembers}
       />
+      {canDisplayKeepTrialPlanSwitch && (
+        <SettingsBillingKeepTrialPlanSwitch
+          trialPlanKey={reverseTrialPlanKeys.trialPlanKey}
+          downgradePlanKey={reverseTrialPlanKeys.downgradePlanKey}
+          trialEndDate={totalRenewDate}
+          disabled={isSubscriptionActionDisabled}
+          onBillingSubscriptionChangeRequested={applyBillingSubscriptionChange}
+        />
+      )}
       <SettingsBillingSubscriptionInfoModals
         billingHasPaymentMethod={billingHasPaymentMethod}
         cancelIntervalSwitchingWording={getBillingSubscriptionChangeWording({

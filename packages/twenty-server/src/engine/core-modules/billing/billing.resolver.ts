@@ -472,7 +472,7 @@ export class BillingResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<BillingEndTrialPeriodDTO> {
     const result =
-      await this.billingSubscriptionService.endTrialPeriod(workspace);
+      await this.billingSubscriptionUpdateService.endTrialPeriod(workspace);
 
     if (!result.hasPaymentMethod && result.stripeCustomerId) {
       const billingPortalUrl =

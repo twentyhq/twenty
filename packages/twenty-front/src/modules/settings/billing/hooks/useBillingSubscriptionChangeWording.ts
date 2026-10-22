@@ -116,6 +116,16 @@ export const useBillingSubscriptionChangeWording = () => {
       planLabel === getBillingPlanLabel(currentPlanKey);
 
     if (isTrialing) {
+      if (
+        !isBillingSubscriptionChangeImmediate({
+          change,
+          currentPlan,
+          subscriptionStatus,
+        })
+      ) {
+        return t`Your plan switches to ${planLabel} on ${getBeautifiedRenewDate()}, at the end of your trial.`;
+      }
+
       return isNewVersionOfCurrentPlan
         ? t`Your plan moves to the new ${planLabel} plan immediately and your trial continues.`
         : t`Your plan switches to ${planLabel} immediately and your trial continues.`;
@@ -237,7 +247,7 @@ export const useBillingSubscriptionChangeWording = () => {
               getChargeSentence({
                 interval: currentInterval,
                 planKey: currentPlanKey,
-                timing: 'CURRENT',
+                timing: isTrialing ? 'AFTER_TRIAL' : 'CURRENT',
               }),
             ]),
       ].join(' '),

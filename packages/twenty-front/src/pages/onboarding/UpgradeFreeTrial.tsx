@@ -25,6 +25,7 @@ import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearanc
 import { useStripePromise } from '@/settings/billing/hooks/useStripePromise';
 import { useSubmitSubscriptionPayment } from '@/settings/billing/hooks/useSubmitSubscriptionPayment';
 import { getCheckoutPlanKeyOrThrow } from '@/settings/billing/utils/getCheckoutPlanKeyOrThrow';
+import { getReverseTrialPlanKeys } from '@/settings/billing/utils/getReverseTrialPlanKeys';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -315,9 +316,14 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
   const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
   const { listPlans } = usePlans();
 
+  const plans = listPlans();
+
+  // A reverse trial always starts on the default plan, whatever plan was requested.
   const planKey = getCheckoutPlanKeyOrThrow({
-    plans: listPlans(),
-    requestedPlanKey: billingCheckoutSession.plan,
+    plans,
+    requestedPlanKey: isDefined(getReverseTrialPlanKeys(plans))
+      ? undefined
+      : billingCheckoutSession.plan,
   });
 
   const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useAtomState(

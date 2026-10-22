@@ -2,18 +2,15 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import { findOrThrow, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
 import { NOT_ENDED_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/not-ended-subscription-statuses.constant';
 import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
+import { getScheduleCurrentAndNextPhasesOrThrow } from 'src/engine/core-modules/billing/utils/get-schedule-current-and-next-phases-or-throw.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -33,35 +30,6 @@ export class StripeSubscriptionScheduleService {
     this.stripe = this.stripeSDKService.getStripe(
       this.twentyConfigService.get('BILLING_STRIPE_API_KEY'),
     );
-  }
-
-  getPhases(subscriptionSchedule: Stripe.SubscriptionSchedule) {
-    const now = Math.floor(Date.now() / 1000);
-
-    const currentPhase = findOrThrow(
-      subscriptionSchedule.phases,
-      (p) => {
-        const s = p.start_date ?? 0;
-        const e = p.end_date ?? Infinity;
-
-        return s <= now && now < e;
-      },
-      new BillingException(
-        `Subscription must have at least 1 current phase`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_PHASE_NOT_FOUND,
-      ),
-    );
-
-    const nextPhase = (subscriptionSchedule.phases || [])
-      .filter((p) => (p.start_date ?? 0) > now)
-      .sort((a, b) => (a.start_date ?? 0) - (b.start_date ?? 0))[0] as
-      | Stripe.SubscriptionSchedule.Phase
-      | undefined;
-
-    return {
-      currentPhase,
-      nextPhase,
-    };
   }
 
   async getSubscriptionWithSchedule(stripeSubscriptionId: string) {
@@ -107,7 +75,7 @@ export class StripeSubscriptionScheduleService {
       from_subscription: stripeSubscriptionId,
     });
 
-    const currentPhase = this.getPhases(schedule).currentPhase;
+    const { currentPhase } = getScheduleCurrentAndNextPhasesOrThrow(schedule);
 
     return {
       schedule,
@@ -123,7 +91,7 @@ export class StripeSubscriptionScheduleService {
       return { subscription: subscriptionWithSchedule };
     }
 
-    const { currentPhase, nextPhase } = this.getPhases(
+    const { currentPhase, nextPhase } = getScheduleCurrentAndNextPhasesOrThrow(
       subscriptionWithSchedule.schedule,
     );
 
