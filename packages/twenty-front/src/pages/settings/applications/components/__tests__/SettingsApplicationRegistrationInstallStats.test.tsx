@@ -6,12 +6,14 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
+import { billingState } from '@/client-config/states/billingState';
 import { getCurrentMonthPeriodDates } from '@/settings/usage/utils/getCurrentMonthPeriodDates';
 
 import { ApolloAdminClientContext } from '@/settings/admin-panel/apollo/contexts/ApolloAdminClientContext';
 import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';
 import {
   type ApplicationRegistrationStats,
+  type Billing,
   FindApplicationRegistrationStatsDocument,
   UsageOperationType,
 } from '~/generated-metadata/graphql';
@@ -34,7 +36,15 @@ const STATS: ApplicationRegistrationStats = {
   ],
 };
 
-const renderStats = (stats = STATS, isAdminView = false) => {
+const renderStats = (
+  stats = STATS,
+  isAdminView = false,
+  isBillingEnabled = true,
+) => {
+  const store = createStore();
+
+  store.set(billingState.atom, { isBillingEnabled } as Billing);
+
   const client = new ApolloClient({
     cache: new InMemoryCache(),
     link: new MockLink([
@@ -61,7 +71,7 @@ const renderStats = (stats = STATS, isAdminView = false) => {
   });
 
   return render(
-    <JotaiProvider store={createStore()}>
+    <JotaiProvider store={store}>
       <I18nProvider i18n={i18n}>
         <ApolloAdminClientContext.Provider value={client}>
           <ApolloProvider client={client}>
@@ -109,4 +119,14 @@ describe('Application registration statistics', () => {
       ).toBeVisible();
     },
   );
+
+  it('hides credit consumption when billing is disabled', async () => {
+    renderStats(STATS, false, false);
+
+    await screen.findByText('1.2.3');
+    expect(
+      screen.queryByText('Credits used this month'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Code Execution')).not.toBeInTheDocument();
+  });
 });
