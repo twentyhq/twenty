@@ -179,7 +179,7 @@ describe('AI front component lifecycle', () => {
     service = module.get(AiFrontComponentService);
   });
 
-  it('previews fixtures without a layout or live record reads', async () => {
+  it('previews fixtures with the pinned shared bundle, without app files or live reads', async () => {
     const draft = await service.createDraft(INPUT, CONTEXT);
     const preview = await service.getPreview(
       'author',
@@ -193,6 +193,29 @@ describe('AI front component lifecycle', () => {
     expect(
       dependencies.flatMaps.getOrRecomputeManyOrAllFlatEntityMaps,
     ).not.toHaveBeenCalled();
+    const checksum = preview.componentSource.split('\n', 1)[0].split(': ')[1];
+    expect(
+      createHash('sha256')
+        .update(preview.sharedDependenciesSource!)
+        .digest('hex'),
+    ).toBe(checksum);
+    const secondDraft = await service.createDraft(INPUT, CONTEXT);
+    const secondPreview = await service.getPreview(
+      'author',
+      secondDraft.draftId,
+      AUTH_CONTEXT!,
+    );
+    expect(secondPreview.sharedDependenciesSource).toBe(
+      preview.sharedDependenciesSource,
+    );
+    const vendorEntries = [...cache.keys()].filter((key) =>
+      key.startsWith('ai-front-component-shared-dependencies:'),
+    );
+    expect(vendorEntries).toHaveLength(1);
+    cache.delete(vendorEntries[0]);
+    await expect(
+      service.getPreview('author', draft.draftId, AUTH_CONTEXT!),
+    ).rejects.toThrow('dependencies are missing or expired');
     expect(dependencies.files.writeFile).not.toHaveBeenCalled();
     expect(dependencies.components.createOne).not.toHaveBeenCalled();
   });

@@ -96,6 +96,36 @@ export class AiFrontComponentService {
     return `ai-front-component:${workspaceId}:${draftId}`;
   }
 
+  private sharedDependenciesKey(checksum: string) {
+    return `ai-front-component-shared-dependencies:${checksum}`;
+  }
+
+  private async getDraftSharedDependencies(draft: FrontComponentDraft) {
+    const checksum = readFrontComponentSharedDependenciesChecksum(
+      draft.compiledSource,
+    );
+
+    if (!isDefined(checksum)) {
+      return undefined;
+    }
+    const source = await this.cache.get<string>(
+      this.sharedDependenciesKey(checksum),
+    );
+
+    if (
+      !isDefined(source) ||
+      createHash('sha256').update(source).digest('hex') !== checksum
+    ) {
+      throw new NotFoundException(
+        doNotTranslate(
+          'Component draft dependencies are missing or expired. Create a new preview.',
+        ),
+      );
+    }
+
+    return source;
+  }
+
   private currentKey(workspaceId: string, rootId: string) {
     return `${this.draftKey(workspaceId, rootId)}:current`;
   }
@@ -245,6 +275,11 @@ export class AiFrontComponentService {
           threadId: context.threadId!,
         };
 
+        await this.cache.set(
+          this.sharedDependenciesKey(built.sharedDependencies.checksum),
+          built.sharedDependencies.source,
+          DRAFT_TTL,
+        );
         await this.saveDraft(context.workspaceId, draft);
         await this.cache.set(
           this.currentKey(context.workspaceId, rootId),
@@ -277,6 +312,7 @@ export class AiFrontComponentService {
       isCurrent: await this.isCurrent(workspaceId, draft),
       published: isDefined(draft.publishedComponentId),
       componentSource: draft.compiledSource,
+      sharedDependenciesSource: await this.getDraftSharedDependencies(draft),
       data: {
         records: draft.sampleRecords,
         count: draft.sampleRecords.length,
