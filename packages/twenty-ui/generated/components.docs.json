@@ -3792,6 +3792,13 @@
         "description": "The default value of the input. Use when uncontrolled."
       },
       {
+        "name": "hasFocusRing",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Shows the focus outline on standalone plain inputs. Defaults to true."
+      },
+      {
         "name": "onValueChange",
         "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
@@ -12719,6 +12726,13 @@
             "description": "The default value of the input. Use when uncontrolled."
           },
           {
+            "name": "hasFocusRing",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Shows the focus outline on standalone plain inputs. Defaults to true."
+          },
+          {
             "name": "onValueChange",
             "type": "((value: string) => void)",
             "required": false,
@@ -14871,6 +14885,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Disables the text input. Controls in actions keep their own state."
+      },
+      {
+        "name": "hasFocusRing",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Only affects standalone plain inputs. The InputGroup focus border stays visible on SearchInput."
       },
       {
         "name": "id",

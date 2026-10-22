@@ -20,6 +20,10 @@
   The default value of the input. Use when uncontrolled.
 </ParamField>
 
+<ParamField body="hasFocusRing" type="boolean" default="true">
+  Shows the focus outline on standalone plain inputs. Defaults to true.
+</ParamField>
+
 <ParamField body="onValueChange" type="((value: string, eventDetails: { reason: &quot;none&quot;; event: Event; cancel: () =&gt; void; allowPropagation: () =&gt; void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) =&gt; void)">
   Receives the next string value and Base UI details, including the native event, reason and cancellation methods.
 </ParamField>
