@@ -38,6 +38,27 @@ describe('getCheckoutPlanKeyOrThrow', () => {
     },
   );
 
+  it('returns the reverse trial plan whatever plan is requested', () => {
+    expect(
+      getCheckoutPlanKeyOrThrow({
+        plans: [
+          {
+            planKey: BillingPlanKey.PRO_V2,
+            isSellable: true,
+            isCheckoutDefault: false,
+          },
+          {
+            planKey: BillingPlanKey.ORGANIZATION_V2,
+            isSellable: true,
+            isCheckoutDefault: true,
+            trialEndPlanKey: BillingPlanKey.PRO_V2,
+          },
+        ],
+        requestedPlanKey: BillingPlanKey.PRO_V2,
+      }),
+    ).toBe(BillingPlanKey.ORGANIZATION_V2);
+  });
+
   it('throws when no plan is the default checkout plan', () => {
     expect(() =>
       getCheckoutPlanKeyOrThrow({

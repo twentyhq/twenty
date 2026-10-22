@@ -9,9 +9,20 @@ export const getCheckoutPlanKeyOrThrow = ({
   plans,
   requestedPlanKey,
 }: {
-  plans: Pick<BillingPlan, 'isCheckoutDefault' | 'isSellable' | 'planKey'>[];
+  plans: Pick<
+    BillingPlan,
+    'isCheckoutDefault' | 'isSellable' | 'planKey' | 'trialEndPlanKey'
+  >[];
   requestedPlanKey?: BillingPlanKey;
 }): BillingPlanKey => {
+  const reverseTrialPlan = plans.find((plan) =>
+    isDefined(plan.trialEndPlanKey),
+  );
+
+  if (isDefined(reverseTrialPlan)) {
+    return reverseTrialPlan.planKey;
+  }
+
   const requestedPlan = plans.find(
     (plan) => plan.planKey === requestedPlanKey && plan.isSellable,
   );

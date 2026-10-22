@@ -315,13 +315,9 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
   const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
   const { listPlans } = usePlans();
 
-  const plans = listPlans();
-
   const planKey = getCheckoutPlanKeyOrThrow({
-    plans,
-    requestedPlanKey:
-      plans.find((plan) => isDefined(plan.trialEndPlanKey))?.planKey ??
-      billingCheckoutSession.plan,
+    plans: listPlans(),
+    requestedPlanKey: billingCheckoutSession.plan,
   });
 
   const [verifyEmailRedirectPath, setVerifyEmailRedirectPath] = useAtomState(
