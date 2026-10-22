@@ -339,6 +339,7 @@ export class TimelineActivityRepository {
             payload.recordId,
             payload.workspaceMemberId ?? null,
             payload.timelineActivityTypeId,
+            payload.linkedRecordId ?? null,
           ]),
         ),
       ),
@@ -373,6 +374,13 @@ export class TimelineActivityRepository {
       ),
       createdAt: MoreThan(tenMinutesAgo),
     };
+
+    const linkedRecordIds = payloads.map((payload) => payload.linkedRecordId);
+
+    // A linked payload only merges into a row with the same linked record, and a busy target can have thousands of recent rows
+    if (linkedRecordIds.every(isDefined)) {
+      whereConditions.linkedRecordId = In(linkedRecordIds);
+    }
 
     // Every candidate is needed: a single row would let only one payload of a multi-record batch merge
     return await timelineActivityRepository.find({

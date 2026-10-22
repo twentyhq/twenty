@@ -1,4 +1,5 @@
 import { type TimelineActivityTypeSnapshot } from 'twenty-shared/timeline';
+import { In } from 'typeorm';
 
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
@@ -151,6 +152,7 @@ describe('TimelineActivityRepository', () => {
           'record-a',
           WORKSPACE_MEMBER_ID,
           TIMELINE_ACTIVITY_TYPE_ID,
+          null,
         ]),
         JSON.stringify([
           'timeline-activity-merge',
@@ -159,11 +161,74 @@ describe('TimelineActivityRepository', () => {
           'record-z',
           WORKSPACE_MEMBER_ID,
           TIMELINE_ACTIVITY_TYPE_ID,
+          null,
         ]),
       ],
     ]);
     expect(
       workspaceRepository.find.mock.invocationCallOrder[0],
     ).toBeGreaterThan(executeRawQuery.mock.invocationCallOrder[0]);
+  });
+
+  it('locks and reads recent rows per linked record for linked payloads', async () => {
+    const executeRawQuery = jest.fn().mockResolvedValue([]);
+    const workspaceRepository = {
+      find: jest.fn().mockResolvedValue([]),
+      update: jest.fn().mockResolvedValue(undefined),
+      insert: jest.fn().mockResolvedValue(undefined),
+    };
+    const workspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn(
+        async (callback: () => Promise<void>) => callback(),
+      ),
+      runInWorkspaceTransaction: jest.fn(
+        async (
+          callback: (transactionScope: {
+            getRepository: () => typeof workspaceRepository;
+            executeRawQuery: typeof executeRawQuery;
+          }) => Promise<void>,
+        ) =>
+          callback({
+            getRepository: () => workspaceRepository,
+            executeRawQuery,
+          }),
+      ),
+    } as unknown as WorkspaceOrmManager;
+    const repository = new TimelineActivityRepository(workspaceOrmManager);
+
+    await repository.upsertTimelineActivities({
+      objectSingularName: 'person',
+      workspaceId: WORKSPACE_ID,
+      payloads: ['message-b', 'message-a'].map((linkedRecordId) => ({
+        happensAt: new Date('2026-08-23T09:00:00.000Z'),
+        properties: {},
+        recordId: RECORD_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+        timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+        linkedRecordId,
+      })),
+    });
+
+    expect(executeRawQuery.mock.calls[0][1]).toEqual([
+      ['message-a', 'message-b'].map((linkedRecordId) =>
+        JSON.stringify([
+          'timeline-activity-merge',
+          WORKSPACE_ID,
+          'person',
+          RECORD_ID,
+          WORKSPACE_MEMBER_ID,
+          TIMELINE_ACTIVITY_TYPE_ID,
+          linkedRecordId,
+        ]),
+      ),
+    ]);
+    expect(workspaceRepository.find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          linkedRecordId: In(['message-b', 'message-a']),
+        }),
+      }),
+    );
   });
 });
