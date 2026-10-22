@@ -3,10 +3,12 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/components/SidePanelShareRecordContent';
 import {
   ObjectSharingReach,
@@ -17,6 +19,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const setGeneralAccess = fn();
 const setShare = fn();
@@ -101,6 +104,10 @@ const SidePanelStoryProviders = ({ children }: { children: ReactNode }) => {
   const [store] = useState(() => {
     const store = createStore();
     store.set(currentWorkspaceMembersState.atom, MEMBERS);
+    store.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      displayName: 'Acme',
+    });
     store.set(currentWorkspaceMemberState.atom, {
       ...MEMBERS[0],
       colorScheme: 'Light',
@@ -146,8 +153,11 @@ const meta: Meta<typeof SidePanelShareRecordContent> = {
   },
   beforeEach: () => {
     setGeneralAccess.mockClear();
+    setGeneralAccess.mockResolvedValue(SHARING);
     setShare.mockClear();
+    setShare.mockResolvedValue(SHARING);
     removeShare.mockClear();
+    removeShare.mockResolvedValue(SHARING);
     refetch.mockClear();
     refetch.mockResolvedValue(undefined);
   },
@@ -163,7 +173,7 @@ export const Default: Story = {
     const generalAccess = await page.findByRole('button', {
       name: 'Restricted',
     });
-    const addPeople = page.getByRole('button', { name: 'Add people or roles' });
+    const addPeople = page.getByPlaceholderText('Add people or everyone');
     const role = page.getByRole('button', { name: 'Sales Viewer' });
     const recipient = page.getByRole('button', { name: 'Phil Schiler Editor' });
     await expect(generalAccess).toBeVisible();
@@ -172,7 +182,7 @@ export const Default: Story = {
     await expect(page.getByText('Users')).toBeVisible();
     await expect(page.getByText('You')).toBeVisible();
     await expect(page.getByText('Owner')).toBeVisible();
-    await userEvent.tab();
+    await userEvent.click(addPeople);
     await expect(addPeople).toHaveFocus();
     await userEvent.tab();
     await expect(generalAccess).toHaveFocus();
@@ -213,25 +223,139 @@ export const Default: Story = {
 export const AddPeople: Story = {
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      await page.findByRole('button', { name: 'Add people or roles' }),
-    );
-    await waitFor(() =>
-      expect(page.getByPlaceholderText('Search people or roles')).toBeVisible(),
-    );
-    const recipientWithoutAvatar = page.getByRole('button', {
-      name: /Jane Austen/,
-    });
+    const search = await page.findByPlaceholderText('Add people or everyone');
+    await userEvent.type(search, 'phil@example.com');
+    await expect(page.getByText('Have access')).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Phil Schiler Editor' }),
+    ).toBeVisible();
+    await expect(
+      page.queryByRole('checkbox', { name: /Jane Austen/ }),
+    ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Enter}');
+    await expect(page.queryByRole('menu')).not.toBeInTheDocument();
+    await expect(search).toHaveFocus();
+    await userEvent.clear(search);
+    await userEvent.type(search, 'j');
+    await expect(page.getByText('Doesn’t have access')).toBeVisible();
+    const recipientWithoutAvatar = page
+      .getByRole('checkbox', {
+        name: /Jane Austen/,
+      })
+      .closest('label');
+
+    if (!isDefined(recipientWithoutAvatar)) {
+      throw new Error('Jane Austen recipient row is missing');
+    }
+
     await expect(
       await within(recipientWithoutAvatar).findByText('J'),
     ).toBeVisible();
-    const recipientWithAvatar = page.getByRole('button', { name: /Jony Ive/ });
+    const recipientWithAvatar = page
+      .getByRole('checkbox', { name: /Jony Ive/ })
+      .closest('label');
+
+    if (!isDefined(recipientWithAvatar)) {
+      throw new Error('Jony Ive recipient row is missing');
+    }
+
     const avatar =
       await within(recipientWithAvatar).findByRole<HTMLImageElement>(
         'presentation',
       );
     await expect(avatar).toBeVisible();
     await waitFor(() => expect(avatar.naturalWidth).toBeGreaterThan(0));
+  },
+};
+
+export const InvitePeople: Story = {
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const search = await page.findByPlaceholderText('Add people or everyone');
+    await userEvent.type(search, 'j');
+    await userEvent.tab();
+    await expect(
+      page.getByRole('button', { name: 'Invite as Viewer' }),
+    ).toHaveFocus();
+    await userEvent.tab();
+    await expect(
+      page.getByRole('checkbox', { name: /Jane Austen/ }),
+    ).toHaveFocus();
+    await userEvent.keyboard(' ');
+    await expect(
+      page.getByRole('checkbox', { name: /Jane Austen/ }),
+    ).toBeChecked();
+    await expect(search).toHaveFocus();
+    await userEvent.click(page.getByRole('checkbox', { name: /Jony Ive/ }));
+    await expect(page.getByRole('button', { name: 'Invite 2' })).toBeEnabled();
+    await expect(setShare).not.toHaveBeenCalled();
+    await userEvent.click(page.getByRole('button', { name: 'Invite 2' }));
+    await waitFor(() => expect(setShare).toHaveBeenCalledTimes(2));
+    await expect(setShare).toHaveBeenNthCalledWith(1, {
+      principal: { workspaceMemberId: 'invite' },
+      accessLevel: RecordShareAccessLevel.READ,
+    });
+    await expect(setShare).toHaveBeenNthCalledWith(2, {
+      principal: { workspaceMemberId: 'invite-with-avatar' },
+      accessLevel: RecordShareAccessLevel.READ,
+    });
+    await waitFor(() =>
+      expect(page.getByRole('button', { name: 'Invite' })).toBeDisabled(),
+    );
+    await expect(setGeneralAccess).not.toHaveBeenCalled();
+  },
+};
+
+export const InviteEveryone: Story = {
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.type(
+      await page.findByPlaceholderText('Add people or everyone'),
+      'Everyone',
+    );
+    await userEvent.click(
+      page.getByRole('checkbox', { name: /Everyone at Acme/ }),
+    );
+    await userEvent.click(
+      page.getByRole('button', { name: 'Invite as Viewer' }),
+    );
+    await expect(
+      page.queryByRole('menuitemradio', { name: 'Full access' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(page.getByRole('menuitemradio', { name: 'Editor' }));
+    await expect(setGeneralAccess).not.toHaveBeenCalled();
+    await userEvent.click(page.getByRole('button', { name: 'Invite 1' }));
+    await waitFor(() =>
+      expect(setGeneralAccess).toHaveBeenCalledWith(
+        RecordShareAccessLevel.READ_WRITE,
+      ),
+    );
+    await expect(setShare).not.toHaveBeenCalled();
+  },
+};
+
+export const RetainFailedInvitations: Story = {
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    setShare.mockResolvedValueOnce(undefined);
+    await userEvent.type(
+      await page.findByPlaceholderText('Add people or everyone'),
+      'j',
+    );
+    await userEvent.click(page.getByRole('checkbox', { name: /Jane Austen/ }));
+    await userEvent.click(page.getByRole('checkbox', { name: /Jony Ive/ }));
+    await userEvent.click(page.getByRole('button', { name: 'Invite 2' }));
+    await expect(await page.findByRole('alert')).toHaveTextContent(
+      'Sharing could not be updated for every recipient. Try again.',
+    );
+    await expect(
+      page.getByRole('checkbox', { name: /Jane Austen/ }),
+    ).toBeChecked();
+    await expect(
+      page.queryByRole('checkbox', { name: /Jony Ive/, checked: true }),
+    ).not.toBeInTheDocument();
+    await expect(page.getByRole('button', { name: 'Invite 1' })).toBeEnabled();
+    await expect(setShare).toHaveBeenCalledTimes(2);
   },
 };
 
@@ -250,20 +374,15 @@ export const Saving: Story = {
   },
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    const addPeople = await page.findByRole('button', {
-      name: 'Add people or roles',
-    });
-    await expect(addPeople).toHaveAttribute('aria-disabled', 'true');
-    await userEvent.click(addPeople);
-    await expect(
-      page.queryByPlaceholderText('Search people or roles'),
-    ).not.toBeInTheDocument();
-    await userEvent.tab();
-    await expect(addPeople).toHaveFocus();
-    await userEvent.keyboard('{Enter}');
-    await expect(
-      page.queryByPlaceholderText('Search people or roles'),
-    ).not.toBeInTheDocument();
+    const addPeople = await page.findByPlaceholderText(
+      'Add people or everyone',
+    );
+    await expect(addPeople).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Invite' })).toBeDisabled();
+    await userEvent.type(addPeople, 'Jane');
+    await expect(addPeople).toHaveValue('');
+    await expect(setShare).not.toHaveBeenCalled();
+    await expect(setGeneralAccess).not.toHaveBeenCalled();
   },
 };
 

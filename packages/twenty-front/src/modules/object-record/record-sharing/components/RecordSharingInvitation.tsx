@@ -1,45 +1,28 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type Ref } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components/input';
-import { IconX } from 'twenty-ui/icon';
-import { Chip } from 'twenty-ui/primitives/data-display';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button, Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { RecordSharingInvitationAccessPicker } from '@/object-record/record-sharing/components/RecordSharingInvitationAccessPicker';
-import { RecordSharingInvitationRecipientPicker } from '@/object-record/record-sharing/components/RecordSharingInvitationRecipientPicker';
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
-import { isSameRecordSharingInvitationRecipient } from '@/object-record/record-sharing/utils/isSameRecordSharingInvitationRecipient';
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 const StyledHeader = styled.div`
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
-  min-height: ${themeCssVariables.spacing[10]};
+  height: ${themeCssVariables.spacing[10]};
   padding: 0 ${themeCssVariables.spacing[3]};
 `;
 
-const StyledPicker = styled.div`
+const StyledSearch = styled.div`
   flex: 1;
   min-width: 0;
-`;
-
-const StyledSelection = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-`;
-
-const StyledActions = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
 `;
 
 const StyledError = styled.div`
@@ -49,29 +32,27 @@ const StyledError = styled.div`
 `;
 
 type RecordSharingInvitationProps = {
-  recipients: RecordSharingInvitationRecipient[];
+  searchInputRef?: Ref<HTMLInputElement>;
+  search: string;
   selectedRecipients: RecordSharingInvitationRecipient[];
   accessLevel: RecordShareAccessLevel;
   canInvite: boolean;
   isSubmitting?: boolean;
   errorMessage?: string;
-  onRecipientsChange: (recipients: RecordSharingInvitationRecipient[]) => void;
-  onAccessLevelChange: (accessLevel: RecordShareAccessLevel) => void;
+  onSearchChange: (search: string) => void;
   onInvite: () => void;
-  onCancel: () => void;
 };
 
 export const RecordSharingInvitation = ({
-  recipients,
+  searchInputRef,
+  search,
   selectedRecipients,
   accessLevel,
   canInvite,
   isSubmitting = false,
   errorMessage,
-  onRecipientsChange,
-  onAccessLevelChange,
+  onSearchChange,
   onInvite,
-  onCancel,
 }: RecordSharingInvitationProps) => {
   const { t } = useLingui();
   const isDisabled = !canInvite || isSubmitting;
@@ -82,29 +63,23 @@ export const RecordSharingInvitation = ({
   const hasInvalidAccessLevel =
     accessLevel === RecordShareAccessLevel.NONE ||
     (hasEveryoneRecipient && accessLevel === RecordShareAccessLevel.FULL);
-  const removeRecipient = (recipient: RecordSharingInvitationRecipient) => {
-    onRecipientsChange(
-      selectedRecipients.filter(
-        (selectedRecipient) =>
-          !isSameRecordSharingInvitationRecipient({
-            recipient,
-            otherRecipient: selectedRecipient,
-          }),
-      ),
-    );
-  };
+  const selectedRecipientCount = selectedRecipients.length;
 
   return (
     <div aria-busy={isSubmitting}>
       <StyledHeader>
-        <StyledPicker>
-          <RecordSharingInvitationRecipientPicker
-            recipients={recipients}
-            selectedRecipients={selectedRecipients}
+        <StyledSearch>
+          <Input
+            ref={searchInputRef}
+            role="searchbox"
+            aria-label={t`Add people or everyone`}
+            placeholder={t`Add people or everyone`}
+            value={search}
+            variant="inline"
             disabled={isDisabled}
-            onRecipientsChange={onRecipientsChange}
+            onValueChange={onSearchChange}
           />
-        </StyledPicker>
+        </StyledSearch>
         <Button
           size="sm"
           variant="solid"
@@ -113,50 +88,9 @@ export const RecordSharingInvitation = ({
           loading={isSubmitting}
           onClick={onInvite}
         >
-          {t`Invite`}
+          {hasSelection ? t`Invite ${selectedRecipientCount}` : t`Invite`}
         </Button>
       </StyledHeader>
-      {hasSelection && (
-        <>
-          <StyledSelection aria-label={t`Selected recipients`}>
-            {selectedRecipients.map((recipient) => (
-              <Chip
-                key={`${recipient.kind}-${recipient.id}`}
-                size="md"
-                variant="soft"
-                maxWidth={240}
-                endElement={
-                  <LightIconButton
-                    aria-label={t`Remove ${recipient.label}`}
-                    disabled={isDisabled}
-                    onClick={() => removeRecipient(recipient)}
-                  >
-                    <IconX />
-                  </LightIconButton>
-                }
-              >
-                {recipient.label}
-              </Chip>
-            ))}
-          </StyledSelection>
-          <StyledActions>
-            <RecordSharingInvitationAccessPicker
-              value={accessLevel}
-              hasEveryoneRecipient={hasEveryoneRecipient}
-              disabled={isDisabled}
-              onChange={onAccessLevelChange}
-            />
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={isSubmitting}
-              onClick={onCancel}
-            >
-              {t`Cancel`}
-            </Button>
-          </StyledActions>
-        </>
-      )}
       {hasInvalidAccessLevel && hasSelection && (
         <StyledError role="alert">
           {t`Choose an access level available to all selected recipients.`}

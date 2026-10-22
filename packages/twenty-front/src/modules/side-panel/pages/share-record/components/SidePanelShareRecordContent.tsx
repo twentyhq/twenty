@@ -1,29 +1,30 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { useRef } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconLink } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { RecordSharingInvitation } from '@/object-record/record-sharing/components/RecordSharingInvitation';
+import { RecordSharingInvitationAccessPicker } from '@/object-record/record-sharing/components/RecordSharingInvitationAccessPicker';
+import { RecordSharingInvitationRecipientPicker } from '@/object-record/record-sharing/components/RecordSharingInvitationRecipientPicker';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SidePanelShareRecordAddPeopleItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordAddPeopleItem';
+import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
 import { SidePanelShareRecordGeneralAccessItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem';
+import { SidePanelShareRecordGroup } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGroup';
+import { SidePanelShareRecordList } from '@/side-panel/pages/share-record/components/SidePanelShareRecordList';
 import { SidePanelShareRecordRecipient } from '@/side-panel/pages/share-record/components/SidePanelShareRecordRecipient';
 import { SidePanelShareRecordRetryItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordRetryItem';
-import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
+import { useSidePanelShareRecordInvitation } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordInvitation';
+import { useSidePanelShareRecordSearch } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordSearch';
 import {
-  ObjectSharingReach,
+  type ObjectSharingReach,
   RecordSharePrincipalType,
-  RecordShareRowCause,
   RecordSharingMode,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-
-const ADD_PEOPLE_ITEM_ID = 'share-record-add-people';
-const GENERAL_ACCESS_ITEM_ID = 'share-record-general-access';
-const RETRY_ITEM_ID = 'share-record-retry';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -35,6 +36,7 @@ const StyledListContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-height: 0;
   overflow: hidden;
 `;
 
@@ -44,6 +46,23 @@ const StyledDescription = styled.div`
   line-height: 1.5;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[1]};
   white-space: normal;
+`;
+
+const StyledSeparator = styled.div`
+  padding: ${themeCssVariables.spacing[0.5]} 0;
+`;
+
+const StyledFooter = styled.div`
+  align-items: center;
+  backdrop-filter: blur(20px);
+  background: ${themeCssVariables.background.transparent.primary};
+  border-top: 1px solid ${themeCssVariables.border.color.medium};
+  box-sizing: border-box;
+  display: flex;
+  flex-shrink: 0;
+  height: ${themeCssVariables.spacing[10]};
+  justify-content: flex-end;
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 type SidePanelShareRecordContentProps = {
@@ -60,108 +79,161 @@ export const SidePanelShareRecordContent = ({
   sharingState,
 }: SidePanelShareRecordContentProps) => {
   const { t } = useLingui();
+  const { sharing, error, setGeneralAccess, setShare, removeShare, refetch } =
+    sharingState;
+  const invitation = useSidePanelShareRecordInvitation({ sharingState });
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const {
+    search,
+    onSearchChange,
+    matchingShares,
+    matchingRecipients,
+    matchesGeneralAccess,
+    hasSelection,
+    isInviting,
+  } = useSidePanelShareRecordSearch({
     sharing,
-    loading,
-    error,
-    saving,
-    setGeneralAccess,
-    setShare,
-    removeShare,
-    refetch,
-  } = sharingState;
+    recipients: invitation.recipients,
+    selectedRecipients: invitation.selectedRecipients,
+  });
   const { copyToClipboard } = useCopyToClipboard();
   const canManageSharing = sharing?.canManageSharing ?? false;
-  const recipientGroups = [
-    {
-      heading: t`Roles`,
-      shares: (sharing?.shares ?? []).filter(
-        (share) => share.principalType === RecordSharePrincipalType.ROLE,
-      ),
-    },
-    {
-      heading: t`Users`,
-      shares: (sharing?.shares ?? []).filter(
-        (share) =>
-          share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER,
-      ),
-    },
-  ];
-
-  const selectableItemIds = isDefined(error)
-    ? [RETRY_ITEM_ID]
-    : canManageSharing
-      ? [
-          ADD_PEOPLE_ITEM_ID,
-          GENERAL_ACCESS_ITEM_ID,
-          ...recipientGroups.flatMap(({ shares }) =>
-            shares
-              .filter((share) => share.rowCause === RecordShareRowCause.MANUAL)
-              .map((share) => share.id),
+  const recipientGroups = isInviting
+    ? [{ heading: t`Have access`, shares: matchingShares }]
+    : [
+        {
+          heading: t`Roles`,
+          shares: matchingShares.filter(
+            (share) => share.principalType === RecordSharePrincipalType.ROLE,
           ),
-        ]
-      : [];
+        },
+        {
+          heading: t`Users`,
+          shares: matchingShares.filter(
+            (share) =>
+              share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER,
+          ),
+        },
+      ];
+  const handleRecipientsChange = (
+    recipients: RecordSharingInvitationRecipient[],
+  ) => {
+    invitation.onRecipientsChange(recipients);
+    searchInputRef.current?.focus();
+  };
+  const accessPicker = (
+    <RecordSharingInvitationAccessPicker
+      value={invitation.accessLevel}
+      hasEveryoneRecipient={invitation.selectedRecipients.some(
+        (recipient) => recipient.kind === 'everyone',
+      )}
+      disabled={invitation.isSubmitting}
+      onChange={invitation.onAccessLevelChange}
+    />
+  );
 
   return (
     <StyledContainer>
+      {canManageSharing && !isDefined(error) && (
+        <RecordSharingInvitation
+          searchInputRef={searchInputRef}
+          search={search}
+          onSearchChange={onSearchChange}
+          selectedRecipients={invitation.selectedRecipients}
+          accessLevel={invitation.accessLevel}
+          canInvite={invitation.canInvite}
+          isSubmitting={invitation.isSubmitting}
+          errorMessage={invitation.errorMessage}
+          onInvite={() => void invitation.onInvite()}
+        />
+      )}
       <StyledListContainer>
-        <SidePanelList selectableItemIds={selectableItemIds} loading={loading}>
+        <SidePanelShareRecordList>
           {isDefined(error) ? (
             <>
               <StyledDescription role="alert">{t`Sharing settings could not be loaded.`}</StyledDescription>
-              <SidePanelShareRecordRetryItem
-                itemId={RETRY_ITEM_ID}
-                refetch={refetch}
-              />
+              <SidePanelShareRecordRetryItem refetch={refetch} />
             </>
           ) : (
             isDefined(sharing) &&
             (canManageSharing ? (
               <>
-                <SidePanelShareRecordAddPeopleItem
-                  itemId={ADD_PEOPLE_ITEM_ID}
-                  sharing={sharing}
-                  saving={saving}
-                  setShare={setShare}
-                />
-                <SidePanelGroup heading={t`Everyone`}>
-                  <SidePanelShareRecordGeneralAccessItem
-                    itemId={GENERAL_ACCESS_ITEM_ID}
-                    generalAccessLevel={sharing.generalAccessLevel}
-                    defaultGeneralAccessLevel={
-                      sharing.defaultGeneralAccessLevel
-                    }
-                    hasManagedGeneralAccess={sharing.hasManagedGeneralAccess}
-                    objectLabelPlural={objectLabelPlural}
-                    saving={saving}
-                    setGeneralAccess={setGeneralAccess}
-                  />
-                </SidePanelGroup>
-                {recipientGroups.map(({ heading, shares }) => (
-                  <SidePanelGroup key={heading} heading={heading}>
-                    {shares.map((share) => (
-                      <SidePanelShareRecordRecipient
-                        key={share.id}
-                        share={share}
-                        roles={sharing.roles}
-                        objectLabelPlural={objectLabelPlural}
-                        sharingReach={sharingReach}
-                        isSaving={saving}
-                        setShare={setShare}
-                        removeShare={removeShare}
-                      />
-                    ))}
-                  </SidePanelGroup>
-                ))}
-                <StyledDescription>
-                  {sharing.hasManagedGeneralAccess
-                    ? t`Workspace access is also managed by an application.`
-                    : sharing.sharingMode === RecordSharingMode.INHERITED
-                      ? t`Access is also inherited from related records.`
-                      : sharingReach === ObjectSharingReach.WORKSPACE
-                        ? t`People you add get this record even if their role can't access ${objectLabelPlural}. Field permissions still apply.`
-                        : t`Role and field permissions still apply.`}
-                </StyledDescription>
+                {hasSelection && (
+                  <SidePanelShareRecordGroup heading={t`Selected`}>
+                    {accessPicker}
+                    <RecordSharingInvitationRecipientPicker
+                      recipients={invitation.selectedRecipients}
+                      selectedRecipients={invitation.selectedRecipients}
+                      disabled={invitation.isSubmitting}
+                      onRecipientsChange={handleRecipientsChange}
+                    />
+                  </SidePanelShareRecordGroup>
+                )}
+                {(!isInviting || matchesGeneralAccess) && (
+                  <SidePanelShareRecordGroup
+                    heading={isInviting ? t`Have access` : t`Everyone`}
+                  >
+                    <SidePanelShareRecordGeneralAccessItem
+                      generalAccessLevel={sharing.generalAccessLevel}
+                      defaultGeneralAccessLevel={
+                        sharing.defaultGeneralAccessLevel
+                      }
+                      hasManagedGeneralAccess={sharing.hasManagedGeneralAccess}
+                      objectLabelPlural={objectLabelPlural}
+                      saving={invitation.isSubmitting}
+                      setGeneralAccess={setGeneralAccess}
+                    />
+                  </SidePanelShareRecordGroup>
+                )}
+                {recipientGroups.map(({ heading, shares }) =>
+                  isNonEmptyArray(shares) ? (
+                    <SidePanelShareRecordGroup
+                      key={heading}
+                      heading={heading}
+                      hideHeading={isInviting && matchesGeneralAccess}
+                    >
+                      {shares.map((share) => (
+                        <SidePanelShareRecordRecipient
+                          key={share.id}
+                          share={share}
+                          roles={sharing.roles}
+                          objectLabelPlural={objectLabelPlural}
+                          sharingReach={sharingReach}
+                          isSaving={invitation.isSubmitting}
+                          setShare={setShare}
+                          removeShare={removeShare}
+                        />
+                      ))}
+                    </SidePanelShareRecordGroup>
+                  ) : null,
+                )}
+                {isInviting && (
+                  <SidePanelShareRecordGroup heading={t`Doesn’t have access`}>
+                    {!hasSelection && (
+                      <>
+                        {accessPicker}
+                        <StyledSeparator>
+                          <Separator />
+                        </StyledSeparator>
+                      </>
+                    )}
+                    <RecordSharingInvitationRecipientPicker
+                      recipients={matchingRecipients}
+                      selectedRecipients={invitation.selectedRecipients}
+                      disabled={invitation.isSubmitting}
+                      onRecipientsChange={handleRecipientsChange}
+                    />
+                    {!isNonEmptyArray(matchingRecipients) && (
+                      <StyledDescription>{t`No matching people or roles`}</StyledDescription>
+                    )}
+                  </SidePanelShareRecordGroup>
+                )}
+                {sharing.hasManagedGeneralAccess && (
+                  <StyledDescription>{t`Workspace access is also managed by an application.`}</StyledDescription>
+                )}
+                {sharing.sharingMode === RecordSharingMode.INHERITED && (
+                  <StyledDescription>{t`Access is also inherited from related records.`}</StyledDescription>
+                )}
               </>
             ) : (
               <StyledDescription>
@@ -173,21 +245,18 @@ export const SidePanelShareRecordContent = ({
               </StyledDescription>
             ))
           )}
-        </SidePanelList>
+        </SidePanelShareRecordList>
       </StyledListContainer>
-      <SidePanelFooter
-        actions={[
-          <Button
-            key="copy-link"
-            size="sm"
-            variant="outline"
-            startIcon={<IconLink />}
-            onClick={() => {
-              void copyToClipboard(recordUrl);
-            }}
-          >{t`Copy link`}</Button>,
-        ]}
-      />
+      <StyledFooter>
+        <Button
+          size="sm"
+          variant="outline"
+          startIcon={<IconLink />}
+          onClick={() => void copyToClipboard(recordUrl)}
+        >
+          {t`Copy link`}
+        </Button>
+      </StyledFooter>
     </StyledContainer>
   );
 };

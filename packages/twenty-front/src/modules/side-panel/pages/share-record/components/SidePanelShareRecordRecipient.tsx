@@ -115,7 +115,6 @@ export const SidePanelShareRecordRecipient = ({
 
     return (
       <SidePanelShareRecordDropdownItem
-        itemId={share.id}
         label={label}
         Icon={Icon}
         LeftComponent={avatar}

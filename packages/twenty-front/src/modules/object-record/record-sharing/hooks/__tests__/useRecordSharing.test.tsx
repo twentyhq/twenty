@@ -135,10 +135,12 @@ describe('useRecordSharing', () => {
       expect(result.current.sharing?.canManageSharing).toBe(true),
     );
     await act(async () => {
-      await result.current.setShare({
-        principal: { workspaceMemberId: 'member' },
-        accessLevel: RecordShareAccessLevel.READ,
-      });
+      await expect(
+        result.current.setShare({
+          principal: { workspaceMemberId: 'member' },
+          accessLevel: RecordShareAccessLevel.READ,
+        }),
+      ).resolves.toEqual(SHARED_WITH_MEMBER);
     });
     expect(request.mock.calls.map(([operationName]) => operationName)).toEqual([
       'GetRecordSharing',
@@ -163,7 +165,9 @@ describe('useRecordSharing', () => {
       expect(result.current.sharing?.canManageSharing).toBe(true),
     );
     await act(async () => {
-      await result.current.setGeneralAccess(RecordShareAccessLevel.READ);
+      await expect(
+        result.current.setGeneralAccess(RecordShareAccessLevel.READ),
+      ).resolves.toEqual(OPEN_TO_VIEWERS);
     });
     expect(request).toHaveBeenLastCalledWith('SetRecordGeneralAccess', {
       target: RECORD_TARGET,
@@ -181,9 +185,11 @@ describe('useRecordSharing', () => {
     });
     expect(result.current.sharing?.shares).toHaveLength(1);
     await act(async () => {
-      await result.current.removeShare({
-        principal: { workspaceMemberId: 'member' },
-      });
+      await expect(
+        result.current.removeShare({
+          principal: { workspaceMemberId: 'member' },
+        }),
+      ).resolves.toEqual(SHARING);
     });
     expect(request).toHaveBeenLastCalledWith('RemoveRecordShare', {
       target: RECORD_TARGET,
@@ -233,10 +239,12 @@ describe('useRecordSharing', () => {
       throw new Error('Save failed');
     });
     await act(async () => {
-      await result.current.setShare({
-        principal: { workspaceMemberId: 'member' },
-        accessLevel: RecordShareAccessLevel.READ,
-      });
+      await expect(
+        result.current.setShare({
+          principal: { workspaceMemberId: 'member' },
+          accessLevel: RecordShareAccessLevel.READ,
+        }),
+      ).resolves.toBeUndefined();
     });
     expect(result.current.sharing?.shares).toEqual([]);
     expect(readStoredPermissions()).toBeUndefined();

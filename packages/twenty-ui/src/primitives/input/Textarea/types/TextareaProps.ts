@@ -23,7 +23,7 @@ export type TextareaProps = Omit<
   ) => void;
   /** Visual size of the textarea. */
   size?: InputSize;
-  variant?: InputVariant;
+  variant?: Exclude<InputVariant, 'inline'>;
   autoResize?: boolean;
   maxRows?: number;
 };

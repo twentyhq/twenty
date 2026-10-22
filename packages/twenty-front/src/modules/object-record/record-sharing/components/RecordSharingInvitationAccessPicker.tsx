@@ -1,11 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
-import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconChevronDown } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { Dropdown, ListItemButton } from 'twenty-ui/components/navigation';
+import { IconChevronRight, IconUserPlus } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
 
-import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharing/constants/RecordShareAccessLevelOptions';
+import { RecordSharingAccessLevelOptions } from '@/object-record/record-sharing/components/RecordSharingAccessLevelOptions';
 import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
+import { type RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 type RecordSharingInvitationAccessPickerProps = {
   value: RecordShareAccessLevel;
@@ -21,39 +22,42 @@ export const RecordSharingInvitationAccessPicker = ({
   onChange,
 }: RecordSharingInvitationAccessPickerProps) => {
   const { t } = useLingui();
-  const options = RECORD_SHARE_ACCESS_LEVEL_OPTIONS.filter(
-    (option) =>
-      !hasEveryoneRecipient || option.value !== RecordShareAccessLevel.FULL,
-  );
+  const theme = useTheme();
 
   return (
     <Dropdown.Root type="menu">
       <Dropdown.Trigger
         disabled={disabled}
+        aria-label={t`Invite as ${getRecordShareAccessLevelLabel(value)}`}
         render={
-          <Button
-            size="sm"
-            variant="ghost"
-            aria-label={t`Invitation access`}
-            endIcon={<IconChevronDown />}
+          <ListItemButton
+            startIcon={
+              <ListItemIconContainer>
+                <IconUserPlus
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              </ListItemIconContainer>
+            }
+            description={getRecordShareAccessLevelLabel(value)}
+            descriptionPlacement="end"
+            endIcon={<IconChevronRight />}
           >
-            {getRecordShareAccessLevelLabel(value)}
-          </Button>
+            {t`Invite as`}
+          </ListItemButton>
         }
       />
-      <Dropdown.Content aria-label={t`Invitation access`} width={160}>
-        <Dropdown.Section>
-          {options.map((option) => (
-            <Dropdown.OptionItem
-              key={option.value}
-              selected={value === option.value}
-              disabled={disabled}
-              onSelect={() => onChange(option.value)}
-            >
-              {t(option.label)}
-            </Dropdown.OptionItem>
-          ))}
-        </Dropdown.Section>
+      <Dropdown.Content
+        aria-label={t`Invitation access`}
+        align="end"
+        sideOffset={4}
+        width={160}
+      >
+        <RecordSharingAccessLevelOptions
+          value={value}
+          onChange={onChange}
+          excludeFullAccess={hasEveryoneRecipient}
+        />
       </Dropdown.Content>
     </Dropdown.Root>
   );

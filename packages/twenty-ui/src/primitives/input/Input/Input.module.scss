@@ -39,6 +39,7 @@
   }
 
   &[data-variant='plain'],
+  &[data-variant='inline'],
   &[data-grouped] {
     background-color: transparent;
     block-size: auto;
@@ -46,7 +47,7 @@
     border-radius: 0;
     padding: 0;
 
-    &:not([data-grouped]) {
+    &[data-variant='plain']:not([data-grouped]) {
       @include focus-ring;
 
       &[aria-invalid='true'],
@@ -55,6 +56,11 @@
         outline-offset: 1px;
       }
     }
+  }
+
+  &[data-variant='inline']::placeholder {
+    color: var(--t-font-color-tertiary);
+    font-weight: var(--t-font-weight-regular);
   }
 
   &[data-grouped] {
