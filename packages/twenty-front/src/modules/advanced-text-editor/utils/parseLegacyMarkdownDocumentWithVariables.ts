@@ -26,4 +26,4 @@ export const parseLegacyMarkdownDocumentWithVariables = (
   new Marked({ extensions: [VARIABLE_TAG_MARKDOWN_EXTENSION] }).parse(
     serializedDocument,
     { async: false },
-  ) as string;
+  );

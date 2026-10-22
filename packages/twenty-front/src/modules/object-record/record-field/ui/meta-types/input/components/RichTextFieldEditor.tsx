@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useAtom, useStore } from 'jotai';
 
 import { type Attachment } from '@/activities/files/types/Attachment';
@@ -42,7 +42,6 @@ import { useDebouncedCallback } from 'use-debounce';
 const StyledEditorContainer = styled.div`
   box-sizing: border-box;
   max-width: 100%;
-  min-height: 400px;
   min-width: 0;
   padding-left: ${themeCssVariables.spacing[8]};
   position: relative;
@@ -165,12 +164,6 @@ export const RichTextFieldEditor = ({
       },
     });
 
-  const initialDocument = useMemo(
-    () => getRichTextFieldSerializedContent(fieldValue),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [fieldName, recordId, isRecordFieldReadOnly, draftResyncKey],
-  );
-
   const handleBodyChange = async (newSerializedDocument: string) => {
     const oldRecord = store.get(recordStoreFamilyState.atomFamily(recordId));
     const oldFieldValue: FieldRichTextValue | undefined =
@@ -255,7 +248,7 @@ export const RichTextFieldEditor = ({
       profile: RICH_TEXT_FIELD_EDITOR_PROFILE,
       placeholder: t`Type '/' for commands, '@' for mentions`,
       readonly: isRecordFieldReadOnly,
-      defaultValue: initialDocument,
+      defaultValue: getRichTextFieldSerializedContent(fieldValue),
       onUpdate: handleEditorUpdate,
       onFocus: handleEditorFocus,
       onBlur: handleEditorBlur,

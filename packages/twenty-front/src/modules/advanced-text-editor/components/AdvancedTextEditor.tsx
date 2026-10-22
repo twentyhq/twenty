@@ -250,9 +250,9 @@ const StyledEditorContainer = styled.div<{
         bottom: 0;
         pointer-events: none;
         position: absolute;
-        right: -2px;
+        right: calc(-1 * ${themeCssVariables.spacing['0.5']});
         top: 0;
-        width: 4px;
+        width: ${themeCssVariables.spacing[1]};
       }
     }
 
