@@ -1,29 +1,12 @@
 import { DELETE_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/deleteConnectedAccount';
 import { DISCONNECT_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/disconnectConnectedAccount';
-import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { type AccountGroupAction } from '@/settings/app-preferences/types/AccountGroupAction';
 import { useApolloClient, useMutation } from '@apollo/client/react';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
-export type AccountGroupAction = {
-  action: 'disconnect' | 'delete';
-  handle: string;
-  targets: { id: string; label: string }[];
-};
-
-type SettingsAccountGroupActionDialogProps = {
-  dialogId: string;
-  accountGroupAction: AccountGroupAction;
-  isPending: boolean;
-  onPendingChange: (isPending: boolean) => void;
-};
-
-export const SettingsAccountGroupActionDialog = ({
-  dialogId,
-  accountGroupAction,
-  isPending,
-  onPendingChange,
-}: SettingsAccountGroupActionDialogProps) => {
+export const useRunAccountGroupAction = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const apolloClient = useApolloClient();
@@ -31,14 +14,17 @@ export const SettingsAccountGroupActionDialog = ({
   const [disconnectConnectedAccount] = useMutation(
     DISCONNECT_CONNECTED_ACCOUNT,
   );
-  const { action, handle, targets } = accountGroupAction;
+  const [isActionPending, setIsActionPending] = useState(false);
 
-  const confirmAction = async () => {
-    if (isPending) {
+  const runAccountGroupAction = async ({
+    action,
+    targets,
+  }: Pick<AccountGroupAction, 'action' | 'targets'>) => {
+    if (isActionPending) {
       return;
     }
 
-    onPendingChange(true);
+    setIsActionPending(true);
 
     try {
       const mutation =
@@ -77,48 +63,9 @@ export const SettingsAccountGroupActionDialog = ({
         });
       }
     } finally {
-      onPendingChange(false);
+      setIsActionPending(false);
     }
   };
 
-  return (
-    <ConfirmationDialog
-      dialogId={dialogId}
-      loading={isPending}
-      title={
-        action === 'disconnect'
-          ? t`Disconnect account`
-          : t`Delete account and synced data?`
-      }
-      subtitle={
-        <>
-          {action === 'disconnect' ? (
-            <Trans>
-              Disconnect {handle} from the following apps and connections? Their
-              access and syncing will stop. Synced emails and events will be
-              retained.
-            </Trans>
-          ) : (
-            <Trans>
-              This permanently deletes {handle}, the following connections, and
-              all emails and events synced through them. This action cannot be
-              undone.
-            </Trans>
-          )}
-          <ul>
-            {targets.map(({ id, label }) => (
-              <li key={id}>{label}</li>
-            ))}
-          </ul>
-        </>
-      }
-      onConfirmClick={confirmAction}
-      confirmButtonText={
-        action === 'disconnect'
-          ? t`Disconnect account`
-          : t`Delete account and data`
-      }
-      shouldWaitForConfirmBeforeClosing
-    />
-  );
+  return { isActionPending, runAccountGroupAction };
 };

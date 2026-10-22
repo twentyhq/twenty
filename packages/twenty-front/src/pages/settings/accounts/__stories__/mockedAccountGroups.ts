@@ -223,7 +223,7 @@ const disconnectedAccountIds = new Set<string>();
 const failingDeleteAccountIds = new Set<string>();
 const failingDisconnectAccountIds = new Set<string>();
 
-export const withoutDeletedAccounts = <
+export const applyAccountActions = <
   TAccount extends { id: string; archivedAt?: string | null },
 >(
   accounts: TAccount[],
@@ -241,10 +241,13 @@ export const disconnectConnectedAccount = fn();
 export const myConnectedAccountsRequested = fn();
 export const myApplicationPreferencesRequested = fn();
 
-export const failConnectedAccountAction = (
-  action: 'delete' | 'disconnect',
-  accountId: string,
-) => {
+export const failConnectedAccountAction = ({
+  action,
+  accountId,
+}: {
+  action: 'delete' | 'disconnect';
+  accountId: string;
+}) => {
   (action === 'delete'
     ? failingDeleteAccountIds
     : failingDisconnectAccountIds
@@ -259,7 +262,7 @@ export const buildConnectedAccountsQueryHandler = (
 
     return HttpResponse.json({
       data: {
-        myConnectedAccounts: withoutDeletedAccounts(accounts),
+        myConnectedAccounts: applyAccountActions(accounts),
       },
     });
   });

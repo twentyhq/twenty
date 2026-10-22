@@ -6,7 +6,7 @@ import {
   MY_USER_WORKSPACE_ID,
   TEAMMATE_USER_WORKSPACE_ID,
   buildConnectedAccount,
-  withoutDeletedAccounts,
+  applyAccountActions,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 
 export const LINEAR_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000024';
@@ -119,7 +119,7 @@ export const LINEAR_CONNECTED_ACCOUNTS_GRAPHQL_HANDLER = graphql.query(
   () =>
     HttpResponse.json({
       data: {
-        myConnectedAccounts: withoutDeletedAccounts([
+        myConnectedAccounts: applyAccountActions([
           ...CONNECTED_ACCOUNTS,
           ...LINEAR_CONNECTED_ACCOUNTS,
         ]),

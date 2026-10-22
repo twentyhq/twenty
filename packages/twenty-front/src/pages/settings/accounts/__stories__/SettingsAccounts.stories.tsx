@@ -8,8 +8,8 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
@@ -341,12 +341,13 @@ const MIXED_GROUP_ACTIVE_ACCOUNT_IDS = [
 ];
 const mixedAccountGroupStory: Story = {
   ...accountGroupsStory,
-  render: () => (
-    <>
-      <AppToaster getToastProps={() => ({ progress: 100 })} />
-      <SettingsAccounts />
-    </>
-  ),
+  decorators: [
+    (Story) => (
+      <ToastStoryContainer>
+        <Story />
+      </ToastStoryContainer>
+    ),
+  ],
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
     msw: {
@@ -358,11 +359,15 @@ const mixedAccountGroupStory: Story = {
   },
 };
 
-const openMixedAccountGroupAction = async (
-  canvasElement: HTMLElement,
-  action: 'Disconnect account' | 'Delete account and synced data',
+const openMixedAccountGroupAction = async ({
+  canvasElement,
+  action,
   handle = 'tim@apple.dev',
-) => {
+}: {
+  canvasElement: HTMLElement;
+  action: 'Disconnect account' | 'Delete account and synced data';
+  handle?: string;
+}) => {
   const canvas = within(canvasElement);
   const body = within(canvasElement.ownerDocument.body);
 
@@ -429,12 +434,12 @@ export const MixedGroupReconnectTargetsEligibleAppIdentity: Story = {
 export const DisconnectArchivesEveryActiveConnectionInMixedGroup: Story = {
   ...mixedAccountGroupStory,
   play: async ({ canvasElement }) => {
-    const dialog = await openMixedAccountGroupAction(
+    const dialog = await openMixedAccountGroupAction({
       canvasElement,
-      'Disconnect account',
-    );
+      action: 'Disconnect account',
+    });
 
-    expect(dialog.getByText('Gmail, Google Calendar')).toBeVisible();
+    expect(dialog.getByText('Gmail and Calendar')).toBeVisible();
     expect(dialog.getByText(/Fathom:/)).toBeVisible();
     expect(dialog.getByText(/Legacy workspace/)).toBeVisible();
     expect(dialog.getByText(/Personal workspace/)).toBeVisible();
@@ -444,10 +449,10 @@ export const DisconnectArchivesEveryActiveConnectionInMixedGroup: Story = {
     await userEvent.click(dialog.getByRole('button', { name: 'Cancel' }));
     expect(disconnectConnectedAccount).not.toHaveBeenCalled();
 
-    const confirmedDialog = await openMixedAccountGroupAction(
+    const confirmedDialog = await openMixedAccountGroupAction({
       canvasElement,
-      'Disconnect account',
-    );
+      action: 'Disconnect account',
+    });
     myConnectedAccountsRequested.mockClear();
     await userEvent.click(
       confirmedDialog.getByRole('button', { name: 'Disconnect account' }),
@@ -491,12 +496,12 @@ export const DisconnectArchivesEveryActiveConnectionInMixedGroup: Story = {
 export const DeleteRemovesArchivedAndActiveConnectionsInMixedGroup: Story = {
   ...mixedAccountGroupStory,
   play: async ({ canvasElement }) => {
-    const dialog = await openMixedAccountGroupAction(
+    const dialog = await openMixedAccountGroupAction({
       canvasElement,
-      'Delete account and synced data',
-    );
+      action: 'Delete account and synced data',
+    });
 
-    expect(dialog.getByText('Gmail, Google Calendar')).toBeVisible();
+    expect(dialog.getByText('Gmail and Calendar')).toBeVisible();
     expect(dialog.getByText(/Fathom:/)).toBeVisible();
     expect(dialog.getByText(/Legacy workspace/)).toBeVisible();
     expect(dialog.getByText(/Personal workspace/)).toBeVisible();
@@ -521,10 +526,10 @@ export const DeleteRemovesArchivedAndActiveConnectionsInMixedGroup: Story = {
       expect(
         within(canvasElement).queryByText('tim@apple.dev'),
       ).not.toBeInTheDocument();
+      expect(within(canvasElement).getByText('notes@apple.dev')).toBeVisible();
+      expect(within(canvasElement).getByText('tim@outlook.com')).toBeVisible();
     });
     expect(disconnectConnectedAccount).not.toHaveBeenCalled();
-    expect(within(canvasElement).getByText('notes@apple.dev')).toBeVisible();
-    expect(within(canvasElement).getByText('tim@outlook.com')).toBeVisible();
   },
 };
 
@@ -532,13 +537,16 @@ export const PartialDisconnectRefetchesAndReportsFailedConnection: Story = {
   ...mixedAccountGroupStory,
   beforeEach: async () => {
     await seedApplicationPreferencesStory();
-    failConnectedAccountAction('disconnect', MIXED_LEGACY_LINEAR_ACCOUNT_ID);
+    failConnectedAccountAction({
+      action: 'disconnect',
+      accountId: MIXED_LEGACY_LINEAR_ACCOUNT_ID,
+    });
   },
   play: async ({ canvasElement }) => {
-    const dialog = await openMixedAccountGroupAction(
+    const dialog = await openMixedAccountGroupAction({
       canvasElement,
-      'Disconnect account',
-    );
+      action: 'Disconnect account',
+    });
     myConnectedAccountsRequested.mockClear();
     await userEvent.click(
       dialog.getByRole('button', { name: 'Disconnect account' }),
@@ -559,10 +567,10 @@ export const PartialDisconnectRefetchesAndReportsFailedConnection: Story = {
     ).toEqual([...MIXED_GROUP_ACTIVE_ACCOUNT_IDS].sort());
     expect(deleteConnectedAccount).not.toHaveBeenCalled();
 
-    const remainingDialog = await openMixedAccountGroupAction(
+    const remainingDialog = await openMixedAccountGroupAction({
       canvasElement,
-      'Disconnect account',
-    );
+      action: 'Disconnect account',
+    });
 
     expect(
       remainingDialog.getAllByRole('listitem').map((item) => item.textContent),
@@ -574,13 +582,16 @@ export const PartialDeleteRefetchesAndReportsFailedConnection: Story = {
   ...mixedAccountGroupStory,
   beforeEach: async () => {
     await seedApplicationPreferencesStory();
-    failConnectedAccountAction('delete', MIXED_LEGACY_LINEAR_ACCOUNT_ID);
+    failConnectedAccountAction({
+      action: 'delete',
+      accountId: MIXED_LEGACY_LINEAR_ACCOUNT_ID,
+    });
   },
   play: async ({ canvasElement }) => {
-    const dialog = await openMixedAccountGroupAction(
+    const dialog = await openMixedAccountGroupAction({
       canvasElement,
-      'Delete account and synced data',
-    );
+      action: 'Delete account and synced data',
+    });
     myConnectedAccountsRequested.mockClear();
     await userEvent.click(
       dialog.getByRole('button', { name: 'Delete account and data' }),
@@ -604,11 +615,11 @@ export const PartialDeleteRefetchesAndReportsFailedConnection: Story = {
     );
     expect(disconnectConnectedAccount).not.toHaveBeenCalled();
 
-    const remainingDialog = await openMixedAccountGroupAction(
+    const remainingDialog = await openMixedAccountGroupAction({
       canvasElement,
-      'Delete account and synced data',
-      'TIM@APPLE.DEV',
-    );
+      action: 'Delete account and synced data',
+      handle: 'TIM@APPLE.DEV',
+    });
 
     expect(
       remainingDialog.getAllByRole('listitem').map((item) => item.textContent),
@@ -670,7 +681,7 @@ export const MailboxOnlyGroupDisconnectsAndDeletesItsMailbox: Story = {
 
     expect(
       disconnectDialog.getAllByRole('listitem').map((item) => item.textContent),
-    ).toEqual(['Outlook email, Outlook Calendar']);
+    ).toEqual(['Outlook']);
     await userEvent.click(
       disconnectDialog.getByRole('button', { name: 'Disconnect account' }),
     );
