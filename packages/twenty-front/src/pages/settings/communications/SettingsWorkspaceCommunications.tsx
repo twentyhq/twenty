@@ -5,6 +5,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { ClickTrackingSwitch } from '@/settings/workspace/components/ClickTrackingSwitch';
 import { OpenTrackingSwitch } from '@/settings/workspace/components/OpenTrackingSwitch';
+import { SettingsWorkspaceDefaultSenderDomainSection } from '@/settings/workspace/components/SettingsWorkspaceDefaultSenderDomainSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsWorkspaceEmailSyncSection } from '@/settings/workspace/components/SettingsWorkspaceEmailSyncSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -91,6 +92,7 @@ export const SettingsWorkspaceCommunications = () => {
             tabs={[]}
           />
         </Section.Root>
+        <SettingsWorkspaceDefaultSenderDomainSection />
         <SettingsWorkspaceEmailGroupSection />
         <SettingsWorkspaceEmailSyncSection />
         <Section.Root>

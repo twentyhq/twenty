@@ -1,3 +1,4 @@
+import { SettingsAccountsDefaultFromHandleSection } from '@/settings/accounts/components/SettingsAccountsDefaultFromHandleSection';
 import { SettingsAccountsMessageChannelsContainer } from '@/settings/accounts/components/SettingsAccountsMessageChannelsContainer';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
@@ -58,11 +59,14 @@ export const SettingsAccountsEmails = () => {
     }
 
     return (
-      <Section.Root>
-        <SettingsAccountsMessageChannelsContainer
-          messageChannels={messageChannels}
-        />
-      </Section.Root>
+      <>
+        <SettingsAccountsDefaultFromHandleSection />
+        <Section.Root>
+          <SettingsAccountsMessageChannelsContainer
+            messageChannels={messageChannels}
+          />
+        </Section.Root>
+      </>
     );
   };
 
