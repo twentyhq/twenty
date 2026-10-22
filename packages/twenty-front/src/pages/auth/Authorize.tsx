@@ -7,15 +7,12 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { getOAuthRedirectTarget } from '@/auth/utils/getOAuthRedirectTarget';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
-import {
-  getUrlHostnameOrThrow,
-  isDefined,
-  isValidUrl,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconDatabase,
@@ -192,7 +189,9 @@ export const Authorize = () => {
   const [isAuthorizing, setIsAuthorizing] = useState(false);
 
   const shouldRedirectToNotFound =
-    !isDefined(clientId) || (!loading && !isDefined(applicationRegistration));
+    !isDefined(clientId) ||
+    !isDefined(redirectUrl) ||
+    (!loading && !isDefined(applicationRegistration));
 
   useEffect(() => {
     if (shouldRedirectToNotFound) {
@@ -284,17 +283,14 @@ export const Authorize = () => {
     );
   }
 
-  if (loading || !applicationRegistration) {
+  if (loading || !applicationRegistration || !isDefined(redirectUrl)) {
     return null;
   }
 
   const appName = applicationRegistration.name;
   const appLogoUrl = applicationRegistration.logoUrl;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
-  const redirectHost =
-    isDefined(redirectUrl) && isValidUrl(redirectUrl)
-      ? getUrlHostnameOrThrow(redirectUrl)
-      : null;
+  const redirectTarget = getOAuthRedirectTarget(redirectUrl);
 
   return (
     <StyledAuthContent>
@@ -332,11 +328,11 @@ export const Authorize = () => {
               </StyledScopeList>
             </StyledPermissionSection>
           )}
-          {isDefined(redirectHost) && (
+          {isDefined(redirectTarget) && (
             <StyledRedirectNotice>
               <Trans>
                 After you connect, you will be redirected to{' '}
-                <StyledRedirectHost>{redirectHost}</StyledRedirectHost>
+                <StyledRedirectHost>{redirectTarget}</StyledRedirectHost>
               </Trans>
             </StyledRedirectNotice>
           )}
