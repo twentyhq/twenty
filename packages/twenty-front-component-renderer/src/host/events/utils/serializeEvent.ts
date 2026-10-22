@@ -8,6 +8,7 @@ import { applyKeyboardEventProperties } from '@/host/events/utils/applyKeyboardE
 import { applyMouseEventProperties } from '@/host/events/utils/applyMouseEventProperties';
 import { applyPointerEventProperties } from '@/host/events/utils/applyPointerEventProperties';
 import { applyWheelEventProperties } from '@/host/events/utils/applyWheelEventProperties';
+import { isTargetScrollStateForwardable } from '@/host/events/utils/isTargetScrollStateForwardable';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 type SerializeEventOptions = {
@@ -38,6 +39,7 @@ export const serializeEvent = (
     serializedEvent,
     target: domEvent.target,
     includesFormControlState,
+    includesScrollState: isTargetScrollStateForwardable(domEvent),
   });
 
   return serializedEvent;
