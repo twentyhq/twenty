@@ -22,6 +22,7 @@ export const ReplyToEmailThreadCommand = () => {
       defaultTo: replyContext.to,
       defaultSubject: replyContext.subject,
       defaultInReplyTo: replyContext.inReplyTo,
+      isReply: true,
     });
   };
 

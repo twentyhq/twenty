@@ -12,6 +12,7 @@ import { composeEmailContextRecordComponentState } from '@/side-panel/pages/comp
 import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultInReplyToComponentState';
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
+import { composeEmailIsReplyComponentState } from '@/side-panel/pages/compose-email/states/composeEmailIsReplyComponentState';
 import { t } from '@lingui/core/macro';
 
 type OpenComposeEmailParams = {
@@ -20,6 +21,7 @@ type OpenComposeEmailParams = {
   defaultTo?: string;
   defaultSubject?: string;
   defaultInReplyTo?: string;
+  isReply?: boolean;
   contextRecord?: EmailComposerContextRecord;
   pageTitle?: string;
   pageIcon?: IconComponent;
@@ -33,7 +35,7 @@ export const useOpenComposeEmailInSidePanel = () => {
     (params: OpenComposeEmailParams) => {
       const pageId = v4();
 
-      const isReply = !!params.defaultInReplyTo;
+      const isReply = params.isReply ?? false;
 
       store.set(
         composeEmailConnectedAccountIdComponentState.atomFamily({
@@ -61,6 +63,13 @@ export const useOpenComposeEmailInSidePanel = () => {
           instanceId: pageId,
         }),
         params.defaultInReplyTo ?? '',
+      );
+
+      store.set(
+        composeEmailIsReplyComponentState.atomFamily({
+          instanceId: pageId,
+        }),
+        isReply,
       );
 
       store.set(

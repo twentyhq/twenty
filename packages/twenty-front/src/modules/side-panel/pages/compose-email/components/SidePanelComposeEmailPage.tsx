@@ -8,13 +8,13 @@ import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { composeEmailConnectedAccountIdComponentState } from '@/side-panel/pages/compose-email/states/composeEmailConnectedAccountIdComponentState';
 import { composeEmailContextRecordComponentState } from '@/side-panel/pages/compose-email/states/composeEmailContextRecordComponentState';
 import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultInReplyToComponentState';
+import { composeEmailIsReplyComponentState } from '@/side-panel/pages/compose-email/states/composeEmailIsReplyComponentState';
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { IconPaperclip, IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -48,23 +48,24 @@ export const SidePanelComposeEmailPage = () => {
   const composeEmailDefaultInReplyTo = useAtomComponentStateValue(
     composeEmailDefaultInReplyToComponentState,
   );
+  const composeEmailIsReply = useAtomComponentStateValue(
+    composeEmailIsReplyComponentState,
+  );
   const composeEmailContextRecord = useAtomComponentStateValue(
     composeEmailContextRecordComponentState,
   );
 
   const { goBackFromSidePanel } = useSidePanelHistory();
 
-  const isReply = isNonEmptyString(composeEmailDefaultInReplyTo);
-
   // a reply must stay on the thread's account, so only the handle may change
   const defaultSender = useDefaultEmailSender({
-    restrictToConnectedAccountId: isReply
-      ? composeEmailConnectedAccountId
+    restrictToConnectedAccountId: composeEmailIsReply
+      ? (composeEmailConnectedAccountId ?? '')
       : undefined,
   });
 
-  const connectedAccountId = isReply
-    ? composeEmailConnectedAccountId
+  const connectedAccountId = composeEmailIsReply
+    ? (composeEmailConnectedAccountId ?? '')
     : (defaultSender?.connectedAccountId ?? composeEmailConnectedAccountId);
 
   const composerState = useEmailComposerState({
