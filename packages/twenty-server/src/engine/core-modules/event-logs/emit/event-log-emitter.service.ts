@@ -12,6 +12,8 @@ import {
   type TrackEventProperties,
 } from 'src/engine/core-modules/event-logs/emit/events.type';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
+import { type ApplicationLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/application-log-entry.interface';
+import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
 import {
   type EventContextFields,
   type WorkspaceEventEnvelope,
@@ -35,6 +37,14 @@ export class EventLogEmitterService {
     }
 
     await this.workspaceEventSinkService.ingest(events);
+  }
+
+  async recordApplicationLogs(entries: ApplicationLogEntry[]): Promise<void> {
+    try {
+      await this.dispatch(buildApplicationLogEnvelopes(entries));
+    } catch (error) {
+      this.logger.error('Failed to record application logs', error);
+    }
   }
 
   createContext(context?: EventContextFields) {
