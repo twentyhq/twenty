@@ -6,6 +6,7 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPencil, IconUnlink } from 'twenty-ui/icon';
 
+import { AiChatThreadRowTriage } from '@/ai/components/AiChatThreadRowTriage';
 import { AiChatThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
@@ -31,6 +32,7 @@ type AiChatThreadActionsDropdownProps = {
   instanceId: string;
   onRenameRequested: () => void;
   onDetach?: () => void;
+  shouldShowTriageActions?: boolean;
 };
 
 export const AiChatThreadActionsDropdown = ({
@@ -38,6 +40,7 @@ export const AiChatThreadActionsDropdown = ({
   instanceId,
   onRenameRequested,
   onDetach,
+  shouldShowTriageActions = false,
 }: AiChatThreadActionsDropdownProps) => {
   const { t } = useLingui();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -76,6 +79,9 @@ export const AiChatThreadActionsDropdown = ({
   return (
     <ContextStoreComponentInstanceContext.Provider value={{ instanceId }}>
       <CommandMenuComponentInstanceContext.Provider value={{ instanceId }}>
+        {shouldShowTriageActions && !isDeleted && (
+          <AiChatThreadRowTriage threadId={thread.id} />
+        )}
         <DropdownRoot
           dropdownId={getCommandMenuDropdownIdFromCommandMenuId(instanceId)}
           type="menu"
