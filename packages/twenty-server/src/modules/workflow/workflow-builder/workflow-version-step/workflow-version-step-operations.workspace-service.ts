@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
@@ -319,6 +320,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.SEND_EMAIL: {
+        const defaultInput = defaultSettings?.input as
+          | { connectedAccountId?: unknown; fromHandle?: unknown }
+          | undefined;
+
         return {
           builtStep: {
             ...baseStep,
@@ -327,7 +332,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             settings: {
               ...BASE_STEP_DEFINITION,
               input: {
-                connectedAccountId: '',
+                connectedAccountId: isNonEmptyString(
+                  defaultInput?.connectedAccountId,
+                )
+                  ? defaultInput.connectedAccountId
+                  : '',
+                ...(isNonEmptyString(defaultInput?.fromHandle)
+                  ? { fromHandle: defaultInput.fromHandle }
+                  : {}),
                 recipients: {
                   to: '',
                   cc: '',
