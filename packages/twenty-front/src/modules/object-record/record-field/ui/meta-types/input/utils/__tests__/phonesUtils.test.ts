@@ -1,5 +1,9 @@
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
+import {
+  createPhonesFromFieldValue,
+  parsePhonesToFieldValue,
+} from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
+import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
 
 describe('createPhonesFromFieldValue test suite', () => {
   it('should return an empty array if fieldValue is undefined', () => {
@@ -183,5 +187,81 @@ describe('createPhonesFromFieldValue test suite', () => {
       { number: '123456789', callingCode: '+33', countryCode: 'FR' },
       { number: '987654321', callingCode: '+44', countryCode: 'GB' },
     ]);
+  });
+});
+
+describe('parsePhonesToFieldValue test suite', () => {
+  it('should never return undefined', () => {
+    expect(parsePhonesToFieldValue([])).toBeDefined();
+    expect(
+      parsePhonesToFieldValue([
+        { number: '', callingCode: '+1', countryCode: 'US' },
+      ]),
+    ).toBeDefined();
+  });
+
+  it('should always satisfy phonesFieldValueSchema', () => {
+    const cases = [
+      [],
+      [{ number: '123456789', callingCode: '+1', countryCode: 'US' }],
+      [
+        { number: '123456789', callingCode: '+1', countryCode: 'US' },
+        { number: '987654321', callingCode: '+44', countryCode: 'GB' },
+      ],
+      [{ number: '', callingCode: '', countryCode: '' }],
+    ];
+
+    for (const phones of cases) {
+      expect(
+        phonesFieldValueSchema.safeParse(parsePhonesToFieldValue(phones))
+          .success,
+      ).toBe(true);
+    }
+  });
+
+  it('should promote the first usable phone as primary', () => {
+    const result = parsePhonesToFieldValue([
+      { number: '', callingCode: '+1', countryCode: 'US' },
+      { number: '987654321', callingCode: '+44', countryCode: 'GB' },
+      { number: '555555555', callingCode: '+33', countryCode: 'FR' },
+    ]);
+
+    expect(result).toEqual({
+      primaryPhoneNumber: '987654321',
+      primaryPhoneCountryCode: 'GB',
+      primaryPhoneCallingCode: '+44',
+      additionalPhones: [
+        { number: '555555555', callingCode: '+33', countryCode: 'FR' },
+      ],
+    });
+  });
+
+  it('should coerce nullish codes on additional phones', () => {
+    const result = parsePhonesToFieldValue([
+      { number: '123456789', callingCode: '+1', countryCode: 'US' },
+      {
+        number: '987654321',
+        callingCode: null as unknown as string,
+        countryCode: null as unknown as string,
+      },
+    ]);
+
+    expect(result).toEqual({
+      primaryPhoneNumber: '123456789',
+      primaryPhoneCountryCode: 'US',
+      primaryPhoneCallingCode: '+1',
+      additionalPhones: [
+        { number: '987654321', callingCode: '', countryCode: '' },
+      ],
+    });
+  });
+
+  it('should return empty primary fields when there are no usable phones', () => {
+    expect(parsePhonesToFieldValue([])).toEqual({
+      primaryPhoneNumber: '',
+      primaryPhoneCountryCode: '',
+      primaryPhoneCallingCode: '',
+      additionalPhones: [],
+    });
   });
 });

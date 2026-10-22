@@ -29,11 +29,13 @@ export const FieldInputEventContextProvider = ({
     usePersistFieldFromFieldInputContext();
 
   const persistAndClose: FieldInputEvent = ({ newValue, skipPersist }) => {
-    if (skipPersist !== true) {
-      persistFieldFromFieldInputContext(newValue);
+    try {
+      if (skipPersist !== true) {
+        persistFieldFromFieldInputContext(newValue);
+      }
+    } finally {
+      onClose();
     }
-
-    onClose();
   };
 
   const handleSubmit: FieldInputEvent = ({
@@ -41,12 +43,14 @@ export const FieldInputEventContextProvider = ({
     skipPersist,
     skipClose,
   }) => {
-    if (skipPersist !== true) {
-      persistFieldFromFieldInputContext(newValue);
-    }
-
-    if (skipClose !== true) {
-      onClose();
+    try {
+      if (skipPersist !== true) {
+        persistFieldFromFieldInputContext(newValue);
+      }
+    } finally {
+      if (skipClose !== true) {
+        onClose();
+      }
     }
   };
 
@@ -61,11 +65,13 @@ export const FieldInputEventContextProvider = ({
       event?.preventDefault();
       event?.stopImmediatePropagation();
 
-      if (skipPersist !== true) {
-        persistFieldFromFieldInputContext(newValue);
+      try {
+        if (skipPersist !== true) {
+          persistFieldFromFieldInputContext(newValue);
+        }
+      } finally {
+        onClose();
       }
-
-      onClose();
     },
     [onClose, instanceId, persistFieldFromFieldInputContext, store],
   );
