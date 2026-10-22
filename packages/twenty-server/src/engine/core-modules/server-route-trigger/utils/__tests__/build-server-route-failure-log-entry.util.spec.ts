@@ -3,6 +3,10 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
+import {
+  UsageLimitException,
+  UsageLimitExceptionCode,
+} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 
 const resolver = {
   id: 'resolver-1',
@@ -35,6 +39,22 @@ describe('buildServerRouteFailureLogEntry', () => {
       message:
         'Server route request failed: Resolver logic function returned an invalid result.',
       errorCode: ServerRouteTriggerExceptionCode.RESOLVER_INVALID_RESULT,
+    });
+  });
+
+  it('keeps the code of a usage refusal', () => {
+    expect(
+      buildServerRouteFailureLogEntry({
+        resolver,
+        applicationRegistrationId: 'registration-1',
+        error: new UsageLimitException(
+          'Quota exhausted',
+          UsageLimitExceptionCode.QUOTA_EXHAUSTED,
+        ),
+      }),
+    ).toMatchObject({
+      message: 'Server route request failed: Quota exhausted',
+      errorCode: UsageLimitExceptionCode.QUOTA_EXHAUSTED,
     });
   });
 
