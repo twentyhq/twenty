@@ -204,43 +204,24 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const command = new InvokeCommand(params);
       const lambdaClient = await this.awsClient.getLambdaClient();
-      const invoke = () =>
-        lambdaClient.send(command, {
-          abortSignal: AbortSignal.timeout(timeoutMs),
-        });
 
-      let invokeStart = Date.now();
-      const result = await invoke().catch(async (error) => {
-        const isExecutorNotReady =
-          error instanceof ResourceNotFoundException ||
-          error instanceof ResourceConflictException ||
-          error instanceof ResourceNotReadyException;
+      const invokeStart = Date.now();
+      const result = await lambdaClient
+        .send(command, { abortSignal: AbortSignal.timeout(timeoutMs) })
+        .catch(async (error) => {
+          // The next run then goes through GetFunction and rebuilds the executor
+          if (
+            error instanceof ResourceNotFoundException ||
+            error instanceof ResourceConflictException ||
+            error instanceof ResourceNotReadyException
+          ) {
+            await this.executorManager.clearExecutorReadyMarker(
+              flatLogicFunction,
+            );
+          }
 
-        if (
-          !isExecutorNotReady ||
-          !(await this.executorManager.isLogicFunctionStillDefined(
-            flatLogicFunction,
-          ))
-        ) {
           throw error;
-        }
-
-        this.logger.warn(
-          `Executor for function ${flatLogicFunction.id} was not ready on invoke (${error.name}), rebuilding and retrying once`,
-        );
-
-        currentPhase = LambdaExecutionPhase.BUILD;
-        await this.rebuildExecutor({
-          flatLogicFunction,
-          flatApplication,
-          applicationUniversalIdentifier,
-          executionMode,
         });
-        currentPhase = LambdaExecutionPhase.INVOKE;
-        invokeStart = Date.now();
-
-        return invoke();
-      });
       const invokeDurationMs = Date.now() - invokeStart;
 
       const parsedResult = result.Payload
@@ -327,28 +308,6 @@ export class LambdaDriver implements LogicFunctionDriver {
         `Lambda invocation failed for function '${flatLogicFunction.id}' during ${currentPhase}: ${error instanceof Error ? error.message : 'Unknown error'}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR,
       );
-    }
-  }
-
-  private async rebuildExecutor({
-    executionMode,
-    ...context
-  }: LogicFunctionInstallPrebuiltBundleParams & {
-    executionMode: LogicFunctionExecutionMode;
-  }): Promise<void> {
-    await this.executorManager.clearExecutorReadyMarker(
-      context.flatLogicFunction,
-    );
-
-    switch (executionMode) {
-      case LogicFunctionExecutionMode.PREBUILT:
-        await this.executorManager.installPrebuiltBundle(context);
-
-        return;
-      case LogicFunctionExecutionMode.LIVE:
-        await this.executorManager.buildExecutor(context);
-
-        return;
     }
   }
 }

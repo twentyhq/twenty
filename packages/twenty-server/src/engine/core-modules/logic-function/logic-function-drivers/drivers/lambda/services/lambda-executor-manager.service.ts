@@ -44,7 +44,6 @@ import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-funct
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -95,26 +94,6 @@ export class LambdaExecutorManagerService {
 
       throw error;
     }
-  }
-
-  async isLogicFunctionStillDefined(
-    flatLogicFunction: FlatLogicFunction,
-  ): Promise<boolean> {
-    const { flatLogicFunctionMaps } =
-      await this.workspaceCacheService.getOrRecompute(
-        flatLogicFunction.workspaceId,
-        ['flatLogicFunctionMaps'],
-      );
-
-    const currentFlatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatLogicFunction.id,
-      flatEntityMaps: flatLogicFunctionMaps,
-    });
-
-    return (
-      isDefined(currentFlatLogicFunction) &&
-      !isDefined(currentFlatLogicFunction.deletedAt)
-    );
   }
 
   async delete(
