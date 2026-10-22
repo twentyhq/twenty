@@ -10,7 +10,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS = `minmax(0, 1fr) 160px ${themeCssVariables.spacing[8]}`;
+const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS = `minmax(0, 1fr) auto ${themeCssVariables.spacing[8]}`;
 
 type SettingsAppPreferencesConnectionsTableProps = {
   applicationId: string;
