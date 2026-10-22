@@ -10,7 +10,7 @@ import { CalendarEventNotSharedContent } from '@/activities/calendar/components/
 import { CalendarEventParticipantsAvatarGroup } from '@/activities/calendar/components/CalendarEventParticipantsAvatarGroup';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
+import { getRestrictedFieldNamesFromRecord } from '@/object-record/record-store/utils/getRestrictedFieldNamesFromRecord';
 import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { UserContext } from '@/users/contexts/UserContext';
 import {
@@ -93,8 +93,6 @@ export const EventCardCalendarEvent = ({
   const { openCalendarEventInSidePanel } = useOpenCalendarEventInSidePanel();
   const { timeZone } = useContext(UserContext);
 
-  const restrictedFieldNames = useRecordRestrictedFieldNames(calendarEventId);
-
   const {
     record: calendarEvent,
     loading,
@@ -151,7 +149,11 @@ export const EventCardCalendarEvent = ({
     return <CalendarEventNotSharedContent />;
   }
 
-  if (restrictedFieldNames.includes('title')) {
+  if (
+    getRestrictedFieldNamesFromRecord({ record: calendarEvent }).includes(
+      'title',
+    )
+  ) {
     return <CalendarEventNotSharedContent />;
   }
 

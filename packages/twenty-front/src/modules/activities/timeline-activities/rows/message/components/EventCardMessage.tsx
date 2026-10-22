@@ -9,7 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows/message/components/EventCardMessageForbidden';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
+import { getRestrictedFieldNamesFromRecord } from '@/object-record/record-store/utils/getRestrictedFieldNamesFromRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 
 const StyledEventCardMessageContainer = styled.div`
@@ -62,8 +62,6 @@ export const EventCardMessage = ({
 }) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  const restrictedFieldNames = useRecordRestrictedFieldNames(messageId);
-
   const {
     record: message,
     loading,
@@ -115,11 +113,7 @@ export const EventCardMessage = ({
     return <EventCardMessageForbidden notSharedByFullName={authorFullName} />;
   }
 
-  if (
-    ['subject', 'text'].some((fieldName) =>
-      restrictedFieldNames.includes(fieldName),
-    )
-  ) {
+  if (getRestrictedFieldNamesFromRecord({ record: message }).length > 0) {
     return <EventCardMessageForbidden notSharedByFullName={authorFullName} />;
   }
 

@@ -7,7 +7,6 @@ import { ThemeProvider } from 'twenty-ui/theme';
 
 import { EventCardCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { UserContext } from '@/users/contexts/UserContext';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -15,12 +14,6 @@ import { TimeFormat } from '@/localization/constants/TimeFormat';
 jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
   useFindOneRecord: jest.fn(),
 }));
-jest.mock(
-  '@/object-record/record-store/hooks/useRecordRestrictedFieldNames',
-  () => ({
-    useRecordRestrictedFieldNames: jest.fn(() => []),
-  }),
-);
 jest.mock('@/side-panel/hooks/useOpenCalendarEventInSidePanel', () => ({
   useOpenCalendarEventInSidePanel: () => ({
     openCalendarEventInSidePanel: jest.fn(),
@@ -50,7 +43,6 @@ const renderCard = () =>
 
 describe('EventCardCalendarEvent', () => {
   it('does not render a title masked by calendar visibility', () => {
-    jest.mocked(useRecordRestrictedFieldNames).mockReturnValue(['title']);
     jest.mocked(useFindOneRecord).mockReturnValue({
       record: {
         id: 'calendar-event-id',

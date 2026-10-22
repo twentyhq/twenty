@@ -17,7 +17,7 @@ export const RecordTitleCellFieldDisplay = ({
 }) => {
   const { fieldDefinition, isForbidden } = useContext(FieldContext);
 
-  if (isForbidden === true) {
+  if (isForbidden) {
     return <ForbiddenFieldDisplay />;
   }
 
