@@ -1,4 +1,5 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { buildWorkspaceDataExportObjectSelections } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-object-selections.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -36,7 +37,9 @@ const buildField = ({
     objectMetadataId,
     type,
     isActive,
-    settings: relationType ? { relationType, joinColumnName: `${id}Id` } : null,
+    settings: isDefined(relationType)
+      ? { relationType, joinColumnName: `${id}Id` }
+      : null,
   });
 
 const fields = [
