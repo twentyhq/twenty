@@ -20,12 +20,12 @@ const StyledPanel = styled.div`
 `;
 
 type RecordTableWidgetSettingsStoryProps = {
-  layoutRowsOnly?: boolean;
+  shouldShowLayoutRowsOnly?: boolean;
   onBackgroundClickOutside: () => void;
 };
 
 export const RecordTableWidgetSettingsStory = ({
-  layoutRowsOnly = false,
+  shouldShowLayoutRowsOnly = false,
   onBackgroundClickOutside,
 }: RecordTableWidgetSettingsStoryProps) => {
   const { pageLayoutId, widgetId, viewId } =
@@ -55,7 +55,7 @@ export const RecordTableWidgetSettingsStory = ({
           value={SIDE_PANEL_CLICK_OUTSIDE_ID}
         >
           <StyledPanel data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}>
-            {layoutRowsOnly ? (
+            {shouldShowLayoutRowsOnly ? (
               <SelectableList
                 selectableListInstanceId={SIDE_PANEL_SELECTABLE_LIST_ID}
                 focusId={SIDE_PANEL_FOCUS_ID}

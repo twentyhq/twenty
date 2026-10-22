@@ -245,7 +245,7 @@ export const LayoutWithoutViewIsDisabled: Story = {
 };
 
 export const EmbeddedViewLayoutRows: Story = {
-  args: { layoutRowsOnly: true },
+  args: { shouldShowLayoutRowsOnly: true },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await body.findByRole('button', { name: /^Layout/ });
