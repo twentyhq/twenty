@@ -1,10 +1,12 @@
 import { useCallback } from 'react';
+import { MultipleRecordPickerSearchEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchEffect';
 import { useStore } from 'jotai';
 
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { t } from '@lingui/core/macro';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useDebouncedCallback } from 'use-debounce';
@@ -50,10 +52,14 @@ export const MultipleRecordPickerSearchInput = () => {
   };
 
   return (
-    <DropdownMenuSearchInput
-      value={multipleRecordPickerSearchFilter}
-      onChange={handleFilterChange}
-      autoFocus
-    />
+    <>
+      <MultipleRecordPickerSearchEffect cancelSearch={debouncedSearch.cancel} />
+      <Dropdown.Search
+        aria-label={t`Search records`}
+        placeholder={t`Search`}
+        value={multipleRecordPickerSearchFilter}
+        onChange={handleFilterChange}
+      />
+    </>
   );
 };

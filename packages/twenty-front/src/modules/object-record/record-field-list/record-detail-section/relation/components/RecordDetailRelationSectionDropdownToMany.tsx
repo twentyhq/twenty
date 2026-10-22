@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useContext } from 'react';
+import { type ReactElement, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -22,17 +22,17 @@ import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from 
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 type RecordDetailRelationSectionDropdownToManyProps = {
-  dropdownTriggerClickableComponent: ReactNode;
+  dropdownTriggerClickableComponent: ReactElement;
 };
 
 export const RecordDetailRelationSectionDropdownToMany = ({
@@ -122,11 +122,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownPlacement = useAtomComponentStateValue(
-    dropdownPlacementComponentState,
-    dropdownId,
-  );
-
   const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
     multipleRecordPickerSearchFilterComponentState,
     dropdownId,
@@ -147,10 +142,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     useMultipleRecordPickerPerformSearch();
 
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
-
-  const handleCloseRelationPickerDropdown = useCallback(() => {
-    setMultipleRecordPickerSearchFilter('');
-  }, [setMultipleRecordPickerSearchFilter]);
 
   const { updateRelation } = useUpdateRelationOneToManyFieldInput();
 
@@ -235,15 +226,24 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   }
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={dropdownId}
-      dropdownPlacement="left-start"
-      onClose={handleCloseRelationPickerDropdown}
-      onOpen={handleOpenRelationPickerDropdown}
-      clickableComponent={dropdownTriggerClickableComponent}
-      dropdownComponents={
+      type="picker"
+      multiple
+      defaultPage="records"
+      onOpenChange={(open) => {
+        if (open) {
+          handleOpenRelationPickerDropdown();
+        }
+      }}
+    >
+      <Dropdown.Trigger render={dropdownTriggerClickableComponent} />
+      <DropdownContent
+        side="left"
+        align="start"
+        aria-label={fieldDefinition.label}
+      >
         <MultipleRecordPicker
-          focusId={dropdownId}
           componentInstanceId={dropdownId}
           onCreate={
             isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)
@@ -252,19 +252,8 @@ export const RecordDetailRelationSectionDropdownToMany = ({
           }
           isCreatePending={isCreatingJunctionRecord}
           onChange={handleChange}
-          onSubmit={() => {
-            closeDropdown(dropdownId);
-          }}
-          onClickOutside={() => {
-            closeDropdown(dropdownId);
-          }}
-          layoutDirection={
-            dropdownPlacement?.includes('end')
-              ? 'search-bar-on-bottom'
-              : 'search-bar-on-top'
-          }
         />
-      }
-    />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

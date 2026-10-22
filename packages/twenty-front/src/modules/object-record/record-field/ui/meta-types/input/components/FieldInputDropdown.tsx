@@ -10,9 +10,13 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 
 type FieldInputDropdownProps<TValue> = {
   children: ReactNode;
-  value: TValue;
+  value?: TValue;
   onDismiss: () => void;
   multiple?: boolean;
+  width?: number;
+  defaultPage?: string;
+  skipPersist?: boolean;
+  dismissOnOutsideInput?: boolean;
 };
 
 export const FieldInputDropdown = <TValue,>({
@@ -20,6 +24,10 @@ export const FieldInputDropdown = <TValue,>({
   value,
   onDismiss,
   multiple,
+  width,
+  defaultPage,
+  skipPersist = false,
+  dismissOnOutsideInput = false,
 }: FieldInputDropdownProps<TValue>) => {
   const { fieldDefinition } = useContext(FieldContext);
   const { onTab, onShiftTab } = useContext(FieldInputEventContext);
@@ -45,16 +53,19 @@ export const FieldInputDropdown = <TValue,>({
     }
 
     event.preventDefault();
-    handleTab({ newValue: value });
+    handleTab(skipPersist ? { skipPersist: true } : { newValue: value });
   };
 
   return (
     <Dropdown.Root
       type="picker"
       multiple={multiple}
+      defaultPage={defaultPage}
       open
       onOpenChange={handleOpenChange}
-      onInteractOutside={preventDropdownDismissOnInputElement}
+      onInteractOutside={
+        dismissOnOutsideInput ? undefined : preventDropdownDismissOnInputElement
+      }
     >
       <DropdownContent
         anchor={anchorRef}
@@ -62,6 +73,7 @@ export const FieldInputDropdown = <TValue,>({
         sideOffset={sideOffset}
         alignOffset={alignOffset}
         collisionPadding={collisionPadding}
+        width={width}
         aria-label={fieldDefinition.label}
         finalFocus={false}
         onKeyDown={handleKeyDown}

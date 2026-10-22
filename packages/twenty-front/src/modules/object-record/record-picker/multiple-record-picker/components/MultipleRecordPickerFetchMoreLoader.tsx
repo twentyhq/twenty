@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { useDropdownPage } from 'twenty-ui/components/navigation';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 
@@ -36,6 +37,7 @@ const StyledIntersectionObserver = styled.div`
 
 export const MultipleRecordPickerFetchMoreLoader = () => {
   const store = useStore();
+  const { isActive } = useDropdownPage();
   const [
     multipleRecordPickerIsFetchingMore,
     setMultipleRecordPickerIsFetchingMore,
@@ -78,7 +80,11 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
       }),
     );
 
-    if (multipleRecordPickerIsLoading || !currentPaginationState.hasNextPage) {
+    if (
+      !isActive ||
+      multipleRecordPickerIsLoading ||
+      !currentPaginationState.hasNextPage
+    ) {
       return;
     }
 
@@ -89,6 +95,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
     });
   }, [
     componentInstanceId,
+    isActive,
     performSearch,
     multipleRecordPickerSearchFilter,
     multipleRecordPickerIsLoading,
@@ -96,6 +103,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
   ]);
 
   const { ref } = useInView({
+    skip: !isActive,
     onChange: useCallback(
       async (inView: boolean) => {
         if (inView) {
@@ -111,6 +119,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
   });
 
   if (
+    !isActive ||
     !paginationState.hasNextPage ||
     multipleRecordPickerShouldShowInitialLoading ||
     multipleRecordPickerShouldShowSkeleton ||
