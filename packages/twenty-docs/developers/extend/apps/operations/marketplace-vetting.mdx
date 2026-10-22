@@ -26,16 +26,13 @@ This is the complete proposed V1 checklist. All applicable items must pass.
   [permissions](/developers/extend/apps/config/roles) needed for the app's features.
 - [ ] **Functionality.** The app works as advertised and is easy to install,
   configure, and use.
+- [ ] **Performance.** Respect shared API/job limits and follow the
+  [app development good practices](/developers/extend/apps/getting-started/good-practices).
 - [ ] **UI, if present.** Use
   [`twenty-ui`](/developers/extend/apps/layout/front-components#using-twenty-ui-components)
   and follow Twenty's design and accessibility conventions.
 - [ ] **Compatibility.** Declare supported Twenty versions and keep entity
   identifiers stable across updates.
-- [ ] **Performance.** Respect shared API/job limits and follow the
-  [app development good practices](/developers/extend/apps/getting-started/good-practices).
-- [ ] **Shared routes, if used.** Complete
-  [setup](/developers/extend/apps/operations/publishing#setting-up-server-routes)
-  and verify events reach the correct workspace.
 - [ ] **Logo and gallery.** Provide a recognizable logo and polished gallery
   images that showcase the app. Follow the
   [image guidelines](/developers/extend/apps/operations/publishing#marketplace-metadata).
@@ -44,5 +41,6 @@ This is the complete proposed V1 checklist. All applicable items must pass.
 - [ ] **Pricing.** Clearly state whether the app is free or paid, plan prices,
   billing frequency, and any required paid third-party services.
 - [ ] **Documentation and support.** Provide clear setup instructions and a
-  support contact.
-
+  support contact. If using shared routes, complete
+  [setup](/developers/extend/apps/operations/publishing#setting-up-server-routes)
+  and verify events reach the correct workspace.
