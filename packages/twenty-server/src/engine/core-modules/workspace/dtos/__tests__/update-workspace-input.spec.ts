@@ -21,16 +21,26 @@ describe('UpdateWorkspaceInput defaultSenderDomain', () => {
     expect(input.defaultSenderDomain).toBeNull();
   });
 
-  it.each(['has space.com', 'example.com/path', 'nodot', 'a@b.com'])(
-    'rejects a non-domain value: %s',
-    async (value) => {
-      expect(await validate(toInput(value))).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ property: 'defaultSenderDomain' }),
-        ]),
-      );
-    },
-  );
+  it('accepts a punycode top-level domain', async () => {
+    expect(await validate(toInput('example.xn--p1ai'))).toEqual([]);
+  });
+
+  it.each([
+    'has space.com',
+    'example.com/path',
+    'nodot',
+    'a@b.com',
+    '-example.com',
+    'example-.com',
+    'localhost',
+    '192.168.0.1',
+  ])('rejects a non-domain value: %s', async (value) => {
+    expect(await validate(toInput(value))).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ property: 'defaultSenderDomain' }),
+      ]),
+    );
+  });
 
   it('explains what a valid domain looks like', async () => {
     const [error] = await validate(toInput('nodot'));
