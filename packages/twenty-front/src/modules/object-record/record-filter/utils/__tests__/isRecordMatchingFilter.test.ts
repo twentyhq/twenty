@@ -776,6 +776,39 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(false);
     });
 
+    it('compares a related record field with a field of the record the filter starts from', () => {
+      const personMockObjectMetadataItem = objectMetadataItems.find(
+        (item) => item.nameSingular === 'person',
+      )!;
+
+      const filter = {
+        pointOfContactForOpportunities: {
+          createdAt: { gtField: 'pointOfContact.createdAt' },
+        },
+      } as RecordGqlOperationFilter;
+
+      const matchesOpportunityCreatedAt = (createdAt: string) =>
+        isRecordMatchingFilter({
+          record: {
+            id: personId,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            pointOfContactForOpportunities: [
+              { id: opportunityWithPointOfContact.id, createdAt },
+            ],
+          },
+          filter,
+          objectMetadataItem: personMockObjectMetadataItem,
+          objectMetadataItems,
+        });
+
+      expect(matchesOpportunityCreatedAt('2026-02-01T00:00:00.000Z')).toBe(
+        true,
+      );
+      expect(matchesOpportunityCreatedAt('2025-12-01T00:00:00.000Z')).toBe(
+        false,
+      );
+    });
+
     it('matches a to-many relation held as a connection, the way records reach the optimistic effects', () => {
       const personMockObjectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === 'person',

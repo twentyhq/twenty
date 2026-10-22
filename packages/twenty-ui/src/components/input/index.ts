@@ -40,9 +40,12 @@ export type { PhoneCountryPickerOptionsProps } from './PhoneCountryPicker/types/
 export type { PhoneCountryPickerProps } from './PhoneCountryPicker/types/PhoneCountryPickerProps';
 export type { PhoneCountryPickerRootProps } from './PhoneCountryPicker/types/PhoneCountryPickerRootProps';
 export type { PhoneCountryPickerTriggerProps } from './PhoneCountryPicker/types/PhoneCountryPickerTriggerProps';
+export { ReactionButton } from './ReactionButton/ReactionButton';
+export type { ReactionButtonProps } from './ReactionButton/types/ReactionButtonProps';
 export { SearchInput } from './SearchInput/SearchInput';
 export type { SearchInputProps } from './SearchInput/types/SearchInputProps';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export type { SegmentedControlOption } from './SegmentedControl/types/SegmentedControlOption';
 export type { SegmentedControlProps } from './SegmentedControl/types/SegmentedControlProps';
 export type { SegmentedControlSize } from './SegmentedControl/types/SegmentedControlSize';
+export type { SegmentedControlVariant } from './SegmentedControl/types/SegmentedControlVariant';

@@ -3642,6 +3642,17 @@ msgstr "I domini personalizzati sono disabilitati per questo spazio di lavoro."
 msgid "Custom object is missing a label identifier field."
 msgstr "All'oggetto personalizzato manca un campo identificatore dell'etichetta."
 
+#. js-lingui-id: iHlVsm
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Custom roles are part of the Organization plan."
+msgstr "I ruoli personalizzati sono inclusi nel piano Organization."
+
+#. js-lingui-id: bO/Qn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
+msgid "Custom roles are part of the Organization plan. Upgrade to assign \"{roleLabel}\"."
+msgstr "I ruoli personalizzati sono inclusi nel piano Organization. Esegui l'upgrade per assegnare \"{roleLabel}\"."
+
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Custom timeline activity type cannot be reset to default."
@@ -6504,6 +6515,16 @@ msgstr "Parametro di filtro non valido."
 msgid "Invalid filter value"
 msgstr "Valore del filtro non valido"
 
+#. js-lingui-id: ys8v/n
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{fieldName}\" and \"{referencedFieldName}\" cannot be compared"
+msgstr "Filtro non valido: \"{fieldName}\" e \"{referencedFieldName}\" non possono essere confrontati"
+
+#. js-lingui-id: 8Ng76x
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" expects a field name"
+msgstr "Filtro non valido: \"{operator}\" richiede un nome di campo"
+
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires a String"
@@ -6514,10 +6535,26 @@ msgstr "Filtro non valido: l'operatore \"{operator}\" richiede una stringa"
 msgid "Invalid filter: \"{operator}\" operator requires an array"
 msgstr "Filtro non valido: l'operatore \"{operator}\" richiede un array"
 
+#. js-lingui-id: xxcw3g
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
+msgstr "Filtro non valido: \"{relationFieldName}\" può fare riferimento solo al record da cui parte il filtro di relazione"
+
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "Filtro non valido: l'operatore \"isEmptyArray\" richiede un booleano"
+
+#. js-lingui-id: S8iHKo
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: {nameSingular} object doesn't have any \"{referencedFieldName}\" field."
+msgstr "Filtro non valido: l'oggetto {nameSingular} non ha alcun campo \"{referencedFieldName}\"."
+
+#. js-lingui-id: OyCWdj
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: composite fields cannot be compared with another field"
+msgstr "Filtro non valido: i campi compositi non possono essere confrontati con un altro campo"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
@@ -6533,6 +6570,11 @@ msgstr "Filtro non valido: il valore del filtro deve essere un oggetto"
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Filtro non valido: il filtraggio per il campo di relazione \\\"{key}\\\" non è supportato"
+
+#. js-lingui-id: wi8qrB
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: the field to compare with was not found"
+msgstr "Filtro non valido: il campo con cui effettuare il confronto non è stato trovato"
 
 #. js-lingui-id: bNNDED
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
@@ -10853,6 +10895,11 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
 msgstr ""
+
+#. js-lingui-id: T/H/3z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
+msgstr "Impossibile assegnare il ruolo \"{roleLabel}\": i ruoli personalizzati richiedono il piano Organization"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts

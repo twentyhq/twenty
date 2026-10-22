@@ -156,7 +156,6 @@ export const SettingsApplicationRegistrationConfigTab = ({
                   variableKey={variable.key}
                   isDeprecated={variable.isDeprecated}
                   description={variable.description}
-                  tooltipId={`config-var-desc-${variable.key}`}
                 />
                 <ConfigVariableInput
                   variable={variable as ConfigVariable}

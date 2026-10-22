@@ -12,6 +12,7 @@ import {
   IconInfoCircle,
 } from 'twenty-ui/icon';
 import { Separator } from 'twenty-ui/primitives/layout';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { MetricRow } from 'twenty-ui/components/data-display';
 import {
   themeCssVariables,
@@ -25,28 +26,6 @@ import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { formatNumber } from '@/localization/utils/formatNumber';
-
-const StyledTrigger = styled.button`
-  align-items: center;
-  background: transparent;
-  border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  height: 20px;
-  justify-content: center;
-  padding: 0;
-  width: 20px;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-  }
-`;
 
 const StyledHeading = styled.div`
   color: ${themeCssVariables.font.color.secondary};
@@ -127,7 +106,9 @@ export const AiModelTierInformationButton = ({
 
   return (
     <>
-      <StyledTrigger
+      <LightIconButton
+        emphasis="subtle"
+        size="xs"
         ref={refs.setReference}
         type="button"
         aria-label={t`Model information`}
@@ -135,7 +116,7 @@ export const AiModelTierInformationButton = ({
         {...getReferenceProps()}
       >
         <IconInfoCircle size={theme.icon.size.sm} />
-      </StyledTrigger>
+      </LightIconButton>
       {isOpen && (
         <FloatingPortal root={themeContainer}>
           <StyledInformationCard

@@ -1,5 +1,4 @@
-import { CARD_ACTION_CLASS_NAME } from '@/ui/layout/card/styles/CardActionClassName';
-import { css, cx } from '@linaria/core';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useId } from 'react';
@@ -9,23 +8,15 @@ import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-const StyledRowContainer = styled.div`
-  > div {
-    align-items: center;
-    box-sizing: border-box;
-    display: flex;
-    font-size: ${themeCssVariables.font.size.md};
-    font-weight: ${themeCssVariables.font.weight.medium};
-    gap: ${themeCssVariables.spacing[2]};
-    height: ${themeCssVariables.spacing[10]};
-    padding: ${themeCssVariables.spacing[2]};
-    padding-left: ${themeCssVariables.spacing[3]};
-    position: relative;
-
-    > svg {
-      flex-shrink: 0;
-    }
-  }
+const ROW_CONTENT_CLASS_NAME = css`
+  align-items: center;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing[10]};
+  padding: ${themeCssVariables.spacing[2]};
+  padding-left: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledRightContainer = styled.div`
@@ -34,8 +25,6 @@ const StyledRightContainer = styled.div`
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[1]};
   pointer-events: none;
-  position: relative;
-  z-index: 1;
 
   :is(
     a,
@@ -81,12 +70,6 @@ const StyledDescription = styled.span`
   white-space: nowrap;
 `;
 
-const rowActionClassName = css`
-  &:hover {
-    background: ${themeCssVariables.background.transparent.lighter};
-  }
-`;
-
 type SettingsListItemCardContentProps = {
   label: string;
   description?: string;
@@ -114,51 +97,46 @@ export const SettingsListItemCardContent = ({
   const hasDescription = isNonEmptyString(description);
 
   return (
-    <StyledRowContainer>
-      <Card.Content divider={divider}>
-        {isDefined(to) ? (
-          <Link
-            className={cx(CARD_ACTION_CLASS_NAME, rowActionClassName)}
+    <Card.Content divider={divider} className={ROW_CONTENT_CLASS_NAME}>
+      {isDefined(to) ? (
+        <Card.Action
+          render={<Link to={to} />}
+          aria-labelledby={labelId}
+          aria-describedby={hasDescription ? descriptionId : undefined}
+          onClick={onClick}
+        />
+      ) : (
+        isDefined(onClick) && (
+          <Card.Action
             aria-labelledby={labelId}
             aria-describedby={hasDescription ? descriptionId : undefined}
             onClick={onClick}
-            to={to}
           />
-        ) : (
-          isDefined(onClick) && (
-            <button
-              className={cx(CARD_ACTION_CLASS_NAME, rowActionClassName)}
-              aria-labelledby={labelId}
-              aria-describedby={hasDescription ? descriptionId : undefined}
-              onClick={onClick}
-              type="button"
-            />
-          )
+        )
+      )}
+      {isDefined(LeftIcon) && (
+        <LeftIcon
+          size={theme.icon.size.md}
+          color={LeftIconColor ?? 'currentColor'}
+        />
+      )}
+      <StyledContent>
+        <StyledLabel id={labelId}>{label}</StyledLabel>
+        {hasDescription && (
+          <StyledDescription id={descriptionId}>
+            {description}
+          </StyledDescription>
         )}
-        {isDefined(LeftIcon) && (
-          <LeftIcon
+      </StyledContent>
+      <Card.Control render={<StyledRightContainer />}>
+        {rightComponent}
+        {isDefined(to) && (
+          <IconChevronRight
             size={theme.icon.size.md}
-            color={LeftIconColor ?? 'currentColor'}
+            color={theme.font.color.tertiary}
           />
         )}
-        <StyledContent>
-          <StyledLabel id={labelId}>{label}</StyledLabel>
-          {hasDescription && (
-            <StyledDescription id={descriptionId}>
-              {description}
-            </StyledDescription>
-          )}
-        </StyledContent>
-        <StyledRightContainer>
-          {rightComponent}
-          {isDefined(to) && (
-            <IconChevronRight
-              size={theme.icon.size.md}
-              color={theme.font.color.tertiary}
-            />
-          )}
-        </StyledRightContainer>
-      </Card.Content>
-    </StyledRowContainer>
+      </Card.Control>
+    </Card.Content>
   );
 };
