@@ -578,9 +578,10 @@ export class ConnectedAccountMetadataService {
       select: { id: true },
     });
 
-    for (const { id } of connectedAccounts) {
-      await this.delete({ id, workspaceId });
-    }
+    await this.deleteMany({
+      ids: connectedAccounts.map(({ id }) => id),
+      workspaceId,
+    });
   }
 
   async delete({
@@ -594,27 +595,55 @@ export class ConnectedAccountMetadataService {
       where: { id, workspaceId },
     });
 
+    await this.deleteMany({ ids: [id], workspaceId });
+
+    return connectedAccount;
+  }
+
+  async deleteMany({
+    ids,
+    workspaceId,
+  }: {
+    ids: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    if (ids.length === 0) {
+      return;
+    }
+
+    const connectedAccounts = await this.repository.find({
+      where: { id: In(ids), workspaceId },
+    });
+
+    if (connectedAccounts.length === 0) {
+      return;
+    }
+
+    const connectedAccountIds = connectedAccounts.map(({ id }) => id);
+
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({
-        where: { connectedAccountId: id, workspaceId },
+        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
         select: { id: true },
       }),
       this.calendarChannelRepository.find({
-        where: { connectedAccountId: id, workspaceId },
+        where: { connectedAccountId: In(connectedAccountIds), workspaceId },
         select: { id: true },
       }),
     ]);
 
     this.logger.log(
-      `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
+      `WorkspaceId: ${workspaceId} Deleting ${connectedAccounts.length} connected account(s) with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
 
-    if (isDefined(connectedAccount.connectionProviderId)) {
-      await this.connectionProviderLifecycleHookService.runOnDisconnect({
-        connectionProviderId: connectedAccount.connectionProviderId,
-        workspaceId,
-        connectedAccountId: id,
-      });
+    for (const { id, connectionProviderId } of connectedAccounts) {
+      if (isDefined(connectionProviderId)) {
+        await this.connectionProviderLifecycleHookService.runOnDisconnect({
+          connectionProviderId,
+          workspaceId,
+          connectedAccountId: id,
+        });
+      }
     }
 
     await this.stopWebhookSubscriptions({
@@ -623,17 +652,17 @@ export class ConnectedAccountMetadataService {
       workspaceId,
     });
 
-    // The hook may have refreshed the tokens through getConnection, and an
-    // overlapping delete may already have removed the row.
-    const latestConnectedAccount = await this.repository.findOne({
-      where: { id, workspaceId },
+    // The hooks may have refreshed tokens through getConnection, and an
+    // overlapping delete may already have removed some rows.
+    const latestConnectedAccounts = await this.repository.find({
+      where: { id: In(connectedAccountIds), workspaceId },
     });
 
-    if (isDefined(latestConnectedAccount)) {
+    for (const latestConnectedAccount of latestConnectedAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
     }
 
-    await this.repository.delete({ id, workspaceId });
+    await this.repository.delete({ id: In(connectedAccountIds), workspaceId });
 
     this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
       MESSAGE_CHANNEL_DELETED_EVENT,
@@ -653,16 +682,12 @@ export class ConnectedAccountMetadataService {
 
     this.workspaceEventEmitter.emitCustomBatchEvent<ConnectedAccountDeletedEvent>(
       CONNECTED_ACCOUNT_DELETED_EVENT,
-      [
-        {
-          connectedAccountId: id,
-          userWorkspaceId: connectedAccount.userWorkspaceId,
-        },
-      ],
+      connectedAccounts.map(({ id, userWorkspaceId }) => ({
+        connectedAccountId: id,
+        userWorkspaceId,
+      })),
       workspaceId,
     );
-
-    return connectedAccount;
   }
 
   private async stopWebhookSubscriptions({
