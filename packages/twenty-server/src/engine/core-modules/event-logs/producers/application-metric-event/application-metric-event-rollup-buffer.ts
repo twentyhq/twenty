@@ -36,6 +36,10 @@ export class ApplicationMetricEventRollupBuffer {
       return;
     }
 
+    if (this.isFull) {
+      return;
+    }
+
     this.eventByKey.set(rollupKey, { ...event });
   }
 

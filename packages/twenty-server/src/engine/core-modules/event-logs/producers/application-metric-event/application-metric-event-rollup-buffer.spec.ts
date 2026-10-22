@@ -48,6 +48,16 @@ describe('ApplicationMetricEventRollupBuffer', () => {
     expect(buffer.drain()).toHaveLength(4);
   });
 
+  it('keeps counting buffered rows but drops new ones once full', () => {
+    const buffer = new ApplicationMetricEventRollupBuffer(1);
+
+    buffer.increment(EVENT);
+    buffer.increment({ ...EVENT, workspaceId: 'workspace-2' });
+    buffer.increment({ ...EVENT, occurrenceCount: 2 });
+
+    expect(buffer.drain()).toEqual([{ ...EVENT, occurrenceCount: 3 }]);
+  });
+
   it('starts empty again once drained', () => {
     const buffer = new ApplicationMetricEventRollupBuffer(1);
 
