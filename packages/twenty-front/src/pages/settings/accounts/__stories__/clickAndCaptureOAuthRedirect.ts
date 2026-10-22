@@ -1,6 +1,5 @@
 import { expect, spyOn, userEvent, waitFor } from 'storybook/test';
 
-// window.open is the redirect useTriggerAppOAuth performs; stubbing it keeps the story on the page
 export const clickAndCaptureOAuthRedirect = async (element: HTMLElement) => {
   const openWindow = spyOn(window, 'open').mockImplementation(() => null);
 
