@@ -28,7 +28,6 @@
   "name": "twenty-monorepo",
   "packageManager": "yarn@4.13.0",
   "resolutions": {
-    "frimousse@npm:^0.4.0": "patch:frimousse@npm%3A0.4.0#~/.yarn/patches/frimousse-npm-0.4.0-62823fdae3.patch",
     "zapier-platform-core/form-data": "4.0.6",
     "@remote-dom/react/@types/react": "^19.2.0",
     "graphql": "16.8.1",

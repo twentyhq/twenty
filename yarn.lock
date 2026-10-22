@@ -32780,7 +32780,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"frimousse@npm:0.4.0":
+"frimousse@npm:^0.4.0":
   version: 0.4.0
   resolution: "frimousse@npm:0.4.0"
   peerDependencies:
@@ -32790,19 +32790,6 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/5793a3098f8b1ff17d16f59109c9da7486837e999d5b52305890d4eef6f787f9452746175c33717aab2b6b4e3f178d6e9f0f6ca6d3aa213b46edddfce09cff21
-  languageName: node
-  linkType: hard
-
-"frimousse@patch:frimousse@npm%3A0.4.0#~/.yarn/patches/frimousse-npm-0.4.0-62823fdae3.patch":
-  version: 0.4.0
-  resolution: "frimousse@patch:frimousse@npm%3A0.4.0#~/.yarn/patches/frimousse-npm-0.4.0-62823fdae3.patch::version=0.4.0&hash=b81e70"
-  peerDependencies:
-    react: ^18 || ^19
-    typescript: ">=5.1.0"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10c0/aec5b30e2448b7ef347bea13042086b7f008a71db34a9a9d9a7b6e19d02cd7f80509a4fe57b5de90bf02a65f9e9c93abc55d83199f4279981caee9e94aae7995
   languageName: node
   linkType: hard
 
