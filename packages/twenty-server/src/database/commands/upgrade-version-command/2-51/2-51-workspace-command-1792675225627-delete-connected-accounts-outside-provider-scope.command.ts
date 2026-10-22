@@ -45,9 +45,10 @@ export class DeleteConnectedAccountsOutsideProviderScopeCommand extends Provisio
       return;
     }
 
-    for (const { id } of connectedAccounts) {
-      await this.connectedAccountMetadataService.delete({ id, workspaceId });
-    }
+    await this.connectedAccountMetadataService.deleteMany({
+      ids: connectedAccounts.map(({ id }) => id),
+      workspaceId,
+    });
 
     this.logger.log(
       `Workspace ${workspaceId}: ${connectedAccounts.length} connected account(s) outside their provider scope deleted`,
