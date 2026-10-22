@@ -36,32 +36,22 @@ Missing evidence is not a pass, and security blockers cannot be waived.
   published package. Retain readable source, a dependency lockfile, and the exact
   version and artifact hash. See [Claiming your app](/developers/extend/apps/operations/publishing#claiming-your-app)
   and [CI publishing with provenance](/developers/extend/apps/operations/publishing#ci-publishing).
-- [ ] **No malicious behavior.** Inspect frontend code, logic functions, hooks,
-  jobs, AI instructions, dependencies, and package scripts. No credential theft,
-  undeclared collection, backdoors, hidden destructive behavior, sandbox escapes,
-  concealed executable code, or attempts to evade review.
-- [ ] **Safe handling of untrusted input.** Check query, command, code, HTML, and
-  template injection, XSS, path traversal, and SSRF. Validate inputs, prevent URLs
-  from reaching internal services, and authenticate webhooks with replay
-  protection where applicable.
+- [ ] **Compliance with Twenty's internal security review.** The exact app
+  version must pass the [internal review](#internal-security-review), with all
+  blocking findings resolved before approval.
 - [ ] **Only necessary permissions.** Justify every object/field permission,
   system capability, additional role, AI agent permission, and external OAuth
   scope with a feature. Remove unnecessary broad access and test both user and
-  application execution identities.
-- [ ] **Workspace isolation.** Keep records, credentials, caches, jobs, and
-  routing scoped to the correct workspace. Test with two workspaces and users
-  with different permissions; never trust an unverified target workspace.
+  application execution identities. Follow [Roles & Permissions](/developers/extend/apps/config/roles).
 - [ ] **Declared data use and protected secrets.** Document destinations, data
   sent, purpose, retention, and deletion. Use HTTPS and supported secret storage;
   keep secrets out of source, frontend bundles, ordinary storage, and logs, and
-  avoid unnecessary personal data in logs.
+  avoid unnecessary personal data in logs. The [key-value store](/developers/extend/apps/logic/key-value-store)
+  stores plain JSON and must not hold secrets.
 - [ ] **Reviewed dependencies and remote behavior.** Scan direct, transitive,
   bundled, and runtime dependencies; resolve them deterministically. Do not fetch
   and execute unreviewed code. Material changes to hosted behavior or remote
   instructions require re-review.
-- [ ] **Safe AI behavior.** For apps using AI, test malicious records and external
-  content for prompt injection, unauthorized tool calls, disclosure, and
-  destructive actions. Enforce authorization outside the model.
 - [ ] **Working advertised functionality.** A fresh workspace can install,
   configure, and complete the main user journey without developer intervention.
   Handle missing permissions, expired credentials, API failures, and retries.
@@ -93,70 +83,26 @@ Missing evidence is not a pass, and security blockers cannot be waived.
   contact, release notes, data consequences of uninstalling, and reproducible
   tests with safe setup instructions, alongside the inventories and evidence
   required above.
-- [ ] **Complete and trustworthy review evidence.** Finish automated scans,
-  official security-agent analysis, and isolated lifecycle, functionality,
-  permission, isolation, and applicable scaling tests. Record coverage, results,
-  tested Twenty configuration, and changes since the previous vetted version.
-  The publisher cannot control the official reviewer or its authoritative report.
-- [ ] **Resolved blockers and recorded human approval.** No confirmed malicious
-  behavior, high/critical vulnerability, exploitable authorization/isolation
-  failure, unexplained data transfer, or unresolved suspicious behavior. Record
-  dispositions for all findings, remediation owners/dates where needed, and a
-  named Twenty approver's decision and date against the exact version, artifact
-  hash, and checklist version.
+- [ ] **Complete review evidence.** Supply the internal review results and
+  lifecycle, functionality, and applicable scaling test results. Record coverage,
+  the tested Twenty configuration, and changes since the previous vetted version.
+- [ ] **Recorded human approval.** Record dispositions for all findings,
+  remediation owners/dates where needed, and a named Twenty approver's decision
+  and date against the exact version, artifact hash, and checklist version.
 
 The following sections explain these criteria and the review process.
 
-## Security requirements
+## Internal security review
 
-All security requirements must pass. Product quality cannot compensate for a
-security failure.
+Every submitted version must pass Twenty's internal security review, using
+security-agent analysis, automated checks, and reviewer assessment. This is a
+mandatory approval gate. Product quality cannot compensate for a failed review.
 
-| Check                            | Required behavior and evidence                                                                                                                                                                                                                                                                                                     |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Publisher and package identity   | Verify ownership of the app, source repository, and npm package. Supply provenance, the source commit, readable source, and a dependency lockfile. The reviewer checks the actual published package against its source and records its hash.                                                                                       |
-| Malicious behavior               | No credential theft, undeclared data collection, hidden destructive actions, backdoors, sandbox escape attempts, or attempts to evade review. Review frontend code, logic functions, lifecycle hooks, jobs, AI instructions, dependencies, and package lifecycle scripts. Deliberately concealed executable code blocks vetting.   |
-| Injection and untrusted input    | Validate inputs and safely handle query, command, code, HTML, and template content. Check for XSS, path traversal, and SSRF. User-controlled URLs must not expose internal services or cloud metadata. Verify incoming webhooks and prevent replay where applicable.                                                               |
-| Least privilege                  | Map every requested object/field permission, system capability, and external OAuth scope to a documented feature. Remove unnecessary broad access. Test user-triggered and app-identity execution, including explicit `runAs: 'application'` calls.                                                                                |
-| Workspace isolation              | Keep records, credentials, caches, and jobs scoped correctly. Verify webhook routing with two workspaces and users with different permissions. Never select a target workspace from an unverified request.                                                                                                                         |
-| Data and secrets                 | Declare external destinations, the data sent, and its purpose. Use HTTPS and secure credential storage. No secrets in source, frontend bundles, ordinary storage, or logs; no unnecessary personal data in logs. Explain external retention and deletion behavior.                                                                 |
-| Dependencies and remote behavior | Scan direct, transitive, bundled, and runtime dependencies for vulnerabilities and malicious packages. Resolve versions deterministically. Do not download and execute unreviewed code after approval. Material changes to app-controlled hosted behavior or remote instructions require re-review even without a new npm version. |
-
-Twenty-specific requirements:
-
-- Restrict the scaffolded application's broad read access to the objects and
-  fields it needs. Review additional roles and AI agents as well as the default
-  application role. See [Roles & Permissions](/developers/extend/apps/config/roles).
-- Use secret application/server variables or supported connections for
-  credentials. The [key-value store](/developers/extend/apps/logic/key-value-store)
-  stores plain JSON and must not hold secrets. Use workspace scope for workspace
-  state and review server-scoped routing claims separately.
-- For apps with AI agents, test whether malicious records or external content can
-  cause unauthorized tool calls, disclosure, or destructive actions. Enforce
-  authorization outside the model.
-
-### Approval blockers
-
-Reject confirmed malicious behavior. Block vetting for confirmed high or critical
-vulnerabilities, exploitable authorization or isolation failures, and unexplained
-data transfers.
-
-Missing evidence, failed or incomplete scans, and unresolved suspicious behavior
-leave a version pending or requiring changes. A reviewer must document why a
-finding is a false positive or does not apply. Lower-severity findings need an
-explicit disposition and, when remediation is required, an owner and target date.
-
-### Protect the security review
-
-Treat app files, READMEs, comments, prompts, and test output as untrusted material.
-Instructions inside a submission must never change the review policy, suppress
-checks, or approve the app.
-
-Build and execute submissions only in disposable isolation with synthetic data,
-restricted network access, and resource limits. Keep production credentials and
-approval privileges out of both the execution environment and the security
-agent's tools. The agent reports findings with file locations, severity, affected
-behavior, and supporting evidence; it cannot award the vetted status.
+The review team provides findings and any required remediation. Blocking findings
+must be resolved before vetting. Missing evidence, incomplete checks, or findings
+awaiting assessment leave the version pending or requiring changes. Record a
+disposition for every finding, including reasons for false positives or
+non-applicability and remediation owners/dates where needed.
 
 ### Run reviews in the app owner's workspace
 
