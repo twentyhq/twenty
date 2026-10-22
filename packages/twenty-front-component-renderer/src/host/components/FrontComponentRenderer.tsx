@@ -45,6 +45,7 @@ type FrontComponentRendererProps = {
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   sharedDependenciesUrl?: string;
+  sharedDependenciesCredentials?: RequestCredentials;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   executionContext: FrontComponentExecutionContext;
@@ -66,6 +67,7 @@ export const FrontComponentRenderer = ({
   functionsBaseUrl,
   sdkClientUrls,
   sharedDependenciesUrl,
+  sharedDependenciesCredentials,
   applicationVariables,
   storageNamespace,
   executionContext,
@@ -105,6 +107,7 @@ export const FrontComponentRenderer = ({
           functionsBaseUrl={functionsBaseUrl}
           sdkClientUrls={sdkClientUrls}
           sharedDependenciesUrl={sharedDependenciesUrl}
+          sharedDependenciesCredentials={sharedDependenciesCredentials}
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}
           initialExecutionContext={initialExecutionContext}

@@ -113,4 +113,28 @@ export class AiFrontComponentController {
       getWorkspaceAuthContext(),
     );
   }
+
+  @Get('shared-dependencies/:cacheKey')
+  @Header('Content-Type', 'application/javascript')
+  @Header('Cache-Control', 'private, max-age=31536000, immutable')
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: false,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
+  getSharedDependencies(@Param('cacheKey') cacheKey: string) {
+    return this.components.getSharedDependencies(
+      cacheKey,
+      getWorkspaceAuthContext(),
+    );
+  }
 }
