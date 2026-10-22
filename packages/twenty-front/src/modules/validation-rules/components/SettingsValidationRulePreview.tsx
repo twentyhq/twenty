@@ -90,10 +90,6 @@ const StyledFieldLabel = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   overflow-wrap: anywhere;
-
-  > svg {
-    flex-shrink: 0;
-  }
 `;
 
 const StyledValue = styled.span<{ isEmpty: boolean }>`

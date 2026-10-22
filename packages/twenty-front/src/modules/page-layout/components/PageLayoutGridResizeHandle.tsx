@@ -33,7 +33,6 @@ const StyledCornerIconWrapper = styled.div<{
 
   & > svg {
     color: transparent;
-    flex-shrink: 0;
     pointer-events: none;
     transform: ${({ position }) => {
       if (position === 'se') {

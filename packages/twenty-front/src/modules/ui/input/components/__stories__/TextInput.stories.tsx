@@ -4,6 +4,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 import { type TextInputComponentProps } from '@/ui/input/types/TextInputComponentProps';
+import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = TextInputComponentProps;
@@ -71,6 +72,7 @@ export const WithRightAdornment: Story = {
 export const ForwardsNativeInputProps: Story = {
   args: {
     label: 'Address',
+    hint: 'Use your full address.',
     value: '',
     onChange: fn(),
     onFocus: fn(),
@@ -79,17 +81,30 @@ export const ForwardsNativeInputProps: Story = {
       id: 'native-address-input',
       role: 'combobox',
       'aria-controls': 'address-options',
+      'aria-describedby': 'address-field-context',
       onChange: fn(),
       onFocus: fn(),
       onKeyDown: fn(),
     },
   },
+  render: (args) => (
+    <>
+      <Text id="address-field-context">Your billing location.</Text>
+      <Render
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...args}
+      />
+    </>
+  ),
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('combobox', { name: 'Address' });
 
     expect(input).toHaveAttribute('id', 'native-address-input');
     expect(input).toHaveAttribute('aria-controls', 'address-options');
+    expect(input).toHaveAccessibleDescription(
+      'Your billing location. Use your full address.',
+    );
 
     await userEvent.click(canvas.getByText('Address'));
 

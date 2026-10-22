@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent, useId, useRef } from 'react';
+import { type MouseEvent, useRef } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
@@ -19,6 +19,8 @@ import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPa
 import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
@@ -41,6 +43,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
 import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 
@@ -78,6 +81,7 @@ const AiChatInboxPageContent = () => {
   const isSplitView = useIsAiChatInboxSplitView();
   const navigate = useNavigateApp();
   const { threadId } = useParams();
+  const isNewThreadRoute = threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT;
   const selectedThreadId =
     isDefined(threadId) && isValidUuid(threadId) ? threadId : undefined;
   const { threads, loading } = useChatThreads(agentChatVisibleThreadsSelector);
@@ -142,15 +146,20 @@ const AiChatInboxPageContent = () => {
 
   // Split view shows the list beside the chat or the selection; otherwise
   // the list and a chat each take the whole page
-  const isListShown = isSplitView || !isDefined(selectedThreadId);
+  const isListShown =
+    isSplitView || (!isDefined(selectedThreadId) && !isNewThreadRoute);
   const isSelectionPaneShown = isSplitView && isSelectionShown;
   const isThreadShown = isDefined(selectedThreadId) && !isSelectionPaneShown;
+  const isNewThreadShown = isNewThreadRoute && !isSelectionPaneShown;
   // Split view always has a chat beside the list
   const firstThreadToOpen =
-    isSplitView && !isDefined(selectedThreadId) ? threads.at(0) : undefined;
+    isSplitView && !isDefined(selectedThreadId) && !isNewThreadRoute
+      ? threads.at(0)
+      : undefined;
   const isEmptyPaneShown =
     isSplitView &&
     !isDefined(selectedThreadId) &&
+    !isNewThreadRoute &&
     !isSelectionShown &&
     !isDefined(firstThreadToOpen);
 
@@ -246,6 +255,26 @@ const AiChatInboxPageContent = () => {
           />
         )}
       </AiChatInboxCommandMenuScope>
+      {isNewThreadShown && (
+        <>
+          <AiChatPageEffects />
+          <AiChatNewThreadPageContent
+            showInformationBanner={!isSplitView}
+            headerActions={
+              isMobile ? (
+                <IconButton
+                  size="sm"
+                  variant="outline"
+                  onClick={() => selectThread(null)}
+                  aria-label={t`Back to inbox`}
+                >
+                  <IconChevronLeft />
+                </IconButton>
+              ) : undefined
+            }
+          />
+        </>
+      )}
       {isThreadShown && (
         <>
           <AiChatPageEffects />
@@ -290,7 +319,7 @@ const AiChatInboxPageContent = () => {
 
 export const AiChatInboxPage = () => {
   // A new instance per visit, so a selection does not outlive the inbox
-  const recordSelectionInstanceId = useId();
+  const recordSelectionInstanceId = useAiChatInboxRecordSelectionInstanceId();
   const { threadId } = useParams();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,

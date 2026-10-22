@@ -5,13 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 const styles = {
   ellipsis: css`
-    & {
-      align-items: center;
-      display: flex;
-      height: 20px;
-      max-width: 100%;
-      width: 100%;
-    }
+    height: 20px;
+    max-width: 100%;
+    width: 100%;
   `,
 };
 

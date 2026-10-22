@@ -10,13 +10,9 @@ type WorkflowNodeLabelProps = {
   className?: string;
 };
 
-const StyledNodeLabelWrapper = styled.div<{ labelColor: string }>`
+const StyledNodeLabelWrapper = styled.div`
   box-sizing: border-box;
   flex: 1 0 0;
-
-  > div {
-    color: ${({ labelColor }) => labelColor};
-  }
 `;
 
 export const WorkflowNodeLabel = ({
@@ -29,14 +25,15 @@ export const WorkflowNodeLabel = ({
   const labelColor = selected ? colors.selected.color : colors.unselected.color;
 
   return (
-    <StyledNodeLabelWrapper labelColor={labelColor} className={className}>
-      <StyledDisplayLabel>{children}</StyledDisplayLabel>
+    <StyledNodeLabelWrapper className={className}>
+      <Text
+        size="xs"
+        weight="semibold"
+        color="light"
+        style={{ color: labelColor }}
+      >
+        {children}
+      </Text>
     </StyledNodeLabelWrapper>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;
