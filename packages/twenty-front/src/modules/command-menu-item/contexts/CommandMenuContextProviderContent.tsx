@@ -108,7 +108,7 @@ export const CommandMenuContextProviderContent = ({
       containerType === CommandMenuItemContainerType.ShowPageHeader &&
       commandMenuContextApi.objectMetadataItem.nameSingular ===
         CoreObjectNameSingular.AgentChatThread &&
-      commandMenuContextApi.featureFlags.IS_AI_CHAT_INBOX_ENABLED;
+      (commandMenuContextApi.featureFlags.IS_AI_CHAT_INBOX_ENABLED ?? false);
 
     const contextCommandMenuItems = commandMenuItemsToDisplay
       .filter(
