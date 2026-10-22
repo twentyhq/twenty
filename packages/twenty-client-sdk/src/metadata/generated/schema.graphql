@@ -514,8 +514,8 @@ enum ApplicationHealthStatus {
 type ApplicationMonitoring {
   activity: [ApplicationMonitoringActivityBucket!]!
   bucketSizeInSeconds: Int!
-  creditUsage: [ApplicationMonitoringCreditBucket!]!
-  creditsUsed: Float!
+  creditUsage: [ApplicationMonitoringCreditBucket!]
+  creditsUsed: Float
   failedRunCount: Int!
   functions: [ApplicationMonitoringFunction!]!
   issues: [ApplicationMonitoringIssue!]!

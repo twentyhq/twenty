@@ -436,8 +436,8 @@ export type ApplicationHealthStatus = 'ERROR' | 'INFO' | 'NEUTRAL' | 'OK' | 'SUC
 export interface ApplicationMonitoring {
     activity: ApplicationMonitoringActivityBucket[]
     bucketSizeInSeconds: Scalars['Int']
-    creditUsage: ApplicationMonitoringCreditBucket[]
-    creditsUsed: Scalars['Float']
+    creditUsage?: ApplicationMonitoringCreditBucket[]
+    creditsUsed?: Scalars['Float']
     failedRunCount: Scalars['Int']
     functions: ApplicationMonitoringFunction[]
     issues: ApplicationMonitoringIssue[]

@@ -255,3 +255,22 @@ export const NoActivity: Story = {
     expect(canvas.getByText('No credits used in this period')).toBeVisible();
   },
 };
+
+export const CreditsUnavailable: Story = {
+  args: {
+    monitoring: { ...MONITORING, creditsUsed: null, creditUsage: null },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Credits used could not be loaded. Refresh to try again.',
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.queryByText('No credits used in this period'),
+    ).not.toBeInTheDocument();
+    expect(canvas.getByText('AUTHENTICATION_FAILED')).toBeVisible();
+  },
+};

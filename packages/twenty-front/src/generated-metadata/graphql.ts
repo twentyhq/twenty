@@ -573,8 +573,8 @@ export type ApplicationMonitoring = {
   __typename?: 'ApplicationMonitoring';
   activity: Array<ApplicationMonitoringActivityBucket>;
   bucketSizeInSeconds: Scalars['Int']['output'];
-  creditUsage: Array<ApplicationMonitoringCreditBucket>;
-  creditsUsed: Scalars['Float']['output'];
+  creditUsage?: Maybe<Array<ApplicationMonitoringCreditBucket>>;
+  creditsUsed?: Maybe<Scalars['Float']['output']>;
   failedRunCount: Scalars['Int']['output'];
   functions: Array<ApplicationMonitoringFunction>;
   issues: Array<ApplicationMonitoringIssue>;
@@ -10059,7 +10059,7 @@ export type FindApplicationRegistrationMonitoringQueryVariables = Exact<{
 }>;
 
 
-export type FindApplicationRegistrationMonitoringQuery = { __typename?: 'Query', findApplicationRegistrationMonitoring: { __typename?: 'ApplicationMonitoring', periodStart: string, periodEnd: string, bucketSizeInSeconds: number, lookbackInHours: number, runCount: number, failedRunCount: number, lifecycleFailureCount: number, rateLimitEventCount: number, creditsUsed: number, activity: Array<{ __typename?: 'ApplicationMonitoringActivityBucket', bucketStart: string, errorCount: number, rateLimitedRequestCount: number, rateLimitedJobCount: number }>, lifecycle: Array<{ __typename?: 'ApplicationMonitoringLifecycleBucket', bucketStart: string, installCount: number, upgradeCount: number, uninstallCount: number, failedCount: number }>, creditUsage: Array<{ __typename?: 'ApplicationMonitoringCreditBucket', bucketStart: string, creditsUsed: number }>, issues: Array<{ __typename?: 'ApplicationMonitoringIssue', level: string, source: string, errorCode: string, logicFunctionName: string, versions: Array<string>, eventCount: number, affectedInstallCount: number, lastSeenAt: string }>, versions: Array<{ __typename?: 'ApplicationMonitoringVersion', version: string, runCount: number, failedRunCount: number, activeInstallCount: number }>, functions: Array<{ __typename?: 'ApplicationMonitoringFunction', logicFunctionName: string, runCount: number, failedRunCount: number, p95DurationMs: number }> } };
+export type FindApplicationRegistrationMonitoringQuery = { __typename?: 'Query', findApplicationRegistrationMonitoring: { __typename?: 'ApplicationMonitoring', periodStart: string, periodEnd: string, bucketSizeInSeconds: number, lookbackInHours: number, runCount: number, failedRunCount: number, lifecycleFailureCount: number, rateLimitEventCount: number, creditsUsed?: number | null, activity: Array<{ __typename?: 'ApplicationMonitoringActivityBucket', bucketStart: string, errorCount: number, rateLimitedRequestCount: number, rateLimitedJobCount: number }>, lifecycle: Array<{ __typename?: 'ApplicationMonitoringLifecycleBucket', bucketStart: string, installCount: number, upgradeCount: number, uninstallCount: number, failedCount: number }>, creditUsage?: Array<{ __typename?: 'ApplicationMonitoringCreditBucket', bucketStart: string, creditsUsed: number }> | null, issues: Array<{ __typename?: 'ApplicationMonitoringIssue', level: string, source: string, errorCode: string, logicFunctionName: string, versions: Array<string>, eventCount: number, affectedInstallCount: number, lastSeenAt: string }>, versions: Array<{ __typename?: 'ApplicationMonitoringVersion', version: string, runCount: number, failedRunCount: number, activeInstallCount: number }>, functions: Array<{ __typename?: 'ApplicationMonitoringFunction', logicFunctionName: string, runCount: number, failedRunCount: number, p95DurationMs: number }> } };
 
 export type FindApplicationRegistrationStatsQueryVariables = Exact<{
   id: Scalars['String']['input'];

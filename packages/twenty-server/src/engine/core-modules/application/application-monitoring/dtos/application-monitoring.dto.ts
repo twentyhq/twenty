@@ -125,8 +125,8 @@ export class ApplicationMonitoringDTO {
   @Field(() => Int)
   rateLimitEventCount: number;
 
-  @Field(() => Float)
-  creditsUsed: number;
+  @Field(() => Float, { nullable: true })
+  creditsUsed: number | null;
 
   @Field(() => [ApplicationMonitoringActivityBucketDTO])
   activity: ApplicationMonitoringActivityBucketDTO[];
@@ -134,8 +134,8 @@ export class ApplicationMonitoringDTO {
   @Field(() => [ApplicationMonitoringLifecycleBucketDTO])
   lifecycle: ApplicationMonitoringLifecycleBucketDTO[];
 
-  @Field(() => [ApplicationMonitoringCreditBucketDTO])
-  creditUsage: ApplicationMonitoringCreditBucketDTO[];
+  @Field(() => [ApplicationMonitoringCreditBucketDTO], { nullable: true })
+  creditUsage: ApplicationMonitoringCreditBucketDTO[] | null;
 
   @Field(() => [ApplicationMonitoringIssueDTO])
   issues: ApplicationMonitoringIssueDTO[];

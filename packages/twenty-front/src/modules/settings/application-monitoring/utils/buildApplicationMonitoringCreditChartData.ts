@@ -5,8 +5,10 @@ import { listApplicationMonitoringBucketStarts } from '@/settings/application-mo
 export const buildApplicationMonitoringCreditChartData = (
   monitoring: Pick<
     ApplicationMonitoringData,
-    'creditUsage' | 'bucketSizeInSeconds' | 'periodStart' | 'periodEnd'
-  >,
+    'bucketSizeInSeconds' | 'periodStart' | 'periodEnd'
+  > & {
+    creditUsage: NonNullable<ApplicationMonitoringData['creditUsage']>;
+  },
 ): ApplicationMonitoringChartDatum<'creditsUsed'>[] => {
   const creditsUsedByBucketStart = new Map(
     monitoring.creditUsage.map((bucket) => [

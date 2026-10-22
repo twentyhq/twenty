@@ -218,7 +218,7 @@ export class ApplicationMonitoringService {
       'applicationRegistrationId' | 'workspaceId'
     >;
     period: ApplicationMonitoringPeriod;
-  }): Promise<{ bucketStart: Date; creditsUsed: number }[]> {
+  }): Promise<{ bucketStart: Date; creditsUsedMicro: number }[] | null> {
     try {
       const installations =
         await this.applicationRegistrationService.findInstallations({
@@ -237,7 +237,7 @@ export class ApplicationMonitoringService {
         error,
       );
 
-      return [];
+      return null;
     }
   }
 }

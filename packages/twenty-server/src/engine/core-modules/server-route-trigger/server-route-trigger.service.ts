@@ -79,26 +79,6 @@ export class ServerRouteTriggerService {
     const { resolver, isResolvedThroughLegacyIdentifier } =
       await this.findResolverOrThrow(resolverLogicFunctionIdentifier);
 
-    const allowedHttpMethods =
-      resolver.serverRouteTriggerSettings?.httpMethods ??
-      DEFAULT_SERVER_ROUTE_HTTP_METHODS;
-
-    if (
-      !allowedHttpMethods.some((httpMethod) => httpMethod === request.method)
-    ) {
-      throw new ServerRouteTriggerException(
-        `Server resolver function ${resolverLogicFunctionIdentifier} does not accept ${request.method} requests`,
-        ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED,
-      );
-    }
-
-    if (resolver.httpRouteTriggerSettings?.isAuthRequired === true) {
-      throw new ServerRouteTriggerException(
-        `Server resolver function ${resolverLogicFunctionIdentifier} requires authentication and cannot be dispatched through the public server route`,
-        ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION,
-      );
-    }
-
     const applicationRegistrationId =
       resolver.application?.applicationRegistration?.id;
 
@@ -109,30 +89,50 @@ export class ServerRouteTriggerService {
       );
     }
 
-    const forwardedRequestHeaders =
-      resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [];
-
-    const isAuthorizationHeaderForwardable =
-      forwardedRequestHeaders.some(
-        (headerName) =>
-          headerName.toLowerCase() ===
-          SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
-      ) &&
-      (await this.serverRouteAuthorizationHeaderService.isForwardable(
-        request.headers[SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME],
-      ));
-
-    const event = buildLogicFunctionEvent({
-      request,
-      pathParameters: {},
-      forwardedRequestHeaders,
-      forwardableCredentialHeaderName: isAuthorizationHeaderForwardable
-        ? SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME
-        : undefined,
-      userWorkspaceId: null,
-    });
-
     try {
+      const allowedHttpMethods =
+        resolver.serverRouteTriggerSettings?.httpMethods ??
+        DEFAULT_SERVER_ROUTE_HTTP_METHODS;
+
+      if (
+        !allowedHttpMethods.some((httpMethod) => httpMethod === request.method)
+      ) {
+        throw new ServerRouteTriggerException(
+          `Server resolver function ${resolverLogicFunctionIdentifier} does not accept ${request.method} requests`,
+          ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED,
+        );
+      }
+
+      if (resolver.httpRouteTriggerSettings?.isAuthRequired === true) {
+        throw new ServerRouteTriggerException(
+          `Server resolver function ${resolverLogicFunctionIdentifier} requires authentication and cannot be dispatched through the public server route`,
+          ServerRouteTriggerExceptionCode.RESOLVER_REQUIRES_AUTHENTICATION,
+        );
+      }
+
+      const forwardedRequestHeaders =
+        resolver.serverRouteTriggerSettings?.forwardedRequestHeaders ?? [];
+
+      const isAuthorizationHeaderForwardable =
+        forwardedRequestHeaders.some(
+          (headerName) =>
+            headerName.toLowerCase() ===
+            SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
+        ) &&
+        (await this.serverRouteAuthorizationHeaderService.isForwardable(
+          request.headers[SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME],
+        ));
+
+      const event = buildLogicFunctionEvent({
+        request,
+        pathParameters: {},
+        forwardedRequestHeaders,
+        forwardableCredentialHeaderName: isAuthorizationHeaderForwardable
+          ? SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME
+          : undefined,
+        userWorkspaceId: null,
+      });
+
       const resolverResult = await this.runFunction({
         logicFunctionUniversalIdentifier: resolver.universalIdentifier,
         workspaceId: resolver.workspaceId,
