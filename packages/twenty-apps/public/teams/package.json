@@ -19,7 +19,7 @@
     "directory": "packages/twenty-apps/public/teams"
   },
   "homepage": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/teams",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.1",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",

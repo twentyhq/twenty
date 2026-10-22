@@ -3,6 +3,7 @@ import { CHECKBOX_PROP_DESCRIPTIONS } from './checkboxPropDescriptions';
 import { SWITCH_PROP_DESCRIPTIONS } from './switchPropDescriptions';
 import { TEXTAREA_PROP_DESCRIPTIONS } from './textareaPropDescriptions';
 import { INPUT_GROUP_PROP_DESCRIPTIONS } from './inputGroupPropDescriptions';
+import { FORM_FIELD_ROW_PROP_DESCRIPTIONS } from './formFieldRowPropDescriptions';
 import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
 import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
@@ -1031,6 +1032,18 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/feedback',
     slug: 'components/feedback/toaster',
     propDescriptions: TOASTER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'FormFieldRow',
+    source: 'components/input/FormFieldRow/FormFieldRow.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/form-field-row',
+    propDescriptions: FORM_FIELD_ROW_PROP_DESCRIPTIONS,
+    propDefaults: {
+      labelWidth: '80',
+      isHoverable: 'false',
+      hasDivider: 'true',
+    },
   },
   {
     name: 'ImageInput',

@@ -57,6 +57,7 @@
     "DetailsRow",
     "Dropdown",
     "EmojiPicker",
+    "FormFieldRow",
     "IconButton",
     "ImageInput",
     "InlineBanner",

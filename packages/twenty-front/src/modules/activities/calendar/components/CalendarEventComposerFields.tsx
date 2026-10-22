@@ -247,7 +247,7 @@ export const CalendarEventComposerFields = ({
                 {t`Add a meeting link`}
               </StyledRowDescription>
             </ComposerFieldRow>
-            <ComposerFieldRow label={t`Description`}>
+            <ComposerFieldRow label={t`Description`} hasDivider={false}>
               <TextArea
                 textAreaId="calendar-event-composer-description"
                 variant="transparent"
