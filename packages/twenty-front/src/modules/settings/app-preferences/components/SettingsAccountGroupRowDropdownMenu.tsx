@@ -226,7 +226,6 @@ export const SettingsAccountGroupRowDropdownMenu = ({
                   triggerAppOAuth({
                     applicationId: provider.applicationId,
                     providerName: provider.name,
-                    scope: 'USER',
                     reconnectingConnectedAccountId: connection.id,
                     redirectLocation: getApplicationPreferencesConnectionsPath(
                       provider.applicationId,

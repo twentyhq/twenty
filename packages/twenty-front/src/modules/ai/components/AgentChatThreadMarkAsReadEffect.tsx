@@ -9,6 +9,8 @@ import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadPar
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
+import { isAgentChatThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
@@ -56,13 +58,38 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     return () => {
       store.set(agentChatThreadOpenViewCountState.atom, (count) => count - 1);
 
-      if (store.get(agentChatThreadOpenViewCountState.atom) === 0) {
-        store.set(agentChatThreadVisitState.atom, (visit) =>
-          visit?.threadId === threadId ? null : visit,
-        );
+      if (store.get(agentChatThreadOpenViewCountState.atom) !== 0) {
+        return;
+      }
+
+      store.set(agentChatThreadVisitState.atom, (visit) =>
+        visit?.threadId === threadId ? null : visit,
+      );
+
+      // Filed on leave, not on read, so the chat stays put while being read
+      const thread = store.get(
+        agentChatThreadRecordFamilySelector.selectorFamily(threadId),
+      );
+      const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
+
+      if (
+        isDefined(thread) &&
+        isDefined(workspaceMemberId) &&
+        isAgentChatThreadSettledForMember({
+          thread,
+          participant: store.get(agentChatThreadParticipantsState.atom)?.[
+            threadId
+          ],
+          workspaceMemberId,
+        })
+      ) {
+        void updateAgentChatThreadInboxState({
+          threadIds: [threadId],
+          action: AgentChatInboxAction.ARCHIVE,
+        });
       }
     };
-  }, [store, threadId]);
+  }, [store, threadId, updateAgentChatThreadInboxState]);
 
   useEffect(() => {
     if (

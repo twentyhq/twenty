@@ -120,5 +120,30 @@ export const fieldControlsTest: TwentyUiGalleryPlayFunction = async ({
       ),
     { timeout: INTERACTION_TIMEOUT },
   );
+  const inlineSubject = canvas.getByRole('textbox', { name: 'Inline subject' });
+  expect(inlineSubject).toHaveAccessibleDescription(
+    'Subject without a field frame',
+  );
+  expect(getComputedStyle(inlineSubject).borderWidth).toBe('0px');
+  expect(getComputedStyle(inlineSubject).padding).toBe('0px');
+  await userEvent.type(inlineSubject, 'Weekly update', { delay: TYPING_DELAY });
+  await waitFor(() =>
+    expect(canvas.getByText('Inline subject: Weekly update')).toBeVisible(),
+  );
+  const framedNotesHeight = notes.getBoundingClientRect().height;
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Use plain notes' }),
+  );
+  await waitFor(() => expect(notes).toHaveAttribute('data-variant', 'plain'));
+  await waitFor(
+    () =>
+      expect(notes.getBoundingClientRect().height).toBeLessThan(
+        framedNotesHeight,
+      ),
+    { timeout: INTERACTION_TIMEOUT },
+  );
+  expect(notes).toHaveAttribute('aria-invalid', 'true');
+  expect(getComputedStyle(notes).borderWidth).toBe('0px');
+  expect(getComputedStyle(notes).padding).toBe('0px');
   expect(errorHandler).not.toHaveBeenCalled();
 };

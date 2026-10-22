@@ -297,19 +297,20 @@ export const DeleteRemovesWholeAccountGroup: Story = {
   },
 };
 
-const MIXED_LEGACY_LINEAR_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000092';
+const MIXED_SHARED_LINEAR_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000092';
 const MIXED_LINEAR_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000093';
 const MIXED_ARCHIVED_LINEAR_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000094';
 const MIXED_GROUP_ACCOUNTS = [
   ...CONNECTED_ACCOUNTS,
   buildConnectedAccount({
-    id: MIXED_LEGACY_LINEAR_ACCOUNT_ID,
+    id: MIXED_SHARED_LINEAR_ACCOUNT_ID,
     handle: 'TIM@APPLE.DEV',
-    name: 'Legacy workspace',
+    name: 'Shared workspace',
     provider: 'app',
     userWorkspaceId: MY_USER_WORKSPACE_ID,
     applicationId: LINEAR_APPLICATION_ID,
     connectionProviderId: '20202020-1a2b-4c3d-8e4f-000000000079',
+    scope: 'WORKSPACE',
     authFailedAt: '2026-09-02T00:00:00.000Z',
   }),
   buildConnectedAccount({
@@ -336,7 +337,7 @@ const MIXED_GROUP_ACCOUNTS = [
 const MIXED_GROUP_ACTIVE_ACCOUNT_IDS = [
   GOOGLE_ACCOUNT_ID,
   FATHOM_ACCOUNT_ID,
-  MIXED_LEGACY_LINEAR_ACCOUNT_ID,
+  MIXED_SHARED_LINEAR_ACCOUNT_ID,
   MIXED_LINEAR_ACCOUNT_ID,
 ];
 const mixedAccountGroupStory: Story = {
@@ -406,7 +407,7 @@ export const MixedGroupReconnectTargetsEligibleAppIdentity: Story = {
     );
 
     expect(
-      body.queryByRole('menuitem', { name: /Reconnect.*Legacy workspace/ }),
+      body.queryByRole('menuitem', { name: /Reconnect.*Shared workspace/ }),
     ).not.toBeInTheDocument();
     expect(
       body.queryByRole('menuitem', { name: /Reconnect.*Archived workspace/ }),
@@ -421,8 +422,6 @@ export const MixedGroupReconnectTargetsEligibleAppIdentity: Story = {
       applicationId: LINEAR_APPLICATION_ID,
       providerName: 'linear',
       transientToken: MOCKED_TRANSIENT_TOKEN,
-      scope: 'USER',
-      visibility: 'user',
       reconnectingConnectedAccountId: MIXED_LINEAR_ACCOUNT_ID,
       redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
     });
@@ -441,7 +440,7 @@ export const DisconnectArchivesEveryActiveConnectionInMixedGroup: Story = {
 
     expect(dialog.getByText('Gmail and Calendar')).toBeVisible();
     expect(dialog.getByText(/Fathom:/)).toBeVisible();
-    expect(dialog.getByText(/Legacy workspace/)).toBeVisible();
+    expect(dialog.getByText(/Shared workspace/)).toBeVisible();
     expect(dialog.getByText(/Personal workspace/)).toBeVisible();
     expect(dialog.queryByText(/Archived workspace/)).not.toBeInTheDocument();
     expect(dialog.getByText(/retained/)).toBeVisible();
@@ -503,7 +502,7 @@ export const DeleteRemovesArchivedAndActiveConnectionsInMixedGroup: Story = {
 
     expect(dialog.getByText('Gmail and Calendar')).toBeVisible();
     expect(dialog.getByText(/Fathom:/)).toBeVisible();
-    expect(dialog.getByText(/Legacy workspace/)).toBeVisible();
+    expect(dialog.getByText(/Shared workspace/)).toBeVisible();
     expect(dialog.getByText(/Personal workspace/)).toBeVisible();
     expect(dialog.getByText(/Archived workspace/)).toBeVisible();
     expect(dialog.getByText(/permanently/)).toBeVisible();
@@ -539,7 +538,7 @@ export const PartialDisconnectRefetchesAndReportsFailedConnection: Story = {
     await seedApplicationPreferencesStory();
     failConnectedAccountAction({
       action: 'disconnect',
-      accountId: MIXED_LEGACY_LINEAR_ACCOUNT_ID,
+      accountId: MIXED_SHARED_LINEAR_ACCOUNT_ID,
     });
   },
   play: async ({ canvasElement }) => {
@@ -555,7 +554,7 @@ export const PartialDisconnectRefetchesAndReportsFailedConnection: Story = {
 
     expect(
       await body.findByText(
-        'Disconnected 3 of 4 connections. Could not disconnect: Linear: Legacy workspace.',
+        'Disconnected 3 of 4 connections. Could not disconnect: Linear: Shared workspace.',
       ),
     ).toBeVisible();
     await waitFor(() => {
@@ -574,7 +573,7 @@ export const PartialDisconnectRefetchesAndReportsFailedConnection: Story = {
 
     expect(
       remainingDialog.getAllByRole('listitem').map((item) => item.textContent),
-    ).toEqual(['Linear: Legacy workspace']);
+    ).toEqual(['Linear: Shared workspace']);
   },
 };
 
@@ -584,7 +583,7 @@ export const PartialDeleteRefetchesAndReportsFailedConnection: Story = {
     await seedApplicationPreferencesStory();
     failConnectedAccountAction({
       action: 'delete',
-      accountId: MIXED_LEGACY_LINEAR_ACCOUNT_ID,
+      accountId: MIXED_SHARED_LINEAR_ACCOUNT_ID,
     });
   },
   play: async ({ canvasElement }) => {
@@ -600,7 +599,7 @@ export const PartialDeleteRefetchesAndReportsFailedConnection: Story = {
 
     expect(
       await body.findByText(
-        'Deleted 4 of 5 connections. Could not delete: Linear: Legacy workspace.',
+        'Deleted 4 of 5 connections. Could not delete: Linear: Shared workspace.',
       ),
     ).toBeVisible();
     await waitFor(() => {
@@ -623,7 +622,7 @@ export const PartialDeleteRefetchesAndReportsFailedConnection: Story = {
 
     expect(
       remainingDialog.getAllByRole('listitem').map((item) => item.textContent),
-    ).toEqual(['Linear: Legacy workspace']);
+    ).toEqual(['Linear: Shared workspace']);
   },
 };
 
@@ -926,8 +925,6 @@ export const AppOnlyAccountNeedingReconnectIsFlagged: Story = {
       applicationId: LINEAR_APPLICATION_ID,
       providerName: 'linear',
       transientToken: MOCKED_TRANSIENT_TOKEN,
-      scope: 'USER',
-      visibility: 'user',
       reconnectingConnectedAccountId: LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
       redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
     });
@@ -1006,7 +1003,7 @@ export const AppOnlyAccountNeedingReconnectWithoutOAuthIsFlaggedOnly: Story = {
   },
 };
 
-const LEGACY_PROVIDER_ACCOUNT_HANDLE = 'workspace-provider@linear.app';
+const WORKSPACE_PROVIDER_ACCOUNT_HANDLE = 'workspace-provider@linear.app';
 
 export const AppOnlyAccountOnUnlistedProviderIsFlaggedEverywhere: Story = {
   ...accountGroupsStory,
@@ -1018,11 +1015,12 @@ export const AppOnlyAccountOnUnlistedProviderIsFlaggedEverywhere: Story = {
           ...CONNECTED_ACCOUNTS,
           buildConnectedAccount({
             id: '20202020-1a2b-4c3d-8e4f-000000000087',
-            handle: LEGACY_PROVIDER_ACCOUNT_HANDLE,
+            handle: WORKSPACE_PROVIDER_ACCOUNT_HANDLE,
             provider: 'app',
             userWorkspaceId: MY_USER_WORKSPACE_ID,
             applicationId: LINEAR_APPLICATION_ID,
             connectionProviderId: '20202020-1a2b-4c3d-8e4f-000000000079',
+            scope: 'WORKSPACE',
             authFailedAt: '2026-09-02T00:00:00.000Z',
           }),
         ]),
@@ -1033,14 +1031,14 @@ export const AppOnlyAccountOnUnlistedProviderIsFlaggedEverywhere: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText(LEGACY_PROVIDER_ACCOUNT_HANDLE, undefined, {
+    await canvas.findByText(WORKSPACE_PROVIDER_ACCOUNT_HANDLE, undefined, {
       timeout: 3000,
     });
     await canvas.findByText('Linear', undefined, { timeout: 3000 });
 
     await expectReconnectNeededWithoutReconnectAction({
       canvasElement,
-      handle: LEGACY_PROVIDER_ACCOUNT_HANDLE,
+      handle: WORKSPACE_PROVIDER_ACCOUNT_HANDLE,
       applicationName: 'Linear',
     });
   },

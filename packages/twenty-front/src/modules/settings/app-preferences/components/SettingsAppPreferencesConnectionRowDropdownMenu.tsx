@@ -55,7 +55,6 @@ export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
                   triggerAppOAuth({
                     applicationId,
                     providerName,
-                    scope: 'USER',
                     reconnectingConnectedAccountId: connection.id,
                     redirectLocation,
                   })

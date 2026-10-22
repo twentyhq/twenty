@@ -26,14 +26,13 @@ describe('useTriggerAppOAuth', () => {
     ] as unknown as ReturnType<typeof useMutation>);
   });
 
-  it('asks the server for the scope and the visibility previous releases read', async () => {
+  it('redirects to the authorize endpoint with the transient token', async () => {
     const { result } = renderHook(() => useTriggerAppOAuth());
 
     await act(() =>
       result.current.triggerAppOAuth({
         applicationId: 'app-1',
         providerName: 'linear',
-        scope: 'WORKSPACE',
         reconnectingConnectedAccountId: 'account-1',
       }),
     );
@@ -45,8 +44,6 @@ describe('useTriggerAppOAuth', () => {
       applicationId: 'app-1',
       providerName: 'linear',
       transientToken: 'transient',
-      scope: 'WORKSPACE',
-      visibility: 'workspace',
       reconnectingConnectedAccountId: 'account-1',
     });
   });

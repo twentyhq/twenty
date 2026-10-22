@@ -76,7 +76,6 @@ export const SettingsAppPreferencesConnectionsTab = ({
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
                 providerName={provider.name}
-                scope="USER"
                 redirectLocation={redirectLocation}
               />
             )}

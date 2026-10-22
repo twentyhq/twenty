@@ -2,7 +2,7 @@ import { getAccountGroupActionFailureMessage } from '@/settings/app-preferences/
 
 const TARGETS = [
   { id: 'google', label: 'Gmail and Calendar' },
-  { id: 'linear', label: 'Linear: Legacy workspace' },
+  { id: 'linear', label: 'Linear: Shared workspace' },
 ];
 
 const FULFILLED: PromiseSettledResult<unknown> = {
@@ -31,11 +31,11 @@ describe('getAccountGroupActionFailureMessage', () => {
   it.each([
     [
       'disconnect',
-      'Disconnected 1 of 2 connections. Could not disconnect: Linear: Legacy workspace.',
+      'Disconnected 1 of 2 connections. Could not disconnect: Linear: Shared workspace.',
     ],
     [
       'delete',
-      'Deleted 1 of 2 connections. Could not delete: Linear: Legacy workspace.',
+      'Deleted 1 of 2 connections. Could not delete: Linear: Shared workspace.',
     ],
   ] as const)('names the one failed connection on %s', (action, message) => {
     expect(
@@ -50,11 +50,11 @@ describe('getAccountGroupActionFailureMessage', () => {
   it.each([
     [
       'disconnect',
-      'Disconnected 0 of 2 connections. Could not disconnect: Gmail and Calendar, Linear: Legacy workspace.',
+      'Disconnected 0 of 2 connections. Could not disconnect: Gmail and Calendar, Linear: Shared workspace.',
     ],
     [
       'delete',
-      'Deleted 0 of 2 connections. Could not delete: Gmail and Calendar, Linear: Legacy workspace.',
+      'Deleted 0 of 2 connections. Could not delete: Gmail and Calendar, Linear: Shared workspace.',
     ],
   ] as const)('names every failed connection on %s', (action, message) => {
     expect(

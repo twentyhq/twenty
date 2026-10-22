@@ -1,5 +1,5 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { CommandMenuItemNumberInput } from '@/command-menu/components/CommandMenuItemNumberInput';
 import { CommandMenuItemTextInput } from '@/command-menu/components/CommandMenuItemTextInput';
 import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
@@ -15,14 +15,16 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
 import { isMinMaxRangeValid } from '@/side-panel/pages/page-layout/utils/isMinMaxRangeValid';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+
+const CHART_SETTINGS_DROPDOWN_SIDE_OFFSET = 4;
 
 type ChartSettingItemProps = {
   item: ChartSettingsItem;
@@ -36,7 +38,6 @@ export const ChartSettingItem = ({
   configuration,
 }: ChartSettingItemProps) => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
-  const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
   const { openDropdown } = useOpenDropdown();
   const { setSelectedItemId } = useSelectableList(
     SIDE_PANEL_SELECTABLE_LIST_ID,
@@ -73,7 +74,6 @@ export const ChartSettingItem = ({
   };
 
   const handleDropdownOpen = () => {
-    closeAnyOpenDropdown();
     openDropdown({
       dropdownComponentInstanceIdFromProps: item.id,
     });
@@ -173,28 +173,33 @@ export const ChartSettingItem = ({
     );
   }
 
+  const settingValue = getChartSettingsValues(item.id);
+  const settingDescription = isString(settingValue) ? settingValue : undefined;
+
   return (
     <SelectableListItem
       key={item.id}
       itemId={item.id}
       onEnter={handleDropdownOpen}
     >
-      <CommandMenuItemDropdown
-        Icon={item.Icon}
-        label={t(item.label)}
-        id={item.id}
-        dropdownId={item.id}
-        dropdownComponents={
-          <LegacyDropdownContent widthInPixels={item.dropdownWidth}>
-            {item.DropdownContent && <item.DropdownContent />}
-          </LegacyDropdownContent>
-        }
-        dropdownPlacement="bottom-end"
-        dropdownOffset={{ y: 4 }}
-        description={getChartSettingsValues(item.id) as string}
-        contextualTextPosition={'right'}
-        hasSubMenu
-      />
+      <DropdownRoot dropdownId={item.id} type="picker">
+        <CommandMenuItemDropdownTrigger
+          Icon={item.Icon}
+          label={t(item.label)}
+          id={item.id}
+          description={settingDescription}
+          contextualTextPosition="right"
+        />
+        <DropdownContent
+          side="bottom"
+          align="end"
+          sideOffset={CHART_SETTINGS_DROPDOWN_SIDE_OFFSET}
+          width={item.dropdownWidth}
+          collisionPadding={{ left: 0, right: 0 }}
+        >
+          {item.DropdownContent && <item.DropdownContent />}
+        </DropdownContent>
+      </DropdownRoot>
     </SelectableListItem>
   );
 };
