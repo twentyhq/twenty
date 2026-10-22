@@ -38,6 +38,11 @@ jest.mock(
   }),
 );
 
+const createConnection = (): RemoteConnection => ({
+  mutate: jest.fn(),
+  call: jest.fn(),
+});
+
 const COMPONENT_RENDER_CONTEXT = {
   componentUrl: 'https://api.twenty.test/rest/front-components/id',
   componentSource: 'export default () => {};',
@@ -69,7 +74,7 @@ const readExecutionContextWhenModuleLoads = async (
   });
 
   await renderFrontComponent({
-    connection: {} as RemoteConnection,
+    connection: createConnection(),
     renderContext: { ...COMPONENT_RENDER_CONTEXT, initialExecutionContext },
     hostFetch: jest.fn(),
   });
@@ -85,7 +90,7 @@ describe('renderFrontComponent', () => {
   it('should fail closed when the host fetch bridge is unavailable', async () => {
     await expect(
       renderFrontComponent({
-        connection: {} as RemoteConnection,
+        connection: createConnection(),
         renderContext: COMPONENT_RENDER_CONTEXT,
         hostFetch: null,
       }),
@@ -124,7 +129,7 @@ describe('renderFrontComponent', () => {
     });
 
     await renderFrontComponent({
-      connection: {} as RemoteConnection,
+      connection: createConnection(),
       renderContext: COMPONENT_RENDER_CONTEXT,
       hostFetch: jest.fn(),
     });

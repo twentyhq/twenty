@@ -42,9 +42,7 @@ jest.mock('@/host/image-loading/utils/createImageLoadingHost', () => ({
   createImageLoadingHost: () => ({ dispose: jest.fn() }),
 }));
 
-(
-  globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
-).IS_REACT_ACT_ENVIRONMENT = true;
+Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 
 const createHostFocusControllerStub = (): HostFocusController => ({
   callFocusMethod: jest.fn(),
