@@ -55,7 +55,7 @@ const createAccountsMock = (
 
 const composerState = {
   connectedAccountId: 'account-1',
-  fromHandle: 'michael@getindexed.ai',
+  fromHandle: 'jane@example.com',
   setSender: jest.fn(),
   to: [],
   cc: [],
@@ -76,7 +76,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
         createAccountsMock([
           {
             id: 'account-1',
-            handle: 'michael@getindexed.ai',
+            handle: 'jane@example.com',
             handleAliases: [],
           },
         ]),
@@ -93,7 +93,7 @@ describe('EmailComposerFields', () => {
       wrapper: Wrapper,
     });
 
-    expect(await screen.findByText('michael@getindexed.ai')).toBeVisible();
+    expect(await screen.findByText('jane@example.com')).toBeVisible();
     expect(screen.getByText('From')).toBeInTheDocument();
   });
 });

@@ -26,12 +26,12 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       const input = await buildSendEmailStep({
         input: {
           connectedAccountId: 'acc',
-          fromHandle: 'michael@getindexed.ai',
+          fromHandle: 'jane@example.com',
         },
       });
 
       expect(input.connectedAccountId).toBe('acc');
-      expect(input.fromHandle).toBe('michael@getindexed.ai');
+      expect(input.fromHandle).toBe('jane@example.com');
     });
 
     it('should leave the input unchanged without default settings', async () => {

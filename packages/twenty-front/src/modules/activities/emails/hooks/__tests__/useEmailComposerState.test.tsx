@@ -153,7 +153,7 @@ describe('useEmailComposerState', () => {
       () =>
         useEmailComposerState({
           connectedAccountId: 'account-1',
-          initialFromHandle: 'michael@getindexed.ai',
+          initialFromHandle: 'jane@example.com',
         }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
@@ -162,16 +162,16 @@ describe('useEmailComposerState', () => {
       },
     );
 
-    expect(result.current.fromHandle).toBe('michael@getindexed.ai');
+    expect(result.current.fromHandle).toBe('jane@example.com');
 
     act(() => {
       result.current.setSender({
         connectedAccountId: 'account-1',
-        fromHandle: 'sales@getindexed.ai',
+        fromHandle: 'sales@example.com',
       });
     });
 
-    expect(result.current.fromHandle).toBe('sales@getindexed.ai');
+    expect(result.current.fromHandle).toBe('sales@example.com');
   });
 
   it('resets the sender when the resolved from handle changes', () => {
@@ -193,8 +193,8 @@ describe('useEmailComposerState', () => {
 
     expect(result.current.fromHandle).toBeUndefined();
 
-    rerender({ initialFromHandle: 'michael@getindexed.ai' });
+    rerender({ initialFromHandle: 'jane@example.com' });
 
-    expect(result.current.fromHandle).toBe('michael@getindexed.ai');
+    expect(result.current.fromHandle).toBe('jane@example.com');
   });
 });

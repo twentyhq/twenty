@@ -99,8 +99,8 @@ describe('useCreateStep', () => {
       jotaiStore.set(myConnectedAccountsState.atom, [
         {
           id: 'account-id',
-          handle: 'michael@example.com',
-          handleAliases: ['michael@getindexed.ai'],
+          handle: 'jane@acme.com',
+          handleAliases: ['jane@example.com'],
           provider: ConnectedAccountProvider.GOOGLE,
           connectionParameters: null,
         },
@@ -127,7 +127,7 @@ describe('useCreateStep', () => {
     };
 
     it('should start on the workspace default sender', async () => {
-      seedSenderState('getindexed.ai');
+      seedSenderState('example.com');
 
       await createSendEmailStep();
 
@@ -136,7 +136,7 @@ describe('useCreateStep', () => {
           defaultSettings: {
             input: {
               connectedAccountId: 'account-id',
-              fromHandle: 'michael@getindexed.ai',
+              fromHandle: 'jane@example.com',
             },
           },
         }),
@@ -154,7 +154,7 @@ describe('useCreateStep', () => {
     });
 
     it('should not override caller provided input', async () => {
-      seedSenderState('getindexed.ai');
+      seedSenderState('example.com');
       const defaultSettings = { input: { subject: 'Hi' } };
 
       await createSendEmailStep(defaultSettings);
@@ -165,7 +165,7 @@ describe('useCreateStep', () => {
     });
 
     it('should not apply the sender to other step types', async () => {
-      seedSenderState('getindexed.ai');
+      seedSenderState('example.com');
       mockGetUpdatableWorkflowVersion.mockResolvedValue('version-123');
       const { result } = renderHook(() => useCreateStep(), { wrapper });
 

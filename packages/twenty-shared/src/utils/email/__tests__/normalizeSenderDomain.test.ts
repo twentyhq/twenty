@@ -2,7 +2,7 @@ import { normalizeSenderDomain } from '@/utils/email/normalizeSenderDomain';
 
 describe('normalizeSenderDomain', () => {
   it('trims, removes a leading @ and lowercases', () => {
-    expect(normalizeSenderDomain(' @GetIndexed.AI ')).toBe('getindexed.ai');
+    expect(normalizeSenderDomain(' @Example.COM ')).toBe('example.com');
   });
 
   it('returns null for empty or missing values', () => {

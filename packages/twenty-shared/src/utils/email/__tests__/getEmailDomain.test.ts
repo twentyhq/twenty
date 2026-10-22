@@ -2,7 +2,7 @@ import { getEmailDomain } from '@/utils/email/getEmailDomain';
 
 describe('getEmailDomain', () => {
   it('returns the lowercased part after the last @', () => {
-    expect(getEmailDomain('Jane@GetIndexed.AI')).toBe('getindexed.ai');
+    expect(getEmailDomain('Jane@Example.COM')).toBe('example.com');
     expect(getEmailDomain('"a@b"@example.com')).toBe('example.com');
   });
 
@@ -12,6 +12,6 @@ describe('getEmailDomain', () => {
   });
 
   it('returns null for a value without an @, even if it looks like a domain', () => {
-    expect(getEmailDomain('getindexed.ai')).toBeNull();
+    expect(getEmailDomain('example.com')).toBeNull();
   });
 });

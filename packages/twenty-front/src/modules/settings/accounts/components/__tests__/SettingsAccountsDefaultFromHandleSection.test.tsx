@@ -33,16 +33,16 @@ const renderSection = (
       ? ([
           {
             id: 'account-id',
-            handle: 'me@getindexed.ai',
+            handle: 'me@example.com',
             provider: ConnectedAccountProvider.GOOGLE,
-            handleAliases: ['alias@getindexed.ai'],
+            handleAliases: ['alias@example.com'],
             scopes: ['https://www.googleapis.com/auth/gmail.send'],
             connectionParameters: null,
             archivedAt: null,
           },
           {
             id: 'archived-account-id',
-            handle: 'old@getindexed.ai',
+            handle: 'old@example.com',
             provider: ConnectedAccountProvider.GOOGLE,
             handleAliases: [],
             scopes: ['https://www.googleapis.com/auth/gmail.send'],
@@ -95,9 +95,9 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
 
     await user.click(screen.getByText('Automatic (workspace domain)'));
 
-    expect(screen.getByText('me@getindexed.ai')).toBeVisible();
-    expect(screen.getByText('alias@getindexed.ai')).toBeVisible();
-    expect(screen.queryByText('old@getindexed.ai')).toBeNull();
+    expect(screen.getByText('me@example.com')).toBeVisible();
+    expect(screen.getByText('alias@example.com')).toBeVisible();
+    expect(screen.queryByText('old@example.com')).toBeNull();
   });
 
   it('saves the chosen handle', async () => {
@@ -105,13 +105,13 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
     const store = renderSection(null);
 
     await user.click(screen.getByText('Automatic (workspace domain)'));
-    await user.click(screen.getByText('alias@getindexed.ai'));
+    await user.click(screen.getByText('alias@example.com'));
 
     expect(mockUpdateMyDefaultFromHandle).toHaveBeenCalledWith({
-      variables: { input: { defaultFromHandle: 'alias@getindexed.ai' } },
+      variables: { input: { defaultFromHandle: 'alias@example.com' } },
     });
     expect(store.get(currentUserWorkspaceState.atom)?.defaultFromHandle).toBe(
-      'alias@getindexed.ai',
+      'alias@example.com',
     );
   });
 
@@ -126,7 +126,7 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
     const store = renderSection(null);
 
     await user.click(screen.getByText('Automatic (workspace domain)'));
-    await user.click(screen.getByText('alias@getindexed.ai'));
+    await user.click(screen.getByText('alias@example.com'));
 
     store.set(currentUserWorkspaceState.atom, {
       ...store.get(currentUserWorkspaceState.atom),
@@ -137,27 +137,27 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
 
     await waitFor(() =>
       expect(store.get(currentUserWorkspaceState.atom)?.defaultFromHandle).toBe(
-        'alias@getindexed.ai',
+        'alias@example.com',
       ),
     );
     expect(store.get(currentUserWorkspaceState.atom)).toMatchObject({
       locale: 'fr-FR',
-      defaultFromHandle: 'alias@getindexed.ai',
+      defaultFromHandle: 'alias@example.com',
     });
   });
 
   it('shows automatic when the stored handle no longer exists', () => {
-    renderSection('removed@getindexed.ai');
+    renderSection('removed@example.com');
 
     expect(screen.getByText('Automatic (workspace domain)')).toBeVisible();
-    expect(screen.queryByText('removed@getindexed.ai')).toBeNull();
+    expect(screen.queryByText('removed@example.com')).toBeNull();
   });
 
   it('saves null when choosing automatic', async () => {
     const user = userEvent.setup();
-    renderSection('me@getindexed.ai');
+    renderSection('me@example.com');
 
-    await user.click(screen.getByText('me@getindexed.ai'));
+    await user.click(screen.getByText('me@example.com'));
     await user.click(screen.getByText('Automatic (workspace domain)'));
 
     expect(mockUpdateMyDefaultFromHandle).toHaveBeenCalledWith({

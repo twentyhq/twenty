@@ -26,8 +26,8 @@ jest.mock('@apollo/client/react', () => ({
 
 const buildAccount = (overrides: Record<string, unknown>) => ({
   id: 'account-id',
-  handle: 'me@getindexed.ai',
-  handleAliases: ['me@pageweaver.com'],
+  handle: 'me@example.com',
+  handleAliases: ['me@initech.com'],
   provider: ConnectedAccountProvider.GOOGLE,
   connectionParameters: null,
   archivedAt: null,
@@ -83,7 +83,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     mockUpdateWorkspace.mockReset();
     mockEnqueueToast.mockReset();
     mockUpdateWorkspace.mockResolvedValue({
-      data: { updateWorkspace: { defaultSenderDomain: 'getindexed.ai' } },
+      data: { updateWorkspace: { defaultSenderDomain: 'example.com' } },
     });
   });
 
@@ -98,8 +98,8 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     );
     expect(optionLabels).toEqual([
       'None',
-      'getindexed.ai',
-      'pageweaver.com',
+      'example.com',
+      'initech.com',
       'Other domain…',
     ]);
   });
@@ -109,14 +109,14 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     const store = renderSection();
 
     await openSelect(user, 'None');
-    await user.click(await screen.findByText('getindexed.ai'));
+    await user.click(await screen.findByText('example.com'));
 
     expect(mockUpdateWorkspace).toHaveBeenCalledWith({
-      variables: { input: { defaultSenderDomain: 'getindexed.ai' } },
+      variables: { input: { defaultSenderDomain: 'example.com' } },
     });
     await waitFor(() =>
       expect(store.get(currentWorkspaceState.atom)?.defaultSenderDomain).toBe(
-        'getindexed.ai',
+        'example.com',
       ),
     );
   });
@@ -126,9 +126,9 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     mockUpdateWorkspace.mockResolvedValue({
       data: { updateWorkspace: { defaultSenderDomain: null } },
     });
-    const store = renderSection({ defaultSenderDomain: 'getindexed.ai' });
+    const store = renderSection({ defaultSenderDomain: 'example.com' });
 
-    await openSelect(user, 'getindexed.ai');
+    await openSelect(user, 'example.com');
     await user.click(await screen.findByRole('option', { name: 'None' }));
 
     expect(mockUpdateWorkspace).toHaveBeenCalledWith({
@@ -183,8 +183,8 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
       ),
     ).toEqual([
       'None',
-      'getindexed.ai',
-      'pageweaver.com',
+      'example.com',
+      'initech.com',
       'teammates.io',
       'Other domain…',
     ]);
@@ -193,17 +193,17 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
   it('keeps the saved domain selected and shows an error when saving fails', async () => {
     mockUpdateWorkspace.mockRejectedValue(new Error('Invalid domain'));
     const user = userEvent.setup();
-    const store = renderSection({ defaultSenderDomain: 'getindexed.ai' });
+    const store = renderSection({ defaultSenderDomain: 'example.com' });
 
-    await openSelect(user, 'getindexed.ai');
-    await user.click(await screen.findByText('pageweaver.com'));
+    await openSelect(user, 'example.com');
+    await user.click(await screen.findByText('initech.com'));
 
     await waitFor(() => expect(mockEnqueueToast).toHaveBeenCalled());
     expect(store.get(currentWorkspaceState.atom)?.defaultSenderDomain).toBe(
-      'getindexed.ai',
+      'example.com',
     );
-    expect(screen.getByText('getindexed.ai')).toBeInTheDocument();
-    expect(screen.queryByText('pageweaver.com')).not.toBeInTheDocument();
+    expect(screen.getByText('example.com')).toBeInTheDocument();
+    expect(screen.queryByText('initech.com')).not.toBeInTheDocument();
   });
 
   it('reverts the text input and shows an error when the server rejects the domain', async () => {
@@ -226,11 +226,11 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
 
   it('does not save when the selected domain is already saved', async () => {
     const user = userEvent.setup();
-    renderSection({ defaultSenderDomain: 'getindexed.ai' });
+    renderSection({ defaultSenderDomain: 'example.com' });
 
-    await openSelect(user, 'getindexed.ai');
+    await openSelect(user, 'example.com');
     await user.click(
-      await screen.findByRole('option', { name: 'getindexed.ai' }),
+      await screen.findByRole('option', { name: 'example.com' }),
     );
 
     expect(mockUpdateWorkspace).not.toHaveBeenCalled();
@@ -255,7 +255,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     expect(screen.getByText('None').closest('[disabled]')).toBeNull();
 
     await openSelect(user, 'None');
-    await user.click(await screen.findByText('getindexed.ai'));
+    await user.click(await screen.findByText('example.com'));
 
     await waitFor(() =>
       expect(screen.getByText('None').closest('[disabled]')).not.toBeNull(),
@@ -266,13 +266,11 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     expect(mockUpdateWorkspace).toHaveBeenCalledTimes(1);
 
     resolveSave({
-      data: { updateWorkspace: { defaultSenderDomain: 'getindexed.ai' } },
+      data: { updateWorkspace: { defaultSenderDomain: 'example.com' } },
     });
 
     await waitFor(() =>
-      expect(
-        screen.getByText('getindexed.ai').closest('[disabled]'),
-      ).toBeNull(),
+      expect(screen.getByText('example.com').closest('[disabled]')).toBeNull(),
     );
   });
 

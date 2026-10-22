@@ -51,11 +51,11 @@ describe('WorkspaceService.updateWorkspaceById defaultSenderDomain', () => {
       hasPermission: true,
     });
 
-    await update(service, ' @GetIndexed.AI ');
+    await update(service, ' @Example.COM ');
 
     expect(workspaceRepository.update).toHaveBeenCalledWith(
       WORKSPACE_ID,
-      expect.objectContaining({ defaultSenderDomain: 'getindexed.ai' }),
+      expect.objectContaining({ defaultSenderDomain: 'example.com' }),
     );
   });
 
@@ -77,7 +77,7 @@ describe('WorkspaceService.updateWorkspaceById defaultSenderDomain', () => {
       hasPermission: false,
     });
 
-    await expect(update(service, 'getindexed.ai')).rejects.toBeInstanceOf(
+    await expect(update(service, 'example.com')).rejects.toBeInstanceOf(
       PermissionsException,
     );
     expect(

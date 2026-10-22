@@ -58,7 +58,7 @@ const accountThread = {
 
 const accountDomain = {
   id: 'domain-account',
-  handle: 'ops@getindexed.ai',
+  handle: 'ops@example.com',
   provider: ConnectedAccountProvider.GOOGLE,
   handleAliases: null,
   scopes: ['https://www.googleapis.com/auth/gmail.send'],
@@ -86,7 +86,7 @@ const renderPage = ({
     accountDomain,
   ] as never);
   store.set(currentWorkspaceState.atom, {
-    defaultSenderDomain: 'getindexed.ai',
+    defaultSenderDomain: 'example.com',
   } as never);
   store.set(currentUserWorkspaceState.atom, {
     permissionFlags: [],
@@ -114,7 +114,7 @@ describe('SidePanelComposeEmailPage', () => {
     expect(mockUseEmailComposerState).toHaveBeenCalledWith(
       expect.objectContaining({
         connectedAccountId: 'domain-account',
-        initialFromHandle: 'ops@getindexed.ai',
+        initialFromHandle: 'ops@example.com',
       }),
     );
   });

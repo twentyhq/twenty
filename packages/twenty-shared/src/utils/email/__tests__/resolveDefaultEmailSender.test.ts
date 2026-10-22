@@ -7,14 +7,14 @@ import {
 const accountA: DefaultEmailSenderAccount = {
   id: 'account-a',
   provider: ConnectedAccountProvider.GOOGLE,
-  handle: 'michael@mwoodworth.com',
-  handleAliases: ['michael@getindexed.ai', 'michael@pageweaver.ai'],
+  handle: 'jane@example.net',
+  handleAliases: ['jane@example.com', 'jane@acme.com'],
 };
 
 const accountB: DefaultEmailSenderAccount = {
   id: 'account-b',
   provider: ConnectedAccountProvider.GOOGLE,
-  handle: 'ops@getindexed.ai',
+  handle: 'ops@example.com',
   handleAliases: null,
 };
 
@@ -23,12 +23,12 @@ describe('resolveDefaultEmailSender', () => {
     expect(
       resolveDefaultEmailSender({
         accounts: [accountA, accountB],
-        personalFromHandle: 'MICHAEL@pageweaver.ai',
-        workspaceSenderDomain: 'getindexed.ai',
+        personalFromHandle: 'JANE@acme.com',
+        workspaceSenderDomain: 'example.com',
       }),
     ).toEqual({
       connectedAccountId: 'account-a',
-      fromHandle: 'michael@pageweaver.ai',
+      fromHandle: 'jane@acme.com',
     });
   });
 
@@ -37,11 +37,11 @@ describe('resolveDefaultEmailSender', () => {
       resolveDefaultEmailSender({
         accounts: [accountA, accountB],
         personalFromHandle: 'gone@x.com',
-        workspaceSenderDomain: 'getindexed.ai',
+        workspaceSenderDomain: 'example.com',
       }),
     ).toEqual({
       connectedAccountId: 'account-a',
-      fromHandle: 'michael@getindexed.ai',
+      fromHandle: 'jane@example.com',
     });
   });
 
@@ -50,22 +50,22 @@ describe('resolveDefaultEmailSender', () => {
       resolveDefaultEmailSender({
         accounts: [accountB],
         personalFromHandle: null,
-        workspaceSenderDomain: 'getindexed.ai',
+        workspaceSenderDomain: 'example.com',
       }),
     ).toEqual({
       connectedAccountId: 'account-b',
-      fromHandle: 'ops@getindexed.ai',
+      fromHandle: 'ops@example.com',
     });
   });
 
-  it.each(['x@getindexed.ai.evil.com', 'x@mail.getindexed.ai'])(
+  it.each(['x@example.com.evil.com', 'x@mail.example.com'])(
     'does not match %s against the domain',
     (handle) => {
       expect(
         resolveDefaultEmailSender({
           accounts: [{ ...accountB, handle }],
           personalFromHandle: null,
-          workspaceSenderDomain: 'getindexed.ai',
+          workspaceSenderDomain: 'example.com',
         }),
       ).toBeNull();
     },
@@ -86,7 +86,7 @@ describe('resolveDefaultEmailSender', () => {
       resolveDefaultEmailSender({
         accounts: [accountA, accountB],
         personalFromHandle: null,
-        workspaceSenderDomain: 'pageweaver.ai',
+        workspaceSenderDomain: 'acme.com',
         restrictToConnectedAccountId: 'account-b',
       }),
     ).toBeNull();
@@ -99,19 +99,19 @@ describe('resolveDefaultEmailSender', () => {
       resolveDefaultEmailSender({
         accounts,
         personalFromHandle: 'gone@x.com',
-        workspaceSenderDomain: 'getindexed.ai',
+        workspaceSenderDomain: 'example.com',
         restrictToConnectedAccountId: 'account-b',
       }),
     ).toEqual({
       connectedAccountId: 'account-b',
-      fromHandle: 'ops@getindexed.ai',
+      fromHandle: 'ops@example.com',
     });
 
     expect(
       resolveDefaultEmailSender({
         accounts,
         personalFromHandle: 'gone@x.com',
-        workspaceSenderDomain: 'pageweaver.ai',
+        workspaceSenderDomain: 'acme.com',
         restrictToConnectedAccountId: 'account-b',
       }),
     ).toBeNull();
@@ -123,16 +123,16 @@ describe('resolveDefaultEmailSender', () => {
         accounts: [
           {
             ...accountA,
-            handle: 'primary@getindexed.ai',
-            handleAliases: ['alias@getindexed.ai'],
+            handle: 'primary@example.com',
+            handleAliases: ['alias@example.com'],
           },
         ],
         personalFromHandle: null,
-        workspaceSenderDomain: 'getindexed.ai',
+        workspaceSenderDomain: 'example.com',
       }),
     ).toEqual({
       connectedAccountId: 'account-a',
-      fromHandle: 'primary@getindexed.ai',
+      fromHandle: 'primary@example.com',
     });
   });
 
@@ -146,8 +146,8 @@ describe('resolveDefaultEmailSender', () => {
             connectionParameters: null,
           },
         ],
-        personalFromHandle: 'ops@getindexed.ai',
-        workspaceSenderDomain: 'getindexed.ai',
+        personalFromHandle: 'ops@example.com',
+        workspaceSenderDomain: 'example.com',
       }),
     ).toBeNull();
   });
@@ -161,8 +161,8 @@ describe('resolveDefaultEmailSender', () => {
     expect(
       resolveDefaultEmailSender({
         accounts: [archivedAccount],
-        personalFromHandle: 'ops@getindexed.ai',
-        workspaceSenderDomain: 'getindexed.ai',
+        personalFromHandle: 'ops@example.com',
+        workspaceSenderDomain: 'example.com',
       }),
     ).toBeNull();
   });
@@ -171,10 +171,10 @@ describe('resolveDefaultEmailSender', () => {
     expect(
       resolveDefaultEmailSender({
         accounts: [
-          { ...accountB, handle: 'getindexed.ai', handleAliases: null },
+          { ...accountB, handle: 'example.com', handleAliases: null },
         ],
         personalFromHandle: null,
-        workspaceSenderDomain: 'getindexed.ai',
+        workspaceSenderDomain: 'example.com',
       }),
     ).toBeNull();
   });

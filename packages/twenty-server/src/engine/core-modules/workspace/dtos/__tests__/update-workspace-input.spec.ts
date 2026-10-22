@@ -8,10 +8,10 @@ const toInput = (defaultSenderDomain: unknown) =>
 
 describe('UpdateWorkspaceInput defaultSenderDomain', () => {
   it('normalizes then accepts a padded, mixed-case, @-prefixed domain', async () => {
-    const input = toInput(' @GetIndexed.AI ');
+    const input = toInput(' @Example.COM ');
 
     expect(await validate(input)).toEqual([]);
-    expect(input.defaultSenderDomain).toBe('getindexed.ai');
+    expect(input.defaultSenderDomain).toBe('example.com');
   });
 
   it('turns an empty string into null and accepts it', async () => {
