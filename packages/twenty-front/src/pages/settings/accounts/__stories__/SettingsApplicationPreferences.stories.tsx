@@ -304,6 +304,7 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     expect(
       await canvas.findByRole(
@@ -322,14 +323,6 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
         'Connected',
       ),
     ).toBeVisible();
-    expect(
-      withinTableRowOrThrow({ canvasElement, text: 'Work Linear' }).queryByRole(
-        'button',
-        {
-          name: 'Reconnect',
-        },
-      ),
-    ).not.toBeInTheDocument();
 
     const reconnectNeededRow = withinTableRowOrThrow({
       canvasElement,
@@ -337,9 +330,6 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
     });
 
     expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
-    expect(
-      reconnectNeededRow.getByRole('button', { name: 'Reconnect' }),
-    ).toBeVisible();
 
     const archivedRow = withinTableRowOrThrow({
       canvasElement,
@@ -347,10 +337,6 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
     });
 
     expect(archivedRow.getByText('Disconnected')).toBeVisible();
-    expect(
-      archivedRow.queryByRole('button', { name: 'Reconnect' }),
-    ).not.toBeInTheDocument();
-    expect(archivedRow.getByRole('button', { name: 'Remove' })).toBeVisible();
 
     const archivedAfterFailureRow = withinTableRowOrThrow({
       canvasElement,
@@ -358,9 +344,36 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
     });
 
     expect(archivedAfterFailureRow.getByText('Disconnected')).toBeVisible();
-    expect(
-      archivedAfterFailureRow.queryByRole('button', { name: 'Reconnect' }),
-    ).not.toBeInTheDocument();
+
+    for (const { text, canReconnect } of [
+      { text: 'Work Linear', canReconnect: false },
+      { text: 'tim.cook@linear.app', canReconnect: true },
+      { text: 'old@linear.app', canReconnect: false },
+      { text: 'left@linear.app', canReconnect: false },
+    ]) {
+      await userEvent.click(
+        withinTableRowOrThrow({ canvasElement, text }).getByRole('button', {
+          name: 'More options',
+        }),
+      );
+
+      expect(
+        await body.findByRole('menuitem', { name: 'Remove' }),
+      ).toBeVisible();
+
+      if (canReconnect) {
+        expect(body.getByRole('menuitem', { name: 'Reconnect' })).toBeVisible();
+      } else {
+        expect(
+          body.queryByRole('menuitem', { name: 'Reconnect' }),
+        ).not.toBeInTheDocument();
+      }
+
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+      );
+    }
 
     expect(canvas.queryByText('shared@linear.app')).not.toBeInTheDocument();
     expect(canvas.queryByText('teammate@linear.app')).not.toBeInTheDocument();
@@ -404,16 +417,21 @@ export const ReconnectStartsTheOAuthFlow: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     await canvas.findByText('tim.cook@linear.app', undefined, {
       timeout: 3000,
     });
 
-    const redirectUrl = await clickAndCaptureOAuthRedirect(
+    await userEvent.click(
       withinTableRowOrThrow({
         canvasElement,
         text: 'tim.cook@linear.app',
-      }).getByRole('button', { name: 'Reconnect' }),
+      }).getByRole('button', { name: 'More options' }),
+    );
+
+    const redirectUrl = await clickAndCaptureOAuthRedirect(
+      await body.findByRole('menuitem', { name: 'Reconnect' }),
     );
 
     expect(generateTransientToken).toHaveBeenCalledTimes(1);
@@ -448,7 +466,10 @@ export const RowRemoveDeletesTheConnection: Story = {
       withinTableRowOrThrow({
         canvasElement,
         text: 'tim.cook@linear.app',
-      }).getByRole('button', { name: 'Remove' }),
+      }).getByRole('button', { name: 'More options' }),
+    );
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Remove' }),
     );
     await userEvent.click(
       await within(
@@ -483,6 +504,7 @@ export const UnconfiguredProviderExplainsWhoMustSetItUp: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     expect(
       await canvas.findByText(
@@ -494,18 +516,16 @@ export const UnconfiguredProviderExplainsWhoMustSetItUp: Story = {
     expect(
       canvas.queryByRole('button', { name: 'Add connection' }),
     ).not.toBeInTheDocument();
-    expect(
+    await userEvent.click(
       withinTableRowOrThrow({
         canvasElement,
         text: 'tim.cook@linear.app',
-      }).queryByRole('button', { name: 'Reconnect' }),
+      }).getByRole('button', { name: 'More options' }),
+    );
+    expect(await body.findByRole('menuitem', { name: 'Remove' })).toBeVisible();
+    expect(
+      body.queryByRole('menuitem', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();
-    expect(
-      withinTableRowOrThrow({
-        canvasElement,
-        text: 'tim.cook@linear.app',
-      }).getByRole('button', { name: 'Remove' }),
-    ).toBeVisible();
   },
 };
 
