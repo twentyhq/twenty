@@ -43,7 +43,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
-    "@vitest/browser-playwright": "^4.1.0",
+    "@vitest/browser-playwright": "^4.1.12",
     "monaco-editor": "0.52.2",
     "playwright": "^1.60.0",
     "prettier": "^3.1.1",

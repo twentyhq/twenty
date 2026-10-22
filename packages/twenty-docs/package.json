@@ -20,7 +20,7 @@
     "tsx": "^4.19.3",
     "twenty-shared": "workspace:*",
     "unist-util-visit": "^5.0.0",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.12"
   },
   "engines": {
     "node": "^24.5.0",
