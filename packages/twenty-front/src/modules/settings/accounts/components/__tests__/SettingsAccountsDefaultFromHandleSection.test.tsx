@@ -22,18 +22,26 @@ jest.mock('@apollo/client/react', () => ({
   useMutation: () => [mockUpdateMyDefaultFromHandle, { loading: false }],
 }));
 
-const renderSection = (defaultFromHandle: string | null) => {
+const renderSection = (
+  defaultFromHandle: string | null,
+  hasSendableAccount = true,
+) => {
   const store = createStore();
-  store.set(myConnectedAccountsState.atom, [
-    {
-      id: 'account-id',
-      handle: 'me@getindexed.ai',
-      provider: ConnectedAccountProvider.GOOGLE,
-      handleAliases: ['alias@getindexed.ai'],
-      scopes: ['https://www.googleapis.com/auth/gmail.send'],
-      connectionParameters: null,
-    },
-  ] as never);
+  store.set(
+    myConnectedAccountsState.atom,
+    hasSendableAccount
+      ? ([
+          {
+            id: 'account-id',
+            handle: 'me@getindexed.ai',
+            provider: ConnectedAccountProvider.GOOGLE,
+            handleAliases: ['alias@getindexed.ai'],
+            scopes: ['https://www.googleapis.com/auth/gmail.send'],
+            connectionParameters: null,
+          },
+        ] as never)
+      : [],
+  );
   store.set(currentUserWorkspaceState.atom, {
     permissionFlags: [],
     objectsPermissions: [],
@@ -57,6 +65,18 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
     mockUpdateMyDefaultFromHandle.mockResolvedValue({
       data: { updateMyDefaultFromHandle: true },
     });
+  });
+
+  it('renders nothing without a sendable account', () => {
+    renderSection(null, false);
+
+    expect(screen.queryByText('My default From address')).toBeNull();
+  });
+
+  it('renders for a sendable account regardless of channel sync', () => {
+    renderSection(null);
+
+    expect(screen.getByText('My default From address')).toBeVisible();
   });
 
   it('offers automatic plus each sendable handle', async () => {

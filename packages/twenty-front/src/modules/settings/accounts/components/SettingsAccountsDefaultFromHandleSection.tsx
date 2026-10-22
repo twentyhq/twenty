@@ -36,6 +36,10 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
       }),
   );
 
+  if (sendableAccounts.length === 0) {
+    return null;
+  }
+
   const options = [
     { label: t`Automatic (workspace domain)`, value: null },
     ...buildConnectedAccountSenderOptions(sendableAccounts),

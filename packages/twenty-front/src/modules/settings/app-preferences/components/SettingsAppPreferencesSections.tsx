@@ -1,3 +1,4 @@
+import { SettingsAccountsDefaultFromHandleSection } from '@/settings/accounts/components/SettingsAccountsDefaultFromHandleSection';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
 import { SettingsAppPreferencesAppsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesAppsSection';
@@ -14,6 +15,7 @@ export const SettingsAppPreferencesSections = () => {
 
   return (
     <>
+      <SettingsAccountsDefaultFromHandleSection />
       <SettingsAccountGroupsSection />
       {(hasBuiltInAccountApps ||
         isNonEmptyArray(applicationsWithPreferences) ||

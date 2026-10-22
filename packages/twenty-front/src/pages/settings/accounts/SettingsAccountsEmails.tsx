@@ -54,18 +54,18 @@ export const SettingsAccountsEmails = () => {
       return <SettingsSectionSkeletonLoader />;
     }
 
-    if (messageChannels.length === 0) {
-      return <SettingsNewAccountSection />;
-    }
-
     return (
       <>
         <SettingsAccountsDefaultFromHandleSection />
-        <Section.Root>
-          <SettingsAccountsMessageChannelsContainer
-            messageChannels={messageChannels}
-          />
-        </Section.Root>
+        {messageChannels.length === 0 ? (
+          <SettingsNewAccountSection />
+        ) : (
+          <Section.Root>
+            <SettingsAccountsMessageChannelsContainer
+              messageChannels={messageChannels}
+            />
+          </Section.Root>
+        )}
       </>
     );
   };
