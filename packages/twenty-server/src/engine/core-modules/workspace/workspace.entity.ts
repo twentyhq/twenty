@@ -280,6 +280,14 @@ export class WorkspaceEntity {
   @Column({ type: 'varchar', unique: true, nullable: true })
   customDomain: string | null;
 
+  @Field(() => String, { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.51.0_AddDefaultSenderSettingsFastInstanceCommand_1792675630235',
+  })
+  @Column({ type: 'varchar', nullable: true })
+  defaultSenderDomain: string | null;
+
   @Field()
   @Column({ default: true })
   isGoogleAuthEnabled: boolean;

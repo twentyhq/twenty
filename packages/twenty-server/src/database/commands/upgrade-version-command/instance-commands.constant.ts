@@ -253,6 +253,7 @@ import { DropBillingMeterTableFastInstanceCommand } from 'src/database/commands/
 import { AddContentSha256ToFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792581115000-add-content-sha256-to-file';
 import { RepairApplicationRegistrationVersionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792655604265-repair-application-registration-versions';
 import { RepairBackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792655604266-repair-backfill-application-registration-versions';
+import { AddDefaultSenderSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792675630235-add-default-sender-settings';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -508,4 +509,5 @@ export const INSTANCE_COMMANDS = [
   AddContentSha256ToFileFastInstanceCommand,
   RepairApplicationRegistrationVersionsFastInstanceCommand,
   RepairBackfillApplicationRegistrationVersionsSlowInstanceCommand,
+  AddDefaultSenderSettingsFastInstanceCommand,
 ];

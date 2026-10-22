@@ -3,6 +3,9 @@ import { Field, InputType } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
+import { normalizeSenderDomain } from 'twenty-shared/utils';
+
+import { Transform } from 'class-transformer';
 
 import {
   IsArray,
@@ -36,6 +39,12 @@ export class UpdateWorkspaceInput {
     /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/,
   )
   customDomain?: string;
+
+  @Field(() => String, { nullable: true })
+  @Transform(({ value }) => normalizeSenderDomain(value))
+  @IsOptional()
+  @Matches(/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/)
+  defaultSenderDomain?: string | null;
 
   @Field({ nullable: true })
   @IsString()

@@ -17,6 +17,7 @@ import {
   isAutoSelectModelId,
   isDefined,
   normalizeAllowedIframeOrigin,
+  normalizeSenderDomain,
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
@@ -130,6 +131,7 @@ export class WorkspaceService {
   > = {
     subdomain: PermissionFlagType.WORKSPACE,
     customDomain: PermissionFlagType.WORKSPACE,
+    defaultSenderDomain: PermissionFlagType.WORKSPACE,
     displayName: PermissionFlagType.WORKSPACE,
     logo: PermissionFlagType.WORKSPACE,
     trashRetentionDays: PermissionFlagType.WORKSPACE,
@@ -469,6 +471,14 @@ export class WorkspaceService {
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
+        // ResolverValidationPipe validates a transformed copy but passes the raw input on
+        ...(payload.defaultSenderDomain !== undefined
+          ? {
+              defaultSenderDomain: normalizeSenderDomain(
+                payload.defaultSenderDomain,
+              ),
+            }
+          : {}),
         ...(payload.customDomain === null
           ? { isCustomDomainEnabled: false }
           : {}),
