@@ -6,7 +6,6 @@ import { Select } from '@/ui/input/components/Select';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
 import { getDatePickerDropdownIds } from '@/ui/input/components/internal/date/utils/getDatePickerDropdownIds';
-import { DATE_PICKER_YEAR_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/DatePickerYearSelectOptions';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
@@ -15,6 +14,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+
+const YEARS_SELECT_OPTIONS = Array.from(
+  { length: 200 },
+  (_, i) => new Date().getFullYear() + 50 - i,
+).map((year) => ({ label: year.toString(), value: year }));
 
 const StyledCustomDatePickerHeader = styled.div`
   align-items: center;
@@ -30,7 +34,6 @@ const StyledCustomDatePickerHeader = styled.div`
 type DatePickerHeaderProps = {
   instanceId: string;
   date: string | null;
-  viewedMonth?: string;
   onChange?: (date: string | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
@@ -44,7 +47,6 @@ type DatePickerHeaderProps = {
 export const DatePickerHeader = ({
   instanceId,
   date,
-  viewedMonth,
   onChange,
   onChangeMonth,
   onChangeYear,
@@ -61,9 +63,6 @@ export const DatePickerHeader = ({
     getDatePickerDropdownIds(instanceId);
 
   const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;
-  const displayedMonth = isDefined(viewedMonth)
-    ? Temporal.PlainYearMonth.from(viewedMonth)
-    : dateParsed;
 
   return (
     <>
@@ -73,14 +72,14 @@ export const DatePickerHeader = ({
           dropdownId={monthSelectDropdownId}
           options={getMonthSelectOptions(userLocale)}
           onChange={onChangeMonth}
-          value={displayedMonth?.month}
+          value={dateParsed?.month}
           fullWidth
         />
         <Select
           dropdownId={yearSelectDropdownId}
           onChange={onChangeYear}
-          value={displayedMonth?.year}
-          options={DATE_PICKER_YEAR_SELECT_OPTIONS}
+          value={dateParsed?.year}
+          options={YEARS_SELECT_OPTIONS}
           fullWidth
         />
         <LightIconButton

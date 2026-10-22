@@ -3,7 +3,7 @@ import { FirstDayOfTheWeek } from '@/types';
 
 export const convertFirstDayOfTheWeekToCalendarStartDayNumber = (
   firstDayOfTheWeek: FirstDayOfTheWeek,
-): Exclude<CalendarStartDay, CalendarStartDay.SYSTEM> => {
+): CalendarStartDay => {
   switch (firstDayOfTheWeek) {
     case FirstDayOfTheWeek.MONDAY:
       return CalendarStartDay.MONDAY;
