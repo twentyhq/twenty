@@ -59,12 +59,7 @@ function CrossMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
       width={sizePx}
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="m5.5 5.5 5 5m0-5-5 5" stroke={color} strokeWidth={strokeWidth} />
-      <path
-        d="M8 14a6 6 0 1 0-4.243-1.757"
-        stroke={color}
-        strokeWidth={strokeWidth}
-      />
+      <path d="m1 4 8 8m0-8-8 8" stroke={color} strokeWidth={strokeWidth} />
     </svg>
   );
 }
@@ -208,6 +203,25 @@ function TagMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   );
 }
 
+function TickMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height={sizePx}
+      viewBox="0 0 16 16"
+      width={sizePx}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="m1 8.5 3.5 3.5L11 4.5"
+        stroke={color}
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+}
+
 function UsersMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   return (
     <svg
@@ -252,6 +266,7 @@ export const INFORMATIVE_MARKS: Record<
   | 'info'
   | 'search'
   | 'tag'
+  | 'tick'
   | 'users',
   ComponentType<InformativeMarkProps>
 > = {
@@ -264,5 +279,6 @@ export const INFORMATIVE_MARKS: Record<
   info: InfoMark,
   search: SearchMark,
   tag: TagMark,
+  tick: TickMark,
   users: UsersMark,
 };
