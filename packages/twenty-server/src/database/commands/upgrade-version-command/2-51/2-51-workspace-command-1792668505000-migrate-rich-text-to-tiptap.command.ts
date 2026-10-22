@@ -28,7 +28,7 @@ type RichTextRecordRow = {
 
 const NIL_UUID = '00000000-0000-0000-0000-000000000000';
 
-@RegisteredWorkspaceCommand('2.51.0', 1792524106000)
+@RegisteredWorkspaceCommand('2.51.0', 1792668505000)
 @Command({
   name: 'upgrade:2-51:migrate-rich-text-to-tiptap',
   description:
