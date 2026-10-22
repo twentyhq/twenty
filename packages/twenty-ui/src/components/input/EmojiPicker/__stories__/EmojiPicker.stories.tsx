@@ -11,7 +11,7 @@ const meta: Meta<typeof EmojiPickerExample> = {
   title: 'UI/Components/Input/EmojiPicker',
   component: EmojiPickerExample,
   decorators: [ComponentDecorator],
-  beforeEach: mockEmojiPickerStoryData,
+  beforeEach: () => mockEmojiPickerStoryData(),
   args: {
     searchLabel: 'Search emojis',
     loadingLabel: 'Loading emojis',

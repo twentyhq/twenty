@@ -3281,7 +3281,7 @@
       },
       {
         "name": "locale",
-        "type": "Locale",
+        "type": "string",
         "required": false,
         "defaultValue": "en",
         "description": "Emoji catalogue locale. The caller must host its data and message files. Interface labels are supplied separately."

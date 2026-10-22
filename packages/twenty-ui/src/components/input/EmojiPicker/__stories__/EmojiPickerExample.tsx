@@ -13,6 +13,7 @@ const EMOJI_PICKER_STORY_WIDTH_PX = 296;
 type EmojiPickerExampleProps = Partial<
   Pick<
     EmojiPickerProps,
+    | 'emojibaseUrl'
     | 'searchLabel'
     | 'searchPlaceholder'
     | 'loadingLabel'
@@ -23,6 +24,7 @@ type EmojiPickerExampleProps = Partial<
 >;
 
 export const EmojiPickerExample = ({
+  emojibaseUrl = EMOJI_PICKER_STORY_EMOJIBASE_URL,
   searchLabel = 'Search emojis',
   searchPlaceholder,
   loadingLabel = 'Loading emojis',
@@ -42,7 +44,7 @@ export const EmojiPickerExample = ({
       }}
     >
       <EmojiPicker
-        emojibaseUrl={EMOJI_PICKER_STORY_EMOJIBASE_URL}
+        emojibaseUrl={emojibaseUrl}
         searchLabel={searchLabel}
         searchPlaceholder={searchPlaceholder}
         loadingLabel={loadingLabel}

@@ -3,10 +3,15 @@ import { spyOn } from 'storybook/test';
 import { EMOJI_PICKER_STORY_DATA } from './emojiPickerStoryData';
 import { EMOJI_PICKER_STORY_EMOJIBASE_URL } from './emojiPickerStoryEmojibaseUrl';
 
-const EMOJI_PICKER_STORY_DATA_PATH = `${EMOJI_PICKER_STORY_EMOJIBASE_URL}/en/data.json`;
-const EMOJI_PICKER_STORY_MESSAGES_PATH = `${EMOJI_PICKER_STORY_EMOJIBASE_URL}/en/messages.json`;
-
-export const mockEmojiPickerStoryData = () => {
+export const mockEmojiPickerStoryData = ({
+  emojibaseUrl = EMOJI_PICKER_STORY_EMOJIBASE_URL,
+  emojis = EMOJI_PICKER_STORY_DATA.emojis,
+}: {
+  emojibaseUrl?: string;
+  emojis?: typeof EMOJI_PICKER_STORY_DATA.emojis;
+} = {}) => {
+  const dataPath = `${emojibaseUrl}/en/data.json`;
+  const messagesPath = `${emojibaseUrl}/en/messages.json`;
   const originalFetch = globalThis.fetch;
   const mockedFetch = spyOn(globalThis, 'fetch').mockImplementation(
     (...parameters: Parameters<typeof fetch>) => {
@@ -17,16 +22,16 @@ export const mockEmojiPickerStoryData = () => {
       );
       const isStoryDataRequest =
         requestUrl.origin === window.location.origin &&
-        (requestUrl.pathname === EMOJI_PICKER_STORY_DATA_PATH ||
-          requestUrl.pathname === EMOJI_PICKER_STORY_MESSAGES_PATH);
+        (requestUrl.pathname === dataPath ||
+          requestUrl.pathname === messagesPath);
 
       if (!isStoryDataRequest) {
         return originalFetch(...parameters);
       }
 
       const responseBody =
-        requestUrl.pathname === EMOJI_PICKER_STORY_DATA_PATH
-          ? EMOJI_PICKER_STORY_DATA.emojis
+        requestUrl.pathname === dataPath
+          ? emojis
           : EMOJI_PICKER_STORY_DATA.messages;
 
       return Promise.resolve(

@@ -12,7 +12,7 @@ const meta: Meta<typeof EmojiPickerExample> = {
   component: EmojiPickerExample,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
-  beforeEach: mockEmojiPickerStoryData,
+  beforeEach: () => mockEmojiPickerStoryData(),
   args: { onEmojiSelect: fn() },
 };
 
@@ -24,7 +24,15 @@ export const SearchAndPointerSelection: Story = {
     const canvas = within(canvasElement);
     const search = canvas.getByRole('searchbox', { name: 'Search emojis' });
 
-    await canvas.findByRole('gridcell', { name: 'Thumbs up' });
+    const firstEmoji = await canvas.findByRole('gridcell', {
+      name: 'Thumbs up',
+    });
+
+    await expect(firstEmoji).toHaveAttribute('aria-colindex', '1');
+    await expect(firstEmoji.closest('[role="row"]')).toHaveAttribute(
+      'aria-rowindex',
+      '1',
+    );
     await userEvent.type(search, 'celebrate');
     await waitFor(() =>
       expect(

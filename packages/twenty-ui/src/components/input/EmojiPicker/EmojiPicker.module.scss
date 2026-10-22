@@ -6,7 +6,7 @@
 
   [frimousse-category-header] {
     background: var(--t-background-primary);
-    color: var(--t-font-color-tertiary);
+    color: var(--t-font-color-secondary);
     font-size: var(--t-font-size-xs);
     padding: var(--t-spacing-1) var(--t-spacing-2);
   }
@@ -41,7 +41,7 @@
 }
 
 .message {
-  color: var(--t-font-color-tertiary);
+  color: var(--t-font-color-secondary);
   display: block;
   font-size: var(--t-font-size-sm);
   padding: var(--t-spacing-3);

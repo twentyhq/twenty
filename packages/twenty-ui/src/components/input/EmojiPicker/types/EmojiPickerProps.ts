@@ -1,4 +1,3 @@
-import { type EmojiPickerRootProps } from 'frimousse';
 import { type ComponentPropsWithRef } from 'react';
 
 export type EmojiPickerProps = Omit<
@@ -6,7 +5,7 @@ export type EmojiPickerProps = Omit<
   'children'
 > & {
   emojibaseUrl: string;
-  locale?: EmojiPickerRootProps['locale'];
+  locale?: string;
   searchLabel: string;
   searchPlaceholder?: string;
   loadingLabel: string;
