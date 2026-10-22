@@ -150,7 +150,8 @@ const StyledEditorContainer = styled.div<{
       padding-left: var(--editor-quote-indent);
     }
 
-    .node-image {
+    .node-image,
+    .node-file {
       margin-bottom: var(--editor-block-spacing);
     }
 
@@ -256,10 +257,6 @@ const StyledEditorContainer = styled.div<{
 
     &.resize-cursor {
       cursor: col-resize;
-    }
-
-    [data-type='file'] {
-      margin-bottom: var(--editor-block-spacing);
     }
 
     .block-section {

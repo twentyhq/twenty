@@ -4,6 +4,7 @@ import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AdvancedTextEditorExtensionContext } from '@/advanced-text-editor/types/AdvancedTextEditorExtensionContext';
+import { getPositionAfterCursorBlock } from '@/advanced-text-editor/utils/getPositionAfterCursorBlock';
 import { insertUploadingFile } from '@/advanced-text-editor/utils/insertUploadingFile';
 import { insertUploadingImage } from '@/advanced-text-editor/utils/insertUploadingImage';
 import { isImageFile } from '@/advanced-text-editor/utils/isImageFile';
@@ -48,12 +49,8 @@ export const UploadExtension = Extension.create<
       return [];
     }
 
-    const insertUploadingFiles = (
-      editor: Editor,
-      files: File[],
-      pos?: number,
-    ) =>
-      files.forEach((file) => {
+    const insertUploadingFiles = (editor: Editor, files: File[], pos: number) =>
+      [...files].reverse().forEach((file) => {
         if (isImageFile(file) && isDefined(onImageUpload)) {
           insertUploadingImage({
             editor,
@@ -83,7 +80,12 @@ export const UploadExtension = Extension.create<
           ? undefined
           : [...EMAIL_IMAGE_MIME_TYPES],
         consumePasteEvent: true,
-        onPaste: (editor, files) => insertUploadingFiles(editor, files),
+        onPaste: (editor, files) =>
+          insertUploadingFiles(
+            editor,
+            files,
+            getPositionAfterCursorBlock(editor.state),
+          ),
         onDrop: (editor, files, pos) =>
           insertUploadingFiles(editor, files, pos),
       }),
