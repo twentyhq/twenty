@@ -27,6 +27,7 @@ import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/
 import { Dropdown as LegacyDropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
@@ -137,7 +138,7 @@ export const AiChatThreadDetailsDropdown = ({
           // The details are read first, so focus stays off the first chip
           initialFocus={() => dropdownContentRef.current}
           align="start"
-          width={400}
+          width={GenericDropdownContentWidth.ExtraExtraLarge}
           aria-label={t`Chat details`}
         >
           <StyledDetails>

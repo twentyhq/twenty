@@ -3,4 +3,5 @@ export enum GenericDropdownContentWidth {
   Medium = 200,
   Large = 240,
   ExtraLarge = 320,
+  ExtraExtraLarge = 400,
 }
