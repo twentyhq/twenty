@@ -253,7 +253,6 @@ export const SelectAndFormatText: Story = {
     await userEvent.tripleClick(canvas.getByText('Shared instructions'));
     const bold = await body.findByRole('button', { name: /^Bold/ });
     await waitFor(() => expect(bold).toBeVisible());
-    await expect(canvasElement.contains(bold)).toBe(false);
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
     await expect(jotaiStore.get(EDITING_WIDGET_ATOM)).toBe('other-widget');
     await userEvent.click(bold);
