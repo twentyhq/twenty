@@ -31,12 +31,14 @@ export class RecordExportQueryService {
   async buildContext({
     parameters,
     authContext,
+    shouldIncludeInactiveFields = false,
   }: {
     parameters: Pick<
       RecordExportParameters,
       'objectMetadataId' | 'fieldMetadataIds'
     >;
     authContext: WorkspaceAuthContext;
+    shouldIncludeInactiveFields?: boolean;
   }): Promise<RecordExportQueryContext> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(
@@ -76,7 +78,10 @@ export class RecordExportQueryService {
         i18nContext: getI18nContext(field.applicationId),
       }),
     );
-    if (fields.some((field) => !field.isActive)) {
+    if (
+      !shouldIncludeInactiveFields &&
+      fields.some((field) => !field.isActive)
+    ) {
       throw new BadRequestException(t`An export field is no longer available.`);
     }
     const columns = buildRecordExportColumns(
@@ -85,6 +90,7 @@ export class RecordExportQueryService {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
+        shouldIncludeInactiveFields,
       }),
     );
     const node: CommonSelectedFields = {};

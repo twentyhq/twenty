@@ -9,7 +9,7 @@ import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-ob
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 
 const isExportableField = (field: FlatFieldMetadata): boolean => {
-  if (!field.isActive || field.type === FieldMetadataType.TS_VECTOR) {
+  if (field.type === FieldMetadataType.TS_VECTOR) {
     return false;
   }
 
@@ -35,7 +35,6 @@ export const buildWorkspaceDataExportObjectSelections = ({
 }): WorkspaceDataExportObjectSelection[] =>
   Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
     .filter(isDefined)
-    .filter((flatObjectMetadata) => flatObjectMetadata.isActive)
     .sort((left, right) => left.nameSingular.localeCompare(right.nameSingular))
     .map((flatObjectMetadata) => {
       const fieldMetadataIds = findManyFlatEntityByIdInFlatEntityMaps({

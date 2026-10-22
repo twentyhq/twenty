@@ -170,6 +170,7 @@ export class WorkspaceDataExportService {
             fieldMetadataIds,
           },
           authContext,
+          shouldIncludeInactiveFields: true,
         });
 
         return {
