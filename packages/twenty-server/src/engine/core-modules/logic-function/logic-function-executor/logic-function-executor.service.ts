@@ -600,7 +600,7 @@ export class LogicFunctionExecutorService {
       })),
     );
 
-    await this.eventLogEmitterService.recordApplicationMetricEvents([
+    void this.eventLogEmitterService.recordApplicationMetricEvents([
       buildLogicFunctionRunMetricEvent({
         result,
         flatApplication,
