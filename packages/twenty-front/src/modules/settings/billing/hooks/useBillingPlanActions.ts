@@ -65,7 +65,6 @@ export const useBillingPlanActions = ({
   const displayedPlanKeys = comparedPlanKeys.includes(currentPlanKey)
     ? comparedPlanKeys
     : [currentPlanKey, ...comparedPlanKeys];
-  // Three plan columns leave no room for titles naming the target
   const hasShortChangeTitles = displayedPlanKeys.length > 2;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const subscriptionStatus = useSubscriptionStatus();
