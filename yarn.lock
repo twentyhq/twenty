@@ -7686,17 +7686,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:12.0.1":
-  version: 12.0.1
-  resolution: "@graphql-tools/utils@npm:12.0.1"
+"@graphql-tools/utils@npm:12.0.4":
+  version: 12.0.4
+  resolution: "@graphql-tools/utils@npm:12.0.4"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
-    "@whatwg-node/promise-helpers": "npm:^1.0.0"
+    "@whatwg-node/promise-helpers": "npm:^2.0.0"
     cross-inspect: "npm:1.0.1"
     tslib: "npm:^2.4.0"
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: 10c0/46a8878618090524241fd434c5e08d5f2885c7c8d8ec762b3828eff064f74fd446d03c1379d1bce80039e7d4f730fa9a3cfd6e005d3c70b852c712cdb6139f7a
+  checksum: 10c0/778814487b4cc07aba428143ced4a7dd9ab367752dbb6aeedeea57bec0a7f1ccb24b8cccbf384a538be5e3c336557b6b77be01c4431e94fa4ad255b690a464cb
   languageName: node
   linkType: hard
 
@@ -50811,7 +50811,7 @@ __metadata:
     "@faker-js/faker": "npm:10.5.0"
     "@file-type/pdf": "npm:^0.3.0"
     "@graphql-tools/schema": "npm:10.0.4"
-    "@graphql-tools/utils": "npm:12.0.1"
+    "@graphql-tools/utils": "npm:12.0.4"
     "@graphql-yoga/nestjs": "npm:2.1.0"
     "@jrmdayn/googleapis-batcher": "npm:^0.10.1"
     "@lifeomic/axios-fetch": "npm:^3.1.0"

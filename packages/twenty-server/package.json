@@ -44,7 +44,7 @@
     "@faker-js/faker": "10.5.0",
     "@file-type/pdf": "^0.3.0",
     "@graphql-tools/schema": "10.0.4",
-    "@graphql-tools/utils": "12.0.1",
+    "@graphql-tools/utils": "12.0.4",
     "@graphql-yoga/nestjs": "2.1.0",
     "@jrmdayn/googleapis-batcher": "^0.10.1",
     "@lifeomic/axios-fetch": "^3.1.0",
