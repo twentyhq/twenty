@@ -1802,6 +1802,9 @@ export default {
             "downgradePlanKeys": [
                 92
             ],
+            "isCheckoutDefault": [
+                4
+            ],
             "isSellable": [
                 4
             ],

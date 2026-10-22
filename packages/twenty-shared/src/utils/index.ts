@@ -156,6 +156,7 @@ export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordG
 export { getFilterOperandsForFilterableFieldType } from './filter/utils/getFilterOperandsForFilterableFieldType';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
+export { isFieldReferenceFilterOperator } from './filter/utils/isFieldReferenceFilterOperator';
 export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
 export { isMatchingBooleanFilter } from './filter/utils/isMatchingBooleanFilter';
 export type { CompositeSubFieldMatcher } from './filter/utils/isMatchingCompositeFilter';
@@ -172,6 +173,7 @@ export { isMatchingSelectFilter } from './filter/utils/isMatchingSelectFilter';
 export { isMatchingStringFilter } from './filter/utils/isMatchingStringFilter';
 export { isMatchingTSVectorFilter } from './filter/utils/isMatchingTSVectorFilter';
 export { isMatchingUUIDFilter } from './filter/utils/isMatchingUUIDFilter';
+export { parseFieldReferenceFilterValue } from './filter/utils/parseFieldReferenceFilterValue';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export {
   strictArrayOfUuidOrVariableSchema,

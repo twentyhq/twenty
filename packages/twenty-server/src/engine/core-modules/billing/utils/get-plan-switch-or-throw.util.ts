@@ -6,18 +6,23 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { BILLING_PLAN_SWITCHES } from 'src/engine/core-modules/billing/constants/billing-plan-switches.constant';
 import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { type BillingPlansConfig } from 'src/engine/core-modules/billing/types/billing-plans-config.type';
+import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 
 export const getPlanSwitchOrThrow = ({
   currentPlanKey,
   targetPlanKey,
+  plansConfig,
 }: {
   currentPlanKey: BillingPlanKey;
   targetPlanKey?: BillingPlanKey;
+  plansConfig: BillingPlansConfig;
 }): { targetPlanKey: BillingPlanKey } => {
-  const { upgradePlanKeys, downgradePlanKeys } =
-    BILLING_PLAN_SWITCHES[currentPlanKey];
+  const { upgradePlanKeys, downgradePlanKeys } = getBillingPlanConfig({
+    plansConfig,
+    planKey: currentPlanKey,
+  });
   const allowedTargetPlanKeys = [...upgradePlanKeys, ...downgradePlanKeys];
 
   if (!isDefined(targetPlanKey) && allowedTargetPlanKeys.length !== 1) {

@@ -729,6 +729,7 @@ export interface BillingPaymentIntent {
 export interface BillingPlan {
     baseProducts: BillingLicensedProduct[]
     downgradePlanKeys: BillingPlanKey[]
+    isCheckoutDefault: Scalars['Boolean']
     isSellable: Scalars['Boolean']
     meteredProducts: BillingMeteredProduct[]
     planKey: BillingPlanKey
@@ -4778,6 +4779,7 @@ export interface BillingPaymentIntentGenqlSelection{
 export interface BillingPlanGenqlSelection{
     baseProducts?: BillingLicensedProductGenqlSelection
     downgradePlanKeys?: boolean | number
+    isCheckoutDefault?: boolean | number
     isSellable?: boolean | number
     meteredProducts?: BillingMeteredProductGenqlSelection
     planKey?: boolean | number

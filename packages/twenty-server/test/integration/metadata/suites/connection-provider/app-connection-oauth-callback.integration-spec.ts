@@ -23,17 +23,11 @@ import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
-import { type LegacyAppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
-import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
-import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const APPLICATION_IDENTIFIER = v4();
 const PROVIDER_IDENTIFIER = v4();
@@ -128,7 +122,6 @@ describe('app connection OAuth callback', () => {
         providerName,
         transientToken:
           transient.data.generateTransientToken.transientToken.token,
-        scope: 'WORKSPACE',
         reconnectingConnectedAccountId,
         redirectLocation,
       });
@@ -533,33 +526,6 @@ export const handler = ({ connectedAccountId }) => {
         );
       }
     });
-  });
-
-  it('completes the callback for a state signed before visibility was renamed to scope', async () => {
-    const legacyStatePayload: LegacyAppOAuthStateJwtPayload = {
-      sub: provider.id,
-      type: JwtTokenTypeEnum.APP_OAUTH_STATE,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      connectionProviderId: provider.id,
-      userId: USER_DATA_SEED_IDS.JANE,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      visibility: 'workspace',
-      reconnectingConnectedAccountId: null,
-      redirectLocation: null,
-      codeVerifier: null,
-    };
-    const legacyState = await getAppProviderByClassName<JwtWrapperService>(
-      'JwtWrapperService',
-    ).signAsyncOrThrow(legacyStatePayload as unknown as JwtPayload, {
-      expiresIn: 60,
-    });
-
-    const redirect = await callback(legacyState, 'team-a:first');
-
-    expect(redirect.searchParams.get('errorMessage')).toBeNull();
-    expect(await readAccounts()).toMatchObject([
-      { scope: 'WORKSPACE', externalAccountId: 'team-a' },
-    ]);
   });
 
   it('rejects tampered state before exchanging a code or executing the app', async () => {

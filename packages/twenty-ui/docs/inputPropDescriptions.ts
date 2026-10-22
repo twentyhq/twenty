@@ -1,6 +1,8 @@
 import { type InputProps } from '../src/primitives/input/Input/types/InputProps';
 
 export const INPUT_PROP_DESCRIPTIONS = {
+  variant:
+    'default keeps the field frame. plain removes fill, border, radius and padding and uses natural height. Its outline follows native :focus-visible, including pointer focus or autofocus on text inputs; invalid state uses a danger outline. InputGroup always owns the grouped frame.',
   size: 'Visual size. Explicit input size takes precedence over the InputGroup default, then md applies. Group layout still sets the surrounding height.',
   ref: 'Ref to the native input element.',
   render:

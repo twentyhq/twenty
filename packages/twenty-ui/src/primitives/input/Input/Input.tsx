@@ -9,9 +9,16 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from './Input.module.scss';
 import { type InputProps } from './types/InputProps';
 
-export const Input = ({ size, className, ...props }: InputProps) => {
+export const Input = ({
+  size,
+  variant = 'default',
+  className,
+  ...props
+}: InputProps) => {
   const inputGroup = useContext(InputGroupContext);
   const resolvedSize = size ?? inputGroup?.size ?? 'md';
+  const isGrouped = isDefined(inputGroup);
+  const resolvedVariant = isGrouped ? 'plain' : variant;
 
   return (
     <InputPrimitive
@@ -20,7 +27,8 @@ export const Input = ({ size, className, ...props }: InputProps) => {
         clsx(styles.input, styles[resolvedSize]),
         className,
       )}
-      data-grouped={isDefined(inputGroup) || undefined}
+      data-variant={resolvedVariant}
+      data-grouped={isGrouped || undefined}
     />
   );
 };
