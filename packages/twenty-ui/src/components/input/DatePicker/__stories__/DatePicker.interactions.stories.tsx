@@ -4,15 +4,15 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
 
-import { DateCalendar } from '../DateCalendar';
-import { DATE_CALENDAR_WEEKDAY_LABELS } from './dateCalendarWeekdayLabels';
-import { DateCalendarExample } from './DateCalendarExample';
-import { DateCalendarExternalMonthExample } from './DateCalendarExternalMonthExample';
+import { DatePicker } from '../DatePicker';
+import { DATE_PICKER_WEEKDAY_LABELS } from './datePickerWeekdayLabels';
+import { DatePickerExample } from './DatePickerExample';
+import { DatePickerExternalMonthExample } from './DatePickerExternalMonthExample';
 
-const meta: Meta<typeof DateCalendar> = {
-  id: 'ui-components-datecalendar-interactions',
-  title: 'UI/Components/Input/DateCalendar/Interactions',
-  component: DateCalendar,
+const meta: Meta<typeof DatePicker> = {
+  id: 'ui-components-datepicker-interactions',
+  title: 'UI/Components/Input/DatePicker/Interactions',
+  component: DatePicker,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 312 } },
   args: {
@@ -21,7 +21,7 @@ const meta: Meta<typeof DateCalendar> = {
     viewedMonth: '2026-10',
     weekStart: 1,
     locale: 'en-US',
-    weekdayLabels: DATE_CALENDAR_WEEKDAY_LABELS,
+    weekdayLabels: DATE_PICKER_WEEKDAY_LABELS,
     previousMonthLabel: 'Previous month',
     nextMonthLabel: 'Next month',
     monthLabel: 'Month',
@@ -33,13 +33,13 @@ const meta: Meta<typeof DateCalendar> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof DateCalendar>;
+type Story = StoryObj<typeof DatePicker>;
 
 const NEXT_YEAR_OPTION_LABEL = /^2027$/;
 
 export const DayKeyboardNavigation: Story = {
   render: ({ onValueChange, onValueSelect, onViewedMonthChange }) => (
-    <DateCalendarExample
+    <DatePickerExample
       onValueChange={onValueChange}
       onValueSelect={onValueSelect}
       onViewedMonthChange={onViewedMonthChange}
@@ -71,7 +71,7 @@ export const DayKeyboardNavigation: Story = {
 
 export const MonthAndYearControls: Story = {
   render: ({ onValueChange, onViewedMonthChange }) => (
-    <DateCalendarExample
+    <DatePickerExample
       onValueChange={onValueChange}
       onViewedMonthChange={onViewedMonthChange}
     />
@@ -112,7 +112,7 @@ export const MonthAndYearControls: Story = {
 
 export const UnavailableDates: Story = {
   render: ({ onValueChange, onViewedMonthChange }) => (
-    <DateCalendarExample
+    <DatePickerExample
       onValueChange={onValueChange}
       onViewedMonthChange={onViewedMonthChange}
       isDateUnavailable={(date) => date === '2026-10-08'}
@@ -144,7 +144,7 @@ export const UnavailableDates: Story = {
 
 export const MonthBoundaryAndLeapYear: Story = {
   render: ({ onValueChange, onViewedMonthChange }) => (
-    <DateCalendarExample
+    <DatePickerExample
       initialValue="2024-01-31"
       initialViewedMonth="2024-01"
       onValueChange={onValueChange}
@@ -180,7 +180,7 @@ export const MonthBoundaryAndLeapYear: Story = {
 
 export const ExternalMonthChange: Story = {
   render: ({ onValueChange, onViewedMonthChange }) => (
-    <DateCalendarExternalMonthExample
+    <DatePickerExternalMonthExample
       onValueChange={onValueChange}
       onViewedMonthChange={onViewedMonthChange}
     />
@@ -209,7 +209,7 @@ export const ExternalMonthChange: Story = {
 export const RightToLeft: Story = {
   render: () => (
     <DirectionProvider direction="rtl">
-      <DateCalendarExample />
+      <DatePickerExample />
     </DirectionProvider>
   ),
   play: async ({ canvasElement }) => {
@@ -254,14 +254,14 @@ export const SundayStart: Story = {
   play: async ({ canvasElement }) => {
     const headers = await within(canvasElement).findAllByRole('columnheader');
     await expect(headers.map((header) => header.textContent)).toEqual(
-      DATE_CALENDAR_WEEKDAY_LABELS,
+      DATE_PICKER_WEEKDAY_LABELS,
     );
   },
 };
 
 export const RangeReadOnlyNavigation: Story = {
   render: ({ onValueChange, onViewedMonthChange }) => (
-    <DateCalendarExample
+    <DatePickerExample
       initialValue={null}
       highlightedRange={{ start: '2026-10-07', end: '2026-10-09' }}
       readOnly
@@ -293,7 +293,7 @@ export const RangeReadOnlyNavigation: Story = {
 
 export const HeaderOnly: Story = {
   render: ({ onValueChange, onViewedMonthChange }) => (
-    <DateCalendarExample
+    <DatePickerExample
       hideGrid
       onValueChange={onValueChange}
       onViewedMonthChange={onViewedMonthChange}
@@ -313,7 +313,7 @@ export const HeaderOnly: Story = {
 
 export const SameAndAdjacentDates: Story = {
   render: ({ onValueChange, onValueSelect }) => (
-    <DateCalendarExample
+    <DatePickerExample
       onValueChange={onValueChange}
       onValueSelect={onValueSelect}
     />

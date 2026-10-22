@@ -3,19 +3,19 @@ import { isNumber } from '@sniptt/guards';
 import { Select } from '@ui/primitives/input/Select/Select';
 import { useTheme } from '@ui/theme/useTheme';
 
-import { type DateCalendarProps } from '../types/DateCalendarProps';
+import { type DatePickerProps } from '../types/DatePickerProps';
 
-type DateCalendarSelectProps = {
+type DatePickerSelectProps = {
   value: number;
   items: { value: number; label: string }[];
   onValueChange: (value: number) => void;
   label: string;
   disabled?: boolean;
-  portalContainer?: DateCalendarProps['portalContainer'];
+  portalContainer?: DatePickerProps['portalContainer'];
   onOpenChange?: (open: boolean) => void;
 };
 
-export const DateCalendarSelect = ({
+export const DatePickerSelect = ({
   value,
   items,
   onValueChange,
@@ -23,7 +23,7 @@ export const DateCalendarSelect = ({
   disabled,
   portalContainer,
   onOpenChange,
-}: DateCalendarSelectProps) => {
+}: DatePickerSelectProps) => {
   const theme = useTheme();
 
   return (

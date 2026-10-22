@@ -1,4 +1,4 @@
-export type DateCalendarHeaderProps = {
+export type DatePickerHeaderProps = {
   viewedMonth: string;
   onPreviousMonth: () => void;
   onNextMonth: () => void;

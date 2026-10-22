@@ -1,16 +1,16 @@
 ---
-title: DateCalendar
+title: DatePicker
 description: Share the existing calendar engine while browsing months independently from the selected date.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-import DateCalendarReference from '/snippets/ui/generated/components/input/date-calendar.mdx';
+import DatePickerReference from '/snippets/ui/generated/components/input/date-picker.mdx';
 
-`DateCalendar` shares the `react-datepicker` calendar engine used by Twenty's date and date-time inputs. It provides date-only values and independent control over the selected date and viewed month.
+`DatePicker` shares the `react-datepicker` calendar engine used by Twenty's date and date-time inputs. It provides date-only values and independent control over the selected date and viewed month.
 
 <StoryEmbed
-  storyId="ui-components-datecalendar--display"
-  title="DateCalendar example"
+  storyId="ui-components-datepicker--display"
+  title="DatePicker example"
   height={330}
 />
 
@@ -18,14 +18,14 @@ import DateCalendarReference from '/snippets/ui/generated/components/input/date-
 
 ```tsx
 import { useState } from 'react';
-import { DateCalendar } from 'twenty-ui/components/input';
+import { DatePicker } from 'twenty-ui/components/input';
 
 export const ChooseDate = () => {
   const [value, setValue] = useState<string | null>('2026-10-07');
   const [viewedMonth, setViewedMonth] = useState('2026-10');
 
   return (
-    <DateCalendar
+    <DatePicker
       aria-label="Choose a date"
       value={value}
       onValueChange={setValue}
@@ -77,7 +77,7 @@ Use `readOnly` to display a computed range or selected date while allowing month
 
 ## Custom headers
 
-Use `renderHeader` to compose an existing product header with date inputs, time inputs, or application-specific controls. Its `DateCalendarHeaderProps` argument provides these values and actions:
+Use `renderHeader` to compose an existing product header with date inputs, time inputs, or application-specific controls. Its `DatePickerHeaderProps` argument provides these values and actions:
 
 | Property | Purpose |
 | --- | --- |
@@ -91,7 +91,7 @@ These header actions change the viewed month and leave the selected date unchang
 
 ```tsx
 import { useState } from 'react';
-import { DateCalendar } from 'twenty-ui/components/input';
+import { DatePicker } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -101,7 +101,7 @@ export const CalendarWithProductHeader = () => {
   const [viewedMonth, setViewedMonth] = useState('2026-10');
 
   return (
-    <DateCalendar
+    <DatePicker
       aria-label="Choose a date"
       value={value}
       onValueChange={setValue}
@@ -153,4 +153,4 @@ Keep product headers, text inputs, time editing, timezone conversion, clear acti
 
 ## Props
 
-<DateCalendarReference />
+<DatePickerReference />

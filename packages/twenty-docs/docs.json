@@ -657,6 +657,7 @@
                           "ui/components/input/currency-picker",
                           "ui/components/input/phone-country-picker",
                           "ui/components/input/form-field-row",
+                          "ui/components/input/date-picker",
                           "ui/components/input/image-input",
                           "ui/components/input/search-input",
                           "ui/components/input/number-stepper",

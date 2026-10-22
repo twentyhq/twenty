@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { validateDateCalendarHighlightedRangeOrThrow } from '../validateDateCalendarHighlightedRangeOrThrow';
+import { validateDatePickerHighlightedRangeOrThrow } from '../validateDatePickerHighlightedRangeOrThrow';
 
-describe('validateDateCalendarHighlightedRangeOrThrow', () => {
+describe('validateDatePickerHighlightedRangeOrThrow', () => {
   it.each([
     { start: '2026-10-07', end: '2026-10-09' },
     { start: '2026-10-07', end: '2026-10-07' },
     { start: '2026-12-31', end: '2027-01-01' },
   ])('accepts the inclusive range from $start to $end', (range) => {
     expect(() =>
-      validateDateCalendarHighlightedRangeOrThrow(range),
+      validateDatePickerHighlightedRangeOrThrow(range),
     ).not.toThrow();
   });
 
@@ -18,7 +18,7 @@ describe('validateDateCalendarHighlightedRangeOrThrow', () => {
     { start: '2026-2-01', end: '2026-10-07' },
     { start: '2026-10-07', end: '2026-02-30' },
   ])('rejects the invalid range from $start to $end', (range) => {
-    expect(() => validateDateCalendarHighlightedRangeOrThrow(range)).toThrow(
+    expect(() => validateDatePickerHighlightedRangeOrThrow(range)).toThrow(
       RangeError,
     );
   });

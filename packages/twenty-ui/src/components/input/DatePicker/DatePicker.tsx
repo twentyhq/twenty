@@ -11,18 +11,18 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Skeleton } from '@ui/primitives/feedback/Skeleton/Skeleton';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import styles from './DateCalendar.module.scss';
-import { DateCalendarHeader } from './internal/DateCalendarHeader';
-import { DateCalendarViewedMonthEffect } from './internal/DateCalendarViewedMonthEffect';
-import { formatDateCalendarLocalDate } from './internal/formatDateCalendarLocalDate';
-import { parseDateCalendarLocalDateOrThrow } from './internal/parseDateCalendarLocalDateOrThrow';
-import { ReactDateCalendar } from './internal/ReactDateCalendar';
-import { validateDateCalendarHighlightedRangeOrThrow } from './internal/validateDateCalendarHighlightedRangeOrThrow';
-import { type DateCalendarProps } from './types/DateCalendarProps';
+import styles from './DatePicker.module.scss';
+import { DatePickerHeader } from './internal/DatePickerHeader';
+import { DatePickerViewedMonthEffect } from './internal/DatePickerViewedMonthEffect';
+import { formatDatePickerLocalDate } from './internal/formatDatePickerLocalDate';
+import { parseDatePickerLocalDateOrThrow } from './internal/parseDatePickerLocalDateOrThrow';
+import { ReactDatePickerLibrary } from './internal/ReactDatePickerLibrary';
+import { validateDatePickerHighlightedRangeOrThrow } from './internal/validateDatePickerHighlightedRangeOrThrow';
+import { type DatePickerProps } from './types/DatePickerProps';
 
-const DATE_CALENDAR_LOADING_HEIGHT = 300;
+const DATE_PICKER_LOADING_HEIGHT = 300;
 
-export const DateCalendar = ({
+export const DatePicker = ({
   value,
   onValueChange,
   onValueSelect,
@@ -50,7 +50,7 @@ export const DateCalendar = ({
   ref,
   className,
   ...props
-}: DateCalendarProps) => {
+}: DatePickerProps) => {
   const calendarRef = useRef<ReactDatePicker>(null);
   const internalMouseDownRef = useRef<MouseEvent | null>(null);
   const engineViewedMonthRef = useRef(value?.slice(0, 7) ?? viewedMonth);
@@ -58,11 +58,11 @@ export const DateCalendar = ({
   const direction = dir === 'rtl' || dir === 'ltr' ? dir : providedDirection;
 
   if (isDefined(highlightedRange)) {
-    validateDateCalendarHighlightedRangeOrThrow(highlightedRange);
+    validateDatePickerHighlightedRangeOrThrow(highlightedRange);
   }
 
   const handleViewedMonthChange = (date: Date) => {
-    const nextMonth = formatDateCalendarLocalDate(date).slice(0, 7);
+    const nextMonth = formatDatePickerLocalDate(date).slice(0, 7);
     engineViewedMonthRef.current = nextMonth;
 
     if (nextMonth !== viewedMonth) {
@@ -75,7 +75,7 @@ export const DateCalendar = ({
       return;
     }
 
-    onValueChange(formatDateCalendarLocalDate(date));
+    onValueChange(formatDatePickerLocalDate(date));
   };
 
   const calendarProps = {
@@ -86,22 +86,22 @@ export const DateCalendar = ({
         event.preventDefault();
       }
     },
-    minDate: parseDateCalendarLocalDateOrThrow('0001-01-01'),
-    maxDate: parseDateCalendarLocalDateOrThrow('9999-12-31'),
+    minDate: parseDatePickerLocalDateOrThrow('0001-01-01'),
+    maxDate: parseDatePickerLocalDateOrThrow('9999-12-31'),
     disabled,
     disabledKeyboardNavigation,
-    openToDate: parseDateCalendarLocalDateOrThrow(`${viewedMonth}-01`),
+    openToDate: parseDatePickerLocalDateOrThrow(`${viewedMonth}-01`),
     calendarStartDay: weekStart,
     onMonthChange: handleViewedMonthChange,
     onYearChange: handleViewedMonthChange,
     filterDate: (date: Date) =>
-      !isDateUnavailable?.(formatDateCalendarLocalDate(date)),
+      !isDateUnavailable?.(formatDatePickerLocalDate(date)),
     onSelect: (date: Date | null) => {
       if (readOnly || disabled || !isDefined(date)) {
         return;
       }
 
-      const nextValue = formatDateCalendarLocalDate(date);
+      const nextValue = formatDatePickerLocalDate(date);
 
       if (isDefined(highlightedRange) && nextValue !== value) {
         onValueChange(nextValue);
@@ -130,7 +130,7 @@ export const DateCalendar = ({
       nextMonthButtonDisabled,
     }: ReactDatePickerCustomHeaderProps) => {
       const navigationProps = {
-        viewedMonth: formatDateCalendarLocalDate(monthDate).slice(0, 7),
+        viewedMonth: formatDatePickerLocalDate(monthDate).slice(0, 7),
         onPreviousMonth: decreaseMonth,
         onNextMonth: increaseMonth,
         onMonthChange: (month: number) => changeMonth(month - 1),
@@ -142,7 +142,7 @@ export const DateCalendar = ({
       return isDefined(renderHeader) ? (
         <>{renderHeader(navigationProps)}</>
       ) : (
-        <DateCalendarHeader
+        <DatePickerHeader
           // oxlint-disable-next-line react/jsx-props-no-spreading
           {...navigationProps}
           locale={locale}
@@ -175,35 +175,31 @@ export const DateCalendar = ({
       children: (
         <Suspense
           fallback={
-            loadingFallback ?? (
-              <Skeleton height={DATE_CALENDAR_LOADING_HEIGHT} />
-            )
+            loadingFallback ?? <Skeleton height={DATE_PICKER_LOADING_HEIGHT} />
           }
         >
-          <DateCalendarViewedMonthEffect
+          <DatePickerViewedMonthEffect
             calendarRef={calendarRef}
             engineViewedMonthRef={engineViewedMonthRef}
             viewedMonth={viewedMonth}
           />
           {isDefined(highlightedRange) ? (
-            <ReactDateCalendar
+            <ReactDatePickerLibrary
               // oxlint-disable-next-line react/jsx-props-no-spreading
               {...calendarProps}
               selectsRange
-              startDate={parseDateCalendarLocalDateOrThrow(
+              startDate={parseDatePickerLocalDateOrThrow(
                 highlightedRange.start,
               )}
-              endDate={parseDateCalendarLocalDateOrThrow(highlightedRange.end)}
+              endDate={parseDatePickerLocalDateOrThrow(highlightedRange.end)}
               onChange={() => undefined}
             />
           ) : (
-            <ReactDateCalendar
+            <ReactDatePickerLibrary
               // oxlint-disable-next-line react/jsx-props-no-spreading
               {...calendarProps}
               selected={
-                isDefined(value)
-                  ? parseDateCalendarLocalDateOrThrow(value)
-                  : null
+                isDefined(value) ? parseDatePickerLocalDateOrThrow(value) : null
               }
               onChange={handleDateChange}
             />

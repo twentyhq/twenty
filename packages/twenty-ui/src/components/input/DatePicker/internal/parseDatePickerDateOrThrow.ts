@@ -1,17 +1,17 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
-import { DATE_CALENDAR_CONSTANTS } from './dateCalendarConstants';
+import { DATE_PICKER_CONSTANTS } from './datePickerConstants';
 
-const DATE_CALENDAR_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
-const DATE_CALENDAR_DATE_STRING_LENGTH = 10;
+const DATE_PICKER_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+const DATE_PICKER_DATE_STRING_LENGTH = 10;
 
-export const parseDateCalendarDateOrThrow = (value: string): Date => {
-  const dateParts = value.match(DATE_CALENDAR_DATE_PATTERN);
+export const parseDatePickerDateOrThrow = (value: string): Date => {
+  const dateParts = value.match(DATE_PICKER_DATE_PATTERN);
 
   if (
     !isDefined(dateParts) ||
-    value.length !== DATE_CALENDAR_DATE_STRING_LENGTH
+    value.length !== DATE_PICKER_DATE_STRING_LENGTH
   ) {
     throw new RangeError(
       doNotTranslate('Calendar dates must use the YYYY-MM-DD format.'),
@@ -27,8 +27,8 @@ export const parseDateCalendarDateOrThrow = (value: string): Date => {
   date.setUTCFullYear(year, month - 1, day);
 
   const isSupportedDate =
-    year >= DATE_CALENDAR_CONSTANTS.MIN_YEAR &&
-    year <= DATE_CALENDAR_CONSTANTS.MAX_YEAR &&
+    year >= DATE_PICKER_CONSTANTS.MIN_YEAR &&
+    year <= DATE_PICKER_CONSTANTS.MAX_YEAR &&
     date.getUTCFullYear() === year &&
     date.getUTCMonth() === month - 1 &&
     date.getUTCDate() === day;

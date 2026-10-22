@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 import { Button } from '@ui/primitives/input/Button/Button';
-import styles from './DateCalendar.stories.module.scss';
+import styles from './DatePicker.stories.module.scss';
 
-import { DateCalendar } from '../DateCalendar';
-import { DATE_CALENDAR_WEEKDAY_LABELS } from './dateCalendarWeekdayLabels';
+import { DatePicker } from '../DatePicker';
+import { DATE_PICKER_WEEKDAY_LABELS } from './datePickerWeekdayLabels';
 
-export const DateCalendarExternalMonthExample = ({
+export const DatePickerExternalMonthExample = ({
   onValueChange,
   onViewedMonthChange,
 }: {
@@ -17,7 +17,7 @@ export const DateCalendarExternalMonthExample = ({
 
   return (
     <div className={styles.externalExample}>
-      <DateCalendar
+      <DatePicker
         aria-label="Choose a date"
         value="2026-10-07"
         onValueChange={onValueChange}
@@ -28,7 +28,7 @@ export const DateCalendarExternalMonthExample = ({
         }}
         weekStart={1}
         locale="en-US"
-        weekdayLabels={DATE_CALENDAR_WEEKDAY_LABELS}
+        weekdayLabels={DATE_PICKER_WEEKDAY_LABELS}
         previousMonthLabel="Previous month"
         nextMonthLabel="Next month"
         monthLabel="Month"

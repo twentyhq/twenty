@@ -1,4 +1,4 @@
-export const DATE_CALENDAR_WEEKDAY_LABELS = [
+export const DATE_PICKER_WEEKDAY_LABELS = [
   'Su',
   'Mo',
   'Tu',

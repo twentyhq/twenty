@@ -2,13 +2,13 @@ import { vi } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
-import { DateCalendar } from '../DateCalendar';
-import styles from '../DateCalendar.module.scss';
+import { DatePicker } from '../DatePicker';
+import styles from '../DatePicker.module.scss';
 
 runComponentConformance({
-  name: 'DateCalendar',
+  name: 'DatePicker',
   element: (
-    <DateCalendar
+    <DatePicker
       value="2026-10-07"
       onValueChange={vi.fn()}
       viewedMonth="2026-10"

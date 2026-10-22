@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-import { DateCalendar } from '../DateCalendar';
-import { DATE_CALENDAR_WEEKDAY_LABELS } from './dateCalendarWeekdayLabels';
-import { type DateCalendarProps } from '../types/DateCalendarProps';
+import { DatePicker } from '../DatePicker';
+import { DATE_PICKER_WEEKDAY_LABELS } from './datePickerWeekdayLabels';
+import { type DatePickerProps } from '../types/DatePickerProps';
 
-export const DateCalendarExample = ({
+export const DatePickerExample = ({
   initialValue = '2026-10-07',
   initialViewedMonth = '2026-10',
   highlightedRange,
@@ -17,7 +17,7 @@ export const DateCalendarExample = ({
   onViewedMonthChange,
 }: Partial<
   Pick<
-    DateCalendarProps,
+    DatePickerProps,
     | 'highlightedRange'
     | 'readOnly'
     | 'hideGrid'
@@ -35,7 +35,7 @@ export const DateCalendarExample = ({
   const [viewedMonth, setViewedMonth] = useState(initialViewedMonth);
 
   return (
-    <DateCalendar
+    <DatePicker
       aria-label="Choose a date"
       value={value}
       onValueChange={(date) => {
@@ -53,7 +53,7 @@ export const DateCalendarExample = ({
       hideGrid={hideGrid}
       weekStart={1}
       locale="en-US"
-      weekdayLabels={DATE_CALENDAR_WEEKDAY_LABELS}
+      weekdayLabels={DATE_PICKER_WEEKDAY_LABELS}
       previousMonthLabel="Previous month"
       nextMonthLabel="Next month"
       monthLabel="Month"

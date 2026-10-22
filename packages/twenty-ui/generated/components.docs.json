@@ -14917,9 +14917,9 @@
     ]
   },
   {
-    "name": "DateCalendar",
+    "name": "DatePicker",
     "entryPoint": "twenty-ui/components/input",
-    "slug": "components/input/date-calendar",
+    "slug": "components/input/date-picker",
     "props": [
       {
         "name": "aria-label",
@@ -15070,7 +15070,7 @@
       },
       {
         "name": "renderHeader",
-        "type": "((props: DateCalendarHeaderProps) => ReactNode)",
+        "type": "((props: DatePickerHeaderProps) => ReactNode)",
         "required": false,
         "defaultValue": null,
         "description": "Renders a product header with the viewed month, previous/next actions, month numbers from 1 through 12, year change actions, and navigation-disabled states. Header actions only browse months."

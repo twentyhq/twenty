@@ -1,6 +1,6 @@
-import { type DateCalendarProps } from '../src/components/input/DateCalendar/types/DateCalendarProps';
+import { type DatePickerProps } from '../src/components/input/DatePicker/types/DatePickerProps';
 
-export const DATE_CALENDAR_PROP_DESCRIPTIONS = {
+export const DATE_PICKER_PROP_DESCRIPTIONS = {
   value:
     'Controlled selected Gregorian date in YYYY-MM-DD form, or null for no selection.',
   onValueChange:
@@ -46,4 +46,4 @@ export const DATE_CALENDAR_PROP_DESCRIPTIONS = {
   role: 'Root semantics. Defaults to a group; the caller supplies its accessible name.',
   'aria-label': 'Accessible name of the calendar group.',
   'aria-labelledby': 'ID of the element that labels the calendar group.',
-} satisfies Partial<Record<keyof DateCalendarProps, string>>;
+} satisfies Partial<Record<keyof DatePickerProps, string>>;

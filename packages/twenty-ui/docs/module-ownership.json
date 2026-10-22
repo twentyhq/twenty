@@ -54,7 +54,7 @@
     "CommandBlock",
     "CountrySelect",
     "CurrencyPicker",
-    "DateCalendar",
+    "DatePicker",
     "DetailsRow",
     "Dropdown",
     "FormFieldRow",

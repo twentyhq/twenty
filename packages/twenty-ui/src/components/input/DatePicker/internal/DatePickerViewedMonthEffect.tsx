@@ -1,26 +1,26 @@
 import { useEffect, type RefObject } from 'react';
 import { type default as ReactDatePicker } from 'react-datepicker';
 
-import { parseDateCalendarLocalDateOrThrow } from './parseDateCalendarLocalDateOrThrow';
+import { parseDatePickerLocalDateOrThrow } from './parseDatePickerLocalDateOrThrow';
 
-type DateCalendarViewedMonthEffectProps = {
+type DatePickerViewedMonthEffectProps = {
   calendarRef: RefObject<ReactDatePicker | null>;
   engineViewedMonthRef: RefObject<string>;
   viewedMonth: string;
 };
 
-export const DateCalendarViewedMonthEffect = ({
+export const DatePickerViewedMonthEffect = ({
   calendarRef,
   engineViewedMonthRef,
   viewedMonth,
-}: DateCalendarViewedMonthEffectProps) => {
+}: DatePickerViewedMonthEffectProps) => {
   useEffect(() => {
     if (engineViewedMonthRef.current === viewedMonth) {
       return;
     }
 
     calendarRef.current?.setPreSelection(
-      parseDateCalendarLocalDateOrThrow(`${viewedMonth}-01`),
+      parseDatePickerLocalDateOrThrow(`${viewedMonth}-01`),
     );
     engineViewedMonthRef.current = viewedMonth;
   }, [calendarRef, engineViewedMonthRef, viewedMonth]);

@@ -29,7 +29,7 @@ import { RADIO_GROUP_PROP_DESCRIPTIONS } from './radioGroupPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
-import { DATE_CALENDAR_PROP_DESCRIPTIONS } from './dateCalendarPropDescriptions';
+import { DATE_PICKER_PROP_DESCRIPTIONS } from './datePickerPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
@@ -1041,11 +1041,11 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: IMAGE_INPUT_PROP_DESCRIPTIONS,
   },
   {
-    name: 'DateCalendar',
-    source: 'components/input/DateCalendar/DateCalendar.tsx',
+    name: 'DatePicker',
+    source: 'components/input/DatePicker/DatePicker.tsx',
     entryPoint: 'twenty-ui/components/input',
-    slug: 'components/input/date-calendar',
-    propDescriptions: DATE_CALENDAR_PROP_DESCRIPTIONS,
+    slug: 'components/input/date-picker',
+    propDescriptions: DATE_PICKER_PROP_DESCRIPTIONS,
     propDefaults: {
       disabledKeyboardNavigation: 'false',
       loadingFallback: '300px-high Skeleton',

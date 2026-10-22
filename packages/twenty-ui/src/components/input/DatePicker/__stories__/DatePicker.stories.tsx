@@ -4,15 +4,15 @@ import { fn } from 'storybook/test';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator, GroupedCatalog } from '@ui/testing';
 
-import { DateCalendar } from '../DateCalendar';
-import { DATE_CALENDAR_WEEKDAY_LABELS } from './dateCalendarWeekdayLabels';
-import { type DateCalendarProps } from '../types/DateCalendarProps';
-import { DateCalendarExample } from './DateCalendarExample';
+import { DatePicker } from '../DatePicker';
+import { DATE_PICKER_WEEKDAY_LABELS } from './datePickerWeekdayLabels';
+import { type DatePickerProps } from '../types/DatePickerProps';
+import { DatePickerExample } from './DatePickerExample';
 
-const meta: Meta<typeof DateCalendar> = {
-  id: 'ui-components-datecalendar',
-  title: 'UI/Components/Input/DateCalendar',
-  component: DateCalendar,
+const meta: Meta<typeof DatePicker> = {
+  id: 'ui-components-datepicker',
+  title: 'UI/Components/Input/DatePicker',
+  component: DatePicker,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 312 } },
   args: {
@@ -21,7 +21,7 @@ const meta: Meta<typeof DateCalendar> = {
     viewedMonth: '2026-10',
     weekStart: 1,
     locale: 'en-US',
-    weekdayLabels: DATE_CALENDAR_WEEKDAY_LABELS,
+    weekdayLabels: DATE_PICKER_WEEKDAY_LABELS,
     previousMonthLabel: 'Previous month',
     nextMonthLabel: 'Next month',
     monthLabel: 'Month',
@@ -32,7 +32,7 @@ const meta: Meta<typeof DateCalendar> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof DateCalendar>;
+type Story = StoryObj<typeof DatePicker>;
 
 export const Display: Story = {
   argTypes: {
@@ -48,7 +48,7 @@ export const Display: Story = {
     'aria-label': { control: false },
   },
   render: ({ disabled, highlightedRange, readOnly, hideGrid }) => (
-    <DateCalendarExample
+    <DatePickerExample
       disabled={disabled}
       highlightedRange={highlightedRange}
       readOnly={readOnly}
@@ -60,7 +60,7 @@ export const Display: Story = {
 const CALENDAR_EXAMPLES: {
   label: string;
   props: Partial<
-    Pick<DateCalendarProps, 'value' | 'disabled' | 'isDateUnavailable'>
+    Pick<DatePickerProps, 'value' | 'disabled' | 'isDateUnavailable'>
   >;
 }[] = [
   { label: 'Selected date and today', props: {} },
@@ -82,7 +82,7 @@ export const Catalog: Story = {
       renderExample={({ label, props }) => (
         <>
           <Text>{label}</Text>
-          <DateCalendar
+          <DatePicker
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...args}
             // oxlint-disable-next-line react/jsx-props-no-spreading

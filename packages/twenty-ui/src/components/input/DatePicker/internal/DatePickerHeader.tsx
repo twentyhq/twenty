@@ -1,16 +1,16 @@
 import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { IconChevronLeft, IconChevronRight } from '@ui/icon';
 
-import styles from '../DateCalendar.module.scss';
-import { type DateCalendarProps } from '../types/DateCalendarProps';
-import { type DateCalendarHeaderProps } from '../types/DateCalendarHeaderProps';
-import { DATE_CALENDAR_CONSTANTS } from './dateCalendarConstants';
-import { DateCalendarSelect } from './DateCalendarSelect';
-import { parseDateCalendarDateOrThrow } from './parseDateCalendarDateOrThrow';
+import styles from '../DatePicker.module.scss';
+import { type DatePickerProps } from '../types/DatePickerProps';
+import { type DatePickerHeaderProps } from '../types/DatePickerHeaderProps';
+import { DATE_PICKER_CONSTANTS } from './datePickerConstants';
+import { DatePickerSelect } from './DatePickerSelect';
+import { parseDatePickerDateOrThrow } from './parseDatePickerDateOrThrow';
 
 const YEAR_WINDOW = 100;
 
-export const DateCalendarHeader = ({
+export const DatePickerHeader = ({
   viewedMonth,
   onPreviousMonth,
   onNextMonth,
@@ -26,9 +26,9 @@ export const DateCalendarHeader = ({
   portalContainer,
   onNavigationOpenChange,
   disabled,
-}: DateCalendarHeaderProps &
+}: DatePickerHeaderProps &
   Pick<
-    DateCalendarProps,
+    DatePickerProps,
     | 'locale'
     | 'previousMonthLabel'
     | 'nextMonthLabel'
@@ -38,7 +38,7 @@ export const DateCalendarHeader = ({
     | 'onNavigationOpenChange'
     | 'disabled'
   >) => {
-  const monthDate = parseDateCalendarDateOrThrow(`${viewedMonth}-01`);
+  const monthDate = parseDatePickerDateOrThrow(`${viewedMonth}-01`);
   const year = monthDate.getUTCFullYear();
   const month = monthDate.getUTCMonth() + 1;
   const monthFormatter = new Intl.DateTimeFormat(locale, {
@@ -49,11 +49,7 @@ export const DateCalendarHeader = ({
   const yearFormatter = new Intl.NumberFormat(locale, { useGrouping: false });
   const months = [];
 
-  for (
-    let index = 1;
-    index <= DATE_CALENDAR_CONSTANTS.MONTHS_PER_YEAR;
-    index++
-  ) {
+  for (let index = 1; index <= DATE_PICKER_CONSTANTS.MONTHS_PER_YEAR; index++) {
     const date = new Date(monthDate);
     date.setUTCMonth(index - 1);
     months.push({ value: index, label: monthFormatter.format(date) });
@@ -61,13 +57,10 @@ export const DateCalendarHeader = ({
 
   const years = [];
   const firstYear = Math.max(
-    DATE_CALENDAR_CONSTANTS.MIN_YEAR,
+    DATE_PICKER_CONSTANTS.MIN_YEAR,
     year - YEAR_WINDOW,
   );
-  const lastYear = Math.min(
-    DATE_CALENDAR_CONSTANTS.MAX_YEAR,
-    year + YEAR_WINDOW,
-  );
+  const lastYear = Math.min(DATE_PICKER_CONSTANTS.MAX_YEAR, year + YEAR_WINDOW);
 
   for (let optionYear = firstYear; optionYear <= lastYear; optionYear++) {
     years.push({ value: optionYear, label: yearFormatter.format(optionYear) });
@@ -76,7 +69,7 @@ export const DateCalendarHeader = ({
   return (
     <div className={styles.header}>
       <div className={styles.monthSelect}>
-        <DateCalendarSelect
+        <DatePickerSelect
           value={month}
           items={months}
           disabled={disabled}
@@ -89,7 +82,7 @@ export const DateCalendarHeader = ({
         />
       </div>
       <div className={styles.yearSelect}>
-        <DateCalendarSelect
+        <DatePickerSelect
           value={year}
           items={years}
           disabled={disabled}

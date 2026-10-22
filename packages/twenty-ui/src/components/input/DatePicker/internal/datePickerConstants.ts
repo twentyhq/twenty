@@ -1,4 +1,4 @@
-export const DATE_CALENDAR_CONSTANTS = {
+export const DATE_PICKER_CONSTANTS = {
   MIN_YEAR: 1,
   MAX_YEAR: 9999,
   DAYS_PER_WEEK: 7,

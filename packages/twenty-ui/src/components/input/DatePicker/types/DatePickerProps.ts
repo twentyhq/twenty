@@ -1,11 +1,11 @@
 import { type useRender } from '@base-ui/react/use-render';
 import { type ReactNode } from 'react';
 
-import { type DateCalendarHeaderProps } from './DateCalendarHeaderProps';
+import { type DatePickerHeaderProps } from './DatePickerHeaderProps';
 
 import { type SelectPortalProps } from '@ui/primitives/input/Select/types/SelectPortalProps';
 
-export type DateCalendarProps = Omit<
+export type DatePickerProps = Omit<
   useRender.ComponentProps<'div'>,
   'children' | 'onChange' | 'defaultValue'
 > & {
@@ -41,5 +41,5 @@ export type DateCalendarProps = Omit<
   disabled?: boolean;
   disabledKeyboardNavigation?: boolean;
   loadingFallback?: ReactNode;
-  renderHeader?: (props: DateCalendarHeaderProps) => ReactNode;
+  renderHeader?: (props: DatePickerHeaderProps) => ReactNode;
 };

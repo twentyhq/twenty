@@ -1,7 +1,7 @@
-import { parseDateCalendarDateOrThrow } from './parseDateCalendarDateOrThrow';
+import { parseDatePickerDateOrThrow } from './parseDatePickerDateOrThrow';
 
-export const parseDateCalendarLocalDateOrThrow = (value: string): Date => {
-  const parsedDate = parseDateCalendarDateOrThrow(value);
+export const parseDatePickerLocalDateOrThrow = (value: string): Date => {
+  const parsedDate = parseDatePickerDateOrThrow(value);
   const localDate = new Date(0);
   localDate.setFullYear(
     parsedDate.getUTCFullYear(),
