@@ -49,6 +49,26 @@ function CheckMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   );
 }
 
+function CrossMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height={sizePx}
+      viewBox="0 0 16 16"
+      width={sizePx}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="m5.5 5.5 5 5m0-5-5 5" stroke={color} strokeWidth={strokeWidth} />
+      <path
+        d="M8 14a6 6 0 1 0-4.243-1.757"
+        stroke={color}
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+}
+
 function CodeMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   return (
     <svg
@@ -226,6 +246,7 @@ export const INFORMATIVE_MARKS: Record<
   | 'book'
   | 'check'
   | 'code'
+  | 'cross'
   | 'edit'
   | 'eye'
   | 'info'
@@ -237,6 +258,7 @@ export const INFORMATIVE_MARKS: Record<
   book: BookMark,
   check: CheckMark,
   code: CodeMark,
+  cross: CrossMark,
   edit: EditMark,
   eye: EyeMark,
   info: InfoMark,
