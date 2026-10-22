@@ -59,13 +59,8 @@ jobs:
             and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty create-twenty-app"
               or .packages == "twenty-ui" or .packages == "twenty")
             and ((.stage_only // false) | type == "boolean")
-            and (if .stage_only == true then
-              .dry_run == false and .dist_tag == "alpha"
-              and (.version | test("^[0-9]+[.][0-9]+[.][0-9]+$"))
-              and (.staging_version | type == "string")
-              and (.staging_version | test("^[0-9]+[.][0-9]+[.][0-9]+-alpha[.](0|[1-9][0-9]*)$"))
-              and (. as $plan | .staging_version | startswith($plan.version + "-alpha."))
-            else .staging_version == null end)
+            and (.staging_version == null)
+            and (if .stage_only == true then .dry_run == false else true end)
           ' plan.json > /dev/null
           jq -r '"PACKAGES=\(.packages)\nVERSION=\(.version)\nDIST_TAG=\(.dist_tag)\nDRY_RUN=\(.dry_run)\nSTAGE_ONLY=\(.stage_only // false)"' plan.json >> "$GITHUB_ENV"
 
@@ -101,15 +96,12 @@ jobs:
       - name: Stage validation packages without publishing
         if: env.STAGE_ONLY == 'true'
         run: |
-          python3 .github/scripts/tests/test_prepare_npm_staging.py
           npm install --global npm@11.21.0
-          staging_version=$(jq -r .staging_version plan.json)
           for package in $PACKAGES; do
-            tarball="$RUNNER_TEMP/$package-$staging_version.tgz"
+            tarball="$RUNNER_TEMP/$package-$VERSION.tgz"
             yarn workspace "$package" pack --out "$tarball"
-            python3 .github/scripts/prepare-npm-staging.py "$tarball" "$VERSION" "$staging_version"
-            npm stage publish "$tarball" --registry=https://registry.npmjs.org/ --access public --tag alpha --provenance --ignore-scripts
-            echo "Staged $package@$staging_version for OIDC validation only. Do not approve; reject after verification." >> "$GITHUB_STEP_SUMMARY"
+            npm stage publish "$tarball" --registry=https://registry.npmjs.org/ --access public --tag "$DIST_TAG" --provenance --ignore-scripts
+            echo "Staged $package@$VERSION for OIDC validation only. Do not approve; reject after verification." >> "$GITHUB_STEP_SUMMARY"
           done
 
       - name: Publish packages with provenance
