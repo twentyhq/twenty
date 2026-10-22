@@ -8,6 +8,7 @@ import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 import { AiChatThreadFollowersField } from '@/ai/components/AiChatThreadFollowersField';
 import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
 import { AiChatThreadStatusField } from '@/ai/components/AiChatThreadStatusField';
@@ -77,7 +78,7 @@ const AiChatThreadDetailsFieldsStory = ({
         }
       />
       <DetailsRow
-        labelWidth={110}
+        labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
         startIcon={<IconLink size={themeCssVariables.icon.size.md} />}
         label="Linked to"
       >
@@ -92,7 +93,7 @@ const AiChatThreadDetailsFieldsStory = ({
         ))}
       </DetailsRow>
       <DetailsRow
-        labelWidth={110}
+        labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
         startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
         label="Assignee"
       >

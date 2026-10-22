@@ -15,6 +15,7 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
@@ -144,7 +145,7 @@ export const AiChatThreadDetailsDropdown = ({
           <StyledDetails>
             {areRecordTargetsAvailable && (
               <DetailsRow
-                labelWidth={110}
+                labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
                 startIcon={<IconLink size={themeCssVariables.icon.size.md} />}
                 label={t`Linked to`}
                 action={
@@ -186,7 +187,7 @@ export const AiChatThreadDetailsDropdown = ({
               </DetailsRow>
             )}
             <DetailsRow
-              labelWidth={110}
+              labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
               startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
               label={t`Assignee`}
               action={

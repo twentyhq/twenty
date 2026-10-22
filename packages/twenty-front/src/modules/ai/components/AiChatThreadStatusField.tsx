@@ -13,6 +13,7 @@ import {
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
 
 const StyledScope = styled.span`
@@ -48,7 +49,7 @@ export const AiChatThreadStatusField = ({
 
   return (
     <DetailsRow
-      labelWidth={110}
+      labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
       startIcon={<IconCircleDashed size={themeCssVariables.icon.size.md} />}
       label={t`Status`}
       action={

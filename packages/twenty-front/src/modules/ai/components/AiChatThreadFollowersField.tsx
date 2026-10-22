@@ -7,6 +7,8 @@ import { IconBell, IconBellOff } from 'twenty-ui/icon';
 import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
+
 const StyledEmptyValue = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.sm};
@@ -31,7 +33,7 @@ export const AiChatThreadFollowersField = ({
 
   return (
     <DetailsRow
-      labelWidth={110}
+      labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
       startIcon={<IconBell size={themeCssVariables.icon.size.md} />}
       label={t`Following`}
       action={

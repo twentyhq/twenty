@@ -8,6 +8,7 @@ import { IconPencil, IconTag } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 import { type AiChatThreadLabel } from '@/ai/types/AiChatThreadLabel';
 
 const StyledEmptyValue = styled.span`
@@ -35,7 +36,7 @@ export const AiChatThreadLabelsField = ({
 
   return (
     <DetailsRow
-      labelWidth={110}
+      labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
       startIcon={<IconTag size={themeCssVariables.icon.size.md} />}
       label={t`Labels`}
       action={
