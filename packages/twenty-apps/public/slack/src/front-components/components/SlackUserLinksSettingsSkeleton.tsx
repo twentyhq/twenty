@@ -3,6 +3,11 @@ import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const SKELETON_ROW_COUNT = 5;
+const TITLE_BAR_WIDTH_PIXELS = 140;
+const TITLE_BAR_HEIGHT_PIXELS = 16;
+const DESCRIPTION_LINE_HEIGHT_PIXELS = 13;
+const LAST_DESCRIPTION_LINE_WIDTH = '60%';
+const ROW_HEIGHT_PIXELS = 32;
 
 const shimmer = keyframes`
   to { transform: translateX(100%); }
@@ -59,20 +64,20 @@ const StyledBar = styled.span`
 `;
 
 const StyledTitleBar = styled(StyledBar)`
-  height: 16px;
-  width: 140px;
+  height: ${TITLE_BAR_HEIGHT_PIXELS}px;
+  width: ${TITLE_BAR_WIDTH_PIXELS}px;
 `;
 
 const StyledDescriptionLine = styled(StyledBar)`
-  height: 13px;
+  height: ${DESCRIPTION_LINE_HEIGHT_PIXELS}px;
 
   &:last-of-type {
-    width: 60%;
+    width: ${LAST_DESCRIPTION_LINE_WIDTH};
   }
 `;
 
 const StyledRow = styled(StyledBar)`
-  height: 32px;
+  height: ${ROW_HEIGHT_PIXELS}px;
 `;
 
 export const SlackUserLinksSettingsSkeleton = () => (

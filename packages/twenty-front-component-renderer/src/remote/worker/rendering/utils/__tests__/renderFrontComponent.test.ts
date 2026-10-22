@@ -6,18 +6,30 @@ import { FRONT_COMPONENT_CONTEXT_KEY } from 'twenty-sdk/front-component-renderer
 import { getFrontComponentExecutionContext } from '@/remote/worker/environment/utils/getFrontComponentExecutionContext';
 import { setFrontComponentExecutionContext } from '@/remote/worker/environment/utils/setFrontComponentExecutionContext';
 import { loadFrontComponentModule } from '@/remote/worker/module-loading/utils/loadFrontComponentModule';
+import { attachRemoteRenderRootToWorkerDocument } from '@/remote/worker/rendering/utils/attachRemoteRenderRootToWorkerDocument';
+import { waitForScheduledReactCommit } from '@/remote/worker/rendering/utils/waitForScheduledReactCommit';
 import { renderFrontComponent } from '../renderFrontComponent';
 
 jest.mock(
   '@/remote/worker/rendering/utils/attachRemoteRenderRootToWorkerDocument',
   () => ({
-    attachRemoteRenderRootToWorkerDocument: jest.fn(() => ({})),
+    attachRemoteRenderRootToWorkerDocument: jest.fn(() => ({
+      renderContainer: {},
+      flushPendingMutations: jest.fn(),
+    })),
   }),
 );
 
 jest.mock('@/remote/worker/fetch-proxy/utils/installHostFetchProxy', () => ({
   installHostFetchProxy: jest.fn(),
 }));
+
+jest.mock(
+  '@/remote/worker/rendering/utils/waitForScheduledReactCommit',
+  () => ({
+    waitForScheduledReactCommit: jest.fn(async () => {}),
+  }),
+);
 
 jest.mock(
   '@/remote/worker/module-loading/utils/loadFrontComponentModule',
@@ -90,6 +102,34 @@ describe('renderFrontComponent', () => {
     expect(
       await readExecutionContextWhenModuleLoads(initialExecutionContext),
     ).toBe(initialExecutionContext);
+  });
+
+  it('should flush the first committed tree before resolving', async () => {
+    const events: string[] = [];
+    const flushPendingMutations = jest.fn(() => {
+      events.push('flush');
+    });
+
+    jest.mocked(attachRemoteRenderRootToWorkerDocument).mockReturnValue({
+      renderContainer: {} as Element,
+      flushPendingMutations,
+    });
+    jest.mocked(waitForScheduledReactCommit).mockImplementation(async () => {
+      events.push('commit');
+    });
+    jest.mocked(loadFrontComponentModule).mockResolvedValue({
+      default: () => {
+        events.push('mount');
+      },
+    });
+
+    await renderFrontComponent({
+      connection: {} as RemoteConnection,
+      renderContext: COMPONENT_RENDER_CONTEXT,
+      hostFetch: jest.fn(),
+    });
+
+    expect(events).toEqual(['mount', 'commit', 'flush']);
   });
 
   it('should keep a context the host pushed before render when the module loads', async () => {

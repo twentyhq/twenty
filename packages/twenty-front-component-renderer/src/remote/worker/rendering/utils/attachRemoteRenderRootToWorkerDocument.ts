@@ -12,9 +12,14 @@ import { workerInputSelectionStore } from '@/polyfills/input-selection/states/wo
 import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTransport';
 import { installStyleBridge } from '@/polyfills/style/utils/installStyleBridge';
 
+type RemoteRenderRoot = {
+  renderContainer: Element;
+  flushPendingMutations: () => void;
+};
+
 export const attachRemoteRenderRootToWorkerDocument = (
   connection: RemoteConnection,
-): Element => {
+): RemoteRenderRoot => {
   const batchedConnection = new BatchingRemoteConnection({
     call: connection.call,
     mutate: (records) =>
@@ -40,5 +45,8 @@ export const attachRemoteRenderRootToWorkerDocument = (
   workerInputSelectionStore.setRootElement(remoteRoot);
   installStyleBridge(styleContainer);
 
-  return renderContainer;
+  return {
+    renderContainer,
+    flushPendingMutations: () => batchedConnection.flush(),
+  };
 };
