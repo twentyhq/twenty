@@ -17,10 +17,30 @@ describe('buildApplicationMonitoringActivityChartData', () => {
         ],
       }),
     ).toEqual([
-      { errorCount: 0, rateLimitedRequestCount: 0, rateLimitedJobCount: 0 },
-      { errorCount: 41, rateLimitedRequestCount: 33, rateLimitedJobCount: 4 },
-      { errorCount: 0, rateLimitedRequestCount: 0, rateLimitedJobCount: 0 },
-      { errorCount: 0, rateLimitedRequestCount: 0, rateLimitedJobCount: 0 },
+      {
+        bucketStart: '2026-10-16T00:00:00.000Z',
+        errorCount: 0,
+        rateLimitedRequestCount: 0,
+        rateLimitedJobCount: 0,
+      },
+      {
+        bucketStart: '2026-10-17T00:00:00.000Z',
+        errorCount: 41,
+        rateLimitedRequestCount: 33,
+        rateLimitedJobCount: 4,
+      },
+      {
+        bucketStart: '2026-10-18T00:00:00.000Z',
+        errorCount: 0,
+        rateLimitedRequestCount: 0,
+        rateLimitedJobCount: 0,
+      },
+      {
+        bucketStart: '2026-10-19T00:00:00.000Z',
+        errorCount: 0,
+        rateLimitedRequestCount: 0,
+        rateLimitedJobCount: 0,
+      },
     ]);
   });
 });

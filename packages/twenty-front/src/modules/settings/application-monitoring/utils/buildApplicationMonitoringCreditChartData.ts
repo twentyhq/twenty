@@ -17,6 +17,7 @@ export const buildApplicationMonitoringCreditChartData = (
 
   return listApplicationMonitoringBucketStarts(monitoring).map(
     (bucketStart) => ({
+      bucketStart,
       creditsUsed: creditsUsedByBucketStart.get(bucketStart) ?? 0,
     }),
   );

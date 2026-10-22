@@ -255,7 +255,9 @@ describe('Application registration monitoring (integration)', () => {
     const monitoring = await findCreditsUsed();
 
     await clickHouseClient.command({
-      query: `ALTER TABLE usageEvent DELETE WHERE resourceId = '${resourceId}'`,
+      query:
+        'ALTER TABLE usageEvent DELETE WHERE resourceId = {resourceId:String}',
+      query_params: { resourceId },
     });
 
     expect(monitoring.creditsUsed - creditsUsedBefore).toBeCloseTo(2);

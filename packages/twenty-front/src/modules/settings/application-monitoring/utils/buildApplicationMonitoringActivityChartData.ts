@@ -22,6 +22,7 @@ export const buildApplicationMonitoringActivityChartData = (
       const bucket = activityByBucketStart.get(bucketStart);
 
       return {
+        bucketStart,
         errorCount: bucket?.errorCount ?? 0,
         rateLimitedRequestCount: bucket?.rateLimitedRequestCount ?? 0,
         rateLimitedJobCount: bucket?.rateLimitedJobCount ?? 0,

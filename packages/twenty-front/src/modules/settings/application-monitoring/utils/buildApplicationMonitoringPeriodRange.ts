@@ -4,10 +4,13 @@ import { type ApplicationMonitoringPeriodRange } from '@/settings/application-mo
 
 const HOUR_IN_MS = 60 * 60 * 1000;
 
-export const buildApplicationMonitoringPeriodRange = (
-  period: ApplicationMonitoringPeriod,
-  now: Date = new Date(),
-): ApplicationMonitoringPeriodRange => {
+export const buildApplicationMonitoringPeriodRange = ({
+  period,
+  now = new Date(),
+}: {
+  period: ApplicationMonitoringPeriod;
+  now?: Date;
+}): ApplicationMonitoringPeriodRange => {
   const hours =
     APPLICATION_MONITORING_PERIODS.find(({ value }) => value === period)
       ?.hours ?? 0;
