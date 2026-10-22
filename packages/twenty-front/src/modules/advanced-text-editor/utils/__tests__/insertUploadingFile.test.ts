@@ -59,6 +59,22 @@ const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 const FILE = new File(['content'], 'report.pdf', { type: 'application/pdf' });
 
+const pasteFiles = (editor: Editor, files: File[]) => {
+  const pasteEvent = {
+    clipboardData: { files, getData: () => '' },
+    preventDefault: jest.fn(),
+    stopPropagation: jest.fn(),
+  } as unknown as ClipboardEvent;
+
+  editor.view.someProp('handlePaste', (handlePaste) =>
+    handlePaste(editor.view, pasteEvent, Slice.empty),
+  );
+};
+
+const onFileUpload = async (file: File) => ({
+  url: `https://files.twenty.com/${file.name}`,
+});
+
 describe('uploading into the editor', () => {
   it('saves text typed during an upload, then the uploaded file url', async () => {
     const { editor, savedDocuments } = createEditorSavingEveryUpdate();
@@ -127,18 +143,10 @@ describe('uploading into the editor', () => {
         url: 'https://files.twenty.com/report.pdf',
       }),
     });
-    const pasteEvent = {
-      clipboardData: {
-        files: [new File(['image'], 'logo.png', { type: 'image/png' }), FILE],
-        getData: () => '',
-      },
-      preventDefault: jest.fn(),
-      stopPropagation: jest.fn(),
-    } as unknown as ClipboardEvent;
-
-    editor.view.someProp('handlePaste', (handlePaste) =>
-      handlePaste(editor.view, pasteEvent, Slice.empty),
-    );
+    pasteFiles(editor, [
+      new File(['image'], 'logo.png', { type: 'image/png' }),
+      FILE,
+    ]);
     await flushPromises();
 
     expect(JSON.parse(savedDocuments.at(-1) ?? '{}').content).toEqual(
@@ -157,6 +165,69 @@ describe('uploading into the editor', () => {
         }),
       ]),
     );
+
+    editor.destroy();
+  });
+
+  it('pastes a file after the task item holding the cursor, not inside it', async () => {
+    const { editor } = createEditorSavingEveryUpdate({ onFileUpload });
+
+    editor.commands.setContent({
+      type: 'doc',
+      content: [
+        {
+          type: 'taskList',
+          content: ['First task', 'Second task'].map((text) => ({
+            type: 'taskItem',
+            attrs: { checked: false },
+            content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+          })),
+        },
+      ],
+    });
+    editor.commands.setTextSelection(13);
+
+    pasteFiles(editor, [FILE]);
+    await flushPromises();
+
+    expect(editor.getJSON().content?.map(({ type }) => type)).toEqual([
+      'taskList',
+      'file',
+      'taskList',
+    ]);
+
+    editor.destroy();
+  });
+
+  it('pastes files in order after the paragraph holding the cursor', async () => {
+    const { editor } = createEditorSavingEveryUpdate({ onFileUpload });
+
+    editor.commands.setContent({
+      type: 'doc',
+      content: [
+        { type: 'paragraph', content: [{ type: 'text', text: 'hello world' }] },
+      ],
+    });
+    editor.commands.setTextSelection(6);
+
+    pasteFiles(editor, [
+      new File(['first'], 'first.pdf', { type: 'application/pdf' }),
+      new File(['second'], 'second.pdf', { type: 'application/pdf' }),
+    ]);
+    await flushPromises();
+
+    expect(editor.getJSON().content).toEqual([
+      expect.objectContaining({
+        type: 'paragraph',
+        content: [expect.objectContaining({ text: 'hello world' })],
+      }),
+      expect.objectContaining({
+        attrs: expect.objectContaining({ name: 'first.pdf' }),
+      }),
+      expect.objectContaining({
+        attrs: expect.objectContaining({ name: 'second.pdf' }),
+      }),
+    ]);
 
     editor.destroy();
   });
