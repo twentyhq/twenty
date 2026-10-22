@@ -25,10 +25,10 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: msg`Personal AI usage`,
       tiers: {
         enterprise: { kind: 'text', text: msg`Custom allowance` },
-        organization: { kind: 'text', text: msg`5x Pro` },
-        pro: { kind: 'text', text: msg`Limited` },
+        organization: { kind: 'text', text: msg`≈ 500 AI tasks/week` },
+        pro: { kind: 'text', text: msg`≈ 100 AI tasks/week` },
       },
-      tooltip: msg`Each member's own AI chat usage, renewed every Monday. When it runs out, chat continues on workspace credits unless an admin turns that off.`,
+      tooltip: msg`Each member's own AI allowance, renewed every Monday. An AI task is one chat request, estimated with the default model; smarter models use more. When it runs out, chat continues on workspace credits unless an admin turns that off.`,
       type: 'row',
     },
     {
