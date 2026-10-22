@@ -45,6 +45,41 @@ customer workspace. Functional tests execute in disposable test workspaces.
    authorized Twenty approver can mark that exact artifact vetted. Confirmed
    malicious behavior is rejected; blockers or missing evidence remain unvetted.
 
+## Internal security gates
+
+The publisher-facing checklist requires compliance with Twenty's internal
+security review. Keep the technical checks here for the review agent and human
+reviewers; removing attack lists from the public page does not remove these gates.
+
+- **Artifact and behavior.** Verify identity, provenance, and source against the
+  retained package. Inspect frontend code, logic functions, hooks, jobs, AI
+  instructions, dependencies, and lifecycle scripts for credential theft,
+  undeclared collection, backdoors, destructive actions, sandbox escapes,
+  concealed execution, and attempts to evade review.
+- **Untrusted input.** Check query, command, code, HTML, and template injection,
+  XSS, path traversal, and SSRF. Verify input validation, protection of internal
+  services and cloud metadata, webhook authentication, and applicable replay
+  protection.
+- **Authorization and isolation.** Verify least privilege for app and agent roles
+  and external OAuth scopes. Test user-triggered and application-identity calls
+  with different roles and at least two workspaces. Check records, credentials,
+  caches, jobs, and routing; unverified input must not select a target workspace.
+- **AI behavior.** For AI apps, test whether malicious records or external content
+  cause unauthorized tool calls, disclosure, or destructive actions. Verify that
+  authorization is enforced outside the model.
+- **Data and dependencies.** Verify declared destinations and data flows, secret
+  storage, HTTPS, retention/deletion, and logging. Scan direct, transitive,
+  bundled, and runtime dependencies for vulnerabilities and malicious packages.
+  Check deterministic resolution and unreviewed code or remote instructions
+  introduced after approval.
+
+Reject confirmed malicious behavior. Block approval for confirmed high/critical
+vulnerabilities, exploitable authorization or isolation failures, unexplained
+data transfers, and unresolved suspicious behavior. Incomplete scans or missing
+evidence cannot pass. Document false positives and non-applicability; give
+lower-severity findings an explicit disposition and, where remediation is
+required, an owner and target date.
+
 ## Trust boundaries
 
 | Boundary | V1 requirement |
