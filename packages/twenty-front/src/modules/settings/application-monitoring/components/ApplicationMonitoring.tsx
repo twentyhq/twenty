@@ -85,10 +85,15 @@ export const ApplicationMonitoring = ({
   const lifecycleChartData =
     buildApplicationMonitoringLifecycleChartData(monitoring);
   const creditChartData = buildApplicationMonitoringCreditChartData(monitoring);
-  const creditsUsedLabel = i18n.number(monitoring.creditsUsed, {
-    maximumFractionDigits: monitoring.creditsUsed >= 10 ? 0 : 2,
-    roundingMode: 'trunc',
-  });
+  const creditsUsedLabel = i18n.number(
+    monitoring.creditsUsed,
+    monitoring.creditsUsed > 0 && monitoring.creditsUsed < 0.01
+      ? { maximumSignificantDigits: 2, roundingMode: 'trunc' }
+      : {
+          maximumFractionDigits: monitoring.creditsUsed >= 10 ? 0 : 2,
+          roundingMode: 'trunc',
+        },
+  );
 
   return (
     <>
@@ -143,7 +148,7 @@ export const ApplicationMonitoring = ({
             title={t`Credits used`}
             description={
               isAdminView
-                ? t`${creditsUsedLabel} credits across every workspace in this period`
+                ? t`${creditsUsedLabel} credits in this period`
                 : t`${creditsUsedLabel} credits across every install in this period`
             }
           />
