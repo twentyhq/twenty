@@ -8,6 +8,8 @@ import { EmojiPicker } from '../EmojiPicker';
 import { type EmojiPickerProps } from '../types/EmojiPickerProps';
 import { EMOJI_PICKER_STORY_EMOJIBASE_URL } from './emojiPickerStoryEmojibaseUrl';
 
+const EMOJI_PICKER_STORY_WIDTH_PX = 296;
+
 type EmojiPickerExampleProps = Partial<
   Pick<
     EmojiPickerProps,
@@ -36,7 +38,7 @@ export const EmojiPickerExample = ({
         display: 'flex',
         flexDirection: 'column',
         gap: themeCssVariables.spacing[2],
-        width: 296,
+        width: EMOJI_PICKER_STORY_WIDTH_PX,
       }}
     >
       <EmojiPicker
