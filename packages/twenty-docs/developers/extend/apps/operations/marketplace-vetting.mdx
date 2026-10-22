@@ -1,219 +1,79 @@
 ---
 title: Marketplace vetting (WIP)
-description: Proposed V1 requirements for reviewing a third-party app version for security, functionality, UX, and operation across many workspaces.
+description: Proposed requirements for third-party apps to receive a Vetted badge.
 icon: 'shield-halved'
 ---
 
 <Warning>
-  **Work in progress — proposed policy.** These requirements and the review
-  process are under discussion. They do not describe an available third-party
-  certification program or checks that Twenty already performs. See
+  **Work in progress.** This page and the proposed requirements may evolve as we
+  develop the review process. Third-party vetting is not available yet. See
   [Publishing](/developers/extend/apps/operations/publishing#marketplace-visibility-and-vetting)
   for current marketplace behavior.
 </Warning>
 
 ## What a vetted version means
 
-A vetted version has passed Twenty's security, functionality, UX, and operational
-checks, with recorded evidence and a named approver. Approval belongs to an exact
-app version and package hash. Every newly published version starts unvetted,
-including updates to an already vetted app.
+Under this proposal, a vetted version has passed Twenty's security, functionality,
+UX, and operational review. Approval applies to the exact published version and
+package; each update requires a new review.
 
-A security agent helps inspect each version, alongside automated scans and
-isolated tests. A Twenty reviewer makes the approval decision in V1. Passing a
-review reduces risk; it does not guarantee that a version has no vulnerabilities.
+## Vetting checklist
 
-## Complete V1 vetting checklist
+This is the complete publisher checklist for the proposed V1. Every applicable
+requirement must pass. Provide documentation and test evidence for the checks
+below, and explain any that do not apply to your app.
 
-This is the complete acceptance checklist for the proposed V1. Record a result
-and supporting evidence for every item. All applicable criteria must pass before
-the exact app version can be vetted. Mark a capability-specific check as not
-applicable only when the app does not use that capability, with a written reason.
-Missing evidence is not a pass, and security blockers cannot be waived.
-
-- [ ] **Verified publisher and artifact.** Verify ownership of the app, source
-  repository, and npm package; check provenance and the source commit against the
-  published package. Retain readable source, a dependency lockfile, and the exact
-  version and artifact hash. See [Claiming your app](/developers/extend/apps/operations/publishing#claiming-your-app)
-  and [CI publishing with provenance](/developers/extend/apps/operations/publishing#ci-publishing).
-- [ ] **Compliance with Twenty's internal security review.** The exact app
-  version must pass the [internal review](#internal-security-review), with all
-  blocking findings resolved before approval.
-- [ ] **Only necessary permissions.** Justify every object/field permission,
-  system capability, additional role, AI agent permission, and external OAuth
-  scope with a feature. Remove unnecessary broad access and test both user and
-  application execution identities. Follow [Roles & Permissions](/developers/extend/apps/config/roles).
-- [ ] **Working advertised functionality.** A fresh workspace can install,
-  configure, and complete the main user journey without developer intervention.
+- [ ] **Publisher and source.** [Claim your app](/developers/extend/apps/operations/publishing#claiming-your-app)
+  and [publish with provenance](/developers/extend/apps/operations/publishing#ci-publishing).
+  Provide the npm package/version, matching source commit, readable source, and
+  dependency lockfile.
+- [ ] **Security review.** The submitted version must pass Twenty's internal
+  security review, with all blocking findings resolved.
+- [ ] **Permissions.** Request only the object/field access, system capabilities,
+  roles, AI agent permissions, and external OAuth scopes needed for documented
+  features. Test both user and application execution identities. See
+  [Roles & Permissions](/developers/extend/apps/config/roles).
+- [ ] **Functionality.** A user must be able to install, configure, and use the
+  advertised features in a fresh workspace without developer intervention.
   Handle missing permissions, expired credentials, API failures, and retries.
-- [ ] **Safe installation lifecycle.** Test real package installation, upgrade
-  from the previous vetted version when available, and uninstall, including
-  hooks. Preserve data during non-destructive upgrades, disclose destructive
-  changes, prevent duplicate side effects, stop ongoing work on uninstall, and
-  attempt external cleanup with recovery instructions for failures.
-- [ ] **Consistent and accessible UI.** Use supported `twenty-ui` controls,
-  theme tokens, imports, and host APIs; align SDK/UI versions. Check light/dark
-  themes, keyboard access, labels, validation, loading, empty, success, and error
-  states. Confirm destructive actions.
-- [ ] **Understandable workspace changes.** Inventory and justify each object,
-  field, view, workflow, agent, and navigation item. Reuse existing entities where
-  appropriate and avoid duplicate CRM objects, unnecessary navigation, and
-  user-facing technical clutter.
-- [ ] **Stable identifiers and compatibility.** Preserve entity identifiers
-  across versions, avoid hardcoded workspace/record/user IDs, and declare
-  supported Twenty versions.
-- [ ] **Bounded work at installation scale.** Follow the app development
-  standards for event batching/filtering, bulk operations, pagination, caching,
-  paced scheduling, idempotency, deduplication, loop prevention, and bounded
-  retries/backoff. Provide an API/job budget across installations and a small
-  burst/retry test. Expose workspace settings with sensible defaults.
-- [ ] **Operational shared routes.** For apps using shared server routes, verify
-  owner-workspace setup and routing to the correct installed workspace. Document
-  the dependency on the owner installation and its operational maintenance.
-- [ ] **Complete publisher documentation.** Supply setup instructions, a support
-  contact, release notes, data consequences of uninstalling, and reproducible
-  tests with safe setup instructions, alongside the inventories and evidence
-  required above.
+- [ ] **Installation lifecycle.** Test package installation, upgrade from the
+  previous vetted version when available, and uninstall, including
+  [install hooks](/developers/extend/apps/config/install-hooks). Preserve data
+  during non-destructive upgrades, disclose destructive changes, and prevent
+  duplicate side effects. Uninstall must stop ongoing work and attempt external
+  cleanup, with recovery instructions if cleanup fails.
+- [ ] **UI and accessibility.** Follow the
+  [front-component guidelines](/developers/extend/apps/layout/front-components#using-twenty-ui-components):
+  use supported `twenty-ui` controls, theme tokens, imports, and host APIs with
+  compatible SDK/UI versions. Support light/dark themes, keyboard access, labels,
+  input validation, and loading, empty, success, and error states. Confirm
+  destructive actions.
+- [ ] **Workspace changes.** List each added object, field, view, workflow, agent,
+  and navigation item with its purpose. Reuse existing entities where appropriate;
+  avoid duplicate CRM objects, unnecessary navigation, and user-facing technical
+  clutter.
+- [ ] **Compatibility.** Declare supported Twenty versions, preserve entity
+  identifiers across releases, and avoid hardcoded workspace, record, or user IDs.
+- [ ] **Performance.** Respect API and job limits across installations. Provide an
+  estimate of API calls/jobs at the expected installation scale and a burst/retry
+  test showing bounded work and recovery. Follow the
+  [good practices](/developers/extend/apps/getting-started/good-practices) for
+  batching, pagination, caching, scheduling, deduplication, loop prevention, and
+  bounded retries. Make workspace-specific settings configurable with defaults.
+- [ ] **Shared routes, if used.** Complete
+  [server-route setup](/developers/extend/apps/operations/publishing#setting-up-server-routes)
+  and test routing to the correct installed workspace. Document how the owner
+  installation is maintained: removing it interrupts shared webhooks.
+- [ ] **Documentation and support.** Provide setup instructions, a support
+  contact, release notes, and reproducible tests with safe setup instructions.
+  Explain what data the app sends externally, where and why, its retention and
+  deletion, and the data consequences of uninstalling.
 
-The following sections explain these criteria and the review process.
+## Review and updates
 
-## Internal security review
+A Twenty reviewer checks the submission and returns approval or findings to
+address. Updates do not inherit approval; the previous vetted version remains
+available while its replacement is reviewed. Expanded permissions or data access
+require renewed administrator consent. Approval may be revoked if a version no
+longer meets the requirements.
 
-Every submitted version must pass Twenty's internal security review, using
-security-agent analysis, automated checks, and reviewer assessment. This is a
-mandatory approval gate. Product quality cannot compensate for a failed review.
-
-The review team provides findings and any required remediation. Blocking findings
-must be resolved before vetting. Missing evidence, incomplete checks, or findings
-awaiting assessment leave the version pending or requiring changes. Record a
-disposition for every finding, including reasons for false positives or
-non-applicability and remediation owners/dates where needed.
-
-### Run reviews in the app owner's workspace
-
-The proposed V1 runs a Twenty-controlled security agent in the submitted app's
-registered owner workspace, using Twenty's
-[workspace agent infrastructure](/developers/extend/apps/logic/skills-and-agents).
-Each newly recorded version starts a separate review of its exact published
-artifact. Publishers can see the findings and address them in their workspace.
-
-Twenty controls the review policy, agent configuration, permitted tools, and
-official trigger. The submitted app must not supply or modify its own reviewer.
-The agent can inspect the submission and scan evidence, with no access to CRM
-records, workspace secrets, or approval actions. Building or running submitted
-code still requires a separate disposable test environment.
-
-Keep authoritative evidence and approval in Twenty's version review record,
-linked to the official run, owner workspace, artifact hash, and review policy
-version. A publisher-created report or a manually invoked agent conversation
-does not qualify as an official review. Missing ownership, unavailable agents,
-exhausted quotas, and incomplete runs leave the version unvetted.
-
-## Functionality and UX
-
-| Check                         | Acceptance criteria                                                                                                                                                                                                                                                        |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Main user journey             | A fresh workspace can install, configure, and use the advertised functionality without developer intervention. Exercise missing permissions, expired credentials, external API failures, and retries.                                                                      |
-| Installation lifecycle        | Test fresh installation, upgrade from the previous vetted version when one exists, and uninstall through the real package installation path. Preserve existing customer data during non-destructive upgrades and disclose destructive changes before they happen.          |
-| Twenty UI                     | Use supported `twenty-ui` components for standard controls and theme tokens for custom UI. Check light/dark themes, keyboard access, labels, validation, loading, empty, success, and error states. Clearly confirm destructive actions.                                   |
-| Workspace changes             | Provide an inventory of objects, fields, views, workflows, agents, and navigation items, with a purpose for each. Reuse existing entities where appropriate. Avoid duplicate CRM objects, unnecessary navigation, and technical objects presented as user-facing features. |
-| Compatibility and maintenance | Preserve stable entity identifiers across releases. Do not hardcode workspace, record, or user IDs. Declare supported Twenty versions, provide setup documentation and a support contact, and explain data consequences of uninstalling.                                   |
-
-There is no fixed entity-count maximum in this V1 proposal. Reviewers assess
-whether each entity is necessary for the advertised functionality and inspect
-the additions in each update.
-
-Follow the [front-component guidelines](/developers/extend/apps/layout/front-components#using-twenty-ui-components):
-align SDK/UI versions, use supported subpath imports and individual icons, and
-use host APIs for dialogs.
-
-Test [install hooks](/developers/extend/apps/config/install-hooks) explicitly:
-development sync skips them, and a synchronous post-install failure does not roll
-back schema changes. Hooks and retries must not create duplicate records or
-external resources. Uninstall must stop ongoing work and attempt cleanup of
-external resources, with recovery instructions if cleanup fails.
-
-## Operation across many workspaces
-
-Apply the [app development good practices](/developers/extend/apps/getting-started/good-practices)
-where relevant:
-
-- Batch database events, filter relevant updated fields, and use bulk reads/writes.
-- Spread scheduled work with randomized delays and pace job fan-outs.
-- Make jobs and hooks idempotent, deduplicate bursts, and prevent event-trigger loops.
-- Handle rate limits and transient failures with bounded backoff or delayed jobs.
-- Paginate large datasets, cache stable lookups, and batch external API requests.
-- Expose workspace-specific settings as application variables with sensible defaults.
-
-API calls made as the app share a budget across all installations. Supply an
-estimate of API calls and jobs at the expected installation scale, and a small
-burst/retry test demonstrating that work stays bounded and can recover. Review
-current API and enqueue limits in the good-practices documentation.
-
-For apps using shared server routes, verify that the owner workspace is configured
-and operational and that events reach the correct installed workspace. Document
-the operational dependency: removing the owner installation can interrupt
-webhooks for all installations. See
-[server-route setup](/developers/extend/apps/operations/publishing#setting-up-server-routes).
-
-## Submission and review evidence
-
-The publisher provides:
-
-- App identity, npm version, package artifact, source commit, provenance, and lockfile.
-- Feature-to-permission mapping and external destinations/data-flow explanation.
-- Entity inventory, supported Twenty versions, and release notes.
-- Reproducible lifecycle/core-flow tests, safe test setup instructions, and scaling evidence.
-- Setup documentation, support contact, and data retention/deletion explanation.
-
-The review records:
-
-- App ID, version, artifact hash, source commit, and provenance verification.
-- Scan results, the security agent's report, and the changes since the previous vetted version.
-- Functional/security test results and the Twenty version and configuration tested.
-- Findings and their dispositions, including any false-positive explanations.
-- Reviewer, approver, decision date, and checklist version.
-
-| Role                                | Responsibility                                                                                                          |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Publisher                           | Submit evidence, explain requested access, and remediate findings.                                                      |
-| Automated checks and security agent | Inspect each artifact, run isolated checks, and produce evidence. No approval authority.                                |
-| Twenty reviewer                     | Check functionality, UX, operational behavior, and completeness of evidence; request security triage when needed.       |
-| Twenty approver                     | Confirm all mandatory gates pass and record the version decision. A designated reviewer can also be the approver in V1. |
-
-## Version lifecycle
-
-1. Record each published version as **pending**, with its exact artifact hash.
-2. Run scans and agent analysis on the full artifact, with a diff of code,
-   dependencies, permissions, destinations, and entities against the previous
-   vetted version.
-3. Run isolated lifecycle, functional, permission, isolation, and applicable
-   scaling tests.
-4. Record **vetted**, **changes required**, or **rejected**. Use **revoked** when a
-   previously vetted version no longer meets the requirements.
-
-The proposed enforcement must:
-
-- Install the approved artifact, with a hash check, instead of resolving approval
-  through a mutable npm tag.
-- Keep the previous vetted version available while its replacement is reviewed.
-  Existing installations must not automatically move to an unvetted version.
-- Require renewed administrator consent for expanded permissions or data access.
-- Re-scan retained versions when new vulnerability information appears.
-- Support revocation, blocking new installs/upgrades, and containment of affected
-  installations when malicious behavior is discovered.
-
-Published community apps and vetted versions are distinct. Removing a badge is
-not sufficient containment for known malicious code.
-
-Twenty currently rejects app downgrades. Plan recovery around containment and a
-vetted corrective release, and do not promise an automatic rollback.
-
-## V1 scope
-
-Start with this checklist, a version-specific review record, isolated automated
-checks and agent analysis, and a human approval queue. Add the installation,
-upgrade, and revocation gates before piloting third-party vetting.
-
-Automatic approval, certification tiers, numerical trust scores, and extensive
-performance certification can follow once the first reviews show where they help.
