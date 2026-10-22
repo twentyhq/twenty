@@ -6,10 +6,7 @@ import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  DateCalendar,
-  type DateCalendarProps,
-} from 'twenty-ui/components/input';
+import { DatePicker, type DatePickerProps } from 'twenty-ui/components/input';
 
 type DatePickerCalendarProps = {
   value: string | null;
@@ -19,10 +16,10 @@ type DatePickerCalendarProps = {
   readOnly?: boolean;
   hideGrid?: boolean;
   today?: string;
-  weekStart?: DateCalendarProps['weekStart'];
+  weekStart?: DatePickerProps['weekStart'];
   onViewedMonthChange?: (month: string) => void;
-  renderHeader?: DateCalendarProps['renderHeader'];
-  loadingFallback?: DateCalendarProps['loadingFallback'];
+  renderHeader?: DatePickerProps['renderHeader'];
+  loadingFallback?: DatePickerProps['loadingFallback'];
 };
 
 export const DatePickerCalendar = ({
@@ -53,7 +50,7 @@ export const DatePickerCalendar = ({
   }
 
   return (
-    <DateCalendar
+    <DatePicker
       aria-label={t`Choose a date`}
       value={value}
       onValueChange={(date) => onChange?.(date)}
