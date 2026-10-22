@@ -503,10 +503,12 @@ msgstr "{0} членів робочого простору"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
+#. placeholder {0}: selectedField.label
 #. placeholder {0}: sourceFieldMetadataItem.label
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
 msgstr "{0}, назад до полів"
@@ -2621,6 +2623,7 @@ msgstr "Агенти"
 
 #. js-lingui-id: 3y9hVY
 #: src/modules/object-record/record-group/components/RecordGroupAggregateDropdown.tsx
+#: src/modules/side-panel/pages/page-layout/components/__stories__/ChartSettings.navigation.stories.tsx
 msgid "Aggregate"
 msgstr "Агрегувати"
 
@@ -4250,6 +4253,7 @@ msgid "Average"
 msgstr "Середнє"
 
 #. js-lingui-id: li9In6
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAxisNameSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Axis name"
 msgstr "Назва осі"
@@ -4287,6 +4291,11 @@ msgstr "Повернутися до вмісту"
 #: src/pages/ai-chat/AiChatInboxPage.tsx
 msgid "Back to inbox"
 msgstr "Назад до вхідних"
+
+#. js-lingui-id: 5CWqLx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
+msgid "Back to operations"
+msgstr ""
 
 #. js-lingui-id: 9aZHfH
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -4838,6 +4847,11 @@ msgstr "Доступ до календаря потребує схвалення
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 msgid "Calendar accounts"
 msgstr "Облікові записи календаря"
+
+#. js-lingui-id: bRk+FR
+#: src/modules/activities/calendar/utils/getTimelineCalendarEventLabel.ts
+msgid "Calendar event"
+msgstr ""
 
 #. js-lingui-id: 6kmXOY
 #: src/modules/activities/calendar/hooks/useCreateCalendarEvent.ts
@@ -5973,6 +5987,8 @@ msgid "Color"
 msgstr "Колір"
 
 #. js-lingui-id: 1HfW/F
+#: src/modules/side-panel/pages/page-layout/components/__stories__/ChartSettings.stories.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/ui/input/components/ThemeColorPickerMenu.tsx
 msgid "Colors"
@@ -8192,6 +8208,7 @@ msgid "Date format"
 msgstr "Формат дати"
 
 #. js-lingui-id: +A7KEy
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDateGranularitySelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -9892,7 +9909,7 @@ msgid "Email the attendees an invitation"
 msgstr "Надішліть учасникам запрошення електронною поштою"
 
 #. js-lingui-id: ju58G/
-#: src/modules/activities/emails/components/EmailThreadPreview.tsx
+#: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
 msgid "Email thread"
 msgstr "Ланцюжок електронних листів"
 
@@ -12358,6 +12375,7 @@ msgstr "Форму надіслано"
 
 #. js-lingui-id: kI1qVD
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
+#: src/modules/side-panel/pages/page-layout/components/__stories__/ChartSettings.stories.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Format"
 msgstr "Формат"
@@ -12935,6 +12953,7 @@ msgstr "Група"
 #. js-lingui-id: ALoP4W
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/__stories__/ChartSettings.navigation.stories.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -15231,6 +15250,20 @@ msgstr "Вміст посилання"
 msgid "Link copied to clipboard"
 msgstr "Посилання скопійовано в буфер обміну"
 
+#. js-lingui-id: /RZu15
+#: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+#: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
+#: src/modules/page-layout/widgets/emails/components/WidgetActionEmails.tsx
+msgid "Link email threads"
+msgstr ""
+
+#. js-lingui-id: ze7eaG
+#: src/modules/activities/calendar/components/CalendarEventsEmptyState.tsx
+#: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
+#: src/modules/page-layout/widgets/calendar/components/WidgetActionCalendar.tsx
+msgid "Link events"
+msgstr ""
+
 #. js-lingui-id: vH3ZQY
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor.tsx
 msgid "Link label"
@@ -15379,6 +15412,11 @@ msgstr "Завантаження csv ... "
 msgid "Loading document viewer..."
 msgstr "Завантаження переглядача документів..."
 
+#. js-lingui-id: A6/Vxy
+#: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
+msgid "Loading email threads"
+msgstr ""
+
 #. js-lingui-id: qIaOZk
 #: src/modules/activities/emails/components/EmailLoader.tsx
 msgid "Loading emails"
@@ -15388,6 +15426,11 @@ msgstr "Завантаження електронних листів"
 #: src/modules/ai/components/AiChatMessageReactionPicker.tsx
 msgid "Loading emojis"
 msgstr "Завантаження емодзі"
+
+#. js-lingui-id: 0Jvyke
+#: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
+msgid "Loading events"
+msgstr ""
 
 #. js-lingui-id: IFQsdb
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -17445,6 +17488,11 @@ msgstr "Опис для цього застосунку відсутній"
 msgid "No email exchange has occurred with this record yet."
 msgstr "Обмін електронними листами з цим записом ще не відбувся."
 
+#. js-lingui-id: dtnAuN
+#: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
+msgid "No email threads found"
+msgstr ""
+
 #. js-lingui-id: quWMra
 #: src/modules/ai/components/AiChatMessageReactionPicker.tsx
 msgid "No emoji found"
@@ -17457,12 +17505,17 @@ msgid "No event logs found"
 msgstr "Журналів подій не знайдено"
 
 #. js-lingui-id: l7y8S8
-#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
+#: src/modules/activities/calendar/components/CalendarEventsEmptyState.tsx
 msgid "No Events"
 msgstr "Подій немає"
 
+#. js-lingui-id: dW40Uz
+#: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
+msgid "No events found"
+msgstr ""
+
 #. js-lingui-id: wY82y3
-#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
+#: src/modules/activities/calendar/components/CalendarEventsEmptyState.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "З цим {objectName} ще не заплановано жодної події."
 
@@ -17472,12 +17525,14 @@ msgid "No field configured"
 msgstr "Поле не налаштовано"
 
 #. js-lingui-id: /hvarH
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
 msgid "No fields available"
 msgstr ""
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "No fields found"
@@ -17629,6 +17684,11 @@ msgstr "Для цього режиму немає доступної модел�
 msgid "No notes"
 msgstr "Немає приміток"
 
+#. js-lingui-id: XIpopT
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
+msgid "No operations found"
+msgstr ""
+
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
 #: src/modules/ui/input/components/SelectInput.tsx
@@ -17636,6 +17696,7 @@ msgid "No option found"
 msgstr "Опцій не знайдено"
 
 #. js-lingui-id: UbbJ8j
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 msgid "No options found"
 msgstr "Опцій не знайдено"
@@ -17765,6 +17826,8 @@ msgstr "Немає результатів"
 #. js-lingui-id: AxPAXW
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelList.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 msgid "No results found"
 msgstr "Результатів не знайдено"
 
@@ -18276,6 +18339,7 @@ msgstr "Числове поле"
 
 #. js-lingui-id: bR2sEm
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartNumberFormatSelectionDropdownContent.tsx
 msgid "Number format"
 msgstr "Формат числа"
 
@@ -22111,6 +22175,7 @@ msgstr "SDK"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
+#: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
@@ -22261,6 +22326,7 @@ msgstr "Пошук за назвою робочого простору, підд
 
 #. js-lingui-id: yI4D/V
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartColorSelectionDropdownContent.tsx
 #: src/modules/ui/input/components/ThemeColorPickerMenu.tsx
 msgid "Search colors"
 msgstr "Пошук кольорів"
@@ -22285,10 +22351,20 @@ msgstr "Шукати країну"
 msgid "Search currency"
 msgstr "Пошук валюти"
 
+#. js-lingui-id: BMsyzt
+#: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
+msgid "Search email threads"
+msgstr ""
+
 #. js-lingui-id: Sb71rQ
 #: src/modules/ai/components/AiChatMessageReactionPicker.tsx
 msgid "Search emojis"
 msgstr "Шукати емодзі"
+
+#. js-lingui-id: Lncu40
+#: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
+msgid "Search events"
+msgstr ""
 
 #. js-lingui-id: AHePb2
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -22309,7 +22385,10 @@ msgstr "метадані поля пошуку"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionTargetObjectFieldsView.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -22355,16 +22434,19 @@ msgstr "Шукати учасників"
 
 #. js-lingui-id: two5rl
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
 msgid "Search objects"
 msgstr "Пошук об’єктів"
 
 #. js-lingui-id: pGn7U0
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 msgid "Search operations"
 msgstr "Пошук операцій"
 
 #. js-lingui-id: 996xRf
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
 msgstr "Параметри пошуку"
@@ -24000,6 +24082,7 @@ msgid "Sort"
 msgstr "Сортування"
 
 #. js-lingui-id: /HgF9q
+#: src/modules/side-panel/pages/page-layout/components/__stories__/ChartSettings.navigation.stories.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Sort by"
@@ -24029,7 +24112,9 @@ msgstr "Сортування"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/settings/data-model/constants/CompositeFieldSubFieldLabelMessages.ts
+#: src/modules/side-panel/pages/page-layout/components/__stories__/ChartSettings.stories.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
@@ -29519,6 +29604,16 @@ msgstr "Ваш ключ Організації"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your Organization subscription has been canceled."
 msgstr "Вашу підписку Організації скасовано."
+
+#. js-lingui-id: j58uXD
+#: src/modules/activities/emails/components/LinkEmailThreadsDropdown.tsx
+msgid "Your other email threads"
+msgstr ""
+
+#. js-lingui-id: NRHz0j
+#: src/modules/activities/calendar/components/LinkCalendarEventsDropdown.tsx
+msgid "Your other events"
+msgstr ""
 
 #. js-lingui-id: 8mfOAZ
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
