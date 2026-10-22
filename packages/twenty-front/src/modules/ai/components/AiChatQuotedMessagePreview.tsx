@@ -18,6 +18,7 @@ const StyledQuote = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+  overflow-wrap: anywhere;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
@@ -26,10 +27,6 @@ const StyledHeader = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
-`;
-
-const StyledExcerpt = styled.div`
-  overflow-wrap: anywhere;
 `;
 
 const StyledNavigation = styled.div`
@@ -65,9 +62,7 @@ export const AiChatQuotedMessagePreview = ({
           {source.authorName}
         </Text>
       </StyledHeader>
-      <StyledExcerpt>
-        <LazyMarkdownRenderer text={source.excerpt} noImage />
-      </StyledExcerpt>
+      <LazyMarkdownRenderer text={source.excerpt} noImage />
       {isDefined(onNavigateToMessage) && (
         <StyledNavigation>
           <Button
