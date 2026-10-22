@@ -98,11 +98,14 @@ export const WithVariable: Story = {
       expect(args.onChange).toHaveBeenCalledWith({
         tiptap: serializeDocument([
           {
+            type: 'heading',
+            attrs: { level: 2 },
+            content: [{ type: 'text', text: 'Title' }],
+          },
+          {
             type: 'paragraph',
             content: [
-              { type: 'text', text: '## Title' },
-              { type: 'hardBreak' },
-              { type: 'text', text: 'Variable: ' },
+              { type: 'text', text: 'Variable:' },
               {
                 type: 'variableTag',
                 attrs: {
@@ -113,6 +116,7 @@ export const WithVariable: Story = {
           },
         ]),
         markdown: null,
+        blocknote: null,
       });
     });
     expect(args.onChange).toHaveBeenCalledTimes(1);
@@ -164,6 +168,7 @@ export const WithDeletableVariable: Story = {
           },
         ]),
         markdown: null,
+        blocknote: null,
       });
     });
     expect(args.onChange).toHaveBeenCalledTimes(1);
@@ -296,6 +301,7 @@ export const HasHistory: Story = {
     expect(args.onChange).toHaveBeenLastCalledWith({
       tiptap: documentWithVariable,
       markdown: null,
+      blocknote: null,
     });
 
     await userEvent.type(editor, `{${controlKey}>}z{/${controlKey}}`);
@@ -304,6 +310,7 @@ export const HasHistory: Story = {
     expect(args.onChange).toHaveBeenLastCalledWith({
       tiptap: serializeDocument([{ type: 'paragraph' }]),
       markdown: null,
+      blocknote: null,
     });
 
     await userEvent.type(
@@ -315,6 +322,7 @@ export const HasHistory: Story = {
     expect(args.onChange).toHaveBeenLastCalledWith({
       tiptap: documentWithVariable,
       markdown: null,
+      blocknote: null,
     });
   },
 };

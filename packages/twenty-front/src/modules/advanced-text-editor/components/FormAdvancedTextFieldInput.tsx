@@ -18,6 +18,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { type ComponentType, useEffect, useId, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -186,12 +187,11 @@ export const FormAdvancedTextFieldInput = ({
     };
   }, [editor, onEditorReady]);
 
-  const handleEnterFullScreen = () => {
-    setIsFullScreen(true);
-  };
-
-  const handleExitFullScreen = () => {
-    setIsFullScreen(false);
+  const handleFullScreenChange = (isFullScreenOpen: boolean) => {
+    flushSync(() => {
+      setIsFullScreen(isFullScreenOpen);
+    });
+    editor?.commands.focus();
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -223,7 +223,7 @@ export const FormAdvancedTextFieldInput = ({
 
   const { renderFullScreenModal } = useFullScreenModal({
     links: breadcrumbLinks,
-    onClose: handleExitFullScreen,
+    onClose: () => handleFullScreenChange(false),
     hasClosePageButton: !isMobile,
   });
 
@@ -281,7 +281,7 @@ export const FormAdvancedTextFieldInput = ({
                   {!readonly && !isFullScreen && (
                     <LightIconButton
                       size="sm"
-                      onClick={handleEnterFullScreen}
+                      onClick={() => handleFullScreenChange(true)}
                       emphasis="subtle"
                       aria-label={t`Expand to full screen`}
                     >

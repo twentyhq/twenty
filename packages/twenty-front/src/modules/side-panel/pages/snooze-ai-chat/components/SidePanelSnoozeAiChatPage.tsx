@@ -11,12 +11,14 @@ import {
   getAgentChatThreadSnoozeOptions,
 } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -104,19 +106,24 @@ export const SidePanelSnoozeAiChatPage = () => {
           })
         }
       >
-        <CommandMenuItemDropdown
-          id={SNOOZE_UNTIL_DATE_ITEM_ID}
-          Icon={IconCalendar}
-          label={t`Day & Time`}
-          dropdownId={untilDateDropdownId}
-          dropdownPlacement="bottom-start"
-          dropdownComponents={
+        <DropdownRoot dropdownId={untilDateDropdownId} type="panel">
+          <CommandMenuItemDropdownTrigger
+            id={SNOOZE_UNTIL_DATE_ITEM_ID}
+            Icon={IconCalendar}
+            label={t`Day & Time`}
+          />
+          <DropdownContent
+            side="bottom"
+            align="start"
+            width="auto"
+            collisionPadding={{ left: 0, right: 0 }}
+          >
             <SnoozeAiChatUntilDatePicker
               threadIds={snoozeAiChatThreadIds}
               onSnoozed={closeSidePanelMenu}
             />
-          }
-        />
+          </DropdownContent>
+        </DropdownRoot>
       </SelectableListItem>
     </SidePanelList>
   );
