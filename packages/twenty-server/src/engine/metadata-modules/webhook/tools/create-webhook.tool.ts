@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { webhookOperationSchema } from 'src/engine/metadata-modules/webhook/tools/schemas/webhook-operation.schema';
 import { compileWebhookOperations } from 'src/engine/metadata-modules/webhook/tools/utils/compile-webhook-operations.util';
@@ -51,15 +51,10 @@ export class CreateWebhookTool extends BaseTool<
     super();
   }
 
-  async execute(
-    {
-      targetUrl,
-      operations,
-      description,
-      secret,
-    }: z.infer<typeof createWebhookInputSchema>,
-    { workspaceId }: ToolProviderContext,
-  ): Promise<ToolOutput> {
+  async execute({
+    input: { targetUrl, operations, description, secret },
+    context: { workspaceId },
+  }: ToolExecuteArgs<typeof createWebhookInputSchema>): Promise<ToolOutput> {
     const webhook = await this.webhookService.create(
       {
         targetUrl,

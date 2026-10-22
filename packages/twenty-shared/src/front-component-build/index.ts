@@ -7,4 +7,9 @@
  *                              |___/
  */
 
+export {
+  createCssInjectionPlugin,
+  cssInjectionPlugin,
+} from './css-injection-plugin';
 export { createJsxRuntimeRemoteWrapperPlugin } from './jsx-runtime-remote-wrapper-plugin';
+export { unwrapDefineFrontComponentToDirectExport } from './unwrap-define-front-component-to-direct-export';

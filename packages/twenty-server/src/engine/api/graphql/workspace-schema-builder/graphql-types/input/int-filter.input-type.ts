@@ -5,6 +5,7 @@ import {
   GraphQLInt,
 } from 'graphql';
 
+import { FIELD_REFERENCE_FILTER_INPUT_FIELDS } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/field-reference-filter.input-fields';
 import { FilterIs } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/filter-is.input-type';
 
 export const IntFilterType = new GraphQLInputObjectType({
@@ -18,5 +19,6 @@ export const IntFilterType = new GraphQLInputObjectType({
     lte: { type: GraphQLInt },
     neq: { type: GraphQLInt },
     is: { type: FilterIs },
+    ...FIELD_REFERENCE_FILTER_INPUT_FIELDS,
   },
 });
