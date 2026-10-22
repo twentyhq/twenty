@@ -36,7 +36,7 @@ As per our [Privacy Policy](https://twenty.com/privacy-policy), Twenty acts as t
 No. Twenty does not have its own AI model and does not train any model on your data. The AI providers used by default on Twenty Cloud (Azure OpenAI, OpenAI, Anthropic and Mistral) do not train on it under their terms. Some optional models, such as Google Gemini, and TypeSafe (used by the workflow Classify action) are only used if an admin enables them; their terms are listed in [our Trust Center](https://trust.twenty.com/?tab=subprocessors).
 </Accordion>
 <Accordion title="If optional AI processing exists, can it be fully disabled for our workspace?">
-No data is sent to an AI provider unless someone in your workspace runs AI: the AI chat, an AI agent, or an AI step in a workflow. To block AI entirely, remove the Ask AI permission from every role in Settings → Roles, and set a workspace AI usage limit of 0 in Settings → Billing.
+No data is sent to an AI provider unless someone in your workspace runs AI: the AI chat, an AI agent, or an AI step in a workflow. To block AI entirely, set a workspace AI usage limit of 0 in Settings → Billing, which applies to every member, admins included. You can also remove the Ask AI permission from your editable roles in Settings → Roles; the built-in Admin role always keeps it.
 </Accordion>
 </AccordionGroup>
 
@@ -50,7 +50,7 @@ All data is encrypted in transit and at rest. Tenant data is isolated through a 
 Twenty's engineering and support teams may access customer workspaces to investigate and resolve issues. Workspace owners control this: support access can be disabled at any time in Settings → General → Security, and it stays off until you turn it back on. Support access requires two-factor authentication on Twenty's side, and on the Organization plan and above each session is recorded in your audit logs.
 </Accordion>
 <Accordion title="Can members of our workspace impersonate each other?">
-Members whose role has the Impersonate permission can view the workspace as another member, but cannot impersonate an admin. You control who has this permission in Settings → Roles. On the Organization plan and above, each impersonation is recorded in the audit logs.
+Members whose role has the Impersonate permission can view the workspace as any other member, including workspace admins, so only grant it to roles you trust. You control who has this permission in Settings → Roles. On the Organization plan and above, each impersonation is recorded in the audit logs.
 </Accordion>
 <Accordion title="How long are audit logs kept?">
 Audit logs are available on the Organization plan and above. They are kept for the period you set in Settings → General → Security. New workspaces start with a short default, so set the period your policy requires.
