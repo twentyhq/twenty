@@ -153,7 +153,6 @@ export class AgentChatThreadService {
     return this.restoreDeletedThread({ args, threadBefore });
   }
 
-  // Access-checked writes return raw rows; record events carry ORM records
   private async restoreDeletedThread({
     args,
     threadBefore,

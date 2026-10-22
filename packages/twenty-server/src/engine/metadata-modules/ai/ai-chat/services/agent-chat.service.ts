@@ -269,10 +269,12 @@ export class AgentChatService {
         .map(({ id }) => id),
     );
 
+    // their message and attachments are theirs to show; only the reply ran under their permissions
     return messages.map((message) => {
       if (
         !isDefined(message.turnId) ||
-        !turnIdsOpenedByOtherMembers.has(message.turnId)
+        !turnIdsOpenedByOtherMembers.has(message.turnId) ||
+        message.role === AgentMessageRole.USER
       ) {
         return message;
       }
