@@ -14,7 +14,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { RoleAssignmentValidationService } from 'src/engine/metadata-modules/role-assignment-validation/services/role-assignment-validation.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -29,6 +29,7 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
 
   let service: UserWorkspaceService;
   const userWorkspaceRepository = { update: jest.fn() };
+  const coreEntityCacheService = { invalidate: jest.fn() };
   const connectedAccountMetadataService = { findUsableByCaller: jest.fn() };
 
   beforeEach(async () => {
@@ -59,6 +60,7 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
           provide: ConnectedAccountMetadataService,
           useValue: connectedAccountMetadataService,
         },
+        { provide: CoreEntityCacheService, useValue: coreEntityCacheService },
         ...[
           getWorkspaceScopedRepositoryToken(RoleTargetEntity),
           RoleAssignmentValidationService,
@@ -71,7 +73,6 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
           FileCorePictureService,
           FileUrlService,
           OnboardingService,
-          CoreEntityCacheService,
           TwentyConfigService,
           WorkflowRunRecordShareService,
           WorkspaceCacheService,
@@ -93,6 +94,10 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
       { id: userWorkspaceId, workspaceId },
       { defaultFromHandle: 'Me@Example.com' },
     );
+    expect(coreEntityCacheService.invalidate).toHaveBeenCalledWith(
+      'userWorkspaceEntity',
+      userWorkspaceId,
+    );
   });
 
   it('saves an alias of a connected account', async () => {
@@ -109,18 +114,21 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
   });
 
   it('rejects a handle that is not sendable by the caller', async () => {
-    await expect(
-      service.updateDefaultFromHandle({
+    const error = await service
+      .updateDefaultFromHandle({
         userWorkspaceId,
         workspaceId,
         defaultFromHandle: 'shared@example.com',
-      }),
-    ).rejects.toMatchObject({
-      constructor: PermissionsException,
-      userFriendlyMessage: expect.objectContaining({
+      })
+      .catch((caughtError: unknown) => caughtError);
+
+    expect(error).toBeInstanceOf(UserInputError);
+    expect((error as UserInputError).extensions.userFriendlyMessage).toEqual(
+      expect.objectContaining({
         message: 'You cannot send from this address.',
       }),
-    });
+    );
+    expect(coreEntityCacheService.invalidate).not.toHaveBeenCalled();
 
     expect(userWorkspaceRepository.update).not.toHaveBeenCalled();
   });
@@ -135,6 +143,10 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
     expect(userWorkspaceRepository.update).toHaveBeenCalledWith(
       { id: userWorkspaceId, workspaceId },
       { defaultFromHandle: null },
+    );
+    expect(coreEntityCacheService.invalidate).toHaveBeenCalledWith(
+      'userWorkspaceEntity',
+      userWorkspaceId,
     );
     expect(
       connectedAccountMetadataService.findUsableByCaller,

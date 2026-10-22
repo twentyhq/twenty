@@ -13,6 +13,7 @@ import {
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -115,17 +116,20 @@ export class UserWorkspaceService {
         ) ?? null;
 
       if (!isDefined(storedHandle)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-          { userFriendlyMessage: msg`You cannot send from this address.` },
-        );
+        throw new UserInputError('Handle is not sendable by this user', {
+          userFriendlyMessage: msg`You cannot send from this address.`,
+        });
       }
     }
 
     await this.userWorkspaceRepository.update(
       { id: userWorkspaceId, workspaceId },
       { defaultFromHandle: storedHandle },
+    );
+
+    await this.coreEntityCacheService.invalidate(
+      'userWorkspaceEntity',
+      userWorkspaceId,
     );
   }
 
