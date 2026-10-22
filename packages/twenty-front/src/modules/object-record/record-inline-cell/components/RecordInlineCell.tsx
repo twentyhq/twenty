@@ -5,6 +5,7 @@ import { FieldFocusContextProvider } from '@/object-record/record-field/ui/conte
 import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
 
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { useIsFieldValueRestricted } from '@/object-record/record-field/ui/hooks/useIsFieldValueRestricted';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 
 import { useIcons } from 'twenty-ui/icon';
@@ -57,10 +58,12 @@ export const RecordInlineCell = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
+  const isFieldValueRestricted = useIsFieldValueRestricted();
+
   const { getIcon } = useIcons();
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    readonly: isReadOnly,
+    readonly: isReadOnly || isFieldValueRestricted,
     buttonIcon: buttonIcon,
     IconLabel: fieldDefinition.iconName
       ? getIcon(fieldDefinition.iconName)

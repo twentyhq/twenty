@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { useCoreRecordReferenceField } from '@/object-record/record-field/ui/hooks/useCoreRecordReferenceField';
+import { useIsFieldValueRestricted } from '@/object-record/record-field/ui/hooks/useIsFieldValueRestricted';
 import { ActorFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ActorFieldDisplay';
 import { CoreRecordReferenceFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/CoreRecordReferenceFieldDisplay';
 import { ArrayFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ArrayFieldDisplay';
@@ -75,7 +76,13 @@ export const FieldDisplay = () => {
     fieldName: fieldDefinition.metadata.fieldName,
   });
 
+  const isFieldValueRestricted = useIsFieldValueRestricted();
+
   if (isDefined(isForbidden) && isForbidden) {
+    return <ForbiddenFieldDisplay />;
+  }
+
+  if (isFieldValueRestricted && !isChipDisplay) {
     return <ForbiddenFieldDisplay />;
   }
 

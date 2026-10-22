@@ -1,5 +1,6 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { useIsFieldValueRestricted } from '@/object-record/record-field/ui/hooks/useIsFieldValueRestricted';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { useContext, type ReactNode } from 'react';
@@ -19,9 +20,11 @@ export const RecordTableCellDisplayMode = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
+  const isFieldValueRestricted = useIsFieldValueRestricted();
+
   const handleClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    if (!isFieldInputOnly && !isReadOnly) {
+    if (!isFieldInputOnly && !isReadOnly && !isFieldValueRestricted) {
       openTableCell();
     }
   };

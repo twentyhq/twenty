@@ -4,6 +4,7 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useGetSecondaryFieldButton } from '@/object-record/record-field/ui/hooks/useGetSecondaryFieldButton';
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { useIsFieldValueRestricted } from '@/object-record/record-field/ui/hooks/useIsFieldValueRestricted';
 import {
   useRecordInlineCellContext,
   type RecordInlineCellContextProps,
@@ -75,7 +76,11 @@ export const RecordInlineCellDisplayMode = ({
   const { editModeContentOnly, label, buttonIcon, readonly } =
     useRecordInlineCellContext();
 
-  const { isForbidden } = useContext(FieldContext);
+  const { isForbidden: isFieldForbidden } = useContext(FieldContext);
+
+  const isFieldValueRestricted = useIsFieldValueRestricted();
+
+  const isForbidden = isFieldForbidden === true || isFieldValueRestricted;
 
   const isFieldEmpty = useIsFieldEmpty();
   const showEditButton =
