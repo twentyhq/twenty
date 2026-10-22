@@ -1,3 +1,4 @@
+import { FRONT_COMPONENT_BUILD_TIMEOUT_MS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-build-timeout-ms.constant';
 import { context, type BuildOptions } from 'esbuild';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -6,7 +7,6 @@ import {
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
 
-const BUILD_TIMEOUT_MS = 10000;
 const MAX_BUILD_OUTPUT_BYTES = 5 * 1024 * 1024;
 
 export const buildFrontComponentWithLimits = async (options: BuildOptions) => {
@@ -18,7 +18,7 @@ export const buildFrontComponentWithLimits = async (options: BuildOptions) => {
       FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
     );
     void buildContext.cancel().catch(() => undefined);
-  }, BUILD_TIMEOUT_MS);
+  }, FRONT_COMPONENT_BUILD_TIMEOUT_MS);
 
   try {
     const result = await buildContext.rebuild();
