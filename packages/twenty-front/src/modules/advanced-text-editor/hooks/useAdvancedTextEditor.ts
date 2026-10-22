@@ -1,4 +1,5 @@
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
 import { type UploadedFile } from '@/advanced-text-editor/types/UploadedFile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { buildAdvancedTextEditorExtensions } from '@/advanced-text-editor/utils/buildAdvancedTextEditorExtensions';
@@ -17,9 +18,9 @@ type UseAdvancedTextEditorProps = {
   onFocus?: (editor: Editor) => void;
   onBlur?: (editor: Editor) => void;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
-  onImageUploadError?: (error: Error, file: File) => void;
+  onImageUploadError?: UploadErrorHandler;
   onFileUpload?: (file: File) => Promise<UploadedFile>;
-  onFileUploadError?: (error: Error, file: File) => void;
+  onFileUploadError?: UploadErrorHandler;
   content?: Content;
   editorProps?: EditorOptions['editorProps'];
 };

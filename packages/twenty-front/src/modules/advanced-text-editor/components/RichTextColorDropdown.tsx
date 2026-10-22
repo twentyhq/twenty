@@ -35,10 +35,13 @@ export const RichTextColorDropdown = ({
   const getColorLabel = (color: RichTextColor | null) =>
     isDefined(color) ? t(RICH_TEXT_COLOR_DISPLAY_NAMES[color]) : t`Default`;
 
-  const handleColorSelect = (
-    attributeName: 'textColor' | 'backgroundColor',
-    color: RichTextColor | null,
-  ) => {
+  const handleColorSelect = ({
+    attributeName,
+    color,
+  }: {
+    attributeName: 'textColor' | 'backgroundColor';
+    color: RichTextColor | null;
+  }) => {
     editor
       .chain()
       .focus()
@@ -47,17 +50,20 @@ export const RichTextColorDropdown = ({
       .run();
   };
 
-  const renderColorOptions = (
-    attributeName: 'textColor' | 'backgroundColor',
-    selectedColor: RichTextColor | null,
-  ) =>
+  const renderColorOptions = ({
+    attributeName,
+    selectedColor,
+  }: {
+    attributeName: 'textColor' | 'backgroundColor';
+    selectedColor: RichTextColor | null;
+  }) =>
     colorOptions.map((color) => (
       <Dropdown.OptionItem
         key={color ?? 'default'}
         aria-label={getColorLabel(color)}
         selected={selectedColor === color}
         startIcon={<RichTextColorIcon {...{ [attributeName]: color }} />}
-        onSelect={() => handleColorSelect(attributeName, color)}
+        onSelect={() => handleColorSelect({ attributeName, color })}
       >
         {getColorLabel(color)}
       </Dropdown.OptionItem>
@@ -89,11 +95,17 @@ export const RichTextColorDropdown = ({
         aria-label={t`Text and background colors`}
       >
         <Dropdown.Section label={t`Text Colors`}>
-          {renderColorOptions('textColor', textColor)}
+          {renderColorOptions({
+            attributeName: 'textColor',
+            selectedColor: textColor,
+          })}
         </Dropdown.Section>
         <Dropdown.Separator />
         <Dropdown.Section label={t`Background Colors`}>
-          {renderColorOptions('backgroundColor', backgroundColor)}
+          {renderColorOptions({
+            attributeName: 'backgroundColor',
+            selectedColor: backgroundColor,
+          })}
         </Dropdown.Section>
       </DropdownContent>
     </DropdownRoot>

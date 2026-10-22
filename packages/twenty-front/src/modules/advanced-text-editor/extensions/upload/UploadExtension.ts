@@ -49,7 +49,15 @@ export const UploadExtension = Extension.create<
       return [];
     }
 
-    const insertUploadingFiles = (editor: Editor, files: File[], pos: number) =>
+    const insertUploadingFiles = ({
+      editor,
+      files,
+      pos,
+    }: {
+      editor: Editor;
+      files: File[];
+      pos: number;
+    }) =>
       [...files].reverse().forEach((file) => {
         if (isImageFile(file) && isDefined(onImageUpload)) {
           insertUploadingImage({
@@ -81,13 +89,13 @@ export const UploadExtension = Extension.create<
           : [...EMAIL_IMAGE_MIME_TYPES],
         consumePasteEvent: true,
         onPaste: (editor, files) =>
-          insertUploadingFiles(
+          insertUploadingFiles({
             editor,
             files,
-            getPositionAfterCursorBlock(editor.state),
-          ),
+            pos: getPositionAfterCursorBlock(editor.state),
+          }),
         onDrop: (editor, files, pos) =>
-          insertUploadingFiles(editor, files, pos),
+          insertUploadingFiles({ editor, files, pos }),
       }),
     ];
   },

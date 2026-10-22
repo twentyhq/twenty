@@ -1,5 +1,6 @@
 import { FormRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRichTextFieldInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type JSONContent } from '@tiptap/core';
 import {
   expect,
   fn,
@@ -13,7 +14,7 @@ import { getUserDevice } from 'twenty-ui/utilities';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
-const serializeDocument = (content: unknown[]) =>
+const serializeDocument = (content: JSONContent[]) =>
   JSON.stringify({
     type: 'doc',
     content,

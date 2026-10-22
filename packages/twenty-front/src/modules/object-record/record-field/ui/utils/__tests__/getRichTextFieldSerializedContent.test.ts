@@ -48,7 +48,7 @@ describe('getRichTextFieldSerializedContent', () => {
       tiptap: null,
     });
 
-    expect(JSON.parse(result as string)).toMatchObject({
+    expect(JSON.parse(result ?? '')).toMatchObject({
       type: 'doc',
       content: [
         {
@@ -79,7 +79,7 @@ describe('getRichTextFieldSerializedContent', () => {
       blocknote: JSON.stringify(tipTapBlocks),
     });
 
-    expect(JSON.parse(result as string)).toEqual({
+    expect(JSON.parse(result ?? '')).toEqual({
       type: 'doc',
       content: tipTapBlocks,
     });

@@ -1,5 +1,6 @@
 import { FormRecordRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { type JSONContent } from '@tiptap/core';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -8,7 +9,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-const serializeDocument = (content: unknown[]) =>
+const serializeDocument = (content: JSONContent[]) =>
   JSON.stringify({
     type: 'doc',
     content,
