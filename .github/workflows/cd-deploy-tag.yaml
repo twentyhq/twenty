@@ -14,6 +14,7 @@ defaults:
 
 jobs:
   dispatch-tag:
+    environment: release-dispatch
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:

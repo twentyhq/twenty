@@ -8,6 +8,7 @@ permissions: {}
 
 jobs:
   dispatch:
+    environment: automation
     if: |
       github.event.pull_request.draft == false &&
       github.event.pull_request.author_association != 'MEMBER' &&

@@ -23,6 +23,7 @@ concurrency:
 
 jobs:
   e2e-test:
+    environment: ${{ github.event_name == 'pull_request' && 'public-ci' || 'automation' }}
     if: >
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
@@ -173,7 +174,7 @@ jobs:
       - name: QA Scout / Prepare merged PR context
         id: qa-scout-pr
         if: >-
-          ${{ !cancelled() && (
+          ${{ !cancelled() && github.ref == 'refs/heads/main' && (
             github.event_name == 'push' ||
             github.event_name == 'workflow_dispatch' ||
             (github.event_name == 'pull_request' &&

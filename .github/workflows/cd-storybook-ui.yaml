@@ -51,6 +51,7 @@ jobs:
           retention-days: 7
 
   dispatch:
+    environment: release-dispatch
     needs: build
     permissions: {}
     runs-on: ubuntu-latest

@@ -157,6 +157,7 @@ jobs:
 
   # ── Dispatch: pixel diff for the triggering workflow's project (PRs + main) ──
   dispatch-pixel-diff:
+    environment: automation
     needs: resolve-context
     if: needs.resolve-context.outputs.has_artifact == 'true'
     runs-on: ubuntu-latest

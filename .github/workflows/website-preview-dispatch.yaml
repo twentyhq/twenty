@@ -4,7 +4,7 @@ permissions:
   contents: read
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened, closed, labeled]
     paths:
       - packages/twenty-website/**
@@ -18,8 +18,8 @@ concurrency:
 
 jobs:
   trigger-build:
-    # Same fork PRs from outside the org don't have `secrets.*` so the dispatch
-    # call would fail anyway — skip explicitly to avoid noise.
+    environment: automation
+    # The trusted base workflow forwards metadata without checking out PR code.
     if: |
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.action != 'closed' && (
@@ -59,6 +59,7 @@ jobs:
             -f pr_head_ref="$PR_HEAD_REF"
 
   trigger-cleanup:
+    environment: automation
     # Covers both merge and close-without-merge — pull_request `closed` fires
     # for both. PRs left open forever are covered by OpenNext's
     # `maxVersionAgeDays: 14` + `maxNumberOfVersions: 50` auto-pruning in

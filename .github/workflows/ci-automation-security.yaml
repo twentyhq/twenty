@@ -1,0 +1,27 @@
+name: CI Automation Security
+
+on:
+  pull_request:
+    paths:
+      - .github/scripts/**
+      - .github/workflows/ci-automation-security.yaml
+      - .github/workflows/*i18n*.yaml
+  push:
+    branches: [main]
+    paths:
+      - .github/scripts/**
+      - .github/workflows/ci-automation-security.yaml
+      - .github/workflows/*i18n*.yaml
+
+permissions:
+  contents: read
+
+jobs:
+  translation-branch-isolation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - run: python3 -m unittest discover -s .github/scripts/tests -v

@@ -27,6 +27,7 @@ concurrency:
 
 jobs:
   pull_website_translations:
+    environment: automation
     name: Pull website translations
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -38,9 +39,7 @@ jobs:
           ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup website i18n branch
-        run: |
-          git fetch origin i18n-website || true
-          git checkout -B i18n-website origin/i18n-website || git checkout -b i18n-website
+        run: python3 .github/scripts/prepare-translation-branch.py i18n-website
 
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
@@ -48,12 +47,10 @@ jobs:
       - name: Build twenty-shared
         run: npx nx build twenty-shared
 
-      - name: Stash any changes before pulling translations
+      - name: Configure git
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@twenty.com'
-          git add .
-          git stash
 
       # Repair machine-translation damage in Crowdin before downloading, so the
       # catalogs that reach the repo are already correct rather than a cycle behind.
@@ -115,6 +112,18 @@ jobs:
         if: steps.compile_translations.outputs.changes_detected == 'true'
         run: git push origin HEAD:i18n-website
 
+      - name: Generate PR creation token
+        id: pr-token
+        if: steps.compile_translations.outputs.changes_detected == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ vars.TWENTY_PR_APP_ID }}
+          private-key: ${{ secrets.TWENTY_PR_APP_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Create pull request
         if: steps.compile_translations.outputs.changes_detected == 'true'
         run: |
@@ -124,7 +133,7 @@ jobs:
             echo "No file differences between branches, skipping PR creation"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.pr-token.outputs.token }}
 
       - name: Mint twenty-infra dispatch token
         id: app-token

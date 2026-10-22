@@ -21,6 +21,7 @@ concurrency:
 
 jobs:
   extract_website_translations:
+    environment: automation
     name: Extract and upload website translations
     runs-on: ubuntu-latest
     steps:
@@ -31,9 +32,7 @@ jobs:
           ref: main
 
       - name: Setup website i18n branch
-        run: |
-          git fetch origin i18n-website || true
-          git checkout -B i18n-website origin/i18n-website || git checkout -b i18n-website
+        run: python3 .github/scripts/prepare-translation-branch.py i18n-website
 
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
@@ -93,6 +92,18 @@ jobs:
           CROWDIN_PROJECT_ID: '4'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+      - name: Generate PR creation token
+        id: pr-token
+        if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ vars.TWENTY_PR_APP_ID }}
+          private-key: ${{ secrets.TWENTY_PR_APP_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: twenty
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Create a pull request
         if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
         run: |
@@ -102,7 +113,7 @@ jobs:
             echo "No file differences between branches, skipping PR creation"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.pr-token.outputs.token }}
 
       - name: Mint twenty-infra dispatch token
         id: app-token

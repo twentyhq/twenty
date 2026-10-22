@@ -13,6 +13,7 @@ concurrency:
 
 jobs:
   dispatch:
+    environment: automation
     if: >
       github.event.pull_request.draft == false &&
       (github.event.action != 'labeled' || startsWith(github.event.label.name, 'pr-review-'))

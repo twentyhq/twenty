@@ -15,6 +15,7 @@ jobs:
       files: packages/twenty-website/**
 
   deploy-main:
+    environment: automation
     needs: website-changed-files
     timeout-minutes: 3
     runs-on: ubuntu-latest

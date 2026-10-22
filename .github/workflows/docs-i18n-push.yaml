@@ -32,6 +32,7 @@ concurrency:
 
 jobs:
   push_docs:
+    environment: automation
     name: Push documentation to Crowdin
     runs-on: ubuntu-latest
     steps:
