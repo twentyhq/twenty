@@ -7,8 +7,6 @@ describe('getAppOnlyApplicationIds', () => {
     expect(
       getAppOnlyApplicationIds({
         group: {
-          id: 'group',
-          handle: 'tim@apple.dev',
           builtInAccount: { applicationId: null },
           appAccounts: [{ applicationId: 'linear' }],
         },
@@ -24,8 +22,6 @@ describe('getAppOnlyApplicationIds', () => {
     expect(
       getAppOnlyApplicationIds({
         group: {
-          id: 'group',
-          handle: 'tim@apple.dev',
           appAccounts: [
             { applicationId: 'fathom' },
             { applicationId: 'linear' },
@@ -43,8 +39,6 @@ describe('getAppOnlyApplicationIds', () => {
     expect(
       getAppOnlyApplicationIds({
         group: {
-          id: 'group',
-          handle: 'tim@apple.dev',
           appAccounts: [{ applicationId: 'fathom' }, { applicationId: null }],
         },
         applicationIdsWithConnectionsTab: APPLICATION_IDS_WITH_CONNECTIONS_TAB,
