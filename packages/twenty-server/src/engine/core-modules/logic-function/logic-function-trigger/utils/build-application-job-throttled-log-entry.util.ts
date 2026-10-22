@@ -6,14 +6,12 @@ import { ThrottlerExceptionCode } from 'src/engine/core-modules/throttler/thrott
 export const buildApplicationJobThrottledLogEntry = ({
   workspaceId,
   application,
-  skippedJobCount,
 }: {
   workspaceId: string;
   application: Pick<
     FlatApplication,
     'id' | 'applicationRegistrationId' | 'version'
   >;
-  skippedJobCount: number;
 }): ApplicationLogEntry =>
   buildApplicationPlatformLogEntry({
     workspaceId,
@@ -22,7 +20,6 @@ export const buildApplicationJobThrottledLogEntry = ({
     applicationVersion: application.version ?? '',
     source: 'JOB_RATE_LIMIT',
     level: 'WARN',
-    message: `Job enqueue limit reached. Skipped ${skippedJobCount} logic function trigger(s).`,
+    message: 'Job enqueue limit reached. Logic function triggers were skipped.',
     errorCode: ThrottlerExceptionCode.LIMIT_REACHED,
-    properties: { skippedJobCount },
   });
