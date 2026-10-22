@@ -16,9 +16,9 @@ beforeAll(async () => {
   sharedDependencies = await buildFrontComponentSharedDependencies();
 });
 const buildFrontComponent = async (
-  input: Parameters<typeof compileFrontComponent>[0],
+  input: Parameters<typeof compileFrontComponent>[0]['input'],
 ) => ({
-  ...(await compileFrontComponent(input, sharedDependencies)),
+  ...(await compileFrontComponent({ input, sharedDependencies })),
   sharedDependencies,
 });
 
