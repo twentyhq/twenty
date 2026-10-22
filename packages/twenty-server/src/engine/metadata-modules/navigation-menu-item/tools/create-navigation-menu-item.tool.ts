@@ -23,7 +23,9 @@ const commonOptionalFields = {
   folderId: z
     .uuid()
     .optional()
-    .describe('Parent folder id, if the item should live inside a folder.'),
+    .describe(
+      'Parent id: the tab, section or folder the item should live in. Tabs have no parent, sections live in a tab or at the root of Home, folders cannot be nested in folders.',
+    ),
 };
 
 const requiredNameField = z
@@ -44,6 +46,18 @@ const derivedNameField = z
 const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(NavigationMenuItemType.FOLDER),
+    scope: navigationMenuItemScopeSchema,
+    name: requiredNameField,
+    ...commonOptionalFields,
+  }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.TAB),
+    scope: navigationMenuItemScopeSchema,
+    name: requiredNameField,
+    ...commonOptionalFields,
+  }),
+  z.object({
+    type: z.literal(NavigationMenuItemType.SECTION),
     scope: navigationMenuItemScopeSchema,
     name: requiredNameField,
     ...commonOptionalFields,
@@ -113,6 +127,8 @@ const toServiceInput = (
 
   switch (params.type) {
     case NavigationMenuItemType.FOLDER:
+    case NavigationMenuItemType.TAB:
+    case NavigationMenuItemType.SECTION:
       return { ...base, name: params.name };
     case NavigationMenuItemType.LINK:
       return { ...base, name: params.name, link: params.link };
@@ -147,6 +163,8 @@ const toServiceInput = (
   description: `Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
 
 Type chooses the variant:
+- TAB: a sidebar tab next to Home (name required, no parent). Items and sections live in it through folderId.
+- SECTION: a titled group of items inside a tab or at the root of Home (name required).
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).

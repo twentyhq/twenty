@@ -75,6 +75,26 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
             ),
           ];
     }
+    case NavigationMenuItemType.TAB: {
+      return isDefined(name) && name.trim() !== ''
+        ? []
+        : [
+            buildInvalidInputError(
+              t`A name is required for TAB type`,
+              msg`A name is required for TAB type`,
+            ),
+          ];
+    }
+    case NavigationMenuItemType.SECTION: {
+      return isDefined(name) && name.trim() !== ''
+        ? []
+        : [
+            buildInvalidInputError(
+              t`A name is required for SECTION type`,
+              msg`A name is required for SECTION type`,
+            ),
+          ];
+    }
     case NavigationMenuItemType.OBJECT: {
       return validateUuidProperty({
         value: targetObjectMetadataUniversalIdentifier,

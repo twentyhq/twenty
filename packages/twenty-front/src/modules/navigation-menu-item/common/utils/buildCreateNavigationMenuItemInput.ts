@@ -10,6 +10,7 @@ import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/co
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 import { isNavigationMenuItemObject } from '@/navigation-menu-item/common/utils/isNavigationMenuItemObject';
+import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 
 export const buildCreateNavigationMenuItemInput = (
   draftItem: NavigationMenuItem,
@@ -21,11 +22,15 @@ export const buildCreateNavigationMenuItemInput = (
     position: draftItem.position,
   };
 
-  if (isNavigationMenuItemFolder(draftItem)) {
+  if (
+    isNavigationMenuItemFolder(draftItem) ||
+    isNavigationMenuItemTabOrSection(draftItem)
+  ) {
     input.name = draftItem.name ?? undefined;
     input.icon = draftItem.icon ?? null;
   } else if (isNavigationMenuItemLink(draftItem)) {
     input.name = draftItem.name ?? t`Link`;
+    input.icon = draftItem.icon ?? null;
     const linkUrl = (draftItem.link ?? '').trim();
     input.link = linkUrl
       ? getLinkNavigationMenuItemComputedLink({ link: linkUrl })

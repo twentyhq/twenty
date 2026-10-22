@@ -1,4 +1,7 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
+
+import { NavigationMenuItemContainerContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemContainerContext';
 
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
@@ -20,13 +23,20 @@ export const WorkspaceSectionListEditModeFallback = ({
   filteredItems,
   folderChildrenById,
   onActiveObjectMetadataItemClick,
-}: WorkspaceSectionListEditModeFallbackProps) => (
-  <StyledFallback>
-    <WorkspaceSectionListReadOnly
-      filteredItems={filteredItems}
-      folderChildrenById={folderChildrenById}
-      onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-    />
-    <WorkspaceSectionAddMenuItemButton />
-  </StyledFallback>
-);
+}: WorkspaceSectionListEditModeFallbackProps) => {
+  const { containerId } = useContext(NavigationMenuItemContainerContext);
+
+  return (
+    <StyledFallback>
+      <WorkspaceSectionListReadOnly
+        filteredItems={filteredItems}
+        folderChildrenById={folderChildrenById}
+        onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+      />
+      <WorkspaceSectionAddMenuItemButton
+        containerId={containerId}
+        position={filteredItems.length}
+      />
+    </StyledFallback>
+  );
+};

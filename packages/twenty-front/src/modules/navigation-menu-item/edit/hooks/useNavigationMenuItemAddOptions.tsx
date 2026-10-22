@@ -9,6 +9,7 @@ import {
   IconFolder,
   IconLink,
   IconPerspective,
+  IconSettings,
   IconTable,
   useIcons,
 } from 'twenty-ui/icon';
@@ -21,12 +22,18 @@ import {
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SETTINGS_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorSettingsLink';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
 import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
+import {
+  type SettingsNavigationMenuDestination,
+  useSettingsNavigationMenuDestinations,
+} from '@/navigation-menu-item/edit/hooks/useSettingsNavigationMenuDestinations';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/utils/isViewDisplayableInNavigationMenu';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -43,28 +50,36 @@ type UseNavigationMenuItemAddOptionsParams = {
   step: NavigationMenuItemAddStep;
   search: string;
   objectId: string | null;
+  settingsPageLink: string | null;
   folderId?: string;
   currentItems: NavigationMenuItem[];
   isSearchingAllItems: boolean;
   addItem: (input: NewNavigationMenuItemInput) => void;
   navigateToStep: (step: NavigationMenuItemAddStep) => void;
   selectObject: (objectId: string) => void;
+  selectSettingsPage: (link: string) => void;
 };
 
 export const useNavigationMenuItemAddOptions = ({
   step,
   search,
   objectId,
+  settingsPageLink,
   folderId,
   currentItems,
   isSearchingAllItems,
   addItem,
   navigateToStep,
   selectObject,
+  selectSettingsPage,
 }: UseNavigationMenuItemAddOptionsParams) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
+  const settingsDestinationSections = useSettingsNavigationMenuDestinations();
+  const parentItem = currentItems.find((item) => item.id === folderId);
+  const isInsideFolder =
+    isDefined(parentItem) && isNavigationMenuItemFolder(parentItem);
 
   const {
     data: standalonePagesData,
@@ -109,6 +124,59 @@ export const useNavigationMenuItemAddOptions = ({
     ),
   });
 
+  const getSettingsDestinationOption = (
+    destination: SettingsNavigationMenuDestination,
+  ): NavigationMenuItemOption => {
+    const isAlreadyInSidebar = currentItems.some(
+      (item) =>
+        item.type === NavigationMenuItemType.LINK &&
+        item.link === destination.link,
+    );
+
+    return {
+      id: destination.link,
+      label: destination.label,
+      searchableValues: [destination.label, destination.pageLabel ?? ''],
+      contextualText: destination.pageLabel,
+      Icon: getIcon(destination.iconName),
+      isDisabled: isAlreadyInSidebar,
+      isAlreadyInSidebar,
+      onClick: () =>
+        addItem({
+          type: NavigationMenuItemType.LINK,
+          name: destination.label,
+          link: destination.link,
+          icon: destination.iconName,
+          color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_SETTINGS_LINK,
+        }),
+    };
+  };
+
+  const getSettingsGroups = (): {
+    label: string;
+    items: NavigationMenuItemOption[];
+  }[] =>
+    settingsDestinationSections.map((section) => ({
+      label: section.label,
+      items: section.pages.map((page) =>
+        page.tabs.length > 0
+          ? {
+              id: page.link,
+              label: page.label,
+              Icon: getIcon(page.iconName),
+              hasSubMenu: true,
+              onClick: () => selectSettingsPage(page.link),
+            }
+          : getSettingsDestinationOption(page),
+      ),
+    }));
+
+  const getSettingsSearchItems = (): NavigationMenuItemOption[] =>
+    settingsDestinationSections
+      .flatMap((section) => section.pages)
+      .flatMap((page) => [page, ...page.tabs])
+      .map(getSettingsDestinationOption);
+
   const getItems = (
     targetStep: NavigationMenuItemAddStep = step,
   ): NavigationMenuItemOption[] => {
@@ -140,11 +208,11 @@ export const useNavigationMenuItemAddOptions = ({
         {
           id: 'folder',
           label: t`Folder`,
-          contextualText: isDefined(folderId)
+          contextualText: isInsideFolder
             ? t`Cannot nest folders into folders`
             : undefined,
-          Icon: isDefined(folderId) ? IconFolder : undefined,
-          icon: isDefined(folderId) ? undefined : (
+          Icon: isInsideFolder ? IconFolder : undefined,
+          icon: isInsideFolder ? undefined : (
             <ColoredIcon
               Icon={IconFolder}
               color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
@@ -157,7 +225,7 @@ export const useNavigationMenuItemAddOptions = ({
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
             });
           },
-          isDisabled: isDefined(folderId),
+          isDisabled: isInsideFolder,
         },
         {
           id: 'link',
@@ -188,7 +256,31 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('page'),
           hasSubMenu: true,
         },
+        {
+          id: 'settings',
+          label: t`Settings`,
+          icon: (
+            <TintedIconTile icon={<IconSettings size={theme.icon.size.md} />} />
+          ),
+          onClick: () => navigateToStep('settings'),
+          hasSubMenu: true,
+        },
       ];
+    }
+    if (targetStep === 'settings') {
+      return getSettingsGroups().flatMap((group) => group.items);
+    }
+    if (targetStep === 'settings-page') {
+      const page = settingsDestinationSections
+        .flatMap((section) => section.pages)
+        .find((settingsPage) => settingsPage.link === settingsPageLink);
+
+      return isDefined(page)
+        ? [page, ...page.tabs].map((destination) => ({
+            ...getSettingsDestinationOption(destination),
+            contextualText: undefined,
+          }))
+        : [];
     }
     if (
       targetStep === 'object' ||
@@ -365,6 +457,8 @@ export const useNavigationMenuItemAddOptions = ({
 
   return {
     getItems,
+    getSettingsGroups,
+    getSettingsSearchItems,
     standalonePagesLoading,
     standalonePagesError,
     recordSearchLoading,

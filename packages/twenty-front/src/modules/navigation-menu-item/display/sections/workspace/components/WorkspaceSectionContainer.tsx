@@ -6,6 +6,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { NavigationMenuItemContainerContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemContainerContext';
 import { type NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useReadableNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useReadableNavigationMenuItems';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
@@ -15,6 +16,7 @@ import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 import { WorkspaceSectionListEditModeFallback } from '@/object-metadata/components/WorkspaceSectionListEditModeFallback';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
@@ -32,6 +34,9 @@ const StyledWorkspaceSectionContentGapOffset = styled.div`
 type WorkspaceSectionContainerProps = {
   sectionTitle: string;
   items: NavigationMenuItem[];
+  containerId?: string | null;
+  navigationSectionId?: string;
+  isTitleHidden?: boolean;
   rightIcon?: React.ReactNode;
   selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
@@ -44,6 +49,9 @@ type WorkspaceSectionContainerProps = {
 export const WorkspaceSectionContainer = ({
   sectionTitle,
   items,
+  containerId = null,
+  navigationSectionId = doNotTranslate('Workspace'),
+  isTitleHidden = false,
   rightIcon,
   selectedNavigationMenuItemId = null,
   onNavigationMenuItemClick,
@@ -53,16 +61,18 @@ export const WorkspaceSectionContainer = ({
     isLayoutCustomizationModeEnabledState,
   );
   const { toggleNavigationSection, isNavigationSectionOpen } =
-    useNavigationSection(doNotTranslate('Workspace'));
+    useNavigationSection(navigationSectionId);
   const views = useAtomStateValue(viewsSelector);
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const flatItems = items.filter((item) => !isDefined(item.folderId));
+  const flatItems = items.filter(
+    (item) => (item.folderId ?? null) === containerId,
+  );
 
   const folderChildrenById = items.reduce<Map<string, NavigationMenuItem[]>>(
     (acc, item) => {
       const folderId = item.folderId;
-      if (isDefined(folderId)) {
+      if (isDefined(folderId) && folderId !== containerId) {
         const children = acc.get(folderId) ?? [];
         children.push(item);
         acc.set(folderId, children);
@@ -110,44 +120,52 @@ export const WorkspaceSectionContainer = ({
     };
   };
 
-  return (
-    <NavigationMenuItemSection
-      title={sectionTitle}
-      isOpen={isNavigationSectionOpen}
-      onToggle={() => toggleNavigationSection()}
-      rightIcon={rightIcon}
-      alwaysShowRightIcon={isLayoutCustomizationModeEnabled}
-      contentWrapper={(children) => (
-        <StyledWorkspaceSectionContentGapOffset>
-          {children}
-        </StyledWorkspaceSectionContentGapOffset>
-      )}
-    >
-      {isLayoutCustomizationModeEnabled ? (
-        <Suspense
-          fallback={
-            <WorkspaceSectionListEditModeFallback
-              filteredItems={workspaceOrphanItemsForSection}
-              folderChildrenById={folderChildrenById}
-              onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-            />
-          }
-        >
-          <LazyWorkspaceSectionListDndKit
-            filteredItems={workspaceOrphanItemsForSection}
-            getEditModeProps={getEditModeProps}
-            folderChildrenById={folderChildrenById}
-            onNavigationMenuItemClick={onNavigationMenuItemClick}
-            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          />
-        </Suspense>
-      ) : (
-        <WorkspaceSectionListReadOnly
-          filteredItems={filteredItems}
-          folderChildrenById={filteredFolderChildrenById}
+  const list = isLayoutCustomizationModeEnabled ? (
+    <Suspense
+      fallback={
+        <WorkspaceSectionListEditModeFallback
+          filteredItems={workspaceOrphanItemsForSection}
+          folderChildrenById={folderChildrenById}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
         />
+      }
+    >
+      <LazyWorkspaceSectionListDndKit
+        filteredItems={workspaceOrphanItemsForSection}
+        getEditModeProps={getEditModeProps}
+        folderChildrenById={folderChildrenById}
+        onNavigationMenuItemClick={onNavigationMenuItemClick}
+        onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+      />
+    </Suspense>
+  ) : (
+    <WorkspaceSectionListReadOnly
+      filteredItems={filteredItems}
+      folderChildrenById={filteredFolderChildrenById}
+      onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+    />
+  );
+
+  return (
+    <NavigationMenuItemContainerContext.Provider value={{ containerId }}>
+      {isTitleHidden ? (
+        <NavigationDrawerSection>{list}</NavigationDrawerSection>
+      ) : (
+        <NavigationMenuItemSection
+          title={sectionTitle}
+          isOpen={isNavigationSectionOpen}
+          onToggle={() => toggleNavigationSection()}
+          rightIcon={rightIcon}
+          alwaysShowRightIcon={isLayoutCustomizationModeEnabled}
+          contentWrapper={(children) => (
+            <StyledWorkspaceSectionContentGapOffset>
+              {children}
+            </StyledWorkspaceSectionContentGapOffset>
+          )}
+        >
+          {list}
+        </NavigationMenuItemSection>
       )}
-    </NavigationMenuItemSection>
+    </NavigationMenuItemContainerContext.Provider>
   );
 };

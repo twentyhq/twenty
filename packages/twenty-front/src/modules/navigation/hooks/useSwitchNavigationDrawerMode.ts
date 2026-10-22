@@ -5,11 +5,13 @@ import { SettingsPath } from 'twenty-shared/types';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
+import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
+import { settingsPathOpenedFromNavigationMenuState } from '@/navigation/states/settingsPathOpenedFromNavigationMenuState';
 import { getNavigationDrawerHomeDestination } from '@/navigation/utils/getNavigationDrawerHomeDestination';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -47,6 +49,12 @@ export const useSwitchNavigationDrawerMode = () => {
   );
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
+  );
+  const setCurrentNavigationMenuTabId = useSetAtomState(
+    currentNavigationMenuTabIdState,
+  );
+  const setSettingsPathOpenedFromNavigationMenu = useSetAtomState(
+    settingsPathOpenedFromNavigationMenuState,
   );
 
   const { defaultHomePagePath } = useDefaultHomePagePath();
@@ -110,6 +118,7 @@ export const useSwitchNavigationDrawerMode = () => {
       case NAVIGATION_DRAWER_TABS.SETTINGS:
         // The mobile settings drawer can outlive its route (browser back), so check the page, not the drawer.
         if (isSettingsPage) {
+          setSettingsPathOpenedFromNavigationMenu(null);
           return;
         }
         navigateSettings(SettingsPath.ProfilePage);
@@ -117,5 +126,10 @@ export const useSwitchNavigationDrawerMode = () => {
     }
   };
 
-  return { switchNavigationDrawerMode };
+  const switchToNavigationMenuTab = (tabId: string | null) => {
+    setCurrentNavigationMenuTabId(tabId);
+    switchNavigationDrawerMode(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+  };
+
+  return { switchNavigationDrawerMode, switchToNavigationMenuTab };
 };

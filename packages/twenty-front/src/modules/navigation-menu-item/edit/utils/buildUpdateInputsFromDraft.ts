@@ -7,6 +7,7 @@ import {
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
+import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 
 export const buildUpdateInputsFromDraft = ({
   draft,
@@ -34,16 +35,17 @@ export const buildUpdateInputsFromDraft = ({
     const positionChanged = original.position !== draftItem.position;
     const folderIdChanged =
       (original.folderId ?? null) !== (draftItem.folderId ?? null);
+    const isNamedContainer =
+      isNavigationMenuItemFolder(draftItem) ||
+      isNavigationMenuItemTabOrSection(draftItem);
     const nameChanged =
-      (isNavigationMenuItemFolder(draftItem) ||
-        isNavigationMenuItemLink(draftItem)) &&
+      (isNamedContainer || isNavigationMenuItemLink(draftItem)) &&
       (original.name ?? null) !== (draftItem.name ?? null);
     const linkChanged =
       isNavigationMenuItemLink(draftItem) &&
       (original.link ?? null) !== (draftItem.link ?? null);
     const iconChanged =
-      isNavigationMenuItemFolder(draftItem) &&
-      (original.icon ?? null) !== (draftItem.icon ?? null);
+      isNamedContainer && (original.icon ?? null) !== (draftItem.icon ?? null);
     const colorChanged =
       isNavigationMenuItemFolder(draftItem) &&
       (original.color ?? null) !== (draftItem.color ?? null);
@@ -69,10 +71,7 @@ export const buildUpdateInputsFromDraft = ({
         ? resolveFolderId(draftItem.folderId)
         : null;
     }
-    if (nameChanged && isNavigationMenuItemFolder(draftItem)) {
-      updatePayload.name = draftItem.name;
-    }
-    if (nameChanged && isNavigationMenuItemLink(draftItem)) {
+    if (nameChanged) {
       updatePayload.name = draftItem.name;
     }
     if (linkChanged && isNavigationMenuItemLink(draftItem)) {
@@ -81,7 +80,7 @@ export const buildUpdateInputsFromDraft = ({
         ? getLinkNavigationMenuItemComputedLink({ link: linkUrl })
         : null;
     }
-    if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
+    if (iconChanged) {
       updatePayload.icon = draftItem.icon ?? null;
     }
     if (colorChanged) {

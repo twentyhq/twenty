@@ -40,6 +40,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
 
   const currentPath = location.pathname;
   const currentSearch = location.search;
+  const currentHash = location.hash;
   const currentPathWithSearch = location.pathname + location.search;
 
   const currentObjectMetadataItem = activeObjectMetadataItems.find(
@@ -108,7 +109,11 @@ export const useIdentifyActiveNavigationMenuItems = (): {
             item.type === NavigationMenuItemType.LINK &&
             isLinkNavigationMenuItemActive({
               computedLink: getLinkNavigationMenuItemComputedLink(item),
-              location: { pathname: currentPath, search: currentSearch },
+              location: {
+                pathname: currentPath,
+                search: currentSearch,
+                hash: currentHash,
+              },
             }),
         )
         .map((item) => item.id);
@@ -206,6 +211,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       currentPathWithSearch,
       currentPath,
       currentSearch,
+      currentHash,
       currentObjectMetadataItem,
       isOnRecordShowPage,
       contextStoreCurrentViewId,

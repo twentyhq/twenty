@@ -235,12 +235,21 @@ export class NavigationMenuItemService {
       existingFlatNavigationMenuItemMaps,
     );
 
-    const foldersFirst = [...inputs].sort((a, b) => {
-      const aIsFolder = a.type === NavigationMenuItemType.FOLDER ? 0 : 1;
-      const bIsFolder = b.type === NavigationMenuItemType.FOLDER ? 0 : 1;
+    const parentTypesInCreationOrder = [
+      NavigationMenuItemType.TAB,
+      NavigationMenuItemType.SECTION,
+      NavigationMenuItemType.FOLDER,
+    ];
 
-      return aIsFolder - bIsFolder;
-    });
+    const getCreationRank = (type: NavigationMenuItemType) => {
+      const rank = parentTypesInCreationOrder.indexOf(type);
+
+      return rank === -1 ? parentTypesInCreationOrder.length : rank;
+    };
+
+    const foldersFirst = [...inputs].sort(
+      (a, b) => getCreationRank(a.type) - getCreationRank(b.type),
+    );
 
     const flatEntityByInput = new Map<
       CreateNavigationMenuItemInput,
@@ -581,17 +590,22 @@ export class NavigationMenuItemService {
         ),
       );
 
-      const flatEntitiesForRoot = [flatNavigationMenuItemRoot];
+      const userWorkspaceIdKey =
+        flatNavigationMenuItemRoot.userWorkspaceId ?? 'null';
 
-      if (flatNavigationMenuItemRoot.type === NavigationMenuItemType.FOLDER) {
-        const userWorkspaceIdKey =
-          flatNavigationMenuItemRoot.userWorkspaceId ?? 'null';
-        const folderChildren =
+      const getDescendantsDeepestFirst = (
+        parentId: string,
+      ): FlatNavigationMenuItem[] =>
+        (
           existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndFolderId[
             userWorkspaceIdKey
-          ]?.[requestedId] ?? [];
-        flatEntitiesForRoot.unshift(...folderChildren);
-      }
+          ]?.[parentId] ?? []
+        ).flatMap((child) => [...getDescendantsDeepestFirst(child.id), child]);
+
+      const flatEntitiesForRoot = [
+        ...getDescendantsDeepestFirst(requestedId),
+        flatNavigationMenuItemRoot,
+      ];
 
       for (const flatEntity of flatEntitiesForRoot) {
         if (!seenDeleteId.has(flatEntity.id)) {

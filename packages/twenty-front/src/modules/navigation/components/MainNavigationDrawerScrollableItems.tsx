@@ -1,8 +1,12 @@
+import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
+import { NavigationMenuItemCustomSections } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSections';
+import { NavigationMenuTabContent } from '@/navigation-menu-item/display/tab/components/NavigationMenuTabContent';
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -29,13 +33,23 @@ const StyledScrollableItemsContainer = styled.div`
 `;
 
 export const MainNavigationDrawerScrollableItems = () => {
+  const activeNavigationMenuTab = useActiveNavigationMenuTab();
+
   return (
     <StyledScrollableItemsContainer>
       <NavigationDrawerOpenedSection />
-      <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
-        <FavoritesSectionDispatcher />
-        <WorkspaceSectionDispatcher />
-      </Suspense>
+      {isDefined(activeNavigationMenuTab) ? (
+        <NavigationMenuTabContent
+          key={activeNavigationMenuTab.id}
+          tab={activeNavigationMenuTab}
+        />
+      ) : (
+        <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
+          <FavoritesSectionDispatcher />
+          <WorkspaceSectionDispatcher />
+          <NavigationMenuItemCustomSections parentId={null} />
+        </Suspense>
+      )}
     </StyledScrollableItemsContainer>
   );
 };

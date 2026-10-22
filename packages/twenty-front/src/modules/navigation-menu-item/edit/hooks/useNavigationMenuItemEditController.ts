@@ -11,6 +11,7 @@ import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
+import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -65,11 +66,20 @@ export const useNavigationMenuItemEditController = (
     { targetFolderId, targetIndex }: CreateItemOptions = {},
   ): string => {
     const folderId = targetFolderId ?? null;
-    const itemsInFolder = currentItems.filter(
+    const isTabOrSection = isNavigationMenuItemTabOrSection(input);
+    const positionSiblings = currentItems.filter(
+      (item) => isNavigationMenuItemTabOrSection(item) === isTabOrSection,
+    );
+    const itemsInFolder = positionSiblings.filter(
       (item) => (item.folderId ?? null) === folderId,
     );
     const index = targetIndex ?? itemsInFolder.length;
-    const { flatIndex, position } = computeInsertIndexAndPosition(
+    const { position } = computeInsertIndexAndPosition(
+      positionSiblings,
+      folderId,
+      index,
+    );
+    const { flatIndex } = computeInsertIndexAndPosition(
       currentItems,
       folderId,
       index,

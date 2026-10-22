@@ -1,5 +1,8 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
+import { useContext } from 'react';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+
+import { NavigationMenuItemContainerContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemContainerContext';
 
 import { flattenNavigationMenuItemsWithFolderChildren } from '@/navigation-menu-item/common/utils/flattenNavigationMenuItemsWithFolderChildren';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
@@ -9,7 +12,8 @@ import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hoo
 export const useNavigationMenuItemEditSectionItems = (
   section: NavigationMenuItemSection,
 ): NavigationMenuItem[] => {
-  const workspaceSectionItems = useNavigationMenuItemSectionItems();
+  const { containerId } = useContext(NavigationMenuItemContainerContext);
+  const workspaceSectionItems = useNavigationMenuItemSectionItems(containerId);
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
 

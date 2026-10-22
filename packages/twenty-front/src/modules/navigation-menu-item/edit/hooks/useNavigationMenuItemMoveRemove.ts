@@ -1,8 +1,10 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 
@@ -22,10 +24,14 @@ export const useNavigationMenuItemMoveRemove = (
       return null;
     }
     const folderId = currentItem.folderId ?? null;
+    const isTabOrSection = isNavigationMenuItemTabOrSection(currentItem);
     return currentItems
       .filter(
         (item) =>
-          (item.folderId ?? null) === folderId && visibleItemIds.has(item.id),
+          (item.folderId ?? null) === folderId &&
+          (isTabOrSection
+            ? item.type === currentItem.type
+            : visibleItemIds.has(item.id)),
       )
       .sort((a, b) => a.position - b.position);
   };
@@ -74,15 +80,10 @@ export const useNavigationMenuItemMoveRemove = (
       return;
     }
 
-    if (isNavigationMenuItemFolder(itemToRemove)) {
-      const childIds = currentItems
-        .filter((item) => item.folderId === navigationMenuItemId)
-        .map((item) => item.id);
-      await deleteItems([navigationMenuItemId, ...childIds]);
-      return;
-    }
-
-    await deleteItems([navigationMenuItemId]);
+    await deleteItems([
+      navigationMenuItemId,
+      ...getNavigationMenuItemDescendantIds(currentItems, navigationMenuItemId),
+    ]);
   };
 
   const moveToFolder = async (
@@ -121,10 +122,11 @@ export const useNavigationMenuItemMoveRemove = (
       }
     }
 
-    const itemsInTargetFolder = currentItems.filter((item) =>
-      targetFolderId === null
-        ? !isDefined(item.folderId)
-        : item.folderId === targetFolderId,
+    const itemsInTargetFolder = currentItems.filter(
+      (item) =>
+        (item.folderId ?? null) === targetFolderId &&
+        isNavigationMenuItemTabOrSection(item) ===
+          isNavigationMenuItemTabOrSection(itemToMove),
     );
     const maxPositionInTarget =
       itemsInTargetFolder.length > 0

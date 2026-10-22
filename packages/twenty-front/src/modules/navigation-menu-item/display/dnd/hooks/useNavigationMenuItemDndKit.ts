@@ -97,17 +97,22 @@ export const useNavigationMenuItemDndKit = (
         return resolved.effectiveDropTargetId;
       }
 
-      const destFolderId = extractFolderIdFromDroppableId(
-        resolved.destination.droppableId,
-        sectionType,
+      const destinationParent = getNavItemById(
+        extractFolderIdFromDroppableId(
+          resolved.destination.droppableId,
+          sectionType,
+        ) ?? undefined,
       );
-      if (isDefined(destFolderId)) {
+      if (
+        isDefined(destinationParent) &&
+        isNavigationMenuItemFolder(destinationParent)
+      ) {
         return resolved.dropTargetId;
       }
 
       return null;
     },
-    [sectionType, isSourceFolderDrag],
+    [sectionType, isSourceFolderDrag, getNavItemById],
   );
 
   const applyWorkspaceReorder = useCallback(

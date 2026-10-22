@@ -22,6 +22,9 @@ export const NavigationMenuItemDisplay = ({
   orphanIndex,
 }: NavigationMenuItemDisplayProps) => {
   switch (item.type) {
+    case NavigationMenuItemType.TAB:
+    case NavigationMenuItemType.SECTION:
+      return null;
     case NavigationMenuItemType.FOLDER:
       return (
         <NavigationMenuItemFolder

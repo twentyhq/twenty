@@ -8,14 +8,18 @@ import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   GetAgentChatOpenThreadsSummaryDocument,
+  type NavigationMenuItem,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { mockedUserData } from '~/testing/mock-data/users';
@@ -26,6 +30,10 @@ jest.mock(
 );
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
+jest.mock(
+  '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs',
+);
+jest.mock('@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab');
 
 let mockIsAiChatInboxEnabled = true;
 
@@ -39,6 +47,17 @@ jest.mock('twenty-ui/utilities', () => ({
 }));
 
 const mockSwitchNavigationDrawerMode = jest.fn();
+const mockSwitchToNavigationMenuTab = jest.fn();
+
+const developersTab: NavigationMenuItem = {
+  id: 'developers-tab',
+  type: NavigationMenuItemType.TAB,
+  name: 'Developers',
+  icon: 'IconCode',
+  position: 0,
+  createdAt: '',
+  updatedAt: '',
+};
 
 const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
   request: { query: GetAgentChatOpenThreadsSummaryDocument },
@@ -120,7 +139,10 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       .mockReturnValue(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     jest.mocked(useSwitchNavigationDrawerMode).mockReturnValue({
       switchNavigationDrawerMode: mockSwitchNavigationDrawerMode,
+      switchToNavigationMenuTab: mockSwitchToNavigationMenuTab,
     });
+    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(null);
     jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(true);
   });
 
@@ -188,6 +210,71 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(mode);
     },
   );
+
+  it('lists custom tabs before Settings and opens them', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([developersTab]);
+
+    renderModeSwitcher();
+
+    const buttonNames = screen
+      .getAllByRole('button')
+      .map((button) => button.getAttribute('aria-label'));
+
+    expect(buttonNames).toEqual(['Home', 'AI', 'Developers', 'Settings']);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Developers' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(
+      developersTab.id,
+    );
+  });
+
+  it('returns Home from a custom tab', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([developersTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(developersTab);
+
+    renderModeSwitcher();
+
+    expect(screen.getByRole('button', { name: 'Developers' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Home' })).not.toHaveAttribute(
+      'aria-current',
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Home' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(null);
+  });
+
+  it('offers to add a tab only while editing the layout', () => {
+    renderModeSwitcher();
+
+    expect(
+      screen.queryByRole('button', { name: 'Add tab' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps custom tabs reachable while editing the layout', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([developersTab]);
+
+    renderModeSwitcher({ isLayoutCustomizationModeEnabled: true });
+
+    expect(screen.getByRole('button', { name: 'Add tab' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Developers' }));
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(
+      developersTab.id,
+    );
+  });
 
   it('marks the inbox while one of its open chats is unread', async () => {
     renderModeSwitcher({ hasUnreadOpenThread: true });

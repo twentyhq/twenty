@@ -78,4 +78,27 @@ describe('isLinkNavigationMenuItemActive', () => {
       }),
     ).toBe(false);
   });
+
+  it('matches the tab of a settings page a link points to', () => {
+    expect(
+      isLinkNavigationMenuItemActive({
+        computedLink: '/settings/developers#webhooks',
+        location: {
+          pathname: '/settings/developers',
+          search: '',
+          hash: '#webhooks',
+        },
+      }),
+    ).toBe(true);
+    expect(
+      isLinkNavigationMenuItemActive({
+        computedLink: '/settings/developers#webhooks',
+        location: {
+          pathname: '/settings/developers',
+          search: '',
+          hash: '#api',
+        },
+      }),
+    ).toBe(false);
+  });
 });

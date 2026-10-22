@@ -1,0 +1,1 @@
+export const NAVIGATION_MENU_TAB_MAX_COUNT = 3;

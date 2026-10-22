@@ -18,7 +18,9 @@ export type NavigationMenuItemClickParams = {
   objectMetadataItem?: EnrichedObjectMetadataItem | null;
 };
 
-export const useNavigationMenuItemSectionItems = (): NavigationMenuItem[] => {
+export const useNavigationMenuItemSectionItems = (
+  containerId: string | null = null,
+): NavigationMenuItem[] => {
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
@@ -37,6 +39,7 @@ export const useNavigationMenuItemSectionItems = (): NavigationMenuItem[] => {
     views,
     objectPermissionsByObjectMetadataId,
     includeInaccessibleObjectBackedItems: isLayoutCustomizationModeEnabled,
+    containerId,
   });
 
   return flattenNavigationMenuItemsWithFolderChildren(

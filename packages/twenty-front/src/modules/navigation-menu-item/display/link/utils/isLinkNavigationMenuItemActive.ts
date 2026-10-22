@@ -1,4 +1,5 @@
 import { parsePath } from 'react-router-dom';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isSafeInternalPath } from 'twenty-shared/utils';
 
 export const isLinkNavigationMenuItemActive = ({
@@ -6,7 +7,7 @@ export const isLinkNavigationMenuItemActive = ({
   location,
 }: {
   computedLink: string;
-  location: { pathname: string; search: string };
+  location: { pathname: string; search: string; hash?: string };
 }): boolean => {
   if (!isSafeInternalPath(computedLink)) {
     return false;
@@ -15,6 +16,10 @@ export const isLinkNavigationMenuItemActive = ({
   const link = parsePath(computedLink);
 
   if (link.pathname !== location.pathname) {
+    return false;
+  }
+
+  if (isNonEmptyString(link.hash) && link.hash !== location.hash) {
     return false;
   }
 

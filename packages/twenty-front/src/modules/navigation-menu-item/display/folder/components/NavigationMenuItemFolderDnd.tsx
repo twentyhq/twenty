@@ -21,12 +21,14 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/Fol
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections';
+import { NavigationMenuItemContainerContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemContainerContext';
 import { NavigationDropTargetContext } from '@/navigation-menu-item/common/contexts/NavigationDropTargetContext';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { SortableDropTargetRefContext } from '@/navigation-menu-item/common/contexts/SortableDropTargetRefContext';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { getDndKitDropTargetId } from '@/navigation-menu-item/common/utils/getDndKitDropTargetId';
+import { getNavigationMenuItemContainerDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerDroppableId';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
 import {
   FOLDER_HEADER_SLOT_COLLISION_PRIORITY,
@@ -148,6 +150,7 @@ export const NavigationMenuItemFolderDnd = ({
   const isDragging = isDraggingProp || isContextDragging;
 
   const setSortableDropTargetRef = useContext(SortableDropTargetRefContext);
+  const { containerId } = useContext(NavigationMenuItemContainerContext);
   const dropDisabled = useIsDropDisabledForSection(isWorkspace);
   const { activeDropTargetId, forbiddenDropTargetId } = useContext(
     NavigationDropTargetContext,
@@ -245,7 +248,11 @@ export const NavigationMenuItemFolderDnd = ({
     >
       {showInsertBeforeZone && (
         <NavigationMenuItemInsertBeforeDroppableZone
-          orphanDroppableId={config.orphanDroppableId}
+          orphanDroppableId={
+            isWorkspace
+              ? getNavigationMenuItemContainerDroppableId(containerId)
+              : config.orphanDroppableId
+          }
           orphanIndex={orphanIndex}
           itemId={folderId}
           disabled={dropDisabled}

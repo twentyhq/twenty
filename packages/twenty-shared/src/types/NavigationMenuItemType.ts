@@ -5,4 +5,6 @@ export enum NavigationMenuItemType {
   OBJECT = 'OBJECT',
   RECORD = 'RECORD',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
+  TAB = 'TAB',
+  SECTION = 'SECTION',
 }

@@ -1,14 +1,8 @@
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
-import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
-import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';
-import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronUp,
   IconChevronDown,
-  IconHierarchy2,
-  useIcons,
   IconFolderSymlink,
   IconRowInsertTop,
   IconRowInsertBottom,
@@ -21,6 +15,7 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
+import { useNavigationMenuItemMoveDestinations } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveDestinations';
 
 type NavigationMenuItemActionsProps = {
   item: NavigationMenuItem;
@@ -35,9 +30,15 @@ export const NavigationMenuItemActions = ({
   onClose,
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
-  const { getIcon } = useIcons();
-  const { items, getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
+  const { getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
     useNavigationMenuItemMoveRemove(section);
+  const moveDestinationGroups = useNavigationMenuItemMoveDestinations({
+    item,
+    section,
+  });
+  const hasMoveDestination = moveDestinationGroups.some((group) =>
+    group.destinations.some((destination) => !destination.isDisabled),
+  );
   const { goToPage } = useDropdownPage();
   const siblings = getSortedSiblings(item.id) ?? [];
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
@@ -61,12 +62,12 @@ export const NavigationMenuItemActions = ({
       onClick: () => run(() => moveDown(item.id)),
     },
     {
-      id: 'folder',
-      label: t`Move to folder`,
+      id: 'move',
+      label: t`Move to`,
       Icon: IconFolderSymlink,
-      isDisabled: item.type === NavigationMenuItemType.FOLDER,
+      isDisabled: !hasMoveDestination,
       hasSubMenu: true,
-      onClick: () => goToPage('folders'),
+      onClick: () => goToPage('move'),
     },
     {
       id: 'before',
@@ -92,29 +93,6 @@ export const NavigationMenuItemActions = ({
       onClick: () => run(() => remove(item.id)),
     },
   ];
-  const folders: NavigationMenuItemOption[] = [
-    {
-      id: 'root',
-      label: t`Root level`,
-      Icon: IconHierarchy2,
-      isDisabled: !isDefined(item.folderId),
-      onClick: () => run(() => moveToFolder(item.id, null)),
-    },
-    ...items
-      .filter((folder) => folder.type === NavigationMenuItemType.FOLDER)
-      .map((folder) => ({
-        id: folder.id,
-        label: folder.name ?? t`Folder`,
-        icon: (
-          <ColoredIcon
-            Icon={getIcon(folder.icon ?? FOLDER_ICON_DEFAULT)}
-            color={folder.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
-          />
-        ),
-        isDisabled: folder.id === item.folderId,
-        onClick: () => run(() => moveToFolder(item.id, folder.id)),
-      })),
-  ];
   return (
     <>
       <Dropdown.Page id="root">
@@ -124,11 +102,30 @@ export const NavigationMenuItemActions = ({
           ))}
         </Dropdown.Section>
       </Dropdown.Page>
-      <Dropdown.Page id="folders">
-        <Dropdown.Back>{t`Move to folder`}</Dropdown.Back>
+      <Dropdown.Page id="move">
+        <Dropdown.Back>{t`Move to`}</Dropdown.Back>
         <Dropdown.Section scrollable>
-          {folders.map((option) => (
-            <NavigationMenuItemSelectableItem key={option.id} item={option} />
+          {moveDestinationGroups.map((group) => (
+            <Dropdown.Section key={group.id} label={group.label}>
+              {group.destinations.map((destination) => (
+                <NavigationMenuItemSelectableItem
+                  key={destination.id ?? 'root'}
+                  item={{
+                    id: destination.id ?? 'root',
+                    label: destination.label,
+                    icon: (
+                      <ColoredIcon
+                        Icon={destination.Icon}
+                        color={destination.iconColor}
+                      />
+                    ),
+                    isDisabled: destination.isDisabled,
+                    onClick: () =>
+                      run(() => moveToFolder(item.id, destination.id)),
+                  }}
+                />
+              ))}
+            </Dropdown.Section>
           ))}
         </Dropdown.Section>
       </Dropdown.Page>

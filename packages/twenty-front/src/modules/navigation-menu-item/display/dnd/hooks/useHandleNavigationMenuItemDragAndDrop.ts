@@ -15,6 +15,7 @@ import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/
 import { computeDndReorderPosition } from '@/navigation-menu-item/common/utils/computeDndReorderPosition';
 import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -45,16 +46,15 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     ? workspaceNavigationMenuItems
     : navigationMenuItems;
 
-  const getSortedItems = (): Array<{
-    id: string;
-    position: number;
-    folderId?: string | null;
-  }> =>
-    isDraftMode
-      ? (store.get(navigationMenuItemsDraftState.atom) ?? []).sort(
+  const getSortedItems = (): Array<
+    Pick<NavigationMenuItem, 'id' | 'position' | 'folderId' | 'type'>
+  > =>
+    (isDraftMode
+      ? [...(store.get(navigationMenuItemsDraftState.atom) ?? [])].sort(
           (a, b) => a.position - b.position,
         )
-      : navigationMenuItemsSorted;
+      : navigationMenuItemsSorted
+    ).filter((item) => !isNavigationMenuItemTabOrSection(item));
 
   const applyReorder = async (
     draggableId: string,
@@ -145,10 +145,15 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       section,
     );
 
+    const destinationParent = allItems.find(
+      (item) => item.id === destinationFolderId,
+    );
+
     if (
       isDraftMode &&
       isNavigationMenuItemFolder(draggedItem) &&
-      isDefined(destinationFolderId)
+      isDefined(destinationParent) &&
+      isNavigationMenuItemFolder(destinationParent)
     ) {
       return;
     }
