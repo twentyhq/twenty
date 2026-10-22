@@ -212,13 +212,13 @@ export class LambdaLayerManagerService {
     await this.deleteAllLayerVersions(layerName);
   }
 
-  hasExpectedLayers({
+  async hasExpectedLayers({
     lambdaExecutor,
     flatApplication,
     applicationUniversalIdentifier,
   }: LayerAppContext & {
     lambdaExecutor: GetFunctionCommandOutput;
-  }): boolean {
+  }): Promise<boolean> {
     const layers = lambdaExecutor.Configuration?.Layers;
 
     if (!isDefined(layers) || layers.length !== 2) {
@@ -229,26 +229,12 @@ export class LambdaLayerManagerService {
       flatApplication,
       namespace: this.options.resourceNamespace,
     });
-    const sdkLayerName = getLambdaSdkLayerName({
-      workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
-    });
 
-    return (
-      layers.some((layer) => layer.Arn?.includes(depsLayerName)) &&
-      layers.some((layer) => layer.Arn?.includes(sdkLayerName))
-    );
-  }
+    if (!layers.some((layer) => layer.Arn?.includes(depsLayerName))) {
+      return false;
+    }
 
-  async isOnLatestSdkLayer({
-    lambdaExecutor,
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: {
-    lambdaExecutor: GetFunctionCommandOutput;
-    flatApplication: Pick<FlatApplication, 'workspaceId'>;
-    applicationUniversalIdentifier: string;
-  }): Promise<boolean> {
+    // The SDK layer name is stable across regenerations, only its version changes
     const latestSdkLayerArn = await this.awsClient.getExistingLayerArn(
       getLambdaSdkLayerName({
         workspaceId: flatApplication.workspaceId,
@@ -258,9 +244,7 @@ export class LambdaLayerManagerService {
 
     return (
       isDefined(latestSdkLayerArn) &&
-      (lambdaExecutor.Configuration?.Layers ?? []).some(
-        (layer) => layer.Arn === latestSdkLayerArn,
-      )
+      layers.some((layer) => layer.Arn === latestSdkLayerArn)
     );
   }
 

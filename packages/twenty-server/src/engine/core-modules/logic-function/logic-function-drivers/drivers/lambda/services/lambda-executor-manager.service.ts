@@ -32,7 +32,6 @@ import {
   LAMBDA_EPHEMERAL_STORAGE_MB,
   LAMBDA_EXECUTOR_READY_MARKER_TTL_MS,
   LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG,
-  LAMBDA_SDK_CLIENT_CHECKSUM_TAG,
   PREBUILT_BUNDLE_FILE_NAME,
   PREBUILT_INSTALL_LOCK_MAX_RETRIES,
   PREBUILT_INSTALL_LOCK_RETRY_MS,
@@ -41,8 +40,6 @@ import {
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
-import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
-import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -124,12 +121,6 @@ export class LambdaExecutorManagerService {
     flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
   ): Promise<void> {
     await this.clearExecutorReadyMarker(flatLogicFunction);
-
-    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
-
-    if (!isDefined(lambdaExecutor)) {
-      return;
-    }
 
     const lambdaClient = await this.awsClient.getLambdaClient();
 
@@ -274,8 +265,6 @@ export class LambdaExecutorManagerService {
 
           const lambdaClient = await this.awsClient.getLambdaClient();
 
-          await this.clearExecutorReadyMarker(flatLogicFunction);
-
           const updateResult = await lambdaClient.send(
             new UpdateFunctionCodeCommand({
               FunctionName: flatLogicFunction.id,
@@ -348,33 +337,17 @@ export class LambdaExecutorManagerService {
   async clearExecutorReadyMarker(
     flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
   ): Promise<void> {
-    await this.cacheStorageService
-      .del(this.getExecutorReadyMarkerKey(flatLogicFunction))
-      .catch((error) =>
-        this.warnExecutorReadyMarkerFailure({
-          action: 'clear',
-          flatLogicFunction,
-          error,
-        }),
-      );
+    await this.cacheStorageService.del(
+      this.getExecutorReadyMarkerKey(flatLogicFunction),
+    );
   }
 
   private async readExecutorReadyMarker(
     flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
   ): Promise<ExecutorReadyMarker | undefined> {
-    return this.cacheStorageService
-      .get<ExecutorReadyMarker>(
-        this.getExecutorReadyMarkerKey(flatLogicFunction),
-      )
-      .catch((error) => {
-        this.warnExecutorReadyMarkerFailure({
-          action: 'read',
-          flatLogicFunction,
-          error,
-        });
-
-        return undefined;
-      });
+    return this.cacheStorageService.get<ExecutorReadyMarker>(
+      this.getExecutorReadyMarkerKey(flatLogicFunction),
+    );
   }
 
   private async markExecutorReady({
@@ -386,32 +359,10 @@ export class LambdaExecutorManagerService {
       bundleChecksum,
     };
 
-    await this.cacheStorageService
-      .set(
-        this.getExecutorReadyMarkerKey(context.flatLogicFunction),
-        executorReadyMarker,
-        LAMBDA_EXECUTOR_READY_MARKER_TTL_MS,
-      )
-      .catch((error) =>
-        this.warnExecutorReadyMarkerFailure({
-          action: 'write',
-          flatLogicFunction: context.flatLogicFunction,
-          error,
-        }),
-      );
-  }
-
-  private warnExecutorReadyMarkerFailure({
-    action,
-    flatLogicFunction,
-    error,
-  }: {
-    action: 'read' | 'write' | 'clear';
-    flatLogicFunction: Pick<FlatLogicFunction, 'id'>;
-    error: unknown;
-  }): void {
-    this.logger.warn(
-      `Failed to ${action} executor ready marker for function ${flatLogicFunction.id}, falling back to GetFunction: ${error instanceof Error ? error.message : String(error)}`,
+    await this.cacheStorageService.set(
+      this.getExecutorReadyMarkerKey(context.flatLogicFunction),
+      executorReadyMarker,
+      LAMBDA_EXECUTOR_READY_MARKER_TTL_MS,
     );
   }
 
@@ -421,23 +372,11 @@ export class LambdaExecutorManagerService {
     return `lambda-executor-ready:${this.options.resourceNamespace}:${flatLogicFunction.id}`;
   }
 
+  // Executor layers depend on application state the logic function id does not capture
   private computeExecutorFingerprint({
-    flatLogicFunction,
     flatApplication,
-    applicationUniversalIdentifier,
   }: ExecutorBuildContext): string {
-    return [
-      getLambdaDepsLayerName({
-        flatApplication,
-        namespace: this.options.resourceNamespace,
-      }),
-      getLambdaSdkLayerName({
-        workspaceId: flatApplication.workspaceId,
-        applicationUniversalIdentifier,
-      }),
-      flatApplication.sdkClientCoreChecksum ?? '',
-      flatLogicFunction.runtime,
-    ].join('|');
+    return `${flatApplication.yarnLockChecksum ?? ''}:${flatApplication.sdkClientCoreChecksum ?? ''}`;
   }
 
   private async checkBuildStatus(context: ExecutorBuildContext): Promise<{
@@ -469,12 +408,7 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
-      this.layerManager.hasExpectedLayers({
-        lambdaExecutor,
-        flatApplication,
-        applicationUniversalIdentifier,
-      }) &&
-      (await this.hasExpectedSdkClientChecksum({
+      (await this.layerManager.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
         applicationUniversalIdentifier,
@@ -491,72 +425,6 @@ export class LambdaExecutorManagerService {
     return { canSkip, lambdaExecutor };
   }
 
-  private async hasExpectedSdkClientChecksum({
-    lambdaExecutor,
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: Omit<ExecutorBuildContext, 'flatLogicFunction'> & {
-    lambdaExecutor: GetFunctionCommandOutput;
-  }): Promise<boolean> {
-    const { sdkClientCoreChecksum } = flatApplication;
-
-    if (!isNonEmptyString(sdkClientCoreChecksum)) {
-      return true;
-    }
-
-    const taggedSdkClientChecksum =
-      lambdaExecutor.Tags?.[LAMBDA_SDK_CLIENT_CHECKSUM_TAG];
-
-    if (isDefined(taggedSdkClientChecksum)) {
-      return taggedSdkClientChecksum === sdkClientCoreChecksum;
-    }
-
-    const isOnLatestSdkLayer = await this.layerManager.isOnLatestSdkLayer({
-      lambdaExecutor,
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-
-    if (!isOnLatestSdkLayer) {
-      return false;
-    }
-
-    await this.tagSdkClientChecksum({
-      functionArn: lambdaExecutor.Configuration?.FunctionArn,
-      sdkClientCoreChecksum,
-    }).catch((error) =>
-      this.logger.warn(
-        `Failed to tag SDK client checksum on ${lambdaExecutor.Configuration?.FunctionName}: ${error instanceof Error ? error.message : String(error)}`,
-      ),
-    );
-
-    return true;
-  }
-
-  private async tagSdkClientChecksum({
-    functionArn,
-    sdkClientCoreChecksum,
-  }: {
-    functionArn: string | undefined;
-    sdkClientCoreChecksum: string;
-  }): Promise<void> {
-    if (!isNonEmptyString(functionArn)) {
-      throw new LogicFunctionException(
-        'Cannot tag SDK client checksum on a Lambda function without an ARN',
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
-      );
-    }
-
-    const lambdaClient = await this.awsClient.getLambdaClient();
-
-    await lambdaClient.send(
-      new TagResourceCommand({
-        Resource: functionArn,
-        Tags: { [LAMBDA_SDK_CLIENT_CHECKSUM_TAG]: sdkClientCoreChecksum },
-      }),
-    );
-  }
-
   private async ensureExecutor({
     flatLogicFunction,
     flatApplication,
@@ -565,8 +433,6 @@ export class LambdaExecutorManagerService {
   }: ExecutorBuildContext & {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }): Promise<void> {
-    await this.clearExecutorReadyMarker(flatLogicFunction);
-
     let depsLayerArn: string;
 
     try {
@@ -624,7 +490,6 @@ export class LambdaExecutorManagerService {
         flatLogicFunction,
         depsLayerArn,
         sdkLayerArn,
-        sdkClientCoreChecksum: flatApplication.sdkClientCoreChecksum,
       });
       await this.awsClient.waitFunctionActive(flatLogicFunction.id);
 
@@ -635,24 +500,22 @@ export class LambdaExecutorManagerService {
       flatLogicFunction,
       depsLayerArn,
       sdkLayerArn,
-      sdkClientCoreChecksum: flatApplication.sdkClientCoreChecksum,
     });
+    await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
   }
 
   private async updateExecutorConfiguration({
     flatLogicFunction,
     depsLayerArn,
     sdkLayerArn,
-    sdkClientCoreChecksum,
   }: {
     flatLogicFunction: FlatLogicFunction;
     depsLayerArn: string;
     sdkLayerArn: string;
-    sdkClientCoreChecksum: string | null;
   }): Promise<void> {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    const updateResult = await lambdaClient.send(
+    await lambdaClient.send(
       new UpdateFunctionConfigurationCommand({
         FunctionName: flatLogicFunction.id,
         Layers: [depsLayerArn, sdkLayerArn],
@@ -661,29 +524,16 @@ export class LambdaExecutorManagerService {
         MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
       }),
     );
-
-    await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
-
-    if (!isNonEmptyString(sdkClientCoreChecksum)) {
-      return;
-    }
-
-    await this.tagSdkClientChecksum({
-      functionArn: updateResult.FunctionArn,
-      sdkClientCoreChecksum,
-    });
   }
 
   private async createExecutor({
     flatLogicFunction,
     depsLayerArn,
     sdkLayerArn,
-    sdkClientCoreChecksum,
   }: {
     flatLogicFunction: FlatLogicFunction;
     depsLayerArn: string;
     sdkLayerArn: string;
-    sdkClientCoreChecksum: string | null;
   }): Promise<void> {
     const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir, lambdaZipPath } =
@@ -708,12 +558,6 @@ export class LambdaExecutorManagerService {
         MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
-
-      if (isNonEmptyString(sdkClientCoreChecksum)) {
-        params.Tags = {
-          [LAMBDA_SDK_CLIENT_CHECKSUM_TAG]: sdkClientCoreChecksum,
-        };
-      }
 
       const lambdaClient = await this.awsClient.getLambdaClient();
 
