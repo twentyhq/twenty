@@ -32,6 +32,31 @@ export const AiChatThreadShareButton = ({
   shortcut,
 }: AiChatThreadShareButtonProps) => {
   const { t } = useLingui();
+  const getStartIcon = () => {
+    if (!isNonEmptyArray(accessMembers)) {
+      return <IconShare />;
+    }
+
+    return (
+      <AvatarGroup
+        render={<span />}
+        maxVisible={MAX_VISIBLE_ACCESS_MEMBERS}
+        overlapOffset={themeCssVariables.spacing[1]}
+        overflowShape="circle"
+        avatars={accessMembers.map(({ id, name, avatarUrl }) => (
+          <Avatar
+            key={id}
+            colorSeed={id}
+            name={name}
+            src={avatarUrl}
+            size="sm"
+            shape="circle"
+            ring
+          />
+        ))}
+      />
+    );
+  };
 
   return (
     <Button
@@ -42,29 +67,7 @@ export const AiChatThreadShareButton = ({
       loading={loading}
       shortcut={shortcut}
       onClick={onClick}
-      startIcon={
-        isNonEmptyArray(accessMembers) ? (
-          <AvatarGroup
-            render={<span />}
-            maxVisible={MAX_VISIBLE_ACCESS_MEMBERS}
-            overlapOffset={themeCssVariables.spacing[1]}
-            overflowShape="circle"
-            avatars={accessMembers.map(({ id, name, avatarUrl }) => (
-              <Avatar
-                key={id}
-                colorSeed={id}
-                name={name}
-                src={avatarUrl}
-                size="sm"
-                shape="circle"
-                ring
-              />
-            ))}
-          />
-        ) : (
-          <IconShare />
-        )
-      }
+      startIcon={getStartIcon()}
     >
       {label ?? t`Share`}
     </Button>
