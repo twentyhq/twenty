@@ -4,23 +4,43 @@ import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { Fragment } from 'react';
 
-import { INFORMATIVE_MARKS } from '@/icons';
-import { getMessageDescriptorSource } from '@/platform/i18n/get-message-descriptor-source';
-import { color, EASING, FONT_WEIGHT, REDUCED_MOTION, spacing } from '@/tokens';
-import { Body, parseHeadingNotation } from '@/ui';
+import {
+  color,
+  EASING,
+  fontFamily,
+  fontSize,
+  REDUCED_MOTION,
+  spacing,
+} from '@/tokens';
+import { Body } from '@/ui';
 
 import { FEATURE_TRANSITION_TIMING } from './feature-transition-timing';
+import { getPlanFeatureKey } from './get-plan-feature-key';
+import { PlanFeatureLogoStack } from './PlanFeatureLogoStack';
+import { type PlanFeature } from './plans-data';
 import { type FeatureTransitionPhase } from './use-feature-transition';
 
 const FEATURE_SWITCH_ANIMATION_MS =
   FEATURE_TRANSITION_TIMING.switchMilliseconds;
 const FEATURE_ITEM_STAGGER_MS = FEATURE_TRANSITION_TIMING.staggerMilliseconds;
 
-const FEATURE_ITEM_EXPANDED_HEIGHT = spacing(8);
+const FEATURE_ITEM_EXPANDED_HEIGHT = spacing(12);
 const FEATURE_ITEM_SPACING = spacing(4);
-const FEATURE_LIST_ROW_LAYOUT_HEIGHT = spacing(5.5);
+const FEATURE_LIST_ROW_LAYOUT_HEIGHT = spacing(11.25);
+const FEATURE_ICON_SIZE_PX = 18;
+
+const FeaturesSection = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+`;
+
+const featuresIntroClassName = css`
+  color: ${color('black-70')};
+  margin-bottom: ${FEATURE_ITEM_SPACING};
+`;
 
 const FeaturesViewport = styled.div<{ $featuresHeight: string }>`
   flex: 1 1 auto;
@@ -44,12 +64,26 @@ const FeatureList = styled.ul`
   width: 100%;
 `;
 
-const FeatureCheck = styled.span`
+const FeatureVisual = styled.span`
   align-items: center;
-  display: inline-flex;
-  height: 16px;
+  color: ${color('blue')};
+  display: flex;
+  height: calc(${fontSize(4)} * 1.55);
   justify-content: center;
-  width: 16px;
+`;
+
+const FeatureText = styled.span`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing(0.5)};
+  min-width: 0;
+`;
+
+const FeatureDescription = styled.span`
+  color: ${color('black-70')};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.5)};
+  line-height: 1.3;
 `;
 
 const FeatureItem = styled.li<{
@@ -58,43 +92,41 @@ const FeatureItem = styled.li<{
 }>`
   @keyframes pricingFeatureItemEnter {
     from {
+      grid-template-rows: 0fr;
       margin-top: 0;
-      max-height: 0;
       opacity: 0;
     }
 
     to {
+      grid-template-rows: 1fr;
       margin-top: ${({ $featureSpacing }) => $featureSpacing};
-      max-height: ${FEATURE_ITEM_EXPANDED_HEIGHT};
       opacity: 1;
     }
   }
 
   @keyframes pricingFeatureItemExit {
     from {
+      grid-template-rows: 1fr;
       margin-top: ${({ $featureSpacing }) => $featureSpacing};
-      max-height: ${FEATURE_ITEM_EXPANDED_HEIGHT};
       opacity: 1;
     }
 
     to {
+      grid-template-rows: 0fr;
       margin-top: 0;
-      max-height: 0;
       opacity: 0;
     }
   }
 
-  align-items: center;
-  column-gap: ${spacing(2)};
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr;
   margin-top: ${({ $featureSpacing }) => $featureSpacing};
-  max-height: ${FEATURE_ITEM_EXPANDED_HEIGHT};
   min-width: 0;
-  overflow: hidden;
 
-  &[data-state='stable'] {
-    max-height: none;
+  &[data-state='entering'],
+  &[data-state='exiting'] {
+    overflow: hidden;
   }
 
   &[data-state='entering'] {
@@ -118,84 +150,96 @@ const FeatureItem = styled.li<{
   }
 `;
 
-const FeatureAccent = styled.span`
-  color: ${color('blue')};
-  font-weight: ${FONT_WEIGHT.medium};
-  white-space: nowrap;
+const FeatureRow = styled.div`
+  align-items: start;
+  column-gap: ${spacing(3)};
+  display: grid;
+  grid-template-columns: ${spacing(7)} minmax(0, 1fr);
+  min-height: 0;
 `;
 
-const featureTextClassName = css`
-  color: ${color('black-80')};
-`;
-
-function getLayoutMinHeight(maxBullets: number) {
-  if (maxBullets <= 0) {
+function getLayoutMinHeight(maxFeatures: number) {
+  if (maxFeatures <= 0) {
     return '0px';
   }
-  return `calc((${FEATURE_LIST_ROW_LAYOUT_HEIGHT} * ${maxBullets}) + (${FEATURE_ITEM_SPACING} * ${maxBullets - 1}))`;
+  return `calc((${FEATURE_LIST_ROW_LAYOUT_HEIGHT} * ${maxFeatures}) + (${FEATURE_ITEM_SPACING} * ${maxFeatures - 1}))`;
 }
 
-function getAnimationMinHeight(maxBullets: number) {
-  if (maxBullets <= 0) {
+function getAnimationMinHeight(maxFeatures: number) {
+  if (maxFeatures <= 0) {
     return '0px';
   }
-  return `calc((${FEATURE_ITEM_EXPANDED_HEIGHT} * ${maxBullets}) + (${FEATURE_ITEM_SPACING} * ${maxBullets - 1}))`;
+  return `calc((${FEATURE_ITEM_EXPANDED_HEIGHT} * ${maxFeatures}) + (${FEATURE_ITEM_SPACING} * ${maxFeatures - 1}))`;
 }
 
 export function PlanFeatureList({
-  comparisonBulletTexts,
-  maxBullets,
+  comparisonItemKeys,
+  intro,
+  maxFeatures,
   phase,
-  visibleBullets,
+  visibleFeatures,
 }: {
-  comparisonBulletTexts: Set<string>;
-  maxBullets: number;
+  comparisonItemKeys: Set<string>;
+  intro: MessageDescriptor;
+  maxFeatures: number;
   phase: FeatureTransitionPhase;
-  visibleBullets: MessageDescriptor[];
+  visibleFeatures: PlanFeature[];
 }) {
   const { i18n } = useLingui();
-  const CheckMark = INFORMATIVE_MARKS.check;
 
   return (
-    <FeaturesViewport
-      $featuresHeight={
-        phase === 'stable'
-          ? getLayoutMinHeight(maxBullets)
-          : getAnimationMinHeight(maxBullets)
-      }
-    >
-      <FeatureList data-state={phase}>
-        {visibleBullets.map((bullet, bulletNumber) => (
-          <FeatureItem
-            $featureIndex={bulletNumber}
-            $featureSpacing={bulletNumber > 0 ? FEATURE_ITEM_SPACING : '0px'}
-            data-state={
-              phase === 'stable' ||
-              comparisonBulletTexts.has(getMessageDescriptorSource(bullet))
-                ? 'stable'
-                : phase
-            }
-            key={getMessageDescriptorSource(bullet)}
-          >
-            <FeatureCheck>
-              <CheckMark color={color('blue')} sizePx={16} strokeWidth={1.5} />
-            </FeatureCheck>
-            <Body as="span" className={featureTextClassName} size="sm">
-              {parseHeadingNotation(i18n._(bullet)).map((segment) =>
-                segment.kind === 'accent' ? (
-                  <FeatureAccent key={`accent-${segment.text}`}>
-                    {segment.text}
-                  </FeatureAccent>
-                ) : segment.kind === 'text' ? (
-                  <Fragment key={`text-${segment.text}`}>
-                    {segment.text}
-                  </Fragment>
-                ) : null,
-              )}
-            </Body>
-          </FeatureItem>
-        ))}
-      </FeatureList>
-    </FeaturesViewport>
+    <FeaturesSection>
+      <Body as="p" className={featuresIntroClassName} size="sm">
+        {i18n._(intro)}
+      </Body>
+      <FeaturesViewport
+        $featuresHeight={
+          phase === 'stable'
+            ? getLayoutMinHeight(maxFeatures)
+            : getAnimationMinHeight(maxFeatures)
+        }
+      >
+        <FeatureList data-state={phase}>
+          {visibleFeatures.map((feature, featureNumber) => {
+            const featureKey = getPlanFeatureKey(feature);
+            const FeatureIcon =
+              feature.visual.kind === 'icon' ? feature.visual.icon : null;
+
+            return (
+              <FeatureItem
+                $featureIndex={featureNumber}
+                $featureSpacing={
+                  featureNumber > 0 ? FEATURE_ITEM_SPACING : '0px'
+                }
+                data-state={
+                  phase === 'stable' || comparisonItemKeys.has(featureKey)
+                    ? 'stable'
+                    : phase
+                }
+                key={featureKey}
+              >
+                <FeatureRow>
+                  <FeatureVisual>
+                    {feature.visual.kind === 'logos' ? (
+                      <PlanFeatureLogoStack logos={feature.visual.logos} />
+                    ) : FeatureIcon !== null ? (
+                      <FeatureIcon aria-hidden size={FEATURE_ICON_SIZE_PX} />
+                    ) : null}
+                  </FeatureVisual>
+                  <FeatureText>
+                    <Body as="span" size="sm">
+                      {i18n._(feature.title)}
+                    </Body>
+                    <FeatureDescription>
+                      {i18n._(feature.description)}
+                    </FeatureDescription>
+                  </FeatureText>
+                </FeatureRow>
+              </FeatureItem>
+            );
+          })}
+        </FeatureList>
+      </FeaturesViewport>
+    </FeaturesSection>
   );
 }

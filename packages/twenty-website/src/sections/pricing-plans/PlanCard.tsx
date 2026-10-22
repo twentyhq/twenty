@@ -1,5 +1,6 @@
 'use client';
 
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -7,7 +8,16 @@ import NextImage from 'next/image';
 
 import { TalkToUsButton } from '@/contact-cal';
 import { useAnimatedNumber } from '@/platform/motion';
-import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
+import {
+  color,
+  FONT_WEIGHT,
+  fontFamily,
+  fontSize,
+  mediaUp,
+  radius,
+  semanticColor,
+  spacing,
+} from '@/tokens';
 import { Body, Button, Heading } from '@/ui';
 
 import {
@@ -15,9 +25,14 @@ import {
   type PlansBillingPeriod,
   type PlansTierId,
 } from './plans-data';
+import { getPlanFeatureKey } from './get-plan-feature-key';
 import { PlanFeatureList } from './PlanFeatureList';
 import { type PlansHostingMode } from '@/pricing-state';
 import { useFeatureTransition } from './use-feature-transition';
+
+const PLAN_CARD_ROW_COUNT = 5;
+
+const RECOMMENDED_LABEL = msg`Recommended`;
 
 const CardShell = styled.div`
   background-color: ${color('white')};
@@ -33,11 +48,18 @@ const CardShell = styled.div`
   z-index: 1;
 
   &[data-highlighted] {
-    border-color: ${color('blue-40')};
+    border-color: ${color('blue')};
   }
 
   & > * + * {
     margin-top: ${spacing(4)};
+  }
+
+  ${mediaUp('md')} {
+    display: grid;
+    grid-row: span ${PLAN_CARD_ROW_COUNT};
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: subgrid;
   }
 `;
 
@@ -57,15 +79,44 @@ const CardHeaderInfo = styled.div`
   overflow: hidden;
 
   & > * + * {
-    margin-top: ${spacing(4)};
+    margin-top: ${spacing(1)};
   }
+`;
+
+const TitleRow = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${spacing(1)} ${spacing(3)};
+  min-width: 0;
 `;
 
 // Guards long localized strings where the two cards share the row on desktop.
 const titleClassName = css`
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const RecommendedBadge = styled.span`
+  align-items: center;
+  border: 1px solid ${color('blue')};
+  border-radius: ${radius(2)};
+  box-sizing: border-box;
+  color: ${color('blue')};
+  display: inline-flex;
+  flex-shrink: 0;
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(3)};
+  font-weight: ${FONT_WEIGHT.medium};
+  height: ${spacing(6)};
+  padding: 0 ${spacing(2)};
+  text-transform: uppercase;
+`;
+
+const taglineClassName = css`
+  color: ${color('black-60')};
 `;
 
 const PriceLine = styled.div`
@@ -94,13 +145,9 @@ const priceSuffixClassName = css`
   }
 `;
 
-const taglineClassName = css`
-  color: ${color('black')};
-
-  && {
-    margin-bottom: ${spacing(2)};
-    margin-top: ${spacing(6)};
-  }
+const priceQualifierClassName = css`
+  color: ${color('black-60')};
+  flex-shrink: 0;
 `;
 
 const CardRule = styled.div`
@@ -108,6 +155,10 @@ const CardRule = styled.div`
   flex-shrink: 0;
   height: 0;
   width: 100%;
+
+  && {
+    margin-top: ${spacing(6)};
+  }
 `;
 
 const CardIcon = styled.div<{ $widthPx: number }>`
@@ -141,13 +192,13 @@ export function PlanCard({
   billing,
   highlighted = false,
   hosting,
-  maxBullets,
+  maxFeatures,
   tierId,
 }: {
   billing: PlansBillingPeriod;
   highlighted?: boolean;
   hosting: PlansHostingMode;
-  maxBullets: number;
+  maxFeatures: number;
   tierId: PlansTierId;
 }) {
   const { i18n } = useLingui();
@@ -156,31 +207,32 @@ export function PlanCard({
   const cta = tier.cta[hosting];
   const iconWidth = tier.icon.widthPx ?? 80;
   const animatedPriceValue = useAnimatedNumber(cell.price.value);
-  const { comparisonBulletTexts, phase, visibleBullets } = useFeatureTransition(
-    cell.featureBullets,
+  const { comparisonItemKeys, phase, visibleItems } = useFeatureTransition(
+    cell.features,
+    getPlanFeatureKey,
   );
 
   return (
     <CardShell data-highlighted={highlighted ? '' : undefined}>
       <CardHeader>
         <CardHeaderInfo>
-          <Heading
-            as="h3"
-            className={titleClassName}
-            family="sans"
-            size="xs"
-            weight="medium"
-          >
-            {i18n._(tier.heading[hosting])}
-          </Heading>
-          <PriceLine>
-            <Heading as="h4" family="sans" size="sm" weight="medium">
-              {`${cell.price.prefix}${PRICE_NUMBER_FORMATTER.format(animatedPriceValue)}${cell.price.valueSuffix ?? ''}`}
+          <TitleRow>
+            <Heading
+              as="h3"
+              className={titleClassName}
+              family="sans"
+              size="xs"
+              weight="medium"
+            >
+              {i18n._(tier.heading[hosting])}
             </Heading>
-            <Body as="span" className={priceSuffixClassName} size="sm">
-              {i18n._(cell.price.suffix)}
-            </Body>
-          </PriceLine>
+            {highlighted && (
+              <RecommendedBadge>{i18n._(RECOMMENDED_LABEL)}</RecommendedBadge>
+            )}
+          </TitleRow>
+          <Body as="p" className={taglineClassName} size="sm" weight="medium">
+            {i18n._(tier.tagline[hosting])}
+          </Body>
         </CardHeaderInfo>
         <CardIcon $widthPx={iconWidth}>
           <NextImage
@@ -192,17 +244,28 @@ export function PlanCard({
         </CardIcon>
       </CardHeader>
 
-      <Body as="p" className={taglineClassName} size="sm" weight="medium">
-        {i18n._(tier.tagline[hosting])}
-      </Body>
+      <PriceLine>
+        {cell.price.qualifier !== undefined && (
+          <Body as="span" className={priceQualifierClassName} size="sm">
+            {i18n._(cell.price.qualifier)}
+          </Body>
+        )}
+        <Heading as="h4" family="sans" size="sm" weight="medium">
+          {`${cell.price.prefix}${PRICE_NUMBER_FORMATTER.format(animatedPriceValue)}${cell.price.valueSuffix ?? ''}`}
+        </Heading>
+        <Body as="span" className={priceSuffixClassName} size="sm">
+          {i18n._(cell.price.suffix)}
+        </Body>
+      </PriceLine>
 
       <CardRule />
 
       <PlanFeatureList
-        comparisonBulletTexts={comparisonBulletTexts}
-        maxBullets={maxBullets}
+        comparisonItemKeys={comparisonItemKeys}
+        intro={tier.featuresIntro}
+        maxFeatures={maxFeatures}
         phase={phase}
-        visibleBullets={visibleBullets}
+        visibleFeatures={visibleItems}
       />
 
       <CtaRow>
