@@ -15,6 +15,7 @@ import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { restrictObjectPermissionsToMetadataWritability } from '@/object-record/read-only/utils/restrictObjectPermissionsToMetadataWritability';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordPermissionsByRecordIdFamilySelector } from '@/object-record/record-sharing/states/recordPermissionsByRecordIdFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -129,7 +130,10 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     objectMetadataItem?.id ?? '',
   );
   const objectPermissions = isDefined(objectMetadataItem)
-    ? currentObjectPermissions
+    ? restrictObjectPermissionsToMetadataWritability({
+        objectPermissions: currentObjectPermissions,
+        writability: objectMetadataItem.writability,
+      })
     : EMPTY_COMMAND_MENU_CONTEXT_API.objectPermissions;
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(

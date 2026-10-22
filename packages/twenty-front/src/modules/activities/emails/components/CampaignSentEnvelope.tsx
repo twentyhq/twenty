@@ -120,7 +120,10 @@ export const CampaignSentEnvelope = ({
           )}
         </ComposerFieldRow>
       )}
-      <ComposerFieldRow label={t`Subject`}>
+      <ComposerFieldRow
+        label={t`Subject`}
+        hasDivider={isNonEmptyString(scheduledSendTime)}
+      >
         {isNonEmptyString(subject) ? (
           <StyledValue>{subject}</StyledValue>
         ) : (
@@ -128,7 +131,7 @@ export const CampaignSentEnvelope = ({
         )}
       </ComposerFieldRow>
       {isNonEmptyString(scheduledSendTime) && (
-        <ComposerFieldRow label={t`Send at`}>
+        <ComposerFieldRow label={t`Send at`} hasDivider={false}>
           <StyledValue>{scheduledSendTime}</StyledValue>
         </ComposerFieldRow>
       )}

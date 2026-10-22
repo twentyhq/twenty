@@ -59,11 +59,13 @@ export const SettingsRoleDefaultRole = ({
     return null;
   }
 
-  const options = roles.map((role) => ({
-    label: role.label,
-    value: role.id,
-    Icon: getIcon(role.icon) ?? IconUserPin,
-  }));
+  const options = roles
+    .filter((role) => role.canBeAssignedToUsers)
+    .map((role) => ({
+      label: role.label,
+      value: role.id,
+      Icon: getIcon(role.icon) ?? IconUserPin,
+    }));
 
   if (options.length === 0) {
     return null;
