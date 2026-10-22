@@ -7,6 +7,7 @@ import { createFileInputAwareRemoteConnection } from '@/host/file-input/utils/cr
 import { createFileInputHost } from '@/host/file-input/utils/createFileInputHost';
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
+import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/buildHostFetchPolicyFromFrontComponentUrls';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
 import { createImageLoadingHost } from '@/host/image-loading/utils/createImageLoadingHost';
@@ -41,12 +42,14 @@ type FrontComponentWorkerEffectProps = {
   mediaSessionHost?: FrontComponentMediaSessionHost;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   hostFocusController: HostFocusController;
+  hostScrollController: HostScrollController;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
 };
 
 export const FrontComponentWorkerEffect = ({
   hostFocusController,
+  hostScrollController,
   componentUrl,
   applicationAccessToken,
   apiUrl,
@@ -192,6 +195,7 @@ export const FrontComponentWorkerEffect = ({
       imageLoadingHost.dispose();
       fileInputHost.dispose();
       hostFocusController.reset();
+      hostScrollController.reset();
       window.removeEventListener('message', handleSandboxMessage);
       setThread(null);
       channel.port1.close();
@@ -210,6 +214,7 @@ export const FrontComponentWorkerEffect = ({
     initialExecutionContext,
     geometryTracker,
     hostFocusController,
+    hostScrollController,
     mediaSessionHost,
     setError,
     setReceiver,

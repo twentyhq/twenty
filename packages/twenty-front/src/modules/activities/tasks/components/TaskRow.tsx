@@ -21,6 +21,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCalendar } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTaskBody = styled.div`
@@ -29,9 +30,7 @@ const StyledTaskBody = styled.div`
   max-width: calc(80% - ${themeCssVariables.spacing[2]});
   overflow: hidden;
   padding-bottom: 1px;
-  position: relative;
   text-overflow: ellipsis;
-  z-index: 1;
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -71,9 +70,7 @@ const StyledRightSideContainer = styled.div`
 
 const StyledActivityTargetsContainer = styled.div`
   overflow: clip;
-  position: relative;
   width: 100%;
-  z-index: 1;
 `;
 
 const StyledPlaceholder = styled.div`
@@ -90,8 +87,6 @@ const StyledLeftSideContainer = styled.div`
 
 const StyledCheckboxContainer = styled.div`
   display: flex;
-  position: relative;
-  z-index: 1;
 `;
 
 export const TaskRow = ({
@@ -132,26 +127,25 @@ export const TaskRow = ({
       }}
     >
       <StyledLeftSideContainer>
-        <StyledCheckboxContainer
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
+        <Card.Control
+          render={<StyledCheckboxContainer />}
+          onClick={(event) => event.stopPropagation()}
         >
           <Checkbox
             checked={task.status === 'DONE'}
             shape={'round'}
             onCheckedChange={completeTask}
           />
-        </StyledCheckboxContainer>
+        </Card.Control>
         <StyledTaskTitle completed={task.status === 'DONE'}>
           {task.title || <StyledPlaceholder>{t`Task title`}</StyledPlaceholder>}
         </StyledTaskTitle>
-        <StyledTaskBody>
+        <Card.Control render={<StyledTaskBody />}>
           <OverflowingTextWithTooltip
             text={<LinkifiedText text={body} />}
             tooltipContent={body}
           />
-        </StyledTaskBody>
+        </Card.Control>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>
         {task.dueAt && (
@@ -163,7 +157,7 @@ export const TaskRow = ({
           </StyledDueDate>
         )}
         {
-          <StyledActivityTargetsContainer>
+          <Card.Control render={<StyledActivityTargetsContainer />}>
             <FieldContextProvider
               objectNameSingular={CoreObjectNameSingular.Task}
               objectRecordId={task.id}
@@ -181,7 +175,7 @@ export const TaskRow = ({
                 </RecordFieldComponentInstanceContext.Provider>
               </StopPropagationContainer>
             </FieldContextProvider>
-          </StyledActivityTargetsContainer>
+          </Card.Control>
         }
       </StyledRightSideContainer>
     </ActivityRow>

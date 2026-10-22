@@ -4,6 +4,7 @@ import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildApplicationWorkflowCronTriggerCacheEntries } from 'src/engine/core-modules/application/application-manifest/utils/build-application-workflow-cron-trigger-cache-entries.util';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
@@ -21,6 +22,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -37,6 +39,7 @@ export class ApplicationManifestMigrationService {
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     private readonly logger: LoggerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
   ) {}
 
   async syncPreInstallLogicFunctionFromManifest({
@@ -252,32 +255,50 @@ export class ApplicationManifestMigrationService {
         },
       });
 
+    const connectionProviderIdsToDelete = Object.values(
+      allFlatEntityOperationRecordByMetadataName.connectionProvider
+        ?.flatEntityToDelete ?? {},
+    ).map(
+      ({ universalIdentifier }) =>
+        findFlatEntityByUniversalIdentifierOrThrow({
+          flatEntityMaps: fromAllFlatEntityMaps.flatConnectionProviderMaps,
+          universalIdentifier,
+        }).id,
+    );
+
+    const shouldRunOnDisconnectHooks =
+      !dryRun && connectionProviderIdsToDelete.length > 0;
+
+    const validateBuildAndRunMigration = (isDryRun: boolean) =>
+      this.validateBuildAndRunOrThrow({
+        allFlatEntityOperationRecordByMetadataName,
+        workspaceId,
+        isSystemBuild: false,
+        applicationUniversalIdentifier:
+          ownerFlatApplication.universalIdentifier,
+        idByUniversalIdentifierByMetadataName,
+        dryRun: isDryRun,
+      });
+
     const validateBuildRunStart = performance.now();
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromRecord(
-        {
-          allFlatEntityOperationRecordByMetadataName,
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            ownerFlatApplication.universalIdentifier,
-          idByUniversalIdentifierByMetadataName,
-          dryRun,
-        },
+    let validateAndBuildResult = await validateBuildAndRunMigration(
+      dryRun || shouldRunOnDisconnectHooks,
+    );
+
+    // Hooks release remote state and need the rows the migration deletes, so the plan is validated first
+    if (shouldRunOnDisconnectHooks) {
+      await this.connectionProviderLifecycleHookService.runOnDisconnectForConnectionProviders(
+        { connectionProviderIds: connectionProviderIdsToDelete, workspaceId },
       );
+
+      validateAndBuildResult = await validateBuildAndRunMigration(false);
+    }
     const validateBuildRunMs = performance.now() - validateBuildRunStart;
 
     this.logger.perf(
-      `[install-perf] syncMetadataFromManifest validateBuildAndRunWorkspaceMigrationFromTo took ${validateBuildRunMs.toFixed(1)}ms (dryRun=${dryRun}, actions=${validateAndBuildResult.status === 'success' ? validateAndBuildResult.workspaceMigration.actions.length : 'n/a-failed'})`,
+      `[install-perf] syncMetadataFromManifest validateBuildAndRunWorkspaceMigrationFromTo took ${validateBuildRunMs.toFixed(1)}ms (dryRun=${dryRun}, actions=${validateAndBuildResult.workspaceMigration.actions.length})`,
       ApplicationManifestMigrationService.name,
     );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Validation errors occurred while syncing application manifest metadata',
-      );
-    }
 
     this.logger.log(
       `Metadata migration ${dryRun ? 'plan computed (dry run)' : 'completed'} for application ${ownerFlatApplication.universalIdentifier}`,
@@ -304,6 +325,26 @@ export class ApplicationManifestMigrationService {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
     };
+  }
+
+  private async validateBuildAndRunOrThrow(
+    args: Parameters<
+      WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunWorkspaceMigrationFromRecord']
+    >[0],
+  ) {
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromRecord(
+        args,
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Validation errors occurred while syncing application manifest metadata',
+      );
+    }
+
+    return validateAndBuildResult;
   }
 
   private async syncApplicationReferencesFromManifest({

@@ -96,15 +96,6 @@ const LINEAR_CONNECTED_ACCOUNTS = [
     archivedAt: '2026-09-03T00:00:00.000Z',
   }),
   buildConnectedAccount({
-    id: '20202020-1a2b-4c3d-8e4f-000000000083',
-    handle: 'shared@linear.app',
-    provider: 'app',
-    userWorkspaceId: MY_USER_WORKSPACE_ID,
-    applicationId: LINEAR_APPLICATION_ID,
-    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
-    scope: 'WORKSPACE',
-  }),
-  buildConnectedAccount({
     id: '20202020-1a2b-4c3d-8e4f-000000000084',
     handle: 'teammate@linear.app',
     provider: 'app',

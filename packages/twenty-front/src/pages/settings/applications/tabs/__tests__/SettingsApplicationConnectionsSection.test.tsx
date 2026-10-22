@@ -111,7 +111,7 @@ describe('SettingsApplicationConnectionsSection', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('adds a workspace shared connection without asking for a scope', async () => {
+  it('adds a workspace shared connection', async () => {
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
       connectionProviders: [
         {
@@ -150,12 +150,10 @@ describe('SettingsApplicationConnectionsSection', () => {
       screen.getByRole('button', { name: /Add connection/i }),
     );
 
-    expect(screen.queryByText('Just for me')).not.toBeInTheDocument();
     expect(mockTriggerAppOAuth).toHaveBeenCalledTimes(1);
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',
       providerName: 'google-calendar',
-      scope: 'WORKSPACE',
     });
   });
 
@@ -245,40 +243,27 @@ describe('SettingsApplicationConnectionsSection', () => {
     );
   };
 
-  it('lists the shared row of a workspace provider and never a personal one', () => {
+  it('lists the rows of a workspace provider', () => {
     renderSection({
       providerScope: 'WORKSPACE',
-      accounts: [SHARED_ACCOUNT, PERSONAL_ACCOUNT],
+      accounts: [SHARED_ACCOUNT],
     });
 
     expect(screen.getByRole('link', { name: /Team calendar/i })).toBeVisible();
-    expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /Add connection/i }),
     ).toBeVisible();
   });
 
-  it('hides a member-scoped provider that only has personal rows', () => {
+  it('does not list a member-scoped provider', () => {
     renderSection({
       providerScope: 'USER',
       accounts: [PERSONAL_ACCOUNT],
+      isClientCredentialsConfigured: false,
     });
 
     expect(screen.queryByText('Google Calendar')).not.toBeInTheDocument();
     expect(screen.queryByText('My calendar')).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /Add connection/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('lists the shared row of a member-scoped provider without offering to add one', () => {
-    renderSection({
-      providerScope: 'USER',
-      accounts: [SHARED_ACCOUNT],
-      isClientCredentialsConfigured: false,
-    });
-
-    expect(screen.getByRole('link', { name: /Team calendar/i })).toBeVisible();
     expect(
       screen.queryByRole('button', { name: /Add connection/i }),
     ).not.toBeInTheDocument();

@@ -379,8 +379,6 @@ The **Accounts** list groups a member's connections by handle. **Disconnect acco
 
 Disconnected app connections remain listed as **Disconnected** and do not offer Reconnect. Remove the old connection before using **Add connection** again; reconnecting a mailbox does not restore its grouped app connections.
 
-A personal connection made before the provider became `WORKSPACE`-scoped (before Twenty 2.40.0, or while the provider was `USER`) keeps working for its owner, who can disconnect or delete its account group from the **Accounts** list in **Settings > User > App preferences**. These actions also affect the other connections listed in the confirmation. It cannot be turned into a shared one, and Twenty's settings offer no Reconnect for it. To move the app to a shared connection, remove the personal connection first, then use **Add connection** in the app's workspace settings: some apps' disconnect hooks clean up by external account, so removing the personal connection afterwards can break the new shared one.
-
 <Note>
   **App preferences** is not enabled in every workspace yet: where it is not,
   members have no place to add a `USER` connection, or to remove a personal
@@ -390,9 +388,9 @@ A personal connection made before the provider became `WORKSPACE`-scoped (before
 
 A provider has exactly one scope. If your app needs both a shared credential and one per member for the same service (a bot token and each member's own account, say), declare two providers.
 
-Twenty refuses a new connection whose scope does not match the provider's, including when your app changes its scope while a member is on the provider's consent screen. Changing `scope` in a later version does not move or delete existing connections: they keep their scope. A shared connection left on a `USER` provider can still be reconnected from the app's workspace settings; a personal connection left on a `WORKSPACE` provider can be disconnected or deleted through its account group.
+A connection always has its provider's scope, and a provider's scope is part of its identity: a later version cannot change the `scope` of an existing provider, and the upgrade is refused if it tries. To move a service from one scope to the other, declare a new provider with a new `universalIdentifier` and drop the old one. Upgrading then deletes the old provider and every connection made with it, running `onDisconnectLogicFunction` for each first, and members connect again through the new provider.
 
-Adding or reconnecting a personal connection requires `CONNECTED_ACCOUNTS` permission, and adding or reconnecting a workspace-shared one requires `APPLICATIONS` permission. Reconnecting keeps the connection's scope.
+Adding or reconnecting a **Just for me** connection requires `CONNECTED_ACCOUNTS` permission, and adding or reconnecting a **Workspace shared** one requires `APPLICATIONS` permission.
 
 Use the right connection for each handler:
 

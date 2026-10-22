@@ -1,17 +1,11 @@
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
+import { t } from '@lingui/core/macro';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { getChartAxisNameDisplayOptions } from '@/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ListItemButton } from 'twenty-ui/components/navigation';
 import { AxisNameDisplay } from '~/generated-metadata/graphql';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
@@ -31,15 +25,6 @@ export const ChartAxisNameSelectionDropdownContent = () => {
 
   const currentAxisNameDisplay = configuration.axisNameDisplay;
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   const axisOptions: AxisNameDisplay[] = [
     AxisNameDisplay.NONE,
     AxisNameDisplay.X,
@@ -50,49 +35,30 @@ export const ChartAxisNameSelectionDropdownContent = () => {
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const { closeDropdown } = useCloseDropdown();
-
   const handleSelectAxisNameOption = (axisNameOption: AxisNameDisplay) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
         axisNameDisplay: axisNameOption,
       },
     });
-    closeDropdown();
   };
 
   return (
-    <>
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={axisOptions}
-        >
-          {axisOptions.map((option) => (
-            <SelectableListItem
-              key={option}
-              itemId={option}
-              onEnter={() => {
-                handleSelectAxisNameOption(option);
-              }}
-            >
-              <ListItemButton
-                focused={selectedItemId === option}
-                onClick={() => {
-                  handleSelectAxisNameOption(option);
-                }}
-                role="option"
-                aria-selected={currentAxisNameDisplay?.toUpperCase() === option}
-                selected={currentAxisNameDisplay?.toUpperCase() === option}
-                indicator="check"
-              >
-                {getChartAxisNameDisplayOptions(option)}
-              </ListItemButton>
-            </SelectableListItem>
-          ))}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
-    </>
+    <ChartSettingsDropdownSection>
+      <Dropdown.SelectionGroup
+        aria-label={t`Axis name`}
+        value={currentAxisNameDisplay?.toUpperCase() ?? null}
+      >
+        {axisOptions.map((option) => (
+          <Dropdown.OptionItem
+            key={option}
+            value={option}
+            onSelect={() => handleSelectAxisNameOption(option)}
+          >
+            {getChartAxisNameDisplayOptions(option)}
+          </Dropdown.OptionItem>
+        ))}
+      </Dropdown.SelectionGroup>
+    </ChartSettingsDropdownSection>
   );
 };

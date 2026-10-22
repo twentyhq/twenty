@@ -113,12 +113,13 @@ export const SettingsApplicationConnectionDetail = () => {
 
   const application = data?.findOneApplication;
   const providerIds = new Set(
-    connectionProviders.map((provider) => provider.id),
+    connectionProviders
+      .filter((provider) => provider.scope === 'WORKSPACE')
+      .map((provider) => provider.id),
   );
   const connection = connectedAccounts.find(
     (account) =>
       account.id === connectedAccountId &&
-      account.scope === 'WORKSPACE' &&
       account.connectionProviderId !== null &&
       account.connectionProviderId !== undefined &&
       providerIds.has(account.connectionProviderId),
@@ -155,7 +156,6 @@ export const SettingsApplicationConnectionDetail = () => {
     triggerAppOAuth({
       applicationId,
       providerName: provider.name,
-      scope: 'WORKSPACE',
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });

@@ -821,6 +821,7 @@ type BillingPaymentIntent {
 type BillingPlan {
   baseProducts: [BillingLicensedProduct!]!
   downgradePlanKeys: [BillingPlanKey!]!
+  isCheckoutDefault: Boolean!
   isSellable: Boolean!
   meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
@@ -3039,7 +3040,7 @@ type Mutation {
   cancelSwitchResourceCreditPrice: BillingUpdate!
   checkCustomDomainValidRecords: DomainValidRecords
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
-  checkoutSession(plan: BillingPlanKey! = PRO, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
+  checkoutSession(plan: BillingPlanKey!, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
@@ -3083,7 +3084,7 @@ type Mutation {
   createPublicDomain(applicationId: String!, domain: String!): PublicDomain!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   createSkill(input: CreateSkillInput!): Skill!
-  createSubscriptionPaymentIntent(idempotencyKey: String!, plan: BillingPlanKey! = PRO, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingPaymentIntent!
+  createSubscriptionPaymentIntent(idempotencyKey: String!, plan: BillingPlanKey!, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingPaymentIntent!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   createUsageLimit(input: CreateUsageLimitInput!): UsageLimit!
   createValidationRule(input: CreateValidationRuleInput!): ValidationRule!

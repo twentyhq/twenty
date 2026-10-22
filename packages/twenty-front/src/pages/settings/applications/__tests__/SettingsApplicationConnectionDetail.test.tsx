@@ -148,7 +148,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           lastSignedInAt: null,
           connectionProviderId: 'provider-1',
           name: 'Original name',
-          scope: ConnectedAccountScope.USER,
+          scope: ConnectedAccountScope.WORKSPACE,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
@@ -157,19 +157,6 @@ describe('SettingsApplicationConnectionDetail', () => {
       loading: false,
       refetch: jest.fn(),
     });
-  });
-
-  it('a personal connection is not found on the detail page', () => {
-    renderDetailPage();
-
-    expect(screen.getByText('Connection not found')).toBeVisible();
-    expect(screen.queryByText('Original name')).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: /Reconnect/ }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Remove' }),
-    ).not.toBeInTheDocument();
   });
 
   it('offers reconnect and remove on a failed workspace shared connection', () => {
@@ -204,7 +191,6 @@ describe('SettingsApplicationConnectionDetail', () => {
     expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
       applicationId: 'app-1',
       providerName: 'google-calendar',
-      scope: 'WORKSPACE',
       reconnectingConnectedAccountId: 'account-1',
       redirectLocation: '/settings/applications/app-1/connections/account-1',
     });

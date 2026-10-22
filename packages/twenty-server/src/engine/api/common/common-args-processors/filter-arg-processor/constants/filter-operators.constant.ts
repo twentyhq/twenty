@@ -1,4 +1,11 @@
+import { FIELD_REFERENCE_FILTER_OPERATORS } from 'twenty-shared/constants';
+import { type FieldReferenceFilterOperator } from 'twenty-shared/types';
+
 import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
+
+const FIELD_REFERENCE_OPERATORS = Object.keys(
+  FIELD_REFERENCE_FILTER_OPERATORS,
+) as FieldReferenceFilterOperator[];
 
 export const STRING_FILTER_OPERATORS: FilterOperator[] = [
   'eq',
@@ -24,6 +31,7 @@ export const NUMBER_FILTER_OPERATORS: FilterOperator[] = [
   'lte',
   'in',
   'is',
+  ...FIELD_REFERENCE_OPERATORS,
 ];
 
 export const BOOLEAN_FILTER_OPERATORS: FilterOperator[] = ['eq', 'is'];
@@ -37,6 +45,7 @@ export const DATE_FILTER_OPERATORS: FilterOperator[] = [
   'lte',
   'in',
   'is',
+  ...FIELD_REFERENCE_OPERATORS,
 ];
 
 export const UUID_FILTER_OPERATORS: FilterOperator[] = [

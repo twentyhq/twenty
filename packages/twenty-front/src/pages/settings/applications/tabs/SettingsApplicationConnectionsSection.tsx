@@ -36,19 +36,15 @@ export const SettingsApplicationConnectionsSection = ({
   return (
     <>
       {connectionProviders.map((provider) => {
-        const isClientCredentialsConfigured =
-          provider.oauth?.isClientCredentialsConfigured ?? false;
-        const canAddConnection = provider.scope === 'WORKSPACE';
-
-        const providerConnections = connectedAccounts.filter(
-          (account) =>
-            account.connectionProviderId === provider.id &&
-            account.scope === 'WORKSPACE',
-        );
-
-        if (!canAddConnection && providerConnections.length === 0) {
+        if (provider.scope !== 'WORKSPACE') {
           return null;
         }
+
+        const isClientCredentialsConfigured =
+          provider.oauth?.isClientCredentialsConfigured ?? false;
+        const providerConnections = connectedAccounts.filter(
+          (account) => account.connectionProviderId === provider.id,
+        );
 
         return (
           <SettingsApplicationConnectionProviderSection
@@ -57,7 +53,7 @@ export const SettingsApplicationConnectionsSection = ({
             providerLogoUrl={provider.logoUrl}
             isClientCredentialsConfigured={isClientCredentialsConfigured}
             description={t`Manage connections used by this app to call ${provider.displayName}.`}
-            shouldShowMissingCredentialsBanner={canAddConnection}
+            shouldShowMissingCredentialsBanner
           >
             {providerConnections.length > 0 && (
               <Table>
@@ -116,11 +112,10 @@ export const SettingsApplicationConnectionsSection = ({
                 </SettingsApplicationConnectionTableRows>
               </Table>
             )}
-            {canAddConnection && isClientCredentialsConfigured && (
+            {isClientCredentialsConfigured && (
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
                 providerName={provider.name}
-                scope="WORKSPACE"
               />
             )}
           </SettingsApplicationConnectionProviderSection>

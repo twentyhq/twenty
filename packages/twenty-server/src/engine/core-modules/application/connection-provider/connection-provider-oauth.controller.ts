@@ -4,8 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isConnectionProviderScope } from 'twenty-shared/application';
-import { CONNECTION_SCOPE_BY_LEGACY_VISIBILITY } from 'twenty-shared/application-runtime';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -55,8 +53,6 @@ export class ConnectionProviderOAuthController {
     @Query('applicationId') applicationId: string,
     @Query('providerName') providerName: string,
     @Query('transientToken') transientToken: string,
-    @Query('scope') scope: string | undefined,
-    @Query('visibility') legacyVisibility: string | undefined,
     @Query('reconnectingConnectedAccountId')
     reconnectingConnectedAccountId: string | undefined,
     @Query('redirectLocation') redirectLocation: string | undefined,
@@ -69,24 +65,6 @@ export class ConnectionProviderOAuthController {
       if (!applicationId || !providerName || !transientToken) {
         throw new ConnectionProviderException(
           'Missing required query parameters: applicationId, providerName, transientToken',
-          ConnectionProviderExceptionCode.INVALID_REQUEST,
-        );
-      }
-
-      if (isDefined(scope) && !isConnectionProviderScope(scope)) {
-        throw new ConnectionProviderException(
-          `Invalid scope "${scope}" — must be 'USER' or 'WORKSPACE'`,
-          ConnectionProviderExceptionCode.INVALID_REQUEST,
-        );
-      }
-
-      if (
-        legacyVisibility !== undefined &&
-        legacyVisibility !== 'user' &&
-        legacyVisibility !== 'workspace'
-      ) {
-        throw new ConnectionProviderException(
-          `Invalid visibility "${legacyVisibility}" — must be 'user' or 'workspace'`,
           ConnectionProviderExceptionCode.INVALID_REQUEST,
         );
       }
@@ -143,11 +121,6 @@ export class ConnectionProviderOAuthController {
           workspaceId,
           userId,
           userWorkspaceId: userWorkspace.id,
-          scope:
-            scope ??
-            (isDefined(legacyVisibility)
-              ? CONNECTION_SCOPE_BY_LEGACY_VISIBILITY[legacyVisibility]
-              : null),
           reconnectingConnectedAccountId:
             reconnectingConnectedAccountId ?? null,
           redirectLocation: redirectLocation ?? null,
