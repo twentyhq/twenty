@@ -2,12 +2,14 @@
 
 import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { Fragment } from 'react';
 
 import { INFORMATIVE_MARKS } from '@/icons';
 import { getMessageDescriptorSource } from '@/platform/i18n/get-message-descriptor-source';
-import { color, EASING, REDUCED_MOTION, spacing } from '@/tokens';
-import { Body } from '@/ui';
+import { color, EASING, FONT_WEIGHT, REDUCED_MOTION, spacing } from '@/tokens';
+import { Body, parseHeadingNotation } from '@/ui';
 
 import { FEATURE_TRANSITION_TIMING } from './feature-transition-timing';
 import { type FeatureTransitionPhase } from './use-feature-transition';
@@ -116,6 +118,16 @@ const FeatureItem = styled.li<{
   }
 `;
 
+const FeatureAccent = styled.span`
+  color: ${color('blue')};
+  font-weight: ${FONT_WEIGHT.medium};
+  white-space: nowrap;
+`;
+
+const featureTextClassName = css`
+  color: ${color('black-80')};
+`;
+
 function getLayoutMinHeight(maxBullets: number) {
   if (maxBullets <= 0) {
     return '0px';
@@ -168,8 +180,18 @@ export function PlanFeatureList({
             <FeatureCheck>
               <CheckMark color={color('blue')} sizePx={16} strokeWidth={1.5} />
             </FeatureCheck>
-            <Body as="span" size="sm">
-              {i18n._(bullet)}
+            <Body as="span" className={featureTextClassName} size="sm">
+              {parseHeadingNotation(i18n._(bullet)).map((segment) =>
+                segment.kind === 'accent' ? (
+                  <FeatureAccent key={`accent-${segment.text}`}>
+                    {segment.text}
+                  </FeatureAccent>
+                ) : segment.kind === 'text' ? (
+                  <Fragment key={`text-${segment.text}`}>
+                    {segment.text}
+                  </Fragment>
+                ) : null,
+              )}
             </Body>
           </FeatureItem>
         ))}

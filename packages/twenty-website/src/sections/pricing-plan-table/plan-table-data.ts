@@ -10,14 +10,25 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: msg`Price`,
       selfHostTiers: {
         enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$19/user` },
-        pro: { kind: 'text', text: msg`$0/user` },
+        organization: { kind: 'text', text: msg`$19/user/month` },
+        pro: { kind: 'text', text: msg`$0/user/month` },
       },
       tiers: {
         enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$19/user` },
-        pro: { kind: 'text', text: msg`$9/user` },
+        organization: { kind: 'text', text: msg`$39/user/month` },
+        pro: { kind: 'text', text: msg`$9/user/month` },
       },
+      type: 'row',
+    },
+    {
+      appliesTo: 'cloud',
+      featureLabel: msg`Workspace credits`,
+      tiers: {
+        enterprise: { kind: 'text', text: msg`Custom allowance` },
+        organization: { kind: 'text', text: msg`4 credits/user/month` },
+        pro: { kind: 'text', text: msg`1 credit/user/month` },
+      },
+      tooltip: msg`Monthly credits for the whole workspace, used by workflows, AI agents and apps.`,
       type: 'row',
     },
     {
@@ -129,6 +140,16 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     { title: msg`AI & Automations`, type: 'category' },
     {
+      appliesTo: 'cloud',
+      featureLabel: msg`Personal AI usage`,
+      tiers: {
+        organization: { kind: 'text', text: msg`5x Pro` },
+        pro: { kind: 'text', text: msg`Limited` },
+      },
+      tooltip: msg`Dedicated AI usage for each member to search, update and create with AI chat.`,
+      type: 'row',
+    },
+    {
       featureLabel: msg`Workflows`,
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },
@@ -164,25 +185,37 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     {
       featureLabel: msg`User roles`,
-      tiers: {
+      selfHostTiers: {
         organization: { kind: 'text', text: msg`Unlimited` },
         pro: { kind: 'text', text: msg`Unlimited` },
+      },
+      tiers: {
+        organization: { kind: 'text', text: msg`Unlimited` },
+        pro: { kind: 'text', text: msg`Standard roles only` },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Read/Edit/Delete permissions`,
-      tiers: {
+      selfHostTiers: {
         organization: { kind: 'text', text: msg`Unlimited` },
         pro: { kind: 'text', text: msg`Unlimited` },
+      },
+      tiers: {
+        organization: { kind: 'text', text: msg`Unlimited` },
+        pro: { kind: 'dash' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Field-level permissions`,
-      tiers: {
+      selfHostTiers: {
         organization: { kind: 'text', text: msg`Unlimited` },
         pro: { kind: 'text', text: msg`Unlimited` },
+      },
+      tiers: {
+        organization: { kind: 'text', text: msg`Unlimited` },
+        pro: { kind: 'dash' },
       },
       type: 'row',
     },

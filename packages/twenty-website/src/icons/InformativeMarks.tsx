@@ -112,6 +112,33 @@ function EyeMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   );
 }
 
+function InfoMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height={sizePx}
+      viewBox="0 0 16 16"
+      width={sizePx}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx={8} cy={8} r={6} stroke={color} strokeWidth={strokeWidth} />
+      <path
+        d="M8 7.5V11"
+        stroke={color}
+        strokeLinecap="round"
+        strokeWidth={strokeWidth}
+      />
+      <path
+        d="M8 5h.01"
+        stroke={color}
+        strokeLinecap="round"
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+}
+
 function SearchMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   return (
     <svg
@@ -196,7 +223,15 @@ function UsersMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
 }
 
 export const INFORMATIVE_MARKS: Record<
-  'book' | 'check' | 'code' | 'edit' | 'eye' | 'search' | 'tag' | 'users',
+  | 'book'
+  | 'check'
+  | 'code'
+  | 'edit'
+  | 'eye'
+  | 'info'
+  | 'search'
+  | 'tag'
+  | 'users',
   ComponentType<InformativeMarkProps>
 > = {
   book: BookMark,
@@ -204,6 +239,7 @@ export const INFORMATIVE_MARKS: Record<
   code: CodeMark,
   edit: EditMark,
   eye: EyeMark,
+  info: InfoMark,
   search: SearchMark,
   tag: TagMark,
   users: UsersMark,

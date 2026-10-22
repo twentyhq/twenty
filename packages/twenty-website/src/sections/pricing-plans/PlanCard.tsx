@@ -32,6 +32,10 @@ const CardShell = styled.div`
   position: relative;
   z-index: 1;
 
+  &[data-highlighted] {
+    border-color: ${color('blue-40')};
+  }
+
   & > * + * {
     margin-top: ${spacing(4)};
   }
@@ -87,6 +91,15 @@ const priceSuffixClassName = css`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+`;
+
+const taglineClassName = css`
+  color: ${color('black')};
+
+  && {
+    margin-bottom: ${spacing(2)};
+    margin-top: ${spacing(6)};
   }
 `;
 
@@ -148,7 +161,7 @@ export function PlanCard({
   );
 
   return (
-    <CardShell>
+    <CardShell data-highlighted={highlighted ? '' : undefined}>
       <CardHeader>
         <CardHeaderInfo>
           <Heading
@@ -156,12 +169,12 @@ export function PlanCard({
             className={titleClassName}
             family="sans"
             size="xs"
-            weight="light"
+            weight="medium"
           >
             {i18n._(tier.heading[hosting])}
           </Heading>
           <PriceLine>
-            <Heading as="h4" family="sans" size="sm" weight="regular">
+            <Heading as="h4" family="sans" size="sm" weight="medium">
               {`${cell.price.prefix}${PRICE_NUMBER_FORMATTER.format(animatedPriceValue)}${cell.price.valueSuffix ?? ''}`}
             </Heading>
             <Body as="span" className={priceSuffixClassName} size="sm">
@@ -178,6 +191,10 @@ export function PlanCard({
           />
         </CardIcon>
       </CardHeader>
+
+      <Body as="p" className={taglineClassName} size="sm" weight="medium">
+        {i18n._(tier.tagline[hosting])}
+      </Body>
 
       <CardRule />
 

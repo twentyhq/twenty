@@ -25,6 +25,7 @@ export type PlanTableFeatureRowDataType = {
   featureLabel: MessageDescriptor;
   selfHostTiers?: Partial<Record<PlanTableTierId, PlanTableCellType>>;
   tiers: Partial<Record<PlanTableTierId, PlanTableCellType>>;
+  tooltip?: MessageDescriptor;
   type: 'row';
 };
 
