@@ -26,7 +26,11 @@ export const expectReconnectNeededWithoutReconnectAction = async ({
 
   const body = within(canvasElement.ownerDocument.body);
 
-  expect(await body.findByRole('menuitem', { name: 'Remove' })).toBeVisible();
+  expect(
+    await body.findByRole('menuitem', {
+      name: 'Delete account and synced data',
+    }),
+  ).toBeVisible();
   expect(
     body.queryByRole('menuitem', { name: /Reconnect/ }),
   ).not.toBeInTheDocument();
