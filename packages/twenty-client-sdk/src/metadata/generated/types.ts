@@ -1963,6 +1963,9 @@ export default {
             "downgradePlanKeys": [
                 99
             ],
+            "isCheckoutDefault": [
+                4
+            ],
             "isSellable": [
                 4
             ],

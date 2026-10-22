@@ -11,6 +11,8 @@ export { AvatarGroup } from './AvatarGroup/AvatarGroup';
 export type { AvatarGroupProps } from './AvatarGroup/types/AvatarGroupProps';
 export { CommandBlock } from './CommandBlock/CommandBlock';
 export type { CommandBlockProps } from './CommandBlock/types/CommandBlockProps';
+export { DetailsRow } from './DetailsRow/DetailsRow';
+export type { DetailsRowProps } from './DetailsRow/types/DetailsRowProps';
 export { JsonTree } from './JsonTree/JsonTree';
 export type { GetJsonNodeHighlighting } from './JsonTree/types/GetJsonNodeHighlighting';
 export type { JsonNodeHighlighting } from './JsonTree/types/JsonNodeHighlighting';

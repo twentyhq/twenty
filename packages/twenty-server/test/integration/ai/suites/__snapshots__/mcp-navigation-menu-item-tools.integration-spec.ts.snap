@@ -1,0 +1,397 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MCP navigation menu item tools (integration) should describe the navigation menu item tools to the model 1`] = `
+[
+  {
+    "description": "List navigation menu items (shared workspace navigation and/or the current user's personal favorites). Returns items sorted by position.",
+    "inputSchema": {
+      "properties": {
+        "folderId": {
+          "description": "Only return items inside this folder.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "limit": {
+          "default": 100,
+          "description": "Max number of items to return.",
+          "type": "integer",
+        },
+        "scope": {
+          "default": "all",
+          "description": "'workspace' = shared navigation, 'user' = current user's favorites, 'all' = both merged (default).",
+          "enum": [
+            "workspace",
+            "user",
+            "all",
+          ],
+          "type": "string",
+        },
+        "type": {
+          "description": "Filter by item type (FOLDER, LINK, OBJECT, VIEW, RECORD, PAGE_LAYOUT).",
+          "enum": [
+            "FOLDER",
+            "LINK",
+            "OBJECT",
+            "VIEW",
+            "RECORD",
+            "PAGE_LAYOUT",
+          ],
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "list_navigation_menu_items",
+  },
+  {
+    "description": "Create a navigation menu item. With scope='user' it becomes a personal favorite for the current user; with scope='workspace' it is shared with everyone (requires LAYOUTS permission).
+
+Type chooses the variant:
+- FOLDER: a group to nest other items into (name required).
+- LINK: an external URL pinned in the sidebar (name + link required).
+- OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).
+- VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
+- RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
+- PAGE_LAYOUT: pins a standalone page layout (name required — no auto-derivation). The referenced page layout must be of type STANDALONE_PAGE; dashboards and record/index page layouts are not reachable this way.
+
+Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.",
+    "inputSchema": {
+      "$defs": {
+        "__schema0": {
+          "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+          "enum": [
+            "workspace",
+            "user",
+          ],
+          "type": "string",
+        },
+        "__schema1": {
+          "description": "Label shown in the sidebar.",
+          "minLength": 1,
+          "type": "string",
+        },
+        "__schema2": {
+          "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+          "type": "string",
+        },
+        "__schema3": {
+          "description": "Optional hex colour",
+          "type": "string",
+        },
+        "__schema4": {
+          "description": "Position among siblings; defaults to the end.",
+          "type": "number",
+        },
+        "__schema5": {
+          "description": "Parent folder id, if the item should live inside a folder.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "__schema6": {
+          "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
+          "minLength": 1,
+          "type": "string",
+        },
+      },
+      "anyOf": [
+        {
+          "properties": {
+            "color": {
+              "$ref": "#/$defs/__schema3",
+            },
+            "folderId": {
+              "$ref": "#/$defs/__schema5",
+            },
+            "icon": {
+              "$ref": "#/$defs/__schema2",
+            },
+            "name": {
+              "$ref": "#/$defs/__schema1",
+            },
+            "position": {
+              "$ref": "#/$defs/__schema4",
+            },
+            "scope": {
+              "$ref": "#/$defs/__schema0",
+            },
+            "type": {
+              "const": "FOLDER",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "name",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "$ref": "#/$defs/__schema3",
+            },
+            "folderId": {
+              "$ref": "#/$defs/__schema5",
+            },
+            "icon": {
+              "$ref": "#/$defs/__schema2",
+            },
+            "link": {
+              "description": "Target URL",
+              "format": "uri",
+              "type": "string",
+            },
+            "name": {
+              "$ref": "#/$defs/__schema1",
+            },
+            "position": {
+              "$ref": "#/$defs/__schema4",
+            },
+            "scope": {
+              "$ref": "#/$defs/__schema0",
+            },
+            "type": {
+              "const": "LINK",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "name",
+            "link",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "$ref": "#/$defs/__schema3",
+            },
+            "folderId": {
+              "$ref": "#/$defs/__schema5",
+            },
+            "icon": {
+              "$ref": "#/$defs/__schema2",
+            },
+            "name": {
+              "$ref": "#/$defs/__schema6",
+            },
+            "position": {
+              "$ref": "#/$defs/__schema4",
+            },
+            "scope": {
+              "$ref": "#/$defs/__schema0",
+            },
+            "targetObjectMetadataId": {
+              "description": "Id of the object to pin",
+              "format": "uuid",
+              "type": "string",
+            },
+            "type": {
+              "const": "OBJECT",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "targetObjectMetadataId",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "$ref": "#/$defs/__schema3",
+            },
+            "folderId": {
+              "$ref": "#/$defs/__schema5",
+            },
+            "icon": {
+              "$ref": "#/$defs/__schema2",
+            },
+            "name": {
+              "$ref": "#/$defs/__schema6",
+            },
+            "position": {
+              "$ref": "#/$defs/__schema4",
+            },
+            "scope": {
+              "$ref": "#/$defs/__schema0",
+            },
+            "type": {
+              "const": "VIEW",
+              "type": "string",
+            },
+            "viewId": {
+              "description": "Id of the view to pin",
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "viewId",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "$ref": "#/$defs/__schema3",
+            },
+            "folderId": {
+              "$ref": "#/$defs/__schema5",
+            },
+            "icon": {
+              "$ref": "#/$defs/__schema2",
+            },
+            "name": {
+              "$ref": "#/$defs/__schema6",
+            },
+            "position": {
+              "$ref": "#/$defs/__schema4",
+            },
+            "scope": {
+              "$ref": "#/$defs/__schema0",
+            },
+            "targetObjectMetadataId": {
+              "description": "Id of the record's object metadata",
+              "format": "uuid",
+              "type": "string",
+            },
+            "targetRecordId": {
+              "description": "Id of the record to pin",
+              "format": "uuid",
+              "type": "string",
+            },
+            "type": {
+              "const": "RECORD",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "targetRecordId",
+            "targetObjectMetadataId",
+          ],
+          "type": "object",
+        },
+        {
+          "properties": {
+            "color": {
+              "$ref": "#/$defs/__schema3",
+            },
+            "folderId": {
+              "$ref": "#/$defs/__schema5",
+            },
+            "icon": {
+              "$ref": "#/$defs/__schema2",
+            },
+            "name": {
+              "$ref": "#/$defs/__schema1",
+            },
+            "pageLayoutId": {
+              "description": "Id of the page layout to pin",
+              "type": "string",
+            },
+            "position": {
+              "$ref": "#/$defs/__schema4",
+            },
+            "scope": {
+              "$ref": "#/$defs/__schema0",
+            },
+            "type": {
+              "const": "PAGE_LAYOUT",
+              "type": "string",
+            },
+          },
+          "required": [
+            "type",
+            "scope",
+            "pageLayoutId",
+            "name",
+          ],
+          "type": "object",
+        },
+      ],
+    },
+    "name": "create_navigation_menu_item",
+  },
+  {
+    "description": "Update a navigation menu item (rename, recolor, move between folders, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.",
+    "inputSchema": {
+      "properties": {
+        "color": {
+          "description": "New hex colour",
+          "type": "string",
+        },
+        "folderId": {
+          "anyOf": [
+            {
+              "type": "string",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "Move into a different folder. Pass null to move to the top level.",
+        },
+        "icon": {
+          "description": "New icon identifier",
+          "type": "string",
+        },
+        "id": {
+          "description": "Id of the navigation menu item to update",
+          "format": "uuid",
+          "type": "string",
+        },
+        "link": {
+          "description": "New URL (only meaningful for LINK items)",
+          "format": "uri",
+          "type": "string",
+        },
+        "name": {
+          "description": "New display name. For OBJECT/VIEW/RECORD items the sidebar normally shows the target entity's own name — only set this if the user wants a custom label.",
+          "minLength": 1,
+          "type": "string",
+        },
+        "pageLayoutId": {
+          "description": "New page layout id (only meaningful for PAGE_LAYOUT items)",
+          "type": "string",
+        },
+        "position": {
+          "description": "New position among siblings",
+          "type": "number",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_navigation_menu_item",
+  },
+  {
+    "description": "Delete a navigation menu item. Deleting a folder also deletes everything inside it.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "Id of the navigation menu item to delete",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_navigation_menu_item",
+  },
+]
+`;

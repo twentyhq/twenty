@@ -1,0 +1,472 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MCP role tools (integration) should describe the role tools to the model 1`] = `
+[
+  {
+    "description": "List all roles of this workspace with their permissions.
+
+Returns for each role: global record permissions (canReadAllObjectRecords, ...), settings access (canUpdateAllSettings), per-object permission overrides, permission flags, and assignability (users, agents, API keys).
+Roles with isEditable=false (like Admin) are system-managed and cannot be changed.",
+    "inputSchema": {
+      "properties": {
+        "includeRowLevelPermissionRules": {
+          "description": "When true, include each role's row-level permission predicates and predicate groups (enterprise feature; empty when disabled).",
+          "type": "boolean",
+        },
+      },
+      "type": "object",
+    },
+    "name": "list_roles",
+  },
+  {
+    "description": "Create a new role in this workspace.
+
+Global record permissions (canReadAllObjectRecords, canUpdateAllObjectRecords, ...) and settings access default to false; assignability to users, agents and API keys defaults to true.
+After creating the role, use upsert_object_permissions to set per-object overrides and upsert_row_level_permission_rules to restrict which records are visible.
+Granting write access on an object without read access is invalid.",
+    "inputSchema": {
+      "properties": {
+        "canAccessAllTools": {
+          "description": "Grants access to all workspace tools",
+          "type": "boolean",
+        },
+        "canBeAssignedToAgents": {
+          "description": "Whether the role can be assigned to AI agents",
+          "type": "boolean",
+        },
+        "canBeAssignedToApiKeys": {
+          "description": "Whether the role can be assigned to API keys",
+          "type": "boolean",
+        },
+        "canBeAssignedToUsers": {
+          "description": "Whether the role can be assigned to users",
+          "type": "boolean",
+        },
+        "canDestroyAllObjectRecords": {
+          "description": "Default destroy access on all objects",
+          "type": "boolean",
+        },
+        "canReadAllObjectRecords": {
+          "description": "Default read access on all objects",
+          "type": "boolean",
+        },
+        "canSoftDeleteAllObjectRecords": {
+          "description": "Default soft-delete access on all objects",
+          "type": "boolean",
+        },
+        "canUpdateAllObjectRecords": {
+          "description": "Default update access on all objects",
+          "type": "boolean",
+        },
+        "canUpdateAllSettings": {
+          "description": "Grants full settings/admin access",
+          "type": "boolean",
+        },
+        "description": {
+          "description": "Optional role description",
+          "type": "string",
+        },
+        "icon": {
+          "description": "Optional icon identifier (e.g. "IconUser")",
+          "type": "string",
+        },
+        "label": {
+          "description": "Display name of the role",
+          "minLength": 1,
+          "type": "string",
+        },
+      },
+      "required": [
+        "label",
+      ],
+      "type": "object",
+    },
+    "name": "create_role",
+  },
+  {
+    "description": "Update an existing role's label, description, icon, global record permissions, settings access, or assignability.
+
+System-managed roles (isEditable=false, like Admin) cannot be updated. Updates that would remove your own access to role management are rejected.",
+    "inputSchema": {
+      "properties": {
+        "roleId": {
+          "description": "Id of the role to update",
+          "format": "uuid",
+          "type": "string",
+        },
+        "update": {
+          "description": "Fields to change; omitted fields are left untouched",
+          "properties": {
+            "canAccessAllTools": {
+              "description": "Grants access to all workspace tools",
+              "type": "boolean",
+            },
+            "canBeAssignedToAgents": {
+              "description": "Whether the role can be assigned to AI agents",
+              "type": "boolean",
+            },
+            "canBeAssignedToApiKeys": {
+              "description": "Whether the role can be assigned to API keys",
+              "type": "boolean",
+            },
+            "canBeAssignedToUsers": {
+              "description": "Whether the role can be assigned to users",
+              "type": "boolean",
+            },
+            "canDestroyAllObjectRecords": {
+              "description": "Default destroy access on all objects",
+              "type": "boolean",
+            },
+            "canReadAllObjectRecords": {
+              "description": "Default read access on all objects",
+              "type": "boolean",
+            },
+            "canSoftDeleteAllObjectRecords": {
+              "description": "Default soft-delete access on all objects",
+              "type": "boolean",
+            },
+            "canUpdateAllObjectRecords": {
+              "description": "Default update access on all objects",
+              "type": "boolean",
+            },
+            "canUpdateAllSettings": {
+              "description": "Grants full settings/admin access",
+              "type": "boolean",
+            },
+            "description": {
+              "description": "New description",
+              "type": "string",
+            },
+            "icon": {
+              "description": "New icon identifier",
+              "type": "string",
+            },
+            "label": {
+              "description": "New display name",
+              "minLength": 1,
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+      },
+      "required": [
+        "roleId",
+        "update",
+      ],
+      "type": "object",
+    },
+    "name": "update_role",
+  },
+  {
+    "description": "Delete a role. Members, agents and API keys assigned to it are reassigned to the workspace default role.
+
+System-managed roles (isEditable=false, like Admin), the workspace default role, and roles you are assigned to cannot be deleted.",
+    "inputSchema": {
+      "properties": {
+        "roleId": {
+          "description": "Id of the role to delete",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "roleId",
+      ],
+      "type": "object",
+    },
+    "name": "delete_role",
+  },
+  {
+    "description": "Assign a role to a workspace member, replacing their current role.
+
+You cannot change your own role, assign a role that does not allow user assignment (canBeAssignedToUsers=false), or remove the admin role from the last administrator.",
+    "inputSchema": {
+      "properties": {
+        "roleId": {
+          "description": "Id of the role to assign",
+          "format": "uuid",
+          "type": "string",
+        },
+        "workspaceMemberId": {
+          "description": "Id of the workspace member to assign the role to",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "workspaceMemberId",
+        "roleId",
+      ],
+      "type": "object",
+    },
+    "name": "assign_role_to_workspace_member",
+  },
+  {
+    "description": "Set per-object permission overrides on a role, e.g. make an object read-only for that role.
+
+IMPORTANT: this replaces the role's full override list. Include every override you want to keep; objects omitted from the list revert to the role's global permissions (canReadAllObjectRecords, ...). Use list_roles first to see current overrides.
+Example read-only override: { objectMetadataId, canReadObjectRecords: true, canUpdateObjectRecords: false, canSoftDeleteObjectRecords: false, canDestroyObjectRecords: false }.
+Granting write access without read access is rejected. System-managed roles (like Admin) cannot be changed.",
+    "inputSchema": {
+      "properties": {
+        "objectPermissions": {
+          "description": "The complete set of per-object overrides to keep on the role. Overrides for objects omitted from this list are removed and fall back to the role's global permissions.",
+          "items": {
+            "properties": {
+              "canDestroyObjectRecords": {
+                "description": "Override destroy access for this object",
+                "type": "boolean",
+              },
+              "canReadObjectRecords": {
+                "description": "Override read access for this object",
+                "type": "boolean",
+              },
+              "canSoftDeleteObjectRecords": {
+                "description": "Override soft-delete access for this object",
+                "type": "boolean",
+              },
+              "canUpdateObjectRecords": {
+                "description": "Override update access for this object",
+                "type": "boolean",
+              },
+              "objectMetadataId": {
+                "description": "Id of the object metadata the override applies to",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            "required": [
+              "objectMetadataId",
+            ],
+            "type": "object",
+          },
+          "minItems": 1,
+          "type": "array",
+        },
+        "roleId": {
+          "description": "Id of the role to set overrides on",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "roleId",
+        "objectPermissions",
+      ],
+      "type": "object",
+    },
+    "name": "upsert_object_permissions",
+  },
+  {
+    "description": "Set row-level permission rules restricting which records members with a role can see on a given object (enterprise feature).
+
+Example, "members with this role only see records where the owner field matches the current user": pass one predicate with fieldMetadataId = the owner field on the object, operand = IS, and workspaceMemberFieldMetadataId = the "id" field of the workspaceMember object (resolved to the current user at query time). Use metadata tools to look up field ids.
+The same works between relations: for "only records in my region", pass fieldMetadataId = a many-to-one relation on the object and workspaceMemberFieldMetadataId = a many-to-one relation on workspaceMember pointing at the same object, with operand IS.
+Combine several predicates with predicateGroups (AND / OR): give each new group a client-generated UUID and reference it from predicates via rowLevelPermissionPredicateGroupId.
+IMPORTANT: this replaces the full rule set for the role + object. Predicates or groups omitted from the lists are deleted; empty lists clear all rules. System-managed roles (like Admin) cannot be changed.",
+    "inputSchema": {
+      "properties": {
+        "objectMetadataId": {
+          "description": "Id of the object the rules restrict",
+          "format": "uuid",
+          "type": "string",
+        },
+        "predicateGroups": {
+          "description": "The complete list of predicate groups to keep for this role and object. Existing groups omitted from the list are deleted.",
+          "items": {
+            "properties": {
+              "id": {
+                "description": "Group id. Pass an existing id to update a group, or a new client-generated UUID so predicates can reference the group via rowLevelPermissionPredicateGroupId.",
+                "format": "uuid",
+                "type": "string",
+              },
+              "logicalOperator": {
+                "description": "How predicates inside this group are combined (AND / OR)",
+                "enum": [
+                  "AND",
+                  "OR",
+                ],
+                "type": "string",
+              },
+              "parentRowLevelPermissionPredicateGroupId": {
+                "anyOf": [
+                  {
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Parent group id for nested groups",
+              },
+              "positionInRowLevelPermissionPredicateGroup": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Position of this group within its parent",
+              },
+            },
+            "required": [
+              "logicalOperator",
+            ],
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "predicates": {
+          "description": "The complete list of predicates to keep for this role and object. Existing predicates omitted from the list are deleted; pass an empty array to remove all rules.",
+          "items": {
+            "properties": {
+              "fieldMetadataId": {
+                "description": "Id of the field (on the target object) the rule filters on",
+                "format": "uuid",
+                "type": "string",
+              },
+              "id": {
+                "description": "Id of an existing predicate to update. Omit to create a new one.",
+                "format": "uuid",
+                "type": "string",
+              },
+              "operand": {
+                "description": "Comparison operator",
+                "enum": [
+                  "IS",
+                  "IS_NOT_NULL",
+                  "IS_NOT",
+                  "LESS_THAN_OR_EQUAL",
+                  "GREATER_THAN_OR_EQUAL",
+                  "IS_BEFORE",
+                  "IS_AFTER",
+                  "CONTAINS",
+                  "DOES_NOT_CONTAIN",
+                  "IS_EMPTY",
+                  "IS_NOT_EMPTY",
+                  "IS_RELATIVE",
+                  "IS_IN_PAST",
+                  "IS_IN_FUTURE",
+                  "IS_TODAY",
+                  "VECTOR_SEARCH",
+                ],
+                "type": "string",
+              },
+              "positionInRowLevelPermissionPredicateGroup": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Position of this predicate within its group",
+              },
+              "rowLevelPermissionPredicateGroupId": {
+                "anyOf": [
+                  {
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Id of the predicate group this predicate belongs to",
+              },
+              "subFieldName": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Sub-field for composite fields (e.g. "firstName" of a FULL_NAME field)",
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                  },
+                  {
+                    "items": {
+                      "type": "string",
+                    },
+                    "type": "array",
+                  },
+                  {
+                    "type": "boolean",
+                  },
+                  {
+                    "type": "number",
+                  },
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Static value to compare the field against. Omit when using workspaceMemberFieldMetadataId or a value-less operand (IS_EMPTY, IS_IN_PAST, ...).",
+              },
+              "workspaceMemberFieldMetadataId": {
+                "anyOf": [
+                  {
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Dynamic comparison: id of a field on the workspaceMember object whose value for the CURRENT user is substituted at query time. Use the workspaceMember "id" field to express "matches the current user", or a many-to-one relation field to compare against a relation on the record pointing at the same object.",
+              },
+              "workspaceMemberSubFieldName": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Sub-field of the workspace member field when it is a composite field",
+              },
+            },
+            "required": [
+              "fieldMetadataId",
+              "operand",
+            ],
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "roleId": {
+          "description": "Id of the role the rules apply to",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "roleId",
+        "objectMetadataId",
+        "predicates",
+        "predicateGroups",
+      ],
+      "type": "object",
+    },
+    "name": "upsert_row_level_permission_rules",
+  },
+]
+`;
