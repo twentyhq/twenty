@@ -2,7 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { APPLICATION_MONITORING_RETENTION_IN_DAYS } from 'twenty-shared/constants';
+import { IconButton } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
+import { IconRefresh } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ApplicationMonitoringLineChart } from '@/settings/application-monitoring/components/ApplicationMonitoringLineChart';
@@ -40,6 +42,8 @@ type ApplicationMonitoringProps = {
   monitoring: ApplicationMonitoringData;
   selectedPeriod: ApplicationMonitoringPeriod;
   onPeriodChange: (period: ApplicationMonitoringPeriod) => void;
+  onRefresh: () => void;
+  isRefreshing?: boolean;
   isAdminView?: boolean;
   additionalActions?: ReactNode;
 };
@@ -49,6 +53,8 @@ export const ApplicationMonitoring = ({
   monitoring,
   selectedPeriod,
   onPeriodChange,
+  onRefresh,
+  isRefreshing = false,
   isAdminView = false,
   additionalActions,
 }: ApplicationMonitoringProps) => {
@@ -82,6 +88,15 @@ export const ApplicationMonitoring = ({
           actions={
             <StyledHeaderActions>
               {additionalActions}
+              <IconButton
+                size="sm"
+                tooltip={t`Refresh`}
+                aria-label={t`Refresh`}
+                loading={isRefreshing}
+                onClick={onRefresh}
+              >
+                <IconRefresh />
+              </IconButton>
               <ApplicationMonitoringPeriodSelect
                 dropdownId={`${instanceId}-period`}
                 value={displayedPeriod}
