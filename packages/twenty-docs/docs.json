@@ -654,7 +654,6 @@
                           "ui/components/input/reaction-button",
                           "ui/components/input/country-select",
                           "ui/components/input/currency-picker",
-                          "ui/components/input/emoji-picker",
                           "ui/components/input/phone-country-picker",
                           "ui/components/input/image-input",
                           "ui/components/input/search-input",
