@@ -4,12 +4,16 @@ on:
   pull_request:
     paths:
       - .github/scripts/**
+      - .github/review-prompts/**
+      - .github/workflows/*drift*.yaml
       - .github/workflows/ci-automation-security.yaml
       - .github/workflows/*i18n*.yaml
   push:
     branches: [main]
     paths:
       - .github/scripts/**
+      - .github/review-prompts/**
+      - .github/workflows/*drift*.yaml
       - .github/workflows/ci-automation-security.yaml
       - .github/workflows/*i18n*.yaml
 
@@ -17,11 +21,15 @@ permissions:
   contents: read
 
 jobs:
-  translation-branch-isolation:
+  automation-isolation:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
-      - run: python3 -m unittest discover -s .github/scripts/tests -v
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: '22'
+      - run: npm install -g @anthropic-ai/claude-code@2.1.296
+      - run: CLAUDE_REVIEW_CLI="$(command -v claude)" python3 -m unittest discover -s .github/scripts/tests -v

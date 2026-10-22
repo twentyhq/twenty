@@ -1,0 +1,153 @@
+name: Restricted PR drift review
+
+on:
+  workflow_call:
+    inputs:
+      kind:
+        type: string
+        required: true
+      pr_number:
+        type: number
+        required: true
+      head_sha:
+        type: string
+        required: false
+        default: ''
+      base_sha:
+        type: string
+        required: false
+        default: ''
+      dry_run:
+        type: boolean
+        required: false
+        default: false
+  workflow_dispatch:
+    inputs:
+      kind:
+        type: choice
+        options: [app-docs, agent-skills]
+        required: true
+      pr_number:
+        type: number
+        required: true
+      dry_run:
+        type: boolean
+        default: true
+        description: Review without posting a PR comment
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    environment: automation
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      relevant: ${{ steps.source.outputs.relevant }}
+      head_sha: ${{ steps.source.outputs.head_sha }}
+      report: ${{ steps.agent.outputs.report }}
+    steps:
+      - name: Checkout trusted review implementation
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+
+      - name: Read PR changes as data
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ inputs.head_sha }}
+          BASE_SHA: ${{ inputs.base_sha }}
+          REVIEW_KIND: ${{ inputs.kind }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          REVIEW_DIRECTORY: ${{ runner.temp }}/drift-review
+        run: python3 .github/scripts/review-drift.py prepare --kind "$REVIEW_KIND" --pr-number "$PR_NUMBER"
+
+      - name: Setup Node.js
+        if: steps.source.outputs.relevant == 'true'
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: '22'
+
+      - name: Install pinned review runtime
+        if: steps.source.outputs.relevant == 'true'
+        run: npm install -g @anthropic-ai/claude-code@2.1.296
+
+      - name: Review with confined file tools and no shell
+        if: steps.source.outputs.relevant == 'true'
+        id: agent
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          REVIEW_KIND: ${{ inputs.kind }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          REVIEW_DIRECTORY: ${{ runner.temp }}/drift-review
+          REPORT_PATH: ${{ runner.temp }}/drift-report.json
+        run: python3 .github/scripts/review-drift.py review --kind "$REVIEW_KIND" --pr-number "$PR_NUMBER"
+
+      - name: Upload structured review
+        if: steps.agent.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: drift-${{ inputs.kind }}-${{ inputs.pr_number }}
+          path: ${{ runner.temp }}/drift-report.json
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: review
+    if: needs.review.outputs.relevant == 'true' && !inputs.dry_run
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+      - name: Post the validated review to its original PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_KIND: ${{ inputs.kind }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          HEAD_SHA: ${{ needs.review.outputs.head_sha }}
+          REPORT: ${{ needs.review.outputs.report }}
+          REVIEW_DIRECTORY: ${{ runner.temp }}/unused
+        run: python3 .github/scripts/review-drift.py publish --kind "$REVIEW_KIND" --pr-number "$PR_NUMBER"
+
+  verdict:
+    needs: [review, publish]
+    if: always() && needs.review.outputs.relevant == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions: {}
+    steps:
+      - name: Gate on the review outcome
+        env:
+          REVIEW_RESULT: ${{ needs.review.result }}
+          PUBLISH_RESULT: ${{ needs.publish.result }}
+          REPORT: ${{ needs.review.outputs.report }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          python3 - <<'PYTHON'
+          import json
+          import os
+
+          if os.environ["REVIEW_RESULT"] != "success":
+              raise RuntimeError("Drift review did not complete")
+          if os.environ["DRY_RUN"] != "true" and os.environ["PUBLISH_RESULT"] != "success":
+              raise RuntimeError("Drift review could not be published")
+          report = json.loads(os.environ["REPORT"])
+          if type(report.get("hasDrift")) is not bool:
+              raise RuntimeError("Invalid drift verdict")
+          print(report["summary"])
+          if report["hasDrift"]:
+              raise SystemExit("Drift detected; see the review findings")
+          PYTHON
