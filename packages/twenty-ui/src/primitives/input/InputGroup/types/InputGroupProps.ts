@@ -5,7 +5,7 @@ import { type InputSize } from '@ui/primitives/input/types/InputSize';
 
 export type InputGroupProps = useRender.ComponentProps<'div'> & {
   size?: InputSize;
-  focusRing?: boolean;
+  hasFocusRing?: boolean;
   /** Content rendered before the input, such as a prefix or an icon. */
   startElement?: ReactNode;
   /** Content rendered after the input, such as a suffix or a button. */
