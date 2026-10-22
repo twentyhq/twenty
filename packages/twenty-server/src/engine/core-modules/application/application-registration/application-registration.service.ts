@@ -472,6 +472,8 @@ export class ApplicationRegistrationService {
         'latestAvailableVersion',
         'websiteUrl',
         'oAuthScopes',
+        'universalIdentifier',
+        'isVetted',
       ],
     });
 
@@ -479,13 +481,21 @@ export class ApplicationRegistrationService {
       return null;
     }
 
+    const isVerified =
+      registration.isVetted ||
+      registration.universalIdentifier ===
+        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier;
+
     return {
       id: registration.id,
       name: registration.name,
-      logoUrl:
-        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
+      // Anyone can register a client with any logo, so only verified apps get to show one
+      logoUrl: isVerified
+        ? this.applicationRegistrationAssetUrlService.buildLogoUrl(registration)
+        : null,
       websiteUrl: registration.websiteUrl,
       oAuthScopes: registration.oAuthScopes,
+      isVerified,
     };
   }
 

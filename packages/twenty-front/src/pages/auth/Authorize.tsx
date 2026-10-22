@@ -2,18 +2,18 @@ import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/components/feedback';
 import {
   type IconComponent,
+  IconAlertTriangle,
   IconDatabase,
   IconUserCircle,
 } from 'twenty-ui/icon';
@@ -123,6 +123,25 @@ const StyledScopeIcon = styled.div`
   justify-content: center;
 `;
 
+const StyledUnverifiedCallout = styled.div`
+  margin-top: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledRedirectNotice = styled.p`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.sm};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
+  margin: ${themeCssVariables.spacing[6]} 0 0;
+  overflow-wrap: anywhere;
+  padding-left: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledRedirectHost = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+`;
+
 const StyledErrorText = styled.div`
   color: ${themeCssVariables.color.red};
   font-size: ${themeCssVariables.font.size.sm};
@@ -134,6 +153,18 @@ const StyledErrorText = styled.div`
 const OAUTH_SCOPE_ICONS: { [scope: string]: IconComponent | undefined } = {
   api: IconDatabase,
   profile: IconUserCircle,
+};
+
+const getRedirectHost = (redirectUrl: string | null) => {
+  if (!isDefined(redirectUrl)) {
+    return null;
+  }
+
+  try {
+    return new URL(redirectUrl).host;
+  } catch {
+    return null;
+  }
 };
 
 export const Authorize = () => {
@@ -219,33 +250,6 @@ export const Authorize = () => {
     }
   };
 
-  useGlobalHotkeys({
-    keys: [Key.Enter],
-    callback: (keyboardEvent) => {
-      if (
-        keyboardEvent.target instanceof HTMLButtonElement ||
-        loading ||
-        isAuthorizing ||
-        !isDefined(applicationRegistration)
-      ) {
-        return;
-      }
-
-      handleAuthorize();
-    },
-    containsModifier: false,
-    dependencies: [
-      loading,
-      isAuthorizing,
-      applicationRegistration,
-      clientId,
-      redirectUrl,
-    ],
-    options: {
-      preventDefault: false,
-    },
-  });
-
   if (isDefined(queryError)) {
     return (
       <StyledAuthContent>
@@ -272,6 +276,7 @@ export const Authorize = () => {
   const appName = applicationRegistration.name;
   const appLogoUrl = applicationRegistration.logoUrl;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
+  const redirectHost = getRedirectHost(redirectUrl);
 
   return (
     <StyledAuthContent>
@@ -308,6 +313,25 @@ export const Authorize = () => {
                 })}
               </StyledScopeList>
             </StyledPermissionSection>
+          )}
+          {!applicationRegistration.isVerified && (
+            <StyledUnverifiedCallout>
+              <Callout
+                status="warning"
+                fullWidth
+                icon={<IconAlertTriangle size={theme.icon.size.md} />}
+                title={t`Twenty hasn't verified this app`}
+                description={t`Anyone can register an app under any name. Only connect it if you started this connection yourself and trust where it sends you.`}
+              />
+            </StyledUnverifiedCallout>
+          )}
+          {isDefined(redirectHost) && (
+            <StyledRedirectNotice>
+              <Trans>
+                After you connect, you will be redirected to{' '}
+                <StyledRedirectHost>{redirectHost}</StyledRedirectHost>
+              </Trans>
+            </StyledRedirectNotice>
           )}
           {authorizeError && (
             <StyledErrorText>{authorizeError}</StyledErrorText>
