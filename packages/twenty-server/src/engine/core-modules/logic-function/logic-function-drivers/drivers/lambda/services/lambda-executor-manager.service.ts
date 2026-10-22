@@ -5,9 +5,7 @@ import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
   DeleteFunctionCommand,
-  GetFunctionCommand,
   type GetFunctionCommandOutput,
-  ResourceNotFoundException,
   TagResourceCommand,
   UpdateFunctionCodeCommand,
   UpdateFunctionConfigurationCommand,
@@ -18,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import {
   CacheLockException,
   CacheLockExceptionCode,
@@ -30,7 +27,6 @@ import {
   EXECUTOR_LAMBDA_MEMORY_MB,
   EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
-  LAMBDA_EXECUTOR_CACHE_TTL_MS,
   LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG,
   PREBUILT_BUNDLE_FILE_NAME,
   PREBUILT_INSTALL_LOCK_MAX_RETRIES,
@@ -67,59 +63,18 @@ export class LambdaExecutorManagerService {
     private readonly cacheLockService: CacheLockService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async getLambdaExecutor(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<GetFunctionCommandOutput | undefined> {
-    const cacheKey = this.getLambdaExecutorCacheKey(flatLogicFunction);
-    const cachedLambdaExecutor =
-      await this.cacheStorageService.get<GetFunctionCommandOutput>(cacheKey);
-
-    if (isDefined(cachedLambdaExecutor)) {
-      return cachedLambdaExecutor;
-    }
-
-    const lambdaClient = await this.awsClient.getLambdaClient();
-
-    let lambdaExecutor: GetFunctionCommandOutput;
-
-    try {
-      lambdaExecutor = await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: flatLogicFunction.id }),
-      );
-    } catch (error) {
-      if (error instanceof ResourceNotFoundException) {
-        return undefined;
-      }
-
-      throw error;
-    }
-
-    if (lambdaExecutor.Configuration?.State === 'Active') {
-      await this.cacheStorageService.set(
-        cacheKey,
-        lambdaExecutor,
-        LAMBDA_EXECUTOR_CACHE_TTL_MS,
-      );
-    }
-
-    return lambdaExecutor;
+    return this.awsClient.getFunction(flatLogicFunction.id);
   }
 
   async clearLambdaExecutorCache(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<void> {
-    await this.cacheStorageService.del(
-      this.getLambdaExecutorCacheKey(flatLogicFunction),
-    );
-  }
-
-  private getLambdaExecutorCacheKey(
-    flatLogicFunction: FlatLogicFunction,
-  ): string {
-    return `lambda-executor:${flatLogicFunction.id}`;
+    await this.awsClient.clearFunctionCache(flatLogicFunction.id);
   }
 
   async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
