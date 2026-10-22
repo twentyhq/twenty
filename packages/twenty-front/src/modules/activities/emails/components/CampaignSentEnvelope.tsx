@@ -8,7 +8,7 @@ import {
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
+import { ActivityComposerFieldRow } from '@/activities/components/ActivityComposerFieldRow';
 import { CampaignEnvelopeBox } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -86,14 +86,14 @@ export const CampaignSentEnvelope = ({
 
   return (
     <CampaignEnvelopeBox>
-      <ComposerFieldRow label={t`From`}>
+      <ActivityComposerFieldRow label={t`From`}>
         {isNonEmptyString(fromAddress) ? (
           <StyledValue>{fromAddress}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No sender`}</StyledEmptyValue>
         )}
-      </ComposerFieldRow>
-      <ComposerFieldRow label={t`To`}>
+      </ActivityComposerFieldRow>
+      <ActivityComposerFieldRow label={t`To`}>
         {isDefined(list) ? (
           <RecordChip
             record={list}
@@ -106,9 +106,9 @@ export const CampaignSentEnvelope = ({
             <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
           )
         )}
-      </ComposerFieldRow>
+      </ActivityComposerFieldRow>
       {hasUnsubscribeTopic && (
-        <ComposerFieldRow label={t`Topic`}>
+        <ActivityComposerFieldRow label={t`Topic`}>
           {isDefined(unsubscribeTopic) ? (
             <StyledValue>
               {unsubscribeTopic.name ?? t`Untitled topic`}
@@ -118,19 +118,22 @@ export const CampaignSentEnvelope = ({
               <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
             )
           )}
-        </ComposerFieldRow>
+        </ActivityComposerFieldRow>
       )}
-      <ComposerFieldRow label={t`Subject`}>
+      <ActivityComposerFieldRow
+        label={t`Subject`}
+        divider={isNonEmptyString(scheduledSendTime)}
+      >
         {isNonEmptyString(subject) ? (
           <StyledValue>{subject}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No subject`}</StyledEmptyValue>
         )}
-      </ComposerFieldRow>
+      </ActivityComposerFieldRow>
       {isNonEmptyString(scheduledSendTime) && (
-        <ComposerFieldRow label={t`Send at`}>
+        <ActivityComposerFieldRow label={t`Send at`} divider={false}>
           <StyledValue>{scheduledSendTime}</StyledValue>
-        </ComposerFieldRow>
+        </ActivityComposerFieldRow>
       )}
     </CampaignEnvelopeBox>
   );

@@ -12,7 +12,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
+import { ActivityComposerFieldRow } from '@/activities/components/ActivityComposerFieldRow';
 import { CampaignEnvelopeBox } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { CampaignVariablePicker } from '@/activities/emails/components/CampaignVariablePicker';
 import { useCampaignDetailsState } from '@/activities/emails/hooks/useCampaignDetailsState';
@@ -116,7 +116,7 @@ export const CampaignDetailsFields = ({
         )
       }
     >
-      <ComposerFieldRow
+      <ActivityComposerFieldRow
         label={t`From`}
         onClick={
           isSenderSelectDisabled
@@ -134,8 +134,8 @@ export const CampaignDetailsFields = ({
           emptyOption={{ label: t`Select a sender`, value: '' }}
           onChange={detailsState.setFromAddress}
         />
-      </ComposerFieldRow>
-      <ComposerFieldRow
+      </ActivityComposerFieldRow>
+      <ActivityComposerFieldRow
         label={t`To`}
         onClick={() => openDropdownById(listDropdownId)}
       >
@@ -148,9 +148,9 @@ export const CampaignDetailsFields = ({
           onChange={detailsState.setListId}
           onCreate={handleCreateList}
         />
-      </ComposerFieldRow>
+      </ActivityComposerFieldRow>
       {hasTopicOptions && (
-        <ComposerFieldRow
+        <ActivityComposerFieldRow
           label={t`Topic`}
           onClick={
             isTopicSelectDisabled
@@ -174,9 +174,9 @@ export const CampaignDetailsFields = ({
               detailsState.setUnsubscribeTopicId(value === '' ? null : value)
             }
           />
-        </ComposerFieldRow>
+        </ActivityComposerFieldRow>
       )}
-      <ComposerFieldRow label={t`Subject`}>
+      <ActivityComposerFieldRow label={t`Subject`} divider={false}>
         <FormTextFieldInput
           key={`subject-${detailsState.draftResyncKey}`}
           ariaLabel={t`Subject`}
@@ -186,7 +186,7 @@ export const CampaignDetailsFields = ({
           VariablePicker={CampaignVariablePicker}
           enableTemplateVariableFallback
         />
-      </ComposerFieldRow>
+      </ActivityComposerFieldRow>
     </CampaignEnvelopeBox>
   );
 };

@@ -1,0 +1,26 @@
+import { type ComponentProps } from 'react';
+
+import { type ComposerFieldRow } from '../src/components/input/ComposerFieldRow/ComposerFieldRow';
+
+export const COMPOSER_FIELD_ROW_PROP_DESCRIPTIONS = {
+  label:
+    'Optional visible field label and default group name. Supply aria-label or aria-labelledby when the label is omitted. Label each nested input separately.',
+  startIcon:
+    'Optional decorative icon before the label. The caller controls icon dimensions.',
+  trailing:
+    'Optional trailing content. Nested controls retain their own keyboard focus and event behavior.',
+  children:
+    'Field content, such as plain inputs, recipient chips, selectors or toggles. The caller owns input labels, state and click-to-focus behavior.',
+  labelWidth:
+    'Preferred label column width, capped at 40% of the row. Numbers use pixels; use the same width for aligned sibling rows.',
+  hoverable:
+    'Enables a neutral hover background independently of click handlers. Keyboard focus remains on nested controls without changing the row background.',
+  divider:
+    'Shows a decorative bottom divider. Set false on the final row when the surrounding surface supplies its own border.',
+  className: 'CSS class applied to the group root.',
+  style: 'Inline styles applied to the group root.',
+  ref: 'Ref forwarded to the group root div.',
+  render: 'Customizes the group root. Forward its props and ref.',
+} satisfies Partial<
+  Record<keyof ComponentProps<typeof ComposerFieldRow>, string>
+>;

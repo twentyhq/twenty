@@ -52,6 +52,7 @@
     "CodeEditor",
     "CodeEditorHeader",
     "CommandBlock",
+    "ComposerFieldRow",
     "CountrySelect",
     "CurrencyPicker",
     "DetailsRow",

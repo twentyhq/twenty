@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export { ComposerFieldRow } from './ComposerFieldRow/ComposerFieldRow';
+export type { ComposerFieldRowProps } from './ComposerFieldRow/types/ComposerFieldRowProps';
 export { CountrySelect } from './CountrySelect/CountrySelect';
 export type { CountryChoice } from './CountrySelect/types/CountryChoice';
 export type { CountrySelectOptionsProps } from './CountrySelect/types/CountrySelectOptionsProps';

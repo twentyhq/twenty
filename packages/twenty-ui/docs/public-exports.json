@@ -90,6 +90,7 @@
   "components/input": {
     "reExports": [],
     "values": {
+      "ComposerFieldRow": "components/input/ComposerFieldRow/ComposerFieldRow",
       "CountrySelect": "components/input/CountrySelect/CountrySelect",
       "CurrencyPicker": "components/input/CurrencyPicker/CurrencyPicker",
       "IconButton": "components/input/IconButton/IconButton",
@@ -104,6 +105,7 @@
       "SegmentedControl": "components/input/SegmentedControl/SegmentedControl"
     },
     "types": {
+      "ComposerFieldRowProps": "components/input/ComposerFieldRow/types/ComposerFieldRowProps",
       "CountryChoice": "components/input/CountrySelect/types/CountryChoice",
       "CountrySelectOptionsProps": "components/input/CountrySelect/types/CountrySelectOptionsProps",
       "CountrySelectOptionsState": "components/input/CountrySelect/types/CountrySelectOptionsState",
