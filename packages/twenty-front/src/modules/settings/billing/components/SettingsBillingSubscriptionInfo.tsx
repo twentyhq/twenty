@@ -19,7 +19,6 @@ import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResour
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextInterval } from '@/settings/billing/hooks/useNextInterval';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
-import { useReverseTrialPlanKeys } from '@/settings/billing/hooks/useReverseTrialPlanKeys';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { isSendInvoiceBillingSubscription } from '@/settings/billing/utils/isSendInvoiceBillingSubscription';
@@ -82,7 +81,6 @@ export const SettingsBillingSubscriptionInfo = ({
   const { nextBillingPhase } = useNextBillingPhase();
   const { nextPlan } = useNextPlan();
   const { nextInterval } = useNextInterval();
-  const { reverseTrialPlanKeys } = useReverseTrialPlanKeys();
   const upcomingPlanKey = nextPlan?.planKey ?? currentPlan.planKey;
   const isPlanSwitchScheduled = upcomingPlanKey !== currentPlan.planKey;
   const nextResourceCreditPrice =
@@ -301,11 +299,9 @@ export const SettingsBillingSubscriptionInfo = ({
   const canCancelIntervalSwitch =
     isDefined(nextInterval) && currentInterval !== nextInterval;
   const canStartSubscription = isTrialPeriod && hasPermissionToEndTrialPeriod;
+  const trialEndPlanKey = currentPlan.trialEndPlanKey;
   const canDisplayKeepTrialPlanSwitch =
-    isTrialPeriod &&
-    !isCancellationScheduled &&
-    isDefined(reverseTrialPlanKeys) &&
-    reverseTrialPlanKeys.trialPlanKey === currentPlan.planKey;
+    isTrialPeriod && !isCancellationScheduled && isDefined(trialEndPlanKey);
   const canCancelPlanSwitch =
     isPlanSwitchScheduled && !canDisplayKeepTrialPlanSwitch;
 
@@ -476,8 +472,8 @@ export const SettingsBillingSubscriptionInfo = ({
       />
       {canDisplayKeepTrialPlanSwitch && (
         <SettingsBillingKeepTrialPlanSwitch
-          trialPlanKey={reverseTrialPlanKeys.trialPlanKey}
-          downgradePlanKey={reverseTrialPlanKeys.downgradePlanKey}
+          trialPlanKey={currentPlan.planKey}
+          downgradePlanKey={trialEndPlanKey}
           trialEndDate={totalRenewDate}
           disabled={isSubscriptionActionDisabled}
           onBillingSubscriptionChangeRequested={applyBillingSubscriptionChange}

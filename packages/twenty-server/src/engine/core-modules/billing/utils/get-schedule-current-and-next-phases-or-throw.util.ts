@@ -9,12 +9,15 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 
-// Stripe applies a phase seconds after its start date, and test clocks run on their own time, so wall time cannot pick the phase
-export const getScheduleCurrentAndNextPhasesOrThrow = (
-  schedule: Pick<Stripe.SubscriptionSchedule, 'current_phase' | 'phases'>,
+export const getScheduleCurrentAndNextPhasesOrThrow = <
+  TPhase extends Pick<Stripe.SubscriptionSchedule.Phase, 'start_date'>,
+>(
+  schedule: Pick<Stripe.SubscriptionSchedule, 'current_phase'> & {
+    phases: TPhase[];
+  },
 ): {
-  currentPhase: Stripe.SubscriptionSchedule.Phase;
-  nextPhase: Stripe.SubscriptionSchedule.Phase | undefined;
+  currentPhase: TPhase;
+  nextPhase: TPhase | undefined;
 } => {
   const currentPhaseStartDate = schedule.current_phase?.start_date;
 

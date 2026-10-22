@@ -61,25 +61,29 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     ? formatDate(currentBillingSubscription.currentPeriodEnd, 'MMM dd')
     : undefined;
 
-  const keepPlanMessage = isDefined(trialEndDate)
-    ? hasPermissionToManageBilling
-      ? t`Trial ends ${trialEndDate}, please add card details to keep the ${planName}`
-      : t`Trial ends ${trialEndDate}. Please contact your admin to add card details to keep the ${planName}`
-    : hasPermissionToManageBilling
+  const getKeepPlanMessage = () => {
+    if (isDefined(trialEndDate)) {
+      return hasPermissionToManageBilling
+        ? t`Trial ends ${trialEndDate}, please add card details to keep the ${planName}`
+        : t`Trial ends ${trialEndDate}. Please contact your admin to add card details to keep the ${planName}`;
+    }
+
+    return hasPermissionToManageBilling
       ? t`Trial ends soon, please add card details to keep the ${planName}`
       : t`Trial ends soon. Please contact your admin to add card details to keep the ${planName}`;
+  };
 
-  const continueOnPlanMessage = isDefined(trialEndDate)
-    ? hasPermissionToManageBilling
-      ? t`Trial ends ${trialEndDate}, please add card details to continue on the ${planName}`
-      : t`Trial ends ${trialEndDate}. Please contact your admin to add card details to continue on the ${planName}`
-    : hasPermissionToManageBilling
+  const getContinueOnPlanMessage = () => {
+    if (isDefined(trialEndDate)) {
+      return hasPermissionToManageBilling
+        ? t`Trial ends ${trialEndDate}, please add card details to continue on the ${planName}`
+        : t`Trial ends ${trialEndDate}. Please contact your admin to add card details to continue on the ${planName}`;
+    }
+
+    return hasPermissionToManageBilling
       ? t`Trial ends soon, please add card details to continue on the ${planName}`
       : t`Trial ends soon. Please contact your admin to add card details to continue on the ${planName}`;
-
-  const message = isPlanSwitchScheduled
-    ? continueOnPlanMessage
-    : keepPlanMessage;
+  };
 
   return (
     <>
@@ -94,7 +98,9 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
           )
         }
       >
-        {message}
+        {isPlanSwitchScheduled
+          ? getContinueOnPlanMessage()
+          : getKeepPlanMessage()}
       </InlineBanner>
     </>
   );

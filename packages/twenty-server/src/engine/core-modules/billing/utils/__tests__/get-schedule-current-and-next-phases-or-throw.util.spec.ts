@@ -1,22 +1,15 @@
 /* @license Enterprise */
 
-import type Stripe from 'stripe';
-
 import { getScheduleCurrentAndNextPhasesOrThrow } from 'src/engine/core-modules/billing/utils/get-schedule-current-and-next-phases-or-throw.util';
 
 const TRIAL_START = 1_700_000_000;
 const TRIAL_END = 1_700_604_800;
 const DOWNGRADE_END = 1_703_283_200;
 
-const buildPhase = (
-  startDate: number,
-  endDate: number,
-): Stripe.SubscriptionSchedule.Phase =>
-  ({
-    start_date: startDate,
-    end_date: endDate,
-    items: [],
-  }) as unknown as Stripe.SubscriptionSchedule.Phase;
+const buildPhase = (startDate: number, endDate: number) => ({
+  start_date: startDate,
+  end_date: endDate,
+});
 
 const trialPhase = buildPhase(TRIAL_START, TRIAL_END);
 const downgradePhase = buildPhase(TRIAL_END, DOWNGRADE_END);

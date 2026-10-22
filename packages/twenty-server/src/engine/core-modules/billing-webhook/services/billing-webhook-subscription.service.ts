@@ -26,6 +26,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
@@ -71,6 +72,7 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
+    private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
   ) {}
 
   async processStripeEvent(
@@ -276,6 +278,12 @@ export class BillingWebhookSubscriptionService {
       await this.stripeSubscriptionService.updateSubscription(
         subscriptionWithSchedule.id,
         { pending_invoice_item_interval: { interval: 'month' } },
+      );
+    }
+
+    if (type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED) {
+      await this.billingSubscriptionUpdateService.scheduleReverseTrialDowngradeWithoutLock(
+        data.object.id,
       );
     }
 

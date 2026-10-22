@@ -1817,6 +1817,9 @@ export default {
             "resourceCreditProducts": [
                 88
             ],
+            "trialEndPlanKey": [
+                92
+            ],
             "upgradePlanKeys": [
                 92
             ],

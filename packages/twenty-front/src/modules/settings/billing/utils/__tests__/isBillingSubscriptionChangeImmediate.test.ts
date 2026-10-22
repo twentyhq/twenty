@@ -7,22 +7,17 @@ import {
 
 describe('isBillingSubscriptionChangeImmediate', () => {
   const proPlan = {
-    planKey: BillingPlanKey.PRO,
-    isCheckoutDefault: true,
     upgradePlanKeys: [BillingPlanKey.ENTERPRISE],
     downgradePlanKeys: [],
   };
   const enterprisePlan = {
-    planKey: BillingPlanKey.ENTERPRISE,
-    isCheckoutDefault: false,
     upgradePlanKeys: [],
     downgradePlanKeys: [BillingPlanKey.PRO],
   };
   const reverseTrialOrganizationPlan = {
-    planKey: BillingPlanKey.ORGANIZATION_V2,
-    isCheckoutDefault: true,
     upgradePlanKeys: [],
     downgradePlanKeys: [BillingPlanKey.PRO_V2],
+    trialEndPlanKey: BillingPlanKey.PRO_V2,
   };
 
   it('applies upgrades immediately and downgrades at period end', () => {
@@ -67,8 +62,6 @@ describe('isBillingSubscriptionChangeImmediate', () => {
 
   it('defers a plan switch only when the target is a downgrade of the current plan', () => {
     const legacyEnterprisePlan = {
-      planKey: BillingPlanKey.ENTERPRISE,
-      isCheckoutDefault: false,
       upgradePlanKeys: [BillingPlanKey.ORGANIZATION_V2],
       downgradePlanKeys: [BillingPlanKey.PRO_V2],
     };
@@ -147,16 +140,6 @@ describe('isBillingSubscriptionChangeImmediate', () => {
           targetInterval: SubscriptionInterval.Month,
         },
         currentPlan: reverseTrialOrganizationPlan,
-        subscriptionStatus: SubscriptionStatus.Trialing,
-      }),
-    ).toBe(true);
-    expect(
-      isBillingSubscriptionChangeImmediate({
-        change: { type: 'SWITCH_PLAN', targetPlanKey: BillingPlanKey.PRO_V2 },
-        currentPlan: {
-          ...reverseTrialOrganizationPlan,
-          isCheckoutDefault: false,
-        },
         subscriptionStatus: SubscriptionStatus.Trialing,
       }),
     ).toBe(true);

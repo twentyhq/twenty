@@ -9,6 +9,7 @@ export const mockBillingPlans = {
       isCheckoutDefault: true,
       upgradePlanKeys: ['ENTERPRISE'],
       downgradePlanKeys: [],
+      trialEndPlanKey: null,
       baseProducts: [
         {
           __typename: 'BillingLicensedProduct',
@@ -310,6 +311,7 @@ export const mockBillingPlans = {
       isCheckoutDefault: false,
       upgradePlanKeys: [],
       downgradePlanKeys: ['PRO'],
+      trialEndPlanKey: null,
       baseProducts: [
         {
           __typename: 'BillingLicensedProduct',
@@ -611,6 +613,7 @@ export const mockBillingPlans = {
       isCheckoutDefault: false,
       upgradePlanKeys: [],
       downgradePlanKeys: [],
+      trialEndPlanKey: null,
       baseProducts: [],
       resourceCreditProducts: [],
       meteredProducts: [],
@@ -622,6 +625,7 @@ export const mockBillingPlans = {
       isCheckoutDefault: false,
       upgradePlanKeys: [],
       downgradePlanKeys: [],
+      trialEndPlanKey: null,
       baseProducts: [],
       resourceCreditProducts: [],
       meteredProducts: [],

@@ -19,7 +19,6 @@ export const toPhaseUpdateParams = (
     ...(isDefined(phase.billing_thresholds)
       ? { billing_thresholds: phase.billing_thresholds }
       : {}),
-    // Stripe ends the trial when a rewritten phase omits trial_end
     ...(isDefined(phase.trial_end) ? { trial_end: phase.trial_end } : {}),
     proration_behavior: 'none',
   }) as Stripe.SubscriptionScheduleUpdateParams.Phase;

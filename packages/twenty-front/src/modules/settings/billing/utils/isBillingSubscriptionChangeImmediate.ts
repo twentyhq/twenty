@@ -1,6 +1,5 @@
 import { type BillingPlanSwitches } from '@/settings/billing/types/BillingPlanSwitches';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
-import { getReverseTrialPlanKeys } from '@/settings/billing/utils/getReverseTrialPlanKeys';
 import { assertUnreachable } from 'twenty-shared/utils';
 import {
   type BillingPlan,
@@ -14,18 +13,14 @@ export const isBillingSubscriptionChangeImmediate = ({
   subscriptionStatus,
 }: {
   change: BillingSubscriptionChange;
-  currentPlan: BillingPlanSwitches &
-    Pick<BillingPlan, 'isCheckoutDefault' | 'planKey'>;
+  currentPlan: BillingPlanSwitches & Pick<BillingPlan, 'trialEndPlanKey'>;
   subscriptionStatus: SubscriptionStatus | undefined;
 }) => {
   if (subscriptionStatus === SubscriptionStatus.Trialing) {
-    // Only the default plan can be the reverse trial plan, so the current plan alone is enough.
-    const isReverseTrialDowngrade =
-      change.type === 'SWITCH_PLAN' &&
-      getReverseTrialPlanKeys([currentPlan])?.downgradePlanKey ===
-        change.targetPlanKey;
-
-    return !isReverseTrialDowngrade;
+    return (
+      change.type !== 'SWITCH_PLAN' ||
+      change.targetPlanKey !== currentPlan.trialEndPlanKey
+    );
   }
 
   switch (change.type) {
