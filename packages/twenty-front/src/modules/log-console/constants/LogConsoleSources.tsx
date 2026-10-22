@@ -15,7 +15,6 @@ import {
   IconApps,
   IconArrowUpRight,
   IconBox,
-  IconBrandTypescript,
   IconClock,
   IconCoins,
   IconEye,
@@ -52,6 +51,7 @@ import { LOG_CONSOLE_USAGE_EVENT_COLUMNS } from '@/log-console/constants/LogCons
 import { LOG_CONSOLE_WEBHOOK_COLUMNS } from '@/log-console/constants/LogConsoleWebhookColumns';
 import { type LogConsoleDetailField } from '@/log-console/types/LogConsoleDetailField';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { getLogConsoleApplicationLogEventIcon } from '@/log-console/utils/getLogConsoleApplicationLogEventIcon';
 import { getLogConsoleRecordLabel } from '@/log-console/utils/getLogConsoleRecordLabel';
 import { getLogConsoleSecurityEvent } from '@/log-console/utils/getLogConsoleSecurityEvent';
 import { getApplicationLogFunctionOrEventLabel } from '@/settings/application-monitoring/utils/getApplicationLogFunctionOrEventLabel';
@@ -178,7 +178,7 @@ export const LOG_CONSOLE_SOURCES: LogConsoleSource[] = [
     id: 'app-logs',
     label: msg`App logs`,
     Icon: IconTerminal,
-    DetailIcon: IconBrandTypescript,
+    getDetailIcon: (entry) => getLogConsoleApplicationLogEventIcon(entry.event),
     table: EventLogTable.APPLICATION_LOG,
     filterFields: LOG_CONSOLE_APPLICATION_LOG_FILTER_FIELDS,
     requiresAuditLogs: false,
