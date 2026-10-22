@@ -382,7 +382,7 @@ const AgentChatMessagesSetterEffect = ({
       threadId: currentThreadId,
       isUnread: true,
       isKeptUnread: false,
-      lastReadAt: getMockedDateWithOffset({ minutes: -1.5 }),
+      lastReadAt: getMockedDateWithOffset({ seconds: -90 }),
     });
     store.set(messagesAtom, messages);
     store.set(reactionsAtom, [
