@@ -36,7 +36,7 @@ export const buildRecordRichTextExtensions = ({
   Code,
   TextStyle,
   RichTextColor,
-  Heading.configure({ levels: [1, 2, 3] }),
+  Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
   TextAlign.configure({
     types: [TIPTAP_NODE_TYPES.HEADING, TIPTAP_NODE_TYPES.PARAGRAPH],
   }),

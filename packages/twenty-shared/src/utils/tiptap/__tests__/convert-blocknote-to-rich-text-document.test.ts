@@ -311,7 +311,7 @@ describe('convertBlockNoteToRichTextDocument', () => {
     ]);
   });
 
-  it('should convert quotes, code blocks, dividers and headings deeper than the editor supports', () => {
+  it('should convert quotes, code blocks, dividers and keep heading levels up to 6', () => {
     expect(
       convert([
         block('quote', [text('Quoted')]),
@@ -320,6 +320,7 @@ describe('convertBlockNoteToRichTextDocument', () => {
         }),
         block('divider', undefined),
         block('heading', [text('Small title')], { level: 5 }),
+        block('heading', [text('Too deep')], { level: 9 }),
       ]),
     ).toEqual([
       {
@@ -336,8 +337,13 @@ describe('convertBlockNoteToRichTextDocument', () => {
       { type: 'divider' },
       {
         type: 'heading',
-        attrs: { level: 3 },
+        attrs: { level: 5 },
         content: [{ type: 'text', text: 'Small title' }],
+      },
+      {
+        type: 'heading',
+        attrs: { level: 6 },
+        content: [{ type: 'text', text: 'Too deep' }],
       },
     ]);
   });

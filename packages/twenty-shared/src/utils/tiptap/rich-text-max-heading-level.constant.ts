@@ -1,1 +1,1 @@
-export const RICH_TEXT_MAX_HEADING_LEVEL = 3;
+export const RICH_TEXT_MAX_HEADING_LEVEL = 6;

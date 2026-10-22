@@ -83,7 +83,14 @@ const paragraphNodeSchema = z.looseObject({
 const headingNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.HEADING),
   attrs: z.looseObject({
-    level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+    level: z.union([
+      z.literal(1),
+      z.literal(2),
+      z.literal(3),
+      z.literal(4),
+      z.literal(5),
+      z.literal(6),
+    ]),
     textAlign: textAlignAttributeSchema,
   }),
   content: z.array(inlineNodeSchema).optional(),
