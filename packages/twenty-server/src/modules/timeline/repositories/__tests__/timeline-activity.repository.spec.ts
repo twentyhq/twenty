@@ -19,45 +19,52 @@ const TIMELINE_ACTIVITY_TYPE_SNAPSHOT: TimelineActivityTypeSnapshot = {
   frontComponentUniversalIdentifier: null,
 };
 
+const buildTimelineActivityRepository = (
+  recentTimelineActivities: Record<string, unknown>[] = [],
+) => {
+  const executeRawQuery = jest.fn().mockResolvedValue([]);
+  const workspaceRepository = {
+    find: jest.fn().mockResolvedValue(recentTimelineActivities),
+    update: jest.fn().mockResolvedValue(undefined),
+    insert: jest.fn().mockResolvedValue(undefined),
+  };
+  const workspaceOrmManager = {
+    executeInWorkspaceContext: async (callback: () => Promise<void>) =>
+      callback(),
+    runInWorkspaceTransaction: async (
+      callback: (transactionScope: {
+        getRepository: () => typeof workspaceRepository;
+        executeRawQuery: typeof executeRawQuery;
+      }) => Promise<void>,
+    ) =>
+      callback({ getRepository: () => workspaceRepository, executeRawQuery }),
+  } as unknown as WorkspaceOrmManager;
+
+  return {
+    repository: new TimelineActivityRepository(workspaceOrmManager),
+    workspaceRepository,
+    executeRawQuery,
+  };
+};
+
 describe('TimelineActivityRepository', () => {
   it('merges and stamps a recent row written without a snapshot', async () => {
-    const update = jest.fn().mockResolvedValue(undefined);
-    const insert = jest.fn().mockResolvedValue(undefined);
-    const workspaceRepository = {
-      find: jest.fn().mockResolvedValue([
-        {
-          id: '20202020-0000-4000-8000-000000000006',
-          targetPersonId: RECORD_ID,
-          workspaceMemberId: WORKSPACE_MEMBER_ID,
-          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
-          timelineActivityTypeSnapshot: null,
-          linkedRecordId: null,
-          properties: {
-            diff: { name: { before: 'Before', after: 'First' } },
-          },
+    const {
+      repository,
+      workspaceRepository: { update, insert },
+    } = buildTimelineActivityRepository([
+      {
+        id: '20202020-0000-4000-8000-000000000006',
+        targetPersonId: RECORD_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+        timelineActivityTypeSnapshot: null,
+        linkedRecordId: null,
+        properties: {
+          diff: { name: { before: 'Before', after: 'First' } },
         },
-      ]),
-      update,
-      insert,
-    };
-    const workspaceOrmManager = {
-      executeInWorkspaceContext: jest.fn(
-        async (callback: () => Promise<void>) => callback(),
-      ),
-      runInWorkspaceTransaction: jest.fn(
-        async (
-          callback: (transactionScope: {
-            getRepository: () => typeof workspaceRepository;
-            executeRawQuery: () => Promise<never[]>;
-          }) => Promise<void>,
-        ) =>
-          callback({
-            getRepository: () => workspaceRepository,
-            executeRawQuery: jest.fn().mockResolvedValue([]),
-          }),
-      ),
-    } as unknown as WorkspaceOrmManager;
-    const repository = new TimelineActivityRepository(workspaceOrmManager);
+      },
+    ]);
 
     await repository.upsertTimelineActivities({
       objectSingularName: 'person',
@@ -90,30 +97,8 @@ describe('TimelineActivityRepository', () => {
   });
 
   it('locks merge identities in a stable order before reading recent rows', async () => {
-    const executeRawQuery = jest.fn().mockResolvedValue([]);
-    const workspaceRepository = {
-      find: jest.fn().mockResolvedValue([]),
-      update: jest.fn().mockResolvedValue(undefined),
-      insert: jest.fn().mockResolvedValue(undefined),
-    };
-    const workspaceOrmManager = {
-      executeInWorkspaceContext: jest.fn(
-        async (callback: () => Promise<void>) => callback(),
-      ),
-      runInWorkspaceTransaction: jest.fn(
-        async (
-          callback: (transactionScope: {
-            getRepository: () => typeof workspaceRepository;
-            executeRawQuery: typeof executeRawQuery;
-          }) => Promise<void>,
-        ) =>
-          callback({
-            getRepository: () => workspaceRepository,
-            executeRawQuery,
-          }),
-      ),
-    } as unknown as WorkspaceOrmManager;
-    const repository = new TimelineActivityRepository(workspaceOrmManager);
+    const { repository, workspaceRepository, executeRawQuery } =
+      buildTimelineActivityRepository();
 
     await repository.upsertTimelineActivities({
       objectSingularName: 'person',
@@ -171,30 +156,8 @@ describe('TimelineActivityRepository', () => {
   });
 
   it('locks and reads recent rows per linked record for linked payloads', async () => {
-    const executeRawQuery = jest.fn().mockResolvedValue([]);
-    const workspaceRepository = {
-      find: jest.fn().mockResolvedValue([]),
-      update: jest.fn().mockResolvedValue(undefined),
-      insert: jest.fn().mockResolvedValue(undefined),
-    };
-    const workspaceOrmManager = {
-      executeInWorkspaceContext: jest.fn(
-        async (callback: () => Promise<void>) => callback(),
-      ),
-      runInWorkspaceTransaction: jest.fn(
-        async (
-          callback: (transactionScope: {
-            getRepository: () => typeof workspaceRepository;
-            executeRawQuery: typeof executeRawQuery;
-          }) => Promise<void>,
-        ) =>
-          callback({
-            getRepository: () => workspaceRepository,
-            executeRawQuery,
-          }),
-      ),
-    } as unknown as WorkspaceOrmManager;
-    const repository = new TimelineActivityRepository(workspaceOrmManager);
+    const { repository, workspaceRepository, executeRawQuery } =
+      buildTimelineActivityRepository();
 
     await repository.upsertTimelineActivities({
       objectSingularName: 'person',
@@ -233,43 +196,22 @@ describe('TimelineActivityRepository', () => {
   });
 
   it('does not merge a payload without a linked record into a linked row', async () => {
-    const update = jest.fn().mockResolvedValue(undefined);
-    const insert = jest.fn().mockResolvedValue(undefined);
-    const workspaceRepository = {
-      find: jest.fn().mockResolvedValue([
-        {
-          id: '20202020-0000-4000-8000-000000000006',
-          targetPersonId: RECORD_ID,
-          workspaceMemberId: WORKSPACE_MEMBER_ID,
-          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
-          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
-          linkedRecordId: '20202020-0000-4000-8000-000000000007',
-          properties: {
-            diff: { name: { before: 'Before', after: 'First' } },
-          },
+    const {
+      repository,
+      workspaceRepository: { update, insert },
+    } = buildTimelineActivityRepository([
+      {
+        id: '20202020-0000-4000-8000-000000000006',
+        targetPersonId: RECORD_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+        timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+        linkedRecordId: '20202020-0000-4000-8000-000000000007',
+        properties: {
+          diff: { name: { before: 'Before', after: 'First' } },
         },
-      ]),
-      update,
-      insert,
-    };
-    const workspaceOrmManager = {
-      executeInWorkspaceContext: jest.fn(
-        async (callback: () => Promise<void>) => callback(),
-      ),
-      runInWorkspaceTransaction: jest.fn(
-        async (
-          callback: (transactionScope: {
-            getRepository: () => typeof workspaceRepository;
-            executeRawQuery: () => Promise<never[]>;
-          }) => Promise<void>,
-        ) =>
-          callback({
-            getRepository: () => workspaceRepository,
-            executeRawQuery: jest.fn().mockResolvedValue([]),
-          }),
-      ),
-    } as unknown as WorkspaceOrmManager;
-    const repository = new TimelineActivityRepository(workspaceOrmManager);
+      },
+    ]);
 
     await repository.upsertTimelineActivities({
       objectSingularName: 'person',

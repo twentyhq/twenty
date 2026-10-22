@@ -377,7 +377,6 @@ export class TimelineActivityRepository {
 
     const linkedRecordIds = payloads.map((payload) => payload.linkedRecordId);
 
-    // A busy target can hold thousands of recent rows, nearly none for these linked records
     if (linkedRecordIds.every(isDefined)) {
       whereConditions.linkedRecordId = In(linkedRecordIds);
     }
