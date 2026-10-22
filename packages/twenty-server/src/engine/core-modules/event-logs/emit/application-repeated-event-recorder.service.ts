@@ -29,6 +29,7 @@ export class ApplicationRepeatedEventRecorderService
   private readonly metricEventRollupBuffer =
     new ApplicationMetricEventRollupBuffer(MAX_BUFFERED_METRIC_EVENTS);
   private flushTimer: NodeJS.Timeout | null = null;
+  private pendingFlush: Promise<void> = Promise.resolve();
 
   constructor(
     private readonly eventLogEmitterService: EventLogEmitterService,
@@ -82,7 +83,15 @@ export class ApplicationRepeatedEventRecorderService
     }
   }
 
-  private async flushMetricEvents(): Promise<void> {
+  private flushMetricEvents(): Promise<void> {
+    this.pendingFlush = this.pendingFlush.then(() =>
+      this.drainAndRecordMetricEvents(),
+    );
+
+    return this.pendingFlush;
+  }
+
+  private async drainAndRecordMetricEvents(): Promise<void> {
     const metricEvents = this.metricEventRollupBuffer.drain();
 
     if (metricEvents.length > 0) {
