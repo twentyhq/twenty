@@ -1,15 +1,21 @@
+import { type DiscoveryService } from '@nestjs/core';
+
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FieldActorSource } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldActorSource } from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { AgentToolProvider } from 'src/engine/core-modules/tool-provider/providers/agent-tool.provider';
+import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { type AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import { AgentToolWorkspaceService } from 'src/engine/metadata-modules/ai/ai-agent/tools/services/agent-tool.workspace-service';
+import { CreateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/create-agent.tool';
+import { DeleteAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/delete-agent.tool';
+import { ListAgentsTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/list-agents.tool';
+import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/update-agent.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const workspaceId = 'workspace-id';
 const agentId = '20202020-0000-4000-8000-000000000001';
@@ -32,7 +38,27 @@ const buildAgent = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-const buildProvider = (options?: {
+const otherApplication = {
+  id: 'other-application-id',
+  sourceType: 'npm',
+} as unknown as FlatApplication;
+
+const context: ToolProviderContext = {
+  workspaceId,
+  rolePermissionConfig: {
+    intersectionOf: { userWorkspaceRoleId: 'caller-role-id' },
+  },
+  userWorkspaceId: 'caller-user-workspace-id',
+  actorContext: {
+    source: FieldActorSource.MANUAL,
+    workspaceMemberId: 'caller-workspace-member-id',
+    name: 'Caller',
+    context: {},
+  },
+};
+
+// Runs the tools through the registry, which applies their declared gates and parses their input
+const buildAgentTools = (options?: {
   hasAiSettingsPermission?: boolean;
   isAiChatInboxEnabled?: boolean;
 }) => {
@@ -56,53 +82,78 @@ const buildProvider = (options?: {
       .mockResolvedValue(options?.hasAiSettingsPermission ?? true),
   };
   const featureFlagService = {
-    isFeatureEnabled: jest
-      .fn()
-      .mockResolvedValue(options?.isAiChatInboxEnabled ?? true),
+    getWorkspaceFeatureFlagsMap: jest.fn().mockResolvedValue({
+      [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]:
+        options?.isAiChatInboxEnabled ?? true,
+    }),
   };
 
-  const provider = new AgentToolProvider(
-    new AgentToolWorkspaceService(
+  const tools = [
+    new ListAgentsTool(agentService as unknown as AgentService),
+    new CreateAgentTool(
       agentService as unknown as AgentService,
       aiModelRegistryService as unknown as AiModelRegistryService,
     ),
+    new UpdateAgentTool(
+      agentService as unknown as AgentService,
+      aiModelRegistryService as unknown as AiModelRegistryService,
+    ),
+    new DeleteAgentTool(agentService as unknown as AgentService),
+  ];
+
+  const definedToolRegistryService = new DefinedToolRegistryService(
+    {
+      getProviders: () =>
+        tools.map((tool) => ({ instance: tool, metatype: tool.constructor })),
+    } as unknown as DiscoveryService,
     permissionsService as unknown as PermissionsService,
     featureFlagService as unknown as FeatureFlagService,
   );
 
+  definedToolRegistryService.onModuleInit();
+
+  const listToolNames = async () =>
+    (
+      await definedToolRegistryService.getAvailableDescriptors(context, {
+        includeSchemas: false,
+      })
+    ).map((descriptor) => descriptor.name);
+
+  const executeTool = ({
+    toolName,
+    args,
+    toolContext = context,
+  }: {
+    toolName: string;
+    args: Record<string, unknown>;
+    toolContext?: ToolProviderContext;
+  }) => {
+    const definedTool = definedToolRegistryService.findDefinedTool(toolName);
+
+    jestExpectToBeDefined(definedTool);
+
+    return definedToolRegistryService.execute({
+      definedTool,
+      args,
+      context: toolContext,
+    });
+  };
+
   return {
-    provider,
+    listToolNames,
+    executeTool,
     agentService,
     aiModelRegistryService,
     permissionsService,
   };
 };
 
-const otherApplication = {
-  id: 'other-application-id',
-  sourceType: 'npm',
-} as unknown as FlatApplication;
-
-const context: ToolProviderContext = {
-  workspaceId,
-  rolePermissionConfig: {
-    intersectionOf: { userWorkspaceRoleId: 'caller-role-id' },
-  },
-  userWorkspaceId: 'caller-user-workspace-id',
-  actorContext: {
-    source: FieldActorSource.MANUAL,
-    workspaceMemberId: 'caller-workspace-member-id',
-    name: 'Caller',
-    context: {},
-  },
-};
-
-describe('AgentToolProvider', () => {
-  describe('isAvailable', () => {
+describe('Agent tools', () => {
+  describe('availability', () => {
     it('is available when the caller has the AI settings permission', async () => {
-      const { provider, permissionsService } = buildProvider();
+      const { listToolNames, permissionsService } = buildAgentTools();
 
-      await expect(provider.isAvailable(context)).resolves.toBe(true);
+      await expect(listToolNames()).resolves.toHaveLength(4);
       expect(permissionsService.checkRolesPermissions).toHaveBeenCalledTimes(1);
       expect(permissionsService.checkRolesPermissions).toHaveBeenCalledWith(
         context.rolePermissionConfig,
@@ -112,29 +163,40 @@ describe('AgentToolProvider', () => {
     });
 
     it('is not available without the AI settings permission', async () => {
-      const { provider } = buildProvider({ hasAiSettingsPermission: false });
+      const { listToolNames, executeTool, agentService } = buildAgentTools({
+        hasAiSettingsPermission: false,
+      });
 
-      await expect(provider.isAvailable(context)).resolves.toBe(false);
+      await expect(listToolNames()).resolves.toEqual([]);
+      await expect(
+        executeTool({ toolName: 'list_agents', args: {} }),
+      ).resolves.toMatchObject({
+        success: false,
+        message: 'Tool "list_agents" is not available',
+      });
+      expect(agentService.findManyAgents).not.toHaveBeenCalled();
     });
 
     it('is not available while the AI chat inbox feature flag is off', async () => {
-      const { provider, permissionsService } = buildProvider({
-        isAiChatInboxEnabled: false,
-      });
+      const { listToolNames, executeTool, agentService, permissionsService } =
+        buildAgentTools({ isAiChatInboxEnabled: false });
 
-      await expect(provider.isAvailable(context)).resolves.toBe(false);
+      await expect(listToolNames()).resolves.toEqual([]);
+      await expect(
+        executeTool({ toolName: 'list_agents', args: {} }),
+      ).resolves.toMatchObject({
+        success: false,
+        message: 'Tool "list_agents" is not available',
+      });
       expect(permissionsService.checkRolesPermissions).not.toHaveBeenCalled();
+      expect(agentService.findManyAgents).not.toHaveBeenCalled();
     });
   });
 
   it('exposes the agent management tools', async () => {
-    const { provider } = buildProvider();
+    const { listToolNames } = buildAgentTools();
 
-    const descriptors = await provider.generateDescriptors(context, {
-      includeSchemas: true,
-    });
-
-    expect(descriptors.map((descriptor) => descriptor.name)).toEqual([
+    await expect(listToolNames()).resolves.toEqual([
       'list_agents',
       'create_agent',
       'update_agent',
@@ -144,18 +206,14 @@ describe('AgentToolProvider', () => {
 
   describe('list_agents', () => {
     it('leaves out system agents', async () => {
-      const { provider, agentService } = buildProvider();
+      const { executeTool, agentService } = buildAgentTools();
 
       agentService.findManyAgents.mockResolvedValue([
         buildAgent(),
         buildAgent({ id: 'workflow-step-agent-id', isSystem: true }),
       ]);
 
-      const output = await provider.executeStaticTool(
-        'list_agents',
-        {},
-        context,
-      );
+      const output = await executeTool({ toolName: 'list_agents', args: {} });
 
       expect(output.success).toBe(true);
       expect(output.result).toMatchObject({
@@ -172,7 +230,7 @@ describe('AgentToolProvider', () => {
     };
 
     it('only lists the agents of the calling application', async () => {
-      const { provider, agentService } = buildProvider();
+      const { executeTool, agentService } = buildAgentTools();
 
       agentService.findManyAgents.mockResolvedValue([
         buildAgent(),
@@ -182,11 +240,11 @@ describe('AgentToolProvider', () => {
         }),
       ]);
 
-      const output = await provider.executeStaticTool(
-        'list_agents',
-        {},
-        applicationContext,
-      );
+      const output = await executeTool({
+        toolName: 'list_agents',
+        args: {},
+        toolContext: applicationContext,
+      });
 
       expect(output.result).toMatchObject({
         count: 1,
@@ -195,21 +253,21 @@ describe('AgentToolProvider', () => {
     });
 
     it('refuses to update or delete an agent of another application', async () => {
-      const { provider, agentService } = buildProvider();
+      const { executeTool, agentService } = buildAgentTools();
 
       await expect(
-        provider.executeStaticTool(
-          'update_agent',
-          { id: agentId, prompt: 'Something else' },
-          applicationContext,
-        ),
+        executeTool({
+          toolName: 'update_agent',
+          args: { id: agentId, prompt: 'Something else' },
+          toolContext: applicationContext,
+        }),
       ).rejects.toMatchObject({ code: AiExceptionCode.AGENT_NOT_FOUND });
       await expect(
-        provider.executeStaticTool(
-          'delete_agent',
-          { id: agentId },
-          applicationContext,
-        ),
+        executeTool({
+          toolName: 'delete_agent',
+          args: { id: agentId },
+          toolContext: applicationContext,
+        }),
       ).rejects.toMatchObject({ code: AiExceptionCode.AGENT_NOT_FOUND });
       expect(agentService.updateOneAgent).not.toHaveBeenCalled();
       expect(agentService.deleteOneAgent).not.toHaveBeenCalled();
@@ -218,12 +276,12 @@ describe('AgentToolProvider', () => {
 
   describe('create_agent', () => {
     it('creates an agent on the workspace default model with generated trigger ids', async () => {
-      const { provider, agentService, aiModelRegistryService } =
-        buildProvider();
+      const { executeTool, agentService, aiModelRegistryService } =
+        buildAgentTools();
 
-      const output = await provider.executeStaticTool(
-        'create_agent',
-        {
+      const output = await executeTool({
+        toolName: 'create_agent',
+        args: {
           label: 'Deal watcher',
           prompt: 'Watch deals',
           roleId,
@@ -236,8 +294,7 @@ describe('AgentToolProvider', () => {
             { type: 'CRON', settings: { pattern: '0 9 * * 1' } },
           ],
         },
-        context,
-      );
+      });
 
       expect(output.success).toBe(true);
       expect(
@@ -281,12 +338,12 @@ describe('AgentToolProvider', () => {
 
   describe('update_agent', () => {
     it('keeps the ids of the triggers passed back and only sends the given fields', async () => {
-      const { provider, agentService, aiModelRegistryService } =
-        buildProvider();
+      const { executeTool, agentService, aiModelRegistryService } =
+        buildAgentTools();
 
-      const output = await provider.executeStaticTool(
-        'update_agent',
-        {
+      const output = await executeTool({
+        toolName: 'update_agent',
+        args: {
           id: agentId,
           triggers: [
             {
@@ -297,8 +354,7 @@ describe('AgentToolProvider', () => {
             },
           ],
         },
-        context,
-      );
+      });
 
       expect(output.success).toBe(true);
       expect(
@@ -323,18 +379,17 @@ describe('AgentToolProvider', () => {
     });
 
     it('refuses to change an agent backing a workflow step', async () => {
-      const { provider, agentService } = buildProvider();
+      const { executeTool, agentService } = buildAgentTools();
 
       agentService.findOneAgentById.mockResolvedValue(
         buildAgent({ isSystem: true }),
       );
 
       await expect(
-        provider.executeStaticTool(
-          'update_agent',
-          { id: agentId, prompt: 'Something else' },
-          context,
-        ),
+        executeTool({
+          toolName: 'update_agent',
+          args: { id: agentId, prompt: 'Something else' },
+        }),
       ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
       expect(agentService.updateOneAgent).not.toHaveBeenCalled();
     });
@@ -342,13 +397,12 @@ describe('AgentToolProvider', () => {
 
   describe('delete_agent', () => {
     it('deletes the agent', async () => {
-      const { provider, agentService } = buildProvider();
+      const { executeTool, agentService } = buildAgentTools();
 
-      const output = await provider.executeStaticTool(
-        'delete_agent',
-        { id: agentId },
-        context,
-      );
+      const output = await executeTool({
+        toolName: 'delete_agent',
+        args: { id: agentId },
+      });
 
       expect(output.success).toBe(true);
       expect(agentService.deleteOneAgent).toHaveBeenCalledTimes(1);
@@ -359,14 +413,14 @@ describe('AgentToolProvider', () => {
     });
 
     it('refuses to delete an agent backing a workflow step', async () => {
-      const { provider, agentService } = buildProvider();
+      const { executeTool, agentService } = buildAgentTools();
 
       agentService.findOneAgentById.mockResolvedValue(
         buildAgent({ isSystem: true }),
       );
 
       await expect(
-        provider.executeStaticTool('delete_agent', { id: agentId }, context),
+        executeTool({ toolName: 'delete_agent', args: { id: agentId } }),
       ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
       expect(agentService.deleteOneAgent).not.toHaveBeenCalled();
     });

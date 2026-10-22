@@ -1,0 +1,351 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MCP agent tools (integration) should describe the agent tools to the model 1`] = `
+[
+  {
+    "description": "List the AI agents of the workspace with their prompt, model, role and triggers. System agents (those backing workflow AI steps or installed by an application) are not included.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object",
+    },
+    "name": "list_agents",
+  },
+  {
+    "description": "Create an AI agent that works on its own: it wakes up on its triggers (record events or a schedule) and acts with the tools its role allows, for example posting a note, updating records or sending a summary.
+
+Before creating it, present the plan to the user (prompt, role, triggers) and get their confirmation, since the agent keeps running after this conversation.
+Give the agent a role with the least access it needs (use list_roles to find one); without a role it cannot read or write records.
+Write the prompt as standing instructions for every run, and put what to do for a specific trigger in that trigger's instructions.",
+    "inputSchema": {
+      "$defs": {
+        "__schema0": {
+          "description": "Id of an existing trigger, as returned by list_agents. Pass it to keep that trigger when updating; omit it for a new trigger.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "__schema1": {
+          "description": "Whether the trigger starts runs. Defaults to true.",
+          "type": "boolean",
+        },
+        "__schema2": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "What the agent should do when this trigger fires, on top of its prompt (e.g. 'Post a summary of the new deal in a note on the company').",
+        },
+      },
+      "properties": {
+        "description": {
+          "description": "Optional short description",
+          "type": "string",
+        },
+        "icon": {
+          "description": "Optional icon identifier (e.g. "IconRobot")",
+          "type": "string",
+        },
+        "label": {
+          "description": "Display name of the agent",
+          "minLength": 1,
+          "type": "string",
+        },
+        "modelId": {
+          "description": "Model the agent runs on. Defaults to "workspace-default-model", the workspace default model.",
+          "type": "string",
+        },
+        "prompt": {
+          "description": "System prompt describing who the agent is and what it does on every run",
+          "minLength": 1,
+          "type": "string",
+        },
+        "roleId": {
+          "description": "Role the agent acts with. Without a role the agent can neither read nor write any record.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "triggers": {
+          "description": "What wakes the agent up on its own. DATABASE_EVENT runs it when records change, with the changed records as input. CRON runs it on a schedule.",
+          "items": {
+            "anyOf": [
+              {
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/__schema0",
+                  },
+                  "instructions": {
+                    "$ref": "#/$defs/__schema2",
+                  },
+                  "isActive": {
+                    "$ref": "#/$defs/__schema1",
+                  },
+                  "settings": {
+                    "properties": {
+                      "batchMode": {
+                        "description": "When true, events fired close together are grouped into a single run.",
+                        "type": "boolean",
+                      },
+                      "eventName": {
+                        "description": "'<objectNameSingular>.<action>' where action is created, updated, deleted, destroyed, restored or upserted (e.g. 'opportunity.created'). Wildcards are not allowed.",
+                        "pattern": "^[a-z][a-zA-Z0-9]*\\.(created|updated|deleted|destroyed|restored|upserted)$",
+                        "type": "string",
+                      },
+                      "updatedFields": {
+                        "description": "Only for '.updated' events: field names that must change for the trigger to fire.",
+                        "items": {
+                          "minLength": 1,
+                          "type": "string",
+                        },
+                        "type": "array",
+                      },
+                    },
+                    "required": [
+                      "eventName",
+                    ],
+                    "type": "object",
+                  },
+                  "type": {
+                    "const": "DATABASE_EVENT",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "type",
+                  "settings",
+                ],
+                "type": "object",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/__schema0",
+                  },
+                  "instructions": {
+                    "$ref": "#/$defs/__schema2",
+                  },
+                  "isActive": {
+                    "$ref": "#/$defs/__schema1",
+                  },
+                  "settings": {
+                    "properties": {
+                      "pattern": {
+                        "description": "Standard 5-field cron pattern (e.g. '0 9 * * 1' for every Monday at 9:00).",
+                        "minLength": 1,
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "pattern",
+                    ],
+                    "type": "object",
+                  },
+                  "type": {
+                    "const": "CRON",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "type",
+                  "settings",
+                ],
+                "type": "object",
+              },
+            ],
+          },
+          "maxItems": 20,
+          "type": "array",
+        },
+      },
+      "required": [
+        "label",
+        "prompt",
+      ],
+      "type": "object",
+    },
+    "name": "create_agent",
+  },
+  {
+    "description": "Update an AI agent. Only the fields you pass are changed.
+
+To pause an agent without deleting it, set isActive to false on its triggers. Confirm changes to the role or triggers with the user first.",
+    "inputSchema": {
+      "$defs": {
+        "__schema0": {
+          "description": "Id of an existing trigger, as returned by list_agents. Pass it to keep that trigger when updating; omit it for a new trigger.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "__schema1": {
+          "description": "Whether the trigger starts runs. Defaults to true.",
+          "type": "boolean",
+        },
+        "__schema2": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "What the agent should do when this trigger fires, on top of its prompt (e.g. 'Post a summary of the new deal in a note on the company').",
+        },
+      },
+      "properties": {
+        "description": {
+          "type": "string",
+        },
+        "icon": {
+          "type": "string",
+        },
+        "id": {
+          "description": "Id of the agent to update",
+          "format": "uuid",
+          "type": "string",
+        },
+        "label": {
+          "minLength": 1,
+          "type": "string",
+        },
+        "modelId": {
+          "type": "string",
+        },
+        "prompt": {
+          "minLength": 1,
+          "type": "string",
+        },
+        "roleId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "New role of the agent, or null to remove its role",
+        },
+        "triggers": {
+          "description": "Replaces the whole trigger list. To keep an existing trigger, pass it again with its id from list_agents. Pass an empty list to remove all triggers.",
+          "items": {
+            "anyOf": [
+              {
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/__schema0",
+                  },
+                  "instructions": {
+                    "$ref": "#/$defs/__schema2",
+                  },
+                  "isActive": {
+                    "$ref": "#/$defs/__schema1",
+                  },
+                  "settings": {
+                    "properties": {
+                      "batchMode": {
+                        "description": "When true, events fired close together are grouped into a single run.",
+                        "type": "boolean",
+                      },
+                      "eventName": {
+                        "description": "'<objectNameSingular>.<action>' where action is created, updated, deleted, destroyed, restored or upserted (e.g. 'opportunity.created'). Wildcards are not allowed.",
+                        "pattern": "^[a-z][a-zA-Z0-9]*\\.(created|updated|deleted|destroyed|restored|upserted)$",
+                        "type": "string",
+                      },
+                      "updatedFields": {
+                        "description": "Only for '.updated' events: field names that must change for the trigger to fire.",
+                        "items": {
+                          "minLength": 1,
+                          "type": "string",
+                        },
+                        "type": "array",
+                      },
+                    },
+                    "required": [
+                      "eventName",
+                    ],
+                    "type": "object",
+                  },
+                  "type": {
+                    "const": "DATABASE_EVENT",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "type",
+                  "settings",
+                ],
+                "type": "object",
+              },
+              {
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/__schema0",
+                  },
+                  "instructions": {
+                    "$ref": "#/$defs/__schema2",
+                  },
+                  "isActive": {
+                    "$ref": "#/$defs/__schema1",
+                  },
+                  "settings": {
+                    "properties": {
+                      "pattern": {
+                        "description": "Standard 5-field cron pattern (e.g. '0 9 * * 1' for every Monday at 9:00).",
+                        "minLength": 1,
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "pattern",
+                    ],
+                    "type": "object",
+                  },
+                  "type": {
+                    "const": "CRON",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "type",
+                  "settings",
+                ],
+                "type": "object",
+              },
+            ],
+          },
+          "maxItems": 20,
+          "type": "array",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_agent",
+  },
+  {
+    "description": "Delete an AI agent and its triggers, for example once it is no longer useful. Use list_agents first if you don't know the id.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "Id of the agent to delete",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_agent",
+  },
+]
+`;
