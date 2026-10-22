@@ -9,6 +9,7 @@ import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescription
 import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
+import { COUNT_PAGER_PROP_DESCRIPTIONS } from './countPagerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { DETAILS_ROW_PROP_DESCRIPTIONS } from './detailsRowPropDescriptions';
@@ -933,6 +934,18 @@ export const DOCUMENTED_COMPONENTS = [
       hasSubmenu: 'Displays a decorative submenu indicator.',
     },
     propDefaults: { type: 'button', disabled: 'false' },
+  },
+  {
+    name: 'CountPager',
+    source: 'components/navigation/CountPager/CountPager.tsx',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/count-pager',
+    propDescriptions: COUNT_PAGER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      disabled: 'false',
+      positionPlacement: 'between',
+      role: 'group',
+    },
   },
   {
     name: 'TabButton',

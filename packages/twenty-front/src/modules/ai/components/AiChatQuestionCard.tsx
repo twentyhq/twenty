@@ -9,10 +9,9 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
+import { CountPager } from 'twenty-ui/components/navigation';
 import {
   IconArrowUp,
-  IconChevronLeft,
-  IconChevronRightPipe,
   type IconComponent,
   IconInfoCircle,
   IconSquareNumber1,
@@ -77,18 +76,6 @@ const StyledQuestionText = styled.p`
   margin: 0;
   min-width: 0;
   overflow-wrap: anywhere;
-`;
-
-const StyledPager = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledPagerLabel = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledOptionsList = styled.div`
@@ -391,33 +378,15 @@ export const AiChatQuestionCard = ({
             <TextWithChatReferences text={currentQuestion.question} />
           </StyledQuestionText>
           {hasMultipleQuestions && (
-            <StyledPager>
-              <LightIconButton
-                size="sm"
-                disabled={currentIndex === 0}
-                onClick={() =>
-                  setCurrentIndex((index) => Math.max(0, index - 1))
-                }
-                aria-label={t`Previous`}
-              >
-                <IconChevronLeft />
-              </LightIconButton>
-              <StyledPagerLabel>
-                {currentIndex + 1}/{questions.length}
-              </StyledPagerLabel>
-              <LightIconButton
-                size="sm"
-                disabled={isLastQuestion}
-                onClick={() =>
-                  setCurrentIndex((index) =>
-                    Math.min(questions.length - 1, index + 1),
-                  )
-                }
-                aria-label={t`Next question`}
-              >
-                <IconChevronRightPipe />
-              </LightIconButton>
-            </StyledPager>
+            <CountPager
+              aria-label={t`Questions`}
+              index={currentIndex}
+              count={questions.length}
+              onIndexChange={setCurrentIndex}
+              positionText={`${currentIndex + 1}/${questions.length}`}
+              previousLabel={t`Previous`}
+              nextLabel={t`Next question`}
+            />
           )}
         </StyledQuestionHeaderRow>
 
