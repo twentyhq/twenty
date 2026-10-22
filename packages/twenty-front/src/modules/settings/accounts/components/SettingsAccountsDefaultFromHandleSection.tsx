@@ -30,6 +30,7 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
 
   const sendableAccounts = (myConnectedAccounts ?? []).filter(
     (connectedAccount) =>
+      !isDefined(connectedAccount.archivedAt) &&
       canConnectedAccountPerformEmailOperation({
         connectedAccount,
         operation: EmailOperation.SEND,

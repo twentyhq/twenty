@@ -58,6 +58,14 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
         handleAliases: [],
         connectionParameters: null,
       },
+      {
+        userWorkspaceId,
+        provider: ConnectedAccountProvider.GOOGLE,
+        connectionParameters: null,
+        handle: 'archived@example.com',
+        handleAliases: [],
+        archivedAt: new Date('2026-01-01'),
+      },
     ]);
 
     const module = await Test.createTestingModule({
@@ -138,7 +146,11 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
     );
   });
 
-  it.each(['unknown@example.com', 'no-smtp@example.com'])(
+  it.each([
+    'unknown@example.com',
+    'no-smtp@example.com',
+    'archived@example.com',
+  ])(
     'rejects %s, which no usable account can send from',
     async (defaultFromHandle) => {
       const error = await service

@@ -8,6 +8,7 @@ export type DefaultEmailSenderAccount = ConnectedAccountEmailFields & {
   id: string;
   handle: string | null;
   handleAliases: string[] | null;
+  archivedAt?: string | null;
 };
 
 export type DefaultEmailSender = {
@@ -29,6 +30,7 @@ export const resolveDefaultEmailSender = ({
   const candidates = accounts
     .filter(
       (account) =>
+        !isDefined(account.archivedAt) &&
         (!isDefined(restrictToConnectedAccountId) ||
           account.id === restrictToConnectedAccountId) &&
         canConnectedAccountPerformEmailOperation({

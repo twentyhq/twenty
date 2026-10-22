@@ -38,6 +38,16 @@ const renderSection = (
             handleAliases: ['alias@getindexed.ai'],
             scopes: ['https://www.googleapis.com/auth/gmail.send'],
             connectionParameters: null,
+            archivedAt: null,
+          },
+          {
+            id: 'archived-account-id',
+            handle: 'old@getindexed.ai',
+            provider: ConnectedAccountProvider.GOOGLE,
+            handleAliases: [],
+            scopes: ['https://www.googleapis.com/auth/gmail.send'],
+            connectionParameters: null,
+            archivedAt: '2026-01-01T00:00:00.000Z',
           },
         ] as never)
       : [],
@@ -87,6 +97,7 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
 
     expect(screen.getByText('me@getindexed.ai')).toBeVisible();
     expect(screen.getByText('alias@getindexed.ai')).toBeVisible();
+    expect(screen.queryByText('old@getindexed.ai')).toBeNull();
   });
 
   it('saves the chosen handle', async () => {

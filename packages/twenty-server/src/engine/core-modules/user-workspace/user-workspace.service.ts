@@ -104,11 +104,13 @@ export class UserWorkspaceService {
         });
 
       const sendableHandles = connectedAccounts
-        .filter((connectedAccount) =>
-          canConnectedAccountPerformEmailOperation({
-            connectedAccount,
-            operation: EmailOperation.SEND,
-          }),
+        .filter(
+          (connectedAccount) =>
+            !isDefined(connectedAccount.archivedAt) &&
+            canConnectedAccountPerformEmailOperation({
+              connectedAccount,
+              operation: EmailOperation.SEND,
+            }),
         )
         .flatMap(getSendableEmailHandles);
 

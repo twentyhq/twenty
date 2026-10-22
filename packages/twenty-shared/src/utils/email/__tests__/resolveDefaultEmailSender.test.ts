@@ -151,4 +151,19 @@ describe('resolveDefaultEmailSender', () => {
       }),
     ).toBeNull();
   });
+
+  it('skips archived accounts for both personal and domain matches', () => {
+    const archivedAccount = {
+      ...accountB,
+      archivedAt: '2026-01-01T00:00:00.000Z',
+    };
+
+    expect(
+      resolveDefaultEmailSender({
+        accounts: [archivedAccount],
+        personalFromHandle: 'ops@getindexed.ai',
+        workspaceSenderDomain: 'getindexed.ai',
+      }),
+    ).toBeNull();
+  });
 });
