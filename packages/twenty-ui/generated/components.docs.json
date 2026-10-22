@@ -14616,6 +14616,104 @@
     ]
   },
   {
+    "name": "FormFieldRow",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/form-field-row",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Field content, such as plain inputs, recipient chips, selectors or toggles. The caller owns input labels, state and click-to-focus behavior."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the group root."
+      },
+      {
+        "name": "hasDivider",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Shows a decorative bottom divider. Set false on the final row when the surrounding surface supplies its own border."
+      },
+      {
+        "name": "isHoverable",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Enables a neutral hover background independently of click handlers. Keyboard focus remains on nested controls without changing the row background."
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional visible field label and default group name. Supply aria-label or aria-labelledby when the label is omitted. Label each nested input separately."
+      },
+      {
+        "name": "labelWidth",
+        "type": "Width<string | number>",
+        "required": false,
+        "defaultValue": "80",
+        "description": "Preferred label column width, capped at 40% of the row. Numbers use pixels; use the same width for aligned sibling rows."
+      },
+      {
+        "name": "onClick",
+        "type": "MouseEventHandler<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native group click handler. Providing a handler shows a pointer cursor; the caller guards nested-control and portaled events as needed."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the group root div."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the group root. Forward its props and ref."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional decorative icon before the label. The caller controls icon dimensions."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the group root."
+      },
+      {
+        "name": "trailing",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional trailing content. Nested controls retain their own keyboard focus and event behavior."
+      },
+      {
+        "name": "trailingProps",
+        "type": "Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native props, event handlers and ref applied to the trailing content wrapper. The wrapper is rendered only when trailing content is present; className is merged with the shared layout class."
+      }
+    ]
+  },
+  {
     "name": "ImageInput",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/image-input",
