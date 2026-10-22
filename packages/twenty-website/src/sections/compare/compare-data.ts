@@ -93,7 +93,7 @@ const HUBSPOT_COMPARISON: CompetitorComparison = {
         sourceUrl: HUBSPOT_PRICING_URL,
       },
       twenty: {
-        detail: msg`Standard roles only on Pro, custom permissions on Organization`,
+        detail: msg`Admin & Member roles on Pro, custom permissions on Organization`,
       },
     },
     {

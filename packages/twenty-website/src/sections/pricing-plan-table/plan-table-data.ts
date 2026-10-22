@@ -22,15 +22,68 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     {
       appliesTo: 'cloud',
+      featureLabel: msg`Personal AI usage`,
+      tiers: {
+        enterprise: { kind: 'text', text: msg`Custom allowance` },
+        organization: { kind: 'text', text: msg`5x Pro` },
+        pro: { kind: 'text', text: msg`Limited` },
+      },
+      tooltip: msg`Each member's own AI chat usage, renewed every Monday. When it runs out, chat continues on workspace credits unless an admin turns that off.`,
+      type: 'row',
+    },
+    {
+      appliesTo: 'cloud',
       featureLabel: msg`Workspace credits`,
       tiers: {
         enterprise: { kind: 'text', text: msg`Custom allowance` },
         organization: { kind: 'text', text: msg`4 credits/user/month` },
         pro: { kind: 'text', text: msg`1 credit/user/month` },
       },
-      tooltip: msg`Monthly credits for the whole workspace, used by workflows, AI agents and apps.`,
+      tooltip: msg`Monthly credits shared by the workspace for workflows, AI agents and apps. 1 credit covers 10,000 workflow steps.`,
       type: 'row',
     },
+    {
+      featureLabel: msg`Permissions`,
+      selfHostTiers: {
+        organization: {
+          kind: 'text',
+          text: msg`Custom roles, down to fields and rows`,
+        },
+        pro: { kind: 'text', text: msg`Custom roles, down to fields` },
+      },
+      tiers: {
+        organization: {
+          kind: 'text',
+          text: msg`Custom roles, down to fields and rows`,
+        },
+        pro: { kind: 'text', text: msg`Admin & Member` },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: msg`SSO`,
+      tiers: {
+        enterprise: { kind: 'text', text: msg`SAML/OIDC + SCIM` },
+        organization: { kind: 'text', text: msg`SAML/OIDC` },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: msg`Support`,
+      selfHostTiers: {
+        enterprise: { kind: 'text', text: msg`Dedicated, with SLA` },
+        organization: { kind: 'text', text: msg`Priority` },
+        pro: { kind: 'text', text: msg`Community` },
+      },
+      tiers: {
+        enterprise: { kind: 'text', text: msg`Dedicated, with SLA` },
+        organization: { kind: 'text', text: msg`Priority` },
+        pro: { kind: 'text', text: msg`Email and chat` },
+      },
+      type: 'row',
+    },
+    { title: msg`Workspace`, type: 'category' },
     {
       featureLabel: msg`Seats limit`,
       tiers: {
@@ -39,7 +92,6 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       },
       type: 'row',
     },
-    { title: msg`Workspace`, type: 'category' },
     {
       featureLabel: msg`Custom objects`,
       tiers: {
@@ -140,16 +192,6 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     { title: msg`AI & Automations`, type: 'category' },
     {
-      appliesTo: 'cloud',
-      featureLabel: msg`Personal AI usage`,
-      tiers: {
-        organization: { kind: 'text', text: msg`5x Pro` },
-        pro: { kind: 'text', text: msg`Limited` },
-      },
-      tooltip: msg`Dedicated AI usage for each member to search, update and create with AI chat.`,
-      type: 'row',
-    },
-    {
       featureLabel: msg`Workflows`,
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },
@@ -191,7 +233,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       },
       tiers: {
         organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Standard roles only` },
+        pro: { kind: 'text', text: msg`Admin & Member` },
       },
       type: 'row',
     },
@@ -223,14 +265,6 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: msg`Row-level permissions`,
       tiers: {
         organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'dash' },
-      },
-      type: 'row',
-    },
-    {
-      featureLabel: msg`SSO`,
-      tiers: {
-        organization: { kind: 'yes', label: msg`Yes` },
         pro: { kind: 'dash' },
       },
       type: 'row',
