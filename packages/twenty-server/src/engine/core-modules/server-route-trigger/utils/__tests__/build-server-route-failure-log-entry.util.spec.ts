@@ -3,7 +3,6 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
-import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 const resolver = {
   id: 'resolver-1',
@@ -11,7 +10,7 @@ const resolver = {
   workspaceId: 'owner-workspace',
   applicationId: 'application-1',
   application: { version: '1.2.3' },
-} as LogicFunctionEntity;
+};
 
 describe('buildServerRouteFailureLogEntry', () => {
   it('records the failure against the resolver in the owner workspace', () => {
