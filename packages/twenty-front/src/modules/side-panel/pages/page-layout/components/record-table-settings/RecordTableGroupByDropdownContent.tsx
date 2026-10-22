@@ -1,22 +1,13 @@
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 const NO_GROUP_BY_ITEM_ID = 'no-group-by';
@@ -45,17 +36,6 @@ export const RecordTableGroupByDropdownContent = ({
       objectMetadataItemToFind.id === objectMetadataId,
   );
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const { closeDropdown } = useCloseDropdown();
-
   const { handleGroupByFieldChange } = useRecordTableWidgetLayoutCallbacks({
     pageLayoutId,
     widgetId,
@@ -71,79 +51,52 @@ export const RecordTableGroupByDropdownContent = ({
     getSearchableValues: (fieldMetadataItem) => [fieldMetadataItem.label],
   });
 
-  const selectableItemIds = [
-    ...(isClearable ? [NO_GROUP_BY_ITEM_ID] : []),
-    ...filteredFields.map((fieldMetadataItem) => fieldMetadataItem.id),
-  ];
+  const shouldShowClearOption =
+    isClearable &&
+    isNonEmptyArray(
+      filterBySearchQuery({
+        items: [t`None`],
+        searchQuery,
+        getSearchableValues: (label) => [label],
+      }),
+    );
 
   return (
     <>
-      <DropdownMenuSearchInput
-        autoFocus
+      <Dropdown.Search
+        placeholder={t`Search fields`}
+        aria-label={t`Search fields`}
         value={searchQuery}
-        onChange={(event) => setSearchQuery(event.target.value)}
+        onValueChange={setSearchQuery}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          selectableItemIdArray={selectableItemIds}
-          focusId={dropdownId}
+      <ChartSettingsDropdownSection>
+        <Dropdown.SelectionGroup
+          aria-label={t`Group by`}
+          value={currentMainGroupByFieldMetadataId ?? NO_GROUP_BY_ITEM_ID}
         >
-          {isClearable && (
-            <SelectableListItem
-              itemId={NO_GROUP_BY_ITEM_ID}
-              onEnter={() => {
-                handleGroupByFieldChange(null);
-                closeDropdown();
-              }}
-            >
-              <ListItemButton
-                focused={selectedItemId === NO_GROUP_BY_ITEM_ID}
-                onClick={() => {
-                  handleGroupByFieldChange(null);
-                  closeDropdown();
-                }}
-                role="option"
-                aria-selected={!isDefined(currentMainGroupByFieldMetadataId)}
-                selected={!isDefined(currentMainGroupByFieldMetadataId)}
-                indicator="check"
-              >{t`None`}</ListItemButton>
-            </SelectableListItem>
+          {shouldShowClearOption && (
+            <Dropdown.OptionItem
+              value={NO_GROUP_BY_ITEM_ID}
+              onSelect={() => handleGroupByFieldChange(null)}
+            >{t`None`}</Dropdown.OptionItem>
           )}
           {filteredFields.map((fieldMetadataItem) => (
-            <SelectableListItem
+            <Dropdown.OptionItem
               key={fieldMetadataItem.id}
-              itemId={fieldMetadataItem.id}
-              onEnter={() => {
-                handleGroupByFieldChange(fieldMetadataItem);
-                closeDropdown();
-              }}
+              value={fieldMetadataItem.id}
+              onSelect={() => handleGroupByFieldChange(fieldMetadataItem)}
+              startIcon={
+                <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+              }
             >
-              <ListItemButton
-                focused={selectedItemId === fieldMetadataItem.id}
-                onClick={() => {
-                  handleGroupByFieldChange(fieldMetadataItem);
-                  closeDropdown();
-                }}
-                role="option"
-                aria-selected={
-                  currentMainGroupByFieldMetadataId === fieldMetadataItem.id
-                }
-                selected={
-                  currentMainGroupByFieldMetadataId === fieldMetadataItem.id
-                }
-                indicator="check"
-                startIcon={
-                  <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
-                }
-              >
-                {fieldMetadataItem.label}
-              </ListItemButton>
-            </SelectableListItem>
+              {fieldMetadataItem.label}
+            </Dropdown.OptionItem>
           ))}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
+        </Dropdown.SelectionGroup>
+        {!shouldShowClearOption && !isNonEmptyArray(filteredFields) && (
+          <Dropdown.Empty>{t`No results found`}</Dropdown.Empty>
+        )}
+      </ChartSettingsDropdownSection>
     </>
   );
 };
