@@ -37,7 +37,7 @@ export class WorkspaceDataExportStateService {
       );
 
       if (isDefined(error)) {
-        this.logger.warn(
+        this.logger.error(
           `Workspace ${key.workspaceId}: export ${key.exportId} has an unreadable state file: ${error}`,
         );
       }
