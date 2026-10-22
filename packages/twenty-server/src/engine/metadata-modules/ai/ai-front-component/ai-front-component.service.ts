@@ -39,7 +39,7 @@ import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-fron
 import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
 import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
-import { buildFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
+import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
 
 const DRAFT_TTL = 24 * 60 * 60 * 1000;
 
@@ -59,6 +59,7 @@ export class AiFrontComponentService {
     private readonly records: FindRecordsService,
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
     private readonly componentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
+    private readonly compiler: FrontComponentCompilerService,
   ) {}
 
   private isEnabled(workspaceId: string) {
@@ -240,7 +241,13 @@ export class AiFrontComponentService {
       : undefined;
     const id = v4();
     const rootId = previous?.rootId ?? id;
-    const built = await buildFrontComponent({ ...input, componentId: id });
+    const built = await this.compiler.build(context.workspaceId, {
+      componentId: id,
+      name: input.name,
+      source: input.source,
+      query: input.query,
+      pageLayoutType: input.pageLayoutType,
+    });
 
     return this.locks.withLock(
       async () => {

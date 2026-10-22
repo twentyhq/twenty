@@ -1,3 +1,4 @@
+import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -34,6 +35,7 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
   providers: [
     provideWorkspaceScopedRepository(FrontComponentEntity),
     AiFrontComponentService,
+    FrontComponentCompilerService,
     {
       provide: AI_FRONT_COMPONENT_SERVICE_TOKEN,
       useExisting: AiFrontComponentService,

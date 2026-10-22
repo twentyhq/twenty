@@ -1,3 +1,4 @@
+import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 import { createHash } from 'crypto';
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { PageLayoutType } from 'twenty-shared/types';
@@ -116,6 +117,7 @@ describe('AI front component lifecycle', () => {
         componentEntries.some((entry) => entry.id === id),
       ),
     },
+    compiler: { build: jest.fn() },
   };
 
   beforeEach(async () => {
@@ -125,6 +127,26 @@ describe('AI front component lifecycle', () => {
     widgetEntries = [];
     commandEntries = [];
     settingsEntries = [];
+    const vendorSource = 'export const vendor = true;';
+    const vendorChecksum = createHash('sha256')
+      .update(vendorSource)
+      .digest('hex');
+    dependencies.compiler.build.mockImplementation(
+      async (_workspaceId: string, input: FrontComponentBuildInput) => {
+        const compiledSource = `// twenty-ai-shared-dependencies: ${vendorChecksum}\nexport default () => {};`;
+        return {
+          source: buildFrontComponentEntrySource(input),
+          componentName: 'TwentyGeneratedComponent',
+          compiledSource,
+          checksum: createHash('sha256').update(compiledSource).digest('hex'),
+          sharedDependencies: {
+            source: vendorSource,
+            checksum: vendorChecksum,
+            exportNamesBySpecifier: new Map(),
+          },
+        };
+      },
+    );
     dependencies.featureFlags.isFeatureEnabled.mockResolvedValue(true);
     dependencies.permissions.checkRolesPermissions.mockResolvedValue(true);
     dependencies.permissions.userHasWorkspaceSettingPermission.mockResolvedValue(
@@ -187,6 +209,19 @@ describe('AI front component lifecycle', () => {
       AUTH_CONTEXT!,
     );
 
+    expect(dependencies.compiler.build).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({
+        source: INPUT.source,
+        componentId: expect.any(String),
+      }),
+    );
+    expect(dependencies.compiler.build.mock.calls[0][1]).not.toHaveProperty(
+      'sampleRecords',
+    );
+    expect(preview.componentSource).toBe(
+      (await dependencies.compiler.build.mock.results[0].value).compiledSource,
+    );
     expect(preview.data.records).toEqual(INPUT.sampleRecords);
     expect(preview.componentSource).not.toContain('Example');
     expect(dependencies.records.execute).not.toHaveBeenCalled();
@@ -219,6 +254,26 @@ describe('AI front component lifecycle', () => {
     expect(dependencies.files.writeFile).not.toHaveBeenCalled();
     expect(dependencies.components.createOne).not.toHaveBeenCalled();
   });
+  it('does not provision a build when the feature is disabled', async () => {
+    dependencies.featureFlags.isFeatureEnabled.mockResolvedValue(false);
+    await expect(service.createDraft(INPUT, CONTEXT)).rejects.toThrow(
+      'disabled',
+    );
+    expect(dependencies.compiler.build).not.toHaveBeenCalled();
+  });
+
+  it('does not cache or save a draft when Lambda compilation fails', async () => {
+    dependencies.compiler.build.mockRejectedValueOnce(
+      new Error('Lambda build unavailable'),
+    );
+    await expect(service.createDraft(INPUT, CONTEXT)).rejects.toThrow(
+      'Lambda build unavailable',
+    );
+    expect(cache.size).toBe(0);
+    expect(dependencies.files.writeFile).not.toHaveBeenCalled();
+    expect(dependencies.components.createOne).not.toHaveBeenCalled();
+  });
+
   it.each(['inline', 'application', 'pinned'] as const)(
     'loads %s components with their own shared dependencies',
     async (kind) => {
