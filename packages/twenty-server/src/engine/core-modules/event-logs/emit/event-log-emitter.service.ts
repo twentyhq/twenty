@@ -39,10 +39,12 @@ export class EventLogEmitterService {
     await this.workspaceEventSinkService.ingest(events);
   }
 
-  recordApplicationLogs(entries: ApplicationLogEntry[]): void {
-    void this.dispatch(buildApplicationLogEnvelopes(entries)).catch((error) => {
+  async recordApplicationLogs(entries: ApplicationLogEntry[]): Promise<void> {
+    try {
+      await this.dispatch(buildApplicationLogEnvelopes(entries));
+    } catch (error) {
       this.logger.error('Failed to record application logs', error);
-    });
+    }
   }
 
   createContext(context?: EventContextFields) {
