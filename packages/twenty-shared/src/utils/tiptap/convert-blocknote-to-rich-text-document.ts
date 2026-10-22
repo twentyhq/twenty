@@ -173,10 +173,13 @@ const convertInlineItem = (
   }
 };
 
-const convertInlineContent = (
-  content: unknown,
-  inheritedColors: BlockNoteColors,
-): TipTapNode[] =>
+const convertInlineContent = ({
+  content,
+  inheritedColors,
+}: {
+  content: unknown;
+  inheritedColors: BlockNoteColors;
+}): TipTapNode[] =>
   isString(content)
     ? convertStyledText({ styledText: { text: content }, inheritedColors })
     : toObjects(content).flatMap((inlineItem) =>
@@ -190,7 +193,10 @@ const createParagraphNode = (block: BlockNoteObject): TipTapNode => {
   return createNode({
     type: TIPTAP_NODE_TYPES.PARAGRAPH,
     attrs: isDefined(textAlign) ? { textAlign } : undefined,
-    content: convertInlineContent(block.content, readBlockColors(props)),
+    content: convertInlineContent({
+      content: block.content,
+      inheritedColors: readBlockColors(props),
+    }),
   });
 };
 
@@ -207,13 +213,19 @@ const createHeadingNode = (block: BlockNoteObject): TipTapNode => {
   return createNode({
     type: TIPTAP_NODE_TYPES.HEADING,
     attrs: isDefined(textAlign) ? { level, textAlign } : { level },
-    content: convertInlineContent(block.content, readBlockColors(props)),
+    content: convertInlineContent({
+      content: block.content,
+      inheritedColors: readBlockColors(props),
+    }),
   });
 };
 
 const createCodeBlockNode = (block: BlockNoteObject): TipTapNode => {
   const props = readProps(block);
-  const code = convertInlineContent(block.content, {})
+  const code = convertInlineContent({
+    content: block.content,
+    inheritedColors: {},
+  })
     .map((node) =>
       node.type === TIPTAP_NODE_TYPES.HARD_BREAK ? '\n' : (node.text ?? ''),
     )
@@ -379,10 +391,13 @@ const getListNodeType = (blockType: unknown): ListNodeType | undefined => {
   }
 };
 
-const createListNode = (
-  listNodeType: ListNodeType,
-  firstItemProps: BlockNoteObject,
-): TipTapNode => {
+const createListNode = ({
+  listNodeType,
+  firstItemProps,
+}: {
+  listNodeType: ListNodeType;
+  firstItemProps: BlockNoteObject;
+}): TipTapNode => {
   const start = isNumber(firstItemProps.start)
     ? Math.max(Math.trunc(firstItemProps.start), 1)
     : 1;
@@ -392,10 +407,13 @@ const createListNode = (
     : { type: listNodeType, content: [] };
 };
 
-const createListItemNode = (
-  block: BlockNoteObject,
-  listNodeType: ListNodeType,
-): TipTapNode => {
+const createListItemNode = ({
+  block,
+  listNodeType,
+}: {
+  block: BlockNoteObject;
+  listNodeType: ListNodeType;
+}): TipTapNode => {
   const content = [
     createParagraphNode(block),
     ...convertBlocks(block.children),
@@ -431,11 +449,14 @@ const convertBlocks = (blocks: unknown): TipTapNode[] => {
       listNodeType === TIPTAP_NODE_TYPES.ORDERED_LIST && isNumber(props.start);
 
     if (currentListNode?.type !== listNodeType || restartsNumbering) {
-      currentListNode = createListNode(listNodeType, props);
+      currentListNode = createListNode({
+        listNodeType,
+        firstItemProps: props,
+      });
       nodes.push(currentListNode);
     }
 
-    currentListNode.content?.push(createListItemNode(block, listNodeType));
+    currentListNode.content?.push(createListItemNode({ block, listNodeType }));
   }
 
   return nodes;

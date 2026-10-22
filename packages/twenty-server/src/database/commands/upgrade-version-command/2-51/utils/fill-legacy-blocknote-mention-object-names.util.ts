@@ -1,6 +1,34 @@
 import { isString } from '@sniptt/guards';
 import { isDefined, isPlainObject, parseJson } from 'twenty-shared/utils';
 
+const fillMentionObjectName = ({
+  value,
+  objectNameSingularByObjectMetadataId,
+}: {
+  value: unknown;
+  objectNameSingularByObjectMetadataId: Map<string, string>;
+}): unknown => {
+  if (
+    !isPlainObject(value) ||
+    value.type !== 'mention' ||
+    !isPlainObject(value.props) ||
+    isString(value.props.objectNameSingular) ||
+    !isString(value.props.objectMetadataId)
+  ) {
+    return value;
+  }
+
+  const objectNameSingular = objectNameSingularByObjectMetadataId.get(
+    value.props.objectMetadataId,
+  );
+
+  if (!isDefined(objectNameSingular)) {
+    return value;
+  }
+
+  return { ...value, props: { ...value.props, objectNameSingular } };
+};
+
 export const fillLegacyBlockNoteMentionObjectNames = ({
   serializedBlockNote,
   objectNameSingularByObjectMetadataId,
@@ -15,20 +43,6 @@ export const fillLegacyBlockNoteMentionObjectNames = ({
   }
 
   return JSON.stringify(blocks, (_key, value: unknown) =>
-    isPlainObject(value) &&
-    value.type === 'mention' &&
-    isPlainObject(value.props) &&
-    !isString(value.props.objectNameSingular) &&
-    isString(value.props.objectMetadataId)
-      ? {
-          ...value,
-          props: {
-            ...value.props,
-            objectNameSingular: objectNameSingularByObjectMetadataId.get(
-              value.props.objectMetadataId,
-            ),
-          },
-        }
-      : value,
+    fillMentionObjectName({ value, objectNameSingularByObjectMetadataId }),
   );
 };

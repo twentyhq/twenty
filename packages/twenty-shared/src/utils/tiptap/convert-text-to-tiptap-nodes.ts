@@ -1,3 +1,7 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+
 import { type TipTapMark } from './tiptap-mark-types';
 import { type TipTapNode } from './tiptap-node';
 import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
@@ -10,9 +14,9 @@ export const convertTextToTipTapNodes = (
     const lineNodes: TipTapNode[] =
       lineIndex > 0 ? [{ type: TIPTAP_NODE_TYPES.HARD_BREAK }] : [];
 
-    if (line.length > 0) {
+    if (isNonEmptyString(line)) {
       lineNodes.push(
-        marks.length > 0
+        isNonEmptyArray(marks)
           ? { type: TIPTAP_NODE_TYPES.TEXT, text: line, marks }
           : { type: TIPTAP_NODE_TYPES.TEXT, text: line },
       );

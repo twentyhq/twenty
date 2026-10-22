@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { z } from 'zod';
 
 import { isSafeUrl } from '@/utils/url/isSafeUrl';
@@ -20,7 +21,7 @@ const colorAttributeSchema = z.enum(RICH_TEXT_COLORS).nullable().optional();
 const urlSchema = z
   .string()
   .max(RICH_TEXT_URL_MAX_LENGTH)
-  .refine((url) => url.trim().length === 0 || isSafeUrl(url.trim()), {
+  .refine((url) => !isNonEmptyString(url.trim()) || isSafeUrl(url.trim()), {
     message: 'Dangerous URL protocol',
   });
 
@@ -163,17 +164,26 @@ const tableCellAttributesSchema = z
   })
   .optional();
 
-const tableCellNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.TABLE_CELL),
-  attrs: tableCellAttributesSchema,
-  content: blockContentSchema.min(1),
-});
+const createTableCellNodeSchema = <
+  TTableCellType extends
+    | typeof TIPTAP_NODE_TYPES.TABLE_CELL
+    | typeof TIPTAP_NODE_TYPES.TABLE_HEADER,
+>(
+  tableCellType: TTableCellType,
+) =>
+  z.looseObject({
+    type: z.literal(tableCellType),
+    attrs: tableCellAttributesSchema,
+    content: blockContentSchema.min(1),
+  });
 
-const tableHeaderNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.TABLE_HEADER),
-  attrs: tableCellAttributesSchema,
-  content: blockContentSchema.min(1),
-});
+const tableCellNodeSchema = createTableCellNodeSchema(
+  TIPTAP_NODE_TYPES.TABLE_CELL,
+);
+
+const tableHeaderNodeSchema = createTableCellNodeSchema(
+  TIPTAP_NODE_TYPES.TABLE_HEADER,
+);
 
 const tableRowNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.TABLE_ROW),

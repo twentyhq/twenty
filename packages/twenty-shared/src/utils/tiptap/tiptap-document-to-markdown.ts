@@ -1,5 +1,6 @@
 import { formatRecordReference } from '@/ai/utils/format-record-reference.util';
 import { formatSkillReference } from '@/ai/utils/format-skill-reference.util';
+import { isDefined } from '@/utils/validation';
 
 import { parseTipTapJsonDocument } from './parse-tiptap-json-document';
 import { type TipTapDocument } from './tiptap-document';
@@ -57,7 +58,13 @@ const applyMark = (text: string, mark: TipTapMark): string => {
   }
 };
 
-const buildBacktickFence = (code: string, minimumLength: number): string =>
+const buildBacktickFence = ({
+  code,
+  minimumLength,
+}: {
+  code: string;
+  minimumLength: number;
+}): string =>
   '`'.repeat(
     Math.max(
       minimumLength,
@@ -66,7 +73,7 @@ const buildBacktickFence = (code: string, minimumLength: number): string =>
   );
 
 const renderInlineCode = (code: string): string => {
-  const fence = buildBacktickFence(code, 1);
+  const fence = buildBacktickFence({ code, minimumLength: 1 });
   const padding = code.startsWith('`') || code.endsWith('`') ? ' ' : '';
 
   return `${fence}${padding}${code}${padding}${fence}`;
@@ -74,7 +81,7 @@ const renderInlineCode = (code: string): string => {
 
 const renderCodeBlock = (node: TipTapNode): string => {
   const code = (node.content ?? []).map((child) => child.text ?? '').join('');
-  const fence = buildBacktickFence(code, 3);
+  const fence = buildBacktickFence({ code, minimumLength: 3 });
   const language =
     typeof node.attrs?.language === 'string' ? node.attrs.language : '';
 
@@ -89,7 +96,7 @@ const renderTableRow = (row: TipTapNode): string =>
 const renderTable = (node: TipTapNode): string => {
   const [headerRow, ...bodyRows] = node.content ?? [];
 
-  if (headerRow === undefined) {
+  if (!isDefined(headerRow)) {
     return '';
   }
 

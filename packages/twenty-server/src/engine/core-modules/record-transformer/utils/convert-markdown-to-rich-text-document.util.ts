@@ -97,7 +97,7 @@ const convertListItem = (item: Tokens.ListItem): TipTapNode => {
   return item.task
     ? {
         type: TIPTAP_NODE_TYPES.TASK_ITEM,
-        attrs: { checked: item.checked === true },
+        attrs: { checked: item.checked ?? false },
         content,
       }
     : { type: TIPTAP_NODE_TYPES.LIST_ITEM, content };
