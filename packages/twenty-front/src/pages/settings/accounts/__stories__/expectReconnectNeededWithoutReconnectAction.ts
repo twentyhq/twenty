@@ -1,6 +1,6 @@
 import { expect, userEvent, within } from 'storybook/test';
 
-import { withinTableRowOrThrow } from '~/pages/settings/accounts/__stories__/withinTableRowOrThrow';
+import { withinTableRowOrThrow } from '~/testing/utils/withinTableRowOrThrow';
 
 export const expectReconnectNeededWithoutReconnectAction = async ({
   canvasElement,

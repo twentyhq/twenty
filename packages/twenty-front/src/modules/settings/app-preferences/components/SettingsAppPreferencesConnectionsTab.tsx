@@ -57,7 +57,7 @@ export const SettingsAppPreferencesConnectionsTab = ({
                 providerName={provider.name}
                 connections={providerConnections}
                 isClientCredentialsConfigured={isClientCredentialsConfigured}
-                loading={loading}
+                isLoading={loading}
               />
             ) : (
               isClientCredentialsConfigured && (
