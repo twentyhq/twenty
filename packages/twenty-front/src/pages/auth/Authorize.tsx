@@ -314,7 +314,7 @@ export const Authorize = () => {
               </StyledScopeList>
             </StyledPermissionSection>
           )}
-          {!applicationRegistration.isVerified && (
+          {!applicationRegistration.isVetted && (
             <StyledUnverifiedCallout>
               <Callout
                 status="warning"

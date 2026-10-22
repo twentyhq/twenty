@@ -20,5 +20,5 @@ export class PublicApplicationRegistrationDTO {
   oAuthScopes: string[];
 
   @Field()
-  isVerified: boolean;
+  isVetted: boolean;
 }

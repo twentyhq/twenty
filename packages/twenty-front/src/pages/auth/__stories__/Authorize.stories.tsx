@@ -23,7 +23,7 @@ const buildHandlers = (
     logoUrl: string | null;
     oAuthScopes: string[];
     websiteUrl: string | null;
-    isVerified: boolean;
+    isVetted: boolean;
   } | null,
 ) => [
   graphql.query(
@@ -94,7 +94,7 @@ export const Default: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
-        isVerified: true,
+        isVetted: true,
       }),
     },
   },
@@ -121,7 +121,7 @@ export const WithApiScopeOnly: Story = {
         logoUrl: null,
         oAuthScopes: ['api'],
         websiteUrl: null,
-        isVerified: true,
+        isVetted: true,
       }),
     },
   },
@@ -150,7 +150,7 @@ export const WithLongAppName: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
-        isVerified: true,
+        isVetted: true,
       }),
     },
   },
@@ -179,7 +179,7 @@ export const Unverified: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
-        isVerified: false,
+        isVetted: false,
       }),
     },
   },

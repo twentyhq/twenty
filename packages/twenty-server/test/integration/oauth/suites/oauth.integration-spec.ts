@@ -278,7 +278,7 @@ describe('OAuth (integration)', () => {
       query FindApplicationRegistrationByClientId($clientId: String!) {
         findApplicationRegistrationByClientId(clientId: $clientId) {
           logoUrl
-          isVerified
+          isVetted
         }
       }
     `;
@@ -314,10 +314,10 @@ describe('OAuth (integration)', () => {
       createdEntityIds.registrations.push(rows[0].id);
     });
 
-    it('should flag a dynamically registered client as unverified and hide its logo', async () => {
+    it('should flag a dynamically registered client as not vetted and hide its logo', async () => {
       expect(await findByClientId(dynamicClientId)).toEqual({
         logoUrl: null,
-        isVerified: false,
+        isVetted: false,
       });
     });
 
@@ -329,7 +329,7 @@ describe('OAuth (integration)', () => {
 
       expect(await findByClientId(dynamicClientId)).toEqual({
         logoUrl: 'https://example.com/logo.png',
-        isVerified: true,
+        isVetted: true,
       });
     });
   });

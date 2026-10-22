@@ -2717,6 +2717,7 @@ export interface PreviewMessageCampaignSendOutputDTO {
 
 export interface PublicApplicationRegistration {
     id: Scalars['UUID']
+    isVetted: Scalars['Boolean']
     logoUrl?: Scalars['String']
     name: Scalars['String']
     oAuthScopes: Scalars['String'][]
@@ -7031,6 +7032,7 @@ export interface PreviewMessageCampaignSendOutputDTOGenqlSelection{
 
 export interface PublicApplicationRegistrationGenqlSelection{
     id?: boolean | number
+    isVetted?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
     oAuthScopes?: boolean | number
