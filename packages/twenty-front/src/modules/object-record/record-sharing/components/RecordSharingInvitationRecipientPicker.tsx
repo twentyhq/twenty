@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown, ListItemButton } from 'twenty-ui/components/navigation';
-import { IconLock, IconUsers } from 'twenty-ui/icon';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+
+import { RecordSharingInvitationRecipientIcon } from '@/object-record/record-sharing/components/RecordSharingInvitationRecipientIcon';
 
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
 
@@ -55,18 +55,7 @@ export const RecordSharingInvitationRecipientPicker = ({
               selected={isSelected(recipient)}
               disabled={disabled}
               startIcon={
-                recipient.kind === 'workspaceMember' ? (
-                  <Avatar
-                    name={recipient.label}
-                    src={recipient.avatarUrl}
-                    size="sm"
-                    shape="circle"
-                  />
-                ) : recipient.kind === 'role' ? (
-                  <IconLock />
-                ) : (
-                  <IconUsers />
-                )
+                <RecordSharingInvitationRecipientIcon recipient={recipient} />
               }
               onSelect={() => {
                 if (isSelected(recipient)) {
