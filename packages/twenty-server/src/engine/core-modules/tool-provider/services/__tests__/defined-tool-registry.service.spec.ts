@@ -234,20 +234,6 @@ describe('DefinedToolRegistryService', () => {
         featureFlagService.getWorkspaceFeatureFlagsMap,
       ).toHaveBeenCalledWith(context.workspaceId);
     });
-
-    it('should not read the feature flags when no tool requires one', async () => {
-      const { definedToolRegistryService, featureFlagService } =
-        buildDefinedToolRegistryService({
-          tools: [new RenameWebhookTool()],
-          isGranted: true,
-        });
-
-      await listToolNames(definedToolRegistryService);
-
-      expect(
-        featureFlagService.getWorkspaceFeatureFlagsMap,
-      ).not.toHaveBeenCalled();
-    });
   });
 
   describe('execute', () => {

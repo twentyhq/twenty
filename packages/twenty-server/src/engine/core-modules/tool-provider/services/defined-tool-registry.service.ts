@@ -3,7 +3,7 @@ import { DiscoveryService } from '@nestjs/core';
 
 import { type ToolCategory } from 'twenty-shared/ai';
 import { type PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -21,12 +21,6 @@ import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-
-// Shared by the tools of one listing, so each permission and the workspace feature flags are read once
-type ToolAvailabilityCache = {
-  grantedByPermissionFlag: Map<PermissionFlagType, Promise<boolean>>;
-  getFeatureFlagsMap: () => Promise<FeatureFlagMap>;
-};
 
 @Injectable()
 export class DefinedToolRegistryService implements OnModuleInit {
@@ -71,11 +65,23 @@ export class DefinedToolRegistryService implements OnModuleInit {
         !isDefined(categories) || categories.includes(options.category),
     );
 
-    const cache = this.createToolAvailabilityCache(context);
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        context.workspaceId,
+      );
+    const grantedByPermissionFlag = new Map<
+      PermissionFlagType,
+      Promise<boolean>
+    >();
 
     const isAvailableByTool = await Promise.all(
       requestedTools.map((definedTool) =>
-        this.isToolAvailableToCaller({ definedTool, context, cache }),
+        this.isToolAvailableToCaller({
+          definedTool,
+          context,
+          featureFlagsMap,
+          grantedByPermissionFlag,
+        }),
       ),
     );
 
@@ -113,11 +119,16 @@ export class DefinedToolRegistryService implements OnModuleInit {
   }): Promise<ToolOutput> {
     const { options, tool } = definedTool;
 
+    const featureFlagsMap =
+      await this.featureFlagService.getWorkspaceFeatureFlagsMap(
+        context.workspaceId,
+      );
+
     if (
       !(await this.isToolAvailableToCaller({
         definedTool,
         context,
-        cache: this.createToolAvailabilityCache(context),
+        featureFlagsMap,
       }))
     ) {
       return buildToolNotAvailableOutput(options.name);
@@ -135,47 +146,30 @@ export class DefinedToolRegistryService implements OnModuleInit {
     return tool.execute({ input: parsedInput.data, context });
   }
 
-  private createToolAvailabilityCache(
-    context: ToolProviderContext,
-  ): ToolAvailabilityCache {
-    let featureFlagsMap: Promise<FeatureFlagMap> | undefined;
-
-    return {
-      grantedByPermissionFlag: new Map(),
-      getFeatureFlagsMap: () =>
-        (featureFlagsMap ??=
-          this.featureFlagService.getWorkspaceFeatureFlagsMap(
-            context.workspaceId,
-          )),
-    };
-  }
-
   private async isToolAvailableToCaller({
     definedTool: {
-      options: { requiredPermissionFlags, requiredFeatureFlags },
+      options: { requiredPermissionFlags, requiredFeatureFlags = [] },
     },
     context,
-    cache,
+    featureFlagsMap,
+    grantedByPermissionFlag = new Map(),
   }: {
     definedTool: DefinedTool;
     context: ToolProviderContext;
-    cache: ToolAvailabilityCache;
+    featureFlagsMap: FeatureFlagMap;
+    grantedByPermissionFlag?: Map<PermissionFlagType, Promise<boolean>>;
   }): Promise<boolean> {
-    if (isNonEmptyArray(requiredFeatureFlags)) {
-      const featureFlagsMap = await cache.getFeatureFlagsMap();
-
-      if (
-        !requiredFeatureFlags.every(
-          (featureFlag) => featureFlagsMap[featureFlag] === true,
-        )
-      ) {
-        return false;
-      }
+    if (
+      !requiredFeatureFlags.every(
+        (featureFlag) => featureFlagsMap[featureFlag] === true,
+      )
+    ) {
+      return false;
     }
 
     const grants = await Promise.all(
       requiredPermissionFlags.map((permissionFlag) => {
-        const cachedGrant = cache.grantedByPermissionFlag.get(permissionFlag);
+        const cachedGrant = grantedByPermissionFlag.get(permissionFlag);
 
         if (isDefined(cachedGrant)) {
           return cachedGrant;
@@ -187,7 +181,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
           permissionFlag,
         );
 
-        cache.grantedByPermissionFlag.set(permissionFlag, grant);
+        grantedByPermissionFlag.set(permissionFlag, grant);
 
         return grant;
       }),
