@@ -1,7 +1,7 @@
 import { CalendarEventComposerTargetsInput } from '@/activities/calendar/components/CalendarEventComposerTargetsInput';
 import { CalendarEventLocationInput } from '@/activities/calendar/components/CalendarEventLocationInput';
 import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
-import { ActivityComposerFieldRow } from '@/activities/components/ActivityComposerFieldRow';
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
 import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
@@ -95,7 +95,7 @@ export const CalendarEventComposerFields = ({
           onDragEnd={handlers.onDragEnd}
         >
           <ComposerHeader>
-            <ActivityComposerFieldRow label={t`Calendar`}>
+            <ComposerFieldRow label={t`Calendar`}>
               <Select
                 dropdownId="calendar-event-composer-account"
                 fullWidth
@@ -104,8 +104,8 @@ export const CalendarEventComposerFields = ({
                 options={composerState.accountOptions}
                 onChange={composerState.setConnectedAccountId}
               />
-            </ActivityComposerFieldRow>
-            <ActivityComposerFieldRow label={t`Guests`}>
+            </ComposerFieldRow>
+            <ComposerFieldRow label={t`Guests`}>
               <EmailRecipientsFieldInput
                 fieldId="to"
                 draggedSourceIndices={draggedSourceIndices}
@@ -116,16 +116,16 @@ export const CalendarEventComposerFields = ({
                 excludedSuggestionKeys={allRecipientKeys}
                 contextRecord={contextRecord}
               />
-            </ActivityComposerFieldRow>
+            </ComposerFieldRow>
             {composerState.canPickTargets && (
-              <ActivityComposerFieldRow label={t`Relations`}>
+              <ComposerFieldRow label={t`Relations`}>
                 <CalendarEventComposerTargetsInput
                   targets={composerState.targets}
                   onTargetChange={composerState.handleTargetChange}
                 />
-              </ActivityComposerFieldRow>
+              </ComposerFieldRow>
             )}
-            <ActivityComposerFieldRow label={t`Title`}>
+            <ComposerFieldRow label={t`Title`}>
               <Input
                 variant="plain"
                 type="text"
@@ -133,16 +133,16 @@ export const CalendarEventComposerFields = ({
                 placeholder={t`Add an event title`}
                 onChange={(event) => composerState.setTitle(event.target.value)}
               />
-            </ActivityComposerFieldRow>
-            <ActivityComposerFieldRow label={t`Location`}>
+            </ComposerFieldRow>
+            <ComposerFieldRow label={t`Location`}>
               <CalendarEventLocationInput
                 ariaLabel={t`Location`}
                 placeholder={t`Add a location`}
                 value={composerState.location}
                 onChange={composerState.setLocation}
               />
-            </ActivityComposerFieldRow>
-            <ActivityComposerFieldRow
+            </ComposerFieldRow>
+            <ComposerFieldRow
               label={t`All day`}
               onClick={() =>
                 composerState.handleIsFullDayChange(!composerState.isFullDay)
@@ -159,28 +159,28 @@ export const CalendarEventComposerFields = ({
               <StyledRowDescription>
                 {t`Create an all-day event`}
               </StyledRowDescription>
-            </ActivityComposerFieldRow>
+            </ComposerFieldRow>
             {composerState.isFullDay ? (
               <>
-                <ActivityComposerFieldRow label={t`Starts`}>
+                <ComposerFieldRow label={t`Starts`}>
                   <FormDateFieldInput
                     variant="transparent"
                     defaultValue={composerState.dates.startsAt}
                     onChange={composerState.handleStartsAtChange}
                   />
-                </ActivityComposerFieldRow>
-                <ActivityComposerFieldRow label={t`Ends`}>
+                </ComposerFieldRow>
+                <ComposerFieldRow label={t`Ends`}>
                   <FormDateFieldInput
                     key={composerState.dates.endsAt}
                     variant="transparent"
                     defaultValue={composerState.dates.endsAt}
                     onChange={composerState.setEndsAt}
                   />
-                </ActivityComposerFieldRow>
+                </ComposerFieldRow>
               </>
             ) : (
               <>
-                <ActivityComposerFieldRow label={t`Starts`}>
+                <ComposerFieldRow label={t`Starts`}>
                   <FormDateTimeFieldInput
                     key={`starts-at-${composerState.timeZone}`}
                     variant="transparent"
@@ -188,8 +188,8 @@ export const CalendarEventComposerFields = ({
                     onChange={composerState.handleStartsAtChange}
                     timeZone={composerState.timeZone}
                   />
-                </ActivityComposerFieldRow>
-                <ActivityComposerFieldRow label={t`Ends`}>
+                </ComposerFieldRow>
+                <ComposerFieldRow label={t`Ends`}>
                   <FormDateTimeFieldInput
                     key={`ends-at-${composerState.dates.endsAt}-${composerState.timeZone}`}
                     variant="transparent"
@@ -197,10 +197,10 @@ export const CalendarEventComposerFields = ({
                     onChange={composerState.setEndsAt}
                     timeZone={composerState.timeZone}
                   />
-                </ActivityComposerFieldRow>
+                </ComposerFieldRow>
               </>
             )}
-            <ActivityComposerFieldRow label={t`Time zone`}>
+            <ComposerFieldRow label={t`Time zone`}>
               <Select
                 dropdownId="calendar-event-composer-time-zone"
                 fullWidth
@@ -210,8 +210,8 @@ export const CalendarEventComposerFields = ({
                 options={AVAILABLE_TIMEZONE_OPTIONS}
                 onChange={composerState.setTimeZone}
               />
-            </ActivityComposerFieldRow>
-            <ActivityComposerFieldRow
+            </ComposerFieldRow>
+            <ComposerFieldRow
               label={t`Invitations`}
               onClick={() =>
                 composerState.setSendInvitations(!composerState.sendInvitations)
@@ -228,8 +228,8 @@ export const CalendarEventComposerFields = ({
               <StyledRowDescription>
                 {t`Email guests an invitation`}
               </StyledRowDescription>
-            </ActivityComposerFieldRow>
-            <ActivityComposerFieldRow
+            </ComposerFieldRow>
+            <ComposerFieldRow
               label={t`Video call`}
               onClick={() =>
                 composerState.setAddConferencing(!composerState.addConferencing)
@@ -246,8 +246,8 @@ export const CalendarEventComposerFields = ({
               <StyledRowDescription>
                 {t`Add a meeting link`}
               </StyledRowDescription>
-            </ActivityComposerFieldRow>
-            <ActivityComposerFieldRow label={t`Description`} hasDivider={false}>
+            </ComposerFieldRow>
+            <ComposerFieldRow label={t`Description`} hasDivider={false}>
               <TextArea
                 textAreaId="calendar-event-composer-description"
                 variant="transparent"
@@ -257,7 +257,7 @@ export const CalendarEventComposerFields = ({
                 placeholder={t`Add details for guests`}
                 onChange={composerState.setDescription}
               />
-            </ActivityComposerFieldRow>
+            </ComposerFieldRow>
           </ComposerHeader>
         </DragDropProvider>
       </DragDropItemDndContext.Provider>

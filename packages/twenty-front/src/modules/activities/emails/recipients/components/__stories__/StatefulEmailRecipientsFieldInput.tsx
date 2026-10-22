@@ -2,7 +2,7 @@ import { DragDropProvider } from '@dnd-kit/react';
 import { useState } from 'react';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { ActivityComposerFieldRow } from '@/activities/components/ActivityComposerFieldRow';
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
 import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
@@ -48,7 +48,7 @@ export const StatefulEmailRecipientsFieldInput = ({
       >
         {(['to', 'cc'] as const).map((fieldId) => (
           <div key={fieldId} role="group" aria-label={`${fieldId} recipients`}>
-            <ActivityComposerFieldRow
+            <ComposerFieldRow
               label={fieldId === 'to' ? 'To' : 'Cc'}
               hasDivider={false}
             >
@@ -70,7 +70,7 @@ export const StatefulEmailRecipientsFieldInput = ({
                 onSubmit={onSubmit}
                 excludedSuggestionKeys={excludedSuggestionKeys}
               />
-            </ActivityComposerFieldRow>
+            </ComposerFieldRow>
           </div>
         ))}
         <Button onClick={onSubmit}>Send</Button>

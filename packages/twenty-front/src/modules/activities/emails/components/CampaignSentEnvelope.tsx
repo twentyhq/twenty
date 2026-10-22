@@ -8,7 +8,7 @@ import {
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ActivityComposerFieldRow } from '@/activities/components/ActivityComposerFieldRow';
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { CampaignEnvelopeBox } from '@/activities/emails/components/CampaignEnvelopeBox';
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
@@ -86,14 +86,14 @@ export const CampaignSentEnvelope = ({
 
   return (
     <CampaignEnvelopeBox>
-      <ActivityComposerFieldRow label={t`From`}>
+      <ComposerFieldRow label={t`From`}>
         {isNonEmptyString(fromAddress) ? (
           <StyledValue>{fromAddress}</StyledValue>
         ) : (
           <StyledEmptyValue>{t`No sender`}</StyledEmptyValue>
         )}
-      </ActivityComposerFieldRow>
-      <ActivityComposerFieldRow label={t`To`}>
+      </ComposerFieldRow>
+      <ComposerFieldRow label={t`To`}>
         {isDefined(list) ? (
           <RecordChip
             record={list}
@@ -106,9 +106,9 @@ export const CampaignSentEnvelope = ({
             <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
           )
         )}
-      </ActivityComposerFieldRow>
+      </ComposerFieldRow>
       {hasUnsubscribeTopic && (
-        <ActivityComposerFieldRow label={t`Topic`}>
+        <ComposerFieldRow label={t`Topic`}>
           {isDefined(unsubscribeTopic) ? (
             <StyledValue>
               {unsubscribeTopic.name ?? t`Untitled topic`}
@@ -118,9 +118,9 @@ export const CampaignSentEnvelope = ({
               <StyledEmptyValue>{t`Unavailable`}</StyledEmptyValue>
             )
           )}
-        </ActivityComposerFieldRow>
+        </ComposerFieldRow>
       )}
-      <ActivityComposerFieldRow
+      <ComposerFieldRow
         label={t`Subject`}
         hasDivider={isNonEmptyString(scheduledSendTime)}
       >
@@ -129,11 +129,11 @@ export const CampaignSentEnvelope = ({
         ) : (
           <StyledEmptyValue>{t`No subject`}</StyledEmptyValue>
         )}
-      </ActivityComposerFieldRow>
+      </ComposerFieldRow>
       {isNonEmptyString(scheduledSendTime) && (
-        <ActivityComposerFieldRow label={t`Send at`} hasDivider={false}>
+        <ComposerFieldRow label={t`Send at`} hasDivider={false}>
           <StyledValue>{scheduledSendTime}</StyledValue>
-        </ActivityComposerFieldRow>
+        </ComposerFieldRow>
       )}
     </CampaignEnvelopeBox>
   );

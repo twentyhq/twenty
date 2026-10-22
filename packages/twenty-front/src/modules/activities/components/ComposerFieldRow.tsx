@@ -7,7 +7,7 @@ const NESTED_CONTROL_SELECTOR = doNotTranslate(
   'input, textarea, button, a[href], [role="button"]',
 );
 
-type ActivityComposerFieldRowProps = {
+type ComposerFieldRowProps = {
   label: string;
   children: ReactNode;
   trailing?: ReactNode;
@@ -15,13 +15,13 @@ type ActivityComposerFieldRowProps = {
   onClick?: MouseEventHandler<HTMLDivElement>;
 };
 
-export const ActivityComposerFieldRow = ({
+export const ComposerFieldRow = ({
   label,
   children,
   trailing,
   hasDivider,
   onClick,
-}: ActivityComposerFieldRowProps) => {
+}: ComposerFieldRowProps) => {
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!(event.target instanceof Element)) {
       return;

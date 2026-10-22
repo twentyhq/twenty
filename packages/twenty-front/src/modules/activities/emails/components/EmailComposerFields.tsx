@@ -16,7 +16,7 @@ import { LightButton } from 'twenty-ui/components/input';
 import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ActivityComposerFieldRow } from '@/activities/components/ActivityComposerFieldRow';
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
@@ -183,7 +183,7 @@ export const EmailComposerFields = ({
         >
           <ComposerHeader>
             {hasMultipleSenders && (
-              <ActivityComposerFieldRow label={t`From`}>
+              <ComposerFieldRow label={t`From`}>
                 <Select
                   dropdownId="email-composer-from-account"
                   fullWidth
@@ -192,9 +192,9 @@ export const EmailComposerFields = ({
                   options={senderOptions}
                   onChange={handleSenderChange}
                 />
-              </ActivityComposerFieldRow>
+              </ComposerFieldRow>
             )}
-            <ActivityComposerFieldRow
+            <ComposerFieldRow
               label={t`To`}
               trailing={
                 !areCcBccFieldsVisible && (
@@ -218,10 +218,10 @@ export const EmailComposerFields = ({
                 excludedSuggestionKeys={allRecipientKeys}
                 contextRecord={contextRecord}
               />
-            </ActivityComposerFieldRow>
+            </ComposerFieldRow>
             {areCcBccFieldsVisible && (
               <>
-                <ActivityComposerFieldRow label={t`Cc`}>
+                <ComposerFieldRow label={t`Cc`}>
                   <EmailRecipientsFieldInput
                     fieldId="cc"
                     inputRef={ccInputRef}
@@ -233,8 +233,8 @@ export const EmailComposerFields = ({
                     excludedSuggestionKeys={allRecipientKeys}
                     contextRecord={contextRecord}
                   />
-                </ActivityComposerFieldRow>
-                <ActivityComposerFieldRow label={t`Bcc`}>
+                </ComposerFieldRow>
+                <ComposerFieldRow label={t`Bcc`}>
                   <EmailRecipientsFieldInput
                     fieldId="bcc"
                     draggedSourceIndices={getDraggedIndicesForField('bcc')}
@@ -245,10 +245,10 @@ export const EmailComposerFields = ({
                     excludedSuggestionKeys={allRecipientKeys}
                     contextRecord={contextRecord}
                   />
-                </ActivityComposerFieldRow>
+                </ComposerFieldRow>
               </>
             )}
-            <ActivityComposerFieldRow label={t`Subject`} hasDivider={false}>
+            <ComposerFieldRow label={t`Subject`} hasDivider={false}>
               <Input
                 variant="plain"
                 type="text"
@@ -258,7 +258,7 @@ export const EmailComposerFields = ({
                   composerState.setSubject(event.target.value)
                 }
               />
-            </ActivityComposerFieldRow>
+            </ComposerFieldRow>
           </ComposerHeader>
         </DragDropProvider>
       </DragDropItemDndContext.Provider>
