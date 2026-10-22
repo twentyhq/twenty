@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { Section } from 'twenty-ui/components/layout';
 
@@ -8,11 +9,13 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 type ApplicationMonitoringFallbackProps = {
   isClickHouseConfigured: boolean;
   hasError: boolean;
+  actions?: ReactNode;
 };
 
 export const ApplicationMonitoringFallback = ({
   isClickHouseConfigured,
   hasError,
+  actions,
 }: ApplicationMonitoringFallbackProps) => {
   const { t } = useLingui();
   const clickHouseUrlVariableName = doNotTranslate('CLICKHOUSE_URL');
@@ -29,7 +32,7 @@ export const ApplicationMonitoringFallback = ({
   if (hasError) {
     return (
       <Section.Root>
-        <Section.Header title={t`Health`} />
+        <Section.Header title={t`Health`} actions={actions} />
         <SettingsEmptyPlaceholder>{t`Couldn't load monitoring`}</SettingsEmptyPlaceholder>
       </Section.Root>
     );
