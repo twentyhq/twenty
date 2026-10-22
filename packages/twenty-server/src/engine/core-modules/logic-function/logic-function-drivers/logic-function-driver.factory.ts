@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-
 import {
   type LogicFunctionDriver,
   LogicFunctionDriverType,
@@ -11,7 +9,7 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { DisabledDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/disabled.driver';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
-import { getLambdaResourceNamespace } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-resource-namespace.util';
+import { getLambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-connection-options.util';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
@@ -59,47 +57,11 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
         });
 
       case LogicFunctionDriverType.LAMBDA: {
-        const region = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_REGION',
-        );
-        const accessKeyId = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID',
-        );
-        const secretAccessKey = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY',
-        );
-        const lambdaRole = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_ROLE',
-        );
-        const subhostingRole = this.twentyConfigService.get(
-          'LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE',
-        );
-        const s3BucketName = this.twentyConfigService.get('STORAGE_S3_NAME');
-        const layerBucket =
-          this.twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET') ??
-          s3BucketName ??
-          'twenty-lambda-layer';
-        const layerBucketRegion =
-          this.twentyConfigService.get(
-            'LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION',
-          ) ?? region;
-        const resourceNamespace = getLambdaResourceNamespace({
-          lambdaRoleArn: lambdaRole,
-        });
-
         return new LambdaDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
           cacheLockService: this.cacheLockService,
           workspaceCacheService: this.workspaceCacheService,
-          credentials: accessKeyId
-            ? { accessKeyId, secretAccessKey }
-            : fromNodeProviderChain({ clientConfig: { region } }),
-          region,
-          lambdaRole,
-          subhostingRole,
-          layerBucket,
-          layerBucketRegion,
-          resourceNamespace,
+          ...getLambdaConnectionOptions(this.twentyConfigService),
           sdkClientArchiveService: this.sdkClientArchiveService,
         });
       }

@@ -5,10 +5,22 @@ import { build, transform } from 'esbuild';
 import { PageLayoutType } from 'twenty-shared/types';
 
 import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
-import { buildFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
-import { FrontComponentException } from 'src/engine/metadata-modules/front-component/front-component.exception';
+import { buildFrontComponent as compileFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
+import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 
 jest.useRealTimers();
+let sharedDependencies: Awaited<
+  ReturnType<typeof buildFrontComponentSharedDependencies>
+>;
+beforeAll(async () => {
+  sharedDependencies = await buildFrontComponentSharedDependencies();
+});
+const buildFrontComponent = async (
+  input: Parameters<typeof compileFrontComponent>[0],
+) => ({
+  ...(await compileFrontComponent(input, sharedDependencies)),
+  sharedDependencies,
+});
 
 const SOURCE = `import { useState } from 'react';
 type Company = { id: string; name: string };
@@ -88,6 +100,13 @@ export function Component() {
           '\\n',
       ),
     );
+    expect(
+      sharedDependencies.exportNamesBySpecifier.get('react-dom')?.namedExports,
+    ).toContain('createPortal');
+    expect(
+      sharedDependencies.exportNamesBySpecifier.get('react-dom/client')
+        ?.namedExports,
+    ).toContain('createRoot');
     expect(compiledSource).not.toContain('--t-font-color-primary:');
     expect(sharedDependencies.source).toContain('--t-font-color-primary:');
     expect(
@@ -173,7 +192,7 @@ export function Component() {
     'rejects source outside the named Component contract: %s',
     async (source) => {
       await expect(buildFrontComponent({ ...INPUT, source })).rejects.toThrow(
-        FrontComponentException,
+        FrontComponentBuildException,
       );
     },
   );

@@ -18,6 +18,7 @@ export const buildFrontComponentSharedDependencies =
   async (): Promise<FrontComponentSharedDependencies> => {
     const dependencies = [
       'react',
+      'react-dom',
       'react-dom/client',
       'react/jsx-runtime',
       ...FRONT_COMPONENT_UI_IMPORTS,
