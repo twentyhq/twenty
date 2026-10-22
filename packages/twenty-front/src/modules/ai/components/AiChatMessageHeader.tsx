@@ -45,11 +45,9 @@ export const AiChatMessageHeader = ({
       >
         {name}
       </Text>
-      <StyledTime>
-        <Text render={<span />} size="sm" color="light">
-          {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
-        </Text>
-      </StyledTime>
+      <Text render={<StyledTime />} size="sm" color="light">
+        {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
+      </Text>
     </StyledHeader>
   );
 };
