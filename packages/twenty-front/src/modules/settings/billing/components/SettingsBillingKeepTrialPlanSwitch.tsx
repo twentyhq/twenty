@@ -1,6 +1,6 @@
+import { useApplyBillingSubscriptionChange } from '@/settings/billing/hooks/useApplyBillingSubscriptionChange';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
-import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { styled } from '@linaria/react';
@@ -23,9 +23,6 @@ type SettingsBillingKeepTrialPlanSwitchProps = {
   downgradePlanKey: BillingPlanKey;
   trialEndDate: string | undefined;
   disabled: boolean;
-  onBillingSubscriptionChangeRequested: (
-    change: BillingSubscriptionChange,
-  ) => void;
 };
 
 export const SettingsBillingKeepTrialPlanSwitch = ({
@@ -33,11 +30,14 @@ export const SettingsBillingKeepTrialPlanSwitch = ({
   downgradePlanKey,
   trialEndDate,
   disabled,
-  onBillingSubscriptionChangeRequested,
 }: SettingsBillingKeepTrialPlanSwitchProps) => {
   const { t } = useLingui();
   const { getBillingPlanLabel } = useBillingWording();
   const { nextPlan } = useNextPlan();
+  const {
+    applyBillingSubscriptionChange,
+    isApplyingBillingSubscriptionChange,
+  } = useApplyBillingSubscriptionChange();
   const hasPermissionToManageBilling = useHasPermissionFlag(
     PermissionFlagType.BILLING,
   );
@@ -46,7 +46,7 @@ export const SettingsBillingKeepTrialPlanSwitch = ({
   const downgradePlanLabel = getBillingPlanLabel(downgradePlanKey);
 
   const handleChange = (keepTrialPlan: boolean) =>
-    onBillingSubscriptionChangeRequested(
+    applyBillingSubscriptionChange(
       keepTrialPlan
         ? { type: 'CANCEL_PLAN_SWITCH' }
         : { type: 'SWITCH_PLAN', targetPlanKey: downgradePlanKey },
@@ -64,7 +64,11 @@ export const SettingsBillingKeepTrialPlanSwitch = ({
               : t`If off, you move to the ${downgradePlanLabel} plan when your trial ends`
           }
           checked={nextPlan?.planKey !== downgradePlanKey}
-          disabled={disabled || !hasPermissionToManageBilling}
+          disabled={
+            disabled ||
+            isApplyingBillingSubscriptionChange ||
+            !hasPermissionToManageBilling
+          }
           onChange={handleChange}
         />
       </Card.Root>

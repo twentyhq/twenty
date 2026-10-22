@@ -61,19 +61,7 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     ? formatDate(currentBillingSubscription.currentPeriodEnd, 'MMM dd')
     : undefined;
 
-  const getKeepPlanMessage = () => {
-    if (isDefined(trialEndDate)) {
-      return hasPermissionToManageBilling
-        ? t`Trial ends ${trialEndDate}, please add card details to keep the ${planName}`
-        : t`Trial ends ${trialEndDate}. Please contact your admin to add card details to keep the ${planName}`;
-    }
-
-    return hasPermissionToManageBilling
-      ? t`Trial ends soon, please add card details to keep the ${planName}`
-      : t`Trial ends soon. Please contact your admin to add card details to keep the ${planName}`;
-  };
-
-  const getContinueOnPlanMessage = () => {
+  const getMessage = () => {
     if (isDefined(trialEndDate)) {
       return hasPermissionToManageBilling
         ? t`Trial ends ${trialEndDate}, please add card details to continue on the ${planName}`
@@ -98,9 +86,7 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
           )
         }
       >
-        {isPlanSwitchScheduled
-          ? getContinueOnPlanMessage()
-          : getKeepPlanMessage()}
+        {getMessage()}
       </InlineBanner>
     </>
   );

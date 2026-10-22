@@ -476,7 +476,6 @@ export const SettingsBillingSubscriptionInfo = ({
           downgradePlanKey={trialEndPlanKey}
           trialEndDate={totalRenewDate}
           disabled={isSubscriptionActionDisabled}
-          onBillingSubscriptionChangeRequested={applyBillingSubscriptionChange}
         />
       )}
       <SettingsBillingSubscriptionInfoModals
