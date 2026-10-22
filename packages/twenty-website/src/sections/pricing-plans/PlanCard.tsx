@@ -1,6 +1,5 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -11,9 +10,6 @@ import { useAnimatedNumber } from '@/platform/motion';
 import {
   color,
   EASING,
-  FONT_WEIGHT,
-  fontFamily,
-  fontSize,
   mediaUp,
   radius,
   REDUCED_MOTION,
@@ -33,8 +29,6 @@ import { getPlanFeatureKey } from './get-plan-feature-key';
 import { PlanFeatureList } from './PlanFeatureList';
 import { type PlansHostingMode } from '@/pricing-state';
 import { useFeatureTransition } from './use-feature-transition';
-
-const RECOMMENDED_LABEL = msg`Recommended`;
 
 const CardShell = styled.div<{ $rowTemplate: string }>`
   background-color: ${color('white')};
@@ -90,36 +84,11 @@ const CardHeaderInfo = styled.div`
   }
 `;
 
-const TitleRow = styled.div`
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${spacing(1)} ${spacing(3)};
-  min-width: 0;
-`;
-
 // Guards long localized strings where the two cards share the row on desktop.
 const titleClassName = css`
-  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const RecommendedBadge = styled.span`
-  align-items: center;
-  border: 1px solid ${color('blue')};
-  border-radius: ${radius(2)};
-  box-sizing: border-box;
-  color: ${color('blue')};
-  display: inline-flex;
-  flex-shrink: 0;
-  font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(3)};
-  font-weight: ${FONT_WEIGHT.medium};
-  height: ${spacing(6)};
-  padding: 0 ${spacing(2)};
-  text-transform: uppercase;
 `;
 
 const taglineClassName = css`
@@ -229,20 +198,15 @@ export function PlanCard({
     >
       <CardHeader>
         <CardHeaderInfo>
-          <TitleRow>
-            <Heading
-              as="h3"
-              className={titleClassName}
-              family="sans"
-              size="xs"
-              weight="medium"
-            >
-              {i18n._(tier.heading[hosting])}
-            </Heading>
-            {highlighted && (
-              <RecommendedBadge>{i18n._(RECOMMENDED_LABEL)}</RecommendedBadge>
-            )}
-          </TitleRow>
+          <Heading
+            as="h3"
+            className={titleClassName}
+            family="sans"
+            size="xs"
+            weight="medium"
+          >
+            {i18n._(tier.heading[hosting])}
+          </Heading>
           <Body as="p" className={taglineClassName} size="sm" weight="medium">
             {i18n._(tier.tagline[hosting])}
           </Body>
