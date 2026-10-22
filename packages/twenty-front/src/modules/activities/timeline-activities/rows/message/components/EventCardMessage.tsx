@@ -2,14 +2,13 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldValueRestricted } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows/message/components/EventCardMessageForbidden';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { getRestrictedFieldNamesFromRecord } from '@/object-record/record-store/utils/getRestrictedFieldNamesFromRecord';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 
 const StyledEventCardMessageContainer = styled.div`
@@ -113,7 +112,7 @@ export const EventCardMessage = ({
     return <EventCardMessageForbidden notSharedByFullName={authorFullName} />;
   }
 
-  if (getRestrictedFieldNamesFromRecord({ record: message }).length > 0) {
+  if ([message.subject, message.text].some(isFieldValueRestricted)) {
     return <EventCardMessageForbidden notSharedByFullName={authorFullName} />;
   }
 

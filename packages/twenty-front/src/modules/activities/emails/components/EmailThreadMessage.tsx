@@ -7,8 +7,8 @@ import { EmailThreadMessageReceivers } from '@/activities/emails/components/Emai
 import { EmailThreadMessageSender } from '@/activities/emails/components/EmailThreadMessageSender';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { getRestrictedFieldNamesFromRecord } from '@/object-record/record-store/utils/getRestrictedFieldNamesFromRecord';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { isFieldValueRestricted } from 'twenty-shared/utils';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 type EmailThreadMessageProps = {
@@ -32,9 +32,7 @@ export const EmailThreadMessage = ({
 
   const { isDraft } = message;
 
-  const isRestricted = getRestrictedFieldNamesFromRecord({
-    record: message,
-  }).includes('text');
+  const isRestricted = isFieldValueRestricted(message.text);
 
   const handleRowClick = () => {
     if (isRestricted) {

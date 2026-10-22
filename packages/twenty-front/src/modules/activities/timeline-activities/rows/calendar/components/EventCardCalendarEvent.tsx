@@ -3,14 +3,17 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldValueRestricted,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CalendarEventNotSharedContent } from '@/activities/calendar/components/CalendarEventNotSharedContent';
 import { CalendarEventParticipantsAvatarGroup } from '@/activities/calendar/components/CalendarEventParticipantsAvatarGroup';
 import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { getRestrictedFieldNamesFromRecord } from '@/object-record/record-store/utils/getRestrictedFieldNamesFromRecord';
 import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { UserContext } from '@/users/contexts/UserContext';
 import {
@@ -149,11 +152,7 @@ export const EventCardCalendarEvent = ({
     return <CalendarEventNotSharedContent />;
   }
 
-  if (
-    getRestrictedFieldNamesFromRecord({ record: calendarEvent }).includes(
-      'title',
-    )
-  ) {
+  if (isFieldValueRestricted(calendarEvent.title)) {
     return <CalendarEventNotSharedContent />;
   }
 
