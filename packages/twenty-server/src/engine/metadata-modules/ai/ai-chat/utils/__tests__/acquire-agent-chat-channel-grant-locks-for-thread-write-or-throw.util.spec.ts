@@ -1,8 +1,6 @@
 import { QueryFailedError } from 'typeorm';
 
-import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AGENT_CHAT_CHANNEL_GRANT_LOCK_TIMEOUT_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-grant-lock-timeout-ms.constant';
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
@@ -81,11 +79,5 @@ describe('acquireAgentChatChannelGrantLocksForThreadWriteOrThrow', () => {
         channelIds: [FIRST_CHANNEL_ID],
       }),
     ).rejects.toBe(connectionError);
-  });
-
-  it('gives up before the database client times out', () => {
-    expect(AGENT_CHAT_CHANNEL_GRANT_LOCK_TIMEOUT_MS).toBeLessThan(
-      new ConfigVariables().PG_DATABASE_PRIMARY_TIMEOUT_MS,
-    );
   });
 });

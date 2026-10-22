@@ -974,20 +974,32 @@ describe('Chat channels through the authenticated API', () => {
     expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
   });
 
-  it('refuses a chat filed into a channel whose grants stay locked too long', async () => {
+  it('refuses chats filed into a channel whose grants stay locked too long', async () => {
     const channelId = await createChannel();
+    const threadId = await createThreadInChannel(null);
 
     await holdChannelGrantLock({ channelId, mode: 'exclusive' });
 
-    const response = await makeMetadataApiRequest({
-      query: CREATE_THREAD,
-      variables: { channelId },
-    });
+    const [createResponse, moveResponse] = await Promise.all([
+      makeMetadataApiRequest({
+        query: CREATE_THREAD,
+        variables: { channelId },
+      }),
+      makeMetadataApiRequest({
+        query: MOVE_THREAD,
+        variables: { threadId, channelId },
+      }),
+    ]);
 
-    expect(response.body.errors[0].extensions).toMatchObject({
+    expect(createResponse.body.errors[0].extensions).toMatchObject({
       code: 'CONFLICT',
       subCode: AiExceptionCode.CHAT_CHANNEL_BUSY,
     });
+    expect(moveResponse.body.errors[0].extensions).toMatchObject({
+      code: 'CONFLICT',
+      subCode: AiExceptionCode.CHAT_CHANNEL_BUSY,
+    });
+    expect((await readChannelState(threadId)).channelId).toBeNull();
     expect(await countThreadsInChannel(channelId)).toBe(0);
   });
 
