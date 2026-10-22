@@ -56,12 +56,17 @@ const StyledMessageText = styled.div<{
   isUser?: boolean;
   isOtherMember?: boolean;
 }>`
-  background: ${({ isUser, isOtherMember }) =>
-    isOtherMember
-      ? themeCssVariables.background.secondary
-      : isUser
-        ? themeCssVariables.background.tertiary
-        : 'transparent'};
+  background: ${({ isUser, isOtherMember }) => {
+    if (isOtherMember) {
+      return themeCssVariables.background.secondary;
+    }
+
+    if (isUser) {
+      return themeCssVariables.background.tertiary;
+    }
+
+    return 'transparent';
+  }};
   border: ${({ isOtherMember }) =>
     isOtherMember
       ? `1px solid ${themeCssVariables.border.color.medium}`

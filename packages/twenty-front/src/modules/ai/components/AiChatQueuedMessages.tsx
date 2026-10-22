@@ -56,26 +56,31 @@ export const AiChatQueuedMessages = () => {
       currentWorkspaceMemberId: currentWorkspaceMember?.id,
       isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
     });
+    const queuedMessage = {
+      id: message.id,
+      text: message.parts.find((part) => part.type === 'text')?.text ?? '',
+      isRemovable:
+        !isReadOnly && (!isAiChatInboxEnabled || isCurrentWorkspaceMember),
+    };
+
+    if (!hasOtherSenders || !isDefined(senderId)) {
+      return queuedMessage;
+    }
+
     const sender = currentWorkspaceMembers.find(
       (member) => member.id === senderId,
     );
 
     return {
-      id: message.id,
-      text: message.parts.find((part) => part.type === 'text')?.text ?? '',
-      isRemovable:
-        !isReadOnly && (!isAiChatInboxEnabled || isCurrentWorkspaceMember),
-      sender:
-        hasOtherSenders && isDefined(senderId)
-          ? {
-              id: senderId,
-              name: getAgentChatSenderLabel({
-                sender,
-                isCurrentWorkspaceMember,
-              }),
-              avatarUrl: getAbsoluteImageUrl(sender?.avatarUrl),
-            }
-          : undefined,
+      ...queuedMessage,
+      sender: {
+        id: senderId,
+        name: getAgentChatSenderLabel({
+          sender,
+          isCurrentWorkspaceMember,
+        }),
+        avatarUrl: getAbsoluteImageUrl(sender?.avatarUrl),
+      },
     };
   });
 
