@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconMessage } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
@@ -10,15 +11,20 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelAiChatPickerSkeleton } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSkeleton';
 import { SidePanelAiChatPickerRequestCleanupEffect } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRequestCleanupEffect';
+import { AI_CHAT_PICKER_RECORD_GQL_FIELDS } from '@/side-panel/pages/search-ai-chats/constants/AiChatPickerRecordGqlFields';
+import { useAiChatThreadSearchFilter } from '@/side-panel/pages/search-ai-chats/hooks/useAiChatThreadSearchFilter';
 import { useOpenAiChatFromPicker } from '@/side-panel/pages/search-ai-chats/hooks/useOpenAiChatFromPicker';
-import { useSearchAiChatThreads } from '@/side-panel/pages/search-ai-chats/hooks/useSearchAiChatThreads';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useWorkspaceSurfaceHeaderPortal } from '@/ui/layout/hooks/useWorkspaceSurfaceHeaderPortal';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const CHAT_PICKER_PAGINATION_SKELETON_ROW_COUNT = 3;
 
@@ -39,15 +45,30 @@ export const SidePanelAiChatPicker = () => {
   const { t } = useLingui();
   const { actions: headerActionsPortal } = useWorkspaceSurfaceHeaderPortal();
   const [pendingOpenRequests] = useState(() => new Set<AbortController>());
+  const { filter, isSearchPending } = useAiChatThreadSearchFilter();
   const {
-    threads,
-    isLoading,
-    isFetchingMore,
-    hasNextPage,
-    error,
+    records,
+    loading,
+    hasNextPage: hasQueryNextPage,
+    error: queryError,
     fetchMoreRecords,
     refetch,
-  } = useSearchAiChatThreads();
+    queryIdentifier,
+  } = useFindManyRecords<AgentChatThreadRecord>({
+    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+    recordGqlFields: AI_CHAT_PICKER_RECORD_GQL_FIELDS,
+    filter,
+    orderBy: [{ lastActivityAt: 'DescNullsLast' }],
+    fetchPolicy: 'network-only',
+  });
+  const isFetchingMoreRecords = useAtomFamilyStateValue(
+    isFetchingMoreRecordsFamilyState,
+    queryIdentifier,
+  );
+  const isLoading = isSearchPending || (loading && !isFetchingMoreRecords);
+  const threads = isLoading ? [] : records;
+  const hasNextPage = !isLoading && hasQueryNextPage;
+  const error = isLoading ? undefined : queryError;
   const { openThread, openingThreadId, hasOpenError } = useOpenAiChatFromPicker(
     { pendingOpenRequests },
   );
@@ -123,13 +144,13 @@ export const SidePanelAiChatPicker = () => {
       )}
       {canShowThreads && hasNextPage && (
         <StyledFooter>
-          {isFetchingMore && (
+          {isFetchingMoreRecords && (
             <SidePanelAiChatPickerSkeleton
               label={t`Loading more chats...`}
               rowCount={CHAT_PICKER_PAGINATION_SKELETON_ROW_COUNT}
             />
           )}
-          {!isFetchingMore && (
+          {!isFetchingMoreRecords && (
             <Button
               fullWidth
               variant="ghost"
