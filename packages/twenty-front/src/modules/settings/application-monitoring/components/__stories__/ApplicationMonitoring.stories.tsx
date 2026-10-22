@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -145,6 +145,7 @@ const meta: Meta<typeof ApplicationMonitoring> = {
     monitoring: MONITORING,
     selectedPeriod: '7d',
     onPeriodChange: () => {},
+    onRefresh: () => {},
   },
   decorators: [
     (Story) => (
@@ -195,6 +196,21 @@ export const BillingDisabled: Story = {
     expect(
       canvas.queryByRole('heading', { name: 'Credits used' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const Refresh: Story = {
+  args: {
+    onRefresh: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Refresh' }),
+    );
+
+    await expect(args.onRefresh).toHaveBeenCalledTimes(1);
   },
 };
 
