@@ -277,9 +277,11 @@ export class LocalChildProcessRunnerService {
         }
 
         if ('type' in message) {
-          if (message.type === 'fetch' && isDefined(fetchRelayHandler)) {
-            void relayFetchRequest({ message, handler: fetchRelayHandler });
+          if (message.type !== 'fetch' || !isDefined(fetchRelayHandler)) {
+            return;
           }
+
+          void relayFetchRequest({ message, handler: fetchRelayHandler });
 
           return;
         }
