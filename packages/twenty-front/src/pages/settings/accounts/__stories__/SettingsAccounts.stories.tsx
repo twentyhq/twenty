@@ -711,8 +711,8 @@ export const MailboxOnlyGroupDisconnectsAndDeletesItsMailbox: Story = {
         [MICROSOFT_ACCOUNT_ID],
       ]);
       expect(canvas.queryByText('tim@outlook.com')).not.toBeInTheDocument();
+      expect(canvas.getByText('tim@apple.dev')).toBeVisible();
     });
-    expect(canvas.getByText('tim@apple.dev')).toBeVisible();
   },
 };
 
