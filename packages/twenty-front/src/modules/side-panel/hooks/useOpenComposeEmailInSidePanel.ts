@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconArrowBackUp, IconMail } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
@@ -12,16 +14,17 @@ import { composeEmailContextRecordComponentState } from '@/side-panel/pages/comp
 import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultInReplyToComponentState';
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
+import { composeEmailInitialFromHandleComponentState } from '@/side-panel/pages/compose-email/states/composeEmailInitialFromHandleComponentState';
 import { composeEmailIsReplyComponentState } from '@/side-panel/pages/compose-email/states/composeEmailIsReplyComponentState';
 import { t } from '@lingui/core/macro';
 
 type OpenComposeEmailParams = {
   threadId?: string;
   connectedAccountId: string;
+  initialFromHandle?: string;
   defaultTo?: string;
   defaultSubject?: string;
   defaultInReplyTo?: string;
-  isReply?: boolean;
   contextRecord?: EmailComposerContextRecord;
   pageTitle?: string;
   pageIcon?: IconComponent;
@@ -35,13 +38,21 @@ export const useOpenComposeEmailInSidePanel = () => {
     (params: OpenComposeEmailParams) => {
       const pageId = v4();
 
-      const isReply = params.isReply ?? false;
+      const isReply =
+        isDefined(params.threadId) || isNonEmptyString(params.defaultInReplyTo);
 
       store.set(
         composeEmailConnectedAccountIdComponentState.atomFamily({
           instanceId: pageId,
         }),
         params.connectedAccountId,
+      );
+
+      store.set(
+        composeEmailInitialFromHandleComponentState.atomFamily({
+          instanceId: pageId,
+        }),
+        params.initialFromHandle ?? null,
       );
 
       store.set(

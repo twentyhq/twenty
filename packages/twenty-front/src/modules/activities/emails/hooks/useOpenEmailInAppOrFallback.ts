@@ -1,25 +1,22 @@
-import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
-import { findFirstConnectedAccountAbleToSendEmail } from '@/accounts/utils/findFirstConnectedAccountAbleToSendEmail';
+import { useResolveNewEmailSender } from '@/activities/emails/hooks/useResolveNewEmailSender';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
 import { isDefined } from 'twenty-shared/utils';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export const useOpenEmailInAppOrFallback = () => {
-  const store = useStore();
+  const { resolveNewEmailSender } = useResolveNewEmailSender();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
 
   const openEmail = useCallback(
     (email: string) => {
-      const connectedAccount = findFirstConnectedAccountAbleToSendEmail(
-        store.get(myConnectedAccountsState.atom) ?? [],
-      );
+      const sender = resolveNewEmailSender();
 
-      if (isDefined(connectedAccount)) {
+      if (isDefined(sender)) {
         openComposeEmailInSidePanel({
-          connectedAccountId: connectedAccount.id,
+          connectedAccountId: sender.connectedAccountId,
+          initialFromHandle: sender.fromHandle,
           defaultTo: email,
         });
 
@@ -28,7 +25,7 @@ export const useOpenEmailInAppOrFallback = () => {
 
       openUrlInNewTab(`mailto:${email}`);
     },
-    [store, openComposeEmailInSidePanel],
+    [resolveNewEmailSender, openComposeEmailInSidePanel],
   );
 
   return { openEmail };

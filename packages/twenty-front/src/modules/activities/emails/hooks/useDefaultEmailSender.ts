@@ -9,12 +9,12 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type UseDefaultEmailSenderArgs = {
-  restrictToConnectedAccountId?: string;
+  restrictToConnectedAccountId: string;
 };
 
 export const useDefaultEmailSender = ({
   restrictToConnectedAccountId,
-}: UseDefaultEmailSenderArgs = {}): DefaultEmailSender | null => {
+}: UseDefaultEmailSenderArgs): DefaultEmailSender | null => {
   const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);

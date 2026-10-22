@@ -1,7 +1,9 @@
-import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
+import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
 import { useResolveDefaultEmailRecipient } from '@/activities/emails/hooks/useResolveDefaultEmailRecipient';
+import { useResolveNewEmailSender } from '@/activities/emails/hooks/useResolveNewEmailSender';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -11,8 +13,8 @@ export const useComposeEmailForTargetRecord = (
 ) => {
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const navigateSettings = useNavigateSettings();
-  const { connectedAccountId, loading: accountLoading } =
-    useFirstConnectedAccount();
+  const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
+  const { resolveNewEmailSender } = useResolveNewEmailSender();
 
   const { defaultTo, loading: recipientLoading } =
     useResolveDefaultEmailRecipient({
@@ -21,14 +23,17 @@ export const useComposeEmailForTargetRecord = (
     });
 
   const openComposer = () => {
-    if (!isDefined(connectedAccountId)) {
+    const sender = resolveNewEmailSender();
+
+    if (!isDefined(sender)) {
       navigateSettings(SettingsPath.NewAccount);
 
       return;
     }
 
     openComposeEmailInSidePanel({
-      connectedAccountId,
+      connectedAccountId: sender.connectedAccountId,
+      initialFromHandle: sender.fromHandle,
       defaultTo,
       contextRecord: {
         objectNameSingular: targetRecord.targetObjectNameSingular,
@@ -39,6 +44,6 @@ export const useComposeEmailForTargetRecord = (
 
   return {
     openComposer,
-    loading: accountLoading || recipientLoading,
+    loading: !isDefined(myConnectedAccounts) || recipientLoading,
   };
 };

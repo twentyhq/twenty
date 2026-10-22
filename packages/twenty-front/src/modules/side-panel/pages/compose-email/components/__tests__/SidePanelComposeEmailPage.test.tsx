@@ -3,7 +3,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { composeEmailConnectedAccountIdComponentState } from '@/side-panel/pages/compose-email/states/composeEmailConnectedAccountIdComponentState';
-import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultInReplyToComponentState';
+import { composeEmailInitialFromHandleComponentState } from '@/side-panel/pages/compose-email/states/composeEmailInitialFromHandleComponentState';
 import { composeEmailIsReplyComponentState } from '@/side-panel/pages/compose-email/states/composeEmailIsReplyComponentState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -66,17 +66,17 @@ const accountDomain = {
 };
 
 const renderPage = ({
-  inReplyTo = null,
   isReply = false,
   connectedAccountId = 'thread-account',
+  initialFromHandle = null,
 }: {
-  inReplyTo?: string | null;
   isReply?: boolean;
   connectedAccountId?: string | null;
+  initialFromHandle?: string | null;
 } = {}) => {
   mockStateValues = new Map<unknown, unknown>([
     [composeEmailConnectedAccountIdComponentState, connectedAccountId],
-    [composeEmailDefaultInReplyToComponentState, inReplyTo],
+    [composeEmailInitialFromHandleComponentState, initialFromHandle],
     [composeEmailIsReplyComponentState, isReply],
   ]);
 
@@ -108,8 +108,11 @@ describe('SidePanelComposeEmailPage', () => {
     mockUseEmailComposerState.mockReset();
   });
 
-  it('starts a new email on the workspace domain account', () => {
-    renderPage();
+  it('starts a new email on the requested sender', () => {
+    renderPage({
+      connectedAccountId: 'domain-account',
+      initialFromHandle: 'ops@example.com',
+    });
 
     expect(mockUseEmailComposerState).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -119,8 +122,8 @@ describe('SidePanelComposeEmailPage', () => {
     );
   });
 
-  it('keeps the thread account for a reply even when another account matches the domain', () => {
-    renderPage({ inReplyTo: '<message-id@mail>', isReply: true });
+  it('keeps the account requested for a new email', () => {
+    renderPage();
 
     expect(mockUseEmailComposerState).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -130,8 +133,8 @@ describe('SidePanelComposeEmailPage', () => {
     );
   });
 
-  it('keeps the thread account for a reply without a message id', () => {
-    renderPage({ inReplyTo: '', isReply: true });
+  it('keeps the thread account for a reply even when another account matches the domain', () => {
+    renderPage({ isReply: true });
 
     expect(mockUseEmailComposerState).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -142,7 +145,7 @@ describe('SidePanelComposeEmailPage', () => {
   });
 
   it('does not pick another account for a reply that has no account', () => {
-    renderPage({ inReplyTo: '', isReply: true, connectedAccountId: null });
+    renderPage({ isReply: true, connectedAccountId: null });
 
     expect(mockUseEmailComposerState).toHaveBeenCalledWith(
       expect.objectContaining({

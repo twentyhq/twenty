@@ -349,9 +349,6 @@ export const useFrontComponentExecutionContext = ({
           defaultTo: params.defaultTo,
           defaultSubject: params.defaultSubject,
           defaultInReplyTo: params.defaultInReplyTo,
-          isReply:
-            isDefined(params.threadId) ||
-            isNonEmptyString(params.defaultInReplyTo),
           pageTitle: params.pageTitle,
           pageIcon: isDefined(params.pageIcon)
             ? getIcon(params.pageIcon)

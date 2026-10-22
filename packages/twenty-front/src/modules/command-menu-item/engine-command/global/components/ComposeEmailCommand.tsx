@@ -1,18 +1,20 @@
-import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
+import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
 import { useResolveDefaultEmailRecipient } from '@/activities/emails/hooks/useResolveDefaultEmailRecipient';
+import { useResolveNewEmailSender } from '@/activities/emails/hooks/useResolveNewEmailSender';
 import { getPrimaryEmailFromRecord } from '@/activities/emails/utils/getPrimaryEmailFromRecord';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const ComposeEmailCommand = () => {
-  const { connectedAccountId, loading: accountLoading } =
-    useFirstConnectedAccount();
+  const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
+  const { resolveNewEmailSender } = useResolveNewEmailSender();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const navigateSettings = useNavigateSettings();
 
@@ -57,14 +59,17 @@ export const ComposeEmailCommand = () => {
     : singleDefaultTo;
 
   const handleExecute = () => {
-    if (!isDefined(connectedAccountId)) {
+    const sender = resolveNewEmailSender();
+
+    if (!isDefined(sender)) {
       navigateSettings(SettingsPath.NewAccount);
 
       return;
     }
 
     openComposeEmailInSidePanel({
-      connectedAccountId,
+      connectedAccountId: sender.connectedAccountId,
+      initialFromHandle: sender.fromHandle,
       defaultTo,
       contextRecord:
         isDefined(objectNameSingular) && isDefined(singleSelectedRecordId)
@@ -77,7 +82,8 @@ export const ComposeEmailCommand = () => {
   };
 
   const ready =
-    !accountLoading && (isBulkPerson ? !bulkLoading : !recipientLoading);
+    isDefined(myConnectedAccounts) &&
+    (isBulkPerson ? !bulkLoading : !recipientLoading);
 
   return (
     <HeadlessEngineCommandWrapperEffect execute={handleExecute} ready={ready} />

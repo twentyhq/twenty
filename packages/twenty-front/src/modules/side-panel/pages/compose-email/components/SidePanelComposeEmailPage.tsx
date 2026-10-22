@@ -8,9 +8,10 @@ import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { composeEmailConnectedAccountIdComponentState } from '@/side-panel/pages/compose-email/states/composeEmailConnectedAccountIdComponentState';
 import { composeEmailContextRecordComponentState } from '@/side-panel/pages/compose-email/states/composeEmailContextRecordComponentState';
 import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultInReplyToComponentState';
-import { composeEmailIsReplyComponentState } from '@/side-panel/pages/compose-email/states/composeEmailIsReplyComponentState';
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
+import { composeEmailInitialFromHandleComponentState } from '@/side-panel/pages/compose-email/states/composeEmailInitialFromHandleComponentState';
+import { composeEmailIsReplyComponentState } from '@/side-panel/pages/compose-email/states/composeEmailIsReplyComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -39,6 +40,9 @@ export const SidePanelComposeEmailPage = () => {
   const composeEmailConnectedAccountId = useAtomComponentStateValue(
     composeEmailConnectedAccountIdComponentState,
   );
+  const composeEmailInitialFromHandle = useAtomComponentStateValue(
+    composeEmailInitialFromHandleComponentState,
+  );
   const composeEmailDefaultTo = useAtomComponentStateValue(
     composeEmailDefaultToComponentState,
   );
@@ -58,19 +62,15 @@ export const SidePanelComposeEmailPage = () => {
   const { goBackFromSidePanel } = useSidePanelHistory();
 
   // a reply must stay on the thread's account, so only the handle may change
-  const defaultSender = useDefaultEmailSender({
-    restrictToConnectedAccountId: composeEmailIsReply
-      ? (composeEmailConnectedAccountId ?? '')
-      : undefined,
+  const replySender = useDefaultEmailSender({
+    restrictToConnectedAccountId: composeEmailConnectedAccountId ?? '',
   });
 
-  const connectedAccountId = composeEmailIsReply
-    ? (composeEmailConnectedAccountId ?? '')
-    : (defaultSender?.connectedAccountId ?? composeEmailConnectedAccountId);
-
   const composerState = useEmailComposerState({
-    connectedAccountId: connectedAccountId ?? '',
-    initialFromHandle: defaultSender?.fromHandle,
+    connectedAccountId: composeEmailConnectedAccountId ?? '',
+    initialFromHandle: composeEmailIsReply
+      ? replySender?.fromHandle
+      : (composeEmailInitialFromHandle ?? undefined),
     defaultTo: composeEmailDefaultTo ?? '',
     defaultSubject: composeEmailDefaultSubject ?? '',
     defaultInReplyTo: composeEmailDefaultInReplyTo ?? undefined,
@@ -96,7 +96,7 @@ export const SidePanelComposeEmailPage = () => {
     dependencies: [handleSendHotkey],
   });
 
-  if (!connectedAccountId) {
+  if (!composeEmailConnectedAccountId) {
     return null;
   }
 

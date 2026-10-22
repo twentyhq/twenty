@@ -43,14 +43,14 @@ jest.mock(
 );
 
 describe('ReplyToEmailThreadCommand', () => {
-  it('opens the composer as a reply even without a message id', () => {
+  it('opens the composer on the selected thread even without a message id', () => {
     render(<ReplyToEmailThreadCommand />);
 
     expect(mockOpenComposeEmailInSidePanel).toHaveBeenCalledWith(
       expect.objectContaining({
+        threadId: 'thread-id',
         connectedAccountId: 'thread-account',
         defaultInReplyTo: '',
-        isReply: true,
       }),
     );
   });
