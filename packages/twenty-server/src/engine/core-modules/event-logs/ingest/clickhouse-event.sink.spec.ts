@@ -13,11 +13,16 @@ const applicationLog: WorkspaceEventEnvelope = {
     timestamp: 't',
     workspaceId: 'w',
     applicationId: '',
+    applicationRegistrationId: '',
+    applicationVersion: '',
+    source: 'LOGIC_FUNCTION',
     logicFunctionId: '',
     logicFunctionName: 'fn',
     executionId: 'e',
     level: 'INFO',
     message: 'm',
+    errorCode: '',
+    properties: {},
   },
 };
 
