@@ -5,7 +5,6 @@ import { once } from 'events';
 import { Readable } from 'stream';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { WORKSPACE_DATA_EXPORT_STORAGE_TAGS } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type WorkspaceDataExportState } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-state.type';
 import { buildWorkspaceDataExportFileNames } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-file-names.util';
@@ -42,7 +41,6 @@ export class WorkspaceDataExportArchiveService {
       }),
       stream: archive,
       mimeType: 'application/zip',
-      tags: WORKSPACE_DATA_EXPORT_STORAGE_TAGS,
     });
     const failure = new Promise<never>((_, reject) => {
       archive.once('error', reject);

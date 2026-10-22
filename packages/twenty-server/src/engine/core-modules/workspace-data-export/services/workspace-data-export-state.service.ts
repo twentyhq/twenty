@@ -3,7 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Readable } from 'stream';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WORKSPACE_DATA_EXPORT_STORAGE_TAGS } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -64,7 +63,6 @@ export class WorkspaceDataExportStateService {
       ...buildWorkspaceDataExportResource({ ...key, file: { type: 'state' } }),
       stream: Readable.from([Buffer.from(JSON.stringify(state), 'utf8')]),
       mimeType: 'application/json',
-      tags: WORKSPACE_DATA_EXPORT_STORAGE_TAGS,
     });
   }
 }

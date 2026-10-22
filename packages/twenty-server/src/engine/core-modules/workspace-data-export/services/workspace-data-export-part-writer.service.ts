@@ -12,10 +12,7 @@ import { RECORD_EXPORT_PAGE_SIZE } from 'src/engine/core-modules/record-export/c
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { formatRecordExportHeader } from 'src/engine/core-modules/record-export/utils/format-record-export-header.util';
 import { formatRecordExportRow } from 'src/engine/core-modules/record-export/utils/format-record-export-row.util';
-import {
-  WORKSPACE_DATA_EXPORT_PART_MAX_SIZE_IN_BYTES,
-  WORKSPACE_DATA_EXPORT_STORAGE_TAGS,
-} from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
+import { WORKSPACE_DATA_EXPORT_PART_MAX_SIZE_IN_BYTES } from 'src/engine/core-modules/workspace-data-export/constants/workspace-data-export.constant';
 import { type WorkspaceDataExportCursor } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-cursor.type';
 import { type WorkspaceDataExportObject } from 'src/engine/core-modules/workspace-data-export/types/workspace-data-export-object.type';
 import { buildWorkspaceDataExportPartName } from 'src/engine/core-modules/workspace-data-export/utils/build-workspace-data-export-part-name.util';
@@ -118,7 +115,6 @@ export class WorkspaceDataExportPartWriterService {
       }),
       stream: Readable.from([lines.join('')]),
       mimeType: 'text/csv',
-      tags: WORKSPACE_DATA_EXPORT_STORAGE_TAGS,
     });
 
     return { partName, recordCount, after, isLastPart };

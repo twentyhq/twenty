@@ -741,7 +741,6 @@ export class FileStorageService {
     params: ResourceIdentifier & {
       stream: Readable;
       mimeType: string | undefined;
-      tags?: Record<string, string>;
     },
   ): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
@@ -752,7 +751,6 @@ export class FileStorageService {
       filePath: onStorageFilePath,
       stream: params.stream,
       mimeType: params.mimeType,
-      tags: params.tags,
     });
   }
 

@@ -208,7 +208,6 @@ export class S3Driver implements StorageDriver {
     filePath: string;
     stream: Readable;
     mimeType: string | undefined;
-    tags?: Record<string, string>;
   }): Promise<void> {
     // Upload streams with bounded memory; PutObjectCommand needs the whole payload upfront.
     const upload = new Upload({
@@ -218,9 +217,6 @@ export class S3Driver implements StorageDriver {
         Key: params.filePath,
         Body: params.stream,
         ContentType: params.mimeType,
-        Tagging: isDefined(params.tags)
-          ? new URLSearchParams(params.tags).toString()
-          : undefined,
       },
     });
 
