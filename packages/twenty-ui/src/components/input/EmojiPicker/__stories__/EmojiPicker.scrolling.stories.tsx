@@ -120,6 +120,13 @@ export const KeyboardScrollsActiveRowIntoView: Story = {
     for (const name of EMOJI_PICKER_SCROLL_STORY_ACTIVE_ROW_LABELS) {
       await userEvent.keyboard('{ArrowDown}');
       await expectActiveEmojiToBeVisible(name);
+
+      if (name === 'Reaction 41') {
+        await userEvent.keyboard('{ArrowLeft}');
+        await expectActiveEmojiToBeVisible('Reaction 40');
+        await userEvent.keyboard('{ArrowRight}');
+        await expectActiveEmojiToBeVisible('Reaction 41');
+      }
     }
 
     const lastRowFirstEmoji = await canvas.findByRole('gridcell', {
@@ -131,6 +138,28 @@ export const KeyboardScrollsActiveRowIntoView: Story = {
       'aria-rowindex',
       '10',
     );
+
+    await userEvent.keyboard('{ArrowDown>3/}');
+    await expectActiveEmojiToBeVisible('Reaction 73');
+    await userEvent.keyboard('{ArrowRight>7/}');
+    await expectActiveEmojiToBeVisible('Reaction 80');
+
+    const lastEmoji = await canvas.findByRole('gridcell', {
+      name: 'Reaction 80',
+    });
+
+    viewport.scrollTop -= lastEmoji.getBoundingClientRect().height / 2;
+    const scrollTopBeforeHover = viewport.scrollTop;
+
+    await userEvent.hover(lastEmoji);
+    await expect(viewport.scrollTop).toBe(scrollTopBeforeHover);
+    await expect(lastEmoji.getBoundingClientRect().bottom).toBeGreaterThan(
+      viewport.getBoundingClientRect().bottom,
+    );
+    await userEvent.keyboard('{ArrowRight>3/}');
+    await expectActiveEmojiToBeVisible('Reaction 80');
+    await userEvent.keyboard('{ArrowLeft>7/}');
+    await expectActiveEmojiToBeVisible('Reaction 73');
 
     const previousRowLabels = [
       ...EMOJI_PICKER_SCROLL_STORY_ACTIVE_ROW_LABELS.slice(0, -1).reverse(),
