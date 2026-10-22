@@ -111,7 +111,11 @@ export class CronTriggerCronJob {
               applicationRegistrationId,
             });
           } catch (error) {
-            if (error instanceof ThrottlerException && isDefined(application)) {
+            if (!(error instanceof ThrottlerException)) {
+              throw error;
+            }
+
+            if (isDefined(application)) {
               await this.applicationRepeatedEventRecorderService.record({
                 entry: buildApplicationJobThrottledLogEntry({
                   workspaceId: activeWorkspace.id,
@@ -121,7 +125,7 @@ export class CronTriggerCronJob {
               });
             }
 
-            throw error;
+            continue;
           }
 
           await this.messageQueueService.add<LogicFunctionTriggerJobData>(
