@@ -23,6 +23,89 @@ A security agent helps inspect each version, alongside automated scans and
 isolated tests. A Twenty reviewer makes the approval decision in V1. Passing a
 review reduces risk; it does not guarantee that a version has no vulnerabilities.
 
+## Complete V1 vetting checklist
+
+This is the complete acceptance checklist for the proposed V1. Record a result
+and supporting evidence for every item. All applicable criteria must pass before
+the exact app version can be vetted. Mark a capability-specific check as not
+applicable only when the app does not use that capability, with a written reason.
+Missing evidence is not a pass, and security blockers cannot be waived.
+
+- [ ] **Verified publisher and artifact.** Verify ownership of the app, source
+  repository, and npm package; check provenance and the source commit against the
+  published package. Retain readable source, a dependency lockfile, and the exact
+  version and artifact hash.
+- [ ] **No malicious behavior.** Inspect frontend code, logic functions, hooks,
+  jobs, AI instructions, dependencies, and package scripts. No credential theft,
+  undeclared collection, backdoors, hidden destructive behavior, sandbox escapes,
+  concealed executable code, or attempts to evade review.
+- [ ] **Safe handling of untrusted input.** Check query, command, code, HTML, and
+  template injection, XSS, path traversal, and SSRF. Validate inputs, prevent URLs
+  from reaching internal services, and authenticate webhooks with replay
+  protection where applicable.
+- [ ] **Only necessary permissions.** Justify every object/field permission,
+  system capability, additional role, AI agent permission, and external OAuth
+  scope with a feature. Remove unnecessary broad access and test both user and
+  application execution identities.
+- [ ] **Workspace isolation.** Keep records, credentials, caches, jobs, and
+  routing scoped to the correct workspace. Test with two workspaces and users
+  with different permissions; never trust an unverified target workspace.
+- [ ] **Declared data use and protected secrets.** Document destinations, data
+  sent, purpose, retention, and deletion. Use HTTPS and supported secret storage;
+  keep secrets out of source, frontend bundles, ordinary storage, and logs, and
+  avoid unnecessary personal data in logs.
+- [ ] **Reviewed dependencies and remote behavior.** Scan direct, transitive,
+  bundled, and runtime dependencies; resolve them deterministically. Do not fetch
+  and execute unreviewed code. Material changes to hosted behavior or remote
+  instructions require re-review.
+- [ ] **Safe AI behavior.** For apps using AI, test malicious records and external
+  content for prompt injection, unauthorized tool calls, disclosure, and
+  destructive actions. Enforce authorization outside the model.
+- [ ] **Working advertised functionality.** A fresh workspace can install,
+  configure, and complete the main user journey without developer intervention.
+  Handle missing permissions, expired credentials, API failures, and retries.
+- [ ] **Safe installation lifecycle.** Test real package installation, upgrade
+  from the previous vetted version when available, and uninstall, including
+  hooks. Preserve data during non-destructive upgrades, disclose destructive
+  changes, prevent duplicate side effects, stop ongoing work on uninstall, and
+  attempt external cleanup with recovery instructions for failures.
+- [ ] **Consistent and accessible UI.** Use supported `twenty-ui` controls,
+  theme tokens, imports, and host APIs; align SDK/UI versions. Check light/dark
+  themes, keyboard access, labels, validation, loading, empty, success, and error
+  states. Confirm destructive actions.
+- [ ] **Understandable workspace changes.** Inventory and justify each object,
+  field, view, workflow, agent, and navigation item. Reuse existing entities where
+  appropriate and avoid duplicate CRM objects, unnecessary navigation, and
+  user-facing technical clutter.
+- [ ] **Stable identifiers and compatibility.** Preserve entity identifiers
+  across versions, avoid hardcoded workspace/record/user IDs, and declare
+  supported Twenty versions.
+- [ ] **Bounded work at installation scale.** Follow the app development
+  standards for event batching/filtering, bulk operations, pagination, caching,
+  paced scheduling, idempotency, deduplication, loop prevention, and bounded
+  retries/backoff. Provide an API/job budget across installations and a small
+  burst/retry test. Expose workspace settings with sensible defaults.
+- [ ] **Operational shared routes.** For apps using shared server routes, verify
+  owner-workspace setup and routing to the correct installed workspace. Document
+  the dependency on the owner installation and its operational maintenance.
+- [ ] **Complete publisher documentation.** Supply setup instructions, a support
+  contact, release notes, data consequences of uninstalling, and reproducible
+  tests with safe setup instructions, alongside the inventories and evidence
+  required above.
+- [ ] **Complete and trustworthy review evidence.** Finish automated scans,
+  official security-agent analysis, and isolated lifecycle, functionality,
+  permission, isolation, and applicable scaling tests. Record coverage, results,
+  tested Twenty configuration, and changes since the previous vetted version.
+  The publisher cannot control the official reviewer or its authoritative report.
+- [ ] **Resolved blockers and recorded human approval.** No confirmed malicious
+  behavior, high/critical vulnerability, exploitable authorization/isolation
+  failure, unexplained data transfer, or unresolved suspicious behavior. Record
+  dispositions for all findings, remediation owners/dates where needed, and a
+  named Twenty approver's decision and date against the exact version, artifact
+  hash, and checklist version.
+
+The following sections explain these criteria and the review process.
+
 ## Security requirements
 
 All security requirements must pass. Product quality cannot compensate for a
@@ -202,19 +285,3 @@ upgrade, and revocation gates before piloting third-party vetting.
 
 Automatic approval, certification tiers, numerical trust scores, and extensive
 performance certification can follow once the first reviews show where they help.
-
-## Marketplace precedents
-
-These policies informed the proposal; they are not Twenty requirements:
-
-- [Salesforce security review](https://developer.salesforce.com/docs/platform/salesforce-code-analyzer/guide/appexchange.html):
-  scan reports with human assessment of findings and false positives.
-- [HubSpot certification](https://academy.hubspot.com/lessons/overview-of-certification-requirements):
-  justified scopes and secure authentication.
-- [Zapier publishing requirements](https://docs.zapier.com/platform/publish/integration-publishing-requirements):
-  secure credentials, HTTPS, and functional test evidence.
-- [Attio code review](https://docs.attio.com/share/code-review):
-  secret handling, verified webhooks, privacy, input validation, and UX states.
-- [n8n verification guidelines](https://docs.n8n.io/connect/create-nodes/build-your-node/reference/verification-guidelines.md):
-  source/provenance verification and automated package checks. Twenty allows
-  justified dependencies that are pinned and scanned.
