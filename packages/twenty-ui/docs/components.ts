@@ -67,6 +67,7 @@ import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { REACTION_BUTTON_PROP_DESCRIPTIONS } from './reactionButtonPropDescriptions';
+import { EMOJI_PICKER_PROP_DESCRIPTIONS } from './emojiPickerPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
@@ -341,6 +342,18 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'components/input/light-button',
     propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
     propDefaults: { variant: 'ghost', size: 'sm' },
+  },
+  {
+    name: 'EmojiPicker',
+    source: 'components/input/EmojiPicker/EmojiPicker.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/emoji-picker',
+    propDescriptions: EMOJI_PICKER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      locale: 'en',
+      searchPlaceholder: 'searchLabel',
+      autoFocus: 'false',
+    },
   },
   {
     name: 'ReactionButton',

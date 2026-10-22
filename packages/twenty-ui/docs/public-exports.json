@@ -92,6 +92,7 @@
     "values": {
       "CountrySelect": "components/input/CountrySelect/CountrySelect",
       "CurrencyPicker": "components/input/CurrencyPicker/CurrencyPicker",
+      "EmojiPicker": "components/input/EmojiPicker/EmojiPicker",
       "IconButton": "components/input/IconButton/IconButton",
       "ImageInput": "components/input/ImageInput/ImageInput",
       "LightButton": "components/input/LightButton/LightButton",
@@ -117,6 +118,7 @@
       "CurrencyPickerRootProps": "components/input/CurrencyPicker/types/CurrencyPickerRootProps",
       "CurrencyPickerState": "components/input/CurrencyPicker/types/CurrencyPickerState",
       "CurrencyPickerTriggerProps": "components/input/CurrencyPicker/types/CurrencyPickerTriggerProps",
+      "EmojiPickerProps": "components/input/EmojiPicker/types/EmojiPickerProps",
       "IconButtonProps": "components/input/IconButton/types/IconButtonProps",
       "IconButtonSize": "components/input/IconButton/types/IconButtonSize",
       "ImageInputProps": "components/input/ImageInput/types/ImageInputProps",

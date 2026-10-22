@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { LightIconButton } from 'twenty-ui/components/input';
+import { EmojiPicker, LightIconButton } from 'twenty-ui/components/input';
 import { IconMoodPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatMessageEmojiPicker } from '@/ai/components/AiChatMessageEmojiPicker';
+import { AGENT_CHAT_EMOJIBASE_URL } from '@/ai/constants/AgentChatEmojibaseUrl';
 import { AGENT_CHAT_QUICK_REACTION_EMOJIS } from '@/ai/constants/AgentChatQuickReactionEmojis';
 
 const StyledQuickReactions = styled.div`
@@ -39,7 +39,16 @@ export const AiChatMessageReactionPickerContent = ({
   const { t } = useLingui();
 
   if (isEmojiPickerOpen) {
-    return <AiChatMessageEmojiPicker onEmojiSelect={onEmojiSelect} />;
+    return (
+      <EmojiPicker
+        emojibaseUrl={AGENT_CHAT_EMOJIBASE_URL}
+        searchLabel={t`Search emojis`}
+        loadingLabel={t`Loading emojis`}
+        emptyLabel={t`No emoji found`}
+        autoFocus
+        onEmojiSelect={onEmojiSelect}
+      />
+    );
   }
 
   return (

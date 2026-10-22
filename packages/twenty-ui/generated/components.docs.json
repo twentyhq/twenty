@@ -3240,6 +3240,90 @@
     ]
   },
   {
+    "name": "EmojiPicker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/emoji-picker",
+    "props": [
+      {
+        "name": "autoFocus",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Focuses the search input when the picker mounts."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional class name applied to the picker root div."
+      },
+      {
+        "name": "emojibaseUrl",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Base URL for caller-hosted Emojibase data. The picker loads data.json and messages.json from the selected locale directory."
+      },
+      {
+        "name": "emptyLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Caller-supplied message displayed when no emoji matches the search."
+      },
+      {
+        "name": "loadingLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Caller-supplied message displayed while emoji data loads."
+      },
+      {
+        "name": "locale",
+        "type": "Locale",
+        "required": false,
+        "defaultValue": "en",
+        "description": "Emoji catalogue locale. The caller must host its data and message files. Interface labels are supplied separately."
+      },
+      {
+        "name": "onEmojiSelect",
+        "type": "(emoji: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Called with the selected Unicode emoji string. The application owns the selected value, persistence, and popup visibility."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref for the picker root div."
+      },
+      {
+        "name": "searchLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name for the search input. Also supplies its placeholder unless searchPlaceholder is set."
+      },
+      {
+        "name": "searchPlaceholder",
+        "type": "string",
+        "required": false,
+        "defaultValue": "searchLabel",
+        "description": "Optional placeholder overriding the search label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native inline styles applied to the picker root div."
+      }
+    ]
+  },
+  {
     "name": "ReactionButton",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/reaction-button",
