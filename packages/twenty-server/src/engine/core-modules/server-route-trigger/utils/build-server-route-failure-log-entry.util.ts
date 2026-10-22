@@ -5,6 +5,22 @@ import { ServerRouteTriggerExceptionCode } from 'src/engine/core-modules/server-
 import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
+const getServerRouteFailureDetails = (
+  error: unknown,
+): Pick<ApplicationLogEntry, 'message' | 'errorCode'> => {
+  if (isAppFacingServerRouteError(error)) {
+    return {
+      message: `Server route request failed: ${error.message}`,
+      errorCode: error.code,
+    };
+  }
+
+  return {
+    message: 'Server route request failed because of a platform error.',
+    errorCode: ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
+  };
+};
+
 export const buildServerRouteFailureLogEntry = ({
   resolver,
   applicationRegistrationId,
@@ -26,14 +42,5 @@ export const buildServerRouteFailureLogEntry = ({
     logicFunctionId: resolver.id,
     logicFunctionName: resolver.name,
     level: 'ERROR',
-    ...(isAppFacingServerRouteError(error)
-      ? {
-          message: `Server route request failed: ${error.message}`,
-          errorCode: error.code,
-        }
-      : {
-          message: 'Server route request failed because of a platform error.',
-          errorCode:
-            ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
-        }),
+    ...getServerRouteFailureDetails(error),
   });
