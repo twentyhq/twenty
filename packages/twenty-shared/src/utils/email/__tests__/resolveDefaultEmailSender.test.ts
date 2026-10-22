@@ -92,6 +92,50 @@ describe('resolveDefaultEmailSender', () => {
     ).toBeNull();
   });
 
+  it('falls back to the domain within the restricted account when the personal handle is stale', () => {
+    const accounts = [accountA, accountB];
+
+    expect(
+      resolveDefaultEmailSender({
+        accounts,
+        personalFromHandle: 'gone@x.com',
+        workspaceSenderDomain: 'getindexed.ai',
+        restrictToConnectedAccountId: 'account-b',
+      }),
+    ).toEqual({
+      connectedAccountId: 'account-b',
+      fromHandle: 'ops@getindexed.ai',
+    });
+
+    expect(
+      resolveDefaultEmailSender({
+        accounts,
+        personalFromHandle: 'gone@x.com',
+        workspaceSenderDomain: 'pageweaver.ai',
+        restrictToConnectedAccountId: 'account-b',
+      }),
+    ).toBeNull();
+  });
+
+  it('prefers the handle over an alias on the same domain within one account', () => {
+    expect(
+      resolveDefaultEmailSender({
+        accounts: [
+          {
+            ...accountA,
+            handle: 'primary@getindexed.ai',
+            handleAliases: ['alias@getindexed.ai'],
+          },
+        ],
+        personalFromHandle: null,
+        workspaceSenderDomain: 'getindexed.ai',
+      }),
+    ).toEqual({
+      connectedAccountId: 'account-a',
+      fromHandle: 'primary@getindexed.ai',
+    });
+  });
+
   it('skips accounts that cannot send', () => {
     expect(
       resolveDefaultEmailSender({
