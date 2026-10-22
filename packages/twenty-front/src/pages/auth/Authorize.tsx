@@ -1,5 +1,6 @@
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
@@ -7,12 +8,11 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
-import { getOAuthRedirectTarget } from '@/auth/utils/getOAuthRedirectTarget';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
+import { getUrlSafely, isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconDatabase,
@@ -290,7 +290,7 @@ export const Authorize = () => {
   const appName = applicationRegistration.name;
   const appLogoUrl = applicationRegistration.logoUrl;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
-  const redirectTarget = getOAuthRedirectTarget(redirectUrl);
+  const redirectHost = getUrlSafely(redirectUrl)?.host;
 
   return (
     <StyledAuthContent>
@@ -328,11 +328,11 @@ export const Authorize = () => {
               </StyledScopeList>
             </StyledPermissionSection>
           )}
-          {isDefined(redirectTarget) && (
+          {isNonEmptyString(redirectHost) && (
             <StyledRedirectNotice>
               <Trans>
                 After you connect, you will be redirected to{' '}
-                <StyledRedirectHost>{redirectTarget}</StyledRedirectHost>
+                <StyledRedirectHost>{redirectHost}</StyledRedirectHost>
               </Trans>
             </StyledRedirectNotice>
           )}
