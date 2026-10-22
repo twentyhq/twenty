@@ -4,7 +4,7 @@ export const isSameRecordSharingInvitationRecipient = ({
   recipient,
   otherRecipient,
 }: {
-  recipient: RecordSharingInvitationRecipient;
-  otherRecipient: RecordSharingInvitationRecipient;
+  recipient: Pick<RecordSharingInvitationRecipient, 'kind' | 'id'>;
+  otherRecipient: Pick<RecordSharingInvitationRecipient, 'kind' | 'id'>;
 }) =>
   recipient.kind === otherRecipient.kind && recipient.id === otherRecipient.id;
