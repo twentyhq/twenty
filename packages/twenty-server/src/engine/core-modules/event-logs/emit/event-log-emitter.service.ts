@@ -42,16 +42,20 @@ export class EventLogEmitterService {
     await this.workspaceEventSinkService.ingest(events);
   }
 
-  recordApplicationLogs(entries: ApplicationLogEntry[]): void {
-    this.dispatchInBackground(buildApplicationLogEnvelopes(entries));
+  async recordApplicationLogs(entries: ApplicationLogEntry[]): Promise<void> {
+    await this.dispatchOrLogError(buildApplicationLogEnvelopes(entries));
   }
 
-  recordApplicationMetricEvents(events: ApplicationMetricEvent[]): void {
-    this.dispatchInBackground(buildApplicationMetricEventEnvelopes(events));
+  async recordApplicationMetricEvents(
+    events: ApplicationMetricEvent[],
+  ): Promise<void> {
+    await this.dispatchOrLogError(buildApplicationMetricEventEnvelopes(events));
   }
 
-  recordApplicationPlatformEvents(entries: ApplicationLogEntry[]): void {
-    this.dispatchInBackground([
+  async recordApplicationPlatformEvents(
+    entries: ApplicationLogEntry[],
+  ): Promise<void> {
+    await this.dispatchOrLogError([
       ...buildApplicationLogEnvelopes(entries),
       ...buildApplicationMetricEventEnvelopes(
         entries.map(toApplicationMetricEvent),
@@ -59,10 +63,14 @@ export class EventLogEmitterService {
     ]);
   }
 
-  private dispatchInBackground(envelopes: WorkspaceEventEnvelope[]): void {
-    void this.dispatch(envelopes).catch((error) => {
+  private async dispatchOrLogError(
+    envelopes: WorkspaceEventEnvelope[],
+  ): Promise<void> {
+    try {
+      await this.dispatch(envelopes);
+    } catch (error) {
       this.logger.error('Failed to record application events', error);
-    });
+    }
   }
 
   createContext(context?: EventContextFields) {

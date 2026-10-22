@@ -19,14 +19,16 @@ export class ApplicationLogDeduplicationService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  recordOncePerWindow(entry: ApplicationLogEntry): void {
+  async recordOncePerWindow(entry: ApplicationLogEntry): Promise<void> {
     if (!this.eventLogEmitterService.isEnabled()) {
       return;
     }
 
-    void this.recordIfFirstInWindow(entry).catch((error) => {
+    try {
+      await this.recordIfFirstInWindow(entry);
+    } catch (error) {
       this.logger.error('Failed to record application log', error);
-    });
+    }
   }
 
   private async recordIfFirstInWindow(
@@ -45,7 +47,9 @@ export class ApplicationLogDeduplicationService {
     });
 
     if (isDefined(ownerToken)) {
-      this.eventLogEmitterService.recordApplicationPlatformEvents([entry]);
+      await this.eventLogEmitterService.recordApplicationPlatformEvents([
+        entry,
+      ]);
     }
   }
 }
