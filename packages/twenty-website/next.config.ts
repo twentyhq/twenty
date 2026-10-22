@@ -57,6 +57,8 @@ const nextConfig: LinariaConfig = {
             i18n: ['@lingui/core', 'i18n'],
             trans: ['@lingui/react', 'Trans'],
           },
+          // Catalogs are still compiled by @lingui/cli 5
+          useLinguiV5IdGeneration: true,
         },
       ],
     ],
