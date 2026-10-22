@@ -46,11 +46,8 @@ export const ComposerFieldRow = ({
       hasDivider={hasDivider}
       isHoverable={isDefined(onClick)}
       onClick={isDefined(onClick) ? handleClick : undefined}
-      trailing={
-        isDefined(trailing) && (
-          <div onClick={(event) => event.stopPropagation()}>{trailing}</div>
-        )
-      }
+      trailing={trailing}
+      trailingProps={{ onClick: (event) => event.stopPropagation() }}
     >
       {children}
     </FormFieldRow>

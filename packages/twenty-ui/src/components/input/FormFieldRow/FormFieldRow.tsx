@@ -15,6 +15,7 @@ export const FormFieldRow = ({
   label,
   startIcon,
   trailing,
+  trailingProps,
   children,
   labelWidth = 80,
   isHoverable = false,
@@ -67,7 +68,13 @@ export const FormFieldRow = ({
             )}
             <div className={styles.content}>{children}</div>
             {isRenderableSlot(trailing) && (
-              <div className={styles.trailing}>{trailing}</div>
+              <div
+                // oxlint-disable-next-line react/jsx-props-no-spreading
+                {...trailingProps}
+                className={clsx(styles.trailing, trailingProps?.className)}
+              >
+                {trailing}
+              </div>
             )}
           </div>
           {hasDivider && (

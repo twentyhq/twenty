@@ -1,5 +1,5 @@
 import { type useRender } from '@base-ui/react/use-render';
-import { type CSSProperties, type ReactNode } from 'react';
+import { type ComponentProps, type CSSProperties, type ReactNode } from 'react';
 
 export type FormFieldRowProps = Omit<
   useRender.ComponentProps<'div'>,
@@ -8,6 +8,7 @@ export type FormFieldRowProps = Omit<
   label?: string;
   startIcon?: ReactNode;
   trailing?: ReactNode;
+  trailingProps?: Omit<ComponentProps<'div'>, 'children'>;
   children: ReactNode;
   labelWidth?: CSSProperties['width'];
   isHoverable?: boolean;
