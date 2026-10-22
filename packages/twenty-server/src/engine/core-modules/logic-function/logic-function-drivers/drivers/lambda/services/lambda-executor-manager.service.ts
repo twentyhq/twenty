@@ -5,7 +5,6 @@ import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
   DeleteFunctionCommand,
-  GetFunctionCommand,
   type GetFunctionCommandOutput,
   ResourceNotFoundException,
   TagResourceCommand,
@@ -70,33 +69,29 @@ export class LambdaExecutorManagerService {
   async getLambdaExecutor(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<GetFunctionCommandOutput | undefined> {
-    const lambdaClient = await this.awsClient.getLambdaClient();
+    return this.awsClient.getFunction(flatLogicFunction.id);
+  }
 
-    try {
-      return await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: flatLogicFunction.id }),
-      );
-    } catch (error) {
-      if (error instanceof ResourceNotFoundException) {
-        return undefined;
-      }
-
-      throw error;
-    }
+  async clearLambdaExecutorCache(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<void> {
+    await this.awsClient.clearFunctionCache(flatLogicFunction.id);
   }
 
   async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
-    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
-
-    if (!isDefined(lambdaExecutor)) {
-      return;
-    }
-
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    await lambdaClient.send(
-      new DeleteFunctionCommand({ FunctionName: flatLogicFunction.id }),
-    );
+    try {
+      await lambdaClient.send(
+        new DeleteFunctionCommand({ FunctionName: flatLogicFunction.id }),
+      );
+    } catch (error) {
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
+      }
+    }
+
+    await this.clearLambdaExecutorCache(flatLogicFunction);
   }
 
   async buildExecutor(context: ExecutorBuildContext): Promise<void> {
@@ -125,6 +120,9 @@ export class LambdaExecutorManagerService {
           }
 
           await this.ensureExecutor({ ...refreshedContext, lambdaExecutor });
+          await this.clearLambdaExecutorCache(
+            refreshedContext.flatLogicFunction,
+          );
         },
         lockKey,
         {
@@ -247,6 +245,8 @@ export class LambdaExecutorManagerService {
               },
             }),
           );
+
+          await this.clearLambdaExecutorCache(flatLogicFunction);
         } catch (error) {
           this.logger.error(
             `Failed to install prebuilt bundle for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
