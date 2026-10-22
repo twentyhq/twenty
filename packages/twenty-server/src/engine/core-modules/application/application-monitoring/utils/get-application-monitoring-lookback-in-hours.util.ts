@@ -1,5 +1,7 @@
-import { APPLICATION_MONITORING_RETENTION_IN_DAYS } from '@/constants/ApplicationMonitoringRetentionInDays';
-import { EVENT_LOG_RETENTION } from '@/constants/EventLogRetention';
+import {
+  APPLICATION_MONITORING_RETENTION_IN_DAYS,
+  EVENT_LOG_RETENTION,
+} from 'twenty-shared/constants';
 
 export const getApplicationMonitoringLookbackInHours = ({
   hasAuditLogsEntitlement,
