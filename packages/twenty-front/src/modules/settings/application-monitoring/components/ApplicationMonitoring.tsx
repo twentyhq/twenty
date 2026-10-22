@@ -20,6 +20,7 @@ import { type ApplicationMonitoringPeriod } from '@/settings/application-monitor
 import { buildApplicationMonitoringActivityChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringActivityChartData';
 import { buildApplicationMonitoringCreditChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringCreditChartData';
 import { buildApplicationMonitoringLifecycleChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringLifecycleChartData';
+import { getApplicationMonitoringCreditsFormatOptions } from '@/settings/application-monitoring/utils/getApplicationMonitoringCreditsFormatOptions';
 import { getLargestAllowedApplicationMonitoringPeriod } from '@/settings/application-monitoring/utils/getLargestAllowedApplicationMonitoringPeriod';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -95,12 +96,7 @@ export const ApplicationMonitoring = ({
   const creditChartData = buildApplicationMonitoringCreditChartData(monitoring);
   const creditsUsedLabel = i18n.number(
     monitoring.creditsUsed,
-    monitoring.creditsUsed > 0 && monitoring.creditsUsed < 0.01
-      ? { maximumSignificantDigits: 2, roundingMode: 'trunc' }
-      : {
-          maximumFractionDigits: monitoring.creditsUsed >= 10 ? 0 : 2,
-          roundingMode: 'trunc',
-        },
+    getApplicationMonitoringCreditsFormatOptions(monitoring.creditsUsed),
   );
 
   return (
