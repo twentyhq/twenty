@@ -1,0 +1,362 @@
+name: Publish npm packages
+run-name: Publish npm packages from ${{ inputs.ref }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Release tag to publish from (e.g. sdk/v1.2.3, ui/v0.1.0, cli/v0.3.1). Only `sdk/v*`, `ui/v*` and `cli/v*` tags are accepted."
+        required: true
+      dry_run:
+        description: "Build and inspect packages without publishing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.ref }}
+  cancel-in-progress: true
+
+env:
+  ORDERED_BY_DEPENDENCY_PACKAGES: twenty-client-sdk twenty-ui twenty-sdk create-twenty-app twenty
+
+jobs:
+  compute-ref:
+    timeout-minutes: 1
+    name: Compute ref
+    runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.compute-ref.outputs.REF }}
+    steps:
+      - name: Resolve and enforce npm release ref
+        id: compute-ref
+        env:
+          INPUT_REF: ${{ github.event.inputs.ref }}
+        run: |
+          set -euo pipefail
+          ref="${INPUT_REF:-}"
+          if [[ "$ref" != sdk/v* && "$ref" != ui/v* && "$ref" != cli/v* ]]; then
+            echo "::error::Expected an 'sdk/v*', 'ui/v*' or 'cli/v*' tag, got '${ref:-<empty>}'"
+            exit 1
+          fi
+          echo "REF=$ref" >> "$GITHUB_OUTPUT"
+
+  validate-tag:
+    needs: [compute-ref]
+    uses: ./.github/workflows/resolve-npm-release-tag.yaml
+    with:
+      tag: ${{ needs.compute-ref.outputs.ref }}
+
+  compute-and-validate-version:
+    timeout-minutes: 2
+    name: Compute and validate version
+    needs: [compute-ref, validate-tag]
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.read-version.outputs.version }}
+      tag: ${{ steps.read-version.outputs.tag }}
+      packages: ${{ steps.packages.outputs.packages }}
+    steps:
+      - name: Resolve package list for tag family
+        id: packages
+        env:
+          FAMILY: ${{ needs.validate-tag.outputs.family }}
+        run: |
+          set -euo pipefail
+          case "$FAMILY" in
+            sdk) PACKAGES="${ORDERED_BY_DEPENDENCY_PACKAGES}" ;;
+            ui)  PACKAGES="twenty-ui" ;;
+            cli) PACKAGES="twenty" ;;
+            *) echo "::error::No package mapping for tag family '$FAMILY'"; exit 1 ;;
+          esac
+          echo "packages=$PACKAGES" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          repository: twentyhq/twenty
+          ref: ${{ needs.compute-ref.outputs.ref }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Read version and validate ref policy
+        id: read-version
+        env:
+          PACKAGES: ${{ steps.packages.outputs.packages }}
+          REF: ${{ needs.compute-ref.outputs.ref }}
+          TAG_MAJOR: ${{ needs.validate-tag.outputs.major }}
+          TAG_MINOR: ${{ needs.validate-tag.outputs.minor }}
+          TAG_CHANNEL: ${{ needs.validate-tag.outputs.channel }}
+          # MAJOR.MINOR.PATCH with optional pre-release (group 5) and build (group 7).
+          # Only used to parse package.json versions; semver tag parsing is delegated
+          # to resolve-and-validate-tag.yaml above.
+          SEMVER_RE: '^v?(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?(\+[0-9A-Za-z.-]+)?$'
+        run: |
+          VERSION=""
+          for pkg in $PACKAGES; do
+            directory="packages/$pkg"
+            if [[ "$pkg" == "twenty" ]]; then
+              directory="packages/twenty-cli"
+            fi
+            PKG_NAME=$(jq -r '.name' "$directory/package.json")
+            if [[ "$PKG_NAME" != "$pkg" ]]; then
+              echo "::error::Expected $pkg in $directory, found $PKG_NAME"
+              exit 1
+            fi
+            PKG_VERSION=$(jq -r '.version' "$directory/package.json")
+            if [[ -z "$VERSION" ]]; then
+              VERSION="$PKG_VERSION"
+            elif [[ "$PKG_VERSION" != "$VERSION" ]]; then
+              echo "::error::Version mismatch: expected $VERSION but $pkg has $PKG_VERSION"
+              exit 1
+            fi
+          done
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          if [[ "$REF" == cli/v* && "$REF" != "cli/v$VERSION" ]]; then
+            echo "::error::Tag ${REF} does not match CLI package version ${VERSION}"
+            exit 1
+          fi
+
+          # Tag semver was validated above; cross-check it against package.json here.
+          if ! [[ "$VERSION" =~ $SEMVER_RE ]]; then
+            echo "::error::Package version '${VERSION}' is not a valid semver"
+            exit 1
+          fi
+          VER_MAJOR="${BASH_REMATCH[1]}"
+          VER_MINOR="${BASH_REMATCH[2]}"
+          VER_PRE="${BASH_REMATCH[5]}"
+          VER_CHANNEL="${VER_PRE%%.*}"
+
+          if [[ "$TAG_MAJOR" != "$VER_MAJOR" || "$TAG_MINOR" != "$VER_MINOR" ]]; then
+            echo "::error::Tag ${REF} (${TAG_MAJOR}.${TAG_MINOR}) does not match package version ${VERSION} (${VER_MAJOR}.${VER_MINOR}) on major.minor"
+            exit 1
+          fi
+
+          if [[ "$TAG_CHANNEL" != "$VER_CHANNEL" ]]; then
+            echo "::error::Tag ${REF} pre-release channel '${TAG_CHANNEL:-stable}' does not match package version ${VERSION} channel '${VER_CHANNEL:-stable}'"
+            exit 1
+          fi
+
+          if [[ -n "$VER_PRE" ]]; then
+            TAG="$VER_CHANNEL"
+          else
+            TAG="latest"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+  publish:
+    environment: npm-release
+    name: Publish packages@${{ needs.compute-and-validate-version.outputs.version }}
+    needs: [compute-ref, validate-tag, compute-and-validate-version]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      FAMILY: ${{ needs.validate-tag.outputs.family }}
+      PACKAGES: ${{ needs.compute-and-validate-version.outputs.packages }}
+      VERSION: ${{ needs.compute-and-validate-version.outputs.version }}
+      DIST_TAG: ${{ needs.compute-and-validate-version.outputs.tag }}
+    steps:
+      - name: Free disk space for dependencies
+        run: |
+          df -h /
+          df -i /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+          df -h /
+          df -i /
+
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          repository: twentyhq/twenty
+          ref: ${{ needs.compute-ref.outputs.ref }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: "24"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Report disk usage after installation
+        if: always()
+        run: |
+          df -h /
+          df -i /
+
+      - name: Build packages
+        env:
+          BUILD_PROJECT_BY_PACKAGE: '{"twenty": "twenty-cli"}'
+        run: |
+          BUILD_PROJECTS=$(jq -rn \
+            --arg packages "$PACKAGES" \
+            --argjson projectByPackage "$BUILD_PROJECT_BY_PACKAGE" \
+            '$packages | split(" ") | map($projectByPackage[.] // .) | join(",")')
+          yarn nx run-many --target=build --projects="$BUILD_PROJECTS"
+
+      - name: Verify package contents
+        run: |
+          for pkg in $PACKAGES; do
+            echo "--- Packing $pkg (dry-run) ---"
+            yarn workspace "$pkg" pack --dry-run
+          done
+
+      # npm versions are immutable, so a re-run after a later step fails would
+      # otherwise die republishing what is already there. Skip anything the
+      # registry already serves: the lockfile step below re-resolves every
+      # first-party package from npm and fails unless each one is present with a
+      # matching integrity checksum, so a skipped package is still verified.
+      - name: Publish libraries
+        if: ${{ !inputs.dry_run }}
+        run: |
+          for pkg in $PACKAGES; do
+            if [ "$pkg" = "create-twenty-app" ]; then continue; fi
+            # Released with the libraries it pins, the CLI waits for them below.
+            if [ "$pkg" = "twenty" ] && [ "$FAMILY" = "sdk" ]; then continue; fi
+
+            if curl -fsS "https://registry.npmjs.org/$pkg/$VERSION" > /dev/null; then
+              echo "--- $pkg@$VERSION is already published, skipping ---"
+              continue
+            fi
+
+            echo "--- Publishing $pkg ---"
+            yarn workspace "$pkg" npm publish --provenance --tag "$DIST_TAG" --access public
+          done
+
+      # SDK releases build template lockfiles from npm below, so they wait until the
+      # libraries those templates pin resolve. `npm view` reads the packument the
+      # installs use, which lags the version URL by minutes (see verify-scaffold).
+      - name: Wait for the published libraries to be served
+        if: ${{ !inputs.dry_run && env.FAMILY == 'sdk' }}
+        run: |
+          for pkg in $PACKAGES; do
+            if [ "$pkg" = "create-twenty-app" ] || [ "$pkg" = "twenty" ]; then continue; fi
+
+            echo "--- Waiting for $pkg@$VERSION ---"
+            for attempt in $(seq 1 60); do
+              if npm view "$pkg@$VERSION" version > /dev/null 2>&1; then
+                echo "$pkg@$VERSION is live"
+                break
+              fi
+
+              if [ "$attempt" -eq 60 ]; then
+                echo "::error::$pkg@$VERSION was not served within ten minutes"
+                exit 1
+              fi
+
+              sleep 10
+            done
+          done
+
+      # Its prepublish script checks the pins are on npm and builds the template
+      # lockfile from them.
+      - name: Publish the twenty CLI
+        if: ${{ !inputs.dry_run && env.FAMILY == 'sdk' }}
+        run: |
+          if curl -fsS "https://registry.npmjs.org/twenty/$VERSION" > /dev/null; then
+            echo "--- twenty@$VERSION is already published, skipping ---"
+            exit 0
+          fi
+
+          echo "--- Publishing twenty ---"
+          yarn workspace twenty npm publish --provenance --tag "$DIST_TAG" --access public
+
+      # Without this lockfile a generated project resolves every dependency on its
+      # first install, which fails outright for anyone enforcing a minimum release
+      # age: the libraries above are minutes old and the pins are exact.
+      - name: Generate the create-twenty-app template lockfile
+        if: ${{ !inputs.dry_run && contains(env.PACKAGES, 'create-twenty-app') }}
+        run: |
+          yarn nx run create-twenty-app:generate-template-lock --releaseVersion="$VERSION"
+
+          LOCKFILE=packages/create-twenty-app/dist/constants/template/yarn.lock
+          if [ ! -s "$LOCKFILE" ]; then
+            echo "::error::$LOCKFILE is missing; refusing to publish a scaffolder without a lockfile"
+            exit 1
+          fi
+
+      - name: Publish create-twenty-app
+        if: ${{ !inputs.dry_run && contains(env.PACKAGES, 'create-twenty-app') }}
+        run: |
+          if curl -fsS "https://registry.npmjs.org/create-twenty-app/$VERSION" > /dev/null; then
+            echo "::error::create-twenty-app@$VERSION is already published. npm versions are immutable, so the lockfile just generated cannot be shipped under this version — release a new patch version instead."
+            exit 1
+          fi
+
+          echo "--- Publishing create-twenty-app ---"
+          (cd packages/create-twenty-app && yarn npm publish --provenance --tag "$DIST_TAG" --access public)
+
+  verify-scaffold:
+    name: Verify a scaffolded app installs
+    needs: [compute-and-validate-version, publish]
+    if: ${{ !inputs.dry_run && contains(needs.compute-and-validate-version.outputs.packages, 'create-twenty-app') }}
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.compute-and-validate-version.outputs.version }}
+      # The packages were published minutes ago. Scaffolding under a gate this long
+      # succeeds only because the template ships a lockfile, so this is the check
+      # that the release is actually installable for someone enforcing a cooldown.
+      YARN_NPM_MINIMAL_AGE_GATE: 30d
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: "24"
+
+      # `yarn npm publish` returns before the registry can resolve the version:
+      # npx has failed with ETARGET up to ~4 minutes after create-twenty-app was published.
+      - name: Wait for create-twenty-app to be served
+        run: |
+          for attempt in $(seq 1 60); do
+            if npm view "create-twenty-app@$VERSION" version > /dev/null 2>&1; then
+              echo "create-twenty-app@$VERSION is live"
+              exit 0
+            fi
+
+            sleep 10
+          done
+
+          echo "::error::create-twenty-app@$VERSION was not served within ten minutes"
+          exit 1
+
+      - name: Scaffold an app from the published package
+        run: |
+          corepack enable
+          mkdir -p /tmp/scaffold-check
+          cd /tmp/scaffold-check
+
+          # An unreachable server URL makes OAuth discovery fail fast, so the CLI
+          # scaffolds and installs without waiting on a browser.
+          npx --yes create-twenty-app@"$VERSION" verify-app \
+            --display-name "Release verification" \
+            --description "Release verification" \
+            --url http://127.0.0.1:1
+
+      - name: Verify the scaffolded app is installed and reproducible
+        run: |
+          cd /tmp/scaffold-check/verify-app
+
+          if [ ! -d node_modules ]; then
+            echo "::error::create-twenty-app@$VERSION reported success but installed nothing"
+            exit 1
+          fi
+
+          for pkg in twenty-client-sdk twenty-sdk twenty-ui; do
+            installed=$(node -p "require('./node_modules/$pkg/package.json').version")
+            if [ "$installed" != "$VERSION" ]; then
+              echo "::error::$pkg resolved to $installed, expected $VERSION"
+              exit 1
+            fi
+          done
+
+          # What the generated project's own CI workflow runs on its first push.
+          yarn install --immutable

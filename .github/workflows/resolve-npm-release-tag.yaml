@@ -1,0 +1,146 @@
+name: Resolve npm release tag
+run-name: validate-tag ${{ inputs.tag }}
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+        description: "Namespaced tag to resolve (e.g. twenty/v1.2.3, sdk/v1.2.3), or any git ref (branch/SHA) when throw_on_invalid is false"
+      throw_on_invalid:
+        type: boolean
+        default: true
+    outputs:
+      source_repository:
+        description: "Repository the ref was resolved against – thread this into every downstream build so they share one source"
+        value: ${{ jobs.resolve-tag.outputs.source_repository }}
+      tag:
+        description: "The literal ref that was checked out (namespaced tag, e.g. twenty/v1.2.3) – use for checkout"
+        value: ${{ jobs.resolve-tag.outputs.tag }}
+      version:
+        description: "Canonical semver version with the family prefix stripped (e.g. v1.2.3) – use for stamping/labeling/naming"
+        value: ${{ jobs.resolve-tag.outputs.version }}
+      family:
+        description: "Tag family/namespace (e.g. twenty, sdk); empty when the ref carries no `<family>/` prefix"
+        value: ${{ jobs.resolve-tag.outputs.family }}
+      sha:
+        description: "Commit SHA the tag points to"
+        value: ${{ jobs.resolve-tag.outputs.sha }}
+      is_tag_valid_semver:
+        description: "Whether the tag is a valid semver tag present in the repo"
+        value: ${{ jobs.resolve-tag.outputs.is_tag_valid_semver }}
+      major:
+        description: "MAJOR semver component (empty if the tag is not a valid semver)"
+        value: ${{ jobs.resolve-tag.outputs.major }}
+      minor:
+        description: "MINOR semver component (empty if the tag is not a valid semver)"
+        value: ${{ jobs.resolve-tag.outputs.minor }}
+      patch:
+        description: "PATCH semver component (empty if the tag is not a valid semver)"
+        value: ${{ jobs.resolve-tag.outputs.patch }}
+      channel:
+        description: "Pre-release channel: first dot-segment of the pre-release suffix (e.g. `beta`, `canary`); empty for stable"
+        value: ${{ jobs.resolve-tag.outputs.channel }}
+      is_pre_release:
+        description: "Whether the tag carries a pre-release suffix"
+        value: ${{ jobs.resolve-tag.outputs.is_pre_release }}
+      is_canary:
+        description: "Whether the tag's pre-release channel is `canary`"
+        value: ${{ jobs.resolve-tag.outputs.is_canary }}
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+jobs:
+  resolve-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      source_repository: twentyhq/twenty
+      tag: ${{ steps.validate.outputs.TAG }}
+      version: ${{ steps.validate.outputs.VERSION }}
+      family: ${{ steps.validate.outputs.FAMILY }}
+      sha: ${{ steps.validate.outputs.SHA }}
+      is_tag_valid_semver: ${{ steps.validate.outputs.IS_TAG_VALID_SEMVER }}
+      major: ${{ steps.validate.outputs.MAJOR }}
+      minor: ${{ steps.validate.outputs.MINOR }}
+      patch: ${{ steps.validate.outputs.PATCH }}
+      channel: ${{ steps.validate.outputs.CHANNEL }}
+      is_pre_release: ${{ steps.validate.outputs.IS_PRE_RELEASE }}
+      is_canary: ${{ steps.validate.outputs.IS_CANARY }}
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Validate semver tag
+        id: validate
+        env:
+          TAG: ${{ inputs.tag }}
+          SOURCE_REPOSITORY: twentyhq/twenty
+          THROW_ON_INVALID: ${{ inputs.throw_on_invalid }}
+          SEMVER_RE: '^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?(\+([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?$'
+        run: |
+          # Tags are namespaced as `<family>/v<semver>` (e.g. twenty/v1.2.3, sdk/v1.2.3).
+          # The literal TAG is what we check out; VERSION is the canonical semver with the
+          # family prefix stripped and is what every downstream stamping/labeling step uses.
+          if [[ "$TAG" == */* ]]; then
+            FAMILY="${TAG%%/*}"
+          else
+            FAMILY=""
+          fi
+          VERSION="${TAG##*/}"
+
+          is_valid=true
+
+          if [ -z "$TAG" ]; then
+            echo "::warning::No tag provided"
+            is_valid=false
+          elif ! git tag -l | grep -Fxq "$TAG"; then
+            echo "::warning::Tag ${TAG} not found in ${SOURCE_REPOSITORY}"
+            is_valid=false
+          elif ! [[ "$VERSION" =~ $SEMVER_RE ]]; then
+            echo "::warning::${TAG} does not resolve to a valid semver version (parsed '${VERSION}')"
+            is_valid=false
+          fi
+
+          # Best-effort semver parse from the prefix-stripped VERSION. Always populated
+          # when VERSION matches the semver regex, even if the tag isn't present in the
+          # repo. Empty otherwise.
+          MAJOR=""; MINOR=""; PATCH=""; CHANNEL=""
+          IS_PRE_RELEASE=false; IS_CANARY=false
+          if [[ "$VERSION" =~ $SEMVER_RE ]]; then
+            MAJOR="${BASH_REMATCH[1]}"
+            MINOR="${BASH_REMATCH[2]}"
+            PATCH="${BASH_REMATCH[3]}"
+            CHANNEL="${BASH_REMATCH[5]%%.*}"
+            if [ -n "${BASH_REMATCH[5]}" ]; then
+              IS_PRE_RELEASE=true
+            fi
+            if [ "$CHANNEL" = "canary" ]; then
+              IS_CANARY=true
+            fi
+          fi
+
+          {
+            echo "TAG=$TAG"
+            echo "VERSION=$VERSION"
+            echo "FAMILY=$FAMILY"
+            echo "SHA=$(git rev-parse HEAD)"
+            echo "IS_TAG_VALID_SEMVER=$is_valid"
+            echo "MAJOR=$MAJOR"
+            echo "MINOR=$MINOR"
+            echo "PATCH=$PATCH"
+            echo "CHANNEL=$CHANNEL"
+            echo "IS_PRE_RELEASE=$IS_PRE_RELEASE"
+            echo "IS_CANARY=$IS_CANARY"
+          } >> "$GITHUB_OUTPUT"
+
+          if [ "$is_valid" = "false" ] && [ "$THROW_ON_INVALID" = "true" ]; then
+            echo "::error::Tag validation failed for ${TAG}"
+            exit 1
+          fi
