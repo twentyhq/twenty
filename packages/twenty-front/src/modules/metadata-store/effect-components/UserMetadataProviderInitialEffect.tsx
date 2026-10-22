@@ -118,6 +118,9 @@ export const UserMetadataProviderInitialEffect = () => {
         isImpersonating:
           userQueryData.currentUser.currentUserWorkspace.isImpersonating ??
           false,
+        defaultFromHandle:
+          userQueryData.currentUser.currentUserWorkspace.defaultFromHandle ??
+          null,
       });
     }
 
