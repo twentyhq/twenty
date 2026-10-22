@@ -250,8 +250,8 @@ test('assertSetupHelper passes on current state', () => {
 test('assertJsonMetadata catches version mismatch between package.json and plugin.json', () => {
   withJsonMutation(
     PACKAGE_JSON_PATH,
-    (pkg) => {
-      pkg.version = '99.99.99';
+    (packageJson) => {
+      packageJson.version = '99.99.99';
     },
     () => {
       const failures = collectFailures(metadata.assertJsonMetadata);
@@ -266,8 +266,8 @@ test('assertJsonMetadata catches version mismatch between package.json and plugi
 test('assertJsonMetadata catches missing .mcp.json from package.json files', () => {
   withJsonMutation(
     PACKAGE_JSON_PATH,
-    (pkg) => {
-      pkg.files = pkg.files.filter((f) => f !== '.mcp.json');
+    (packageJson) => {
+      packageJson.files = packageJson.files.filter((f) => f !== '.mcp.json');
     },
     () => {
       const failures = collectFailures(metadata.assertJsonMetadata);
@@ -353,8 +353,8 @@ test('source scans ignore generated distribution files', () => {
 test('assertInterfaceFields catches invalid brandColor', () => {
   withJsonMutation(
     PLUGIN_JSON_PATH,
-    (j) => {
-      j.interface.brandColor = 'red';
+    (pluginJson) => {
+      pluginJson.interface.brandColor = 'red';
     },
     () => {
       const failures = collectFailures(metadata.assertInterfaceFields);
@@ -366,8 +366,8 @@ test('assertInterfaceFields catches invalid brandColor', () => {
 test('assertInterfaceFields catches too-long shortDescription', () => {
   withJsonMutation(
     PLUGIN_JSON_PATH,
-    (j) => {
-      j.interface.shortDescription = 'x'.repeat(100);
+    (pluginJson) => {
+      pluginJson.interface.shortDescription = 'x'.repeat(100);
     },
     () => {
       const failures = collectFailures(metadata.assertInterfaceFields);
@@ -381,8 +381,8 @@ test('assertInterfaceFields catches too-long shortDescription', () => {
 test('assertInterfaceFields catches unknown category', () => {
   withJsonMutation(
     PLUGIN_JSON_PATH,
-    (j) => {
-      j.interface.category = 'Photography';
+    (pluginJson) => {
+      pluginJson.interface.category = 'Photography';
     },
     () => {
       const failures = collectFailures(metadata.assertInterfaceFields);
@@ -394,8 +394,8 @@ test('assertInterfaceFields catches unknown category', () => {
 test('assertInterfaceFields catches invalid capability', () => {
   withJsonMutation(
     PLUGIN_JSON_PATH,
-    (j) => {
-      j.interface.capabilities = ['Magic'];
+    (pluginJson) => {
+      pluginJson.interface.capabilities = ['Magic'];
     },
     () => {
       const failures = collectFailures(metadata.assertInterfaceFields);
@@ -409,8 +409,8 @@ test('assertInterfaceFields catches invalid capability', () => {
 test('assertInterfaceFields catches empty defaultPrompt', () => {
   withJsonMutation(
     PLUGIN_JSON_PATH,
-    (j) => {
-      j.interface.defaultPrompt = [];
+    (pluginJson) => {
+      pluginJson.interface.defaultPrompt = [];
     },
     () => {
       const failures = collectFailures(metadata.assertInterfaceFields);
@@ -422,8 +422,10 @@ test('assertInterfaceFields catches empty defaultPrompt', () => {
 test('assertAssets catches a missing screenshot reference', () => {
   withJsonMutation(
     PLUGIN_JSON_PATH,
-    (j) => {
-      j.interface.screenshots = ['./assets/screenshots/nonexistent.png'];
+    (pluginJson) => {
+      pluginJson.interface.screenshots = [
+        './assets/screenshots/nonexistent.png',
+      ];
     },
     () => {
       const failures = collectFailures(assets.assertAssets);
@@ -437,8 +439,8 @@ test('assertAssets catches a missing screenshot reference', () => {
 test('assertAssets catches a non-PNG logo', () => {
   withJsonMutation(
     PLUGIN_JSON_PATH,
-    (j) => {
-      j.interface.logo = './assets/twenty-logo.svg';
+    (pluginJson) => {
+      pluginJson.interface.logo = './assets/twenty-logo.svg';
     },
     () => {
       const failures = collectFailures(assets.assertAssets);
@@ -451,8 +453,8 @@ test('assertMarketplaceTemplate requires marketplace identity', () => {
   withJsonMutation(
     MARKETPLACE_TEMPLATE_PATH,
     (template) => {
-      delete template.name;
-      delete template.interface;
+      template.name = undefined;
+      template.interface = undefined;
     },
     () => {
       const failures = collectFailures(metadata.assertMarketplaceTemplate);

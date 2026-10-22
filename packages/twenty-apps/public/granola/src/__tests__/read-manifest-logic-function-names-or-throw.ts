@@ -8,11 +8,13 @@ const buildResultSchema = z.object({
   }),
 });
 
-export const readManifestLogicFunctionNames = async (): Promise<string[]> => {
+export const readManifestLogicFunctionNamesOrThrow = async (): Promise<
+  string[]
+> => {
   const result = await runTwenty(['app', 'build']);
 
   if (!result.ok) {
-    throw new Error(`App build failed: ${JSON.stringify(result.error)}`);
+    throw new Error(`App build failed: ${result.error.message}`);
   }
 
   const { manifest } = buildResultSchema.parse(result.data);

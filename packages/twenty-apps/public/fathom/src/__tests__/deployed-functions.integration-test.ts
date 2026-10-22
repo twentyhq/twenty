@@ -1,6 +1,6 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { executeDeployedFunction } from './execute-deployed-function';
-import { readManifestLogicFunctionNames } from './read-manifest-logic-function-names';
+import { executeDeployedFunctionOrThrow } from './execute-deployed-function-or-throw';
+import { readManifestLogicFunctionNamesOrThrow } from './read-manifest-logic-function-names-or-throw';
 import { describe, expect, it } from 'vitest';
 
 // These scenarios run the functions the way the server runs them: deployed,
@@ -27,16 +27,16 @@ describe('Fathom app deployed functions', () => {
         (logicFunction: { name: string }) => logicFunction.name,
       );
 
-    for (const manifestFunctionName of await readManifestLogicFunctionNames()) {
+    for (const manifestFunctionName of await readManifestLogicFunctionNamesOrThrow()) {
       expect(deployedFunctionNames).toContain(manifestFunctionName);
     }
   });
 
   it('rejects a backfill window outside the allowed range before touching the queue', async () => {
-    const execution = await executeDeployedFunction(
-      'fathom-backfill',
-      buildRoutePayload({ days: 0 }),
-    );
+    const execution = await executeDeployedFunctionOrThrow({
+      functionName: 'fathom-backfill',
+      payload: buildRoutePayload({ days: 0 }),
+    });
 
     expect(execution.status).toBe('SUCCESS');
     expect(execution.data).toEqual({
@@ -46,10 +46,10 @@ describe('Fathom app deployed functions', () => {
   });
 
   it('reports the missing Fathom connection from the deployed backfill route', async () => {
-    const execution = await executeDeployedFunction(
-      'fathom-backfill',
-      buildRoutePayload({ days: 30 }),
-    );
+    const execution = await executeDeployedFunctionOrThrow({
+      functionName: 'fathom-backfill',
+      payload: buildRoutePayload({ days: 30 }),
+    });
 
     expect(execution.status).toBe('SUCCESS');
     expect(execution.data).toEqual({
@@ -59,12 +59,15 @@ describe('Fathom app deployed functions', () => {
   });
 
   it('rejects invalid workflow action input before looking up a connection', async () => {
-    const listExecution = await executeDeployedFunction(
-      'fathom-list-calls-by-participant',
-      { participantEmail: '   ' },
-    );
-    const syncExecution = await executeDeployedFunction('fathom-sync-call', {
-      recordingId: '42',
+    const listExecution = await executeDeployedFunctionOrThrow({
+      functionName: 'fathom-list-calls-by-participant',
+      payload: { participantEmail: '   ' },
+    });
+    const syncExecution = await executeDeployedFunctionOrThrow({
+      functionName: 'fathom-sync-call',
+      payload: {
+        recordingId: '42',
+      },
     });
 
     expect(listExecution.status).toBe('SUCCESS');
@@ -80,12 +83,15 @@ describe('Fathom app deployed functions', () => {
   });
 
   it('reports the missing Fathom connection from the deployed workflow actions', async () => {
-    const listExecution = await executeDeployedFunction(
-      'fathom-list-calls-by-participant',
-      { participantEmail: 'ada@example.com' },
-    );
-    const syncExecution = await executeDeployedFunction('fathom-sync-call', {
-      recordingId: 42,
+    const listExecution = await executeDeployedFunctionOrThrow({
+      functionName: 'fathom-list-calls-by-participant',
+      payload: { participantEmail: 'ada@example.com' },
+    });
+    const syncExecution = await executeDeployedFunctionOrThrow({
+      functionName: 'fathom-sync-call',
+      payload: {
+        recordingId: 42,
+      },
     });
 
     expect(listExecution.status).toBe('SUCCESS');

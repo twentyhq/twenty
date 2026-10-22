@@ -152,10 +152,13 @@ describe('CLI snapshots produce repeatable artifacts', () => {
     return appPath;
   };
 
-  const buildRepeatedSnapshot = (
-    appPath: string,
-    useHeldSnapshot: Parameters<typeof runAppWorker>[0]['useHeldSnapshot'],
-  ) =>
+  const buildRepeatedSnapshot = ({
+    appPath,
+    useHeldSnapshot,
+  }: {
+    appPath: string;
+    useHeldSnapshot: Parameters<typeof runAppWorker>[0]['useHeldSnapshot'];
+  }) =>
     runAppWorker({
       request: { type: 'bundleSnapshot', appPath, holdSnapshot: true },
       signal: new AbortController().signal,
@@ -280,7 +283,10 @@ describe('CLI snapshots produce repeatable artifacts', () => {
         ).toEqual(json(expected.diagnostics));
       }
     };
-    const reference = await buildRepeatedSnapshot(appPath, compareBuild);
+    const reference = await buildRepeatedSnapshot({
+      appPath,
+      useHeldSnapshot: compareBuild,
+    });
     if (!reference.isSnapshotHeld) {
       await compareBuild(reference);
     }

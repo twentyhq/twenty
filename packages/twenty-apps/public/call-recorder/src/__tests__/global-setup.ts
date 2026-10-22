@@ -37,7 +37,7 @@ export async function setup() {
   const { apiUrl } = validateEnv();
 
   await checkServer(apiUrl);
-  await runTwenty(['app', 'uninstall', '--yes']);
+  await teardown();
 
   const build = await runTwenty(['app', 'build']);
 
@@ -60,7 +60,9 @@ export async function setup() {
 export async function teardown() {
   const result = await runTwenty(['app', 'uninstall', '--yes']);
 
-  if (!result.ok) {
-    console.warn(`App uninstall failed: ${result.error.message}`);
+  if (!result.ok && result.error.code !== 'APP_NOT_INSTALLED') {
+    throw new Error(
+      `App uninstall failed: ${result.error.code} ${result.error.message}`,
+    );
   }
 }

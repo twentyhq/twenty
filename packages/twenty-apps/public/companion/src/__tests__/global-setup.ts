@@ -1,10 +1,12 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { runTwenty } from './run-twenty';
 
 function validateEnv(): { apiUrl: string; apiKey: string } {
   const apiUrl = process.env.TWENTY_API_URL;
   const apiKey = process.env.TWENTY_API_KEY;
 
-  if (!apiUrl || !apiKey) {
+  if (!isNonEmptyString(apiUrl) || !isNonEmptyString(apiKey)) {
     throw new Error(
       'TWENTY_API_URL and TWENTY_API_KEY must be set.\n' +
         'Or set them in vitest env config.',
@@ -35,7 +37,7 @@ export async function setup() {
   const { apiUrl } = validateEnv();
 
   await checkServer(apiUrl);
-  await runTwenty(['app', 'uninstall', '--yes']);
+  await teardown();
 
   const result = await runTwenty(['app', 'apply', '--create']);
 
@@ -49,7 +51,9 @@ export async function setup() {
 export async function teardown() {
   const result = await runTwenty(['app', 'uninstall', '--yes']);
 
-  if (!result.ok) {
-    console.warn(`App uninstall failed: ${result.error.message}`);
+  if (!result.ok && result.error.code !== 'APP_NOT_INSTALLED') {
+    throw new Error(
+      `App uninstall failed: ${result.error.code} ${result.error.message}`,
+    );
   }
 }
