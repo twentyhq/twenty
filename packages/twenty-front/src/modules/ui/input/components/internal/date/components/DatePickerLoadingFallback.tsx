@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+const DATE_PICKER_SKELETON_HEIGHT = 300;
 const DATE_PICKER_SKELETON_PADDING = 16;
 const DATE_PICKER_SKELETON_BORDER_RADIUS = 2;
 const DATE_PICKER_SKELETON_ROW_COUNT = 4;
@@ -17,7 +18,7 @@ const StyledFallback = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  height: 300px;
+  height: ${DATE_PICKER_SKELETON_HEIGHT}px;
   justify-content: center;
   padding: ${themeCssVariables.spacing[4]};
   width: ${DATE_PICKER_CONTAINER_WIDTH}px;

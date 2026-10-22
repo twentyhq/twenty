@@ -17,7 +17,7 @@ const StyledButtonContainer = styled.div`
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  height: 32px;
+  height: ${themeCssVariables.spacing[8]};
   margin: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]};
   width: auto;
