@@ -115,7 +115,11 @@ describe('Application registration monitoring (integration)', () => {
 
   afterAll(async () => {
     await clickHouseClient.command({
-      query: `ALTER TABLE applicationMetricEvent DELETE WHERE applicationRegistrationId = '${ownedApplicationRegistrationId}'`,
+      query:
+        'ALTER TABLE applicationMetricEvent DELETE WHERE applicationRegistrationId = {applicationRegistrationId:String}',
+      query_params: {
+        applicationRegistrationId: ownedApplicationRegistrationId,
+      },
     });
     await clickHouseClient.close();
 
