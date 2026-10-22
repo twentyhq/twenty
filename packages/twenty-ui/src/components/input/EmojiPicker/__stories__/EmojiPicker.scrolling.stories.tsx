@@ -30,12 +30,15 @@ for (const index of new Array<number>(
 ).keys()) {
   const codePoint = EMOJI_PICKER_SCROLL_STORY_FIRST_EMOJI_CODE_POINT + index;
 
+  const isPeopleAndBodyCategory =
+    index < EMOJI_PICKER_SCROLL_STORY_EMOJI_COUNT / 2;
+
   EMOJI_PICKER_SCROLL_STORY_EMOJIS.push({
     emoji: String.fromCodePoint(codePoint),
     label: `reaction ${index + 1}`,
     hexcode: codePoint.toString(16).toUpperCase(),
-    group: 1,
-    subgroup: 19,
+    group: isPeopleAndBodyCategory ? 1 : 6,
+    subgroup: isPeopleAndBodyCategory ? 19 : 60,
     version: 1,
     type: 1,
     order: index,
@@ -89,36 +92,56 @@ export const KeyboardScrollsActiveRowIntoView: Story = {
       expect(firstEmoji).toHaveAttribute('aria-selected', 'true'),
     );
 
-    for (const name of EMOJI_PICKER_SCROLL_STORY_ACTIVE_ROW_LABELS) {
-      await userEvent.keyboard('{ArrowDown}');
+    const expectActiveEmojiToBeVisible = async (name: string) => {
       const activeEmoji = await canvas.findByRole('gridcell', { name });
 
-      await waitFor(() =>
-        expect(activeEmoji).toHaveAttribute('aria-selected', 'true'),
-      );
+      await waitFor(() => {
+        expect(activeEmoji).toHaveAttribute('aria-selected', 'true');
+
+        const emojiBounds = activeEmoji.getBoundingClientRect();
+        const viewportBounds = viewport.getBoundingClientRect();
+        const categoryHeaderHeight = Number.parseFloat(
+          getComputedStyle(viewport).getPropertyValue(
+            '--frimousse-category-header-height',
+          ),
+        );
+
+        expect(emojiBounds.top).toBeGreaterThanOrEqual(
+          viewportBounds.top + categoryHeaderHeight,
+        );
+        expect(emojiBounds.bottom).toBeLessThanOrEqual(viewportBounds.bottom);
+        expect(emojiBounds.left).toBeGreaterThanOrEqual(viewportBounds.left);
+        expect(emojiBounds.right).toBeLessThanOrEqual(viewportBounds.right);
+      });
+    };
+
+    for (const name of EMOJI_PICKER_SCROLL_STORY_ACTIVE_ROW_LABELS) {
+      await userEvent.keyboard('{ArrowDown}');
+      await expectActiveEmojiToBeVisible(name);
     }
+
     const lastRowFirstEmoji = await canvas.findByRole('gridcell', {
       name: 'Reaction 73',
     });
 
     await expect(lastRowFirstEmoji).toHaveAttribute('aria-colindex', '1');
-    await expect(lastRowFirstEmoji).toHaveAttribute('aria-selected', 'true');
     await expect(lastRowFirstEmoji.closest('[role="row"]')).toHaveAttribute(
       'aria-rowindex',
       '10',
     );
 
-    await waitFor(() => {
-      const emojiBounds = lastRowFirstEmoji.getBoundingClientRect();
-      const viewportBounds = viewport.getBoundingClientRect();
+    const previousRowLabels = [
+      ...EMOJI_PICKER_SCROLL_STORY_ACTIVE_ROW_LABELS.slice(0, -1).reverse(),
+      'Reaction 1',
+    ];
 
-      expect(emojiBounds.top).toBeGreaterThanOrEqual(viewportBounds.top);
-      expect(emojiBounds.bottom).toBeLessThanOrEqual(viewportBounds.bottom);
-      expect(emojiBounds.left).toBeGreaterThanOrEqual(viewportBounds.left);
-      expect(emojiBounds.right).toBeLessThanOrEqual(viewportBounds.right);
-    });
+    for (const name of previousRowLabels) {
+      await userEvent.keyboard('{ArrowUp}');
+      await expectActiveEmojiToBeVisible(name);
+    }
+
     await userEvent.keyboard('{Enter}');
     await expect(args.onEmojiSelect).toHaveBeenCalledOnce();
-    await expect(args.onEmojiSelect).toHaveBeenCalledWith('🙈');
+    await expect(args.onEmojiSelect).toHaveBeenCalledWith('😀');
   },
 };
