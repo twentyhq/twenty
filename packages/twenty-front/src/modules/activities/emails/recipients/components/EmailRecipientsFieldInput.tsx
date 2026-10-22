@@ -9,6 +9,7 @@ import {
   type ClipboardEvent,
   type MouseEvent,
   type ReactNode,
+  type RefObject,
   useContext,
   useId,
   useMemo,
@@ -100,6 +101,7 @@ const StyledInput = styled.input`
 
 type EmailRecipientsFieldInputProps = {
   fieldId: EmailRecipientsFieldId;
+  inputRef?: RefObject<HTMLInputElement | null>;
   // null when the drag started in another field.
   draggedSourceIndices: number[] | null;
   label: string;
@@ -112,6 +114,7 @@ type EmailRecipientsFieldInputProps = {
 
 export const EmailRecipientsFieldInput = ({
   fieldId,
+  inputRef: providedInputRef,
   draggedSourceIndices,
   label,
   recipients,
@@ -124,7 +127,8 @@ export const EmailRecipientsFieldInput = ({
   const focusId = `email-recipients-field-${instanceId}`;
   const suggestionsDropdownId = `${focusId}-suggestions`;
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const localInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = providedInputRef ?? localInputRef;
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =

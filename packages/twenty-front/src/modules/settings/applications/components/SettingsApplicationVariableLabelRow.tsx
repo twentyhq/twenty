@@ -25,13 +25,11 @@ export const SettingsApplicationVariableLabelRow = ({
   label,
   isDeprecated,
   description,
-  tooltipId,
 }: {
   variableKey: string;
   label?: string;
   isDeprecated: boolean;
   description: string;
-  tooltipId: string;
 }) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -49,10 +47,8 @@ export const SettingsApplicationVariableLabelRow = ({
           delay={TooltipDelay.shortDelay}
         >
           <IconInfoCircle
-            id={tooltipId}
             size={theme.icon.size.sm}
             color={theme.font.color.tertiary}
-            style={{ outline: 'none', cursor: 'pointer' }}
           />
         </Tooltip>
       )}

@@ -110,13 +110,12 @@ export const SettingsAdminChatToolCallPart = ({
   ];
 
   return (
-    <StyledContainer>
-      <StyledToggleRow
-        aria-expanded={isExpanded}
-        onClick={() =>
-          setIsExpanded((previousIsExpanded) => !previousIsExpanded)
-        }
-      >
+    <Collapsible.Root
+      open={isExpanded}
+      onOpenChange={setIsExpanded}
+      render={<StyledContainer />}
+    >
+      <Collapsible.Trigger render={<StyledToggleRow />}>
         <StyledToolLabel>
           <IconTool size={14} />
           {toolName}
@@ -129,56 +128,54 @@ export const SettingsAdminChatToolCallPart = ({
             <IconChevronDown size={14} />
           )}
         </StyledRightContent>
-      </StyledToggleRow>
-      <Collapsible.Root open={isExpanded}>
-        <Collapsible.Panel>
-          <Tabs.Root
-            value={activeTab}
-            onValueChange={(value) => {
-              if (value !== 'output' && value !== 'input') {
-                return;
-              }
-              setActiveTab(value);
-            }}
+      </Collapsible.Trigger>
+      <Collapsible.Panel>
+        <Tabs.Root
+          value={activeTab}
+          onValueChange={(value) => {
+            if (value !== 'output' && value !== 'input') {
+              return;
+            }
+            setActiveTab(value);
+          }}
+        >
+          <Tabs.List
+            aria-label={t`Tool call details`}
+            render={<StyledTabContainer />}
           >
-            <Tabs.List
-              aria-label={t`Tool call details`}
-              render={<StyledTabContainer />}
-            >
-              <Tabs.Tab value="output" size="compact">
-                {t`Output`}
-              </Tabs.Tab>
-              <Tabs.Tab value="input" size="compact">
-                {t`Input`}
-              </Tabs.Tab>
-              <Tabs.Indicator />
-            </Tabs.List>
-            {tabPanels.map(({ value, content, emptyLabel }) => (
-              <Tabs.Panel key={value} value={value}>
-                {isDefined(content) ? (
-                  <StyledJsonTreeContainer>
-                    <JsonTree
-                      value={content}
-                      shouldExpandNodeInitially={() => false}
-                      emptyArrayLabel={t`Empty Array`}
-                      emptyObjectLabel={t`Empty Object`}
-                      emptyStringLabel={t`[empty string]`}
-                      arrowButtonCollapsedLabel={t`Expand`}
-                      arrowButtonExpandedLabel={t`Collapse`}
-                      onNodeValueClick={copyToClipboard}
-                    />
-                  </StyledJsonTreeContainer>
-                ) : (
-                  <StyledEmptyTabLabel>{emptyLabel}</StyledEmptyTabLabel>
-                )}
-              </Tabs.Panel>
-            ))}
-          </Tabs.Root>
-          {isNonEmptyString(part.errorMessage) && (
-            <StyledErrorMessage>{part.errorMessage}</StyledErrorMessage>
-          )}
-        </Collapsible.Panel>
-      </Collapsible.Root>
-    </StyledContainer>
+            <Tabs.Tab value="output" size="compact">
+              {t`Output`}
+            </Tabs.Tab>
+            <Tabs.Tab value="input" size="compact">
+              {t`Input`}
+            </Tabs.Tab>
+            <Tabs.Indicator />
+          </Tabs.List>
+          {tabPanels.map(({ value, content, emptyLabel }) => (
+            <Tabs.Panel key={value} value={value}>
+              {isDefined(content) ? (
+                <StyledJsonTreeContainer>
+                  <JsonTree
+                    value={content}
+                    shouldExpandNodeInitially={() => false}
+                    emptyArrayLabel={t`Empty Array`}
+                    emptyObjectLabel={t`Empty Object`}
+                    emptyStringLabel={t`[empty string]`}
+                    arrowButtonCollapsedLabel={t`Expand`}
+                    arrowButtonExpandedLabel={t`Collapse`}
+                    onNodeValueClick={copyToClipboard}
+                  />
+                </StyledJsonTreeContainer>
+              ) : (
+                <StyledEmptyTabLabel>{emptyLabel}</StyledEmptyTabLabel>
+              )}
+            </Tabs.Panel>
+          ))}
+        </Tabs.Root>
+        {isNonEmptyString(part.errorMessage) && (
+          <StyledErrorMessage>{part.errorMessage}</StyledErrorMessage>
+        )}
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type Stripe from 'stripe';
 
-import { BILLING_SELLABLE_PLAN_KEYS } from 'src/engine/core-modules/billing/constants/billing-sellable-plan-keys.constant';
 import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
@@ -39,7 +38,7 @@ export class StripeCheckoutService {
     successUrl,
     cancelUrl,
     stripeCustomerId,
-    plan = BILLING_SELLABLE_PLAN_KEYS[0],
+    plan,
     requirePaymentMethod = true,
     withTrialPeriod,
   }: {
@@ -49,7 +48,7 @@ export class StripeCheckoutService {
     successUrl?: string;
     cancelUrl?: string;
     stripeCustomerId?: string;
-    plan?: BillingPlanKey;
+    plan: BillingPlanKey;
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
   }): Promise<Stripe.Checkout.Session> {
@@ -89,7 +88,7 @@ export class StripeCheckoutService {
     workspace,
     stripeSubscriptionLineItems,
     stripeCustomerId,
-    plan = BILLING_SELLABLE_PLAN_KEYS[0],
+    plan,
     requirePaymentMethod = false,
     withTrialPeriod,
     idempotencyKey,
@@ -98,7 +97,7 @@ export class StripeCheckoutService {
     workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
     stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     stripeCustomerId?: string;
-    plan?: BillingPlanKey;
+    plan: BillingPlanKey;
     requirePaymentMethod?: boolean;
     withTrialPeriod: boolean;
     idempotencyKey: string;
@@ -139,7 +138,7 @@ export class StripeCheckoutService {
     workspace,
     stripeSubscriptionLineItems,
     stripeCustomerId,
-    plan = BILLING_SELLABLE_PLAN_KEYS[0],
+    plan,
     withTrialPeriod,
     idempotencyKey,
   }: {
@@ -147,7 +146,7 @@ export class StripeCheckoutService {
     workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
     stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     stripeCustomerId?: string;
-    plan?: BillingPlanKey;
+    plan: BillingPlanKey;
     withTrialPeriod: boolean;
     idempotencyKey: string;
   }): Promise<Stripe.Subscription> {

@@ -1,3 +1,4 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -50,26 +51,6 @@ const StyledBottomLinks = styled.div`
   flex-direction: row;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: center;
-`;
-
-const StyledLinkButton = styled.button`
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: 140%;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.secondary};
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
 `;
 
 const StyledDot = styled.div`
@@ -168,16 +149,18 @@ export const EmailVerificationSent = ({
 
       {!isError && (
         <StyledBottomLinks>
-          <StyledLinkButton
+          <Button
+            variant="link"
+            size="sm"
             onClick={handleResendEmailVerificationToken(email)}
             disabled={isLoading}
           >
             {isLoading ? t`Sending...` : t`Resend email`}
-          </StyledLinkButton>
+          </Button>
           <StyledDot />
-          <StyledLinkButton onClick={handleChangeEmail}>
+          <Button variant="link" size="sm" onClick={handleChangeEmail}>
             {t`Change email`}
-          </StyledLinkButton>
+          </Button>
         </StyledBottomLinks>
       )}
     </StyledContainer>
