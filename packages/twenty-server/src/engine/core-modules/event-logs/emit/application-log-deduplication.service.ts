@@ -41,6 +41,7 @@ export class ApplicationLogDeduplicationService {
         entry.workspaceId,
         entry.applicationRegistrationId,
         entry.applicationId,
+        entry.logicFunctionId,
         entry.source,
         entry.errorCode ?? '',
       ].join(':'),
