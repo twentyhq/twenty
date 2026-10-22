@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import {
   useRecordIndexLazyFetchRecords,
@@ -54,11 +55,13 @@ export const useRecordIndexExportRecords = ({
   onMoreRecords,
   abortSignal,
 }: UseExportTableDataOptions) => {
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const downloadCsv = useCallback<UseRecordDataOptions['callback']>(
     ({ rows, columns }) => {
-      csvDownloader({ filename, rows, columns });
+      csvDownloader({ filename, rows, columns, objectMetadataItems });
     },
-    [filename],
+    [filename, objectMetadataItems],
   );
 
   const { getTableData: download, progress } = useRecordIndexLazyFetchRecords({

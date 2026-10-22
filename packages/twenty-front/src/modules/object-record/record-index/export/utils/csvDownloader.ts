@@ -5,14 +5,16 @@ import {
   formatRecordExportRow,
 } from 'twenty-shared/utils';
 
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getRecordExportSubFieldLabels } from '@/object-record/record-index/export/utils/getRecordExportSubFieldLabels';
+import { getRecordExportFields } from '@/object-record/record-index/export/utils/getRecordExportFields';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 export const csvDownloader = ({
   filename,
   columns,
   rows,
+  objectMetadataItems,
 }: {
   filename: string;
   columns: Pick<
@@ -20,18 +22,13 @@ export const csvDownloader = ({
     'label' | 'type' | 'metadata'
   >[];
   rows: Record<string, unknown>[];
+  objectMetadataItems: Pick<
+    EnrichedObjectMetadataItem,
+    'id' | 'labelSingular'
+  >[];
 }) => {
   const exportColumns = buildRecordExportColumns(
-    columns.map((column) => ({
-      name: column.metadata.fieldName,
-      label: column.label,
-      type: column.type,
-      subFieldLabels: getRecordExportSubFieldLabels(column.type),
-      relationType:
-        'relationType' in column.metadata
-          ? column.metadata.relationType
-          : undefined,
-    })),
+    getRecordExportFields({ columns, objectMetadataItems }),
   );
   const blob = new Blob(
     [

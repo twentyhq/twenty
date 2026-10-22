@@ -1,5 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { csvDownloader } from '@/object-record/record-index/export/utils/csvDownloader';
@@ -16,6 +17,8 @@ export const useExportSingleRecord = ({
   objectMetadataItem,
   recordId,
 }: UseSingleExportTableDataOptions) => {
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const columns: Pick<
     ColumnDefinition<FieldMetadata>,
     'size' | 'label' | 'type' | 'metadata'
@@ -37,7 +40,7 @@ export const useExportSingleRecord = ({
     if (isDefined(error) || !isDefined(record)) {
       return;
     }
-    csvDownloader({ filename, rows: [record], columns });
+    csvDownloader({ filename, rows: [record], columns, objectMetadataItems });
   };
   return { download };
 };

@@ -61,6 +61,7 @@ describe('csvDownloader', () => {
   it('prepends UTF-8 BOM (EF BB BF) as first three bytes', async () => {
     csvDownloader({
       filename: 'export.csv',
+      objectMetadataItems: [],
       columns,
       rows: [{ id: '1', name: 'test' }],
     });
@@ -83,6 +84,7 @@ describe('csvDownloader', () => {
   ])('preserves %s characters in exported content', async (_, name) => {
     csvDownloader({
       filename: 'export.csv',
+      objectMetadataItems: [],
       columns,
       rows: [{ id: '1', name }],
     });
@@ -104,6 +106,7 @@ describe('csvDownloader', () => {
 
     csvDownloader({
       filename: 'export.csv',
+      objectMetadataItems: [],
       columns: [
         {
           label: 'Nom',
@@ -138,6 +141,7 @@ describe('csvDownloader', () => {
   it('downloads raw records with shared currency and relation formatting', async () => {
     csvDownloader({
       filename: 'export.csv',
+      objectMetadataItems: [],
       columns: [
         {
           label: 'Amount',
@@ -175,6 +179,65 @@ describe('csvDownloader', () => {
 
     expect(Buffer.from(await readBlob(blob)).toString('utf-8')).toBe(
       '\uFEFFId,Amount / Amount,Amount / Currency,Company Id\n1,,,\n2,1.5,EUR,company-1\n',
+    );
+  });
+
+  it('exports one join column per morph relation target', async () => {
+    csvDownloader({
+      filename: 'export.csv',
+      objectMetadataItems: [
+        { id: 'company-object-id', labelSingular: 'Company' },
+        { id: 'person-object-id', labelSingular: 'Person' },
+      ],
+      columns: [
+        {
+          label: 'Target',
+          type: FieldMetadataType.MORPH_RELATION,
+          metadata: {
+            fieldName: 'target',
+            relationType: RelationType.MANY_TO_ONE,
+            morphRelations: [
+              {
+                type: RelationType.MANY_TO_ONE,
+                sourceFieldMetadata: { id: 'source-field-id', name: 'target' },
+                targetFieldMetadata: { id: 'company-field-id', name: 'notes' },
+                sourceObjectMetadata: {
+                  id: 'note-object-id',
+                  nameSingular: 'note',
+                  namePlural: 'notes',
+                },
+                targetObjectMetadata: {
+                  id: 'company-object-id',
+                  nameSingular: 'company',
+                  namePlural: 'companies',
+                },
+              },
+              {
+                type: RelationType.MANY_TO_ONE,
+                sourceFieldMetadata: { id: 'source-field-id', name: 'target' },
+                targetFieldMetadata: { id: 'person-field-id', name: 'notes' },
+                sourceObjectMetadata: {
+                  id: 'note-object-id',
+                  nameSingular: 'note',
+                  namePlural: 'notes',
+                },
+                targetObjectMetadata: {
+                  id: 'person-object-id',
+                  nameSingular: 'person',
+                  namePlural: 'people',
+                },
+              },
+            ],
+          },
+        },
+      ],
+      rows: [{ id: '1', targetCompanyId: 'company-1', targetPersonId: null }],
+    });
+
+    const blob = getDownloadedBlob();
+
+    expect(Buffer.from(await readBlob(blob)).toString('utf-8')).toBe(
+      '\uFEFFId,Target / Company Id,Target / Person Id\n1,company-1,\n',
     );
   });
 });
