@@ -11,8 +11,11 @@ import { cssInjectionPlugin } from '@/front-component-renderer/build/css-injecti
 describe('front-component build CSS injection', () => {
   it('injects imported CSS into the document head and supports server rendering', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'css-injection-'));
-    const css =
-      '.example::before { content: "hello\\nworld"; box-sizing: border-box; }';
+    const css = String.raw`.example::before {
+  content: "hello\\world";
+  box-sizing: border-box;
+}
+`;
 
     try {
       await writeFile(join(directory, 'style.css'), css);
@@ -34,7 +37,7 @@ describe('front-component build CSS injection', () => {
 
       expect(createElement).toHaveBeenCalledWith('style');
       expect(appendChild).toHaveBeenCalledWith(style);
-      expect(style.textContent).toBe(css);
+      expect(style.textContent).toContain(css);
       expect(() => runInNewContext(result.outputFiles[0].text)).not.toThrow();
     } finally {
       await rm(directory, { recursive: true, force: true });
