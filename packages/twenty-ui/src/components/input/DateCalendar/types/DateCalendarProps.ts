@@ -1,5 +1,7 @@
 import { type useRender } from '@base-ui/react/use-render';
 
+import { type SelectPortalProps } from '@ui/primitives/input/Select/types/SelectPortalProps';
+
 export type DateCalendarProps = Omit<
   useRender.ComponentProps<'div'>,
   'children' | 'onChange' | 'defaultValue'
@@ -9,6 +11,9 @@ export type DateCalendarProps = Omit<
   viewedMonth: string;
   onViewedMonthChange: (month: string) => void;
   today?: string;
+  highlightedRange?: { start: string; end: string };
+  readOnly?: boolean;
+  hideGrid?: boolean;
   weekStart: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   locale: string;
   weekdayLabels?: readonly [
@@ -24,6 +29,11 @@ export type DateCalendarProps = Omit<
   nextMonthLabel: string;
   monthLabel: string;
   yearLabel: string;
+  portalContainer?: SelectPortalProps['container'];
+  onNavigationOpenChange?: (args: {
+    open: boolean;
+    control: 'month' | 'year';
+  }) => void;
   isDateUnavailable?: (date: string) => boolean;
   disabled?: boolean;
 };

@@ -3,6 +3,7 @@ import { isNumber } from '@sniptt/guards';
 import { Select } from '@ui/primitives/input/Select/Select';
 
 import styles from '../DateCalendar.module.scss';
+import { type DateCalendarProps } from '../types/DateCalendarProps';
 
 type DateCalendarSelectProps = {
   value: number;
@@ -10,6 +11,8 @@ type DateCalendarSelectProps = {
   onValueChange: (value: number) => void;
   label: string;
   disabled?: boolean;
+  portalContainer?: DateCalendarProps['portalContainer'];
+  onOpenChange?: (open: boolean) => void;
 };
 
 export const DateCalendarSelect = ({
@@ -18,11 +21,23 @@ export const DateCalendarSelect = ({
   onValueChange,
   label,
   disabled,
+  portalContainer,
+  onOpenChange,
 }: DateCalendarSelectProps) => (
   <Select.Root
     value={value}
     items={items}
     disabled={disabled}
+    onOpenChange={(open) => {
+      if (open) {
+        onOpenChange?.(true);
+      }
+    }}
+    onOpenChangeComplete={(open) => {
+      if (!open) {
+        onOpenChange?.(false);
+      }
+    }}
     onValueChange={(nextValue) => {
       if (!isNumber(nextValue)) {
         return;
@@ -35,7 +50,7 @@ export const DateCalendarSelect = ({
       <Select.Value />
       <Select.Icon />
     </Select.Trigger>
-    <Select.Portal>
+    <Select.Portal container={portalContainer}>
       <Select.Positioner sideOffset={4} alignItemWithTrigger={false}>
         <Select.Popup>
           {items.map(({ value: itemValue, label: itemLabel }) => (

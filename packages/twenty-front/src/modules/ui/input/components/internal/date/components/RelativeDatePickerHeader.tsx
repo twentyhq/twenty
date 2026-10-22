@@ -1,6 +1,5 @@
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { RelativeDatePickerCalendarNavigation } from '@/ui/input/components/internal/date/components/RelativeDatePickerCalendarNavigation';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
 import { RELATIVE_DATETIME_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateTimeUnits';
 import { RELATIVE_DATE_UNITS } from '@/ui/input/components/internal/date/constants/RelativeDateUnits';
@@ -44,11 +43,6 @@ type RelativeDatePickerHeaderProps = {
   readonly?: boolean;
   unitDropdownWidth?: number;
   allowIntraDayUnits?: boolean;
-  calendarMonthDate?: Date;
-  onPreviousMonth?: () => void;
-  onNextMonth?: () => void;
-  prevMonthButtonDisabled?: boolean;
-  nextMonthButtonDisabled?: boolean;
 };
 
 export const RelativeDatePickerHeader = ({
@@ -61,11 +55,6 @@ export const RelativeDatePickerHeader = ({
   readonly,
   unitDropdownWidth,
   allowIntraDayUnits,
-  calendarMonthDate,
-  onPreviousMonth,
-  onNextMonth,
-  prevMonthButtonDisabled,
-  nextMonthButtonDisabled,
 }: RelativeDatePickerHeaderProps) => {
   const amountString = amount?.toString() ?? '';
 
@@ -193,17 +182,6 @@ export const RelativeDatePickerHeader = ({
           dropdownWidth={unitDropdownWidth}
         />
       </StyledControlsRow>
-      {isDefined(calendarMonthDate) &&
-        isDefined(onPreviousMonth) &&
-        isDefined(onNextMonth) && (
-          <RelativeDatePickerCalendarNavigation
-            monthLabelDate={calendarMonthDate}
-            onPreviousMonth={onPreviousMonth}
-            onNextMonth={onNextMonth}
-            prevMonthButtonDisabled={prevMonthButtonDisabled ?? false}
-            nextMonthButtonDisabled={nextMonthButtonDisabled ?? false}
-          />
-        )}
     </StyledContainer>
   );
 };

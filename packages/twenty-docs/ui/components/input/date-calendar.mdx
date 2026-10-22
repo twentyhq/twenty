@@ -70,6 +70,14 @@ Unavailable dates retain their place in the grid, so an unavailable week does no
 
 Days from neighboring months appear muted and are not interactive. Keyboard movement across the current month boundary requests the next viewed month without selecting a date.
 
+## Highlighted ranges and read-only views
+
+Pass `highlightedRange={{ start: '2026-10-05', end: '2026-10-11' }}` to highlight an inclusive date range. Range highlighting is presentation only. It does not select multiple dates, change `value`, or calculate a relative filter.
+
+Set `readOnly` when the calendar displays a computed range or selected date that the user cannot change directly. The month and year controls and keyboard navigation remain available, while clicks, Enter, and Space do not select a date. `disabled` also disables navigation controls.
+
+Use `hideGrid` for a month-only navigator. It hides the weekday and date rows and retains the same shared month and year controls. The application decides how the requested month affects its data.
+
 ## Keyboard navigation
 
 Tab enters the grid at one date and leaves it after that single grid stop. The selected date, keyboard focus, and viewed month remain separate.
@@ -81,7 +89,7 @@ Tab enters the grid at one date and leaves it after that single grid stop. The s
 | Home or End | Move to the first or last day of the configured week. |
 | Page Up or Page Down | Move to the previous or next month, preserving the day when possible. |
 | Shift + Page Up or Page Down | Move to the previous or next year, preserving the day when possible. |
-| Enter or Space | Select the focused available date. |
+| Enter or Space | Select the focused available date unless `readOnly` is set. |
 
 Month and year movement clamps dates such as January 31 or February 29 to the destination month's final day. Crossing a month boundary requests a new `viewedMonth` without changing `value`.
 
@@ -90,6 +98,16 @@ Month and year movement clamps dates such as January 31 or February 29 to the de
 Supply a group name with `aria-label` or `aria-labelledby`, plus the four header control labels. The grid is named by its formatted month and year. Weekday headers expose full names, selected cells expose `aria-selected`, and the supplied today date uses `aria-current="date"`.
 
 Native attributes, `className`, `style`, and `ref` apply to the root. Use `render` to compose a different root while preserving the supplied props and ref. The component uses shared Twenty UI buttons and selectors and retains their keyboard focus treatment.
+
+Use `portalContainer` to mount month and year popup content in a host-provided element, shadow root, or ref. It follows the shared Select portal contract. Omitting it keeps the shared Select default, which uses the theme container when present.
+
+`onNavigationOpenChange` receives `{ open, control }`, where `control` is `month` or `year`. It reports `open: true` when opening starts and `open: false` after closing completes. This lets the host retain nested-popup focus and dismissal handling through the interaction that closes the selector. Header arrow actions only request a viewed month and do not call this callback.
+
+## Product adapters
+
+Twenty's date, date-time, and month-only pickers compose this shared calendar surface. Their adapters keep text inputs, time editing, timezone conversion, member preferences, clear actions, and relative-filter computation in `twenty-front`.
+
+For a relative filter, compute its inclusive date bounds in the adapter, then supply `highlightedRange` and `readOnly`. For a month-only picker, supply `hideGrid` and handle `onViewedMonthChange` in the adapter. This keeps calendar rendering and navigation in one shared component.
 
 ## Props
 

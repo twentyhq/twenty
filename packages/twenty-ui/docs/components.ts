@@ -1046,7 +1046,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/date-calendar',
     propDescriptions: DATE_CALENDAR_PROP_DESCRIPTIONS,
-    propDefaults: { disabled: 'false', role: 'group' },
+    propDefaults: {
+      disabled: 'false',
+      readOnly: 'false',
+      hideGrid: 'false',
+      role: 'group',
+    },
   },
   {
     name: 'SearchInput',

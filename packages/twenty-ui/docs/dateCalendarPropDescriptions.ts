@@ -22,6 +22,16 @@ export const DATE_CALENDAR_PROP_DESCRIPTIONS = {
   yearLabel: 'Accessible name of the year selector.',
   isDateUnavailable:
     'Returns whether a canonical YYYY-MM-DD date cannot be selected. Unavailable dates remain discoverable with arrow keys.',
+  highlightedRange:
+    'Inclusive YYYY-MM-DD start and end dates to highlight. This is presentation only; the application owns range computation and the selected date remains independent.',
+  readOnly:
+    'Prevents date selection while preserving header controls, keyboard navigation, and the displayed selection or range.',
+  hideGrid:
+    'Hides weekday and date rows while retaining the shared month and year controls for a month-only navigator.',
+  portalContainer:
+    'Mount container for month and year selector popups. Accepts the shared Select portal container contract; the calendar root stays in its original location.',
+  onNavigationOpenChange:
+    'Reports { open, control } when a month or year popup starts opening and after it finishes closing. The host can retain nested-popup focus and dismissal handling until closure completes. Header arrow actions do not call this callback.',
   disabled: 'Disables date selection and all header controls.',
   render: 'Composes the root element while preserving its props and contents.',
   ref: 'Ref to the root element.',

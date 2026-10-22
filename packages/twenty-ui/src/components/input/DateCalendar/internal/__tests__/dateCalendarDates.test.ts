@@ -5,6 +5,7 @@ import { getDateCalendarKeyboardTarget } from '../getDateCalendarKeyboardTarget'
 import { getDateCalendarWeeks } from '../getDateCalendarWeeks';
 import { parseDateCalendarDate } from '../parseDateCalendarDate';
 import { shiftDateCalendarDate } from '../shiftDateCalendarDate';
+import { validateDateCalendarHighlightedRange } from '../validateDateCalendarHighlightedRange';
 
 describe('calendar date parsing and formatting', () => {
   it.each(['0001-01-01', '0051-06-15', '2000-02-29', '9999-12-31'])(
@@ -209,5 +210,25 @@ describe('calendar keyboard targets', () => {
     expect(
       getDateCalendarKeyboardTarget({ ...keyboardState, key: 'Tab' }),
     ).toBeNull();
+  });
+});
+
+describe('calendar highlighted range validation', () => {
+  it.each([
+    { start: '2026-10-07', end: '2026-10-09' },
+    { start: '2026-10-07', end: '2026-10-07' },
+    { start: '2026-12-31', end: '2027-01-01' },
+  ])('accepts the inclusive range from $start to $end', (range) => {
+    expect(() => validateDateCalendarHighlightedRange(range)).not.toThrow();
+  });
+
+  it.each([
+    { start: '2026-10-09', end: '2026-10-07' },
+    { start: '2026-2-01', end: '2026-10-07' },
+    { start: '2026-10-07', end: '2026-02-30' },
+  ])('rejects the invalid range from $start to $end', (range) => {
+    expect(() => validateDateCalendarHighlightedRange(range)).toThrow(
+      RangeError,
+    );
   });
 });

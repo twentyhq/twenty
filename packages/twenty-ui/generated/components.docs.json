@@ -14950,6 +14950,20 @@
         "description": "Disables date selection and all header controls."
       },
       {
+        "name": "hideGrid",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Hides weekday and date rows while retaining the shared month and year controls for a month-only navigator."
+      },
+      {
+        "name": "highlightedRange",
+        "type": "{ start: string; end: string; }",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inclusive YYYY-MM-DD start and end dates to highlight. This is presentation only; the application owns range computation and the selected date remains independent."
+      },
+      {
         "name": "isDateUnavailable",
         "type": "((date: string) => boolean)",
         "required": false,
@@ -14978,6 +14992,13 @@
         "description": "Accessible name of the next-month button."
       },
       {
+        "name": "onNavigationOpenChange",
+        "type": "((args: { open: boolean; control: \"month\" | \"year\"; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports { open, control } when a month or year popup starts opening and after it finishes closing. The host can retain nested-popup focus and dismissal handling until closure completes. Header arrow actions do not call this callback."
+      },
+      {
         "name": "onValueChange",
         "type": "(date: string) => void",
         "required": true,
@@ -14992,11 +15013,25 @@
         "description": "Requests the month shown by the header controls or keyboard navigation across a month boundary. Does not change the selected date."
       },
       {
+        "name": "portalContainer",
+        "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Mount container for month and year selector popups. Accepts the shared Select portal container contract; the calendar root stays in its original location."
+      },
+      {
         "name": "previousMonthLabel",
         "type": "string",
         "required": true,
         "defaultValue": null,
         "description": "Accessible name of the previous-month button."
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents date selection while preserving header controls, keyboard navigation, and the displayed selection or range."
       },
       {
         "name": "ref",

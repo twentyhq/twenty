@@ -1,9 +1,10 @@
 import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { Text } from 'twenty-ui/primitives/typography';
 
 const INITIAL_PLAIN_DATE = '2023-01-01';
 
@@ -19,24 +20,36 @@ const DatePickerStory = ({
   instanceId = 'story-date-picker',
   isRelative,
   clearable,
+  onChange,
+  onClose,
 }: {
   instanceId?: string;
   isRelative?: boolean;
   clearable?: boolean;
+  onChange?: (date: string | null) => void;
+  onClose?: (date: string | null) => void;
 }) => {
   const [plainDateString, setPlainDateString] = useState<string | null>(
     INITIAL_PLAIN_DATE,
   );
 
   return (
-    <DatePicker
-      instanceId={instanceId}
-      plainDateString={plainDateString}
-      onChange={setPlainDateString}
-      clearable={clearable}
-      isRelative={isRelative}
-      relativeDate={isRelative ? RELATIVE_DATE : undefined}
-    />
+    <>
+      <DatePicker
+        instanceId={instanceId}
+        plainDateString={plainDateString}
+        onChange={(date) => {
+          setPlainDateString(date);
+          onChange?.(date);
+        }}
+        onClose={onClose}
+        onClear={() => setPlainDateString(null)}
+        clearable={clearable}
+        isRelative={isRelative}
+        relativeDate={isRelative ? RELATIVE_DATE : undefined}
+      />
+      <Text aria-label="Selected date">{plainDateString ?? 'None'}</Text>
+    </>
   );
 };
 
@@ -53,7 +66,6 @@ type Story = StoryObj<typeof DatePicker>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Lazy-loaded react-datepicker renders the day grid; wait for a day cell.
     await canvas.findByText('15', {}, { timeout: 10000 });
   },
 };
@@ -126,7 +138,42 @@ export const OpensOnlyItsOwnMonthSelect: Story = {
     await userEvent.click(firstMonthSelect);
 
     await waitFor(() => {
-      expect(body.getAllByRole('dialog', { name: 'January' })).toHaveLength(1);
+      expect(body.getAllByRole('listbox')).toHaveLength(1);
     });
+  },
+};
+
+export const NavigationDoesNotSelect: Story = {
+  args: { onChange: fn(), onClose: fn() },
+  render: ({ onChange, onClose }) => (
+    <DatePickerStory onChange={onChange} onClose={onClose} />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Next month' }));
+    expect(canvas.getByRole('combobox', { name: 'Month' })).toHaveTextContent(
+      'February',
+    );
+    expect(canvas.getByLabelText('Selected date')).toHaveTextContent(
+      INITIAL_PLAIN_DATE,
+    );
+    expect(args.onChange).not.toHaveBeenCalled();
+    expect(args.onClose).not.toHaveBeenCalled();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Wednesday, February 15, 2023' }),
+    );
+    expect(args.onChange).toHaveBeenCalledWith('2023-02-15');
+    expect(args.onClose).toHaveBeenCalledWith('2023-02-15');
+  },
+};
+
+export const ClearSelection: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Clear' }));
+    expect(canvas.getByLabelText('Selected date')).toHaveTextContent('None');
+    expect(
+      canvas.getByRole('grid').querySelector('[aria-selected="true"]'),
+    ).toBeNull();
   },
 };

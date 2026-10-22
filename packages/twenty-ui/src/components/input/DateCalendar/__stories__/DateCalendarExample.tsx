@@ -8,6 +8,9 @@ export const DateCalendarExample = ({
   initialValue = '2026-10-07',
   initialViewedMonth = '2026-10',
   today = '2026-10-22',
+  highlightedRange,
+  readOnly,
+  hideGrid,
   disabled,
   isDateUnavailable,
   onValueChange,
@@ -16,6 +19,9 @@ export const DateCalendarExample = ({
   Pick<
     DateCalendarProps,
     | 'today'
+    | 'highlightedRange'
+    | 'readOnly'
+    | 'hideGrid'
     | 'disabled'
     | 'isDateUnavailable'
     | 'onValueChange'
@@ -42,6 +48,9 @@ export const DateCalendarExample = ({
         onViewedMonthChange?.(month);
       }}
       today={today}
+      highlightedRange={highlightedRange}
+      readOnly={readOnly}
+      hideGrid={hideGrid}
       weekStart={1}
       locale="en-US"
       weekdayLabels={DATE_CALENDAR_WEEKDAY_LABELS}

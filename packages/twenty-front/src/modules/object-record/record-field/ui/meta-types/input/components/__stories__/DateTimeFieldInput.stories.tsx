@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
@@ -31,13 +32,13 @@ const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
     setFieldValue(value.toISOString());
   }, [setFieldValue, value]);
 
-  return <></>;
+  return null;
 };
 
 const DateFieldValueGater = () => {
   const { fieldValue } = useDateTimeField();
 
-  return fieldValue ? <DateTimeFieldInput /> : null;
+  return isNonEmptyString(fieldValue) ? <DateTimeFieldInput /> : null;
 };
 
 type DateFieldInputWithContextProps = {
@@ -45,26 +46,31 @@ type DateFieldInputWithContextProps = {
   recordId: string;
 };
 
-const DateFieldInputWithContext = ({
-  value,
-  recordId,
-}: DateFieldInputWithContextProps) => {
+const DateFieldInputFocusEffect = ({ instanceId }: { instanceId: string }) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const instanceId = getRecordFieldInputInstanceId({
-    recordId,
-    fieldName: 'Date',
-    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
-  });
 
   useEffect(() => {
     pushFocusItemToFocusStack({
       focusId: instanceId,
       component: {
         type: FocusComponentType.OPENED_FIELD_INPUT,
-        instanceId: instanceId,
+        instanceId,
       },
     });
   }, [pushFocusItemToFocusStack, instanceId]);
+
+  return null;
+};
+
+const DateFieldInputWithContext = ({
+  value,
+  recordId,
+}: DateFieldInputWithContextProps) => {
+  const instanceId = getRecordFieldInputInstanceId({
+    recordId,
+    fieldName: 'Date',
+    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+  });
 
   return (
     <RecordFieldComponentInstanceContext.Provider
@@ -72,6 +78,7 @@ const DateFieldInputWithContext = ({
         instanceId: instanceId,
       }}
     >
+      <DateFieldInputFocusEffect instanceId={instanceId} />
       <FieldContext.Provider
         value={{
           fieldDefinition: {
@@ -129,19 +136,11 @@ type Story = StoryObj<typeof DateFieldInputWithContext>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
 
-    const calendarButton = await canvas.findByRole(
-      'button',
-      { name: 'Select month and year' },
-      { timeout: 10000 },
-    );
-    await userEvent.click(calendarButton);
-
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    const div = await body.findByText('January', {}, { timeout: 10000 });
-
-    await expect(div.innerText).toContain('January');
+    await expect(
+      await canvas.findByRole('combobox', { name: 'Month' }),
+    ).toBeVisible();
+    await expect(canvas.getByRole('grid')).toBeVisible();
   },
 };
 
@@ -150,27 +149,19 @@ export const ClickOutside: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(0);
-
-    const calendarButton = await canvas.findByRole(
-      'button',
-      { name: 'Select month and year' },
-      { timeout: 10000 },
+    await expect(handleClickoutsideMocked).not.toHaveBeenCalled();
+    await userEvent.click(
+      await canvas.findByRole('combobox', { name: 'Month' }),
     );
-    await userEvent.click(calendarButton);
-
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    await body.findByText('January', {}, { timeout: 10000 });
+    await body.findByRole('listbox');
 
     const outsideButton = canvas.getByRole('button', {
       name: 'Outside date field',
     });
     await userEvent.click(outsideButton);
-    await waitFor(() => {
-      expect(
-        body.queryByRole('dialog', { name: 'Select month and year' }),
-      ).not.toBeInTheDocument();
-    });
+    await waitFor(() =>
+      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
     await expect(handleClickoutsideMocked).not.toHaveBeenCalled();
     await userEvent.click(outsideButton);
 
@@ -180,28 +171,20 @@ export const ClickOutside: Story = {
 
 export const Escape: Story = {
   play: async ({ canvasElement }) => {
-    await expect(handleEscapeMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    const calendarButton = await canvas.findByRole(
-      'button',
-      { name: 'Select month and year' },
-      { timeout: 10000 },
-    );
-    await userEvent.click(calendarButton);
-
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    await body.findByText('January', {}, { timeout: 10000 });
-
-    await userEvent.keyboard('{escape}');
-    await waitFor(() => {
-      expect(
-        body.queryByRole('dialog', { name: 'Select month and year' }),
-      ).not.toBeInTheDocument();
-    });
     await expect(handleEscapeMocked).not.toHaveBeenCalled();
-    await userEvent.keyboard('{escape}');
+    await userEvent.click(
+      await canvas.findByRole('combobox', { name: 'Month' }),
+    );
+    await body.findByRole('listbox');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
+    await expect(handleEscapeMocked).not.toHaveBeenCalled();
+    await userEvent.keyboard('{Escape}');
 
     await expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
   },
@@ -209,30 +192,45 @@ export const Escape: Story = {
 
 export const Enter: Story = {
   play: async ({ canvasElement }) => {
-    await expect(handleEnterMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    const calendarButton = await canvas.findByRole(
-      'button',
-      { name: 'Select month and year' },
-      { timeout: 10000 },
-    );
-    await userEvent.click(calendarButton);
-
-    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    await body.findByText('January', {}, { timeout: 10000 });
-
-    await userEvent.keyboard('{enter}');
-    await waitFor(() => {
-      expect(
-        body.queryByRole('dialog', { name: 'Select month and year' }),
-      ).not.toBeInTheDocument();
-    });
     await expect(handleEnterMocked).not.toHaveBeenCalled();
-    await userEvent.click(await canvas.findByPlaceholderText(/HH:mm/));
-    await userEvent.keyboard('{enter}');
+    await userEvent.click(
+      await canvas.findByRole('combobox', { name: 'Month' }),
+    );
+    await body.findByRole('listbox');
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() =>
+      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
+    await expect(handleEnterMocked).not.toHaveBeenCalled();
+    await userEvent.click(canvas.getByRole('textbox', { name: 'Time' }));
+    await userEvent.keyboard('{Enter}');
 
     await expect(handleEnterMocked).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const CalendarNavigationDoesNotSubmit: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const dateInput = await canvas.findByRole('textbox', {
+      name: 'Date and time',
+    });
+    const initialValue = (dateInput as HTMLInputElement).value;
+    const monthSelect = canvas.getByRole('combobox', { name: 'Month' });
+    const initialMonth = monthSelect.innerText;
+    const nextMonth = canvas.getByRole('button', { name: 'Next month' });
+
+    nextMonth.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(handleEnterMocked).not.toHaveBeenCalled();
+    await expect(dateInput).toHaveValue(initialValue);
+    canvas.getByRole('button', { name: 'Previous month' }).focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(monthSelect).toHaveTextContent(initialMonth);
+    await expect(dateInput).toHaveValue(initialValue);
+    await expect(handleEnterMocked).not.toHaveBeenCalled();
   },
 };

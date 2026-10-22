@@ -48,6 +48,10 @@
   inline-size: 100%;
   margin-block: calc(-1 * var(--t-spacing-1));
   table-layout: fixed;
+
+  &[aria-readonly='true'] .day {
+    cursor: default;
+  }
 }
 
 .weekday {

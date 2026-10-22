@@ -18,6 +18,8 @@ export const DateCalendarGrid = ({
   onValueChange,
   viewedMonth,
   today,
+  highlightedRange,
+  readOnly,
   weekStart,
   locale,
   weekdayLabels,
@@ -33,6 +35,8 @@ export const DateCalendarGrid = ({
   | 'onValueChange'
   | 'viewedMonth'
   | 'today'
+  | 'highlightedRange'
+  | 'readOnly'
   | 'weekStart'
   | 'locale'
   | 'weekdayLabels'
@@ -97,7 +101,13 @@ export const DateCalendarGrid = ({
       <VisuallyHidden id={headingId} aria-live="polite" aria-atomic="true">
         {monthFormatter.format(parseDateCalendarDate(`${viewedMonth}-01`))}
       </VisuallyHidden>
-      <table className={styles.grid} role="grid" aria-labelledby={headingId}>
+      <table
+        className={styles.grid}
+        role="grid"
+        aria-labelledby={headingId}
+        aria-readonly={readOnly || undefined}
+        aria-multiselectable={isDefined(highlightedRange) || undefined}
+      >
         <thead>
           <tr>
             {weekdays.map(({ label, fullLabel }) => (
@@ -117,20 +127,25 @@ export const DateCalendarGrid = ({
             <tr key={weekIndex}>
               {week.map((date, dayIndex) => {
                 if (!isDefined(date)) {
-                  return <td key={dayIndex} />;
+                  return <td key={dayIndex} role="gridcell" />;
                 }
 
                 const parsedDate = parseDateCalendarDate(date);
                 const isOutsideMonth = !date.startsWith(`${viewedMonth}-`);
                 const isUnavailable =
                   isOutsideMonth || (isDateUnavailable?.(date) ?? false);
-                const isSelected = value === date;
+                const isInHighlightedRange =
+                  isDefined(highlightedRange) &&
+                  date >= highlightedRange.start &&
+                  date <= highlightedRange.end;
+                const isSelected = value === date || isInHighlightedRange;
                 const dateLabel = dateFormatter.format(parsedDate);
                 const dayText = dayFormatter.format(parsedDate.getUTCDate());
 
                 return (
                   <td
                     key={date}
+                    role="gridcell"
                     aria-selected={isSelected}
                     aria-disabled={isUnavailable || disabled || undefined}
                     aria-label={isOutsideMonth ? dateLabel : undefined}
@@ -160,7 +175,13 @@ export const DateCalendarGrid = ({
                         onKeyDownCapture={(event) =>
                           onDayKeyDown({ event, date })
                         }
-                        onClick={() => onValueChange(date)}
+                        onClick={() => {
+                          if (readOnly) {
+                            return;
+                          }
+
+                          onValueChange(date);
+                        }}
                       >
                         {dayText}
                       </Button>

@@ -20,6 +20,8 @@ export const DateCalendarHeader = ({
   nextMonthLabel,
   monthLabel,
   yearLabel,
+  portalContainer,
+  onNavigationOpenChange,
   disabled,
 }: Pick<
   DateCalendarProps,
@@ -30,6 +32,8 @@ export const DateCalendarHeader = ({
   | 'nextMonthLabel'
   | 'monthLabel'
   | 'yearLabel'
+  | 'portalContainer'
+  | 'onNavigationOpenChange'
   | 'disabled'
 >) => {
   const monthDate = parseDateCalendarDate(`${viewedMonth}-01`);
@@ -84,6 +88,10 @@ export const DateCalendarHeader = ({
           items={months}
           disabled={disabled}
           label={monthLabel}
+          portalContainer={portalContainer}
+          onOpenChange={(open) =>
+            onNavigationOpenChange?.({ open, control: 'month' })
+          }
           onValueChange={(nextMonthValue) => {
             const nextMonthDate = new Date(monthDate);
             nextMonthDate.setUTCMonth(nextMonthValue - 1);
@@ -99,6 +107,10 @@ export const DateCalendarHeader = ({
           items={years}
           disabled={disabled}
           label={yearLabel}
+          portalContainer={portalContainer}
+          onOpenChange={(open) =>
+            onNavigationOpenChange?.({ open, control: 'year' })
+          }
           onValueChange={(nextYear) => {
             const nextMonthDate = new Date(monthDate);
             nextMonthDate.setUTCFullYear(nextYear);

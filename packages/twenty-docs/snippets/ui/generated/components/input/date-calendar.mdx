@@ -27,6 +27,14 @@
   Disables date selection and all header controls.
 </ParamField>
 
+<ParamField body="hideGrid" type="boolean" default="false">
+  Hides weekday and date rows while retaining the shared month and year controls for a month-only navigator.
+</ParamField>
+
+<ParamField body="highlightedRange" type="{ start: string; end: string; }">
+  Inclusive YYYY-MM-DD start and end dates to highlight. This is presentation only; the application owns range computation and the selected date remains independent.
+</ParamField>
+
 <ParamField body="isDateUnavailable" type="((date: string) =&gt; boolean)">
   Returns whether a canonical YYYY-MM-DD date cannot be selected. Unavailable dates remain discoverable with arrow keys.
 </ParamField>
@@ -43,6 +51,10 @@
   Accessible name of the next-month button.
 </ParamField>
 
+<ParamField body="onNavigationOpenChange" type="((args: { open: boolean; control: &quot;month&quot; | &quot;year&quot;; }) =&gt; void)">
+  Reports &#123; open, control &#125; when a month or year popup starts opening and after it finishes closing. The host can retain nested-popup focus and dismissal handling until closure completes. Header arrow actions do not call this callback.
+</ParamField>
+
 <ParamField body="onValueChange" type="(date: string) =&gt; void" required>
   Requests an available date after a click, Enter, or Space. Navigation and prop changes do not select a date.
 </ParamField>
@@ -51,8 +63,16 @@
   Requests the month shown by the header controls or keyboard navigation across a month boundary. Does not change the selected date.
 </ParamField>
 
+<ParamField body="portalContainer" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
+  Mount container for month and year selector popups. Accepts the shared Select portal container contract; the calendar root stays in its original location.
+</ParamField>
+
 <ParamField body="previousMonthLabel" type="string" required>
   Accessible name of the previous-month button.
+</ParamField>
+
+<ParamField body="readOnly" type="boolean" default="false">
+  Prevents date selection while preserving header controls, keyboard navigation, and the displayed selection or range.
 </ParamField>
 
 <ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">

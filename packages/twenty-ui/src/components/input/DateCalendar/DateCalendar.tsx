@@ -9,6 +9,7 @@ import { DateCalendarGrid } from './internal/DateCalendarGrid';
 import { DateCalendarHeader } from './internal/DateCalendarHeader';
 import { parseDateCalendarDate } from './internal/parseDateCalendarDate';
 import { useDateCalendarFocus } from './internal/useDateCalendarFocus';
+import { validateDateCalendarHighlightedRange } from './internal/validateDateCalendarHighlightedRange';
 import { type DateCalendarProps } from './types/DateCalendarProps';
 
 export const DateCalendar = ({
@@ -17,6 +18,9 @@ export const DateCalendar = ({
   viewedMonth,
   onViewedMonthChange,
   today,
+  highlightedRange,
+  readOnly = false,
+  hideGrid = false,
   weekStart,
   locale,
   weekdayLabels,
@@ -24,6 +28,8 @@ export const DateCalendar = ({
   nextMonthLabel,
   monthLabel,
   yearLabel,
+  portalContainer,
+  onNavigationOpenChange,
   isDateUnavailable,
   disabled = false,
   dir,
@@ -41,6 +47,10 @@ export const DateCalendar = ({
 
   if (isDefined(today)) {
     parseDateCalendarDate(today);
+  }
+
+  if (isDefined(highlightedRange)) {
+    validateDateCalendarHighlightedRange(highlightedRange);
   }
 
   const {
@@ -77,23 +87,29 @@ export const DateCalendar = ({
             nextMonthLabel={nextMonthLabel}
             monthLabel={monthLabel}
             yearLabel={yearLabel}
+            portalContainer={portalContainer}
+            onNavigationOpenChange={onNavigationOpenChange}
             disabled={disabled}
           />
-          <DateCalendarGrid
-            value={value}
-            onValueChange={onValueChange}
-            viewedMonth={viewedMonth}
-            today={today}
-            weekStart={weekStart}
-            locale={locale}
-            weekdayLabels={weekdayLabels}
-            isDateUnavailable={isDateUnavailable}
-            disabled={disabled}
-            focusedDate={focusedDate}
-            onDayKeyDown={handleDayKeyDown}
-            onDateFocus={handleDateFocus}
-            registerDateButton={registerDateButton}
-          />
+          {!hideGrid && (
+            <DateCalendarGrid
+              value={value}
+              onValueChange={onValueChange}
+              viewedMonth={viewedMonth}
+              today={today}
+              highlightedRange={highlightedRange}
+              readOnly={readOnly}
+              weekStart={weekStart}
+              locale={locale}
+              weekdayLabels={weekdayLabels}
+              isDateUnavailable={isDateUnavailable}
+              disabled={disabled}
+              focusedDate={focusedDate}
+              onDayKeyDown={handleDayKeyDown}
+              onDateFocus={handleDateFocus}
+              registerDateButton={registerDateButton}
+            />
+          )}
         </>
       ),
     },

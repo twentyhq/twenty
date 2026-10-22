@@ -49,7 +49,14 @@ export const Display: Story = {
     yearLabel: { control: false },
     'aria-label': { control: false },
   },
-  render: ({ disabled }) => <DateCalendarExample disabled={disabled} />,
+  render: ({ disabled, highlightedRange, readOnly, hideGrid }) => (
+    <DateCalendarExample
+      disabled={disabled}
+      highlightedRange={highlightedRange}
+      readOnly={readOnly}
+      hideGrid={hideGrid}
+    />
+  ),
 };
 
 const CALENDAR_EXAMPLES: {
