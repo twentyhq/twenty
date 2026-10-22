@@ -37,6 +37,15 @@ describe('resolveScrollLengthInPixels', () => {
     ).toBe(0);
   });
 
+  it('should resolve a calc() length mixing a percentage and pixels', () => {
+    expect(
+      resolveScrollLengthInPixels({
+        length: 'calc(10% + 20px)',
+        referenceSize: 200,
+      }),
+    ).toBe(40);
+  });
+
   it('should resolve auto to zero', () => {
     expect(
       resolveScrollLengthInPixels({ length: 'auto', referenceSize: 200 }),
