@@ -74,8 +74,16 @@ export const KeyboardScrollsActiveRowIntoView: Story = {
       name: 'Reaction 1',
     });
 
+    const viewport = firstEmoji.closest<HTMLElement>('[frimousse-viewport]');
+
+    if (!isDefined(viewport)) {
+      throw new Error('Emoji picker viewport is missing');
+    }
+
     await userEvent.click(search);
     await expect(search).toHaveFocus();
+    await userEvent.tab();
+    await expect(viewport).toHaveFocus();
     await userEvent.keyboard('{ArrowLeft}');
     await waitFor(() =>
       expect(firstEmoji).toHaveAttribute('aria-selected', 'true'),
@@ -99,14 +107,6 @@ export const KeyboardScrollsActiveRowIntoView: Story = {
       'aria-rowindex',
       '10',
     );
-
-    const viewport = lastRowFirstEmoji.closest<HTMLElement>(
-      '[frimousse-viewport]',
-    );
-
-    if (!isDefined(viewport)) {
-      throw new Error('Emoji picker viewport is missing');
-    }
 
     await waitFor(() => {
       const emojiBounds = lastRowFirstEmoji.getBoundingClientRect();

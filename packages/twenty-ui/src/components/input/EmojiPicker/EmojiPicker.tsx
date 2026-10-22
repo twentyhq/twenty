@@ -37,7 +37,7 @@ export const EmojiPicker = ({
         autoFocus={autoFocus}
       />
     </div>
-    <FrimousseEmojiPicker.Viewport className={styles.viewport}>
+    <FrimousseEmojiPicker.Viewport className={styles.viewport} tabIndex={0}>
       <FrimousseEmojiPicker.Loading className={styles.message}>
         {loadingLabel}
       </FrimousseEmojiPicker.Loading>
