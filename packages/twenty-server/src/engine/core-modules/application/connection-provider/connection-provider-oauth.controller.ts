@@ -191,11 +191,12 @@ export class ConnectionProviderOAuthController {
 
       const hasRedirectLocation = isNonEmptyString(redirectLocation);
 
-      const { pathname, searchParams, hash } = this.parseRedirectLocation(
-        hasRedirectLocation
-          ? redirectLocation
-          : getSettingsPath(SettingsPath.ApplicationDetail, { applicationId }),
-      );
+      const { pathname, searchParams, hash } = this.parseRedirectLocation({
+        redirectLocation,
+        fallbackPathname: getSettingsPath(SettingsPath.ApplicationDetail, {
+          applicationId,
+        }),
+      });
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
@@ -245,11 +246,18 @@ export class ConnectionProviderOAuthController {
   }
 
   // redirectLocation is a raw query param, so a malformed one must not turn the redirect into a 500
-  private parseRedirectLocation(redirectLocation: string) {
-    return (
-      parseRelativeUrlOrNull(redirectLocation) ??
-      parseRelativeUrl(getSettingsPath(SettingsPath.Accounts))
-    );
+  private parseRedirectLocation({
+    redirectLocation,
+    fallbackPathname,
+  }: {
+    redirectLocation: string | null | undefined;
+    fallbackPathname: string;
+  }) {
+    const parsedRedirectLocation = isNonEmptyString(redirectLocation)
+      ? parseRelativeUrlOrNull(redirectLocation)
+      : null;
+
+    return parsedRedirectLocation ?? parseRelativeUrl(fallbackPathname);
   }
 
   private redirectToError({
@@ -263,11 +271,10 @@ export class ConnectionProviderOAuthController {
     workspace: WorkspaceEntity | null;
     redirectLocation: string | null;
   }) {
-    const { pathname, searchParams, hash } = this.parseRedirectLocation(
-      isNonEmptyString(redirectLocation)
-        ? redirectLocation
-        : getSettingsPath(SettingsPath.Accounts),
-    );
+    const { pathname, searchParams, hash } = this.parseRedirectLocation({
+      redirectLocation,
+      fallbackPathname: getSettingsPath(SettingsPath.Accounts),
+    });
 
     return res.redirect(
       this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
