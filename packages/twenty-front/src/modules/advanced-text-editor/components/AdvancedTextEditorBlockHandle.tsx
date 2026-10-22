@@ -31,6 +31,15 @@ const DRAG_HANDLE_OPTIONS: Pick<
             ? 1000
             : 0,
       },
+      {
+        id: 'excludeTableContent',
+        evaluate: ({ $pos, depth }) =>
+          Array.from({ length: depth }, (_, ancestorDepth) =>
+            $pos.node(ancestorDepth),
+          ).some((ancestor) => ancestor.type.name === TIPTAP_NODE_TYPES.TABLE)
+            ? 1000
+            : 0,
+      },
     ],
   },
   computePositionConfig: { placement: 'left', middleware: [offset(4)] },

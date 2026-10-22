@@ -2,6 +2,7 @@ import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorSt
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { useLingui } from '@lingui/react/macro';
 import { type ChainedCommands, type Editor } from '@tiptap/core';
+import { type Level } from '@tiptap/extension-heading';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import {
   type IconComponent,
@@ -9,6 +10,9 @@ import {
   IconH1,
   IconH2,
   IconH3,
+  IconH4,
+  IconH5,
+  IconH6,
   IconTextSize,
 } from 'twenty-ui/icon';
 
@@ -25,6 +29,9 @@ const HEADING_ICONS: Record<number, IconComponent> = {
   1: IconH1,
   2: IconH2,
   3: IconH3,
+  4: IconH4,
+  5: IconH5,
+  6: IconH6,
 };
 
 export const useTurnIntoBlockOptions = (editor: Editor) => {
@@ -34,6 +41,9 @@ export const useTurnIntoBlockOptions = (editor: Editor) => {
     1: t`Heading 1`,
     2: t`Heading 2`,
     3: t`Heading 3`,
+    4: t`Heading 4`,
+    5: t`Heading 5`,
+    6: t`Heading 6`,
   };
 
   return useLiveEditorState(editor, (currentEditor): TurnIntoBlockOptions[] => {
@@ -61,26 +71,28 @@ export const useTurnIntoBlockOptions = (editor: Editor) => {
           return currentEditor.isActive('paragraph') && !isInBlockquote;
         },
       },
-      ...(hasEditorExtension(currentEditor, 'heading')
-        ? ([1, 2, 3] as const).map((level) => ({
-            id: `heading${level}`,
-            title: headingTitles[level],
-            icon: HEADING_ICONS[level],
-            onClick: () => {
-              return liftOutOfBlockquote(currentEditor.chain().focus())
-                .setHeading({ level })
-                .run();
-            },
-            disabled: () => {
-              return isInBlockquote
-                ? !currentEditor.can().lift(TIPTAP_NODE_TYPES.BLOCKQUOTE)
-                : !currentEditor.can().setHeading({ level });
-            },
-            isActive: () => {
-              return currentEditor.isActive('heading', { level });
-            },
-          }))
-        : []),
+      ...(
+        (currentEditor.extensionManager.extensions.find(
+          ({ name }) => name === TIPTAP_NODE_TYPES.HEADING,
+        )?.options.levels ?? []) as Level[]
+      ).map((level) => ({
+        id: `heading${level}`,
+        title: headingTitles[level],
+        icon: HEADING_ICONS[level],
+        onClick: () => {
+          return liftOutOfBlockquote(currentEditor.chain().focus())
+            .setHeading({ level })
+            .run();
+        },
+        disabled: () => {
+          return isInBlockquote
+            ? !currentEditor.can().lift(TIPTAP_NODE_TYPES.BLOCKQUOTE)
+            : !currentEditor.can().setHeading({ level });
+        },
+        isActive: () => {
+          return currentEditor.isActive('heading', { level });
+        },
+      })),
       ...(hasEditorExtension(currentEditor, TIPTAP_NODE_TYPES.BLOCKQUOTE)
         ? [
             {
