@@ -10,13 +10,7 @@ exports[`MCP database tool input schemas should list the input schemas of the no
           "bodyV2": {
             "description": "Note body",
             "properties": {
-              "blocknote": {
-                "type": "string",
-              },
               "markdown": {
-                "type": "string",
-              },
-              "tiptap": {
                 "type": "string",
               },
             },
@@ -63,13 +57,7 @@ exports[`MCP database tool input schemas should list the input schemas of the no
     "bodyV2": {
       "description": "Note body",
       "properties": {
-        "blocknote": {
-          "type": "string",
-        },
         "markdown": {
-          "type": "string",
-        },
-        "tiptap": {
           "type": "string",
         },
       },
@@ -1119,13 +1107,7 @@ exports[`MCP database tool input schemas should list the input schemas of the no
         "bodyV2": {
           "description": "Note body",
           "properties": {
-            "blocknote": {
-              "type": "string",
-            },
             "markdown": {
-              "type": "string",
-            },
-            "tiptap": {
               "type": "string",
             },
           },
@@ -1173,13 +1155,7 @@ exports[`MCP database tool input schemas should list the input schemas of the no
     "bodyV2": {
       "description": "Note body",
       "properties": {
-        "blocknote": {
-          "type": "string",
-        },
         "markdown": {
-          "type": "string",
-        },
-        "tiptap": {
           "type": "string",
         },
       },
@@ -1227,13 +1203,7 @@ exports[`MCP database tool input schemas should list the input schemas of the no
           "bodyV2": {
             "description": "Note body",
             "properties": {
-              "blocknote": {
-                "type": "string",
-              },
               "markdown": {
-                "type": "string",
-              },
-              "tiptap": {
                 "type": "string",
               },
             },
