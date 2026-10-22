@@ -6,7 +6,7 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { Suspense, useEffect } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -509,15 +509,15 @@ export const MultiplayerConversation: Story = {
     await expect(await canvas.findByText('Marco Rossi')).toBeVisible();
     await expect(await canvas.findByText('Assistant')).toBeVisible();
     await expect(canvas.getByText('New')).toBeVisible();
-    await expect(
-      canvas.getByRole('button', { name: '👍 by You' }),
-    ).toBeVisible();
-    await userEvent.hover(
-      canvas.getByText('I will handle the security review.'),
-    );
-    await expect(
-      canvas.getAllByRole('button', { name: 'Add reaction' })[1],
-    ).toBeVisible();
+    const selectedReaction = canvas.getByRole('button', { name: '👍 by You' });
+    await expect(selectedReaction).toBeVisible();
+    selectedReaction.focus();
+    await userEvent.tab();
+    const addReactionButton = canvas.getAllByRole('button', {
+      name: 'Add reaction',
+    })[1];
+    await expect(addReactionButton).toHaveFocus();
+    await waitFor(() => expect(addReactionButton).toBeVisible());
   },
 };
 
