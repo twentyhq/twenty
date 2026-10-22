@@ -3250,6 +3250,7 @@ type Mutation {
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
+  updateMyDefaultFromHandle(input: UpdateMyDefaultFromHandleInput!): Boolean!
   updateMyUserApplicationVariable(applicationUniversalIdentifier: String!, key: String!, value: String!): Boolean!
   updateNavigationMenuItem(input: UpdateOneNavigationMenuItemInput!): NavigationMenuItem!
   updateOneAgent(input: UpdateAgentInput!): Agent!
@@ -4854,6 +4855,10 @@ input UpdateMessageFoldersInput {
   update: UpdateMessageFolderInputUpdates!
 }
 
+input UpdateMyDefaultFromHandleInput {
+  defaultFromHandle: String
+}
+
 input UpdateNavigationMenuItemInput {
   color: String
   folderId: UUID
@@ -5165,6 +5170,7 @@ input UpdateWorkspaceInput {
   allowImpersonation: Boolean
   customDomain: String
   defaultRoleId: UUID
+  defaultSenderDomain: String
   displayName: String
   editableProfileFields: [String!]
   eventLogRetentionDays: Float
@@ -5557,6 +5563,7 @@ type UserSession {
 
 type UserWorkspace {
   createdAt: DateTime!
+  defaultFromHandle: String
   deletedAt: DateTime
   id: UUID!
   isImpersonating: Boolean
@@ -5911,6 +5918,7 @@ type Workspace {
   customDomain: String
   databaseSchema: String
   defaultRole: Role
+  defaultSenderDomain: String
   deletedAt: DateTime
   displayName: String
   editableProfileFields: [String!]
