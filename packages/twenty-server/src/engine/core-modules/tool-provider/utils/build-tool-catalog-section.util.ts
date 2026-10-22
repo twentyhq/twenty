@@ -31,6 +31,8 @@ const getCategoryLabel = (category: ToolCategory): string => {
       return 'Role Tools (manage roles and permissions)';
     case ToolCategory.AGENT:
       return 'Agent Tools (create/manage AI agents and their triggers)';
+    case ToolCategory.MCP:
+      return 'MCP Tools (external MCP servers)';
     default:
       return assertUnreachable(category);
   }
