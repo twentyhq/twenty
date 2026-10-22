@@ -17,7 +17,7 @@ type SettingsAppPreferencesConnectionsTableProps = {
   providerName: string;
   connections: ConnectedAccount[];
   isClientCredentialsConfigured: boolean;
-  loading: boolean;
+  isLoading: boolean;
 };
 
 export const SettingsAppPreferencesConnectionsTable = ({
@@ -25,7 +25,7 @@ export const SettingsAppPreferencesConnectionsTable = ({
   providerName,
   connections,
   isClientCredentialsConfigured,
-  loading,
+  isLoading,
 }: SettingsAppPreferencesConnectionsTableProps) => {
   const { t } = useLingui();
 
@@ -38,7 +38,7 @@ export const SettingsAppPreferencesConnectionsTable = ({
         <TableHeader>{t`Status`}</TableHeader>
         <TableHeader />
       </TableRow>
-      {loading ? (
+      {isLoading ? (
         <SettingsTableRowsSkeletonLoader
           gridTemplateColumns={CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
           columns={[{}, { width: 96 }, { align: 'right', width: 24 }]}

@@ -24,7 +24,7 @@ import {
   unconfigureLinearClientCredentials,
 } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
-import { withinTableRowOrThrow } from '~/pages/settings/accounts/__stories__/withinTableRowOrThrow';
+import { withinTableRowOrThrow } from '~/testing/utils/withinTableRowOrThrow';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsApplicationPreferencesConnections',
@@ -244,6 +244,9 @@ export const UnconfiguredProviderExplainsWhoMustSetItUp: Story = {
     expect(
       canvas.queryByRole('button', { name: 'Add connection' }),
     ).not.toBeInTheDocument();
+    await canvas.findByText('tim.cook@linear.app', undefined, {
+      timeout: 3000,
+    });
     await userEvent.click(
       withinTableRowOrThrow({
         canvasElement,
