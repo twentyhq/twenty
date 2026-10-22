@@ -77,6 +77,8 @@ export enum SettingsPath {
   ApiKeyDetail = 'developers/apis/:apiKeyId',
   NewWebhook = 'developers/webhooks/new',
   WebhookDetail = 'developers/webhooks/:webhookId',
+  NewMcpServer = 'developers/mcp-servers/new',
+  McpServerDetail = 'developers/mcp-servers/:mcpServerId',
   Integrations = 'integrations',
   Security = 'general#security',
   Logs = 'general#logs',

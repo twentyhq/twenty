@@ -1,0 +1,1 @@
+export const MCP_SERVER_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 1fr 80px 28px';

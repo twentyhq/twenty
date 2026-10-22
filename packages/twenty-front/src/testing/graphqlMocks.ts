@@ -13,6 +13,7 @@ import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/m
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/publicWorkspaceDataBySubdomain';
+import { mockedMcpServer } from '~/testing/mock-data/mcp-servers';
 import { mockedUserData } from '~/testing/mock-data/users';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
@@ -692,6 +693,21 @@ export const graphqlMocks = {
               secret: 'sample-secret',
             },
           ],
+        },
+      });
+    }),
+    metadataGraphql.query('GetMcpServers', () => {
+      return HttpResponse.json({
+        data: { mcpServers: [mockedMcpServer] },
+      });
+    }),
+    metadataGraphql.query('GetMcpServer', ({ variables }) => {
+      return HttpResponse.json({
+        data: {
+          mcpServer: {
+            ...mockedMcpServer,
+            id: variables.id || mockedMcpServer.id,
+          },
         },
       });
     }),

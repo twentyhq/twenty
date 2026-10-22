@@ -9,16 +9,18 @@ import PlaygroundCoverDark from '@/settings/developers/assets/cover-dark.png';
 import PlaygroundCoverLight from '@/settings/developers/assets/cover-light.png';
 import { PlaygroundSetupForm } from '@/settings/developers/components/PlaygroundSetupForm';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
+import { SettingsMcpServersTable } from '@/settings/developers/components/SettingsMcpServersTable';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
+import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import {
   IconApi,
   IconApps,
+  IconPlug,
   IconPlus,
   IconSparkle2,
   IconTerminal2,
@@ -31,6 +33,7 @@ import AppsCoverLight from '~/pages/settings/applications/assets/cover-light.png
 import { SettingsDevelopersClaimErrorTabEffect } from '~/pages/settings/developers/components/SettingsDevelopersClaimErrorTabEffect';
 import { SettingsDevelopersAppsTab } from '~/pages/settings/developers/tabs/SettingsDevelopersAppsTab';
 import { SettingsDevelopersCliTab } from '~/pages/settings/developers/tabs/SettingsDevelopersCliTab';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type TabKey =
   (typeof SETTINGS_DEVELOPERS_TABS.TABS_IDS)[keyof typeof SETTINGS_DEVELOPERS_TABS.TABS_IDS];
@@ -63,6 +66,9 @@ const StyledTableContainer = styled.div<{ isMobile?: boolean }>`
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
+  const isMcpServersEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
+  );
 
   const tabs = [
     {
@@ -75,6 +81,15 @@ export const SettingsDevelopers = () => {
       title: t`Webhooks`,
       Icon: IconWebhook,
     },
+    ...(isMcpServersEnabled
+      ? [
+          {
+            id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.MCP_SERVERS,
+            title: t`MCP servers`,
+            Icon: IconPlug,
+          },
+        ]
+      : []),
     {
       id: SETTINGS_DEVELOPERS_TABS.TABS_IDS.APPS,
       title: t`Apps`,
@@ -192,6 +207,29 @@ export const SettingsDevelopers = () => {
             </Section.Root>
           </StyledTabContent>
         )}
+
+        {activeTab === SETTINGS_DEVELOPERS_TABS.TABS_IDS.MCP_SERVERS &&
+          isMcpServersEnabled && (
+            <StyledTabContent>
+              <Section.Root>
+                <Section.Header
+                  title={t`MCP servers`}
+                  description={t`Connect external MCP servers so their tools are available in the AI chat.`}
+                />
+                <StyledTableContainer isMobile={isMobile}>
+                  <SettingsMcpServersTable />
+                  <StyledButtonContainer>
+                    <NavigationButton
+                      startIcon={<IconPlus />}
+                      size="sm"
+                      to={getSettingsPath(SettingsPath.NewMcpServer)}
+                      variant="outline"
+                    >{t`New MCP server`}</NavigationButton>
+                  </StyledButtonContainer>
+                </StyledTableContainer>
+              </Section.Root>
+            </StyledTabContent>
+          )}
 
         {isAppsTab && <SettingsDevelopersAppsTab />}
 

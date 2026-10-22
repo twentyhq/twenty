@@ -265,6 +265,7 @@ export enum AllMetadataName {
   frontComponent = 'frontComponent',
   index = 'index',
   logicFunction = 'logicFunction',
+  mcpServer = 'mcpServer',
   navigationMenuItem = 'navigationMenuItem',
   objectMetadata = 'objectMetadata',
   objectPermission = 'objectPermission',
@@ -1567,6 +1568,15 @@ export type CreateLogicFunctionFromSourceInput = {
   workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
 };
 
+export type CreateMcpServerInput = {
+  authorizationHeaderValue?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  isEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  label: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  url: Scalars['String']['input'];
+};
+
 export type CreateMessageSuppressionInput = {
   emailAddress: Scalars['String']['input'];
   unsubscribeTopicId?: InputMaybe<Scalars['UUID']['input']>;
@@ -2261,6 +2271,7 @@ export enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
+  IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
@@ -2944,6 +2955,31 @@ export type MarketplaceAppRoleObjectPermission = {
   universalIdentifier: Scalars['String']['output'];
 };
 
+export type McpServer = {
+  __typename?: 'McpServer';
+  applicationId: Scalars['UUID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  hasAuthorizationHeader: Scalars['Boolean']['output'];
+  id: Scalars['UUID']['output'];
+  isEnabled: Scalars['Boolean']['output'];
+  label: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  tools: Array<McpServerTool>;
+  toolsSyncError?: Maybe<Scalars['String']['output']>;
+  toolsSyncedAt?: Maybe<Scalars['DateTime']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type McpServerTool = {
+  __typename?: 'McpServerTool';
+  annotations?: Maybe<Scalars['JSON']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  inputSchema: Scalars['JSON']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type MessageCampaignBodyConfiguration = {
   __typename?: 'MessageCampaignBodyConfiguration';
   configurationType: WidgetConfigurationType;
@@ -3234,6 +3270,7 @@ export type Mutation = {
   createManyViewFieldGroups: Array<ViewFieldGroup>;
   createManyViewFields: Array<ViewField>;
   createManyViewGroups: Array<ViewGroup>;
+  createMcpServer: McpServer;
   createMessageSuppression: MessageSuppression;
   createNavigationMenuItem: NavigationMenuItem;
   createNewWorkspaceLogoUpload: FileUploadTarget;
@@ -3275,6 +3312,7 @@ export type Mutation = {
   deleteEmailingDomain: Scalars['Boolean']['output'];
   deleteFrontComponent: FrontComponent;
   deleteManyNavigationMenuItems: Array<NavigationMenuItem>;
+  deleteMcpServer: McpServer;
   deleteMessageSuppression: Scalars['Boolean']['output'];
   deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
@@ -3394,6 +3432,7 @@ export type Mutation = {
   switchSubscriptionInterval: BillingUpdate;
   syncApplication: WorkspaceMigration;
   syncMarketplaceCatalog: Scalars['Boolean']['output'];
+  syncMcpServerTools: McpServer;
   trackAnalytics: Analytics;
   transferApplicationRegistrationOwnership: ApplicationRegistration;
   triggerAddPeopleToMessageListJob: TriggerAddPeopleToMessageListJobResult;
@@ -3419,6 +3458,7 @@ export type Mutation = {
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
   updateManyViewGroups: Array<ViewGroup>;
+  updateMcpServer: McpServer;
   updateMessageChannel: MessageChannel;
   updateMessageFolder: MessageFolder;
   updateMessageFolders: Array<MessageFolder>;
@@ -3677,6 +3717,11 @@ export type MutationCreateManyViewGroupsArgs = {
 };
 
 
+export type MutationCreateMcpServerArgs = {
+  input: CreateMcpServerInput;
+};
+
+
 export type MutationCreateMessageSuppressionArgs = {
   input: CreateMessageSuppressionInput;
 };
@@ -3885,6 +3930,11 @@ export type MutationDeleteFrontComponentArgs = {
 
 export type MutationDeleteManyNavigationMenuItemsArgs = {
   ids: Array<Scalars['UUID']['input']>;
+};
+
+
+export type MutationDeleteMcpServerArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -4463,6 +4513,11 @@ export type MutationSyncApplicationArgs = {
 };
 
 
+export type MutationSyncMcpServerToolsArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -4582,6 +4637,11 @@ export type MutationUpdateManyObjectsArgs = {
 
 export type MutationUpdateManyViewGroupsArgs = {
   inputs: Array<UpdateViewGroupInput>;
+};
+
+
+export type MutationUpdateMcpServerArgs = {
+  input: UpdateMcpServerInput;
 };
 
 
@@ -5527,6 +5587,8 @@ export type Query = {
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
+  mcpServer?: Maybe<McpServer>;
+  mcpServers: Array<McpServer>;
   messageSuppressions: MessageSuppressionList;
   metadataTranslations: Array<MetadataTranslation>;
   minimalMetadata: MinimalMetadata;
@@ -5965,6 +6027,11 @@ export type QueryIsApplicationStoppedArgs = {
 
 export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
+};
+
+
+export type QueryMcpServerArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -7000,6 +7067,21 @@ export type UpdateLogicFunctionFromSourceInputUpdates = {
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
   toolTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
   workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type UpdateMcpServerInput = {
+  /** The id of the MCP server to update */
+  id: Scalars['UUID']['input'];
+  /** The MCP server fields to update */
+  update: UpdateMcpServerInputUpdates;
+};
+
+export type UpdateMcpServerInputUpdates = {
+  authorizationHeaderValue?: InputMaybe<Scalars['String']['input']>;
+  isEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateMessageChannelInput = {
@@ -10227,6 +10309,8 @@ export type UsageQuotasWithConsumptionQuery = { __typename?: 'Query', usageQuota
 
 export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } };
 
+export type McpServerFragmentFragment = { __typename?: 'McpServer', id: string, name: string, label: string, url: string, hasAuthorizationHeader: boolean, isEnabled: boolean, toolsSyncedAt?: string | null, toolsSyncError?: string | null, applicationId: string, tools: Array<{ __typename?: 'McpServerTool', name: string, description?: string | null, inputSchema: any, annotations?: any | null }> };
+
 export type WebhookFragmentFragment = { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string };
 
 export type AssignRoleToApiKeyMutationVariables = Exact<{
@@ -10244,12 +10328,26 @@ export type CreateApiKeyMutationVariables = Exact<{
 
 export type CreateApiKeyMutation = { __typename?: 'Mutation', createApiKey: { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } } };
 
+export type CreateMcpServerMutationVariables = Exact<{
+  input: CreateMcpServerInput;
+}>;
+
+
+export type CreateMcpServerMutation = { __typename?: 'Mutation', createMcpServer: { __typename?: 'McpServer', id: string, name: string, label: string, url: string, hasAuthorizationHeader: boolean, isEnabled: boolean, toolsSyncedAt?: string | null, toolsSyncError?: string | null, applicationId: string, tools: Array<{ __typename?: 'McpServerTool', name: string, description?: string | null, inputSchema: any, annotations?: any | null }> } };
+
 export type CreateWebhookMutationVariables = Exact<{
   input: CreateWebhookInput;
 }>;
 
 
 export type CreateWebhookMutation = { __typename?: 'Mutation', createWebhook: { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string } };
+
+export type DeleteMcpServerMutationVariables = Exact<{
+  id: Scalars['UUID']['input'];
+}>;
+
+
+export type DeleteMcpServerMutation = { __typename?: 'Mutation', deleteMcpServer: { __typename?: 'McpServer', id: string, name: string, label: string, url: string, hasAuthorizationHeader: boolean, isEnabled: boolean, toolsSyncedAt?: string | null, toolsSyncError?: string | null, applicationId: string, tools: Array<{ __typename?: 'McpServerTool', name: string, description?: string | null, inputSchema: any, annotations?: any | null }> } };
 
 export type DeleteWebhookMutationVariables = Exact<{
   id: Scalars['UUID']['input'];
@@ -10265,12 +10363,26 @@ export type RevokeApiKeyMutationVariables = Exact<{
 
 export type RevokeApiKeyMutation = { __typename?: 'Mutation', revokeApiKey?: { __typename?: 'ApiKey', id: string } | null };
 
+export type SyncMcpServerToolsMutationVariables = Exact<{
+  id: Scalars['UUID']['input'];
+}>;
+
+
+export type SyncMcpServerToolsMutation = { __typename?: 'Mutation', syncMcpServerTools: { __typename?: 'McpServer', id: string, name: string, label: string, url: string, hasAuthorizationHeader: boolean, isEnabled: boolean, toolsSyncedAt?: string | null, toolsSyncError?: string | null, applicationId: string, tools: Array<{ __typename?: 'McpServerTool', name: string, description?: string | null, inputSchema: any, annotations?: any | null }> } };
+
 export type UpdateApiKeyMutationVariables = Exact<{
   input: UpdateApiKeyInput;
 }>;
 
 
 export type UpdateApiKeyMutation = { __typename?: 'Mutation', updateApiKey?: { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } } | null };
+
+export type UpdateMcpServerMutationVariables = Exact<{
+  input: UpdateMcpServerInput;
+}>;
+
+
+export type UpdateMcpServerMutation = { __typename?: 'Mutation', updateMcpServer: { __typename?: 'McpServer', id: string, name: string, label: string, url: string, hasAuthorizationHeader: boolean, isEnabled: boolean, toolsSyncedAt?: string | null, toolsSyncError?: string | null, applicationId: string, tools: Array<{ __typename?: 'McpServerTool', name: string, description?: string | null, inputSchema: any, annotations?: any | null }> } };
 
 export type UpdateWebhookMutationVariables = Exact<{
   input: UpdateWebhookInput;
@@ -10295,6 +10407,18 @@ export type GetApiKeysQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetApiKeysQuery = { __typename?: 'Query', apiKeys: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } }> };
+
+export type GetMcpServerQueryVariables = Exact<{
+  id: Scalars['UUID']['input'];
+}>;
+
+
+export type GetMcpServerQuery = { __typename?: 'Query', mcpServer?: { __typename?: 'McpServer', id: string, name: string, label: string, url: string, hasAuthorizationHeader: boolean, isEnabled: boolean, toolsSyncedAt?: string | null, toolsSyncError?: string | null, applicationId: string, tools: Array<{ __typename?: 'McpServerTool', name: string, description?: string | null, inputSchema: any, annotations?: any | null }> } | null };
+
+export type GetMcpServersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMcpServersQuery = { __typename?: 'Query', mcpServers: Array<{ __typename?: 'McpServer', id: string, name: string, label: string, url: string, hasAuthorizationHeader: boolean, isEnabled: boolean, toolsSyncedAt?: string | null, toolsSyncError?: string | null, applicationId: string, tools: Array<{ __typename?: 'McpServerTool', name: string, description?: string | null, inputSchema: any, annotations?: any | null }> }> };
 
 export type GetWebhookQueryVariables = Exact<{
   id: Scalars['UUID']['input'];
@@ -11034,6 +11158,7 @@ export const ApplicationRegistrationListItemFragmentDoc = {"kind":"Document","de
 export const BillingPriceLicensedFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingPriceLicensedFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingPriceLicensed"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"recurringInterval"}},{"kind":"Field","name":{"kind":"Name","value":"priceUsageType"}},{"kind":"Field","name":{"kind":"Name","value":"creditAmount"}},{"kind":"Field","name":{"kind":"Name","value":"isSellable"}}]}}]} as unknown as DocumentNode<BillingPriceLicensedFragmentFragment, unknown>;
 export const BillingPriceMeteredFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"BillingPriceMeteredFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"BillingPriceMetered"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"priceUsageType"}},{"kind":"Field","name":{"kind":"Name","value":"recurringInterval"}},{"kind":"Field","name":{"kind":"Name","value":"stripePriceId"}},{"kind":"Field","name":{"kind":"Name","value":"tiers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"flatAmount"}},{"kind":"Field","name":{"kind":"Name","value":"unitAmount"}},{"kind":"Field","name":{"kind":"Name","value":"upTo"}}]}}]}}]} as unknown as DocumentNode<BillingPriceMeteredFragmentFragment, unknown>;
 export const ApiKeyFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKey"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<ApiKeyFragmentFragment, unknown>;
+export const McpServerFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"McpServerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"McpServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hasAuthorizationHeader"}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"tools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"inputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"annotations"}}]}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncedAt"}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncError"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<McpServerFragmentFragment, unknown>;
 export const WebhookFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<WebhookFragmentFragment, unknown>;
 export const ApiKeyForRoleFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyForRoleFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKeyForRole"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}}]}}]} as unknown as DocumentNode<ApiKeyForRoleFragmentFragment, unknown>;
 export const FieldPermissionFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FieldPermissionFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FieldPermission"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"canReadFieldValue"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdateFieldValue"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}}]}}]} as unknown as DocumentNode<FieldPermissionFragmentFragment, unknown>;
@@ -11279,14 +11404,20 @@ export const UsageQuotaScopeConsumptionDocument = {"kind":"Document","definition
 export const UsageQuotasWithConsumptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"operationType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderId"}},{"kind":"Field","name":{"kind":"Name","value":"spenderLabel"}},{"kind":"Field","name":{"kind":"Name","value":"periodUnit"}},{"kind":"Field","name":{"kind":"Name","value":"unit"}},{"kind":"Field","name":{"kind":"Name","value":"limitValue"}},{"kind":"Field","name":{"kind":"Name","value":"isEnforced"}},{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"remainingValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<UsageQuotasWithConsumptionQuery, UsageQuotasWithConsumptionQueryVariables>;
 export const AssignRoleToApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignRoleToApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignRoleToApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"apiKeyId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}}}]}]}}]} as unknown as DocumentNode<AssignRoleToApiKeyMutation, AssignRoleToApiKeyMutationVariables>;
 export const CreateApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateApiKeyInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApiKeyFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKey"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
+export const CreateMcpServerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateMcpServer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateMcpServerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createMcpServer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"McpServerFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"McpServerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"McpServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hasAuthorizationHeader"}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"tools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"inputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"annotations"}}]}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncedAt"}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncError"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<CreateMcpServerMutation, CreateMcpServerMutationVariables>;
 export const CreateWebhookDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWebhook"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWebhookInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWebhook"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WebhookFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<CreateWebhookMutation, CreateWebhookMutationVariables>;
+export const DeleteMcpServerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteMcpServer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteMcpServer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"McpServerFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"McpServerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"McpServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hasAuthorizationHeader"}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"tools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"inputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"annotations"}}]}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncedAt"}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncError"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<DeleteMcpServerMutation, DeleteMcpServerMutationVariables>;
 export const DeleteWebhookDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteWebhook"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteWebhook"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WebhookFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<DeleteWebhookMutation, DeleteWebhookMutationVariables>;
 export const RevokeApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RevokeApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RevokeApiKeyInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"revokeApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<RevokeApiKeyMutation, RevokeApiKeyMutationVariables>;
+export const SyncMcpServerToolsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SyncMcpServerTools"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"syncMcpServerTools"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"McpServerFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"McpServerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"McpServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hasAuthorizationHeader"}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"tools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"inputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"annotations"}}]}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncedAt"}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncError"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<SyncMcpServerToolsMutation, SyncMcpServerToolsMutationVariables>;
 export const UpdateApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateApiKeyInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApiKeyFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKey"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<UpdateApiKeyMutation, UpdateApiKeyMutationVariables>;
+export const UpdateMcpServerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateMcpServer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateMcpServerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateMcpServer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"McpServerFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"McpServerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"McpServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hasAuthorizationHeader"}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"tools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"inputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"annotations"}}]}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncedAt"}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncError"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<UpdateMcpServerMutation, UpdateMcpServerMutationVariables>;
 export const UpdateWebhookDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateWebhook"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateWebhookInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateWebhook"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WebhookFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<UpdateWebhookMutation, UpdateWebhookMutationVariables>;
 export const GetApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GetApiKeyInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"apiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApiKeyFragment"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKey"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<GetApiKeyQuery, GetApiKeyQueryVariables>;
 export const GetApiKeyRolesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetApiKeyRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getApiKeyRoles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"canBeAssignedToApiKeys"}}]}}]}}]} as unknown as DocumentNode<GetApiKeyRolesQuery, GetApiKeyRolesQueryVariables>;
 export const GetApiKeysDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetApiKeys"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"apiKeys"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApiKeyFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKey"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<GetApiKeysQuery, GetApiKeysQueryVariables>;
+export const GetMcpServerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMcpServer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mcpServer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"McpServerFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"McpServerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"McpServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hasAuthorizationHeader"}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"tools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"inputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"annotations"}}]}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncedAt"}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncError"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<GetMcpServerQuery, GetMcpServerQueryVariables>;
+export const GetMcpServersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMcpServers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mcpServers"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"McpServerFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"McpServerFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"McpServer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"hasAuthorizationHeader"}},{"kind":"Field","name":{"kind":"Name","value":"isEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"tools"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"inputSchema"}},{"kind":"Field","name":{"kind":"Name","value":"annotations"}}]}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncedAt"}},{"kind":"Field","name":{"kind":"Name","value":"toolsSyncError"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<GetMcpServersQuery, GetMcpServersQueryVariables>;
 export const GetWebhookDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWebhook"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"webhook"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WebhookFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<GetWebhookQuery, GetWebhookQueryVariables>;
 export const GetWebhooksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetWebhooks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"webhooks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WebhookFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<GetWebhooksQuery, GetWebhooksQueryVariables>;
 export const CheckPublicDomainValidRecordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CheckPublicDomainValidRecords"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"domain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"checkPublicDomainValidRecords"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"domain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"domain"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"records"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"validationType"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}}]} as unknown as DocumentNode<CheckPublicDomainValidRecordsMutation, CheckPublicDomainValidRecordsMutationVariables>;

@@ -538,6 +538,22 @@ const SettingsDevelopersWebhookDetail = lazy(() =>
   ),
 );
 
+const SettingsDevelopersMcpServerNew = lazy(() =>
+  import('~/pages/settings/developers/mcp-servers/components/SettingsDevelopersMcpServerNew').then(
+    (module) => ({
+      default: module.SettingsDevelopersMcpServerNew,
+    }),
+  ),
+);
+
+const SettingsDevelopersMcpServerDetail = lazy(() =>
+  import('~/pages/settings/developers/mcp-servers/components/SettingsDevelopersMcpServerDetail').then(
+    (module) => ({
+      default: module.SettingsDevelopersMcpServerDetail,
+    }),
+  ),
+);
+
 const SettingsObjectNewFieldSelect = lazy(() =>
   import('~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect').then(
     (module) => ({
@@ -1130,6 +1146,14 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.WebhookDetail}
         element={<SettingsDevelopersWebhookDetail />}
+      />
+      <Route
+        path={SettingsPath.NewMcpServer}
+        element={<SettingsDevelopersMcpServerNew />}
+      />
+      <Route
+        path={SettingsPath.McpServerDetail}
+        element={<SettingsDevelopersMcpServerDetail />}
       />
     </Route>
 
