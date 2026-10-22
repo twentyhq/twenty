@@ -57,6 +57,8 @@ describe('useToggleActivityLink', () => {
 
     mockUseFindManyRecords.mockReturnValue({
       records: [{ id: 'target-id', messageThreadId: 'linked-thread-id' }],
+      loading: false,
+      error: undefined,
       refetch: mockRefetch,
     });
   });
@@ -108,4 +110,66 @@ describe('useToggleActivityLink', () => {
     expect(mockDeleteOneRecord).toHaveBeenCalledWith('target-id');
     expect(mockCreateOneRecord).not.toHaveBeenCalled();
   });
+
+  it('should wait for links to load before unlinking an existing activity', async () => {
+    mockUseFindManyRecords.mockReturnValue({
+      records: [],
+      loading: true,
+      error: undefined,
+      refetch: mockRefetch,
+    });
+
+    const { result, rerender } = renderToggleHook();
+
+    expect(result.current.areActivityLinksReady).toBe(false);
+
+    await act(() => result.current.toggleActivityLink('linked-thread-id'));
+
+    expect(mockCreateOneRecord).not.toHaveBeenCalled();
+    expect(mockDeleteOneRecord).not.toHaveBeenCalled();
+    expect(mockRefetch).not.toHaveBeenCalled();
+    expect(mockRefetchQueries).not.toHaveBeenCalled();
+
+    mockUseFindManyRecords.mockReturnValue({
+      records: [{ id: 'target-id', messageThreadId: 'linked-thread-id' }],
+      loading: false,
+      error: undefined,
+      refetch: mockRefetch,
+    });
+    rerender();
+
+    expect(result.current.areActivityLinksReady).toBe(true);
+
+    await act(() => result.current.toggleActivityLink('linked-thread-id'));
+
+    expect(mockDeleteOneRecord).toHaveBeenCalledWith('target-id');
+    expect(mockCreateOneRecord).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { loading: true, error: undefined },
+    { loading: false, error: new Error('Failed to load activity links') },
+  ])(
+    'should not change links while their query is unavailable: %o',
+    async ({ loading, error }) => {
+      mockUseFindManyRecords.mockReturnValue({
+        records: [{ id: 'target-id', messageThreadId: 'linked-thread-id' }],
+        loading,
+        error,
+        refetch: mockRefetch,
+      });
+
+      const { result } = renderToggleHook();
+
+      expect(result.current.areActivityLinksReady).toBe(false);
+
+      await act(() => result.current.toggleActivityLink('linked-thread-id'));
+      await act(() => result.current.toggleActivityLink('unlinked-thread-id'));
+
+      expect(mockCreateOneRecord).not.toHaveBeenCalled();
+      expect(mockDeleteOneRecord).not.toHaveBeenCalled();
+      expect(mockRefetch).not.toHaveBeenCalled();
+      expect(mockRefetchQueries).not.toHaveBeenCalled();
+    },
+  );
 });
