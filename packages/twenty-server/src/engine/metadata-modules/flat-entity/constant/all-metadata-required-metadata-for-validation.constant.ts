@@ -120,6 +120,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
   },
   webhook: {},
+  mcpServer: {},
   applicationVariable: {},
   connectionProvider: {},
   searchFieldMetadata: {

@@ -140,6 +140,7 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'fieldPermission':
     case 'viewSort':
     case 'webhook':
+    case 'mcpServer':
     case 'workflow':
     case 'workflowVersion':
     case 'connectionProvider':
