@@ -597,7 +597,7 @@ export abstract class CommonBaseQueryRunnerService<
         buildApplicationApiRateLimitedLogLine({ authContext, exhaustedScope }),
       );
 
-      await this.applicationLogDeduplicationService.recordOncePerWindow(
+      this.applicationLogDeduplicationService.recordOncePerWindow(
         buildApplicationApiRateLimitedLogEntry({ authContext, exhaustedScope }),
       );
     }

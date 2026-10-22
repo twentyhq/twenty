@@ -112,11 +112,10 @@ export class CronTriggerCronJob {
             });
           } catch (error) {
             if (error instanceof ThrottlerException && isDefined(application)) {
-              await this.applicationLogDeduplicationService.recordOncePerWindow(
+              this.applicationLogDeduplicationService.recordOncePerWindow(
                 buildApplicationJobThrottledLogEntry({
                   workspaceId: activeWorkspace.id,
                   application,
-                  skippedJobCount: 1,
                 }),
               );
             }

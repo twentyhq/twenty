@@ -33,6 +33,7 @@ import {
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { ServerRouteAuthorizationHeaderService } from 'src/engine/core-modules/server-route-trigger/server-route-authorization-header.service';
 import { buildServerRouteFailureLogEntry } from 'src/engine/core-modules/server-route-trigger/utils/build-server-route-failure-log-entry.util';
+import { isAppFacingServerRouteError } from 'src/engine/core-modules/server-route-trigger/utils/is-app-facing-server-route-error.util';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
 import { SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME } from 'src/engine/metadata-modules/logic-function/constants/server-route-forwardable-credential-header-name.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -168,7 +169,7 @@ export class ServerRouteTriggerService {
         isResolvedThroughLegacyIdentifier,
       };
     } catch (error) {
-      await this.recordServerRouteFailure({
+      this.recordServerRouteFailure({
         resolver,
         applicationRegistrationId,
         error,
@@ -178,7 +179,7 @@ export class ServerRouteTriggerService {
     }
   }
 
-  private async recordServerRouteFailure({
+  private recordServerRouteFailure({
     resolver,
     applicationRegistrationId,
     error,
@@ -195,7 +196,14 @@ export class ServerRouteTriggerService {
       return;
     }
 
-    await this.applicationLogDeduplicationService.recordOncePerWindow(
+    if (!isAppFacingServerRouteError(error)) {
+      this.logger.error(
+        `Server route ${resolver.id} failed with a platform error`,
+        error,
+      );
+    }
+
+    this.applicationLogDeduplicationService.recordOncePerWindow(
       buildServerRouteFailureLogEntry({
         resolver,
         applicationRegistrationId,
