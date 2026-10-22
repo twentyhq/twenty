@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationMonitoringService } from 'src/engine/core-modules/application/application-monitoring/application-monitoring.service';
 import { ApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/application-monitoring.dto';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
@@ -23,6 +24,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 @MetadataResolver()
 @UseFilters(
   ApplicationRegistrationExceptionFilter,
+  ApplicationExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class ApplicationMonitoringResolver {
