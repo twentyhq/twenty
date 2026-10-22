@@ -4,6 +4,7 @@ import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/a
 import { frontComponentQuerySchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-query.schema';
 import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
 import { Injectable } from '@nestjs/common';
+import { isDefined } from 'twenty-shared/utils';
 import { InvokeCommand } from '@aws-sdk/client-lambda';
 import { createHash } from 'crypto';
 import { promises as fs } from 'fs';
@@ -56,7 +57,13 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       resourceNamespace: options.resourceNamespace,
     };
   }
-  async build(workspaceId: string, input: FrontComponentBuildInput) {
+  async build({
+    workspaceId,
+    input,
+  }: {
+    workspaceId: string;
+    input: FrontComponentBuildInput;
+  }) {
     if (
       this.twentyConfigService.get('LOGIC_FUNCTION_TYPE') !==
       LogicFunctionDriverType.LAMBDA
@@ -111,7 +118,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
         abortSignal: AbortSignal.timeout(BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000),
       },
     );
-    if (result.FunctionError || !result.Payload) {
+    if (result.FunctionError || !isDefined(result.Payload)) {
       throw new FrontComponentException(
         'Frontend component builder Lambda failed.',
         FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,

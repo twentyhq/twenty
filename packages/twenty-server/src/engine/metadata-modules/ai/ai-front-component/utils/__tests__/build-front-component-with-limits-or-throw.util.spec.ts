@@ -1,6 +1,6 @@
 import { context } from 'esbuild';
 
-import { buildFrontComponentWithLimits } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits.util';
+import { buildFrontComponentWithLimitsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util';
 
 jest.mock('esbuild', () => ({ context: jest.fn() }));
 
@@ -30,7 +30,9 @@ describe('component build limits', () => {
   afterEach(() => jest.useRealTimers());
 
   it('returns a completed build and releases its compiler context', async () => {
-    await expect(buildFrontComponentWithLimits({})).resolves.toBe(output);
+    await expect(buildFrontComponentWithLimitsOrThrow({})).resolves.toBe(
+      output,
+    );
     expect(dispose).toHaveBeenCalledTimes(1);
     await jest.advanceTimersByTimeAsync(10000);
     expect(cancel).not.toHaveBeenCalled();
@@ -45,15 +47,17 @@ describe('component build limits', () => {
           });
         }),
     );
-    const result = expect(buildFrontComponentWithLimits({})).rejects.toThrow(
-      '10 second time limit',
-    );
+    const result = expect(
+      buildFrontComponentWithLimitsOrThrow({}),
+    ).rejects.toThrow('10 second time limit');
 
     await jest.advanceTimersByTimeAsync(10000);
     await result;
     expect(cancel).toHaveBeenCalledTimes(1);
     expect(dispose).toHaveBeenCalledTimes(1);
-    await expect(buildFrontComponentWithLimits({})).resolves.toBe(output);
+    await expect(buildFrontComponentWithLimitsOrThrow({})).resolves.toBe(
+      output,
+    );
   });
 
   it('rejects late success after cancellation', async () => {
@@ -63,9 +67,9 @@ describe('component build limits', () => {
           cancel.mockImplementationOnce(async () => resolve(output));
         }),
     );
-    const result = expect(buildFrontComponentWithLimits({})).rejects.toThrow(
-      '10 second time limit',
-    );
+    const result = expect(
+      buildFrontComponentWithLimitsOrThrow({}),
+    ).rejects.toThrow('10 second time limit');
 
     await jest.advanceTimersByTimeAsync(10000);
     await result;
@@ -80,7 +84,7 @@ describe('component build limits', () => {
       ],
     });
 
-    await expect(buildFrontComponentWithLimits({})).rejects.toThrow(
+    await expect(buildFrontComponentWithLimitsOrThrow({})).rejects.toThrow(
       '5 MB output limit',
     );
     expect(dispose).toHaveBeenCalledTimes(1);
@@ -88,10 +92,12 @@ describe('component build limits', () => {
 
   it('preserves compiler diagnostics and releases a failed build', async () => {
     rebuild.mockRejectedValueOnce(new Error('Unsupported import'));
-    await expect(buildFrontComponentWithLimits({})).rejects.toThrow(
+    await expect(buildFrontComponentWithLimitsOrThrow({})).rejects.toThrow(
       'Unsupported import',
     );
     expect(dispose).toHaveBeenCalledTimes(1);
-    await expect(buildFrontComponentWithLimits({})).resolves.toBe(output);
+    await expect(buildFrontComponentWithLimitsOrThrow({})).resolves.toBe(
+      output,
+    );
   });
 });
