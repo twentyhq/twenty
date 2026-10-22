@@ -146,7 +146,7 @@ export const SidePanelShareRecordContent = ({
                         roles={sharing.roles}
                         objectLabelPlural={objectLabelPlural}
                         sharingReach={sharingReach}
-                        saving={saving}
+                        isSaving={saving}
                         setShare={setShare}
                         removeShare={removeShare}
                       />

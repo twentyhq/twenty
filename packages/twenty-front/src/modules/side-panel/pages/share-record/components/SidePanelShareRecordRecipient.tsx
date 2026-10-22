@@ -37,7 +37,7 @@ type SidePanelShareRecordRecipientProps = {
   roles: RecordSharingFieldsFragment['roles'];
   objectLabelPlural: string;
   sharingReach: ObjectSharingReach;
-  saving: boolean;
+  isSaving: boolean;
   setShare: ReturnType<typeof useRecordSharing>['setShare'];
   removeShare: ReturnType<typeof useRecordSharing>['removeShare'];
 };
@@ -47,7 +47,7 @@ export const SidePanelShareRecordRecipient = ({
   roles,
   objectLabelPlural,
   sharingReach,
-  saving,
+  isSaving,
   setShare,
   removeShare,
 }: SidePanelShareRecordRecipientProps) => {
@@ -120,7 +120,7 @@ export const SidePanelShareRecordRecipient = ({
         Icon={Icon}
         LeftComponent={avatar}
         description={getRecordShareAccessLevelLabel(share.accessLevel)}
-        disabled={saving}
+        disabled={isSaving}
       >
         <RecordSharingAccessLevelOptions
           value={share.accessLevel}
