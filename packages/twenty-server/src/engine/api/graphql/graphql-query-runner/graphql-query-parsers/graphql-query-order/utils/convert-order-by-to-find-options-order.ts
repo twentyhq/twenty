@@ -7,7 +7,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { type OrderByClause } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
-import { getEffectiveScanOrder } from 'src/engine/api/utils/get-effective-scan-order.utils';
+import { getEffectiveScanOrder } from 'src/engine/api/utils/get-effective-scan-order.util';
 
 // Same scan-order primitive as the keyset cursor conditions, so ORDER BY and the WHERE continuation cannot disagree
 export const convertOrderByToFindOptionsOrder = (

@@ -1,7 +1,7 @@
 import {
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
-} from 'twenty-shared/application';
+} from 'twenty-shared/application-runtime';
 
 import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
 

@@ -1,9 +1,10 @@
+import { LinkEmailThreadsDropdown } from '@/activities/emails/components/LinkEmailThreadsDropdown';
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { IconMail } from 'twenty-ui/icon';
+import { IconLink, IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 export const EmptyInboxPlaceholder = () => {
@@ -23,12 +24,22 @@ export const EmptyInboxPlaceholder = () => {
           <Trans>No email exchange has occurred with this record yet.</Trans>
         </EmptyState.Description>
       </EmptyState.Content>
-      <Button
-        startIcon={<IconMail />}
-        onClick={openComposer}
-        disabled={loading}
-        variant="outline"
-      >{t`Send Email`}</Button>
+      <EmptyState.Actions>
+        <LinkEmailThreadsDropdown
+          dropdownIdPrefix="empty-inbox-link-email-threads"
+          trigger={
+            <Button startIcon={<IconLink />} variant="outline">
+              {t`Link email threads`}
+            </Button>
+          }
+        />
+        <Button
+          startIcon={<IconMail />}
+          onClick={openComposer}
+          disabled={loading}
+          variant="outline"
+        >{t`Send Email`}</Button>
+      </EmptyState.Actions>
     </EmptyState.Root>
   );
 };

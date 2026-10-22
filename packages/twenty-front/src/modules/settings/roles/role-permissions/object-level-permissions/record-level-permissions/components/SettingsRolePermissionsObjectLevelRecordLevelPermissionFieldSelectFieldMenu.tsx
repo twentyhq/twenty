@@ -136,6 +136,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
           placeholder={t`Search fields`}
           aria-label={t`Search fields`}
         />
+        <Dropdown.Separator />
         <Dropdown.Section label={t`Fields`}>
           {filteredFieldMetadataItems.map((fieldMetadataItem) => (
             <Dropdown.OptionItem

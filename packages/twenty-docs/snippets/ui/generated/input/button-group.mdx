@@ -15,8 +15,8 @@
   Join adjacent controls. Set to false for independently rounded buttons with a 2px gap.
 </ParamField>
 
-<ParamField body="color" type="&quot;accent&quot; | &quot;danger&quot; | &quot;neutral&quot; | &quot;success&quot;">
-  Default semantic color for children without an explicit color.
+<ParamField body="color" type="&quot;accent&quot; | &quot;danger&quot; | &quot;inherit&quot; | &quot;neutral&quot; | &quot;success&quot;">
+  Default semantic color for children without an explicit color. Inherited color requires each child to resolve to a non-solid variant; explicit child overrides take precedence.
 </ParamField>
 
 <ParamField body="framed" type="boolean" default="false">

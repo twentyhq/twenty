@@ -1,7 +1,10 @@
 import { t } from '@lingui/core/macro';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { shouldWorkflowRefetchRequestFamilyState } from '@/workflow/states/shouldWorkflowRefetchRequestFamilyState';
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 import { CoreWorkflowVersionCard } from '@/object-core/workflows/versions/components/CoreWorkflowVersionCard';
@@ -23,9 +26,19 @@ export const CoreWorkflowEditor = ({
   const { coreWorkflowVersion, loading, error, refetchCoreWorkflowVersion } =
     useCoreWorkflowVersion(coreWorkflowVersionId);
 
+  const setShouldWorkflowRefetchRequest = useSetAtomFamilyState(
+    shouldWorkflowRefetchRequestFamilyState,
+    coreWorkflowId,
+  );
+
+  const refetchCoreWorkflow = useCallback(() => {
+    void refetchCoreWorkflowVersion();
+    setShouldWorkflowRefetchRequest(true);
+  }, [refetchCoreWorkflowVersion, setShouldWorkflowRefetchRequest]);
+
   useListenToCoreWorkflowEvents({
     coreWorkflowId,
-    refetch: refetchCoreWorkflowVersion,
+    refetch: refetchCoreWorkflow,
   });
 
   if (loading && !isDefined(coreWorkflowVersion)) {

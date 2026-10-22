@@ -1,14 +1,10 @@
 import { plural, t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconSend } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
-import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
-import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
+import { useCampaignSendPreview } from '@/activities/emails/hooks/useCampaignSendPreview';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { sendCampaignCampaignIdComponentState } from '@/side-panel/pages/send-campaign/states/sendCampaignCampaignIdComponentState';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -28,16 +24,12 @@ export const SidePanelSendCampaignInfo = ({
     sidePanelPageInstanceId,
   );
 
-  const { record: campaign } = useFindOneRecord<MessageCampaign>({
-    objectNameSingular: CoreObjectNameSingular.MessageCampaign,
-    objectRecordId: sendCampaignCampaignId,
-    skip: !isNonEmptyString(sendCampaignCampaignId),
+  const { sendPreview } = useCampaignSendPreview({
+    campaignId: sendCampaignCampaignId,
+    scheduledAt: null,
   });
 
-  const { audiencePreview } = useCampaignAudiencePreview({
-    listId: campaign?.listId ?? null,
-    unsubscribeTopicId: campaign?.unsubscribeTopicId ?? null,
-  });
+  const audiencePreview = sendPreview?.audience ?? null;
 
   return (
     <HeaderIdentifier

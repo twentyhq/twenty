@@ -1,6 +1,6 @@
 import { useTranslate } from 'twenty-sdk/front-component';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { TeamsUserLinksList } from 'src/features/chat/front-components/TeamsUserLinksList';
 import { FeatureSettingsSection } from 'src/front-components/components/FeatureSettingsSection';
@@ -12,11 +12,11 @@ export const ChatSettings = () => {
   const { settingValue, isSaving, hasSaveError, updateSetting } =
     useFeatureSetting({
       variableKey: CHAT_ENABLED_APPLICATION_VARIABLE_KEY,
-      isAvailable: FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED,
+      isAvailable: RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED,
     });
 
   const isChatEnabled = isFeatureEnabled({
-    isAvailable: FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED,
+    isAvailable: RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED,
     settingValue,
   });
 
@@ -32,7 +32,7 @@ export const ChatSettings = () => {
         description={t(
           'Use the Teams assistant and messaging workflows in this workspace.',
         )}
-        isAvailable={FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED}
+        isAvailable={RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED}
         isEnabled={isChatEnabled}
         isSaving={isSaving}
         hasSaveError={hasSaveError}

@@ -377,6 +377,8 @@ A provider has exactly one scope. If your app needs both a shared credential and
 
 Twenty refuses a new connection whose scope does not match the provider's, including when your app changes its scope while a member is on the provider's consent screen. Changing `scope` in a later version does not move or delete existing connections: they keep their scope and can still be disconnected or reconnected.
 
+Adding or reconnecting a **Just for me** connection requires `CONNECTED_ACCOUNTS` permission, and adding or reconnecting a **Workspace shared** one requires `APPLICATIONS` permission. Reconnecting a **Workspace shared** connection as **Just for me** requires both.
+
 Use the right connection for each handler:
 
 ```ts

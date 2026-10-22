@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { type CurrencyCode } from 'twenty-shared/constants';
 import { type CurrencyPickerOption } from 'twenty-ui/components';
 
 import { getCurrencyLabel } from '@/localization/utils/getCurrencyLabel';
@@ -14,7 +13,7 @@ export const useCurrencyPickerCurrencies = (): CurrencyPickerOption[] => {
       CURRENCY_PICKER_CURRENCIES.map((currency) => ({
         ...currency,
         name: getCurrencyLabel({
-          currencyCode: currency.code as CurrencyCode,
+          currencyCode: currency.code,
           locale: i18n.locale,
         }),
       })),

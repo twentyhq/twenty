@@ -314,8 +314,10 @@ export const LargeResponse: Story = {
                 ],
               },
               metadata: {
-                createdAt: new Date(2023, 0, 1 + i).toISOString(),
-                lastLogin: new Date(2023, 11, 1 + (i % 30)).toISOString(),
+                createdAt: new Date(Date.UTC(2023, 0, 1 + i)).toISOString(),
+                lastLogin: new Date(
+                  Date.UTC(2023, 11, 1 + (i % 30)),
+                ).toISOString(),
                 permissions: ['read', 'write', 'admin'].slice(0, (i % 3) + 1),
               },
             })),

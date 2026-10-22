@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
 
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 
@@ -52,6 +53,46 @@ describe('useProjectAiChatThreadToUrl', () => {
       { threadId: null },
       undefined,
       { replace: true, state: null },
+    );
+  });
+
+  it('keeps the inbox route when selecting a draft', () => {
+    window.history.pushState(null, '', `/inbox/${THREAD_A}`);
+
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+
+    act(() => {
+      result.current.projectAiChatThreadToUrl(
+        getDefaultStore().get(newAiChatThreadIdState.atom),
+      );
+    });
+
+    expect(navigateAppMock).toHaveBeenCalledWith(
+      AppPath.AiChatInbox,
+      { threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT },
+      undefined,
+      { replace: true, state: null },
+    );
+  });
+
+  it('keeps the inbox route after the first message creates a thread', () => {
+    window.history.pushState(
+      { usr: { returnLocation: '/objects/people' } },
+      '',
+      `/inbox/${AI_CHAT_NEW_THREAD_PATH_SEGMENT}`,
+    );
+
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+
+    act(() => {
+      result.current.projectAiChatThreadToUrl(THREAD_A);
+    });
+
+    expect(navigateAppMock).toHaveBeenCalledWith(
+      AppPath.AiChatInbox,
+      { threadId: THREAD_A },
+      undefined,
+      { replace: true, state: { returnLocation: '/objects/people' } },
     );
   });
 

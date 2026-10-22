@@ -74,7 +74,10 @@ jobs:
       - name: Typecheck
         run: npx tsgo -p packages/twenty-cli/tsconfig.json --noEmit
       - name: Unit tests
-        run: npx vitest run --maxWorkers=2
+        run: npx vitest run --maxWorkers=2 --exclude src/app/manifest/__tests__/manifest-parity.spec.ts
+        working-directory: packages/twenty-cli
+      - name: Manifest parity tests
+        run: npx vitest run --maxWorkers=1 src/app/manifest/__tests__/manifest-parity.spec.ts
         working-directory: packages/twenty-cli
       - name: Test app publishing with an isolated local registry
         run: |

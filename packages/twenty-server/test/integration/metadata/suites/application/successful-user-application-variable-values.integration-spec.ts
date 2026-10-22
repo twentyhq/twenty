@@ -1,4 +1,6 @@
+import { myApplicationPreferences } from 'test/integration/metadata/suites/application/utils/my-application-preferences.util';
 import { myUserApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-user-application-variables.util';
+import { findStoredUserApplicationVariableValues } from 'test/integration/metadata/suites/application/utils/find-stored-user-application-variable-values.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithVariable,
@@ -10,6 +12,7 @@ import { generateApplicationTokenPair } from 'test/integration/utils/generate-ap
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 describe('User application variable values should succeed', () => {
@@ -19,6 +22,7 @@ describe('User application variable values should succeed', () => {
   let applicationToken: string;
   let defaultApplicationToken: string;
   let janeApplicationToken: string;
+  let jonyApplicationToken: string;
 
   beforeAll(async () => {
     application = await setupApplicationWithVariable({
@@ -42,6 +46,7 @@ describe('User application variable values should succeed', () => {
       applicationTokenPair,
       janeApplicationTokenPair,
       defaultApplicationTokenPair,
+      jonyApplicationTokenPair,
     ] = await Promise.all([
       generateApplicationTokenPair({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -54,6 +59,12 @@ describe('User application variable values should succeed', () => {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         applicationId: defaultApplication.id,
       }),
+      generateApplicationTokenPair({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationId: application.id,
+        userId: USER_DATA_SEED_IDS.JONY,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      }),
     ]);
 
     applicationToken = applicationTokenPair.applicationAccessToken.token;
@@ -61,6 +72,8 @@ describe('User application variable values should succeed', () => {
       defaultApplicationTokenPair.applicationAccessToken.token;
     janeApplicationToken =
       janeApplicationTokenPair.applicationAccessToken.token;
+    jonyApplicationToken =
+      jonyApplicationTokenPair.applicationAccessToken.token;
   }, 120000);
 
   afterAll(async () => {
@@ -118,7 +131,7 @@ describe('User application variable values should succeed', () => {
     );
   });
 
-  it('should let a member without the applications permission set their own value', async () => {
+  it('should let a member without the Workspace Apps permission set their own value', async () => {
     const { data: updateData } = await updateMyUserApplicationVariable({
       input: {
         applicationUniversalIdentifier: application.universalIdentifier,
@@ -213,6 +226,46 @@ describe('User application variable values should succeed', () => {
     );
   });
 
+  it('should let an application token set the value of the member it acts for only', async () => {
+    const { data: updateData } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: application.universalIdentifier,
+        key: application.variableKey,
+        value: 'jane-from-app',
+      },
+      token: janeApplicationToken,
+      expectToFail: false,
+    });
+
+    expect(updateData.updateMyUserApplicationVariable).toBe(true);
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: applicationToken,
+      expectToFail: false,
+    });
+
+    expect(data.myUserApplicationVariables).toEqual(
+      expect.arrayContaining([
+        {
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          variables: [{ key: application.variableKey, value: 'jane-from-app' }],
+        },
+        {
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          variables: [{ key: application.variableKey, value: 'jony' }],
+        },
+        {
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+          variables: [{ key: application.variableKey, value: '' }],
+        },
+      ]),
+    );
+  });
+
   it('should leave the values of another application out of the list', async () => {
     await updateMyUserApplicationVariable({
       input: {
@@ -284,5 +337,145 @@ describe('User application variable values should succeed', () => {
         }),
       ]),
     );
+  });
+
+  it('should let an application token act for a member when both their roles grant the User Apps permission', async () => {
+    const { data: updateData } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: application.universalIdentifier,
+        key: application.variableKey,
+        value: 'jony-from-app',
+      },
+      token: jonyApplicationToken,
+      expectToFail: false,
+    });
+
+    expect(updateData.updateMyUserApplicationVariable).toBe(true);
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: applicationToken,
+      expectToFail: false,
+    });
+
+    const jonyValues = data.myUserApplicationVariables.find(
+      ({ userWorkspaceId }) =>
+        userWorkspaceId === USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    );
+
+    expect(jonyValues?.variables).toEqual([
+      { key: application.variableKey, value: 'jony-from-app' },
+    ]);
+  });
+
+  it('should give a member the default again once they clear their value', async () => {
+    const { data: updateData } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: defaultApplication.universalIdentifier,
+        key: defaultApplication.variableKey,
+        value: '',
+      },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    expect(updateData.updateMyUserApplicationVariable).toBe(true);
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: defaultApplicationToken,
+      expectToFail: false,
+    });
+
+    expect(data.myUserApplicationVariables).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+          variables: [{ key: defaultApplication.variableKey, value: 'true' }],
+        }),
+      ]),
+    );
+
+    const { data: preferencesData } = await myApplicationPreferences({
+      input: {},
+      gqlFields: `
+        applicationId
+        variables {
+          key
+          value
+        }
+      `,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    expect(
+      preferencesData.myApplicationPreferences.find(
+        ({ applicationId }) => applicationId === defaultApplication.id,
+      )?.variables,
+    ).toEqual([{ key: defaultApplication.variableKey, value: 'true' }]);
+  });
+
+  it('should leave an empty value once a member clears a value without default', async () => {
+    await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: application.universalIdentifier,
+        key: application.variableKey,
+        value: '',
+      },
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: applicationToken,
+      expectToFail: false,
+    });
+
+    const jonyValues = data.myUserApplicationVariables.find(
+      ({ userWorkspaceId }) =>
+        userWorkspaceId === USER_WORKSPACE_DATA_SEED_IDS.JONY,
+    );
+
+    expect(jonyValues?.variables).toEqual([
+      { key: application.variableKey, value: '' },
+    ]);
+  });
+
+  it('should accept clearing a value a member never set', async () => {
+    const { data: updateData } = await updateMyUserApplicationVariable({
+      input: {
+        applicationUniversalIdentifier: defaultApplication.universalIdentifier,
+        key: defaultApplication.variableKey,
+        value: '',
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    expect(updateData.updateMyUserApplicationVariable).toBe(true);
+
+    const { data } = await myUserApplicationVariables({
+      input: {},
+      token: defaultApplicationToken,
+      expectToFail: false,
+    });
+
+    expect(data.myUserApplicationVariables).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+          variables: [{ key: defaultApplication.variableKey, value: 'true' }],
+        }),
+      ]),
+    );
+
+    const storedJaneValues = await findStoredUserApplicationVariableValues({
+      applicationId: defaultApplication.id,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+    });
+
+    expect(storedJaneValues).toHaveLength(0);
   });
 });

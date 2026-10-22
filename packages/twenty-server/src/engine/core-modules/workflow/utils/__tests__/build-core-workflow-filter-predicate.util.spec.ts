@@ -525,6 +525,35 @@ describe('buildCoreWorkflowFilterPredicate', () => {
     });
   });
 
+  describe('IS_SYSTEM rules', () => {
+    it('should bind the requested system flag', () => {
+      expect(
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.IS_SYSTEM,
+            operand: CoreWorkflowFilterOperand.IS,
+            value: 'false',
+          },
+        ]),
+      ).toEqual({
+        predicate: `(c."isSystem" = $2::boolean)`,
+        parameters: [false],
+      });
+    });
+
+    it('should reject a value that is not a boolean', () => {
+      expect(() =>
+        buildPredicate([
+          {
+            fieldKey: CoreWorkflowFilterFieldKey.IS_SYSTEM,
+            operand: CoreWorkflowFilterOperand.IS,
+            value: 'maybe',
+          },
+        ]),
+      ).toThrow(UserInputError);
+    });
+  });
+
   describe('supported operands', () => {
     const VALUE_BY_FIELD_KEY: Record<CoreWorkflowFilterFieldKey, string> = {
       [CoreWorkflowFilterFieldKey.NAME]: 'invoice',
@@ -534,6 +563,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
       [CoreWorkflowFilterFieldKey.UPDATED_AT]: JSON.stringify(
         '2026-08-31T13:45:00.000Z',
       ),
+      [CoreWorkflowFilterFieldKey.IS_SYSTEM]: 'false',
     };
 
     const SUPPORTED_OPERANDS_BY_FIELD_KEY: Record<
@@ -563,6 +593,7 @@ describe('buildCoreWorkflowFilterPredicate', () => {
         CoreWorkflowFilterOperand.IS_EMPTY,
         CoreWorkflowFilterOperand.IS_NOT_EMPTY,
       ],
+      [CoreWorkflowFilterFieldKey.IS_SYSTEM]: [CoreWorkflowFilterOperand.IS],
     };
 
     const fieldOperandPairs = Object.values(CoreWorkflowFilterFieldKey).flatMap(

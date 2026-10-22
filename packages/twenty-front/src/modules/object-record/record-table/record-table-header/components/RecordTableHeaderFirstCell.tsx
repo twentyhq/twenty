@@ -115,7 +115,7 @@ export const RecordTableHeaderFirstCell = () => {
       )}
 
       {isRecordTableColumnResizable && (
-        <RecordTableHeaderResizeHandler recordFieldIndex={0} position="right" />
+        <RecordTableHeaderResizeHandler recordFieldIndex={0} position="end" />
       )}
     </RecordTableHeaderCellContainer>
   );

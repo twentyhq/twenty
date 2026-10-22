@@ -254,6 +254,14 @@ export class BullMQDriver
       ...(isDefined(options?.maxStalledCount)
         ? { maxStalledCount: options.maxStalledCount }
         : {}),
+      ...(isDefined(options?.rateLimit)
+        ? {
+            limiter: {
+              max: options.rateLimit.max,
+              duration: options.rateLimit.durationMs,
+            },
+          }
+        : {}),
       metrics: {
         maxDataPoints: MetricsTime.ONE_WEEK,
         collectInterval: 60000,

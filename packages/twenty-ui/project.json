@@ -164,7 +164,7 @@
       "configurations": {
         "test": {},
         "docs": {
-          "command": "STORYBOOK_DOCS=true NODE_OPTIONS='--max-old-space-size=10240' storybook build --disable-telemetry"
+          "command": "NODE_OPTIONS='--max-old-space-size=10240' storybook build --disable-telemetry"
         }
       }
     },
@@ -183,7 +183,7 @@
     },
     "storybook:test": {
       "options": {
-        "command": "vitest run --coverage --shard={args.shard} --project storybook --project reduced-motion"
+        "command": "STORYBOOK_COVERAGE=true vitest run --coverage --shard={args.shard} --project storybook --project reduced-motion"
       }
     },
     "storybook:test:no-coverage": {

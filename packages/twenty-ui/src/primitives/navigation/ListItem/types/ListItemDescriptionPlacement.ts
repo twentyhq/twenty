@@ -1,1 +1,1 @@
-export type ListItemDescriptionPlacement = 'inline' | 'end';
+export type ListItemDescriptionPlacement = 'inline' | 'end' | 'below';

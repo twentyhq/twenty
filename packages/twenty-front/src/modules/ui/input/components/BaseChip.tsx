@@ -74,7 +74,7 @@ const StyledLabel = styled.span<{ maxWidth?: number }>`
   text-overflow: ellipsis;
 `;
 
-const StyledDelete = styled.button<{ danger: boolean }>`
+const StyledDelete = styled.button`
   align-items: center;
   background: none;
   border: none;
@@ -92,11 +92,6 @@ const StyledDelete = styled.button<{ danger: boolean }>`
   padding: 0;
   user-select: none;
   width: 20px;
-
-  &:hover {
-    background-color: ${({ danger }) =>
-      danger ? themeCssVariables.color.red5 : themeCssVariables.color.blue5};
-  }
 `;
 
 type BaseChipProps = {
@@ -149,7 +144,6 @@ export const BaseChip = ({
           type="button"
           onClick={onRemove}
           aria-label={removeAriaLabel ?? t`Remove`}
-          danger={danger}
         >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledDelete>

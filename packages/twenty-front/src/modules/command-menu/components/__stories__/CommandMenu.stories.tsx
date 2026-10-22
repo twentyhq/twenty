@@ -19,7 +19,6 @@ import {
   mockedLimitedPermissionsUserData,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
-import { sleep } from '~/utils/sleep';
 
 import { type SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
@@ -41,8 +40,6 @@ import { HttpResponse, graphql } from 'msw';
 import { ContextStorePageType, SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
-
-const openTimeout = 50;
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
@@ -174,7 +171,7 @@ export const MatchingNavigate: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const searchInput = await canvas.findByTestId(SIDE_PANEL_FOCUS_ID);
-    await sleep(openTimeout);
+    await waitFor(() => expect(searchInput).toHaveFocus());
     await userEvent.type(searchInput, 'ta');
     expect(await canvas.findByText('Go to Tasks')).toBeVisible();
   },
@@ -184,7 +181,7 @@ export const MatchingNavigateShortcuts: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const searchInput = await canvas.findByTestId(SIDE_PANEL_FOCUS_ID);
-    await sleep(openTimeout);
+    await waitFor(() => expect(searchInput).toHaveFocus());
     await userEvent.type(searchInput, 'gp');
     expect(await canvas.findByText('Go to People')).toBeVisible();
   },
@@ -193,8 +190,8 @@ export const MatchingNavigateShortcuts: Story = {
 export const NoResultsSearchFallback: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const searchInput = await canvas.findByTestId(SIDE_PANEL_FOCUS_ID);
-    await sleep(openTimeout);
+    const searchInput = await canvas.findByRole('textbox', { name: 'Search' });
+    await waitFor(() => expect(searchInput).toHaveFocus());
     await userEvent.type(searchInput, 'input without results');
     expect(
       await canvas.findByText('Use ‘input without results’ with...'),

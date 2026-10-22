@@ -62,7 +62,6 @@ const StyledHeader = styled.div`
 `;
 
 const StyledOAuthTitle = styled(Heading)`
-  margin: 0;
   max-width: min(100%, var(--oauth-modal-content-max-width));
   padding-bottom: ${themeCssVariables.spacing[1]};
   text-wrap: balance;

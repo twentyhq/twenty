@@ -35,13 +35,13 @@ export const createGeometryWakeSources = (
     createInputMediaFeatureChangeObserver(onWake);
 
   let rootContainer: Element | null = null;
+  let portalLayer: Element | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
   let rootAncestorMutationObserver: MutationObserver | null = null;
   let documentStyleObserver: MutationObserver | null = null;
   let areViewportSourcesAttached = false;
   let areElementSourcesAttached = false;
-  let arePortalLayerSourcesAttached = false;
 
   const isEventTargetRelevantToRoot = (target: EventTarget | null): boolean => {
     if (!isDefined(rootContainer)) {
@@ -52,7 +52,11 @@ export const createGeometryWakeSources = (
       return false;
     }
 
-    return rootContainer.contains(target) || target.contains(rootContainer);
+    return (
+      rootContainer.contains(target) ||
+      target.contains(rootContainer) ||
+      (isDefined(portalLayer) && portalLayer.contains(target))
+    );
   };
 
   const handleAnimationEvent = (event: Event): void => {
@@ -75,7 +79,7 @@ export const createGeometryWakeSources = (
   };
 
   const syncScrollListener = (): void => {
-    if (areElementSourcesAttached || arePortalLayerSourcesAttached) {
+    if (areElementSourcesAttached || isDefined(portalLayer)) {
       document.addEventListener('scroll', handleScroll, true);
       return;
     }
@@ -220,12 +224,15 @@ export const createGeometryWakeSources = (
     resizeObservedNodes.clear();
   };
 
-  const attachPortalLayerSources = (): void => {
-    if (arePortalLayerSourcesAttached) {
+  const attachPortalLayerSources = (nextPortalLayer: Element): void => {
+    const wasPortalLayerAttached = isDefined(portalLayer);
+
+    portalLayer = nextPortalLayer;
+
+    if (wasPortalLayerAttached) {
       return;
     }
 
-    arePortalLayerSourcesAttached = true;
     syncScrollListener();
 
     if (isDefined(rootContainer)) {
@@ -234,11 +241,11 @@ export const createGeometryWakeSources = (
   };
 
   const detachPortalLayerSources = (): void => {
-    if (!arePortalLayerSourcesAttached) {
+    if (!isDefined(portalLayer)) {
       return;
     }
 
-    arePortalLayerSourcesAttached = false;
+    portalLayer = null;
     syncScrollListener();
     disconnectRootAncestorMutations();
   };
@@ -282,7 +289,7 @@ export const createGeometryWakeSources = (
       observeRootMutations(node);
     }
 
-    if (arePortalLayerSourcesAttached) {
+    if (isDefined(portalLayer)) {
       observeRootAncestorMutations(node);
     }
   };

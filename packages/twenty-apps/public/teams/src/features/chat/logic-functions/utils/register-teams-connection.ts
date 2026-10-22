@@ -1,23 +1,18 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { getConnection, kv } from 'twenty-sdk/logic-function';
 
-import { FEATURE_FLAGS } from 'src/constants/feature-flags';
-import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
 import { buildTeamsConnectedAccountTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-connected-account-tenant-kv-key';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
 import { fetchTeamsTenantId } from 'src/features/chat/logic-functions/utils/fetch-teams-tenant-id';
+import { isTeamsChatEnabled } from 'src/features/chat/logic-functions/utils/is-teams-chat-enabled';
 import { releaseTeamsConnectionTenant } from 'src/features/chat/logic-functions/utils/release-teams-connection-tenant';
-import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
 
 export const registerTeamsConnection = async ({
   connectedAccountId,
 }: {
   connectedAccountId: string;
 }): Promise<{ claimedTenantId: string | null }> => {
-  const isChatEnabled = isFeatureEnabled({
-    isAvailable: FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED,
-    settingValue: process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY],
-  });
+  const isChatEnabled = isTeamsChatEnabled();
   const connection = isChatEnabled
     ? await getConnection(connectedAccountId)
     : undefined;

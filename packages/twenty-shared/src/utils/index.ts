@@ -139,6 +139,7 @@ export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecor
 export { combineFilters } from './filter/utils/combineFilters';
 export { compareSelectOptionValues } from './filter/utils/compareSelectOptionValues';
 export { COMPOSITE_FIELD_FILTER_OPERANDS_MAP } from './filter/utils/compositeFieldFilterOperandsMap';
+export { COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP } from './filter/utils/compositeFieldSubFieldMatchersMap';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
 export { convertLikePatternToRegexOrThrow } from './filter/utils/convertLikePatternToRegexOrThrow';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
@@ -155,8 +156,11 @@ export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordG
 export { getFilterOperandsForFilterableFieldType } from './filter/utils/getFilterOperandsForFilterableFieldType';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
+export { isFieldReferenceFilterOperator } from './filter/utils/isFieldReferenceFilterOperator';
 export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
 export { isMatchingBooleanFilter } from './filter/utils/isMatchingBooleanFilter';
+export type { CompositeSubFieldMatcher } from './filter/utils/isMatchingCompositeFilter';
+export { isMatchingCompositeFilter } from './filter/utils/isMatchingCompositeFilter';
 export { isMatchingCurrencyFilter } from './filter/utils/isMatchingCurrencyFilter';
 export { isMatchingDateFilter } from './filter/utils/isMatchingDateFilter';
 export { isMatchingFilesFilter } from './filter/utils/isMatchingFilesFilter';
@@ -169,6 +173,7 @@ export { isMatchingSelectFilter } from './filter/utils/isMatchingSelectFilter';
 export { isMatchingStringFilter } from './filter/utils/isMatchingStringFilter';
 export { isMatchingTSVectorFilter } from './filter/utils/isMatchingTSVectorFilter';
 export { isMatchingUUIDFilter } from './filter/utils/isMatchingUUIDFilter';
+export { parseFieldReferenceFilterValue } from './filter/utils/parseFieldReferenceFilterValue';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export {
   strictArrayOfUuidOrVariableSchema,
@@ -242,6 +247,12 @@ export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
+export { findMalformedTemplateVariable } from './template-variable/find-malformed-template-variable';
+export { formatTemplateVariableWithFallback } from './template-variable/format-template-variable-with-fallback';
+export { parseTemplateVariableWithFallback } from './template-variable/parse-template-variable-with-fallback';
+export { replaceTemplateVariables } from './template-variable/replace-template-variables';
+export { TEMPLATE_VARIABLE_PATTERN } from './template-variable/template-variable-pattern';
+export type { TemplateVariableWithFallback } from './template-variable/template-variable-with-fallback';
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
 export { convertEmailBodyToEmailDocument } from './tiptap/convert-email-body-to-email-document';

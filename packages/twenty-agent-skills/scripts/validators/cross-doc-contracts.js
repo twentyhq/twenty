@@ -167,7 +167,7 @@ const assertFrontComponentGuidance = (fail) => {
     'Prefer Twenty UI primitives',
     'Use `Callout`',
     'Use `Button`',
-    'Use `Tag`, `Status`, `Chip`, `Label`, and `Avatar`',
+    'Use `Tag`, `Status`, `Chip`, and `Avatar`',
     'Use `themeCssVariables`',
     'Design the visible states',
   ];

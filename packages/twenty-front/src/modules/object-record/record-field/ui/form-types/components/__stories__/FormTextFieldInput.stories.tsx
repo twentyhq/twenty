@@ -229,6 +229,57 @@ export const DisabledWithVariable: Story = {
   },
 };
 
+export const WithTemplateVariableFallback: Story = {
+  args: {
+    label: 'Subject',
+    defaultValue: 'Hi {{jobTitle | default: "there"}}',
+    enableTemplateVariableFallback: true,
+    onChange: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(await canvas.findByText('{{jobTitle}}')).toBeVisible();
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Edit fallback value' }),
+    );
+
+    expect(
+      await body.findByRole('textbox', { name: 'Fallback value' }),
+    ).toHaveValue('there');
+  },
+};
+
+export const WithMissingTemplateVariableFallback: Story = {
+  args: {
+    label: 'Subject',
+    defaultValue: 'Hi {{jobTitle}}',
+    enableTemplateVariableFallback: true,
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Edit fallback value' }),
+    );
+
+    await userEvent.type(
+      await body.findByRole('textbox', { name: 'Fallback value' }),
+      'there{Enter}',
+    );
+
+    await waitFor(() => {
+      expect(args.onChange).toHaveBeenLastCalledWith(
+        'Hi {{jobTitle | default: "there"}}',
+      );
+    });
+  },
+};
+
 export const HasHistory: Story = {
   args: {
     label: 'Text',

@@ -1,7 +1,7 @@
 import { appendFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
+import { DEFAULT_API_URL_NAME } from 'twenty-shared/application-runtime';
 
 import { buildClientWrapperSource } from './client-wrapper';
 import { emptyDir, ensureDir } from './fs-utils';

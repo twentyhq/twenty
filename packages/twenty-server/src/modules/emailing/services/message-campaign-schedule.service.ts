@@ -42,13 +42,6 @@ export class MessageCampaignScheduleService {
     campaignId: string;
     scheduledAt: Date;
   }): Promise<SendCampaignResult> {
-    if (scheduledAt.getTime() <= Date.now()) {
-      throw new EmailingDomainException(
-        `Campaign ${campaignId} cannot be scheduled for ${scheduledAt.toISOString()}, which is not in the future`,
-        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE,
-      );
-    }
-
     const {
       roleId,
       sendableRecipients,
@@ -59,6 +52,7 @@ export class MessageCampaignScheduleService {
       workspaceId,
       userWorkspaceId,
       campaignId,
+      requestedScheduledAt: scheduledAt,
     });
 
     const scheduled =

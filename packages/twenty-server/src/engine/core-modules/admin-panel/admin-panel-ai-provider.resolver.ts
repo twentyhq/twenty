@@ -4,7 +4,6 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
-import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { CustomAiProviderAccessDTO } from 'src/engine/core-modules/admin-panel/dtos/custom-ai-provider-access.dto';
@@ -16,7 +15,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ModelsDevModelSuggestionDTO } from 'src/engine/core-modules/admin-panel/dtos/models-dev-model-suggestion.dto';
 import { ModelsDevProviderSuggestionDTO } from 'src/engine/core-modules/admin-panel/dtos/models-dev-provider-suggestion.dto';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
@@ -41,7 +40,7 @@ import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-model
     oauthClient: false,
     application: false,
   }),
-  SettingsPermissionGuard(PermissionFlagType.SECURITY),
+  NoPermissionGuard,
 )
 export class AdminPanelAiProviderResolver {
   constructor(

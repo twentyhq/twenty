@@ -3,7 +3,6 @@ import { RecordTableRowContextValue } from '@/object-record/record-table/context
 import { RecordTableRowDraggableContextValue } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 
 export const recordTableRowContextValue: RecordTableRowContextValue = {
-  rowIndex: 2,
   isSelected: false,
   recordId: 'recordId',
   pathToShowPage: '/',
@@ -23,8 +22,5 @@ export const recordTableCellContextValue: RecordTableCellContextValue = {
     id: 'id',
     isVisible: true,
   },
-  cellPosition: {
-    row: 2,
-    column: 3,
-  },
+  columnIndex: 3,
 };

@@ -1,0 +1,4 @@
+export const RELEASE_FLAGS = {
+  IS_CHAT_ASSISTANT_RELEASED: false,
+  IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED: false,
+} as const;

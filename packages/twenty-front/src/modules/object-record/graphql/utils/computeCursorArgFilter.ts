@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { isAscendingOrder } from '@/object-record/graphql/utils/isAscendingOrder';
 import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
 
 type CursorOrderByField = {
@@ -12,9 +13,6 @@ type CursorOrderByField = {
   direction: string;
   subFieldName?: string;
 };
-
-const isAscendingOrder = (direction: string): boolean =>
-  direction === 'AscNullsFirst' || direction === 'AscNullsLast';
 
 const computeOperator = (
   isAscending: boolean,

@@ -1,3 +1,4 @@
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
 import { GraphQLPlayground } from '@/settings/developers/components/GraphQLPlayground';
 import { playgroundApiKeyState } from '@/settings/developers/states/playgroundApiKeyState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -15,7 +16,7 @@ const PlaygroundApiKeySetterEffect = () => {
   useEffect(() => {
     setPlaygroundApiKey({
       token: 'test-api-key-123',
-      expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      expiresAt: getMockedDateWithOffset({ hours: 1 }),
     });
   }, [setPlaygroundApiKey]);
 

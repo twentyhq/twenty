@@ -41,7 +41,11 @@ runComponentConformance({
 
 runComponentConformance({
   name: 'Tabs.Tab',
-  element: <Tabs.Tab value="overview">Overview</Tabs.Tab>,
+  element: (
+    <Tabs.Tab value="overview" size="compact">
+      Overview
+    </Tabs.Tab>
+  ),
   refInstanceOf: HTMLButtonElement,
   ownClassName: styles.tab,
   renderPropTagName: 'button',

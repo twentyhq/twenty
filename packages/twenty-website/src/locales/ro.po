@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-07 16:20\n"
+"PO-Revision-Date: 2026-10-12 12:37\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -245,11 +245,15 @@ msgid "≈ 8× less"
 msgstr "≈ de 8× mai puțin"
 
 #. js-lingui-id: be30i9
-#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$0"
 msgstr "0 $"
+
+#. js-lingui-id: hPuNoh
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$0/user"
+msgstr ""
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -325,12 +329,6 @@ msgstr "175 $/utilizator/lună"
 msgid "$18,960"
 msgstr "18.960 $"
 
-#. js-lingui-id: EkIZkY
-#: src/sections/pricing-plan-table/plan-table-data.ts
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$19"
-msgstr "19 $"
-
 #. js-lingui-id: 3TfGqu
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, SSO included"
@@ -343,6 +341,12 @@ msgstr "19 $ per utilizator pe lună, SSO inclus"
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, that's it"
 msgstr "19 $ per utilizator pe lună, atât tot"
+
+#. js-lingui-id: rlRjZO
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$19/user"
+msgstr ""
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -457,17 +461,17 @@ msgstr "79 $ per utilizator pe lună cu SSO"
 msgid "$79/user/mo"
 msgstr "79 $/utilizator/lună"
 
-#. js-lingui-id: 8r6DgO
-#: src/sections/pricing-plan-table/plan-table-data.ts
-msgid "$9"
-msgstr "9 $"
-
 #. js-lingui-id: OCkNt+
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9 to $19/user, everything included"
 msgstr "de la 9 $ la 19 $/utilizator, totul inclus"
+
+#. js-lingui-id: R6J1hV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "$9/user"
+msgstr ""
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -507,6 +511,11 @@ msgstr "150"
 #: src/case-studies/case-study-catalog.ts
 msgid "150 hrs"
 msgstr "150 ore"
+
+#. js-lingui-id: Ur5nZV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "2 hours"
+msgstr "2 ore"
 
 #. js-lingui-id: 2z1Znr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1245,6 +1254,11 @@ msgstr "API-urile sunt extra. Simplitatea are un preț."
 #: src/sections/menu/data/menu.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "API-uri, SDK-uri și webhook-uri pentru a extinde Twenty și a livra aplicații construite peste datele din CRM-ul dumneavoastră."
+
+#. js-lingui-id: Oh+wHS
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "App logs"
+msgstr "Jurnale ale aplicației"
 
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
@@ -2498,6 +2512,11 @@ msgstr "Sidebar personalizat"
 msgid "Custom views"
 msgstr "Vizualizări personalizate"
 
+#. js-lingui-id: T8n/Qf
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Custom, up to 3 years"
+msgstr "Personalizat, până la 3 ani"
+
 #. js-lingui-id: 876pfE
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
 msgid "Customer"
@@ -3297,7 +3316,9 @@ msgid "ex: {example}"
 msgstr "ex: {example}"
 
 #. js-lingui-id: Dcm8+x
+#. placeholder {0}: option.examples
 #. placeholder {0}: i18n._(scope.examples)
+#: src/ui/CategoryCardSelect.tsx
 #: src/partners-marketplace/PartnerCoverageSection.tsx
 msgid "ex. {0}"
 msgstr "ex. {0}"
@@ -4917,6 +4938,11 @@ msgstr "Lock-in"
 msgid "Log in"
 msgstr "Autentificare"
 
+#. js-lingui-id: qakNlV
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Log retention"
+msgstr "Păstrarea jurnalelor"
+
 #. js-lingui-id: LE5a4y
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Looking to hire a partner?"
@@ -6301,6 +6327,11 @@ msgstr "Date în timp real"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Real-time is a state of mind, not a feature."
 msgstr "„Timp real” este o stare de spirit, nu o funcționalitate."
+
+#. js-lingui-id: v5nqef
+#: src/sections/pricing-plan-table/plan-table-data.ts
+msgid "Record change logs"
+msgstr "Jurnale de modificări ale înregistrărilor"
 
 #. js-lingui-id: TnoD2J
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -9077,6 +9108,10 @@ msgid "Yemen 🇾🇪"
 msgstr "Yemen 🇾🇪"
 
 #. js-lingui-id: l75CjT
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
+#: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts

@@ -180,10 +180,20 @@ export const PreviewSkill: Story = {
       expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
     );
 
-    await userEvent.type(
-      menu.getByRole('searchbox', { name: 'Search skills' }),
-      'meet',
+    const search = menu.getByRole('searchbox', { name: 'Search skills' });
+    await userEvent.type(search, 'meet');
+    await expect(await body.findByRole('tooltip')).toHaveTextContent(
+      '/meeting-prep',
     );
+    await userEvent.click(menu.getByRole('button', { name: 'Skills' }));
+    await waitFor(() =>
+      expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
+    expect(search).toBeInTheDocument();
+    expect(search).not.toBeVisible();
+    await userEvent.click(menu.getByRole('menuitem', { name: /Skills/ }));
+    expect(menu.getByRole('searchbox', { name: 'Search skills' })).toBe(search);
+    expect(search).toHaveValue('meet');
     await expect(await body.findByRole('tooltip')).toHaveTextContent(
       '/meeting-prep',
     );

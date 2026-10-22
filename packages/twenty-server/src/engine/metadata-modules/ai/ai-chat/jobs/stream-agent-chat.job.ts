@@ -2,10 +2,7 @@ import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  type CodeExecutionData,
-  isSilentAgentChatMessageParts,
-} from 'twenty-shared/ai';
+import { type CodeExecutionData } from 'twenty-shared/ai';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -18,22 +15,16 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
-import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import {
-  type AgentTurnStreamResult,
-  AgentTurnStreamService,
-} from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
+import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
 import { type AgentChatStreamClaim } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
-import { hasReplyText } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-reply-text.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -164,23 +155,14 @@ export class StreamAgentChatJob {
       );
     }
 
-    const { message, sender, authorization } =
-      await this.actorService.authorizeJob({
-        workspaceId: data.workspaceId,
-        threadId: data.threadId,
-        messageId: data.messageId,
-        turnId: data.existingTurnId,
-        userWorkspaceId: data.userWorkspaceId,
-      });
-
-    const turnId = data.existingTurnId ?? message?.turnId;
-
-    if (!isDefined(turnId)) {
-      throw new AiException(
-        'Message turn not found',
-        AiExceptionCode.MESSAGE_NOT_FOUND,
-      );
-    }
+    const turnId = data.existingTurnId;
+    const { sender, authorization } = await this.actorService.authorizeJob({
+      workspaceId: data.workspaceId,
+      threadId: data.threadId,
+      messageId: data.messageId,
+      turnId,
+      userWorkspaceId: data.userWorkspaceId,
+    });
 
     const isRunning = await this.turnRecorderService.markRunning({
       workspaceId: data.workspaceId,
@@ -206,9 +188,10 @@ export class StreamAgentChatJob {
           })
           .catch(() => null);
 
-    const result = await this.turnStreamService.stream({
+    const { finish } = await this.turnStreamService.streamTurn({
       claim,
       turnId,
+      abortSignal,
       startTurn: async (writer) => {
         const turn = await this.chatExecutionService.streamChat({
           workspace,
@@ -278,24 +261,10 @@ export class StreamAgentChatJob {
           getStopReason: turn.getStopReason,
         };
       },
-    });
-
-    const stopReason = result.started.getStopReason();
-
-    this.logTurnWithoutText({
-      result,
-      stopReason,
-      threadId: data.threadId,
-      workspaceId: data.workspaceId,
-      modelId: turnModelId,
-    });
-
-    const finish = await this.turnStreamService.finishTurn({
-      claim,
-      turnId,
-      result,
-      modelId: turnModelId,
-      stopReason,
+      completeTurn: async ({ started }) => ({
+        modelId: turnModelId,
+        stopReason: started.getStopReason(),
+      }),
     });
 
     if (isDefined(finish)) {
@@ -309,21 +278,6 @@ export class StreamAgentChatJob {
         });
       }
     }
-
-    // a worker shutting down interrupted the turn, which fails rather than ends as stopped
-    if (abortSignal.reason instanceof AiException) {
-      throw abortSignal.reason;
-    }
-
-    if (isDefined(result.streamError)) {
-      throw result.streamError;
-    }
-
-    await this.turnStreamService.publishTurnEnd({
-      claim,
-      assistantMessageId: result.assistantMessageId,
-      stopReason,
-    });
   }
 
   // resolve auto-select ids here so turn-start and outcome metrics carry the same model label
@@ -392,60 +346,6 @@ export class StreamAgentChatJob {
         return;
       default:
         return assertUnreachable(outcome);
-    }
-  }
-
-  private logTurnWithoutText({
-    result: { replyParts, isAborted, streamError, usage },
-    stopReason,
-    threadId,
-    workspaceId,
-    modelId,
-  }: {
-    result: AgentTurnStreamResult;
-    stopReason: StepDebitResult['stopReason'];
-    threadId: string;
-    workspaceId: string;
-    modelId: string;
-  }): void {
-    const hasText = hasReplyText(replyParts);
-
-    if (
-      (!isAborted && hasText) ||
-      findAwaitingPausingToolParts(replyParts).length > 0 ||
-      isSilentAgentChatMessageParts(replyParts)
-    ) {
-      return;
-    }
-
-    const reason = isAborted
-      ? 'user-cancelled'
-      : streamError
-        ? 'stream-error'
-        : stopReason === 'userAllowance'
-          ? 'user-credits-exhausted'
-          : stopReason === 'workspaceAllowance'
-            ? 'credits-exhausted'
-            : 'empty-completion';
-
-    const errorDetail = isDefined(streamError)
-      ? formatErrorWithCause(streamError)
-      : 'none';
-
-    this.logger.warn(
-      `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
-        `reason=${reason}, model=${modelId}, ` +
-        `threadId=${threadId}, workspaceId=${workspaceId}, ` +
-        `isAborted=${isAborted}, stopReason=${stopReason}, hasText=${hasText}, ` +
-        `streamError=${errorDetail}, ` +
-        `inputTokens=${usage.inputTokens},` +
-        `responseMessage.parts=${JSON.stringify(replyParts)}`,
-    );
-
-    if (streamError instanceof Error && isDefined(streamError.stack)) {
-      this.logger.warn(
-        `[AI_CHAT_NO_TEXT] streamError stack — threadId=${threadId}: ${streamError.stack}`,
-      );
     }
   }
 }

@@ -23,6 +23,7 @@ export const badgeTest: TwentyUiGalleryPlayFunction = async ({
   const primaryCircle = canvas.getByLabelText('Primary circle badge');
   const secondaryCircle = canvas.getByLabelText('Secondary circle badge');
   const inherited = canvas.getByLabelText('Inherited badge');
+  const accent = canvas.getByLabelText('Accent badge');
 
   await waitFor(() => {
     expect(extraSmall).toHaveStyle({ height: '14px' });
@@ -41,6 +42,13 @@ export const badgeTest: TwentyUiGalleryPlayFunction = async ({
     const primaryCircleStyle = getComputedStyle(primaryCircle);
     expect(primaryCircleStyle.color).toBe(
       primaryCircleStyle.getPropertyValue('--t-font-color-on-accent').trim(),
+    );
+    const accentStyle = getComputedStyle(accent);
+    expect(accentStyle.backgroundColor).toBe(
+      accentStyle.getPropertyValue('--t-accent-tertiary').trim(),
+    );
+    expect(accentStyle.color).toBe(
+      accentStyle.getPropertyValue('--t-accent-accent11').trim(),
     );
     expect(getComputedStyle(inherited).color).toBe('rgb(20, 80, 120)');
     expect(getComputedStyle(inherited).fontWeight).toBe('600');

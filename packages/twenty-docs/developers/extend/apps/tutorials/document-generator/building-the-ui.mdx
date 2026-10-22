@@ -114,10 +114,13 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Style with inline CSS variables (`var(--t-color-blue)`), not values imported from
-`twenty-ui`. The CLI mocks that package during build, so module-level imports of
-theme constants would be `undefined`. See the
-[full component](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+  Read `useTheme()` or `themeCssVariables` from `twenty-ui/theme` inside the
+  component body when styling with Twenty's tokens. The CLI mocks `twenty-ui`
+  during manifest extraction, so dereferencing imported theme constants at
+  module scope can fail the build. See [Theming and theme
+  tokens](/developers/extend/apps/layout/front-components#theming-and-theme-tokens)
+  and the [full
+  component](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
 </Warning>
 
 ## A command to open it

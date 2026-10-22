@@ -1,6 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -13,8 +12,6 @@ import {
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const WARM_UP_CHUNK_SIZE = 10;
 
 @Injectable()
 export class LogicFunctionPrebuiltWarmUpService {
@@ -50,6 +47,13 @@ export class LogicFunctionPrebuiltWarmUpService {
         applicationUniversalIdentifier: flatApplication.universalIdentifier,
       });
     } catch (error) {
+      if (
+        error instanceof LogicFunctionException &&
+        error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED
+      ) {
+        throw error;
+      }
+
       const cause = error instanceof Error ? error.message : String(error);
 
       this.logger.error(
@@ -66,14 +70,14 @@ export class LogicFunctionPrebuiltWarmUpService {
     }
   }
 
-  async warmUpApplicationLogicFunctions({
+  async warmUpLogicFunction({
     workspaceId,
     applicationId,
-    logicFunctionUniversalIdentifiers,
+    logicFunctionUniversalIdentifier,
   }: {
     workspaceId: string;
     applicationId: string;
-    logicFunctionUniversalIdentifiers: string[];
+    logicFunctionUniversalIdentifier: string;
   }): Promise<void> {
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -91,48 +95,22 @@ export class LogicFunctionPrebuiltWarmUpService {
       return;
     }
 
-    const flatLogicFunctions = logicFunctionUniversalIdentifiers
-      .map(
-        (universalIdentifier) =>
-          flatLogicFunctionMaps.byUniversalIdentifier[universalIdentifier],
-      )
-      .filter(isDefined)
-      .filter(
-        (flatLogicFunction) =>
-          flatLogicFunction.applicationId === applicationId &&
-          isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction),
-      );
+    const flatLogicFunction =
+      flatLogicFunctionMaps.byUniversalIdentifier[
+        logicFunctionUniversalIdentifier
+      ];
 
-    const failures: string[] = [];
-
-    for (const flatLogicFunctionsChunk of chunk(
-      flatLogicFunctions,
-      WARM_UP_CHUNK_SIZE,
-    )) {
-      const results = await Promise.allSettled(
-        flatLogicFunctionsChunk.map((flatLogicFunction) =>
-          this.ensurePrebuiltBundleInstalled({
-            flatLogicFunction,
-            flatApplication,
-          }),
-        ),
-      );
-
-      results.forEach((result, index) => {
-        if (result.status === 'rejected') {
-          failures.push(
-            `${flatLogicFunctionsChunk[index].id}: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
-          );
-        }
-      });
+    if (
+      !isDefined(flatLogicFunction) ||
+      flatLogicFunction.applicationId !== applicationId ||
+      !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction)
+    ) {
+      return;
     }
 
-    if (failures.length > 0) {
-      throw new LogicFunctionException(
-        `Failed to warm up ${failures.length} of ${flatLogicFunctions.length} prebuilt logic functions ` +
-          `for application ${applicationId} in workspace ${workspaceId}: ${failures.join('; ')}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
-      );
-    }
+    await this.ensurePrebuiltBundleInstalled({
+      flatLogicFunction,
+      flatApplication,
+    });
   }
 }

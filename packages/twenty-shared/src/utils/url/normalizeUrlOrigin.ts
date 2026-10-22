@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { getUrlSafely } from '@/utils/getUrlSafely';
 import { isDefined } from '@/utils/validation';
 
@@ -9,5 +11,13 @@ export const normalizeUrlOrigin = (rawUrl: string) => {
     return rawUrl;
   }
 
-  return (url.origin + url.pathname + url.search + url.hash).replace(/\/$/, '');
+  const href = url.origin + url.pathname + url.search + url.hash;
+  const hasQueryOrHash =
+    isNonEmptyString(url.search) || isNonEmptyString(url.hash);
+
+  if (hasQueryOrHash) {
+    return href;
+  }
+
+  return href.replace(/\/$/, '');
 };

@@ -28,6 +28,8 @@ const computeStoriesGlob = () => {
   return ['../src/**/*.docs.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'];
 };
 
+const isCoverageEnabled = process.env.STORYBOOK_COVERAGE === 'true';
+
 const config: StorybookConfig = {
   stories: computeStoriesGlob(),
 
@@ -43,7 +45,7 @@ const config: StorybookConfig = {
   addons: [
     '@storybook-community/storybook-addon-cookie',
     '@storybook/addon-links',
-    '@storybook/addon-coverage',
+    ...(isCoverageEnabled ? ['@storybook/addon-coverage'] : []),
     'storybook-addon-pseudo-states',
     'storybook-addon-mock-date',
     '@storybook/addon-vitest',

@@ -376,7 +376,8 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       expect(labels).toEqual(
         expect.arrayContaining([
           'Upload files',
-          'Install and manage applications',
+          'Install and manage workspace apps',
+          'Manage own app preferences and accounts',
           'Run AI agents',
           'Manage billing',
           'Manage MCP, API keys, and webhooks',

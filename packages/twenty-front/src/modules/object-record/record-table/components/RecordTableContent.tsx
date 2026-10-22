@@ -18,12 +18,14 @@ import { RecordTableHeader } from '@/object-record/record-table/record-table-hea
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
+import { recordTableRowIndexByRecordIdComponentSelector } from '@/object-record/record-table/states/selectors/recordTableRowIndexByRecordIdComponentSelector';
 import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 const StyledTableContainer = styled.div`
@@ -88,6 +90,10 @@ export const RecordTableContent = ({
 
   const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
+  const rowIndexByRecordIdCallbackState = useAtomComponentSelectorCallbackState(
+    recordTableRowIndexByRecordIdComponentSelector,
+  );
+
   const handleDelegatedMouseMove = useCallback(
     (event: React.MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -100,15 +106,19 @@ export const RecordTableContent = ({
       }
 
       const column = Number(cellElement.dataset.recordTableCol);
-      const row = Number(cellElement.dataset.recordTableRow);
+      const recordId = cellElement.dataset.recordTableRecordId;
 
-      if (isNaN(column) || isNaN(row)) {
+      const row = isDefined(recordId)
+        ? store.get(rowIndexByRecordIdCallbackState).get(recordId)
+        : undefined;
+
+      if (isNaN(column) || !isDefined(row)) {
         return;
       }
 
       moveHoverToCurrentCell({ column, row });
     },
-    [moveHoverToCurrentCell],
+    [moveHoverToCurrentCell, rowIndexByRecordIdCallbackState, store],
   );
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(

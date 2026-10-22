@@ -12,9 +12,6 @@ const StyledContainer = styled.div<{ noMargin: boolean }>`
 `;
 
 const StyledLabel = styled(Text)`
-  color: ${themeCssVariables.font.color.light};
-  font-size: 11px;
-  font-weight: ${themeCssVariables.font.weight.semiBold};
   margin-inline: ${themeCssVariables.spacing[2]};
 `;
 
@@ -40,7 +37,13 @@ export const LabeledDivider = ({
   return (
     <StyledContainer role="separator" aria-label={children} noMargin={noMargin}>
       <Separator aria-hidden style={separatorStyle} />
-      <StyledLabel render={<span />} style={{ color }}>
+      <StyledLabel
+        size="xs"
+        weight="semibold"
+        color="light"
+        render={<span />}
+        style={{ color }}
+      >
         {children}
       </StyledLabel>
       {textPosition === 'center' && (

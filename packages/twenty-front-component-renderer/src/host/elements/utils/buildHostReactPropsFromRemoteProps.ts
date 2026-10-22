@@ -5,6 +5,7 @@ import { buildHostReactEventHandlerProp } from '@/host/elements/utils/buildHostR
 import { hasDangerousUrlScheme } from '@/host/elements/utils/hasDangerousUrlScheme';
 import { isNavigationUrlAttribute } from '@/host/elements/utils/isNavigationUrlAttribute';
 import { parseCssString } from '@/host/elements/utils/parseCssString';
+import { type ClaimPointerEventForwarding } from '@/host/events/types/ClaimPointerEventForwarding';
 import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
@@ -15,10 +16,12 @@ export const buildHostReactPropsFromRemoteProps = ({
   remoteProps,
   htmlTag,
   findRemoteElementIdContainingNode,
+  claimPointerEventForwarding,
 }: {
   remoteProps: Record<string, unknown>;
   htmlTag: string;
   findRemoteElementIdContainingNode?: FindRemoteElementIdContainingNode;
+  claimPointerEventForwarding?: ClaimPointerEventForwarding;
 }): Record<string, unknown> => {
   const hostReactProps: Record<string, unknown> = {};
 
@@ -46,6 +49,7 @@ export const buildHostReactPropsFromRemoteProps = ({
         remotePropName,
         remotePropValue,
         findRemoteElementIdContainingNode,
+        claimPointerEventForwarding,
       });
 
       if (isDefined(hostReactEventHandlerProp)) {

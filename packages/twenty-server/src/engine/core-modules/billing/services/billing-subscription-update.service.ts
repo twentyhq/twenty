@@ -18,7 +18,6 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
-import { BILLING_PLAN_SWITCHES } from 'src/engine/core-modules/billing/constants/billing-plan-switches.constant';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -43,6 +42,7 @@ import { isResourceCreditPriceForSubscription } from 'src/engine/core-modules/bi
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
+import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-plan-switch-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
@@ -51,6 +51,7 @@ import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/ut
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -73,6 +74,7 @@ export class BillingSubscriptionUpdateService {
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async changeResourceCreditPrice(
@@ -207,7 +209,11 @@ export class BillingSubscriptionUpdateService {
 
     assertIsDefinedOrThrow(currentPlanKey);
 
-    const planSwitch = getPlanSwitchOrThrow({ currentPlanKey, targetPlanKey });
+    const planSwitch = getPlanSwitchOrThrow({
+      currentPlanKey,
+      targetPlanKey,
+      plansConfig: this.twentyConfigService.get('BILLING_PLANS'),
+    });
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.PLAN,
@@ -613,9 +619,10 @@ export class BillingSubscriptionUpdateService {
 
         const isDowngrade =
           isDefined(currentPlan) &&
-          BILLING_PLAN_SWITCHES[currentPlan].downgradePlanKeys.includes(
-            update.newPlan,
-          );
+          getBillingPlanConfig({
+            plansConfig: this.twentyConfigService.get('BILLING_PLANS'),
+            planKey: currentPlan,
+          }).downgradePlanKeys.includes(update.newPlan);
 
         return isDowngrade;
       }

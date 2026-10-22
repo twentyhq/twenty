@@ -11,6 +11,7 @@ describe('getWidgetCardVariant', () => {
         getWidgetCardVariant({
           isSideColumnContext: false,
           pageLayoutType,
+          presentation: 'stack',
         }),
       ).toBe('framed');
     });
@@ -24,6 +25,7 @@ describe('getWidgetCardVariant', () => {
         getWidgetCardVariant({
           isSideColumnContext: false,
           pageLayoutType,
+          presentation: 'stack',
         }),
       ).toBe('flush');
     });
@@ -34,6 +36,17 @@ describe('getWidgetCardVariant', () => {
       getWidgetCardVariant({
         isSideColumnContext: true,
         pageLayoutType: PageLayoutType.DASHBOARD,
+        presentation: 'stack',
+      }),
+    ).toBe('flush');
+  });
+
+  it("returns 'flush' for the only widget of a standalone page", () => {
+    expect(
+      getWidgetCardVariant({
+        isSideColumnContext: false,
+        pageLayoutType: PageLayoutType.STANDALONE_PAGE,
+        presentation: 'solo',
       }),
     ).toBe('flush');
   });

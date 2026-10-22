@@ -17,6 +17,7 @@ import {
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { buildPostgresSafeAlias } from 'src/engine/twenty-orm/sql/utils/build-postgres-safe-alias.util';
 
 type BuildParentPolicy = (target: RowAccessPolicyTarget) => RowAccessPolicy;
 
@@ -200,7 +201,9 @@ const buildInheritedReadabilityParentExpression = ({
   parent: InheritedReadabilityParent;
 }): InheritedReadabilityParentExpression => {
   if (parent.kind === 'column') {
-    const parentTableAlias = `${tableAlias}_${parent.joinColumnName}`;
+    const parentTableAlias = buildPostgresSafeAlias(
+      `${tableAlias}_${parent.joinColumnName}`,
+    );
 
     return {
       kind: 'column',
@@ -216,7 +219,9 @@ const buildInheritedReadabilityParentExpression = ({
     };
   }
 
-  const childTableAlias = `${tableAlias}_${parent.childFlatObjectMetadata.nameSingular}`;
+  const childTableAlias = buildPostgresSafeAlias(
+    `${tableAlias}_${parent.childFlatObjectMetadata.nameSingular}`,
+  );
 
   return {
     kind: 'children',

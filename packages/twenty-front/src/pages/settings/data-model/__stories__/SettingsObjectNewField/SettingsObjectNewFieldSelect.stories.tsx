@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { SettingsObjectNewFieldSelect } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 
 import {
@@ -33,9 +33,13 @@ export const Default: Story = {
     await canvas.findByText('1. Select a field type');
     const searchInput = await canvas.findByPlaceholderText('Search a type');
     await userEvent.type(searchInput, 'Rela');
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await expect(
+      await canvas.findByRole('link', { name: 'Relation' }),
+    ).toBeVisible();
     await userEvent.clear(searchInput);
     await userEvent.type(searchInput, 'Num');
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await expect(
+      await canvas.findByRole('link', { name: 'Number' }),
+    ).toBeVisible();
   },
 };

@@ -14,7 +14,6 @@ import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentF
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { TooltipTextContent } from '@/ui/layout/tooltip/components/TooltipTextContent';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -269,7 +268,7 @@ export const OnboardingFreeCreditsPill = ({
             align="end"
             sideOffset={10}
           >
-            <Tooltip.Popup maxWidth={300} withExitAnimation>
+            <Tooltip.Popup withExitAnimation>
               <StyledTooltipContents>
                 <AnimatePresence initial={false}>
                   {isDefined(tooltipContent) && (
@@ -280,11 +279,9 @@ export const OnboardingFreeCreditsPill = ({
                       exit={{ opacity: 0, y: -tooltipSlideOffset }}
                       transition={{ duration: theme.animation.duration.normal }}
                     >
-                      <TooltipTextContent
-                        description={tooltipContent.description}
-                      >
+                      <Tooltip.Body description={tooltipContent.description}>
                         {tooltipContent.title}
-                      </TooltipTextContent>
+                      </Tooltip.Body>
                     </StyledTooltipContent>
                   )}
                 </AnimatePresence>

@@ -8,6 +8,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -25,10 +26,14 @@ const otherUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JONY;
 
 describe('Persisted chat senders', () => {
   let chat: AgentChatService;
+  let queue: AgentChatQueueService;
   let actors: AgentChatActorService;
   const threadId = randomUUID();
   beforeAll(async () => {
     chat = getAppProviderByClassName<AgentChatService>('AgentChatService');
+    queue = getAppProviderByClassName<AgentChatQueueService>(
+      'AgentChatQueueService',
+    );
     actors = getAppProviderByClassName<AgentChatActorService>(
       'AgentChatActorService',
     );
@@ -53,7 +58,7 @@ describe('Persisted chat senders', () => {
         parts: [{ type: 'text', text: 'Hello' }],
       },
     });
-    const queued = await chat.queueMessage({
+    const queued = await queue.queueMessage({
       workspaceId,
       threadId,
       userWorkspaceId,
@@ -97,18 +102,18 @@ describe('Persisted chat senders', () => {
         userWorkspaceId: otherUserWorkspaceId,
       }),
     ).rejects.toBeDefined();
-    await chat.deleteQueuedMessage({ workspaceId, messageId: queued.id });
+    await queue.deleteQueuedMessage({ workspaceId, messageId: queued.id });
   });
 
   it('retains the queued sender through promotion and rejects a different executor', async () => {
-    const queued = await chat.queueMessage({
+    const queued = await queue.queueMessage({
       workspaceId,
       threadId,
       userWorkspaceId,
       workspaceMemberId,
       text: 'Next attributed message',
     });
-    const turnId = await chat.promoteQueuedMessage({
+    const turnId = await queue.promoteQueuedMessage({
       workspaceId,
       threadId,
       messageId: queued.id,

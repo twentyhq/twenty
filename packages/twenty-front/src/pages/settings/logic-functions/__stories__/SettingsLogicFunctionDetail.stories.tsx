@@ -10,7 +10,6 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/utils/sleep';
 
 const SOURCE_CODE_FULL_PATH =
   'logic-function/20202020-1c25-4d02-bf25-6aeccf7ea419/adb4bd21-7670-4c81-9f74-1fc196fe87ea/source.ts';
@@ -70,7 +69,6 @@ export type Story = StoryObj<typeof SettingsLogicFunctionDetail>;
 export const Default: Story = {
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
-    await sleep(100);
     await canvas.findByText('Name and describe your function', undefined, {
       timeout: 3000,
     });

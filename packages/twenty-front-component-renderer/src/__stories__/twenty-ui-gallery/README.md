@@ -6,7 +6,9 @@ component stories. Each fixture has React and Preact stories built with
 Preact stories need Preact 11, which passes `ref` to function components as a
 regular prop like React 19. Preact 10 hands that ref to the component instance,
 so Dropdown-based popups never open there.
-The layout fixtures mirror a bounded set of stylesheet and inherited layout properties, including logical paddings, borders and margins and individual transforms, for elements the worker already measures, plus native positioned ancestors and size observations. Reading a computed style enrolls an element only when one of its children is already measured, so container properties such as gaps follow the host. Theme custom properties are not mirrored, so they keep resolving through `var()` on the host, while inline custom properties still read back from the element's own style. Worker `ResizeObserver` entries report content, border and device-pixel content boxes from owned host snapshots, and `document.body` and `document.documentElement` report the renderer root box. They deliver the first valid measurement and later size changes, report a zero size when a measured target leaves the document, resume after it is reinserted, and stop after unobserve or disconnect. Position-only updates still use the existing geometry update path rather than resize notifications.
+The layout fixtures mirror a bounded set of stylesheet and inherited layout properties, including logical paddings, borders and margins and individual transforms, for elements the worker already measures, plus native positioned ancestors and size observations. Reading a computed style enrolls an element only when one of its children is already measured, so container properties such as gaps follow the host. Theme custom properties are not mirrored, so they keep resolving through `var()` on the host, while inline custom properties still read back from the element's own style. Worker `ResizeObserver` entries report content, border and device-pixel content boxes from owned host snapshots, and `document.body` and `document.documentElement` report the renderer root box. They deliver the first valid measurement and later size changes, report a zero size when a measured target leaves the document, resume after it is reinserted, and stop after unobserve or disconnect. SVG graphics inside an `svg` element report their host bounding box and its later changes, while the outermost `svg` reports its CSS box (`Geometry.stories.tsx`). Position-only updates still use the existing geometry update path rather than resize notifications.
+
+Native Slider range inputs receive their minimum, maximum and step, so browser keyboard defaults and worker callbacks agree. A Slider's own capture remains in place when its parent has a pointer handler.
 
 The field-controls fixture checks native input/textarea refs and change targets, typed textarea render composition, Field labels, controlled multiline value updates, positive Textarea height growth and shrink, and reflow after width changes in React and Preact. Auto-resize reads the host's intrinsic content measurement after a local block-size reset and reconciles delayed content measurements through the geometry update listener. Caller sizing overrides and detached controls end that reconciliation.
 
@@ -219,6 +221,41 @@ does not prove native chooser activation.
 
 Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popover activation are prohibited in front components. Their standalone Twenty UI APIs have dedicated unit and browser stories. Front components use SDK `openCommandConfirmationModal`, whose structured title, subtitle and confirm-button options are rendered by the host. The Dialog fixture checks the confirmation request. Result handling and actual host modal focus, restoration, dismissal and teardown acceptance remain part of the renderer integration work. No direct Dialog or AlertDialog gallery fixture is retained as a compatibility target.
 
+## Scrolling inside controls
+
+Worker `scrollTop`/`scrollLeft` writes, `scrollTo()`/`scroll()` and
+`scrollIntoView()` travel to the host as ordered commands on the owning element.
+The host applies them after the commit that carries them, so input selection
+changes from the same render land first, and acknowledges the resulting
+positions. Reads return the requested value until that acknowledgement or a
+newer geometry snapshot arrives. `scrollIntoView()` is reimplemented on the
+host: it only moves scroll containers rendered by the same renderer and stops at
+the renderer root or its portal layer, so widget frames, the page and other
+renderers never move. `html`, `body` and `window` scrolling stays in the worker.
+
+`TwentyUiScrolling.stories.tsx` checks, in React and Preact, Autocomplete
+keyboard highlight reveal in a portaled popup and in an inline list nested in an
+owned scroller, the filtered-list scroll reset, long LTR and RTL input Home/End
+with synthetic and trusted keys, Select selected-option reveal and keyboard
+navigation, Select trigger alignment stability, and overflowing Tabs in both
+directions. `ScrollCommands.stories.tsx` drives the raw commands: nested and
+RTL reveal, read-after-write, echo elision, keyboard scroll without event echo,
+no replay after detaching and reattaching a node, portal scroll refresh after
+the geometry tracker idles, page scrolling staying local, and two independent
+renderers.
+
+Dropdown and the pickers built on it reveal their items through native host
+`focus()`, unchanged by these commands. The Autocomplete filter reset needs the
+list to have been measured once; it is enrolled when a keyboard reveal scrolls
+it, so a query typed within the same frame as that reveal can miss the reset.
+Base UI list items re-run navigation from forwarded focus events, so several
+arrow keys pressed before the host focus round trip completes can make focus
+cycle between options; the Select stories press one key at a time. Select's
+initial focus differs between runtimes, so its keyboard steps start from `End`.
+Elements created with `document.createElement` for a standard tag name do not
+forward property updates made after insertion, so scroll commands on them never
+reach the host; elements rendered through JSX do.
+
 ## Known sandbox limitations
 
 An invisible popup is not a compatibility pass.
@@ -325,9 +362,9 @@ refs. Default panel IDs preserve automatic tab/panel relationships. Base UI 1.8
 registers a generated panel ID even when an explicit `id` is supplied, so the
 controlled fixture pairs its explicit panel IDs with matching native
 `aria-controls` on each tab. Its TabButton controls retain route links with
-`aria-current` and adjacent button actions without tab-panel semantics. Events that happen outside the
-component never reach the worker, so dismissal on a press elsewhere on the page
-is not covered.
+`aria-current` and adjacent button actions without tab-panel semantics.
+
+A trusted primary press on a slider control, the innermost pressed element that disables touch gestures with `touch-action: none` and contains an enabled range input, starts a host capture session that forwards every move, release and cancellation of that pointer to the worker until the gesture ends, including a release that arrives before the worker answers, a zero pointer id and movement after capture loss. It forwards pointer coordinates and modifiers without another host target's control values, reports the implicit capture release that follows a release or cancellation, and renderer or node teardown ends the session. Each pointer has its own session, so a second pointer on the same control keeps the first capture. Capture only flows from the host to the worker. The worker's `setPointerCapture`, `hasPointerCapture` and `releasePointerCapture` keep a local record of one capturing element per pointer, which a forwarded capture loss or implicit release clears and which a detached element no longer reports. A worker release therefore never ends the host's capture early. General outside presses and overlay dismissal remain separate compatibility work.
 
 Once the remaining gaps are fixed, extend the stories to verify keyboard
 navigation, dismissal, and focus restoration across overlay components. The fixtures
@@ -345,15 +382,15 @@ Then, from `packages/twenty-front-component-renderer`, run:
 npx vitest run --config vitest.storybook.config.ts TwentyUiGallery.stories.tsx
 ```
 
-For collision and anchor motion, and independent OverflowingList renderer cleanup, serve the fresh static Storybook on port 6008 and run the suite that CI runs as `storybook:test:layout`:
+For real mouse gestures, collision and anchor motion, and independent OverflowingList renderer cleanup, serve the fresh static Storybook on port 6008 and run the suite that CI runs as `storybook:test:layout`:
 
 ```sh
 npx playwright test --config playwright.layout.config.ts
 ```
 
-Set `STORYBOOK_URL` to use another Storybook URL.
+Set `STORYBOOK_URL` to use another Storybook URL. These Chromium tests operate the actual host controls and browser pointer capture; unit mocks do not replace them. Slider's upstream touch cancellation behavior remains a separate API acceptance issue: a native `pointercancel` currently leaves its dragging state active outside the renderer as well. The React Slider gestures are marked as expected failures until Base UI fixes the hidden edge-aligned thumbs described in the Slider limitation above.
 
-The AvatarGroup, Autocomplete, CountrySelect and reading-directions fixtures
+The AvatarGroup, Autocomplete, CountrySelect, reading-directions and scrolling fixtures
 live in their own story files, so run them separately:
 
 ```sh
@@ -361,6 +398,8 @@ npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.
 npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiAvatarGroup.stories.tsx
+npx vitest run --config vitest.storybook.config.ts TwentyUiScrolling.stories.tsx
+npx vitest run --config vitest.storybook.config.ts ScrollCommands.stories.tsx
 ```
 
 Section and CommandBlock composition is checked in the Typography and DataDisplay

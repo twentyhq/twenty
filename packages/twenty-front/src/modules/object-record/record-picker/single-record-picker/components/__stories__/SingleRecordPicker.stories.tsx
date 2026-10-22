@@ -5,7 +5,6 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/utils/sleep';
 
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { IconUserCircle } from 'twenty-ui/icon';
@@ -49,7 +48,6 @@ export const WithSearchFilter: Story = {
     const searchInput = await canvas.findByRole('textbox');
 
     await step('Enter search text', async () => {
-      await sleep(50);
       await userEvent.type(searchInput, 'a');
       await expect(searchInput).toHaveValue('a');
     });

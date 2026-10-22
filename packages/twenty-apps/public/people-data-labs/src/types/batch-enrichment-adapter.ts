@@ -7,7 +7,7 @@ import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
   objectNameSingular: string;
   noIdentifierMessage: string;
-  costPerMatchDollars: number;
+  pricePerMatchDollars: number;
   minLikelihoodEnvVarName: string;
   weakIdentifierMinLikelihoodEnvVarName: string;
   readRecords: (args: {

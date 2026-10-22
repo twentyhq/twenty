@@ -139,6 +139,12 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   previousPeriodStart: Date | null;
 
+  @Column({ nullable: true, type: 'integer' })
+  currentPeriodMaxSeats: number | null;
+
+  @Column({ nullable: true, type: 'integer' })
+  previousPeriodMaxSeats: number | null;
+
   @Field(() => graphqlTypeJson)
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import {
@@ -11,6 +12,7 @@ import {
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
+import { type UserApplicationVariableValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/user-application-variable-value.dto';
 import { type WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-modules/application/application-variable/dtos/workspace-member-application-variables.dto';
 import { UserApplicationVariableValueEntity } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.entity';
 import { toUserApplicationVariableValues } from 'src/engine/core-modules/application/application-variable/utils/to-user-application-variable-values.util';
@@ -152,6 +154,47 @@ export class UserApplicationVariableValueService {
     });
   }
 
+  async findMyUserApplicationVariableValuesByApplicationId({
+    workspaceId,
+    applicationIds,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    applicationIds: string[];
+    userWorkspaceId: string;
+  }): Promise<Record<string, UserApplicationVariableValueDTO[]>> {
+    const { flatApplicationVariableMaps, userApplicationVariableValueMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationVariableMaps',
+        'userApplicationVariableValueMaps',
+      ]);
+
+    return Object.fromEntries(
+      await Promise.all(
+        applicationIds.map(async (applicationId) => [
+          applicationId,
+          toUserApplicationVariableValues({
+            flatUserApplicationVariables:
+              await this.findFlatUserApplicationVariables({
+                workspaceId,
+                applicationId,
+                flatApplicationVariableMaps,
+              }),
+            userApplicationVariableValueMaps,
+            userWorkspaceId,
+            shouldMaskSecret: true,
+            getDisplayValue: ({ value, isSecret }) =>
+              this.applicationVariableService.getDisplayValue({
+                value,
+                workspaceId,
+                isSecret,
+              }),
+          }),
+        ]),
+      ),
+    );
+  }
+
   async updateMyUserApplicationVariable({
     workspaceId,
     applicationUniversalIdentifier,
@@ -177,17 +220,24 @@ export class UserApplicationVariableValueService {
         key,
       });
 
-    await this.userApplicationVariableValueRepository.upsert(
-      workspaceId,
-      {
+    if (!isNonEmptyString(plainTextValue)) {
+      await this.userApplicationVariableValueRepository.delete(workspaceId, {
         applicationVariableId: flatApplicationVariable.id,
         userWorkspaceId,
-        value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
-          workspaceId,
-        }),
-      },
-      ['applicationVariableId', 'userWorkspaceId'],
-    );
+      });
+    } else {
+      await this.userApplicationVariableValueRepository.upsert(
+        workspaceId,
+        {
+          applicationVariableId: flatApplicationVariable.id,
+          userWorkspaceId,
+          value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
+            workspaceId,
+          }),
+        },
+        ['applicationVariableId', 'userWorkspaceId'],
+      );
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'userApplicationVariableValueMaps',

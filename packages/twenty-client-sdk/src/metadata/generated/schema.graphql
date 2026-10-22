@@ -511,6 +511,12 @@ enum ApplicationHealthStatus {
   WARNING
 }
 
+type ApplicationPreferences {
+  applicationId: UUID!
+  settingsMenuItems: [SettingsMenuItem!]!
+  variables: [UserApplicationVariableValue!]!
+}
+
 type ApplicationRegistration {
   createdAt: DateTime!
   galleryImagesUrls: [String!]!
@@ -782,6 +788,7 @@ type BillingEntitlement {
 enum BillingEntitlementKey {
   AUDIT_LOGS
   CUSTOM_DOMAIN
+  CUSTOM_ROLES
   RECORD_SHARING
   RLS
   SSO
@@ -813,6 +820,7 @@ type BillingPaymentIntent {
 type BillingPlan {
   baseProducts: [BillingLicensedProduct!]!
   downgradePlanKeys: [BillingPlanKey!]!
+  isCheckoutDefault: Boolean!
   isSellable: Boolean!
   meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
@@ -885,6 +893,8 @@ type BillingResourceCreditUsage {
   userCreditsUsed: Float!
   workspaceCreditsExtraGranted: Float!
   workspaceCreditsGranted: Float!
+  workspaceCreditsGrantedForSeats: Float!
+  workspaceCreditsSeats: Int!
   workspaceCreditsTotalGranted: Float!
   workspaceCreditsUsed: Float!
 }
@@ -2128,8 +2138,6 @@ enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-  IS_JSON_FILTER_ENABLED
-  IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
@@ -2787,6 +2795,11 @@ type MessageCampaignDetailsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
+type MessageCampaignSendBlockerDTO {
+  code: String!
+  message: String!
+}
+
 type MessageChannel {
   connectedAccount: ConnectedAccountPublicDTO
   connectedAccountId: UUID!
@@ -3026,7 +3039,7 @@ type Mutation {
   cancelSwitchResourceCreditPrice: BillingUpdate!
   checkCustomDomainValidRecords: DomainValidRecords
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
-  checkoutSession(plan: BillingPlanKey! = PRO, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
+  checkoutSession(plan: BillingPlanKey!, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   claimApplicationRegistrationOwnership(applicationRegistrationId: String!): ApplicationRegistration!
   completeAppTarballUpload(fileId: UUID!): ApplicationRegistration!
   completeApplicationFileUploads(applicationUniversalIdentifier: String!, fileIds: [UUID!]!): CompleteApplicationFileUploadsResult!
@@ -3070,7 +3083,7 @@ type Mutation {
   createPublicDomain(applicationId: String!, domain: String!): PublicDomain!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   createSkill(input: CreateSkillInput!): Skill!
-  createSubscriptionPaymentIntent(idempotencyKey: String!, plan: BillingPlanKey! = PRO, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingPaymentIntent!
+  createSubscriptionPaymentIntent(idempotencyKey: String!, plan: BillingPlanKey!, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingPaymentIntent!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   createUsageLimit(input: CreateUsageLimitInput!): UsageLimit!
   createValidationRule(input: CreateValidationRuleInput!): ValidationRule!
@@ -3735,6 +3748,16 @@ input PreviewMessageCampaignAudienceInput {
   unsubscribeTopicId: String
 }
 
+input PreviewMessageCampaignSendInput {
+  campaignId: String!
+  scheduledAt: DateTime
+}
+
+type PreviewMessageCampaignSendOutputDTO {
+  audience: CampaignAudiencePreviewDTO
+  blockers: [MessageCampaignSendBlockerDTO!]!
+}
+
 type PublicApplicationRegistration {
   id: UUID!
   logoUrl: String
@@ -3911,6 +3934,7 @@ type Query {
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   minimalMetadata: MinimalMetadata!
   mostlyEmptyFieldMetadataIds(objectMetadataId: UUID!): [UUID!]!
+  myApplicationPreferences: [ApplicationPreferences!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
@@ -3932,6 +3956,7 @@ type Query {
   ): ObjectConnection!
   pieChartData(input: PieChartDataInput!): PieChartData!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
+  previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!

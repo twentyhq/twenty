@@ -21,7 +21,6 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewBarAdvancedFilterDropdownId } from '@/views/utils/getViewBarAdvancedFilterDropdownId';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { flushSync } from 'react-dom';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
@@ -29,15 +28,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconFilter } from 'twenty-ui/icon';
 import { Badge } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
-
-const StyledBadgeContainer = styled.span`
-  > span[data-badge-size] {
-    background: ${themeCssVariables.color.blue3};
-    color: ${themeCssVariables.color.blue};
-  }
-`;
 
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const rootRecordFilterGroup = useAtomComponentSelectorValue(
@@ -158,9 +149,9 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         focused={isSelectedItemId}
         endIcon={
           advancedFilterQuerySubFilterCount > 0 ? (
-            <StyledBadgeContainer>
-              <Badge>{advancedFilterQuerySubFilterCount.toString()}</Badge>
-            </StyledBadgeContainer>
+            <Badge color="accent">
+              {advancedFilterQuerySubFilterCount.toString()}
+            </Badge>
           ) : undefined
         }
       >{t`Advanced filter`}</ListItemButton>

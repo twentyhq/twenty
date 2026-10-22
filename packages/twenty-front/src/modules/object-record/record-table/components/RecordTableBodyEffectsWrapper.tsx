@@ -4,6 +4,7 @@ import { RecordSelectionEscapeHotkeyEffect } from '@/object-record/record-select
 import { RecordTableBodyFocusClickOutsideEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusClickOutsideEffect';
 import { RecordTableBodyFocusKeyboardEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusKeyboardEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
+import { RecordTableRecordGroupsSSESubscribeEffect } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsSSESubscribeEffect';
 import { RecordTableNoRecordGroupScrollToPreviousRecordEffect } from '@/object-record/record-table/virtualization/components/RecordTableNoRecordGroupScrollToPreviousRecordEffect';
 import { RecordTableVirtualizedFieldMetadataUpdateEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedFieldMetadataUpdateEffect';
 import { RecordTableVirtualizedInitialDataLoadEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedInitialDataLoadEffect';
@@ -20,7 +21,10 @@ export const RecordTableBodyEffectsWrapper = ({
   return (
     <>
       {hasRecordGroups ? (
-        <RecordTableRecordGroupBodyEffects />
+        <>
+          <RecordTableRecordGroupBodyEffects />
+          <RecordTableRecordGroupsSSESubscribeEffect />
+        </>
       ) : (
         <>
           <RecordTableEmptyHasNewRecordEffect />

@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { type CurrencyCode } from 'twenty-shared/constants';
 
 import { getCurrencyLabel } from '@/localization/utils/getCurrencyLabel';
 import { CURRENCIES } from '@/ui/input/components/internal/currency/constants/Currencies';
@@ -13,7 +12,7 @@ export const useCurrencies = (): Currency[] => {
     () =>
       CURRENCIES.map((currency) => {
         const currencyLabel = getCurrencyLabel({
-          currencyCode: currency.value as CurrencyCode,
+          currencyCode: currency.value,
           locale: i18n.locale,
         });
 

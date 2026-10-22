@@ -325,7 +325,7 @@ export const CalendarEventWithoutAccountPermission: Story = {
 
     expect(
       await canvas.findByText(
-        'Ask a workspace admin for the Sync Account permission to connect a calendar account.',
+        'Ask a workspace admin for the User Apps permission to connect a calendar account.',
       ),
     ).toBeVisible();
     expect(

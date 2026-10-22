@@ -23,6 +23,7 @@ import {
   assertUnreachable,
   getSettingsPath,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 import {
   IconArrowDown,
@@ -58,6 +59,13 @@ export const useBillingPlanActions = ({
   const { getBillingPlanLabel } = useBillingWording();
   const { getPlanByPlanKey } = usePlanByPlanKey();
   const currentPlan = getPlanByPlanKey(currentPlanKey);
+  const canCurrentPlanSwitch =
+    isNonEmptyArray(currentPlan.upgradePlanKeys) ||
+    isNonEmptyArray(currentPlan.downgradePlanKeys);
+  const displayedPlanKeys = comparedPlanKeys.includes(currentPlanKey)
+    ? comparedPlanKeys
+    : [currentPlanKey, ...comparedPlanKeys];
+  const hasShortChangeTitles = displayedPlanKeys.length > 2;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const subscriptionStatus = useSubscriptionStatus();
   const { nextPlan } = useNextPlan();
@@ -119,6 +127,17 @@ export const useBillingPlanActions = ({
     change: BillingSubscriptionChange;
     isUpgrade: boolean;
   }) => {
+    if (hasShortChangeTitles) {
+      if (
+        change.type === 'CANCEL_PLAN_SWITCH' ||
+        change.type === 'CANCEL_INTERVAL_SWITCH'
+      ) {
+        return t`Cancel switch`;
+      }
+
+      return isUpgrade ? t`Upgrade` : t`Switch`;
+    }
+
     switch (change.type) {
       case 'SWITCH_PLAN':
         return getSwitchPlanTitle({
@@ -206,11 +225,16 @@ export const useBillingPlanActions = ({
       };
     }
 
-    if (
+    const isPlanSwitchUnavailable =
       cell.change.type === 'SWITCH_PLAN' &&
       !currentPlan.upgradePlanKeys.includes(planKey) &&
-      !currentPlan.downgradePlanKeys.includes(planKey)
-    ) {
+      !currentPlan.downgradePlanKeys.includes(planKey);
+    const isLegacyIntervalSwitchDeferred =
+      cell.change.type === 'SWITCH_INTERVAL' &&
+      !getPlanByPlanKey(planKey).isSellable &&
+      canCurrentPlanSwitch;
+
+    if (isPlanSwitchUnavailable || isLegacyIntervalSwitchDeferred) {
       return {
         disabled: true,
         title: t`Unavailable`,
@@ -245,8 +269,12 @@ export const useBillingPlanActions = ({
     });
   };
 
-  const comparedPlans: SettingsBillingComparedPlan[] = comparedPlanKeys.map(
-    (planKey) => ({ action: getPlanAction(planKey), planKey }),
+  const comparedPlans: SettingsBillingComparedPlan[] = displayedPlanKeys.map(
+    (planKey) => ({
+      action: getPlanAction(planKey),
+      isLegacy: !getPlanByPlanKey(planKey).isSellable,
+      planKey,
+    }),
   );
 
   return { comparedPlans };

@@ -8,9 +8,6 @@ import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const INSERT_BUTTON_CLASS_NAME = css`
-  background: ${themeCssVariables.background.transparent.primary};
-  border-color: ${themeCssVariables.background.transparent.light};
-  flex-shrink: 0;
   opacity: 0;
   pointer-events: none;
 `;
@@ -74,8 +71,8 @@ export const RecordPageWidgetInsertionSeparator = ({
   return (
     <StyledSeparator>
       <IconButton
-        elevated
         className={INSERT_BUTTON_CLASS_NAME}
+        elevated
         aria-label={t`Add widget above ${widget.title}`}
         size="sm"
         onClick={() =>

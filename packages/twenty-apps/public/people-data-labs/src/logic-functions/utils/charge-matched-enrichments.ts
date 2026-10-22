@@ -1,15 +1,14 @@
 import { chargeCredits } from 'twenty-sdk/billing';
 
-import { BILLING_MARGIN_MULTIPLIER } from 'src/constants/billing-margin-multiplier';
 import { MICRO_CREDITS_PER_DOLLAR } from 'src/constants/micro-credits-per-dollar';
 
 export const chargeMatchedEnrichments = async ({
   matchedCount,
-  costPerMatchDollars,
+  pricePerMatchDollars,
   resourceContext,
 }: {
   matchedCount: number;
-  costPerMatchDollars: number;
+  pricePerMatchDollars: number;
   resourceContext: string;
 }): Promise<void> => {
   if (matchedCount === 0) {
@@ -17,7 +16,7 @@ export const chargeMatchedEnrichments = async ({
   }
 
   const creditsPerMatchMicro = Math.round(
-    costPerMatchDollars * BILLING_MARGIN_MULTIPLIER * MICRO_CREDITS_PER_DOLLAR,
+    pricePerMatchDollars * MICRO_CREDITS_PER_DOLLAR,
   );
 
   await chargeCredits({

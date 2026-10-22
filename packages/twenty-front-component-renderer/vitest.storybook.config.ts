@@ -38,7 +38,8 @@ export default defineConfig({
         plugins: [
           storybookTest({
             configDir: path.join(dirname, '.storybook'),
-            storybookScript: 'yarn storybook --no-open --port 6008',
+            storybookScript: 'npx storybook dev -p 6008 --no-open',
+            storybookUrl: 'http://localhost:6008',
           }),
         ],
         test: {
