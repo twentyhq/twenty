@@ -205,10 +205,17 @@ export const Enter: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await expect(handleEnterMocked).not.toHaveBeenCalled();
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Select month and year' }),
-    );
-    await body.findByRole('dialog', { name: 'Select month and year' });
+    const monthYearTrigger = await canvas.findByRole('button', {
+      name: 'Select month and year',
+    });
+    monthYearTrigger.focus();
+    await userEvent.keyboard('{Enter}');
+    const panel = await body.findByRole('dialog', {
+      name: 'Select month and year',
+    });
+    await expect(panel).toBeVisible();
+    await expect(monthYearTrigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(handleEnterMocked).not.toHaveBeenCalled();
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(
@@ -220,6 +227,9 @@ export const Enter: Story = {
     await userEvent.keyboard('{Enter}');
 
     await expect(handleEnterMocked).toHaveBeenCalledTimes(1);
+    await expect(handleEnterMocked).toHaveBeenLastCalledWith({
+      newValue: '2022-01-01T02:00:00Z',
+    });
   },
 };
 
