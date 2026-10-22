@@ -132,7 +132,7 @@ describe('AI front component lifecycle', () => {
       .update(vendorSource)
       .digest('hex');
     dependencies.compiler.build.mockImplementation(
-      async (_workspaceId: string, input: FrontComponentBuildInput) => {
+      async ({ input }: { input: FrontComponentBuildInput }) => {
         const compiledSource = `// twenty-ai-shared-dependencies: ${vendorChecksum}\nexport default () => {};`;
         return {
           source: buildFrontComponentEntrySource(input),
@@ -209,16 +209,16 @@ describe('AI front component lifecycle', () => {
       AUTH_CONTEXT!,
     );
 
-    expect(dependencies.compiler.build).toHaveBeenCalledWith(
-      WORKSPACE_ID,
-      expect.objectContaining({
+    expect(dependencies.compiler.build).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      input: expect.objectContaining({
         source: INPUT.source,
         componentId: expect.any(String),
       }),
-    );
-    expect(dependencies.compiler.build.mock.calls[0][1]).not.toHaveProperty(
-      'sampleRecords',
-    );
+    });
+    expect(
+      dependencies.compiler.build.mock.calls[0][0].input,
+    ).not.toHaveProperty('sampleRecords');
     expect(preview.componentSource).toBe(
       (await dependencies.compiler.build.mock.results[0].value).compiledSource,
     );

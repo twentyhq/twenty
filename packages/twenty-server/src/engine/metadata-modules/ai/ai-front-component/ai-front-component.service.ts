@@ -241,12 +241,15 @@ export class AiFrontComponentService {
       : undefined;
     const id = v4();
     const rootId = previous?.rootId ?? id;
-    const built = await this.compiler.build(context.workspaceId, {
-      componentId: id,
-      name: input.name,
-      source: input.source,
-      query: input.query,
-      pageLayoutType: input.pageLayoutType,
+    const built = await this.compiler.build({
+      workspaceId: context.workspaceId,
+      input: {
+        componentId: id,
+        name: input.name,
+        source: input.source,
+        query: input.query,
+        pageLayoutType: input.pageLayoutType,
+      },
     });
 
     return this.locks.withLock(
