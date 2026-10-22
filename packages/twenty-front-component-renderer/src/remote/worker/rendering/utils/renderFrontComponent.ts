@@ -73,8 +73,6 @@ export const renderFrontComponent = async ({
 
   componentModule.default(renderContainer);
 
-  // createRoot().render() commits in a later task; flush that first tree before
-  // resolving so the host never swaps its loading fallback for an empty root.
   await waitForScheduledReactCommit();
   flushPendingMutations();
 };
