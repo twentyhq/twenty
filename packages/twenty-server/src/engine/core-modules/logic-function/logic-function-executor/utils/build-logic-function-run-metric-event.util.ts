@@ -11,8 +11,11 @@ export const buildLogicFunctionRunMetricEvent = ({
   workspaceId,
 }: {
   result: LogicFunctionExecuteResult;
-  flatApplication: FlatApplication;
-  flatLogicFunction: FlatLogicFunction;
+  flatApplication: Pick<
+    FlatApplication,
+    'id' | 'applicationRegistrationId' | 'version'
+  >;
+  flatLogicFunction: Pick<FlatLogicFunction, 'id' | 'name'>;
   workspaceId: string;
 }): ApplicationMetricEvent => ({
   timestamp: new Date(),

@@ -71,7 +71,10 @@ export class ApplicationRepeatedEventRecorderService
     try {
       await this.recordLogIfFirstInWindow(entry);
     } catch (error) {
-      this.logger.error('Failed to record application log', error);
+      this.logger.error(
+        `Failed to record application log for application ${entry.applicationId} in workspace ${entry.workspaceId}`,
+        error,
+      );
     }
   }
 

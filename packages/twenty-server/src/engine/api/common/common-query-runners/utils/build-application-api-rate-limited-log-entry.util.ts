@@ -8,8 +8,14 @@ export const buildApplicationApiRateLimitedLogEntry = ({
   authContext,
   exhaustedScope,
 }: {
-  authContext: ApplicationWorkspaceAuthContext;
-  exhaustedScope: ExhaustedScope;
+  authContext: {
+    workspace: Pick<ApplicationWorkspaceAuthContext['workspace'], 'id'>;
+    application: Pick<
+      ApplicationWorkspaceAuthContext['application'],
+      'id' | 'applicationRegistrationId' | 'version'
+    >;
+  };
+  exhaustedScope: Pick<ExhaustedScope, 'limitValue' | 'unit' | 'retryAfterMs'>;
 }): ApplicationLogEntry =>
   buildApplicationPlatformLogEntry({
     workspaceId: authContext.workspace.id,
