@@ -23,8 +23,8 @@ describe('UpdateWorkspaceInput defaultSenderDomain', () => {
 
   it.each(['example.com', 'example.xn--p1ai'])(
     'accepts a domain: %s',
-    async (value) => {
-      expect(await validate(toInput(value))).toEqual([]);
+    async (senderDomain) => {
+      expect(await validate(toInput(senderDomain))).toEqual([]);
     },
   );
 
@@ -40,8 +40,8 @@ describe('UpdateWorkspaceInput defaultSenderDomain', () => {
     'localhost',
     '192.168.0.1',
     'example.c',
-  ])('rejects a non-domain value: %s', async (value) => {
-    expect(await validate(toInput(value))).toEqual(
+  ])('rejects a non-domain: %s', async (senderDomain) => {
+    expect(await validate(toInput(senderDomain))).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ property: 'defaultSenderDomain' }),
       ]),

@@ -236,7 +236,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
   });
 
   it('blocks further changes while a save is pending', async () => {
-    let resolveSave: (value: unknown) => void = () => {};
+    let resolveSave: (response: unknown) => void = () => {};
     mockUpdateWorkspace.mockReturnValue(
       new Promise((resolve) => {
         resolveSave = resolve;
@@ -268,7 +268,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
   });
 
   it('disables the other-domain input while its save is pending', async () => {
-    let resolveSave: (value: unknown) => void = () => {};
+    let resolveSave: (response: unknown) => void = () => {};
     mockUpdateWorkspace.mockReturnValue(
       new Promise((resolve) => {
         resolveSave = resolve;

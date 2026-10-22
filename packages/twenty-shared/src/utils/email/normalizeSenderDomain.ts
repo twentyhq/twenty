@@ -1,9 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const normalizeSenderDomain = (
-  value: string | null | undefined,
+  senderDomain: string | null | undefined,
 ): string | null => {
-  const normalizedDomain = (value ?? '').trim().replace(/^@/, '').toLowerCase();
+  const normalizedDomain = (senderDomain ?? '')
+    .trim()
+    .replace(/^@/, '')
+    .toLowerCase();
 
   return isNonEmptyString(normalizedDomain) ? normalizedDomain : null;
 };

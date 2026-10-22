@@ -42,7 +42,7 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
 
   const storedDefaultFromHandle = currentUserWorkspace?.defaultFromHandle;
 
-  const selectedValue = options.some(
+  const selectedDefaultFromHandle = options.some(
     (option) => option.value === storedDefaultFromHandle,
   )
     ? (storedDefaultFromHandle ?? null)
@@ -74,7 +74,7 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
         dropdownId="settings-default-from-handle"
         label={t`My default From address`}
         fullWidth
-        value={selectedValue}
+        value={selectedDefaultFromHandle}
         options={options}
         onChange={handleChange}
         disabled={isSaving}

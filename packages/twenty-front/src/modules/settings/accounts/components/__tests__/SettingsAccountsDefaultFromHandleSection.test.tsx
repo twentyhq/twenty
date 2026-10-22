@@ -111,7 +111,7 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
   });
 
   it('keeps fields changed on the atom while the save is pending', async () => {
-    let resolveSave: (value: unknown) => void = () => {};
+    let resolveSave: (response: unknown) => void = () => {};
     mockUpdateMyDefaultFromHandle.mockReturnValue(
       new Promise((resolve) => {
         resolveSave = resolve;
@@ -143,7 +143,7 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
   });
 
   it('blocks another choice while a save is pending', async () => {
-    let resolveSave: (value: unknown) => void = () => {};
+    let resolveSave: (response: unknown) => void = () => {};
     mockUpdateMyDefaultFromHandle.mockReturnValue(
       new Promise((resolve) => {
         resolveSave = resolve;

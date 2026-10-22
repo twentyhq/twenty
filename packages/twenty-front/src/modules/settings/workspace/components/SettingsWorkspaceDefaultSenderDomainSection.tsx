@@ -62,7 +62,7 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
     setIsSaving(true);
 
     try {
-      const result = await updateWorkspace({
+      const updateWorkspaceResponse = await updateWorkspace({
         variables: {
           input: {
             defaultSenderDomain: nextDomain === '' ? null : nextDomain,
@@ -72,7 +72,8 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
 
       // The server normalizes the domain, so show what it stored
       const storedDomain =
-        result.data?.updateWorkspace?.defaultSenderDomain ?? null;
+        updateWorkspaceResponse.data?.updateWorkspace?.defaultSenderDomain ??
+        null;
 
       setCurrentWorkspace((previousWorkspace) =>
         isDefined(previousWorkspace)
@@ -92,8 +93,8 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
     }
   };
 
-  const handleSelectChange = async (value: string | null) => {
-    if (value === OTHER_DOMAIN_VALUE) {
+  const handleSelectChange = async (selectedDomain: string | null) => {
+    if (selectedDomain === OTHER_DOMAIN_VALUE) {
       setDomain(savedDomain ?? '');
       setIsOtherDomainSelected(true);
       return;
@@ -101,8 +102,8 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
 
     setIsOtherDomainSelected(false);
 
-    if (value !== savedDomain) {
-      await saveDomain(value ?? '');
+    if (selectedDomain !== savedDomain) {
+      await saveDomain(selectedDomain ?? '');
     }
   };
 
