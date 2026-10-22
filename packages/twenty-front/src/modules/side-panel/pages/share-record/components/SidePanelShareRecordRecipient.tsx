@@ -88,29 +88,9 @@ export const SidePanelShareRecordRecipient = ({
     objectLabelPlural,
   });
   const isEditable = share.rowCause === RecordShareRowCause.MANUAL;
-
-  return (
-    <>
-      {isEditable ? (
-        <SidePanelShareRecordDropdownItem
-          itemId={share.id}
-          label={label}
-          Icon={Icon}
-          LeftComponent={avatar}
-          description={getRecordShareAccessLevelLabel(share.accessLevel)}
-          disabled={saving}
-        >
-          <RecordSharingAccessLevelOptions
-            value={share.accessLevel}
-            onChange={(accessLevel) => {
-              void setShare({ principal, accessLevel });
-            }}
-            onRemove={() => {
-              void removeShare({ principal });
-            }}
-          />
-        </SidePanelShareRecordDropdownItem>
-      ) : (
+  const getRecipientItem = () => {
+    if (!isEditable) {
+      return (
         <CommandMenuItem
           id={share.id}
           label={label}
@@ -124,7 +104,34 @@ export const SidePanelShareRecordRecipient = ({
           contextualTextPosition="right"
           disabled
         />
-      )}
+      );
+    }
+
+    return (
+      <SidePanelShareRecordDropdownItem
+        itemId={share.id}
+        label={label}
+        Icon={Icon}
+        LeftComponent={avatar}
+        description={getRecordShareAccessLevelLabel(share.accessLevel)}
+        disabled={saving}
+      >
+        <RecordSharingAccessLevelOptions
+          value={share.accessLevel}
+          onChange={(accessLevel) => {
+            void setShare({ principal, accessLevel });
+          }}
+          onRemove={() => {
+            void removeShare({ principal });
+          }}
+        />
+      </SidePanelShareRecordDropdownItem>
+    );
+  };
+
+  return (
+    <>
+      {getRecipientItem()}
       {isDefined(roleAccessNote) && (
         <StyledRoleAccessNote>{roleAccessNote}</StyledRoleAccessNote>
       )}
