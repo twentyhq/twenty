@@ -10,11 +10,13 @@ import { TalkToUsButton } from '@/contact-cal';
 import { useAnimatedNumber } from '@/platform/motion';
 import {
   color,
+  EASING,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
   mediaUp,
   radius,
+  REDUCED_MOTION,
   semanticColor,
   spacing,
 } from '@/tokens';
@@ -25,26 +27,29 @@ import {
   type PlansBillingPeriod,
   type PlansTierId,
 } from './plans-data';
+import { FEATURE_TRANSITION_TIMING } from './feature-transition-timing';
+import { getPlanCardRowTemplate } from './get-plan-card-row-template';
 import { getPlanFeatureKey } from './get-plan-feature-key';
 import { PlanFeatureList } from './PlanFeatureList';
 import { type PlansHostingMode } from '@/pricing-state';
 import { useFeatureTransition } from './use-feature-transition';
 
-const PLAN_CARD_ROW_COUNT = 5;
-
 const RECOMMENDED_LABEL = msg`Recommended`;
 
-const CardShell = styled.div`
+const CardShell = styled.div<{ $rowTemplate: string }>`
   background-color: ${color('white')};
   border: 1px solid transparent;
   border-radius: ${radius(2)};
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: ${({ $rowTemplate }) => $rowTemplate};
   height: 100%;
   min-height: 0;
   overflow: hidden;
   padding: ${spacing(4)};
   position: relative;
+  transition: grid-template-rows
+    ${FEATURE_TRANSITION_TIMING.switchMilliseconds}ms ${EASING.spring};
   z-index: 1;
 
   &[data-highlighted] {
@@ -55,10 +60,12 @@ const CardShell = styled.div`
     margin-top: ${spacing(4)};
   }
 
+  ${REDUCED_MOTION} {
+    transition: none;
+  }
+
   ${mediaUp('md')} {
-    display: grid;
-    grid-row: span ${PLAN_CARD_ROW_COUNT};
-    grid-template-columns: minmax(0, 1fr);
+    grid-row: 1 / -1;
     grid-template-rows: subgrid;
   }
 `;
@@ -150,6 +157,10 @@ const priceQualifierClassName = css`
   flex-shrink: 0;
 `;
 
+const featuresClassName = css`
+  grid-row: 4 / -2;
+`;
+
 const CardRule = styled.div`
   border-top: 1px dotted ${semanticColor.divider};
   flex-shrink: 0;
@@ -178,6 +189,7 @@ const CardIcon = styled.div<{ $widthPx: number }>`
 
 const CtaRow = styled.div`
   flex-shrink: 0;
+  grid-row: -2 / -1;
   width: 100%;
 
   > * {
@@ -192,13 +204,11 @@ export function PlanCard({
   billing,
   highlighted = false,
   hosting,
-  maxFeatures,
   tierId,
 }: {
   billing: PlansBillingPeriod;
   highlighted?: boolean;
   hosting: PlansHostingMode;
-  maxFeatures: number;
   tierId: PlansTierId;
 }) {
   const { i18n } = useLingui();
@@ -213,7 +223,10 @@ export function PlanCard({
   );
 
   return (
-    <CardShell data-highlighted={highlighted ? '' : undefined}>
+    <CardShell
+      $rowTemplate={getPlanCardRowTemplate(cell.features.length)}
+      data-highlighted={highlighted ? '' : undefined}
+    >
       <CardHeader>
         <CardHeaderInfo>
           <TitleRow>
@@ -261,9 +274,9 @@ export function PlanCard({
       <CardRule />
 
       <PlanFeatureList
+        className={featuresClassName}
         comparisonItemKeys={comparisonItemKeys}
         intro={tier.featuresIntro}
-        maxFeatures={maxFeatures}
         phase={phase}
         visibleFeatures={visibleItems}
       />

@@ -13,7 +13,7 @@ export type FeatureTransitionPhase = 'entering' | 'exiting' | 'stable';
 // items present in both stay put (the comparison set marks them).
 export function useFeatureTransition<TItem>(
   nextItems: TItem[],
-  getItemKey: (item: TItem) => string,
+  getItemKey: (item: TItem, itemIndex: number) => string,
 ) {
   const timeouts = useTimeoutRegistry();
   const [visibleItems, setVisibleItems] = useState(nextItems);

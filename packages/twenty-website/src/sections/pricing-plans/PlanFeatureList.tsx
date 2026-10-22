@@ -17,6 +17,7 @@ import { Body } from '@/ui';
 
 import { FEATURE_TRANSITION_TIMING } from './feature-transition-timing';
 import { getPlanFeatureKey } from './get-plan-feature-key';
+import { PLAN_FEATURE_ROW_METRICS } from './plan-feature-row-metrics';
 import { PlanFeatureLogoStack } from './PlanFeatureLogoStack';
 import { type PlanFeature } from './plans-data';
 import { type FeatureTransitionPhase } from './use-feature-transition';
@@ -25,15 +26,13 @@ const FEATURE_SWITCH_ANIMATION_MS =
   FEATURE_TRANSITION_TIMING.switchMilliseconds;
 const FEATURE_ITEM_STAGGER_MS = FEATURE_TRANSITION_TIMING.staggerMilliseconds;
 
-const FEATURE_ITEM_EXPANDED_HEIGHT = spacing(12);
-const FEATURE_ITEM_SPACING = spacing(4);
-const FEATURE_LIST_ROW_LAYOUT_HEIGHT = spacing(11.25);
+const FEATURE_ITEM_SPACING = PLAN_FEATURE_ROW_METRICS.spacing;
 const FEATURE_ICON_SIZE_PX = 18;
 
 const FeaturesSection = styled.div`
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: subgrid;
   min-width: 0;
 `;
 
@@ -42,26 +41,14 @@ const featuresIntroClassName = css`
   margin-bottom: ${FEATURE_ITEM_SPACING};
 `;
 
-const FeaturesViewport = styled.div<{ $featuresHeight: string }>`
-  flex: 1 1 auto;
-  min-height: ${({ $featuresHeight }) => $featuresHeight};
-  min-width: 0;
-  overflow: hidden;
-  position: relative;
-  transition: min-height ${FEATURE_SWITCH_ANIMATION_MS}ms ${EASING.spring};
-
-  ${REDUCED_MOTION} {
-    transition: none;
-  }
-`;
-
 const FeatureList = styled.ul`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-row: 2 / -1;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: subgrid;
   list-style: none;
   min-width: 0;
   padding: 0;
-  width: 100%;
 `;
 
 const FeatureVisual = styled.span`
@@ -118,6 +105,7 @@ const FeatureItem = styled.li<{
     }
   }
 
+  align-self: start;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 1fr;
@@ -158,88 +146,64 @@ const FeatureRow = styled.div`
   min-height: 0;
 `;
 
-function getLayoutMinHeight(maxFeatures: number) {
-  if (maxFeatures <= 0) {
-    return '0px';
-  }
-  return `calc((${FEATURE_LIST_ROW_LAYOUT_HEIGHT} * ${maxFeatures}) + (${FEATURE_ITEM_SPACING} * ${maxFeatures - 1}))`;
-}
-
-function getAnimationMinHeight(maxFeatures: number) {
-  if (maxFeatures <= 0) {
-    return '0px';
-  }
-  return `calc((${FEATURE_ITEM_EXPANDED_HEIGHT} * ${maxFeatures}) + (${FEATURE_ITEM_SPACING} * ${maxFeatures - 1}))`;
-}
-
 export function PlanFeatureList({
+  className,
   comparisonItemKeys,
   intro,
-  maxFeatures,
   phase,
   visibleFeatures,
 }: {
+  className?: string;
   comparisonItemKeys: Set<string>;
   intro: MessageDescriptor;
-  maxFeatures: number;
   phase: FeatureTransitionPhase;
   visibleFeatures: PlanFeature[];
 }) {
   const { i18n } = useLingui();
 
   return (
-    <FeaturesSection>
+    <FeaturesSection className={className}>
       <Body as="p" className={featuresIntroClassName} size="sm">
         {i18n._(intro)}
       </Body>
-      <FeaturesViewport
-        $featuresHeight={
-          phase === 'stable'
-            ? getLayoutMinHeight(maxFeatures)
-            : getAnimationMinHeight(maxFeatures)
-        }
-      >
-        <FeatureList data-state={phase}>
-          {visibleFeatures.map((feature, featureNumber) => {
-            const featureKey = getPlanFeatureKey(feature);
-            const FeatureIcon =
-              feature.visual.kind === 'icon' ? feature.visual.icon : null;
+      <FeatureList data-state={phase}>
+        {visibleFeatures.map((feature, featureNumber) => {
+          const featureKey = getPlanFeatureKey(feature, featureNumber);
+          const FeatureIcon =
+            feature.visual.kind === 'icon' ? feature.visual.icon : null;
 
-            return (
-              <FeatureItem
-                $featureIndex={featureNumber}
-                $featureSpacing={
-                  featureNumber > 0 ? FEATURE_ITEM_SPACING : '0px'
-                }
-                data-state={
-                  phase === 'stable' || comparisonItemKeys.has(featureKey)
-                    ? 'stable'
-                    : phase
-                }
-                key={featureKey}
-              >
-                <FeatureRow>
-                  <FeatureVisual>
-                    {feature.visual.kind === 'logos' ? (
-                      <PlanFeatureLogoStack logos={feature.visual.logos} />
-                    ) : FeatureIcon !== null ? (
-                      <FeatureIcon aria-hidden size={FEATURE_ICON_SIZE_PX} />
-                    ) : null}
-                  </FeatureVisual>
-                  <FeatureText>
-                    <Body as="span" size="sm">
-                      {i18n._(feature.title)}
-                    </Body>
-                    <FeatureDescription>
-                      {i18n._(feature.description)}
-                    </FeatureDescription>
-                  </FeatureText>
-                </FeatureRow>
-              </FeatureItem>
-            );
-          })}
-        </FeatureList>
-      </FeaturesViewport>
+          return (
+            <FeatureItem
+              $featureIndex={featureNumber}
+              $featureSpacing={featureNumber > 0 ? FEATURE_ITEM_SPACING : '0px'}
+              data-state={
+                phase === 'stable' || comparisonItemKeys.has(featureKey)
+                  ? 'stable'
+                  : phase
+              }
+              key={featureKey}
+            >
+              <FeatureRow>
+                <FeatureVisual>
+                  {feature.visual.kind === 'logos' ? (
+                    <PlanFeatureLogoStack logos={feature.visual.logos} />
+                  ) : FeatureIcon !== null ? (
+                    <FeatureIcon aria-hidden size={FEATURE_ICON_SIZE_PX} />
+                  ) : null}
+                </FeatureVisual>
+                <FeatureText>
+                  <Body as="span" size="sm">
+                    {i18n._(feature.title)}
+                  </Body>
+                  <FeatureDescription>
+                    {i18n._(feature.description)}
+                  </FeatureDescription>
+                </FeatureText>
+              </FeatureRow>
+            </FeatureItem>
+          );
+        })}
+      </FeatureList>
     </FeaturesSection>
   );
 }
