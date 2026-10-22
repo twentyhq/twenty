@@ -30,6 +30,7 @@ export class ApplicationRepeatedEventRecorderService
     new ApplicationMetricEventRollupBuffer(MAX_BUFFERED_METRIC_EVENTS);
   private flushTimer: NodeJS.Timeout | null = null;
   private pendingFlush: Promise<void> = Promise.resolve();
+  private isFlushQueued = false;
 
   constructor(
     private readonly eventLogEmitterService: EventLogEmitterService,
@@ -76,7 +77,7 @@ export class ApplicationRepeatedEventRecorderService
     });
 
     if (this.metricEventRollupBuffer.isFull) {
-      await this.flushMetricEvents();
+      void this.flushMetricEvents();
     }
 
     try {
@@ -90,6 +91,11 @@ export class ApplicationRepeatedEventRecorderService
   }
 
   private flushMetricEvents(): Promise<void> {
+    if (this.isFlushQueued) {
+      return this.pendingFlush;
+    }
+
+    this.isFlushQueued = true;
     this.pendingFlush = this.pendingFlush.then(() =>
       this.drainAndRecordMetricEvents(),
     );
@@ -98,6 +104,8 @@ export class ApplicationRepeatedEventRecorderService
   }
 
   private async drainAndRecordMetricEvents(): Promise<void> {
+    this.isFlushQueued = false;
+
     const metricEvents = this.metricEventRollupBuffer.drain();
 
     if (metricEvents.length > 0) {
