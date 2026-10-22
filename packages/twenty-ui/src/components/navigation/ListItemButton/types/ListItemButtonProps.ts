@@ -12,6 +12,8 @@ export type ListItemButtonProps = Omit<
     ListItemProps,
     | 'color'
     | 'selected'
+    | 'selectionAppearance'
+    | 'active'
     | 'focused'
     | 'indicator'
     | 'startIcon'

@@ -14,14 +14,12 @@ const StyledFooter = styled.div`
 type SettingsApplicationAddConnectionButtonProps = {
   applicationId: string;
   providerName: string;
-  scope: 'USER' | 'WORKSPACE';
   redirectLocation?: string;
 };
 
 export const SettingsApplicationAddConnectionButton = ({
   applicationId,
   providerName,
-  scope,
   redirectLocation,
 }: SettingsApplicationAddConnectionButtonProps) => {
   const { t } = useLingui();
@@ -36,7 +34,6 @@ export const SettingsApplicationAddConnectionButton = ({
           triggerAppOAuth({
             applicationId,
             providerName,
-            scope,
             redirectLocation,
           })
         }

@@ -132,7 +132,6 @@ export const SettingsApplicationConnectionsSection = ({
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
                 providerName={provider.name}
-                scope="WORKSPACE"
               />
             )}
           </SettingsApplicationConnectionProviderSection>

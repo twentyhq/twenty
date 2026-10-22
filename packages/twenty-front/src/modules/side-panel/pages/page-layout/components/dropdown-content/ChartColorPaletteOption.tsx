@@ -1,19 +1,12 @@
 import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/side-panel/pages/page-layout/constants/ChartSettingsPaletteColorGroupCount';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
-import { useTheme, themeCssVariables, type ThemeColor } from 'twenty-ui/theme';
-
-type ChartColorPaletteOptionProps = {
-  selectedItemId: string | null;
-  currentColor: string | null | undefined;
-  onSelectColor: (colorName: ThemeColor | 'auto') => void;
-};
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledColorSamplesContainer = styled.div`
   align-items: center;
@@ -21,11 +14,7 @@ const StyledColorSamplesContainer = styled.div`
   gap: ${themeCssVariables.spacing[0.5]};
 `;
 
-export const ChartColorPaletteOption = ({
-  selectedItemId,
-  currentColor,
-  onSelectColor,
-}: ChartColorPaletteOptionProps) => {
+export const ChartColorPaletteOption = () => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme.color);
 
@@ -56,25 +45,10 @@ export const ChartColorPaletteOption = ({
   );
 
   return (
-    <SelectableListItem
-      key={'auto'}
-      itemId={'auto'}
-      onEnter={() => {
-        onSelectColor('auto');
-      }}
-    >
-      <ListItemButton
-        focused={selectedItemId === 'auto' || currentColor === 'auto'}
-        onClick={() => {
-          onSelectColor('auto');
-        }}
-        role="option"
-        aria-selected={false}
-        selected={false}
-        indicator="check"
-        description={colorSamples}
-        descriptionPlacement={'end'}
-      >{t`Default palette`}</ListItemButton>
-    </SelectableListItem>
+    <Dropdown.OptionItem
+      value="auto"
+      description={colorSamples}
+      descriptionPlacement="end"
+    >{t`Default palette`}</Dropdown.OptionItem>
   );
 };

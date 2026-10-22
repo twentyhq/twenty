@@ -375,7 +375,6 @@ export const ConnectionOnlyAppListsMyConnections: Story = {
       );
     }
 
-    expect(canvas.queryByText('shared@linear.app')).not.toBeInTheDocument();
     expect(canvas.queryByText('teammate@linear.app')).not.toBeInTheDocument();
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
   },
@@ -404,8 +403,6 @@ export const AddConnectionStartsTheOAuthFlow: Story = {
       applicationId: LINEAR_APPLICATION_ID,
       providerName: 'linear',
       transientToken: MOCKED_TRANSIENT_TOKEN,
-      scope: 'USER',
-      visibility: 'user',
       redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
     });
   },
@@ -442,8 +439,6 @@ export const ReconnectStartsTheOAuthFlow: Story = {
       applicationId: LINEAR_APPLICATION_ID,
       providerName: 'linear',
       transientToken: MOCKED_TRANSIENT_TOKEN,
-      scope: 'USER',
-      visibility: 'user',
       reconnectingConnectedAccountId: LINEAR_RECONNECT_NEEDED_ACCOUNT_ID,
       redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
     });

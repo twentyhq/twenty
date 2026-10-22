@@ -5,7 +5,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { PageLayoutWidgetFieldValidationException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget-field-validation.exception';
-import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { validateCompositeSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-composite-subfield.util';
 import { validateRelationSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-relation-subfield.util';
 
@@ -44,7 +44,10 @@ export const validateGroupByFieldOrThrow = ({
     );
   }
 
-  const field = findActiveFlatFieldMetadataById(fieldId, flatFieldMetadataMaps);
+  const field = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: fieldId,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
 
   if (!isDefined(field)) {
     throw new PageLayoutWidgetFieldValidationException(
