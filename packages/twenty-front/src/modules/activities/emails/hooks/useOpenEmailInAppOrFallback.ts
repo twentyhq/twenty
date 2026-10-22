@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import { useResolveNewEmailSender } from '@/activities/emails/hooks/useResolveNewEmailSender';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,24 +7,21 @@ export const useOpenEmailInAppOrFallback = () => {
   const { resolveNewEmailSender } = useResolveNewEmailSender();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
 
-  const openEmail = useCallback(
-    (email: string) => {
-      const sender = resolveNewEmailSender();
+  const openEmail = (email: string) => {
+    const sender = resolveNewEmailSender();
 
-      if (isDefined(sender)) {
-        openComposeEmailInSidePanel({
-          connectedAccountId: sender.connectedAccountId,
-          initialFromHandle: sender.fromHandle,
-          defaultTo: email,
-        });
+    if (isDefined(sender)) {
+      openComposeEmailInSidePanel({
+        connectedAccountId: sender.connectedAccountId,
+        initialFromHandle: sender.fromHandle,
+        defaultTo: email,
+      });
 
-        return;
-      }
+      return;
+    }
 
-      openUrlInNewTab(`mailto:${email}`);
-    },
-    [resolveNewEmailSender, openComposeEmailInSidePanel],
-  );
+    openUrlInNewTab(`mailto:${email}`);
+  };
 
   return { openEmail };
 };

@@ -71,10 +71,10 @@ export const useEmailComposerState = ({
     }
   }
 
-  const setSender = useCallback((nextSender: ConnectedAccountSender) => {
+  const setSender = (nextSender: ConnectedAccountSender) => {
     setIsSenderChosenByUser(true);
     setSenderState(nextSender);
-  }, []);
+  };
 
   const { connectedAccountId, fromHandle } = sender;
   const [to, setTo] = useState<EmailRecipient[]>(() =>
