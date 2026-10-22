@@ -2,11 +2,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type JSONSchema7 } from 'json-schema';
 import {
   AggregateOperations,
+  compositeTypeDefinitions,
   FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import {
+  isCompositePropertySupportedInGroupBy,
+  isDefined,
   isFieldMetadataArrayKind,
   isFieldMetadataDateKind,
   isFieldMetadataSupportedInGroupBy,
@@ -18,7 +21,6 @@ import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { buildObjectJsonSchema } from 'src/engine/core-modules/record-crud/utils/build-object-json-schema.util';
 import { referenceJsonSchemaDefinition } from 'src/engine/core-modules/record-crud/utils/reference-json-schema-definition.util';
-import { getGroupableSubFieldsForCompositeType } from 'src/engine/metadata-modules/field-metadata/utils/get-groupable-sub-fields-for-composite-type.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -121,8 +123,13 @@ const buildGroupByEntries = ({
       }
 
       if (isCompositeFieldMetadataType(field.type)) {
-        return (getGroupableSubFieldsForCompositeType(field.type) ?? []).map(
-          (subField) => ({
+        return (compositeTypeDefinitions.get(field.type)?.properties ?? [])
+          .filter(
+            (property) =>
+              isCompositePropertySupportedInGroupBy(property) &&
+              !isDefined(property.deprecationReason),
+          )
+          .map(({ name: subField }) => ({
             schema: buildSingleKeyObject({
               key: field.name,
               value: buildSingleKeyObject({
@@ -131,8 +138,7 @@ const buildGroupByEntries = ({
               }),
             }),
             label: `${field.name}.${subField}`,
-          }),
-        );
+          }));
       }
 
       if (isFieldMetadataArrayKind(field.type)) {
