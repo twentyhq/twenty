@@ -341,6 +341,8 @@ export const SearchPaginationAndSelection: Story = {
     await expect(
       await canvas.findByRole('button', { name: 'Recent company research' }),
     ).toBeVisible();
+    await expect(searchInput).toHaveFocus();
+    await expect(getComputedStyle(searchInput).outlineStyle).toBe('none');
     await expect(
       canvas.queryByText('Older conversation beyond loaded history'),
     ).not.toBeInTheDocument();

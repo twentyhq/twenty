@@ -4,6 +4,7 @@ import { type InputSize } from '@ui/primitives/input/types/InputSize';
 import { type InputVariant } from '@ui/primitives/input/types/InputVariant';
 
 export type InputProps = Omit<InputPrimitive.Props, 'size'> & {
+  hasFocusRing?: boolean;
   size?: InputSize;
   variant?: InputVariant;
 };

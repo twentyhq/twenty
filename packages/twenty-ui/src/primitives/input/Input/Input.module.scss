@@ -47,7 +47,9 @@
     padding: 0;
 
     &:not([data-grouped]) {
-      @include focus-ring;
+      &:where([data-focus-ring]) {
+        @include focus-ring;
+      }
 
       &[aria-invalid='true'],
       &[data-invalid] {
