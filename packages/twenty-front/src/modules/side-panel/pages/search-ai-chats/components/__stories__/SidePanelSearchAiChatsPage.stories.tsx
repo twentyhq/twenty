@@ -6,6 +6,7 @@ import {
   type GraphQLQuery,
   type GraphQLResponseBody,
 } from 'msw';
+import { useState } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
@@ -30,6 +31,7 @@ import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/conte
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { WorkspaceSurfaceHeaderPortalContext } from '@/ui/layout/contexts/WorkspaceSurfaceHeaderPortalContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -126,6 +128,8 @@ type SearchAiChatsStoryProps = {
 const SearchAiChatsStory = ({
   hasBackControl = false,
 }: SearchAiChatsStoryProps) => {
+  const [headerActionsPortal, setHeaderActionsPortal] =
+    useState<HTMLElement | null>(null);
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const navigationStack = useAtomStateValue(sidePanelNavigationStackState);
@@ -136,18 +140,22 @@ const SearchAiChatsStory = ({
     <SidePanelPageComponentInstanceContext.Provider
       value={{ instanceId: pageId }}
     >
-      <Text data-testid="underlying-record-path">{pathname}</Text>
-      {hasBackControl && (
-        <Button onClick={() => navigate(-1)}>Browser Back</Button>
-      )}
-      {isChatOpen ? (
-        <Text>Conversation opened in the side panel</Text>
-      ) : (
-        <>
-          <SidePanelTopBar />
-          <SidePanelSearchAiChatsPage />
-        </>
-      )}
+      <WorkspaceSurfaceHeaderPortalContext.Provider
+        value={{ title: null, actions: headerActionsPortal }}
+      >
+        <Text data-testid="underlying-record-path">{pathname}</Text>
+        {hasBackControl && (
+          <Button onClick={() => navigate(-1)}>Browser Back</Button>
+        )}
+        {isChatOpen ? (
+          <Text>Conversation opened in the side panel</Text>
+        ) : (
+          <>
+            <SidePanelTopBar setHeaderActionsPortal={setHeaderActionsPortal} />
+            <SidePanelSearchAiChatsPage />
+          </>
+        )}
+      </WorkspaceSurfaceHeaderPortalContext.Provider>
     </SidePanelPageComponentInstanceContext.Provider>
   );
 };
@@ -373,9 +381,11 @@ export const SearchPaginationAndSelection: Story = {
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Load more chats' }),
     );
-    await expect(
-      await canvas.findByRole('button', { name: 'Loading more chats...' }),
-    ).toBeDisabled();
+    const loadingMore = await canvas.findByRole('status', {
+      name: 'Loading more chats...',
+    });
+    await expect(loadingMore).toBeVisible();
+    await expect(loadingMore.querySelector('[data-skeleton]')).not.toBeNull();
     await expect(
       canvas.getByRole('button', { name: 'Recent company research' }),
     ).toBeVisible();
@@ -424,13 +434,28 @@ export const BackDuringPendingSelection: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Recent company research' }),
-    );
-    await expect(await canvas.findByText('Opening chat...')).toBeVisible();
-    const selectedChat = canvas.getByRole('button', {
+    const selectedChat = await canvas.findByRole('button', {
       name: 'Recent company research',
     });
+    const rowTopBeforeOpening = selectedChat.getBoundingClientRect().top;
+    await userEvent.click(selectedChat);
+    const openingIndicator = await canvas.findByRole('status', {
+      name: 'Opening chat...',
+    });
+    const searchInputBounds = canvas
+      .getByRole('textbox')
+      .getBoundingClientRect();
+    const indicatorBounds = openingIndicator.getBoundingClientRect();
+    await expect(openingIndicator).toBeVisible();
+    await expect(indicatorBounds.top).toBeGreaterThanOrEqual(
+      searchInputBounds.top,
+    );
+    await expect(indicatorBounds.bottom).toBeLessThanOrEqual(
+      searchInputBounds.bottom,
+    );
+    await expect(selectedChat.getBoundingClientRect().top).toBe(
+      rowTopBeforeOpening,
+    );
     await waitFor(() =>
       expect(findChats).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -512,7 +537,11 @@ export const Searching: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findByText('Searching chats...')).toBeVisible();
+    const searching = await canvas.findByRole('status', {
+      name: 'Searching chats...',
+    });
+    await expect(searching).toBeVisible();
+    await expect(searching.querySelector('[data-skeleton]')).not.toBeNull();
     await expect(
       canvas.queryByText('No chats match your search'),
     ).not.toBeInTheDocument();
@@ -567,6 +596,9 @@ export const FailedOpen: Story = {
     await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
       CURRENT_THREAD_ID,
     );
+    await expect(
+      canvas.queryByRole('status', { name: 'Opening chat...' }),
+    ).not.toBeInTheDocument();
 
     shouldFailSelection = false;
     await userEvent.click(

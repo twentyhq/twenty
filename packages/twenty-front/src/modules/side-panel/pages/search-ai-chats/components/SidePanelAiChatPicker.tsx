@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconMessage } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
@@ -12,10 +13,14 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { SidePanelAiChatPickerSkeleton } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSkeleton';
 import { SidePanelAiChatPickerRequestCleanupEffect } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRequestCleanupEffect';
 import { useOpenAiChatFromPicker } from '@/side-panel/pages/search-ai-chats/hooks/useOpenAiChatFromPicker';
 import { useSearchAiChatThreads } from '@/side-panel/pages/search-ai-chats/hooks/useSearchAiChatThreads';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useWorkspaceSurfaceHeaderPortal } from '@/ui/layout/hooks/useWorkspaceSurfaceHeaderPortal';
+
+const CHAT_PICKER_PAGINATION_SKELETON_ROW_COUNT = 3;
 
 const StyledStatus = styled.div`
   align-items: center;
@@ -32,6 +37,7 @@ const StyledFooter = styled.div`
 
 export const SidePanelAiChatPicker = () => {
   const { t } = useLingui();
+  const { actions: headerActionsPortal } = useWorkspaceSurfaceHeaderPortal();
   const [pendingOpenRequests] = useState(() => new Set<AbortController>());
   const {
     threads,
@@ -63,10 +69,9 @@ export const SidePanelAiChatPicker = () => {
         pendingOpenRequests={pendingOpenRequests}
       />
       {isLoading && (
-        <StyledStatus role="status">
-          <Loader aria-hidden="true" />
-          <Text color="secondary">{t`Searching chats...`}</Text>
-        </StyledStatus>
+        <SidePanelGroup heading={t`Chats`}>
+          <SidePanelAiChatPickerSkeleton label={t`Searching chats...`} />
+        </SidePanelGroup>
       )}
       {!isLoading && hasError && (
         <StyledStatus role="alert">
@@ -87,12 +92,12 @@ export const SidePanelAiChatPicker = () => {
           </Text>
         </StyledStatus>
       )}
-      {isOpeningThread && (
-        <StyledStatus role="status">
-          <Loader aria-hidden="true" />
-          <Text color="secondary">{t`Opening chat...`}</Text>
-        </StyledStatus>
-      )}
+      {isOpeningThread &&
+        isDefined(headerActionsPortal) &&
+        createPortal(
+          <Loader role="status" aria-label={t`Opening chat...`} />,
+          headerActionsPortal,
+        )}
       {canShowThreads && hasThreads && (
         <SidePanelGroup heading={t`Chats`}>
           {threads.map((thread) => (
@@ -118,15 +123,22 @@ export const SidePanelAiChatPicker = () => {
       )}
       {canShowThreads && hasNextPage && (
         <StyledFooter>
-          <Button
-            fullWidth
-            variant="ghost"
-            loading={isFetchingMore}
-            disabled={isFetchingMore || isOpeningThread}
-            onClick={() => void fetchMoreRecords()}
-          >
-            {isFetchingMore ? t`Loading more chats...` : t`Load more chats`}
-          </Button>
+          {isFetchingMore && (
+            <SidePanelAiChatPickerSkeleton
+              label={t`Loading more chats...`}
+              rowCount={CHAT_PICKER_PAGINATION_SKELETON_ROW_COUNT}
+            />
+          )}
+          {!isFetchingMore && (
+            <Button
+              fullWidth
+              variant="ghost"
+              disabled={isOpeningThread}
+              onClick={() => void fetchMoreRecords()}
+            >
+              {t`Load more chats`}
+            </Button>
+          )}
         </StyledFooter>
       )}
     </SidePanelList>
