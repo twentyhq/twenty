@@ -7,7 +7,6 @@ import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { EmailOperation, FileFolder, OpenRecordIn } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
-  canConnectedAccountPerformEmailOperation,
   getSendableEmailHandles,
   isDefined,
 } from 'twenty-shared/utils';
@@ -97,22 +96,16 @@ export class UserWorkspaceService {
     let storedHandle: string | null = null;
 
     if (isDefined(defaultFromHandle)) {
-      const connectedAccounts =
-        await this.connectedAccountMetadataService.findUsableByCaller({
+      const sendableMailboxes =
+        await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
           userWorkspaceId,
           workspaceId,
+          operation: EmailOperation.SEND,
         });
 
-      const sendableHandles = connectedAccounts
-        .filter(
-          (connectedAccount) =>
-            !isDefined(connectedAccount.archivedAt) &&
-            canConnectedAccountPerformEmailOperation({
-              connectedAccount,
-              operation: EmailOperation.SEND,
-            }),
-        )
-        .flatMap(getSendableEmailHandles);
+      const sendableHandles = sendableMailboxes.flatMap(
+        getSendableEmailHandles,
+      );
 
       storedHandle =
         sendableHandles.find(

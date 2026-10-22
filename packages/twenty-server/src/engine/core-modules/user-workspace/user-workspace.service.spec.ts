@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { EmailOperation } from 'twenty-shared/types';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
@@ -31,42 +31,27 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
   let service: UserWorkspaceService;
   const userWorkspaceRepository = { update: jest.fn() };
   const coreEntityCacheService = { invalidate: jest.fn() };
-  const connectedAccountMetadataService = { findUsableByCaller: jest.fn() };
+  const connectedAccountMetadataService = {
+    findMailboxesUsableByCaller: jest.fn(),
+  };
 
   beforeEach(async () => {
     jest.resetAllMocks();
 
-    connectedAccountMetadataService.findUsableByCaller.mockResolvedValue([
-      {
-        userWorkspaceId,
-        provider: ConnectedAccountProvider.GOOGLE,
-        connectionParameters: null,
-        handle: 'Me@Example.com',
-        handleAliases: ['sales@example.com'],
-      },
-      {
-        userWorkspaceId: 'someone-else',
-        provider: ConnectedAccountProvider.GOOGLE,
-        handle: 'shared@example.com',
-        handleAliases: [],
-        connectionParameters: null,
-      },
-      {
-        userWorkspaceId: 'someone-else',
-        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-        handle: 'no-smtp@example.com',
-        handleAliases: [],
-        connectionParameters: null,
-      },
-      {
-        userWorkspaceId,
-        provider: ConnectedAccountProvider.GOOGLE,
-        connectionParameters: null,
-        handle: 'archived@example.com',
-        handleAliases: [],
-        archivedAt: new Date('2026-01-01'),
-      },
-    ]);
+    connectedAccountMetadataService.findMailboxesUsableByCaller.mockResolvedValue(
+      [
+        {
+          userWorkspaceId,
+          handle: 'Me@Example.com',
+          handleAliases: ['sales@example.com'],
+        },
+        {
+          userWorkspaceId: 'someone-else',
+          handle: 'shared@example.com',
+          handleAliases: [],
+        },
+      ],
+    );
 
     const module = await Test.createTestingModule({
       providers: [
@@ -118,6 +103,13 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
       'userWorkspaceEntity',
       userWorkspaceId,
     );
+    expect(
+      connectedAccountMetadataService.findMailboxesUsableByCaller,
+    ).toHaveBeenCalledWith({
+      userWorkspaceId,
+      workspaceId,
+      operation: EmailOperation.SEND,
+    });
   });
 
   it('saves an alias of a connected account', async () => {
@@ -146,31 +138,24 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
     );
   });
 
-  it.each([
-    'unknown@example.com',
-    'no-smtp@example.com',
-    'archived@example.com',
-  ])(
-    'rejects %s, which no usable account can send from',
-    async (defaultFromHandle) => {
-      const error = await service
-        .updateDefaultFromHandle({
-          userWorkspaceId,
-          workspaceId,
-          defaultFromHandle,
-        })
-        .catch((caughtError: unknown) => caughtError);
+  it('rejects a handle that no sendable mailbox can send from', async () => {
+    const error = await service
+      .updateDefaultFromHandle({
+        userWorkspaceId,
+        workspaceId,
+        defaultFromHandle: 'unknown@example.com',
+      })
+      .catch((caughtError: unknown) => caughtError);
 
-      expect(error).toBeInstanceOf(UserInputError);
-      expect((error as UserInputError).extensions.userFriendlyMessage).toEqual(
-        expect.objectContaining({
-          message: 'You cannot send from this address.',
-        }),
-      );
-      expect(coreEntityCacheService.invalidate).not.toHaveBeenCalled();
-      expect(userWorkspaceRepository.update).not.toHaveBeenCalled();
-    },
-  );
+    expect(error).toBeInstanceOf(UserInputError);
+    expect((error as UserInputError).extensions.userFriendlyMessage).toEqual(
+      expect.objectContaining({
+        message: 'You cannot send from this address.',
+      }),
+    );
+    expect(coreEntityCacheService.invalidate).not.toHaveBeenCalled();
+    expect(userWorkspaceRepository.update).not.toHaveBeenCalled();
+  });
 
   it('clears the handle when given null', async () => {
     await service.updateDefaultFromHandle({
@@ -188,7 +173,7 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
       userWorkspaceId,
     );
     expect(
-      connectedAccountMetadataService.findUsableByCaller,
+      connectedAccountMetadataService.findMailboxesUsableByCaller,
     ).not.toHaveBeenCalled();
   });
 });
