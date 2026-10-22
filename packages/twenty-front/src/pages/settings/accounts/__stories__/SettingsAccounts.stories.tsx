@@ -21,13 +21,18 @@ import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
   CONNECTED_ACCOUNTS,
   FATHOM_APPLICATION_ID,
+  FATHOM_ACCOUNT_ID,
   FATHOM_ONLY_ACCOUNT_ID,
   GOOGLE_ACCOUNT_ID,
   GRANOLA_APPLICATION_ID,
   MY_USER_WORKSPACE_ID,
   buildConnectedAccount,
+  buildConnectedAccountsQueryHandler,
   MICROSOFT_ACCOUNT_ID,
   deleteConnectedAccount,
+  disconnectConnectedAccount,
+  failConnectedAccountAction,
+  myConnectedAccountsRequested,
   myApplicationPreferencesRequested,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
@@ -245,7 +250,7 @@ export const RowOpensAccountPage: Story = {
   },
 };
 
-export const DeleteKeepsAppConnections: Story = {
+export const DeleteRemovesWholeAccountGroup: Story = {
   ...accountGroupsStory,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -278,17 +283,429 @@ export const DeleteKeepsAppConnections: Story = {
       await body.findByRole('button', { name: /Delete account and data/ }),
     );
 
-    const remainingRow = await waitFor(() =>
-      withinTableRowOrThrow({ canvasElement, text: 'Tim@Apple.dev' }),
+    await waitFor(() =>
+      expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument(),
+    );
+    expect(canvas.queryByText('Tim@Apple.dev')).not.toBeInTheDocument();
+    expect(deleteConnectedAccount.mock.calls).toEqual(
+      expect.arrayContaining([[GOOGLE_ACCOUNT_ID], [FATHOM_ACCOUNT_ID]]),
+    );
+    expect(deleteConnectedAccount).toHaveBeenCalledTimes(2);
+    expect(disconnectConnectedAccount).not.toHaveBeenCalled();
+    expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
+  },
+};
+
+const MIXED_LEGACY_LINEAR_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000092';
+const MIXED_LINEAR_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000093';
+const MIXED_ARCHIVED_LINEAR_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000094';
+const MIXED_GROUP_ACCOUNTS = [
+  ...CONNECTED_ACCOUNTS,
+  buildConnectedAccount({
+    id: MIXED_LEGACY_LINEAR_ACCOUNT_ID,
+    handle: 'TIM@APPLE.DEV',
+    name: 'Legacy workspace',
+    provider: 'app',
+    userWorkspaceId: MY_USER_WORKSPACE_ID,
+    applicationId: LINEAR_APPLICATION_ID,
+    connectionProviderId: '20202020-1a2b-4c3d-8e4f-000000000079',
+    authFailedAt: '2026-09-02T00:00:00.000Z',
+  }),
+  buildConnectedAccount({
+    id: MIXED_LINEAR_ACCOUNT_ID,
+    handle: 'tim@apple.dev',
+    name: 'Personal workspace',
+    provider: 'app',
+    userWorkspaceId: MY_USER_WORKSPACE_ID,
+    applicationId: LINEAR_APPLICATION_ID,
+    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+    authFailedAt: '2026-09-02T00:00:00.000Z',
+  }),
+  buildConnectedAccount({
+    id: MIXED_ARCHIVED_LINEAR_ACCOUNT_ID,
+    handle: 'tim@apple.dev',
+    name: 'Archived workspace',
+    provider: 'app',
+    userWorkspaceId: MY_USER_WORKSPACE_ID,
+    applicationId: LINEAR_APPLICATION_ID,
+    connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+    archivedAt: '2026-09-03T00:00:00.000Z',
+  }),
+];
+const MIXED_GROUP_ACTIVE_ACCOUNT_IDS = [
+  GOOGLE_ACCOUNT_ID,
+  FATHOM_ACCOUNT_ID,
+  MIXED_LEGACY_LINEAR_ACCOUNT_ID,
+  MIXED_LINEAR_ACCOUNT_ID,
+];
+const mixedAccountGroupStory: Story = {
+  ...accountGroupsStory,
+  beforeEach: seedApplicationPreferencesStory,
+  parameters: {
+    msw: {
+      handlers: [
+        buildConnectedAccountsQueryHandler(MIXED_GROUP_ACCOUNTS),
+        ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+      ],
+    },
+  },
+};
+
+const openMixedAccountGroupAction = async (
+  canvasElement: HTMLElement,
+  action: 'Disconnect account' | 'Delete account and synced data',
+  handle = 'tim@apple.dev',
+) => {
+  const canvas = within(canvasElement);
+  const body = within(canvasElement.ownerDocument.body);
+
+  await canvas.findByText(handle, undefined, { timeout: 3000 });
+  await canvas.findByText('Linear', undefined, { timeout: 3000 });
+  await userEvent.click(
+    withinTableRowOrThrow({ canvasElement, text: handle }).getByRole('button', {
+      name: 'More options',
+    }),
+  );
+  await userEvent.click(await body.findByRole('menuitem', { name: action }));
+
+  return within(
+    await body.findByRole('dialog', {
+      name:
+        action === 'Disconnect account'
+          ? 'Disconnect account'
+          : 'Delete account and synced data?',
+    }),
+  );
+};
+
+export const MixedGroupReconnectTargetsEligibleAppIdentity: Story = {
+  ...mixedAccountGroupStory,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('tim@apple.dev', undefined, { timeout: 3000 });
+    await canvas.findByText('Linear', undefined, { timeout: 3000 });
+    await userEvent.click(
+      withinTableRowOrThrow({ canvasElement, text: 'tim@apple.dev' }).getByRole(
+        'button',
+        { name: 'More options' },
+      ),
     );
 
-    expect(remainingRow.getByRole('img', { name: 'Fathom' })).toBeVisible();
     expect(
-      remainingRow.getByRole('button', { name: 'More options' }),
+      body.queryByRole('menuitem', { name: /Reconnect.*Legacy workspace/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      body.queryByRole('menuitem', { name: /Reconnect.*Archived workspace/ }),
+    ).not.toBeInTheDocument();
+    const redirectUrl = await clickAndCaptureOAuthRedirect(
+      await body.findByRole('menuitem', {
+        name: 'Reconnect Linear (Personal workspace)',
+      }),
+    );
+
+    expect(Object.fromEntries(redirectUrl.searchParams)).toEqual({
+      applicationId: LINEAR_APPLICATION_ID,
+      providerName: 'linear',
+      transientToken: MOCKED_TRANSIENT_TOKEN,
+      scope: 'USER',
+      visibility: 'user',
+      reconnectingConnectedAccountId: MIXED_LINEAR_ACCOUNT_ID,
+      redirectLocation: LINEAR_CONNECTIONS_REDIRECT_LOCATION,
+    });
+    expect(deleteConnectedAccount).not.toHaveBeenCalled();
+    expect(disconnectConnectedAccount).not.toHaveBeenCalled();
+  },
+};
+
+export const DisconnectArchivesEveryActiveConnectionInMixedGroup: Story = {
+  ...mixedAccountGroupStory,
+  play: async ({ canvasElement }) => {
+    const dialog = await openMixedAccountGroupAction(
+      canvasElement,
+      'Disconnect account',
+    );
+
+    expect(dialog.getByText('Gmail, Google Calendar')).toBeVisible();
+    expect(dialog.getByText(/Fathom:/)).toBeVisible();
+    expect(dialog.getByText(/Legacy workspace/)).toBeVisible();
+    expect(dialog.getByText(/Personal workspace/)).toBeVisible();
+    expect(dialog.queryByText(/Archived workspace/)).not.toBeInTheDocument();
+    expect(dialog.getByText(/retained/)).toBeVisible();
+
+    await userEvent.click(dialog.getByRole('button', { name: 'Cancel' }));
+    expect(disconnectConnectedAccount).not.toHaveBeenCalled();
+
+    const confirmedDialog = await openMixedAccountGroupAction(
+      canvasElement,
+      'Disconnect account',
+    );
+    myConnectedAccountsRequested.mockClear();
+    await userEvent.click(
+      confirmedDialog.getByRole('button', { name: 'Disconnect account' }),
+    );
+
+    await waitFor(() => {
+      expect(
+        disconnectConnectedAccount.mock.calls.map(([id]) => id).sort(),
+      ).toEqual([...MIXED_GROUP_ACTIVE_ACCOUNT_IDS].sort());
+      expect(myConnectedAccountsRequested).toHaveBeenCalled();
+    });
+    expect(deleteConnectedAccount).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(
+        withinTableRowOrThrow({
+          canvasElement,
+          text: 'tim@apple.dev',
+        }).getByText('Disconnected'),
+      ).toBeVisible(),
+    );
+    const body = within(canvasElement.ownerDocument.body);
+
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await userEvent.click(
+      withinTableRowOrThrow({ canvasElement, text: 'tim@apple.dev' }).getByRole(
+        'button',
+        { name: 'More options' },
+      ),
+    );
+    expect(
+      body.queryByRole('menuitem', { name: 'Disconnect account' }),
+    ).not.toBeInTheDocument();
+    expect(
+      body.getByRole('menuitem', { name: 'Delete account and synced data' }),
     ).toBeVisible();
-    expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
-    expect(deleteConnectedAccount.mock.calls).toEqual([[GOOGLE_ACCOUNT_ID]]);
-    expect(canvas.queryByText(/Navigated to/)).not.toBeInTheDocument();
+  },
+};
+
+export const DeleteRemovesArchivedAndActiveConnectionsInMixedGroup: Story = {
+  ...mixedAccountGroupStory,
+  play: async ({ canvasElement }) => {
+    const dialog = await openMixedAccountGroupAction(
+      canvasElement,
+      'Delete account and synced data',
+    );
+
+    expect(dialog.getByText('Gmail, Google Calendar')).toBeVisible();
+    expect(dialog.getByText(/Fathom:/)).toBeVisible();
+    expect(dialog.getByText(/Legacy workspace/)).toBeVisible();
+    expect(dialog.getByText(/Personal workspace/)).toBeVisible();
+    expect(dialog.getByText(/Archived workspace/)).toBeVisible();
+    expect(dialog.getByText(/permanently/)).toBeVisible();
+    myConnectedAccountsRequested.mockClear();
+
+    await userEvent.click(
+      dialog.getByRole('button', { name: 'Delete account and data' }),
+    );
+
+    await waitFor(() => {
+      expect(
+        deleteConnectedAccount.mock.calls.map(([id]) => id).sort(),
+      ).toEqual(
+        [
+          ...MIXED_GROUP_ACTIVE_ACCOUNT_IDS,
+          MIXED_ARCHIVED_LINEAR_ACCOUNT_ID,
+        ].sort(),
+      );
+      expect(myConnectedAccountsRequested).toHaveBeenCalled();
+      expect(
+        within(canvasElement).queryByText('tim@apple.dev'),
+      ).not.toBeInTheDocument();
+    });
+    expect(disconnectConnectedAccount).not.toHaveBeenCalled();
+    expect(within(canvasElement).getByText('notes@apple.dev')).toBeVisible();
+    expect(within(canvasElement).getByText('tim@outlook.com')).toBeVisible();
+  },
+};
+
+export const PartialDisconnectRefetchesAndReportsFailedConnection: Story = {
+  ...mixedAccountGroupStory,
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    failConnectedAccountAction('disconnect', MIXED_LEGACY_LINEAR_ACCOUNT_ID);
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openMixedAccountGroupAction(
+      canvasElement,
+      'Disconnect account',
+    );
+    myConnectedAccountsRequested.mockClear();
+    await userEvent.click(
+      dialog.getByRole('button', { name: 'Disconnect account' }),
+    );
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(
+      await body.findByText(
+        'Disconnected 3 of 4 connections. Could not disconnect: Linear: Legacy workspace.',
+      ),
+    ).toBeVisible();
+    await waitFor(() => {
+      expect(myConnectedAccountsRequested).toHaveBeenCalled();
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+    expect(
+      disconnectConnectedAccount.mock.calls.map(([id]) => id).sort(),
+    ).toEqual([...MIXED_GROUP_ACTIVE_ACCOUNT_IDS].sort());
+    expect(deleteConnectedAccount).not.toHaveBeenCalled();
+
+    const remainingDialog = await openMixedAccountGroupAction(
+      canvasElement,
+      'Disconnect account',
+    );
+
+    expect(
+      remainingDialog.getAllByRole('listitem').map((item) => item.textContent),
+    ).toEqual(['Linear: Legacy workspace']);
+  },
+};
+
+export const PartialDeleteRefetchesAndReportsFailedConnection: Story = {
+  ...mixedAccountGroupStory,
+  beforeEach: async () => {
+    await seedApplicationPreferencesStory();
+    failConnectedAccountAction('delete', MIXED_LEGACY_LINEAR_ACCOUNT_ID);
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openMixedAccountGroupAction(
+      canvasElement,
+      'Delete account and synced data',
+    );
+    myConnectedAccountsRequested.mockClear();
+    await userEvent.click(
+      dialog.getByRole('button', { name: 'Delete account and data' }),
+    );
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(
+      await body.findByText(
+        'Deleted 4 of 5 connections. Could not delete: Linear: Legacy workspace.',
+      ),
+    ).toBeVisible();
+    await waitFor(() => {
+      expect(myConnectedAccountsRequested).toHaveBeenCalled();
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+    expect(deleteConnectedAccount.mock.calls.map(([id]) => id).sort()).toEqual(
+      [
+        ...MIXED_GROUP_ACTIVE_ACCOUNT_IDS,
+        MIXED_ARCHIVED_LINEAR_ACCOUNT_ID,
+      ].sort(),
+    );
+    expect(disconnectConnectedAccount).not.toHaveBeenCalled();
+
+    const remainingDialog = await openMixedAccountGroupAction(
+      canvasElement,
+      'Delete account and synced data',
+      'TIM@APPLE.DEV',
+    );
+
+    expect(
+      remainingDialog.getAllByRole('listitem').map((item) => item.textContent),
+    ).toEqual(['Linear: Legacy workspace']);
+  },
+};
+
+export const MailboxOnlyGroupKeepsAccountSettings: Story = {
+  ...accountGroupsStory,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('tim@outlook.com', undefined, { timeout: 3000 });
+    await userEvent.click(
+      withinTableRowOrThrow({
+        canvasElement,
+        text: 'tim@outlook.com',
+      }).getByRole('button', { name: 'More options' }),
+    );
+    const accountSettings = await body.findByRole('menuitem', {
+      name: 'Account settings',
+    });
+
+    expect(accountSettings).toHaveAttribute(
+      'href',
+      `/settings/accounts/detail/${MICROSOFT_ACCOUNT_ID}`,
+    );
+    await userEvent.click(accountSettings);
+    expect(
+      await canvas.findByText(
+        'Navigated to /settings/accounts/detail/:connectedAccountId',
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const MailboxOnlyGroupDisconnectsAndDeletesItsMailbox: Story = {
+  ...accountGroupsStory,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const openRowMenu = () =>
+      userEvent.click(
+        withinTableRowOrThrow({
+          canvasElement,
+          text: 'tim@outlook.com',
+        }).getByRole('button', { name: 'More options' }),
+      );
+
+    await canvas.findByText('tim@outlook.com', undefined, { timeout: 3000 });
+    await openRowMenu();
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Disconnect account' }),
+    );
+    const disconnectDialog = within(
+      await body.findByRole('dialog', { name: 'Disconnect account' }),
+    );
+
+    expect(
+      disconnectDialog.getAllByRole('listitem').map((item) => item.textContent),
+    ).toEqual(['Outlook email, Outlook Calendar']);
+    await userEvent.click(
+      disconnectDialog.getByRole('button', { name: 'Disconnect account' }),
+    );
+    await waitFor(() => {
+      expect(disconnectConnectedAccount.mock.calls).toEqual([
+        [MICROSOFT_ACCOUNT_ID],
+      ]);
+      expect(
+        withinTableRowOrThrow({
+          canvasElement,
+          text: 'tim@outlook.com',
+        }).getByText('Disconnected'),
+      ).toBeVisible();
+    });
+    expect(deleteConnectedAccount).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    await openRowMenu();
+    expect(
+      body.queryByRole('menuitem', { name: 'Disconnect account' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      body.getByRole('menuitem', { name: 'Delete account and synced data' }),
+    );
+    const deleteDialog = within(
+      await body.findByRole('dialog', {
+        name: 'Delete account and synced data?',
+      }),
+    );
+
+    await userEvent.click(
+      deleteDialog.getByRole('button', { name: 'Delete account and data' }),
+    );
+    await waitFor(() => {
+      expect(deleteConnectedAccount.mock.calls).toEqual([
+        [MICROSOFT_ACCOUNT_ID],
+      ]);
+      expect(canvas.queryByText('tim@outlook.com')).not.toBeInTheDocument();
+    });
+    expect(canvas.getByText('tim@apple.dev')).toBeVisible();
   },
 };
 
@@ -338,22 +755,16 @@ export const AppOnlyAccountWithoutConnectionsTabHasNoLink: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('MyConnectedAccounts', () =>
-          HttpResponse.json({
-            data: {
-              myConnectedAccounts: [
-                ...CONNECTED_ACCOUNTS,
-                buildConnectedAccount({
-                  id: '20202020-1a2b-4c3d-8e4f-000000000019',
-                  handle: GRANOLA_ONLY_ACCOUNT_HANDLE,
-                  provider: 'app',
-                  userWorkspaceId: MY_USER_WORKSPACE_ID,
-                  applicationId: GRANOLA_APPLICATION_ID,
-                }),
-              ],
-            },
+        buildConnectedAccountsQueryHandler([
+          ...CONNECTED_ACCOUNTS,
+          buildConnectedAccount({
+            id: '20202020-1a2b-4c3d-8e4f-000000000019',
+            handle: GRANOLA_ONLY_ACCOUNT_HANDLE,
+            provider: 'app',
+            userWorkspaceId: MY_USER_WORKSPACE_ID,
+            applicationId: GRANOLA_APPLICATION_ID,
           }),
-        ),
+        ]),
         ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
       ],
     },
@@ -387,7 +798,7 @@ export const AppOnlyAccountWithoutConnectionsTabHasNoLink: Story = {
   },
 };
 
-export const AppOnlyAccountRowMenuRemoves: Story = {
+export const AppOnlyAccountRowMenuDeletes: Story = {
   ...accountGroupsStory,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -402,19 +813,21 @@ export const AppOnlyAccountRowMenuRemoves: Story = {
       }).getByRole('button', { name: 'More options' }),
     );
 
-    const removeMenuItem = await body.findByRole('menuitem', {
-      name: 'Remove',
+    const deleteMenuItem = await body.findByRole('menuitem', {
+      name: 'Delete account and synced data',
     });
 
     expect(
       body.queryByRole('menuitem', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();
 
-    await userEvent.click(removeMenuItem);
+    await userEvent.click(deleteMenuItem);
     await userEvent.click(
       await within(
-        await body.findByRole('dialog', { name: 'Remove connection?' }),
-      ).findByRole('button', { name: 'Remove' }),
+        await body.findByRole('dialog', {
+          name: 'Delete account and synced data?',
+        }),
+      ).findByRole('button', { name: 'Delete account and data' }),
     );
 
     await waitFor(() =>
@@ -427,7 +840,7 @@ export const AppOnlyAccountRowMenuRemoves: Story = {
     );
     await waitFor(() =>
       expect(
-        body.queryByRole('dialog', { name: 'Remove connection?' }),
+        body.queryByRole('dialog', { name: 'Delete account and synced data?' }),
       ).not.toBeInTheDocument(),
     );
   },
@@ -536,7 +949,14 @@ export const ArchivedAppOnlyAccountsShowDisconnected: Story = {
       }).getByRole('button', { name: 'More options' }),
     );
 
-    expect(await body.findByRole('menuitem', { name: 'Remove' })).toBeVisible();
+    expect(
+      await body.findByRole('menuitem', {
+        name: 'Delete account and synced data',
+      }),
+    ).toBeVisible();
+    expect(
+      body.queryByRole('menuitem', { name: 'Disconnect account' }),
+    ).not.toBeInTheDocument();
     expect(
       body.queryByRole('menuitem', { name: /Reconnect/ }),
     ).not.toBeInTheDocument();
@@ -576,24 +996,18 @@ export const AppOnlyAccountOnUnlistedProviderIsFlaggedEverywhere: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('MyConnectedAccounts', () =>
-          HttpResponse.json({
-            data: {
-              myConnectedAccounts: [
-                ...CONNECTED_ACCOUNTS,
-                buildConnectedAccount({
-                  id: '20202020-1a2b-4c3d-8e4f-000000000087',
-                  handle: LEGACY_PROVIDER_ACCOUNT_HANDLE,
-                  provider: 'app',
-                  userWorkspaceId: MY_USER_WORKSPACE_ID,
-                  applicationId: LINEAR_APPLICATION_ID,
-                  connectionProviderId: '20202020-1a2b-4c3d-8e4f-000000000079',
-                  authFailedAt: '2026-09-02T00:00:00.000Z',
-                }),
-              ],
-            },
+        buildConnectedAccountsQueryHandler([
+          ...CONNECTED_ACCOUNTS,
+          buildConnectedAccount({
+            id: '20202020-1a2b-4c3d-8e4f-000000000087',
+            handle: LEGACY_PROVIDER_ACCOUNT_HANDLE,
+            provider: 'app',
+            userWorkspaceId: MY_USER_WORKSPACE_ID,
+            applicationId: LINEAR_APPLICATION_ID,
+            connectionProviderId: '20202020-1a2b-4c3d-8e4f-000000000079',
+            authFailedAt: '2026-09-02T00:00:00.000Z',
           }),
-        ),
+        ]),
         ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
       ],
     },
@@ -624,35 +1038,29 @@ export const AppOnlyAccountRowMenuNamesEachConnectionToOneApp: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('MyConnectedAccounts', () =>
-          HttpResponse.json({
-            data: {
-              myConnectedAccounts: [
-                ...CONNECTED_ACCOUNTS,
-                buildConnectedAccount({
-                  id: FIRST_LINEAR_CONNECTION_ID,
-                  handle: TWO_LINEAR_CONNECTIONS_HANDLE,
-                  name: 'Linear #1',
-                  provider: 'app',
-                  userWorkspaceId: MY_USER_WORKSPACE_ID,
-                  applicationId: LINEAR_APPLICATION_ID,
-                  connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
-                  authFailedAt: '2026-09-02T00:00:00.000Z',
-                }),
-                buildConnectedAccount({
-                  id: SECOND_LINEAR_CONNECTION_ID,
-                  handle: TWO_LINEAR_CONNECTIONS_HANDLE,
-                  name: 'Linear #2',
-                  provider: 'app',
-                  userWorkspaceId: MY_USER_WORKSPACE_ID,
-                  applicationId: LINEAR_APPLICATION_ID,
-                  connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
-                  archivedAt: '2026-09-03T00:00:00.000Z',
-                }),
-              ],
-            },
+        buildConnectedAccountsQueryHandler([
+          ...CONNECTED_ACCOUNTS,
+          buildConnectedAccount({
+            id: FIRST_LINEAR_CONNECTION_ID,
+            handle: TWO_LINEAR_CONNECTIONS_HANDLE,
+            name: 'Linear #1',
+            provider: 'app',
+            userWorkspaceId: MY_USER_WORKSPACE_ID,
+            applicationId: LINEAR_APPLICATION_ID,
+            connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+            authFailedAt: '2026-09-02T00:00:00.000Z',
           }),
-        ),
+          buildConnectedAccount({
+            id: SECOND_LINEAR_CONNECTION_ID,
+            handle: TWO_LINEAR_CONNECTIONS_HANDLE,
+            name: 'Linear #2',
+            provider: 'app',
+            userWorkspaceId: MY_USER_WORKSPACE_ID,
+            applicationId: LINEAR_APPLICATION_ID,
+            connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
+            archivedAt: '2026-09-03T00:00:00.000Z',
+          }),
+        ]),
         ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
       ],
     },
@@ -693,24 +1101,33 @@ export const AppOnlyAccountRowMenuNamesEachConnectionToOneApp: Story = {
     ).not.toBeInTheDocument();
 
     await userEvent.click(
-      await body.findByRole('menuitem', { name: 'Remove Linear (Linear #2)' }),
+      await body.findByRole('menuitem', {
+        name: 'Delete account and synced data',
+      }),
     );
 
-    const removeDialog = within(
-      await body.findByRole('dialog', { name: 'Remove connection?' }),
+    const deleteDialog = within(
+      await body.findByRole('dialog', {
+        name: 'Delete account and synced data?',
+      }),
     );
 
-    expect(
-      removeDialog.getByText(/This permanently removes Linear #2\./),
-    ).toBeVisible();
+    expect(deleteDialog.getByText(/Linear #1/)).toBeVisible();
+    expect(deleteDialog.getByText(/Linear #2/)).toBeVisible();
 
-    await userEvent.click(removeDialog.getByRole('button', { name: 'Remove' }));
-
-    await waitFor(() =>
-      expect(deleteConnectedAccount.mock.calls).toEqual([
-        [SECOND_LINEAR_CONNECTION_ID],
-      ]),
+    await userEvent.click(
+      deleteDialog.getByRole('button', { name: 'Delete account and data' }),
     );
+
+    await waitFor(() => {
+      expect(deleteConnectedAccount.mock.calls).toEqual(
+        expect.arrayContaining([
+          [FIRST_LINEAR_CONNECTION_ID],
+          [SECOND_LINEAR_CONNECTION_ID],
+        ]),
+      );
+      expect(deleteConnectedAccount).toHaveBeenCalledTimes(2);
+    });
   },
 };
 
@@ -722,30 +1139,24 @@ export const AppOnlyAccountRowMenuNamesEachApp: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('MyConnectedAccounts', () =>
-          HttpResponse.json({
-            data: {
-              myConnectedAccounts: [
-                ...CONNECTED_ACCOUNTS,
-                buildConnectedAccount({
-                  id: '20202020-1a2b-4c3d-8e4f-000000000090',
-                  handle: LINEAR_AND_FATHOM_HANDLE,
-                  provider: 'app',
-                  userWorkspaceId: MY_USER_WORKSPACE_ID,
-                  applicationId: LINEAR_APPLICATION_ID,
-                  connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
-                }),
-                buildConnectedAccount({
-                  id: '20202020-1a2b-4c3d-8e4f-000000000091',
-                  handle: LINEAR_AND_FATHOM_HANDLE,
-                  provider: 'app',
-                  userWorkspaceId: MY_USER_WORKSPACE_ID,
-                  applicationId: FATHOM_APPLICATION_ID,
-                }),
-              ],
-            },
+        buildConnectedAccountsQueryHandler([
+          ...CONNECTED_ACCOUNTS,
+          buildConnectedAccount({
+            id: '20202020-1a2b-4c3d-8e4f-000000000090',
+            handle: LINEAR_AND_FATHOM_HANDLE,
+            provider: 'app',
+            userWorkspaceId: MY_USER_WORKSPACE_ID,
+            applicationId: LINEAR_APPLICATION_ID,
+            connectionProviderId: LINEAR_CONNECTION_PROVIDER_ID,
           }),
-        ),
+          buildConnectedAccount({
+            id: '20202020-1a2b-4c3d-8e4f-000000000091',
+            handle: LINEAR_AND_FATHOM_HANDLE,
+            provider: 'app',
+            userWorkspaceId: MY_USER_WORKSPACE_ID,
+            applicationId: FATHOM_APPLICATION_ID,
+          }),
+        ]),
         ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
       ],
     },
@@ -767,9 +1178,37 @@ export const AppOnlyAccountRowMenuNamesEachApp: Story = {
     );
 
     expect(
-      await body.findByRole('menuitem', { name: 'Remove Linear' }),
+      await body.findByRole('menuitem', { name: 'Disconnect account' }),
     ).toBeVisible();
-    expect(body.getByRole('menuitem', { name: 'Remove Fathom' })).toBeVisible();
+    expect(
+      body.getByRole('menuitem', { name: 'Delete account and synced data' }),
+    ).toBeVisible();
+    expect(
+      body.queryByRole('menuitem', { name: /Remove/ }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      body.getByRole('menuitem', { name: 'Disconnect account' }),
+    );
+    const disconnectDialog = within(
+      await body.findByRole('dialog', { name: 'Disconnect account' }),
+    );
+
+    expect(disconnectDialog.getByText(/Linear:/)).toBeVisible();
+    expect(disconnectDialog.getByText(/Fathom:/)).toBeVisible();
+    await userEvent.click(
+      disconnectDialog.getByRole('button', { name: 'Disconnect account' }),
+    );
+    await waitFor(() => {
+      expect(disconnectConnectedAccount.mock.calls).toEqual(
+        expect.arrayContaining([
+          ['20202020-1a2b-4c3d-8e4f-000000000090'],
+          ['20202020-1a2b-4c3d-8e4f-000000000091'],
+        ]),
+      );
+      expect(disconnectConnectedAccount).toHaveBeenCalledTimes(2);
+    });
+    expect(deleteConnectedAccount).not.toHaveBeenCalled();
   },
 };
 
@@ -778,16 +1217,12 @@ export const AppsWithoutAccountShowMissingAccount: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('MyConnectedAccounts', () =>
-          HttpResponse.json({
-            data: {
-              myConnectedAccounts: CONNECTED_ACCOUNTS.filter(
-                (account) =>
-                  account.id !== GOOGLE_ACCOUNT_ID &&
-                  account.id !== MICROSOFT_ACCOUNT_ID,
-              ),
-            },
-          }),
+        buildConnectedAccountsQueryHandler(
+          CONNECTED_ACCOUNTS.filter(
+            (account) =>
+              account.id !== GOOGLE_ACCOUNT_ID &&
+              account.id !== MICROSOFT_ACCOUNT_ID,
+          ),
         ),
         ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
       ],

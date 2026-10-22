@@ -3,8 +3,7 @@ import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/Set
 import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
 import { SettingsAccountGroupUsedBy } from '@/settings/app-preferences/components/SettingsAccountGroupUsedBy';
-import { SettingsAppPreferencesAppAccountsRowDropdownMenu } from '@/settings/app-preferences/components/SettingsAppPreferencesAppAccountsRowDropdownMenu';
-import { SettingsAppPreferencesRowDropdownMenu } from '@/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu';
+import { SettingsAccountGroupRowDropdownMenu } from '@/settings/app-preferences/components/SettingsAccountGroupRowDropdownMenu';
 import { SettingsBuiltInAccountAppPermissionsCell } from '@/settings/app-preferences/components/SettingsBuiltInAccountAppPermissionsCell';
 import { SettingsConnectedAccountSyncStatus } from '@/settings/app-preferences/components/SettingsConnectedAccountSyncStatus';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
@@ -177,14 +176,10 @@ export const SettingsAccountGroupTableRow = ({
         </TableCell>
       )}
       <TableCell align="right" onClick={(event) => event.stopPropagation()}>
-        {isDefined(builtInAccount) ? (
-          <SettingsAppPreferencesRowDropdownMenu account={builtInAccount} />
-        ) : (
-          <SettingsAppPreferencesAppAccountsRowDropdownMenu
-            groupId={group.id}
-            appAccounts={group.appAccounts}
-          />
-        )}
+        <SettingsAccountGroupRowDropdownMenu
+          group={group}
+          settingsPath={settingsPath}
+        />
       </TableCell>
     </TableRow>
   );
