@@ -45,6 +45,8 @@ jobs:
         env:
           RELEASE_REF: ${{ github.ref }}
         run: |
+          # A shallow checkout can leave the tag ref pointing to its peeled commit.
+          git fetch --no-tags --depth=1 origin "+$RELEASE_REF:$RELEASE_REF"
           if [[ "$(git cat-file -t "$RELEASE_REF")" != tag ]]; then
             echo '::error::Expected an annotated publishing tag created by infra'
             exit 1
