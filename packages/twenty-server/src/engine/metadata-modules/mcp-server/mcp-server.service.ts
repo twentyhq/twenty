@@ -18,6 +18,11 @@ import { fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow } from 'src/engi
 import { type CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
 import { type UpdateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/update-mcp-server.input';
+import {
+  McpServerException,
+  McpServerExceptionCode,
+} from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
+import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -28,6 +33,7 @@ export class McpServerService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly mcpServerToolSyncService: McpServerToolSyncService,
   ) {}
 
   private encryptAuthorizationHeaderValue(
@@ -118,6 +124,11 @@ export class McpServerService {
         'Multiple validation errors occurred while creating MCP server',
     });
 
+    await this.mcpServerToolSyncService.syncTools({
+      mcpServerId: flatMcpServerToCreate.id,
+      workspaceId,
+    });
+
     return fromFlatMcpServerToMcpServerDto(
       findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: flatMcpServerToCreate.id,
@@ -162,9 +173,37 @@ export class McpServerService {
         'Multiple validation errors occurred while updating MCP server',
     });
 
+    if (isDefined(url) || authorizationHeaderValue !== undefined) {
+      await this.mcpServerToolSyncService.syncTools({
+        mcpServerId: input.id,
+        workspaceId,
+      });
+    }
+
     return fromFlatMcpServerToMcpServerDto(
       findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: input.id,
+        flatEntityMaps: await this.getFlatMcpServerMaps(workspaceId),
+      }),
+    );
+  }
+
+  async syncTools(id: string, workspaceId: string): Promise<McpServerDTO> {
+    if (!isDefined(await this.findById(id, workspaceId))) {
+      throw new McpServerException(
+        'MCP server not found',
+        McpServerExceptionCode.MCP_SERVER_NOT_FOUND,
+      );
+    }
+
+    await this.mcpServerToolSyncService.syncTools({
+      mcpServerId: id,
+      workspaceId,
+    });
+
+    return fromFlatMcpServerToMcpServerDto(
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: id,
         flatEntityMaps: await this.getFlatMcpServerMaps(workspaceId),
       }),
     );

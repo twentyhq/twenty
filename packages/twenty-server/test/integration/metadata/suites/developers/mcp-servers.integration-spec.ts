@@ -48,7 +48,7 @@ describe('mcpServersResolver (e2e)', () => {
   };
 
   describe('createMcpServer', () => {
-    it('creates a server with an empty tool list and defaults', async () => {
+    it('creates a server with defaults and records why its tools could not be listed', async () => {
       const response = await createAndTrack();
 
       expect(response.body.errors).toBeUndefined();
@@ -61,7 +61,7 @@ describe('mcpServersResolver (e2e)', () => {
         isEnabled: true,
         tools: [],
         toolsSyncedAt: null,
-        toolsSyncError: null,
+        toolsSyncError: expect.any(String),
       });
       expect(mcpServer.id).toBeDefined();
       expect(mcpServer.applicationId).toBeDefined();

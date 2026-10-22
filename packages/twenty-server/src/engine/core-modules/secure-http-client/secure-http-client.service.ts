@@ -68,9 +68,14 @@ export class SecureHttpClientService {
       : axios.create(boundedAxiosConfig);
 
     client.interceptors.request.use((requestConfig) => {
-      requestConfig.signal = AbortSignal.timeout(
+      const timeoutSignal = AbortSignal.timeout(
         requestConfig.timeout || OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS,
       );
+
+      requestConfig.signal =
+        requestConfig.signal instanceof AbortSignal
+          ? AbortSignal.any([requestConfig.signal, timeoutSignal])
+          : timeoutSignal;
 
       return requestConfig;
     });
@@ -125,12 +130,22 @@ export class SecureHttpClientService {
     return axios.create(config);
   }
 
-  createSsrfSafeFetch(): typeof globalThis.fetch {
+  createSsrfSafeFetch(
+    config?: SecureHttpClientConfig,
+    context?: OutboundRequestContext,
+  ): typeof globalThis.fetch {
     if (!this.isSafeModeEnabled(this.getAllowedInternalHosts())) {
       return globalThis.fetch;
     }
 
-    return buildAxiosFetch(this.getHttpClient()) as typeof globalThis.fetch;
+    // axios-fetch drops the caller's signal, so callers could not abort a request
+    return buildAxiosFetch(
+      this.getHttpClient(config, context),
+      (axiosConfig, _input, init) => ({
+        ...axiosConfig,
+        ...(isDefined(init?.signal) && { signal: init.signal }),
+      }),
+    ) as typeof globalThis.fetch;
   }
 
   // For libraries that only accept an agent (openid-client); undefined means no restriction.

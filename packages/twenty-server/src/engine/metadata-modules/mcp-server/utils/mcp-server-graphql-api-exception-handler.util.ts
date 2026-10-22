@@ -2,6 +2,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   ConflictError,
+  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -21,6 +22,8 @@ export const mcpServerGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error);
       case McpServerExceptionCode.MCP_SERVER_NAME_ALREADY_EXISTS:
         throw new ConflictError(error);
+      case McpServerExceptionCode.MCP_SERVER_REQUEST_FAILED:
+        throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);
       }

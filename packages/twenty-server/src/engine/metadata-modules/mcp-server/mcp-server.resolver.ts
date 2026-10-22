@@ -93,6 +93,18 @@ export class McpServerResolver {
     FeatureFlagGuard(FeatureFlagKey.IS_MCP_SERVERS_ENABLED),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
+  async syncMcpServerTools(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<McpServerDTO> {
+    return await this.mcpServerService.syncTools(id, workspace.id);
+  }
+
+  @Mutation(() => McpServerDTO)
+  @UseGuards(
+    FeatureFlagGuard(FeatureFlagKey.IS_MCP_SERVERS_ENABLED),
+    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+  )
   async deleteMcpServer(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

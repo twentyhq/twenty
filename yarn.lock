@@ -51131,6 +51131,7 @@ __metadata:
     "@lingui/format-po": "npm:5.9.5"
     "@microsoft/microsoft-graph-client": "npm:3.0.7"
     "@microsoft/microsoft-graph-types": "npm:^2.40.0"
+    "@modelcontextprotocol/sdk": "npm:1.30.0"
     "@nestjs/axios": "npm:3.1.2"
     "@nestjs/cache-manager": "npm:^2.3.0"
     "@nestjs/cli": "npm:^11.0.16"

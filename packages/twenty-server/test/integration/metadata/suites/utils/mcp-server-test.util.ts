@@ -44,6 +44,14 @@ const DELETE_MCP_SERVER_MUTATION = gql`
   }
 `;
 
+const SYNC_MCP_SERVER_TOOLS_MUTATION = gql`
+  mutation SyncMcpServerTools($id: UUID!) {
+    syncMcpServerTools(id: $id) {
+      ${MCP_SERVER_FIELDS}
+    }
+  }
+`;
+
 const GET_MCP_SERVER_QUERY = gql`
   query GetMcpServer($id: UUID!) {
     mcpServer(id: $id) {
@@ -83,6 +91,12 @@ export const updateMcpServer = (id: string, update: Partial<McpServerInput>) =>
 export const deleteMcpServer = (id: string) =>
   makeMetadataApiRequest({
     query: DELETE_MCP_SERVER_MUTATION,
+    variables: { id },
+  });
+
+export const syncMcpServerTools = (id: string) =>
+  makeMetadataApiRequest({
+    query: SYNC_MCP_SERVER_TOOLS_MUTATION,
     variables: { id },
   });
 
