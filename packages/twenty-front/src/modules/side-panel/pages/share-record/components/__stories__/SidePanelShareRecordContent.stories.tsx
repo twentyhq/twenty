@@ -142,6 +142,7 @@ const meta: Meta<typeof SidePanelShareRecordContent> = {
     setShare.mockClear();
     removeShare.mockClear();
     refetch.mockClear();
+    refetch.mockResolvedValue(undefined);
   },
   parameters: { container: { width: 600, height: 700 } },
 };
