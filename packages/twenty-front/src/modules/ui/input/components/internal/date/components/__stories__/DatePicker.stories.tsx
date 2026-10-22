@@ -66,7 +66,11 @@ type Story = StoryObj<typeof DatePicker>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('15', {}, { timeout: 10000 });
+    await canvas.findByRole(
+      'gridcell',
+      { name: /^Choose Sunday, January 15/ },
+      { timeout: 10000 },
+    );
   },
 };
 
@@ -74,7 +78,11 @@ export const NotClearable: Story = {
   render: () => <DatePickerStory clearable={false} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('15', {}, { timeout: 10000 });
+    await canvas.findByRole(
+      'gridcell',
+      { name: /^Choose Sunday, January 15/ },
+      { timeout: 10000 },
+    );
     expect(canvas.queryByText('Clear')).not.toBeInTheDocument();
   },
 };
@@ -83,7 +91,13 @@ export const Relative: Story = {
   render: () => <DatePickerStory isRelative />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('15', {}, { timeout: 10000 });
+    await expect(
+      await canvas.findByRole(
+        'gridcell',
+        { name: /^Choose Sunday, December 25/ },
+        { timeout: 10000 },
+      ),
+    ).toHaveAttribute('aria-selected', 'true');
   },
 };
 
@@ -150,30 +164,72 @@ export const NavigationDoesNotSelect: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Next month' }));
-    expect(canvas.getByRole('combobox', { name: 'Month' })).toHaveTextContent(
-      'February',
-    );
+    await userEvent.click(await canvas.findByRole('button', { name: 'Next' }));
+    const nextDate = await canvas.findByRole('gridcell', {
+      name: /^Choose Wednesday, February 15/,
+    });
+    expect(canvas.getByText('February')).toBeVisible();
     expect(canvas.getByLabelText('Selected date')).toHaveTextContent(
       INITIAL_PLAIN_DATE,
     );
     expect(args.onChange).not.toHaveBeenCalled();
     expect(args.onClose).not.toHaveBeenCalled();
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Wednesday, February 15, 2023' }),
-    );
+    await userEvent.click(nextDate);
     expect(args.onChange).toHaveBeenCalledWith('2023-02-15');
     expect(args.onClose).toHaveBeenCalledWith('2023-02-15');
+  },
+};
+
+export const SelectingTheSameDateOnlyCloses: Story = {
+  args: { onChange: fn(), onClose: fn() },
+  render: ({ onChange, onClose }) => (
+    <DatePickerStory onChange={onChange} onClose={onClose} />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('gridcell', {
+        name: /^Choose Sunday, January 1st, 2023$/,
+      }),
+    );
+    expect(args.onChange).not.toHaveBeenCalled();
+    expect(args.onClose).toHaveBeenCalledOnce();
+    expect(args.onClose).toHaveBeenCalledWith(INITIAL_PLAIN_DATE);
+  },
+};
+
+export const SelectsAnAdjacentMonthDate: Story = {
+  args: { onChange: fn(), onClose: fn() },
+  render: ({ onChange, onClose }) => (
+    <DatePickerStory onChange={onChange} onClose={onClose} />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    expect(await canvas.findByText('January')).toBeVisible();
+    await userEvent.click(
+      await canvas.findByRole('gridcell', {
+        name: /^Choose Wednesday, February 1st, 2023$/,
+      }),
+    );
+    expect(args.onChange).toHaveBeenCalledOnce();
+    expect(args.onChange).toHaveBeenCalledWith('2023-02-01');
+    expect(args.onClose).toHaveBeenCalledOnce();
+    expect(args.onClose).toHaveBeenCalledWith('2023-02-01');
+    expect(canvas.getByLabelText('Selected date')).toHaveTextContent(
+      '2023-02-01',
+    );
   },
 };
 
 export const ClearSelection: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Clear' }));
+    await userEvent.click(await canvas.findByText('Clear'));
     expect(canvas.getByLabelText('Selected date')).toHaveTextContent('None');
-    expect(
-      canvas.getByRole('grid').querySelector('[aria-selected="true"]'),
-    ).toBeNull();
+    await waitFor(() => {
+      const selectedDates = canvas.getAllByRole('gridcell', { selected: true });
+      expect(selectedDates).toHaveLength(1);
+      expect(selectedDates[0]).toHaveAttribute('aria-current', 'date');
+    });
   },
 };

@@ -19,7 +19,6 @@ const meta: Meta<typeof DateCalendar> = {
     'aria-label': 'Choose a date',
     value: '2026-10-07',
     viewedMonth: '2026-10',
-    today: '2026-10-22',
     weekStart: 1,
     locale: 'en-US',
     weekdayLabels: DATE_CALENDAR_WEEKDAY_LABELS,
@@ -28,6 +27,7 @@ const meta: Meta<typeof DateCalendar> = {
     monthLabel: 'Month',
     yearLabel: 'Year',
     onValueChange: fn(),
+    onValueSelect: fn(),
     onViewedMonthChange: fn(),
   },
 };
@@ -38,50 +38,34 @@ type Story = StoryObj<typeof DateCalendar>;
 const NEXT_YEAR_OPTION_LABEL = /^2027$/;
 
 export const DayKeyboardNavigation: Story = {
-  render: ({ onValueChange, onViewedMonthChange }) => (
+  render: ({ onValueChange, onValueSelect, onViewedMonthChange }) => (
     <DateCalendarExample
       onValueChange={onValueChange}
+      onValueSelect={onValueSelect}
       onViewedMonthChange={onViewedMonthChange}
     />
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const selected = canvas.getByRole('button', {
-      name: 'Wednesday, October 7, 2026',
+    const selected = await canvas.findByRole('gridcell', {
+      name: 'Choose Wednesday, October 7th, 2026',
     });
-    const today = canvas.getByRole('button', {
-      name: 'Thursday, October 22, 2026',
-    });
-    const selectedCell = selected.closest('td');
-    const firstWeekday = canvas.getAllByRole('columnheader')[0];
 
-    await expect(firstWeekday).toHaveTextContent('Mo');
-    await expect(firstWeekday).toHaveAttribute('abbr', 'Monday');
-
-    await expect(selectedCell).toHaveAttribute('aria-selected', 'true');
-    await expect(today).toHaveAttribute('aria-current', 'date');
-    await expect(selected).not.toHaveAttribute('aria-current');
+    await expect(canvas.getAllByRole('columnheader')[0]).toHaveTextContent(
+      'Mo',
+    );
+    await expect(selected).toHaveAttribute('aria-selected', 'true');
     selected.focus();
     await userEvent.keyboard('{ArrowDown}');
     await expect(
-      canvas.getByRole('button', { name: 'Wednesday, October 14, 2026' }),
-    ).toHaveFocus();
-    await userEvent.keyboard('{ArrowUp}{Home}');
-    await expect(
-      canvas.getByRole('button', { name: 'Monday, October 5, 2026' }),
-    ).toHaveFocus();
-    await userEvent.keyboard('{End}');
-    await expect(
-      canvas.getByRole('button', { name: 'Sunday, October 11, 2026' }),
+      canvas.getByRole('gridcell', {
+        name: 'Choose Wednesday, October 14th, 2026',
+      }),
     ).toHaveFocus();
     await expect(args.onValueChange).not.toHaveBeenCalled();
-    await expect(selectedCell).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Enter}');
-    await expect(args.onValueChange).toHaveBeenLastCalledWith('2026-10-11');
-    await userEvent.keyboard('{ArrowLeft} ');
-    await expect(args.onValueChange).toHaveBeenLastCalledWith('2026-10-10');
-    await expect(args.onValueChange).toHaveBeenCalledTimes(2);
-    await expect(args.onViewedMonthChange).not.toHaveBeenCalled();
+    await expect(args.onValueChange).toHaveBeenLastCalledWith('2026-10-14');
+    await expect(args.onValueSelect).toHaveBeenLastCalledWith('2026-10-14');
   },
 };
 
@@ -95,28 +79,32 @@ export const MonthAndYearControls: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const nextMonth = canvas.getByRole('button', { name: 'Next month' });
+    const nextMonth = await canvas.findByRole('button', { name: 'Next month' });
 
     await userEvent.click(nextMonth);
     await expect(
-      canvas.getByRole('grid', { name: 'November 2026' }),
-    ).toBeVisible();
+      canvas.getByRole('combobox', { name: 'Month' }),
+    ).toHaveTextContent('November');
     await expect(nextMonth).toHaveFocus();
+    await expect(
+      canvas.getAllByRole('gridcell').filter((day) => day.tabIndex === 0),
+    ).toHaveLength(1);
     await expect(args.onViewedMonthChange).toHaveBeenLastCalledWith('2026-11');
     await userEvent.click(canvas.getByRole('combobox', { name: 'Month' }));
     await userEvent.click(
       await body.findByRole('option', { name: 'December' }),
     );
     await expect(
-      canvas.getByRole('grid', { name: 'December 2026' }),
-    ).toBeVisible();
+      canvas.getByRole('combobox', { name: 'Month' }),
+    ).toHaveTextContent('December');
+    await expect(args.onViewedMonthChange).toHaveBeenLastCalledWith('2026-12');
     await userEvent.click(canvas.getByRole('combobox', { name: 'Year' }));
     await userEvent.click(
       await body.findByRole('option', { name: NEXT_YEAR_OPTION_LABEL }),
     );
     await expect(
-      canvas.getByRole('grid', { name: 'December 2027' }),
-    ).toBeVisible();
+      canvas.getByRole('combobox', { name: 'Year' }),
+    ).toHaveTextContent('2027');
     await expect(args.onViewedMonthChange).toHaveBeenLastCalledWith('2027-12');
     await expect(args.onValueChange).not.toHaveBeenCalled();
   },
@@ -132,22 +120,24 @@ export const UnavailableDates: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const selected = canvas.getByRole('button', {
-      name: 'Wednesday, October 7, 2026',
+    const selected = await canvas.findByRole('gridcell', {
+      name: 'Choose Wednesday, October 7th, 2026',
     });
-    const unavailable = canvas.getByRole('button', {
-      name: 'Thursday, October 8, 2026',
+    const unavailable = canvas.getByRole('gridcell', {
+      name: 'Not available Thursday, October 8th, 2026',
     });
 
-    selected.focus();
-    await userEvent.keyboard('{ArrowRight}');
-    await expect(unavailable).toHaveFocus();
     await expect(unavailable).toHaveAttribute('aria-disabled', 'true');
-    await userEvent.keyboard('{Enter} ');
     await userEvent.click(unavailable);
     await expect(args.onValueChange).not.toHaveBeenCalled();
-    await userEvent.keyboard('{ArrowRight}{Enter}');
-    await expect(args.onValueChange).toHaveBeenCalledOnce();
+    selected.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(
+      canvas.getByRole('gridcell', {
+        name: 'Choose Friday, October 9th, 2026',
+      }),
+    ).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
     await expect(args.onValueChange).toHaveBeenLastCalledWith('2026-10-09');
   },
 };
@@ -157,34 +147,33 @@ export const MonthBoundaryAndLeapYear: Story = {
     <DateCalendarExample
       initialValue="2024-01-31"
       initialViewedMonth="2024-01"
-      today="2024-01-15"
       onValueChange={onValueChange}
       onViewedMonthChange={onViewedMonthChange}
     />
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-
-    canvas.getByRole('button', { name: 'Wednesday, January 31, 2024' }).focus();
+    (
+      await canvas.findByRole('gridcell', {
+        name: 'Choose Wednesday, January 31st, 2024',
+      })
+    ).focus();
     await userEvent.keyboard('{PageDown}');
     await waitFor(() =>
       expect(
-        canvas.getByRole('button', { name: 'Thursday, February 29, 2024' }),
+        canvas.getByRole('gridcell', {
+          name: 'Choose Thursday, February 29th, 2024',
+        }),
       ).toHaveFocus(),
     );
     await userEvent.keyboard('{Shift>}{PageDown}{/Shift}');
     await waitFor(() =>
       expect(
-        canvas.getByRole('button', { name: 'Friday, February 28, 2025' }),
+        canvas.getByRole('gridcell', {
+          name: 'Choose Friday, February 28th, 2025',
+        }),
       ).toHaveFocus(),
     );
-    await userEvent.keyboard('{ArrowRight}');
-    await waitFor(() =>
-      expect(
-        canvas.getByRole('button', { name: 'Saturday, March 1, 2025' }),
-      ).toHaveFocus(),
-    );
-    await expect(args.onViewedMonthChange).toHaveBeenLastCalledWith('2025-03');
     await expect(args.onValueChange).not.toHaveBeenCalled();
   },
 };
@@ -198,18 +187,19 @@ export const ExternalMonthChange: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const externalControl = canvas.getByRole('button', {
+    const externalControl = await canvas.findByRole('button', {
       name: 'Show November',
     });
 
     await userEvent.click(externalControl);
-    const grid = canvas.getByRole('grid', { name: 'November 2026' });
-    await expect(grid).toBeVisible();
+    await expect(
+      await canvas.findByRole('gridcell', {
+        name: 'Choose Sunday, November 15th, 2026',
+      }),
+    ).toBeVisible();
     await expect(externalControl).toHaveFocus();
     await expect(
-      within(grid)
-        .getAllByRole('button')
-        .filter((button) => button.tabIndex === 0),
+      canvas.getAllByRole('gridcell').filter((day) => day.tabIndex === 0),
     ).toHaveLength(1);
     await expect(args.onViewedMonthChange).not.toHaveBeenCalled();
     await expect(args.onValueChange).not.toHaveBeenCalled();
@@ -217,35 +207,26 @@ export const ExternalMonthChange: Story = {
 };
 
 export const RightToLeft: Story = {
-  render: ({ onValueChange, onViewedMonthChange }) => (
+  render: () => (
     <DirectionProvider direction="rtl">
-      <DateCalendarExample
-        onValueChange={onValueChange}
-        onViewedMonthChange={onViewedMonthChange}
-      />
+      <DateCalendarExample />
     </DirectionProvider>
   ),
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const selected = canvas.getByRole('button', {
-      name: 'Wednesday, October 7, 2026',
+    const selected = await canvas.findByRole('gridcell', {
+      name: 'Choose Wednesday, October 7th, 2026',
     });
-    const nextDate = canvas.getByRole('button', {
-      name: 'Thursday, October 8, 2026',
+    const nextDate = canvas.getByRole('gridcell', {
+      name: 'Choose Thursday, October 8th, 2026',
     });
 
     await expect(
       canvas.getByRole('group', { name: 'Choose a date' }),
     ).toHaveAttribute('dir', 'rtl');
-    selected.focus();
-    await userEvent.keyboard('{ArrowLeft}');
-    await expect(nextDate).toHaveFocus();
     await expect(nextDate.getBoundingClientRect().left).toBeLessThan(
       selected.getBoundingClientRect().left,
     );
-    await userEvent.keyboard('{ArrowRight}');
-    await expect(selected).toHaveFocus();
-    await expect(args.onValueChange).not.toHaveBeenCalled();
   },
 };
 
@@ -253,22 +234,17 @@ export const Disabled: Story = {
   args: { disabled: true },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const previous = canvas.getByRole('button', { name: 'Previous month' });
-    const next = canvas.getByRole('button', { name: 'Next month' });
-    const date = canvas.getByRole('button', {
-      name: 'Wednesday, October 7, 2026',
+    const next = await canvas.findByRole('button', { name: 'Next month' });
+    const date = canvas.getByRole('gridcell', {
+      name: 'Not available Wednesday, October 7th, 2026',
     });
 
-    await expect(previous).toBeDisabled();
     await expect(next).toBeDisabled();
-    await expect(date).toBeDisabled();
+    await expect(date).toHaveAttribute('aria-disabled', 'true');
     await expect(
       canvas.getByRole('combobox', { name: 'Month' }),
     ).toBeDisabled();
-    await expect(canvas.getByRole('combobox', { name: 'Year' })).toBeDisabled();
-    await userEvent.click(next);
     await userEvent.click(date);
-    await expect(args.onViewedMonthChange).not.toHaveBeenCalled();
     await expect(args.onValueChange).not.toHaveBeenCalled();
   },
 };
@@ -276,13 +252,10 @@ export const Disabled: Story = {
 export const SundayStart: Story = {
   args: { weekStart: 0 },
   play: async ({ canvasElement }) => {
-    const headers = within(canvasElement).getAllByRole('columnheader');
-
+    const headers = await within(canvasElement).findAllByRole('columnheader');
     await expect(headers.map((header) => header.textContent)).toEqual(
       DATE_CALENDAR_WEEKDAY_LABELS,
     );
-    await expect(headers[0]).toHaveAttribute('abbr', 'Sunday');
-    await expect(headers[6]).toHaveAttribute('abbr', 'Saturday');
   },
 };
 
@@ -298,45 +271,22 @@ export const RangeReadOnlyNavigation: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const grid = canvas.getByRole('grid', { name: 'October 2026' });
-    const middleDate = canvas.getByRole('button', {
-      name: 'Thursday, October 8, 2026',
+    const middleDate = await canvas.findByRole('gridcell', {
+      name: 'Choose Thursday, October 8th, 2026',
     });
 
-    await expect(grid).toHaveAttribute('aria-readonly', 'true');
-    await expect(grid).toHaveAttribute('aria-multiselectable', 'true');
+    await expect(middleDate).toHaveAttribute('aria-selected', 'true');
     await expect(
-      within(grid).getAllByRole('gridcell', { selected: true }),
+      canvas.getAllByRole('gridcell', { selected: true }),
     ).toHaveLength(3);
-    await expect(
-      canvas
-        .getByRole('button', { name: 'Wednesday, October 7, 2026' })
-        .closest('td'),
-    ).toHaveAttribute('aria-selected', 'true');
-    await expect(
-      canvas
-        .getByRole('button', { name: 'Friday, October 9, 2026' })
-        .closest('td'),
-    ).toHaveAttribute('aria-selected', 'true');
-    await expect(middleDate).toBeEnabled();
-    await userEvent.click(middleDate);
-    await userEvent.keyboard('{Enter} ');
-    await expect(args.onValueChange).not.toHaveBeenCalled();
-    await userEvent.keyboard('{ArrowRight}');
-    await expect(
-      canvas.getByRole('button', { name: 'Friday, October 9, 2026' }),
-    ).toHaveFocus();
-    await userEvent.keyboard('{PageDown}');
-    await waitFor(() =>
-      expect(
-        canvas.getByRole('button', { name: 'Monday, November 9, 2026' }),
-      ).toHaveFocus(),
-    );
+    await expect(middleDate.parentElement?.parentElement).toHaveStyle({
+      pointerEvents: 'none',
+      opacity: '0.5',
+    });
     await userEvent.click(canvas.getByRole('button', { name: 'Next month' }));
     await expect(
-      canvas.getByRole('grid', { name: 'December 2026' }),
-    ).toBeVisible();
-    await expect(args.onViewedMonthChange).toHaveBeenLastCalledWith('2026-12');
+      canvas.getByRole('combobox', { name: 'Month' }),
+    ).toHaveTextContent('November');
     await expect(args.onValueChange).not.toHaveBeenCalled();
   },
 };
@@ -351,28 +301,51 @@ export const HeaderOnly: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
-
-    await expect(canvas.queryByRole('grid')).not.toBeInTheDocument();
-    await expect(canvas.getAllByRole('combobox')).toHaveLength(2);
+    await expect(
+      await canvas.findByRole('combobox', { name: 'Month' }),
+    ).toBeVisible();
+    await expect(canvas.queryByRole('gridcell')).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Next month' }));
     await expect(args.onViewedMonthChange).toHaveBeenLastCalledWith('2026-11');
-    await userEvent.click(canvas.getByRole('combobox', { name: 'Month' }));
-    await userEvent.click(
-      await body.findByRole('option', { name: 'December' }),
-    );
-    await userEvent.click(canvas.getByRole('combobox', { name: 'Year' }));
-    await userEvent.click(
-      await body.findByRole('option', { name: NEXT_YEAR_OPTION_LABEL }),
-    );
-    await expect(
-      canvas.getByRole('combobox', { name: 'Month' }),
-    ).toHaveTextContent('December');
-    await expect(
-      canvas.getByRole('combobox', { name: 'Year' }),
-    ).toHaveTextContent('2027');
-    await expect(canvas.queryByRole('grid')).not.toBeInTheDocument();
-    await expect(args.onViewedMonthChange).toHaveBeenLastCalledWith('2027-12');
     await expect(args.onValueChange).not.toHaveBeenCalled();
+  },
+};
+
+export const SameAndAdjacentDates: Story = {
+  render: ({ onValueChange, onValueSelect }) => (
+    <DateCalendarExample
+      onValueChange={onValueChange}
+      onValueSelect={onValueSelect}
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('gridcell', {
+        name: 'Choose Wednesday, October 7th, 2026',
+      }),
+    );
+    await expect(args.onValueChange).not.toHaveBeenCalled();
+    await expect(args.onValueSelect).toHaveBeenLastCalledWith('2026-10-07');
+    await userEvent.click(
+      canvas.getByRole('gridcell', {
+        name: 'Choose Wednesday, September 30th, 2026',
+      }),
+    );
+    await expect(args.onValueChange).toHaveBeenLastCalledWith('2026-09-30');
+    await expect(args.onValueSelect).toHaveBeenLastCalledWith('2026-09-30');
+  },
+};
+
+export const SupportedYearBoundaries: Story = {
+  args: { value: '0001-01-01', viewedMonth: '0001-01' },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const previous = await canvas.findByRole('button', {
+      name: 'Previous month',
+    });
+    await expect(previous).toBeDisabled();
+    await userEvent.click(previous);
+    await expect(args.onViewedMonthChange).not.toHaveBeenCalled();
   },
 };

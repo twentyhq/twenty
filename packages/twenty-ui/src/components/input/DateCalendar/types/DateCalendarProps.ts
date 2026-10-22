@@ -1,4 +1,7 @@
 import { type useRender } from '@base-ui/react/use-render';
+import { type ReactNode } from 'react';
+
+import { type DateCalendarHeaderProps } from './DateCalendarHeaderProps';
 
 import { type SelectPortalProps } from '@ui/primitives/input/Select/types/SelectPortalProps';
 
@@ -8,9 +11,9 @@ export type DateCalendarProps = Omit<
 > & {
   value: string | null;
   onValueChange: (date: string) => void;
+  onValueSelect?: (date: string) => void;
   viewedMonth: string;
   onViewedMonthChange: (month: string) => void;
-  today?: string;
   highlightedRange?: { start: string; end: string };
   readOnly?: boolean;
   hideGrid?: boolean;
@@ -36,4 +39,7 @@ export type DateCalendarProps = Omit<
   }) => void;
   isDateUnavailable?: (date: string) => boolean;
   disabled?: boolean;
+  disabledKeyboardNavigation?: boolean;
+  loadingFallback?: ReactNode;
+  renderHeader?: (props: DateCalendarHeaderProps) => ReactNode;
 };

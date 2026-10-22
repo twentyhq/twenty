@@ -19,7 +19,6 @@ const meta: Meta<typeof DateCalendar> = {
     'aria-label': 'Choose a date',
     value: '2026-10-07',
     viewedMonth: '2026-10',
-    today: '2026-10-22',
     weekStart: 1,
     locale: 'en-US',
     weekdayLabels: DATE_CALENDAR_WEEKDAY_LABELS,
@@ -39,7 +38,6 @@ export const Display: Story = {
   argTypes: {
     value: { control: false },
     viewedMonth: { control: false },
-    today: { control: false },
     weekStart: { control: false },
     locale: { control: false },
     weekdayLabels: { control: false },

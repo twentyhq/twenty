@@ -1,16 +1,16 @@
 import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
-import { parseDateCalendarDate } from './parseDateCalendarDate';
+import { parseDateCalendarDateOrThrow } from './parseDateCalendarDateOrThrow';
 
-export const validateDateCalendarHighlightedRange = ({
+export const validateDateCalendarHighlightedRangeOrThrow = ({
   start,
   end,
 }: {
   start: string;
   end: string;
 }): void => {
-  parseDateCalendarDate(start);
-  parseDateCalendarDate(end);
+  parseDateCalendarDateOrThrow(start);
+  parseDateCalendarDateOrThrow(end);
 
   if (start > end) {
     throw new RangeError(

@@ -79,8 +79,8 @@ export const ChangesMonthWithoutShowingDays: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    expect(canvas.queryByRole('grid')).not.toBeInTheDocument();
-    await userEvent.click(canvas.getByRole('button', { name: 'Next month' }));
+    expect(canvas.queryByRole('gridcell')).not.toBeInTheDocument();
+    await userEvent.click(await canvas.findByRole('button', { name: 'Next' }));
     expect(args.onChange).toHaveBeenCalledWith('2023-02-28');
   },
 };
@@ -96,7 +96,7 @@ export const KeepsEmptySelection: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Next month' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Next' }));
     expect(args.onChange).toHaveBeenCalledWith(null);
   },
 };

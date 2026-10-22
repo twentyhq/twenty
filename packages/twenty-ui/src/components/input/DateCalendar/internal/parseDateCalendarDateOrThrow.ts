@@ -6,7 +6,7 @@ import { DATE_CALENDAR_CONSTANTS } from './dateCalendarConstants';
 const DATE_CALENDAR_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 const DATE_CALENDAR_DATE_STRING_LENGTH = 10;
 
-export const parseDateCalendarDate = (value: string): Date => {
+export const parseDateCalendarDateOrThrow = (value: string): Date => {
   const dateParts = value.match(DATE_CALENDAR_DATE_PATTERN);
 
   if (

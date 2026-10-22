@@ -119,6 +119,7 @@
       "CurrencyPickerRootProps": "components/input/CurrencyPicker/types/CurrencyPickerRootProps",
       "CurrencyPickerState": "components/input/CurrencyPicker/types/CurrencyPickerState",
       "CurrencyPickerTriggerProps": "components/input/CurrencyPicker/types/CurrencyPickerTriggerProps",
+      "DateCalendarHeaderProps": "components/input/DateCalendar/types/DateCalendarHeaderProps",
       "DateCalendarProps": "components/input/DateCalendar/types/DateCalendarProps",
       "FormFieldRowProps": "components/input/FormFieldRow/types/FormFieldRowProps",
       "IconButtonProps": "components/input/IconButton/types/IconButtonProps",

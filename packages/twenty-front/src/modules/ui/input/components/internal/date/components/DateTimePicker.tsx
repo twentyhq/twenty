@@ -1,7 +1,10 @@
 import { doNotTranslate } from 'twenty-shared/i18n';
 import {
+  convertFirstDayOfTheWeekToCalendarStartDayNumber,
   isDefined,
   isSubDayRelativeDateFilterUnit,
+  turnJSDateToPlainDate,
+  turnPlainDateToShiftedDateInSystemTimeZone,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { Temporal } from 'temporal-polyfill';
@@ -9,9 +12,12 @@ import { Temporal } from 'temporal-polyfill';
 import { DatePickerCalendar } from '@/ui/input/components/internal/date/components/DatePickerCalendar';
 import { DatePickerClearButton } from '@/ui/input/components/internal/date/components/DatePickerClearButton';
 import { DateTimePickerHeader } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
+import { DateTimePickerLoadingFallback } from '@/ui/input/components/internal/date/components/DateTimePickerLoadingFallback';
+import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { RelativeDateTimeRangeText } from '@/ui/input/components/internal/date/components/RelativeDateTimeRangeText';
 import { StyledDatePickerContainer } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
+import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 
 type DateTimePickerProps = {
@@ -50,23 +56,28 @@ export const DateTimePicker = ({
   timeZone,
 }: DateTimePickerProps) => {
   const { userTimezone } = useUserTimezone();
+  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
   const resolvedTimeZone = timeZone ?? userTimezone;
-  const dateToUse = (
-    date ?? Temporal.Now.zonedDateTimeISO(resolvedTimeZone)
-  ).withTimeZone(resolvedTimeZone);
-  const today = Temporal.Now.zonedDateTimeISO(resolvedTimeZone)
-    .toPlainDate()
-    .toString();
+  const dateToUse = date ?? Temporal.Now.zonedDateTimeISO(resolvedTimeZone);
+  const { getShiftedDateToSystemTimeZone } =
+    useGetShiftedDateToSystemTimeZone();
+  const selectedCalendarDate = getShiftedDateToSystemTimeZone(
+    new Date(dateToUse.toInstant().toString()),
+    resolvedTimeZone,
+  );
+  const selectedCalendarValue =
+    turnJSDateToPlainDate(selectedCalendarDate).toString();
+  const hasSelectedCalendarTime =
+    selectedCalendarDate.getHours() !== 0 ||
+    selectedCalendarDate.getMinutes() !== 0 ||
+    selectedCalendarDate.getSeconds() !== 0 ||
+    selectedCalendarDate.getMilliseconds() !== 0;
   const relativeUnit = relativeDate?.unit ?? doNotTranslate('DAY');
   const relativeRangeStart = isRelative ? relativeDate?.start : undefined;
   const relativeRangeEnd = isRelative ? relativeDate?.end : undefined;
-  const relativeRangeStartDate = relativeRangeStart
-    ?.withTimeZone(resolvedTimeZone)
-    .toPlainDate()
-    .toString();
+  const relativeRangeStartDate = relativeRangeStart?.toPlainDate().toString();
   const relativeRangeEndDate = relativeRangeEnd
     ?.subtract({ nanoseconds: 1 })
-    .withTimeZone(resolvedTimeZone)
     .toPlainDate()
     .toString();
   const highlightedRange = isDefined(relativeRangeStartDate)
@@ -77,52 +88,87 @@ export const DateTimePicker = ({
     : undefined;
   const isSubDayRelativeUnit =
     isRelative === true && isSubDayRelativeDateFilterUnit(relativeUnit);
+  const getZonedDateTimeFromDatePicked = (datePicked: string) =>
+    Temporal.PlainDate.from(datePicked)
+      .toZonedDateTime(resolvedTimeZone)
+      .with({ hour: dateToUse.hour, minute: dateToUse.minute });
 
-  const handleDateChange = (plainDate: string) => {
-    const selectedDate = Temporal.PlainDate.from(plainDate).toZonedDateTime({
-      timeZone: resolvedTimeZone,
-      plainTime: dateToUse.toPlainTime(),
-    });
+  const handleDateSelect = (datePicked: string) => {
+    const selectedDate = getZonedDateTimeFromDatePicked(datePicked);
+    const isSameCalendarDay = datePicked === selectedCalendarValue;
 
-    onChange?.(selectedDate);
+    if (isSameCalendarDay && hasSelectedCalendarTime) {
+      onChange?.(selectedDate);
+    }
+
     onClose?.(selectedDate);
   };
 
   return (
     <StyledDatePickerContainer>
-      {isRelative ? (
-        <RelativeDatePickerHeader
-          instanceId={instanceId}
-          direction={relativeDate?.direction ?? 'PAST'}
-          amount={relativeDate?.amount}
-          unit={relativeUnit}
-          onChange={onRelativeDateChange}
-          allowIntraDayUnits
-        />
-      ) : (
-        <DateTimePickerHeader
-          date={dateToUse}
-          onChange={onChange}
-          hideInput={hideHeaderInput}
-          timeZone={resolvedTimeZone}
-        />
-      )}
       {isSubDayRelativeUnit ? (
-        isDefined(relativeRangeStart) &&
-        isDefined(relativeRangeEnd) && (
-          <RelativeDateTimeRangeText
-            start={relativeRangeStart.withTimeZone(resolvedTimeZone)}
-            end={relativeRangeEnd.withTimeZone(resolvedTimeZone)}
+        <>
+          <RelativeDatePickerHeader
+            instanceId={instanceId}
+            direction={relativeDate?.direction ?? 'PAST'}
+            amount={relativeDate?.amount}
+            unit={relativeUnit}
+            onChange={onRelativeDateChange}
+            allowIntraDayUnits
           />
-        )
+          {isDefined(relativeRangeStart) && isDefined(relativeRangeEnd) && (
+            <RelativeDateTimeRangeText
+              start={relativeRangeStart}
+              end={relativeRangeEnd}
+            />
+          )}
+        </>
       ) : (
         <DatePickerCalendar
-          instanceId={instanceId}
-          value={isRelative ? null : dateToUse.toPlainDate().toString()}
-          onChange={handleDateChange}
+          loadingFallback={<DateTimePickerLoadingFallback />}
+          value={isRelative ? null : selectedCalendarValue}
+          onChange={(datePicked) =>
+            onChange?.(getZonedDateTimeFromDatePicked(datePicked))
+          }
+          onSelect={handleDateSelect}
           highlightedRange={highlightedRange}
-          readOnly={isRelative === true}
-          today={today}
+          readOnly={isRelative}
+          weekStart={convertFirstDayOfTheWeekToCalendarStartDayNumber(
+            userFirstDayOfTheWeek,
+          )}
+          renderHeader={(header) =>
+            isRelative ? (
+              <RelativeDatePickerHeader
+                instanceId={instanceId}
+                direction={relativeDate?.direction ?? 'PAST'}
+                amount={relativeDate?.amount}
+                unit={relativeUnit}
+                onChange={onRelativeDateChange}
+                allowIntraDayUnits
+                calendarMonthDate={turnPlainDateToShiftedDateInSystemTimeZone(
+                  Temporal.PlainDate.from(`${header.viewedMonth}-01`),
+                )}
+                onPreviousMonth={header.onPreviousMonth}
+                onNextMonth={header.onNextMonth}
+                prevMonthButtonDisabled={header.previousMonthDisabled}
+                nextMonthButtonDisabled={header.nextMonthDisabled}
+              />
+            ) : (
+              <DateTimePickerHeader
+                instanceId={instanceId}
+                date={dateToUse}
+                viewedMonth={header.viewedMonth}
+                onChange={onChange}
+                onAddMonth={header.onNextMonth}
+                onSubtractMonth={header.onPreviousMonth}
+                prevMonthButtonDisabled={header.previousMonthDisabled}
+                nextMonthButtonDisabled={header.nextMonthDisabled}
+                hideInput={hideHeaderInput}
+                onChangeMonth={header.onMonthChange}
+                onChangeYear={header.onYearChange}
+              />
+            )
+          }
         />
       )}
       {clearable && <DatePickerClearButton onClear={onClear} />}

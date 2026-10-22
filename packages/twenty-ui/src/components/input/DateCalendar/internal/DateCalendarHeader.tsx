@@ -1,20 +1,23 @@
 import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { IconChevronLeft, IconChevronRight } from '@ui/icon';
-import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../DateCalendar.module.scss';
 import { type DateCalendarProps } from '../types/DateCalendarProps';
+import { type DateCalendarHeaderProps } from '../types/DateCalendarHeaderProps';
 import { DATE_CALENDAR_CONSTANTS } from './dateCalendarConstants';
 import { DateCalendarSelect } from './DateCalendarSelect';
-import { formatDateCalendarDate } from './formatDateCalendarDate';
-import { parseDateCalendarDate } from './parseDateCalendarDate';
-import { shiftDateCalendarDate } from './shiftDateCalendarDate';
+import { parseDateCalendarDateOrThrow } from './parseDateCalendarDateOrThrow';
 
 const YEAR_WINDOW = 100;
 
 export const DateCalendarHeader = ({
   viewedMonth,
-  onViewedMonthChange,
+  onPreviousMonth,
+  onNextMonth,
+  onMonthChange,
+  onYearChange,
+  previousMonthDisabled,
+  nextMonthDisabled,
   locale,
   previousMonthLabel,
   nextMonthLabel,
@@ -23,20 +26,19 @@ export const DateCalendarHeader = ({
   portalContainer,
   onNavigationOpenChange,
   disabled,
-}: Pick<
-  DateCalendarProps,
-  | 'viewedMonth'
-  | 'onViewedMonthChange'
-  | 'locale'
-  | 'previousMonthLabel'
-  | 'nextMonthLabel'
-  | 'monthLabel'
-  | 'yearLabel'
-  | 'portalContainer'
-  | 'onNavigationOpenChange'
-  | 'disabled'
->) => {
-  const monthDate = parseDateCalendarDate(`${viewedMonth}-01`);
+}: DateCalendarHeaderProps &
+  Pick<
+    DateCalendarProps,
+    | 'locale'
+    | 'previousMonthLabel'
+    | 'nextMonthLabel'
+    | 'monthLabel'
+    | 'yearLabel'
+    | 'portalContainer'
+    | 'onNavigationOpenChange'
+    | 'disabled'
+  >) => {
+  const monthDate = parseDateCalendarDateOrThrow(`${viewedMonth}-01`);
   const year = monthDate.getUTCFullYear();
   const month = monthDate.getUTCMonth() + 1;
   const monthFormatter = new Intl.DateTimeFormat(locale, {
@@ -71,15 +73,6 @@ export const DateCalendarHeader = ({
     years.push({ value: optionYear, label: yearFormatter.format(optionYear) });
   }
 
-  const previousMonth = shiftDateCalendarDate({
-    date: `${viewedMonth}-01`,
-    months: -1,
-  });
-  const nextMonth = shiftDateCalendarDate({
-    date: `${viewedMonth}-01`,
-    months: 1,
-  });
-
   return (
     <div className={styles.header}>
       <div className={styles.monthSelect}>
@@ -92,13 +85,7 @@ export const DateCalendarHeader = ({
           onOpenChange={(open) =>
             onNavigationOpenChange?.({ open, control: 'month' })
           }
-          onValueChange={(nextMonthValue) => {
-            const nextMonthDate = new Date(monthDate);
-            nextMonthDate.setUTCMonth(nextMonthValue - 1);
-            onViewedMonthChange(
-              formatDateCalendarDate(nextMonthDate).slice(0, 7),
-            );
-          }}
+          onValueChange={onMonthChange}
         />
       </div>
       <div className={styles.yearSelect}>
@@ -111,37 +98,23 @@ export const DateCalendarHeader = ({
           onOpenChange={(open) =>
             onNavigationOpenChange?.({ open, control: 'year' })
           }
-          onValueChange={(nextYear) => {
-            const nextMonthDate = new Date(monthDate);
-            nextMonthDate.setUTCFullYear(nextYear);
-            onViewedMonthChange(
-              formatDateCalendarDate(nextMonthDate).slice(0, 7),
-            );
-          }}
+          onValueChange={onYearChange}
         />
       </div>
       <div className={styles.navigation}>
         <LightIconButton
           size="md"
-          disabled={disabled || !isDefined(previousMonth)}
+          disabled={disabled || previousMonthDisabled}
           aria-label={previousMonthLabel}
-          onClick={() => {
-            if (isDefined(previousMonth)) {
-              onViewedMonthChange(previousMonth.slice(0, 7));
-            }
-          }}
+          onClick={onPreviousMonth}
         >
           <IconChevronLeft className={styles.chevron} />
         </LightIconButton>
         <LightIconButton
           size="md"
-          disabled={disabled || !isDefined(nextMonth)}
+          disabled={disabled || nextMonthDisabled}
           aria-label={nextMonthLabel}
-          onClick={() => {
-            if (isDefined(nextMonth)) {
-              onViewedMonthChange(nextMonth.slice(0, 7));
-            }
-          }}
+          onClick={onNextMonth}
         >
           <IconChevronRight className={styles.chevron} />
         </LightIconButton>

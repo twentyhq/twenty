@@ -136,11 +136,16 @@ type Story = StoryObj<typeof DateFieldInputWithContext>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
-    await expect(
-      await canvas.findByRole('combobox', { name: 'Month' }),
-    ).toBeVisible();
-    await expect(canvas.getByRole('grid')).toBeVisible();
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Select month and year' }),
+    );
+    const panel = await body.findByRole('dialog', {
+      name: 'Select month and year',
+    });
+    await expect(within(panel).getByText('January')).toBeVisible();
+    await expect(canvas.getAllByRole('gridcell').length).toBeGreaterThan(0);
   },
 };
 
@@ -151,16 +156,18 @@ export const ClickOutside: Story = {
 
     await expect(handleClickoutsideMocked).not.toHaveBeenCalled();
     await userEvent.click(
-      await canvas.findByRole('combobox', { name: 'Month' }),
+      await canvas.findByRole('button', { name: 'Select month and year' }),
     );
-    await body.findByRole('listbox');
+    await body.findByRole('dialog', { name: 'Select month and year' });
 
     const outsideButton = canvas.getByRole('button', {
       name: 'Outside date field',
     });
     await userEvent.click(outsideButton);
     await waitFor(() =>
-      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+      expect(
+        body.queryByRole('dialog', { name: 'Select month and year' }),
+      ).not.toBeInTheDocument(),
     );
     await expect(handleClickoutsideMocked).not.toHaveBeenCalled();
     await userEvent.click(outsideButton);
@@ -176,12 +183,14 @@ export const Escape: Story = {
 
     await expect(handleEscapeMocked).not.toHaveBeenCalled();
     await userEvent.click(
-      await canvas.findByRole('combobox', { name: 'Month' }),
+      await canvas.findByRole('button', { name: 'Select month and year' }),
     );
-    await body.findByRole('listbox');
+    await body.findByRole('dialog', { name: 'Select month and year' });
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
-      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+      expect(
+        body.queryByRole('dialog', { name: 'Select month and year' }),
+      ).not.toBeInTheDocument(),
     );
     await expect(handleEscapeMocked).not.toHaveBeenCalled();
     await userEvent.keyboard('{Escape}');
@@ -197,12 +206,14 @@ export const Enter: Story = {
 
     await expect(handleEnterMocked).not.toHaveBeenCalled();
     await userEvent.click(
-      await canvas.findByRole('combobox', { name: 'Month' }),
+      await canvas.findByRole('button', { name: 'Select month and year' }),
     );
-    await body.findByRole('listbox');
+    await body.findByRole('dialog', { name: 'Select month and year' });
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
-      expect(body.queryByRole('listbox')).not.toBeInTheDocument(),
+      expect(
+        body.queryByRole('dialog', { name: 'Select month and year' }),
+      ).not.toBeInTheDocument(),
     );
     await expect(handleEnterMocked).not.toHaveBeenCalled();
     await userEvent.click(canvas.getByRole('textbox', { name: 'Time' }));
@@ -215,21 +226,28 @@ export const Enter: Story = {
 export const CalendarNavigationDoesNotSubmit: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const dateInput = await canvas.findByRole('textbox', {
+    const nextMonth = await canvas.findByRole('button', { name: 'Next' });
+    const dateInput = canvas.getByRole<HTMLInputElement>('textbox', {
       name: 'Date and time',
     });
-    const initialValue = (dateInput as HTMLInputElement).value;
-    const monthSelect = canvas.getByRole('combobox', { name: 'Month' });
-    const initialMonth = monthSelect.innerText;
-    const nextMonth = canvas.getByRole('button', { name: 'Next month' });
+    const initialValue = dateInput.value;
+    const initialMonth =
+      canvas
+        .getByRole('rowgroup', { name: /^Month / })
+        .getAttribute('aria-label') ?? '';
 
     nextMonth.focus();
     await userEvent.keyboard('{Enter}');
     await expect(handleEnterMocked).not.toHaveBeenCalled();
     await expect(dateInput).toHaveValue(initialValue);
-    canvas.getByRole('button', { name: 'Previous month' }).focus();
+    await expect(
+      canvas.getByRole('rowgroup', { name: /^Month / }),
+    ).not.toHaveAttribute('aria-label', initialMonth);
+    canvas.getByRole('button', { name: 'Previous' }).focus();
     await userEvent.keyboard('{Enter}');
-    await expect(monthSelect).toHaveTextContent(initialMonth);
+    await expect(
+      canvas.getByRole('rowgroup', { name: initialMonth }),
+    ).toBeVisible();
     await expect(dateInput).toHaveValue(initialValue);
     await expect(handleEnterMocked).not.toHaveBeenCalled();
   },

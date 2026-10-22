@@ -7,24 +7,24 @@ import { type DateCalendarProps } from '../types/DateCalendarProps';
 export const DateCalendarExample = ({
   initialValue = '2026-10-07',
   initialViewedMonth = '2026-10',
-  today = '2026-10-22',
   highlightedRange,
   readOnly,
   hideGrid,
   disabled,
   isDateUnavailable,
   onValueChange,
+  onValueSelect,
   onViewedMonthChange,
 }: Partial<
   Pick<
     DateCalendarProps,
-    | 'today'
     | 'highlightedRange'
     | 'readOnly'
     | 'hideGrid'
     | 'disabled'
     | 'isDateUnavailable'
     | 'onValueChange'
+    | 'onValueSelect'
     | 'onViewedMonthChange'
   >
 > & {
@@ -42,12 +42,12 @@ export const DateCalendarExample = ({
         setValue(date);
         onValueChange?.(date);
       }}
+      onValueSelect={onValueSelect}
       viewedMonth={viewedMonth}
       onViewedMonthChange={(month) => {
         setViewedMonth(month);
         onViewedMonthChange?.(month);
       }}
-      today={today}
       highlightedRange={highlightedRange}
       readOnly={readOnly}
       hideGrid={hideGrid}

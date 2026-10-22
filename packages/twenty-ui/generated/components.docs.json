@@ -14947,91 +14947,112 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Disables date selection and all header controls."
+        "description": "Disables date selection and the default header controls."
+      },
+      {
+        "name": "disabledKeyboardNavigation",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables keyboard date navigation in the calendar engine for compatibility with existing input wrappers. Header controls retain their native keyboard behavior."
       },
       {
         "name": "hideGrid",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Hides weekday and date rows while retaining the shared month and year controls for a month-only navigator."
+        "description": "Hides weekday and date rows while retaining the header for a month-only navigator."
       },
       {
         "name": "highlightedRange",
         "type": "{ start: string; end: string; }",
         "required": false,
         "defaultValue": null,
-        "description": "Inclusive YYYY-MM-DD start and end dates to highlight. This is presentation only; the application owns range computation and the selected date remains independent."
+        "description": "Inclusive YYYY-MM-DD start and end dates to highlight. The application computes the range independently from the selected date."
       },
       {
         "name": "isDateUnavailable",
         "type": "((date: string) => boolean)",
         "required": false,
         "defaultValue": null,
-        "description": "Returns whether a canonical YYYY-MM-DD date cannot be selected. Unavailable dates remain discoverable with arrow keys."
+        "description": "Returns whether a canonical YYYY-MM-DD date cannot be selected. The calendar engine handles unavailable-date presentation and navigation."
+      },
+      {
+        "name": "loadingFallback",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": "300px-high Skeleton",
+        "description": "Custom Suspense fallback while the calendar engine loads. Defaults to a 300px-high Skeleton."
       },
       {
         "name": "locale",
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Locale used for month names, weekday labels, full date labels, and number formatting. Date arithmetic remains Gregorian and formatting uses UTC."
+        "description": "Locale for the default month/year header and custom weekday titles. Engine day labels retain their existing locale behavior; values remain Gregorian date-only strings."
       },
       {
         "name": "monthLabel",
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Accessible name of the month selector."
+        "description": "Accessible name of the default month selector."
       },
       {
         "name": "nextMonthLabel",
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Accessible name of the next-month button."
+        "description": "Accessible name of the default next-month button."
       },
       {
         "name": "onNavigationOpenChange",
         "type": "((args: { open: boolean; control: \"month\" | \"year\"; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Reports { open, control } when a month or year popup starts opening and after it finishes closing. The host can retain nested-popup focus and dismissal handling until closure completes. Header arrow actions do not call this callback."
+        "description": "Reports { open, control } when a default month or year popup starts opening and after it finishes closing. Header arrow actions do not call this callback."
       },
       {
         "name": "onValueChange",
         "type": "(date: string) => void",
         "required": true,
         "defaultValue": null,
-        "description": "Requests an available date after a click, Enter, or Space. Navigation and prop changes do not select a date."
+        "description": "Called when choosing an available day changes the selected date. Month and year browsing does not select another date."
+      },
+      {
+        "name": "onValueSelect",
+        "type": "((date: string) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the selected YYYY-MM-DD date after choosing an available day, including the already-selected day. Use it to commit or close a product picker."
       },
       {
         "name": "onViewedMonthChange",
         "type": "(month: string) => void",
         "required": true,
         "defaultValue": null,
-        "description": "Requests the month shown by the header controls or keyboard navigation across a month boundary. Does not change the selected date."
+        "description": "Requests the month shown by calendar navigation without changing the selected date."
       },
       {
         "name": "portalContainer",
         "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
         "required": false,
         "defaultValue": null,
-        "description": "Mount container for month and year selector popups. Accepts the shared Select portal container contract; the calendar root stays in its original location."
+        "description": "Mount container for the default month and year selector popups. Accepts the shared Select portal container contract."
       },
       {
         "name": "previousMonthLabel",
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Accessible name of the previous-month button."
+        "description": "Accessible name of the default previous-month button."
       },
       {
         "name": "readOnly",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Prevents date selection while preserving header controls, keyboard navigation, and the displayed selection or range."
+        "description": "Prevents date selection while allowing month and year browsing and displaying the selected date or highlighted range."
       },
       {
         "name": "ref",
@@ -15048,6 +15069,13 @@
         "description": "Composes the root element while preserving its props and contents."
       },
       {
+        "name": "renderHeader",
+        "type": "((props: DateCalendarHeaderProps) => ReactNode)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Renders a product header with the viewed month, previous/next actions, month numbers from 1 through 12, year change actions, and navigation-disabled states. Header actions only browse months."
+      },
+      {
         "name": "role",
         "type": "AriaRole",
         "required": false,
@@ -15060,13 +15088,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Inline styles applied to the root element."
-      },
-      {
-        "name": "today",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Caller-supplied YYYY-MM-DD date marked as today with aria-current. Resolve the product timezone before passing this value."
       },
       {
         "name": "value",
@@ -15087,7 +15108,7 @@
         "type": "readonly [string, string, string, string, string, string, string]",
         "required": false,
         "defaultValue": null,
-        "description": "Optional short weekday labels in Sunday-first order. Defaults to locale-formatted short labels. Accessible weekday names always use full locale-formatted names."
+        "description": "Optional short weekday labels in Sunday-first order. The calendar engine supplies weekday names when omitted."
       },
       {
         "name": "weekStart",
@@ -15101,7 +15122,7 @@
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Accessible name of the year selector."
+        "description": "Accessible name of the default year selector."
       }
     ]
   },

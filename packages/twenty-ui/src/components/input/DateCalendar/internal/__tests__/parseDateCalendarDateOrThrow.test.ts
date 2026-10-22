@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseDateCalendarDate } from '../parseDateCalendarDate';
+import { parseDateCalendarDateOrThrow } from '../parseDateCalendarDateOrThrow';
 
-describe('parseDateCalendarDate', () => {
+describe('parseDateCalendarDateOrThrow', () => {
   it.each(['0001-01-01', '0051-06-15', '2000-02-29', '9999-12-31'])(
     'parses %s as UTC midnight, including years below 100',
     (value) => {
-      expect(parseDateCalendarDate(value).toISOString()).toBe(
+      expect(parseDateCalendarDateOrThrow(value).toISOString()).toBe(
         `${value}T00:00:00.000Z`,
       );
     },
@@ -23,6 +23,6 @@ describe('parseDateCalendarDate', () => {
     '0000-01-01',
     '10000-01-01',
   ])('rejects the invalid or noncanonical date %s', (value) => {
-    expect(() => parseDateCalendarDate(value)).toThrow(RangeError);
+    expect(() => parseDateCalendarDateOrThrow(value)).toThrow(RangeError);
   });
 });

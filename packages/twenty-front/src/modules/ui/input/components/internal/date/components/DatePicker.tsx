@@ -1,12 +1,17 @@
 import { DatePickerCalendar } from '@/ui/input/components/internal/date/components/DatePickerCalendar';
+import { DatePickerLoadingFallback } from '@/ui/input/components/internal/date/components/DatePickerLoadingFallback';
 import { DatePickerClearButton } from '@/ui/input/components/internal/date/components/DatePickerClearButton';
-import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
+import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { StyledDatePickerContainer } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
+import {
+  isDefined,
+  turnPlainDateToShiftedDateInSystemTimeZone,
+  type RelativeDateFilter,
+} from 'twenty-shared/utils';
 
 type DatePickerProps = {
   instanceId: string;
@@ -37,12 +42,14 @@ export const DatePicker = ({
   onClose,
   clearable = true,
   onClear,
-  isRelative = false,
+  isRelative,
   relativeDate,
   onRelativeDateChange,
   hideHeaderInput,
-  hideCalendar,
 }: DatePickerProps) => {
+  const plainDate = isDefined(plainDateString)
+    ? Temporal.PlainDate.from(plainDateString)
+    : Temporal.Now.plainDateISO();
   const highlightedRange =
     isRelative && isDefined(relativeDate)
       ? {
@@ -55,29 +62,45 @@ export const DatePicker = ({
 
   return (
     <StyledDatePickerContainer>
-      {isRelative ? (
-        <RelativeDatePickerHeader
-          instanceId={instanceId}
-          direction={relativeDate?.direction ?? 'PAST'}
-          amount={relativeDate?.amount}
-          unit={relativeDate?.unit ?? doNotTranslate('DAY')}
-          onChange={onRelativeDateChange}
-        />
-      ) : (
-        !hideHeaderInput && (
-          <DatePickerInput date={plainDateString ?? null} onChange={onChange} />
-        )
-      )}
       <DatePickerCalendar
-        instanceId={instanceId}
-        value={isRelative ? null : (plainDateString ?? null)}
-        onChange={(date) => {
-          onChange?.(date);
-          onClose?.(date);
-        }}
+        loadingFallback={<DatePickerLoadingFallback />}
+        value={isRelative ? null : plainDate.toString()}
+        onChange={onChange}
+        onSelect={onClose}
         highlightedRange={highlightedRange}
         readOnly={isRelative}
-        hideGrid={hideCalendar}
+        renderHeader={(header) =>
+          isRelative ? (
+            <RelativeDatePickerHeader
+              instanceId={instanceId}
+              direction={relativeDate?.direction ?? 'PAST'}
+              amount={relativeDate?.amount}
+              unit={relativeDate?.unit ?? doNotTranslate('DAY')}
+              onChange={onRelativeDateChange}
+              calendarMonthDate={turnPlainDateToShiftedDateInSystemTimeZone(
+                Temporal.PlainDate.from(`${header.viewedMonth}-01`),
+              )}
+              onPreviousMonth={header.onPreviousMonth}
+              onNextMonth={header.onNextMonth}
+              prevMonthButtonDisabled={header.previousMonthDisabled}
+              nextMonthButtonDisabled={header.nextMonthDisabled}
+            />
+          ) : (
+            <DatePickerHeader
+              instanceId={instanceId}
+              date={plainDate.toString()}
+              viewedMonth={header.viewedMonth}
+              onChange={onChange}
+              onChangeMonth={header.onMonthChange}
+              onChangeYear={header.onYearChange}
+              onAddMonth={header.onNextMonth}
+              onSubtractMonth={header.onPreviousMonth}
+              prevMonthButtonDisabled={header.previousMonthDisabled}
+              nextMonthButtonDisabled={header.nextMonthDisabled}
+              hideInput={hideHeaderInput}
+            />
+          )
+        }
       />
       {clearable && <DatePickerClearButton onClear={onClear} />}
     </StyledDatePickerContainer>

@@ -32,8 +32,14 @@ export const Default: Story = {
 
     await userEvent.click(await canvas.findByText(/2023/));
 
-    expect(await body.findByRole('combobox', { name: 'Month' })).toBeVisible();
-    expect(body.getByRole('grid', { name: 'January 2023' })).toBeVisible();
+    expect(
+      await body.findByRole('button', { name: 'Select month and year' }),
+    ).toBeVisible();
+    expect(
+      await body.findByRole('gridcell', {
+        name: /^Choose Sunday, January 15/,
+      }),
+    ).toBeVisible();
   },
 };
 
@@ -41,18 +47,28 @@ export const ChangingMonthKeepsPickerOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
+    const displayedDate = await canvas.findByText(/2023/);
+    const initialDateText = displayedDate.textContent ?? '';
 
-    await userEvent.click(await canvas.findByText(/2023/));
-
-    const monthSelect = await body.findByRole('combobox', { name: 'Month' });
-    await userEvent.click(monthSelect);
+    await userEvent.click(displayedDate);
+    const calendarButton = await body.findByRole('button', {
+      name: 'Select month and year',
+    });
+    await userEvent.click(calendarButton);
+    const panel = within(
+      await body.findByRole('dialog', { name: 'Select month and year' }),
+    );
+    await userEvent.click(panel.getByText('January'));
 
     const options = within(await body.findByRole('listbox'));
-    expect(monthSelect).toBeVisible();
     await userEvent.click(options.getByRole('option', { name: 'February' }));
 
-    expect(monthSelect).toBeVisible();
-    expect(monthSelect).toHaveTextContent('February');
-    expect(body.getByRole('grid', { name: 'February 2023' })).toBeVisible();
+    expect(calendarButton).toBeVisible();
+    expect(
+      await body.findByRole('gridcell', {
+        name: /^Choose Wednesday, February 15/,
+      }),
+    ).toBeVisible();
+    expect(displayedDate).toHaveTextContent(initialDateText);
   },
 };

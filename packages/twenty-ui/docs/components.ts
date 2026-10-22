@@ -1047,6 +1047,8 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'components/input/date-calendar',
     propDescriptions: DATE_CALENDAR_PROP_DESCRIPTIONS,
     propDefaults: {
+      disabledKeyboardNavigation: 'false',
+      loadingFallback: '300px-high Skeleton',
       disabled: 'false',
       readOnly: 'false',
       hideGrid: 'false',

@@ -1,12 +1,37 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { IconCalendarX } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { Text } from 'twenty-ui/primitives/typography';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-const StyledContainer = styled.div`
-  border-top: 1px solid ${themeCssVariables.border.color.light};
+const StyledSeparator = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  width: 100%;
+`;
+
+const StyledButtonContainer = styled.div`
+  align-items: center;
+  border-radius: calc(
+    ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
+  );
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 32px;
+  margin: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[1]};
+  width: auto;
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.light};
+  }
+`;
+
+const StyledButtonContent = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: start;
 `;
 
 type DatePickerClearButtonProps = {
@@ -15,14 +40,18 @@ type DatePickerClearButtonProps = {
 
 export const DatePickerClearButton = ({
   onClear,
-}: DatePickerClearButtonProps) => (
-  <StyledContainer>
-    <ListItem
-      render={<button type="button" />}
-      startIcon={<IconCalendarX />}
-      onClick={onClear}
-    >
-      {t`Clear`}
-    </ListItem>
-  </StyledContainer>
-);
+}: DatePickerClearButtonProps) => {
+  const theme = useTheme();
+
+  return (
+    <>
+      <StyledSeparator />
+      <StyledButtonContainer onClick={() => onClear?.()}>
+        <StyledButtonContent>
+          <IconCalendarX size={theme.icon.size.md} />
+          <Text>{t`Clear`}</Text>
+        </StyledButtonContent>
+      </StyledButtonContainer>
+    </>
+  );
+};

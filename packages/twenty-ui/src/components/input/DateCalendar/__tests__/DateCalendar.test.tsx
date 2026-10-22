@@ -13,7 +13,6 @@ runComponentConformance({
       onValueChange={vi.fn()}
       viewedMonth="2026-10"
       onViewedMonthChange={vi.fn()}
-      today="2026-10-22"
       weekStart={1}
       locale="en-US"
       previousMonthLabel="Previous month"
