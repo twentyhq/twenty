@@ -5,7 +5,7 @@ import { type ParsedLogLine } from 'src/engine/core-modules/event-logs/producers
 import { type LogicFunctionExecuteError } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 const getStackTraceLines = (
-  stackTrace: LogicFunctionExecuteError['stackTrace'] | undefined,
+  stackTrace?: LogicFunctionExecuteError['stackTrace'],
 ): string[] => {
   if (Array.isArray(stackTrace)) {
     return stackTrace;
@@ -15,7 +15,8 @@ const getStackTraceLines = (
 };
 
 export const buildLogicFunctionErrorLogLine = (
-  error: LogicFunctionExecuteError,
+  error: Pick<LogicFunctionExecuteError, 'errorType' | 'errorMessage'> &
+    Partial<Pick<LogicFunctionExecuteError, 'stackTrace'>>,
 ): ParsedLogLine & Pick<ApplicationLogEntry, 'errorCode' | 'properties'> => ({
   timestamp: new Date(),
   level: 'ERROR',

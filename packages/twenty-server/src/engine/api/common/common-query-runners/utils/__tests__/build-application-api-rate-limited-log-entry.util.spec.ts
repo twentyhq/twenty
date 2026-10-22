@@ -1,23 +1,20 @@
 import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-entry.util';
-import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const authContext = {
-  type: 'application',
   workspace: { id: 'workspace-1' },
   application: {
     id: 'application-1',
     applicationRegistrationId: 'registration-1',
     version: '1.2.3',
   },
-} as unknown as ApplicationWorkspaceAuthContext;
+};
 
 const exhaustedScope = {
   limitValue: 500,
   unit: UsageUnit.COMPLEXITY,
   retryAfterMs: 1200,
-} as ExhaustedScope;
+};
 
 describe('buildApplicationApiRateLimitedLogEntry', () => {
   it('records the throttled app as a warning with the limit it hit', () => {

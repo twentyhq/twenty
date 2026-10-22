@@ -1,4 +1,3 @@
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildApplicationJobThrottledLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-throttled-log-entry.util';
 
 describe('buildApplicationJobThrottledLogEntry', () => {
@@ -10,7 +9,7 @@ describe('buildApplicationJobThrottledLogEntry', () => {
           id: 'application-1',
           applicationRegistrationId: 'registration-1',
           version: '1.2.3',
-        } as FlatApplication,
+        },
         skippedJobCount: 3,
       }),
     ).toMatchObject({
