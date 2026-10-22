@@ -52,6 +52,7 @@
     "CodeEditor",
     "CodeEditorHeader",
     "CommandBlock",
+    "CountPager",
     "CountrySelect",
     "CurrencyPicker",
     "DetailsRow",

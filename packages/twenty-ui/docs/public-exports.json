@@ -155,6 +155,7 @@
   "components/navigation": {
     "reExports": [],
     "values": {
+      "CountPager": "components/navigation/CountPager/CountPager",
       "DEFAULT_COLOR_LABELS": "components/navigation/MenuItem/constants/DefaultColorLabels",
       "Dropdown": "components/navigation/Dropdown/Dropdown",
       "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
@@ -163,6 +164,7 @@
     },
     "types": {
       "ColorLabels": "components/navigation/MenuItem/types/ColorLabels",
+      "CountPagerProps": "components/navigation/CountPager/types/CountPagerProps",
       "DropdownActionItemProps": "components/navigation/Dropdown/types/DropdownActionItemProps",
       "DropdownCloseProps": "components/navigation/Dropdown/types/DropdownCloseProps",
       "DropdownContentProps": "components/navigation/Dropdown/types/DropdownContentProps",

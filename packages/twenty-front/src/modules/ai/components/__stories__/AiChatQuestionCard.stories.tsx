@@ -124,6 +124,37 @@ export const SingleQuestion: Story = {
 
 export const MultipleQuestions: Story = {
   args: { pendingQuestion: multipleQuestions },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const previous = await canvas.findByRole('button', { name: 'Previous' });
+    const next = canvas.getByRole('button', { name: 'Next question' });
+
+    expect(previous).toBeDisabled();
+    expect(canvas.getByText('1/2')).toBeVisible();
+    await userEvent.type(
+      canvas.getByPlaceholderText('Type your own answer here'),
+      'Welcome email draft',
+    );
+    await userEvent.click(next);
+
+    expect(canvas.getByText(TONE_QUESTION.question)).toBeVisible();
+    expect(canvas.getByText('2/2')).toBeVisible();
+    expect(next).toBeDisabled();
+    await userEvent.type(
+      canvas.getByPlaceholderText('Type your own answer here'),
+      'Friendly tone draft',
+    );
+    await userEvent.click(previous);
+
+    expect(canvas.getByText(EMAIL_TYPE_QUESTION.question)).toBeVisible();
+    expect(
+      canvas.getByPlaceholderText('Type your own answer here'),
+    ).toHaveValue('Welcome email draft');
+    await userEvent.click(next);
+    expect(
+      canvas.getByPlaceholderText('Type your own answer here'),
+    ).toHaveValue('Friendly tone draft');
+  },
 };
 
 export const LongQuestion: Story = {
