@@ -2,5 +2,5 @@ import { getMessageDescriptorSource } from '@/platform/i18n/get-message-descript
 
 import { type PlanFeature } from './plans-data';
 
-export const getPlanFeatureKey = (feature: PlanFeature) =>
-  `${getMessageDescriptorSource(feature.title)}|${getMessageDescriptorSource(feature.description)}`;
+export const getPlanFeatureKey = (feature: PlanFeature, featureIndex: number) =>
+  `${featureIndex}|${getMessageDescriptorSource(feature.title)}|${getMessageDescriptorSource(feature.description)}`;
