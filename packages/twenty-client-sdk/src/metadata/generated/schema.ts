@@ -3028,6 +3028,7 @@ export interface ResendEmailVerificationToken {
 }
 
 export interface RichTextBody {
+    /** @deprecated Use markdown or tiptap instead. This value is cleared whenever the field is written in another format. */
     blocknote?: Scalars['String']
     markdown?: Scalars['String']
     tiptap?: Scalars['String']
@@ -7371,6 +7372,7 @@ export interface ResendEmailVerificationTokenGenqlSelection{
 export interface RevokeApiKeyInput {id: Scalars['UUID']}
 
 export interface RichTextBodyGenqlSelection{
+    /** @deprecated Use markdown or tiptap instead. This value is cleared whenever the field is written in another format. */
     blocknote?: boolean | number
     markdown?: boolean | number
     tiptap?: boolean | number

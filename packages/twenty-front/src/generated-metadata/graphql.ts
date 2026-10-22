@@ -6228,6 +6228,7 @@ export type RevokeApiKeyInput = {
 
 export type RichTextBody = {
   __typename?: 'RichTextBody';
+  /** @deprecated Use markdown or tiptap instead. This value is cleared whenever the field is written in another format. */
   blocknote?: Maybe<Scalars['String']['output']>;
   markdown?: Maybe<Scalars['String']['output']>;
   tiptap?: Maybe<Scalars['String']['output']>;
