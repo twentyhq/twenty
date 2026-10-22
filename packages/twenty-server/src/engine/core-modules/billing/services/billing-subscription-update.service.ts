@@ -19,7 +19,6 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
-import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -37,7 +36,6 @@ import {
   type SubscriptionUpdate,
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
-import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
 import { computeImmediateSubscriptionUpdate } from 'src/engine/core-modules/billing/utils/compute-immediate-subscription-update.util';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
@@ -57,7 +55,6 @@ import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/ut
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -83,7 +80,6 @@ export class BillingSubscriptionUpdateService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async changeResourceCreditPrice(
@@ -243,25 +239,6 @@ export class BillingSubscriptionUpdateService {
   }
 
   async scheduleReverseTrialDowngrade(
-    stripeSubscription: Pick<Stripe.Subscription, 'id' | 'customer'>,
-  ): Promise<void> {
-    if (
-      !isDefined(
-        getReverseTrialPlanKeys(this.twentyConfigService.get('BILLING_PLANS')),
-      )
-    ) {
-      return;
-    }
-
-    await this.cacheLockService.withLock(
-      () =>
-        this.scheduleReverseTrialDowngradeWithoutLock(stripeSubscription.id),
-      buildBillingSubscriptionStateLockKey(String(stripeSubscription.customer)),
-      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
-    );
-  }
-
-  async scheduleReverseTrialDowngradeWithoutLock(
     stripeSubscriptionId: string,
   ): Promise<void> {
     const reverseTrialPlanKeys = getReverseTrialPlanKeys(
@@ -272,15 +249,25 @@ export class BillingSubscriptionUpdateService {
       return;
     }
 
-    const { subscription, nextPhase } =
+    const { subscription, schedule, currentPhase, nextPhase } =
       await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
         stripeSubscriptionId,
       );
 
     if (
       subscription.status !== 'trialing' ||
-      !isDefined(subscription.trial_end) ||
-      isDefined(nextPhase)
+      !isDefined(subscription.trial_end)
+    ) {
+      return;
+    }
+
+    if (
+      isDefined(currentPhase) &&
+      isDefined(nextPhase) &&
+      !isSamePhaseSignature(
+        toPhaseUpdateParams(currentPhase),
+        toPhaseUpdateParams(nextPhase),
+      )
     ) {
       return;
     }
@@ -304,6 +291,23 @@ export class BillingSubscriptionUpdateService {
       },
       currentPrices,
     );
+
+    if (
+      isDefined(schedule) &&
+      isDefined(currentPhase) &&
+      isDefined(nextPhase)
+    ) {
+      await this.runSubscriptionScheduleUpdate({
+        stripeScheduleId: schedule.id,
+        toUpdateNextPrices,
+        toUpdateCurrentPrices: undefined,
+        currentPhase: toPhaseUpdateParams(currentPhase),
+        nextPhase: toPhaseUpdateParams(nextPhase),
+        subscriptionCurrentPeriodEnd: subscription.trial_end,
+      });
+
+      return;
+    }
 
     await this.createScheduleWithNextPhase({
       stripeSubscriptionId,

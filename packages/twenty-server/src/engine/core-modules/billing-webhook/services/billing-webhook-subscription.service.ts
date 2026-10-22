@@ -282,7 +282,7 @@ export class BillingWebhookSubscriptionService {
     }
 
     if (type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED) {
-      await this.billingSubscriptionUpdateService.scheduleReverseTrialDowngradeWithoutLock(
+      await this.billingSubscriptionUpdateService.scheduleReverseTrialDowngrade(
         data.object.id,
       );
     }

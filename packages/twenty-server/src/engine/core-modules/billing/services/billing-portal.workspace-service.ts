@@ -130,7 +130,7 @@ export class BillingPortalWorkspaceService {
       });
 
     await this.billingSubscriptionUpdateService.scheduleReverseTrialDowngrade(
-      stripeSubscription,
+      stripeSubscription.id,
     );
 
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
@@ -180,7 +180,7 @@ export class BillingPortalWorkspaceService {
       );
 
     await this.billingSubscriptionUpdateService.scheduleReverseTrialDowngrade(
-      stripeSubscription,
+      stripeSubscription.id,
     );
 
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
@@ -267,7 +267,7 @@ export class BillingPortalWorkspaceService {
 
     if (isDefined(paymentIntent)) {
       await this.billingSubscriptionUpdateService.scheduleReverseTrialDowngrade(
-        stripeSubscription,
+        stripeSubscription.id,
       );
 
       return paymentIntent;
