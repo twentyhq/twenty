@@ -60,6 +60,7 @@ export const FIND_ADMIN_APPLICATION_REGISTRATION_MONITORING = gql`
       workspaces {
         workspaceId
         workspaceName
+        workspaceLogoUrl
         applicationVersion
         runCount
         failedRunCount

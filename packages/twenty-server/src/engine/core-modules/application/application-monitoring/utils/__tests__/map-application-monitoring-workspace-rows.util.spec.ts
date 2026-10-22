@@ -1,7 +1,7 @@
 import { mapApplicationMonitoringWorkspaceRows } from 'src/engine/core-modules/application/application-monitoring/utils/map-application-monitoring-workspace-rows.util';
 
 describe('mapApplicationMonitoringWorkspaceRows', () => {
-  it('names each workspace and converts ClickHouse values', () => {
+  it('names each workspace with its logo and converts ClickHouse values', () => {
     expect(
       mapApplicationMonitoringWorkspaceRows({
         rows: [
@@ -22,12 +22,19 @@ describe('mapApplicationMonitoringWorkspaceRows', () => {
             lastEventAt: '2026-10-01 10:00:00',
           },
         ],
-        workspaceNameById: new Map([['workspace-1', 'Acme Corp']]),
+        workspaces: [
+          {
+            workspaceId: 'workspace-1',
+            workspaceName: 'Acme Corp',
+            workspaceLogoUrl: 'https://files.example.com/acme-logo.png',
+          },
+        ],
       }),
     ).toEqual([
       {
         workspaceId: 'workspace-1',
         workspaceName: 'Acme Corp',
+        workspaceLogoUrl: 'https://files.example.com/acme-logo.png',
         applicationVersion: '1.2.3',
         runCount: 1240,
         failedRunCount: 49,
@@ -37,6 +44,7 @@ describe('mapApplicationMonitoringWorkspaceRows', () => {
       {
         workspaceId: 'deleted-workspace',
         workspaceName: null,
+        workspaceLogoUrl: null,
         applicationVersion: '1.2.2',
         runCount: 3,
         failedRunCount: 0,

@@ -26,6 +26,7 @@ import {
   resolveApplicationMonitoringPeriod,
 } from 'src/engine/core-modules/application/application-monitoring/utils/resolve-application-monitoring-period.util';
 import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type ApplicationMonitoringQueryParams = {
@@ -48,6 +49,7 @@ export class ApplicationMonitoringService {
   constructor(
     private readonly clickHouseService: ClickHouseService,
     private readonly eventLogRetentionService: EventLogRetentionService,
+    private readonly fileUrlService: FileUrlService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -87,7 +89,7 @@ export class ApplicationMonitoringService {
 
     const workspaces = await this.workspaceRepository.find({
       where: { id: In(workspaceRows.map((row) => row.workspaceId)) },
-      select: ['id', 'displayName'],
+      select: ['id', 'displayName', 'logoFileId'],
       withDeleted: true,
     });
 
@@ -98,11 +100,13 @@ export class ApplicationMonitoringService {
       ),
       workspaces: mapApplicationMonitoringWorkspaceRows({
         rows: workspaceRows,
-        workspaceNameById: new Map(
-          workspaces.map((workspace) => [
-            workspace.id,
-            workspace.displayName ?? null,
-          ]),
+        workspaces: await Promise.all(
+          workspaces.map(async (workspace) => ({
+            workspaceId: workspace.id,
+            workspaceName: workspace.displayName ?? null,
+            workspaceLogoUrl:
+              await this.fileUrlService.signWorkspaceLogoUrl(workspace),
+          })),
         ),
       }),
     };

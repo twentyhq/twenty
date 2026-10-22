@@ -10,6 +10,9 @@ export class ApplicationMonitoringWorkspaceDTO {
   @Field(() => String, { nullable: true })
   workspaceName: string | null;
 
+  @Field(() => String, { nullable: true })
+  workspaceLogoUrl: string | null;
+
   @Field(() => String)
   applicationVersion: string;
 
