@@ -228,6 +228,7 @@ export const SidePanelTopBar = ({
           <>
             <Input
               variant="plain"
+              hasFocusRing={false}
               size="sm"
               aria-label={t`Search`}
               data-testid={SIDE_PANEL_FOCUS_ID}
