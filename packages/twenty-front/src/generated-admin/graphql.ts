@@ -344,6 +344,7 @@ export type ApplicationMonitoringWorkspace = {
   rateLimitEventCount: Scalars['Int']['output'];
   runCount: Scalars['Int']['output'];
   workspaceId: Scalars['String']['output'];
+  workspaceLogoUrl?: Maybe<Scalars['String']['output']>;
   workspaceName?: Maybe<Scalars['String']['output']>;
 };
 
