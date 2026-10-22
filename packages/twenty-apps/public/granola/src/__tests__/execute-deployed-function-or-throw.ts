@@ -5,10 +5,15 @@ import {
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
-export const executeDeployedFunction = async (
-  functionName: string,
-  payload: Record<string, unknown>,
-): Promise<Omit<MetadataSchema.LogicFunctionExecutionResult, '__typename'>> => {
+export const executeDeployedFunctionOrThrow = async ({
+  functionName,
+  payload,
+}: {
+  functionName: string;
+  payload: Record<string, unknown>;
+}): Promise<
+  Omit<MetadataSchema.LogicFunctionExecutionResult, '__typename'>
+> => {
   const client = new MetadataApiClient();
   const {
     findOneApplication: application,

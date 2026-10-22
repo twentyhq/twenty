@@ -1,6 +1,6 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { executeDeployedFunction } from './execute-deployed-function';
-import { readManifestLogicFunctionNames } from './read-manifest-logic-function-names';
+import { executeDeployedFunctionOrThrow } from './execute-deployed-function-or-throw';
+import { readManifestLogicFunctionNamesOrThrow } from './read-manifest-logic-function-names-or-throw';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { buildSlackAppMentionEventBody } from 'src/__tests__/utils/build-slack-app-mention-event-body.util';
@@ -49,11 +49,14 @@ describe('Slack app deployed functions', () => {
   };
 
   const verifiesTestWebhookSecret = async (): Promise<boolean> => {
-    const execution = await executeDeployedFunction('slack-events-resolver', {
-      ...buildSlackRoutePayload({
-        type: 'url_verification',
-        challenge: 'leftover-secret-probe',
-      }),
+    const execution = await executeDeployedFunctionOrThrow({
+      functionName: 'slack-events-resolver',
+      payload: {
+        ...buildSlackRoutePayload({
+          type: 'url_verification',
+          challenge: 'leftover-secret-probe',
+        }),
+      },
     });
 
     return execution.status === 'SUCCESS';
@@ -125,18 +128,21 @@ describe('Slack app deployed functions', () => {
         (logicFunction: { name: string }) => logicFunction.name,
       );
 
-    for (const manifestFunctionName of await readManifestLogicFunctionNames()) {
+    for (const manifestFunctionName of await readManifestLogicFunctionNamesOrThrow()) {
       expect(deployedFunctionNames).toContain(manifestFunctionName);
     }
   });
 
   it('should answer the Slack url_verification handshake from the deployed events route', async () => {
     await withTestWebhookSecret(async () => {
-      const execution = await executeDeployedFunction('slack-events-resolver', {
-        ...buildSlackRoutePayload({
-          type: 'url_verification',
-          challenge: 'deployed-challenge-token',
-        }),
+      const execution = await executeDeployedFunctionOrThrow({
+        functionName: 'slack-events-resolver',
+        payload: {
+          ...buildSlackRoutePayload({
+            type: 'url_verification',
+            challenge: 'deployed-challenge-token',
+          }),
+        },
       });
 
       expect(execution.status).toBe('SUCCESS');
@@ -150,11 +156,14 @@ describe('Slack app deployed functions', () => {
 
   it('should reject an unsigned Slack request from the deployed events route', async () => {
     await withTestWebhookSecret(async () => {
-      const execution = await executeDeployedFunction('slack-events-resolver', {
-        ...buildSlackRoutePayload(
-          { type: 'url_verification', challenge: 'deployed-challenge-token' },
-          { secret: 'not-the-signing-secret' },
-        ),
+      const execution = await executeDeployedFunctionOrThrow({
+        functionName: 'slack-events-resolver',
+        payload: {
+          ...buildSlackRoutePayload(
+            { type: 'url_verification', challenge: 'deployed-challenge-token' },
+            { secret: 'not-the-signing-secret' },
+          ),
+        },
       });
 
       expect(execution.status).toBe('ERROR');
@@ -169,14 +178,17 @@ describe('Slack app deployed functions', () => {
   // the scoped read the way the in-process app runtime fake pretends it does.
   it('should refuse an event from an unclaimed Slack team through the real key value store', async () => {
     await withTestWebhookSecret(async () => {
-      const execution = await executeDeployedFunction('slack-events-resolver', {
-        ...buildSlackRoutePayload(
-          buildSlackAppMentionEventBody({
-            channelId: 'C0DEPLOYED',
-            text: 'hello',
-            teamId: 'T0UNCLAIMED',
-          }),
-        ),
+      const execution = await executeDeployedFunctionOrThrow({
+        functionName: 'slack-events-resolver',
+        payload: {
+          ...buildSlackRoutePayload(
+            buildSlackAppMentionEventBody({
+              channelId: 'C0DEPLOYED',
+              text: 'hello',
+              teamId: 'T0UNCLAIMED',
+            }),
+          ),
+        },
       });
 
       expect(execution.status).toBe('ERROR');
@@ -187,7 +199,10 @@ describe('Slack app deployed functions', () => {
   });
 
   it('should report the missing Slack connection from the deployed channel list tool', async () => {
-    const execution = await executeDeployedFunction('slack-list-channels', {});
+    const execution = await executeDeployedFunctionOrThrow({
+      functionName: 'slack-list-channels',
+      payload: {},
+    });
 
     expect(execution.status).toBe('SUCCESS');
     expect(execution.data).toEqual({

@@ -40,7 +40,16 @@ const installedFunction = {
   cronTriggerSettings: null,
 };
 
-const mockInstalledFunctions = (logicFunctions: unknown[]) => {
+type InstalledFunction = {
+  applicationId: string;
+  universalIdentifier: string;
+  databaseEventTriggerSettings:
+    | typeof logicFunction.databaseEventTriggerSettings
+    | null;
+  cronTriggerSettings: typeof logicFunction.cronTriggerSettings | null;
+};
+
+const mockInstalledFunctions = (logicFunctions: InstalledFunction[]) => {
   query.mockResolvedValue({
     findOneApplication: { id: 'call-recorder' },
     findManyLogicFunctions: logicFunctions,

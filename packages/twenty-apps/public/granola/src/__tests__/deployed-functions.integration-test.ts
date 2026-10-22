@@ -1,17 +1,9 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { executeDeployedFunction as executeFunction } from './execute-deployed-function';
-import { readManifestLogicFunctionNames } from './read-manifest-logic-function-names';
+import { executeDeployedFunctionOrThrow } from './execute-deployed-function-or-throw';
+import { readManifestLogicFunctionNamesOrThrow } from './read-manifest-logic-function-names-or-throw';
 import { describe, expect, it } from 'vitest';
 
 import { GRANOLA_BACKFILL_ROUTE_PATH } from 'src/constants/granola-backfill-route-path';
-
-const executeDeployedFunction = ({
-  functionName,
-  payload,
-}: {
-  functionName: string;
-  payload: Record<string, unknown>;
-}) => executeFunction(functionName, payload);
 
 const buildBackfillRoutePayload = (body: Record<string, unknown>) => ({
   headers: {},
@@ -32,13 +24,13 @@ describe('Granola deployed functions', () => {
     const deployedNames = result.findManyLogicFunctions.map(
       (logicFunction) => logicFunction.name,
     );
-    for (const name of await readManifestLogicFunctionNames()) {
+    for (const name of await readManifestLogicFunctionNamesOrThrow()) {
       expect(deployedNames).toContain(name);
     }
   });
 
   it('reports the missing API key from the deployed connection status route', async () => {
-    const execution = await executeDeployedFunction({
+    const execution = await executeDeployedFunctionOrThrow({
       functionName: 'granola-connection-status',
       payload: {},
     });
@@ -49,7 +41,7 @@ describe('Granola deployed functions', () => {
   it.each([0, -1, 3651, 1.5, '31'])(
     'rejects the invalid backfill window %s before enqueueing',
     async (days) => {
-      const execution = await executeDeployedFunction({
+      const execution = await executeDeployedFunctionOrThrow({
         functionName: 'granola-backfill',
         payload: buildBackfillRoutePayload({ days }),
       });
@@ -87,7 +79,7 @@ describe('Granola deployed functions', () => {
   ])(
     'validates inputs in deployed $functionName',
     async ({ functionName, payload, error }) => {
-      const execution = await executeDeployedFunction({
+      const execution = await executeDeployedFunctionOrThrow({
         functionName,
         payload,
       });
@@ -106,7 +98,7 @@ describe('Granola deployed functions', () => {
   ])(
     'reports the missing key from deployed $functionName',
     async ({ functionName, payload }) => {
-      const execution = await executeDeployedFunction({
+      const execution = await executeDeployedFunctionOrThrow({
         functionName,
         payload,
       });

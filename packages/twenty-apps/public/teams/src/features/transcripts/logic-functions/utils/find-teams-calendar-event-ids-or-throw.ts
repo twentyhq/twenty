@@ -71,32 +71,39 @@ const listCalendarChannelEventAssociationsOrThrow = ({
 
       const connection = result.calendarChannelEventAssociations;
 
-      return isDefined(connection)
-        ? {
-            ...connection,
-            edges: connection.edges.flatMap(
-              ({
-                node,
-              }: {
+      if (!isDefined(connection)) {
+        return undefined;
+      }
+
+      return {
+        ...connection,
+        edges: connection.edges.flatMap(
+          ({
+            node,
+          }: {
+            node: {
+              eventExternalId?: string | null;
+              calendarEventId?: string | null;
+            };
+          }) => {
+            if (
+              !isNonEmptyString(node.eventExternalId) ||
+              !isNonEmptyString(node.calendarEventId)
+            ) {
+              return [];
+            }
+
+            return [
+              {
                 node: {
-                  eventExternalId?: string | null;
-                  calendarEventId?: string | null;
-                };
-              }) =>
-                isNonEmptyString(node.eventExternalId) &&
-                isNonEmptyString(node.calendarEventId)
-                  ? [
-                      {
-                        node: {
-                          eventExternalId: node.eventExternalId,
-                          calendarEventId: node.calendarEventId,
-                        },
-                      },
-                    ]
-                  : [],
-            ),
-          }
-        : undefined;
+                  eventExternalId: node.eventExternalId,
+                  calendarEventId: node.calendarEventId,
+                },
+              },
+            ];
+          },
+        ),
+      };
     },
   });
 
@@ -123,20 +130,18 @@ const listCalendarEventsByICalUidOrThrow = ({
       });
       const connection = result.calendarEvents;
 
-      return isDefined(connection)
-        ? {
-            ...connection,
-            edges: connection.edges.map(
-              ({
-                node,
-              }: {
-                node: { id: string; iCalUid?: string | null };
-              }) => ({
-                node: { id: node.id, iCalUid: node.iCalUid ?? null },
-              }),
-            ),
-          }
-        : undefined;
+      if (!isDefined(connection)) {
+        return undefined;
+      }
+
+      return {
+        ...connection,
+        edges: connection.edges.map(
+          ({ node }: { node: { id: string; iCalUid?: string | null } }) => ({
+            node: { id: node.id, iCalUid: node.iCalUid ?? null },
+          }),
+        ),
+      };
     },
   });
 
