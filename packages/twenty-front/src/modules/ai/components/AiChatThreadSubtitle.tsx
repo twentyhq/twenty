@@ -1,16 +1,18 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
-import { IconHandClick } from 'twenty-ui/icon';
+import { IconHandClick, IconPencil } from 'twenty-ui/icon';
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
+import { agentChatDraftPreviewTextFamilySelector } from '@/ai/states/selectors/agentChatDraftPreviewTextFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -25,10 +27,10 @@ const StyledSubtitle = styled.div`
   min-width: 0;
 `;
 
-const StyledNeedsInput = styled.div<{ $isUnread: boolean }>`
+const StyledStatus = styled.div<{ $isHighlighted: boolean }>`
   align-items: center;
-  color: ${({ $isUnread }) =>
-    $isUnread
+  color: ${({ $isHighlighted }) =>
+    $isHighlighted
       ? themeCssVariables.color.blue
       : themeCssVariables.font.color.tertiary};
   display: flex;
@@ -70,21 +72,35 @@ export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
     : undefined;
   const isAwaitingAnswer =
     !isDefined(thread.deletedAt) && isDefined(thread.pendingQuestionMessageId);
-  const previewText = getAgentChatThreadPreviewText({
-    thread,
-    workspaceMembers: currentWorkspaceMembers,
-    currentWorkspaceMemberId: currentWorkspaceMember?.id,
-  });
+  const draftPreviewText = useAtomFamilySelectorValue(
+    agentChatDraftPreviewTextFamilySelector,
+    thread.id,
+  );
+  const hasDraft = isNonEmptyString(draftPreviewText);
+  const previewText = hasDraft
+    ? draftPreviewText
+    : getAgentChatThreadPreviewText({
+        thread,
+        workspaceMembers: currentWorkspaceMembers,
+        currentWorkspaceMemberId: currentWorkspaceMember?.id,
+      });
 
   return (
     <StyledSubtitle>
       {isAwaitingAnswer && (
-        <StyledNeedsInput $isUnread={isUnread}>
+        <StyledStatus $isHighlighted={isUnread}>
           <IconHandClick size={theme.icon.size.sm} />
           {t`Needs input`}
-        </StyledNeedsInput>
+        </StyledStatus>
       )}
-      {isAwaitingAnswer && isNonEmptyString(previewText) && (
+      {isAwaitingAnswer && hasDraft && <span aria-hidden>·</span>}
+      {hasDraft && (
+        <StyledStatus $isHighlighted={false}>
+          <IconPencil size={theme.icon.size.sm} />
+          {t`Draft`}
+        </StyledStatus>
+      )}
+      {(isAwaitingAnswer || hasDraft) && isNonEmptyString(previewText) && (
         <span aria-hidden>·</span>
       )}
       <StyledPreview>{previewText}</StyledPreview>

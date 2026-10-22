@@ -25,7 +25,6 @@ export const useInitializeQueryParamState = () => {
           if (
             typeof parsedValue === 'object' &&
             parsedValue !== null &&
-            'plan' in parsedValue &&
             'interval' in parsedValue &&
             'requirePaymentMethod' in parsedValue &&
             !isDeeplyEqual(billingCheckoutSession, parsedValue)

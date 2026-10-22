@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { DEFAULT_CODE_INTERPRETER_TIMEOUT_MS } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';
-import { LOCAL_DRIVER_PERSISTENT_KERNEL_SCRIPT } from 'src/engine/core-modules/code-interpreter/drivers/local-driver-kernel.const';
+import { LOCAL_DRIVER_PERSISTENT_KERNEL_SCRIPT } from 'src/engine/core-modules/code-interpreter/drivers/local-driver-kernel.constant';
 import { getMimeType } from 'src/engine/core-modules/code-interpreter/utils/get-mime-type.util';
 
 import {
