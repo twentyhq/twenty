@@ -46,6 +46,10 @@ export class ApplicationRepeatedEventRecorderService
   }
 
   async onModuleDestroy() {
+    await this.flushAndStop();
+  }
+
+  async flushAndStop(): Promise<void> {
     if (isDefined(this.flushTimer)) {
       clearInterval(this.flushTimer);
       this.flushTimer = null;
