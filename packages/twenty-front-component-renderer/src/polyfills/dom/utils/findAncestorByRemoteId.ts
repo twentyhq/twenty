@@ -1,6 +1,5 @@
-import { remoteId } from '@remote-dom/core/elements';
-
 import { type NodeLike } from '@/polyfills/dom/types/NodeLike';
+import { findSelfOrAncestorByRemoteId } from '@/polyfills/dom/utils/findSelfOrAncestorByRemoteId';
 import { isElementNode } from '@/polyfills/dom/utils/isElementNode';
 
 export const findAncestorByRemoteId = ({
@@ -10,15 +9,15 @@ export const findAncestorByRemoteId = ({
   node: NodeLike;
   remoteElementId: string;
 }): Element | null => {
-  let ancestor: unknown = node.parentNode;
+  const { parentNode } = node;
 
-  while (isElementNode(ancestor)) {
-    if (remoteId(ancestor) === remoteElementId) {
-      return ancestor;
-    }
-
-    ancestor = ancestor.parentNode;
+  if (!isElementNode(parentNode)) {
+    return null;
   }
 
-  return null;
+  return findSelfOrAncestorByRemoteId({
+    element: parentNode,
+    remoteElementId,
+    rootElement: null,
+  });
 };

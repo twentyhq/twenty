@@ -53,6 +53,8 @@ export type SerializedEventData = {
   selectedOptionIndexes?: number[];
   scrollTop?: number;
   scrollLeft?: number;
+  scrollWidth?: number;
+  clientWidth?: number;
   deltaX?: number;
   deltaY?: number;
   deltaZ?: number;
