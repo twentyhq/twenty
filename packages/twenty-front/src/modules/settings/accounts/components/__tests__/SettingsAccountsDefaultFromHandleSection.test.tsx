@@ -104,6 +104,13 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
     );
   });
 
+  it('shows automatic when the stored handle no longer exists', () => {
+    renderSection('removed@getindexed.ai');
+
+    expect(screen.getByText('Automatic (workspace domain)')).toBeVisible();
+    expect(screen.queryByText('removed@getindexed.ai')).toBeNull();
+  });
+
   it('saves null when choosing automatic', async () => {
     const user = userEvent.setup();
     renderSection('me@getindexed.ai');

@@ -45,6 +45,14 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
     ...buildConnectedAccountSenderOptions(sendableAccounts),
   ];
 
+  const storedDefaultFromHandle = currentUserWorkspace?.defaultFromHandle;
+
+  const selectedValue = options.some(
+    (option) => option.value === storedDefaultFromHandle,
+  )
+    ? (storedDefaultFromHandle ?? null)
+    : null;
+
   const handleChange = async (defaultFromHandle: string | null) => {
     if (!isDefined(currentUserWorkspace)) {
       return;
@@ -67,7 +75,7 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
         dropdownId="settings-default-from-handle"
         label={t`My default From address`}
         fullWidth
-        value={currentUserWorkspace?.defaultFromHandle ?? null}
+        value={selectedValue}
         options={options}
         onChange={handleChange}
       />
