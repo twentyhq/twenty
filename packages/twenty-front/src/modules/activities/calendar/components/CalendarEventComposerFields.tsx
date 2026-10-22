@@ -247,7 +247,7 @@ export const CalendarEventComposerFields = ({
                 {t`Add a meeting link`}
               </StyledRowDescription>
             </ActivityComposerFieldRow>
-            <ActivityComposerFieldRow label={t`Description`} divider={false}>
+            <ActivityComposerFieldRow label={t`Description`} hasDivider={false}>
               <TextArea
                 textAreaId="calendar-event-composer-description"
                 variant="transparent"

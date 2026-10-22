@@ -11,7 +11,7 @@ type ActivityComposerFieldRowProps = {
   label: string;
   children: ReactNode;
   trailing?: ReactNode;
-  divider?: boolean;
+  hasDivider?: boolean;
   onClick?: MouseEventHandler<HTMLDivElement>;
 };
 
@@ -19,7 +19,7 @@ export const ActivityComposerFieldRow = ({
   label,
   children,
   trailing,
-  divider,
+  hasDivider,
   onClick,
 }: ActivityComposerFieldRowProps) => {
   const handleClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -43,8 +43,8 @@ export const ActivityComposerFieldRow = ({
   return (
     <ComposerFieldRow
       label={label}
-      divider={divider}
-      hoverable={isDefined(onClick)}
+      hasDivider={hasDivider}
+      isHoverable={isDefined(onClick)}
       onClick={isDefined(onClick) ? handleClick : undefined}
       trailing={
         isDefined(trailing) && (

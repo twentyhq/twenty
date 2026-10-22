@@ -50,7 +50,7 @@ export const StatefulEmailRecipientsFieldInput = ({
           <div key={fieldId} role="group" aria-label={`${fieldId} recipients`}>
             <ActivityComposerFieldRow
               label={fieldId === 'to' ? 'To' : 'Cc'}
-              divider={false}
+              hasDivider={false}
             >
               <EmailRecipientsFieldInput
                 fieldId={fieldId}

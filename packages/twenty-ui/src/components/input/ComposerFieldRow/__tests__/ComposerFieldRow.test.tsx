@@ -39,7 +39,7 @@ it('names the group without relabelling its nested controls or announcing decora
 
 it('accepts an external group name without a visible label', () => {
   render(
-    <ComposerFieldRow aria-labelledby="event-options-label" divider={false}>
+    <ComposerFieldRow aria-labelledby="event-options-label" hasDivider={false}>
       <span id="event-options-label">Event options</span>
     </ComposerFieldRow>,
   );

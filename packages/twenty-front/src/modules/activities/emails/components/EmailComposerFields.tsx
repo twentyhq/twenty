@@ -248,7 +248,7 @@ export const EmailComposerFields = ({
                 </ActivityComposerFieldRow>
               </>
             )}
-            <ActivityComposerFieldRow label={t`Subject`} divider={false}>
+            <ActivityComposerFieldRow label={t`Subject`} hasDivider={false}>
               <Input
                 variant="plain"
                 type="text"

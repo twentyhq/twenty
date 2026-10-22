@@ -176,7 +176,7 @@ export const CampaignDetailsFields = ({
           />
         </ActivityComposerFieldRow>
       )}
-      <ActivityComposerFieldRow label={t`Subject`} divider={false}>
+      <ActivityComposerFieldRow label={t`Subject`} hasDivider={false}>
         <FormTextFieldInput
           key={`subject-${detailsState.draftResyncKey}`}
           ariaLabel={t`Subject`}

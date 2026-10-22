@@ -80,7 +80,7 @@ export const EmailFields: Story = {
       <ComposerFieldRow
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...args}
-        divider={false}
+        hasDivider={false}
       />
     </>
   ),
@@ -122,7 +122,7 @@ export const CalendarFields: Story = {
       </ComposerFieldRow>
       <ComposerFieldRow
         label="All day"
-        divider={false}
+        hasDivider={false}
         trailing={
           <Switch aria-label="All day" onCheckedChange={handleFullDayChange} />
         }
@@ -207,8 +207,8 @@ export const ExplicitHover: Story = {
       <ComposerFieldRow
         label="Hoverable"
         className="hoverable-row"
-        hoverable
-        divider={false}
+        isHoverable
+        hasDivider={false}
       >
         <Input variant="plain" aria-label="Hoverable" />
       </ComposerFieldRow>

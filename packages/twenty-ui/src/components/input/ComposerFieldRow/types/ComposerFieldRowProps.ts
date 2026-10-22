@@ -10,6 +10,6 @@ export type ComposerFieldRowProps = Omit<
   trailing?: ReactNode;
   children: ReactNode;
   labelWidth?: CSSProperties['width'];
-  hoverable?: boolean;
-  divider?: boolean;
+  isHoverable?: boolean;
+  hasDivider?: boolean;
 };

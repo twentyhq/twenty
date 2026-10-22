@@ -1026,7 +1026,11 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/composer-field-row',
     propDescriptions: COMPOSER_FIELD_ROW_PROP_DESCRIPTIONS,
-    propDefaults: { labelWidth: '80', hoverable: 'false', divider: 'true' },
+    propDefaults: {
+      labelWidth: '80',
+      isHoverable: 'false',
+      hasDivider: 'true',
+    },
   },
   {
     name: 'ImageInput',

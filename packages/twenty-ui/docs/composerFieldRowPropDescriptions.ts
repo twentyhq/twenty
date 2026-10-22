@@ -15,9 +15,9 @@ export const COMPOSER_FIELD_ROW_PROP_DESCRIPTIONS = {
     'Native group click handler. Providing a handler shows a pointer cursor; the caller guards nested-control and portaled events as needed.',
   labelWidth:
     'Preferred label column width, capped at 40% of the row. Numbers use pixels; use the same width for aligned sibling rows.',
-  hoverable:
+  isHoverable:
     'Enables a neutral hover background independently of click handlers. Keyboard focus remains on nested controls without changing the row background.',
-  divider:
+  hasDivider:
     'Shows a decorative bottom divider. Set false on the final row when the surrounding surface supplies its own border.',
   className: 'CSS class applied to the group root.',
   style: 'Inline styles applied to the group root.',

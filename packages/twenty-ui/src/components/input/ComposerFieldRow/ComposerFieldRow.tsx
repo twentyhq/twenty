@@ -17,8 +17,8 @@ export const ComposerFieldRow = ({
   trailing,
   children,
   labelWidth = 80,
-  hoverable = false,
-  divider = true,
+  isHoverable = false,
+  hasDivider = true,
   render,
   ref,
   className,
@@ -42,7 +42,7 @@ export const ComposerFieldRow = ({
       'aria-label': label,
       ...props,
       'data-clickable': isDefined(props.onClick) || undefined,
-      'data-hoverable': hoverable || undefined,
+      'data-hoverable': isHoverable || undefined,
       className: clsx(styles.root, className),
       style: rowStyle,
       children: (
@@ -70,7 +70,7 @@ export const ComposerFieldRow = ({
               <div className={styles.trailing}>{trailing}</div>
             )}
           </div>
-          {divider && (
+          {hasDivider && (
             <Separator className={styles.divider} aria-hidden="true" />
           )}
         </>
