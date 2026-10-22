@@ -24,7 +24,8 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     fieldMetadataItemByFieldMetadataItemId,
     fieldDefinitionByFieldMetadataItemId,
   } = useRecordIndexContextOrThrow();
-  const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly, restrictedFieldNames } =
+    useRecordTableRowContextOrThrow();
 
   const { getRecordTableRowIndex } = useGetRecordTableRowIndex();
 
@@ -72,6 +73,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         displayedMaxRows: 1,
         isRecordFieldReadOnly:
           isRecordTableCellsNonEditable ||
+          restrictedFieldNames.includes(fieldDefinition.metadata.fieldName) ||
           isRecordFieldReadOnly({
             isRecordReadOnly: isRecordReadOnly ?? false,
             objectMetadataId: objectMetadataItem.id,

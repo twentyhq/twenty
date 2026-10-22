@@ -154,6 +154,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_FEEDBACK_TOAST: '/ui/components/feedback/toast',
   UI_COMPONENTS_INPUT_COUNTRY_SELECT: '/ui/components/input/country-select',
   UI_COMPONENTS_INPUT_CURRENCY_PICKER: '/ui/components/input/currency-picker',
+  UI_COMPONENTS_INPUT_FORM_FIELD_ROW: '/ui/components/input/form-field-row',
   UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_IMAGE_INPUT: '/ui/components/input/image-input',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
