@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   type IdentifiedAccount,
   type IdentifyAccountPayload,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
@@ -24,7 +22,6 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -56,8 +53,6 @@ export class ConnectionProviderLifecycleHookService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
   async dispatchOnConnect({
@@ -161,31 +156,6 @@ export class ConnectionProviderLifecycleHookService {
     }
 
     return parsedResult.identifiedAccount;
-  }
-
-  async runOnDisconnectForConnectionProviders({
-    connectionProviderIds,
-    workspaceId,
-  }: {
-    connectionProviderIds: string[];
-    workspaceId: string;
-  }): Promise<void> {
-    const connectedAccounts = await this.connectedAccountRepository.find({
-      where: { connectionProviderId: In(connectionProviderIds), workspaceId },
-      select: { id: true, connectionProviderId: true },
-    });
-
-    for (const { id, connectionProviderId } of connectedAccounts) {
-      if (!isDefined(connectionProviderId)) {
-        continue;
-      }
-
-      await this.runOnDisconnect({
-        connectionProviderId,
-        workspaceId,
-        connectedAccountId: id,
-      });
-    }
   }
 
   // Runs inline, before the connected account and its token are deleted, so the
