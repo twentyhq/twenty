@@ -3,7 +3,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { SettingsWorkspaceDefaultSenderDomainSection } from '@/settings/workspace/components/SettingsWorkspaceDefaultSenderDomainSection';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -95,6 +95,42 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     await user.tab();
 
     expect(mockUpdateWorkspace).not.toHaveBeenCalled();
+  });
+
+  it('keeps fields changed on the atom while the save is pending', async () => {
+    let resolveSave: (value: unknown) => void = () => {};
+    mockUpdateWorkspace.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSave = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    const store = renderSection([PermissionFlagType.WORKSPACE]);
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'Default sending domain' }),
+      'getindexed.ai',
+    );
+    await user.tab();
+
+    store.set(currentWorkspaceState.atom, {
+      ...store.get(currentWorkspaceState.atom),
+      displayName: 'Changed while saving',
+    } as never);
+
+    resolveSave({
+      data: { updateWorkspace: { defaultSenderDomain: 'getindexed.ai' } },
+    });
+
+    await waitFor(() =>
+      expect(store.get(currentWorkspaceState.atom)?.defaultSenderDomain).toBe(
+        'getindexed.ai',
+      ),
+    );
+    expect(store.get(currentWorkspaceState.atom)).toMatchObject({
+      displayName: 'Changed while saving',
+      defaultSenderDomain: 'getindexed.ai',
+    });
   });
 
   it('is disabled without the workspace permission', () => {

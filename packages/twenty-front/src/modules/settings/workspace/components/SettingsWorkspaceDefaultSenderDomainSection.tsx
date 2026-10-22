@@ -46,10 +46,11 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
       const storedDomain =
         result.data?.updateWorkspace?.defaultSenderDomain ?? null;
 
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        defaultSenderDomain: storedDomain,
-      });
+      setCurrentWorkspace((previousWorkspace) =>
+        isDefined(previousWorkspace)
+          ? { ...previousWorkspace, defaultSenderDomain: storedDomain }
+          : previousWorkspace,
+      );
       setDomain(storedDomain ?? '');
     } catch (error) {
       setDomain(savedDomain);

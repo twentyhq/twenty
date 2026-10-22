@@ -64,7 +64,11 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
         variables: { input: { defaultFromHandle } },
       });
 
-      setCurrentUserWorkspace({ ...currentUserWorkspace, defaultFromHandle });
+      setCurrentUserWorkspace((previousUserWorkspace) =>
+        isDefined(previousUserWorkspace)
+          ? { ...previousUserWorkspace, defaultFromHandle }
+          : previousUserWorkspace,
+      );
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     }

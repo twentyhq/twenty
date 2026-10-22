@@ -3,7 +3,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { SettingsAccountsDefaultFromHandleSection } from '@/settings/accounts/components/SettingsAccountsDefaultFromHandleSection';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -113,6 +113,37 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
     expect(store.get(currentUserWorkspaceState.atom)?.defaultFromHandle).toBe(
       'alias@getindexed.ai',
     );
+  });
+
+  it('keeps fields changed on the atom while the save is pending', async () => {
+    let resolveSave: (value: unknown) => void = () => {};
+    mockUpdateMyDefaultFromHandle.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSave = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    const store = renderSection(null);
+
+    await user.click(screen.getByText('Automatic (workspace domain)'));
+    await user.click(screen.getByText('alias@getindexed.ai'));
+
+    store.set(currentUserWorkspaceState.atom, {
+      ...store.get(currentUserWorkspaceState.atom),
+      locale: 'fr-FR',
+    } as never);
+
+    resolveSave({ data: { updateMyDefaultFromHandle: true } });
+
+    await waitFor(() =>
+      expect(store.get(currentUserWorkspaceState.atom)?.defaultFromHandle).toBe(
+        'alias@getindexed.ai',
+      ),
+    );
+    expect(store.get(currentUserWorkspaceState.atom)).toMatchObject({
+      locale: 'fr-FR',
+      defaultFromHandle: 'alias@getindexed.ai',
+    });
   });
 
   it('shows automatic when the stored handle no longer exists', () => {
