@@ -258,13 +258,15 @@ export class ApplicationManifestMigrationService {
     const connectionProviderIdsToDelete = Object.values(
       allFlatEntityOperationRecordByMetadataName.connectionProvider
         ?.flatEntityToDelete ?? {},
-    ).map(
-      ({ universalIdentifier }) =>
-        findFlatEntityByUniversalIdentifierOrThrow({
-          flatEntityMaps: fromAllFlatEntityMaps.flatConnectionProviderMaps,
-          universalIdentifier,
-        }).id,
-    );
+    )
+      .filter(isDefined)
+      .map(
+        ({ universalIdentifier }) =>
+          findFlatEntityByUniversalIdentifierOrThrow({
+            flatEntityMaps: fromAllFlatEntityMaps.flatConnectionProviderMaps,
+            universalIdentifier,
+          }).id,
+      );
 
     const shouldRunOnDisconnectHooks =
       !dryRun && connectionProviderIdsToDelete.length > 0;
