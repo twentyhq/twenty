@@ -231,4 +231,64 @@ describe('TimelineActivityRepository', () => {
       }),
     );
   });
+
+  it('does not merge a payload without a linked record into a linked row', async () => {
+    const update = jest.fn().mockResolvedValue(undefined);
+    const insert = jest.fn().mockResolvedValue(undefined);
+    const workspaceRepository = {
+      find: jest.fn().mockResolvedValue([
+        {
+          id: '20202020-0000-4000-8000-000000000006',
+          targetPersonId: RECORD_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+          linkedRecordId: '20202020-0000-4000-8000-000000000007',
+          properties: {
+            diff: { name: { before: 'Before', after: 'First' } },
+          },
+        },
+      ]),
+      update,
+      insert,
+    };
+    const workspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn(
+        async (callback: () => Promise<void>) => callback(),
+      ),
+      runInWorkspaceTransaction: jest.fn(
+        async (
+          callback: (transactionScope: {
+            getRepository: () => typeof workspaceRepository;
+            executeRawQuery: () => Promise<never[]>;
+          }) => Promise<void>,
+        ) =>
+          callback({
+            getRepository: () => workspaceRepository,
+            executeRawQuery: jest.fn().mockResolvedValue([]),
+          }),
+      ),
+    } as unknown as WorkspaceOrmManager;
+    const repository = new TimelineActivityRepository(workspaceOrmManager);
+
+    await repository.upsertTimelineActivities({
+      objectSingularName: 'person',
+      workspaceId: WORKSPACE_ID,
+      payloads: [
+        {
+          happensAt: new Date('2026-08-23T09:00:00.000Z'),
+          properties: {
+            diff: { name: { before: 'First', after: 'Second' } },
+          },
+          recordId: RECORD_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_ID,
+          timelineActivityTypeId: TIMELINE_ACTIVITY_TYPE_ID,
+          timelineActivityTypeSnapshot: TIMELINE_ACTIVITY_TYPE_SNAPSHOT,
+        },
+      ],
+    });
+
+    expect(update).not.toHaveBeenCalled();
+    expect(insert).toHaveBeenCalledTimes(1);
+  });
 });

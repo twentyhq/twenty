@@ -237,8 +237,8 @@ export class TimelineActivityRepository {
                 )
                 .find(
                   (timelineActivity) =>
-                    !isDefined(payload.linkedRecordId) ||
-                    timelineActivity.linkedRecordId === payload.linkedRecordId,
+                    (timelineActivity.linkedRecordId ?? null) ===
+                    (payload.linkedRecordId ?? null),
                 );
 
             if (isDefined(recentTimelineActivity)) {
@@ -377,7 +377,7 @@ export class TimelineActivityRepository {
 
     const linkedRecordIds = payloads.map((payload) => payload.linkedRecordId);
 
-    // A linked payload only merges into a row with the same linked record, and a busy target can have thousands of recent rows
+    // A busy target can hold thousands of recent rows, nearly none for these linked records
     if (linkedRecordIds.every(isDefined)) {
       whereConditions.linkedRecordId = In(linkedRecordIds);
     }
