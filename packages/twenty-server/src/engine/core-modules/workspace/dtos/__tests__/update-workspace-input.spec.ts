@@ -21,9 +21,12 @@ describe('UpdateWorkspaceInput defaultSenderDomain', () => {
     expect(input.defaultSenderDomain).toBeNull();
   });
 
-  it('accepts a punycode top-level domain', async () => {
-    expect(await validate(toInput('example.xn--p1ai'))).toEqual([]);
-  });
+  it.each(['example.com', 'example.xn--p1ai'])(
+    'accepts a domain: %s',
+    async (value) => {
+      expect(await validate(toInput(value))).toEqual([]);
+    },
+  );
 
   it.each([
     'has space.com',
@@ -32,8 +35,11 @@ describe('UpdateWorkspaceInput defaultSenderDomain', () => {
     'a@b.com',
     '-example.com',
     'example-.com',
+    'example.com-',
+    '_mail.example.com',
     'localhost',
     '192.168.0.1',
+    'example.c',
   ])('rejects a non-domain value: %s', async (value) => {
     expect(await validate(toInput(value))).toEqual(
       expect.arrayContaining([

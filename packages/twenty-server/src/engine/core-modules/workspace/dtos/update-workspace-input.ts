@@ -1,10 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { isString } from '@sniptt/guards';
 import GraphQLJSON from 'graphql-type-json';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
-import { isValidHostname, normalizeSenderDomain } from 'twenty-shared/utils';
+import { normalizeSenderDomain } from 'twenty-shared/utils';
 
 import { Transform } from 'class-transformer';
 
@@ -12,6 +11,7 @@ import {
   IsArray,
   IsBoolean,
   IsEnum,
+  IsFQDN,
   IsInt,
   IsOptional,
   IsObject,
@@ -20,7 +20,6 @@ import {
   Matches,
   Max,
   Min,
-  ValidateBy,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -45,16 +44,15 @@ export class UpdateWorkspaceInput {
   @Field(() => String, { nullable: true })
   @Transform(({ value }) => normalizeSenderDomain(value))
   @IsOptional()
-  @ValidateBy({
-    name: 'senderDomain',
-    validator: {
-      validate: (value: unknown) =>
-        isString(value) &&
-        isValidHostname(value, { allowLocalhost: false, allowIp: false }),
-      defaultMessage: () =>
-        'defaultSenderDomain must be a domain such as example.com',
+  @IsFQDN(
+    {
+      require_tld: true,
+      allow_underscores: false,
+      allow_trailing_dot: false,
+      allow_numeric_tld: false,
     },
-  })
+    { message: 'defaultSenderDomain must be a domain such as example.com' },
+  )
   defaultSenderDomain?: string | null;
 
   @Field({ nullable: true })
