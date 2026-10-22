@@ -1,12 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { DetailsRow } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconBell, IconBellOff } from 'twenty-ui/icon';
 import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-import { AiChatThreadDetailsRow } from '@/ai/components/AiChatThreadDetailsRow';
 
 const StyledEmptyValue = styled.span`
   color: ${themeCssVariables.font.color.light};
@@ -31,8 +30,9 @@ export const AiChatThreadFollowersField = ({
   const ActionIcon = isFollowing ? IconBellOff : IconBell;
 
   return (
-    <AiChatThreadDetailsRow
-      Icon={IconBell}
+    <DetailsRow
+      labelWidth={110}
+      startIcon={<IconBell size={themeCssVariables.icon.size.md} />}
       label={t`Following`}
       action={
         isDefined(onFollowingChange) && (
@@ -63,6 +63,6 @@ export const AiChatThreadFollowersField = ({
       ) : (
         <StyledEmptyValue>{t`None`}</StyledEmptyValue>
       )}
-    </AiChatThreadDetailsRow>
+    </DetailsRow>
   );
 };

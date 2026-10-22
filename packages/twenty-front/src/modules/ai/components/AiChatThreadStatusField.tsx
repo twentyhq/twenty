@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { DetailsRow } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
@@ -12,7 +13,6 @@ import {
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadDetailsRow } from '@/ai/components/AiChatThreadDetailsRow';
 import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
 
 const StyledScope = styled.span`
@@ -47,8 +47,9 @@ export const AiChatThreadStatusField = ({
   const editLabel = t`Change status in ${scopeLabel}`;
 
   return (
-    <AiChatThreadDetailsRow
-      Icon={IconCircleDashed}
+    <DetailsRow
+      labelWidth={110}
+      startIcon={<IconCircleDashed size={themeCssVariables.icon.size.md} />}
       label={t`Status`}
       action={
         isDefined(onStatusChange) && (
@@ -99,6 +100,6 @@ export const AiChatThreadStatusField = ({
     >
       <Tag color={status === 'open' ? 'sky' : 'gray'}>{statusLabel}</Tag>
       <StyledScope>{scopeLabel}</StyledScope>
-    </AiChatThreadDetailsRow>
+    </DetailsRow>
   );
 };

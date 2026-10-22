@@ -1,13 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { DetailsRow } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPencil, IconTag } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadDetailsRow } from '@/ai/components/AiChatThreadDetailsRow';
 import { type AiChatThreadLabel } from '@/ai/types/AiChatThreadLabel';
 
 const StyledEmptyValue = styled.span`
@@ -34,8 +34,9 @@ export const AiChatThreadLabelsField = ({
   );
 
   return (
-    <AiChatThreadDetailsRow
-      Icon={IconTag}
+    <DetailsRow
+      labelWidth={110}
+      startIcon={<IconTag size={themeCssVariables.icon.size.md} />}
       label={t`Labels`}
       action={
         isDefined(onLabelsChange) && (
@@ -90,6 +91,6 @@ export const AiChatThreadLabelsField = ({
       ) : (
         <StyledEmptyValue>{t`None`}</StyledEmptyValue>
       )}
-    </AiChatThreadDetailsRow>
+    </DetailsRow>
   );
 };

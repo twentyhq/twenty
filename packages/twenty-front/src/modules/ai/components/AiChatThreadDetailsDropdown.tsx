@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { DetailsRow } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
@@ -14,7 +15,6 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadDetailsRow } from '@/ai/components/AiChatThreadDetailsRow';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
@@ -42,10 +42,11 @@ const StyledEmptyValue = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-const StyledDetails = styled.div`
+const StyledDetails = styled.dl`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+  margin: 0;
   padding: ${themeCssVariables.spacing[2]};
 `;
 
@@ -141,8 +142,9 @@ export const AiChatThreadDetailsDropdown = ({
         >
           <StyledDetails>
             {areRecordTargetsAvailable && (
-              <AiChatThreadDetailsRow
-                Icon={IconLink}
+              <DetailsRow
+                labelWidth={110}
+                startIcon={<IconLink size={themeCssVariables.icon.size.md} />}
                 label={t`Linked to`}
                 action={
                   canEditRecordTargets && (
@@ -180,10 +182,11 @@ export const AiChatThreadDetailsDropdown = ({
                 ) : (
                   <StyledEmptyValue>{t`None`}</StyledEmptyValue>
                 )}
-              </AiChatThreadDetailsRow>
+              </DetailsRow>
             )}
-            <AiChatThreadDetailsRow
-              Icon={IconUsers}
+            <DetailsRow
+              labelWidth={110}
+              startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
               label={t`Assignee`}
               action={
                 permissions?.canUpdate && (
@@ -209,7 +212,7 @@ export const AiChatThreadDetailsDropdown = ({
               ) : (
                 <StyledEmptyValue>{t`None`}</StyledEmptyValue>
               )}
-            </AiChatThreadDetailsRow>
+            </DetailsRow>
           </StyledDetails>
         </DropdownContent>
       </DropdownRoot>

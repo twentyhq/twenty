@@ -2,19 +2,19 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
+import { DetailsRow } from 'twenty-ui/components/data-display';
 import { IconLink, IconUsers } from 'twenty-ui/icon';
 import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadDetailsRow } from '@/ai/components/AiChatThreadDetailsRow';
 import { AiChatThreadFollowersField } from '@/ai/components/AiChatThreadFollowersField';
 import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
 import { AiChatThreadStatusField } from '@/ai/components/AiChatThreadStatusField';
 import { type AiChatThreadLabel } from '@/ai/types/AiChatThreadLabel';
 import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
 
-const StyledFields = styled.div`
+const StyledFields = styled.dl`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
@@ -22,6 +22,7 @@ const StyledFields = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+  margin: 0;
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
@@ -75,7 +76,11 @@ const AiChatThreadDetailsFieldsStory = ({
               }
         }
       />
-      <AiChatThreadDetailsRow Icon={IconLink} label="Linked to">
+      <DetailsRow
+        labelWidth={110}
+        startIcon={<IconLink size={themeCssVariables.icon.size.md} />}
+        label="Linked to"
+      >
         {['Anthropic', 'Open AI', 'Google'].map((name) => (
           <Chip
             key={name}
@@ -85,15 +90,19 @@ const AiChatThreadDetailsFieldsStory = ({
             {name}
           </Chip>
         ))}
-      </AiChatThreadDetailsRow>
-      <AiChatThreadDetailsRow Icon={IconUsers} label="Assignee">
+      </DetailsRow>
+      <DetailsRow
+        labelWidth={110}
+        startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
+        label="Assignee"
+      >
         <Chip
           variant="soft"
           startElement={<Avatar name="Thomas" size="sm" shape="circle" />}
         >
           Thomas
         </Chip>
-      </AiChatThreadDetailsRow>
+      </DetailsRow>
       <AiChatThreadLabelsField
         labels={LABELS}
         selectedLabelIds={selectedLabelIds}
