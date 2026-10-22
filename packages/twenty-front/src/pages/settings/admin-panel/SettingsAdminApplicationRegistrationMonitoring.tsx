@@ -138,17 +138,27 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
     );
   }
 
+  const instanceId = `admin-application-registration-monitoring-${registration.id}`;
+  const workspaceSelect = (
+    <SettingsAdminApplicationMonitoringWorkspaceSelect
+      dropdownId={`${instanceId}-workspace`}
+      workspaces={installedWorkspaces}
+      selectedWorkspace={selectedWorkspace}
+      onChange={setSelectedWorkspace}
+    />
+  );
+
   const renderContent = () => {
     if (!isClickHouseConfigured || isDefined(error) || !isDefined(monitoring)) {
       return (
         <ApplicationMonitoringFallback
           isClickHouseConfigured={isClickHouseConfigured}
           hasError={isDefined(error)}
+          actions={workspaceSelect}
         />
       );
     }
 
-    const instanceId = `admin-application-registration-monitoring-${registration.id}`;
     const activeWorkspaceCountLabel =
       monitoring.activeWorkspaceCount.toString();
 
@@ -172,14 +182,7 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
           }}
           isRefreshing={loading}
           isAdminView
-          additionalActions={
-            <SettingsAdminApplicationMonitoringWorkspaceSelect
-              dropdownId={`${instanceId}-workspace`}
-              workspaces={installedWorkspaces}
-              selectedWorkspace={selectedWorkspace}
-              onChange={setSelectedWorkspace}
-            />
-          }
+          additionalActions={workspaceSelect}
         />
         <Section.Root>
           <Section.Header
