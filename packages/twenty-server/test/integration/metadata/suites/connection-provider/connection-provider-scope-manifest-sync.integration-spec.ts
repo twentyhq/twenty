@@ -4,7 +4,11 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
 import { type ConnectionProviderManifest } from 'twenty-shared/application';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
+
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -12,8 +16,9 @@ const TEST_PROVIDER_ID = uuidv4();
 
 const buildProvider = (
   scope?: ConnectionProviderManifest['scope'],
+  universalIdentifier = TEST_PROVIDER_ID,
 ): ConnectionProviderManifest => ({
-  universalIdentifier: TEST_PROVIDER_ID,
+  universalIdentifier,
   name: 'linear',
   displayName: 'Linear',
   type: 'oauth',
@@ -45,6 +50,39 @@ const findProviderScopes = async () =>
     (provider) => provider.scope,
   );
 
+const insertConnectedAccount = async (): Promise<string> => {
+  const [provider] = await findConnectionProvidersByApplication(TEST_APP_ID);
+  const id = uuidv4();
+
+  await globalThis.testDataSource.query(
+    `INSERT INTO core."connectedAccount"
+       (id, handle, provider, scope, "workspaceId", "userWorkspaceId",
+        "applicationId", "connectionProviderId")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+    [
+      id,
+      'linear@example.com',
+      ConnectedAccountProvider.APP,
+      provider.scope,
+      SEED_APPLE_WORKSPACE_ID,
+      USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      provider.applicationId,
+      provider.id,
+    ],
+  );
+
+  return id;
+};
+
+const countConnectedAccounts = async (id: string): Promise<number> => {
+  const [{ count }] = await globalThis.testDataSource.query(
+    'SELECT count(*)::int AS count FROM core."connectedAccount" WHERE id = $1',
+    [id],
+  );
+
+  return count;
+};
+
 describe('connection provider scope manifest sync', () => {
   beforeEach(async () => {
     await setupApplicationForSync({
@@ -73,11 +111,27 @@ describe('connection provider scope manifest sync', () => {
     expect(await findProviderScopes()).toEqual(['USER']);
   }, 60000);
 
-  it('applies a scope change on a later sync', async () => {
+  it('refuses a scope change on a later sync and keeps the stored one', async () => {
     await syncProvider(buildProvider('WORKSPACE'));
-    await syncProvider(buildProvider('USER'));
+
+    const { errors } = await syncProvider(buildProvider('USER'), {
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      'Connection provider scope cannot be changed after creation',
+    );
+    expect(await findProviderScopes()).toEqual(['WORKSPACE']);
+  }, 60000);
+
+  it('deletes the connections of a provider replaced by one with a new identifier', async () => {
+    await syncProvider(buildProvider('WORKSPACE'));
+    const connectedAccountId = await insertConnectedAccount();
+
+    await syncProvider(buildProvider('USER', uuidv4()));
 
     expect(await findProviderScopes()).toEqual(['USER']);
+    expect(await countConnectedAccounts(connectedAccountId)).toBe(0);
   }, 60000);
 
   it('rejects an unknown scope on create', async () => {
@@ -90,19 +144,5 @@ describe('connection provider scope manifest sync', () => {
       'Connection provider scope \\"WORKSPACE_MEMBER\\" is invalid',
     );
     expect(await findProviderScopes()).toEqual([]);
-  }, 60000);
-
-  it('rejects an unknown scope on update and keeps the stored one', async () => {
-    await syncProvider(buildProvider('USER'));
-
-    const { errors } = await syncProvider(
-      buildProvider('WORKSPACE_MEMBER' as never),
-      { expectToFail: true },
-    );
-
-    expect(JSON.stringify(errors)).toContain(
-      'Connection provider scope \\"WORKSPACE_MEMBER\\" is invalid',
-    );
-    expect(await findProviderScopes()).toEqual(['USER']);
   }, 60000);
 });
