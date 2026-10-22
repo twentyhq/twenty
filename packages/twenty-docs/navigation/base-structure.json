@@ -511,6 +511,7 @@
           "pages": [
             "developers/self-host/capabilities/docker-compose",
             "developers/self-host/capabilities/setup",
+            "developers/self-host/capabilities/security",
             "developers/self-host/capabilities/upgrade-guide",
             "developers/self-host/capabilities/troubleshooting"
           ]
