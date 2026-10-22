@@ -150,7 +150,13 @@ export const ApplicationMonitoringLineChart = <TSeriesKey extends string>({
                 : maxValue * 1.1,
             stacked: false,
           }}
-          yFormat={isDefined(integerTickValues) ? '>-,.0f' : '>-,.2~f'}
+          yFormat={
+            isDefined(integerTickValues)
+              ? '>-,.0f'
+              : maxValue < 1
+                ? '>-,.2~r'
+                : '>-,.2~f'
+          }
           axisBottom={{
             legend: axisLabel,
             legendOffset: 20,
