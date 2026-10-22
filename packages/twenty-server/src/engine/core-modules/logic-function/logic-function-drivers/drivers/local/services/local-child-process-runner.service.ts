@@ -5,6 +5,8 @@ import { join } from 'path';
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildLocalChildProcessEnv } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-env.util';
+import { buildLocalChildProcessNodeFlags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-node-flags.util';
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
 import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
@@ -144,14 +146,41 @@ export class LocalChildProcessRunnerService {
     return runnerPath;
   }
 
-  runChildWithEnv(options: {
+  async runChildWithEnv(options: {
     runnerPath: string;
+    executionDirectory: string;
+    layerDirectories: string[];
     env: Record<string, string>;
     payload: unknown;
     context: LogicFunctionExecutionContext;
     timeoutMs: number;
   }) {
-    const { runnerPath, env, payload, context, timeoutMs } = options;
+    const {
+      runnerPath,
+      executionDirectory,
+      layerDirectories,
+      env,
+      payload,
+      context,
+      timeoutMs,
+    } = options;
+
+    const temporaryDirectory = join(executionDirectory, 'tmp');
+
+    await fs.mkdir(temporaryDirectory, { recursive: true });
+
+    const nodeFlags = buildLocalChildProcessNodeFlags({
+      readableDirectories: [executionDirectory, ...layerDirectories],
+      writableDirectory: temporaryDirectory,
+      // Node 25+ denies network access under --permission unless --allow-net is passed.
+      allowNetwork: process.allowedNodeEnvironmentFlags.has('--allow-net'),
+    });
+
+    const childEnv = buildLocalChildProcessEnv({
+      hostEnv: process.env,
+      functionEnv: env,
+      temporaryDirectory,
+    });
 
     return new Promise<{
       ok: boolean;
@@ -162,12 +191,9 @@ export class LocalChildProcessRunnerService {
       stdout: string;
       stderr: string;
     }>((resolve) => {
-      // Strip NODE_OPTIONS to prevent tsx loader from being inherited
-      const { NODE_OPTIONS: _n1, ...cleanProcessEnv } = process.env;
-      const { NODE_OPTIONS: _n2, ...cleanUserEnv } = env;
-
-      const child = spawn(process.execPath, [runnerPath], {
-        env: { ...cleanProcessEnv, ...cleanUserEnv },
+      const child = spawn(process.execPath, [...nodeFlags, runnerPath], {
+        cwd: executionDirectory,
+        env: childEnv,
         stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       });
 
