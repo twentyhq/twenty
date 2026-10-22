@@ -29,7 +29,7 @@ export const Input = ({
         className,
       )}
       data-variant={resolvedVariant}
-      data-focus-ring={hasFocusRing || undefined}
+      data-focus-ring={hasFocusRing}
       data-grouped={isGrouped || undefined}
     />
   );

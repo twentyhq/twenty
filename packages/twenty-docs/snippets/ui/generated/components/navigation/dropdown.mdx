@@ -369,8 +369,8 @@
   The default value of the input. Use when uncontrolled.
 </ParamField>
 
-<ParamField body="Search.hasFocusRing" type="boolean">
-  Shows the focus outline on standalone plain inputs. Defaults to true.
+<ParamField body="Search.hasFocusRing" type="boolean" default="false">
+  Shows the search input focus outline. Defaults to false for all dropdown searches. Set true to opt in. Error styling remains visible.
 </ParamField>
 
 <ParamField body="Search.onValueChange" type="((value: string) =&gt; void)">

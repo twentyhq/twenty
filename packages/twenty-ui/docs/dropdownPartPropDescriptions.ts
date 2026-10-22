@@ -10,7 +10,6 @@ import { type DropdownSearchProps } from '../src/components/navigation/Dropdown/
 import { type DropdownSelectionGroupProps } from '../src/components/navigation/Dropdown/types/DropdownSelectionGroupProps';
 import { type DropdownSectionProps } from '../src/components/navigation/Dropdown/types/DropdownSectionProps';
 import { type DropdownSubmenuTriggerProps } from '../src/components/navigation/Dropdown/types/DropdownSubmenuTriggerProps';
-import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 
 const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
   type: 'Interaction model: `menu` for commands and links, `picker` for search and selectable options, or `panel` for forms. It sets the ARIA roles, initial focus, and keyboard navigation.',
@@ -94,7 +93,8 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
       'Element or function rendered as the group. Functions receive supplied props and `{ value, multiple }` state. Forward the props and ref.',
   } satisfies Partial<Record<keyof DropdownSelectionGroupProps, string>>,
   Search: {
-    hasFocusRing: INPUT_PROP_DESCRIPTIONS.hasFocusRing,
+    hasFocusRing:
+      'Shows the search input focus outline. Defaults to false for all dropdown searches. Set true to opt in. Error styling remains visible.',
     onValueChange:
       'Called with the search text on every change. The application filters the results.',
   } satisfies Partial<Record<keyof DropdownSearchProps, string>>,

@@ -8,6 +8,7 @@ import { type InputGroupProps } from './types/InputGroupProps';
 
 export const InputGroup = ({
   size = 'md',
+  hasFocusRing = true,
   startElement,
   endElement,
   className,
@@ -22,6 +23,7 @@ export const InputGroup = ({
     props: {
       ...props,
       className: clsx(styles.root, styles[size], className),
+      'data-focus-ring': hasFocusRing,
       children: (
         <>
           {isRenderableAdornment(startElement) && (

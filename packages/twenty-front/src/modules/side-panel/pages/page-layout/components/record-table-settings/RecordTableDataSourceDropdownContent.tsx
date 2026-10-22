@@ -1,3 +1,4 @@
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -9,20 +10,10 @@ import { useRemoveDraftViewForRecordTableWidget } from '@/page-layout/widgets/re
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const RecordTableDataSourceDropdownContent = () => {
@@ -36,27 +27,13 @@ export const RecordTableDataSourceDropdownContent = () => {
     | string
     | undefined;
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
-
   const { addDraftViewForRecordTableWidget } =
     useAddDraftViewForRecordTableWidget(pageLayoutId);
-
   const { removeDraftViewForRecordTableWidget } =
     useRemoveDraftViewForRecordTableWidget(pageLayoutId);
-
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
-
-  const { closeDropdown } = useCloseDropdown();
 
   const readableActiveObjectMetadataItems =
     filterReadableActiveObjectMetadataItems(
@@ -80,7 +57,6 @@ export const RecordTableDataSourceDropdownContent = () => {
 
   const handleSelectSource = (newObjectMetadataItemId: string) => {
     if (currentObjectMetadataItemId === newObjectMetadataItemId) {
-      closeDropdown();
       return;
     }
 
@@ -109,63 +85,44 @@ export const RecordTableDataSourceDropdownContent = () => {
         title: selectedObjectMetadataItem.labelPlural,
       });
     }
-
-    closeDropdown();
   };
 
   return (
     <>
-      <DropdownMenuSearchInput
-        autoFocus
-        type="text"
+      <Dropdown.Search
         placeholder={t`Search objects`}
-        onChange={(event) => setSearchQuery(event.target.value)}
+        aria-label={t`Search objects`}
+        onValueChange={setSearchQuery}
         value={searchQuery}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={filteredObjects.map(
-            (objectMetadataItem) => objectMetadataItem.id,
-          )}
+      <ChartSettingsDropdownSection>
+        <Dropdown.SelectionGroup
+          aria-label={t`Source`}
+          value={currentObjectMetadataItemId ?? null}
         >
           {filteredObjects.map((objectMetadataItem) => (
-            <SelectableListItem
+            <Dropdown.OptionItem
               key={objectMetadataItem.id}
-              itemId={objectMetadataItem.id}
-              onEnter={() => {
-                handleSelectSource(objectMetadataItem.id);
-              }}
+              value={objectMetadataItem.id}
+              onSelect={() => handleSelectSource(objectMetadataItem.id)}
+              startIcon={
+                <SelectOptionIcon
+                  Icon={() => (
+                    <ObjectMetadataIcon
+                      objectMetadataItem={objectMetadataItem}
+                    />
+                  )}
+                />
+              }
             >
-              <ListItemButton
-                focused={selectedItemId === objectMetadataItem.id}
-                onClick={() => {
-                  handleSelectSource(objectMetadataItem.id);
-                }}
-                role="option"
-                aria-selected={
-                  currentObjectMetadataItemId === objectMetadataItem.id
-                }
-                selected={currentObjectMetadataItemId === objectMetadataItem.id}
-                indicator="check"
-                startIcon={
-                  <SelectOptionIcon
-                    Icon={() => (
-                      <ObjectMetadataIcon
-                        objectMetadataItem={objectMetadataItem}
-                      />
-                    )}
-                  />
-                }
-              >
-                {objectMetadataItem.labelPlural}
-              </ListItemButton>
-            </SelectableListItem>
+              {objectMetadataItem.labelPlural}
+            </Dropdown.OptionItem>
           ))}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
+        </Dropdown.SelectionGroup>
+        {!isNonEmptyArray(filteredObjects) && (
+          <Dropdown.Empty>{t`No results found`}</Dropdown.Empty>
+        )}
+      </ChartSettingsDropdownSection>
     </>
   );
 };

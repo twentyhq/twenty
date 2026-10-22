@@ -3,13 +3,13 @@ import { type ComponentProps } from 'react';
 import { type SearchInput } from '../src/components/input/SearchInput/SearchInput';
 
 export const SEARCH_INPUT_PROP_DESCRIPTIONS = {
-  hasFocusRing:
-    'Only affects standalone plain inputs. The InputGroup focus border stays visible on SearchInput.',
   value: 'Current search text.',
   onValueChange: 'Called with the new text. The application owns filtering.',
   onChange: 'Native input change event handler.',
   ref: 'Ref to the native input element.',
   size: 'Visual size of the input group.',
+  hasFocusRing:
+    'Shows the group focus border. Defaults to false for all search inputs. Set true to opt in. Error styling remains visible.',
   placeholder:
     'Hint shown when the input is empty. Also used as the accessible name if no explicit label is supplied.',
   actions:
