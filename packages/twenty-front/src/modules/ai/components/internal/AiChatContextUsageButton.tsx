@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { MetricRow } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconWindow, IconGauge } from 'twenty-ui/icon';
@@ -28,26 +29,6 @@ import { StyledInformationCard } from '@/ui/layout/information-card/components/S
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '@/localization/utils/formatNumber';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-
-const StyledTrigger = styled.button`
-  align-items: center;
-  background: transparent;
-  border: none;
-  border-radius: ${themeCssVariables.border.radius.md};
-  cursor: pointer;
-  display: flex;
-  height: 24px;
-  justify-content: center;
-  padding: 0;
-  width: 24px;
-
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
-  }
-  &:focus-visible {
-    outline: 2px solid ${themeCssVariables.color.blue};
-  }
-`;
 
 const StyledFooter = styled.div`
   display: flex;
@@ -164,7 +145,8 @@ export const AiChatContextUsageButton = () => {
 
   return (
     <>
-      <StyledTrigger
+      <LightIconButton
+        size="sm"
         ref={refs.setReference}
         type="button"
         aria-label={
@@ -181,7 +163,7 @@ export const AiChatContextUsageButton = () => {
           barColor={contextWindowRingColor}
           render={<span />}
         />
-      </StyledTrigger>
+      </LightIconButton>
       {isMounted && (
         <FloatingPortal>
           <StyledInformationCard

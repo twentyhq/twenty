@@ -4,18 +4,11 @@ import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hoo
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft } from 'twenty-ui/icon';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
@@ -26,21 +19,17 @@ type RatioOption = {
   color?: ThemeColor;
 };
 
+type ChartRatioOptionValueSelectionDropdownContentProps = {
+  currentFieldMetadataId: string;
+};
+
 export const ChartRatioOptionValueSelectionDropdownContent = ({
   currentFieldMetadataId,
-  setIsOptionValueMenuOpen,
-}: {
-  currentFieldMetadataId: string;
-  setIsOptionValueMenuOpen: (isOpen: boolean) => void;
-}) => {
+}: ChartRatioOptionValueSelectionDropdownContentProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { objectMetadataItems } = useObjectMetadataItems();
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
-
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
 
   if (
     !isWidgetConfigurationOfType(
@@ -97,50 +86,39 @@ export const ChartRatioOptionValueSelectionDropdownContent = ({
 
   return (
     <>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={() => setIsOptionValueMenuOpen(false)}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
+      <Dropdown.Back aria-label={t`Back to operations`}>
         {t`Select value`}
-      </DropdownMenuHeader>
-      <DropdownMenuSearchInput
-        autoFocus
-        type="text"
+      </Dropdown.Back>
+      <Dropdown.Search
         placeholder={t`Search options`}
-        onChange={(event) => setSearchQuery(event.target.value)}
+        aria-label={t`Search options`}
+        onValueChange={setSearchQuery}
         value={searchQuery}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={filteredOptions.map((item) => item.value)}
-        >
-          {filteredOptions.map((option) =>
-            isBoolean ? (
-              <ChartRatioOptionBooleanSelectableListItem
-                key={option.value}
-                optionValue={option.value}
-                label={option.label}
-                currentFieldMetadataId={currentFieldMetadataId}
-              />
-            ) : (
-              <ChartRatioOptionSelectSelectableListItem
-                key={option.value}
-                optionValue={option.value}
-                label={option.label}
-                color={option.color}
-                currentFieldMetadataId={currentFieldMetadataId}
-              />
-            ),
-          )}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
+      <Dropdown.Separator />
+      <ChartSettingsDropdownSection>
+        {filteredOptions.map((option) =>
+          isBoolean ? (
+            <ChartRatioOptionBooleanSelectableListItem
+              key={option.value}
+              optionValue={option.value}
+              label={option.label}
+              currentFieldMetadataId={currentFieldMetadataId}
+            />
+          ) : (
+            <ChartRatioOptionSelectSelectableListItem
+              key={option.value}
+              optionValue={option.value}
+              label={option.label}
+              color={option.color}
+              currentFieldMetadataId={currentFieldMetadataId}
+            />
+          ),
+        )}
+        {!isNonEmptyArray(filteredOptions) && (
+          <Dropdown.Empty>{t`No options found`}</Dropdown.Empty>
+        )}
+      </ChartSettingsDropdownSection>
     </>
   );
 };

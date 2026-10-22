@@ -48,9 +48,17 @@ const StyledDescription = styled.div`
   width: 50%;
 `;
 
+const StyledActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--t-spacing-2);
+  justify-content: center;
+`;
+
 export const EmptyState = {
   Root: StyledRoot,
   Content: StyledContent,
   Title: StyledTitle,
   Description: StyledDescription,
+  Actions: StyledActions,
 };
