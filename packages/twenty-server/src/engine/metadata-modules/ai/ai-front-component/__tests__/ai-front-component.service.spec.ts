@@ -215,11 +215,20 @@ describe('AI front component lifecycle', () => {
       );
       const runtime = await service.getRuntime('component', AUTH_CONTEXT!);
       expect(runtime.sharedDependenciesSource).toBe(
-        kind === 'inline' ? undefined : sharedDependenciesSource,
+        kind === 'application' ? sharedDependenciesSource : undefined,
       );
       expect(
         dependencies.applications.findOneApplicationWithRelationsOrThrow,
       ).toHaveBeenCalledTimes(kind === 'application' ? 1 : 0);
+      expect(runtime.sharedDependenciesChecksum).toBe(
+        kind === 'pinned' ? checksum : undefined,
+      );
+      if (kind === 'pinned') {
+        expect(dependencies.files.readFile).toHaveBeenCalledTimes(1);
+        await expect(
+          service.getSharedDependencies(checksum + '.js', AUTH_CONTEXT!),
+        ).resolves.toBe(sharedDependenciesSource);
+      }
       if (kind !== 'inline') {
         dependencies.files.readFile.mockImplementation(
           async ({ resourcePath }) =>
@@ -230,7 +239,9 @@ describe('AI front component lifecycle', () => {
             ),
         );
         await expect(
-          service.getRuntime('component', AUTH_CONTEXT!),
+          kind === 'pinned'
+            ? service.getSharedDependencies(checksum + '.js', AUTH_CONTEXT!)
+            : service.getRuntime('component', AUTH_CONTEXT!),
         ).rejects.toThrow('shared dependencies checksum mismatch');
       }
       dependencies.files.readFile.mockResolvedValue(
@@ -241,6 +252,17 @@ describe('AI front component lifecycle', () => {
       ).rejects.toThrow('Component source checksum mismatch');
     },
   );
+
+  it('rejects invalid asset paths and disabled workspaces before reading files', async () => {
+    await expect(
+      service.getSharedDependencies('../other.js', AUTH_CONTEXT!),
+    ).rejects.toThrow('Invalid component');
+    dependencies.featureFlags.isFeatureEnabled.mockResolvedValue(false);
+    await expect(
+      service.getSharedDependencies('a'.repeat(64) + '.js', AUTH_CONTEXT!),
+    ).rejects.toThrow('disabled');
+    expect(dependencies.files.readFile).not.toHaveBeenCalled();
+  });
 
   it('reads live data with current viewer permissions', async () => {
     const viewerContext = {

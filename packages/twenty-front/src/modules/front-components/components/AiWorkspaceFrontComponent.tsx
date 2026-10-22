@@ -18,6 +18,7 @@ export const AiWorkspaceFrontComponent = ({
   const [runtime, setRuntime] = useState<{
     componentSource: string;
     sharedDependenciesSource?: string;
+    sharedDependenciesChecksum?: string;
     data: Record<string, unknown>;
   }>();
   const [error, setError] = useState<Error>();
@@ -60,6 +61,11 @@ export const AiWorkspaceFrontComponent = ({
           componentId={frontComponentId}
           componentSource={runtime.componentSource}
           sharedDependenciesSource={runtime.sharedDependenciesSource}
+          sharedDependenciesUrl={
+            isDefined(runtime.sharedDependenciesChecksum)
+              ? `${REACT_APP_SERVER_BASE_URL}/rest/ai-front-components/shared-dependencies/${runtime.sharedDependenciesChecksum}.js`
+              : undefined
+          }
           data={runtime.data}
           colorScheme={colorScheme}
           onError={setError}

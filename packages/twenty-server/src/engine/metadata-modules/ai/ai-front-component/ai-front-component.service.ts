@@ -1,3 +1,4 @@
+import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/extract-checksum-from-cache-key.util';
 import { getFrontComponentSharedDependenciesPath } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-shared-dependencies-path.util';
 import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
 import {
@@ -188,24 +189,20 @@ export class AiFrontComponentService {
     }
 
     let sharedDependenciesSource: string | undefined;
+    const sharedDependenciesChecksum =
+      readFrontComponentSharedDependenciesChecksum(componentSource);
 
     if (
       componentSource.includes(
         FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
-      )
+      ) &&
+      !isDefined(sharedDependenciesChecksum)
     ) {
-      const pinnedChecksum =
-        readFrontComponentSharedDependenciesChecksum(componentSource);
-      const applicationDependencies = isDefined(pinnedChecksum)
-        ? {
-            frontComponentSharedDependenciesBuiltPath:
-              getFrontComponentSharedDependenciesPath(pinnedChecksum),
-            frontComponentSharedDependenciesChecksum: pinnedChecksum,
-          }
-        : await this.applications.findOneApplicationWithRelationsOrThrow({
-            id: application.id,
-            workspaceId: authContext.workspace.id,
-          });
+      const applicationDependencies =
+        await this.applications.findOneApplicationWithRelationsOrThrow({
+          id: application.id,
+          workspaceId: authContext.workspace.id,
+        });
 
       if (
         !isDefined(
@@ -235,6 +232,46 @@ export class AiFrontComponentService {
       }
     }
 
-    return { componentSource, sharedDependenciesSource, data };
+    return {
+      componentSource,
+      sharedDependenciesSource,
+      sharedDependenciesChecksum,
+      data,
+    };
+  }
+
+  async getSharedDependencies(
+    cacheKey: string,
+    authContext: WorkspaceAuthContext,
+  ) {
+    const workspaceId = authContext.workspace.id;
+    await this.assertEnabled(workspaceId);
+    const checksum = extractChecksumFromCacheKey(cacheKey);
+
+    if (!isDefined(checksum)) {
+      throw new BadRequestException(
+        doNotTranslate('Invalid component shared dependencies checksum.'),
+      );
+    }
+    const { workspaceCustomFlatApplication: application } =
+      await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+    const source = await text(
+      await this.files.readFile({
+        workspaceId,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        fileFolder: FileFolder.BuiltFrontComponent,
+        resourcePath: getFrontComponentSharedDependenciesPath(checksum),
+      }),
+    );
+
+    if (createHash('sha256').update(source).digest('hex') !== checksum) {
+      throw new BadRequestException(
+        doNotTranslate('Component shared dependencies checksum mismatch.'),
+      );
+    }
+
+    return source;
   }
 }
