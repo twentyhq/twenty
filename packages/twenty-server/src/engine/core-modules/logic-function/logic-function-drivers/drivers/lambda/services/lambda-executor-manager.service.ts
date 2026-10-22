@@ -6,6 +6,7 @@ import {
   type CreateFunctionCommandInput,
   DeleteFunctionCommand,
   type GetFunctionCommandOutput,
+  ResourceNotFoundException,
   TagResourceCommand,
   UpdateFunctionCodeCommand,
   UpdateFunctionConfigurationCommand,
@@ -78,19 +79,19 @@ export class LambdaExecutorManagerService {
   }
 
   async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
-    await this.clearLambdaExecutorCache(flatLogicFunction);
-
-    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
-
-    if (!isDefined(lambdaExecutor)) {
-      return;
-    }
-
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    await lambdaClient.send(
-      new DeleteFunctionCommand({ FunctionName: flatLogicFunction.id }),
-    );
+    try {
+      await lambdaClient.send(
+        new DeleteFunctionCommand({ FunctionName: flatLogicFunction.id }),
+      );
+    } catch (error) {
+      if (!(error instanceof ResourceNotFoundException)) {
+        throw error;
+      }
+    }
+
+    await this.clearLambdaExecutorCache(flatLogicFunction);
   }
 
   async buildExecutor(context: ExecutorBuildContext): Promise<void> {
