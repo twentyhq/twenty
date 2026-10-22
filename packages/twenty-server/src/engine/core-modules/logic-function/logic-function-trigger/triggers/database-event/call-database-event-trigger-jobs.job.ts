@@ -149,11 +149,10 @@ export class CallDatabaseEventTriggerJobsJob {
             `Enqueue throttled for application ${applicationId} (registration ${applicationRegistrationId}) in workspace ${workspaceEventBatch.workspaceId}: skipping ${logicFunctionPayloads.length} logic function trigger(s)`,
           );
 
-          await this.applicationLogDeduplicationService.recordOncePerWindow(
+          this.applicationLogDeduplicationService.recordOncePerWindow(
             buildApplicationJobThrottledLogEntry({
               workspaceId: workspaceEventBatch.workspaceId,
               application,
-              skippedJobCount: logicFunctionPayloads.length,
             }),
           );
 
