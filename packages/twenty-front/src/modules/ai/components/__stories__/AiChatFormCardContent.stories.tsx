@@ -3,14 +3,17 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatFormCardContent } from '@/ai/components/AiChatFormCardContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
+const AI_CHAT_FORM_CARD_STORY_WIDTH_PX = 640;
+
 const StyledContainer = styled.div`
-  padding: 24px;
-  width: 640px;
+  padding: ${themeCssVariables.spacing[6]};
+  width: ${AI_CHAT_FORM_CARD_STORY_WIDTH_PX}px;
 `;
 
 const meta = {
