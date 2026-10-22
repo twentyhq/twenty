@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 
+import { WIDGET_SCROLL_FRAME_LABEL } from '@/__stories__/twenty-ui-gallery/constants/WidgetScrollFrameLabel';
+
 export const PortalBoundsDecorator: Decorator = (Story) => {
   const [hostActionCount, setHostActionCount] = useState(0);
 
@@ -29,7 +31,7 @@ export const PortalBoundsDecorator: Decorator = (Story) => {
       >
         <div
           role="region"
-          aria-label="Widget scroll frame"
+          aria-label={WIDGET_SCROLL_FRAME_LABEL}
           style={{ width: '100%', height: '100%', overflow: 'auto' }}
         >
           <div role="group" aria-label="Widget" style={{ height: 260 }}>

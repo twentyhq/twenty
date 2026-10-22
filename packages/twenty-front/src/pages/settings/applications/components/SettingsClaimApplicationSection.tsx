@@ -3,6 +3,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -21,6 +22,7 @@ import { Callout, useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   FindClaimableApplicationRegistrationDocument,
@@ -257,19 +259,28 @@ export const SettingsClaimApplicationSection = () => {
             label={t`Package name or universal identifier`}
           />
         </StyledInputContainer>
+        {canSyncCatalog && (
+          <Tooltip
+            content={t`Sync catalog`}
+            delay={TooltipDelay.shortDelay}
+            side="top"
+          >
+            <span>
+              <Button
+                startIcon={<IconRefresh />}
+                aria-label={t`Sync catalog`}
+                onClick={handleSync}
+                disabled={isSyncing}
+                variant="outline"
+              />
+            </span>
+          </Tooltip>
+        )}
         <Button
           startIcon={<IconSearch />}
           onClick={handleLookup}
           disabled={isLookingUp || lookupValue.trim().length === 0}
         >{t`Look up`}</Button>
-        {canSyncCatalog && (
-          <Button
-            startIcon={<IconRefresh />}
-            onClick={handleSync}
-            disabled={isSyncing}
-            variant="outline"
-          >{t`Sync catalog`}</Button>
-        )}
       </StyledRow>
 
       {notFound && (

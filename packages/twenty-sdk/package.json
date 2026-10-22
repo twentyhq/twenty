@@ -1,5 +1,10 @@
 {
   "name": "twenty-sdk",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twentyhq/twenty.git",
+    "directory": "packages/twenty-sdk"
+  },
   "version": "2.51.0",
   "sideEffects": false,
   "bin": {

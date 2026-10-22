@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 
+import { billingState } from '@/client-config/states/billingState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { USAGE_LIMIT_OPERATION_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitOperationTypeIcons';
 import { isKeyOfRecord } from '@/settings/billing/utils/isKeyOfRecord';
@@ -10,6 +11,7 @@ import {
 } from '@/settings/components/SettingsStatsGrid';
 import { getCurrentMonthPeriodDates } from '@/settings/usage/utils/getCurrentMonthPeriodDates';
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconBrandDocker,
@@ -33,6 +35,8 @@ export const SettingsApplicationRegistrationInstallStats = ({
 }) => {
   const { t, i18n } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
+  const billing = useAtomStateValue(billingState);
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const periodDates = getCurrentMonthPeriodDates();
 
   const applicationRegistrationId = registration.id;
@@ -136,5 +140,11 @@ export const SettingsApplicationRegistrationInstallStats = ({
     ),
   ];
 
-  return <SettingsStatsGrid columns={[installStats, creditsUsedStats]} />;
+  return (
+    <SettingsStatsGrid
+      columns={
+        isBillingEnabled ? [installStats, creditsUsedStats] : [installStats]
+      }
+    />
+  );
 };

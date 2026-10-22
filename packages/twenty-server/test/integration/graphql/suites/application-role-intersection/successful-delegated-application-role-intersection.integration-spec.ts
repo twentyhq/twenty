@@ -25,6 +25,7 @@ import { updateOneView } from 'test/integration/metadata/suites/view/utils/updat
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -135,7 +136,7 @@ describe('A delegated application holding the flag acts like the session', () =>
     // downstream either way. What matters is that it is no longer the gate.
     it('should clear the billing checkout permission gate', async () => {
       const { errors } = await checkoutSession({
-        input: { recurringInterval: 'Month' },
+        input: { recurringInterval: 'Month', plan: BillingPlanKey.PRO },
         token: token(),
         expectToFail: true,
       });
