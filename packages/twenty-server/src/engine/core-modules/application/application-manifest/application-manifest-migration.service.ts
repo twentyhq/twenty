@@ -4,7 +4,6 @@ import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildApplicationWorkflowCronTriggerCacheEntries } from 'src/engine/core-modules/application/application-manifest/utils/build-application-workflow-cron-trigger-cache-entries.util';
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
@@ -22,6 +21,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -39,7 +39,7 @@ export class ApplicationManifestMigrationService {
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     private readonly logger: LoggerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
-    private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   async syncPreInstallLogicFunctionFromManifest({
@@ -268,7 +268,7 @@ export class ApplicationManifestMigrationService {
           }).id,
       );
 
-    const shouldRunOnDisconnectHooks =
+    const shouldDeleteConnectedAccounts =
       !dryRun && connectionProviderIdsToDelete.length > 0;
 
     const validateBuildAndRunMigration = (isDryRun: boolean) =>
@@ -284,12 +284,12 @@ export class ApplicationManifestMigrationService {
 
     const validateBuildRunStart = performance.now();
     let validateAndBuildResult = await validateBuildAndRunMigration(
-      dryRun || shouldRunOnDisconnectHooks,
+      dryRun || shouldDeleteConnectedAccounts,
     );
 
-    // Hooks release remote state and need the rows the migration deletes, so the plan is validated first
-    if (shouldRunOnDisconnectHooks) {
-      await this.connectionProviderLifecycleHookService.runOnDisconnectForConnectionProviders(
+    // Deleting runs disconnect hooks and revokes tokens, so the plan is validated before anything is released
+    if (shouldDeleteConnectedAccounts) {
+      await this.connectedAccountMetadataService.deleteManyByConnectionProviderIds(
         { connectionProviderIds: connectionProviderIdsToDelete, workspaceId },
       );
 
