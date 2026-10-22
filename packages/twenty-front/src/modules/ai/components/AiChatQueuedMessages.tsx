@@ -1,6 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { isAgentChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
+import { isAgentChatQueuedMessageRemovable } from '@/ai/utils/isAgentChatQueuedMessageRemovable';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
@@ -63,8 +64,12 @@ export const AiChatQueuedMessages = () => {
     const queuedMessage = {
       id: message.id,
       text: message.parts.find((part) => part.type === 'text')?.text ?? '',
-      isRemovable:
-        !isReadOnly && (!isAiChatInboxEnabled || isCurrentWorkspaceMember),
+      isRemovable: isAgentChatQueuedMessageRemovable({
+        message,
+        currentWorkspaceMemberId: currentWorkspaceMember?.id,
+        isAiChatInboxEnabled,
+        isReadOnly,
+      }),
     };
 
     if (!hasOtherSenders || !isDefined(senderId)) {
