@@ -9,6 +9,8 @@ export const FORM_FIELD_ROW_PROP_DESCRIPTIONS = {
     'Optional decorative icon before the label. The caller controls icon dimensions.',
   trailing:
     'Optional trailing content. Nested controls retain their own keyboard focus and event behavior.',
+  trailingProps:
+    'Native props, event handlers and ref applied to the trailing content wrapper. The wrapper is rendered only when trailing content is present; className is merged with the shared layout class.',
   children:
     'Field content, such as plain inputs, recipient chips, selectors or toggles. The caller owns input labels, state and click-to-focus behavior.',
   onClick:
