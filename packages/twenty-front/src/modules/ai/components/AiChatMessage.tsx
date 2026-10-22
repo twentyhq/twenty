@@ -85,12 +85,6 @@ const StyledMessageText = styled.div<{
   /* Pre-wrap on the container turns newlines between blocks into spacing; only code pre-wraps. */
   word-wrap: break-word;
 
-  .markdown-section {
-    line-height: inherit;
-    margin: ${({ isUser }) =>
-      isUser ? '0' : `${themeCssVariables.spacing['1.5']} 0`};
-  }
-
   code {
     background: ${themeCssVariables.background.tertiary};
     border-radius: ${themeCssVariables.border.radius.sm};
@@ -280,6 +274,7 @@ export const AiChatMessage = ({
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
   const messageContent = (
     <AiChatAssistantMessageRenderer
+      isUserMessage={isUser}
       isLastMessageStreaming={isLastMessageStreaming}
       messageParts={agentChatMessage.parts}
       hasError={shouldShowError}
