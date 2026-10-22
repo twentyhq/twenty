@@ -9,6 +9,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
@@ -340,6 +341,12 @@ const MIXED_GROUP_ACTIVE_ACCOUNT_IDS = [
 ];
 const mixedAccountGroupStory: Story = {
   ...accountGroupsStory,
+  render: () => (
+    <>
+      <AppToaster getToastProps={() => ({ progress: 100 })} />
+      <SettingsAccounts />
+    </>
+  ),
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
     msw: {
@@ -458,7 +465,7 @@ export const DisconnectArchivesEveryActiveConnectionInMixedGroup: Story = {
         withinTableRowOrThrow({
           canvasElement,
           text: 'tim@apple.dev',
-        }).getByText('Disconnected'),
+        }).getByText('Sync paused'),
       ).toBeVisible(),
     );
     const body = within(canvasElement.ownerDocument.body);
@@ -675,7 +682,7 @@ export const MailboxOnlyGroupDisconnectsAndDeletesItsMailbox: Story = {
         withinTableRowOrThrow({
           canvasElement,
           text: 'tim@outlook.com',
-        }).getByText('Disconnected'),
+        }).getByText('Sync paused'),
       ).toBeVisible();
     });
     expect(deleteConnectedAccount).not.toHaveBeenCalled();
