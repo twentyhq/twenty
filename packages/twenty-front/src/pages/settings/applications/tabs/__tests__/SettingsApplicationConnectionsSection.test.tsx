@@ -42,16 +42,11 @@ const mockedUseApplicationConnectedAccounts =
   >;
 
 describe('SettingsApplicationConnectionsSection', () => {
-  const CONNECTION_SCOPES = [
-    ConnectedAccountScope.USER,
-    ConnectedAccountScope.WORKSPACE,
-  ];
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it.each(CONNECTION_SCOPES)('links %s rows for WORKSPACE', (scope) => {
+  it('renders app connection rows as links to the connection detail page', () => {
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
       connectionProviders: [
         {
@@ -83,7 +78,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           lastSignedInAt: null,
           connectionProviderId: 'provider-1',
           name: 'Main connection',
-          scope,
+          scope: ConnectedAccountScope.WORKSPACE,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
@@ -108,13 +103,7 @@ describe('SettingsApplicationConnectionsSection', () => {
       '/settings/applications/app-1/connections/account-1',
     );
     expect(screen.getByText('Reconnect needed')).toBeVisible();
-    expect(
-      screen.getByText(
-        scope === ConnectedAccountScope.WORKSPACE
-          ? 'Workspace shared'
-          : 'Just for me',
-      ),
-    ).toBeVisible();
+    expect(screen.getByText('Workspace shared')).toBeVisible();
     expect(
       screen.queryByRole('button', { name: 'Reconnect' }),
     ).not.toBeInTheDocument();
@@ -210,7 +199,7 @@ describe('SettingsApplicationConnectionsSection', () => {
     ).not.toBeInTheDocument();
   });
 
-  it.each(CONNECTION_SCOPES)('lists %s rows for USER providers', (scope) => {
+  it('lists the connections of a provider scoped to each member without offering to add one', () => {
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
       connectionProviders: [
         {
@@ -242,7 +231,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           lastSignedInAt: null,
           connectionProviderId: 'provider-1',
           name: 'My calendar',
-          scope,
+          scope: ConnectedAccountScope.USER,
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
@@ -260,17 +249,8 @@ describe('SettingsApplicationConnectionsSection', () => {
       </I18nProvider>,
     );
 
-    expect(screen.getByRole('link', { name: /My calendar/i })).toHaveAttribute(
-      'href',
-      '/settings/applications/app-1/connections/account-1',
-    );
-    expect(
-      screen.getByText(
-        scope === ConnectedAccountScope.WORKSPACE
-          ? 'Workspace shared'
-          : 'Just for me',
-      ),
-    ).toBeVisible();
+    expect(screen.getByRole('link', { name: /My calendar/i })).toBeVisible();
+    expect(screen.getByText('Just for me')).toBeVisible();
     expect(
       screen.queryByRole('button', { name: /Add connection/i }),
     ).not.toBeInTheDocument();

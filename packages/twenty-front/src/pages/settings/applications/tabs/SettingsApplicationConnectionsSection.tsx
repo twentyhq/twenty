@@ -55,9 +55,10 @@ export const SettingsApplicationConnectionsSection = ({
             key={provider.id}
             providerDisplayName={provider.displayName}
             providerLogoUrl={provider.logoUrl}
-            isClientCredentialsConfigured={isClientCredentialsConfigured}
             description={t`Manage connections used by this app to call ${provider.displayName}.`}
-            shouldShowMissingCredentialsBanner={canAddConnection}
+            shouldShowMissingCredentialsBanner={
+              canAddConnection && !isClientCredentialsConfigured
+            }
           >
             {providerConnections.length > 0 && (
               <Table>
