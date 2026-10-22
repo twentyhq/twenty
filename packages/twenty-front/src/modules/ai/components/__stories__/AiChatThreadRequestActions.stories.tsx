@@ -73,7 +73,7 @@ export const Reply: Story = {
 };
 
 export const Pending: Story = {
-  args: { ...Choices.args, loading: true },
+  args: { ...Choices.args, isLoading: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole('button', { name: 'Sarah Lin' });

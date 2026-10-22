@@ -15,13 +15,13 @@ const StyledActions = styled.div`
 type AiChatThreadRequestActionsProps = {
   request: AiChatThreadRequest;
   disabled?: boolean;
-  loading?: boolean;
+  isLoading?: boolean;
 };
 
 export const AiChatThreadRequestActions = ({
   request,
   disabled = false,
-  loading = false,
+  isLoading = false,
 }: AiChatThreadRequestActionsProps) => {
   const { t } = useLingui();
 
@@ -29,7 +29,7 @@ export const AiChatThreadRequestActions = ({
     <StyledActions
       role="group"
       aria-label={t`Respond to request`}
-      aria-busy={loading}
+      aria-busy={isLoading}
     >
       {request.type === 'choices' &&
         request.choices.map((choice) => (
@@ -38,7 +38,7 @@ export const AiChatThreadRequestActions = ({
             size="sm"
             variant="outline"
             startIcon={choice.avatar}
-            disabled={disabled || loading}
+            disabled={disabled || isLoading}
             onClick={(event) => {
               event.stopPropagation();
               request.onChoose(choice.id);
@@ -52,7 +52,7 @@ export const AiChatThreadRequestActions = ({
           size="sm"
           variant="outline"
           disabled={disabled}
-          loading={loading}
+          loading={isLoading}
           onClick={(event) => {
             event.stopPropagation();
             request.onReview();
@@ -66,7 +66,7 @@ export const AiChatThreadRequestActions = ({
           size="sm"
           variant="outline"
           disabled={disabled}
-          loading={loading}
+          loading={isLoading}
           onClick={(event) => {
             event.stopPropagation();
             request.onReply();
