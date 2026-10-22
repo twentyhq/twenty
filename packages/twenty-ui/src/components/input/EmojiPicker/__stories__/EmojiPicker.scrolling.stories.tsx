@@ -79,8 +79,10 @@ export const KeyboardScrollsActiveRowIntoView: Story = {
 
     const viewport = firstEmoji.closest<HTMLElement>('[frimousse-viewport]');
 
+    await expect(viewport).toBeInTheDocument();
+
     if (!isDefined(viewport)) {
-      throw new Error('Emoji picker viewport is missing');
+      return;
     }
 
     await userEvent.click(search);
