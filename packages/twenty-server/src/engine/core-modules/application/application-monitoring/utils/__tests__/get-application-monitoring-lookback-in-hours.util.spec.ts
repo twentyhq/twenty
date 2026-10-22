@@ -1,6 +1,9 @@
-import { APPLICATION_MONITORING_RETENTION_IN_DAYS } from '@/constants/ApplicationMonitoringRetentionInDays';
-import { EVENT_LOG_RETENTION } from '@/constants/EventLogRetention';
-import { getApplicationMonitoringLookbackInHours } from '@/utils/event-logs/getApplicationMonitoringLookbackInHours';
+import {
+  APPLICATION_MONITORING_RETENTION_IN_DAYS,
+  EVENT_LOG_RETENTION,
+} from 'twenty-shared/constants';
+
+import { getApplicationMonitoringLookbackInHours } from 'src/engine/core-modules/application/application-monitoring/utils/get-application-monitoring-lookback-in-hours.util';
 
 describe('getApplicationMonitoringLookbackInHours', () => {
   it('should cap Pro plans at their log retention', () => {

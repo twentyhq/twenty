@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { getApplicationMonitoringLookbackInHours } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
@@ -19,6 +18,7 @@ import {
   type ApplicationMonitoringVersionRow,
   type ApplicationMonitoringWorkspaceRow,
 } from 'src/engine/core-modules/application/application-monitoring/types/application-monitoring-rows.type';
+import { getApplicationMonitoringLookbackInHours } from 'src/engine/core-modules/application/application-monitoring/utils/get-application-monitoring-lookback-in-hours.util';
 import { mapApplicationMonitoringRows } from 'src/engine/core-modules/application/application-monitoring/utils/map-application-monitoring-rows.util';
 import { mapApplicationMonitoringWorkspaceRows } from 'src/engine/core-modules/application/application-monitoring/utils/map-application-monitoring-workspace-rows.util';
 import {
