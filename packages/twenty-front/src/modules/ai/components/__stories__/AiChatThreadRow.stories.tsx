@@ -226,12 +226,15 @@ export const NarrowDraft: Story = {
       'Quote the annual plan and include the renewal details',
     );
 
+    await expect(row.getBoundingClientRect().height).toBe(65);
+    await expect(activityTime).toBeVisible();
     await userEvent.tab();
     await expect(row).toHaveFocus();
     const doneButton = canvas.getByRole('button', { name: 'Done' });
     await waitFor(() => expect(doneButton).toBeVisible());
-    await expect(activityTime).toBeVisible();
-    await expect(doneButton.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+    await expect(activityTime).not.toBeVisible();
+    await expect(row.getBoundingClientRect().height).toBe(65);
+    await expect(doneButton.getBoundingClientRect().top).toBeLessThan(
       subtitle.getBoundingClientRect().bottom,
     );
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
@@ -243,10 +246,11 @@ export const NarrowDraft: Story = {
     const snoozeButton = canvas.getByRole('button', { name: 'Snooze' });
     await expect(snoozeButton).toHaveFocus();
     await waitFor(() => expect(snoozeButton).toBeVisible());
-    await expect(activityTime).toBeVisible();
-    await expect(
-      snoozeButton.getBoundingClientRect().top,
-    ).toBeGreaterThanOrEqual(subtitle.getBoundingClientRect().bottom);
+    await expect(activityTime).not.toBeVisible();
+    await expect(row.getBoundingClientRect().height).toBe(65);
+    await expect(snoozeButton.getBoundingClientRect().top).toBeLessThan(
+      subtitle.getBoundingClientRect().bottom,
+    );
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
   },
 };
@@ -282,6 +286,53 @@ export const Snoozed: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Wake now' }));
     await expect(onReopen).toHaveBeenCalledTimes(1);
     await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const CompactSnoozed: Story = {
+  ...Snoozed,
+  tags: ['!dev'],
+  parameters: { container: { width: 400 } },
+  play: async ({ canvasElement }) => {
+    const { userEvent: trustedUserEvent } = await import('vitest/browser');
+    const canvas = within(canvasElement);
+    const row = canvas.getByRole('group', { name: 'Q3 renewal outreach' });
+    const activityTime = canvas.getByText('Thu · 09:00');
+    const title = canvas.getByText('Q3 renewal outreach');
+    const subtitle = canvas.getByText(
+      'Sarah: I drafted five check-in emails for the October renewals.',
+    );
+
+    await trustedUserEvent.unhover(row);
+    await expect(row.getBoundingClientRect().height).toBe(65);
+    await expect(activityTime).toBeVisible();
+    await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
+    await trustedUserEvent.hover(row);
+    const changeButton = canvas.getByRole('button', { name: 'Change' });
+    const wakeButton = canvas.getByRole('button', { name: 'Wake now' });
+    await waitFor(() => expect(changeButton).toBeVisible());
+    await expect(wakeButton).toBeVisible();
+    await expect(activityTime).not.toBeVisible();
+    await expect(row.getBoundingClientRect().height).toBe(65);
+    await expect(changeButton.getBoundingClientRect().height).toBe(24);
+    await expect(wakeButton.getBoundingClientRect().height).toBe(24);
+    await expect(changeButton.getBoundingClientRect().top).toBe(
+      wakeButton.getBoundingClientRect().top,
+    );
+    await expect(
+      changeButton.getBoundingClientRect().top,
+    ).toBeGreaterThanOrEqual(title.getBoundingClientRect().top);
+    await expect(wakeButton.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      subtitle.getBoundingClientRect().bottom,
+    );
+    await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
+    await trustedUserEvent.unhover(row);
+    await userEvent.tab();
+    await expect(row).toHaveFocus();
+    await waitFor(() => expect(changeButton).toBeVisible());
+    await expect(activityTime).not.toBeVisible();
+    await expect(row.getBoundingClientRect().height).toBe(65);
+    await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
   },
 };
 

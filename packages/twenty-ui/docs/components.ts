@@ -600,6 +600,8 @@ export const DOCUMENTED_COMPONENTS = [
         'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
         'When trailing actions are visible: on hover and focus, or always.',
+      actionsPlacement:
+        'Keeps actions beside the content at every width when set to `end`. The default `auto` preserves responsive wrapping. Hidden end actions do not reserve width on devices without touch.',
     },
   },
   {
