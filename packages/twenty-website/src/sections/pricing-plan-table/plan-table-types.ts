@@ -7,6 +7,7 @@ export type PlanTableTierId = 'enterprise' | 'organization' | 'pro';
 export type PlanTableCellType =
   | { kind: 'dash' }
   | { kind: 'text'; text: MessageDescriptor }
+  | { kind: 'unlimited' }
   | { kind: 'yes'; label?: MessageDescriptor };
 
 export type PlanTableTierColumnType = {

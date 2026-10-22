@@ -154,6 +154,29 @@ function InfoMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   );
 }
 
+function InfinityMark({
+  color,
+  sizePx,
+  strokeWidth = 2,
+}: InformativeMarkProps) {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height={sizePx}
+      viewBox="0 0 16 16"
+      width={sizePx}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M5.885 6.115a2.667 2.667 0 1 0 0 3.771 6.667 6.667 0 0 0 1.448-1.885 6.667 6.667 0 0 1 1.448-1.886 2.667 2.667 0 1 1 0 3.771 6.667 6.667 0 0 1-1.448-1.885 6.667 6.667 0 0 0-1.448-1.886"
+        stroke={color}
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+}
+
 function SearchMark({ color, sizePx, strokeWidth = 2 }: InformativeMarkProps) {
   return (
     <svg
@@ -263,6 +286,7 @@ export const INFORMATIVE_MARKS: Record<
   | 'cross'
   | 'edit'
   | 'eye'
+  | 'infinity'
   | 'info'
   | 'search'
   | 'tag'
@@ -276,6 +300,7 @@ export const INFORMATIVE_MARKS: Record<
   cross: CrossMark,
   edit: EditMark,
   eye: EyeMark,
+  infinity: InfinityMark,
   info: InfoMark,
   search: SearchMark,
   tag: TagMark,

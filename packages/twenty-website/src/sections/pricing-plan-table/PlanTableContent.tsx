@@ -32,6 +32,7 @@ import {
 import { resolveVisibleRows } from './plan-table-visible-rows';
 
 const CrossMark = INFORMATIVE_MARKS.cross;
+const InfinityMark = INFORMATIVE_MARKS.infinity;
 const TickMark = INFORMATIVE_MARKS.tick;
 
 const TableScope = styled.div`
@@ -91,8 +92,8 @@ const TierText = styled.span`
 
 const CellMark = styled.span`
   align-items: center;
+  column-gap: ${spacing(1.5)};
   display: flex;
-  height: ${spacing(5.5)};
 `;
 
 const CategoryBand = styled.div`
@@ -153,21 +154,32 @@ function resolveCell(
 function CellValue({ cell }: { cell: PlanTableCellType }) {
   const { i18n } = useLingui();
 
-  if (cell.kind === 'dash') {
-    return (
-      <CellMark aria-label={i18n._(msg`No`)} role="img">
-        <CrossMark color={semanticColor.inkSubtle} sizePx={18} />
-      </CellMark>
-    );
-  }
-
   if (cell.kind === 'text') {
     return <TierText>{i18n._(cell.text)}</TierText>;
   }
 
+  if (cell.kind === 'dash') {
+    return (
+      <CellMark>
+        <CrossMark color={semanticColor.inkSubtle} sizePx={18} />
+        <TierText>{i18n._(msg`No`)}</TierText>
+      </CellMark>
+    );
+  }
+
+  if (cell.kind === 'unlimited') {
+    return (
+      <CellMark>
+        <InfinityMark color={color('blue')} sizePx={18} />
+        <TierText>{i18n._(msg`Unlimited`)}</TierText>
+      </CellMark>
+    );
+  }
+
   return (
-    <CellMark aria-label={i18n._(cell.label ?? msg`Yes`)} role="img">
+    <CellMark>
       <TickMark color={color('blue')} sizePx={18} />
+      <TierText>{i18n._(cell.label ?? msg`Yes`)}</TierText>
     </CellMark>
   );
 }
