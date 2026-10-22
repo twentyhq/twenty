@@ -87,32 +87,32 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Seats limit`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Custom objects`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Custom fields`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Custom views`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
@@ -127,16 +127,16 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Custom layout`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Records`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
@@ -160,8 +160,8 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Number of dashboards`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
@@ -169,8 +169,8 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Internet accounts per user`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
@@ -228,11 +228,11 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`User roles`,
       selfHostTiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
         pro: { kind: 'text', text: msg`Admin & Member` },
       },
       type: 'row',
@@ -240,11 +240,11 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Read/Edit/Delete permissions`,
       selfHostTiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
         pro: { kind: 'dash' },
       },
       type: 'row',
@@ -252,11 +252,11 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Field-level permissions`,
       selfHostTiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
         pro: { kind: 'dash' },
       },
       type: 'row',
@@ -264,7 +264,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Row-level permissions`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
         pro: { kind: 'dash' },
       },
       type: 'row',
@@ -396,8 +396,8 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Custom apps`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
