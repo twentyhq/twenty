@@ -10,6 +10,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-grants-rewrite-job-retry-options.constant';
 import { REWRITE_AGENT_CHAT_CHANNEL_GRANTS_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/rewrite-agent-chat-channel-grants-job-name.constant';
 import { type RewriteAgentChatChannelGrantsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/rewrite-agent-chat-channel-grants-job.types';
+import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
 import { buildAgentChatChannelAccessQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-access-query.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -57,11 +58,10 @@ export class AgentChatChannelGrantService {
       return;
     }
 
-    await acquireAgentChatChannelGrantLocks({
+    await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
       manager,
       workspaceId,
       channelIds: affectedChannelIds,
-      mode: 'shared',
     });
 
     await this.replaceGrantsInTransaction({

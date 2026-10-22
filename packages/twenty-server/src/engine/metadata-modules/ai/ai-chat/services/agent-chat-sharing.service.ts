@@ -18,7 +18,7 @@ import { RecordShareStorageService } from 'src/engine/core-modules/record-share/
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
-import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
+import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
@@ -244,11 +244,10 @@ export class AgentChatSharingService {
             channelId: args.channelId,
           });
         }
-        await acquireAgentChatChannelGrantLocks({
+        await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
           manager,
           workspaceId: args.workspaceId,
           channelIds: [args.channelId],
-          mode: 'shared',
         });
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
           `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${isDefined(args.channelId) ? ', "channelId"' : ''})

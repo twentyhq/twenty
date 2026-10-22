@@ -969,6 +969,23 @@ describe('Chat channels through the authenticated API', () => {
     expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
   });
 
+  it('refuses a chat filed into a channel whose grants stay locked too long', async () => {
+    const channelId = await createChannel();
+
+    await holdChannelGrantLock({ channelId, mode: 'exclusive' });
+
+    const response = await makeMetadataApiRequest({
+      query: CREATE_THREAD,
+      variables: { channelId },
+    });
+
+    expect(response.body.errors[0].extensions).toMatchObject({
+      code: 'CONFLICT',
+      subCode: AiExceptionCode.CHAT_CHANNEL_BUSY,
+    });
+    expect(await countThreadsInChannel(channelId)).toBe(0);
+  });
+
   it("removes a role's access to all channels once a failed rewrite is retried", async () => {
     const channelId = await createChannel();
     const threadId = await createThreadInChannel(channelId);
