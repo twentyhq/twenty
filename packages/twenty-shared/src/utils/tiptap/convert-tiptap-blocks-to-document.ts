@@ -2,6 +2,7 @@ import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
 import { isTipTapNode } from './parse-tiptap-json-document';
 import { type TipTapDocument } from './tiptap-document';
+import { type TipTapNode } from './tiptap-node';
 import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
 
 // Workflow steps created through the API can still hold BlockNote, which also parses as TipTap
@@ -18,6 +19,10 @@ const isBlockNoteContent = (value: unknown): boolean => {
 
   return Array.isArray(value.content) && value.content.some(isBlockNoteContent);
 };
+
+const isTipTapDocumentNode = (
+  node: TipTapNode | undefined,
+): node is TipTapDocument => node?.type === TIPTAP_NODE_TYPES.DOCUMENT;
 
 export const convertTipTapBlocksToDocument = (
   serializedBlocks: string,
@@ -42,7 +47,7 @@ export const convertTipTapBlocksToDocument = (
 
   const [firstNode] = nodes;
 
-  return nodes.length === 1 && firstNode?.type === TIPTAP_NODE_TYPES.DOCUMENT
-    ? (firstNode as TipTapDocument)
+  return nodes.length === 1 && isTipTapDocumentNode(firstNode)
+    ? firstNode
     : { type: TIPTAP_NODE_TYPES.DOCUMENT, content: nodes };
 };

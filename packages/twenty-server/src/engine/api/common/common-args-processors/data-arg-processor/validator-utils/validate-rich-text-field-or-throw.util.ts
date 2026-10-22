@@ -47,7 +47,9 @@ const validateBlocknoteFieldOrThrow = (
 ): string | null => {
   const textValue = validateTextFieldOrThrow(value, fieldName);
 
-  if (!isNonEmptyString(textValue)) return textValue;
+  if (!isNonEmptyString(textValue)) {
+    return textValue;
+  }
 
   let parsed: unknown;
 
@@ -88,7 +90,9 @@ const validateTipTapFieldOrThrow = (
 ): string | null => {
   const textValue = validateTextFieldOrThrow(value, fieldName);
 
-  if (!isNonEmptyString(textValue)) return textValue;
+  if (!isNonEmptyString(textValue)) {
+    return textValue;
+  }
 
   const parsedDocument = richTextDocumentSchema.safeParse(
     parseJson<unknown>(textValue),
