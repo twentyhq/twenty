@@ -47,7 +47,11 @@ export const AiChatQueuedMessages = () => {
   const hasOtherSenders = agentChatQueuedMessages.some(
     (message) =>
       isDefined(message.metadata?.senderWorkspaceMemberId) &&
-      message.metadata.senderWorkspaceMemberId !== currentWorkspaceMember?.id,
+      !isAgentChatMessageOwn({
+        message,
+        currentWorkspaceMemberId: currentWorkspaceMember?.id,
+        isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
+      }),
   );
   const messages = agentChatQueuedMessages.map((message) => {
     const senderId = message.metadata?.senderWorkspaceMemberId;
