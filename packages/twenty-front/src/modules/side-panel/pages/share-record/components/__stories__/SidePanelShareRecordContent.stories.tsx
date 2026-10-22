@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -41,6 +41,13 @@ const MEMBERS = [
     name: { firstName: 'Jane', lastName: 'Austen' },
     userEmail: 'jane.austen@example.com',
     userId: 'invite-user',
+  },
+  {
+    id: 'invite-with-avatar',
+    name: { firstName: 'Jony', lastName: 'Ive' },
+    userEmail: 'jony@example.com',
+    userId: 'invite-with-avatar-user',
+    avatarUrl: AVATAR_URL_MOCK,
   },
 ];
 
@@ -212,7 +219,19 @@ export const AddPeople: Story = {
     await waitFor(() =>
       expect(page.getByPlaceholderText('Search people or roles')).toBeVisible(),
     );
-    await expect(page.getByText('Jane Austen')).toBeVisible();
+    const recipientWithoutAvatar = page.getByRole('button', {
+      name: /Jane Austen/,
+    });
+    await expect(
+      await within(recipientWithoutAvatar).findByText('J'),
+    ).toBeVisible();
+    const recipientWithAvatar = page.getByRole('button', { name: /Jony Ive/ });
+    const avatar =
+      await within(recipientWithAvatar).findByRole<HTMLImageElement>(
+        'presentation',
+      );
+    await expect(avatar).toBeVisible();
+    await waitFor(() => expect(avatar.naturalWidth).toBeGreaterThan(0));
   },
 };
 

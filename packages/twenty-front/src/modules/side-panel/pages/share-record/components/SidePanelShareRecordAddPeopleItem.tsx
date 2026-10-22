@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconLock, IconPlus, IconUsers } from 'twenty-ui/icon';
+import { IconLock, IconPlus } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { RecordSharingAccessSelect } from '@/object-record/record-sharing/components/RecordSharingAccessSelect';
@@ -11,6 +12,7 @@ import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-recor
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledRecipients = styled.div`
   max-height: 240px;
@@ -86,7 +88,15 @@ export const SidePanelShareRecordAddPeopleItem = ({
           {availableMembers.map((member) => (
             <Dropdown.ActionItem
               key={member.id}
-              startIcon={<IconUsers />}
+              startIcon={
+                <Avatar
+                  src={getAbsoluteImageUrl(member.avatarUrl)}
+                  name={getWorkspaceMemberNameOrEmail(member)}
+                  colorSeed={member.id}
+                  size="md"
+                  shape="circle"
+                />
+              }
               description={member.userEmail}
               disabled={saving}
               onClick={() => {
