@@ -52,7 +52,7 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
     },
   );
 
-  const { data, error } = useQuery(
+  const { data, previousData, loading, error } = useQuery(
     FindAdminApplicationRegistrationMonitoringDocument,
     {
       client: apolloAdminClient,
@@ -70,7 +70,8 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
   );
 
   const registration = registrationData?.findOneAdminApplicationRegistration;
-  const monitoring = data?.findAdminApplicationRegistrationMonitoring;
+  const monitoring = (data ?? previousData)
+    ?.findAdminApplicationRegistrationMonitoring;
 
   if (!isApplicationMonitoringEnabled || !isDefined(registration)) {
     return null;
@@ -99,6 +100,12 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
           onPeriodChange={(period) =>
             setPeriodRange(buildApplicationMonitoringPeriodRange(period))
           }
+          onRefresh={() =>
+            setPeriodRange(
+              buildApplicationMonitoringPeriodRange(periodRange.period),
+            )
+          }
+          isRefreshing={loading}
           isAdminView
           additionalActions={
             <SettingsAdminApplicationMonitoringWorkspaceSelect
