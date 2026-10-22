@@ -1,14 +1,8 @@
-ARG TARGETARCH
-
 # ===========================================================================
 # Base image
 # ===========================================================================
 
-# Per-arch repos until the multi-arch node:24.22.1-alpine3.23 index is published
-FROM amd64/node:24.22.1-alpine3.23@sha256:fdff1a7a39ca25677049cea557922827b3668b2aa94d80e3fde0fb751a769998 AS node-base-amd64
-FROM arm64v8/node:24.22.1-alpine3.23@sha256:73d1822fb892643f4cbec60d7c7cc47775ecd5f128198302cd3f508f0878c4a9 AS node-base-arm64
-FROM s390x/node:24.22.1-alpine3.23@sha256:167260a1ace21f357590810d5d2e1fcacf446089ab88a3592b816705dd5387b0 AS node-base-s390x
-FROM node-base-${TARGETARCH} AS node-base
+FROM node:24.22.1-alpine3.23@sha256:0468540aa58203ff9e40c2aab3907c52644ab818af6176b1c70a026137dc92a2 AS node-base
 
 # ===========================================================================
 # Dependency stages
