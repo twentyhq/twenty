@@ -24,7 +24,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       appliesTo: 'cloud',
       featureLabel: msg`Personal AI usage`,
       tiers: {
-        enterprise: { kind: 'text', text: msg`Custom allowance` },
+        enterprise: { kind: 'text', text: msg`Custom` },
         organization: { kind: 'text', text: msg`≈ 500 AI tasks/week` },
         pro: { kind: 'text', text: msg`≈ 100 AI tasks/week` },
       },
@@ -35,7 +35,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       appliesTo: 'cloud',
       featureLabel: msg`Workspace credits`,
       tiers: {
-        enterprise: { kind: 'text', text: msg`Custom allowance` },
+        enterprise: { kind: 'text', text: msg`Custom` },
         organization: { kind: 'text', text: msg`4 credits/user/month` },
         pro: { kind: 'text', text: msg`1 credit/user/month` },
       },
