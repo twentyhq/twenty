@@ -5,7 +5,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isSafeInternalPath,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
@@ -17,7 +21,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
-import { parseRelativeUrlOrNull } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url-or-null.util';
 import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
@@ -245,7 +248,6 @@ export class ConnectionProviderOAuthController {
     });
   }
 
-  // redirectLocation is a raw query param, so a malformed one must not turn the redirect into a 500
   private parseRedirectLocation({
     redirectLocation,
     fallbackPathname,
@@ -253,11 +255,11 @@ export class ConnectionProviderOAuthController {
     redirectLocation: string | null | undefined;
     fallbackPathname: string;
   }) {
-    const parsedRedirectLocation = isNonEmptyString(redirectLocation)
-      ? parseRelativeUrlOrNull(redirectLocation)
-      : null;
-
-    return parsedRedirectLocation ?? parseRelativeUrl(fallbackPathname);
+    return parseRelativeUrl(
+      isDefined(redirectLocation) && isSafeInternalPath(redirectLocation)
+        ? redirectLocation
+        : fallbackPathname,
+    );
   }
 
   private redirectToError({
