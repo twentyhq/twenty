@@ -1019,30 +1019,9 @@ describe('useFrontComponentExecutionContext', () => {
         defaultTo: 'lead@example.com',
         defaultSubject: undefined,
         defaultInReplyTo: undefined,
-        isReply: false,
         pageTitle: undefined,
         pageIcon: 'icon-IconMail',
       });
-    });
-
-    it('should open the email composer as a reply when a thread is given', async () => {
-      const { result } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
-          {
-            page: SidePanelPages.ComposeEmail,
-            connectedAccountId: 'account-1',
-            threadId: 'thread-1',
-          },
-        );
-      });
-
-      expect(mockOpenComposeEmailInSidePanel).toHaveBeenCalledWith(
-        expect.objectContaining({ threadId: 'thread-1', isReply: true }),
-      );
     });
   });
 

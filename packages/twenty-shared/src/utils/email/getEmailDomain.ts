@@ -1,9 +1,17 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const getEmailDomain = (emailAddress: string): string | null => {
+import { isDefined } from '@/utils/validation/isDefined';
+
+export const getEmailDomain = (
+  emailAddress: string | null | undefined,
+): string | null => {
+  if (!isDefined(emailAddress) || !emailAddress.includes('@')) {
+    return null;
+  }
+
   const domain = emailAddress
     .slice(emailAddress.lastIndexOf('@') + 1)
     .toLowerCase();
 
-  return emailAddress.includes('@') && isNonEmptyString(domain) ? domain : null;
+  return isNonEmptyString(domain) ? domain : null;
 };

@@ -1,13 +1,13 @@
-import { type ConnectedAccountEmailFields, EmailOperation } from '@/types';
-import { canConnectedAccountPerformEmailOperation } from '@/utils/email/canConnectedAccountPerformEmailOperation';
+import { type ConnectedAccountEmailFields } from '@/types';
+import { canConnectedAccountSendEmail } from '@/utils/email/canConnectedAccountSendEmail';
 import { getEmailDomain } from '@/utils/email/getEmailDomain';
 import { getSendableEmailHandles } from '@/utils/email/getSendableEmailHandles';
 import { normalizeSenderDomain } from '@/utils/email/normalizeSenderDomain';
 import { isDefined } from '@/utils/validation/isDefined';
 
-export type DefaultEmailSenderAccount = ConnectedAccountEmailFields & {
+type DefaultEmailSenderAccount = ConnectedAccountEmailFields & {
   id: string;
-  handle: string | null;
+  handle: string;
   handleAliases: string[] | null;
   archivedAt?: string | null;
 };
@@ -31,19 +31,15 @@ export const resolveDefaultEmailSender = ({
   const candidates = accounts
     .filter(
       (account) =>
-        !isDefined(account.archivedAt) &&
         (!isDefined(restrictToConnectedAccountId) ||
           account.id === restrictToConnectedAccountId) &&
-        canConnectedAccountPerformEmailOperation({
-          connectedAccount: account,
-          operation: EmailOperation.SEND,
-        }),
+        canConnectedAccountSendEmail(account),
     )
     .flatMap((account) =>
-      getSendableEmailHandles({
-        handle: account.handle ?? '',
-        handleAliases: account.handleAliases,
-      }).map((handle) => ({ connectedAccountId: account.id, handle })),
+      getSendableEmailHandles(account).map((handle) => ({
+        connectedAccountId: account.id,
+        handle,
+      })),
     );
 
   const normalizedPersonalHandle = personalFromHandle?.trim().toLowerCase();

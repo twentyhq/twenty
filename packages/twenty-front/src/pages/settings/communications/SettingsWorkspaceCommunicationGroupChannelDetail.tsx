@@ -3,7 +3,6 @@ import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/compo
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpdateEmailGroupChannel } from '@/settings/accounts/hooks/useUpdateEmailGroupChannel';
-import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsDiscoveryHeroCardFooter } from '@/settings/components/SettingsDiscoveryHeroCardFooter';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
@@ -24,7 +23,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getEmailDomain,
+  getSettingsPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import {
@@ -95,7 +98,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const sourceHandle = channel.connectedAccount.handle;
   const forwardingAddress = channel.handle;
 
-  const channelDomain = getEmailChannelDomain(sourceHandle);
+  const channelDomain = getEmailDomain(sourceHandle);
   const emailingDomain = emailingDomainsData?.getEmailingDomains?.find(
     (domain) => domain.domain.toLowerCase() === channelDomain,
   );

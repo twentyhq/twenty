@@ -1,11 +1,10 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import {
-  canConnectedAccountPerformEmailOperation,
+  canConnectedAccountSendEmail,
   getEmailDomain,
   getSendableEmailHandles,
   isDefined,
 } from 'twenty-shared/utils';
-import { EmailOperation } from 'twenty-shared/types';
 
 export const getSenderDomainOptionsFromAccounts = (
   accounts: Pick<
@@ -18,15 +17,8 @@ export const getSenderDomainOptionsFromAccounts = (
   >[],
 ): string[] => {
   const domains = accounts
-    .filter(
-      (account) =>
-        !isDefined(account.archivedAt) &&
-        canConnectedAccountPerformEmailOperation({
-          connectedAccount: account,
-          operation: EmailOperation.SEND,
-        }),
-    )
-    .flatMap((account) => getSendableEmailHandles(account))
+    .filter(canConnectedAccountSendEmail)
+    .flatMap(getSendableEmailHandles)
     .map(getEmailDomain)
     .filter(isDefined);
 

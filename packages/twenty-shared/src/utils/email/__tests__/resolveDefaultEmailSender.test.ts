@@ -1,17 +1,14 @@
 import { ConnectedAccountProvider } from '@/types';
-import {
-  type DefaultEmailSenderAccount,
-  resolveDefaultEmailSender,
-} from '@/utils/email/resolveDefaultEmailSender';
+import { resolveDefaultEmailSender } from '@/utils/email/resolveDefaultEmailSender';
 
-const accountA: DefaultEmailSenderAccount = {
+const accountA = {
   id: 'account-a',
   provider: ConnectedAccountProvider.GOOGLE,
   handle: 'jane@example.net',
   handleAliases: ['jane@example.com', 'jane@acme.com'],
 };
 
-const accountB: DefaultEmailSenderAccount = {
+const accountB = {
   id: 'account-b',
   provider: ConnectedAccountProvider.GOOGLE,
   handle: 'ops@example.com',
@@ -170,9 +167,7 @@ describe('resolveDefaultEmailSender', () => {
   it('never matches a handle without an @ against the workspace domain', () => {
     expect(
       resolveDefaultEmailSender({
-        accounts: [
-          { ...accountB, handle: 'example.com', handleAliases: null },
-        ],
+        accounts: [{ ...accountB, handle: 'example.com', handleAliases: null }],
         personalFromHandle: null,
         workspaceSenderDomain: 'example.com',
       }),

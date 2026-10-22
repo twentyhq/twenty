@@ -55,6 +55,7 @@ export { turnPlainDateIntoUserTimeZoneInstantString } from './date/turnPlainDate
 export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDateToShiftedDateInSystemTimeZone';
 export { deepMerge } from './deepMerge';
 export { canConnectedAccountPerformEmailOperation } from './email/canConnectedAccountPerformEmailOperation';
+export { canConnectedAccountSendEmail } from './email/canConnectedAccountSendEmail';
 export { formatEmailAddress } from './email/formatEmailAddress';
 export { getEmailDomain } from './email/getEmailDomain';
 export { getEmailProvidersForOperation } from './email/getEmailProvidersForOperation';
@@ -62,10 +63,7 @@ export { getSendableEmailHandles } from './email/getSendableEmailHandles';
 export { normalizeSenderDomain } from './email/normalizeSenderDomain';
 export type { ParsedEmailAddress } from './email/parseEmailAddressList';
 export { parseEmailAddressList } from './email/parseEmailAddressList';
-export type {
-  DefaultEmailSenderAccount,
-  DefaultEmailSender,
-} from './email/resolveDefaultEmailSender';
+export type { DefaultEmailSender } from './email/resolveDefaultEmailSender';
 export { resolveDefaultEmailSender } from './email/resolveDefaultEmailSender';
 export { CustomError } from './errors/CustomError';
 export { evalFromContext } from './evalFromContext';
