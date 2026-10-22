@@ -210,7 +210,6 @@ describe('app connection connected accounts permission', () => {
       userId: USER_DATA_SEED_IDS.PHIL,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
       scope: 'USER',
-      visibility: 'user',
       reconnectingConnectedAccountId: null,
       redirectLocation: null,
       codeVerifier: null,
