@@ -47,7 +47,7 @@ export class ApplicationLogDeduplicationService {
     });
 
     if (isDefined(ownerToken)) {
-      this.eventLogEmitterService.recordApplicationLogs([entry]);
+      await this.eventLogEmitterService.recordApplicationLogs([entry]);
     }
   }
 }
