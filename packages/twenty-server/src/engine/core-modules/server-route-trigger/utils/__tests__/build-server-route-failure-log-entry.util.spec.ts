@@ -58,16 +58,16 @@ describe('buildServerRouteFailureLogEntry', () => {
     });
   });
 
-  it('records an unexpected error as UNKNOWN', () => {
+  it('keeps the detail of a platform error out of the app log', () => {
     expect(
       buildServerRouteFailureLogEntry({
         resolver,
         applicationRegistrationId: 'registration-1',
-        error: new Error('Queue unavailable'),
+        error: new Error('connect ECONNREFUSED 10.0.0.12:6379'),
       }),
     ).toMatchObject({
-      message: 'Server route request failed: Queue unavailable',
-      errorCode: 'UNKNOWN',
+      message: 'Server route request failed because of a platform error.',
+      errorCode: ServerRouteTriggerExceptionCode.SERVER_ROUTE_PLATFORM_ERROR,
     });
   });
 });
