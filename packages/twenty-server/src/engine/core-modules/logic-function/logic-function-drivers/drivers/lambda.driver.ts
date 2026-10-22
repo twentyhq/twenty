@@ -185,11 +185,10 @@ export class LambdaDriver implements LogicFunctionDriver {
         const fetchStart = Date.now();
 
         executorPayload.code =
-          await this.logicFunctionResourceService.getBuiltCodeByChecksum({
+          await this.logicFunctionResourceService.getBuiltCode({
             workspaceId: flatLogicFunction.workspaceId,
             applicationUniversalIdentifier,
             builtHandlerPath: flatLogicFunction.builtHandlerPath,
-            checksum: flatLogicFunction.checksum,
           });
         getBuiltCodeMs = Date.now() - fetchStart;
       }

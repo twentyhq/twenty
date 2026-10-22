@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
@@ -19,11 +18,7 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-
-const MAX_CACHED_BUILT_CODE_ENTRIES = 100;
-const MAX_CACHED_BUILT_CODE_BYTES = 512 * 1024;
 
 type Identifier = {
   workspaceId: string;
@@ -65,8 +60,6 @@ type CopySourceParams = Identifier & {
 
 @Injectable()
 export class LogicFunctionResourceService {
-  private readonly builtCodeByCacheKey = new Map<string, string>();
-
   constructor(private readonly fileStorageService: FileStorageService) {}
 
   async seedSourceFiles({
@@ -376,47 +369,6 @@ export class LogicFunctionResourceService {
         }),
       )
     ).toString('utf-8');
-  }
-
-  async getBuiltCodeByChecksum({
-    checksum,
-    ...getBuiltCodeParams
-  }: GetBuiltCodeParams & { checksum: string | null }): Promise<string> {
-    if (!isNonEmptyString(checksum)) {
-      return this.getBuiltCode(getBuiltCodeParams);
-    }
-
-    const cacheKey = [
-      getBuiltCodeParams.workspaceId,
-      getBuiltCodeParams.applicationUniversalIdentifier,
-      getBuiltCodeParams.builtHandlerPath,
-      checksum,
-    ].join(':');
-
-    const cachedBuiltCode = readLruEntry({
-      map: this.builtCodeByCacheKey,
-      key: cacheKey,
-    });
-
-    if (isDefined(cachedBuiltCode)) {
-      return cachedBuiltCode;
-    }
-
-    const builtCode = await this.getBuiltCode(getBuiltCodeParams);
-
-    if (
-      Buffer.byteLength(builtCode, 'utf-8') <= MAX_CACHED_BUILT_CODE_BYTES &&
-      crypto.createHash('md5').update(builtCode).digest('hex') === checksum
-    ) {
-      writeLruEntry({
-        map: this.builtCodeByCacheKey,
-        key: cacheKey,
-        value: builtCode,
-        maxEntries: MAX_CACHED_BUILT_CODE_ENTRIES,
-      });
-    }
-
-    return builtCode;
   }
 
   async copyBuiltCodeInMemory({
