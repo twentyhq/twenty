@@ -10,7 +10,7 @@
 
 ## 💳 Billing
 
-**Free**
+**Free.** Optional AI summaries use AI credits.
 
 ## 📌 Getting started
 
