@@ -30,7 +30,7 @@ const StyledDescription = styled.div`
 const StyledRows = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[1]};
+  gap: ${() => themeCssVariables.spacing[2]};
 `;
 
 // TODO(@abdulrahmancodes): use Skeleton from twenty-ui/primitives/feedback once this app is on twenty-ui 2.x
