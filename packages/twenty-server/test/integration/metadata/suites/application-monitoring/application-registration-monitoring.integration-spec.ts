@@ -225,8 +225,12 @@ describe('Application registration monitoring (integration)', () => {
       query_params: { resourceId },
     });
 
-    expect(monitoring.creditsUsed - creditsUsedBefore).toBeCloseTo(2);
-    expect(monitoring.creditUsage.length).toBeGreaterThan(0);
+    expect(creditsUsedBefore).not.toBeNull();
+    expect(monitoring.creditsUsed).not.toBeNull();
+    expect(
+      (monitoring.creditsUsed ?? 0) - (creditsUsedBefore ?? 0),
+    ).toBeCloseTo(2);
+    expect(monitoring.creditUsage?.length).toBeGreaterThan(0);
   });
 
   it('refuses an app registration owned by another workspace', async () => {

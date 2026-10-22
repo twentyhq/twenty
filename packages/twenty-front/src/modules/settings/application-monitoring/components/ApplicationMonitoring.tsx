@@ -8,6 +8,7 @@ import { IconRefresh } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { billingState } from '@/client-config/states/billingState';
+import { ApplicationMonitoringCreditsSection } from '@/settings/application-monitoring/components/ApplicationMonitoringCreditsSection';
 import { ApplicationMonitoringLineChart } from '@/settings/application-monitoring/components/ApplicationMonitoringLineChart';
 import { ApplicationMonitoringFunctionsTable } from '@/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable';
 import { ApplicationMonitoringIssuesTable } from '@/settings/application-monitoring/components/ApplicationMonitoringIssuesTable';
@@ -18,9 +19,7 @@ import { APPLICATION_MONITORING_PERIODS } from '@/settings/application-monitorin
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
 import { type ApplicationMonitoringPeriod } from '@/settings/application-monitoring/types/ApplicationMonitoringPeriod';
 import { buildApplicationMonitoringActivityChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringActivityChartData';
-import { buildApplicationMonitoringCreditChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringCreditChartData';
 import { buildApplicationMonitoringLifecycleChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringLifecycleChartData';
-import { getApplicationMonitoringCreditsFormatOptions } from '@/settings/application-monitoring/utils/getApplicationMonitoringCreditsFormatOptions';
 import { getLargestAllowedApplicationMonitoringPeriod } from '@/settings/application-monitoring/utils/getLargestAllowedApplicationMonitoringPeriod';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -85,11 +84,6 @@ export const ApplicationMonitoring = ({
     buildApplicationMonitoringActivityChartData(monitoring);
   const lifecycleChartData =
     buildApplicationMonitoringLifecycleChartData(monitoring);
-  const creditChartData = buildApplicationMonitoringCreditChartData(monitoring);
-  const creditsUsedLabel = i18n.number(
-    monitoring.creditsUsed,
-    getApplicationMonitoringCreditsFormatOptions(monitoring.creditsUsed),
-  );
 
   return (
     <>
@@ -139,27 +133,11 @@ export const ApplicationMonitoring = ({
         </StyledHealth>
       </Section.Root>
       {isBillingEnabled && (
-        <Section.Root>
-          <Section.Header
-            title={t`Credits used`}
-            description={
-              isAdminView
-                ? t`${creditsUsedLabel} credits in this period`
-                : t`${creditsUsedLabel} credits across every install in this period`
-            }
-          />
-          {monitoring.creditUsage.length === 0 ? (
-            <SettingsEmptyPlaceholder>{t`No credits used in this period`}</SettingsEmptyPlaceholder>
-          ) : (
-            <ApplicationMonitoringLineChart
-              data={creditChartData}
-              series={[
-                { key: 'creditsUsed', label: t`Credits`, color: 'purple' },
-              ]}
-              axisLabel={chartAxisLabel}
-            />
-          )}
-        </Section.Root>
+        <ApplicationMonitoringCreditsSection
+          monitoring={monitoring}
+          axisLabel={chartAxisLabel}
+          isAdminView={isAdminView}
+        />
       )}
       <Section.Root>
         <Section.Header

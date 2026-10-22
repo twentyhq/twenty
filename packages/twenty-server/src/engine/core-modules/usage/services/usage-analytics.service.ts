@@ -18,6 +18,7 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { type UsageConsumptionTotals } from 'src/engine/core-modules/usage/types/usage-consumption-totals.type';
 import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
 import { type CreditsUsed } from 'src/engine/core-modules/usage/types/credits-used.type';
+import { buildInstallationFilterParams } from 'src/engine/core-modules/usage/utils/build-installation-filter-params.util';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
 import { buildUsageResourceTypeFilter } from 'src/engine/core-modules/usage/utils/build-usage-resource-type-filter.util';
@@ -102,15 +103,6 @@ const USAGE_OPERATION_TYPES = new Set<string>(
 
 const USAGE_RESOURCE_TYPES = new Set<string>(Object.values(UsageResourceType));
 
-const buildInstallationFilterParams = (
-  installations: { applicationId: string; workspaceId: string }[],
-) => ({
-  workspaceIds: [
-    ...new Set(installations.map(({ workspaceId }) => workspaceId)),
-  ],
-  applicationIds: installations.map(({ applicationId }) => applicationId),
-});
-
 @Injectable()
 export class UsageAnalyticsService {
   constructor(private readonly clickHouseService: ClickHouseService) {}
@@ -177,7 +169,7 @@ export class UsageAnalyticsService {
     periodStart: Date;
     periodEnd: Date;
     bucketSizeInSeconds: number;
-  }): Promise<{ bucketStart: Date; creditsUsed: number }[]> {
+  }): Promise<{ bucketStart: Date; creditsUsedMicro: number }[]> {
     if (!isNonEmptyArray(installations)) {
       return [];
     }
@@ -208,7 +200,7 @@ export class UsageAnalyticsService {
 
     return rows.map(({ bucketStart, creditsUsedMicro }) => ({
       bucketStart: parseClickHouseDateTime(bucketStart),
-      creditsUsed: toDisplayCredits(Number(creditsUsedMicro)),
+      creditsUsedMicro: Number(creditsUsedMicro),
     }));
   }
 

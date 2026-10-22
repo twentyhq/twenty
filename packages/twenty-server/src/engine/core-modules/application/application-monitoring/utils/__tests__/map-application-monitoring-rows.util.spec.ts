@@ -113,18 +113,53 @@ describe('mapApplicationMonitoringRows', () => {
   });
 
   it('totals the credits used across buckets', () => {
-    const creditUsage = [
-      { bucketStart: new Date('2026-10-17T00:00:00.000Z'), creditsUsed: 1.5 },
-      { bucketStart: new Date('2026-10-18T00:00:00.000Z'), creditsUsed: 2.25 },
-    ];
-
     expect(
       mapApplicationMonitoringRows({
         period: PERIOD,
         lookbackInHours: 2160,
         rows: EMPTY_ROWS,
-        creditUsage,
+        creditUsage: [
+          {
+            bucketStart: new Date('2026-10-17T00:00:00.000Z'),
+            creditsUsedMicro: 10_000,
+          },
+          {
+            bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+            creditsUsedMicro: 10_000,
+          },
+          {
+            bucketStart: new Date('2026-10-19T00:00:00.000Z'),
+            creditsUsedMicro: 120_000,
+          },
+        ],
       }),
-    ).toMatchObject({ creditsUsed: 3.75, creditUsage });
+    ).toMatchObject({
+      creditsUsed: 0.14,
+      creditUsage: [
+        {
+          bucketStart: new Date('2026-10-17T00:00:00.000Z'),
+          creditsUsed: 0.01,
+        },
+        {
+          bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+          creditsUsed: 0.01,
+        },
+        {
+          bucketStart: new Date('2026-10-19T00:00:00.000Z'),
+          creditsUsed: 0.12,
+        },
+      ],
+    });
+  });
+
+  it('keeps unavailable credits apart from zero usage', () => {
+    expect(
+      mapApplicationMonitoringRows({
+        period: PERIOD,
+        lookbackInHours: 2160,
+        rows: EMPTY_ROWS,
+        creditUsage: null,
+      }),
+    ).toMatchObject({ creditsUsed: null, creditUsage: null });
   });
 });
