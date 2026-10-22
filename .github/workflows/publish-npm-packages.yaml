@@ -58,8 +58,11 @@ jobs:
             and (.dist_tag | type == "string" and test("^[a-zA-Z][a-zA-Z0-9._-]*$"))
             and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty create-twenty-app"
               or .packages == "twenty-ui" or .packages == "twenty")
+            and ((.stage_only // false) | type == "boolean")
+            and (.staging_version == null)
+            and (if .stage_only == true then .dry_run == false else true end)
           ' plan.json > /dev/null
-          jq -r '"PACKAGES=\(.packages)\nVERSION=\(.version)\nDIST_TAG=\(.dist_tag)\nDRY_RUN=\(.dry_run)"' plan.json >> "$GITHUB_ENV"
+          jq -r '"PACKAGES=\(.packages)\nVERSION=\(.version)\nDIST_TAG=\(.dist_tag)\nDRY_RUN=\(.dry_run)\nSTAGE_ONLY=\(.stage_only // false)"' plan.json >> "$GITHUB_ENV"
 
       - name: Free disk space
         run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet
@@ -90,8 +93,19 @@ jobs:
             yarn workspace "$package" pack --dry-run
           done
 
+      - name: Stage validation packages without publishing
+        if: env.STAGE_ONLY == 'true'
+        run: |
+          # This test stages the SDK before it is publicly available to the CLI's release-readiness check.
+          jq 'del(.scripts.prepublish)' packages/twenty-cli/package.json > "$RUNNER_TEMP/twenty-cli-staging.json"
+          mv "$RUNNER_TEMP/twenty-cli-staging.json" packages/twenty-cli/package.json
+          for package in $PACKAGES; do
+            yarn workspace "$package" npm publish --staged --provenance --tag "$DIST_TAG" --access public
+            echo "Staged $package@$VERSION for OIDC validation only. Do not approve; reject after verification." >> "$GITHUB_STEP_SUMMARY"
+          done
+
       - name: Publish packages with provenance
-        if: env.DRY_RUN == 'false'
+        if: env.DRY_RUN == 'false' && env.STAGE_ONLY != 'true'
         run: |
           # Template lockfiles resolve the released libraries from npm.
           published_libraries=""
