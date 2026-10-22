@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-12 12:38\n"
+"PO-Revision-Date: 2026-10-22 18:20\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -253,7 +253,7 @@ msgstr "$0"
 #. js-lingui-id: hPuNoh
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$0/user"
-msgstr ""
+msgstr "kullanıcı başına 0 $"
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -346,7 +346,7 @@ msgstr "Ayda kullanıcı başına 19 $, hepsi bu"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$19/user"
-msgstr ""
+msgstr "kullanıcı başına 19 $"
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -471,7 +471,7 @@ msgstr "Her şey dahil, kullanıcı başına 9 $ ile 19 $ arası"
 #. js-lingui-id: R6J1hV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$9/user"
-msgstr ""
+msgstr "kullanıcı başına 9 $"
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -4239,7 +4239,7 @@ msgstr "Uygulama projesi (ilk yıl, tipik)"
 #. js-lingui-id: WuWe27
 #: src/client-brief/client-brief-copy.ts
 msgid "Implementation/migration budget range"
-msgstr ""
+msgstr "Uygulama/geçiş bütçe aralığı"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx

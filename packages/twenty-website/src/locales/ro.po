@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-12 12:37\n"
+"PO-Revision-Date: 2026-10-22 18:20\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -253,7 +253,7 @@ msgstr "0 $"
 #. js-lingui-id: hPuNoh
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$0/user"
-msgstr ""
+msgstr "$0/utilizator"
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -346,7 +346,7 @@ msgstr "19 $ per utilizator pe lună, atât tot"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$19/user"
-msgstr ""
+msgstr "$19/utilizator"
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -471,7 +471,7 @@ msgstr "de la 9 $ la 19 $/utilizator, totul inclus"
 #. js-lingui-id: R6J1hV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$9/user"
-msgstr ""
+msgstr "$9/utilizator"
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -4239,7 +4239,7 @@ msgstr "Proiect de implementare (primul an, tipic)"
 #. js-lingui-id: WuWe27
 #: src/client-brief/client-brief-copy.ts
 msgid "Implementation/migration budget range"
-msgstr ""
+msgstr "Intervalul bugetului de implementare/migrare"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx

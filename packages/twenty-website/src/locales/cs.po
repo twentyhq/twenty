@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-12 12:37\n"
+"PO-Revision-Date: 2026-10-22 18:20\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -253,7 +253,7 @@ msgstr "0 $"
 #. js-lingui-id: hPuNoh
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$0/user"
-msgstr ""
+msgstr "0 $/uživatele"
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -346,7 +346,7 @@ msgstr "19 $ na uživatele za měsíc, a tím to končí"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$19/user"
-msgstr ""
+msgstr "19 $/uživatele"
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -471,7 +471,7 @@ msgstr "9 až 19 $/uživatele, vše v ceně"
 #. js-lingui-id: R6J1hV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$9/user"
-msgstr ""
+msgstr "9 $/uživatele"
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -4239,7 +4239,7 @@ msgstr "Implementační projekt (první rok, typicky)"
 #. js-lingui-id: WuWe27
 #: src/client-brief/client-brief-copy.ts
 msgid "Implementation/migration budget range"
-msgstr ""
+msgstr "Rozsah rozpočtu na implementaci/migraci"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx

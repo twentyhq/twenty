@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-10-12 12:37\n"
+"PO-Revision-Date: 2026-10-22 18:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -253,7 +253,7 @@ msgstr "$0"
 #. js-lingui-id: hPuNoh
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$0/user"
-msgstr ""
+msgstr "0 $/utilisateur"
 
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
@@ -346,7 +346,7 @@ msgstr "19 $ par utilisateur et par mois, c’est tout"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$19/user"
-msgstr ""
+msgstr "19 $/utilisateur"
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
@@ -471,7 +471,7 @@ msgstr "9 $ à 19 $/utilisateur, tout inclus"
 #. js-lingui-id: R6J1hV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "$9/user"
-msgstr ""
+msgstr "9 $/utilisateur"
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
@@ -4239,7 +4239,7 @@ msgstr "Projet de mise en œuvre (première année, typique)"
 #. js-lingui-id: WuWe27
 #: src/client-brief/client-brief-copy.ts
 msgid "Implementation/migration budget range"
-msgstr ""
+msgstr "Fourchette budgétaire pour l'implémentation/la migration"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx
