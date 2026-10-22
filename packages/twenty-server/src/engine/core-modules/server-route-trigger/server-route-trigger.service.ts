@@ -195,13 +195,13 @@ export class ServerRouteTriggerService {
       return;
     }
 
-    await this.applicationRepeatedEventRecorderService.record(
-      buildServerRouteFailureLogEntry({
+    await this.applicationRepeatedEventRecorderService.record({
+      entry: buildServerRouteFailureLogEntry({
         resolver,
         applicationRegistrationId,
         error,
       }),
-    );
+    });
   }
 
   private createResolverQueryBuilder(): SelectQueryBuilder<LogicFunctionEntity> {

@@ -59,7 +59,13 @@ export class ApplicationRepeatedEventRecorderService
     await this.flushMetricEvents();
   }
 
-  async record(entry: ApplicationLogEntry, occurrenceCount = 1): Promise<void> {
+  async record({
+    entry,
+    occurrenceCount = 1,
+  }: {
+    entry: ApplicationLogEntry;
+    occurrenceCount?: number;
+  }): Promise<void> {
     if (!this.eventLogEmitterService.isEnabled()) {
       return;
     }

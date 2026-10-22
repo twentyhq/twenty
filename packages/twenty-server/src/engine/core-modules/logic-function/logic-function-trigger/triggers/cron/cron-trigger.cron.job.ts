@@ -112,13 +112,13 @@ export class CronTriggerCronJob {
             });
           } catch (error) {
             if (error instanceof ThrottlerException && isDefined(application)) {
-              await this.applicationRepeatedEventRecorderService.record(
-                buildApplicationJobThrottledLogEntry({
+              await this.applicationRepeatedEventRecorderService.record({
+                entry: buildApplicationJobThrottledLogEntry({
                   workspaceId: activeWorkspace.id,
                   application,
                   skippedJobCount: 1,
                 }),
-              );
+              });
             }
 
             throw error;

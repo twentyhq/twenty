@@ -597,9 +597,12 @@ export abstract class CommonBaseQueryRunnerService<
         buildApplicationApiRateLimitedLogLine({ authContext, exhaustedScope }),
       );
 
-      await this.applicationRepeatedEventRecorderService.record(
-        buildApplicationApiRateLimitedLogEntry({ authContext, exhaustedScope }),
-      );
+      await this.applicationRepeatedEventRecorderService.record({
+        entry: buildApplicationApiRateLimitedLogEntry({
+          authContext,
+          exhaustedScope,
+        }),
+      });
     }
   }
 

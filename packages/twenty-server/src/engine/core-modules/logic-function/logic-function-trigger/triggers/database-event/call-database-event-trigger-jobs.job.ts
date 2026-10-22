@@ -149,14 +149,14 @@ export class CallDatabaseEventTriggerJobsJob {
             `Enqueue throttled for application ${applicationId} (registration ${applicationRegistrationId}) in workspace ${workspaceEventBatch.workspaceId}: skipping ${logicFunctionPayloads.length} logic function trigger(s)`,
           );
 
-          await this.applicationRepeatedEventRecorderService.record(
-            buildApplicationJobThrottledLogEntry({
+          await this.applicationRepeatedEventRecorderService.record({
+            entry: buildApplicationJobThrottledLogEntry({
               workspaceId: workspaceEventBatch.workspaceId,
               application,
               skippedJobCount: logicFunctionPayloads.length,
             }),
-            logicFunctionPayloads.length,
-          );
+            occurrenceCount: logicFunctionPayloads.length,
+          });
 
           continue;
         }
