@@ -9,7 +9,10 @@ export const buildApplicationJobThrottledLogEntry = ({
   skippedJobCount,
 }: {
   workspaceId: string;
-  application: FlatApplication;
+  application: Pick<
+    FlatApplication,
+    'id' | 'applicationRegistrationId' | 'version'
+  >;
   skippedJobCount: number;
 }): ApplicationLogEntry =>
   buildApplicationPlatformLogEntry({
