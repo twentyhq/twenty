@@ -29,6 +29,7 @@ import { RADIO_GROUP_PROP_DESCRIPTIONS } from './radioGroupPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
+import { DATE_CALENDAR_PROP_DESCRIPTIONS } from './dateCalendarPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
@@ -1038,6 +1039,14 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/image-input',
     propDescriptions: IMAGE_INPUT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'DateCalendar',
+    source: 'components/input/DateCalendar/DateCalendar.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/date-calendar',
+    propDescriptions: DATE_CALENDAR_PROP_DESCRIPTIONS,
+    propDefaults: { disabled: 'false', role: 'group' },
   },
   {
     name: 'SearchInput',

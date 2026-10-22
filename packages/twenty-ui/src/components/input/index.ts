@@ -22,6 +22,8 @@ export type { CurrencyPickerProps } from './CurrencyPicker/types/CurrencyPickerP
 export type { CurrencyPickerRootProps } from './CurrencyPicker/types/CurrencyPickerRootProps';
 export type { CurrencyPickerState } from './CurrencyPicker/types/CurrencyPickerState';
 export type { CurrencyPickerTriggerProps } from './CurrencyPicker/types/CurrencyPickerTriggerProps';
+export { DateCalendar } from './DateCalendar/DateCalendar';
+export type { DateCalendarProps } from './DateCalendar/types/DateCalendarProps';
 export { FormFieldRow } from './FormFieldRow/FormFieldRow';
 export type { FormFieldRowProps } from './FormFieldRow/types/FormFieldRowProps';
 export { IconButton } from './IconButton/IconButton';

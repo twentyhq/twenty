@@ -1,0 +1,96 @@
+---
+title: DateCalendar
+description: Select a date from an accessible month grid with independent month navigation.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DateCalendarReference from '/snippets/ui/generated/components/input/date-calendar.mdx';
+
+`DateCalendar` presents one month with month and year selectors, previous and next controls, and a keyboard-accessible date grid. The selected date and viewed month are controlled independently.
+
+<StoryEmbed
+  storyId="ui-components-datecalendar--display"
+  title="DateCalendar example"
+  height={330}
+/>
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import { DateCalendar } from 'twenty-ui/components/input';
+
+export const ChooseDate = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DateCalendar
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      today="2026-10-22"
+      weekStart={1}
+      weekdayLabels={['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+    />
+  );
+};
+```
+
+## Controlled state
+
+Selecting an available date calls `onValueChange`. Changing the month or year calls `onViewedMonthChange` without selecting another date. Moving keyboard focus also leaves selection unchanged until Enter or Space is pressed.
+
+Update each controlled prop in its matching callback. Changing props does not call either callback or choose a replacement date. External month changes do not move focus into the grid, and clicking a header navigation button keeps focus on that control.
+
+The year selector lists up to 100 years before and after the viewed year. Navigation supports Gregorian years 0001 through 9999.
+
+## Date values and localization
+
+Pass canonical Gregorian date-only strings: `YYYY-MM-DD` for `value` and `today`, and `YYYY-MM` for `viewedMonth`. Set `value={null}` for no selection. These values contain no time or timezone.
+
+The required `locale` formats month names, weekday labels, full date labels, and numbers. Formatting uses the Gregorian calendar and UTC so the host timezone cannot shift the displayed day. `weekStart` sets the first column, using 0 for Sunday through 6 for Saturday.
+
+Use `weekdayLabels` to supply seven short visible labels in Sunday-first order, regardless of `weekStart`. Without this prop, the labels use the locale's short weekday format. Full accessible weekday names always come from `locale`.
+
+Supply `today` after resolving your application's timezone. Today is marked independently from selection and can be omitted. The component does not read member preferences, load availability, or manage scheduling.
+
+## Unavailable and disabled dates
+
+Use `isDateUnavailable` to apply your application's date policy. The callback receives a canonical `YYYY-MM-DD` string. Returning `true` prevents selection while keeping the date discoverable through grid navigation with `aria-disabled`.
+
+Unavailable dates retain their place in the grid, so an unavailable week does not interrupt arrow-key movement. Set `disabled` to disable the entire calendar, including its header controls.
+
+Days from neighboring months appear muted and are not interactive. Keyboard movement across the current month boundary requests the next viewed month without selecting a date.
+
+## Keyboard navigation
+
+Tab enters the grid at one date and leaves it after that single grid stop. The selected date, keyboard focus, and viewed month remain separate.
+
+| Key | Action |
+| --- | --- |
+| Left or Right arrow | Move one day, following the reading direction. |
+| Up or Down arrow | Move one week. |
+| Home or End | Move to the first or last day of the configured week. |
+| Page Up or Page Down | Move to the previous or next month, preserving the day when possible. |
+| Shift + Page Up or Page Down | Move to the previous or next year, preserving the day when possible. |
+| Enter or Space | Select the focused available date. |
+
+Month and year movement clamps dates such as January 31 or February 29 to the destination month's final day. Crossing a month boundary requests a new `viewedMonth` without changing `value`.
+
+## Accessibility and composition
+
+Supply a group name with `aria-label` or `aria-labelledby`, plus the four header control labels. The grid is named by its formatted month and year. Weekday headers expose full names, selected cells expose `aria-selected`, and the supplied today date uses `aria-current="date"`.
+
+Native attributes, `className`, `style`, and `ref` apply to the root. Use `render` to compose a different root while preserving the supplied props and ref. The component uses shared Twenty UI buttons and selectors and retains their keyboard focus treatment.
+
+## Props
+
+<DateCalendarReference />

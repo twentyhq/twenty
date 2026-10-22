@@ -14917,6 +14917,160 @@
     ]
   },
   {
+    "name": "DateCalendar",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/date-calendar",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name of the calendar group."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the element that labels the calendar group."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the root element."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables date selection and all header controls."
+      },
+      {
+        "name": "isDateUnavailable",
+        "type": "((date: string) => boolean)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Returns whether a canonical YYYY-MM-DD date cannot be selected. Unavailable dates remain discoverable with arrow keys."
+      },
+      {
+        "name": "locale",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Locale used for month names, weekday labels, full date labels, and number formatting. Date arithmetic remains Gregorian and formatting uses UTC."
+      },
+      {
+        "name": "monthLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the month selector."
+      },
+      {
+        "name": "nextMonthLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the next-month button."
+      },
+      {
+        "name": "onValueChange",
+        "type": "(date: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Requests an available date after a click, Enter, or Space. Navigation and prop changes do not select a date."
+      },
+      {
+        "name": "onViewedMonthChange",
+        "type": "(month: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Requests the month shown by the header controls or keyboard navigation across a month boundary. Does not change the selected date."
+      },
+      {
+        "name": "previousMonthLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the previous-month button."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Composes the root element while preserving its props and contents."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": "group",
+        "description": "Root semantics. Defaults to a group; the caller supplies its accessible name."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root element."
+      },
+      {
+        "name": "today",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied YYYY-MM-DD date marked as today with aria-current. Resolve the product timezone before passing this value."
+      },
+      {
+        "name": "value",
+        "type": "string | null",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled selected Gregorian date in YYYY-MM-DD form, or null for no selection."
+      },
+      {
+        "name": "viewedMonth",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled Gregorian month in YYYY-MM form. It is independent from the selected date."
+      },
+      {
+        "name": "weekdayLabels",
+        "type": "readonly [string, string, string, string, string, string, string]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional short weekday labels in Sunday-first order. Defaults to locale-formatted short labels. Accessible weekday names always use full locale-formatted names."
+      },
+      {
+        "name": "weekStart",
+        "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
+        "required": true,
+        "defaultValue": null,
+        "description": "First weekday column: 0 for Sunday through 6 for Saturday."
+      },
+      {
+        "name": "yearLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the year selector."
+      }
+    ]
+  },
+  {
     "name": "SearchInput",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/search-input",

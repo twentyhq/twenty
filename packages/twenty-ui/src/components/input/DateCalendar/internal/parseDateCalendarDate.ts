@@ -1,0 +1,45 @@
+import { isDefined } from '@ui/utilities/utils/isDefined';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
+
+import { DATE_CALENDAR_CONSTANTS } from './dateCalendarConstants';
+
+const DATE_CALENDAR_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+const DATE_CALENDAR_DATE_STRING_LENGTH = 10;
+
+export const parseDateCalendarDate = (value: string): Date => {
+  const dateParts = value.match(DATE_CALENDAR_DATE_PATTERN);
+
+  if (
+    !isDefined(dateParts) ||
+    value.length !== DATE_CALENDAR_DATE_STRING_LENGTH
+  ) {
+    throw new RangeError(
+      doNotTranslate('Calendar dates must use the YYYY-MM-DD format.'),
+    );
+  }
+
+  const [, yearString, monthString, dayString] = dateParts;
+  const year = Number(yearString);
+  const month = Number(monthString);
+  const day = Number(dayString);
+  const date = new Date(0);
+
+  date.setUTCFullYear(year, month - 1, day);
+
+  const isSupportedDate =
+    year >= DATE_CALENDAR_CONSTANTS.MIN_YEAR &&
+    year <= DATE_CALENDAR_CONSTANTS.MAX_YEAR &&
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day;
+
+  if (!isSupportedDate) {
+    throw new RangeError(
+      doNotTranslate(
+        'Calendar dates must be valid dates in years 0001 through 9999.',
+      ),
+    );
+  }
+
+  return date;
+};
