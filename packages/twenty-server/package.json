@@ -168,7 +168,6 @@
     "temporal-polyfill": "^0.3.0",
     "tsconfig-paths": "^4.2.0",
     "tsdav": "^2.2.1",
-    "twenty-ui": "workspace:*",
     "type-fest": "4.10.1",
     "typeorm": "patch:typeorm@0.3.31#./patches/typeorm+0.3.31.patch",
     "typescript": "^5.9.3",
@@ -233,7 +232,8 @@
     "twenty-client-sdk": "workspace:*",
     "twenty-emails": "workspace:*",
     "twenty-oxlint-rules": "workspace:*",
-    "twenty-shared": "workspace:*"
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*"
   },
   "engines": {
     "node": "^24.5.0",

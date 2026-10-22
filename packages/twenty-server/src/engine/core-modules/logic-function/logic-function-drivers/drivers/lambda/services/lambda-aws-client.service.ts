@@ -18,7 +18,7 @@ import {
   LAMBDA_CLIENT_RETRY_MODE,
   UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
-import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { type LambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { addLambdaRateLimitErrorMiddleware } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/add-lambda-rate-limit-error-middleware.util';
 import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
 
@@ -31,7 +31,7 @@ export class LambdaAwsClientService {
     | undefined;
   private credentialsExpiry: Date | null = null;
 
-  constructor(private readonly options: LambdaDriverOptions) {}
+  constructor(private readonly options: LambdaConnectionOptions) {}
 
   async getLambdaClient() {
     if (

@@ -2,12 +2,9 @@ import * as typescript from 'typescript';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FRONT_COMPONENT_ALLOWED_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-allowed-imports.constant';
-import {
-  FrontComponentException,
-  FrontComponentExceptionCode,
-} from 'src/engine/metadata-modules/front-component/front-component.exception';
+import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 
-export const validateFrontComponentSource = (source: string): void => {
+export const validateFrontComponentSourceOrThrow = (source: string): void => {
   const sourceFile = typescript.createSourceFile(
     'component.front-component.tsx',
     source,
@@ -34,9 +31,9 @@ export const validateFrontComponentSource = (source: string): void => {
         ));
 
     if (isDefaultExport) {
-      throw new FrontComponentException(
+      throw new FrontComponentBuildException(
         'Export a named Component without a default export. Twenty adds the SDK registration.',
-        FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        'INVALID_INPUT',
       );
     }
 
@@ -64,17 +61,17 @@ export const validateFrontComponentSource = (source: string): void => {
       typescript.isStringLiteral(statement.moduleSpecifier) &&
       !FRONT_COMPONENT_ALLOWED_IMPORTS.includes(statement.moduleSpecifier.text)
     ) {
-      throw new FrontComponentException(
+      throw new FrontComponentBuildException(
         `Unsupported import: ${statement.moduleSpecifier.text}. Use React and the supported twenty-ui imports.`,
-        FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        'INVALID_INPUT',
       );
     }
   }
 
   if (!hasComponent) {
-    throw new FrontComponentException(
+    throw new FrontComponentBuildException(
       'Export a named Component function or const.',
-      FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+      'INVALID_INPUT',
     );
   }
 };

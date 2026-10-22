@@ -1,4 +1,4 @@
-import * as fs from 'fs/promises';
+import { promises as fs } from 'fs';
 import { join } from 'path';
 
 import {
@@ -9,6 +9,7 @@ import {
   LogType,
   PublishLayerVersionCommand,
   ResourceNotFoundException,
+  ResourceConflictException,
 } from '@aws-sdk/client-lambda';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,10 +64,12 @@ export class LambdaToolFunctionsService {
   async transpile(
     params: Omit<BuilderLambdaPayload, 'action'>,
   ): Promise<BuilderLambdaResult> {
-    await this.ensureBuilderLambdaExists();
-
     const lambdaClient = await this.awsClient.getLambdaClient();
     const builderFunctionName = await this.getBuilderFunctionName();
+    await this.ensureBuilderLambdaExists({
+      functionName: builderFunctionName,
+      copyFiles: copyBuilder,
+    });
 
     const payload: BuilderLambdaPayload = {
       action: 'transpile',
@@ -257,14 +260,22 @@ export class LambdaToolFunctionsService {
     await this.awsClient.waitFunctionActive(yarnInstallFunctionName);
   }
 
-  private async ensureBuilderLambdaExists(): Promise<void> {
-    const builderFunctionName = await this.getBuilderFunctionName();
+  async ensureBuilderLambdaExists({
+    functionName,
+    copyFiles,
+  }: {
+    functionName: string;
+    copyFiles: (directory: string) => Promise<void>;
+  }): Promise<void> {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
     try {
-      await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: builderFunctionName }),
+      const existing = await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: functionName }),
       );
+      if (existing.Configuration?.State !== 'Active') {
+        await this.awsClient.waitFunctionActive(functionName);
+      }
 
       return;
     } catch (error) {
@@ -280,7 +291,7 @@ export class LambdaToolFunctionsService {
       await temporaryDirManager.init();
 
     try {
-      await copyBuilder(sourceTemporaryDir);
+      await copyFiles(sourceTemporaryDir);
 
       await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
@@ -288,7 +299,7 @@ export class LambdaToolFunctionsService {
         Code: {
           ZipFile: await fs.readFile(lambdaZipPath),
         },
-        FunctionName: builderFunctionName,
+        FunctionName: functionName,
         Layers: [commonLayerArn],
         Handler: 'index.handler',
         Role: this.options.lambdaRole,
@@ -298,12 +309,18 @@ export class LambdaToolFunctionsService {
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
-      await lambdaClient.send(new CreateFunctionCommand(params));
+      try {
+        await lambdaClient.send(new CreateFunctionCommand(params));
+      } catch (error) {
+        if (!(error instanceof ResourceConflictException)) {
+          throw error;
+        }
+      }
     } finally {
       await temporaryDirManager.clean();
     }
 
-    await this.awsClient.waitFunctionActive(builderFunctionName);
+    await this.awsClient.waitFunctionActive(functionName);
   }
 
   private async getCommonLayerName(): Promise<string> {

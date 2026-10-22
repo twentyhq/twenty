@@ -2,20 +2,17 @@ import { FRONT_COMPONENT_BUILD_TIMEOUT_MS } from 'src/engine/metadata-modules/ai
 import { context, type BuildOptions } from 'esbuild';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  FrontComponentException,
-  FrontComponentExceptionCode,
-} from 'src/engine/metadata-modules/front-component/front-component.exception';
+import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
 
-const MAX_BUILD_OUTPUT_BYTES = 5 * 1024 * 1024;
+import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 
 export const buildFrontComponentWithLimits = async (options: BuildOptions) => {
   const buildContext = await context({ ...options, write: false });
-  let timeoutError: FrontComponentException | undefined;
+  let timeoutError: FrontComponentBuildException | undefined;
   const timeout = setTimeout(() => {
-    timeoutError = new FrontComponentException(
+    timeoutError = new FrontComponentBuildException(
       'Component build exceeded the 10 second time limit.',
-      FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
+      'BUILD_FAILED',
     );
     void buildContext.cancel().catch(() => undefined);
   }, FRONT_COMPONENT_BUILD_TIMEOUT_MS);
@@ -30,11 +27,11 @@ export const buildFrontComponentWithLimits = async (options: BuildOptions) => {
       result.outputFiles.reduce(
         (size, file) => size + file.contents.byteLength,
         0,
-      ) > MAX_BUILD_OUTPUT_BYTES
+      ) > FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES
     ) {
-      throw new FrontComponentException(
+      throw new FrontComponentBuildException(
         'Component build exceeds the 5 MB output limit.',
-        FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        'INVALID_INPUT',
       );
     }
 

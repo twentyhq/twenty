@@ -1,29 +1,35 @@
-import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
+import { createHash } from 'crypto';
+import { promises as fs } from 'fs';
 import { getFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-shared-dependencies.util';
 
-jest.mock(
-  'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util',
-);
-
 describe('getFrontComponentSharedDependencies', () => {
-  it('shares concurrent builds and retries a failed build', async () => {
-    const built = {
-      source: 'vendor',
-      checksum: 'checksum',
-      exportNamesBySpecifier: new Map(),
-    };
-    const build = jest.mocked(buildFrontComponentSharedDependencies);
-
-    build
-      .mockRejectedValueOnce(new Error('Unable to build dependencies'))
-      .mockResolvedValueOnce(built);
+  afterEach(() => jest.restoreAllMocks());
+  it('rejects corrupted release artifacts, retries loading and shares the verified vendor', async () => {
+    const source = 'vendor';
+    const checksum = createHash('sha256').update(source).digest('hex');
+    const read = jest.spyOn(fs, 'readFile');
+    read
+      .mockResolvedValueOnce(source)
+      .mockResolvedValueOnce(
+        JSON.stringify({ checksum: '0'.repeat(64), exports: {} }),
+      );
     const first = getFrontComponentSharedDependencies();
-    const concurrent = getFrontComponentSharedDependencies();
-
-    expect(concurrent).toBe(first);
-    await expect(first).rejects.toThrow('Unable to build dependencies');
-    await expect(getFrontComponentSharedDependencies()).resolves.toBe(built);
-    await expect(getFrontComponentSharedDependencies()).resolves.toBe(built);
-    expect(build).toHaveBeenCalledTimes(2);
+    expect(getFrontComponentSharedDependencies()).toBe(first);
+    await expect(first).rejects.toThrow('checksum mismatch');
+    read.mockResolvedValueOnce(source).mockResolvedValueOnce(
+      JSON.stringify({
+        checksum,
+        exports: {
+          react: { namedExports: ['useState'], hasDefaultExport: true },
+        },
+      }),
+    );
+    const loaded = await getFrontComponentSharedDependencies();
+    expect(loaded.source).toBe(source);
+    expect(loaded.exportNamesBySpecifier.get('react')?.namedExports).toContain(
+      'useState',
+    );
+    expect(await getFrontComponentSharedDependencies()).toBe(loaded);
+    expect(read).toHaveBeenCalledTimes(4);
   });
 });
