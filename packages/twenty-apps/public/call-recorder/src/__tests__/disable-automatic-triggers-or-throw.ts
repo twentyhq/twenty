@@ -5,7 +5,9 @@ import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identi
 
 import { type BuildManifest } from './build-result-schema';
 
-export const disableAutomaticTriggers = async (manifest: BuildManifest) => {
+export const disableAutomaticTriggersOrThrow = async (
+  manifest: BuildManifest,
+) => {
   const logicFunctions = manifest.logicFunctions.map((logicFunction) => ({
     ...logicFunction,
     databaseEventTriggerSettings: null,

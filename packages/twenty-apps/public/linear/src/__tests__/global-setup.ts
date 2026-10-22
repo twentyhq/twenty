@@ -1,6 +1,6 @@
 import { runTwenty } from './run-twenty';
 
-function validateEnv(): { apiUrl: string; apiKey: string } {
+function validateEnvironmentOrThrow(): { apiUrl: string; apiKey: string } {
   const apiUrl = process.env.TWENTY_API_URL;
   const apiKey = process.env.TWENTY_API_KEY;
 
@@ -14,7 +14,7 @@ function validateEnv(): { apiUrl: string; apiKey: string } {
   return { apiUrl, apiKey };
 }
 
-async function checkServer(apiUrl: string) {
+async function checkServerOrThrow(apiUrl: string) {
   let response: Response;
 
   try {
@@ -32,9 +32,9 @@ async function checkServer(apiUrl: string) {
 }
 
 export async function setup() {
-  const { apiUrl } = validateEnv();
+  const { apiUrl } = validateEnvironmentOrThrow();
 
-  await checkServer(apiUrl);
+  await checkServerOrThrow(apiUrl);
   await teardown();
 
   const result = await runTwenty(['app', 'apply', '--create']);
