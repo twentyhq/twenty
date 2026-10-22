@@ -147,4 +147,54 @@ describe('useEmailComposerState', () => {
     expect(result.current.connectedAccountId).toBe('account-2');
     expect(result.current.fromHandle).toBeUndefined();
   });
+
+  it('starts on the initial from handle and lets the user pick another', () => {
+    const { result } = renderHook(
+      () =>
+        useEmailComposerState({
+          connectedAccountId: 'account-1',
+          initialFromHandle: 'michael@getindexed.ai',
+        }),
+      {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <MockedProvider mocks={[]}>{children}</MockedProvider>
+        ),
+      },
+    );
+
+    expect(result.current.fromHandle).toBe('michael@getindexed.ai');
+
+    act(() => {
+      result.current.setSender({
+        connectedAccountId: 'account-1',
+        fromHandle: 'sales@getindexed.ai',
+      });
+    });
+
+    expect(result.current.fromHandle).toBe('sales@getindexed.ai');
+  });
+
+  it('resets the sender when the resolved from handle changes', () => {
+    const { result, rerender } = renderHook(
+      ({ initialFromHandle }: { initialFromHandle?: string }) =>
+        useEmailComposerState({
+          connectedAccountId: 'account-1',
+          initialFromHandle,
+        }),
+      {
+        initialProps: { initialFromHandle: undefined } as {
+          initialFromHandle?: string;
+        },
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <MockedProvider mocks={[]}>{children}</MockedProvider>
+        ),
+      },
+    );
+
+    expect(result.current.fromHandle).toBeUndefined();
+
+    rerender({ initialFromHandle: 'michael@getindexed.ai' });
+
+    expect(result.current.fromHandle).toBe('michael@getindexed.ai');
+  });
 });

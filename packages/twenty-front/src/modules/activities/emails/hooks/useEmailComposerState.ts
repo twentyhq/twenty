@@ -12,6 +12,7 @@ import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPref
 
 type UseEmailComposerStateArgs = {
   connectedAccountId: string;
+  initialFromHandle?: string;
   draftPrefill?: EmailDraftPrefill | null;
   defaultTo?: string;
   defaultSubject?: string;
@@ -26,6 +27,7 @@ const hasInvalidRecipient = (recipients: EmailRecipient[]): boolean =>
 
 export const useEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
+  initialFromHandle,
   draftPrefill,
   defaultTo = '',
   defaultSubject = '',
@@ -40,14 +42,24 @@ export const useEmailComposerState = ({
 
   const [sender, setSender] = useState<ConnectedAccountSender>({
     connectedAccountId: initialConnectedAccountId,
+    fromHandle: initialFromHandle,
   });
   const [previousConnectedAccountId, setPreviousConnectedAccountId] = useState(
     initialConnectedAccountId,
   );
+  const [previousFromHandle, setPreviousFromHandle] =
+    useState(initialFromHandle);
 
-  if (previousConnectedAccountId !== initialConnectedAccountId) {
+  if (
+    previousConnectedAccountId !== initialConnectedAccountId ||
+    previousFromHandle !== initialFromHandle
+  ) {
     setPreviousConnectedAccountId(initialConnectedAccountId);
-    setSender({ connectedAccountId: initialConnectedAccountId });
+    setPreviousFromHandle(initialFromHandle);
+    setSender({
+      connectedAccountId: initialConnectedAccountId,
+      fromHandle: initialFromHandle,
+    });
   }
 
   const { connectedAccountId, fromHandle } = sender;

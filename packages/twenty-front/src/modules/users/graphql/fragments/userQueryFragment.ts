@@ -40,6 +40,7 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       permissionFlags
       isImpersonating
+      defaultFromHandle
       objectsPermissions {
         ...ObjectPermissionFragment
         rowLevelPermissionPredicates {
@@ -73,6 +74,7 @@ export const USER_QUERY_FRAGMENT = gql`
       isMicrosoftAuthBypassEnabled
       isPasswordAuthBypassEnabled
       subdomain
+      defaultSenderDomain
       customDomain
       hasValidSignedEnterpriseKey
       hasValidEnterpriseValidityToken

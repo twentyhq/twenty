@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { EmailComposerFields } from '@/activities/emails/components/EmailComposerFields';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
+import { useDefaultEmailSender } from '@/activities/emails/hooks/useDefaultEmailSender';
 import { type ReplyContextReady } from '@/activities/emails/hooks/useReplyContext';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { EmailThreadComposerFooterEffect } from '@/page-layout/widgets/email-thread/components/EmailThreadComposerFooterEffect';
@@ -52,8 +53,13 @@ export const EmailThreadComposer = ({
     [setIsComposerOpen, openRecordInSidePanel],
   );
 
+  const defaultSender = useDefaultEmailSender({
+    restrictToConnectedAccountId: replyContext.connectedAccountId,
+  });
+
   const composerState = useEmailComposerState({
     connectedAccountId: replyContext.connectedAccountId,
+    initialFromHandle: defaultSender?.fromHandle,
     draftPrefill,
     defaultTo: replyContext.to,
     defaultSubject: replyContext.subject,

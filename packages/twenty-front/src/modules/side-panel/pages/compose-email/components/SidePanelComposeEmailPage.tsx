@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { EmailComposerFields } from '@/activities/emails/components/EmailComposerFields';
+import { useDefaultEmailSender } from '@/activities/emails/hooks/useDefaultEmailSender';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
@@ -52,8 +53,14 @@ export const SidePanelComposeEmailPage = () => {
 
   const { goBackFromSidePanel } = useSidePanelHistory();
 
+  const defaultSender = useDefaultEmailSender();
+
+  const connectedAccountId =
+    defaultSender?.connectedAccountId ?? composeEmailConnectedAccountId;
+
   const composerState = useEmailComposerState({
-    connectedAccountId: composeEmailConnectedAccountId ?? '',
+    connectedAccountId: connectedAccountId ?? '',
+    initialFromHandle: defaultSender?.fromHandle,
     defaultTo: composeEmailDefaultTo ?? '',
     defaultSubject: composeEmailDefaultSubject ?? '',
     defaultInReplyTo: composeEmailDefaultInReplyTo ?? undefined,
@@ -79,7 +86,7 @@ export const SidePanelComposeEmailPage = () => {
     dependencies: [handleSendHotkey],
   });
 
-  if (!composeEmailConnectedAccountId) {
+  if (!connectedAccountId) {
     return null;
   }
 

@@ -33,6 +33,7 @@ export type CurrentWorkspace = Pick<
   | 'hasValidSignedEnterpriseKey'
   | 'hasValidEnterpriseValidityToken'
   | 'subdomain'
+  | 'defaultSenderDomain'
   | 'customDomain'
   | 'workspaceUrls'
   | 'isTwoFactorAuthenticationEnforced'

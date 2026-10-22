@@ -71,6 +71,14 @@ const StyledRecipientLimitWarning = styled.div`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[3]};
 `;
 
+const StyledSenderAddress = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 type EmailComposerFieldsProps = {
   composerState: EmailComposerState;
   contextRecord?: EmailComposerContextRecord | null;
@@ -192,6 +200,11 @@ export const EmailComposerFields = ({
                   options={senderOptions}
                   onChange={handleSenderChange}
                 />
+              </ComposerFieldRow>
+            )}
+            {!hasMultipleSenders && isDefined(selectedSenderValue) && (
+              <ComposerFieldRow label={t`From`}>
+                <StyledSenderAddress>{selectedSenderValue}</StyledSenderAddress>
               </ComposerFieldRow>
             )}
             <ComposerFieldRow
