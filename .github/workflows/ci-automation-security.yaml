@@ -31,5 +31,6 @@ jobs:
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: '22'
+          package-manager-cache: false
       - run: npm install -g @anthropic-ai/claude-code@2.1.296
       - run: CLAUDE_REVIEW_CLI="$(command -v claude)" python3 -m unittest discover -s .github/scripts/tests -v
