@@ -14,7 +14,6 @@ import {
   isSilentAgentChatMessageParts,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { v5 as uuidv5 } from 'uuid';
 
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
@@ -36,6 +35,7 @@ import {
   classifyAgentChatTurnOutcome,
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
+import { buildStreamAssistantMessageId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-stream-assistant-message-id.util';
 import { findAwaitingCallText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-awaiting-call-text.util';
 import { hasReplyText } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-reply-text.util';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
@@ -57,9 +57,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-
-// the reply id derives from the stream, so a retried job overwrites its own reply while each resume writes its own
-const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 
 export type AgentTurnStreamUsage = AgentTurnUsage & {
   conversationSize: number;
@@ -287,7 +284,7 @@ export class AgentTurnStreamService {
     ) => Promise<TStarted>;
   }): Promise<AgentTurnStreamResult & { started: TStarted }> {
     const { workspaceId, threadId, streamId } = claim;
-    const assistantMessageId = uuidv5(streamId, ASSISTANT_MESSAGE_ID_NAMESPACE);
+    const assistantMessageId = buildStreamAssistantMessageId(streamId);
     const usage: AgentTurnStreamUsage = {
       inputTokens: 0,
       outputTokens: 0,
@@ -335,6 +332,7 @@ export class AgentTurnStreamService {
             messageMetadata: ({ part }) =>
               this.computeMessageMetadata({
                 part,
+                turnId,
                 modelConfig: source.modelConfig,
                 usage,
               }),
@@ -632,6 +630,7 @@ export class AgentTurnStreamService {
 
   private computeMessageMetadata({
     part,
+    turnId,
     modelConfig,
     usage,
   }: {
@@ -645,6 +644,7 @@ export class AgentTurnStreamService {
       };
       providerMetadata?: Record<string, Record<string, unknown> | undefined>;
     };
+    turnId: string;
     modelConfig: AiModelConfig;
     usage: AgentTurnStreamUsage;
   }) {
@@ -654,7 +654,7 @@ export class AgentTurnStreamService {
     }
 
     if (part.type === 'start') {
-      return { startedAt: new Date().toISOString() };
+      return { startedAt: new Date().toISOString(), turnId };
     }
 
     if (part.type === 'finish') {

@@ -5,6 +5,7 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -123,6 +124,55 @@ export class AgentChatStreamRecoveryService {
     }
 
     return true;
+  }
+
+  // a conversation's subscriber reaps a stream whose worker died, and pings the channel so its iterator
+  // wakes up and the transport stays open
+  createSubscriberHeartbeat({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): () => Promise<void> {
+    let lastReapCheckAt = 0;
+
+    return async () => {
+      if (
+        Date.now() - lastReapCheckAt >=
+        AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS
+      ) {
+        lastReapCheckAt = Date.now();
+        await this.reapDeadStreamOfThread({ workspaceId, threadId });
+      }
+
+      await this.eventPublisherService.publish({
+        threadId,
+        workspaceId,
+        event: { type: 'keepalive' },
+      });
+    };
+  }
+
+  private async reapDeadStreamOfThread({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    const thread = await this.threadRepository
+      .findOne(workspaceId, {
+        where: { id: threadId },
+        select: ['id', 'activeStreamId'],
+      })
+      .catch(() => null);
+
+    if (!isDefined(thread)) {
+      return;
+    }
+
+    await this.reapDeadStream({ thread, workspaceId }).catch(() => {});
   }
 
   async reapDeadStream({

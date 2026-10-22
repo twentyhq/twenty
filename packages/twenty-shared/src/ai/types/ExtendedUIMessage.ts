@@ -18,6 +18,7 @@ export type AiChatModelMetadata = {
 type Metadata = {
   createdAt?: string;
   startedAt?: string;
+  turnId?: string;
   finishedAt?: string;
   senderWorkspaceMemberId?: string | null;
   usage?: AiChatUsageMetadata;

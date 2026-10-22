@@ -186,6 +186,18 @@ export type AgentRun = {
   toolNames: Array<Scalars['String']['output']>;
 };
 
+export type AgentRunEventPayload = {
+  __typename?: 'AgentRunEventPayload';
+  event?: Maybe<Scalars['JSON']['output']>;
+  threadId: Scalars['UUID']['output'];
+};
+
+export type AgentRunEvents = {
+  __typename?: 'AgentRunEvents';
+  events: Array<Scalars['JSON']['output']>;
+  threadId: Scalars['UUID']['output'];
+};
+
 export enum AgentTurnStatus {
   CANCELLED = 'CANCELLED',
   COMPLETED = 'COMPLETED',
@@ -5422,6 +5434,7 @@ export type PublicWorkspaceDataSummary = {
 export type Query = {
   __typename?: 'Query';
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary;
+  agentRunEvents: AgentRunEvents;
   agentRuns: Array<AgentRun>;
   aiChatUsage?: Maybe<AiChatUsage>;
   apiKey?: Maybe<ApiKey>;
@@ -5562,6 +5575,12 @@ export type Query = {
   validationRules: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+};
+
+
+export type QueryAgentRunEventsArgs = {
+  agentUniversalIdentifier: Scalars['UUID']['input'];
+  threadKey: Scalars['String']['input'];
 };
 
 
@@ -6617,6 +6636,7 @@ export type Subscription = {
   exportRecords: RecordExport;
   logicFunctionLogs: LogicFunctionLogs;
   onAgentChatEvent: AgentChatEvent;
+  onAgentRunEvent: AgentRunEventPayload;
   onEventSubscription?: Maybe<EventSubscription>;
 };
 
@@ -6639,6 +6659,12 @@ export type SubscriptionLogicFunctionLogsArgs = {
 
 export type SubscriptionOnAgentChatEventArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type SubscriptionOnAgentRunEventArgs = {
+  agentUniversalIdentifier: Scalars['UUID']['input'];
+  threadKey: Scalars['String']['input'];
 };
 
 

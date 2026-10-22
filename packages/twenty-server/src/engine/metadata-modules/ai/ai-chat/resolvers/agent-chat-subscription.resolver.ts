@@ -2,13 +2,10 @@ import { createSubscriptionAuthorization } from 'src/engine/subscriptions/utils/
 import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { withAsyncIteratorAuthorization } from 'src/engine/subscriptions/utils/with-async-iterator-authorization';
-import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -19,9 +16,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
-import { AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-stream-reap-check-interval-ms.constant';
 import { AgentChatEventDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.dto';
-import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
@@ -45,8 +40,6 @@ export class AgentChatSubscriptionResolver {
     private readonly subscriptionService: SubscriptionService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly sharingService: AgentChatSharingService,
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
   ) {}
 
   @Subscription(() => AgentChatEventDTO, {
@@ -88,7 +81,10 @@ export class AgentChatSubscriptionResolver {
       },
     };
 
-    let lastReapCheckAt = 0;
+    const heartbeat = this.streamRecoveryService.createSubscriberHeartbeat({
+      workspaceId: workspace.id,
+      threadId,
+    });
 
     return withAsyncIteratorAuthorization({
       iterator: wrapAsyncIteratorWithLifecycle(() => iterator, {
@@ -96,19 +92,7 @@ export class AgentChatSubscriptionResolver {
         heartbeatErrorBehavior: 'close',
         onHeartbeat: async () => {
           await authorize(true);
-          if (
-            Date.now() - lastReapCheckAt >=
-            AGENT_CHAT_STREAM_REAP_CHECK_INTERVAL_MS
-          ) {
-            lastReapCheckAt = Date.now();
-            await this.reapWatchedStreamIfDead(workspace.id, threadId);
-          }
-
-          await this.subscriptionService.publishToAgentChat({
-            workspaceId: workspace.id,
-            threadId,
-            payload: keepalivePayload,
-          });
+          await heartbeat();
 
           return true;
         },
@@ -116,25 +100,5 @@ export class AgentChatSubscriptionResolver {
       }),
       authorize,
     });
-  }
-
-  private async reapWatchedStreamIfDead(
-    workspaceId: string,
-    threadId: string,
-  ): Promise<void> {
-    const thread = await this.threadRepository
-      .findOne(workspaceId, {
-        where: { id: threadId },
-        select: ['id', 'activeStreamId'],
-      })
-      .catch(() => null);
-
-    if (!isDefined(thread)) {
-      return;
-    }
-
-    await this.streamRecoveryService
-      .reapDeadStream({ thread, workspaceId })
-      .catch(() => {});
   }
 }

@@ -43,18 +43,18 @@ const buildResolver = () => {
   };
   const subscriptionService = {
     subscribeToAgentChat: jest.fn().mockResolvedValue(iterator),
-    publishToAgentChat: jest.fn(),
   };
+  const heartbeat = jest.fn();
   const resolver = new AgentChatSubscriptionResolver(
     subscriptionService as never,
-    {} as never,
+    { createSubscriberHeartbeat: () => heartbeat } as never,
     sharingService as never,
-    { findOne: jest.fn().mockResolvedValue(null) } as never,
   );
   return {
     resolver,
     sharingService,
     subscriptionService,
+    heartbeat,
     iterator,
     deliver: () => resolvePending({ done: false, value: payload }),
   };
@@ -149,9 +149,7 @@ describe('Shared conversation subscriptions', () => {
     context.sharingService.getReadableThread.mockRejectedValue(denied());
     await jest.advanceTimersByTimeAsync(AGENT_CHAT_KEEPALIVE_INTERVAL_MS);
     await rejection;
-    expect(
-      context.subscriptionService.publishToAgentChat,
-    ).not.toHaveBeenCalled();
+    expect(context.heartbeat).not.toHaveBeenCalled();
     expect(context.iterator.return).toHaveBeenCalledTimes(1);
     expect(jest.getTimerCount()).toBe(0);
   });

@@ -27,8 +27,6 @@ export class AgentRunConversationService {
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
   ) {}
 
-  // A run holds its conversation's stream while it goes on, as a chat reply does, so nothing else
-  // writes to the conversation meanwhile. A stream whose worker died is reaped first
   async claimThread({
     workspaceId,
     threadId,
@@ -74,8 +72,7 @@ export class AgentRunConversationService {
     });
   }
 
-  // The turn is written before the agent runs, so a run in progress or one that fails is on record.
-  // Messages members sent while the conversation was busy, or while the run waited, are its input too
+  // the turn takes the messages members queued while the conversation was busy or the run waited
   async openTurn({
     workspaceId,
     threadId,

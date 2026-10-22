@@ -155,6 +155,16 @@ type AgentRun {
   toolNames: [String!]!
 }
 
+type AgentRunEventPayload {
+  event: JSON
+  threadId: UUID!
+}
+
+type AgentRunEvents {
+  events: [JSON!]!
+  threadId: UUID!
+}
+
 enum AgentTurnStatus {
   CANCELLED
   COMPLETED
@@ -3815,6 +3825,7 @@ type PublicWorkspaceDataSummary {
 
 type Query {
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
+  agentRunEvents(agentUniversalIdentifier: UUID!, threadKey: String!): AgentRunEvents!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
   apiKey(input: GetApiKeyInput!): ApiKey
@@ -4481,6 +4492,7 @@ type Subscription {
   exportRecords(input: CreateRecordExportInput!): RecordExport!
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
+  onAgentRunEvent(agentUniversalIdentifier: UUID!, threadKey: String!): AgentRunEventPayload!
   onEventSubscription(eventStreamId: String!): EventSubscription
 }
 

@@ -313,6 +313,7 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
       'react-dom',
       '@types',
       '@sniptt/guards',
+      'graphql-sse',
       'uuid',
       'esbuild',
       'typescript',

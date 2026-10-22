@@ -16,11 +16,14 @@ import { DeliverAgentRunOutcomeJob } from 'src/engine/metadata-modules/ai/ai-age
 import { RunAgentJob } from 'src/engine/metadata-modules/ai/ai-agent-execution/jobs/run-agent.job';
 import { AgentMessagePartResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message-part.resolver';
 import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-message.resolver';
+import { AgentRunEventResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run-event.resolver';
 import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
+import { AgentRunEventService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-event.service';
+import { AgentRunStatusService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-status.service';
 import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-pending-wake-up-handler.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
@@ -75,6 +78,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentCallerConversationService,
     AgentRunCallerHandlerRegistryService,
     AgentRunConversationService,
+    AgentRunEventResolver,
+    AgentRunEventService,
+    AgentRunStatusService,
     AgentRunSuspensionService,
     AgentMessagePartResolver,
     AgentMessageResolver,
