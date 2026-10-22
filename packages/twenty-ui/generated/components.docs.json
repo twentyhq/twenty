@@ -3792,6 +3792,13 @@
         "description": "The default value of the input. Use when uncontrolled."
       },
       {
+        "name": "hasFocusRing",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Set false to hide the focus border or outline while keeping errors visible. Defaults to true. InputGroup controls grouped focus styling."
+      },
+      {
         "name": "onValueChange",
         "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
         "required": false,
@@ -3853,6 +3860,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Content rendered after the input, such as a suffix or a button."
+      },
+      {
+        "name": "hasFocusRing",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Set false to keep the group border unchanged on focus. Defaults to true. Error styling remains visible."
       },
       {
         "name": "ref",
@@ -12719,6 +12733,13 @@
             "description": "The default value of the input. Use when uncontrolled."
           },
           {
+            "name": "hasFocusRing",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Shows the search input focus outline. Defaults to false for all dropdown searches. Set true to opt in. Error styling remains visible."
+          },
+          {
             "name": "onValueChange",
             "type": "((value: string) => void)",
             "required": false,
@@ -14969,6 +14990,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Disables the text input. Controls in actions keep their own state."
+      },
+      {
+        "name": "hasFocusRing",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Shows the group focus border. Defaults to false for all search inputs. Set true to opt in. Error styling remains visible."
       },
       {
         "name": "id",
