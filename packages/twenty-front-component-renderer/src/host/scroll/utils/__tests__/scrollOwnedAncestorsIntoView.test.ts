@@ -5,6 +5,7 @@ type ScrollComputedStyle = Pick<
   | 'overflowX'
   | 'overflowY'
   | 'direction'
+  | 'position'
   | 'scrollPaddingTop'
   | 'scrollPaddingRight'
   | 'scrollPaddingBottom'
@@ -15,21 +16,23 @@ type ScrollComputedStyle = Pick<
   | 'scrollMarginLeft'
 >;
 
-type ElementLayout = {
-  clientWidth: number;
-  clientHeight: number;
-  scrollWidth: number;
-  scrollHeight: number;
-  scrollTop: number;
-  scrollLeft: number;
-  offsetWidth: number;
-  offsetHeight: number;
-};
+type ElementLayout = Pick<
+  HTMLElement,
+  | 'clientWidth'
+  | 'clientHeight'
+  | 'scrollWidth'
+  | 'scrollHeight'
+  | 'scrollTop'
+  | 'scrollLeft'
+  | 'offsetWidth'
+  | 'offsetHeight'
+>;
 
 const DEFAULT_COMPUTED_STYLE: ScrollComputedStyle = {
   overflowX: 'visible',
   overflowY: 'visible',
   direction: 'ltr',
+  position: 'static',
   scrollPaddingTop: 'auto',
   scrollPaddingRight: 'auto',
   scrollPaddingBottom: 'auto',
@@ -215,6 +218,77 @@ describe('scrollOwnedAncestorsIntoView', () => {
     expect(innerScrollTo.mock.invocationCallOrder[0]).toBeLessThan(
       outerScrollTo.mock.invocationCallOrder[0],
     );
+  });
+
+  it('should not scroll any ancestor of a fixed-position target', () => {
+    const { inner, target, innerScrollTo } = createNestedElements();
+
+    stubElementGeometry({
+      element: inner,
+      rect: new DOMRect(0, 0, 100, 100),
+      layout: VERTICALLY_SCROLLABLE_LAYOUT,
+    });
+    stubElementGeometry({
+      element: target,
+      rect: new DOMRect(0, 300, 100, 20),
+    });
+    stubComputedStyles(
+      new Map<Element, Partial<ScrollComputedStyle>>([
+        [inner, VERTICALLY_SCROLLABLE_STYLE],
+        [target, { position: 'fixed' }],
+      ]),
+    );
+
+    expect(
+      scrollOwnedAncestorsIntoView({
+        target,
+        block: 'start',
+        inline: 'nearest',
+        isOwnedNode: isAnyNodeOwned,
+      }),
+    ).toEqual([]);
+    expect(innerScrollTo).not.toHaveBeenCalled();
+  });
+
+  it('should scroll a fixed-position scroll container and stop walking above it', () => {
+    const { outer, inner, target, outerScrollTo, innerScrollTo } =
+      createNestedElements();
+
+    stubElementGeometry({
+      element: outer,
+      rect: new DOMRect(0, 0, 100, 100),
+      layout: { ...VERTICALLY_SCROLLABLE_LAYOUT, scrollTop: 40 },
+    });
+    stubElementGeometry({
+      element: inner,
+      rect: new DOMRect(0, 50, 100, 100),
+      layout: { ...VERTICALLY_SCROLLABLE_LAYOUT, scrollTop: 10 },
+    });
+    stubElementGeometry({
+      element: target,
+      rect: new DOMRect(0, 300, 100, 20),
+    });
+    stubComputedStyles(
+      new Map<Element, Partial<ScrollComputedStyle>>([
+        [outer, VERTICALLY_SCROLLABLE_STYLE],
+        [inner, { ...VERTICALLY_SCROLLABLE_STYLE, position: 'fixed' }],
+      ]),
+    );
+
+    expect(
+      scrollOwnedAncestorsIntoView({
+        target,
+        block: 'start',
+        inline: 'nearest',
+        isOwnedNode: isAnyNodeOwned,
+      }),
+    ).toEqual([inner]);
+    expect(innerScrollTo).toHaveBeenCalledWith({
+      top: 260,
+      left: 0,
+      behavior: 'instant',
+    });
+    expect(outerScrollTo).not.toHaveBeenCalled();
   });
 
   it('should return a scroll container without scrolling it when the target is already visible in it', () => {
