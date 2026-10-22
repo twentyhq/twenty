@@ -9,21 +9,21 @@ import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 type RecordSharingInvitationAccessPickerProps = {
   value: RecordShareAccessLevel;
-  includesEveryone: boolean;
+  hasEveryoneRecipient: boolean;
   disabled: boolean;
   onChange: (value: RecordShareAccessLevel) => void;
 };
 
 export const RecordSharingInvitationAccessPicker = ({
   value,
-  includesEveryone,
+  hasEveryoneRecipient,
   disabled,
   onChange,
 }: RecordSharingInvitationAccessPickerProps) => {
   const { t } = useLingui();
   const options = RECORD_SHARE_ACCESS_LEVEL_OPTIONS.filter(
     (option) =>
-      !includesEveryone || option.value !== RecordShareAccessLevel.FULL,
+      !hasEveryoneRecipient || option.value !== RecordShareAccessLevel.FULL,
   );
 
   return (

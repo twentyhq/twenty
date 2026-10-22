@@ -75,12 +75,12 @@ export const RecordSharingInvitation = ({
   const { t } = useLingui();
   const isDisabled = !canInvite || isSubmitting;
   const hasSelection = isNonEmptyArray(selectedRecipients);
-  const includesEveryone = selectedRecipients.some(
+  const hasEveryoneRecipient = selectedRecipients.some(
     (recipient) => recipient.kind === 'everyone',
   );
   const hasInvalidAccessLevel =
     accessLevel === RecordShareAccessLevel.NONE ||
-    (includesEveryone && accessLevel === RecordShareAccessLevel.FULL);
+    (hasEveryoneRecipient && accessLevel === RecordShareAccessLevel.FULL);
   const removeRecipient = (recipient: RecordSharingInvitationRecipient) => {
     onRecipientsChange(
       selectedRecipients.filter(
@@ -138,7 +138,7 @@ export const RecordSharingInvitation = ({
           <StyledActions>
             <RecordSharingInvitationAccessPicker
               value={accessLevel}
-              includesEveryone={includesEveryone}
+              hasEveryoneRecipient={hasEveryoneRecipient}
               disabled={isDisabled}
               onChange={onAccessLevelChange}
             />
