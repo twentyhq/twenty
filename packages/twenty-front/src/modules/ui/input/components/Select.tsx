@@ -1,3 +1,4 @@
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type SelectProps } from '@/ui/input/types/SelectProps';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -262,34 +263,38 @@ export const Select = <TValue extends SelectValue>({
                     const isColoredTag = isDefined(tagColor);
 
                     return (
-                      <Dropdown.OptionItem
+                      <SelectOptionDescriptionTooltip
                         key={`${option.value}-${option.label}`}
-                        value={getSelectOptionIdentifier(option.value)}
-                        disabled={option.disabled}
-                        indicator={
-                          isColoredTag || needIconCheck ? 'check' : 'none'
-                        }
-                        description={
-                          isColoredTag ? undefined : option.contextualText
-                        }
-                        startIcon={
-                          isColoredTag ? undefined : (
-                            <>
-                              <SelectOptionIcon
-                                Icon={option.Icon}
-                                color={option.iconThemeColor}
-                              />
-                              {option.LeftComponent}
-                            </>
-                          )
-                        }
+                        description={option.description}
                       >
-                        {isColoredTag ? (
-                          <Tag color={tagColor}>{option.label}</Tag>
-                        ) : (
-                          option.label
-                        )}
-                      </Dropdown.OptionItem>
+                        <Dropdown.OptionItem
+                          value={getSelectOptionIdentifier(option.value)}
+                          disabled={option.disabled}
+                          indicator={
+                            isColoredTag || needIconCheck ? 'check' : 'none'
+                          }
+                          description={
+                            isColoredTag ? undefined : option.contextualText
+                          }
+                          startIcon={
+                            isColoredTag ? undefined : (
+                              <>
+                                <SelectOptionIcon
+                                  Icon={option.Icon}
+                                  color={option.iconThemeColor}
+                                />
+                                {option.LeftComponent}
+                              </>
+                            )
+                          }
+                        >
+                          {isColoredTag ? (
+                            <Tag color={tagColor}>{option.label}</Tag>
+                          ) : (
+                            option.label
+                          )}
+                        </Dropdown.OptionItem>
+                      </SelectOptionDescriptionTooltip>
                     );
                   })}
                 </Dropdown.Section>
