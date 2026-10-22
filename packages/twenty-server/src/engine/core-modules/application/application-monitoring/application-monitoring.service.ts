@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { getApplicationMonitoringLookbackInHours } from 'twenty-shared/utils';
-
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { APPLICATION_MONITORING_QUERIES } from 'src/engine/core-modules/application/application-monitoring/constants/application-monitoring-queries.constant';
@@ -14,6 +12,7 @@ import {
   type ApplicationMonitoringTotalsRow,
   type ApplicationMonitoringVersionRow,
 } from 'src/engine/core-modules/application/application-monitoring/types/application-monitoring-rows.type';
+import { getApplicationMonitoringLookbackInHours } from 'src/engine/core-modules/application/application-monitoring/utils/get-application-monitoring-lookback-in-hours.util';
 import { mapApplicationMonitoringRows } from 'src/engine/core-modules/application/application-monitoring/utils/map-application-monitoring-rows.util';
 import { resolveApplicationMonitoringPeriod } from 'src/engine/core-modules/application/application-monitoring/utils/resolve-application-monitoring-period.util';
 import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
