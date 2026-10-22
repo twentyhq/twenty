@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { IconLock } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledEmailBodyNotSharedContainer = styled.div`
   align-items: center;
@@ -37,15 +37,19 @@ export const EventCardMessageBodyNotShared = ({
   notSharedByFullName,
 }: {
   notSharedByFullName: string;
-}) => (
-  <StyledEmailBodyNotSharedContainer>
-    <StyledEmailBodyNotShared>
-      <StyledEmailBodyNotSharedIconContainer>
-        <IconLock />
-      </StyledEmailBodyNotSharedIconContainer>
-      <span>
-        <Trans>Not shared by {notSharedByFullName}</Trans>
-      </span>
-    </StyledEmailBodyNotShared>
-  </StyledEmailBodyNotSharedContainer>
-);
+}) => {
+  const theme = useTheme();
+
+  return (
+    <StyledEmailBodyNotSharedContainer>
+      <StyledEmailBodyNotShared>
+        <StyledEmailBodyNotSharedIconContainer>
+          <IconLock size={theme.icon.size.sm} />
+        </StyledEmailBodyNotSharedIconContainer>
+        <span>
+          <Trans>Not shared by {notSharedByFullName}</Trans>
+        </span>
+      </StyledEmailBodyNotShared>
+    </StyledEmailBodyNotSharedContainer>
+  );
+};
