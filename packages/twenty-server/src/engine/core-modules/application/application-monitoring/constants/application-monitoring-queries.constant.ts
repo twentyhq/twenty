@@ -86,7 +86,7 @@ export const APPLICATION_MONITORING_QUERIES = {
   workspaces: `
     SELECT
       workspaceId,
-      argMax(applicationVersion, timestamp) AS applicationVersion,
+      argMaxIf(applicationVersion, timestamp, ${RUNS_ON_VERSION}) AS applicationVersion,
       countIf(source = 'LOGIC_FUNCTION') AS runCount,
       countIf(source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
       countIf(source IN ('API_RATE_LIMIT', 'JOB_RATE_LIMIT')) AS rateLimitEventCount,

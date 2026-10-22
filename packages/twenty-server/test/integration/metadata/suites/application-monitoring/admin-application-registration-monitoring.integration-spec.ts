@@ -79,6 +79,19 @@ describe('Admin application registration monitoring (integration)', () => {
           minutesAgo: 15,
           level: 'ERROR',
         }),
+        {
+          ...buildRunEvent({
+            applicationRegistrationId,
+            workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+            minutesAgo: 1,
+            level: 'ERROR',
+          }),
+          applicationVersion: '2.0.0',
+          source: 'UPGRADE',
+          logicFunctionId: '',
+          logicFunctionName: '',
+          errorCode: 'UPGRADE_FAILED',
+        },
       ],
     });
   });
