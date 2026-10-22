@@ -295,7 +295,7 @@ describe('OAuth (integration)', () => {
     let dynamicClientId: string;
 
     beforeAll(async () => {
-      const res = await request(baseUrl)
+      const registerResponse = await request(baseUrl)
         .post('/oauth/register')
         .send({
           client_name: 'Twenty',
@@ -304,7 +304,7 @@ describe('OAuth (integration)', () => {
         })
         .expect(201);
 
-      dynamicClientId = res.body.client_id;
+      dynamicClientId = registerResponse.body.client_id;
 
       const rows = await ds.query(
         `SELECT id FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,

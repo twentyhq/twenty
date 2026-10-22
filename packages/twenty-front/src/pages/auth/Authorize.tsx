@@ -6,6 +6,7 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { getOAuthRedirectHost } from '@/auth/utils/getOAuthRedirectHost';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -155,18 +156,6 @@ const OAUTH_SCOPE_ICONS: { [scope: string]: IconComponent | undefined } = {
   profile: IconUserCircle,
 };
 
-const getRedirectHost = (redirectUrl: string | null) => {
-  if (!isDefined(redirectUrl)) {
-    return null;
-  }
-
-  try {
-    return new URL(redirectUrl).host;
-  } catch {
-    return null;
-  }
-};
-
 export const Authorize = () => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -276,7 +265,7 @@ export const Authorize = () => {
   const appName = applicationRegistration.name;
   const appLogoUrl = applicationRegistration.logoUrl;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
-  const redirectHost = getRedirectHost(redirectUrl);
+  const redirectHost = getOAuthRedirectHost(redirectUrl);
 
   return (
     <StyledAuthContent>
