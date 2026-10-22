@@ -12,7 +12,7 @@ import {
 
 let sharedDependencies: Promise<FrontComponentSharedDependencies> | undefined;
 
-const readSharedDependencies =
+const readSharedDependenciesOrThrow =
   async (): Promise<FrontComponentSharedDependencies> => {
     const [source, manifestSource] = await Promise.all([
       fs.readFile(
@@ -48,13 +48,15 @@ const readSharedDependencies =
 export const getFrontComponentSharedDependencies =
   (): Promise<FrontComponentSharedDependencies> => {
     if (!isDefined(sharedDependencies)) {
-      sharedDependencies = readSharedDependencies().catch((error: unknown) => {
-        sharedDependencies = undefined;
-        throw new FrontComponentException(
-          `Unable to load the shared frontend component dependencies: ${error instanceof Error ? error.message : String(error)}`,
-          FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
-        );
-      });
+      sharedDependencies = readSharedDependenciesOrThrow().catch(
+        (error: unknown) => {
+          sharedDependencies = undefined;
+          throw new FrontComponentException(
+            `Unable to load the shared frontend component dependencies: ${error instanceof Error ? error.message : String(error)}`,
+            FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
+          );
+        },
+      );
     }
     return sharedDependencies;
   };

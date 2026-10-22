@@ -88,9 +88,9 @@ describe('FrontComponentCompilerService', () => {
   });
   afterEach(() => jest.restoreAllMocks());
   it('reuses a workspace builder but separates workspaces, and returns the exact Lambda artifact', async () => {
-    const result = await service.build('workspace-a', input);
-    await service.build('workspace-a', input);
-    await service.build('workspace-b', input);
+    const result = await service.build({ workspaceId: 'workspace-a', input });
+    await service.build({ workspaceId: 'workspace-a', input });
+    await service.build({ workspaceId: 'workspace-b', input });
     const commands: InvokeCommand[] = send.mock.calls.map(
       ([command]) => command,
     );
@@ -109,9 +109,9 @@ describe('FrontComponentCompilerService', () => {
     'does not compile locally when the driver is %s',
     async (driver) => {
       getConfig.mockReturnValue(driver);
-      await expect(service.build('workspace-a', input)).rejects.toThrow(
-        'requires the Lambda',
-      );
+      await expect(
+        service.build({ workspaceId: 'workspace-a', input }),
+      ).rejects.toThrow('requires the Lambda');
       expect(send).not.toHaveBeenCalled();
     },
   );
@@ -125,9 +125,9 @@ describe('FrontComponentCompilerService', () => {
           }),
       },
     });
-    await expect(service.build('workspace-a', input)).rejects.toThrow(
-      'Unsupported import',
-    );
+    await expect(
+      service.build({ workspaceId: 'workspace-a', input }),
+    ).rejects.toThrow('Unsupported import');
   });
   it.each([
     { checksum: 'b'.repeat(64) },
@@ -138,9 +138,9 @@ describe('FrontComponentCompilerService', () => {
         transformToString: () => JSON.stringify({ ...built, ...override }),
       },
     });
-    await expect(service.build('workspace-a', input)).rejects.toThrow(
-      'checksum mismatch',
-    );
+    await expect(
+      service.build({ workspaceId: 'workspace-a', input }),
+    ).rejects.toThrow('checksum mismatch');
   });
   it('rejects a self-consistent artifact whose vendor banner differs', async () => {
     const wrongVendor = compiledSource.replace('a'.repeat(64), 'b'.repeat(64));
@@ -154,17 +154,17 @@ describe('FrontComponentCompilerService', () => {
           }),
       },
     });
-    await expect(service.build('workspace-a', input)).rejects.toThrow(
-      'checksum mismatch',
-    );
+    await expect(
+      service.build({ workspaceId: 'workspace-a', input }),
+    ).rejects.toThrow('checksum mismatch');
   });
   it('reports infrastructure failures without exposing the Lambda error payload', async () => {
     send.mockResolvedValue({
       FunctionError: 'Unhandled',
       Payload: { transformToString: () => 'internal details' },
     });
-    await expect(service.build('workspace-a', input)).rejects.toThrow(
-      'builder Lambda failed',
-    );
+    await expect(
+      service.build({ workspaceId: 'workspace-a', input }),
+    ).rejects.toThrow('builder Lambda failed');
   });
 });

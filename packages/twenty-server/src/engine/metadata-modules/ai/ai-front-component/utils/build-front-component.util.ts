@@ -16,7 +16,7 @@ import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-
 import { frontComponentQuerySchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-query.schema';
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
-import { buildFrontComponentWithLimits } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits.util';
+import { buildFrontComponentWithLimitsOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits-or-throw.util';
 import { validateFrontComponentSourceOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-source-or-throw.util';
 
 export const buildFrontComponent = async ({
@@ -41,7 +41,7 @@ export const buildFrontComponent = async ({
     query: frontComponentQuerySchema.parse(input.query),
   });
   const sourceFile = join(__dirname, 'component.front-component.tsx');
-  const result = await buildFrontComponentWithLimits({
+  const result = await buildFrontComponentWithLimitsOrThrow({
     ...getCommonFrontComponentBuildOptions(),
     stdin: {
       contents: unwrapDefineFrontComponentToDirectExport(source),

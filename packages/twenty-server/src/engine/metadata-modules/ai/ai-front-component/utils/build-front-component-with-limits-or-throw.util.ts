@@ -7,7 +7,9 @@ import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-
 
 import { FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-max-build-output-bytes.constant';
 
-export const buildFrontComponentWithLimits = async (options: BuildOptions) => {
+export const buildFrontComponentWithLimitsOrThrow = async (
+  options: BuildOptions,
+) => {
   const buildContext = await context({ ...options, write: false });
   let timeoutError: FrontComponentBuildException | undefined;
   const timeout = setTimeout(() => {
