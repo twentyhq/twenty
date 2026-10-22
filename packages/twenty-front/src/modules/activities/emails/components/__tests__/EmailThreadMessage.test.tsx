@@ -1,4 +1,7 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
@@ -58,5 +61,24 @@ describe('EmailThreadMessage', () => {
     expect(
       screen.getByText('I came across your recent article'),
     ).toBeInTheDocument();
+  });
+
+  it('does not render a body masked by metadata visibility', () => {
+    render(
+      <I18nProvider i18n={i18n}>
+        <EmailThreadMessage
+          message={buildMessage({
+            text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+          })}
+          isExpanded
+          onDraftClick={jest.fn()}
+        />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByText('Not shared')).toBeInTheDocument();
+    expect(
+      screen.queryByText(FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED),
+    ).not.toBeInTheDocument();
   });
 });
