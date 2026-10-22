@@ -1,4 +1,1 @@
-export type SharedDependenciesExportNames = {
-  namedExports: string[];
-  hasDefaultExport: boolean;
-};
+export type { SharedDependenciesExportNames } from 'twenty-shared/front-component-build';
