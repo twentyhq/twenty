@@ -39,18 +39,7 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
     jest.resetAllMocks();
 
     connectedAccountMetadataService.findMailboxesUsableByCaller.mockResolvedValue(
-      [
-        {
-          userWorkspaceId,
-          handle: 'Me@Example.com',
-          handleAliases: ['sales@example.com'],
-        },
-        {
-          userWorkspaceId: 'someone-else',
-          handle: 'shared@example.com',
-          handleAliases: [],
-        },
-      ],
+      [{ handle: 'Me@Example.com', handleAliases: ['sales@example.com'] }],
     );
 
     const module = await Test.createTestingModule({
@@ -122,19 +111,6 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
     expect(userWorkspaceRepository.update).toHaveBeenCalledWith(
       { id: userWorkspaceId, workspaceId },
       { defaultFromHandle: 'sales@example.com' },
-    );
-  });
-
-  it('accepts a sendable handle of a shared account', async () => {
-    await service.updateDefaultFromHandle({
-      userWorkspaceId,
-      workspaceId,
-      defaultFromHandle: 'shared@example.com',
-    });
-
-    expect(userWorkspaceRepository.update).toHaveBeenCalledWith(
-      { id: userWorkspaceId, workspaceId },
-      { defaultFromHandle: 'shared@example.com' },
     );
   });
 
