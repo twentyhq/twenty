@@ -17,11 +17,13 @@ import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-cha
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { type AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type UpdateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/update-agent-chat-channel.input';
 import { type AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
+import { type AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { type AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
@@ -270,10 +272,17 @@ const setRoleAllChannelsAccess = async (
   expect(errors).toBeUndefined();
 };
 
-const waitForMetadataEventListeners = () =>
-  getAppProviderByClassName<MetadataEventEmitter>(
+const waitForChannelGrantRewrites = async () => {
+  await getAppProviderByClassName<MetadataEventEmitter>(
     'MetadataEventEmitter',
   ).drain();
+  await waitForAllJobsToFinish();
+};
+
+const getChannelGrantService = () =>
+  getAppProviderByClassName<AgentChatChannelGrantService>(
+    'AgentChatChannelGrantService',
+  );
 
 const waitForBlockedChannelGrantLock = (channelId: string) =>
   expectEventually(async () => {
@@ -544,7 +553,7 @@ describe('Chat channels through the authenticated API', () => {
 
     await setRoleAllChannelsAccess(memberRoleId, false);
     roleIdsToReopenToAllChannels.add(memberRoleId);
-    await waitForMetadataEventListeners();
+    await waitForChannelGrantRewrites();
 
     return memberRoleId;
   };
@@ -577,7 +586,7 @@ describe('Chat channels through the authenticated API', () => {
       await setRoleAllChannelsAccess(roleId, true);
     }
     roleIdsToReopenToAllChannels.clear();
-    await waitForMetadataEventListeners();
+    await waitForChannelGrantRewrites();
 
     for (const threadId of createdThreadIds.splice(0)) {
       await destroyAgentChatThread({ threadId });
@@ -955,7 +964,45 @@ describe('Chat channels through the authenticated API', () => {
 
     await waitForBlockedChannelGrantLock(channelId);
     await queryRunner.commitTransaction();
-    await waitForMetadataEventListeners();
+    await waitForChannelGrantRewrites();
+
+    expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
+  });
+
+  it("removes a role's access to all channels once a failed rewrite is retried", async () => {
+    const channelId = await createChannel();
+    const threadId = await createThreadInChannel(channelId);
+    const { id: memberRoleId } = await findOneRoleByLabel({ label: 'Member' });
+
+    expect(await readChannelGrantRoleIds(threadId)).toContain(memberRoleId);
+
+    jest
+      .spyOn(getChannelGrantService(), 'rewriteAllChannelGrants')
+      .mockRejectedValueOnce(new Error('Grant rewrite failed'));
+
+    roleIdsToReopenToAllChannels.add(memberRoleId);
+    await setRoleAllChannelsAccess(memberRoleId, false);
+    await waitForChannelGrantRewrites();
+
+    expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
+  });
+
+  it("applies a channel's new access once a failed rewrite is retried", async () => {
+    const memberRoleId = await closeMemberAllChannelsAccess();
+    const channelId = await createChannel({ roleIds: [memberRoleId] });
+    const threadId = await createThreadInChannel(channelId);
+
+    expect(await readChannelGrantRoleIds(threadId)).toContain(memberRoleId);
+
+    jest
+      .spyOn(getChannelGrantService(), 'rewriteChannelGrants')
+      .mockRejectedValueOnce(new Error('Grant rewrite failed'));
+
+    const response = await updateChannel(channelId, { roleIds: [] });
+
+    expect(response.body.errors).toBeDefined();
+
+    await waitForChannelGrantRewrites();
 
     expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
   });

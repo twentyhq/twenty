@@ -4,6 +4,12 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-grants-rewrite-job-retry-options.constant';
+import { REWRITE_AGENT_CHAT_CHANNEL_GRANTS_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/rewrite-agent-chat-channel-grants-job-name.constant';
+import { type RewriteAgentChatChannelGrantsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/rewrite-agent-chat-channel-grants-job.types';
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
 import { buildAgentChatChannelAccessQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-access-query.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -22,7 +28,19 @@ export class AgentChatChannelGrantService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
   ) {}
+
+  async enqueueChannelGrantsRewrite(
+    data: RewriteAgentChatChannelGrantsJobData,
+  ): Promise<void> {
+    await this.workspaceQueueService.add<RewriteAgentChatChannelGrantsJobData>(
+      REWRITE_AGENT_CHAT_CHANNEL_GRANTS_JOB_NAME,
+      data,
+      AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_RETRY_OPTIONS,
+    );
+  }
 
   async rewriteThreadGrantsInTransaction({
     manager,

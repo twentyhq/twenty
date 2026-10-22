@@ -52,6 +52,6 @@ export class AgentChatChannelRoleAccessListener {
       return;
     }
 
-    await this.channelGrantService.rewriteAllChannelGrants({ workspaceId });
+    await this.channelGrantService.enqueueChannelGrantsRewrite({ workspaceId });
   }
 }

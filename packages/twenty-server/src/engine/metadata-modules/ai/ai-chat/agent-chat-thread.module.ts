@@ -7,6 +7,7 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { EndAgentChatChannelSnoozeJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-channel-snooze.job';
 import { EndAgentChatThreadSnoozeJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-thread-snooze.job';
+import { RewriteAgentChatChannelGrantsJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/rewrite-agent-chat-channel-grants.job';
 import { AgentChatChannelRoleAccessListener } from 'src/engine/metadata-modules/ai/ai-chat/listeners/agent-chat-channel-role-access.listener';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
@@ -51,6 +52,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentInboxService,
     EndAgentChatChannelSnoozeJob,
     EndAgentChatThreadSnoozeJob,
+    RewriteAgentChatChannelGrantsJob,
   ],
   exports: [
     AgentChatChannelGrantService,

@@ -115,10 +115,16 @@ export class AgentChatChannelService {
     });
 
     if (isDefined(roleIds)) {
-      await this.channelGrantService.rewriteChannelGrants({
-        workspaceId,
-        channelId,
-      });
+      await this.channelGrantService
+        .rewriteChannelGrants({ workspaceId, channelId })
+        .catch(async (error: unknown) => {
+          await this.channelGrantService.enqueueChannelGrantsRewrite({
+            workspaceId,
+            channelId,
+          });
+
+          throw error;
+        });
     }
 
     return channel;
