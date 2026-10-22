@@ -109,6 +109,8 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_INTRODUCTION: '/developers/introduction',
   DEVELOPERS_SELF_HOST_CAPABILITIES_DOCKER_COMPOSE:
     '/developers/self-host/capabilities/docker-compose',
+  DEVELOPERS_SELF_HOST_CAPABILITIES_SECURITY:
+    '/developers/self-host/capabilities/security',
   DEVELOPERS_SELF_HOST_CAPABILITIES_SETUP:
     '/developers/self-host/capabilities/setup',
   DEVELOPERS_SELF_HOST_CAPABILITIES_TROUBLESHOOTING:
