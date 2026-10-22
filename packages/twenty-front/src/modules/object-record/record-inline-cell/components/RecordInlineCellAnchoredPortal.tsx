@@ -2,6 +2,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
@@ -64,12 +65,20 @@ export const RecordInlineCellAnchoredPortal = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const isForbidden = isJunctionRelationForbidden({
-    fieldMetadataItem,
-    sourceObjectMetadataId: objectMetadataItem.id,
-    objectMetadataItems,
-    objectPermissionsByObjectMetadataId,
-  });
+  const restrictedFieldNames = useRecordRestrictedFieldNames(recordId ?? '');
+
+  const isFieldRestricted = restrictedFieldNames.includes(
+    fieldMetadataItem.name,
+  );
+
+  const isForbidden =
+    isFieldRestricted ||
+    isJunctionRelationForbidden({
+      fieldMetadataItem,
+      sourceObjectMetadataId: objectMetadataItem.id,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+    });
 
   const { updateOneRecord } = useUpdateOneRecord();
 
