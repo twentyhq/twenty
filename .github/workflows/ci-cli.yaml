@@ -67,17 +67,17 @@ jobs:
         uses: ./.github/actions/restore-cache
         with:
           key: cli-test
-      - name: Build the CLI and the SDK used by parity tests
+      - name: Build the CLI and SDK authoring exports
         run: npx nx run-many --target=build --projects=twenty-sdk,twenty-cli
       - name: Lint
         run: npx nx lint twenty-cli
       - name: Typecheck
         run: npx tsgo -p packages/twenty-cli/tsconfig.json --noEmit
       - name: Unit tests
-        run: npx vitest run --maxWorkers=2 --exclude src/app/manifest/__tests__/manifest-parity.spec.ts
+        run: npx vitest run --maxWorkers=2 --exclude src/app/manifest/__tests__/manifest-fixtures.spec.ts
         working-directory: packages/twenty-cli
-      - name: Manifest parity tests
-        run: npx vitest run --maxWorkers=1 src/app/manifest/__tests__/manifest-parity.spec.ts
+      - name: Manifest fixture tests
+        run: npx vitest run --maxWorkers=1 src/app/manifest/__tests__/manifest-fixtures.spec.ts
         working-directory: packages/twenty-cli
       - name: Test app publishing with an isolated local registry
         run: |
