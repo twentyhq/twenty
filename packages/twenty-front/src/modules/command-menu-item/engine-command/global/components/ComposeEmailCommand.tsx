@@ -1,4 +1,3 @@
-import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
 import { useResolveDefaultEmailRecipient } from '@/activities/emails/hooks/useResolveDefaultEmailRecipient';
 import { useResolveNewEmailSender } from '@/activities/emails/hooks/useResolveNewEmailSender';
 import { getPrimaryEmailFromRecord } from '@/activities/emails/utils/getPrimaryEmailFromRecord';
@@ -7,14 +6,13 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const ComposeEmailCommand = () => {
-  const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
-  const { resolveNewEmailSender } = useResolveNewEmailSender();
+  const { resolveNewEmailSender, loading: senderLoading } =
+    useResolveNewEmailSender();
   const { openComposeEmailInSidePanel } = useOpenComposeEmailInSidePanel();
   const navigateSettings = useNavigateSettings();
 
@@ -82,8 +80,7 @@ export const ComposeEmailCommand = () => {
   };
 
   const ready =
-    isDefined(myConnectedAccounts) &&
-    (isBulkPerson ? !bulkLoading : !recipientLoading);
+    !senderLoading && (isBulkPerson ? !bulkLoading : !recipientLoading);
 
   return (
     <HeadlessEngineCommandWrapperEffect execute={handleExecute} ready={ready} />

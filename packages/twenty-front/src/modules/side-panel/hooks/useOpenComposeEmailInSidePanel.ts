@@ -1,9 +1,7 @@
 import { useCallback } from 'react';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, IconArrowBackUp, IconMail } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
@@ -15,7 +13,6 @@ import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/c
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
 import { composeEmailInitialFromHandleComponentState } from '@/side-panel/pages/compose-email/states/composeEmailInitialFromHandleComponentState';
-import { composeEmailIsReplyComponentState } from '@/side-panel/pages/compose-email/states/composeEmailIsReplyComponentState';
 import { t } from '@lingui/core/macro';
 
 type OpenComposeEmailParams = {
@@ -38,8 +35,7 @@ export const useOpenComposeEmailInSidePanel = () => {
     (params: OpenComposeEmailParams) => {
       const pageId = v4();
 
-      const isReply =
-        isDefined(params.threadId) || isNonEmptyString(params.defaultInReplyTo);
+      const isReply = !!params.defaultInReplyTo;
 
       store.set(
         composeEmailConnectedAccountIdComponentState.atomFamily({
@@ -74,13 +70,6 @@ export const useOpenComposeEmailInSidePanel = () => {
           instanceId: pageId,
         }),
         params.defaultInReplyTo ?? '',
-      );
-
-      store.set(
-        composeEmailIsReplyComponentState.atomFamily({
-          instanceId: pageId,
-        }),
-        isReply,
       );
 
       store.set(

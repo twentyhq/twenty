@@ -11,7 +11,6 @@ import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/c
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
 import { composeEmailInitialFromHandleComponentState } from '@/side-panel/pages/compose-email/states/composeEmailInitialFromHandleComponentState';
-import { composeEmailIsReplyComponentState } from '@/side-panel/pages/compose-email/states/composeEmailIsReplyComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -52,25 +51,21 @@ export const SidePanelComposeEmailPage = () => {
   const composeEmailDefaultInReplyTo = useAtomComponentStateValue(
     composeEmailDefaultInReplyToComponentState,
   );
-  const composeEmailIsReply = useAtomComponentStateValue(
-    composeEmailIsReplyComponentState,
-  );
   const composeEmailContextRecord = useAtomComponentStateValue(
     composeEmailContextRecordComponentState,
   );
 
   const { goBackFromSidePanel } = useSidePanelHistory();
 
-  // a reply must stay on the thread's account, so only the handle may change
-  const replySender = useDefaultEmailSender({
+  // openers pick the account; only its default handle may be filled in here
+  const restrictedSender = useDefaultEmailSender({
     restrictToConnectedAccountId: composeEmailConnectedAccountId ?? '',
   });
 
   const composerState = useEmailComposerState({
     connectedAccountId: composeEmailConnectedAccountId ?? '',
-    initialFromHandle: composeEmailIsReply
-      ? replySender?.fromHandle
-      : (composeEmailInitialFromHandle ?? undefined),
+    initialFromHandle:
+      composeEmailInitialFromHandle ?? restrictedSender?.fromHandle,
     defaultTo: composeEmailDefaultTo ?? '',
     defaultSubject: composeEmailDefaultSubject ?? '',
     defaultInReplyTo: composeEmailDefaultInReplyTo ?? undefined,

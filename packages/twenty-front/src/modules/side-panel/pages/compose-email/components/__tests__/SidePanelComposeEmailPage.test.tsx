@@ -4,7 +4,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { composeEmailConnectedAccountIdComponentState } from '@/side-panel/pages/compose-email/states/composeEmailConnectedAccountIdComponentState';
 import { composeEmailInitialFromHandleComponentState } from '@/side-panel/pages/compose-email/states/composeEmailInitialFromHandleComponentState';
-import { composeEmailIsReplyComponentState } from '@/side-panel/pages/compose-email/states/composeEmailIsReplyComponentState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render } from '@testing-library/react';
@@ -51,7 +50,7 @@ const accountThread = {
   id: 'thread-account',
   handle: 'person@gmail.com',
   provider: ConnectedAccountProvider.GOOGLE,
-  handleAliases: null,
+  handleAliases: ['person@example.com'],
   scopes: ['https://www.googleapis.com/auth/gmail.send'],
   connectionParameters: null,
 };
@@ -66,24 +65,21 @@ const accountDomain = {
 };
 
 const renderPage = ({
-  isReply = false,
   connectedAccountId = 'thread-account',
   initialFromHandle = null,
 }: {
-  isReply?: boolean;
   connectedAccountId?: string | null;
   initialFromHandle?: string | null;
 } = {}) => {
   mockStateValues = new Map<unknown, unknown>([
     [composeEmailConnectedAccountIdComponentState, connectedAccountId],
     [composeEmailInitialFromHandleComponentState, initialFromHandle],
-    [composeEmailIsReplyComponentState, isReply],
   ]);
 
   const store = createStore();
   store.set(myConnectedAccountsState.atom, [
-    accountThread,
     accountDomain,
+    accountThread,
   ] as never);
   store.set(currentWorkspaceState.atom, {
     defaultSenderDomain: 'example.com',
@@ -122,30 +118,19 @@ describe('SidePanelComposeEmailPage', () => {
     );
   });
 
-  it('keeps the account requested for a new email', () => {
+  it('keeps the requested or thread account and starts on its default handle', () => {
     renderPage();
 
     expect(mockUseEmailComposerState).toHaveBeenCalledWith(
       expect.objectContaining({
         connectedAccountId: 'thread-account',
-        initialFromHandle: undefined,
+        initialFromHandle: 'person@example.com',
       }),
     );
   });
 
-  it('keeps the thread account for a reply even when another account matches the domain', () => {
-    renderPage({ isReply: true });
-
-    expect(mockUseEmailComposerState).toHaveBeenCalledWith(
-      expect.objectContaining({
-        connectedAccountId: 'thread-account',
-        initialFromHandle: undefined,
-      }),
-    );
-  });
-
-  it('does not pick another account for a reply that has no account', () => {
-    renderPage({ isReply: true, connectedAccountId: null });
+  it('does not pick another account when none was requested', () => {
+    renderPage({ connectedAccountId: null });
 
     expect(mockUseEmailComposerState).toHaveBeenCalledWith(
       expect.objectContaining({
