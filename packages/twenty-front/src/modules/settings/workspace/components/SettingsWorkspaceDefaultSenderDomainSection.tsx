@@ -21,8 +21,6 @@ import {
 
 const OTHER_DOMAIN_VALUE = '__other-domain__';
 
-type DomainSelectValue = string | null;
-
 export const SettingsWorkspaceDefaultSenderDomainSection = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
@@ -49,19 +47,18 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
       ? [...accountDomains, savedDomain]
       : accountDomains;
 
-  const options: SelectOption<DomainSelectValue | typeof OTHER_DOMAIN_VALUE>[] =
-    [
-      { label: t`None`, value: null },
-      ...listedDomains.map((listedDomain) => ({
-        label: listedDomain,
-        value: listedDomain,
-      })),
-      { label: t`Other domain…`, value: OTHER_DOMAIN_VALUE },
-    ];
+  const options: SelectOption<string | null>[] = [
+    { label: t`None`, value: null },
+    ...listedDomains.map((listedDomain) => ({
+      label: listedDomain,
+      value: listedDomain,
+    })),
+    { label: t`Other domain…`, value: OTHER_DOMAIN_VALUE },
+  ];
 
-  const saveDomain = async (
-    nextDomain: string,
-  ): Promise<{ isSaved: boolean }> => {
+  const isDisabled = !hasWorkspacePermission || isSaving;
+
+  const saveDomain = async (nextDomain: string): Promise<boolean> => {
     setIsSaving(true);
 
     try {
@@ -84,20 +81,18 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
       );
       setDomain(storedDomain ?? '');
 
-      return { isSaved: true };
+      return true;
     } catch (error) {
       setDomain(savedDomain ?? '');
       enqueueToast(getToastOptionsFromError({ error }));
 
-      return { isSaved: false };
+      return false;
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleSelectChange = async (
-    value: DomainSelectValue | typeof OTHER_DOMAIN_VALUE,
-  ) => {
+  const handleSelectChange = async (value: string | null) => {
     if (value === OTHER_DOMAIN_VALUE) {
       setDomain(savedDomain ?? '');
       setIsOtherDomainSelected(true);
@@ -114,14 +109,12 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
   const handleBlur = async () => {
     const trimmedDomain = domain.trim();
 
-    if (!isDefined(currentWorkspace) || trimmedDomain === (savedDomain ?? '')) {
+    if (trimmedDomain === (savedDomain ?? '')) {
       setDomain(trimmedDomain);
       return;
     }
 
-    const { isSaved } = await saveDomain(trimmedDomain);
-
-    if (isSaved) {
+    if (await saveDomain(trimmedDomain)) {
       setIsOtherDomainSelected(false);
     }
   };
@@ -135,7 +128,7 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
         value={isOtherDomainSelected ? OTHER_DOMAIN_VALUE : savedDomain}
         onChange={handleSelectChange}
         options={options}
-        disabled={!hasWorkspacePermission || isSaving}
+        disabled={isDisabled}
         fullWidth
       />
       {isOtherDomainSelected && (
@@ -146,7 +139,7 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
           onChange={setDomain}
           onBlur={handleBlur}
           placeholder={t`example.com`}
-          disabled={!hasWorkspacePermission || isSaving}
+          disabled={isDisabled}
           autoFocusOnMount
           fullWidth
         />

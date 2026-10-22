@@ -71,13 +71,6 @@ const renderSection = ({
   return store;
 };
 
-const openSelect = async (
-  user: ReturnType<typeof userEvent.setup>,
-  currentText: string,
-) => {
-  await user.click(screen.getByText(currentText));
-};
-
 describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
   beforeEach(() => {
     mockUpdateWorkspace.mockReset();
@@ -91,7 +84,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     const user = userEvent.setup();
     renderSection();
 
-    await openSelect(user, 'None');
+    await user.click(screen.getByText('None'));
 
     const optionLabels = (await screen.findAllByRole('option')).map(
       (option) => option.textContent,
@@ -108,7 +101,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     const user = userEvent.setup();
     const store = renderSection();
 
-    await openSelect(user, 'None');
+    await user.click(screen.getByText('None'));
     await user.click(await screen.findByText('example.com'));
 
     expect(mockUpdateWorkspace).toHaveBeenCalledWith({
@@ -128,7 +121,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     });
     const store = renderSection({ defaultSenderDomain: 'example.com' });
 
-    await openSelect(user, 'example.com');
+    await user.click(screen.getByText('example.com'));
     await user.click(await screen.findByRole('option', { name: 'None' }));
 
     expect(mockUpdateWorkspace).toHaveBeenCalledWith({
@@ -150,7 +143,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
 
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
 
-    await openSelect(user, 'None');
+    await user.click(screen.getByText('None'));
     await user.click(await screen.findByText('Other domain…'));
 
     expect(mockUpdateWorkspace).not.toHaveBeenCalled();
@@ -175,7 +168,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     const user = userEvent.setup();
     renderSection({ defaultSenderDomain: 'teammates.io' });
 
-    await openSelect(user, 'teammates.io');
+    await user.click(screen.getByText('teammates.io'));
 
     expect(
       (await screen.findAllByRole('option')).map(
@@ -195,7 +188,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     const user = userEvent.setup();
     const store = renderSection({ defaultSenderDomain: 'example.com' });
 
-    await openSelect(user, 'example.com');
+    await user.click(screen.getByText('example.com'));
     await user.click(await screen.findByText('initech.com'));
 
     await waitFor(() => expect(mockEnqueueToast).toHaveBeenCalled());
@@ -211,7 +204,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     const user = userEvent.setup();
     renderSection();
 
-    await openSelect(user, 'None');
+    await user.click(screen.getByText('None'));
     await user.click(await screen.findByText('Other domain…'));
 
     const input = await screen.findByRole('textbox', {
@@ -228,7 +221,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     const user = userEvent.setup();
     renderSection({ defaultSenderDomain: 'example.com' });
 
-    await openSelect(user, 'example.com');
+    await user.click(screen.getByText('example.com'));
     await user.click(
       await screen.findByRole('option', { name: 'example.com' }),
     );
@@ -254,7 +247,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
 
     expect(screen.getByText('None').closest('[disabled]')).toBeNull();
 
-    await openSelect(user, 'None');
+    await user.click(screen.getByText('None'));
     await user.click(await screen.findByText('example.com'));
 
     await waitFor(() =>
@@ -284,7 +277,7 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     const user = userEvent.setup();
     renderSection();
 
-    await openSelect(user, 'None');
+    await user.click(screen.getByText('None'));
     await user.click(await screen.findByText('Other domain…'));
     const input = await screen.findByRole('textbox', {
       name: 'Default sending domain',

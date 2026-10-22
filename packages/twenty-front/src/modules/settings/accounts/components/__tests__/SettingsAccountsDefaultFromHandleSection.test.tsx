@@ -7,6 +7,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const mockUpdateMyDefaultFromHandle = jest.fn();
 
@@ -83,12 +84,6 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
     expect(screen.queryByText('My default From address')).toBeNull();
   });
 
-  it('renders for a sendable account regardless of channel sync', () => {
-    renderSection(null);
-
-    expect(screen.getByText('My default From address')).toBeVisible();
-  });
-
   it('offers automatic plus each sendable handle', async () => {
     const user = userEvent.setup();
     renderSection(null);
@@ -128,10 +123,11 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
     await user.click(screen.getByText('Automatic (workspace domain)'));
     await user.click(screen.getByText('alias@example.com'));
 
-    store.set(currentUserWorkspaceState.atom, {
-      ...store.get(currentUserWorkspaceState.atom),
-      locale: 'fr-FR',
-    } as never);
+    store.set(currentUserWorkspaceState.atom, (previousUserWorkspace) =>
+      isDefined(previousUserWorkspace)
+        ? { ...previousUserWorkspace, isImpersonating: true }
+        : previousUserWorkspace,
+    );
 
     resolveSave({ data: { updateMyDefaultFromHandle: true } });
 
@@ -141,9 +137,40 @@ describe('SettingsAccountsDefaultFromHandleSection', () => {
       ),
     );
     expect(store.get(currentUserWorkspaceState.atom)).toMatchObject({
-      locale: 'fr-FR',
+      isImpersonating: true,
       defaultFromHandle: 'alias@example.com',
     });
+  });
+
+  it('blocks another choice while a save is pending', async () => {
+    let resolveSave: (value: unknown) => void = () => {};
+    mockUpdateMyDefaultFromHandle.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSave = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    renderSection(null);
+
+    await user.click(screen.getByText('Automatic (workspace domain)'));
+    await user.click(screen.getByText('alias@example.com'));
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('Automatic (workspace domain)').closest('[disabled]'),
+      ).not.toBeNull(),
+    );
+    await user.click(screen.getByText('Automatic (workspace domain)'));
+    expect(screen.queryByText('me@example.com')).toBeNull();
+
+    resolveSave({ data: { updateMyDefaultFromHandle: true } });
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('alias@example.com').closest('[disabled]'),
+      ).toBeNull(),
+    );
+    expect(mockUpdateMyDefaultFromHandle).toHaveBeenCalledTimes(1);
   });
 
   it('shows automatic when the stored handle no longer exists', () => {

@@ -7,11 +7,8 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { EmailOperation } from 'twenty-shared/types';
-import {
-  canConnectedAccountPerformEmailOperation,
-  isDefined,
-} from 'twenty-shared/utils';
+import { useState } from 'react';
+import { canConnectedAccountSendEmail, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { UpdateMyDefaultFromHandleDocument } from '~/generated-metadata/graphql';
@@ -28,13 +25,10 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
     UpdateMyDefaultFromHandleDocument,
   );
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const sendableAccounts = (myConnectedAccounts ?? []).filter(
-    (connectedAccount) =>
-      !isDefined(connectedAccount.archivedAt) &&
-      canConnectedAccountPerformEmailOperation({
-        connectedAccount,
-        operation: EmailOperation.SEND,
-      }),
+    canConnectedAccountSendEmail,
   );
 
   if (sendableAccounts.length === 0) {
@@ -55,9 +49,7 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
     : null;
 
   const handleChange = async (defaultFromHandle: string | null) => {
-    if (!isDefined(currentUserWorkspace)) {
-      return;
-    }
+    setIsSaving(true);
 
     try {
       await updateMyDefaultFromHandle({
@@ -71,6 +63,8 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
       );
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -83,6 +77,7 @@ export const SettingsAccountsDefaultFromHandleSection = () => {
         value={selectedValue}
         options={options}
         onChange={handleChange}
+        disabled={isSaving}
       />
     </Section.Root>
   );
