@@ -33,8 +33,9 @@ const readSharedDependencies =
     if (
       createHash('sha256').update(source).digest('hex') !== manifest.checksum
     ) {
-      throw new Error(
+      throw new FrontComponentException(
         'Shared frontend component dependencies checksum mismatch.',
+        FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
       );
     }
     return {

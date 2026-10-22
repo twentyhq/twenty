@@ -5,10 +5,13 @@ import { isDefined } from '@/utils/validation/isDefined';
 
 const SHARED_DEPENDENCIES_SHIM_NAMESPACE = 'twenty-shared-dependencies-shim';
 
-export const createSharedDependenciesShimPlugin = (
-  getSharedDependenciesBuildContext: () => SharedDependenciesBuildContext | null,
+export const createSharedDependenciesShimPlugin = ({
+  getSharedDependenciesBuildContext,
   getShimSource = getSharedDependenciesShimSource,
-): esbuild.Plugin => ({
+}: {
+  getSharedDependenciesBuildContext: () => SharedDependenciesBuildContext | null;
+  getShimSource?: typeof getSharedDependenciesShimSource;
+}): esbuild.Plugin => ({
   name: 'twenty-shared-dependencies-shim',
   setup: (build) => {
     build.onResolve({ filter: /.*/ }, ({ path: specifier }) => {

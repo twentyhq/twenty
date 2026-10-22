@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type LambdaConnectionOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
@@ -30,7 +31,7 @@ export const getLambdaConnectionOptions = (
   });
 
   return {
-    credentials: accessKeyId
+    credentials: isNonEmptyString(accessKeyId)
       ? { accessKeyId, secretAccessKey }
       : fromNodeProviderChain({ clientConfig: { region } }),
     region,
