@@ -7,7 +7,9 @@ import { isDefined } from '@/utils/validation';
 import { type RichTextColor } from './rich-text-color.type';
 import { RICH_TEXT_COLORS } from './rich-text-colors.constant';
 import { type RichTextDocument } from './rich-text-document.type';
+import { RICH_TEXT_INDENTABLE_NODE_TYPES } from './rich-text-indentable-node-types.constant';
 import { RICH_TEXT_MAX_HEADING_LEVEL } from './rich-text-max-heading-level.constant';
+import { RICH_TEXT_MAX_INDENT_LEVEL } from './rich-text-max-indent-level.constant';
 import { RICH_TEXT_TEXT_ALIGNMENTS } from './rich-text-text-alignments.constant';
 import { convertTextToTipTapNodes } from './convert-text-to-tiptap-nodes';
 import { isStorableRichTextUrl } from './is-storable-rich-text-url';
@@ -377,10 +379,44 @@ const convertBlockContent = (block: BlockNoteObject): TipTapNode[] => {
   }
 };
 
+const indentNode = (node: TipTapNode, indent: number): TipTapNode =>
+  indent > 0 && RICH_TEXT_INDENTABLE_NODE_TYPES.includes(node.type)
+    ? {
+        ...node,
+        attrs: {
+          ...node.attrs,
+          indent: Math.min(indent, RICH_TEXT_MAX_INDENT_LEVEL),
+        },
+      }
+    : node;
+
+const getToggleSummaryNode = (
+  block: BlockNoteObject,
+): TipTapNode | undefined => {
+  switch (block.type) {
+    case 'toggleListItem':
+      return createParagraphNode(block);
+    case 'heading':
+      return readProps(block).isToggleable === true
+        ? createHeadingNode(block)
+        : undefined;
+    default:
+      return undefined;
+  }
+};
+
+const createToggleNode = (
+  block: BlockNoteObject,
+  summaryNode: TipTapNode,
+): TipTapNode => ({
+  type: TIPTAP_NODE_TYPES.TOGGLE,
+  attrs: { id: isNonEmptyString(block.id) ? block.id : null },
+  content: [summaryNode, ...convertBlocks(block.children)],
+});
+
 const getListNodeType = (blockType: unknown): ListNodeType | undefined => {
   switch (blockType) {
     case 'bulletListItem':
-    case 'toggleListItem':
       return TIPTAP_NODE_TYPES.BULLET_LIST;
     case 'numberedListItem':
       return TIPTAP_NODE_TYPES.ORDERED_LIST;
@@ -428,7 +464,7 @@ const createListItemNode = ({
     : { type: TIPTAP_NODE_TYPES.LIST_ITEM, content };
 };
 
-const convertBlocks = (blocks: unknown): TipTapNode[] => {
+const convertBlocks = (blocks: unknown, indent = 0): TipTapNode[] => {
   const nodes: TipTapNode[] = [];
   let currentListNode: TipTapNode | undefined;
 
@@ -437,9 +473,19 @@ const convertBlocks = (blocks: unknown): TipTapNode[] => {
 
     if (!isDefined(listNodeType)) {
       currentListNode = undefined;
+
+      const toggleSummaryNode = getToggleSummaryNode(block);
+
+      if (isDefined(toggleSummaryNode)) {
+        nodes.push(
+          indentNode(createToggleNode(block, toggleSummaryNode), indent),
+        );
+        continue;
+      }
+
       nodes.push(
-        ...convertBlockContent(block),
-        ...convertBlocks(block.children),
+        ...convertBlockContent(block).map((node) => indentNode(node, indent)),
+        ...convertBlocks(block.children, indent + 1),
       );
       continue;
     }
@@ -449,10 +495,10 @@ const convertBlocks = (blocks: unknown): TipTapNode[] => {
       listNodeType === TIPTAP_NODE_TYPES.ORDERED_LIST && isNumber(props.start);
 
     if (currentListNode?.type !== listNodeType || restartsNumbering) {
-      currentListNode = createListNode({
-        listNodeType,
-        firstItemProps: props,
-      });
+      currentListNode = indentNode(
+        createListNode({ listNodeType, firstItemProps: props }),
+        indent,
+      );
       nodes.push(currentListNode);
     }
 
