@@ -178,7 +178,9 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     await openSelect(user, 'teammates.io');
 
     expect(
-      (await screen.findAllByRole('option')).map((option) => option.textContent),
+      (await screen.findAllByRole('option')).map(
+        (option) => option.textContent,
+      ),
     ).toEqual([
       'None',
       'getindexed.ai',
