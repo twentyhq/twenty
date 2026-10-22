@@ -9,15 +9,14 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { ApplicationMonitoringService } from 'src/engine/core-modules/application/application-monitoring/application-monitoring.service';
 import { ApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/application-monitoring.dto';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 
 @UsePipes(ResolverValidationPipe)
@@ -30,7 +29,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 export class ApplicationMonitoringResolver {
   constructor(
     private readonly applicationMonitoringService: ApplicationMonitoringService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @UseGuards(
@@ -45,6 +43,7 @@ export class ApplicationMonitoringResolver {
       oauthClient: false,
       application: false,
     }),
+    FeatureFlagGuard(FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
     ApplicationTargetGuard,
   )
@@ -61,17 +60,6 @@ export class ApplicationMonitoringResolver {
     @Args('periodEnd', { type: () => Date, nullable: true })
     periodEnd?: Date,
   ): Promise<ApplicationMonitoringDTO> {
-    if (
-      !(await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED,
-        workspaceId,
-      ))
-    ) {
-      throw new ForbiddenError(
-        'Application monitoring is not enabled for this workspace',
-      );
-    }
-
     return this.applicationMonitoringService.getMonitoring({
       applicationRegistrationId,
       viewerWorkspaceId: workspaceId,
