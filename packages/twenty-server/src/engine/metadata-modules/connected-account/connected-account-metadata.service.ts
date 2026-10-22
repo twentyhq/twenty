@@ -652,8 +652,7 @@ export class ConnectedAccountMetadataService {
       workspaceId,
     });
 
-    // The hooks may have refreshed tokens through getConnection, and an
-    // overlapping delete may already have removed some rows.
+    // Hooks may have refreshed tokens through getConnection and an overlapping delete may have removed rows
     const latestConnectedAccounts = await this.repository.find({
       where: { id: In(connectedAccountIds), workspaceId },
     });
