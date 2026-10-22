@@ -14,6 +14,7 @@ import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-functi
 import { getLambdaResourceNamespace } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-resource-namespace.util';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
@@ -29,6 +30,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly secureHttpClientService: SecureHttpClientService,
   ) {
     super(twentyConfigService, configGroupHashService);
   }
@@ -38,6 +40,10 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
 
     if (driverType === LogicFunctionDriverType.LAMBDA) {
       return `lambda|${this.configGroupHashService.computeHash(ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG)}`;
+    }
+
+    if (driverType === LogicFunctionDriverType.LOCAL) {
+      return `local|${this.twentyConfigService.get('LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK')}`;
     }
 
     return driverType;
@@ -56,6 +62,10 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           sdkClientArchiveService: this.sdkClientArchiveService,
           cacheLockService: this.cacheLockService,
           workspaceCacheService: this.workspaceCacheService,
+          secureHttpClientService: this.secureHttpClientService,
+          restrictNetwork: this.twentyConfigService.get(
+            'LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK',
+          ),
         });
 
       case LogicFunctionDriverType.LAMBDA: {

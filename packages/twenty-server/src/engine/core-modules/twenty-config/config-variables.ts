@@ -753,6 +753,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description:
+      'With the LOCAL driver, run logic functions without direct network access: fetch() is sent through the server and follows the outbound HTTP rules (OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS). node:http, sockets and WebSocket are unavailable. Requires Node.js 25 or later.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Throttle limit for logic function execution',
     type: ConfigVariableType.NUMBER,
   })

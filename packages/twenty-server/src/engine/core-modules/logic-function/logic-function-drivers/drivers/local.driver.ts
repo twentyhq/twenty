@@ -14,6 +14,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { LocalChildProcessRunnerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-child-process-runner.service';
+import { LocalFetchRelayService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-fetch-relay.service';
 import { LocalLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-layer-manager.service';
 import { LocalPrebuiltBundleService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-prebuilt-bundle.service';
 import { type LocalDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-driver.type';
@@ -38,6 +39,8 @@ export class LocalDriver implements LogicFunctionDriver {
   private readonly layerManager: LocalLayerManagerService;
   private readonly childProcessRunner: LocalChildProcessRunnerService;
   private readonly prebuiltBundle: LocalPrebuiltBundleService;
+  private readonly fetchRelay: LocalFetchRelayService;
+  private readonly restrictNetwork: boolean;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
@@ -52,6 +55,10 @@ export class LocalDriver implements LogicFunctionDriver {
       options.cacheLockService,
       options.logicFunctionResourceService,
     );
+    this.fetchRelay = new LocalFetchRelayService(
+      options.secureHttpClientService,
+    );
+    this.restrictNetwork = options.restrictNetwork;
   }
 
   async transpile({
@@ -128,6 +135,16 @@ export class LocalDriver implements LogicFunctionDriver {
       );
     }
 
+    if (
+      this.restrictNetwork &&
+      !process.allowedNodeEnvironmentFlags.has('--allow-net')
+    ) {
+      throw new LogicFunctionException(
+        `LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK requires Node.js 25 or later (running ${process.version})`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR,
+      );
+    }
+
     await this.layerManager.ensureDepsLayer({
       flatApplication,
       applicationUniversalIdentifier,
@@ -199,6 +216,7 @@ export class LocalDriver implements LogicFunctionDriver {
           dir: sourceTemporaryDir,
           builtFileAbsPath: inMemoryBuiltHandlerPath,
           handlerName: flatLogicFunction.handlerName,
+          relayFetch: this.restrictNetwork,
         });
 
         const { ok, result, errorType, error, stack, stdout, stderr } =
@@ -216,6 +234,12 @@ export class LocalDriver implements LogicFunctionDriver {
             payload,
             context,
             timeoutMs,
+            fetchRelayHandler: this.restrictNetwork
+              ? this.fetchRelay.createHandler({
+                  workspaceId: flatLogicFunction.workspaceId,
+                  env: env ?? {},
+                })
+              : undefined,
           });
 
         if (stdout)

@@ -470,6 +470,14 @@ LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
+**To keep the local driver off the network:**
+```bash
+LOGIC_FUNCTION_TYPE=LOCAL
+LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK=true
+```
+
+Functions then have no direct network access. `fetch()` calls are sent through the server and follow the same outbound rules as webhooks: private addresses are refused unless listed in `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS`, and calls to your own Twenty API always work. Libraries that open their own connections (`node:http`, database or SMTP clients, WebSocket) do not work in this mode.
+
 ### Code Interpreter - Available Drivers
 
 | Driver | Environment Variable | Use Case | Security Level |

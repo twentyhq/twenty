@@ -3,13 +3,30 @@ import { spawn } from 'node:child_process';
 import { join } from 'path';
 
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { LOCAL_FETCH_RELAY_BOOTSTRAP_CODE } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/constants/local-fetch-relay-bootstrap-code.constant';
+import {
+  type LocalFetchRelayHandler,
+  type LocalFetchRelayRequest,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-fetch-relay.type';
 import { buildLocalChildProcessEnv } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-env.util';
 import { buildLocalChildProcessNodeFlags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-node-flags.util';
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
 import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
+
+type LocalFetchRelayChildMessage = {
+  type: 'fetch';
+  id: number;
+  request: LocalFetchRelayRequest;
+};
+
+type LocalChildProcessMessage =
+  | LocalFetchRelayChildMessage
+  | { ok: true; result?: unknown }
+  | { ok: false; errorType?: string; error: string; stack?: string };
 
 export class LocalChildProcessRunnerService {
   // twenty-client-sdk comes from the SDK layer (workspace-specific generated client), not the deps layer.
@@ -64,10 +81,12 @@ export class LocalChildProcessRunnerService {
     dir,
     builtFileAbsPath,
     handlerName,
+    relayFetch,
   }: {
     dir: string;
     builtFileAbsPath: string;
     handlerName: string;
+    relayFetch: boolean;
   }) {
     if (!HANDLER_NAME_REGEX.test(handlerName)) {
       throw new Error(
@@ -81,6 +100,22 @@ export class LocalChildProcessRunnerService {
       // Auto-generated. Do not edit.
       const { pathToFileURL } = require('node:url');
 
+      ${relayFetch ? LOCAL_FETCH_RELAY_BOOTSTRAP_CODE : 'const settleRelayedFetch = () => {};'}
+
+      // Registered before the import below: a 'message' listener starts the IPC
+      // read, so the run message must be kept until the handler is loaded.
+      let resolveRunMessage;
+      const runMessage = new Promise((resolve) => {
+        resolveRunMessage = resolve;
+      });
+
+      if (process.send) {
+        process.on('message', (msg) => {
+          if (msg?.type === 'run') resolveRunMessage(msg);
+          if (msg?.type === 'fetchResult') settleRelayedFetch(msg);
+        });
+      }
+
       (async () => {
         try {
           const builtUrl = pathToFileURL(${JSON.stringify(builtFileAbsPath)});
@@ -92,30 +127,28 @@ export class LocalChildProcessRunnerService {
 
           let payload = undefined;
           if (process.send) {
-            process.on('message', async (msg) => {
-              if (!msg || msg.type !== 'run') return;
-              try {
-                const out = await handlerFn(msg.payload, msg.context);
-                // Wait for the async IPC flush before exiting, otherwise results
-                // larger than the OS pipe buffer are dropped before delivery.
-                if (process.send) {
-                  process.send({ ok: true, result: out }, () => process.exit(0));
-                } else {
-                  process.exit(0);
-                }
-              } catch (error) {
-                if (process.send) {
-                  process.send({
-                    ok: false,
-                    errorType: error instanceof Error ? error.name : 'Error',
-                    error: error instanceof Error ? error.message : String(error),
-                    stack: error?.stack,
-                  }, () => process.exit(1));
-                } else {
-                  process.exit(1);
-                }
+            const msg = await runMessage;
+            try {
+              const out = await handlerFn(msg.payload, msg.context);
+              // Wait for the async IPC flush before exiting, otherwise results
+              // larger than the OS pipe buffer are dropped before delivery.
+              if (process.send) {
+                process.send({ ok: true, result: out }, () => process.exit(0));
+              } else {
+                process.exit(0);
               }
-            });
+            } catch (error) {
+              if (process.send) {
+                process.send({
+                  ok: false,
+                  errorType: error instanceof Error ? error.name : 'Error',
+                  error: error instanceof Error ? error.message : String(error),
+                  stack: error?.stack,
+                }, () => process.exit(1));
+              } else {
+                process.exit(1);
+              }
+            }
           } else {
             // Fallback for a runner started without IPC: the context travels as
             // argv[3] because the script is written once, before any run exists.
@@ -154,6 +187,7 @@ export class LocalChildProcessRunnerService {
     payload: unknown;
     context: LogicFunctionExecutionContext;
     timeoutMs: number;
+    fetchRelayHandler?: LocalFetchRelayHandler;
   }) {
     const {
       runnerPath,
@@ -163,6 +197,7 @@ export class LocalChildProcessRunnerService {
       payload,
       context,
       timeoutMs,
+      fetchRelayHandler,
     } = options;
 
     const temporaryDirectory = join(executionDirectory, 'tmp');
@@ -172,8 +207,11 @@ export class LocalChildProcessRunnerService {
     const nodeFlags = buildLocalChildProcessNodeFlags({
       readableDirectories: [executionDirectory, ...layerDirectories],
       writableDirectory: temporaryDirectory,
-      // Node 25+ denies network access under --permission unless --allow-net is passed.
-      allowNetwork: process.allowedNodeEnvironmentFlags.has('--allow-net'),
+      // Node 25+ denies network access under --permission unless --allow-net
+      // is passed; relayed handlers reach the network through the server only.
+      allowNetwork:
+        !isDefined(fetchRelayHandler) &&
+        process.allowedNodeEnvironmentFlags.has('--allow-net'),
     });
 
     const childEnv = buildLocalChildProcessEnv({
@@ -204,30 +242,41 @@ export class LocalChildProcessRunnerService {
       child.stdout?.on('data', (d) => (stdout += String(d)));
       child.stderr?.on('data', (d) => (stderr += String(d)));
 
-      child.on(
-        'message',
-        (
-          msg:
-            | {
-                ok: true;
-                result?: unknown;
-                stdout?: string;
-                stderr?: string;
-              }
-            | {
-                ok: false;
-                errorType?: string;
-                error: string;
-                stack?: string;
-                stdout?: string;
-                stderr?: string;
-              },
-        ) => {
-          if (settled) return;
-          settled = true;
-          resolve({ ...msg, stdout, stderr });
-        },
-      );
+      const relayFetch = async (
+        { id, request }: LocalFetchRelayChildMessage,
+        handler: LocalFetchRelayHandler,
+      ) => {
+        // The message comes from handler code, so a malformed request must not throw here.
+        const result = await Promise.resolve()
+          .then(() => handler(request))
+          .then(
+            (response) => ({ response }),
+            (error: unknown) => ({
+              error: error instanceof Error ? error.message : String(error),
+            }),
+          );
+
+        if (!settled && child.connected) {
+          // The callback receives send failures that would otherwise be emitted as 'error'.
+          child.send({ type: 'fetchResult', id, ...result }, () => {});
+        }
+      };
+
+      child.on('message', (msg: LocalChildProcessMessage) => {
+        if (typeof msg !== 'object' || msg === null) return;
+
+        if ('type' in msg) {
+          if (msg.type === 'fetch' && isDefined(fetchRelayHandler)) {
+            void relayFetch(msg, fetchRelayHandler);
+          }
+
+          return;
+        }
+
+        if (typeof msg.ok !== 'boolean' || settled) return;
+        settled = true;
+        resolve({ ...msg, stdout, stderr });
+      });
 
       child.on('exit', (code) => {
         if (settled) return;
@@ -244,10 +293,11 @@ export class LocalChildProcessRunnerService {
         }
       });
 
+      // Also covers a handler that keeps running after reporting a result.
       const t = setTimeout(() => {
+        child.kill('SIGKILL');
         if (settled) return;
         settled = true;
-        child.kill('SIGKILL');
         resolve({
           ok: false,
           error: `Timed out after ${timeoutMs}ms`,
