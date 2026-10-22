@@ -9,7 +9,6 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 type SettingsApplicationConnectionProviderSectionProps = {
   providerDisplayName: string;
   providerLogoUrl?: string | null;
-  isClientCredentialsConfigured: boolean;
   description: string;
   shouldShowMissingCredentialsBanner: boolean;
   children: ReactNode;
@@ -18,7 +17,6 @@ type SettingsApplicationConnectionProviderSectionProps = {
 export const SettingsApplicationConnectionProviderSection = ({
   providerDisplayName,
   providerLogoUrl,
-  isClientCredentialsConfigured,
   description,
   shouldShowMissingCredentialsBanner,
   children,
@@ -41,7 +39,7 @@ export const SettingsApplicationConnectionProviderSection = ({
           ) : undefined
         }
       />
-      {shouldShowMissingCredentialsBanner && !isClientCredentialsConfigured && (
+      {shouldShowMissingCredentialsBanner && (
         <InlineBanner
           layout="compact"
           status="error"

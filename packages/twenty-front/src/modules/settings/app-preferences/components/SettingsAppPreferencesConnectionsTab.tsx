@@ -33,13 +33,6 @@ export const SettingsAppPreferencesConnectionsTab = ({
       providers: APP_CONNECTED_ACCOUNT_PROVIDERS,
     });
 
-  if (loading) {
-    return null;
-  }
-
-  const redirectLocation =
-    getApplicationPreferencesConnectionsPath(applicationId);
-
   return (
     <>
       {connectionProviders.map((provider) => {
@@ -55,17 +48,16 @@ export const SettingsAppPreferencesConnectionsTab = ({
             key={provider.id}
             providerDisplayName={provider.displayName}
             providerLogoUrl={provider.logoUrl}
-            isClientCredentialsConfigured={isClientCredentialsConfigured}
             description={t`Connect your own ${provider.displayName} account for this app to use on your behalf.`}
-            shouldShowMissingCredentialsBanner
+            shouldShowMissingCredentialsBanner={!isClientCredentialsConfigured}
           >
-            {isNonEmptyArray(providerConnections) ? (
+            {loading || isNonEmptyArray(providerConnections) ? (
               <SettingsAppPreferencesConnectionsTable
                 applicationId={applicationId}
                 providerName={provider.name}
                 connections={providerConnections}
                 isClientCredentialsConfigured={isClientCredentialsConfigured}
-                redirectLocation={redirectLocation}
+                loading={loading}
               />
             ) : (
               isClientCredentialsConfigured && (
@@ -76,7 +68,9 @@ export const SettingsAppPreferencesConnectionsTab = ({
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
                 providerName={provider.name}
-                redirectLocation={redirectLocation}
+                redirectLocation={getApplicationPreferencesConnectionsPath(
+                  applicationId,
+                )}
               />
             )}
           </SettingsApplicationConnectionProviderSection>
