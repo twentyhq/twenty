@@ -1,7 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
 
-// Gates the Reconnect action only; badges use isApplicationConnectionReconnectNeeded so broken rows stay visible
 export const canReconnectApplicationConnection = ({
   connection,
   isClientCredentialsConfigured,

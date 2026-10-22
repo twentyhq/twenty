@@ -1,9 +1,11 @@
 import { DELETE_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/deleteConnectedAccount';
 import { DISCONNECT_CONNECTED_ACCOUNT } from '@/settings/accounts/graphql/mutations/disconnectConnectedAccount';
 import { type AccountGroupAction } from '@/settings/app-preferences/types/AccountGroupAction';
+import { getAccountGroupActionFailureMessage } from '@/settings/app-preferences/utils/getAccountGroupActionFailureMessage';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 export const useRunAccountGroupAction = () => {
@@ -34,24 +36,14 @@ export const useRunAccountGroupAction = () => {
       const results = await Promise.allSettled(
         targets.map(({ id }) => mutation({ variables: { id } })),
       );
-      const failedTargets = targets.filter(
-        (_, index) => results[index].status === 'rejected',
-      );
+      const failureMessage = getAccountGroupActionFailureMessage({
+        action,
+        targets,
+        results,
+      });
 
-      if (failedTargets.length > 0) {
-        const failedConnectionLabels = failedTargets
-          .map(({ label }) => label)
-          .join(', ');
-        const successfulCount = targets.length - failedTargets.length;
-        const totalCount = targets.length;
-
-        enqueueToast({
-          status: 'error',
-          children:
-            action === 'disconnect'
-              ? t`Disconnected ${successfulCount} of ${totalCount} connections. Could not disconnect: ${failedConnectionLabels}.`
-              : t`Deleted ${successfulCount} of ${totalCount} connections. Could not delete: ${failedConnectionLabels}.`,
-        });
+      if (isDefined(failureMessage)) {
+        enqueueToast({ status: 'error', children: failureMessage });
       }
 
       try {
