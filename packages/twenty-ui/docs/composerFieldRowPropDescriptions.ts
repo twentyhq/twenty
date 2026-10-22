@@ -11,6 +11,8 @@ export const COMPOSER_FIELD_ROW_PROP_DESCRIPTIONS = {
     'Optional trailing content. Nested controls retain their own keyboard focus and event behavior.',
   children:
     'Field content, such as plain inputs, recipient chips, selectors or toggles. The caller owns input labels, state and click-to-focus behavior.',
+  onClick:
+    'Native group click handler. Providing a handler shows a pointer cursor; the caller guards nested-control and portaled events as needed.',
   labelWidth:
     'Preferred label column width, capped at 40% of the row. Numbers use pixels; use the same width for aligned sibling rows.',
   hoverable:

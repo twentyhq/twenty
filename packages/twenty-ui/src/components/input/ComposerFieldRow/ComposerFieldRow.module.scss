@@ -5,6 +5,10 @@
   min-block-size: 40px;
   min-inline-size: 0;
 
+  &[data-clickable] {
+    cursor: pointer;
+  }
+
   @include hover-capable {
     &[data-hoverable]:hover {
       background-color: var(--t-background-transparent-lighter);

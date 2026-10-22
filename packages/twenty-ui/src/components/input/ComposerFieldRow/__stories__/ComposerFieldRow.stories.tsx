@@ -47,6 +47,15 @@ type Story = StoryObj<typeof ComposerFieldRow>;
 
 export const Display: Story = {};
 
+export const Clickable: Story = {
+  args: { onClick: fn() },
+  play: async ({ canvasElement }) => {
+    const group = within(canvasElement).getByRole('group', { name: 'Subject' });
+
+    await expect(getComputedStyle(group).cursor).toBe('pointer');
+  },
+};
+
 export const EmailFields: Story = {
   render: (args) => (
     <>

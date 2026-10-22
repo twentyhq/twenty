@@ -6,6 +6,7 @@ import { type CSSProperties } from 'react';
 import { Separator } from '@ui/primitives/layout/Separator/Separator';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './ComposerFieldRow.module.scss';
 import { type ComposerFieldRowProps } from './types/ComposerFieldRowProps';
@@ -40,6 +41,7 @@ export const ComposerFieldRow = ({
       role: 'group',
       'aria-label': label,
       ...props,
+      'data-clickable': isDefined(props.onClick) || undefined,
       'data-hoverable': hoverable || undefined,
       className: clsx(styles.root, className),
       style: rowStyle,
