@@ -1,3 +1,6 @@
+import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
@@ -12,7 +15,7 @@ import {
 } from 'microdiff';
 import { useState } from 'react';
 import { type Nullable } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, resolveDefaultEmailSender } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 
@@ -25,6 +28,9 @@ export const useCreateStep = () => {
   const setWorkflowLastCreatedStepId = useSetAtomComponentState(
     workflowLastCreatedStepIdComponentState,
   );
+
+  const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
@@ -59,6 +65,16 @@ export const useCreateStep = () => {
         providedWorkflowVersionId ?? (await getUpdatableWorkflowVersion());
       const id = v4();
 
+      // Workflows run unattended, so the personal default sender is ignored
+      const defaultEmailSender =
+        newStepType === 'SEND_EMAIL' && !isDefined(defaultSettings?.input)
+          ? resolveDefaultEmailSender({
+              accounts: myConnectedAccounts ?? [],
+              personalFromHandle: null,
+              workspaceSenderDomain: currentWorkspace?.defaultSenderDomain,
+            })
+          : null;
+
       const workflowVersionStepChanges = (
         await createWorkflowVersionStep({
           id,
@@ -68,7 +84,9 @@ export const useCreateStep = () => {
           nextStepId,
           position,
           parentStepConnectionOptions: connectionOptions,
-          defaultSettings,
+          defaultSettings: isDefined(defaultEmailSender)
+            ? { ...defaultSettings, input: defaultEmailSender }
+            : defaultSettings,
         })
       )?.data?.createWorkflowVersionStep;
 
