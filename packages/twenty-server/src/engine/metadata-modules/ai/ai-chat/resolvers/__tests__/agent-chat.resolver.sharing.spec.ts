@@ -76,7 +76,7 @@ const buildResolver = () => {
   );
   const chatService = new AgentChatService(
     threadRepository as never,
-    {} as never,
+    { find: jest.fn().mockResolvedValue([]) } as never,
     messages as never,
     {} as never,
     sharing as never,
