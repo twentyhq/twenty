@@ -38,7 +38,9 @@ const attempt = (operation: () => unknown): string => {
 
     return 'allowed';
   } catch (error) {
-    return (error as { code?: string }).code ?? 'failed';
+    return error instanceof Error && 'code' in error
+      ? String(error.code)
+      : 'failed';
   }
 };
 

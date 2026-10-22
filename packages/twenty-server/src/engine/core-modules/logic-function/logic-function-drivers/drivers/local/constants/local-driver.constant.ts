@@ -11,7 +11,6 @@ export const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;
 export const PREBUILT_INSTALL_LOCK_RETRY_MS = 1_000;
 export const PREBUILT_INSTALL_LOCK_MAX_RETRIES = 180;
 
-// Runtime settings a handler may need for locale, TLS trust and outbound proxies.
 export const LOCAL_CHILD_PROCESS_INHERITED_ENV_VARIABLE_NAMES = [
   'PATH',
   'HOME',
