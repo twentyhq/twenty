@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useIsFieldValueRestricted } from '@/object-record/record-field/ui/hooks/useIsFieldValueRestricted';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useGetRecordTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useGetRecordTableCellPosition';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,8 +16,6 @@ export const useOpenRecordTableCellFromCell = () => {
 
   const { getRecordTableCellPosition } = useGetRecordTableCellPosition();
 
-  const isFieldValueRestricted = useIsFieldValueRestricted();
-
   const openTableCell = (initialValue?: string, isNavigating = false) => {
     const cellPosition = getRecordTableCellPosition();
 
@@ -30,7 +27,7 @@ export const useOpenRecordTableCellFromCell = () => {
       cellPosition,
       recordId,
       fieldDefinition,
-      isReadOnly: isReadOnly || isFieldValueRestricted,
+      isReadOnly,
       initialValue,
       isNavigating,
     });

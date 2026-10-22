@@ -7,6 +7,7 @@ import { isRecordSelectedComponentFamilyState } from '@/object-record/record-sel
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowActiveByRecordIdComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableRowActiveByRecordIdComponentFamilySelector';
 import { isRecordTableRowFocusedByRecordIdComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableRowFocusedByRecordIdComponentFamilySelector';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -48,6 +49,8 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
 
     const isRecordDeleted = useIsRecordDeleted({ recordId });
 
+    const restrictedFieldNames = useRecordRestrictedFieldNames(recordId);
+
     const recordTableRowContextValue = useMemo(
       () => ({
         recordId,
@@ -58,8 +61,10 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
         objectNameSingular: objectMetadataItem.nameSingular,
         isSelected: isRecordSelected,
         isRecordReadOnly: isObjectReadOnly || isRecordDeleted,
+        restrictedFieldNames,
       }),
       [
+        restrictedFieldNames,
         isObjectReadOnly,
         isRecordDeleted,
         isRecordSelected,

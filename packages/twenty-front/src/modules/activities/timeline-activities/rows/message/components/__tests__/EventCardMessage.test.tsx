@@ -6,10 +6,17 @@ import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/
 
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 
 jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
   useFindOneRecord: jest.fn(),
 }));
+jest.mock(
+  '@/object-record/record-store/hooks/useRecordRestrictedFieldNames',
+  () => ({
+    useRecordRestrictedFieldNames: jest.fn(() => []),
+  }),
+);
 jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
   useOpenRecordInSidePanel: () => ({ openRecordInSidePanel: jest.fn() }),
 }));
@@ -23,6 +30,9 @@ const renderCard = () =>
 
 describe('EventCardMessage', () => {
   it('does not render fields masked by metadata visibility', () => {
+    jest
+      .mocked(useRecordRestrictedFieldNames)
+      .mockReturnValue(['subject', 'text']);
     jest.mocked(useFindOneRecord).mockReturnValue({
       record: {
         id: 'message-id',
