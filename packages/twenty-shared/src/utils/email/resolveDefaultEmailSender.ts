@@ -1,5 +1,6 @@
 import { type ConnectedAccountEmailFields, EmailOperation } from '@/types';
 import { canConnectedAccountPerformEmailOperation } from '@/utils/email/canConnectedAccountPerformEmailOperation';
+import { getEmailDomain } from '@/utils/email/getEmailDomain';
 import { getSendableEmailHandles } from '@/utils/email/getSendableEmailHandles';
 import { normalizeSenderDomain } from '@/utils/email/normalizeSenderDomain';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -67,8 +68,7 @@ export const resolveDefaultEmailSender = ({
   }
 
   const domainMatch = candidates.find(
-    ({ handle }) =>
-      handle.slice(handle.lastIndexOf('@') + 1).toLowerCase() === senderDomain,
+    ({ handle }) => getEmailDomain(handle) === senderDomain,
   );
 
   return isDefined(domainMatch)

@@ -56,6 +56,7 @@ export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDate
 export { deepMerge } from './deepMerge';
 export { canConnectedAccountPerformEmailOperation } from './email/canConnectedAccountPerformEmailOperation';
 export { formatEmailAddress } from './email/formatEmailAddress';
+export { getEmailDomain } from './email/getEmailDomain';
 export { getEmailProvidersForOperation } from './email/getEmailProvidersForOperation';
 export { getSendableEmailHandles } from './email/getSendableEmailHandles';
 export { normalizeSenderDomain } from './email/normalizeSenderDomain';
