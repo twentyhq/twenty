@@ -3,32 +3,16 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { EmailOperation } from 'twenty-shared/types';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { UserWorkspaceDefaultFromHandleService } from 'src/engine/core-modules/user-workspace/services/user-workspace-default-from-handle.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { RoleAssignmentValidationService } from 'src/engine/metadata-modules/role-assignment-validation/services/role-assignment-validation.service';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-describe('UserWorkspaceService.updateDefaultFromHandle', () => {
+describe('UserWorkspaceDefaultFromHandleService', () => {
   const userWorkspaceId = 'user-workspace-id';
   const workspaceId = 'workspace-id';
 
-  let service: UserWorkspaceService;
+  let service: UserWorkspaceDefaultFromHandleService;
   const userWorkspaceRepository = { update: jest.fn() };
   const coreEntityCacheService = { invalidate: jest.fn() };
   const connectedAccountMetadataService = {
@@ -44,37 +28,20 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
 
     const module = await Test.createTestingModule({
       providers: [
-        UserWorkspaceService,
+        UserWorkspaceDefaultFromHandleService,
         {
           provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: userWorkspaceRepository,
         },
-        { provide: getRepositoryToken(UserEntity), useValue: {} },
         {
           provide: ConnectedAccountMetadataService,
           useValue: connectedAccountMetadataService,
         },
         { provide: CoreEntityCacheService, useValue: coreEntityCacheService },
-        ...[
-          getWorkspaceScopedRepositoryToken(RoleTargetEntity),
-          RoleAssignmentValidationService,
-          WorkspaceInvitationService,
-          WorkspaceDomainsService,
-          LoginTokenService,
-          ApprovedAccessDomainService,
-          WorkspaceOrmManager,
-          UserRoleService,
-          FileCorePictureService,
-          FileUrlService,
-          OnboardingService,
-          TwentyConfigService,
-          WorkflowRunRecordShareService,
-          WorkspaceCacheService,
-        ].map((provide) => ({ provide, useValue: {} })),
       ],
     }).compile();
 
-    service = module.get(UserWorkspaceService);
+    service = module.get(UserWorkspaceDefaultFromHandleService);
   });
 
   it('saves a sendable handle spelled as stored on the account', async () => {

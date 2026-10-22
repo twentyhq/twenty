@@ -1,4 +1,5 @@
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
+import { UserWorkspaceDefaultFromHandleService } from 'src/engine/core-modules/user-workspace/services/user-workspace-default-from-handle.service';
 import { WorkflowRunRecordShareModule } from 'src/engine/core-modules/workflow/workflow-run-record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { Module } from '@nestjs/common';
@@ -41,10 +42,15 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     WorkflowRunRecordShareModule,
     ConnectedAccountMetadataModule,
   ],
-  exports: [UserWorkspaceService, UserWorkspaceAuthContextService],
+  exports: [
+    UserWorkspaceService,
+    UserWorkspaceAuthContextService,
+    UserWorkspaceDefaultFromHandleService,
+  ],
   providers: [
     UserWorkspaceAuthContextService,
     UserWorkspaceService,
+    UserWorkspaceDefaultFromHandleService,
     UserWorkspaceEntityCacheProviderService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],

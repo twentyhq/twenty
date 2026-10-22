@@ -31,6 +31,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modules/two-factor-authentication/utils/two-factor-authentication-method.presenter';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceDefaultFromHandleService } from 'src/engine/core-modules/user-workspace/services/user-workspace-default-from-handle.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { UpdateUserEmailInput } from 'src/engine/core-modules/user/dtos/update-user-email.input';
@@ -106,6 +107,7 @@ export class UserResolver {
     private readonly permissionsService: PermissionsService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly userWorkspaceDefaultFromHandleService: UserWorkspaceDefaultFromHandleService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -525,7 +527,7 @@ export class UserResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<boolean> {
-    await this.userWorkspaceService.updateDefaultFromHandle({
+    await this.userWorkspaceDefaultFromHandleService.updateDefaultFromHandle({
       userWorkspaceId,
       workspaceId: workspace.id,
       defaultFromHandle: input.defaultFromHandle ?? null,
