@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
-import { LEGACY_CONNECTION_VISIBILITY_BY_SCOPE } from 'twenty-shared/application-runtime';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -17,13 +16,11 @@ export const useTriggerAppOAuth = () => {
     async ({
       applicationId,
       providerName,
-      scope,
       reconnectingConnectedAccountId,
       redirectLocation,
     }: {
       applicationId: string;
       providerName: string;
-      scope: 'USER' | 'WORKSPACE';
       // Set to update an existing connectedAccount row rather than creating
       // a new one (the "Reconnect" action on a failed credential).
       reconnectingConnectedAccountId?: string;
@@ -40,9 +37,6 @@ export const useTriggerAppOAuth = () => {
         applicationId,
         providerName,
         transientToken: token,
-        scope,
-        // Read by previous-release servers mid rollout
-        visibility: LEGACY_CONNECTION_VISIBILITY_BY_SCOPE[scope],
       });
 
       if (reconnectingConnectedAccountId) {

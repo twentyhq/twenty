@@ -12,12 +12,14 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateGroupValidatorService {
   validateFlatRowLevelPermissionPredicateGroupCreation({
     flatEntityToValidate: flatPredicateGroupToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
   >): FailedFlatEntityValidation<'rowLevelPermissionPredicateGroup', 'create'> {
@@ -82,6 +84,10 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
+    } else {
+      validationResult.errors.push(
+        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+      );
     }
 
     const objectMetadata = flatObjectMetadataMaps
@@ -142,6 +148,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
   >): FailedFlatEntityValidation<'rowLevelPermissionPredicateGroup', 'update'> {
@@ -245,6 +252,10 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
+    } else {
+      validationResult.errors.push(
+        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+      );
     }
 
     const objectMetadata = flatObjectMetadataMaps
