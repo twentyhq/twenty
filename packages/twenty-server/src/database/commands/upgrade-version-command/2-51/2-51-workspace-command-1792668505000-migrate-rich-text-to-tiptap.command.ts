@@ -7,17 +7,22 @@ import { type DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { EXPORT_NOTE_TO_PDF_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-51/constants/export-note-to-pdf-command-menu-item-universal-identifier.constant';
 import { RICH_TEXT_RECORD_CONVERSION_BATCH_SIZE } from 'src/database/commands/upgrade-version-command/2-51/constants/rich-text-record-conversion-batch-size.constant';
 import { convertStandaloneRichTextWidgetBodyToTiptap } from 'src/database/commands/upgrade-version-command/2-51/utils/convert-standalone-rich-text-widget-body-to-tiptap.util';
 import { convertWorkflowRichTextStepsToTiptap } from 'src/database/commands/upgrade-version-command/2-51/utils/convert-workflow-rich-text-steps-to-tiptap.util';
 import { fillLegacyBlockNoteMentionObjectNames } from 'src/database/commands/upgrade-version-command/2-51/utils/fill-legacy-blocknote-mention-object-names.util';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 type RichTextRecordRow = {
@@ -32,12 +37,14 @@ const NIL_UUID = '00000000-0000-0000-0000-000000000000';
 @Command({
   name: 'upgrade:2-51:migrate-rich-text-to-tiptap',
   description:
-    'Store rich text values, workflow record step rich text values and standalone rich text widget bodies as TipTap documents, keeping the BlockNote blocks untouched',
+    'Store rich text values, workflow record step rich text values and standalone rich text widget bodies as TipTap documents, keeping the BlockNote blocks untouched, and remove the BlockNote-only Export to PDF command menu item',
 })
 export class MigrateRichTextToTiptapCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceIteratorService);
   }
@@ -129,12 +136,66 @@ export class MigrateRichTextToTiptapCommand extends ProvisionedWorkspaceCommandR
       ]);
     }
 
+    await this.removeExportNoteToPdfCommandMenuItem(workspaceId);
+
     this.logger.log(
       `Migrated rich text to TipTap in workspace ${workspaceId}: ${convertedRecordCount} record value(s), ${convertedWorkflowVersionCount} workflow version(s), ${convertedWidgetCount} widget(s)`,
     );
   }
 
   async down(): Promise<void> {}
+
+  private async removeExportNoteToPdfCommandMenuItem(
+    workspaceId: string,
+  ): Promise<void> {
+    const { flatCommandMenuItemMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatCommandMenuItemMaps',
+      ]);
+
+    const exportNoteToPdfCommandMenuItem =
+      findFlatEntityByUniversalIdentifier<FlatCommandMenuItem>({
+        flatEntityMaps: flatCommandMenuItemMaps,
+        universalIdentifier:
+          EXPORT_NOTE_TO_PDF_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+      });
+
+    if (!isDefined(exportNoteToPdfCommandMenuItem)) {
+      return;
+    }
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          workspaceId,
+          allFlatEntityOperationByMetadataName: {
+            commandMenuItem: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [exportNoteToPdfCommandMenuItem],
+              flatEntityToUpdate: [],
+            },
+          },
+        },
+      );
+
+    if (validateAndBuildResult.status === 'fail') {
+      throw new Error(
+        `Failed to remove the Export to PDF command menu item for workspace ${workspaceId}: ${JSON.stringify(
+          validateAndBuildResult,
+          null,
+          2,
+        )}`,
+      );
+    }
+  }
 
   private async convertFieldRecords({
     dataSource,
