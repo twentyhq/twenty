@@ -1,5 +1,5 @@
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RecordFormPickerFieldInput } from '@/object-record/record-form/components/RecordFormPickerFieldInput';
+import { RecordFormTextInput } from '@/object-record/record-form/components/RecordFormTextInput';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { t } from '@lingui/core/macro';
@@ -58,7 +58,7 @@ export const RecordFormPhoneFieldInput = ({
   };
 
   return (
-    <RecordFormPickerFieldInput
+    <RecordFormTextInput
       label={label}
       value={phoneNumber}
       onChange={(newNumber) => emitPhoneValue(countryCode, newNumber)}

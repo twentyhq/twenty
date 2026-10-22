@@ -1,16 +1,27 @@
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/settings/billing/constants/BillingCheckoutSessionDefaultValue';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
+import { usePlans } from '@/settings/billing/hooks/usePlans';
+import { getCheckoutPlanKeyOrThrow } from '@/settings/billing/utils/getCheckoutPlanKeyOrThrow';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  type BillingPlanKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
-export const InformationBannerNoBillingSubscription = () => {
+type InformationBannerNoBillingSubscriptionContentProps = {
+  planKey: BillingPlanKey;
+};
+
+const InformationBannerNoBillingSubscriptionContent = ({
+  planKey,
+}: InformationBannerNoBillingSubscriptionContentProps) => {
   const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({
     recurringInterval: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.interval,
-    plan: BILLING_CHECKOUT_SESSION_DEFAULT_VALUE.plan,
+    plan: planKey,
     requirePaymentMethod: true,
     successUrlPath: getSettingsPath(SettingsPath.Billing),
   });
@@ -32,6 +43,20 @@ export const InformationBannerNoBillingSubscription = () => {
       buttonTitle={hasPermissionToSubscribe ? t`Subscribe` : undefined}
       buttonOnClick={() => handleCheckoutSession()}
       isButtonDisabled={isSubmitting}
+    />
+  );
+};
+
+export const InformationBannerNoBillingSubscription = () => {
+  const { isPlansLoaded, listPlans } = usePlans();
+
+  if (!isPlansLoaded) {
+    return null;
+  }
+
+  return (
+    <InformationBannerNoBillingSubscriptionContent
+      planKey={getCheckoutPlanKeyOrThrow({ plans: listPlans() })}
     />
   );
 };

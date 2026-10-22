@@ -327,11 +327,11 @@ export class ToolExecutorService {
     );
 
     if (isDefined(definedTool)) {
-      return this.definedToolRegistryService.execute(
+      return this.definedToolRegistryService.execute({
         definedTool,
         args,
         context,
-      );
+      });
     }
 
     const provider = this.providers.find(

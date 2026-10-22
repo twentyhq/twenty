@@ -7,9 +7,14 @@ import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadPar
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import {
+  type CurrentWorkspaceMember,
+  currentWorkspaceMemberState,
+} from '@/auth/states/currentWorkspaceMemberState';
+import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 const updateAgentChatThreadInboxState = jest.fn();
 
@@ -20,6 +25,27 @@ jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
 }));
 
 const THREAD_ID = '6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60';
+const WORKSPACE_MEMBER_ID = '20202020-0687-4c41-b707-ed1bfca972a7';
+const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
+
+const CURRENT_WORKSPACE_MEMBER: CurrentWorkspaceMember = {
+  id: WORKSPACE_MEMBER_ID,
+  name: { firstName: 'Tim', lastName: 'Apple' },
+  locale: 'en',
+  colorScheme: 'Light',
+  userEmail: 'tim@apple.dev',
+};
+
+const PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
+  id: 'participant-id',
+  threadId: THREAD_ID,
+  lastReadAt: '2026-10-01T09:00:00.000Z',
+  archivedAt: null,
+  snoozedUntil: null,
+  isSubscribed: true,
+  lastMentionedAt: null,
+  updatedAt: LAST_ACTIVITY_AT,
+};
 
 const renderChatView = () =>
   render(
@@ -37,20 +63,16 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
         __typename: 'AgentChatThread',
         id: THREAD_ID,
         deletedAt: null,
-        lastActivityAt: '2026-10-01T10:00:00.000Z',
+        lastActivityAt: LAST_ACTIVITY_AT,
+        lastMessageSenderWorkspaceMemberId: null,
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        assigneeId: null,
+        pendingQuestionMessageId: null,
       } as never,
     ]);
+    jotaiStore.set(currentWorkspaceMemberState.atom, CURRENT_WORKSPACE_MEMBER);
     jotaiStore.set(agentChatThreadParticipantsState.atom, {
-      [THREAD_ID]: {
-        threadId: THREAD_ID,
-        lastReadAt: '2026-10-01T09:00:00.000Z',
-        archivedAt: null,
-        snoozedUntil: null,
-        isSubscribed: true,
-        lastMentionedAt: null,
-        id: 'participant-id',
-        updatedAt: '2026-10-01T10:00:00.000Z',
-      },
+      [THREAD_ID]: PARTICIPANT,
     });
     jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
   });
@@ -101,5 +123,51 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
     recordPageView.unmount();
 
     expect(jotaiStore.get(agentChatThreadVisitState.atom)).toBeNull();
+  });
+
+  describe('on leaving the chat', () => {
+    const setReadUpTo = (lastReadAt: string) =>
+      jotaiStore.set(agentChatThreadParticipantsState.atom, {
+        [THREAD_ID]: { ...PARTICIPANT, lastReadAt },
+      });
+
+    it('files a chat the member read up to the agent reply', () => {
+      setReadUpTo(LAST_ACTIVITY_AT);
+
+      renderChatView().unmount();
+
+      expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+        threadIds: [THREAD_ID],
+        action: 'ARCHIVE',
+      });
+    });
+
+    it('keeps a chat in the inbox while another view still shows it', () => {
+      setReadUpTo(LAST_ACTIVITY_AT);
+
+      const sidePanelView = renderChatView();
+      const recordPageView = renderChatView();
+
+      sidePanelView.unmount();
+
+      expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'ARCHIVE' }),
+      );
+
+      recordPageView.unmount();
+
+      expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+        threadIds: [THREAD_ID],
+        action: 'ARCHIVE',
+      });
+    });
+
+    it('keeps a chat whose reply the member has not read', () => {
+      renderChatView().unmount();
+
+      expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'ARCHIVE' }),
+      );
+    });
   });
 });

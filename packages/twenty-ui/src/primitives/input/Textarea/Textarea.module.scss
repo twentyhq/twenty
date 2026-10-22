@@ -1,6 +1,7 @@
 .textarea {
   --tw-textarea-border-color: var(--t-border-color-medium);
   --tw-textarea-padding-block: var(--t-spacing-2);
+  --tw-textarea-border-block-size: 2px;
 
   appearance: none;
   background-color: var(--t-background-transparent-lighter);
@@ -16,7 +17,7 @@
   margin: 0;
   max-block-size: calc(
     var(--tw-textarea-max-rows) * 1lh + 2 * var(--tw-textarea-padding-block) +
-      2px
+      var(--tw-textarea-border-block-size)
   );
   outline: none;
   overflow: auto;
@@ -41,6 +42,25 @@
   &:disabled {
     color: var(--t-font-color-tertiary);
     cursor: not-allowed;
+  }
+
+  &[data-variant='plain'] {
+    --tw-textarea-padding-block: 0px;
+    --tw-textarea-border-block-size: 0px;
+
+    @include focus-ring;
+
+    background-color: transparent;
+    block-size: auto;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+
+    &[aria-invalid='true'],
+    &[data-invalid] {
+      outline: 2px solid var(--t-border-color-danger);
+      outline-offset: 1px;
+    }
   }
 }
 
