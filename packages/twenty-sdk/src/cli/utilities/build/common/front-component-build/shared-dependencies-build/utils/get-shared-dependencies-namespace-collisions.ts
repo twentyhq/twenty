@@ -1,4 +1,6 @@
-import { toSharedDependenciesNamespaceIdentifier } from '@/cli/utilities/build/common/front-component-build/shared-dependencies-build/utils/to-shared-dependencies-namespace-identifier';
+import {
+  toSharedDependenciesNamespaceIdentifier,
+} from 'twenty-shared/front-component-build';
 
 export const getSharedDependenciesNamespaceCollisions = (
   dependencies: string[],
