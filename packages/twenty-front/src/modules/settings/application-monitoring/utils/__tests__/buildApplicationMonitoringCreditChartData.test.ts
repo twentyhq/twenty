@@ -12,10 +12,10 @@ describe('buildApplicationMonitoringCreditChartData', () => {
         ],
       }),
     ).toEqual([
-      { creditsUsed: 0 },
-      { creditsUsed: 12.5 },
-      { creditsUsed: 0 },
-      { creditsUsed: 0 },
+      { bucketStart: '2026-10-16T00:00:00.000Z', creditsUsed: 0 },
+      { bucketStart: '2026-10-17T00:00:00.000Z', creditsUsed: 12.5 },
+      { bucketStart: '2026-10-18T00:00:00.000Z', creditsUsed: 0 },
+      { bucketStart: '2026-10-19T00:00:00.000Z', creditsUsed: 0 },
     ]);
   });
 });

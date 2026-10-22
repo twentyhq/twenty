@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -29,6 +29,7 @@ import {
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -49,12 +50,15 @@ type GetApplicationMonitoringArgs = {
 
 @Injectable()
 export class ApplicationMonitoringService {
+  private readonly logger = new Logger(ApplicationMonitoringService.name);
+
   constructor(
     private readonly clickHouseService: ClickHouseService,
     private readonly eventLogRetentionService: EventLogRetentionService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly fileUrlService: FileUrlService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -211,20 +215,35 @@ export class ApplicationMonitoringService {
     params,
     period,
   }: {
-    params: ApplicationMonitoringQueryParams;
+    params: Pick<
+      ApplicationMonitoringQueryParams,
+      'applicationRegistrationId' | 'workspaceId'
+    >;
     period: ApplicationMonitoringPeriod;
-  }) {
-    const installations =
-      await this.applicationRegistrationService.findInstallations({
-        applicationRegistrationId: params.applicationRegistrationId,
-        workspaceId: isNonEmptyString(params.workspaceId)
-          ? params.workspaceId
-          : undefined,
-      });
+  }): Promise<{ bucketStart: Date; creditsUsed: number }[]> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return [];
+    }
 
-    return this.usageAnalyticsService.getCreditsUsedTimeSeriesForInstallations({
-      installations,
-      ...period,
-    });
+    try {
+      const installations =
+        await this.applicationRegistrationService.findInstallations({
+          applicationRegistrationId: params.applicationRegistrationId,
+          workspaceId: isNonEmptyString(params.workspaceId)
+            ? params.workspaceId
+            : undefined,
+        });
+
+      return await this.usageAnalyticsService.getCreditsUsedTimeSeriesForInstallations(
+        { installations, ...period },
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to load credits used for registration ${params.applicationRegistrationId}`,
+        error,
+      );
+
+      return [];
+    }
   }
 }
