@@ -39,6 +39,7 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
   const savedDomain = currentWorkspace?.defaultSenderDomain ?? null;
   const [domain, setDomain] = useState(savedDomain ?? '');
   const [isOtherDomainSelected, setIsOtherDomainSelected] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const accountDomains = getSenderDomainOptionsFromAccounts(
     myConnectedAccounts ?? [],
@@ -61,6 +62,8 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
   const saveDomain = async (
     nextDomain: string,
   ): Promise<{ isSaved: boolean }> => {
+    setIsSaving(true);
+
     try {
       const result = await updateWorkspace({
         variables: {
@@ -87,6 +90,8 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
       enqueueToast(getToastOptionsFromError({ error }));
 
       return { isSaved: false };
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -130,7 +135,7 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
         value={isOtherDomainSelected ? OTHER_DOMAIN_VALUE : savedDomain}
         onChange={handleSelectChange}
         options={options}
-        disabled={!hasWorkspacePermission}
+        disabled={!hasWorkspacePermission || isSaving}
         fullWidth
       />
       {isOtherDomainSelected && (
@@ -141,7 +146,7 @@ export const SettingsWorkspaceDefaultSenderDomainSection = () => {
           onChange={setDomain}
           onBlur={handleBlur}
           placeholder={t`example.com`}
-          disabled={!hasWorkspacePermission}
+          disabled={!hasWorkspacePermission || isSaving}
           autoFocusOnMount
           fullWidth
         />

@@ -234,12 +234,71 @@ describe('SettingsWorkspaceDefaultSenderDomainSection', () => {
     expect(mockUpdateWorkspace).not.toHaveBeenCalled();
   });
 
-  it('is disabled without the workspace permission', async () => {
-    const user = userEvent.setup();
+  it('is disabled without the workspace permission', () => {
     renderSection({ permissionFlags: [] });
 
-    await user.click(screen.getByText('None'));
+    expect(screen.getByText('None').closest('[disabled]')).not.toBeNull();
+  });
 
+  it('blocks further changes while a save is pending', async () => {
+    let resolveSave: (value: unknown) => void = () => {};
+    mockUpdateWorkspace.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSave = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    renderSection();
+
+    expect(screen.getByText('None').closest('[disabled]')).toBeNull();
+
+    await openSelect(user, 'None');
+    await user.click(await screen.findByText('getindexed.ai'));
+
+    await waitFor(() =>
+      expect(screen.getByText('None').closest('[disabled]')).not.toBeNull(),
+    );
+
+    await user.click(screen.getByText('None'));
     expect(screen.queryByRole('option')).not.toBeInTheDocument();
+    expect(mockUpdateWorkspace).toHaveBeenCalledTimes(1);
+
+    resolveSave({
+      data: { updateWorkspace: { defaultSenderDomain: 'getindexed.ai' } },
+    });
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('getindexed.ai').closest('[disabled]'),
+      ).toBeNull(),
+    );
+  });
+
+  it('disables the other-domain input while its save is pending', async () => {
+    let resolveSave: (value: unknown) => void = () => {};
+    mockUpdateWorkspace.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSave = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    renderSection();
+
+    await openSelect(user, 'None');
+    await user.click(await screen.findByText('Other domain…'));
+    const input = await screen.findByRole('textbox', {
+      name: 'Default sending domain',
+    });
+    await user.type(input, 'teammates.io');
+    await user.tab();
+
+    await waitFor(() => expect(input).toBeDisabled());
+
+    resolveSave({
+      data: { updateWorkspace: { defaultSenderDomain: 'teammates.io' } },
+    });
+    await waitFor(() =>
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument(),
+    );
   });
 });

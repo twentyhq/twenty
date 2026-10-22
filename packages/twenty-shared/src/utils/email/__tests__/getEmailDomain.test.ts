@@ -10,4 +10,8 @@ describe('getEmailDomain', () => {
     expect(getEmailDomain('no-at-sign')).toBeNull();
     expect(getEmailDomain('jane@')).toBeNull();
   });
+
+  it('returns null for a value without an @, even if it looks like a domain', () => {
+    expect(getEmailDomain('getindexed.ai')).toBeNull();
+  });
 });

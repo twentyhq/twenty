@@ -166,4 +166,16 @@ describe('resolveDefaultEmailSender', () => {
       }),
     ).toBeNull();
   });
+
+  it('never matches a handle without an @ against the workspace domain', () => {
+    expect(
+      resolveDefaultEmailSender({
+        accounts: [
+          { ...accountB, handle: 'getindexed.ai', handleAliases: null },
+        ],
+        personalFromHandle: null,
+        workspaceSenderDomain: 'getindexed.ai',
+      }),
+    ).toBeNull();
+  });
 });
