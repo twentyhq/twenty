@@ -84,9 +84,7 @@ export const LinkActivitiesDropdownContent = <
   } = useToggleActivityLink({
     targetRecord,
     activityLinkConfig,
-    activityIds: [...recordActivities, ...otherActivities].map(
-      ({ id }) => id,
-    ),
+    activityIds: [...recordActivities, ...otherActivities].map(({ id }) => id),
     timelineQuery,
   });
 
