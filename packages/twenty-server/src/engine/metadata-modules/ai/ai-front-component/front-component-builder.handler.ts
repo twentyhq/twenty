@@ -12,9 +12,12 @@ export const handler = async (input: FrontComponentBuildInput) => {
     ),
   );
   try {
-    const built = await buildFrontComponent(input, {
-      checksum: manifest.checksum,
-      exportNamesBySpecifier: new Map(Object.entries(manifest.exports)),
+    const built = await buildFrontComponent({
+      input,
+      sharedDependencies: {
+        checksum: manifest.checksum,
+        exportNamesBySpecifier: new Map(Object.entries(manifest.exports)),
+      },
     });
     const { compiledSource, checksum, sharedDependenciesChecksum } = built;
     const result = {

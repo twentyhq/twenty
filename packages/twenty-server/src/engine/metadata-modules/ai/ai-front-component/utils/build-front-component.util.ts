@@ -19,10 +19,16 @@ import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/a
 import { buildFrontComponentWithLimits } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-with-limits.util';
 import { validateFrontComponentSourceOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-source-or-throw.util';
 
-export const buildFrontComponent = async (
-  input: FrontComponentBuildInput,
-  sharedDependencies: Omit<FrontComponentSharedDependencies, 'source'>,
-): Promise<{
+export const buildFrontComponent = async ({
+  input,
+  sharedDependencies,
+}: {
+  input: FrontComponentBuildInput;
+  sharedDependencies: Pick<
+    FrontComponentSharedDependencies,
+    'checksum' | 'exportNamesBySpecifier'
+  >;
+}): Promise<{
   source: string;
   componentName: string;
   compiledSource: string;
@@ -91,7 +97,9 @@ export const buildFrontComponent = async (
           }));
         },
       },
-      createSharedDependenciesShimPlugin(() => sharedDependencies),
+      createSharedDependenciesShimPlugin({
+        getSharedDependenciesBuildContext: () => sharedDependencies,
+      }),
     ],
   });
   const compiledSource = result.outputFiles[0].text;

@@ -21,10 +21,11 @@ export const getFrontComponentBuildPlugins = (
 ): esbuild.Plugin[] => [
   ...(isDefined(options?.getSharedDependenciesBuildContext)
     ? [
-        createSharedDependenciesShimPlugin(
-          options.getSharedDependenciesBuildContext,
-          getSharedDependenciesShimSource,
-        ),
+        createSharedDependenciesShimPlugin({
+          getSharedDependenciesBuildContext:
+            options.getSharedDependenciesBuildContext,
+          getShimSource: getSharedDependenciesShimSource,
+        }),
       ]
     : []),
   createJsxRuntimeRemoteWrapperPlugin(
