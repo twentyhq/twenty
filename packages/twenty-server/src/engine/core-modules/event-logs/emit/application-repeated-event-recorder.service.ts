@@ -38,23 +38,23 @@ export class ApplicationRepeatedEventRecorderService
 
   onModuleInit() {
     this.flushTimer = setInterval(
-      () => this.flushMetricEvents(),
+      () => void this.flushMetricEvents(),
       METRIC_EVENT_FLUSH_INTERVAL_MS,
     );
 
     this.flushTimer.unref();
   }
 
-  onModuleDestroy() {
+  async onModuleDestroy() {
     if (isDefined(this.flushTimer)) {
       clearInterval(this.flushTimer);
       this.flushTimer = null;
     }
 
-    this.flushMetricEvents();
+    await this.flushMetricEvents();
   }
 
-  record(entry: ApplicationLogEntry, occurrenceCount = 1): void {
+  async record(entry: ApplicationLogEntry, occurrenceCount = 1): Promise<void> {
     if (!this.eventLogEmitterService.isEnabled()) {
       return;
     }
@@ -65,19 +65,23 @@ export class ApplicationRepeatedEventRecorderService
     });
 
     if (this.metricEventRollupBuffer.isFull) {
-      this.flushMetricEvents();
+      await this.flushMetricEvents();
     }
 
-    void this.recordLogIfFirstInWindow(entry).catch((error) => {
+    try {
+      await this.recordLogIfFirstInWindow(entry);
+    } catch (error) {
       this.logger.error('Failed to record application log', error);
-    });
+    }
   }
 
-  private flushMetricEvents(): void {
+  private async flushMetricEvents(): Promise<void> {
     const metricEvents = this.metricEventRollupBuffer.drain();
 
     if (metricEvents.length > 0) {
-      this.eventLogEmitterService.recordApplicationMetricEvents(metricEvents);
+      await this.eventLogEmitterService.recordApplicationMetricEvents(
+        metricEvents,
+      );
     }
   }
 
@@ -97,7 +101,7 @@ export class ApplicationRepeatedEventRecorderService
     });
 
     if (isDefined(ownerToken)) {
-      this.eventLogEmitterService.recordApplicationLogs([entry]);
+      await this.eventLogEmitterService.recordApplicationLogs([entry]);
     }
   }
 }
