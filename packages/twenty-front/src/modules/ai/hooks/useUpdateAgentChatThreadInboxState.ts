@@ -9,10 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS_GRAPHQL_VALUES } from '@/ai/constants/AgentChatThreadFilterStatusGraphqlValues';
-import {
-  type AgentChatInboxTabSelection,
-  agentChatInboxTabSelectionState,
-} from '@/ai/states/agentChatInboxTabSelectionState';
+import { agentChatInboxTabSelectionState } from '@/ai/states/agentChatInboxTabSelectionState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
@@ -20,6 +17,7 @@ import {
   agentChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { type AgentChatInboxTabSelection } from '@/ai/types/AgentChatInboxTabSelection';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   AgentChatInboxAction,

@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useFetchMoreAgentChatThreadsInFilterStatus } from '@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -26,7 +26,7 @@ export const AiChatInboxThreadPagination = ({
     agentChatThreadFilterStatusState,
   );
   const { fetchMoreAgentChatThreadsInFilterStatus } =
-    useRefreshAgentChatThreads();
+    useFetchMoreAgentChatThreadsInFilterStatus();
   const index = threads.findIndex(({ id }) => id === threadId);
 
   // A chat opened from a link without being listed has no neighbours

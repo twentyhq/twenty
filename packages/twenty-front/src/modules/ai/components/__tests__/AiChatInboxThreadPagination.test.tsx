@@ -17,8 +17,8 @@ i18n.activate(SOURCE_LOCALE);
 
 const fetchMoreAgentChatThreadsInFilterStatus = jest.fn();
 
-jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({
+jest.mock('@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus', () => ({
+  useFetchMoreAgentChatThreadsInFilterStatus: () => ({
     fetchMoreAgentChatThreadsInFilterStatus,
   }),
 }));

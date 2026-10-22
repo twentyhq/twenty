@@ -10,8 +10,8 @@ import {
 
 const refreshAgentChatThreadsInFilterStatus = jest.fn();
 
-jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({
+jest.mock('@/ai/hooks/useRefreshAgentChatThreadsInFilterStatus', () => ({
+  useRefreshAgentChatThreadsInFilterStatus: () => ({
     refreshAgentChatThreadsInFilterStatus,
   }),
 }));

@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type AgentChatInboxTabSelection } from '@/ai/states/agentChatInboxTabSelectionState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { type AgentChatInboxTabSelection } from '@/ai/types/AgentChatInboxTabSelection';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
@@ -28,10 +28,10 @@ export const useAiChatInboxTabSelection = (
     agentChatThreadList?.filterStatusPages?.[agentChatThreadFilterStatus];
   const isTabSelection =
     hasUserSelectedAllRecords &&
-    selectedRecordIds.length > 0 &&
+    isNonEmptyArray(selectedRecordIds) &&
     (filterStatusPage?.hasNextPage ?? false);
 
-  const tabSelection = useMemo((): AgentChatInboxTabSelection | null => {
+  return useMemo((): AgentChatInboxTabSelection | null => {
     if (!isTabSelection) {
       return null;
     }
@@ -46,15 +46,4 @@ export const useAiChatInboxTabSelection = (
         .filter((threadId) => !selectedRecordIdSet.has(threadId)),
     };
   }, [agentChatThreadFilterStatus, isTabSelection, selectedRecordIds, threads]);
-
-  if (!isDefined(tabSelection) || !isDefined(filterStatusPage)) {
-    return { tabSelection, selectedThreadCount: selectedRecordIds.length };
-  }
-
-  const selectedThreadCount = Math.max(
-    filterStatusPage.totalCount - tabSelection.excludedThreadIds.length,
-    selectedRecordIds.length,
-  );
-
-  return { tabSelection, selectedThreadCount };
 };

@@ -119,9 +119,14 @@ jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
 
 const refreshAgentChatThreadsInFilterStatus = jest.fn();
 
-jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({
+jest.mock('@/ai/hooks/useRefreshAgentChatThreadsInFilterStatus', () => ({
+  useRefreshAgentChatThreadsInFilterStatus: () => ({
     refreshAgentChatThreadsInFilterStatus,
+  }),
+}));
+
+jest.mock('@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus', () => ({
+  useFetchMoreAgentChatThreadsInFilterStatus: () => ({
     fetchMoreAgentChatThreadsInFilterStatus: jest.fn(),
   }),
 }));

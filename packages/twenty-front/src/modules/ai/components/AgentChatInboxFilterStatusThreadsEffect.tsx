@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_INBOX_FILTER_STATUS_INITIAL_RETRY_DELAY_IN_MS } from '@/ai/constants/AgentChatInboxFilterStatusInitialRetryDelayInMs';
 import { AGENT_CHAT_INBOX_FILTER_STATUS_MAX_RETRY_DELAY_IN_MS } from '@/ai/constants/AgentChatInboxFilterStatusMaxRetryDelayInMs';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useRefreshAgentChatThreadsInFilterStatus } from '@/ai/hooks/useRefreshAgentChatThreadsInFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,7 +17,7 @@ export const AgentChatInboxFilterStatusThreadsEffect = () => {
   );
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
   const { refreshAgentChatThreadsInFilterStatus } =
-    useRefreshAgentChatThreads();
+    useRefreshAgentChatThreadsInFilterStatus();
   const isListLoaded = isDefined(agentChatThreadList);
   const isFilterStatusLoaded = isDefined(
     agentChatThreadList?.filterStatusPages?.[agentChatThreadFilterStatus],

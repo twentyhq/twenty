@@ -1,10 +1,8 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 
-import {
-  type AgentChatInboxTabSelection,
-  agentChatInboxTabSelectionState,
-} from '@/ai/states/agentChatInboxTabSelectionState';
+import { agentChatInboxTabSelectionState } from '@/ai/states/agentChatInboxTabSelectionState';
+import { type AgentChatInboxTabSelection } from '@/ai/types/AgentChatInboxTabSelection';
 import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';

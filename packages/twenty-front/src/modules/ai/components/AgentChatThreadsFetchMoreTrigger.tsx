@@ -3,7 +3,8 @@ import { useInView } from 'react-intersection-observer';
 import { type AgentChatThreadFilterStatus } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useFetchMoreAgentChatThreads } from '@/ai/hooks/useFetchMoreAgentChatThreads';
+import { useFetchMoreAgentChatThreadsInFilterStatus } from '@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -21,8 +22,9 @@ export const AgentChatThreadsFetchMoreTrigger = ({
   filterStatus,
 }: AgentChatThreadsFetchMoreTriggerProps) => {
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
-  const { fetchMoreAgentChatThreads, fetchMoreAgentChatThreadsInFilterStatus } =
-    useRefreshAgentChatThreads();
+  const { fetchMoreAgentChatThreads } = useFetchMoreAgentChatThreads();
+  const { fetchMoreAgentChatThreadsInFilterStatus } =
+    useFetchMoreAgentChatThreadsInFilterStatus();
   const { ref } = useInView({
     onChange: (inView) => {
       if (!inView) {

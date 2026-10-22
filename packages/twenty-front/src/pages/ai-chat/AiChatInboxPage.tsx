@@ -23,10 +23,11 @@ import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
+import { useAiChatInboxSelectedThreadCount } from '@/ai/hooks/useAiChatInboxSelectedThreadCount';
 import { useAiChatInboxTabSelection } from '@/ai/hooks/useAiChatInboxTabSelection';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
+import { useFetchMoreAgentChatThreadsInFilterStatus } from '@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -106,13 +107,13 @@ const AiChatInboxPageContent = () => {
   const setHasUserSelectedAllRecords = useSetAtomComponentState(
     hasUserSelectedAllRecordsComponentState,
   );
-  const { tabSelection, selectedThreadCount } =
-    useAiChatInboxTabSelection(threads);
+  const tabSelection = useAiChatInboxTabSelection(threads);
+  const selectedThreadCount = useAiChatInboxSelectedThreadCount(tabSelection);
   const agentChatThreadFilterStatus = useAtomStateValue(
     agentChatThreadFilterStatusState,
   );
   const { fetchMoreAgentChatThreadsInFilterStatus } =
-    useRefreshAgentChatThreads();
+    useFetchMoreAgentChatThreadsInFilterStatus();
 
   // Rows hold a menu and a rename input, which a link cannot contain
   const selectThread = (nextThreadId: string | null) =>
