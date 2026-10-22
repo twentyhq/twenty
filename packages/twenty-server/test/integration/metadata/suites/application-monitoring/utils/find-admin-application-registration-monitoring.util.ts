@@ -36,6 +36,7 @@ export const findAdminApplicationRegistrationMonitoring = async ({
           workspaces {
             workspaceId
             workspaceName
+            workspaceLogoUrl
             applicationVersion
             runCount
             failedRunCount

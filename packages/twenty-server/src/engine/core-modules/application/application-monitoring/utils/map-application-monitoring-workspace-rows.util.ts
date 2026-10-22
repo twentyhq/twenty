@@ -4,17 +4,27 @@ import { type ApplicationMonitoringWorkspaceRow } from 'src/engine/core-modules/
 
 export const mapApplicationMonitoringWorkspaceRows = ({
   rows,
-  workspaceNameById,
+  workspaces,
 }: {
   rows: ApplicationMonitoringWorkspaceRow[];
-  workspaceNameById: Map<string, string | null>;
-}): ApplicationMonitoringWorkspaceDTO[] =>
-  rows.map((row) => ({
+  workspaces: Pick<
+    ApplicationMonitoringWorkspaceDTO,
+    'workspaceId' | 'workspaceName' | 'workspaceLogoUrl'
+  >[];
+}): ApplicationMonitoringWorkspaceDTO[] => {
+  const workspaceById = new Map(
+    workspaces.map((workspace) => [workspace.workspaceId, workspace]),
+  );
+
+  return rows.map((row) => ({
     workspaceId: row.workspaceId,
-    workspaceName: workspaceNameById.get(row.workspaceId) ?? null,
+    workspaceName: workspaceById.get(row.workspaceId)?.workspaceName ?? null,
+    workspaceLogoUrl:
+      workspaceById.get(row.workspaceId)?.workspaceLogoUrl ?? null,
     applicationVersion: row.applicationVersion,
     runCount: Number(row.runCount),
     failedRunCount: Number(row.failedRunCount),
     rateLimitEventCount: Number(row.rateLimitEventCount),
     lastEventAt: parseClickHouseDateTime(row.lastEventAt),
   }));
+};
