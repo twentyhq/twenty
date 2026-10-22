@@ -14,10 +14,13 @@ const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const TEST_PROVIDER_ID = uuidv4();
 
-const buildProvider = (
-  scope?: ConnectionProviderManifest['scope'],
+const buildProvider = ({
+  scope,
   universalIdentifier = TEST_PROVIDER_ID,
-): ConnectionProviderManifest => ({
+}: {
+  scope?: ConnectionProviderManifest['scope'];
+  universalIdentifier?: string;
+} = {}): ConnectionProviderManifest => ({
   universalIdentifier,
   name: 'linear',
   displayName: 'Linear',
@@ -106,15 +109,15 @@ describe('connection provider scope manifest sync', () => {
   }, 60000);
 
   it('stores the declared scope', async () => {
-    await syncProvider(buildProvider('USER'));
+    await syncProvider(buildProvider({ scope: 'USER' }));
 
     expect(await findProviderScopes()).toEqual(['USER']);
   }, 60000);
 
   it('refuses a scope change on a later sync and keeps the stored one', async () => {
-    await syncProvider(buildProvider('WORKSPACE'));
+    await syncProvider(buildProvider({ scope: 'WORKSPACE' }));
 
-    const { errors } = await syncProvider(buildProvider('USER'), {
+    const { errors } = await syncProvider(buildProvider({ scope: 'USER' }), {
       expectToFail: true,
     });
 
@@ -125,10 +128,12 @@ describe('connection provider scope manifest sync', () => {
   }, 60000);
 
   it('deletes the connections of a provider replaced by one with a new identifier', async () => {
-    await syncProvider(buildProvider('WORKSPACE'));
+    await syncProvider(buildProvider({ scope: 'WORKSPACE' }));
     const connectedAccountId = await insertConnectedAccount();
 
-    await syncProvider(buildProvider('USER', uuidv4()));
+    await syncProvider(
+      buildProvider({ scope: 'USER', universalIdentifier: uuidv4() }),
+    );
 
     expect(await findProviderScopes()).toEqual(['USER']);
     expect(await countConnectedAccounts(connectedAccountId)).toBe(0);
@@ -136,7 +141,7 @@ describe('connection provider scope manifest sync', () => {
 
   it('rejects an unknown scope on create', async () => {
     const { errors } = await syncProvider(
-      buildProvider('WORKSPACE_MEMBER' as never),
+      buildProvider({ scope: 'WORKSPACE_MEMBER' as never }),
       { expectToFail: true },
     );
 

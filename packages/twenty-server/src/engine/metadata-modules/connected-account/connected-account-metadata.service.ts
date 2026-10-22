@@ -566,6 +566,23 @@ export class ConnectedAccountMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
+  async deleteManyByConnectionProviderIds({
+    connectionProviderIds,
+    workspaceId,
+  }: {
+    connectionProviderIds: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const connectedAccounts = await this.repository.find({
+      where: { connectionProviderId: In(connectionProviderIds), workspaceId },
+      select: { id: true },
+    });
+
+    for (const { id } of connectedAccounts) {
+      await this.delete({ id, workspaceId });
+    }
+  }
+
   async delete({
     id,
     workspaceId,
