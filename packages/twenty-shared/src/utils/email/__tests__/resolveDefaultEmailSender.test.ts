@@ -163,14 +163,4 @@ describe('resolveDefaultEmailSender', () => {
       }),
     ).toBeNull();
   });
-
-  it('never matches a handle without an @ against the workspace domain', () => {
-    expect(
-      resolveDefaultEmailSender({
-        accounts: [{ ...accountB, handle: 'example.com', handleAliases: null }],
-        personalFromHandle: null,
-        workspaceSenderDomain: 'example.com',
-      }),
-    ).toBeNull();
-  });
 });

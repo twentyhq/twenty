@@ -1,8 +1,9 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type ConnectedAccountEmailFields } from '@/types';
 import { canConnectedAccountSendEmail } from '@/utils/email/canConnectedAccountSendEmail';
 import { getEmailDomain } from '@/utils/email/getEmailDomain';
 import { getSendableEmailHandles } from '@/utils/email/getSendableEmailHandles';
-import { normalizeSenderDomain } from '@/utils/email/normalizeSenderDomain';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type DefaultEmailSenderAccount = ConnectedAccountEmailFields & {
@@ -12,7 +13,7 @@ type DefaultEmailSenderAccount = ConnectedAccountEmailFields & {
   archivedAt?: string | null;
 };
 
-export type DefaultEmailSender = {
+type DefaultEmailSender = {
   connectedAccountId: string;
   fromHandle: string;
 };
@@ -42,11 +43,10 @@ export const resolveDefaultEmailSender = ({
       })),
     );
 
-  const normalizedPersonalHandle = personalFromHandle?.trim().toLowerCase();
-
-  const personalMatch = isDefined(normalizedPersonalHandle)
+  const personalMatch = isDefined(personalFromHandle)
     ? candidates.find(
-        ({ handle }) => handle.toLowerCase() === normalizedPersonalHandle,
+        ({ handle }) =>
+          handle.toLowerCase() === personalFromHandle.toLowerCase(),
       )
     : undefined;
 
@@ -57,14 +57,12 @@ export const resolveDefaultEmailSender = ({
     };
   }
 
-  const senderDomain = normalizeSenderDomain(workspaceSenderDomain);
-
-  if (!isDefined(senderDomain)) {
+  if (!isNonEmptyString(workspaceSenderDomain)) {
     return null;
   }
 
   const domainMatch = candidates.find(
-    ({ handle }) => getEmailDomain(handle) === senderDomain,
+    ({ handle }) => getEmailDomain(handle) === workspaceSenderDomain,
   );
 
   return isDefined(domainMatch)

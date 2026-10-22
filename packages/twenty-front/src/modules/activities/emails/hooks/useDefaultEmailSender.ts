@@ -1,7 +1,4 @@
-import {
-  type DefaultEmailSender,
-  resolveDefaultEmailSender,
-} from 'twenty-shared/utils';
+import { resolveDefaultEmailSender } from 'twenty-shared/utils';
 
 import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -14,7 +11,7 @@ type UseDefaultEmailSenderArgs = {
 
 export const useDefaultEmailSender = ({
   restrictToConnectedAccountId,
-}: UseDefaultEmailSenderArgs): DefaultEmailSender | null => {
+}: UseDefaultEmailSenderArgs) => {
   const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);

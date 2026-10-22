@@ -63,7 +63,6 @@ export { getSendableEmailHandles } from './email/getSendableEmailHandles';
 export { normalizeSenderDomain } from './email/normalizeSenderDomain';
 export type { ParsedEmailAddress } from './email/parseEmailAddressList';
 export { parseEmailAddressList } from './email/parseEmailAddressList';
-export type { DefaultEmailSender } from './email/resolveDefaultEmailSender';
 export { resolveDefaultEmailSender } from './email/resolveDefaultEmailSender';
 export { CustomError } from './errors/CustomError';
 export { evalFromContext } from './evalFromContext';
