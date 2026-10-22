@@ -59,7 +59,10 @@ export class RichTextFieldQueryResultGetterHandler implements QueryResultGetterH
       if (isNonEmptyString(fieldValue?.tiptap)) {
         record[field.name] = {
           ...record[field.name],
-          tiptap: await this.signTipTapFileUrls(fieldValue.tiptap, workspaceId),
+          tiptap: await this.signTipTapFileUrls({
+            tiptapJson: fieldValue.tiptap,
+            workspaceId,
+          }),
         };
       }
 
@@ -123,10 +126,13 @@ export class RichTextFieldQueryResultGetterHandler implements QueryResultGetterH
     );
   };
 
-  signTipTapFileUrls = async (
-    tiptapJson: string,
-    workspaceId: string,
-  ): Promise<string> => {
+  signTipTapFileUrls = async ({
+    tiptapJson,
+    workspaceId,
+  }: {
+    tiptapJson: string;
+    workspaceId: string;
+  }): Promise<string> => {
     const document = parseJson<unknown>(tiptapJson);
 
     if (!isTipTapNode(document)) {
@@ -134,20 +140,23 @@ export class RichTextFieldQueryResultGetterHandler implements QueryResultGetterH
     }
 
     return JSON.stringify(
-      await this.signTipTapNodeFileUrls(document, workspaceId),
+      await this.signTipTapNodeFileUrls({ node: document, workspaceId }),
     );
   };
 
-  private signTipTapNodeFileUrls = async (
-    node: TipTapNode,
-    workspaceId: string,
-  ): Promise<TipTapNode> => {
+  private signTipTapNodeFileUrls = async ({
+    node,
+    workspaceId,
+  }: {
+    node: TipTapNode;
+    workspaceId: string;
+  }): Promise<TipTapNode> => {
     const signedNode = isDefined(node.content)
       ? {
           ...node,
           content: await Promise.all(
             node.content.map((childNode) =>
-              this.signTipTapNodeFileUrls(childNode, workspaceId),
+              this.signTipTapNodeFileUrls({ node: childNode, workspaceId }),
             ),
           ),
         }
