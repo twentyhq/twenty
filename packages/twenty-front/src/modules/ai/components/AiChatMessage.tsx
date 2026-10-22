@@ -354,7 +354,7 @@ export const AiChatMessage = ({
             {isAiChatInboxEnabled && (
               <AiChatMessageReactions messageId={messageId} />
             )}
-            {!isAiChatInboxEnabled && (
+            {!hasHeader && (
               <StyledMessageTimestamp>
                 {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
               </StyledMessageTimestamp>

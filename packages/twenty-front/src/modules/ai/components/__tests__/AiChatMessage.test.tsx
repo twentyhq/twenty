@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -17,7 +18,10 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -102,12 +106,20 @@ const MESSAGE_WITHOUT_SENDER: ExtendedUIMessage = {
 const renderMessage = ({
   messageId,
   isAiChatInboxEnabled,
+  currentWorkspaceMemberId,
   error,
 }: {
   messageId: string;
   isAiChatInboxEnabled: boolean;
+  currentWorkspaceMemberId?: string;
   error?: Error;
 }) => {
+  jotaiStore.set(
+    currentWorkspaceMemberState.atom,
+    isDefined(currentWorkspaceMemberId)
+      ? { ...mockedWorkspaceMemberData, id: currentWorkspaceMemberId }
+      : null,
+  );
   jotaiStore.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
     featureFlags: [
@@ -162,6 +174,45 @@ describe('AiChatMessage', () => {
     expect(
       screen.getByText('Which deals close this week?'),
     ).toBeInTheDocument();
+  });
+
+  it('shows the current member inbox message time without a sender header', () => {
+    renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+    });
+
+    expect(
+      screen.getByText('Which deals close this week?'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('You')).not.toBeInTheDocument();
+    expect(screen.queryByText('Julia Martin')).not.toBeInTheDocument();
+    expect(screen.getAllByText(/ago$/)).toHaveLength(1);
+  });
+
+  it('keeps another member name and one timestamp when signed in', () => {
+    renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: 'other-workspace-member',
+    });
+
+    expect(screen.getByText('Julia Martin')).toBeInTheDocument();
+    expect(screen.getAllByText(/ago$/)).toHaveLength(1);
+  });
+
+  it('keeps the current member message time outside the inbox', () => {
+    renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: false,
+      currentWorkspaceMemberId: MEMBER_ID,
+    });
+
+    expect(
+      screen.getByText('Which deals close this week?'),
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/ago$/)).toHaveLength(1);
   });
 
   it('uses a neutral label when an assistant sender is not identified', () => {
