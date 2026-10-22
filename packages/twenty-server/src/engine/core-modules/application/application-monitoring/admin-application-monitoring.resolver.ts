@@ -7,14 +7,13 @@ import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/
 import { ApplicationMonitoringService } from 'src/engine/core-modules/application/application-monitoring/application-monitoring.service';
 import { AdminApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/admin-application-monitoring.dto';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @UsePipes(ResolverValidationPipe)
@@ -40,10 +39,12 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 export class AdminApplicationMonitoringResolver {
   constructor(
     private readonly applicationMonitoringService: ApplicationMonitoringService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(
+    AdminPanelGuard,
+    FeatureFlagGuard(FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED),
+  )
   @Query(() => AdminApplicationMonitoringDTO)
   async findAdminApplicationRegistrationMonitoring(
     @Args('id') applicationRegistrationId: string,
@@ -55,17 +56,6 @@ export class AdminApplicationMonitoringResolver {
     @Args('periodEnd', { type: () => Date, nullable: true })
     periodEnd?: Date,
   ): Promise<AdminApplicationMonitoringDTO> {
-    if (
-      !(await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED,
-        viewerWorkspaceId,
-      ))
-    ) {
-      throw new ForbiddenError(
-        'Application monitoring is not enabled for this workspace',
-      );
-    }
-
     return this.applicationMonitoringService.getAdminMonitoring({
       applicationRegistrationId,
       viewerWorkspaceId,
