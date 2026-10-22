@@ -45,7 +45,7 @@ const MessagePartRenderer = ({
   isStreaming: boolean;
   isUserMessage?: boolean;
 }) => {
-  const displayMode = isUserMessage === true ? 'bubble' : 'chat';
+  const displayMode = isUserMessage ? 'bubble' : 'chat';
 
   switch (part.type) {
     case 'text':
