@@ -387,7 +387,7 @@ Disconnected app connections remain listed as **Disconnected** and do not offer 
 
 A provider has exactly one scope. If your app needs both a shared credential and one per member for the same service (a bot token and each member's own account, say), declare two providers.
 
-A connection always has its provider's scope, and a provider's scope is part of its identity: a later version cannot change the `scope` of an existing provider, and the upgrade is refused if it tries. To move a service from one scope to the other, declare a new provider with a new `universalIdentifier` and drop the old one. Upgrading then deletes the old provider and every connection made with it, running `onDisconnectLogicFunction` for each first, and members connect again through the new provider.
+A connection always has its provider's scope, and a provider's scope is part of its identity: a later version cannot change the `scope` of an existing provider, and the upgrade is refused if it tries. To move a service from one scope to the other, declare a new provider with a new `universalIdentifier` and drop the old one. Upgrading then deletes the old provider and every connection made with it through the regular disconnect path (`onDisconnectLogicFunction`, token revocation, channel cleanup), and members connect again through the new provider.
 
 Adding or reconnecting a **Just for me** connection requires `CONNECTED_ACCOUNTS` permission, and adding or reconnecting a **Workspace shared** one requires `APPLICATIONS` permission.
 

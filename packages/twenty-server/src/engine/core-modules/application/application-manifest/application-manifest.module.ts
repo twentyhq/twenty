@@ -14,9 +14,9 @@ import { ApplicationHealthModule } from 'src/engine/core-modules/application/app
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
-import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
+import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -32,7 +32,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationRegistrationLookupModule,
     ApplicationRegistrationModule,
     ApplicationTranslationModule,
-    ConnectionProviderModule,
+    ConnectedAccountMetadataModule,
     SecretEncryptionModule,
     SdkClientModule,
     WorkflowVersionCoreModule,
