@@ -1,18 +1,16 @@
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 const flatApplication = {
   id: 'application-1',
   applicationRegistrationId: 'registration-1',
   version: '1.2.3',
-} as FlatApplication;
+};
 
 const flatLogicFunction = {
   id: 'function-1',
   name: 'syncContacts',
-} as FlatLogicFunction;
+};
 
 describe('buildLogicFunctionRunMetricEvent', () => {
   it('counts a successful run with its duration', () => {
