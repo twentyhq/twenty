@@ -10,7 +10,10 @@ export const getAppOnlyApplicationIds = ({
   group,
   applicationIdsWithConnectionsTab,
 }: {
-  group: ConnectedAccountGroup<{ applicationId?: string | null }>;
+  group: Pick<
+    ConnectedAccountGroup<{ applicationId?: string | null }>,
+    'builtInAccount' | 'appAccounts'
+  >;
   applicationIdsWithConnectionsTab: ReadonlySet<string>;
 }): AppOnlyApplicationIds => {
   if (isDefined(group.builtInAccount)) {
