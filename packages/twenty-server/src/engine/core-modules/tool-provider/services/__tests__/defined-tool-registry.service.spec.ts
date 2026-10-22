@@ -40,11 +40,36 @@ class RenameWebhookTool extends BaseTool<typeof renameWebhookInputSchema> {
   }
 }
 
-const buildRenameWebhookTool = ({ isGranted }: { isGranted: boolean }) => {
-  const tool = new RenameWebhookTool();
+const archiveWebhookInputSchema = z.object({ id: z.uuid() });
+
+@DefineTool({
+  name: 'archive_webhook',
+  category: ToolCategory.WEBHOOK,
+  description: 'Archive a webhook.',
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  icon: 'IconWebhook',
+})
+class ArchiveWebhookTool extends BaseTool<typeof archiveWebhookInputSchema> {
+  readonly inputSchema = archiveWebhookInputSchema;
+
+  async execute({
+    input,
+  }: ToolExecuteArgs<typeof archiveWebhookInputSchema>): Promise<ToolOutput> {
+    return { success: true, message: `Webhook ${input.id} archived` };
+  }
+}
+
+const buildDefinedToolRegistryService = ({
+  tools,
+  isGranted,
+}: {
+  tools: BaseTool[];
+  isGranted: boolean;
+}) => {
   const definedToolRegistryService = new DefinedToolRegistryService(
     {
-      getProviders: () => [{ instance: tool, metatype: RenameWebhookTool }],
+      getProviders: () =>
+        tools.map((tool) => ({ instance: tool, metatype: tool.constructor })),
     } as unknown as DiscoveryService,
     {
       checkRolesPermissions: jest.fn().mockResolvedValue(isGranted),
@@ -52,6 +77,16 @@ const buildRenameWebhookTool = ({ isGranted }: { isGranted: boolean }) => {
   );
 
   definedToolRegistryService.onModuleInit();
+
+  return definedToolRegistryService;
+};
+
+const buildRenameWebhookTool = ({ isGranted }: { isGranted: boolean }) => {
+  const tool = new RenameWebhookTool();
+  const definedToolRegistryService = buildDefinedToolRegistryService({
+    tools: [tool],
+    isGranted,
+  });
 
   const definedTool =
     definedToolRegistryService.findDefinedTool('rename_webhook');
@@ -62,6 +97,38 @@ const buildRenameWebhookTool = ({ isGranted }: { isGranted: boolean }) => {
 };
 
 describe('DefinedToolRegistryService', () => {
+  describe('getAvailableDescriptors', () => {
+    it('should list a declared icon and leave it out for tools without one', async () => {
+      const definedToolRegistryService = buildDefinedToolRegistryService({
+        tools: [new RenameWebhookTool(), new ArchiveWebhookTool()],
+        isGranted: true,
+      });
+
+      const descriptors =
+        await definedToolRegistryService.getAvailableDescriptors(context, {
+          includeSchemas: false,
+        });
+
+      expect(descriptors).toStrictEqual([
+        {
+          name: 'rename_webhook',
+          label: 'Rename Webhook',
+          description: 'Rename a webhook.',
+          category: ToolCategory.WEBHOOK,
+          executionRef: { kind: 'static', toolId: 'rename_webhook' },
+        },
+        {
+          name: 'archive_webhook',
+          label: 'Archive Webhook',
+          description: 'Archive a webhook.',
+          category: ToolCategory.WEBHOOK,
+          executionRef: { kind: 'static', toolId: 'archive_webhook' },
+          icon: 'IconWebhook',
+        },
+      ]);
+    });
+  });
+
   describe('execute', () => {
     it('should run the tool with its parsed input when every flag is granted', async () => {
       const { definedToolRegistryService, definedTool } =
