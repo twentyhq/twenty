@@ -70,15 +70,16 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         );
 
         const redirectErrorUrl =
-          this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl(
-            'We cannot connect to your Google account, please try again with more permissions, or a valid account',
-            {
+          this.workspaceDomainsService.computeWorkspaceRedirectErrorUrl({
+            errorMessage:
+              'We cannot connect to your Google account, please try again with more permissions, or a valid account',
+            workspace: {
               subdomain: workspace.subdomain,
               customDomain: workspace.customDomain,
               isCustomDomainEnabled: workspace.isCustomDomainEnabled ?? false,
             },
-            '/settings/accounts',
-          );
+            pathname: '/settings/accounts',
+          });
 
         context.switchToHttp().getResponse().redirect(redirectErrorUrl);
 
