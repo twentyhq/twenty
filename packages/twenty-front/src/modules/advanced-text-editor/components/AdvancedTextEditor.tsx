@@ -93,7 +93,10 @@ const StyledEditorContainer = styled.div<{
 
     h1,
     h2,
-    h3 {
+    h3,
+    h4,
+    h5,
+    h6 {
       font-weight: var(--editor-heading-font-weight);
       line-height: var(--editor-heading-line-height);
       margin: var(--editor-heading-spacing-top) 0
@@ -110,6 +113,12 @@ const StyledEditorContainer = styled.div<{
 
     h3 {
       font-size: var(--editor-heading-3-font-size);
+    }
+
+    h4,
+    h5,
+    h6 {
+      font-size: var(--editor-font-size);
     }
 
     ul,
