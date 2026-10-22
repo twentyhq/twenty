@@ -69,21 +69,14 @@ const callMetadataTool = ({
     token,
   });
 
-// The object and field tools answer with their payload, not a ToolOutput
-const runMetadataTool = async <TPayload>(
+const runMetadataTool = async <TResult>(
   call: Parameters<typeof callMetadataTool>[0],
-): Promise<TPayload> => {
+): Promise<TResult | undefined> => {
   const result = await callMetadataTool(call);
 
   expect(result.isError).toBe(false);
 
-  return JSON.parse(result.content[0].text);
-};
-
-const runValidationRuleTool = async <TResult>(
-  call: Parameters<typeof callMetadataTool>[0],
-): Promise<TResult | undefined> => {
-  const output = await runMetadataTool<ToolOutput<TResult>>(call);
+  const output: ToolOutput<TResult> = JSON.parse(result.content[0].text);
 
   expect(output.success).toBe(true);
 
@@ -102,19 +95,29 @@ const runFailingMetadataTool = async (
 
 const listObjects = async (
   toolArguments: Record<string, unknown>,
-): Promise<ObjectSummary[]> =>
-  runMetadataTool<ObjectSummary[]>({
+): Promise<ObjectSummary[]> => {
+  const result = await runMetadataTool<{ objects: ObjectSummary[] }>({
     toolName: 'get_object_metadata',
     toolArguments,
   });
 
+  jestExpectToBeDefined(result);
+
+  return result.objects;
+};
+
 const listFields = async (
   toolArguments: Record<string, unknown>,
-): Promise<FieldSummary[]> =>
-  runMetadataTool<FieldSummary[]>({
+): Promise<FieldSummary[]> => {
+  const result = await runMetadataTool<{ fields: FieldSummary[] }>({
     toolName: 'get_field_metadata',
     toolArguments,
   });
+
+  jestExpectToBeDefined(result);
+
+  return result.fields;
+};
 
 const findObjectOrThrow = async (objectName: string) => {
   const [object] = await listObjects({ objectName });
@@ -205,7 +208,9 @@ describe('MCP metadata tools (integration)', () => {
       labelSingular: 'MCP metadata tools pet',
     });
 
-    const petId = createdPet.id;
+    const petId = createdPet?.id;
+
+    jestExpectToBeDefined(petId);
 
     expect(
       await listObjects({ objectName: PET_NAME_PLURAL, includeFields: true }),
@@ -247,6 +252,7 @@ describe('MCP metadata tools (integration)', () => {
       },
     });
 
+    jestExpectToBeDefined(nicknameField);
     expect(nicknameField).toEqual({
       id: expect.any(String),
       name: 'nickname',
@@ -291,7 +297,7 @@ describe('MCP metadata tools (integration)', () => {
           ],
         },
       }),
-    ).toBe(true);
+    ).toBeUndefined();
 
     const ageField = await findFieldOrThrow({
       objectName: PET_NAME_SINGULAR,
@@ -305,7 +311,7 @@ describe('MCP metadata tools (integration)', () => {
           fields: [{ id: ageField.id, label: 'Age in years' }],
         },
       }),
-    ).toBe(true);
+    ).toBeUndefined();
 
     const petFields = await listFields({ objectMetadataId: petId });
 
@@ -351,7 +357,7 @@ describe('MCP metadata tools (integration)', () => {
           ],
         },
       }),
-    ).toBe(true);
+    ).toBeUndefined();
 
     expect(
       await findFieldOrThrow({
@@ -381,7 +387,7 @@ describe('MCP metadata tools (integration)', () => {
           ],
         },
       }),
-    ).toBe(true);
+    ).toBeUndefined();
 
     const visit = await findObjectOrThrow(VISIT_NAME_SINGULAR);
 
@@ -392,7 +398,7 @@ describe('MCP metadata tools (integration)', () => {
           objects: [{ id: visit.id, description: 'Visits to the clinic' }],
         },
       }),
-    ).toBe(true);
+    ).toBeUndefined();
     expect(await findObjectOrThrow(VISIT_NAME_SINGULAR)).toMatchObject({
       description: 'Visits to the clinic',
     });
@@ -425,14 +431,14 @@ describe('MCP metadata tools (integration)', () => {
     ).toMatchObject({ type: 'RELATION', label: 'Visits' });
 
     expect(
-      await runValidationRuleTool({
+      await runMetadataTool({
         toolName: 'get_validation_rules',
         toolArguments: { objectName: PET_NAME_SINGULAR },
       }),
     ).toEqual([]);
 
     expect(
-      await runValidationRuleTool({
+      await runMetadataTool({
         toolName: 'validate_validation_rule_expression',
         toolArguments: {
           objectName: PET_NAME_SINGULAR,
@@ -441,7 +447,7 @@ describe('MCP metadata tools (integration)', () => {
       }),
     ).toBeUndefined();
 
-    const validationRule = await runValidationRuleTool<ValidationRuleSummary>({
+    const validationRule = await runMetadataTool<ValidationRuleSummary>({
       toolName: 'create_validation_rule',
       toolArguments: {
         objectName: PET_NAME_PLURAL,
@@ -462,7 +468,7 @@ describe('MCP metadata tools (integration)', () => {
     });
 
     expect(
-      await runValidationRuleTool({
+      await runMetadataTool({
         toolName: 'update_validation_rule',
         toolArguments: {
           id: validationRule.id,
@@ -477,7 +483,7 @@ describe('MCP metadata tools (integration)', () => {
     });
 
     expect(
-      await runValidationRuleTool<ValidationRuleSummary[]>({
+      await runMetadataTool<ValidationRuleSummary[]>({
         toolName: 'get_validation_rules',
         toolArguments: { objectName: PET_NAME_SINGULAR },
       }),
@@ -488,7 +494,7 @@ describe('MCP metadata tools (integration)', () => {
         toolName: 'delete_field_metadata',
         toolArguments: { id: nicknameField.id },
       }),
-    ).toEqual({ id: nicknameField.id, success: true });
+    ).toEqual({ id: nicknameField.id, deleted: true });
     expect(
       (await listFields({ objectMetadataId: petId })).map(({ id }) => id),
     ).not.toContain(nicknameField.id);
@@ -499,7 +505,7 @@ describe('MCP metadata tools (integration)', () => {
           toolName: 'delete_object_metadata',
           toolArguments: { id: objectId },
         }),
-      ).toEqual({ id: objectId, success: true });
+      ).toEqual({ id: objectId, deleted: true });
     }
 
     expect(await listObjects({ objectName: PET_NAME_SINGULAR })).toEqual([]);

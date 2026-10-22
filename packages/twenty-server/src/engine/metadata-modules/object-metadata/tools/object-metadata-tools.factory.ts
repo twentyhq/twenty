@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { METADATA_TOOL_EXCLUDED_FIELD_NAMES } from 'src/engine/core-modules/tool-provider/constants/metadata-tool-excluded-field-names.constant';
 import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -184,7 +185,7 @@ export class ObjectMetadataToolsFactory {
           includeFields?: boolean;
           includeFullSystemObjects?: boolean;
           limit?: number;
-        }) => {
+        }): Promise<ToolOutput> => {
           const flatObjectMetadatas =
             await this.objectMetadataService.findManyWithinWorkspace(
               workspaceId,
@@ -207,7 +208,7 @@ export class ObjectMetadataToolsFactory {
             ? await this.buildFieldsByObjectId(workspaceId)
             : undefined;
 
-          return flatObjectMetadatas.map((flatObjectMetadata) => {
+          const objects = flatObjectMetadatas.map((flatObjectMetadata) => {
             const dto =
               fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadata);
 
@@ -230,6 +231,12 @@ export class ObjectMetadataToolsFactory {
               { stripWhenNullish: OBJECT_STRIP_WHEN_NULLISH },
             );
           });
+
+          return {
+            success: true,
+            message: `Found ${objects.length} object(s).`,
+            result: { objects },
+          };
         },
       },
       create_object_metadata: {
@@ -245,7 +252,7 @@ export class ObjectMetadataToolsFactory {
           shortcut?: string;
           isRemote?: boolean;
           isLabelSyncedWithName?: boolean;
-        }) => {
+        }): Promise<ToolOutput> => {
           const { icon, ...createObjectInput } = parameters;
 
           const flatObjectMetadata =
@@ -260,9 +267,13 @@ export class ObjectMetadataToolsFactory {
             });
 
           return {
-            id: flatObjectMetadata.id,
-            nameSingular: flatObjectMetadata.nameSingular,
-            labelSingular: flatObjectMetadata.labelSingular,
+            success: true,
+            message: `Created the object "${flatObjectMetadata.nameSingular}".`,
+            result: {
+              id: flatObjectMetadata.id,
+              nameSingular: flatObjectMetadata.nameSingular,
+              labelSingular: flatObjectMetadata.labelSingular,
+            },
           };
         },
       },
@@ -283,7 +294,7 @@ export class ObjectMetadataToolsFactory {
           labelIdentifierFieldMetadataId?: string;
           imageIdentifierFieldMetadataId?: string;
           isLabelSyncedWithName?: boolean;
-        }) => {
+        }): Promise<ToolOutput> => {
           const { id, icon, ...update } = parameters;
           const normalizedIcon = normalizeIconName(icon);
 
@@ -302,23 +313,31 @@ export class ObjectMetadataToolsFactory {
             });
 
           return {
-            id: flatObjectMetadata.id,
-            nameSingular: flatObjectMetadata.nameSingular,
-            labelSingular: flatObjectMetadata.labelSingular,
+            success: true,
+            message: `Updated the object "${flatObjectMetadata.nameSingular}".`,
+            result: {
+              id: flatObjectMetadata.id,
+              nameSingular: flatObjectMetadata.nameSingular,
+              labelSingular: flatObjectMetadata.labelSingular,
+            },
           };
         },
       },
       delete_object_metadata: {
         description: 'Delete an object by ID. Also deletes associated fields.',
         inputSchema: DeleteObjectMetadataInputSchema,
-        execute: async (parameters: { id: string }) => {
+        execute: async (parameters: { id: string }): Promise<ToolOutput> => {
           const flatObjectMetadata =
             await this.objectMetadataService.deleteOneObject({
               deleteObjectInput: { id: parameters.id },
               workspaceId,
             });
 
-          return { id: flatObjectMetadata.id, success: true };
+          return {
+            success: true,
+            message: `Deleted the object "${flatObjectMetadata.nameSingular}".`,
+            result: { id: flatObjectMetadata.id, deleted: true },
+          };
         },
       },
       create_many_object_metadata: {
@@ -337,7 +356,7 @@ export class ObjectMetadataToolsFactory {
             isRemote?: boolean;
             isLabelSyncedWithName?: boolean;
           }>;
-        }) => {
+        }): Promise<ToolOutput> => {
           await Promise.all(
             parameters.objects.map(async ({ icon, ...createObjectInput }) => {
               await this.objectMetadataService.createOneObject({
@@ -352,7 +371,10 @@ export class ObjectMetadataToolsFactory {
             }),
           );
 
-          return true;
+          return {
+            success: true,
+            message: `Created ${parameters.objects.length} object(s).`,
+          };
         },
       },
       update_many_object_metadata: {
@@ -374,7 +396,7 @@ export class ObjectMetadataToolsFactory {
             imageIdentifierFieldMetadataId?: string;
             isLabelSyncedWithName?: boolean;
           }>;
-        }) => {
+        }): Promise<ToolOutput> => {
           await this.objectMetadataService.updateManyObjects({
             updateObjectInputs: parameters.objects.map(
               ({ id, icon, ...update }) => {
@@ -394,7 +416,10 @@ export class ObjectMetadataToolsFactory {
             workspaceId,
           });
 
-          return true;
+          return {
+            success: true,
+            message: `Updated ${parameters.objects.length} object(s).`,
+          };
         },
       },
     };

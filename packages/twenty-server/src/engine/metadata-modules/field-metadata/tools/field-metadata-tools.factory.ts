@@ -16,6 +16,7 @@ import {
 import { METADATA_TOOL_EXCLUDED_FIELD_NAMES } from 'src/engine/core-modules/tool-provider/constants/metadata-tool-excluded-field-names.constant';
 import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
@@ -246,7 +247,7 @@ export class FieldMetadataToolsFactory {
           objectName?: string;
           includeFullSystemFields?: boolean;
           limit?: number;
-        }) => {
+        }): Promise<ToolOutput> => {
           const objectMetadataId =
             parameters.objectMetadataId ??
             (parameters.objectName
@@ -290,7 +291,11 @@ export class FieldMetadataToolsFactory {
               );
             });
 
-          return compactedFields;
+          return {
+            success: true,
+            message: `Found ${compactedFields.length} field(s).`,
+            result: { fields: compactedFields },
+          };
         },
       },
       create_field_metadata: {
@@ -311,7 +316,7 @@ export class FieldMetadataToolsFactory {
           isLabelSyncedWithName?: boolean;
           isRemoteCreation?: boolean;
           relationCreationPayload?: unknown;
-        }) => {
+        }): Promise<ToolOutput> => {
           const { icon, relationCreationPayload, ...createFieldInput } =
             parameters;
 
@@ -332,11 +337,15 @@ export class FieldMetadataToolsFactory {
             });
 
           return {
-            id: flatFieldMetadata.id,
-            name: flatFieldMetadata.name,
-            label: flatFieldMetadata.label,
-            type: flatFieldMetadata.type,
-            objectMetadataId: flatFieldMetadata.objectMetadataId,
+            success: true,
+            message: `Created the field "${flatFieldMetadata.name}".`,
+            result: {
+              id: flatFieldMetadata.id,
+              name: flatFieldMetadata.name,
+              label: flatFieldMetadata.label,
+              type: flatFieldMetadata.type,
+              objectMetadataId: flatFieldMetadata.objectMetadataId,
+            },
           };
         },
       },
@@ -357,7 +366,7 @@ export class FieldMetadataToolsFactory {
           options?: unknown;
           settings?: unknown;
           isLabelSyncedWithName?: boolean;
-        }) => {
+        }): Promise<ToolOutput> => {
           const { id, icon, ...update } = parameters;
           const normalizedIcon = normalizeIconName(icon);
 
@@ -374,24 +383,32 @@ export class FieldMetadataToolsFactory {
             });
 
           return {
-            id: flatFieldMetadata.id,
-            name: flatFieldMetadata.name,
-            label: flatFieldMetadata.label,
-            type: flatFieldMetadata.type,
+            success: true,
+            message: `Updated the field "${flatFieldMetadata.name}".`,
+            result: {
+              id: flatFieldMetadata.id,
+              name: flatFieldMetadata.name,
+              label: flatFieldMetadata.label,
+              type: flatFieldMetadata.type,
+            },
           };
         },
       },
       delete_field_metadata: {
         description: 'Delete a field by ID.',
         inputSchema: DeleteFieldMetadataInputSchema,
-        execute: async (parameters: { id: string }) => {
+        execute: async (parameters: { id: string }): Promise<ToolOutput> => {
           const flatFieldMetadata =
             await this.fieldMetadataService.deleteOneField({
               deleteOneFieldInput: { id: parameters.id },
               workspaceId,
             });
 
-          return { id: flatFieldMetadata.id, success: true };
+          return {
+            success: true,
+            message: `Deleted the field "${flatFieldMetadata.name}".`,
+            result: { id: flatFieldMetadata.id, deleted: true },
+          };
         },
       },
       create_many_field_metadata: {
@@ -415,7 +432,7 @@ export class FieldMetadataToolsFactory {
             isRemoteCreation?: boolean;
             relationCreationPayload?: unknown;
           }>;
-        }) => {
+        }): Promise<ToolOutput> => {
           await this.fieldMetadataService.createManyFields({
             createFieldInputs: parameters.fields.map(
               ({ icon, relationCreationPayload, ...createFieldInput }) => ({
@@ -433,7 +450,10 @@ export class FieldMetadataToolsFactory {
             workspaceId,
           });
 
-          return true;
+          return {
+            success: true,
+            message: `Created ${parameters.fields.length} field(s).`,
+          };
         },
       },
       update_many_field_metadata: {
@@ -455,7 +475,7 @@ export class FieldMetadataToolsFactory {
             settings?: unknown;
             isLabelSyncedWithName?: boolean;
           }>;
-        }) => {
+        }): Promise<ToolOutput> => {
           await Promise.all(
             parameters.fields.map(async ({ id, icon, ...update }) => {
               const normalizedIcon = normalizeIconName(icon);
@@ -475,7 +495,10 @@ export class FieldMetadataToolsFactory {
             }),
           );
 
-          return true;
+          return {
+            success: true,
+            message: `Updated ${parameters.fields.length} field(s).`,
+          };
         },
       },
       create_many_relation_fields: {
@@ -493,7 +516,7 @@ export class FieldMetadataToolsFactory {
             targetFieldLabel: string;
             targetFieldIcon: string;
           }>;
-        }) => {
+        }): Promise<ToolOutput> => {
           await this.fieldMetadataService.createManyFields({
             createFieldInputs: parameters.relations.map((relation) => ({
               objectMetadataId: relation.objectMetadataId,
@@ -518,7 +541,10 @@ export class FieldMetadataToolsFactory {
             workspaceId,
           });
 
-          return true;
+          return {
+            success: true,
+            message: `Created ${parameters.relations.length} relation field(s).`,
+          };
         },
       },
     };
