@@ -429,6 +429,15 @@ export const BackDuringPendingSelection: Story = {
     const selectedChat = canvas.getByRole('button', {
       name: 'Recent company research',
     });
+    await waitFor(() =>
+      expect(findChats).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filter: expect.objectContaining({
+            and: expect.arrayContaining([{ id: { eq: FIRST_THREAD_ID } }]),
+          }),
+        }),
+      ),
+    );
     const numberOfRequestsBeforeRepeatedSelection = findChats.mock.calls.length;
 
     await expect(selectedChat).toHaveAttribute('aria-disabled', 'true');
