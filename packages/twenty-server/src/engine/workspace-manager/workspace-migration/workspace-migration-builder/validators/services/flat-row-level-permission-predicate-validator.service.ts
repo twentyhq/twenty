@@ -30,7 +30,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { validateRoleIsEditable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util';
+import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateValidatorService {
@@ -167,7 +167,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...validateRoleIsEditable({ flatRole: role, buildOptions }),
+        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
       );
     }
 
@@ -383,7 +383,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       });
     } else {
       validationResult.errors.push(
-        ...validateRoleIsEditable({ flatRole: role, buildOptions }),
+        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
       );
     }
 
