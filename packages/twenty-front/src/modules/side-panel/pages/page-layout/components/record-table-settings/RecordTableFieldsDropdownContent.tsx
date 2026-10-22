@@ -1,10 +1,11 @@
+import { RECORD_TABLE_FIELDS_DROPDOWN_PAGE } from '@/side-panel/pages/page-layout/components/record-table-settings/constants/RecordTableFieldsDropdownPage';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldsComponentInstanceContext } from '@/object-record/record-field/states/context/RecordFieldsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { RecordTableFieldsDropdownHiddenFieldsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableFieldsDropdownHiddenFieldsContent';
 import { RecordTableFieldsDropdownVisibleFieldsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableFieldsDropdownVisibleFieldsContent';
-import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type RecordTableFieldsDropdownContentProps = {
   viewId: string;
@@ -31,28 +32,28 @@ export const RecordTableFieldsDropdownContent = ({
     viewId,
   );
 
-  const [showHiddenFields, setShowHiddenFields] = useState(false);
-
   return (
     <RecordFieldsComponentInstanceContext.Provider
       value={{ instanceId: recordIndexId }}
     >
-      {showHiddenFields ? (
-        <RecordTableFieldsDropdownHiddenFieldsContent
-          objectMetadataId={objectMetadataId}
-          recordIndexId={recordIndexId}
-          onBack={() => setShowHiddenFields(false)}
-          onFieldUpdated={onFieldUpdated}
-          onFieldCreated={onFieldCreated}
-        />
-      ) : (
+      <Dropdown.Page id={RECORD_TABLE_FIELDS_DROPDOWN_PAGE.ROOT} type="panel">
         <RecordTableFieldsDropdownVisibleFieldsContent
           objectMetadataId={objectMetadataId}
           recordIndexId={recordIndexId}
-          onShowHiddenFields={() => setShowHiddenFields(true)}
           onFieldUpdated={onFieldUpdated}
         />
-      )}
+      </Dropdown.Page>
+      <Dropdown.Page
+        id={RECORD_TABLE_FIELDS_DROPDOWN_PAGE.HIDDEN_FIELDS}
+        type="panel"
+      >
+        <RecordTableFieldsDropdownHiddenFieldsContent
+          objectMetadataId={objectMetadataId}
+          recordIndexId={recordIndexId}
+          onFieldUpdated={onFieldUpdated}
+          onFieldCreated={onFieldCreated}
+        />
+      </Dropdown.Page>
     </RecordFieldsComponentInstanceContext.Provider>
   );
 };

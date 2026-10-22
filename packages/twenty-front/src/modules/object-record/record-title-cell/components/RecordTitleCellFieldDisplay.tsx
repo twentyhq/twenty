@@ -1,4 +1,5 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
@@ -14,7 +15,11 @@ export const RecordTitleCellFieldDisplay = ({
 }: {
   containerType: RecordTitleCellContainerType;
 }) => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, isForbidden } = useContext(FieldContext);
+
+  if (isForbidden) {
+    return <ForbiddenFieldDisplay />;
+  }
 
   if (
     !isFieldText(fieldDefinition) &&
