@@ -96,11 +96,8 @@ jobs:
       - name: Stage validation packages without publishing
         if: env.STAGE_ONLY == 'true'
         run: |
-          npm install --global npm@11.21.0
           for package in $PACKAGES; do
-            tarball="$RUNNER_TEMP/$package-$VERSION.tgz"
-            yarn workspace "$package" pack --out "$tarball"
-            npm stage publish "$tarball" --registry=https://registry.npmjs.org/ --access public --tag "$DIST_TAG" --provenance --ignore-scripts
+            yarn workspace "$package" npm publish --staged --provenance --tag "$DIST_TAG" --access public
             echo "Staged $package@$VERSION for OIDC validation only. Do not approve; reject after verification." >> "$GITHUB_STEP_SUMMARY"
           done
 
