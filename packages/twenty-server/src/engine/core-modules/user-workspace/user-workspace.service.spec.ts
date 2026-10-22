@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
@@ -38,13 +39,24 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
     connectedAccountMetadataService.findUsableByCaller.mockResolvedValue([
       {
         userWorkspaceId,
+        provider: ConnectedAccountProvider.GOOGLE,
+        connectionParameters: null,
         handle: 'Me@Example.com',
         handleAliases: ['sales@example.com'],
       },
       {
         userWorkspaceId: 'someone-else',
+        provider: ConnectedAccountProvider.GOOGLE,
         handle: 'shared@example.com',
         handleAliases: [],
+        connectionParameters: null,
+      },
+      {
+        userWorkspaceId: 'someone-else',
+        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+        handle: 'no-smtp@example.com',
+        handleAliases: [],
+        connectionParameters: null,
       },
     ]);
 
@@ -113,25 +125,40 @@ describe('UserWorkspaceService.updateDefaultFromHandle', () => {
     );
   });
 
-  it('rejects a handle that is not sendable by the caller', async () => {
-    const error = await service
-      .updateDefaultFromHandle({
-        userWorkspaceId,
-        workspaceId,
-        defaultFromHandle: 'shared@example.com',
-      })
-      .catch((caughtError: unknown) => caughtError);
+  it('accepts a sendable handle of a shared account', async () => {
+    await service.updateDefaultFromHandle({
+      userWorkspaceId,
+      workspaceId,
+      defaultFromHandle: 'shared@example.com',
+    });
 
-    expect(error).toBeInstanceOf(UserInputError);
-    expect((error as UserInputError).extensions.userFriendlyMessage).toEqual(
-      expect.objectContaining({
-        message: 'You cannot send from this address.',
-      }),
+    expect(userWorkspaceRepository.update).toHaveBeenCalledWith(
+      { id: userWorkspaceId, workspaceId },
+      { defaultFromHandle: 'shared@example.com' },
     );
-    expect(coreEntityCacheService.invalidate).not.toHaveBeenCalled();
-
-    expect(userWorkspaceRepository.update).not.toHaveBeenCalled();
   });
+
+  it.each(['unknown@example.com', 'no-smtp@example.com'])(
+    'rejects %s, which no usable account can send from',
+    async (defaultFromHandle) => {
+      const error = await service
+        .updateDefaultFromHandle({
+          userWorkspaceId,
+          workspaceId,
+          defaultFromHandle,
+        })
+        .catch((caughtError: unknown) => caughtError);
+
+      expect(error).toBeInstanceOf(UserInputError);
+      expect((error as UserInputError).extensions.userFriendlyMessage).toEqual(
+        expect.objectContaining({
+          message: 'You cannot send from this address.',
+        }),
+      );
+      expect(coreEntityCacheService.invalidate).not.toHaveBeenCalled();
+      expect(userWorkspaceRepository.update).not.toHaveBeenCalled();
+    },
+  );
 
   it('clears the handle when given null', async () => {
     await service.updateDefaultFromHandle({

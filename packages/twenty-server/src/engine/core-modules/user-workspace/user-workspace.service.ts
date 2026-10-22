@@ -4,9 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
+import { EmailOperation, FileFolder, OpenRecordIn } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
+  canConnectedAccountPerformEmailOperation,
   getSendableEmailHandles,
   isDefined,
 } from 'twenty-shared/utils';
@@ -102,16 +103,17 @@ export class UserWorkspaceService {
           workspaceId,
         });
 
-      // findUsableByCaller also returns accounts shared by others
-      const ownSendableHandles = connectedAccounts
-        .filter(
-          (connectedAccount) =>
-            connectedAccount.userWorkspaceId === userWorkspaceId,
+      const sendableHandles = connectedAccounts
+        .filter((connectedAccount) =>
+          canConnectedAccountPerformEmailOperation({
+            connectedAccount,
+            operation: EmailOperation.SEND,
+          }),
         )
         .flatMap(getSendableEmailHandles);
 
       storedHandle =
-        ownSendableHandles.find(
+        sendableHandles.find(
           (handle) => handle.toLowerCase() === defaultFromHandle.toLowerCase(),
         ) ?? null;
 
