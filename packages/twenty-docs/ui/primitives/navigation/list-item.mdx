@@ -39,15 +39,108 @@ ListItem
 └── endIcon
 ```
 
-| Slot                                  | Requirement                      | Purpose                                                                         |
-| ------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------- |
-| `children`                            | Required for a visible row label | Supplies the main text.                                                         |
-| `startIcon`, `endIcon`                | Optional                         | Add supporting icons at either end of the row content.                          |
-| `description`                         | Optional                         | Adds supporting text inline or at the end, according to `descriptionPlacement`. |
-| `actions`                             | Optional                         | Adds trailing content, such as a separately focusable action.                   |
-| `indicator`, `shortcut`, `hasSubmenu` | Optional                         | Configure built-in selection marks, shortcut hints, and the submenu indicator.  |
+| Slot                                  | Requirement                      | Purpose                                                                        |
+| ------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------ |
+| `children`                            | Required for a visible row label | Supplies the main text.                                                        |
+| `startIcon`, `endIcon`                | Optional                         | Add icons, avatars, metadata, or independent controls at either end.           |
+| `description`                         | Optional                         | Adds supporting content inline, below the label, or at the end.                |
+| `actions`                             | Optional                         | Adds trailing content, such as a separately focusable action.                  |
+| `indicator`, `shortcut`, `hasSubmenu` | Optional                         | Configure built-in selection marks, shortcut hints, and the submenu indicator. |
 
 The row supplies layout. `render` accepts an element or a callback that receives native props and visual state. Spread those props onto the actual root when using a callback. Native attributes, event handlers, `className`, `style`, and `ref` reach that root. For a row with independent action buttons, keep the row itself non-interactive so those buttons remain separate controls.
+
+## Multiline rows
+
+Set `descriptionPlacement="below"` to place supporting content beneath the label. The title keeps its existing truncation behavior, and supporting content wraps with the available width. The default `inline` placement and the `end` placement retain their existing appearance.
+
+<StoryEmbed
+  storyId="ui-navigation-listitem-multiline--display"
+  title="Multiline ListItem example"
+  height={150}
+/>
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PlanningRow = () => (
+  <ListItem
+    descriptionPlacement="below"
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    description="Review the proposed timeline and confirm the next steps with the team."
+    endIcon={
+      <Text render={<span />} size="sm" color="secondary">
+        09:48
+      </Text>
+    }
+  >
+    Quarterly planning
+  </ListItem>
+);
+```
+
+For shorter previews, pass a [Text](/ui/primitives/typography/text) component with `truncate` or `lineClamp` as `description`. Custom content controls its own layout and accessible labels.
+
+### Independent visual states
+
+All visual state belongs to the caller. `active` identifies the open or current row without selecting it. `selected` represents selection, and `focused` represents a keyboard navigation highlight without moving DOM focus. `active` applies the current-row background. Set `selectionAppearance="accent"` for an accent fill on selected rows, independently of description placement. The default appearance preserves the existing indicator-based selection styling. `focused` applies the shared highlighted background, including when an owner uses it for pointer highlighting. The focus-visible outline follows actual keyboard focus on the root or its controls.
+
+These props do not add accessible states. Supply `aria-current`, `aria-selected`, or a control's `checked` state on the appropriate semantic owner. Actual keyboard focus also retains the native focus-visible outline.
+
+### Independent controls
+
+Keep the default `div` root when a row contains a real checkbox or independent action buttons. Use `startIcon` for the checkbox and `actions` for buttons. The decorative `indicator` is unnecessary when a real checkbox already displays selection.
+
+```tsx
+import { useState } from 'react';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type SelectablePlanningRowProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const SelectablePlanningRow = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: SelectablePlanningRowProps) => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      active={active}
+      selected={selected}
+      selectionAppearance="accent"
+      disabled={disabled}
+      descriptionPlacement="below"
+      description="Review the proposed timeline and confirm the next steps with the team."
+      startIcon={
+        <Checkbox
+          aria-label="Select quarterly planning"
+          checked={selected}
+          onCheckedChange={setSelected}
+          disabled={disabled}
+        />
+      }
+      actions={
+        <Button variant="ghost" size="sm" onClick={onOpen} disabled={disabled}>
+          Open
+        </Button>
+      }
+    >
+      Quarterly planning
+    </ListItem>
+  );
+};
+```
+
+Selection and opening are separate interactions. The application owns event propagation and any row activation or keyboard policy. `ListItem.disabled` changes appearance only; pass `disabled` to each real control to prevent its activation.
+
+The existing action visibility behavior applies to multiline rows: `actionsVisibility="hover"` reveals actions on hover or focus within the row and keeps them visible on touch devices. Set it to `always` for persistent actions, including while a caller-owned popup is open. At row widths of 480px or less, multiline actions move to their own line and wrap as needed.
 
 ## Action row
 
@@ -196,7 +289,7 @@ export const ShowArchivedToggle = () => {
 };
 ```
 
-`selected`, `focused`, and `disabled` control row styling. They do not register actions, move DOM focus, add accessible roles or states, or suppress events. The `check` and `checkbox` indicators are decorative; use a real [Checkbox](/ui/primitives/input/checkbox) for a form control. Set `aria-pressed`, `aria-selected`, or other state semantics on the owner that needs them.
+`active`, `selected`, `focused`, and `disabled` independently control row styling. They do not register actions, move DOM focus, add accessible roles or states, or suppress events. The `check` and `checkbox` indicators are decorative; use a real [Checkbox](/ui/primitives/input/checkbox) for a form control. Set `aria-pressed`, `aria-selected`, or other state semantics on the owner that needs them.
 
 ## Picker rows
 
@@ -291,7 +384,7 @@ The checkbox indicator is not a form control and does not submit a value. Use [C
 
 ## Slots
 
-Use `startIcon` and `endIcon` for icons, `description` for supporting text, `actions` for trailing content, and `hasSubmenu` for a submenu indicator. `descriptionPlacement` accepts `inline` or `end`. `color="danger"` styles a destructive action. Avoid nesting interactive controls inside a row rendered as a button.
+Use `startIcon` and `endIcon` for icons or caller-owned content, `description` for supporting text, `actions` for trailing content, and `hasSubmenu` for a submenu indicator. `descriptionPlacement` accepts `inline`, `end`, or `below`. `color="danger"` styles a destructive action. Avoid nesting interactive controls inside a row rendered as a button.
 
 ```tsx
 import { Button } from 'twenty-ui/primitives/input';

@@ -5,12 +5,14 @@ import {
   MessageChannelVisibility,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { getEffectiveMessageChannelVisibility } from 'src/engine/core-modules/messaging/utils/get-effective-message-channel-visibility.util';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -19,7 +21,15 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+
+type TimelineMessageThread = Omit<
+  TimelineThreadDTO,
+  | 'firstParticipant'
+  | 'lastTwoParticipants'
+  | 'participantCount'
+  | 'read'
+  | 'visibility'
+>;
 
 @Injectable()
 export class TimelineMessagingService {
@@ -29,8 +39,6 @@ export class TimelineMessagingService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly fileUrlService: FileUrlService,
   ) {}
 
@@ -41,14 +49,7 @@ export class TimelineMessagingService {
     pageSize: number,
     targetFilter?: TargetFilter,
   ): Promise<{
-    messageThreads: Omit<
-      TimelineThreadDTO,
-      | 'firstParticipant'
-      | 'lastTwoParticipants'
-      | 'participantCount'
-      | 'read'
-      | 'visibility'
-    >[];
+    messageThreads: TimelineMessageThread[];
     totalNumberOfThreads: number;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
@@ -74,68 +75,237 @@ export class TimelineMessagingService {
         .offset(offset)
         .limit(pageSize);
 
-      const applyRecordFilter = (
-        queryBuilder: WorkspaceSelectQueryBuilder,
-      ): void => {
-        if (isDefined(targetFilter)) {
-          queryBuilder
-            .innerJoin(
-              'messageThread.messageThreadTargets',
-              'messageThreadTargets',
-            )
-            .where(
-              `messageThreadTargets.${targetFilter.fieldName} = :targetRecordId`,
-              { targetRecordId: targetFilter.recordId },
-            );
-
-          return;
-        }
-
-        queryBuilder
-          .innerJoin('messages.messageParticipants', 'messageParticipants')
-          .where('messageParticipants.personId IN(:...personIds)', {
-            personIds,
-          });
-      };
-
-      applyRecordFilter(totalQueryBuilder);
-      applyRecordFilter(threadIdsQueryBuilder);
+      this.applyRecordFilter(totalQueryBuilder, { targetFilter, personIds });
+      this.applyRecordFilter(threadIdsQueryBuilder, {
+        targetFilter,
+        personIds,
+      });
 
       const totalNumberOfThreads = await totalQueryBuilder.getCount();
-      const threadIdsQuery = await threadIdsQueryBuilder.getRawMany();
+      const threadIdsQuery = await threadIdsQueryBuilder.getRawMany<{
+        id: string;
+      }>();
 
       const messageThreadIds = threadIdsQuery.map((thread) => thread.id);
 
-      const messageThreads = await messageThreadRepository.find({
-        where: {
-          id: In(messageThreadIds),
-        },
-        order: {
-          messages: {
-            receivedAt: 'DESC',
-          },
-        },
-        relations: ['messages'],
-      });
-
       return {
-        messageThreads: messageThreads.map((messageThread) => {
-          const lastMessage = messageThread.messages[0];
-          const firstMessage =
-            messageThread.messages[messageThread.messages.length - 1];
-
-          return {
-            id: messageThread.id,
-            subject: firstMessage.subject ?? '',
-            lastMessageBody: lastMessage.text ?? '',
-            lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
-            numberOfMessagesInThread: messageThread.messages.length,
-            lastMessageIsDraft: lastMessage.isDraft ?? false,
-          };
-        }),
+        messageThreads: await this.findMessageThreadsByIds(messageThreadIds),
         totalNumberOfThreads,
       };
     }, authContext);
+  }
+
+  public async searchMessageThreads({
+    workspaceId,
+    searchInput,
+    messageChannelIds,
+    recordFilter,
+    excludedMessageThreadIds = [],
+  }: {
+    workspaceId: string;
+    searchInput: string;
+    messageChannelIds: string[];
+    recordFilter?: { targetFilter?: TargetFilter; personIds: string[] };
+    excludedMessageThreadIds?: string[];
+  }): Promise<TimelineMessageThread[]> {
+    const searchWords = searchInput
+      .trim()
+      .split(/\s+/)
+      .filter(isNonEmptyString);
+
+    if (searchWords.length === 0 || messageChannelIds.length === 0) {
+      return [];
+    }
+
+    if (
+      isDefined(recordFilter) &&
+      !isDefined(recordFilter.targetFilter) &&
+      recordFilter.personIds.length === 0
+    ) {
+      return [];
+    }
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageThreadRepository =
+        this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+          'messageThread',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const queryBuilder = messageThreadRepository
+        .createQueryBuilder('messageThread')
+        .select('messageThread.id', 'id')
+        .addSelect('MAX(messages.receivedAt)', 'max_received_at')
+        .innerJoin('messageThread.messages', 'messages')
+        .innerJoin(
+          'messages.messageChannelMessageAssociations',
+          'messageChannelMessageAssociations',
+        )
+        .where(
+          'messageChannelMessageAssociations.messageChannelId IN (:...messageChannelIds)',
+          { messageChannelIds },
+        );
+
+      searchWords.forEach((searchWord, index) => {
+        const parameterName = `searchWord${index}`;
+
+        queryBuilder.andWhere(`messages.subject ILIKE :${parameterName}`, {
+          [parameterName]: `%${escapeForIlike(searchWord)}%`,
+        });
+      });
+
+      if (isDefined(recordFilter)) {
+        this.applyRecordFilter(queryBuilder, recordFilter);
+      }
+
+      if (excludedMessageThreadIds.length > 0) {
+        queryBuilder.andWhere(
+          'messageThread.id NOT IN (:...excludedMessageThreadIds)',
+          { excludedMessageThreadIds },
+        );
+      }
+
+      const threadIdsQuery = await queryBuilder
+        .groupBy('messageThread.id')
+        .orderBy('max_received_at', 'DESC')
+        .limit(TIMELINE_THREADS_DEFAULT_PAGE_SIZE)
+        .getRawMany<{ id: string }>();
+
+      return this.findMessageThreadsByIds(
+        threadIdsQuery.map((thread) => thread.id),
+      );
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  public async getSearchableMessageChannelIds({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<{
+    ownedMessageChannelIds: string[];
+    subjectVisibleMessageChannelIds: string[];
+  }> {
+    const [ownedConnectedAccounts, messageChannels] = await Promise.all([
+      this.connectedAccountRepository.find({
+        where: { userWorkspaceId, workspaceId },
+        select: { id: true },
+      }),
+      this.messageChannelRepository.find({
+        where: { workspaceId },
+        select: { id: true, visibility: true, connectedAccountId: true },
+      }),
+    ]);
+
+    const ownedConnectedAccountIds = new Set(
+      ownedConnectedAccounts.map((connectedAccount) => connectedAccount.id),
+    );
+
+    const ownedMessageChannelIds: string[] = [];
+    const subjectVisibleMessageChannelIds: string[] = [];
+
+    for (const messageChannel of messageChannels) {
+      const isOwnedByCurrentUser = ownedConnectedAccountIds.has(
+        messageChannel.connectedAccountId,
+      );
+      const visibility = getEffectiveMessageChannelVisibility({
+        visibility: messageChannel.visibility,
+        isOwnedByCurrentUser,
+      });
+
+      if (isOwnedByCurrentUser) {
+        ownedMessageChannelIds.push(messageChannel.id);
+      }
+
+      if (
+        visibility === MessageChannelVisibility.SUBJECT ||
+        visibility === MessageChannelVisibility.SHARE_EVERYTHING
+      ) {
+        subjectVisibleMessageChannelIds.push(messageChannel.id);
+      }
+    }
+
+    return { ownedMessageChannelIds, subjectVisibleMessageChannelIds };
+  }
+
+  private applyRecordFilter(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+    {
+      targetFilter,
+      personIds,
+    }: { targetFilter?: TargetFilter; personIds: string[] },
+  ): void {
+    if (isDefined(targetFilter)) {
+      queryBuilder
+        .innerJoin('messageThread.messageThreadTargets', 'messageThreadTargets')
+        .andWhere(
+          `messageThreadTargets.${targetFilter.fieldName} = :targetRecordId`,
+          { targetRecordId: targetFilter.recordId },
+        );
+
+      return;
+    }
+
+    queryBuilder
+      .innerJoin('messages.messageParticipants', 'messageParticipants')
+      .andWhere('messageParticipants.personId IN (:...personIds)', {
+        personIds,
+      });
+  }
+
+  private async findMessageThreadsByIds(
+    messageThreadIds: string[],
+  ): Promise<TimelineMessageThread[]> {
+    if (messageThreadIds.length === 0) {
+      return [];
+    }
+
+    const messageThreadRepository =
+      this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+        'messageThread',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const messageThreads = await messageThreadRepository.find({
+      where: {
+        id: In(messageThreadIds),
+      },
+      order: {
+        messages: {
+          receivedAt: 'DESC',
+        },
+      },
+      relations: ['messages'],
+    });
+
+    const messageThreadPositionById = new Map(
+      messageThreadIds.map((messageThreadId, index) => [
+        messageThreadId,
+        index,
+      ]),
+    );
+
+    return messageThreads
+      .sort(
+        (a, b) =>
+          (messageThreadPositionById.get(a.id) ?? 0) -
+          (messageThreadPositionById.get(b.id) ?? 0),
+      )
+      .map((messageThread) => {
+        const lastMessage = messageThread.messages[0];
+        const firstMessage =
+          messageThread.messages[messageThread.messages.length - 1];
+
+        return {
+          id: messageThread.id,
+          subject: firstMessage.subject ?? '',
+          lastMessageBody: lastMessage.text ?? '',
+          lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
+          numberOfMessagesInThread: messageThread.messages.length,
+          lastMessageIsDraft: lastMessage.isDraft ?? false,
+        };
+      });
   }
 
   public async getThreadParticipantsByThreadId(
@@ -248,42 +418,18 @@ export class TimelineMessagingService {
     }, authContext);
   }
 
-  public async getThreadVisibilityByThreadId(
-    messageThreadIds: string[],
-    workspaceMemberId: string,
-    workspaceId: string,
-  ): Promise<{
+  public async getThreadVisibilityByThreadId({
+    messageThreadIds,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    messageThreadIds: string[];
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const currentMember = await workspaceMemberRepository.findOne({
-        where: { id: workspaceMemberId },
-        select: { userId: true },
-      });
-
-      if (!currentMember) {
-        return {};
-      }
-
-      const currentUserWorkspace = await this.userWorkspaceRepository.findOne({
-        where: { userId: currentMember.userId, workspaceId },
-        select: { id: true },
-      });
-
-      if (!currentUserWorkspace) {
-        return {};
-      }
-
-      const currentUserWorkspaceId = currentUserWorkspace.id;
-
       const messageThreadRepository =
         this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
           'messageThread',
@@ -335,7 +481,7 @@ export class TimelineMessagingService {
           await this.connectedAccountRepository.find({
             where: {
               id: In(allConnectedAccountIds),
-              userWorkspaceId: currentUserWorkspaceId,
+              userWorkspaceId,
             },
             select: { id: true },
           })
@@ -345,9 +491,12 @@ export class TimelineMessagingService {
       const channelVisibilityMap = new Map(
         messageChannels.map((channel) => [
           channel.id,
-          ownedAccountIds.has(channel.connectedAccountId)
-            ? MessageChannelVisibility.SHARE_EVERYTHING
-            : channel.visibility,
+          getEffectiveMessageChannelVisibility({
+            visibility: channel.visibility,
+            isOwnedByCurrentUser: ownedAccountIds.has(
+              channel.connectedAccountId,
+            ),
+          }),
         ]),
       );
 
@@ -377,6 +526,6 @@ export class TimelineMessagingService {
       }
 
       return threadVisibilityByThreadId;
-    }, authContext);
+    }, buildSystemAuthContext(workspaceId));
   }
 }
