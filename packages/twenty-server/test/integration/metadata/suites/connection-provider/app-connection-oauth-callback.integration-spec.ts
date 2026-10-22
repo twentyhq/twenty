@@ -1,7 +1,4 @@
 import { createHash } from 'crypto';
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
 
 import { http, HttpResponse } from 'msw';
 import request from 'supertest';
@@ -13,6 +10,10 @@ import { uploadApplicationFile } from 'test/integration/metadata/suites/applicat
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
+import {
+  type MarkerServer,
+  startMarkerServer,
+} from 'test/integration/utils/start-marker-server.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   type LogicFunctionManifest,
@@ -53,8 +54,8 @@ const IDENTIFY_ACCOUNT_SOURCE = `export const handler = ({ accessToken }) => {
 
 describe('app connection OAuth callback', () => {
   let provider: ConnectionProviderEntity;
-  let fixtureDirectory: string;
-  let onConnectExecutionsPath: string;
+  let markerServer: MarkerServer;
+  let onConnectExecutionsUrl: string;
   let tokenExchanges: string[];
 
   setupHttpMock(
@@ -74,8 +75,11 @@ describe('app connection OAuth callback', () => {
     }),
   );
 
-  const readExecutions = (path: string): string[] =>
-    existsSync(path) ? readFileSync(path, 'utf8').trim().split('\n') : [];
+  const readExecutions = (markerUrl: string): string[] => {
+    const executions = markerServer.readMarker(markerUrl).trim();
+
+    return executions === '' ? [] : executions.split('\n');
+  };
 
   const readAccounts = (): Promise<ConnectedAccountEntity[]> =>
     globalThis.testDataSource.query(
@@ -144,8 +148,8 @@ describe('app connection OAuth callback', () => {
   };
 
   beforeAll(async () => {
-    fixtureDirectory = mkdtempSync(join(tmpdir(), 'app-connection-callback-'));
-    onConnectExecutionsPath = join(fixtureDirectory, 'on-connect-executions');
+    markerServer = await startMarkerServer();
+    onConnectExecutionsUrl = markerServer.markerUrl('on-connect-executions');
 
     await setupApplicationForSync({
       applicationUniversalIdentifier: APPLICATION_IDENTIFIER,
@@ -164,9 +168,8 @@ describe('app connection OAuth callback', () => {
       {
         universalIdentifier: ON_CONNECT_IDENTIFIER,
         name: 'on-connect',
-        source: `import { appendFileSync } from 'node:fs';
-export const handler = ({ connectedAccountId }) => {
-  appendFileSync(${JSON.stringify(onConnectExecutionsPath)}, connectedAccountId + '\\n');
+        source: `export const handler = async ({ connectedAccountId }) => {
+  await fetch(${JSON.stringify(onConnectExecutionsUrl)}, { method: 'POST', body: connectedAccountId + '\\n' });
 };`,
       },
     ];
@@ -253,7 +256,7 @@ export const handler = ({ connectedAccountId }) => {
 
   beforeEach(() => {
     tokenExchanges = [];
-    rmSync(onConnectExecutionsPath, { force: true });
+    markerServer.clearMarker(onConnectExecutionsUrl);
   });
 
   afterEach(async () => {
@@ -267,7 +270,7 @@ export const handler = ({ connectedAccountId }) => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: APPLICATION_IDENTIFIER,
     });
-    rmSync(fixtureDirectory, { recursive: true, force: true });
+    await markerServer.close();
   });
 
   it('stores the identified account on first connect and runs onConnect for it', async () => {
@@ -279,7 +282,7 @@ export const handler = ({ connectedAccountId }) => {
       externalAccountId: 'team-a',
       handle: 'Handle team-a',
     });
-    expect(readExecutions(onConnectExecutionsPath)).toEqual([connection.id]);
+    expect(readExecutions(onConnectExecutionsUrl)).toEqual([connection.id]);
   });
 
   it('replaces credentials on the same connection when the reconnect resolves to the same account', async () => {
@@ -299,7 +302,7 @@ export const handler = ({ connectedAccountId }) => {
       externalAccountId: 'team-a',
     });
     expect(decryptAccessToken(connections[0])).toBe('team-a:second');
-    expect(readExecutions(onConnectExecutionsPath)).toEqual([
+    expect(readExecutions(onConnectExecutionsUrl)).toEqual([
       original.id,
       original.id,
     ]);
@@ -328,7 +331,7 @@ export const handler = ({ connectedAccountId }) => {
       handle: 'Handle team-a',
     });
     expect(decryptAccessToken(connections[0])).toBe('team-a:first');
-    expect(readExecutions(onConnectExecutionsPath)).toEqual([original.id]);
+    expect(readExecutions(onConnectExecutionsUrl)).toEqual([original.id]);
   });
 
   it('pins the identified account on a reconnect target that predates identification', async () => {
@@ -359,7 +362,7 @@ export const handler = ({ connectedAccountId }) => {
 
     expect(redirect.searchParams.has('errorMessage')).toBe(false);
     expect(connection.externalAccountId).toBeNull();
-    expect(readExecutions(onConnectExecutionsPath)).toEqual([connection.id]);
+    expect(readExecutions(onConnectExecutionsUrl)).toEqual([connection.id]);
   });
 
   it('clears the stored account when a reconnect opts out', async () => {
@@ -388,7 +391,7 @@ export const handler = ({ connectedAccountId }) => {
       'invalid result',
     );
     expect(await readAccounts()).toEqual([]);
-    expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
+    expect(readExecutions(onConnectExecutionsUrl)).toEqual([]);
   });
 
   it('saves nothing and skips onConnect when the identify function fails', async () => {
@@ -401,7 +404,7 @@ export const handler = ({ connectedAccountId }) => {
       'broken:first',
     );
     expect(await readAccounts()).toEqual([]);
-    expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
+    expect(readExecutions(onConnectExecutionsUrl)).toEqual([]);
   });
 
   it('completes the callback for a state signed before visibility was renamed to scope', async () => {
@@ -439,7 +442,7 @@ export const handler = ({ connectedAccountId }) => {
       'invalid or expired',
     );
     expect(tokenExchanges).toEqual([]);
-    expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
+    expect(readExecutions(onConnectExecutionsUrl)).toEqual([]);
     expect(await readAccounts()).toEqual([]);
   });
 
@@ -447,7 +450,7 @@ export const handler = ({ connectedAccountId }) => {
     const OTHER_APPLICATION_IDENTIFIER = v4();
     const OTHER_IDENTIFY_ACCOUNT_IDENTIFIER = v4();
     const OTHER_ROLE_IDENTIFIER = v4();
-    let otherIdentifyExecutionsPath: string;
+    let otherIdentifyExecutionsUrl: string;
     let otherLogicFunctionManifest: LogicFunctionManifest;
 
     const buildOtherApplicationManifest = (
@@ -469,14 +472,12 @@ export const handler = ({ connectedAccountId }) => {
       });
 
     beforeAll(async () => {
-      otherIdentifyExecutionsPath = join(
-        fixtureDirectory,
+      otherIdentifyExecutionsUrl = markerServer.markerUrl(
         'other-identify-executions',
       );
 
-      const source = `import { appendFileSync } from 'node:fs';
-export const handler = () => {
-  appendFileSync(${JSON.stringify(otherIdentifyExecutionsPath)}, 'executed\\n');
+      const source = `export const handler = async () => {
+  await fetch(${JSON.stringify(otherIdentifyExecutionsUrl)}, { method: 'POST', body: 'executed\\n' });
   return { externalAccountId: 'other-application' };
 };`;
 
@@ -518,7 +519,7 @@ export const handler = () => {
     }, 120000);
 
     beforeEach(() => {
-      rmSync(otherIdentifyExecutionsPath, { force: true });
+      markerServer.clearMarker(otherIdentifyExecutionsUrl);
     });
 
     afterAll(async () => {
@@ -582,8 +583,8 @@ export const handler = () => {
           'not found in its application',
         );
         expect(await readAccounts()).toEqual([]);
-        expect(readExecutions(otherIdentifyExecutionsPath)).toEqual([]);
-        expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
+        expect(readExecutions(otherIdentifyExecutionsUrl)).toEqual([]);
+        expect(readExecutions(onConnectExecutionsUrl)).toEqual([]);
       } finally {
         await globalThis.testDataSource.query(
           'UPDATE core."connectionProvider" SET "identifyAccountLogicFunctionUniversalIdentifier" = $1 WHERE id = $2',
