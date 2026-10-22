@@ -59,12 +59,17 @@ const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 const FILE = new File(['content'], 'report.pdf', { type: 'application/pdf' });
 
-const pasteFiles = (editor: Editor, files: File[]) => {
-  const pasteEvent = {
+const isClipboardEvent = (event: Event): event is ClipboardEvent =>
+  'clipboardData' in event;
+
+const pasteFiles = ({ editor, files }: { editor: Editor; files: File[] }) => {
+  const pasteEvent = Object.assign(new Event('paste', { cancelable: true }), {
     clipboardData: { files, getData: () => '' },
-    preventDefault: jest.fn(),
-    stopPropagation: jest.fn(),
-  } as unknown as ClipboardEvent;
+  });
+
+  if (!isClipboardEvent(pasteEvent)) {
+    throw new Error('Expected a paste event carrying clipboard data');
+  }
 
   editor.view.someProp('handlePaste', (handlePaste) =>
     handlePaste(editor.view, pasteEvent, Slice.empty),
@@ -143,10 +148,10 @@ describe('uploading into the editor', () => {
         url: 'https://files.twenty.com/report.pdf',
       }),
     });
-    pasteFiles(editor, [
-      new File(['image'], 'logo.png', { type: 'image/png' }),
-      FILE,
-    ]);
+    pasteFiles({
+      editor,
+      files: [new File(['image'], 'logo.png', { type: 'image/png' }), FILE],
+    });
     await flushPromises();
 
     expect(JSON.parse(savedDocuments.at(-1) ?? '{}').content).toEqual(
@@ -187,7 +192,7 @@ describe('uploading into the editor', () => {
     });
     editor.commands.setTextSelection(13);
 
-    pasteFiles(editor, [FILE]);
+    pasteFiles({ editor, files: [FILE] });
     await flushPromises();
 
     expect(editor.getJSON().content?.map(({ type }) => type)).toEqual([
@@ -210,10 +215,13 @@ describe('uploading into the editor', () => {
     });
     editor.commands.setTextSelection(6);
 
-    pasteFiles(editor, [
-      new File(['first'], 'first.pdf', { type: 'application/pdf' }),
-      new File(['second'], 'second.pdf', { type: 'application/pdf' }),
-    ]);
+    pasteFiles({
+      editor,
+      files: [
+        new File(['first'], 'first.pdf', { type: 'application/pdf' }),
+        new File(['second'], 'second.pdf', { type: 'application/pdf' }),
+      ],
+    });
     await flushPromises();
 
     expect(editor.getJSON().content).toEqual([

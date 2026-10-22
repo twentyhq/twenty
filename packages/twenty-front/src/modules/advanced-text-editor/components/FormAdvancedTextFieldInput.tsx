@@ -2,6 +2,7 @@ import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTe
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
 import { type UploadedFile } from '@/advanced-text-editor/types/UploadedFile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
@@ -101,9 +102,9 @@ type FormAdvancedTextFieldInputProps = {
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
-  onImageUploadError?: (error: Error, file: File) => void;
+  onImageUploadError?: UploadErrorHandler;
   onFileUpload?: (file: File) => Promise<UploadedFile>;
-  onFileUploadError?: (error: Error, file: File) => void;
+  onFileUploadError?: UploadErrorHandler;
   profile: AdvancedTextEditorProfile;
   EditorComponent?: ComponentType<AdvancedTextEditorComponentProps>;
   minHeight?: number;

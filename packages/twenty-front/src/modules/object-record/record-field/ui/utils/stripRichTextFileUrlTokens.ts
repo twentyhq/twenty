@@ -7,19 +7,15 @@ import {
 } from 'twenty-shared/utils';
 
 const stripUrlToken = (url: unknown): unknown => {
-  if (!isString(url)) {
+  if (!isString(url) || !URL.canParse(url)) {
     return url;
   }
 
-  try {
-    const parsedUrl = new URL(url);
+  const parsedUrl = new URL(url);
 
-    parsedUrl.searchParams.delete('token');
+  parsedUrl.searchParams.delete('token');
 
-    return parsedUrl.toString();
-  } catch {
-    return url;
-  }
+  return parsedUrl.toString();
 };
 
 const stripNodeFileUrlTokens = (node: TipTapNode): TipTapNode => {

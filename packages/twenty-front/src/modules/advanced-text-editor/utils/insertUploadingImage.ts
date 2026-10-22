@@ -1,6 +1,7 @@
 import { type Editor } from '@tiptap/core';
 import { TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
+import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { insertUploadingNode } from '@/advanced-text-editor/utils/insertUploadingNode';
 
@@ -9,7 +10,7 @@ type InsertUploadingImageArgs = {
   file: File;
   pos?: number;
   onImageUpload: (file: File) => Promise<UploadedImage>;
-  onImageUploadError?: (error: Error, file: File) => void;
+  onImageUploadError?: UploadErrorHandler;
 };
 
 export const insertUploadingImage = ({

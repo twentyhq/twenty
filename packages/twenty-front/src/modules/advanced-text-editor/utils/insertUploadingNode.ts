@@ -1,9 +1,13 @@
 import { type Editor } from '@tiptap/core';
 import { type Node } from '@tiptap/pm/model';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   getTipTapFileUrlAttributeName,
+  isDefined,
   type TIPTAP_NODE_TYPES,
 } from 'twenty-shared/utils';
+
+import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
 
 type InsertUploadingNodeArgs<TUploaded> = {
   editor: Editor;
@@ -13,7 +17,7 @@ type InsertUploadingNodeArgs<TUploaded> = {
   placeholderAttributes: Record<string, unknown>;
   upload: (file: File) => Promise<TUploaded>;
   getUploadedAttributes: (uploaded: TUploaded) => Record<string, unknown>;
-  onUploadError?: (error: Error, file: File) => void;
+  onUploadError?: UploadErrorHandler;
 };
 
 export const insertUploadingNode = <TUploaded>({
@@ -26,9 +30,16 @@ export const insertUploadingNode = <TUploaded>({
   getUploadedAttributes,
   onUploadError,
 }: InsertUploadingNodeArgs<TUploaded>) => {
+  const urlAttributeName = getTipTapFileUrlAttributeName(nodeType);
+
+  if (!isDefined(urlAttributeName)) {
+    throw new Error(
+      doNotTranslate(`No file URL attribute for node type ${nodeType}`),
+    );
+  }
+
   const { view } = editor;
   const placeholderUrl = URL.createObjectURL(file);
-  const urlAttributeName = getTipTapFileUrlAttributeName(nodeType) ?? 'url';
 
   const isPlaceholderNode = (node: Node) =>
     node.type.name === nodeType &&
@@ -74,7 +85,7 @@ export const insertUploadingNode = <TUploaded>({
 
       view.dispatch(removeTr.setMeta('addToHistory', false));
 
-      onUploadError?.(error, file);
+      onUploadError?.({ error, file });
     })
     .finally(() => {
       URL.revokeObjectURL(placeholderUrl);

@@ -1,7 +1,9 @@
+import { type JSONContent } from '@tiptap/core';
+
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
 
-const buildDocument = (content: unknown[]) =>
+const buildDocument = (content: JSONContent[]) =>
   JSON.stringify({ type: 'doc', attrs: { schemaVersion: 1 }, content });
 
 describe('getActivityAttachmentPathsToRestore', () => {

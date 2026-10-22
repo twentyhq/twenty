@@ -51,6 +51,7 @@ const StyledEditorContainer = styled.div<{
     font-weight: ${themeCssVariables.font.weight.regular};
     height: 100%;
     line-height: var(--editor-line-height);
+    overflow-wrap: anywhere;
     padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
     p.is-editor-empty:first-of-type:not([data-placeholder=''])::before {

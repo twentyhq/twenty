@@ -1,11 +1,13 @@
+import { type JSONContent } from '@tiptap/core';
+
 import { getActivityAttachmentPathsAndName } from '@/activities/utils/getActivityAttachmentPathsAndName';
 
-const buildDocument = (content: unknown[]) =>
+const buildDocument = (content: JSONContent[]) =>
   JSON.stringify({ type: 'doc', attrs: { schemaVersion: 1 }, content });
 
 describe('getActivityAttachmentPathsAndName', () => {
   it('should return the file paths and names from the activity document', () => {
-    const res = getActivityAttachmentPathsAndName(
+    const attachmentPathsAndNames = getActivityAttachmentPathsAndName(
       buildDocument([
         { type: 'paragraph', content: [{ type: 'text', text: 'test' }] },
         {
@@ -25,7 +27,7 @@ describe('getActivityAttachmentPathsAndName', () => {
       ]),
     );
 
-    expect(res).toEqual([
+    expect(attachmentPathsAndNames).toEqual([
       {
         path: 'https://example.com/files/image/image.jpg?queryParam=value',
         name: 'image',
@@ -38,7 +40,7 @@ describe('getActivityAttachmentPathsAndName', () => {
   });
 
   it('should find attachments nested in other nodes', () => {
-    const res = getActivityAttachmentPathsAndName(
+    const attachmentPathsAndNames = getActivityAttachmentPathsAndName(
       buildDocument([
         {
           type: 'bulletList',
@@ -57,18 +59,20 @@ describe('getActivityAttachmentPathsAndName', () => {
       ]),
     );
 
-    expect(res).toEqual([{ path: 'https://example.com/a.pdf', name: 'a' }]);
+    expect(attachmentPathsAndNames).toEqual([
+      { path: 'https://example.com/a.pdf', name: 'a' },
+    ]);
   });
 
   it('should ignore attachments without a url', () => {
-    const res = getActivityAttachmentPathsAndName(
+    const attachmentPathsAndNames = getActivityAttachmentPathsAndName(
       buildDocument([
         { type: 'image', attrs: { src: '', alt: 'empty' } },
         { type: 'file', attrs: { name: 'missing' } },
       ]),
     );
 
-    expect(res).toEqual([]);
+    expect(attachmentPathsAndNames).toEqual([]);
   });
 
   it('should return no attachments for a body that is not a TipTap document', () => {

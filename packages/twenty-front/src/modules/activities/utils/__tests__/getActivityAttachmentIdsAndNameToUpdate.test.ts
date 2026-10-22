@@ -1,7 +1,9 @@
+import { type JSONContent } from '@tiptap/core';
+
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { getActivityAttachmentIdsAndNameToUpdate } from '@/activities/utils/getActivityAttachmentIdsAndNameToUpdate';
 
-const buildDocument = (content: unknown[]) =>
+const buildDocument = (content: JSONContent[]) =>
   JSON.stringify({ type: 'doc', attrs: { schemaVersion: 1 }, content });
 
 describe('getActivityAttachmentIdsAndNameToUpdate', () => {

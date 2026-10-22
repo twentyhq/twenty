@@ -57,7 +57,7 @@ export const FileNodeView = ({
     }
 
     const uploadedFile = await onFileUpload(file).catch((error: Error) => {
-      onFileUploadError?.(error, file);
+      onFileUploadError?.({ error, file });
 
       return undefined;
     });

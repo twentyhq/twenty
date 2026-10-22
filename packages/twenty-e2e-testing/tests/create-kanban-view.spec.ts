@@ -59,8 +59,10 @@ test.describe.serial('Create Kanban View', () => {
     await page.getByText('Group', { exact: true }).click();
     await Promise.all([
       page.getByTestId('hide-group-').click(),
-      page.waitForRequest((req) => {
-        return req.url().includes('/metadata') && req.method() === 'POST';
+      page.waitForRequest((request) => {
+        return (
+          request.url().includes('/metadata') && request.method() === 'POST'
+        );
       }),
     ]);
     await expect(page.getByText('No Value')).not.toBeVisible();

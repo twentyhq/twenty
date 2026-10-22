@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAtom, useStore } from 'jotai';
 
 import { type Attachment } from '@/activities/files/types/Attachment';
@@ -8,7 +8,7 @@ import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivi
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { AdvancedTextEditorBlockHandle } from '@/advanced-text-editor/components/AdvancedTextEditorBlockHandle';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
-import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
+import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
 import { getStorableEditorDocument } from '@/advanced-text-editor/utils/getStorableEditorDocument';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
@@ -47,10 +47,6 @@ const StyledEditorContainer = styled.div`
   padding-left: ${themeCssVariables.spacing[8]};
   position: relative;
   width: 100%;
-
-  .tiptap {
-    overflow-wrap: anywhere;
-  }
 `;
 
 type RichTextFieldEditorProps = {
@@ -129,22 +125,14 @@ export const RichTextFieldEditor = ({
     return { url: attachmentAbsoluteURL };
   };
 
-  const handleUploadFileError = (_error: Error, file: File) => {
+  const handleUploadFileError: UploadErrorHandler = ({ file }) => {
     enqueueToast({
       status: 'error',
       children: t`Failed to upload "${file.name}"`,
     });
   };
 
-  const fieldValue = isDefined(recordInStore)
-    ? (recordInStore[fieldName] as FieldRichTextValue | undefined)
-    : undefined;
-
-  const initialDocument = useMemo(
-    () => getRichTextFieldSerializedContent(fieldValue),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [fieldName, recordId, isRecordFieldReadOnly],
-  );
+  const fieldValue: FieldRichTextValue | undefined = recordInStore?.[fieldName];
 
   const { updateDraft, markDirty, flush, draftResyncKey } =
     useRecordSeededDraft({
@@ -177,8 +165,16 @@ export const RichTextFieldEditor = ({
       },
     });
 
+  const initialDocument = useMemo(
+    () => getRichTextFieldSerializedContent(fieldValue),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [fieldName, recordId, isRecordFieldReadOnly, draftResyncKey],
+  );
+
   const handleBodyChange = async (newSerializedDocument: string) => {
     const oldRecord = store.get(recordStoreFamilyState.atomFamily(recordId));
+    const oldFieldValue: FieldRichTextValue | undefined =
+      oldRecord?.[fieldName];
     const newFieldValue: FieldRichTextValue = {
       blocknote: null,
       markdown: null,
@@ -209,9 +205,7 @@ export const RichTextFieldEditor = ({
 
     await syncAttachments(
       newSerializedDocument,
-      getRichTextFieldSerializedContent(
-        oldRecord?.[fieldName] as FieldRichTextValue | undefined,
-      ),
+      getRichTextFieldSerializedContent(oldFieldValue),
     );
   };
 
@@ -270,7 +264,7 @@ export const RichTextFieldEditor = ({
       onFileUpload: handleUploadFile,
       onFileUploadError: handleUploadFileError,
     },
-    [recordId, isRecordFieldReadOnly],
+    [recordId, isRecordFieldReadOnly, draftResyncKey],
   );
 
   if (isDefined(editorRef)) {
@@ -281,39 +275,6 @@ export const RichTextFieldEditor = ({
     editor.extensionStorage['mention-suggestion'].searchMentionRecords =
       searchMentionRecords;
   }
-
-  // Replace the uncontrolled editor's content in place instead of remounting it.
-  const [lastAppliedResyncKey, setLastAppliedResyncKey] =
-    useState(draftResyncKey);
-
-  useEffect(() => {
-    if (draftResyncKey === lastAppliedResyncKey || !isDefined(editor)) {
-      return;
-    }
-
-    setLastAppliedResyncKey(draftResyncKey);
-
-    const upstreamDocument = getRichTextFieldSerializedContent(
-      store.get(recordStoreFamilyState.atomFamily(recordId))?.[fieldName] as
-        | FieldRichTextValue
-        | undefined,
-    );
-
-    editor.commands.setContent(
-      deserializeAdvancedTextEditorDocument({
-        serializedDocument: upstreamDocument ?? '',
-        parseLegacyDocument: RICH_TEXT_FIELD_EDITOR_PROFILE.parseLegacyDocument,
-      }),
-      { emitUpdate: false },
-    );
-  }, [
-    draftResyncKey,
-    lastAppliedResyncKey,
-    editor,
-    store,
-    recordId,
-    fieldName,
-  ]);
 
   useHotkeysOnFocusedElement({
     keys: Key.Escape,
