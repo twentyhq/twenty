@@ -1,3 +1,5 @@
+import { type ApplicationLogSource } from 'twenty-shared/types';
+
 export type EventContextFields = {
   workspaceId?: string | null;
   userId?: string | null;
@@ -44,11 +46,16 @@ export type ApplicationLogRow = {
   timestamp: string;
   workspaceId: string;
   applicationId: string;
+  applicationRegistrationId: string;
+  applicationVersion: string;
+  source: ApplicationLogSource;
   logicFunctionId: string;
   logicFunctionName: string;
   executionId: string;
   level: string;
   message: string;
+  errorCode: string;
+  properties: Record<string, unknown>;
 };
 
 // The `table` literals must match the registry's clickHouseTable values (EVENT_LOG_TYPES).

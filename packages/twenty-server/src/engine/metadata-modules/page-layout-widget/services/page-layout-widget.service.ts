@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
@@ -109,7 +109,7 @@ export class PageLayoutWidgetService {
       return configuration;
     }
 
-    if (!isDefined(configuration.body)) {
+    if (!isPlainObject(configuration.body)) {
       return configuration;
     }
 
