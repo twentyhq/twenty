@@ -122,6 +122,7 @@ export class ApplicationRepeatedEventRecorderService
         entry.workspaceId,
         entry.applicationRegistrationId,
         entry.applicationId,
+        entry.logicFunctionId,
         entry.source,
         entry.errorCode ?? '',
       ].join(':'),
