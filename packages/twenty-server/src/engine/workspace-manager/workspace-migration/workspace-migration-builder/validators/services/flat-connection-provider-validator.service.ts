@@ -174,11 +174,16 @@ export class FlatConnectionProviderValidatorService {
       return validationResult;
     }
 
-    validationResult.errors.push(
-      ...validateConnectionProviderScope(
-        flatEntityUpdate.scope ?? fromFlatConnectionProvider.scope,
-      ),
-    );
+    if (
+      isDefined(flatEntityUpdate.scope) &&
+      flatEntityUpdate.scope !== fromFlatConnectionProvider.scope
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier`,
+        userFriendlyMessage: msg`Connection provider scope cannot be changed`,
+      });
+    }
 
     return validationResult;
   }

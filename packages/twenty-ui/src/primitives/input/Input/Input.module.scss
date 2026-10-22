@@ -28,6 +28,10 @@
     --tw-input-border-color: var(--t-color-blue);
   }
 
+  &[data-focus-ring='false'] {
+    --tw-input-border-color: var(--t-border-color-medium);
+  }
+
   &[aria-invalid='true'],
   &[data-invalid] {
     --tw-input-border-color: var(--t-border-color-danger);
@@ -47,7 +51,9 @@
     padding: 0;
 
     &:not([data-grouped]) {
-      @include focus-ring;
+      &:not([data-focus-ring='false'], [aria-invalid='true'], [data-invalid]) {
+        @include focus-ring;
+      }
 
       &[aria-invalid='true'],
       &[data-invalid] {
