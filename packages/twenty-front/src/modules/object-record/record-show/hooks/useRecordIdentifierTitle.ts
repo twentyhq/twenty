@@ -5,9 +5,11 @@ import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsR
 import { type GenericFieldContextType } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordImageIdentifierUpload } from '@/object-record/record-show/hooks/useRecordImageIdentifierUpload';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type UseRecordIdentifierTitleParams = {
@@ -51,6 +53,12 @@ export const useRecordIdentifierTitle = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
+  const restrictedFieldNames = useRecordRestrictedFieldNames(objectRecordId);
+
+  const isTitleRestricted =
+    isDefined(labelIdentifierFieldMetadataItem) &&
+    restrictedFieldNames.includes(labelIdentifierFieldMetadataItem.name);
+
   const titleFieldContextValue: GenericFieldContextType = {
     recordId: objectRecordId,
     isLabelIdentifier: false,
@@ -68,7 +76,8 @@ export const useRecordIdentifierTitle = ({
     useUpdateRecord: useUpdateOneObjectRecordMutation,
     isCentered: false,
     isDisplayModeFixHeight: true,
-    isRecordFieldReadOnly: isTitleReadOnly,
+    isRecordFieldReadOnly: isTitleReadOnly || isTitleRestricted,
+    isForbidden: isTitleRestricted,
   };
 
   return {
