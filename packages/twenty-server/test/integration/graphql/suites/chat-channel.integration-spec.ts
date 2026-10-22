@@ -582,11 +582,16 @@ describe('Chat channels through the authenticated API', () => {
       isChannelCacheStale = false;
     }
 
+    const hasRolesToReopen = roleIdsToReopenToAllChannels.size > 0;
+
     for (const roleId of roleIdsToReopenToAllChannels) {
       await setRoleAllChannelsAccess(roleId, true);
     }
     roleIdsToReopenToAllChannels.clear();
-    await waitForChannelGrantRewrites();
+
+    if (hasRolesToReopen) {
+      await waitForChannelGrantRewrites();
+    }
 
     for (const threadId of createdThreadIds.splice(0)) {
       await destroyAgentChatThread({ threadId });
@@ -993,7 +998,7 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(await readChannelGrantRoleIds(threadId)).toContain(memberRoleId);
 
-    jest
+    const rewriteAllChannelGrants = jest
       .spyOn(getChannelGrantService(), 'rewriteAllChannelGrants')
       .mockRejectedValueOnce(new Error('Grant rewrite failed'));
 
@@ -1001,6 +1006,7 @@ describe('Chat channels through the authenticated API', () => {
     await setRoleAllChannelsAccess(memberRoleId, false);
     await waitForChannelGrantRewrites();
 
+    expect(rewriteAllChannelGrants).toHaveBeenCalledTimes(2);
     expect(await readChannelGrantRoleIds(threadId)).not.toContain(memberRoleId);
   });
 

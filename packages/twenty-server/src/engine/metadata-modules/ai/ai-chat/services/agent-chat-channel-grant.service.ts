@@ -7,7 +7,7 @@ import { type EntityManager } from 'typeorm';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_RETRY_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-grants-rewrite-job-retry-options.constant';
+import { AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_OPTIONS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-grants-rewrite-job-options.constant';
 import { REWRITE_AGENT_CHAT_CHANNEL_GRANTS_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/rewrite-agent-chat-channel-grants-job-name.constant';
 import { type RewriteAgentChatChannelGrantsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/rewrite-agent-chat-channel-grants-job.types';
 import { acquireAgentChatChannelGrantLocksForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks-for-thread-write-or-throw.util';
@@ -39,7 +39,7 @@ export class AgentChatChannelGrantService {
     await this.workspaceQueueService.add<RewriteAgentChatChannelGrantsJobData>(
       REWRITE_AGENT_CHAT_CHANNEL_GRANTS_JOB_NAME,
       data,
-      AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_RETRY_OPTIONS,
+      AGENT_CHAT_CHANNEL_GRANTS_REWRITE_JOB_OPTIONS,
     );
   }
 
