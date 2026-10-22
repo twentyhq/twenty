@@ -31,8 +31,8 @@ import {
 } from './plan-table-types';
 import { resolveVisibleRows } from './plan-table-visible-rows';
 
-const CheckMark = INFORMATIVE_MARKS.check;
 const CrossMark = INFORMATIVE_MARKS.cross;
+const TickMark = INFORMATIVE_MARKS.tick;
 
 const TableScope = styled.div`
   align-items: center;
@@ -156,7 +156,7 @@ function CellValue({ cell }: { cell: PlanTableCellType }) {
   if (cell.kind === 'dash') {
     return (
       <CellMark aria-label={i18n._(msg`No`)} role="img">
-        <CrossMark color={semanticColor.inkSubtle} sizePx={16} />
+        <CrossMark color={semanticColor.inkSubtle} sizePx={18} />
       </CellMark>
     );
   }
@@ -167,7 +167,7 @@ function CellValue({ cell }: { cell: PlanTableCellType }) {
 
   return (
     <CellMark aria-label={i18n._(cell.label ?? msg`Yes`)} role="img">
-      <CheckMark color={color('blue')} sizePx={16} />
+      <TickMark color={color('blue')} sizePx={18} />
     </CellMark>
   );
 }
