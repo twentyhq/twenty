@@ -43,15 +43,6 @@ Missing evidence is not a pass, and security blockers cannot be waived.
   system capability, additional role, AI agent permission, and external OAuth
   scope with a feature. Remove unnecessary broad access and test both user and
   application execution identities. Follow [Roles & Permissions](/developers/extend/apps/config/roles).
-- [ ] **Declared data use and protected secrets.** Document destinations, data
-  sent, purpose, retention, and deletion. Use HTTPS and supported secret storage;
-  keep secrets out of source, frontend bundles, ordinary storage, and logs, and
-  avoid unnecessary personal data in logs. The [key-value store](/developers/extend/apps/logic/key-value-store)
-  stores plain JSON and must not hold secrets.
-- [ ] **Reviewed dependencies and remote behavior.** Scan direct, transitive,
-  bundled, and runtime dependencies; resolve them deterministically. Do not fetch
-  and execute unreviewed code. Material changes to hosted behavior or remote
-  instructions require re-review.
 - [ ] **Working advertised functionality.** A fresh workspace can install,
   configure, and complete the main user journey without developer intervention.
   Handle missing permissions, expired credentials, API failures, and retries.
@@ -83,12 +74,6 @@ Missing evidence is not a pass, and security blockers cannot be waived.
   contact, release notes, data consequences of uninstalling, and reproducible
   tests with safe setup instructions, alongside the inventories and evidence
   required above.
-- [ ] **Complete review evidence.** Supply the internal review results and
-  lifecycle, functionality, and applicable scaling test results. Record coverage,
-  the tested Twenty configuration, and changes since the previous vetted version.
-- [ ] **Recorded human approval.** Record dispositions for all findings,
-  remediation owners/dates where needed, and a named Twenty approver's decision
-  and date against the exact version, artifact hash, and checklist version.
 
 The following sections explain these criteria and the review process.
 
