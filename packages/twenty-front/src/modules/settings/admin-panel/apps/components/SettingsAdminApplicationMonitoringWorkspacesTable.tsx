@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -13,6 +14,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const WORKSPACES_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) 72px 72px 64px 88px 136px';
@@ -53,8 +55,15 @@ export const SettingsAdminApplicationMonitoringWorkspacesTable = ({
           >
             <TableCell
               color={themeCssVariables.font.color.primary}
+              gap={themeCssVariables.spacing[2]}
               overflow="hidden"
             >
+              <Avatar
+                src={getAbsoluteImageUrl(workspace.workspaceLogoUrl)}
+                name={getAdminApplicationMonitoringWorkspaceLabel(workspace)}
+                colorSeed={workspace.workspaceId}
+                size="md"
+              />
               <OverflowingTextWithTooltip
                 text={getAdminApplicationMonitoringWorkspaceLabel(workspace)}
               />
