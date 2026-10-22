@@ -11,6 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { RecordSharingInvitationAccessPicker } from '@/object-record/record-sharing/components/RecordSharingInvitationAccessPicker';
 import { RecordSharingInvitationRecipientPicker } from '@/object-record/record-sharing/components/RecordSharingInvitationRecipientPicker';
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
+import { isSameRecordSharingInvitationRecipient } from '@/object-record/record-sharing/utils/isSameRecordSharingInvitationRecipient';
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 const StyledHeader = styled.div`
@@ -84,8 +85,11 @@ export const RecordSharingInvitation = ({
   const removeRecipient = (recipient: RecordSharingInvitationRecipient) => {
     onRecipientsChange(
       selectedRecipients.filter(
-        (selected) =>
-          selected.kind !== recipient.kind || selected.id !== recipient.id,
+        (selectedRecipient) =>
+          !isSameRecordSharingInvitationRecipient({
+            recipient,
+            otherRecipient: selectedRecipient,
+          }),
       ),
     );
   };

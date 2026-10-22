@@ -6,6 +6,7 @@ import { Dropdown, ListItemButton } from 'twenty-ui/components/navigation';
 import { RecordSharingInvitationRecipientIcon } from '@/object-record/record-sharing/components/RecordSharingInvitationRecipientIcon';
 
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
+import { isSameRecordSharingInvitationRecipient } from '@/object-record/record-sharing/utils/isSameRecordSharingInvitationRecipient';
 
 type RecordSharingInvitationRecipientPickerProps = {
   recipients: RecordSharingInvitationRecipient[];
@@ -26,9 +27,11 @@ export const RecordSharingInvitationRecipientPicker = ({
     recipient.label.toLowerCase().includes(search.trim().toLowerCase()),
   );
   const isSelected = (recipient: RecordSharingInvitationRecipient) =>
-    selectedRecipients.some(
-      (selected) =>
-        selected.kind === recipient.kind && selected.id === recipient.id,
+    selectedRecipients.some((selectedRecipient) =>
+      isSameRecordSharingInvitationRecipient({
+        recipient,
+        otherRecipient: selectedRecipient,
+      }),
     );
 
   return (
@@ -61,9 +64,11 @@ export const RecordSharingInvitationRecipientPicker = ({
                 if (isSelected(recipient)) {
                   onRecipientsChange(
                     selectedRecipients.filter(
-                      (selected) =>
-                        selected.kind !== recipient.kind ||
-                        selected.id !== recipient.id,
+                      (selectedRecipient) =>
+                        !isSameRecordSharingInvitationRecipient({
+                          recipient,
+                          otherRecipient: selectedRecipient,
+                        }),
                     ),
                   );
                   return;
