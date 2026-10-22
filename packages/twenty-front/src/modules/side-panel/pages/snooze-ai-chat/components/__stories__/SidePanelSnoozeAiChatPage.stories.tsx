@@ -5,20 +5,24 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const PAGE_CONTEXT = { instanceId: 'snooze-ai-chat-story' };
+const CLICK_OUTSIDE_ID = 'snooze-ai-chat-story-click-outside';
 
 const meta = {
   title: 'Modules/SidePanel/SnoozeAiChat',
   component: SidePanelSnoozeAiChatPage,
   decorators: [
     (Story) => (
-      <SidePanelPageComponentInstanceContext.Provider value={PAGE_CONTEXT}>
-        <Story />
-      </SidePanelPageComponentInstanceContext.Provider>
+      <ParentClickOutsideIdContext.Provider value={CLICK_OUTSIDE_ID}>
+        <SidePanelPageComponentInstanceContext.Provider value={PAGE_CONTEXT}>
+          <Story />
+        </SidePanelPageComponentInstanceContext.Provider>
+      </ParentClickOutsideIdContext.Provider>
     ),
     MemoryRouterDecorator,
     ComponentDecorator,
@@ -43,6 +47,12 @@ export const DayAndTimePicker: Story = {
 
     await userEvent.click(trigger);
 
+    const popup = await body.findByRole('dialog', { name: 'Day & Time' });
+
+    await expect(popup).toHaveAttribute(
+      'data-click-outside-id',
+      CLICK_OUTSIDE_ID,
+    );
     await expect(
       await body.findByRole('button', { name: /^Snooze until/ }),
     ).toBeVisible();
@@ -55,7 +65,7 @@ export const DayAndTimePicker: Story = {
       expect(trigger).toHaveAttribute('aria-expanded', 'false'),
     );
 
-    trigger.focus();
+    await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.keyboard('{Enter}');
 
     await expect(

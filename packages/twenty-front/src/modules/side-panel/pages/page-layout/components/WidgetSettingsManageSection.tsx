@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
@@ -10,7 +10,9 @@ import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-lay
 import { useOpenReplaceWidgetPicker } from '@/side-panel/pages/page-layout/hooks/useOpenReplaceWidgetPicker';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -58,6 +60,7 @@ export const WidgetSettingsManageSection = ({
   const { openReplaceWidgetPicker } = useOpenReplaceWidgetPicker(pageLayoutId);
 
   const { openDialog } = useDialog();
+  const { openDropdown } = useOpenDropdown();
 
   const visibilityLabel = useTranslatedVisibilityLabel(
     widgetInEditMode?.conditionalAvailabilityExpression,
@@ -92,23 +95,34 @@ export const WidgetSettingsManageSection = ({
       <SidePanelGroup heading={t`Manage`}>
         <SelectableListItem
           itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+          onEnter={() =>
+            openDropdown({
+              dropdownComponentInstanceIdFromProps:
+                WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
+            })
+          }
         >
-          <CommandMenuItemDropdown
-            id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-            label={t`Visibility Restriction`}
-            Icon={IconEyeX}
+          <DropdownRoot
             dropdownId={
               WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
             }
-            dropdownComponents={
-              <LegacyDropdownContent>
-                <WidgetVisibilityDropdownContent />
-              </LegacyDropdownContent>
-            }
-            dropdownPlacement="bottom-end"
-            description={visibilityLabel}
-            contextualTextPosition="right"
-          />
+            type="picker"
+          >
+            <CommandMenuItemDropdownTrigger
+              id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+              label={t`Visibility Restriction`}
+              Icon={IconEyeX}
+              description={visibilityLabel}
+              contextualTextPosition="right"
+            />
+            <DropdownContent
+              side="bottom"
+              align="end"
+              collisionPadding={{ left: 0, right: 0 }}
+            >
+              <WidgetVisibilityDropdownContent />
+            </DropdownContent>
+          </DropdownRoot>
         </SelectableListItem>
         <Tooltip
           delay={TooltipDelay.mediumDelay}

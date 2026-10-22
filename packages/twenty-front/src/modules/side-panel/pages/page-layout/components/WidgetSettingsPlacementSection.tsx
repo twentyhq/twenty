@@ -1,5 +1,5 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { useMovePageLayoutWidget } from '@/page-layout/hooks/useMovePageLayoutWidget';
 import { widgetInsertionContextComponentState } from '@/page-layout/states/widgetInsertionContextComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -7,7 +7,9 @@ import { MoveToTabDropdownContent } from '@/side-panel/pages/page-layout/compone
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { type WidgetSettingsPlacement } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacement';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useLingui } from '@lingui/react/macro';
@@ -45,6 +47,7 @@ export const WidgetSettingsPlacementSection = ({
 
   const { movePageLayoutWidget } = useMovePageLayoutWidget(pageLayoutId);
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
+  const { openDropdown } = useOpenDropdown();
 
   if (!isPlacementSectionVisible || !isDefined(pageLayoutEditingWidgetId)) {
     return null;
@@ -110,19 +113,30 @@ export const WidgetSettingsPlacementSection = ({
       )}
       <SelectableListItem
         itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_TO_TAB}
+        onEnter={() =>
+          openDropdown({
+            dropdownComponentInstanceIdFromProps:
+              WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_TO_TAB,
+          })
+        }
       >
-        <CommandMenuItemDropdown
-          id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_TO_TAB}
-          label={t`Move to another tab`}
-          Icon={IconArrowsVertical}
+        <DropdownRoot
           dropdownId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_TO_TAB}
-          dropdownComponents={
-            <LegacyDropdownContent>
-              <MoveToTabDropdownContent />
-            </LegacyDropdownContent>
-          }
-          dropdownPlacement="bottom-end"
-        />
+          type="menu"
+        >
+          <CommandMenuItemDropdownTrigger
+            id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_TO_TAB}
+            label={t`Move to another tab`}
+            Icon={IconArrowsVertical}
+          />
+          <DropdownContent
+            side="bottom"
+            align="end"
+            collisionPadding={{ left: 0, right: 0 }}
+          >
+            <MoveToTabDropdownContent />
+          </DropdownContent>
+        </DropdownRoot>
       </SelectableListItem>
       <SelectableListItem
         itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.ADD_WIDGET_ABOVE}

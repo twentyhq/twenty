@@ -1,20 +1,13 @@
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import {
   IconCalendarEvent,
   IconCalendarMonth,
   IconCalendarWeek,
 } from 'twenty-ui/icon';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 type RecordTableCalendarLayoutDropdownContentProps = {
@@ -28,26 +21,10 @@ export const RecordTableCalendarLayoutDropdownContent = ({
   widgetId,
   currentCalendarLayout,
 }: RecordTableCalendarLayoutDropdownContentProps) => {
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const { closeDropdown } = useCloseDropdown();
-
   const { handleCalendarLayoutChange } = useRecordTableWidgetLayoutCallbacks({
     pageLayoutId,
     widgetId,
   });
-
-  const handleSelect = (calendarLayout: ViewCalendarLayout) => {
-    handleCalendarLayoutChange(calendarLayout);
-    closeDropdown();
-  };
 
   const calendarLayoutOptions = [
     { value: ViewCalendarLayout.DAY, label: t`Day`, Icon: IconCalendarEvent },
@@ -60,32 +37,22 @@ export const RecordTableCalendarLayoutDropdownContent = ({
   ];
 
   return (
-    <DropdownMenuItemsContainer>
-      <SelectableList
-        selectableListInstanceId={dropdownId}
-        selectableItemIdArray={calendarLayoutOptions.map(({ value }) => value)}
-        focusId={dropdownId}
+    <ChartSettingsDropdownSection>
+      <Dropdown.SelectionGroup
+        aria-label={t`Calendar view`}
+        value={currentCalendarLayout}
       >
         {calendarLayoutOptions.map(({ value, label, Icon }) => (
-          <SelectableListItem
+          <Dropdown.OptionItem
             key={value}
-            itemId={value}
-            onEnter={() => handleSelect(value)}
+            value={value}
+            onSelect={() => handleCalendarLayoutChange(value)}
+            startIcon={<SelectOptionIcon Icon={Icon} />}
           >
-            <ListItemButton
-              focused={selectedItemId === value}
-              onClick={() => handleSelect(value)}
-              role="option"
-              aria-selected={currentCalendarLayout === value}
-              selected={currentCalendarLayout === value}
-              indicator="check"
-              startIcon={<SelectOptionIcon Icon={Icon} />}
-            >
-              {label}
-            </ListItemButton>
-          </SelectableListItem>
+            {label}
+          </Dropdown.OptionItem>
         ))}
-      </SelectableList>
-    </DropdownMenuItemsContainer>
+      </Dropdown.SelectionGroup>
+    </ChartSettingsDropdownSection>
   );
 };
