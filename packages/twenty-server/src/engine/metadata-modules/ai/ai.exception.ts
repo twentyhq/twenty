@@ -18,6 +18,8 @@ export enum AiExceptionCode {
   INVALID_CHAT_MESSAGE_REACTION_EMOJI = 'INVALID_CHAT_MESSAGE_REACTION_EMOJI',
   CHAT_THREAD_ASSIGNEE_CANNOT_REPLY = 'CHAT_THREAD_ASSIGNEE_CANNOT_REPLY',
   CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE = 'CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE',
+  INVALID_CHAT_INBOX_TAB_ACTION = 'INVALID_CHAT_INBOX_TAB_ACTION',
+  CHAT_INBOX_TAB_ACTION_TOO_LARGE = 'CHAT_INBOX_TAB_ACTION_TOO_LARGE',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
   INVALID_TOOL_CALL_OUTPUT = 'INVALID_TOOL_CALL_OUTPUT',
   TOOL_CALL_NOT_FOUND = 'TOOL_CALL_NOT_FOUND',
@@ -65,6 +67,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This member can't reply in this chat, so it can't be assigned to them.`;
     case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
       return msg`Unassign yourself before unsubscribing from this chat.`;
+    case AiExceptionCode.INVALID_CHAT_INBOX_TAB_ACTION:
+      return msg`This action can't be applied to every chat in this list.`;
+    case AiExceptionCode.CHAT_INBOX_TAB_ACTION_TOO_LARGE:
+      return msg`Too many chats are selected. Select fewer and try again.`;
     case AiExceptionCode.MESSAGE_NOT_FOUND:
       return msg`Chat message not found.`;
     case AiExceptionCode.INVALID_TOOL_CALL_OUTPUT:

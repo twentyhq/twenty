@@ -3,10 +3,17 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
+import { agentChatInboxTabSelectionState } from '@/ai/states/agentChatInboxTabSelectionState';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { AgentChatInboxAction } from '~/generated-metadata/graphql';
+import {
+  AgentChatInboxAction,
+  AgentChatThreadFilterStatus,
+  UpdateAgentChatThreadInboxStateDocument,
+  UpdateAgentChatThreadInboxStateInFilterStatusDocument,
+} from '~/generated-metadata/graphql';
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const OTHER_THREAD_ID = '20202020-0000-4000-8000-0000000000bb';
@@ -247,5 +254,81 @@ describe('useUpdateAgentChatThreadInboxState', () => {
     });
 
     expect(store.get(agentChatThreadVisitState.atom)).toEqual(otherVisit);
+  });
+
+  describe('with every chat of a tab selected', () => {
+    const selectEveryChatOfTheTab = (
+      store: ReturnType<typeof renderUpdateInboxState>['store'],
+    ) => {
+      store.set(agentChatInboxTabSelectionState.atom, {
+        filterStatus: 'active',
+        selectedThreadIds: [THREAD_ID, OTHER_THREAD_ID],
+        excludedThreadIds: ['20202020-0000-4000-8000-0000000000cc'],
+      });
+      store.set(agentChatThreadListState.atom, {
+        threadIds: [THREAD_ID, OTHER_THREAD_ID],
+        hasNextPage: false,
+        endCursor: null,
+        filterStatusPages: {
+          active: { hasNextPage: true, endCursor: 'page-1', totalCount: 40 },
+        },
+      });
+    };
+
+    it('applies the action to the whole tab, then loads the tab again', async () => {
+      mutate.mockResolvedValue({});
+      const { result, store } = renderUpdateInboxState();
+      selectEveryChatOfTheTab(store);
+
+      await act(async () => {
+        await result.current.updateAgentChatThreadInboxState({
+          threadIds: [OTHER_THREAD_ID, THREAD_ID],
+          action: AgentChatInboxAction.ARCHIVE,
+        });
+      });
+
+      expect(mutate).toHaveBeenCalledWith({
+        mutation: UpdateAgentChatThreadInboxStateInFilterStatusDocument,
+        variables: {
+          filterStatus: AgentChatThreadFilterStatus.ACTIVE,
+          excludedThreadIds: ['20202020-0000-4000-8000-0000000000cc'],
+          action: AgentChatInboxAction.ARCHIVE,
+          snoozedUntil: undefined,
+        },
+      });
+      expect(
+        store.get(agentChatThreadListState.atom)?.filterStatusPages?.active,
+      ).toBeUndefined();
+    });
+
+    it.each([
+      ['a different selection', [THREAD_ID], AgentChatInboxAction.ARCHIVE],
+      [
+        'unsubscribing',
+        [THREAD_ID, OTHER_THREAD_ID],
+        AgentChatInboxAction.UNSUBSCRIBE,
+      ],
+    ])(
+      'keeps to the chats it is given for %s',
+      async (_, threadIds, action) => {
+        mutate.mockResolvedValue({});
+        const { result, store } = renderUpdateInboxState();
+        selectEveryChatOfTheTab(store);
+
+        await act(async () => {
+          await result.current.updateAgentChatThreadInboxState({
+            threadIds,
+            action,
+          });
+        });
+
+        expect(mutate).toHaveBeenCalledWith(
+          expect.objectContaining({
+            mutation: UpdateAgentChatThreadInboxStateDocument,
+            variables: expect.objectContaining({ threadIds }),
+          }),
+        );
+      },
+    );
   });
 });

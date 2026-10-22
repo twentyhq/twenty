@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { parse } from 'graphql';
 import {
   AGENT_CHAT_THREAD_FILTER_STATUS,
   type AgentChatThreadFilterStatus,
@@ -8,6 +9,7 @@ import {
 
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -136,6 +138,22 @@ const createThreadInState = async ({
   return threadId;
 };
 
+const UPDATE_INBOX_STATE_IN_FILTER_STATUS = parse(
+  `mutation UpdateInboxStateInFilterStatus($filterStatus: AgentChatThreadFilterStatus!, $excludedThreadIds: [UUID!]!, $action: AgentChatInboxAction!) {
+    updateAgentChatThreadInboxStateInFilterStatus(filterStatus: $filterStatus, excludedThreadIds: $excludedThreadIds, action: $action) { threadId archivedAt }
+  }`,
+);
+
+const readArchivedAt = async (threadId: string) => {
+  const [{ archivedAt }]: { archivedAt: Date | null }[] =
+    await global.testDataSource.query(
+      `SELECT "archivedAt" FROM ${SCHEMA}."agentChatThreadParticipant" WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+    );
+
+  return archivedAt;
+};
+
 describe('Agent chat thread filter status filter', () => {
   const threadIdByState = {} as Record<ThreadStateName, string>;
 
@@ -186,4 +204,78 @@ describe('Agent chat thread filter status filter', () => {
       );
     },
   );
+});
+
+describe('Inbox action on every chat of a tab', () => {
+  const createdThreadIds: string[] = [];
+
+  const createTestThread = async (state: ThreadState) => {
+    const threadId = await createThreadInState(state);
+
+    createdThreadIds.push(threadId);
+
+    return threadId;
+  };
+
+  const runInboxActionInFilterStatus = (variables: {
+    filterStatus: string;
+    excludedThreadIds: string[];
+    action: string;
+  }) =>
+    makeMetadataApiRequest(
+      { query: UPDATE_INBOX_STATE_IN_FILTER_STATUS, variables },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+  afterEach(async () => {
+    for (const threadId of createdThreadIds.splice(0)) {
+      await destroyAgentChatThread({ threadId });
+    }
+  });
+
+  it('marks every chat of the tab done but the ones left out', async () => {
+    const firstOpenThreadId = await createTestThread(THREAD_STATES.open);
+    const secondOpenThreadId = await createTestThread(
+      THREAD_STATES.doneThenNewActivity,
+    );
+    const excludedThreadId = await createTestThread(THREAD_STATES.open);
+    const snoozedThreadId = await createTestThread(THREAD_STATES.snoozed);
+    const snoozedArchivedAt = await readArchivedAt(snoozedThreadId);
+
+    const response = await runInboxActionInFilterStatus({
+      filterStatus: 'ACTIVE',
+      excludedThreadIds: [excludedThreadId],
+      action: 'ARCHIVE',
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.updateAgentChatThreadInboxStateInFilterStatus.map(
+        ({ threadId }: { threadId: string }) => threadId,
+      ),
+    ).toEqual(expect.arrayContaining([firstOpenThreadId, secondOpenThreadId]));
+    expect(await readArchivedAt(firstOpenThreadId)).not.toBeNull();
+    expect(
+      (await readArchivedAt(secondOpenThreadId))?.getTime(),
+    ).toBeGreaterThan(new Date(AFTER_FILED_AT).getTime());
+    expect(await readArchivedAt(excludedThreadId)).toBeNull();
+    expect(await readArchivedAt(snoozedThreadId)).toEqual(snoozedArchivedAt);
+  });
+
+  it.each([
+    [
+      'an action that can fail on chats the member has not loaded',
+      'ACTIVE',
+      'UNSUBSCRIBE',
+    ],
+    ['an unknown tab', 'EVERYTHING', 'ARCHIVE'],
+  ])('rejects %s', async (_, filterStatus, action) => {
+    const response = await runInboxActionInFilterStatus({
+      filterStatus,
+      excludedThreadIds: [],
+      action,
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+  });
 });

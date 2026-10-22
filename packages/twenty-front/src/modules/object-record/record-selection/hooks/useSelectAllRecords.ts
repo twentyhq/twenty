@@ -3,35 +3,43 @@ import { useCallback } from 'react';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
+import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { recordSelectionRangeComponentState } from '@/object-record/record-selection/states/recordSelectionRangeComponentState';
 import { allRecordsSelectedStatusComponentSelector } from '@/object-record/record-selection/states/selectors/allRecordsSelectedStatusComponentSelector';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
+// A list that is not a record index provides a selection instance but no view instance
 export const useSelectAllRecords = (recordIndexId?: string) => {
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordSelectionComponentInstanceContext,
+    recordIndexId,
+  );
+
   const allRecordsSelectedStatus = useAtomComponentSelectorCallbackState(
     allRecordsSelectedStatusComponentSelector,
-    recordIndexId,
+    instanceId,
   );
 
   const isRecordSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRecordSelectedComponentFamilyState,
-    recordIndexId,
+    instanceId,
   );
 
   const allRecordIds = useAtomComponentSelectorCallbackState(
     recordIndexAllRecordIdsComponentSelector,
-    recordIndexId,
+    instanceId,
   );
 
   const recordSelectionRange = useAtomComponentStateCallbackState(
     recordSelectionRangeComponentState,
-    recordIndexId,
+    instanceId,
   );
 
-  const { resetRecordSelection } = useResetRecordSelection(recordIndexId);
+  const { resetRecordSelection } = useResetRecordSelection(instanceId);
 
   const store = useStore();
 

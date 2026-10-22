@@ -8,6 +8,7 @@
  */
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
+export { AGENT_CHAT_INBOX_TAB_ACTIONS } from './constants/agent-chat-inbox-tab-actions.const';
 export type { AgentChatThreadFilterStatus } from './constants/agent-chat-thread-filter-status.const';
 export { AGENT_CHAT_THREAD_FILTER_STATUS } from './constants/agent-chat-thread-filter-status.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';

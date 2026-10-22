@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -28,7 +28,7 @@ export const AiChatPageThreadUrlSyncEffect = () => {
   const areAgentChatThreadsLoaded =
     useAtomStateValue(agentChatThreadListState) !== null;
   const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
-  const { loadAgentChatThread } = useRefreshAgentChatThreads();
+  const { loadAgentChatThread } = useLoadAgentChatThread();
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
