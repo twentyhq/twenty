@@ -81,12 +81,12 @@ export class LocalChildProcessRunnerService {
     dir,
     builtFileAbsPath,
     handlerName,
-    relayFetch,
+    shouldRelayFetch,
   }: {
     dir: string;
     builtFileAbsPath: string;
     handlerName: string;
-    relayFetch: boolean;
+    shouldRelayFetch: boolean;
   }) {
     if (!HANDLER_NAME_REGEX.test(handlerName)) {
       throw new Error(
@@ -100,7 +100,7 @@ export class LocalChildProcessRunnerService {
       // Auto-generated. Do not edit.
       const { pathToFileURL } = require('node:url');
 
-      ${relayFetch ? LOCAL_FETCH_RELAY_BOOTSTRAP_CODE : 'const settleRelayedFetch = () => {};'}
+      ${shouldRelayFetch ? LOCAL_FETCH_RELAY_BOOTSTRAP_CODE : 'const settleRelayedFetch = () => {};'}
 
       // A 'message' listener starts the IPC read, so the run message is kept until the handler loads.
       let resolveRunMessage;
@@ -110,8 +110,12 @@ export class LocalChildProcessRunnerService {
 
       if (process.send) {
         process.on('message', (message) => {
-          if (message?.type === 'run') resolveRunMessage(message);
-          if (message?.type === 'fetchResult') settleRelayedFetch(message);
+          if (message?.type === 'run') {
+            resolveRunMessage(message);
+          }
+          if (message?.type === 'fetchResult') {
+            settleRelayedFetch(message);
+          }
         });
       }
 
@@ -240,10 +244,13 @@ export class LocalChildProcessRunnerService {
       child.stdout?.on('data', (d) => (stdout += String(d)));
       child.stderr?.on('data', (d) => (stderr += String(d)));
 
-      const relayFetch = async (
-        { id, request }: LocalFetchRelayChildMessage,
-        handler: LocalFetchRelayHandler,
-      ) => {
+      const relayFetchRequest = async ({
+        message: { id, request },
+        handler,
+      }: {
+        message: LocalFetchRelayChildMessage;
+        handler: LocalFetchRelayHandler;
+      }) => {
         // The message comes from handler code, so a malformed request must not throw here.
         const result = await Promise.resolve()
           .then(() => handler(request))
@@ -255,23 +262,32 @@ export class LocalChildProcessRunnerService {
           );
 
         if (!settled && child.connected) {
-          // The callback receives send failures that would otherwise be emitted as 'error'.
-          child.send({ type: 'fetchResult', id, ...result }, () => {});
+          // Without its reply the handler would wait until the timeout.
+          child.send({ type: 'fetchResult', id, ...result }, (sendError) => {
+            if (isDefined(sendError)) {
+              child.kill('SIGKILL');
+            }
+          });
         }
       };
 
       child.on('message', (message: LocalChildProcessMessage) => {
-        if (!isDefined(message) || typeof message !== 'object') return;
+        if (!isDefined(message) || typeof message !== 'object') {
+          return;
+        }
 
         if ('type' in message) {
           if (message.type === 'fetch' && isDefined(fetchRelayHandler)) {
-            void relayFetch(message, fetchRelayHandler);
+            void relayFetchRequest({ message, handler: fetchRelayHandler });
           }
 
           return;
         }
 
-        if (typeof message.ok !== 'boolean' || settled) return;
+        if (typeof message.ok !== 'boolean' || settled) {
+          return;
+        }
+
         settled = true;
         resolve({ ...message, stdout, stderr });
       });

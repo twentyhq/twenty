@@ -216,7 +216,7 @@ export class LocalDriver implements LogicFunctionDriver {
           dir: sourceTemporaryDir,
           builtFileAbsPath: inMemoryBuiltHandlerPath,
           handlerName: flatLogicFunction.handlerName,
-          relayFetch: this.isNetworkRestricted,
+          shouldRelayFetch: this.isNetworkRestricted,
         });
 
         const { ok, result, errorType, error, stack, stdout, stderr } =
