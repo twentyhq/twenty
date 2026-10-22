@@ -1628,11 +1628,6 @@ msgstr "以紧凑列表浏览您的记录，现已向所有人开放。对记录
 msgid "Brunei 🇧🇳"
 msgstr "文莱 🇧🇳"
 
-#. js-lingui-id: 0Nu8Fw
-#: src/client-brief/client-brief-copy.ts
-msgid "Budget range"
-msgstr "预算范围"
-
 #. js-lingui-id: NcjNpp
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
 msgid "Build a CRM your competitors *can't buy.*"
@@ -4240,6 +4235,11 @@ msgstr "实施合作伙伴"
 #: src/sections/compare/compare-data.ts
 msgid "Implementation project (year one, typical)"
 msgstr "实施项目（第一年，典型情况）"
+
+#. js-lingui-id: WuWe27
+#: src/client-brief/client-brief-copy.ts
+msgid "Implementation/migration budget range"
+msgstr ""
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx

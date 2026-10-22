@@ -1628,11 +1628,6 @@ msgstr "Răsfoiește înregistrările într-o listă compactă, acum disponibil�
 msgid "Brunei 🇧🇳"
 msgstr "Brunei 🇧🇳"
 
-#. js-lingui-id: 0Nu8Fw
-#: src/client-brief/client-brief-copy.ts
-msgid "Budget range"
-msgstr "Interval bugetar"
-
 #. js-lingui-id: NcjNpp
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
 msgid "Build a CRM your competitors *can't buy.*"
@@ -4240,6 +4235,11 @@ msgstr "Parteneri de implementare"
 #: src/sections/compare/compare-data.ts
 msgid "Implementation project (year one, typical)"
 msgstr "Proiect de implementare (primul an, tipic)"
+
+#. js-lingui-id: WuWe27
+#: src/client-brief/client-brief-copy.ts
+msgid "Implementation/migration budget range"
+msgstr ""
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx

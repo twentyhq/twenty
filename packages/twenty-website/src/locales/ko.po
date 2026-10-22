@@ -1626,11 +1626,6 @@ msgstr "이제 모든 사용자가 사용할 수 있는 간결한 목록에서 �
 msgid "Brunei 🇧🇳"
 msgstr "Brunei 🇧🇳"
 
-#. js-lingui-id: 0Nu8Fw
-#: src/client-brief/client-brief-copy.ts
-msgid "Budget range"
-msgstr "예산 범위"
-
 #. js-lingui-id: NcjNpp
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
 msgid "Build a CRM your competitors *can't buy.*"
@@ -4238,6 +4233,11 @@ msgstr "구현 파트너"
 #: src/sections/compare/compare-data.ts
 msgid "Implementation project (year one, typical)"
 msgstr "구축 프로젝트(일반적인 첫해 기준)"
+
+#. js-lingui-id: WuWe27
+#: src/client-brief/client-brief-copy.ts
+msgid "Implementation/migration budget range"
+msgstr ""
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx

@@ -1623,11 +1623,6 @@ msgstr "Browse your records in a compact list, now available to everyone. Group 
 msgid "Brunei 🇧🇳"
 msgstr "Brunei 🇧🇳"
 
-#. js-lingui-id: 0Nu8Fw
-#: src/client-brief/client-brief-copy.ts
-msgid "Budget range"
-msgstr "Budget range"
-
 #. js-lingui-id: NcjNpp
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
 msgid "Build a CRM your competitors *can't buy.*"
@@ -4235,6 +4230,11 @@ msgstr "Implementation partners"
 #: src/sections/compare/compare-data.ts
 msgid "Implementation project (year one, typical)"
 msgstr "Implementation project (year one, typical)"
+
+#. js-lingui-id: WuWe27
+#: src/client-brief/client-brief-copy.ts
+msgid "Implementation/migration budget range"
+msgstr "Implementation/migration budget range"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx
