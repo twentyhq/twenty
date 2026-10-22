@@ -12,6 +12,7 @@ import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedSta
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 import { isAiChatPath } from '~/utils/isAiChatPath';
+import { logError } from '~/utils/logError';
 
 export const useOpenAiChatFromPicker = ({
   pendingOpenRequests,
@@ -70,7 +71,9 @@ export const useOpenAiChatFromPicker = ({
       if (isOnChatPage) {
         void closeSidePanelMenu();
       }
-    } catch {
+    } catch (error) {
+      logError(error);
+
       if (isPickerStillOpen()) {
         setHasOpenError(true);
       }
