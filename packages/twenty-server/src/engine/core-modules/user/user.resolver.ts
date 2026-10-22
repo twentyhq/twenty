@@ -34,6 +34,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { UpdateUserEmailInput } from 'src/engine/core-modules/user/dtos/update-user-email.input';
+import { UpdateMyDefaultFromHandleInput } from 'src/engine/core-modules/user/dtos/update-my-default-from-handle.input';
 import { UpdateWorkspaceMemberSettingsInput } from 'src/engine/core-modules/user/dtos/update-workspace-member-settings.input';
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -501,6 +502,36 @@ export class UserResolver {
       workspaceId: workspace.id,
       actingUserWorkspaceId: userWorkspaceId,
     });
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    CustomPermissionGuard,
+  )
+  @AllowSuspendedWorkspace()
+  async updateMyDefaultFromHandle(
+    @Args('input') input: UpdateMyDefaultFromHandleInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<boolean> {
+    await this.userWorkspaceService.updateDefaultFromHandle({
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      defaultFromHandle: input.defaultFromHandle ?? null,
+    });
+
+    return true;
   }
 
   @Mutation(() => Boolean)

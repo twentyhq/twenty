@@ -18,6 +18,7 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { RoleAssignmentValidationModule } from 'src/engine/metadata-modules/role-assignment-validation/role-assignment-validation.module';
+import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 
 @Module({
@@ -38,6 +39,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     OnboardingModule,
     CoreEntityCacheModule,
     WorkflowRunRecordShareModule,
+    ConnectedAccountMetadataModule,
   ],
   exports: [UserWorkspaceService, UserWorkspaceAuthContextService],
   providers: [

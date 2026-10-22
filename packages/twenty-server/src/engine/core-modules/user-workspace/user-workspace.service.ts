@@ -1,9 +1,15 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
+
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  getSendableEmailHandles,
+  isDefined,
+} from 'twenty-shared/utils';
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -25,6 +31,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
@@ -73,7 +80,54 @@ export class UserWorkspaceService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
+
+  async updateDefaultFromHandle({
+    userWorkspaceId,
+    workspaceId,
+    defaultFromHandle,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+    defaultFromHandle: string | null;
+  }): Promise<void> {
+    let storedHandle: string | null = null;
+
+    if (isDefined(defaultFromHandle)) {
+      const connectedAccounts =
+        await this.connectedAccountMetadataService.findUsableByCaller({
+          userWorkspaceId,
+          workspaceId,
+        });
+
+      // findUsableByCaller also returns accounts shared by others
+      const ownSendableHandles = connectedAccounts
+        .filter(
+          (connectedAccount) =>
+            connectedAccount.userWorkspaceId === userWorkspaceId,
+        )
+        .flatMap(getSendableEmailHandles);
+
+      storedHandle =
+        ownSendableHandles.find(
+          (handle) => handle.toLowerCase() === defaultFromHandle.toLowerCase(),
+        ) ?? null;
+
+      if (!isDefined(storedHandle)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+          { userFriendlyMessage: msg`You cannot send from this address.` },
+        );
+      }
+    }
+
+    await this.userWorkspaceRepository.update(
+      { id: userWorkspaceId, workspaceId },
+      { defaultFromHandle: storedHandle },
+    );
+  }
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
     return this.userWorkspaceRepository.findOne({ where: { id } });

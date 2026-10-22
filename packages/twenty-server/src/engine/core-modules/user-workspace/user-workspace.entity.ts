@@ -22,6 +22,7 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
@@ -68,6 +69,14 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @Field(() => String, { nullable: false })
   @Column({ nullable: false, default: SOURCE_LOCALE, type: 'varchar' })
   locale: keyof typeof APP_LOCALES;
+
+  @Field(() => String, { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.51.0_AddDefaultSenderSettingsFastInstanceCommand_1792675630235',
+  })
+  @Column({ type: 'varchar', nullable: true })
+  defaultFromHandle: string | null;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
