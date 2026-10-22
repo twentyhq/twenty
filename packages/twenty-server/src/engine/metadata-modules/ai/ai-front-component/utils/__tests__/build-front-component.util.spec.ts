@@ -1,3 +1,6 @@
+import { createHash } from 'crypto';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
 import { build, transform } from 'esbuild';
 import { PageLayoutType } from 'twenty-shared/types';
 
@@ -62,8 +65,8 @@ describe('buildFrontComponent', () => {
     },
   );
 
-  it('bundles real twenty-ui controls, icons and theme', async () => {
-    const { compiledSource } = await buildFrontComponent({
+  it('loads real twenty-ui controls, icons and theme from one pinned shared bundle', async () => {
+    const { compiledSource, sharedDependencies } = await buildFrontComponent({
       ...INPUT,
       source: `import { Button } from 'twenty-ui/primitives/input';
 import { SearchInput } from 'twenty-ui/components/input';
@@ -75,7 +78,59 @@ export function Component() {
     });
 
     expect(compiledSource).toContain('Filter companies');
-    expect(compiledSource).toContain('--t-font-color-primary:');
+    expect(compiledSource).toContain(
+      FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
+    );
+    expect(compiledSource).toMatch(
+      new RegExp(
+        '^// twenty-ai-shared-dependencies: ' +
+          sharedDependencies.checksum +
+          '\\n',
+      ),
+    );
+    expect(compiledSource).not.toContain('--t-font-color-primary:');
+    expect(sharedDependencies.source).toContain('--t-font-color-primary:');
+    expect(
+      sharedDependencies.exportNamesBySpecifier.get(
+        'twenty-ui/primitives/input',
+      )?.namedExports,
+    ).toContain('Button');
+    expect(
+      sharedDependencies.exportNamesBySpecifier.get('react')?.namedExports,
+    ).toContain('useState');
+    expect(Buffer.byteLength(compiledSource)).toBeLessThan(
+      Buffer.byteLength(sharedDependencies.source) / 5,
+    );
+    const next = await buildFrontComponent(INPUT);
+    expect(next.sharedDependencies).toBe(sharedDependencies);
+    const rebuilt = await buildFrontComponentSharedDependencies();
+    expect(rebuilt.checksum).toBe(sharedDependencies.checksum);
+    expect(
+      createHash('sha256').update(sharedDependencies.source).digest('hex'),
+    ).toBe(sharedDependencies.checksum);
+    await expect(
+      build({
+        stdin: { contents: compiledSource, loader: 'js' },
+        write: false,
+        bundle: true,
+        format: 'esm',
+        plugins: [
+          {
+            name: 'test-vendor',
+            setup(build) {
+              build.onResolve(
+                { filter: /^twenty:front-component-shared-dependencies$/ },
+                () => ({ path: 'vendor', namespace: 'vendor' }),
+              );
+              build.onLoad({ filter: /.*/, namespace: 'vendor' }, () => ({
+                contents: sharedDependencies.source,
+                loader: 'js',
+              }));
+            },
+          },
+        ],
+      }),
+    ).resolves.toHaveProperty('outputFiles');
     expect(compiledSource).not.toMatch(/from\s*['"]twenty-ui/);
   });
 

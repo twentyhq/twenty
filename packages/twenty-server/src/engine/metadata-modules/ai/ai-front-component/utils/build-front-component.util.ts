@@ -1,12 +1,16 @@
 import { createHash } from 'crypto';
 import { dirname, join } from 'path';
 import {
-  createJsxRuntimeRemoteWrapperPlugin,
-  cssInjectionPlugin,
+  createSharedDependenciesShimPlugin,
   getCommonFrontComponentBuildOptions,
   unwrapDefineFrontComponentToDirectExport,
 } from 'twenty-shared/front-component-build';
 
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+
+import { type FrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-shared-dependencies.type';
+import { FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-shared-dependencies-banner-prefix.constant';
+import { getFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-shared-dependencies.util';
 import { FRONT_COMPONENT_ALLOWED_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-allowed-imports.constant';
 import { FRONT_COMPONENT_WRAPPER_NAME } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-wrapper-name.constant';
 import { frontComponentQuerySchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-query.schema';
@@ -22,12 +26,14 @@ export const buildFrontComponent = async (
   componentName: string;
   compiledSource: string;
   checksum: string;
+  sharedDependencies: FrontComponentSharedDependencies;
 }> => {
   validateFrontComponentSource(input.source);
   const source = buildFrontComponentEntrySource({
     ...input,
     query: frontComponentQuerySchema.parse(input.query),
   });
+  const sharedDependencies = await getFrontComponentSharedDependencies();
   const sourceFile = join(__dirname, 'component.front-component.tsx');
   const result = await buildFrontComponentWithLimits({
     ...getCommonFrontComponentBuildOptions(),
@@ -39,6 +45,12 @@ export const buildFrontComponent = async (
     },
     write: false,
     platform: 'browser',
+    external: [FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER],
+    banner: {
+      js:
+        FRONT_COMPONENT_SHARED_DEPENDENCIES_BANNER_PREFIX +
+        sharedDependencies.checksum,
+    },
     plugins: [
       {
         name: 'front-component-imports',
@@ -65,14 +77,14 @@ export const buildFrontComponent = async (
           });
         },
       },
-      createJsxRuntimeRemoteWrapperPlugin(),
-      cssInjectionPlugin,
+      createSharedDependenciesShimPlugin(() => sharedDependencies),
     ],
   });
   const compiledSource = result.outputFiles[0].text;
 
   return {
     source,
+    sharedDependencies,
     componentName: FRONT_COMPONENT_WRAPPER_NAME,
     compiledSource,
     checksum: createHash('sha256').update(compiledSource).digest('hex'),
