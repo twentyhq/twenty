@@ -23,12 +23,20 @@
   Class merged onto the root div or composed element.
 </ParamField>
 
+<ParamField body="closeLabel" type="string" default="Close">
+  Accessible label for the close control. Defaults to Close; supply localized text when needed.
+</ParamField>
+
 <ParamField body="color" type="&quot;blue&quot; | &quot;gray&quot; | &quot;green&quot; | &quot;orange&quot; | &quot;red&quot;" default="status palette">
   Palette override: gray, blue, green, orange or red. When omitted, status selects the corresponding palette.
 </ParamField>
 
 <ParamField body="icon" type="ReactNode">
   Optional leading ReactNode. The caller supplies decorative or accessible icon semantics.
+</ParamField>
+
+<ParamField body="onDismiss" type="(() =&gt; void)">
+  Renders a 24px ghost close control and calls this callback when activated. The caller owns visibility.
 </ParamField>
 
 <ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">

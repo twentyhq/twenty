@@ -14,7 +14,6 @@ const StyledContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]} 0;
 
   svg {
-    flex-shrink: 0;
     margin-top: 1px;
   }
 `;

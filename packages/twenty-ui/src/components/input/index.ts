@@ -22,6 +22,8 @@ export type { CurrencyPickerProps } from './CurrencyPicker/types/CurrencyPickerP
 export type { CurrencyPickerRootProps } from './CurrencyPicker/types/CurrencyPickerRootProps';
 export type { CurrencyPickerState } from './CurrencyPicker/types/CurrencyPickerState';
 export type { CurrencyPickerTriggerProps } from './CurrencyPicker/types/CurrencyPickerTriggerProps';
+export { FormFieldRow } from './FormFieldRow/FormFieldRow';
+export type { FormFieldRowProps } from './FormFieldRow/types/FormFieldRowProps';
 export { IconButton } from './IconButton/IconButton';
 export type { IconButtonProps } from './IconButton/types/IconButtonProps';
 export type { IconButtonSize } from './IconButton/types/IconButtonSize';
@@ -40,9 +42,12 @@ export type { PhoneCountryPickerOptionsProps } from './PhoneCountryPicker/types/
 export type { PhoneCountryPickerProps } from './PhoneCountryPicker/types/PhoneCountryPickerProps';
 export type { PhoneCountryPickerRootProps } from './PhoneCountryPicker/types/PhoneCountryPickerRootProps';
 export type { PhoneCountryPickerTriggerProps } from './PhoneCountryPicker/types/PhoneCountryPickerTriggerProps';
+export { ReactionButton } from './ReactionButton/ReactionButton';
+export type { ReactionButtonProps } from './ReactionButton/types/ReactionButtonProps';
 export { SearchInput } from './SearchInput/SearchInput';
 export type { SearchInputProps } from './SearchInput/types/SearchInputProps';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
 export type { SegmentedControlOption } from './SegmentedControl/types/SegmentedControlOption';
 export type { SegmentedControlProps } from './SegmentedControl/types/SegmentedControlProps';
 export type { SegmentedControlSize } from './SegmentedControl/types/SegmentedControlSize';
+export type { SegmentedControlVariant } from './SegmentedControl/types/SegmentedControlVariant';

@@ -12,7 +12,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { RoleResolver } from 'src/engine/metadata-modules/role/role.resolver';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { WorkspaceFlatRoleMapCacheService } from 'src/engine/metadata-modules/role/services/workspace-flat-role-map-cache.service';
-import { RoleToolWorkspaceService } from 'src/engine/metadata-modules/role/tools/services/role-tool.workspace-service';
 import { WorkspaceRoleIdsWithAllRecordsAccessCacheService } from 'src/engine/metadata-modules/role/services/workspace-role-ids-with-all-records-access-cache.service';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
@@ -37,12 +36,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     RoleService,
     RoleResolver,
-    RoleToolWorkspaceService,
     WorkspaceFlatRoleMapCacheService,
     WorkspaceFlatRoleTargetMapCacheService,
     WorkspaceRolesPermissionsCacheService,
     WorkspaceRoleIdsWithAllRecordsAccessCacheService,
   ],
-  exports: [RoleService, RoleToolWorkspaceService],
+  exports: [RoleService],
 })
 export class RoleModule {}

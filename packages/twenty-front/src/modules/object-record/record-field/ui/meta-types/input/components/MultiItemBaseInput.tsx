@@ -7,46 +7,17 @@ import { Key } from 'ts-key-enum';
 import { isNonEmptyString } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
+import { Input } from 'twenty-ui/primitives/input';
 import { combineRefs } from '~/utils/combineRefs';
 
-const StyledInput = styled.input<{
-  withRightComponent?: boolean;
-  hasError?: boolean;
-  hasItem: boolean;
-}>`
-  background-color: ${({ hasItem }) =>
-    hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
-  background-color: transparent;
-  border: ${({ hasItem, hasError }) =>
-    hasItem
-      ? hasError
-        ? `1px solid ${themeCssVariables.border.color.danger}`
-        : `1px solid ${themeCssVariables.border.color.medium}`
-      : 'none'};
-  border: none;
-  border-radius: ${({ hasItem }) => (hasItem ? '4px' : '0')};
+const StyledInputContent = styled.div<{ hasRightComponent: boolean }>`
+  align-items: center;
   box-sizing: border-box;
-  color: ${themeCssVariables.font.color.primary};
-  font-family: ${themeCssVariables.font.family};
-
-  &::placeholder,
-  &::-webkit-input-placeholder {
-    color: ${themeCssVariables.font.color.light};
-    font-family: ${themeCssVariables.font.family};
-    font-weight: ${themeCssVariables.font.weight.medium};
-  }
-
-  font-size: inherit;
-  font-weight: ${themeCssVariables.font.weight.medium};
-  font-weight: inherit;
-  height: 32px;
-  outline: none;
-  padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[2]};
-  padding-right: ${({ withRightComponent }) =>
-    withRightComponent ? '32px' : '0'};
-  position: relative;
-
-  width: 100%;
+  display: flex;
+  min-height: ${themeCssVariables.spacing[8]};
+  padding-inline-end: ${({ hasRightComponent }) =>
+    hasRightComponent ? themeCssVariables.spacing[8] : '0'};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledInputContainer = styled.div`
@@ -90,7 +61,6 @@ export const MultiItemBaseInput = ({
   renderInput,
   error = '',
   hasError = false,
-  hasItem,
   instanceId,
   ref,
 }: MultiItemBaseInputProps & { ref?: Ref<HTMLInputElement> }) => {
@@ -158,19 +128,20 @@ export const MultiItemBaseInput = ({
             onBlur,
           })
         ) : (
-          <StyledInput
-            hasError={hasError}
-            autoFocus={autoFocus}
-            value={value}
-            placeholder={placeholder}
-            onChange={(event) => onChange(event.target.value)}
-            ref={combinedRef}
-            withRightComponent={isDefined(rightComponent)}
-            hasItem={hasItem}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            onKeyDown={handleKeyDown}
-          />
+          <StyledInputContent hasRightComponent={isDefined(rightComponent)}>
+            <Input
+              variant="plain"
+              aria-invalid={hasError || undefined}
+              autoFocus={autoFocus}
+              value={value}
+              placeholder={placeholder}
+              onChange={(event) => onChange(event.target.value)}
+              ref={combinedRef}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onKeyDown={handleKeyDown}
+            />
+          </StyledInputContent>
         )}
         {isDefined(rightComponent) && (
           <StyledRightContainer>{rightComponent}</StyledRightContainer>

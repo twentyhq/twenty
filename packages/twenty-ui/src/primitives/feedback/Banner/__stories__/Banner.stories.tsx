@@ -1,5 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { useState } from 'react';
+
+import { Button } from '@ui/primitives/input/Button/Button';
+import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 
 import { IconInfoCircle } from '@ui/icon';
 import { Banner } from '@ui/primitives/feedback/Banner/Banner';
@@ -157,5 +161,104 @@ export const IndependentAppearance: Story = {
     await expect(getComputedStyle(action).color).toBe(
       getComputedStyle(banner).color,
     );
+  },
+};
+
+export const Dismissible: Story = {
+  args: {
+    children: 'Contacts are syncing in the background.',
+    onDismiss: fn(),
+    role: 'status',
+    action: <Banner.Action>View progress</Banner.Action>,
+  },
+  parameters: { container: { width: 400 } },
+  decorators: [ComponentDecorator],
+};
+
+export const DismissalInteractions: Story = {
+  ...Dismissible,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const banner = canvas.getByRole('status');
+    const close = canvas.getByRole('button', { name: 'Close' });
+    const action = canvas.getByRole('button', { name: 'View progress' });
+
+    await expect(close).toHaveAttribute('type', 'button');
+    await expect(close.getBoundingClientRect().width).toBe(24);
+    await expect(close.getBoundingClientRect().height).toBe(24);
+    await expect(action.getBoundingClientRect().right).toBeLessThan(
+      close.getBoundingClientRect().left,
+    );
+    await expect(getComputedStyle(close).color).toBe(
+      getComputedStyle(banner).color,
+    );
+    close.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onDismiss).toHaveBeenCalledOnce();
+    await expect(banner).toBeVisible();
+  },
+};
+
+export const DismissibleRtl: Story = {
+  ...Dismissible,
+  args: {
+    ...Dismissible.args,
+    closeLabel: 'Dismiss sync message',
+    dir: 'rtl',
+    onDismiss: fn(),
+  },
+  decorators: [
+    ComponentDecorator,
+    (Story) => (
+      <DirectionProvider direction="rtl">
+        <Story />
+      </DirectionProvider>
+    ),
+  ],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const close = canvas.getByRole('button', { name: 'Dismiss sync message' });
+    const action = canvas.getByRole('button', { name: 'View progress' });
+
+    await expect(close.getBoundingClientRect().right).toBeLessThan(
+      action.getBoundingClientRect().left,
+    );
+    await userEvent.click(close);
+    await expect(args.onDismiss).toHaveBeenCalledOnce();
+  },
+};
+
+export const ControlledDismissal: Story = {
+  decorators: [ComponentDecorator],
+  render: function ControlledDismissalExample() {
+    const [isVisible, setIsVisible] = useState(true);
+
+    return (
+      <form onSubmit={(event) => event.preventDefault()}>
+        {isVisible ? (
+          <Banner
+            onDismiss={() => setIsVisible(false)}
+            closeLabel="Dismiss sync message"
+            role="status"
+          >
+            Contacts are syncing in the background.
+          </Banner>
+        ) : (
+          <Button onClick={() => setIsVisible(true)}>Show sync message</Button>
+        )}
+      </form>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Dismiss sync message' }),
+    );
+    await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Show sync message' }),
+    );
+    await expect(canvas.getByRole('status')).toBeVisible();
   },
 };

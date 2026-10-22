@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconChevronDown } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -18,18 +19,13 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledToggleButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
+const StyledChevron = styled.span`
   display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: 0;
-  width: fit-content;
+  transform: rotate(0deg);
+
+  [data-panel-open] & {
+    transform: rotate(180deg);
+  }
 `;
 
 export const SettingsAdminChatCollapsibleSection = ({
@@ -45,13 +41,11 @@ export const SettingsAdminChatCollapsibleSection = ({
       onOpenChange={setIsExpanded}
       render={<StyledContainer />}
     >
-      <Collapsible.Trigger render={<StyledToggleButton />}>
+      <Collapsible.Trigger render={<Button variant="link" />}>
         {label}
-        {isExpanded ? (
-          <IconChevronUp size={14} />
-        ) : (
+        <StyledChevron>
           <IconChevronDown size={14} />
-        )}
+        </StyledChevron>
       </Collapsible.Trigger>
       <Collapsible.Panel>{children}</Collapsible.Panel>
     </Collapsible.Root>

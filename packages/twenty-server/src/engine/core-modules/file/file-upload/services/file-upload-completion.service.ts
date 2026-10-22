@@ -126,18 +126,12 @@ export class FileUploadCompletionService {
       metadata,
     });
 
-    // The presigned PUT can still overwrite quarantine after the sniff, so only the inspected version is promoted.
-    await this.fileStorageService.move({
+    const { affected } = await this.fileStorageService.promotePendingFile({
+      workspaceId,
+      file,
       from: pendingLocation,
       to: storageLocation,
       ifMatchChecksum: checksum,
-    });
-
-    const { affected } = await this.fileStorageService.markFileUploaded({
-      workspaceId,
-      applicationId: file.applicationId,
-      fileId: file.id,
-      chargedSize: declaredSize,
       size,
       mimeType,
     });

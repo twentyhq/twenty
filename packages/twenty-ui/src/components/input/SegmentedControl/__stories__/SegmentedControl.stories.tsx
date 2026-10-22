@@ -101,6 +101,11 @@ export const Small: Story = {
   args: { size: 'sm' },
 };
 
+export const Rectangle: Story = {
+  args: { variant: 'rectangle', style: { width: 280 } },
+  play: Default.play,
+};
+
 export const ContentWidth: Story = {
   args: { itemWidth: 'content' },
   play: async ({ canvasElement }) => {

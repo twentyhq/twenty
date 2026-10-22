@@ -47,6 +47,23 @@ Compare small and medium inputs in their default, focused, invalid, and disabled
   height={380}
 />
 
+## Plain appearance
+
+Use `variant="plain"` inside an existing row or surface. It removes the fill, border, rounded corners and padding and uses natural height. The parent supplies spacing and row dimensions. Text, placeholder and disabled styling remain shared. The blue outline follows the browser's native `:focus-visible` behavior. For text controls this can include pointer focus and autofocus as well as keyboard focus. Invalid state uses a danger outline without changing layout.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const InlineSubject = () => (
+  <Field.Root>
+    <Field.Label>Subject</Field.Label>
+    <Input variant="plain" placeholder="Add a subject" />
+  </Field.Root>
+);
+```
+
+`InputGroup` automatically gives its input the plain appearance and keeps the group as the only focus and validation frame. Its `sm` and `md` heights remain 24px and 32px. Standalone plain inputs do not use the fixed height associated with `size`.
+
 ## Controlled state
 
 Pass `value` and update it with `onValueChange` to own the same email address in React state. The callback receives the next string value and event details.

@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/people-data-labs",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "People Data Labs enrichment app for Twenty",
   "license": "MIT",
   "engines": {
@@ -12,7 +12,7 @@
   "keywords": [
     "twenty-app"
   ],
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.1",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",

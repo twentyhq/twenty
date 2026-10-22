@@ -35,7 +35,9 @@ export type { AlertDialogTriggerState } from './AlertDialog/types/AlertDialogTri
 export type { AlertDialogViewportProps } from './AlertDialog/types/AlertDialogViewportProps';
 export type { AlertDialogViewportState } from './AlertDialog/types/AlertDialogViewportState';
 export { Card } from './Card/Card';
+export type { CardActionProps } from './Card/types/CardActionProps';
 export type { CardContentProps } from './Card/types/CardContentProps';
+export type { CardControlProps } from './Card/types/CardControlProps';
 export type { CardFooterProps } from './Card/types/CardFooterProps';
 export type { CardHeaderProps } from './Card/types/CardHeaderProps';
 export type { CardRootProps } from './Card/types/CardRootProps';

@@ -17,6 +17,9 @@ import styles from './OverflowingTextWithTooltip.module.scss';
 export const OverflowingTextWithTooltip = memo(
   function OverflowingTextWithTooltip({
     text,
+    size,
+    weight,
+    color,
     isTooltipMultiline,
     truncate,
     lineClamp,
@@ -97,6 +100,9 @@ export const OverflowingTextWithTooltip = memo(
           },
           props,
         )}
+        size={size}
+        weight={weight}
+        color={color}
       >
         {text}
       </Text>

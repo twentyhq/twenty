@@ -1,6 +1,5 @@
 import { i18n } from '@lingui/core';
 import { Banner } from 'twenty-ui/primitives/feedback';
-import { IconX } from 'twenty-ui/icon';
 import { isDefined } from 'twenty-ui/utilities';
 import { type ActionProps } from '../types/ActionProps';
 import { noticeMessage } from '../utils/noticeMessage';
@@ -33,19 +32,14 @@ export const Notice = ({ state, command }: ActionProps) => {
         >
           <Banner
             status={isDefined(state.error) ? 'error' : 'info'}
+            onDismiss={dismiss}
+            closeLabel={i18n._('Dismiss message')}
             action={
-              <div className="notice-actions">
-                {isDefined(recovery) && (
-                  <Banner.Action onClick={() => void command(recovery)}>
-                    {i18n._('Install Desktop Recorder')}
-                  </Banner.Action>
-                )}
-                <Banner.Action
-                  aria-label={i18n._('Dismiss message')}
-                  startIcon={<IconX />}
-                  onClick={dismiss}
-                />
-              </div>
+              isDefined(recovery) ? (
+                <Banner.Action onClick={() => void command(recovery)}>
+                  {i18n._('Install Desktop Recorder')}
+                </Banner.Action>
+              ) : undefined
             }
           >
             {state.error?.message ??
