@@ -88,11 +88,10 @@ const TierText = styled.span`
   color: ${semanticColor.ink};
 `;
 
-const YesRow = styled.div`
+const YesMark = styled.span`
   align-items: center;
-  column-gap: ${spacing(4)};
   display: flex;
-  width: 100%;
+  height: ${spacing(5.5)};
 `;
 
 const CategoryBand = styled.div`
@@ -162,10 +161,9 @@ function CellValue({ cell }: { cell: PlanTableCellType }) {
   }
 
   return (
-    <YesRow>
+    <YesMark aria-label={i18n._(cell.label ?? msg`Yes`)} role="img">
       <CheckMark color={color('blue')} sizePx={16} />
-      <TierText>{i18n._(cell.label ?? msg`Yes`)}</TierText>
-    </YesRow>
+    </YesMark>
   );
 }
 
