@@ -942,7 +942,6 @@ export const ArchivedAppOnlyAccountsShowDisconnected: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await canvas.findByText('left@linear.app', undefined, { timeout: 3000 });
-    // The Linear app row means the providers have loaded, so a missing Reconnect below is not a loading artifact
     await canvas.findByText('Linear', undefined, { timeout: 3000 });
 
     for (const handle of ['old@linear.app', 'left@linear.app']) {
