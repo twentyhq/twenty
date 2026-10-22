@@ -9,11 +9,15 @@ import { type InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { RESOLVER_TYPE_METADATA } from '@nestjs/graphql/dist/graphql.constants.js';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type PermissionFlagType } from 'twenty-shared/constants';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
 import { AUTH_PRINCIPAL_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/auth-principal-guard-config-key.constant';
+import { FEATURE_FLAG_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/feature-flag-guard-config-key.constant';
+import { SETTINGS_PERMISSION_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/settings-permission-guard-config-key.constant';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
@@ -37,6 +41,8 @@ type AcceptedAuthPrincipals = {
 
 type EndpointPermissionDeclarations = {
   authPrincipalGuards: AcceptedAuthPrincipals[];
+  requiredPermissionFlags: PermissionFlagType[];
+  requiredFeatureFlags: FeatureFlagKey[];
   applicationTarget: ApplicationTarget | null;
 };
 
@@ -88,17 +94,23 @@ const isEndpointHandler = (
   ) ||
     (isController && isDefined(reflector.get(PATH_METADATA, handler))));
 
-const readAuthPrincipalGuardConfigs = ({
+const readGuardConfigs = <TGuardConfig>({
   reflector,
-  guardsOwner,
+  guardsOwners,
+  guardConfigKey,
 }: {
   reflector: Reflector;
-  guardsOwner: EndpointClass | EndpointHandler;
-}): AuthPrincipalGuardConfig[] =>
-  (reflector.get<Guard[] | undefined>(GUARDS_METADATA, guardsOwner) ?? [])
+  guardsOwners: (EndpointClass | EndpointHandler)[];
+  guardConfigKey: string;
+}): TGuardConfig[] =>
+  guardsOwners
+    .flatMap(
+      (guardsOwner) =>
+        reflector.get<Guard[] | undefined>(GUARDS_METADATA, guardsOwner) ?? [],
+    )
     .map((guard) =>
-      reflector.get<AuthPrincipalGuardConfig | undefined>(
-        AUTH_PRINCIPAL_GUARD_CONFIG_KEY,
+      reflector.get<TGuardConfig | undefined>(
+        guardConfigKey,
         typeof guard === 'function' ? guard : guard.constructor,
       ),
     )
@@ -162,6 +174,10 @@ const toAcceptedAuthPrincipals = (
 const compareCodePoints = (left: string, right: string): number =>
   left < right ? -1 : left > right ? 1 : 0;
 
+const toSortedUniqueValues = <TValue extends string>(
+  values: TValue[],
+): TValue[] => [...new Set(values)].sort(compareCodePoints);
+
 const stringifyWithSortedKeys = (value: unknown): string =>
   JSON.stringify(value, (_key, nestedValue: unknown) =>
     isPlainObject(nestedValue)
@@ -205,14 +221,30 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
         );
       }
 
+      const guardsOwners = [endpointClass, handler];
+
+      // Every class and method guard must pass, so the union of their flags
+      // is what the endpoint requires
       declarationsByEndpoint.set(endpoint, {
-        authPrincipalGuards: [
-          ...readAuthPrincipalGuardConfigs({
+        authPrincipalGuards: readGuardConfigs<AuthPrincipalGuardConfig>({
+          reflector,
+          guardsOwners,
+          guardConfigKey: AUTH_PRINCIPAL_GUARD_CONFIG_KEY,
+        }).map(toAcceptedAuthPrincipals),
+        requiredPermissionFlags: toSortedUniqueValues(
+          readGuardConfigs<PermissionFlagType[]>({
             reflector,
-            guardsOwner: endpointClass,
+            guardsOwners,
+            guardConfigKey: SETTINGS_PERMISSION_GUARD_CONFIG_KEY,
+          }).flat(),
+        ),
+        requiredFeatureFlags: toSortedUniqueValues(
+          readGuardConfigs<FeatureFlagKey>({
+            reflector,
+            guardsOwners,
+            guardConfigKey: FEATURE_FLAG_GUARD_CONFIG_KEY,
           }),
-          ...readAuthPrincipalGuardConfigs({ reflector, guardsOwner: handler }),
-        ].map(toAcceptedAuthPrincipals),
+        ),
         applicationTarget:
           reflector.get<ApplicationTarget | undefined>(
             APPLICATION_TARGET_METADATA_KEY,
