@@ -1,14 +1,13 @@
-ARG TARGETARCH
-
 # ===========================================================================
 # Base image
 # ===========================================================================
 
-# Per-arch repos until the multi-arch node:24.22.1-alpine3.23 index is published
-FROM amd64/node:24.22.1-alpine3.23@sha256:fdff1a7a39ca25677049cea557922827b3668b2aa94d80e3fde0fb751a769998 AS node-base-amd64
-FROM arm64v8/node:24.22.1-alpine3.23@sha256:73d1822fb892643f4cbec60d7c7cc47775ecd5f128198302cd3f508f0878c4a9 AS node-base-arm64
-FROM s390x/node:24.22.1-alpine3.23@sha256:167260a1ace21f357590810d5d2e1fcacf446089ab88a3592b816705dd5387b0 AS node-base-s390x
-FROM node-base-${TARGETARCH} AS node-base
+FROM node:26.12.1-alpine3.23@sha256:bc2b334006f15c7167bbeb2f08f28c2df883f7594a0470e04454ebe7560cfe68 AS node-base
+
+# Node 26 images no longer bundle Yarn; run the release pinned in .yarnrc.yml.
+RUN printf '%s\n' '#!/bin/sh' 'exec node "/app/$(sed -n "s/^yarnPath: //p" /app/.yarnrc.yml)" "$@"' \
+      > /usr/local/bin/yarn && \
+    chmod +x /usr/local/bin/yarn
 
 # ===========================================================================
 # Dependency stages
@@ -149,7 +148,7 @@ LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 
 # Remove unused, unpatchable components the scanner flags (none are executed at
 # runtime, and none can be fixed by upgrading our deps or Node):
-#  - the bundled npm CLI: the app uses yarn via corepack and never invokes npm,
+#  - the bundled npm CLI: the app uses yarn (see node-base) and never invokes npm,
 #    and npm's bundled ip-address has no patched release;
 #  - example/ apps vendored inside dependencies, e.g. passport-microsoft's
 #    example/login ships a package-lock.json for an old Express demo
@@ -157,10 +156,10 @@ LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 #  - the Node dev headers: only node-gyp needs them and native addons are
 #    compiled in the build stages; their vendored openssl/opensslv.h is what
 #    scanners fingerprint whenever OpenSSL patches ahead of Node releases.
-# The pinned node:24.22.1-alpine base carries the October 2026 security fixes.
-# Do not pin below 24.18.0: 24.17.0's http.Agent keep-alive regression
-# (nodejs/node#64004) flooded prod with false "Premature close" fetch failures.
-# Keep the base current when Node ships 24.x security releases; the scanner
+# The pinned node:26.12.1-alpine base carries the October 2026 security fixes.
+# It also carries the http.Agent keep-alive fix (nodejs/node#64004) whose
+# absence in 24.17.0 flooded prod with false "Premature close" fetch failures.
+# Keep the base current when Node ships 26.x security releases; the scanner
 # flags the statically-linked node binary itself.
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
       /usr/local/include/node && \
