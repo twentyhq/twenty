@@ -47,12 +47,10 @@ describe('Lambda builder deployment', () => {
     jest
       .spyOn(service, 'ensureCommonLayerExists')
       .mockResolvedValue('existing-layer');
-    jest
-      .spyOn(TemporaryDirManager.prototype, 'init')
-      .mockResolvedValue({
-        sourceTemporaryDir: '/tmp/builder-test',
-        lambdaZipPath: '/tmp/builder-test.zip',
-      });
+    jest.spyOn(TemporaryDirManager.prototype, 'init').mockResolvedValue({
+      sourceTemporaryDir: '/tmp/builder-test',
+      lambdaZipPath: '/tmp/builder-test.zip',
+    });
     cleanup = jest
       .spyOn(TemporaryDirManager.prototype, 'clean')
       .mockResolvedValue();
