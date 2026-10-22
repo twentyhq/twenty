@@ -4,19 +4,21 @@ import { RECORD_TABLE_WIDGET_SETTINGS_STORY_DATA } from '@/side-panel/pages/page
 import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
+import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const StyledPanel = styled.div`
-  height: 500px;
+  align-self: stretch;
   margin-left: auto;
-  margin-top: 24px;
-  width: 320px;
+  margin-top: ${themeCssVariables.spacing[6]};
+  width: ${SIDE_PANEL_CONSTRAINTS.min}px;
 `;
 
 type RecordTableWidgetSettingsStoryProps = {

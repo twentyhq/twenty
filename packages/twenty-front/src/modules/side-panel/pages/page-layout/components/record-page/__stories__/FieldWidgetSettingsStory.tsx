@@ -1,4 +1,5 @@
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
+import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
 import { FIELD_WIDGET_SETTINGS_STORY_DATA } from '@/side-panel/pages/page-layout/components/record-page/__stories__/fieldWidgetSettingsStoryData';
 import { SidePanelRecordPageFieldSettings } from '@/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings';
 import { PageLayoutSidePanelTargetContext } from '@/side-panel/pages/page-layout/contexts/PageLayoutSidePanelTargetContext';
@@ -9,9 +10,9 @@ import { styled } from '@linaria/react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const StyledPanel = styled.div`
-  height: 600px;
+  align-self: stretch;
   margin-left: auto;
-  width: 320px;
+  width: ${SIDE_PANEL_CONSTRAINTS.min}px;
 `;
 
 export const FieldWidgetSettingsStory = () => {
