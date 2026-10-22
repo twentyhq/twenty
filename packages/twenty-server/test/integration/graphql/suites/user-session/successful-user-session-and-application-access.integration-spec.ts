@@ -20,6 +20,7 @@ import {
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { AUTH_PRINCIPAL_REFUSED_MESSAGE } from 'src/engine/guards/constants/auth-principal-refused-message.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -357,7 +358,10 @@ describe('User session operations and application access that must keep working'
     // stopped it, leaving checkoutSession on its permission path.
     it('should reach the checkout session permission path', async () => {
       const { errors } = await checkoutSession({
-        input: { recurringInterval: SubscriptionInterval.Month },
+        input: {
+          recurringInterval: SubscriptionInterval.Month,
+          plan: BillingPlanKey.PRO,
+        },
         token: workspaceMembersApplicationToken,
         expectToFail: null,
       });

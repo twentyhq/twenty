@@ -4,6 +4,11 @@
 
 ### Breaking changes
 
+`Text` and `OverflowingTextWithTooltip` now offer optional theme `size`, `weight` and `color` props. Omitted props preserve inherited typography. Native `color` strings must move to `style={{ color: customColor }}`; `color` accepts `primary`, `secondary`, `tertiary` and `light`.
+
+`OverflowingTextWithTooltip.size` now means font size (`xxs` through `xxl`). The previously removed `small`/`large` height options are not aliases; replace the old `large` 16px height with a native style when needed.
+
+
 Removed `MenuItem`, `MenuItemAvatar`, `MenuItemDraggable`, `MenuItemSuggestion` and `MenuPicker` from `twenty-ui/components/navigation` and the aggregate exports. Their props types and `MenuItemDraggableGripMode` are also removed. Applications must migrate these imports before upgrading.
 
 | Removed API                                        | Replacement                                                                                                                                                                                                                                |

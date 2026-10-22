@@ -10,7 +10,7 @@ import {
 } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconDeviceFloppy, IconSend, IconTrash } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button, Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
@@ -27,15 +27,8 @@ const EMAIL_TOOL_NAMES = {
   draft: 'draft_email',
 } as const;
 
-const StyledSubjectInput = styled.input`
-  background: transparent;
-  border: none;
+const StyledSubjectContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  color: ${themeCssVariables.font.color.primary};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  outline: none;
   padding: ${themeCssVariables.spacing[1]} 0;
 `;
 
@@ -208,13 +201,16 @@ export const AiChatToolCallApprovalEmailCard = ({
           onChange={setBcc}
         />
       )}
-      <StyledSubjectInput
-        aria-label={t`Subject`}
-        placeholder={t`Subject`}
-        value={subject}
-        disabled={isAnswering}
-        onChange={(event) => setSubject(event.target.value)}
-      />
+      <StyledSubjectContainer>
+        <Input
+          variant="plain"
+          aria-label={t`Subject`}
+          placeholder={t`Subject`}
+          value={subject}
+          disabled={isAnswering}
+          onChange={(event) => setSubject(event.target.value)}
+        />
+      </StyledSubjectContainer>
       <FormAdvancedTextFieldInput
         defaultValue={serializeEmailBody(proposal.arguments.body)}
         onChange={handleBodyChange}

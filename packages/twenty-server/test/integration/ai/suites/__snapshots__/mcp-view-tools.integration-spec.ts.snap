@@ -1,0 +1,1097 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MCP view tools (integration) should describe the view tools to the model 1`] = `
+[
+  {
+    "description": "List views in the workspace. Views define how records are displayed, filtered, and sorted.",
+    "inputSchema": {
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum views to return.",
+          "type": "integer",
+        },
+        "objectNameSingular": {
+          "description": "Filter views by object name (e.g., "task", "person", "company"). If omitted, returns all views.",
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "get_views",
+  },
+  {
+    "description": "Get filter and sort parameters from a view. Use these parameters with find_* tools to query records matching the view.",
+    "inputSchema": {
+      "properties": {
+        "viewId": {
+          "description": "ID of the view to get query parameters for.",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "viewId",
+      ],
+      "type": "object",
+    },
+    "name": "get_view_query_parameters",
+  },
+  {
+    "description": "List the columns (fields) displayed in a specific view. A view field controls which columns appear in a table or kanban view, their visibility, width, position, and aggregate operation. Use get_views first to find the view ID, then call this to inspect its column configuration.",
+    "inputSchema": {
+      "properties": {
+        "viewId": {
+          "description": "The ID of the view to list fields for. Obtain this from get_views.",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "viewId",
+      ],
+      "type": "object",
+    },
+    "name": "get_view_fields",
+  },
+  {
+    "description": "List all filters applied to a view. Each filter defines a condition that records must match to appear in the view.",
+    "inputSchema": {
+      "properties": {
+        "viewId": {
+          "description": "ID of the view to list filters for. Obtain this from get_views.",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "viewId",
+      ],
+      "type": "object",
+    },
+    "name": "get_view_filters",
+  },
+  {
+    "description": "List all sorts applied to a view. Each sort defines a field and direction that determines the order records appear in the view.",
+    "inputSchema": {
+      "properties": {
+        "viewId": {
+          "description": "ID of the view to list sorts for. Obtain this from get_views.",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "viewId",
+      ],
+      "type": "object",
+    },
+    "name": "get_view_sorts",
+  },
+  {
+    "description": "Create or update a complete view — the view plus its fields (columns), filters, and sorts — in a single call.
+
+IDENTITY: Omit "id" to CREATE a new view (requires objectNameSingular). Provide "id" to UPDATE an existing view.
+
+FIELD REFERENCES: In fields/filters/sorts you can reference a field by NAME (fieldName, e.g. "amount") or by UUID (fieldMetadataId). Names are resolved server-side, so you usually do NOT need get_field_metadata first. UUID wins when both are given.
+
+DECLARATIVE CHILDREN (replace semantics): fields, filters, and sorts each describe the FULL desired set.
+- A provided array REPLACES all existing entries of that kind (existing ones are deleted, the new ones created in order).
+- An empty array [] CLEARS all entries of that kind.
+- Omitting the key leaves existing entries untouched.
+This means you never need to fetch child ids to edit a view — just pass the desired end state. For surgical single-entry edits, the granular tools (create_view_filter, update_view_sort, etc.) remain available.
+
+VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires calendarFieldName + calendarLayout).",
+    "inputSchema": {
+      "$defs": {
+        "__schema0": {
+          "description": "Field name (e.g. "amount", "stage"). Resolved to a UUID server-side. Provide this or fieldMetadataId.",
+          "type": "string",
+        },
+        "__schema1": {
+          "description": "Field UUID. Alternative to fieldName; takes precedence when both are given.",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "properties": {
+        "calendarEndFieldName": {
+          "description": "Optional end date field name for the calendar. It must match the type of calendarFieldName.",
+          "type": "string",
+        },
+        "calendarFieldName": {
+          "description": "Date field name for the calendar (required for CALENDAR, must be DATE or DATE_TIME).",
+          "type": "string",
+        },
+        "calendarLayout": {
+          "description": "Calendar layout (required for CALENDAR).",
+          "enum": [
+            "DAY",
+            "WEEK",
+            "MONTH",
+          ],
+          "type": "string",
+        },
+        "fields": {
+          "description": "Declarative list of columns, in display order. Provided array REPLACES all existing fields; [] clears them; omit to leave untouched.",
+          "items": {
+            "properties": {
+              "fieldMetadataId": {
+                "$ref": "#/$defs/__schema1",
+              },
+              "fieldName": {
+                "$ref": "#/$defs/__schema0",
+              },
+              "isVisible": {
+                "default": true,
+                "description": "Whether the column is visible. Defaults to true.",
+                "type": "boolean",
+              },
+              "size": {
+                "default": 150,
+                "description": "Column width. Defaults to 150.",
+                "type": "integer",
+              },
+            },
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "filters": {
+          "description": "Declarative list of filters. Provided array REPLACES all existing filters; [] clears them; omit to leave untouched.",
+          "items": {
+            "properties": {
+              "fieldMetadataId": {
+                "$ref": "#/$defs/__schema1",
+              },
+              "fieldName": {
+                "$ref": "#/$defs/__schema0",
+              },
+              "operand": {
+                "description": "Filter operator. Must be valid for the field type (e.g. SELECT: IS, IS_NOT; CURRENCY: GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL; TEXT: CONTAINS).",
+                "enum": [
+                  "IS",
+                  "IS_NOT_NULL",
+                  "IS_NOT",
+                  "LESS_THAN_OR_EQUAL",
+                  "GREATER_THAN_OR_EQUAL",
+                  "IS_BEFORE",
+                  "IS_AFTER",
+                  "CONTAINS",
+                  "DOES_NOT_CONTAIN",
+                  "IS_EMPTY",
+                  "IS_NOT_EMPTY",
+                  "IS_RELATIVE",
+                  "IS_IN_PAST",
+                  "IS_IN_FUTURE",
+                  "IS_TODAY",
+                  "VECTOR_SEARCH",
+                ],
+                "type": "string",
+              },
+              "subFieldName": {
+                "description": "Required for composite fields (e.g. "amountMicros" for CURRENCY, "addressCity" for ADDRESS, "firstName" for FULL_NAME).",
+                "type": "string",
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                  },
+                  {
+                    "type": "number",
+                  },
+                  {
+                    "type": "boolean",
+                  },
+                  {
+                    "items": {
+                      "type": "string",
+                    },
+                    "type": "array",
+                  },
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                ],
+                "description": "Filter value. Array of option values for SELECT/MULTI_SELECT (e.g. ["WON"]), number for NUMBER/CURRENCY, "" for IS_EMPTY/IS_NOT_EMPTY.",
+              },
+            },
+            "required": [
+              "operand",
+              "value",
+            ],
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "icon": {
+          "description": "Icon identifier (e.g. "IconList")",
+          "type": "string",
+        },
+        "id": {
+          "description": "View ID to update. Omit to create a new view.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "kanbanAggregateOperation": {
+          "description": "Aggregate operation for kanban columns (e.g. "SUM", "COUNT").",
+          "enum": [
+            "MIN",
+            "MAX",
+            "AVG",
+            "SUM",
+            "COUNT",
+            "COUNT_UNIQUE_VALUES",
+            "COUNT_EMPTY",
+            "COUNT_NOT_EMPTY",
+            "COUNT_TRUE",
+            "COUNT_FALSE",
+            "PERCENTAGE_EMPTY",
+            "PERCENTAGE_NOT_EMPTY",
+          ],
+          "type": "string",
+        },
+        "kanbanAggregateOperationFieldName": {
+          "description": "Field name for the kanban aggregate operation (e.g. "amount").",
+          "type": "string",
+        },
+        "mainGroupByFieldName": {
+          "description": "Field name to group by (required for KANBAN, must be a SELECT field, e.g. "stage").",
+          "type": "string",
+        },
+        "name": {
+          "description": "View name",
+          "type": "string",
+        },
+        "objectNameSingular": {
+          "description": "Object name this view is for (e.g. "opportunity"). Required when creating (no id); ignored when id is given.",
+          "type": "string",
+        },
+        "sorts": {
+          "description": "Declarative list of sorts. Provided array REPLACES all existing sorts; [] clears them; omit to leave untouched.",
+          "items": {
+            "properties": {
+              "direction": {
+                "default": "ASC",
+                "description": "Sort direction: ASC or DESC. Defaults to ASC.",
+                "enum": [
+                  "ASC",
+                  "DESC",
+                ],
+                "type": "string",
+              },
+              "fieldMetadataId": {
+                "$ref": "#/$defs/__schema1",
+              },
+              "fieldName": {
+                "$ref": "#/$defs/__schema0",
+              },
+            },
+            "type": "object",
+          },
+          "type": "array",
+        },
+        "type": {
+          "description": "View type. Defaults to TABLE on create. Use the *_WIDGET variants for views backing a dashboard widget so they stay out of record index view pickers.",
+          "enum": [
+            "TABLE",
+            "LIST",
+            "KANBAN",
+            "CALENDAR",
+            "TABLE_WIDGET",
+            "KANBAN_WIDGET",
+            "LIST_WIDGET",
+            "CALENDAR_WIDGET",
+          ],
+          "type": "string",
+        },
+        "visibility": {
+          "description": "View visibility. Defaults to WORKSPACE on create, which is almost always the best fit — it makes the view visible to everyone and is REQUIRED for any view backing a dashboard widget. Only set UNLISTED for a private, personal view a specific user explicitly asked for, AND only when a user identity is available. An UNLISTED view created without an owner is invisible to everyone (its dashboard widget renders blank), so never use UNLISTED for widget-backing views.",
+          "enum": [
+            "WORKSPACE",
+            "UNLISTED",
+          ],
+          "type": "string",
+        },
+      },
+      "type": "object",
+    },
+    "name": "upsert_complete_view",
+  },
+  {
+    "description": "Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.",
+    "inputSchema": {
+      "properties": {
+        "calendarEndFieldName": {
+          "description": "Optional end date field name for the calendar. It must have the same DATE or DATE_TIME type as calendarFieldName.",
+          "type": "string",
+        },
+        "calendarFieldName": {
+          "description": "Date field name to use for the calendar (required for CALENDAR views, must be a DATE or DATE_TIME field, e.g., "createdAt", "dueAt")",
+          "type": "string",
+        },
+        "calendarLayout": {
+          "description": "Calendar layout (required for CALENDAR views, e.g., "DAY", "WEEK", "MONTH")",
+          "enum": [
+            "DAY",
+            "WEEK",
+            "MONTH",
+          ],
+          "type": "string",
+        },
+        "fieldNames": {
+          "description": "Field names to display in the view as columns (for TABLE) or cards (for KANBAN/CALENDAR). Fields are displayed in the order provided. Use get_field_metadata to find available field names.",
+          "items": {
+            "type": "string",
+          },
+          "type": "array",
+        },
+        "icon": {
+          "default": "IconList",
+          "description": "Icon identifier (e.g., "IconList", "IconCheckbox")",
+          "type": "string",
+        },
+        "kanbanAggregateOperation": {
+          "description": "Aggregate operation for kanban columns (e.g., "SUM", "AVG", "COUNT")",
+          "enum": [
+            "MIN",
+            "MAX",
+            "AVG",
+            "SUM",
+            "COUNT",
+            "COUNT_UNIQUE_VALUES",
+            "COUNT_EMPTY",
+            "COUNT_NOT_EMPTY",
+            "COUNT_TRUE",
+            "COUNT_FALSE",
+            "PERCENTAGE_EMPTY",
+            "PERCENTAGE_NOT_EMPTY",
+          ],
+          "type": "string",
+        },
+        "kanbanAggregateOperationFieldName": {
+          "description": "Field name for the kanban aggregate operation (e.g., "amount")",
+          "type": "string",
+        },
+        "mainGroupByFieldName": {
+          "description": "Field name to group by (required for KANBAN views, must be a SELECT field, e.g., "stage", "status")",
+          "type": "string",
+        },
+        "name": {
+          "description": "View name",
+          "type": "string",
+        },
+        "objectNameSingular": {
+          "description": "Object name this view is for (e.g., "task", "person", "company")",
+          "type": "string",
+        },
+        "type": {
+          "default": "TABLE",
+          "description": "View type. Use the *_WIDGET variants (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) for views backing a dashboard widget so they stay out of record index view pickers.",
+          "enum": [
+            "TABLE",
+            "LIST",
+            "KANBAN",
+            "CALENDAR",
+            "TABLE_WIDGET",
+            "KANBAN_WIDGET",
+            "LIST_WIDGET",
+            "CALENDAR_WIDGET",
+          ],
+          "type": "string",
+        },
+        "visibility": {
+          "default": "WORKSPACE",
+          "description": "View visibility. ALWAYS prefer WORKSPACE (the default) — it is the right choice for shared views and for any view backing a dashboard widget, so the view is visible to everyone. Only use UNLISTED for a private, personal view explicitly requested by a single user, AND only when a user identity is available. An UNLISTED view created without an owner becomes invisible to everyone (e.g. its dashboard widget renders blank), so never use UNLISTED for widget-backing views.",
+          "enum": [
+            "WORKSPACE",
+            "UNLISTED",
+          ],
+          "type": "string",
+        },
+      },
+      "required": [
+        "name",
+        "objectNameSingular",
+      ],
+      "type": "object",
+    },
+    "name": "create_view",
+  },
+  {
+    "description": "Update an existing view. You can change the name and icon.",
+    "inputSchema": {
+      "properties": {
+        "icon": {
+          "description": "New icon identifier",
+          "type": "string",
+        },
+        "id": {
+          "description": "View ID to update",
+          "format": "uuid",
+          "type": "string",
+        },
+        "name": {
+          "description": "New view name",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_view",
+  },
+  {
+    "description": "Delete a view by its ID.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "View ID to delete",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_view",
+  },
+  {
+    "description": "Add a new column to a view. View fields define which columns are shown in table or kanban views. First call get_field_metadata to find the fieldMetadataId of the column to add, and get_views to find the target viewId.",
+    "inputSchema": {
+      "properties": {
+        "aggregateOperation": {
+          "description": "Aggregate operation for this field (e.g., "SUM", "AVG", "COUNT").",
+          "enum": [
+            "MIN",
+            "MAX",
+            "AVG",
+            "SUM",
+            "COUNT",
+            "COUNT_UNIQUE_VALUES",
+            "COUNT_EMPTY",
+            "COUNT_NOT_EMPTY",
+            "COUNT_TRUE",
+            "COUNT_FALSE",
+            "PERCENTAGE_EMPTY",
+            "PERCENTAGE_NOT_EMPTY",
+          ],
+          "type": "string",
+        },
+        "fieldMetadataId": {
+          "description": "The ID of the field metadata to add. Use get_field_metadata to find available fields.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "isVisible": {
+          "default": true,
+          "description": "Whether the field is visible in the view.",
+          "type": "boolean",
+        },
+        "position": {
+          "default": 0,
+          "description": "Position of the field in the view (0-based).",
+          "type": "number",
+        },
+        "size": {
+          "default": 150,
+          "description": "Column width in pixels.",
+          "type": "integer",
+        },
+        "viewId": {
+          "description": "The ID of the view to add the field to.",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "viewId",
+        "fieldMetadataId",
+      ],
+      "type": "object",
+    },
+    "name": "create_view_field",
+  },
+  {
+    "description": "Update properties of a column in a view. You can change its visibility, width (size in pixels), display position, or aggregate operation. Use get_view_fields to find the view field ID. Constraints: position must not be -1, must not precede the label identifier field, and must not conflict with another field's position.",
+    "inputSchema": {
+      "properties": {
+        "aggregateOperation": {
+          "description": "Aggregate operation for this field.",
+          "enum": [
+            "MIN",
+            "MAX",
+            "AVG",
+            "SUM",
+            "COUNT",
+            "COUNT_UNIQUE_VALUES",
+            "COUNT_EMPTY",
+            "COUNT_NOT_EMPTY",
+            "COUNT_TRUE",
+            "COUNT_FALSE",
+            "PERCENTAGE_EMPTY",
+            "PERCENTAGE_NOT_EMPTY",
+          ],
+          "type": "string",
+        },
+        "id": {
+          "description": "The ID of the view field to update. Obtain this from get_view_fields.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "isVisible": {
+          "description": "Whether the field is visible.",
+          "type": "boolean",
+        },
+        "position": {
+          "description": "Position of the field.",
+          "type": "number",
+        },
+        "size": {
+          "description": "Column width in pixels.",
+          "type": "integer",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_view_field",
+  },
+  {
+    "description": "Remove a column from a view. This removes the field from the view's displayed columns. Use get_view_fields to find the view field ID to delete.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "The ID of the view field to delete. Obtain this from get_view_fields.",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_view_field",
+  },
+  {
+    "description": "Add multiple columns to a view at once. More efficient than calling create_view_field multiple times. Each item follows the same schema as create_view_field. All view fields can target the same or different views.",
+    "inputSchema": {
+      "properties": {
+        "viewFields": {
+          "description": "Array of view fields to create (1-50 items).",
+          "items": {
+            "properties": {
+              "aggregateOperation": {
+                "description": "Aggregate operation for this field (e.g., "SUM", "AVG", "COUNT").",
+                "enum": [
+                  "MIN",
+                  "MAX",
+                  "AVG",
+                  "SUM",
+                  "COUNT",
+                  "COUNT_UNIQUE_VALUES",
+                  "COUNT_EMPTY",
+                  "COUNT_NOT_EMPTY",
+                  "COUNT_TRUE",
+                  "COUNT_FALSE",
+                  "PERCENTAGE_EMPTY",
+                  "PERCENTAGE_NOT_EMPTY",
+                ],
+                "type": "string",
+              },
+              "fieldMetadataId": {
+                "description": "The ID of the field metadata to add. Use get_field_metadata to find available fields.",
+                "format": "uuid",
+                "type": "string",
+              },
+              "isVisible": {
+                "default": true,
+                "description": "Whether the field is visible in the view.",
+                "type": "boolean",
+              },
+              "position": {
+                "default": 0,
+                "description": "Position of the field in the view (0-based).",
+                "type": "number",
+              },
+              "size": {
+                "default": 150,
+                "description": "Column width in pixels.",
+                "type": "integer",
+              },
+              "viewId": {
+                "description": "The ID of the view to add the field to.",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            "required": [
+              "viewId",
+              "fieldMetadataId",
+            ],
+            "type": "object",
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "type": "array",
+        },
+      },
+      "required": [
+        "viewFields",
+      ],
+      "type": "object",
+    },
+    "name": "create_many_view_fields",
+  },
+  {
+    "description": "Update multiple columns in a view at once. More efficient than calling update_view_field multiple times. Each item must include the view field ID and properties to update. Same constraints as update_view_field apply to each item.",
+    "inputSchema": {
+      "properties": {
+        "viewFields": {
+          "description": "Array of view field updates to apply (1-50 items).",
+          "items": {
+            "properties": {
+              "aggregateOperation": {
+                "description": "Aggregate operation for this field.",
+                "enum": [
+                  "MIN",
+                  "MAX",
+                  "AVG",
+                  "SUM",
+                  "COUNT",
+                  "COUNT_UNIQUE_VALUES",
+                  "COUNT_EMPTY",
+                  "COUNT_NOT_EMPTY",
+                  "COUNT_TRUE",
+                  "COUNT_FALSE",
+                  "PERCENTAGE_EMPTY",
+                  "PERCENTAGE_NOT_EMPTY",
+                ],
+                "type": "string",
+              },
+              "id": {
+                "description": "The ID of the view field to update. Obtain this from get_view_fields.",
+                "format": "uuid",
+                "type": "string",
+              },
+              "isVisible": {
+                "description": "Whether the field is visible.",
+                "type": "boolean",
+              },
+              "position": {
+                "description": "Position of the field.",
+                "type": "number",
+              },
+              "size": {
+                "description": "Column width in pixels.",
+                "type": "integer",
+              },
+            },
+            "required": [
+              "id",
+            ],
+            "type": "object",
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "type": "array",
+        },
+      },
+      "required": [
+        "viewFields",
+      ],
+      "type": "object",
+    },
+    "name": "update_many_view_fields",
+  },
+  {
+    "description": "Add a filter to a view. Use get_field_metadata to get fieldMetadataId values.",
+    "inputSchema": {
+      "properties": {
+        "fieldMetadataId": {
+          "description": "ID of the field to filter on. Use get_field_metadata to find field IDs.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "operand": {
+          "description": "Filter operator. Valid operators per field type — TEXT/EMAILS/FULL_NAME: CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY. NUMBER/NUMERIC: IS, IS_NOT, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, IS_EMPTY, IS_NOT_EMPTY. CURRENCY: GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, IS_EMPTY, IS_NOT_EMPTY. DATE/DATE_TIME: IS, IS_RELATIVE, IS_IN_PAST, IS_IN_FUTURE, IS_TODAY, IS_BEFORE, IS_AFTER, IS_EMPTY, IS_NOT_EMPTY. SELECT: IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. MULTI_SELECT/ARRAY: CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY. RELATION: IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. BOOLEAN: IS.",
+          "enum": [
+            "IS",
+            "IS_NOT_NULL",
+            "IS_NOT",
+            "LESS_THAN_OR_EQUAL",
+            "GREATER_THAN_OR_EQUAL",
+            "IS_BEFORE",
+            "IS_AFTER",
+            "CONTAINS",
+            "DOES_NOT_CONTAIN",
+            "IS_EMPTY",
+            "IS_NOT_EMPTY",
+            "IS_RELATIVE",
+            "IS_IN_PAST",
+            "IS_IN_FUTURE",
+            "IS_TODAY",
+            "VECTOR_SEARCH",
+          ],
+          "type": "string",
+        },
+        "subFieldName": {
+          "description": "Required for composite fields — e.g. "amountMicros" for CURRENCY, "addressCity" for ADDRESS, "firstName" or "lastName" for FULL_NAME.",
+          "type": "string",
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string",
+            },
+            {
+              "type": "number",
+            },
+            {
+              "type": "boolean",
+            },
+            {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+          ],
+          "description": "Filter value. Format depends on operand and field type: string for TEXT, array of option values for SELECT/MULTI_SELECT (e.g. ["OPTION_1", "OPTION_2"]), number for NUMBER/CURRENCY, empty string "" for IS_EMPTY/IS_NOT_EMPTY operators.",
+        },
+        "viewId": {
+          "description": "ID of the view to add the filter to",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "viewId",
+        "fieldMetadataId",
+        "operand",
+        "value",
+      ],
+      "type": "object",
+    },
+    "name": "create_view_filter",
+  },
+  {
+    "description": "Add multiple filters to a view in one call. Use get_field_metadata to get fieldMetadataId values.",
+    "inputSchema": {
+      "properties": {
+        "filters": {
+          "description": "Array of filters to create (1-20 items)",
+          "items": {
+            "properties": {
+              "fieldMetadataId": {
+                "description": "ID of the field to filter on. Use get_field_metadata to find field IDs.",
+                "format": "uuid",
+                "type": "string",
+              },
+              "operand": {
+                "description": "Filter operator. Valid operators per field type — TEXT/EMAILS/FULL_NAME: CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY. NUMBER/NUMERIC: IS, IS_NOT, GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, IS_EMPTY, IS_NOT_EMPTY. CURRENCY: GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL, IS_EMPTY, IS_NOT_EMPTY. DATE/DATE_TIME: IS, IS_RELATIVE, IS_IN_PAST, IS_IN_FUTURE, IS_TODAY, IS_BEFORE, IS_AFTER, IS_EMPTY, IS_NOT_EMPTY. SELECT: IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. MULTI_SELECT/ARRAY: CONTAINS, DOES_NOT_CONTAIN, IS_EMPTY, IS_NOT_EMPTY. RELATION: IS, IS_NOT, IS_EMPTY, IS_NOT_EMPTY. BOOLEAN: IS.",
+                "enum": [
+                  "IS",
+                  "IS_NOT_NULL",
+                  "IS_NOT",
+                  "LESS_THAN_OR_EQUAL",
+                  "GREATER_THAN_OR_EQUAL",
+                  "IS_BEFORE",
+                  "IS_AFTER",
+                  "CONTAINS",
+                  "DOES_NOT_CONTAIN",
+                  "IS_EMPTY",
+                  "IS_NOT_EMPTY",
+                  "IS_RELATIVE",
+                  "IS_IN_PAST",
+                  "IS_IN_FUTURE",
+                  "IS_TODAY",
+                  "VECTOR_SEARCH",
+                ],
+                "type": "string",
+              },
+              "subFieldName": {
+                "description": "Required for composite fields — e.g. "amountMicros" for CURRENCY, "addressCity" for ADDRESS, "firstName" or "lastName" for FULL_NAME.",
+                "type": "string",
+              },
+              "value": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                  },
+                  {
+                    "type": "number",
+                  },
+                  {
+                    "type": "boolean",
+                  },
+                  {
+                    "items": {
+                      "type": "string",
+                    },
+                    "type": "array",
+                  },
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                ],
+                "description": "Filter value. Format depends on operand and field type: string for TEXT, array of option values for SELECT/MULTI_SELECT (e.g. ["OPTION_1", "OPTION_2"]), number for NUMBER/CURRENCY, empty string "" for IS_EMPTY/IS_NOT_EMPTY operators.",
+              },
+              "viewId": {
+                "description": "ID of the view to add the filter to",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            "required": [
+              "viewId",
+              "fieldMetadataId",
+              "operand",
+              "value",
+            ],
+            "type": "object",
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "type": "array",
+        },
+      },
+      "required": [
+        "filters",
+      ],
+      "type": "object",
+    },
+    "name": "create_many_view_filters",
+  },
+  {
+    "description": "Update a filter on a view. Use get_view_filters to find the filter ID.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "ID of the view filter to update",
+          "format": "uuid",
+          "type": "string",
+        },
+        "operand": {
+          "description": "New filter operator",
+          "enum": [
+            "IS",
+            "IS_NOT_NULL",
+            "IS_NOT",
+            "LESS_THAN_OR_EQUAL",
+            "GREATER_THAN_OR_EQUAL",
+            "IS_BEFORE",
+            "IS_AFTER",
+            "CONTAINS",
+            "DOES_NOT_CONTAIN",
+            "IS_EMPTY",
+            "IS_NOT_EMPTY",
+            "IS_RELATIVE",
+            "IS_IN_PAST",
+            "IS_IN_FUTURE",
+            "IS_TODAY",
+            "VECTOR_SEARCH",
+          ],
+          "type": "string",
+        },
+        "subFieldName": {
+          "description": "New sub-field name for composite fields",
+          "type": "string",
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string",
+            },
+            {
+              "type": "number",
+            },
+            {
+              "type": "boolean",
+            },
+            {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+          ],
+          "description": "New filter value. Use array of option values for SELECT/MULTI_SELECT (e.g. ["OPTION_1"]).",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_view_filter",
+  },
+  {
+    "description": "Remove a filter from a view. Use get_view_filters to find the filter ID.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "ID of the view filter to delete",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_view_filter",
+  },
+  {
+    "description": "Add a sort to a view. Use get_field_metadata to get fieldMetadataId values.",
+    "inputSchema": {
+      "properties": {
+        "direction": {
+          "default": "ASC",
+          "description": "Sort direction: ASC (ascending) or DESC (descending)",
+          "enum": [
+            "ASC",
+            "DESC",
+          ],
+          "type": "string",
+        },
+        "fieldMetadataId": {
+          "description": "ID of the field to sort by. Use get_field_metadata to find field IDs.",
+          "format": "uuid",
+          "type": "string",
+        },
+        "viewId": {
+          "description": "ID of the view to add the sort to",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "viewId",
+        "fieldMetadataId",
+      ],
+      "type": "object",
+    },
+    "name": "create_view_sort",
+  },
+  {
+    "description": "Add multiple sorts to a view in one call. Use get_field_metadata to get fieldMetadataId values.",
+    "inputSchema": {
+      "properties": {
+        "sorts": {
+          "description": "Array of sorts to create (1-10 items)",
+          "items": {
+            "properties": {
+              "direction": {
+                "default": "ASC",
+                "description": "Sort direction: ASC (ascending) or DESC (descending)",
+                "enum": [
+                  "ASC",
+                  "DESC",
+                ],
+                "type": "string",
+              },
+              "fieldMetadataId": {
+                "description": "ID of the field to sort by. Use get_field_metadata to find field IDs.",
+                "format": "uuid",
+                "type": "string",
+              },
+              "viewId": {
+                "description": "ID of the view to add the sort to",
+                "format": "uuid",
+                "type": "string",
+              },
+            },
+            "required": [
+              "viewId",
+              "fieldMetadataId",
+            ],
+            "type": "object",
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "type": "array",
+        },
+      },
+      "required": [
+        "sorts",
+      ],
+      "type": "object",
+    },
+    "name": "create_many_view_sorts",
+  },
+  {
+    "description": "Update a sort on a view. Use get_view_sorts to find the sort ID.",
+    "inputSchema": {
+      "properties": {
+        "direction": {
+          "description": "New sort direction: ASC or DESC",
+          "enum": [
+            "ASC",
+            "DESC",
+          ],
+          "type": "string",
+        },
+        "id": {
+          "description": "ID of the view sort to update",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "update_view_sort",
+  },
+  {
+    "description": "Remove a sort from a view. Use get_view_sorts to find the sort ID.",
+    "inputSchema": {
+      "properties": {
+        "id": {
+          "description": "ID of the view sort to delete",
+          "format": "uuid",
+          "type": "string",
+        },
+      },
+      "required": [
+        "id",
+      ],
+      "type": "object",
+    },
+    "name": "delete_view_sort",
+  },
+]
+`;

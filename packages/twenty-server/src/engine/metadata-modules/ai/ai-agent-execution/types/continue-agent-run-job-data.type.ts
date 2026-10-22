@@ -6,6 +6,6 @@ export type ContinueAgentRunJobData = {
   // the run's wake-up, which the continuation removes once the run went on, and what resolved it
   wakeUpId: string;
   outcome: AgentRunWakeUpOutcome;
-  // set on the delayed copy of a run parked behind a busy conversation
+  // only on a delayed copy parked in Redis by the previous release
   parkId?: string;
 };
