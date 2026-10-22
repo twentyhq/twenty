@@ -14,7 +14,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { validateRoleIsEditable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util';
+import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
 import { validateRoleRequiredPropertiesAreDefined } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util';
@@ -98,7 +98,7 @@ export class FlatRoleValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateRoleIsEditable({
+      ...getRoleNotEditableErrors({
         flatRole: existingRole,
         buildOptions,
       }),
@@ -152,7 +152,7 @@ export class FlatRoleValidatorService {
     }
 
     validationResult.errors.push(
-      ...validateRoleIsEditable({
+      ...getRoleNotEditableErrors({
         flatRole: fromFlatRole,
         buildOptions,
       }),
