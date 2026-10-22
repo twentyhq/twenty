@@ -758,7 +758,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK = false;
+  LOGIC_FUNCTION_LOCAL_NETWORK_RESTRICTION_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,

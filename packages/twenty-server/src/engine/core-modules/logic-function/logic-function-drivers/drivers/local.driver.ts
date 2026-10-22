@@ -140,7 +140,7 @@ export class LocalDriver implements LogicFunctionDriver {
       !process.allowedNodeEnvironmentFlags.has('--allow-net')
     ) {
       throw new LogicFunctionException(
-        `LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK requires Node.js 25 or later (running ${process.version})`,
+        `LOGIC_FUNCTION_LOCAL_NETWORK_RESTRICTION_ENABLED requires Node.js 25 or later (running ${process.version})`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR,
       );
     }

@@ -43,7 +43,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
     }
 
     if (driverType === LogicFunctionDriverType.LOCAL) {
-      return `local|${this.twentyConfigService.get('LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK')}`;
+      return `local|${this.twentyConfigService.get('LOGIC_FUNCTION_LOCAL_NETWORK_RESTRICTION_ENABLED')}`;
     }
 
     return driverType;
@@ -64,7 +64,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           workspaceCacheService: this.workspaceCacheService,
           secureHttpClientService: this.secureHttpClientService,
           isNetworkRestricted: this.twentyConfigService.get(
-            'LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK',
+            'LOGIC_FUNCTION_LOCAL_NETWORK_RESTRICTION_ENABLED',
           ),
         });
 

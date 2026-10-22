@@ -473,7 +473,7 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 **To keep the local driver off the network:**
 ```bash
 LOGIC_FUNCTION_TYPE=LOCAL
-LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK=true
+LOGIC_FUNCTION_LOCAL_NETWORK_RESTRICTION_ENABLED=true
 ```
 
 Functions then have no direct network access. `fetch()` calls are sent through the server and follow the same outbound rules as webhooks: private addresses are refused unless listed in `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS`, and calls to your own Twenty API always work. Libraries that open their own connections (`node:http`, database or SMTP clients, WebSocket) do not work in this mode.
