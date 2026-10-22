@@ -40,11 +40,11 @@ export const AiChatThreadStatusField = ({
   const { t } = useLingui();
   const scopeLabel =
     scope.type === 'personal' ? t`Your inbox` : scope.channelName;
-  const statusLabel = {
+  const statusLabels = {
     open: t`Open`,
     snoozed: t`Snoozed`,
     done: t`Done`,
-  }[status];
+  };
   const editLabel = t`Change status in ${scopeLabel}`;
 
   return (
@@ -75,7 +75,7 @@ export const AiChatThreadStatusField = ({
                   disabled={isSaving}
                   onSelect={() => onStatusChange({ status: 'open', scope })}
                 >
-                  {t`Open`}
+                  {statusLabels.open}
                 </Dropdown.OptionItem>
                 <Dropdown.OptionItem
                   selected={status === 'snoozed'}
@@ -83,7 +83,7 @@ export const AiChatThreadStatusField = ({
                   disabled={isSaving}
                   onSelect={() => onStatusChange({ status: 'snoozed', scope })}
                 >
-                  {t`Snoozed`}
+                  {statusLabels.snoozed}
                 </Dropdown.OptionItem>
                 <Dropdown.OptionItem
                   selected={status === 'done'}
@@ -91,7 +91,7 @@ export const AiChatThreadStatusField = ({
                   disabled={isSaving}
                   onSelect={() => onStatusChange({ status: 'done', scope })}
                 >
-                  {t`Done`}
+                  {statusLabels.done}
                 </Dropdown.OptionItem>
               </Dropdown.Section>
             </Dropdown.Content>
@@ -99,7 +99,9 @@ export const AiChatThreadStatusField = ({
         )
       }
     >
-      <Tag color={status === 'open' ? 'sky' : 'gray'}>{statusLabel}</Tag>
+      <Tag color={status === 'open' ? 'sky' : 'gray'}>
+        {statusLabels[status]}
+      </Tag>
       <StyledScope>{scopeLabel}</StyledScope>
     </DetailsRow>
   );
