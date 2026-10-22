@@ -122,7 +122,11 @@ def prepare(kind, pr_number, directory):
     # The compare API caps its file list; a large PR must not silently skip review.
     if len(files) >= 300:
         raise ValueError("PR is too large for the drift file filter")
-    relevant = any(file["filename"].startswith(SOURCE_PREFIXES) for file in files)
+    relevant = any(
+        file.get(field, "").startswith(SOURCE_PREFIXES)
+        for file in files
+        for field in ["filename", "previous_filename"]
+    )
     context = {
         "pr_number": pr_number,
         "head_sha": head,

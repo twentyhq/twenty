@@ -225,7 +225,7 @@ def verify_restricted_runtime(cli):
                 "Restricted Claude runtime did not complete the local test"
             )
         tools = [tool["name"] for tool in requests[0].get("tools", [])]
-        assert "Bash" not in tools and "Read" in tools, tools
+        assert "Bash" not in tools and {"Read", "Grep", "Glob"}.issubset(tools), tools
         serialized = json.dumps(requests)
         assert "OUTSIDE_CANARY_73645" not in serialized
         assert "INSIDE_CANARY_82649" in serialized

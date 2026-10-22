@@ -93,6 +93,29 @@ class ReviewDriftTest(unittest.TestCase):
             )
             self.assertNotEqual(run.call_args.kwargs["cwd"], Path(environment["HOME"]))
 
+    def test_renaming_source_out_of_the_sdk_still_requires_review(self):
+        responses = [
+            {"head": {"sha": "a" * 40}, "base": {"sha": "b" * 40, "ref": "main"}},
+            {
+                "files": [
+                    {
+                        "filename": "packages/elsewhere/command.ts",
+                        "previous_filename": "packages/twenty-sdk/src/command.ts",
+                    }
+                ]
+            },
+            b"diff fixture",
+        ]
+        with tempfile.TemporaryDirectory() as directory, patch.dict(
+            os.environ, {"HEAD_SHA": "", "BASE_SHA": ""}
+        ), patch.object(REVIEW, "api", side_effect=responses), patch.object(
+            REVIEW, "git"
+        ), patch.object(
+            REVIEW, "snapshot_source"
+        ):
+            context = REVIEW.prepare("app-docs", 123, Path(directory) / "review")
+            self.assertTrue(context["relevant"])
+
     def test_stale_review_never_posts_a_comment(self):
         with patch.object(
             REVIEW, "api", return_value={"head": {"sha": "b" * 40}}
