@@ -6,11 +6,14 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
-import { getOAuthRedirectHost } from '@/auth/utils/getOAuthRedirectHost';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  getUrlHostnameOrThrow,
+  isDefined,
+  isValidUrl,
+} from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import {
   type IconComponent,
@@ -265,7 +268,10 @@ export const Authorize = () => {
   const appName = applicationRegistration.name;
   const appLogoUrl = applicationRegistration.logoUrl;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
-  const redirectHost = getOAuthRedirectHost(redirectUrl);
+  const redirectHost =
+    isDefined(redirectUrl) && isValidUrl(redirectUrl)
+      ? getUrlHostnameOrThrow(redirectUrl)
+      : null;
 
   return (
     <StyledAuthContent>
