@@ -31,4 +31,12 @@ describe('UpdateWorkspaceInput defaultSenderDomain', () => {
       );
     },
   );
+
+  it('explains what a valid domain looks like', async () => {
+    const [error] = await validate(toInput('nodot'));
+
+    expect(Object.values(error.constraints ?? {})).toEqual([
+      'defaultSenderDomain must be a domain such as example.com',
+    ]);
+  });
 });

@@ -43,7 +43,9 @@ export class UpdateWorkspaceInput {
   @Field(() => String, { nullable: true })
   @Transform(({ value }) => normalizeSenderDomain(value))
   @IsOptional()
-  @Matches(/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/)
+  @Matches(/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/, {
+    message: 'defaultSenderDomain must be a domain such as example.com',
+  })
   defaultSenderDomain?: string | null;
 
   @Field({ nullable: true })
