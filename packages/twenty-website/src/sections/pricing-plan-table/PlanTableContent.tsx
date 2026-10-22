@@ -20,6 +20,7 @@ import {
 } from '@/tokens';
 import { Button } from '@/ui';
 
+import { PlanTableInfoTooltip } from './PlanTableInfoTooltip';
 import { PLAN_TABLE_DATA } from './plan-table-data';
 import {
   type PlanTableBodyRowDataType,
@@ -67,6 +68,7 @@ const FeatureLabel = styled.div`
   line-height: ${spacing(8)};
   min-height: ${spacing(16)};
   padding: ${spacing(4)};
+  position: relative;
 `;
 
 const TierCell = styled.div`
@@ -178,7 +180,12 @@ function FeatureRow({
 
   return (
     <GridRow>
-      <FeatureLabel>{i18n._(row.featureLabel)}</FeatureLabel>
+      <FeatureLabel>
+        {i18n._(row.featureLabel)}
+        {row.tooltip !== undefined ? (
+          <PlanTableInfoTooltip text={row.tooltip} />
+        ) : null}
+      </FeatureLabel>
       {tierColumns.map((column) => (
         <TierCell key={column.id}>
           <CellValue cell={resolveCell(row, column.id)} />

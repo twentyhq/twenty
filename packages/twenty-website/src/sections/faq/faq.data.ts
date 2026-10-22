@@ -33,6 +33,6 @@ export const FAQ_QUESTIONS: readonly FaqQuestion[] = [
   },
   {
     question: msg`What does Twenty cost?`,
-    answer: msg`Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control.`,
+    answer: msg`Cloud Pro is $9/user/month (yearly). Organization is $39/user/month and adds 5x personal AI usage, SSO and row-level permissions for teams that need finer access control.`,
   },
 ];

@@ -30,22 +30,15 @@ type PlansTier = {
   cta: Record<PlansHostingMode, PlansTierCta>;
   heading: Record<PlansHostingMode, MessageDescriptor>;
   icon: { alt: string; src: string; widthPx?: number };
+  tagline: Record<PlansHostingMode, MessageDescriptor>;
 };
 
-const PRO_BULLETS_MONTHLY = [
-  msg`Full customization`,
-  msg`Create custom apps`,
-  msg`AI Agents with custom skills`,
-  msg`5 workflow credits/month included`,
-  msg`Standard support`,
-];
-
-const PRO_BULLETS_YEARLY = [
-  msg`Full customization`,
-  msg`Create custom apps`,
-  msg`AI Agents with custom skills`,
-  msg`50 workflow credits/year included`,
-  msg`Standard support`,
+const PRO_BULLETS_CLOUD = [
+  msg`Your sales process, your data model`,
+  msg`Limited personal AI usage`,
+  msg`Agentic workflows`,
+  msg`Email and calendar sync`,
+  msg`Build custom apps`,
 ];
 
 const PRO_BULLETS_SELF_HOST = [
@@ -57,10 +50,10 @@ const PRO_BULLETS_SELF_HOST = [
 
 const ORGANIZATION_BULLETS_CLOUD = [
   msg`Everything in Pro`,
-  msg`Row-level permissions`,
-  msg`SAML/OIDC SSO`,
-  msg`Custom domain`,
+  msg`*5x more personal AI usage*`,
+  msg`Custom permissions`,
   msg`Priority support`,
+  msg`SAML/OIDC SSO and audit logs`,
 ];
 
 const ORGANIZATION_BULLETS_SELF_HOST = [
@@ -73,9 +66,8 @@ const ORGANIZATION_BULLETS_SELF_HOST = [
 
 const ENTERPRISE_BULLETS_CLOUD = [
   msg`Everything in Organization`,
+  msg`Dedicated compute for your CRM data and syncs`,
   msg`Single-tenant isolation`,
-  msg`IP allow-listing`,
-  msg`SCIM provisioning`,
   msg`Dedicated support & SLA`,
 ];
 
@@ -127,17 +119,21 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
       alt: 'Enterprise plan icon',
       src: '/images/pricing/plans/enterprise-icon.webp',
     },
+    tagline: {
+      cloud: msg`For large companies with custom usage needs.`,
+      selfHost: msg`For organizations with strict compliance needs.`,
+    },
   },
   organization: {
     cells: {
       cloud: {
         monthly: {
           featureBullets: ORGANIZATION_BULLETS_CLOUD,
-          price: { value: 25, prefix: '$', suffix: msg`/user/month` },
+          price: { value: 52, prefix: '$', suffix: msg`/user/month` },
         },
         yearly: {
           featureBullets: ORGANIZATION_BULLETS_CLOUD,
-          price: { value: 19, prefix: '$', suffix: msg`/user/month` },
+          price: { value: 39, prefix: '$', suffix: msg`/user/month` },
         },
       },
       selfHost: {
@@ -166,16 +162,20 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
       alt: 'Organization plan icon',
       src: '/images/pricing/plans/organization-icon.webp',
     },
+    tagline: {
+      cloud: msg`For growing teams that need more AI and control.`,
+      selfHost: msg`For companies running Twenty in production.`,
+    },
   },
   pro: {
     cells: {
       cloud: {
         monthly: {
-          featureBullets: PRO_BULLETS_MONTHLY,
+          featureBullets: PRO_BULLETS_CLOUD,
           price: { value: 12, prefix: '$', suffix: msg`/user/month` },
         },
         yearly: {
-          featureBullets: PRO_BULLETS_YEARLY,
+          featureBullets: PRO_BULLETS_CLOUD,
           price: { value: 9, prefix: '$', suffix: msg`/user/month` },
         },
       },
@@ -205,6 +205,10 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
       alt: 'Pro plan icon',
       src: '/images/pricing/plans/pro-icon.webp',
       widthPx: 60,
+    },
+    tagline: {
+      cloud: msg`For one team to run an agentic CRM its own way.`,
+      selfHost: msg`For developers to run Twenty on their own servers.`,
     },
   },
 };
