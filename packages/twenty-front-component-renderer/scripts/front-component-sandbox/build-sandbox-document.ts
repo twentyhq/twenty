@@ -37,7 +37,24 @@ const buildSandboxDocument = async (): Promise<void> => {
       },
     },
     worker: {
-      plugins: () => [createDomutilsStubPlugin()],
+      // Vite 8.1+ no longer applies resolve.alias inside worker bundles
+      plugins: () => [
+        createDomutilsStubPlugin(),
+        {
+          name: 'resolve-src-alias-in-worker',
+          resolveId(id, importer, options) {
+            if (!id.startsWith('@/')) {
+              return null;
+            }
+
+            return this.resolve(
+              path.resolve(projectRoot, 'src', id.slice(2)),
+              importer,
+              { ...options, skipSelf: true },
+            );
+          },
+        },
+      ],
     },
     define: {
       'process.env.NODE_ENV': JSON.stringify('production'),
