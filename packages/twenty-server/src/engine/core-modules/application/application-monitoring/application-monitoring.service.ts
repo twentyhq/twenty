@@ -29,7 +29,6 @@ import {
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -58,7 +57,6 @@ export class ApplicationMonitoringService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly fileUrlService: FileUrlService,
-    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -221,10 +219,6 @@ export class ApplicationMonitoringService {
     >;
     period: ApplicationMonitoringPeriod;
   }): Promise<{ bucketStart: Date; creditsUsed: number }[]> {
-    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return [];
-    }
-
     try {
       const installations =
         await this.applicationRegistrationService.findInstallations({
