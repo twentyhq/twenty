@@ -53,7 +53,10 @@ export const createHostScrollController = ({
   const applyScrollCommand = ({
     remoteElementId,
     scrollCommand,
-  }: ScrollCommandCandidate): Element[] => {
+  }: Pick<
+    ScrollCommandCandidate,
+    'remoteElementId' | 'scrollCommand'
+  >): Element[] => {
     const node = geometryTracker.getRegisteredNode(remoteElementId);
 
     if (!isDefined(node) || !node.isConnected) {
