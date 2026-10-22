@@ -7,7 +7,7 @@ const STANDARD_ADMIN_ROLE_UNIVERSAL_IDENTIFIER =
   '20202020-02c2-43f2-b94d-cab1f2b532eb';
 
 // So admins and the role new members join with can reach General
-@RegisteredInstanceCommand('2.51.0', 1792659937937, { type: 'slow' })
+@RegisteredInstanceCommand('2.51.0', 1792686689823, { type: 'slow' })
 export class BackfillRoleAgentChatChannelAccessSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
