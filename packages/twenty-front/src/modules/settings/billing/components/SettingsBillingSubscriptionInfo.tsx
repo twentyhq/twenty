@@ -166,6 +166,7 @@ export const SettingsBillingSubscriptionInfo = ({
         )
       : undefined;
 
+  const perSeatPriceDisplay = formatCentsToDisplay(perSeatAmountCents);
   const displayedPerSeatPrice =
     formatBillingPeriodCentsToMonthlyDisplay(perSeatAmountCents);
 
@@ -205,17 +206,9 @@ export const SettingsBillingSubscriptionInfo = ({
   };
   const currentPlanLabel = getPlanLabel(currentPlan.planKey);
 
-  const upcomingBasePrice = isPlanSwitchScheduled
-    ? splitedPhaseItemsInPrices.nextBasePrice
-    : undefined;
   const planLabel = getPlanLabel(upcomingPlanKey);
-  const perSeatPriceDisplay = formatCentsToDisplay(
-    upcomingBasePrice?.unitAmount ?? perSeatAmountCents,
-  );
-  const upcomingInterval =
-    upcomingBasePrice?.recurringInterval ?? currentInterval;
   const intervalUnit =
-    upcomingInterval === SubscriptionInterval.Month ? t`month` : t`year`;
+    currentInterval === SubscriptionInterval.Month ? t`month` : t`year`;
   const startSubscriptionSubtitle = isSendInvoice
     ? t`We will activate your ${planLabel} and email your invoice now. Do you want to proceed?`
     : isDefined(perSeatPriceDisplay)
