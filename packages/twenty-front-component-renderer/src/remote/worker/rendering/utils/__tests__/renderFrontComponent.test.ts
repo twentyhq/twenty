@@ -116,7 +116,7 @@ describe('renderFrontComponent', () => {
     });
 
     jest.mocked(attachRemoteRenderRootToWorkerDocument).mockReturnValue({
-      renderContainer: {} as Element,
+      renderContainer: document.createElement('div'),
       flushPendingMutations,
     });
     jest.mocked(waitForScheduledReactCommit).mockImplementation(async () => {
