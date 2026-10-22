@@ -101,6 +101,7 @@ describe('Application registration monitoring (integration)', () => {
           source: 'UPGRADE',
           level: 'ERROR',
           errorCode: 'UPGRADE_FAILED',
+          applicationVersion: '2.0.0',
           logicFunctionName: '',
         }),
         buildMetricEvent({
@@ -170,6 +171,9 @@ describe('Application registration monitoring (integration)', () => {
         affectedInstallCount: 2,
       }),
     );
+    expect(monitoring.versions).toEqual([
+      expect.objectContaining({ version: '1.2.3', activeInstallCount: 2 }),
+    ]);
     expect(monitoring.functions).toEqual([
       expect.objectContaining({
         logicFunctionName: 'syncContacts',

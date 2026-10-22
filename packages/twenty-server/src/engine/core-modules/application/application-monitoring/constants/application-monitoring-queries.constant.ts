@@ -10,6 +10,8 @@ const LIFECYCLE_SOURCES = `('INSTALL', 'UPGRADE', 'UNINSTALL')`;
 
 const RATE_LIMIT_SOURCES = `('API_RATE_LIMIT', 'JOB_RATE_LIMIT')`;
 
+const RUNS_ON_VERSION = `NOT (source IN ${LIFECYCLE_SOURCES} AND level = 'ERROR')`;
+
 const BUCKET_START = `toStartOfInterval(timestamp, toIntervalSecond({bucketSizeInSeconds:UInt32}))`;
 
 export const APPLICATION_MONITORING_QUERIES = {
@@ -64,7 +66,7 @@ export const APPLICATION_MONITORING_QUERIES = {
       sumIf(occurrenceCount, source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
       uniqExact(workspaceId) AS activeInstallCount
     FROM applicationMetricEvent
-    WHERE ${PERIOD_FILTER} AND applicationVersion != ''
+    WHERE ${PERIOD_FILTER} AND applicationVersion != '' AND ${RUNS_ON_VERSION}
     GROUP BY version
     ORDER BY activeInstallCount DESC, version DESC
     LIMIT ${APPLICATION_MONITORING_BREAKDOWN_LIMIT}`,
@@ -86,7 +88,7 @@ export const APPLICATION_MONITORING_QUERIES = {
   workspaces: `
     SELECT
       workspaceId,
-      argMax(applicationVersion, timestamp) AS applicationVersion,
+      argMaxIf(applicationVersion, timestamp, ${RUNS_ON_VERSION}) AS applicationVersion,
       sumIf(occurrenceCount, source = 'LOGIC_FUNCTION') AS runCount,
       sumIf(occurrenceCount, source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
       sumIf(occurrenceCount, source IN ${RATE_LIMIT_SOURCES}) AS rateLimitEventCount,
