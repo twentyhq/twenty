@@ -28,7 +28,8 @@ const getConnectionParametersSchema = () =>
       },
       {
         path: ['port'],
-        error: t`Port must be a positive number when configuring this protocol`,
+        error: () =>
+          t`Port must be a positive number when configuring this protocol`,
       },
     );
 
@@ -36,7 +37,7 @@ export const getConnectionImapSmtpCalDavSchema = () =>
   z
     .object({
       name: z.string().trim(),
-      handle: z.email(t`Invalid email address`),
+      handle: z.email({ error: () => t`Invalid email address` }),
       IMAP: getConnectionParametersSchema().optional(),
       SMTP: getConnectionParametersSchema().optional(),
       CALDAV: getConnectionParametersSchema().optional(),
@@ -49,7 +50,8 @@ export const getConnectionImapSmtpCalDavSchema = () =>
       },
       {
         path: ['handle'],
-        error: t`At least one account type (IMAP, SMTP, or CalDAV) must be completely configured`,
+        error: () =>
+          t`At least one account type (IMAP, SMTP, or CalDAV) must be completely configured`,
       },
     );
 
@@ -57,7 +59,7 @@ export const getConnectionImapSmtpCalDavUpdateSchema = () =>
   z
     .object({
       name: z.string().trim(),
-      handle: z.email(t`Invalid email address`),
+      handle: z.email({ error: () => t`Invalid email address` }),
       IMAP: getConnectionParametersSchema().optional(),
       SMTP: getConnectionParametersSchema().optional(),
       CALDAV: getConnectionParametersSchema().optional(),
@@ -72,6 +74,7 @@ export const getConnectionImapSmtpCalDavUpdateSchema = () =>
       },
       {
         path: ['handle'],
-        error: t`At least one account type (IMAP, SMTP, or CalDAV) must be completely configured`,
+        error: () =>
+          t`At least one account type (IMAP, SMTP, or CalDAV) must be completely configured`,
       },
     );

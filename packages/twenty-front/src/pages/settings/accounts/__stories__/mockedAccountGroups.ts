@@ -20,8 +20,8 @@ import {
 
 const MY_USER_WORKSPACE_ID = '20202020-1a2b-4c3d-8e4f-000000000001';
 const TEAMMATE_USER_WORKSPACE_ID = '20202020-1a2b-4c3d-8e4f-000000000002';
-const FATHOM_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000021';
-const GRANOLA_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000022';
+export const FATHOM_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000021';
+export const GRANOLA_APPLICATION_ID = '20202020-1a2b-4c3d-8e4f-000000000022';
 const CREATED_AT = '2026-09-01T00:00:00.000Z';
 
 export const GOOGLE_ACCOUNT_ID = '20202020-1a2b-4c3d-8e4f-000000000011';
@@ -39,7 +39,7 @@ const buildConnectedAccount = (account: {
   provider: string;
   userWorkspaceId: string;
   applicationId?: string;
-  visibility?: string;
+  scope?: string;
   scopes?: string[];
 }) => ({
   __typename: 'ConnectedAccountPublicDTO',
@@ -52,7 +52,7 @@ const buildConnectedAccount = (account: {
   connectionProviderId: null,
   applicationId: null,
   name: null,
-  visibility: 'user',
+  scope: 'USER',
   lastCredentialsRefreshedAt: null,
   connectionParameters: null,
   createdAt: CREATED_AT,
@@ -97,6 +97,7 @@ const buildCalendarChannel = (id: string, connectedAccountId: string) => ({
   visibility: 'SHARE_EVERYTHING',
   isContactAutoCreationEnabled: false,
   contactAutoCreationPolicy: 'AS_PARTICIPANT_AND_ORGANIZER',
+  excludePrivateEvents: false,
   isSyncEnabled: true,
   syncStatus: 'ACTIVE',
   syncStage: 'CALENDAR_EVENT_LIST_FETCH_PENDING',
@@ -155,7 +156,7 @@ export const CONNECTED_ACCOUNTS = [
     provider: 'app',
     userWorkspaceId: MY_USER_WORKSPACE_ID,
     applicationId: FATHOM_APPLICATION_ID,
-    visibility: 'workspace',
+    scope: 'WORKSPACE',
   }),
   buildConnectedAccount({
     id: TEAMMATE_ACCOUNT_ID,
@@ -163,7 +164,7 @@ export const CONNECTED_ACCOUNTS = [
     provider: 'app',
     userWorkspaceId: TEAMMATE_USER_WORKSPACE_ID,
     applicationId: GRANOLA_APPLICATION_ID,
-    visibility: 'workspace',
+    scope: 'WORKSPACE',
   }),
   buildConnectedAccount({
     id: SECOND_GOOGLE_ACCOUNT_ID,
@@ -177,7 +178,7 @@ export const CONNECTED_ACCOUNTS = [
     handle: 'support@apple.dev',
     provider: 'email_group',
     userWorkspaceId: MY_USER_WORKSPACE_ID,
-    visibility: 'workspace',
+    scope: 'WORKSPACE',
   }),
 ];
 
@@ -201,7 +202,7 @@ const MESSAGE_CHANNELS = [
   ),
 ];
 
-const CALENDAR_CHANNELS = [
+export const CALENDAR_CHANNELS = [
   buildCalendarChannel(
     '20202020-1a2b-4c3d-8e4f-000000000041',
     GOOGLE_ACCOUNT_ID,
@@ -257,6 +258,9 @@ export const ACCOUNT_GROUPS_GRAPHQL_HANDLERS = [
       },
     });
   }),
+  graphql.query('MyApplicationPreferences', () =>
+    HttpResponse.json({ data: { myApplicationPreferences: [] } }),
+  ),
   graphql.query('FindManyBlocklists', () =>
     HttpResponse.json({
       data: {

@@ -1,8 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
+import { CountrySelect } from '../CountrySelect';
+import { COUNTRY_CHOICES } from './COUNTRY_CHOICES';
 import { CountrySelectExample } from './CountrySelectExample';
 import { waitForCountryPopup } from './waitForCountryPopup';
 
@@ -25,6 +28,21 @@ const meta: Meta<typeof CountrySelectExample> = {
 export default meta;
 type Story = StoryObj<typeof CountrySelectExample>;
 
+export const VisibleLabelNamesListbox: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Country' }),
+    );
+    const popup = await waitForCountryPopup({ canvasElement });
+
+    expect(
+      within(popup).getByRole('listbox', { name: 'Country' }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+  },
+};
+
 export const SelectedValueDescription: Story = {
   args: { label: '', 'aria-label': 'Shipping country' },
   render: (args) => (
@@ -44,7 +62,10 @@ export const SelectedValueDescription: Story = {
       canvasElement,
       name: 'Shipping country',
     });
-    const noCountry = within(popup).getByRole('button', { name: 'No country' });
+    expect(
+      within(popup).getByRole('listbox', { name: 'Shipping country' }),
+    ).toBeVisible();
+    const noCountry = within(popup).getByRole('option', { name: 'No country' });
 
     expect(noCountry.querySelector('svg')?.parentElement).toHaveAttribute(
       'aria-hidden',
@@ -71,6 +92,10 @@ export const TriggerNameFallback: Story = {
     await userEvent.click(trigger);
     const popup = await waitForCountryPopup({ canvasElement, name: 'France' });
 
+    expect(
+      within(popup).getByRole('listbox', { name: 'France' }),
+    ).toBeVisible();
+
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
   },
@@ -96,7 +121,89 @@ export const ExternalLabelledBy: Story = {
       name: 'Destination country',
     });
 
+    expect(
+      within(popup).getByRole('listbox', { name: 'Destination country' }),
+    ).toBeVisible();
     expect(popup).toHaveAttribute('aria-labelledby', 'country-name');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+  },
+};
+
+export const PopupAriaLabelOverridesTriggerName: Story = {
+  args: {
+    label: '',
+    popupProps: { 'aria-label': 'Country choices' },
+    optionsProps: { 'aria-label': 'Supported countries' },
+  },
+  render: (args) => (
+    <>
+      <span id="country-name">Destination country</span>
+      <CountrySelectExample
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...args}
+        aria-labelledby="country-name"
+      />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Destination country',
+    });
+
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({
+      canvasElement,
+      name: 'Country choices',
+    });
+
+    const listbox = within(popup).getByRole('listbox', {
+      name: 'Supported countries',
+    });
+
+    expect(listbox).not.toHaveAttribute('aria-labelledby');
+    expect(popup).toHaveAttribute('aria-label', 'Country choices');
+    expect(popup).not.toHaveAttribute('aria-labelledby');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+  },
+};
+
+export const PopupLabelledByOverridesTriggerName: Story = {
+  args: {
+    label: '',
+    'aria-label': 'Destination country',
+    popupProps: { 'aria-labelledby': 'country-popup-name' },
+    optionsProps: { 'aria-labelledby': 'country-popup-name' },
+  },
+  render: (args) => (
+    <>
+      <span id="country-popup-name">Country choices</span>
+      <CountrySelectExample
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...args}
+      />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Destination country',
+    });
+
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({
+      canvasElement,
+      name: 'Country choices',
+    });
+
+    const listbox = within(popup).getByRole('listbox', {
+      name: 'Country choices',
+    });
+
+    expect(listbox).not.toHaveAttribute('aria-label');
+    expect(listbox).toHaveAttribute('aria-labelledby', 'country-popup-name');
+    expect(popup).toHaveAttribute('aria-labelledby', 'country-popup-name');
+    expect(popup).not.toHaveAttribute('aria-label');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
   },
@@ -135,6 +242,9 @@ export const NonButtonTriggerLabel: Story = {
     await userEvent.click(trigger);
     const popup = await waitForCountryPopup({ canvasElement });
 
+    expect(
+      within(popup).getByRole('listbox', { name: 'Country' }),
+    ).toBeVisible();
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
@@ -143,7 +253,7 @@ export const NonButtonTriggerLabel: Story = {
 
 export const TruncatedCountryDisclosure: Story = {
   args: {
-    countries: [{ value: 'France', label: LONG_COUNTRY_LABEL, flag: '🇫🇷' }],
+    countries: [{ value: 'FR', label: LONG_COUNTRY_LABEL, flag: '🇫🇷' }],
   },
   play: async ({ canvasElement }) => {
     const trigger = within(canvasElement).getByRole('button', {
@@ -163,5 +273,36 @@ export const TruncatedCountryDisclosure: Story = {
     expect(tooltip).toHaveTextContent(LONG_COUNTRY_LABEL);
     await userEvent.unhover(selectedText);
     await waitFor(() => expect(tooltip).not.toBeInTheDocument());
+  },
+};
+
+export const CompoundTitleNamesListbox: Story = {
+  render: () => (
+    <CountrySelect.Root countries={COUNTRY_CHOICES} defaultValue="FR">
+      <Dropdown.Root type="picker">
+        <CountrySelect.Trigger label="Country" />
+        <Dropdown.Content>
+          <Dropdown.Title>Destination countries</Dropdown.Title>
+          <CountrySelect.Options />
+        </Dropdown.Content>
+      </Dropdown.Root>
+    </CountrySelect.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Country' }),
+    );
+    const popup = await waitForCountryPopup({
+      canvasElement,
+      name: 'Destination countries',
+    });
+    const title = within(popup).getByText('Destination countries');
+    const listbox = within(popup).getByRole('listbox', {
+      name: 'Destination countries',
+    });
+
+    expect(listbox).toHaveAttribute('aria-labelledby', title.id);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
   },
 };

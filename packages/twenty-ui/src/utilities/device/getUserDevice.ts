@@ -1,4 +1,5 @@
 import { isString } from '@sniptt/guards';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const getUserDevice = () => {
   const userAgent = globalThis.navigator?.userAgent;
@@ -18,7 +19,7 @@ export const getUserDevice = () => {
   }
 
   if (
-    normalizedUserAgent.includes('mac os x') ||
+    normalizedUserAgent.includes(doNotTranslate('mac os x')) ||
     normalizedUserAgent.includes('macos')
   ) {
     return 'mac';

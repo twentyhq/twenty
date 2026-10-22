@@ -57,7 +57,6 @@ export const OverflowingListLayoutEffect = memo(
         return;
       }
 
-      const supportsSynchronousLayout = isDefined(globalThis.ResizeObserver);
       const observedElements = new Set<Element>();
       const measure = () => {
         const itemElements = Array.from(items.children);
@@ -94,7 +93,6 @@ export const OverflowingListLayoutEffect = memo(
           itemElements,
           itemCount: layoutInput.itemCount,
           reserveCountSpace: layoutInput.reserveCountSpace,
-          supportsSynchronousLayout,
         });
         const previousMeasurement = previousMeasurementRef.current;
         const wasUnavailableOpen =
@@ -110,7 +108,7 @@ export const OverflowingListLayoutEffect = memo(
         }
       };
 
-      const observer = supportsSynchronousLayout
+      const observer = isDefined(globalThis.ResizeObserver)
         ? new ResizeObserver(measure)
         : undefined;
 

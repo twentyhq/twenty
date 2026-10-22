@@ -337,6 +337,8 @@ export class AuthResolver {
       )) ??
       (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
 
+    await this.authService.joinWorkspaceIfInvited({ user, workspace });
+
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
       workspace.id,
@@ -1218,7 +1220,10 @@ export class AuthResolver {
       oauthClient: false,
       application: false,
     }),
-    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionGuard([
+      PermissionFlagType.API_KEYS_AND_WEBHOOKS,
+      PermissionFlagType.ROLES,
+    ]),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(

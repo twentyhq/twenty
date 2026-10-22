@@ -19,7 +19,10 @@
   padding: var(--t-spacing-1) var(--t-spacing-1_5);
   word-break: break-word;
   inline-size: max-content;
-  max-inline-size: min(100%, var(--available-width));
+  max-inline-size: min(
+    var(--tw-tooltip-max-width, 300px),
+    var(--available-width)
+  );
   will-change: opacity;
   transition: opacity 0.15s ease-out;
 

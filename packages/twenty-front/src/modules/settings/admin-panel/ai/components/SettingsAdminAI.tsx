@@ -203,7 +203,7 @@ export const SettingsAdminAI = () => {
             description={t`The model behind each mode for every workspace. Workspaces can pin their own.`}
           />
 
-          <Card.Root rounded>
+          <Card.Root>
             <StyledSettingsSelectGroup controlWidth={260}>
               {AI_MODEL_TIERS.map((tier, index) => (
                 <SettingsOptionCardContentSelect
@@ -278,7 +278,7 @@ export const SettingsAdminAI = () => {
               ))}
             </Table>
           ) : (
-            <Card.Root rounded>
+            <Card.Root>
               <TableRow gridTemplateColumns="1fr">
                 <TableCell
                   color={themeCssVariables.font.color.tertiary}

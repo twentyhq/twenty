@@ -65,10 +65,6 @@ const StyledExternalLink = styled.a`
   display: inline-flex;
   gap: ${themeCssVariables.spacing[1]};
   text-decoration: none;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
 `;
 
 const StyledMono = styled.span`
@@ -104,11 +100,9 @@ const STATUS_LABELS: Record<SubscriptionStatus, MessageDescriptor> = {
 };
 
 const toBillingPlanKey = (planKey: string): BillingPlanKey | null =>
-  planKey === BillingPlanKey.PRO
-    ? BillingPlanKey.PRO
-    : planKey === BillingPlanKey.ENTERPRISE
-      ? BillingPlanKey.ENTERPRISE
-      : null;
+  Object.values(BillingPlanKey).find(
+    (billingPlanKey) => billingPlanKey === planKey,
+  ) ?? null;
 
 const StripeLink = ({
   path,
@@ -213,23 +207,23 @@ export const SettingsAdminWorkspaceBillingContent = ({
         {
           Icon: IconChartBar,
           label: t`Credits used`,
-          value: `${formatCredits(usage.usedCredits)} / ${formatCredits(usage.totalGrantedCredits)}`,
+          value: `${formatCredits(usage.workspaceCreditsUsed)} / ${formatCredits(usage.workspaceCreditsTotalGranted)}`,
         },
         ...(!isTrialing
           ? [
               {
                 Icon: IconCoins,
                 label: t`Base credits`,
-                value: formatCredits(usage.grantedCredits),
+                value: formatCredits(usage.workspaceCreditsGranted),
               },
             ]
           : []),
-        ...(usage.rolloverCredits > 0
+        ...(usage.workspaceCreditsExtraGranted > 0
           ? [
               {
                 Icon: IconCoins,
                 label: t`Granted credits`,
-                value: formatCredits(usage.rolloverCredits),
+                value: formatCredits(usage.workspaceCreditsExtraGranted),
               },
             ]
           : []),
@@ -364,11 +358,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
           title={t`Customer`}
           description={t`Stripe customer linked to this workspace`}
         />
-        <SettingsTableCard
-          rounded
-          items={customerItems}
-          gridAutoColumns="3fr 8fr"
-        />
+        <SettingsTableCard items={customerItems} gridAutoColumns="3fr 8fr" />
       </Section.Root>
 
       <Section.Root>
@@ -381,11 +371,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
           }
         />
         {isDefined(usage) && (
-          <SettingsTableCard
-            rounded
-            items={usageItems}
-            gridAutoColumns="3fr 8fr"
-          />
+          <SettingsTableCard items={usageItems} gridAutoColumns="3fr 8fr" />
         )}
       </Section.Root>
 
@@ -400,7 +386,6 @@ export const SettingsAdminWorkspaceBillingContent = ({
         />
         {subscription && (
           <SettingsTableCard
-            rounded
             items={subscriptionItems}
             gridAutoColumns="3fr 8fr"
           />

@@ -21,6 +21,7 @@ type FormLinksFieldInputProps = {
   readonly?: boolean;
   subFieldPlaceholders?: Partial<Record<keyof FieldLinksDraftValue, string>>;
   maxNumberOfValues?: number | null;
+  isPrimaryLinkUrlOnly?: boolean;
 };
 
 export const FormLinksFieldInput = ({
@@ -31,6 +32,7 @@ export const FormLinksFieldInput = ({
   VariablePicker,
   subFieldPlaceholders,
   maxNumberOfValues,
+  isPrimaryLinkUrlOnly = false,
 }: FormLinksFieldInputProps) => {
   const allowsSecondaryLinks = maxNumberOfValues !== 1;
   const secondaryLinks = defaultValue?.secondaryLinks;
@@ -65,6 +67,19 @@ export const FormLinksFieldInput = ({
         : updatedUrls.map((url) => ({ url, label: null })),
     });
   };
+
+  if (isPrimaryLinkUrlOnly) {
+    return (
+      <FormTextFieldInput
+        label={label}
+        defaultValue={defaultValue?.primaryLinkUrl}
+        onChange={handleChange('primaryLinkUrl')}
+        placeholder={subFieldPlaceholders?.primaryLinkUrl ?? t`URL`}
+        readonly={readonly}
+        VariablePicker={VariablePicker}
+      />
+    );
+  }
 
   return (
     <FormFieldInputContainer>

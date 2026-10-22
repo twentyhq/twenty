@@ -66,7 +66,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationConfigTab
             registration={registration}
-            fromAdmin
+            isAdminView
           />
         );
       case 'oauth':
@@ -79,7 +79,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationDistributionTab
             registration={registration}
-            fromAdmin
+            isAdminView
           />
         );
       case 'general':
@@ -91,7 +91,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
             />
             <SettingsApplicationRegistrationGeneralTab
               registration={registration}
-              fromAdmin
+              isAdminView
             />
           </>
         );

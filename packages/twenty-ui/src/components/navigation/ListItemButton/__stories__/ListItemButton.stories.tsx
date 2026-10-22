@@ -27,7 +27,7 @@ const meta: Meta<typeof ListItemButton> = {
 export default meta;
 type Story = StoryObj<typeof ListItemButton>;
 
-export const Default: Story = {};
+export const Display: Story = {};
 
 export const Disabled: Story = {
   args: { disabled: true },
@@ -58,4 +58,13 @@ export const IndependentAction: Story = {
       </Button>
     </div>
   ),
+};
+
+export const Multiline: Story = {
+  args: {
+    children: 'Duplicate document',
+    description: 'Create a copy with the same settings.',
+    descriptionPlacement: 'below',
+    active: true,
+  },
 };

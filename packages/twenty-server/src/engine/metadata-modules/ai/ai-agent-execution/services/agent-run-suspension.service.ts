@@ -5,17 +5,22 @@ import { type PendingWakeUpCondition } from 'twenty-shared/pending-wake-up';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Raw } from 'typeorm';
 
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
+import { computePendingWakeUpRetryDelayMs } from 'src/engine/core-modules/pending-wake-up/utils/compute-pending-wake-up-retry-delay-ms.util';
 import { CONTINUE_AGENT_RUN_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/continue-agent-run-job-name.constant';
+import { DELIVER_AGENT_RUN_OUTCOME_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/deliver-agent-run-outcome-job-name.constant';
 import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
 import { buildWaitOutcomeToolOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/build-wait-outcome-tool-output.util';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { type AgentConversationWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-conversation-wait.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
+import { type AgentRunOutcomeDelivery } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-outcome-delivery.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
@@ -34,6 +39,19 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 // one key for every run, so the owner's unique key leaves a conversation one suspended run
 const SUSPENDED_RUN_WAKE_UP_KEY = 'RUN';
+
+type ConversationWakeUps = Pick<
+  AgentConversationWait,
+  'suspendedRun' | 'hasPostedCall'
+>;
+
+const isHeldByWakeUp = ({ suspendedRun, hasPostedCall }: ConversationWakeUps) =>
+  isDefined(suspendedRun) || hasPostedCall;
+
+const buildAnswerInThreadCondition = (threadId: string) =>
+  Raw((alias) => `${alias} @> :condition::jsonb`, {
+    condition: JSON.stringify({ type: 'ANSWER', threadId }),
+  });
 
 // A suspended run is the AGENT_RUN wake-up its conversation owns: what wakes it up, and in its
 // payload what continues it and who gets its outcome
@@ -79,27 +97,31 @@ export class AgentRunSuspensionService {
     });
   }
 
-  // a run waiting in the conversation would read a new message on continuing, and a caller waiting
-  // on a call it posted there would see the message close it
-  async isConversationWaiting({
+  // a run waiting in the conversation would read another run's prompt on continuing, and a call
+  // a caller such as a workflow step posted there waits on its own answer
+  async findConversationWait({
     workspaceId,
-    threadId,
+    thread: { id: threadId, pendingQuestionMessageId },
   }: {
     workspaceId: string;
-    threadId: string;
-  }): Promise<boolean> {
-    return this.wakeUpRepository.exists(workspaceId, {
-      where: [
-        { ownerType: 'AGENT_RUN', ownerId: threadId },
-        {
-          condition: Raw((alias) => `${alias} @> :condition::jsonb`, {
-            condition: JSON.stringify({ type: 'ANSWER', threadId }),
-          }),
-        },
-      ],
+    thread: Pick<
+      AgentChatThreadWorkspaceEntity,
+      'id' | 'pendingQuestionMessageId'
+    >;
+  }): Promise<AgentConversationWait> {
+    const wakeUps = await this.findConversationWakeUps({
+      workspaceId,
+      threadId,
     });
+
+    return {
+      pendingQuestionMessageId,
+      ...wakeUps,
+      isWaiting: isDefined(pendingQuestionMessageId) || isHeldByWakeUp(wakeUps),
+    };
   }
 
+  // a question the member was asked in chat does not hold the conversation from a run
   async assertConversationNotSuspended({
     workspaceId,
     threadId,
@@ -107,7 +129,11 @@ export class AgentRunSuspensionService {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
-    if (await this.isConversationWaiting({ workspaceId, threadId })) {
+    if (
+      isHeldByWakeUp(
+        await this.findConversationWakeUps({ workspaceId, threadId }),
+      )
+    ) {
       throw new AiException(
         'The conversation is waiting on an earlier run; send the next message once it has finished',
         AiExceptionCode.THREAD_AWAITING_ANSWER,
@@ -132,6 +158,7 @@ export class AgentRunSuspensionService {
     outcome,
     summary = suspendedSummary,
     isAwaitingAnswer = false,
+    streamId,
   }: {
     workspaceId: string;
     threadId: string;
@@ -139,12 +166,62 @@ export class AgentRunSuspensionService {
     outcome: AgentRunCallerOutcome;
     summary?: AgentRunSummary | null;
     isAwaitingAnswer?: boolean;
+    streamId?: string;
   }): Promise<void> {
-    await this.closeAwaitedCalls({ workspaceId, threadId, isAwaitingAnswer });
+    await this.closeAwaitedCalls({
+      workspaceId,
+      threadId,
+      isAwaitingAnswer,
+      streamId,
+    });
 
-    await this.callerHandlerRegistry
-      .getHandlerOrThrow(caller.type)
-      .onOutcome?.({ workspaceId, caller, threadId, outcome, summary });
+    await this.deliverOutcome({
+      workspaceId,
+      caller,
+      threadId,
+      outcome,
+      summary: summary ?? null,
+    });
+  }
+
+  // a workflow step is marked pending only after its executor returns, so an outcome that comes sooner is delivered later
+  async deliverOutcome(delivery: AgentRunOutcomeDelivery): Promise<void> {
+    const { workspaceId, caller, attempt = 0 } = delivery;
+    const handler = this.callerHandlerRegistry.getHandlerOrThrow(caller.type);
+
+    if (!isDefined(handler.onOutcome)) {
+      return;
+    }
+
+    try {
+      const waitingState = await handler.getWaitingState({
+        workspaceId,
+        caller,
+      });
+
+      if (waitingState === 'GONE') {
+        await handler.onCallerGone?.(delivery);
+
+        return;
+      }
+
+      if (waitingState === 'WAITING') {
+        await handler.onOutcome(delivery);
+
+        return;
+      }
+    } catch (error) {
+      // the run already ended, so a failed delivery is tried again rather than lost with the job
+      this.logger.warn(
+        `Could not deliver the outcome of the run in thread ${delivery.threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
+      );
+    }
+
+    await this.messageQueueService.add<AgentRunOutcomeDelivery>(
+      DELIVER_AGENT_RUN_OUTCOME_JOB_NAME,
+      { ...delivery, attempt: attempt + 1 },
+      { delay: computePendingWakeUpRetryDelayMs(attempt) },
+    );
   }
 
   // A caller that stops waiting drops its suspended runs, such as every step of a run that ended
@@ -198,10 +275,13 @@ export class AgentRunSuspensionService {
     workspaceId,
     threadId,
     isAwaitingAnswer,
+    streamId,
   }: {
     workspaceId: string;
     threadId: string;
     isAwaitingAnswer: boolean;
+    // the stream of a run that closes its calls while it holds the conversation
+    streamId?: string;
   }): Promise<void> {
     await this.recordWaitOutcome({
       workspaceId,
@@ -210,7 +290,7 @@ export class AgentRunSuspensionService {
     });
 
     if (isAwaitingAnswer) {
-      await this.closePendingQuestion({ workspaceId, threadId });
+      await this.closePendingQuestion({ workspaceId, threadId, streamId });
     }
   }
 
@@ -257,7 +337,7 @@ export class AgentRunSuspensionService {
         })
         .catch((error: unknown) =>
           this.logger.warn(
-            `Could not end the turn of wait message ${messageId}: ${error instanceof Error ? error.message : String(error)}`,
+            `Could not end the turn of wait message ${messageId}: ${formatErrorWithCause(error)}`,
           ),
         );
     }
@@ -283,20 +363,24 @@ export class AgentRunSuspensionService {
   }
 
   // without a call to look for, the pending question is the one waited on
-  private async closePendingQuestion({
+  async closePendingQuestion({
     workspaceId,
     threadId,
     toolCallId,
+    streamId,
+    turnStatus = AgentTurnStatus.CANCELLED,
   }: {
     workspaceId: string;
     threadId: string;
     toolCallId?: string;
+    streamId?: string;
+    turnStatus?: AgentTurnStatus.COMPLETED | AgentTurnStatus.CANCELLED;
   }): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: {
         id: threadId,
         pendingQuestionMessageId: Not(IsNull()),
-        activeStreamId: IsNull(),
+        activeStreamId: streamId ?? IsNull(),
       },
       select: ['id', 'pendingQuestionMessageId'],
     });
@@ -317,8 +401,33 @@ export class AgentRunSuspensionService {
       workspaceId,
       threadId,
       messageId,
-      activeStreamId: null,
-      turnStatus: AgentTurnStatus.CANCELLED,
+      activeStreamId: streamId ?? null,
+      turnStatus,
     });
+  }
+
+  private async findConversationWakeUps({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<ConversationWakeUps> {
+    const wakeUps = await this.wakeUpRepository.find(workspaceId, {
+      where: [
+        { ownerType: 'AGENT_RUN', ownerId: threadId },
+        { condition: buildAnswerInThreadCondition(threadId) },
+      ],
+      select: ['id', 'ownerType', 'ownerId'],
+    });
+
+    return {
+      suspendedRun:
+        wakeUps.find(
+          ({ ownerType, ownerId }) =>
+            ownerType === 'AGENT_RUN' && ownerId === threadId,
+        ) ?? null,
+      hasPostedCall: wakeUps.some(({ ownerType }) => ownerType !== 'AGENT_RUN'),
+    };
   }
 }

@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { type MouseEvent } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -21,6 +22,15 @@ const meta: Meta<typeof OverflowingTextWithTooltip> = {
 
 export default meta;
 type Story = StoryObj<typeof OverflowingTextWithTooltip>;
+
+export const Display: Story = {
+  args: {
+    text: 'Quarterly account review and renewal preparation',
+    isFocusable: true,
+    style: { maxWidth: 220 },
+  },
+  decorators: [ComponentDecorator],
+};
 
 export const SingleLineOverflowing: Story = {
   args: {
@@ -44,20 +54,23 @@ export const SingleLineOverflowing: Story = {
   },
 };
 
-export const SingleLineOverflowingDocumentation: Story = {
-  args: SingleLineOverflowing.args,
-  decorators: SingleLineOverflowing.decorators,
-};
-
 export const SingleLineNotOverflowing: Story = {
   args: {
     text: 'Short',
+    isFocusable: true,
+    tooltipDelay: 0,
   },
   decorators: [ComponentDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const tooltip = await canvas.findByTestId('overflow-text');
-    await userEvent.hover(tooltip);
+    const text = canvas.getByTestId('overflow-text');
+    const body = within(canvasElement.ownerDocument.body);
+
+    await expect(text.scrollWidth).toBeLessThanOrEqual(text.clientWidth);
+    await userEvent.tab();
+    await expect(text).toHaveFocus();
+    await userEvent.hover(text);
+    await expect(body.queryByRole('tooltip')).not.toBeInTheDocument();
   },
 };
 
@@ -215,18 +228,28 @@ export const ExplicitLink: Story = {
     ),
     style: { maxWidth: 200, display: 'block' },
     tooltipDelay: 0,
+    title: 'Read documentation',
+    onFocus: fn(),
+    onPointerEnter: fn(),
+    onClick: fn((event: MouseEvent<HTMLElement>) => event.preventDefault()),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const link = canvas.getByRole('link');
     await expect(canvas.getAllByRole('link')).toHaveLength(1);
     await expect(link.scrollWidth).toBeGreaterThan(link.clientWidth);
     await userEvent.tab();
     await expect(link).toHaveFocus();
+    await expect(args.onFocus).toHaveBeenCalledOnce();
+    await expect(link).toHaveAttribute('title', 'Read documentation');
     const body = within(canvasElement.ownerDocument.body);
-    await expect(await body.findByRole('tooltip')).toHaveTextContent(
-      link.textContent ?? '',
-    );
+    const popup = await body.findByRole('tooltip');
+
+    await waitFor(() => expect(popup).toBeVisible());
+    await expect(popup).toHaveTextContent(link.textContent ?? '');
+    await userEvent.click(link);
+    await expect(args.onPointerEnter).toHaveBeenCalled();
+    await expect(args.onClick).toHaveBeenCalledOnce();
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
@@ -239,21 +262,48 @@ export const Focusable: Story = {
   decorators: [ComponentDecorator],
   render: (args) => (
     <>
-      <OverflowingTextWithTooltip {...args} data-testid="overflow-text" />
+      <OverflowingTextWithTooltip
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...args}
+        data-testid="overflow-text"
+      />
       <Button>Next action</Button>
     </>
   ),
-  args: { text: longText, isFocusable: true, tooltipDelay: 0 },
+  args: {
+    text: 'Clickable label',
+    tooltipContent: 'Additional information',
+    alwaysShowTooltip: true,
+    isFocusable: true,
+    tooltipDelay: 0,
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const text = canvas.getByTestId('overflow-text');
+    const body = within(canvasElement.ownerDocument.body);
+
     await userEvent.tab();
     await expect(text).toHaveFocus();
-    const body = within(canvasElement.ownerDocument.body);
-    await expect(await body.findByRole('tooltip')).toHaveTextContent(longText);
+    const popup = await body.findByRole('tooltip');
+
+    await waitFor(() => expect(popup).toBeVisible());
+    await expect(popup).toHaveTextContent('Additional information');
     await userEvent.hover(text);
     await userEvent.unhover(text);
-    await waitFor(() => expect(body.getByRole('tooltip')).toBeVisible());
+    await waitFor(() => expect(popup).toBeVisible());
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
+    await expect(text).toHaveFocus();
+    await userEvent.click(text);
+    const reopenedPopup = await body.findByRole('tooltip');
+
+    await waitFor(() => expect(reopenedPopup).toBeVisible());
+    await expect(reopenedPopup).toHaveTextContent('Additional information');
+    await expect(text).toHaveFocus();
+    await userEvent.unhover(text);
+    await waitFor(() => expect(reopenedPopup).toBeVisible());
     await userEvent.tab();
     await expect(
       canvas.getByRole('button', { name: 'Next action' }),
@@ -261,5 +311,61 @@ export const Focusable: Story = {
     await waitFor(() =>
       expect(body.queryByRole('tooltip')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const Typography: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <Text
+      size="xxl"
+      weight="semibold"
+      color="secondary"
+      style={{ maxWidth: 220 }}
+    >
+      <OverflowingTextWithTooltip text="Inherited text" />
+      <OverflowingTextWithTooltip
+        text="Explicit typography with overflowing content"
+        size="lg"
+        weight="regular"
+        color="primary"
+        tooltipDelay={0}
+        isFocusable
+      />
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const inherited = canvas.getByText('Inherited text');
+    const explicit = canvas.getByText(
+      'Explicit typography with overflowing content',
+    );
+    const inheritedStyle = getComputedStyle(inherited);
+    const explicitStyle = getComputedStyle(explicit);
+    const rootFontSize = Number.parseFloat(
+      getComputedStyle(canvasElement.ownerDocument.documentElement).fontSize,
+    );
+
+    await expect(Number.parseFloat(inheritedStyle.fontSize)).toBeCloseTo(
+      rootFontSize * 1.85,
+      1,
+    );
+    await expect(inheritedStyle.fontWeight).toBe('600');
+    await expect(Number.parseFloat(explicitStyle.fontSize)).toBeCloseTo(
+      rootFontSize * 1.23,
+      1,
+    );
+    await expect(explicitStyle.fontWeight).toBe('400');
+    await expect(explicit.scrollWidth).toBeGreaterThan(explicit.clientWidth);
+    await userEvent.hover(explicit);
+
+    const popup = await within(canvasElement.ownerDocument.body).findByRole(
+      'tooltip',
+    );
+
+    await waitFor(() => expect(popup).toBeVisible());
+    await expect(
+      Number.parseFloat(getComputedStyle(popup).fontSize),
+    ).toBeCloseTo(rootFontSize * 0.92, 1);
   },
 };

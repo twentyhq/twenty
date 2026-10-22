@@ -16,6 +16,11 @@ import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import { assertPlanIsSellableOrThrow } from 'src/engine/core-modules/billing/utils/assert-plan-is-sellable-or-throw.util';
+import { findDefaultPlanKey } from 'src/engine/core-modules/billing/utils/find-default-plan-key.util';
+import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
+import { getSellablePlanKeys } from 'src/engine/core-modules/billing/utils/get-sellable-plan-keys.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class BillingPlanService {
@@ -23,9 +28,13 @@ export class BillingPlanService {
   constructor(
     @InjectRepository(BillingProductEntity)
     private readonly billingProductRepository: Repository<BillingProductEntity>,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async listPlans(): Promise<BillingGetPlanResult[]> {
+    const plansConfig = this.twentyConfigService.get('BILLING_PLANS');
+    const sellablePlanKeys = getSellablePlanKeys(plansConfig);
+    const defaultPlanKey = findDefaultPlanKey(plansConfig);
     const planKeys = Object.values(BillingPlanKey);
 
     const products = await this.billingProductRepository.find({
@@ -55,9 +64,17 @@ export class BillingPlanService {
         (product) =>
           product.metadata.productKey === BillingProductKey.RESOURCE_CREDIT,
       );
+      const { upgradePlanKeys, downgradePlanKeys } = getBillingPlanConfig({
+        plansConfig,
+        planKey,
+      });
 
       return {
         planKey,
+        isSellable: sellablePlanKeys.includes(planKey),
+        isCheckoutDefault: planKey === defaultPlanKey,
+        upgradePlanKeys,
+        downgradePlanKeys,
         meteredProducts,
         baseProducts,
         resourceCreditProducts,
@@ -65,13 +82,20 @@ export class BillingPlanService {
     });
   }
 
-  async getPricesPerPlanByInterval({
+  async getSellablePlanPricesByIntervalOrThrow({
     planKey,
     interval,
   }: {
     planKey: BillingPlanKey;
     interval: SubscriptionInterval;
   }): Promise<BillingGetPricesPerPlanResult> {
+    assertPlanIsSellableOrThrow({
+      planKey,
+      sellablePlanKeys: getSellablePlanKeys(
+        this.twentyConfigService.get('BILLING_PLANS'),
+      ),
+    });
+
     const plans = await this.listPlans();
     const plan = plans.find((plan) => plan.planKey === planKey);
 

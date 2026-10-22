@@ -1,6 +1,5 @@
 import { FieldDescriptionTooltipContext } from '@/object-record/record-field/ui/contexts/FieldDescriptionTooltipContext';
 import { type FieldDescriptionTooltipContent } from '@/object-record/record-field/ui/types/FieldDescriptionTooltipContent';
-import { TooltipTextContent } from '@/ui/layout/tooltip/components/TooltipTextContent';
 import { type ReactNode, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -52,12 +51,11 @@ export const FieldDescriptionTooltipProvider = ({
                 side="bottom"
                 positionMethod="fixed"
                 sideOffset={10}
-                style={{ maxWidth: '300px' }}
               >
                 <Tooltip.Popup>
-                  <TooltipTextContent description={payload?.description}>
+                  <Tooltip.Body description={payload?.description}>
                     {payload?.title}
-                  </TooltipTextContent>
+                  </Tooltip.Body>
                 </Tooltip.Popup>
               </Tooltip.Positioner>
             </Tooltip.Portal>

@@ -296,6 +296,7 @@ describe('app install', () => {
     null,
     { jobId: 'another-job', state: 'COMPLETED' },
     { jobId: JOB_ID, state: 'UNKNOWN' },
+    { ...jobStatus('ACTIVE'), progress: 101 },
   ])(
     'never treats missing or unrelated job status as success (%j)',
     async (status) => {
@@ -476,6 +477,33 @@ describe('app install', () => {
       code: 'CANCELLED',
       details: { phase: 'start', outcome: 'unknown', completedPhases: [] },
     });
+  });
+
+  it('reports job progress once per change instead of the job identifier', async () => {
+    state.statuses = [
+      jobStatus('WAITING'),
+      { ...jobStatus('ACTIVE'), progress: 25 },
+      { ...jobStatus('ACTIVE'), progress: 25 },
+      { ...jobStatus('ACTIVE'), progress: 75 },
+      { ...jobStatus('COMPLETED'), progress: 100 },
+    ];
+    const progressMessage = `Installing the registered app on ${server.url}…`;
+
+    const { exitCode, stderr } = await run(
+      '--universal-identifier',
+      UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(exitCode).toBe(0);
+    expect(
+      stderr.split('\n').filter((line) => line.startsWith(progressMessage)),
+    ).toEqual([
+      `${progressMessage} 0%`,
+      `${progressMessage} 25%`,
+      `${progressMessage} 75%`,
+      `${progressMessage} 100%`,
+    ]);
+    expect(stderr).not.toContain(JOB_ID);
   });
 
   it('prints success only after installation and appears as a target write command', async () => {

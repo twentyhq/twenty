@@ -8,6 +8,7 @@ import {
 } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -112,7 +113,9 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
   } else if (groupByFieldMetadataItem.type === FieldMetadataType.SELECT) {
     if (!groupByFieldMetadataItem.options) {
       throw new Error(
-        `Select Field ${objectMetadataItem.nameSingular} has no options`,
+        doNotTranslate(
+          `Select Field ${objectMetadataItem.nameSingular} has no options`,
+        ),
       );
     }
 

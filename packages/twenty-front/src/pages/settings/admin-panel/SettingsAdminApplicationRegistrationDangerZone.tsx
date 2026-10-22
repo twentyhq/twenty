@@ -24,7 +24,7 @@ import {
   type ApplicationRegistration,
   ClaimApplicationRegistrationOwnershipDocument,
   DeleteApplicationRegistrationDocument,
-  FindApplicationRegistrationStatsDocument,
+  FindApplicationRegistrationInstallCountDocument,
   FindManyApplicationRegistrationsDocument,
   PermissionFlagType,
   TransferApplicationRegistrationOwnershipDocument,
@@ -39,14 +39,6 @@ const TRANSFER_OWNERSHIP_MODAL_ID =
 
 const DELETE_REGISTRATION_BUTTON_ID = 'delete-registration-button';
 
-const StyledActionButton = styled(Button)`
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledDescriptionSection = styled(Section.Root)`
-  margin-bottom: ${themeCssVariables.spacing[6]};
-`;
-
 const StyledDangerButtonGroup = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -54,10 +46,10 @@ const StyledDangerButtonGroup = styled.div`
 
 export const SettingsAdminApplicationRegistrationDangerZone = ({
   registration,
-  fromAdmin = false,
+  isAdminView = false,
 }: {
   registration: ApplicationRegistration;
-  fromAdmin?: boolean;
+  isAdminView?: boolean;
 }) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
@@ -78,7 +70,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
   );
 
   const { data: statsData } = useQuery(
-    FindApplicationRegistrationStatsDocument,
+    FindApplicationRegistrationInstallCountDocument,
     {
       variables: { id: applicationRegistrationId },
       skip: !applicationRegistrationId,
@@ -118,7 +110,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         variables: { id: applicationRegistrationId },
       });
 
-      if (fromAdmin) {
+      if (isAdminView) {
         navigate(
           SettingsPath.AdminPanel,
           undefined,
@@ -238,7 +230,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           </Tooltip>
 
           {isUnclaimed
-            ? fromAdmin && (
+            ? isAdminView && (
                 <Button
                   startIcon={<IconUserPlus />}
                   onClick={() =>
@@ -300,17 +292,15 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           <Dialog.Popup
             onKeyDown={onKeyDown}
             data-globally-prevent-click-outside
-            style={{
-              padding: 'var(--t-spacing-6)',
-              borderRadius: 'var(--t-spacing-1)',
-              width: 'calc(400px - var(--t-spacing-32))',
-            }}
+            size="sm"
           >
-            <Dialog.Title>{t`Transfer ownership`}</Dialog.Title>
-            <StyledDescriptionSection align="center" color="primary">
-              {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
-            </StyledDescriptionSection>
-            <Section.Root>
+            <Dialog.Header>
+              <Dialog.Title>{t`Transfer ownership`}</Dialog.Title>
+              <Dialog.Description>
+                {t`Enter the workspace subdomain to transfer this app to. You will lose access to manage it.`}
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Body>
               <SettingsTextInput
                 instanceId="transfer-ownership-subdomain"
                 value={transferSubdomain}
@@ -321,24 +311,26 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
                 label={t`Target workspace subdomain`}
                 autoFocusOnMount
               />
-            </Section.Root>
-            <StyledActionButton
-              onClick={() => {
-                closeDialog(TRANSFER_OWNERSHIP_MODAL_ID);
-                setTransferSubdomain('');
-              }}
-              fullWidth
-              variant="outline"
-            >{t`Cancel`}</StyledActionButton>
-            <StyledActionButton
-              onClick={handleTransferOwnership}
-              disabled={
-                !isNonEmptyString(transferSubdomain.trim()) || isTransferring
-              }
-              fullWidth
-              variant="outline"
-              color="danger"
-            >{t`Transfer`}</StyledActionButton>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button
+                onClick={() => {
+                  closeDialog(TRANSFER_OWNERSHIP_MODAL_ID);
+                  setTransferSubdomain('');
+                }}
+                fullWidth
+                variant="outline"
+              >{t`Cancel`}</Button>
+              <Button
+                onClick={handleTransferOwnership}
+                disabled={
+                  !isNonEmptyString(transferSubdomain.trim()) || isTransferring
+                }
+                fullWidth
+                variant="outline"
+                color="danger"
+              >{t`Transfer`}</Button>
+            </Dialog.Footer>
           </Dialog.Popup>
         )}
       </DialogInstance>

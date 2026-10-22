@@ -1,7 +1,8 @@
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useId } from 'react';
+import { Fragment, type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
@@ -14,16 +15,6 @@ type SettingsRadioSettingsCardProps<Option extends { value: string }> = {
   value: Option['value'];
   disabled?: boolean;
 };
-
-const StyledCardContentContainer = styled.div`
-  > div {
-    cursor: pointer;
-
-    &:hover {
-      background: ${themeCssVariables.background.transparent.lighter};
-    }
-  }
-`;
 
 const StyledOptionHeader = styled.label`
   align-items: center;
@@ -53,8 +44,8 @@ const StyledRadioContainer = styled.span`
   margin-left: auto;
 `;
 
-const StyledExpandedContent = styled.div`
-  margin-top: ${themeCssVariables.spacing[4]};
+const EXPANDED_CONTENT_CLASS_NAME = css`
+  padding-top: ${themeCssVariables.spacing[0]};
 `;
 
 export const SettingsRadioSettingsCard = <
@@ -90,13 +81,26 @@ export const SettingsRadioSettingsCard = <
         }
       }}
     >
-      <Card.Root fullWidth rounded>
+      <Card.Root fullWidth>
         {options.map((option, index) => {
           const isSelected = value === option.value;
+          const hasExpandedContent =
+            isDefined(option.cardContentExpanded) && isSelected;
+          const hasDivider = index < options.length - 1;
+          const radioId = `${groupId}-${index}`;
 
           return (
-            <StyledCardContentContainer key={option.value}>
-              <Card.Content divider={index < options.length - 1}>
+            <Fragment key={option.value}>
+              <Card.Content divider={hasDivider && !hasExpandedContent}>
+                <Card.Action
+                  disabled={disabled}
+                  render={
+                    <label
+                      htmlFor={radioId}
+                      aria-labelledby={`${groupId}-${index}-title`}
+                    />
+                  }
+                />
                 <StyledOptionHeader>
                   {option.cardMedia}
                   <StyledTextContainer>
@@ -107,21 +111,25 @@ export const SettingsRadioSettingsCard = <
                       {i18n._(option.description)}
                     </StyledDescription>
                   </StyledTextContainer>
-                  <StyledRadioContainer>
+                  <Card.Control render={<StyledRadioContainer />}>
                     <Radio
+                      id={radioId}
                       aria-labelledby={`${groupId}-${index}-title`}
                       aria-describedby={`${groupId}-${index}-description`}
                       value={option.value}
                     />
-                  </StyledRadioContainer>
+                  </Card.Control>
                 </StyledOptionHeader>
-                {isDefined(option.cardContentExpanded) && isSelected && (
-                  <StyledExpandedContent>
-                    {option.cardContentExpanded}
-                  </StyledExpandedContent>
-                )}
               </Card.Content>
-            </StyledCardContentContainer>
+              {hasExpandedContent && (
+                <Card.Content
+                  className={EXPANDED_CONTENT_CLASS_NAME}
+                  divider={hasDivider}
+                >
+                  {option.cardContentExpanded}
+                </Card.Content>
+              )}
+            </Fragment>
           );
         })}
       </Card.Root>

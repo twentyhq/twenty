@@ -29,6 +29,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { SettingsRow } from 'twenty-ui/components/settings';
 import {
   IconArrowBarToDownDashed,
@@ -120,7 +121,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   );
 
   const selectableItemIdArray = [
-    ...(currentView?.key !== 'INDEX' ? ['GroupBy', 'Sort'] : []),
+    ...(currentView?.key !== 'INDEX'
+      ? ['GroupBy', doNotTranslate('Sort')]
+      : []),
     ...(shouldShowGroupLoadLimit ? ['LoadLimit'] : []),
     'HideEmptyGroups',
   ];

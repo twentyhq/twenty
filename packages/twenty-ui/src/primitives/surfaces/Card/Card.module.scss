@@ -14,10 +14,6 @@
   overflow: hidden;
   width: auto;
 
-  &[data-rounded] {
-    border-radius: var(--t-border-radius-md);
-  }
-
   &[data-full-width] {
     width: 100%;
   }

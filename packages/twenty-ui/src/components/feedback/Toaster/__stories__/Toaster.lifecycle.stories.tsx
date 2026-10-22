@@ -372,8 +372,10 @@ export const HoverAndFocusPauseAcrossMirrors: Story = {
         name: 'Update unrelated notification',
       }),
     );
-    expect(first.getByText('Updated unrelated notification')).toBeVisible();
-    expect(second.getByText('Updated unrelated notification')).toBeVisible();
+    await waitFor(() => {
+      expect(first.getByText('Updated unrelated notification')).toBeVisible();
+      expect(second.getByText('Updated unrelated notification')).toBeVisible();
+    });
     expect(getCountdown(firstToast)).toBe(firstCountdown);
     expect(getCountdown(secondToast)).toBe(secondCountdown);
     await user.unhover(firstToast);
@@ -619,6 +621,10 @@ export const PreviousProviderOperationsRemainInactive: Story = {
     const replacementSecond = within(
       body.getByRole('region', { name: 'Second lifecycle notifications' }),
     ).getByRole('status');
+    await waitFor(() => {
+      expect(replacementFirst).toBeVisible();
+      expect(replacementSecond).toBeVisible();
+    });
     const replacementId = replacementFirst.id;
     expect(replacementId).not.toBe(originalId);
     await user.click(

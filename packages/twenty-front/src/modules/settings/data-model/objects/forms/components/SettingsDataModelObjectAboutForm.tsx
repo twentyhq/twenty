@@ -64,8 +64,6 @@ const StyledLabel = styled.span`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-const infoCircleElementId = 'info-circle-id';
-
 export const SettingsDataModelObjectAboutForm = ({
   disableEdition = false,
   onNewDirtyField,
@@ -269,7 +267,7 @@ export const SettingsDataModelObjectAboutForm = ({
               control={control}
               defaultValue={objectMetadataItem?.isLabelSyncedWithName}
               render={({ field: { onChange, value } }) => (
-                <Card.Root rounded>
+                <Card.Root>
                   <SettingsOptionCardContentSwitch
                     Icon={IconRefresh}
                     title={t`Synchronize Objects Labels and API Names`}
@@ -337,10 +335,8 @@ export const SettingsDataModelObjectAboutForm = ({
                               delay={TooltipDelay.shortDelay}
                             >
                               <IconInfoCircle
-                                id={infoCircleElementId + fieldName}
                                 size={theme.icon.size.md}
                                 color={theme.font.color.tertiary}
-                                style={{ outline: 'none' }}
                               />
                             </Tooltip>
                           )}
@@ -359,7 +355,7 @@ export const SettingsDataModelObjectAboutForm = ({
             control={control}
             defaultValue={false}
             render={({ field: { onChange, value } }) => (
-              <Card.Root rounded>
+              <Card.Root>
                 <SettingsOptionCardContentSwitch
                   Icon={IconLink}
                   title={t`Skip creating a Name field `}

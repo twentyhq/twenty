@@ -5,19 +5,13 @@ import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hoo
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { capitalize, isDefined } from 'twenty-shared/utils';
-import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ColorOption = {
@@ -31,19 +25,8 @@ export const ChartColorSelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
-
-  const { closeDropdown } = useCloseDropdown();
 
   if (!isDefined(widgetInEditMode)) {
     return null;
@@ -55,7 +38,7 @@ export const ChartColorSelectionDropdownContent = () => {
       'IframeConfiguration',
     )
   ) {
-    throw new Error('Invalid configuration type');
+    throw new Error(doNotTranslate('Invalid configuration type'));
   }
 
   const configuration = widgetInEditMode.configuration as ChartConfiguration;
@@ -77,7 +60,7 @@ export const ChartColorSelectionDropdownContent = () => {
   const colorOptions: ColorOption[] = [
     {
       id: 'auto',
-      name: 'Default palette',
+      name: t`Default palette`,
       colorName: 'auto',
     },
     ...MAIN_COLOR_NAMES.map((colorName) => ({
@@ -99,54 +82,52 @@ export const ChartColorSelectionDropdownContent = () => {
         color: colorName,
       },
     });
-    closeDropdown();
   };
 
   const regularColorOptions = filteredColorOptions.filter(
-    (option) => option.colorName !== 'auto',
+    (option): option is ColorOption & { colorName: ThemeColor } =>
+      option.colorName !== 'auto',
+  );
+  const hasDefaultPalette = filteredColorOptions.some(
+    (option) => option.colorName === 'auto',
   );
 
   return (
     <>
-      <DropdownMenuSearchInput
-        autoFocus
-        type="text"
+      <Dropdown.Search
         placeholder={t`Search colors`}
-        onChange={(event) => setSearchQuery(event.target.value)}
+        aria-label={t`Search colors`}
+        onValueChange={setSearchQuery}
         value={searchQuery}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={filteredColorOptions.map(
-            (colorOption) => colorOption.id,
-          )}
+      <ChartSettingsDropdownSection>
+        <Dropdown.SelectionGroup
+          aria-label={t`Colors`}
+          value={currentColor ?? 'auto'}
+          onValueChange={(value) => {
+            const selectedColor = colorOptions.find(
+              (option) => option.id === value,
+            );
+            if (isDefined(selectedColor)) {
+              handleSelectColor(selectedColor.colorName);
+            }
+          }}
         >
-          <ChartColorPaletteOption
-            selectedItemId={selectedItemId}
-            currentColor={currentColor}
-            onSelectColor={handleSelectColor}
-          />
-
-          {regularColorOptions.length > 0 && (
-            <>
-              <DropdownMenuSeparator />
-
-              {regularColorOptions.map((colorOption) => (
-                <ChartColorGradientOption
-                  key={colorOption.id}
-                  colorOption={colorOption}
-                  selectedItemId={selectedItemId}
-                  currentColor={currentColor}
-                  onSelectColor={handleSelectColor}
-                />
-              ))}
-            </>
+          {hasDefaultPalette && <ChartColorPaletteOption />}
+          {hasDefaultPalette && isNonEmptyArray(regularColorOptions) && (
+            <Dropdown.Separator />
           )}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
+          {regularColorOptions.map((colorOption) => (
+            <ChartColorGradientOption
+              key={colorOption.id}
+              colorOption={colorOption}
+            />
+          ))}
+        </Dropdown.SelectionGroup>
+        {!isNonEmptyArray(filteredColorOptions) && (
+          <Dropdown.Empty>{t`No results found`}</Dropdown.Empty>
+        )}
+      </ChartSettingsDropdownSection>
     </>
   );
 };

@@ -11,15 +11,18 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
@@ -65,6 +68,13 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationRegistrationService,
+        { provide: UsageAnalyticsService, useValue: {} },
+        {
+          provide: ApplicationRegistrationVersionService,
+          useValue: {
+            findTarballFilesOfRegistration: jest.fn().mockResolvedValue([]),
+          },
+        },
         ApplicationRegistrationLookupService,
         {
           provide: getRepositoryToken(ApplicationRegistrationEntity),
@@ -85,6 +95,10 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         {
           provide: ApplicationRegistrationAssetUrlService,
           useValue: { resolveAssetUrls: jest.fn() },
+        },
+        {
+          provide: FileStorageService,
+          useValue: { deleteByFileId: jest.fn() },
         },
         {
           provide: ServerFileStorageService,

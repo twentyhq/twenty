@@ -5,6 +5,10 @@ export const mockBillingPlans = {
     {
       __typename: 'BillingPlan',
       planKey: 'PRO',
+      isSellable: true,
+      isCheckoutDefault: true,
+      upgradePlanKeys: ['ENTERPRISE'],
+      downgradePlanKeys: [],
       baseProducts: [
         {
           __typename: 'BillingLicensedProduct',
@@ -302,6 +306,10 @@ export const mockBillingPlans = {
     {
       __typename: 'BillingPlan',
       planKey: 'ENTERPRISE',
+      isSellable: true,
+      isCheckoutDefault: false,
+      upgradePlanKeys: [],
+      downgradePlanKeys: ['PRO'],
       baseProducts: [
         {
           __typename: 'BillingLicensedProduct',
@@ -595,6 +603,28 @@ export const mockBillingPlans = {
           ],
         },
       ],
+    },
+    {
+      __typename: 'BillingPlan',
+      planKey: 'PRO_V2',
+      isSellable: false,
+      isCheckoutDefault: false,
+      upgradePlanKeys: [],
+      downgradePlanKeys: [],
+      baseProducts: [],
+      resourceCreditProducts: [],
+      meteredProducts: [],
+    },
+    {
+      __typename: 'BillingPlan',
+      planKey: 'ORGANIZATION_V2',
+      isSellable: false,
+      isCheckoutDefault: false,
+      upgradePlanKeys: [],
+      downgradePlanKeys: [],
+      baseProducts: [],
+      resourceCreditProducts: [],
+      meteredProducts: [],
     },
   ],
 } as ListPlansQuery;

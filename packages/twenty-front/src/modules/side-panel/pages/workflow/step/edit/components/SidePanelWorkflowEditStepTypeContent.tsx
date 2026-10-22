@@ -18,6 +18,7 @@ import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useIcons } from 'twenty-ui/icon';
 
 export const SidePanelWorkflowEditStepTypeContent = () => {
@@ -30,7 +31,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
   );
   const flow = useFlowOrThrow();
 
-  const { updateStep } = useUpdateStep();
+  const { updateStepNow } = useUpdateStep();
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
   const { closeRightClickMenu } = useCloseRightClickMenu();
@@ -41,7 +42,9 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
   const handleUpdateStepType = async (selection: WorkflowActionSelection) => {
     if (!isDefined(workflowVisualizerWorkflowId)) {
       throw new Error(
-        'Workflow ID must be configured for the edge when creating a step',
+        doNotTranslate(
+          'Workflow ID must be configured for the edge when creating a step',
+        ),
       );
     }
 
@@ -50,7 +53,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
     );
 
     if (!isDefined(existingStep)) {
-      throw new Error('Step not found');
+      throw new Error(doNotTranslate('Step not found'));
     }
 
     const stepUpdate = {
@@ -59,7 +62,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
       settings: selection.defaultSettings ?? existingStep.settings,
     };
 
-    const { updatedStep } = await updateStep(stepUpdate as WorkflowAction);
+    const { updatedStep } = await updateStepNow(stepUpdate as WorkflowAction);
 
     if (!isDefined(updatedStep)) {
       return;

@@ -7,11 +7,12 @@ import {
   MainButton,
 } from 'twenty-ui/components/input';
 import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/components/navigation';
-import { IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
+import { IconGripVertical, IconPencil, IconPlus, IconX } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import 'twenty-ui/style.css';
-import { ThemeProvider } from 'twenty-ui/theme';
+import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
+import { Text } from 'twenty-ui/primitives/typography';
 
 const ButtonControls = () => {
   const [activations, setActivations] = useState(0);
@@ -42,6 +43,17 @@ const ButtonControls = () => {
       >
         Create record
       </Button>
+      <Text
+        data-testid="inherited-button-surface"
+        style={{
+          background: themeCssVariables.color.blue,
+          color: themeCssVariables.font.color.onAccent,
+        }}
+      >
+        <Button color="inherit" variant="outline" startIcon={<IconPlus />}>
+          Inherited action
+        </Button>
+      </Text>
       <Button disabled onClick={handleClick}>
         Disabled button
       </Button>
@@ -87,10 +99,9 @@ const ButtonControls = () => {
       >
         <IconPlus />
       </IconButton>
-      <MenuItem
-        text="Record"
-        isIconDisplayedOnHoverOnly={false}
-        iconButtons={
+      <ListItem
+        actionsVisibility="always"
+        actions={
           <ButtonGroup attached={false}>
             <LightIconButton aria-label="Add to record" onClick={handleClick}>
               <IconPlus />
@@ -106,11 +117,13 @@ const ButtonControls = () => {
             </span>
           </ButtonGroup>
         }
-      />
-      <MenuItemDraggable
-        text="Draggable record"
-        isIconDisplayedOnHoverOnly={false}
-        iconButtons={
+      >
+        Record
+      </ListItem>
+      <ListItem
+        startIcon={<IconGripVertical />}
+        actionsVisibility="always"
+        actions={
           <LightIconButton
             aria-label="Add to draggable record"
             onClick={handleClick}
@@ -118,7 +131,9 @@ const ButtonControls = () => {
             <IconPlus />
           </LightIconButton>
         }
-      />
+      >
+        Draggable record
+      </ListItem>
       <Button variant="link" onClick={handleClick}>
         Log out
       </Button>

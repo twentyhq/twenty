@@ -1,48 +1,52 @@
-import { noticeMessage } from '../utils/noticeMessage';
-import { Banner } from '@ui/primitives/feedback/Banner/Banner';
-import { Notification } from './Notification';
-import { IconButton } from '@ui/components/input/IconButton/IconButton';
 import { i18n } from '@lingui/core';
-import { Button } from '@ui/primitives/input/Button/Button';
-import { IconX } from 'twenty-ui/icon';
+import { Banner } from 'twenty-ui/primitives/feedback';
+import { isDefined } from 'twenty-ui/utilities';
 import { type ActionProps } from '../types/ActionProps';
+import { noticeMessage } from '../utils/noticeMessage';
+import { NotificationEffect } from './NotificationEffect';
 
-export const Notice = ({ state, command }: ActionProps) =>
-  !state.error && state.notice?.type === 'recording-finished' ? (
-    <div className="notification-container">
-      <Notification
-        message={noticeMessage(state.notice)}
+export const Notice = ({ state, command }: ActionProps) => {
+  const dismiss = () => void command({ type: 'dismiss-error' });
+
+  const notificationMessage =
+    !isDefined(state.error) && state.notice?.type === 'recording-finished'
+      ? noticeMessage(state.notice)
+      : undefined;
+  const shouldShowBanner =
+    !isDefined(notificationMessage) &&
+    (isDefined(state.error) || isDefined(state.notice));
+
+  const recovery = state.error?.recovery;
+
+  return (
+    <>
+      <NotificationEffect
+        message={notificationMessage}
         closeLabel={i18n._('Dismiss message')}
-        onClose={() => void command({ type: 'dismiss-error' })}
+        onClose={dismiss}
       />
-    </div>
-  ) : state.error || state.notice ? (
-    <div className="notice" role={state.error ? 'alert' : 'status'}>
-      <Banner status={state.error ? 'error' : 'info'}>
-        <span className="notice-text">
-          {state.error?.message ??
-            (state.notice && noticeMessage(state.notice))}
-        </span>
-        {state.error?.recovery && (
-          <Button
-            className="notice-recovery"
-            variant="outline"
-            onClick={() =>
-              state.error?.recovery && void command(state.error.recovery)
+      {shouldShowBanner && (
+        <div
+          className="notice"
+          role={isDefined(state.error) ? 'alert' : 'status'}
+        >
+          <Banner
+            status={isDefined(state.error) ? 'error' : 'info'}
+            onDismiss={dismiss}
+            closeLabel={i18n._('Dismiss message')}
+            action={
+              isDefined(recovery) ? (
+                <Banner.Action onClick={() => void command(recovery)}>
+                  {i18n._('Install Desktop Recorder')}
+                </Banner.Action>
+              ) : undefined
             }
           >
-            {i18n._('Install Desktop Recorder')}
-          </Button>
-        )}
-        <IconButton
-          className="notice-close"
-          variant="ghost"
-          aria-label={i18n._('Dismiss message')}
-          onClick={() => void command({ type: 'dismiss-error' })}
-          size="md"
-        >
-          <IconX />
-        </IconButton>
-      </Banner>
-    </div>
-  ) : null;
+            {state.error?.message ??
+              (isDefined(state.notice) ? noticeMessage(state.notice) : null)}
+          </Banner>
+        </div>
+      )}
+    </>
+  );
+};

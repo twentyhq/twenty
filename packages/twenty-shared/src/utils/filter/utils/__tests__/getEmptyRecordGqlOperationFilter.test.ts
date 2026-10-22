@@ -1,4 +1,4 @@
-import { FieldMetadataType, ViewFilterOperand } from '@/types';
+import { FieldMetadataType, RelationType, ViewFilterOperand } from '@/types';
 import { getEmptyRecordGqlOperationFilter } from '@/utils/filter/utils/getEmptyRecordGqlOperationFilter';
 import { type RecordFilter } from '@/utils';
 
@@ -18,6 +18,30 @@ const makeParams = (
     subFieldName,
   } as RecordFilter,
 });
+
+const MORPH_RELATION_FIELD = {
+  id: 'f1',
+  name: 'owner',
+  type: FieldMetadataType.MORPH_RELATION,
+  morphRelations: [
+    {
+      type: RelationType.MANY_TO_ONE,
+      targetObjectMetadata: {
+        id: 'company-id',
+        nameSingular: 'company',
+        namePlural: 'companies',
+      },
+    },
+    {
+      type: RelationType.MANY_TO_ONE,
+      targetObjectMetadata: {
+        id: 'person-id',
+        nameSingular: 'person',
+        namePlural: 'people',
+      },
+    },
+  ],
+};
 
 describe('getEmptyRecordGqlOperationFilter', () => {
   describe('IS_EMPTY operand', () => {
@@ -90,6 +114,30 @@ describe('getEmptyRecordGqlOperationFilter', () => {
     it('should handle RELATION type', () => {
       const result = getEmptyRecordGqlOperationFilter(
         makeParams(FieldMetadataType.RELATION),
+      );
+
+      expect(result).toEqual({
+        testFieldId: { is: 'NULL' },
+      });
+    });
+
+    it('should check every target join column for MORPH_RELATION type', () => {
+      const result = getEmptyRecordGqlOperationFilter({
+        ...makeParams(FieldMetadataType.MORPH_RELATION),
+        correspondingField: MORPH_RELATION_FIELD,
+      });
+
+      expect(result).toEqual({
+        and: [
+          { ownerCompanyId: { is: 'NULL' } },
+          { ownerPersonId: { is: 'NULL' } },
+        ],
+      });
+    });
+
+    it('should check its own join column for a MORPH_RELATION target without morph relations', () => {
+      const result = getEmptyRecordGqlOperationFilter(
+        makeParams(FieldMetadataType.MORPH_RELATION),
       );
 
       expect(result).toEqual({
@@ -272,6 +320,25 @@ describe('getEmptyRecordGqlOperationFilter', () => {
       );
 
       expect(result).toHaveProperty('not');
+    });
+
+    it('should match a record with any target set for MORPH_RELATION type', () => {
+      const result = getEmptyRecordGqlOperationFilter({
+        ...makeParams(
+          FieldMetadataType.MORPH_RELATION,
+          ViewFilterOperand.IS_NOT_EMPTY,
+        ),
+        correspondingField: MORPH_RELATION_FIELD,
+      });
+
+      expect(result).toEqual({
+        not: {
+          and: [
+            { ownerCompanyId: { is: 'NULL' } },
+            { ownerPersonId: { is: 'NULL' } },
+          ],
+        },
+      });
     });
 
     it('should negate the currencyCode check for the CURRENCY currencyCode sub-field', () => {

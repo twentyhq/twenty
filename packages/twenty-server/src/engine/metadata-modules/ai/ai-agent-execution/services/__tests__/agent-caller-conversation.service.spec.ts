@@ -40,7 +40,12 @@ const buildService = ({ isCreated = true } = {}) => {
       ),
   };
   const agentRunSuspensionService = {
-    isConversationWaiting: jest.fn().mockResolvedValue(false),
+    findConversationWait: jest.fn().mockResolvedValue({
+      pendingQuestionMessageId: null,
+      suspendedRun: null,
+      hasPostedCall: false,
+      isWaiting: false,
+    }),
   };
 
   const service = new AgentCallerConversationService(
@@ -182,14 +187,22 @@ describe('AgentCallerConversationService', () => {
     });
 
     it('starts its own conversation while the one its key names waits on another answer', async () => {
-      const { service, agentInboxService } = buildService();
+      const { service, agentInboxService, agentRunSuspensionService } =
+        buildService();
+      const waitingThread = {
+        id: 'waiting-thread-id',
+        pendingQuestionMessageId: 'question-message-id',
+      };
 
       agentInboxService.openThread.mockResolvedValueOnce({
-        thread: {
-          id: 'waiting-thread-id',
-          pendingQuestionMessageId: 'question-message-id',
-        },
+        thread: waitingThread,
         isCreated: false,
+      });
+      agentRunSuspensionService.findConversationWait.mockResolvedValueOnce({
+        pendingQuestionMessageId: 'question-message-id',
+        suspendedRun: null,
+        hasPostedCall: false,
+        isWaiting: true,
       });
 
       await expect(
@@ -198,6 +211,12 @@ describe('AgentCallerConversationService', () => {
           recipientWorkspaceMemberId: 'recipient-id',
         }),
       ).resolves.toMatchObject({ threadId: 'thread-for-recipient-id' });
+      expect(
+        agentRunSuspensionService.findConversationWait,
+      ).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        thread: waitingThread,
+      });
     });
 
     it('starts its own conversation while the one its key names holds a suspended run', async () => {
@@ -208,9 +227,14 @@ describe('AgentCallerConversationService', () => {
         thread: { id: 'suspended-thread-id' },
         isCreated: false,
       });
-      agentRunSuspensionService.isConversationWaiting.mockImplementation(
-        async ({ threadId }: { threadId: string }) =>
-          threadId === 'suspended-thread-id',
+      agentRunSuspensionService.findConversationWait.mockImplementation(
+        async ({ thread }: { thread: { id: string } }) => ({
+          pendingQuestionMessageId: null,
+          suspendedRun:
+            thread.id === 'suspended-thread-id' ? { id: 'wake-up-id' } : null,
+          hasPostedCall: false,
+          isWaiting: thread.id === 'suspended-thread-id',
+        }),
       );
 
       await expect(

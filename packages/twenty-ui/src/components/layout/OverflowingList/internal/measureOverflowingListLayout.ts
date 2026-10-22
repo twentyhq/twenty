@@ -9,7 +9,6 @@ export const measureOverflowingListLayout = ({
   itemElements,
   itemCount,
   reserveCountSpace,
-  supportsSynchronousLayout,
 }: {
   container: HTMLElement;
   items: HTMLElement;
@@ -17,13 +16,8 @@ export const measureOverflowingListLayout = ({
   itemElements: Element[];
   itemCount: number;
   reserveCountSpace: boolean;
-  supportsSynchronousLayout: boolean;
 }): OverflowingListLayout => {
-  const itemWidths = measureItemWidths({
-    items,
-    itemElements,
-    supportsSynchronousLayout,
-  });
+  const itemWidths = measureItemWidths({ items, itemElements });
   const gap = parseFloat(getComputedStyle(items).columnGap) || 0;
   const containerWidth = container.clientWidth;
   const fittedItemCount = getVisibleItemCount({

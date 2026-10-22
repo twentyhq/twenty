@@ -137,6 +137,9 @@ describe('workflow manifest step types', () => {
         2,
         'type',
       ]);
+      expect(result.error?.issues[0]?.message).toContain(
+        'Unsupported step type',
+      );
     },
   );
 });

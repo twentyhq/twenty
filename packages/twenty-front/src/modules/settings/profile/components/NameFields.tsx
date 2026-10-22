@@ -11,6 +11,7 @@ import { useUpdateWorkspaceMemberSettings } from '@/workspace-member/hooks/useUp
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { logError } from '~/utils/logError';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -42,7 +43,7 @@ export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
   const debouncedUpdate = useDebouncedCallback(async () => {
     try {
       if (!currentWorkspaceMember?.id) {
-        throw new Error('User is not logged in');
+        throw new Error(doNotTranslate('User is not logged in'));
       }
 
       if (autoSave) {

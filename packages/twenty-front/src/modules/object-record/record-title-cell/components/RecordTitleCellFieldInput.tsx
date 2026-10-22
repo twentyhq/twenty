@@ -5,6 +5,7 @@ import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { RecordTitleCellTextFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldInput';
 import { RecordTitleFullNameFieldInput } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldInput';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type RecordTitleCellFieldInputProps = {
   instanceId: string;
@@ -18,7 +19,9 @@ export const RecordTitleCellFieldInput = ({
   const { fieldDefinition } = useContext(FieldContext);
 
   if (!isFieldText(fieldDefinition) && !isFieldFullName(fieldDefinition)) {
-    throw new Error('Field definition is not a text or full name field');
+    throw new Error(
+      doNotTranslate('Field definition is not a text or full name field'),
+    );
   }
 
   return (

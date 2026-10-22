@@ -8,6 +8,7 @@ import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/Obj
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, mapById } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useGetRecordBoardEffectsForUpdateInputs = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -50,7 +51,7 @@ export const useGetRecordBoardEffectsForUpdateInputs = () => {
           fieldNamesForUpdateInput.includes(fieldMetadataItemToFilter.name) ||
           (fieldMetadataItemToFilter.type === FieldMetadataType.RELATION &&
             fieldNamesForUpdateInput.includes(
-              `${fieldMetadataItemToFilter.name}Id`,
+              doNotTranslate(`${fieldMetadataItemToFilter.name}Id`),
             )),
       );
 

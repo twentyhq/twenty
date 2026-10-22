@@ -11,7 +11,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       selfHostTiers: {
         enterprise: { kind: 'text', text: msg`From $50k/year` },
         organization: { kind: 'text', text: msg`$19/user/month` },
-        pro: { kind: 'text', text: msg`$0` },
+        pro: { kind: 'text', text: msg`$0/user/month` },
       },
       tiers: {
         enterprise: { kind: 'text', text: msg`From $50k/year` },

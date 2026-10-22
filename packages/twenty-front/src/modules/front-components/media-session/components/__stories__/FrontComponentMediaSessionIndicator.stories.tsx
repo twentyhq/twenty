@@ -59,7 +59,7 @@ export const CircularIndicators: StoryObj<
 
     for (const name of ['Apps recording', 'Recording requests']) {
       const trigger = canvas.getByRole('button', { name });
-      const dot = trigger.querySelector('span[aria-hidden]');
+      const dot = trigger.querySelector('span[aria-hidden]:empty');
 
       if (!isDefined(dot)) {
         throw new Error(`Missing recording indicator for ${name}`);
@@ -157,6 +157,7 @@ export const OneRowPerApplication: StoryObj<
     const applications = await screen.findByRole('list', {
       name: 'Apps recording',
     });
+    await waitFor(() => expect(applications).toBeVisible());
     const applicationsCanvas = within(applications);
 
     await expect(applicationsCanvas.getAllByRole('listitem')).toHaveLength(2);
@@ -202,9 +203,9 @@ export const PendingRequest: StoryObj<
       canvas.getByRole('button', { name: 'Recording requests' }),
     );
 
-    await expect(
-      await screen.findByText('Waiting for permission'),
-    ).toBeVisible();
+    await waitFor(async () => {
+      await expect(screen.getByText('Waiting for permission')).toBeVisible();
+    });
     await expect(
       screen.getByRole('button', { name: 'Cancel recording for Recorder' }),
     ).toBeVisible();

@@ -9,10 +9,6 @@ const { kvStore, enqueueJobsMock, listConnectionsMock } = vi.hoisted(() => ({
   listConnectionsMock: vi.fn(),
 }));
 
-vi.mock('src/constants/feature-flags', () => ({
-  FEATURE_FLAGS: { IS_TRANSCRIPT_IMPORT_ENABLED: true },
-}));
-
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
   kv: {

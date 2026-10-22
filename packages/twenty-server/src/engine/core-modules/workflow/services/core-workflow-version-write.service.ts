@@ -28,14 +28,18 @@ import {
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
+import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { assertWorkflowVersionIsNotMalformedOrThrow } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/assert-workflow-version-is-not-malformed-or-throw.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-export type ValidatedDraftCoreWorkflowVersion = {
-  coreWorkflowVersion: WorkflowVersionEntity;
+export type CoreWorkflowVersionContent = {
   trigger: WorkflowTrigger | null;
   steps: WorkflowAction[] | null;
+};
+
+export type ValidatedDraftCoreWorkflowVersion = CoreWorkflowVersionContent & {
+  coreWorkflowVersion: WorkflowVersionEntity;
 };
 
 export class CoreWorkflowVersionPostCommitError extends Error {
@@ -61,6 +65,7 @@ export class CoreWorkflowVersionWriteService {
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
+    private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -164,20 +169,27 @@ export class CoreWorkflowVersionWriteService {
     coreWorkflowVersionId,
     expectedVersion,
     trigger,
-    steps,
+    steps: callerSteps,
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
     expectedVersion: Pick<WorkflowVersionEntity, 'triggers' | 'steps'>;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
-  }): Promise<void> {
+  }): Promise<CoreWorkflowVersionContent> {
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId,
       trigger,
-      steps,
+      steps: callerSteps,
     });
+
+    const steps =
+      await this.workflowSchemaWorkspaceService.enrichStepsOutputSchema({
+        trigger,
+        steps: callerSteps,
+        workspaceId,
+      });
 
     // the runner cannot compare previous content inside its UPDATE, so concurrent draft edits serialize on this lock
     await this.withCoreWorkflowVersionEditLock(
@@ -255,6 +267,8 @@ export class CoreWorkflowVersionWriteService {
     } catch (error) {
       throw new CoreWorkflowVersionPostCommitError(error);
     }
+
+    return { trigger, steps };
   }
 
   private async withCoreWorkflowVersionEditLock<T>(
@@ -284,7 +298,7 @@ export class CoreWorkflowVersionWriteService {
     coreWorkflowId,
     workspaceWorkflowId,
     trigger,
-    steps,
+    steps: callerSteps,
   }: {
     workspaceId: string;
     coreWorkflowId: string;
@@ -296,8 +310,15 @@ export class CoreWorkflowVersionWriteService {
       workspaceId,
       coreWorkflowVersionId: 'new draft',
       trigger,
-      steps,
+      steps: callerSteps,
     });
+
+    const steps =
+      await this.workflowSchemaWorkspaceService.enrichStepsOutputSchema({
+        trigger,
+        steps: callerSteps,
+        workspaceId,
+      });
 
     const coreWorkflowVersionId = uuidv4();
 

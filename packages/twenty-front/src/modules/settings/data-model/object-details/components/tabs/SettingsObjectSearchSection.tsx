@@ -184,7 +184,7 @@ export const SettingsObjectSearchSection = ({
   return (
     <StyledSearchSectionContent>
       {!isReadOnly && (
-        <Card.Root rounded>
+        <Card.Root>
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Global search`}

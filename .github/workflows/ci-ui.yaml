@@ -2,6 +2,7 @@ name: CI UI
 
 on:
   pull_request:
+  merge_group:
   push:
     branches: [main]
 
@@ -22,6 +23,9 @@ jobs:
         yarn.lock
         packages/twenty-ui/**
         packages/twenty-shared/**
+        packages/twenty-oxlint-rules/scripts/check-unlocalized-strings.mjs
+        packages/twenty-oxlint-rules/scripts/filter-unlocalized-strings.mjs
+        packages/twenty-oxlint-rules/.oxlintrc.i18n.json
   ui-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -85,6 +89,13 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Build dependencies
         run: npx nx build twenty-shared
+      - name: Cache storybook vitest dependency optimizer
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            packages/twenty-ui/node_modules/.cache/storybook
+            packages/twenty-ui/node_modules/.vite
+          key: v4-storybook-vitest-deps-twenty-ui-${{ hashFiles('yarn.lock', 'packages/twenty-ui/vite.config.ts', 'packages/twenty-ui/vitest.config.ts', 'packages/twenty-ui/.storybook/main.ts') }}
       - name: Resolve Playwright version
         id: playwright-version
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"

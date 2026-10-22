@@ -20,9 +20,9 @@ export const publishAppToNpm = async ({
     isDefined(process.env.ACTIONS_ID_TOKEN_REQUEST_URL) &&
     process.env.TWENTY_APP_PUBLISH_DISABLE_PROVENANCE !== 'true';
 
-  context.output.progress(
-    `Publishing ${packedApp.name}@${packedApp.version} to npm…`,
-  );
+  context.output.progress({
+    message: `Publishing ${packedApp.name}@${packedApp.version} to npm…`,
+  });
   await runNpmCommand({
     args: [
       'publish',
@@ -38,7 +38,7 @@ export const publishAppToNpm = async ({
     signal: context.signal,
     canInteract: isInteractionAllowed(context),
     ...(context.outputMode === 'human'
-      ? { onOutput: context.output.progress }
+      ? { onOutput: (message: string) => context.output.progress({ message }) }
       : {}),
   });
 

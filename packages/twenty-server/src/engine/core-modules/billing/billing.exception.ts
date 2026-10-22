@@ -10,6 +10,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum BillingExceptionCode {
   BILLING_CUSTOMER_NOT_FOUND = 'BILLING_CUSTOMER_NOT_FOUND',
   BILLING_PLAN_NOT_FOUND = 'BILLING_PLAN_NOT_FOUND',
+  BILLING_PLAN_NOT_ALLOWED = 'BILLING_PLAN_NOT_ALLOWED',
   BILLING_PRODUCT_NOT_FOUND = 'BILLING_PRODUCT_NOT_FOUND',
   BILLING_PRICE_NOT_FOUND = 'BILLING_PRICE_NOT_FOUND',
   BILLING_SUBSCRIPTION_NOT_FOUND = 'BILLING_SUBSCRIPTION_NOT_FOUND',
@@ -45,6 +46,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Billing customer not found.`;
     case BillingExceptionCode.BILLING_PLAN_NOT_FOUND:
       return msg`Billing plan not found.`;
+    case BillingExceptionCode.BILLING_PLAN_NOT_ALLOWED:
+      return msg`This plan is not available.`;
     case BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND:
       return msg`Billing product not found.`;
     case BillingExceptionCode.BILLING_PRICE_NOT_FOUND:

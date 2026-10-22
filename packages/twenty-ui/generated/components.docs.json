@@ -5,6 +5,13 @@
     "slug": "components/input/country-select",
     "props": [
       {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Custom trigger content. Replaces the selected country presentation while retaining shared trigger behavior."
+      },
+      {
         "name": "className",
         "type": "string | ((state: PopoverTriggerState) => string | undefined)",
         "required": false,
@@ -12,17 +19,59 @@
         "description": "Class applied to the trigger."
       },
       {
+        "name": "closeDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
+      },
+      {
+        "name": "closeOnSelect",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Closes the popup after a selection. Defaults to true. Cancelled selection keeps it open."
+      },
+      {
         "name": "countries",
         "type": "readonly CountryChoice[]",
         "required": true,
         "defaultValue": null,
-        "description": "Prepared country choices with unique non-empty values, display labels, and optional decorative flags."
+        "description": "Prepared country choices with unique stable string values, caller-owned labels, and optional decorative flags and disabled states. An empty string is a valid choice value."
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Whether the uncontrolled popup is initially open."
+      },
+      {
+        "name": "defaultPage",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Dropdown page shown when the popup opens. Defaults to root."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial uncontrolled selected identifier. Defaults to null."
+      },
+      {
+        "name": "delay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "300",
+        "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
       },
       {
         "name": "disabled",
         "type": "boolean",
         "required": false,
-        "defaultValue": "false",
+        "defaultValue": null,
         "description": "Prevents opening and selection while the trigger stays focusable. An empty country list is also disabled."
       },
       {
@@ -37,7 +86,7 @@
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Optional visible label that names the trigger and the popup."
+        "description": "Optional visible label that names the trigger."
       },
       {
         "name": "nativeButton",
@@ -50,29 +99,43 @@
         "name": "noCountryLabel",
         "type": "string",
         "required": false,
-        "defaultValue": "No country",
+        "defaultValue": null,
         "description": "Text of the no-country choice, also displayed when no country is selected."
       },
       {
         "name": "noResultsLabel",
         "type": "string",
         "required": false,
-        "defaultValue": "No results",
+        "defaultValue": null,
         "description": "Text displayed when no choice matches the search."
+      },
+      {
+        "name": "onEscapeKeyDown",
+        "type": "((event: DropdownDismissEvent) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called before Escape dismisses the popup. Call event.preventDefault() to keep it open."
+      },
+      {
+        "name": "onInteractOutside",
+        "type": "((event: DropdownDismissEvent) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called before outside interaction or Tab dismisses the popup. Call event.preventDefault() to keep it open."
       },
       {
         "name": "onOpenChange",
         "type": "((open: boolean) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Reports popup opening and closing."
+        "description": "Reports popup opening and closing with the next boolean state, matching Dropdown.Root."
       },
       {
         "name": "onValueChange",
-        "type": "(value: string) => void",
-        "required": true,
+        "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+        "required": false,
         "defaultValue": null,
-        "description": "Reports the selected choice value, or an empty string when no country is selected."
+        "description": "Reports the selected identifier or null with cancellable event details. Call details.cancel() to preserve selection and keep the popup open."
       },
       {
         "name": "open",
@@ -82,11 +145,25 @@
         "description": "Controls whether the country popup is open."
       },
       {
-        "name": "popupProps",
-        "type": "Omit<DropdownContentProps, \"children\" | \"aria-label\" | \"aria-labelledby\" | \"keepMounted\">",
+        "name": "openOnHover",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the popover should also open when the trigger is hovered."
+      },
+      {
+        "name": "optionsProps",
+        "type": "Omit<CountrySelectOptionsProps, \"closeOnSelect\" | \"searchLabel\" | \"noResultsLabel\" | \"searchProps\">",
         "required": false,
         "defaultValue": null,
-        "description": "Dropdown popup positioning, portal, focus, and event options for host integration."
+        "description": "Native props, ref, and render for the selection group div rendered by CountrySelect.Options."
+      },
+      {
+        "name": "popupProps",
+        "type": "Omit<DropdownContentProps, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Dropdown.Content props, including native popup attributes, ref, render, positioning, portal destination, and keepMounted. Explicit popup accessible names override the trigger name. Children are owned by the picker."
       },
       {
         "name": "ref",
@@ -106,8 +183,15 @@
         "name": "searchLabel",
         "type": "string",
         "required": false,
-        "defaultValue": "Search",
+        "defaultValue": null,
         "description": "Placeholder and accessible name of the search input."
+      },
+      {
+        "name": "searchProps",
+        "type": "Omit<DropdownSearchProps, \"defaultValue\" | \"value\" | \"onValueChange\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native search input props, ref, and render. Search value and change handling are owned by the picker."
       },
       {
         "name": "style",
@@ -118,10 +202,230 @@
       },
       {
         "name": "value",
-        "type": "string",
-        "required": true,
+        "type": "string | null",
+        "required": false,
         "defaultValue": null,
-        "description": "Selected choice value. An empty string selects no country."
+        "description": "Controlled selected identifier. Null selects no country; undefined leaves selection uncontrolled."
+      },
+      {
+        "name": "wrapperProps",
+        "type": "Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native props and ref for the div around the trigger and its visible label. Children are owned by the picker."
+      }
+    ],
+    "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "Picker composition containing Dropdown.Root, CountrySelect.Trigger, and CountrySelect.Options. Root adds no DOM element."
+          },
+          {
+            "name": "countries",
+            "type": "readonly CountryChoice[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Prepared country choices with unique stable string values, caller-owned labels, and optional decorative flags and disabled states. An empty string is a valid choice value."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": "null",
+            "description": "Initial uncontrolled selected identifier. Defaults to null."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Prevents opening and selection. An empty country list is also disabled. The trigger stays focusable with aria-disabled."
+          },
+          {
+            "name": "noCountryLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "No country",
+            "description": "Text for the null selection and its option. Defaults to No country."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Reports the selected identifier or null with event, reason, trigger, cancel and isCanceled details. Call cancel() to preserve selection and keep the popup open."
+          },
+          {
+            "name": "value",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled selected identifier. Null selects no country; undefined leaves selection uncontrolled."
+          }
+        ]
+      },
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Custom trigger content. Replaces the selected country presentation while retaining shared trigger behavior."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to the trigger button."
+          },
+          {
+            "name": "closeDelay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "0",
+            "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
+          },
+          {
+            "name": "delay",
+            "type": "number",
+            "required": false,
+            "defaultValue": "300",
+            "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
+          },
+          {
+            "name": "label",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional visible label that names the trigger."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+          },
+          {
+            "name": "openOnHover",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Whether the popover should also open when the trigger is hovered."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the trigger element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the trigger element. Custom components must forward the supplied props and ref."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "wrapperProps",
+            "type": "Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, \"children\">",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native props and ref for the div around the trigger and its visible label. Children are owned by the picker."
+          }
+        ]
+      },
+      {
+        "name": "Options",
+        "props": [
+          {
+            "name": "aria-label",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Accessible name for the selection listbox. Overrides its default name."
+          },
+          {
+            "name": "aria-labelledby",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Accessible name references for the selection listbox. Defaults to the registered Dropdown title or trigger element."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to the selection group div."
+          },
+          {
+            "name": "closeOnSelect",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Closes the popup after a selection. Defaults to true. Cancelled selection keeps it open."
+          },
+          {
+            "name": "noResultsLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text displayed when no choice matches the search. Defaults to No results."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the selection group element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, CountrySelectOptionsState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the selection group div. Functions receive supplied props and { value, multiple: false } state, with the public string or null selection. Custom components must forward the supplied props and ref."
+          },
+          {
+            "name": "searchLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Search placeholder and accessible name. Defaults to Search."
+          },
+          {
+            "name": "searchProps",
+            "type": "Omit<DropdownSearchProps, \"defaultValue\" | \"value\" | \"onValueChange\">",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native search input props, ref, and render. Search value and change handling are owned by the picker."
+          }
+        ]
       }
     ]
   },
@@ -129,24 +433,296 @@
     "name": "CurrencyPicker",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/currency-picker",
-    "props": [],
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-owned trigger content that overrides the selected value display."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the trigger button."
+      },
+      {
+        "name": "closeOnSelect",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Whether committing an enabled option closes the dropdown. Defaults to true. A canceled selection never closes automatically."
+      },
+      {
+        "name": "contentProps",
+        "type": "Omit<DropdownContentProps, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Dropdown popup props, including placement, width, and accessible attributes."
+      },
+      {
+        "name": "currencies",
+        "type": "readonly CurrencyPickerOption[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Available currencies in display order. Each code is a unique stable identifier; name and optional symbol are caller-owned data. A currency can be disabled."
+      },
+      {
+        "name": "defaultOpen",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Whether the popup is initially open when uncontrolled."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": "null",
+        "description": "Initial uncontrolled currency code, or null for an empty selection. Defaults to null."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables opening, search, and every currency option."
+      },
+      {
+        "name": "getOptionLabel",
+        "type": "((currency: CurrencyPickerOption) => ReactNode)",
+        "required": false,
+        "defaultValue": "Name (CODE)",
+        "description": "Returns caller-owned content for a currency option. Defaults to Name (CODE). Display content does not change the search text."
+      },
+      {
+        "name": "getSearchText",
+        "type": "((currency: CurrencyPickerOption) => string)",
+        "required": false,
+        "defaultValue": "Name (CODE) and symbol",
+        "description": "Returns searchable text for a currency. Defaults to Name (CODE) and its optional symbol. Search trims the query and matches without case sensitivity."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID forwarded to the trigger button."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether render composes a native button. Set false for a custom non-button element so Base UI supplies button interaction."
+      },
+      {
+        "name": "onEscapeKeyDown",
+        "type": "((event: DropdownDismissEvent) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called before Escape closes the popup. Call event.preventDefault() to keep it open."
+      },
+      {
+        "name": "onInteractOutside",
+        "type": "((event: DropdownDismissEvent) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called before an outside press or Tab out closes the popup. Call event.preventDefault() to keep it open."
+      },
+      {
+        "name": "onOpenChange",
+        "type": "((open: boolean) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the next open state when the popup opens or closes."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the next code or null and cancellable Dropdown selection details: event, reason, trigger, cancel and isCanceled. Calling cancel() preserves selection and prevents automatic close. Repeated single selection does not emit a change."
+      },
+      {
+        "name": "open",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Whether the popup is open. Use with onOpenChange to control it."
+      },
+      {
+        "name": "optionsProps",
+        "type": "CurrencyPickerOptionsProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the options wrapper div, listLabel, and search behavior. Native input customization belongs in optionsProps.searchProps."
+      },
+      {
+        "name": "placeholder",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Trigger content displayed when the selected value is null."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the trigger button, or the element composed through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the native trigger button. Forward the supplied props and ref when rendering a custom component."
+      },
+      {
+        "name": "renderValue",
+        "type": "((state: CurrencyPickerState) => ReactNode)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Returns selected trigger content from { value, selectedCurrency, disabled }. The default display is the raw code, or the trigger placeholder when null. Trigger children override it."
+      },
+      {
+        "name": "selectedFirst",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Moves the matching selected currency before other results. Defaults to false, preserving catalogue order."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the trigger button."
+      },
+      {
+        "name": "triggerProps",
+        "type": "CurrencyPickerTriggerProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the trigger button, including native attributes, ref, render, placeholder, and caller-owned children. These override shorthand trigger props."
+      },
+      {
+        "name": "value",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled currency code or null for an empty selection. Undefined leaves selection uncontrolled. Empty and unknown strings remain identifiers."
+      }
+    ],
     "parts": [
       {
-        "name": "Trigger",
+        "name": "Root",
         "props": [
           {
-            "name": "className",
-            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+            "name": "children",
+            "type": "ReactNode | ((state: CurrencyPickerState) => ReactNode)",
+            "required": true,
+            "defaultValue": null,
+            "description": "Picker parts and supporting content, or a render function receiving { value, selectedCurrency, disabled }. Root owns selection and prepared data without adding a DOM element."
+          },
+          {
+            "name": "closeOnSelect",
+            "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+            "description": "Whether committing an enabled option closes the dropdown. Defaults to true. A canceled selection never closes automatically."
+          },
+          {
+            "name": "currencies",
+            "type": "readonly CurrencyPickerOption[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Available currencies in display order. Each code is a unique stable identifier; name and optional symbol are caller-owned data. A currency can be disabled."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": "null",
+            "description": "Initial uncontrolled currency code, or null for an empty selection. Defaults to null."
           },
           {
             "name": "disabled",
             "type": "boolean",
             "required": false,
+            "defaultValue": "false",
+            "description": "Disables the trigger, search input, and every currency option."
+          },
+          {
+            "name": "getOptionLabel",
+            "type": "((currency: CurrencyPickerOption) => ReactNode)",
+            "required": false,
+            "defaultValue": "Name (CODE)",
+            "description": "Returns caller-owned content for a currency option. Defaults to Name (CODE). Display content does not change the search text."
+          },
+          {
+            "name": "getSearchText",
+            "type": "((currency: CurrencyPickerOption) => string)",
+            "required": false,
+            "defaultValue": "Name (CODE) and symbol",
+            "description": "Returns searchable text for a currency. Defaults to Name (CODE) and its optional symbol. Search trims the query and matches without case sensitivity."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+            "required": false,
             "defaultValue": null,
-            "description": "Disables opening the picker."
+            "description": "Called with the next code or null and cancellable Dropdown selection details: event, reason, trigger, cancel and isCanceled. Calling cancel() preserves selection and prevents automatic close. Repeated single selection does not emit a change."
+          },
+          {
+            "name": "renderValue",
+            "type": "((state: CurrencyPickerState) => ReactNode)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Returns selected trigger content from { value, selectedCurrency, disabled }. The default display is the raw code, or the trigger placeholder when null. Trigger children override it."
+          },
+          {
+            "name": "selectedFirst",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Moves the matching selected currency before other results. Defaults to false, preserving catalogue order."
+          },
+          {
+            "name": "value",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled currency code or null for an empty selection. Undefined leaves selection uncontrolled. Empty and unknown strings remain identifiers."
+          }
+        ]
+      },
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Caller-owned trigger content that overrides the selected value display."
+          },
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Class applied to the trigger button."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Additionally disables the native trigger button. Root disabled state always takes precedence."
           },
           {
             "name": "id",
@@ -160,7 +736,21 @@
             "type": "boolean",
             "required": false,
             "defaultValue": "true",
-            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+            "description": "Whether render composes a native button. Set false for a custom non-button element so Base UI supplies button interaction."
+          },
+          {
+            "name": "placeholder",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Trigger content displayed when the selected value is null."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the trigger button, or the element composed through render."
           },
           {
             "name": "render",
@@ -174,14 +764,7 @@
             "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
             "required": false,
             "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          },
-          {
-            "name": "value",
-            "type": "string",
-            "required": true,
-            "defaultValue": null,
-            "description": "Required currency code displayed beside the chevron. The application chooses its initial value and any fallback."
+            "description": "Inline styles applied to the trigger button."
           }
         ]
       },
@@ -189,39 +772,53 @@
         "name": "Options",
         "props": [
           {
-            "name": "currencies",
-            "type": "readonly CurrencyPickerOption[]",
-            "required": true,
+            "name": "className",
+            "type": "string",
+            "required": false,
             "defaultValue": null,
-            "description": "Available currency codes and names, in catalogue order. Each code must be unique. An option can be disabled."
+            "description": "Class applied to the options wrapper div."
           },
           {
             "name": "disabled",
             "type": "boolean",
             "required": false,
             "defaultValue": "false",
-            "description": "Disables search and every currency option."
+            "description": "Additionally disables search and every currency option. Root disabled state always takes precedence."
           },
           {
             "name": "emptyLabel",
-            "type": "string",
+            "type": "ReactNode",
             "required": false,
             "defaultValue": "No results",
-            "description": "Text announced when no currencies match. Defaults to No results."
+            "description": "Content announced when no currencies match. Defaults to No results."
           },
           {
-            "name": "onValueChange",
-            "type": "(code: string) => void",
-            "required": true,
+            "name": "listLabel",
+            "type": "string",
+            "required": false,
             "defaultValue": null,
-            "description": "Called with the code chosen by pointer or keyboard. The application updates the selected value."
+            "description": "Accessible name for the selection listbox. Defaults to the registered Dropdown title or trigger name. Native accessible attributes on Options target only its wrapper."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the options wrapper div, or the element composed through render."
           },
           {
             "name": "render",
             "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
             "required": false,
             "defaultValue": null,
-            "description": "Replaces the non-interactive root div. Forward the supplied props and ref when rendering a custom component."
+            "description": "Replaces the non-interactive wrapper div. Forward the supplied props and ref when rendering a custom component. Use searchProps.render to customize the input."
+          },
+          {
+            "name": "searchable",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Renders a search input above the options. Defaults to true."
           },
           {
             "name": "searchLabel",
@@ -231,11 +828,18 @@
             "description": "Search placeholder and accessible name. Defaults to Search."
           },
           {
-            "name": "value",
-            "type": "string",
+            "name": "searchProps",
+            "type": "DropdownSearchProps",
             "required": false,
             "defaultValue": null,
-            "description": "Selected currency code. Its matching row appears first and is marked pressed."
+            "description": "Native input attributes, ref, render, and controlled or uncontrolled query props forwarded to Dropdown.Search. Use value with onValueChange or defaultValue."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Inline styles applied to the options wrapper div."
           }
         ]
       }
@@ -361,6 +965,76 @@
     ]
   },
   {
+    "name": "DetailsRow",
+    "entryPoint": "twenty-ui/components/data-display",
+    "slug": "components/data-display/details-row",
+    "props": [
+      {
+        "name": "action",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional action content beside the value. The caller supplies controls, accessible names, and handlers."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Value content rendered in the description definition. Text and multiple items wrap within the available space."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the row root."
+      },
+      {
+        "name": "label",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Visible label rendered as the description term."
+      },
+      {
+        "name": "labelWidth",
+        "type": "Width<string | number>",
+        "required": false,
+        "defaultValue": "7rem",
+        "description": "Preferred label column width. Numbers use pixels. The column is capped at 40% of the row width; use the same width for aligned sibling rows."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref forwarded to the row root div."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Customizes the row root. Preserve a div directly inside a dl and forward its props and ref to retain valid description-list grouping."
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative node before the label. The caller controls icon dimensions."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the row root."
+      }
+    ]
+  },
+  {
     "name": "MetricRow",
     "entryPoint": "twenty-ui/components/data-display",
     "slug": "components/data-display/metric-row",
@@ -435,6 +1109,13 @@
     "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/shortcut",
     "props": [
+      {
+        "name": "accessibleKeyLabels",
+        "type": "Readonly<Record<string, string>>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional localized names for individual keys in screen reader output."
+      },
       {
         "name": "combinationSeparator",
         "type": "string",
@@ -584,10 +1265,10 @@
       },
       {
         "name": "color",
-        "type": "\"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "type": "\"accent\" | \"inherit\" | \"primary\" | \"secondary\" | \"tertiary\"",
         "required": false,
         "defaultValue": "tertiary",
-        "description": "Neutral tertiary, inherited text, primary accent, or secondary treatment."
+        "description": "Neutral tertiary, inherited text, solid primary accent, soft accent tint, or secondary treatment."
       },
       {
         "name": "render",
@@ -639,6 +1320,13 @@
         "description": "Class merged onto the root div or composed element."
       },
       {
+        "name": "closeLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Close",
+        "description": "Accessible label for the close control. Defaults to Close; supply localized text when needed."
+      },
+      {
         "name": "color",
         "type": "\"blue\" | \"gray\" | \"green\" | \"orange\" | \"red\"",
         "required": false,
@@ -651,6 +1339,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Optional leading ReactNode. The caller supplies decorative or accessible icon semantics."
+      },
+      {
+        "name": "onDismiss",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Renders a 24px ghost close control and calls this callback when activated. The caller owns visibility."
       },
       {
         "name": "ref",
@@ -902,7 +1597,7 @@
         "type": "BorderRadius<string | number>",
         "required": false,
         "defaultValue": null,
-        "description": "Corner radius in pixels or a CSS length. Defaults to 0.25rem and inherits the surrounding corner shape."
+        "description": "Round corner radius in pixels or a CSS length. Defaults to the 4px smRound theme token. Use mdRound for 8px corners or a custom radius for circles and capsules."
       },
       {
         "name": "className",
@@ -929,8 +1624,8 @@
         "name": "layout",
         "type": "\"block\" | \"inline\"",
         "required": false,
-        "defaultValue": "inline",
-        "description": "`inline` sizes and aligns the placeholder like a line of text. `block` renders a block without a text node, which is cheaper when many placeholders are rendered and alignment with text is not needed."
+        "defaultValue": "block",
+        "description": "`block` renders a block without a text node. `inline` sizes and aligns the placeholder like a line of text."
       },
       {
         "name": "ref",
@@ -958,7 +1653,7 @@
         "type": "Width<string | number>",
         "required": false,
         "defaultValue": null,
-        "description": "Placeholder width in pixels or a CSS length. Defaults to the available width."
+        "description": "Placeholder width in pixels or a CSS length. Defaults to the available width and never exceeds the container."
       }
     ]
   },
@@ -1489,6 +2184,13 @@
         "required": false,
         "defaultValue": null,
         "description": "The controlled value of the radio item that should be currently selected.\n\nTo render an uncontrolled radio group, use the `defaultValue` prop instead."
+      },
+      {
+        "name": "variant",
+        "type": "\"rectangle\" | \"round\"",
+        "required": false,
+        "defaultValue": "round",
+        "description": "Shape: `round` is a pill, `rectangle` fills its container with form-field corners."
       }
     ]
   },
@@ -1857,6 +2559,13 @@
         "description": "Allows the tooltip even when the text is not truncated."
       },
       {
+        "name": "color",
+        "type": "\"light\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic text color. Omitted values inherit; native style supports runtime colors."
+      },
+      {
         "name": "isFocusable",
         "type": "boolean",
         "required": false,
@@ -1883,6 +2592,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Replaces the default div. Native props, styles, handlers and ref target the displayed text, not the popup."
+      },
+      {
+        "name": "size",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\" | \"xxs\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Font size from the theme scale. Omitted values inherit; this does not set height."
       },
       {
         "name": "text",
@@ -1918,6 +2634,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Single-line ellipsis by default. Set false to wrap. Cannot be combined with `lineClamp`."
+      },
+      {
+        "name": "weight",
+        "type": "\"medium\" | \"regular\" | \"semibold\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Theme font weight. Omitted values inherit."
       }
     ]
   },
@@ -1977,10 +2700,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -2131,10 +2854,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": "neutral",
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -2257,10 +2980,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -2390,10 +3113,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -2517,6 +3240,83 @@
     ]
   },
   {
+    "name": "ReactionButton",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/reaction-button",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name describing the reaction. Required unless `aria-labelledby` supplies the name."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the element supplying the accessible name. Can be used instead of `aria-label`."
+      },
+      {
+        "name": "count",
+        "type": "string | number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Displayed count. Pass a string for localized or abbreviated formatting. Hidden from assistive technology."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables the native button and prevents activation."
+      },
+      {
+        "name": "emoji",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Emoji displayed beside the count. Hidden from assistive technology."
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Shows a loading indicator, sets `aria-busy`, and prevents activation without changing the supplied pressed state."
+      },
+      {
+        "name": "onClick",
+        "type": "MouseEventHandler<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native click handler called before `onPressedChange`. Calling `preventDefault()` cancels the change request."
+      },
+      {
+        "name": "onPressedChange",
+        "type": "(pressed: boolean) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Requests the next pressed state after activation. The caller updates `pressed` and `count`."
+      },
+      {
+        "name": "pressed",
+        "type": "boolean",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled selection state. Sets the selected appearance and `aria-pressed`."
+      },
+      {
+        "name": "title",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional native tooltip text supplied by the caller."
+      }
+    ]
+  },
+  {
     "name": "Button",
     "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/button",
@@ -2530,10 +3330,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": "neutral",
-        "description": "Semantic color of the button."
+        "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
       },
       {
         "name": "elevated",
@@ -2663,10 +3463,10 @@
       },
       {
         "name": "color",
-        "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+        "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
         "required": false,
         "defaultValue": null,
-        "description": "Default semantic color for children without an explicit color."
+        "description": "Default semantic color for children without an explicit color. Inherited color requires each child to resolve to a non-solid variant; explicit child overrides take precedence."
       },
       {
         "name": "framed",
@@ -3032,6 +3832,13 @@
         "required": false,
         "defaultValue": null,
         "description": "The value of the input. Use when controlled."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"plain\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding and uses natural height. Its outline follows native :focus-visible, including pointer focus or autofocus on text inputs; invalid state uses a danger outline. InputGroup always owns the grouped frame."
       }
     ]
   },
@@ -3725,7 +4532,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Measures committed controlled values or uncontrolled edits, form resets, row and size changes, and width changes. Overrides blockSize while enabled."
+        "description": "Measures committed controlled values or uncontrolled edits, form resets, row, size and variant changes, and width changes. Overrides blockSize while enabled."
       },
       {
         "name": "className",
@@ -3768,6 +4575,13 @@
         "required": false,
         "defaultValue": "md",
         "description": "Visual size of the textarea."
+      },
+      {
+        "name": "variant",
+        "type": "\"default\" | \"plain\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "default keeps the field frame. plain removes fill, border, radius and padding while retaining rows, automatic sizing and maximum rows. Its outline follows native :focus-visible, including pointer focus or autofocus on textareas; invalid state uses a danger outline."
       }
     ]
   },
@@ -4389,6 +5203,13 @@
         "description": "Callback fired when the value changes."
       },
       {
+        "name": "orientation",
+        "type": "\"horizontal\" | \"vertical\"",
+        "required": false,
+        "defaultValue": "vertical",
+        "description": "Visual layout direction, reflected in data-orientation. Does not change arrow-key navigation or set aria-orientation."
+      },
+      {
         "name": "readOnly",
         "type": "boolean",
         "required": false,
@@ -4439,7 +5260,7 @@
             "type": "RefObject<AutocompleteRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the autocomplete.\nCall this after any externally controlled closing animation finishes."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the autocomplete after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the autocomplete completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the autocomplete imperatively when called."
           },
           {
             "name": "autoHighlight",
@@ -4593,11 +5414,11 @@
             "type": "(highlightedValue: TItem | undefined, eventDetails: AutocompleteRootHighlightEventDetails) => void",
             "required": false,
             "defaultValue": null,
-            "description": "Callback fired when an item is highlighted or unhighlighted.\nReceives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.\nThe `reason` can be:\n- `'keyboard'`: the highlight changed due to keyboard navigation.\n- `'pointer'`: the highlight changed due to pointer hovering.\n- `'none'`: the highlight changed programmatically."
+            "description": "Callback fired when an item is highlighted or unhighlighted.\nReceives the highlighted item value (or `undefined` if no item is highlighted) and event details with a `reason` property describing why the highlight changed.\nThe `reason` can be:\n- `'keyboard'`: the highlight changed due to keyboard navigation.\n- `'pointer'`: the highlight changed due to pointer hovering. The event may be a `MouseEvent`\n  rather than a `PointerEvent`.\n- `'none'`: the highlight changed for another reason, such as typing, `autoHighlight`, the\n  item list changing, or the popup opening or closing."
           },
           {
             "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: AutocompleteRootChangeEventDetails) => void)",
+            "type": "((open: boolean, eventDetails: AutocompleteRootOpenChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Event handler called when the popup is opened or closed."
@@ -4774,7 +5595,7 @@
             "type": "\"md\" | \"sm\"",
             "required": false,
             "defaultValue": null,
-            "description": "Visual size of the input. Inside an InputGroup, the group size applies."
+            "description": "Visual size of the input. Inside an InputGroup, the group size applies. Not accepted with render."
           },
           {
             "name": "style",
@@ -5247,7 +6068,7 @@
             "type": "\"end\" | \"inline\"",
             "required": false,
             "defaultValue": "inline",
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Where the description renders: inline after the content or at the end of the row."
           },
           {
             "name": "disabled",
@@ -5427,7 +6248,7 @@
             "type": "RefObject<SelectRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the select.\nCall this after any externally controlled closing animation finishes."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the select after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the select completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the select imperatively when called."
           },
           {
             "name": "autoComplete",
@@ -5452,7 +6273,7 @@
           },
           {
             "name": "defaultValue",
-            "type": "SelectValueType<Value, Multiple> | null",
+            "type": "SelectInputValue<Value, Multiple> | null",
             "required": false,
             "defaultValue": null,
             "description": "The uncontrolled value of the select when it's initially rendered.\n\nTo render a controlled select, use the `value` prop instead."
@@ -5543,7 +6364,7 @@
           },
           {
             "name": "onOpenChange",
-            "type": "((open: boolean, eventDetails: SelectRootChangeEventDetails) => void)",
+            "type": "((open: boolean, eventDetails: SelectRootOpenChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Receives the requested open state and unchanged Base UI event details."
@@ -5557,7 +6378,7 @@
           },
           {
             "name": "onValueChange",
-            "type": "((value: SelectValueType<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) => void)",
+            "type": "((value: SelectOutputValue<Value, Multiple> | (Multiple extends true ? never : null), eventDetails: SelectRootChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
             "description": "Receives the requested generic value and unchanged Base UI event details, including reason, event and cancel(). Multiple selection receives an array; a cleared single value is null."
@@ -5585,7 +6406,7 @@
           },
           {
             "name": "value",
-            "type": "SelectValueType<Value, Multiple> | null",
+            "type": "SelectInputValue<Value, Multiple> | null",
             "required": false,
             "defaultValue": null,
             "description": "The value of the select. Use when controlled."
@@ -7061,6 +7882,13 @@
         "description": "When trailing actions are visible: on hover and focus, or always."
       },
       {
+        "name": "active",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Marks the open or current item independently of selection and focus. Does not add accessible state or activate the item."
+      },
+      {
         "name": "color",
         "type": "\"danger\" | \"neutral\"",
         "required": false,
@@ -7076,10 +7904,10 @@
       },
       {
         "name": "descriptionPlacement",
-        "type": "\"end\" | \"inline\"",
+        "type": "\"below\" | \"end\" | \"inline\"",
         "required": false,
         "defaultValue": "inline",
-        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+        "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
       },
       {
         "name": "disabled",
@@ -7136,6 +7964,13 @@
         "required": false,
         "defaultValue": "false",
         "description": "Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner."
+      },
+      {
+        "name": "selectionAppearance",
+        "type": "\"accent\" | \"default\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background."
       },
       {
         "name": "shortcut",
@@ -7314,10 +8149,10 @@
           },
           {
             "name": "size",
-            "type": "\"md\" | \"sm\"",
+            "type": "\"compact\" | \"md\" | \"sm\"",
             "required": false,
             "defaultValue": "sm",
-            "description": "Visual size of the tab."
+            "description": "Visual tab size. Compact uses a 24px minimum height, small text, and 4px content padding; sm and md keep a 40px minimum height."
           },
           {
             "name": "startIcon",
@@ -7469,18 +8304,98 @@
             "description": "Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner."
           },
           {
-            "name": "rounded",
-            "type": "boolean",
+            "name": "style",
+            "type": "CSSProperties",
             "required": false,
             "defaultValue": null,
-            "description": "Cards already use the same rounded corners when omitted."
+            "description": "Native styles applied to the rendered part."
+          }
+        ]
+      },
+      {
+        "name": "Action",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional content inside the stretched action. Supply an accessible name for empty actions."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the action class."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Disables native button owners and suppresses the action hover treatment. Links and associated controls remain responsible for their own disabled behavior."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default button, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native element or render callback composed through Base UI useRender. Links retain native navigation and labels activate their associated controls without an additional keyboard target."
           },
           {
             "name": "style",
             "type": "CSSProperties",
             "required": false,
             "defaultValue": null,
-            "description": "Native styles applied to the rendered part."
+            "description": "Native styles applied to the rendered action."
+          }
+        ]
+      },
+      {
+        "name": "Control",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Independent controls or tooltip targets lifted above a sibling Card.Action."
+          },
+          {
+            "name": "className",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class merged with the control class."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLSpanElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the default span, or the element supplied through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or render callback composed through Base UI useRender. The supplied control retains its native attributes, events and semantics."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties",
+            "required": false,
+            "defaultValue": null,
+            "description": "Native styles applied to the rendered control wrapper."
           }
         ]
       },
@@ -7634,7 +8549,7 @@
             "type": "RefObject<DialogRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the dialog.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the dialog imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the dialog after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the dialog completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the dialog imperatively when called."
           },
           {
             "name": "children",
@@ -7990,7 +8905,7 @@
           },
           {
             "name": "size",
-            "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
             "required": false,
             "defaultValue": "lg",
             "description": "Visual font size, independent of the heading level. Defaults to `lg`."
@@ -8129,7 +9044,7 @@
             "type": "RefObject<DialogRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the alert dialog.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the alert dialog imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the alert dialog after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the alert dialog completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the alert dialog imperatively when called."
           },
           {
             "name": "children",
@@ -8526,7 +9441,7 @@
             "type": "RefObject<PopoverRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Manually unmounts the popover.\nCall this after any externally controlled closing animation finishes.\n- `close`: Closes the popover imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the popover after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the popover completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the popover imperatively when called."
           },
           {
             "name": "children",
@@ -9089,7 +10004,7 @@
         "type": "RefObject<TooltipRootActions | null>",
         "required": false,
         "defaultValue": null,
-        "description": "A ref to imperative actions.\n- `unmount`: Unmounts the tooltip popup.\n- `close`: Closes the tooltip imperatively when called."
+        "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the tooltip imperatively when called."
       },
       {
         "name": "align",
@@ -9257,7 +10172,7 @@
         "type": "MaxWidth<string | number>",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum popup width. Defaults to 300 pixels."
+        "description": "Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor."
       },
       {
         "name": "onOpenChange",
@@ -9292,7 +10207,7 @@
         "type": "TooltipPositionerProps",
         "required": false,
         "defaultValue": null,
-        "description": "Full Positioner props, including native props, ref and render. Overrides shorthand placement and width defaults."
+        "description": "Full Positioner props, including native props, ref and render. Overrides shorthand placement defaults."
       },
       {
         "name": "positionMethod",
@@ -9388,7 +10303,7 @@
             "type": "RefObject<TooltipRootActions | null>",
             "required": false,
             "defaultValue": null,
-            "description": "A ref to imperative actions.\n- `unmount`: Unmounts the tooltip popup.\n- `close`: Closes the tooltip imperatively when called."
+            "description": "A ref to imperative actions.\n- `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.\nCall `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.\nWhether it leaves the DOM is decided by `keepMounted` on the portal.\n- `close`: Closes the tooltip imperatively when called."
           },
           {
             "name": "children",
@@ -9726,6 +10641,13 @@
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
+            "name": "maxWidth",
+            "type": "MaxWidth<string | number>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor."
+          },
+          {
             "name": "ref",
             "type": "Ref<HTMLDivElement>",
             "required": false,
@@ -9752,6 +10674,46 @@
             "required": false,
             "defaultValue": "false",
             "description": "Enables the optional Twenty exit transition."
+          }
+        ]
+      },
+      {
+        "name": "Body",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional title content, displayed with medium weight. Omit it for a description-only tooltip."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional secondary content. Preserves line breaks and wraps long text."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the body div. Native props, styles and render target this element."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the body root through an element or render callback while preserving its layout and content."
+          },
+          {
+            "name": "startIcon",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional decorative node before the title. Omitted when the title is empty."
           }
         ]
       },
@@ -9988,6 +10950,13 @@
     "slug": "typography/text",
     "props": [
       {
+        "name": "color",
+        "type": "\"light\" | \"primary\" | \"secondary\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Semantic text color. Omitted values inherit; native style supports runtime colors."
+      },
+      {
         "name": "lineClamp",
         "type": "number",
         "required": false,
@@ -10002,11 +10971,25 @@
         "description": "Replaces the default div. Native props and the ref target the rendered text element."
       },
       {
+        "name": "size",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\" | \"xxs\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Font size from the theme scale. Omitted values inherit; this does not set height."
+      },
+      {
         "name": "truncate",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
         "description": "Truncates one line with an ellipsis. Cannot be combined with `lineClamp`."
+      },
+      {
+        "name": "weight",
+        "type": "\"medium\" | \"regular\" | \"semibold\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Theme font weight. Omitted values inherit."
       }
     ]
   },
@@ -10108,10 +11091,10 @@
       },
       {
         "name": "size",
-        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), or `xl` (40px)."
+        "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px), or `xxl` (40px)."
       },
       {
         "name": "src",
@@ -10218,10 +11201,10 @@
           },
           {
             "name": "size",
-            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
             "required": false,
             "defaultValue": "md",
-            "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), or `xl` (40px)."
+            "description": "Avatar size: `xs` (12px), `sm` (14px), `md` (16px), `lg` (24px), `xl` (32px), or `xxl` (40px)."
           },
           {
             "name": "style",
@@ -10429,7 +11412,7 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Maximum chip width in pixels, used to constrain the content."
+        "description": "Maximum rendered chip width in pixels, including its leading and trailing padding and any outline border."
       },
       {
         "name": "render",
@@ -10489,10 +11472,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"outline\" | \"plain\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Background treatment of the chip."
+        "description": "Background and border treatment. Outline has a strong border, lighter resting fill and 8px inline padding. Plain has no resting fill or leading padding. Both use ghost hover and pressed feedback when clickable."
       },
       {
         "name": "weight",
@@ -10548,7 +11531,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "true",
-        "description": "Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to show the full label without a tooltip."
+        "description": "Truncates constrained string labels and exposes the full text in a tooltip. Set to `false` to keep the full label at its natural width without a tooltip, even inside a narrower parent."
       },
       {
         "name": "variant",
@@ -10636,10 +11619,10 @@
       },
       {
         "name": "size",
-        "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+        "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Visual font size, independent of the heading level. Defaults to `md`."
+        "description": "Visual font size from `xs` through `xxl`, independent of the heading level. Uses the matching font token. Defaults to `md`."
       }
     ]
   },
@@ -10829,8 +11812,203 @@
     "name": "PhoneCountryPicker",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/phone-country-picker",
-    "props": [],
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Required accessible name for the country selector trigger."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional trigger content replacing the default country flag or world icon and chevron."
+      },
+      {
+        "name": "className",
+        "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "closeDelay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
+      },
+      {
+        "name": "closeOnSelect",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Closes the dropdown after an accepted selection. Defaults to true."
+      },
+      {
+        "name": "contentProps",
+        "type": "Omit<DropdownContentProps, \"children\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the internally assembled Dropdown.Content, including its accessible name, placement, width and popup ref."
+      },
+      {
+        "name": "countries",
+        "type": "readonly PhoneCountryOption[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Prepared choices with a unique stable value, localized label, digits-only calling code without a plus sign, decorative flag node and optional disabled state. Matching choices retain their supplied order after the selected country."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Initial uncontrolled country identifier. Omit it or use null to start empty."
+      },
+      {
+        "name": "delay",
+        "type": "number",
+        "required": false,
+        "defaultValue": "300",
+        "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Disables the trigger, search and country selection."
+      },
+      {
+        "name": "dropdownProps",
+        "type": "Omit<DropdownRootProps, \"children\" | \"type\" | \"multiple\">",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the internally assembled Dropdown.Root, including controlled open state and open-change events. The picker fixes its type to picker."
+      },
+      {
+        "name": "id",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the requested country identifier or null and Dropdown.SelectionGroup event details, including reason, event, trigger and cancel(). Cancel before updating controlled state to reject a selection."
+      },
+      {
+        "name": "openOnHover",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the popover should also open when the trigger is hovered."
+      },
+      {
+        "name": "optionsProps",
+        "type": "PhoneCountryPickerOptionsProps",
+        "required": false,
+        "defaultValue": null,
+        "description": "Props for the options root div, including native attributes, ref, render, searchLabel, listLabel and emptyLabel. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLButtonElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the trigger button, or the element composed through render."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Composes the trigger with an element or render callback. Native attributes, handlers, className, style and ref target the trigger."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "value",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled country identifier. Use null to clear the selection. Labels and calling codes do not replace this value."
+      }
+    ],
     "parts": [
+      {
+        "name": "Root",
+        "props": [
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "A Dropdown.Root with type=\"picker\", its Trigger, Content and Options. Root shares prepared data and selection and renders no DOM node."
+          },
+          {
+            "name": "closeOnSelect",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Closes the composed Dropdown after an accepted selection. Defaults to true."
+          },
+          {
+            "name": "countries",
+            "type": "readonly PhoneCountryOption[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Prepared choices shared by Trigger and Options, with unique stable values, localized labels, digits-only calling codes without a plus sign, decorative flag nodes and optional disabled states."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": "null",
+            "description": "Initial uncontrolled country identifier. Omit it or use null to start empty."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Disables the composed trigger, search and country selection."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Receives the requested identifier or null and Dropdown.SelectionGroup event details, including reason, event, trigger and cancel(). Cancel before updating controlled state to reject a selection."
+          },
+          {
+            "name": "value",
+            "type": "string | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled country identifier shared by the parts. Use null to clear the selection."
+          }
+        ]
+      },
       {
         "name": "Trigger",
         "props": [
@@ -10840,6 +12018,13 @@
             "required": true,
             "defaultValue": null,
             "description": "Required accessible name for the country selector button."
+          },
+          {
+            "name": "children",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Optional trigger content replacing the selected country flag or empty world icon and chevron. The selected label comes from Root."
           },
           {
             "name": "className",
@@ -10856,13 +12041,6 @@
             "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
           },
           {
-            "name": "country",
-            "type": "PhoneCountryOption",
-            "required": false,
-            "defaultValue": null,
-            "description": "Prepared country whose flag is displayed and whose label describes the trigger. Omit it to show a world icon."
-          },
-          {
             "name": "delay",
             "type": "number",
             "required": false,
@@ -10874,7 +12052,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Disables the native trigger button."
+            "description": "Disables the native trigger button in addition to Root.disabled."
           },
           {
             "name": "id",
@@ -10884,11 +12062,32 @@
             "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
           },
           {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+          },
+          {
             "name": "openOnHover",
             "type": "boolean",
             "required": false,
             "defaultValue": "false",
             "description": "Whether the popover should also open when the trigger is hovered."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLButtonElement>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Ref to the trigger button, or the element composed through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the Dropdown trigger with an element or render callback. Native attributes, handlers, className, style and ref target this element."
           },
           {
             "name": "style",
@@ -10903,39 +12102,46 @@
         "name": "Options",
         "props": [
           {
-            "name": "countries",
-            "type": "readonly PhoneCountryOption[]",
-            "required": true,
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
             "defaultValue": null,
-            "description": "Prepared choices with a unique value, localized label, calling code without a plus sign, and flag node. The supplied order is preserved after the matching selected country."
+            "description": "Disables search and selection in addition to Root.disabled."
           },
           {
             "name": "emptyLabel",
             "type": "string",
             "required": false,
             "defaultValue": "No results",
-            "description": "Status message shown when no country names match. Defaults to No results."
+            "description": "Status message shown when no country label, identifier or calling code matches. Defaults to No results."
           },
           {
-            "name": "onValueChange",
-            "type": "(value: string) => void",
-            "required": true,
+            "name": "listLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "Countries",
+            "description": "Accessible name of the country listbox, separate from the search field. Defaults to Countries."
+          },
+          {
+            "name": "ref",
+            "type": "Ref<HTMLDivElement>",
+            "required": false,
             "defaultValue": null,
-            "description": "Called with the chosen country value. The host owns the selected country and phone number."
+            "description": "Ref to the options root div, or the element composed through render."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Composes the non-interactive options root with an element or render callback. Native attributes, handlers, className, style and ref target this element. searchLabel names the internal search input."
           },
           {
             "name": "searchLabel",
             "type": "string",
             "required": false,
             "defaultValue": "Search",
-            "description": "Accessible name and placeholder of the country search field. Defaults to Search."
-          },
-          {
-            "name": "value",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Selected country value. Its row appears first only while it matches the search."
+            "description": "Accessible name and placeholder of the country search field. Defaults to Search. Search matches normalized labels and identifiers, or calling codes with an optional leading plus sign. Surrounding query whitespace is trimmed."
           }
         ]
       }
@@ -10969,7 +12175,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Allows selecting several options. Options then keep the popup open and show a checkbox by default."
+            "description": "Default for standalone options. Use `SelectionGroup.multiple` for independently owned selection values."
           },
           {
             "name": "onEscapeKeyDown",
@@ -11219,10 +12425,10 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
+            "type": "\"below\" | \"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
           },
           {
             "name": "endIcon",
@@ -11325,7 +12531,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Closes the dropdown after selection. Defaults to `true`, or `false` when `multiple` is set."
+            "description": "Overrides the nearest group close policy for this option. A cancelled selection never closes automatically."
           },
           {
             "name": "color",
@@ -11343,10 +12549,10 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
+            "type": "\"below\" | \"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
           },
           {
             "name": "endIcon",
@@ -11385,24 +12591,24 @@
           },
           {
             "name": "onSelect",
-            "type": "(() => void)",
+            "type": "((eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
             "required": false,
             "defaultValue": null,
-            "description": "Called when the option is activated. The application owns the selected value."
+            "description": "Called before the nearest group commits selection, with `event`, `reason`, `trigger`, `cancel` and `isCanceled`. Calling `cancel()` prevents the value change and automatic close."
           },
           {
             "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>>",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DropdownOptionItemState>",
             "required": false,
             "defaultValue": null,
-            "description": "Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref."
+            "description": "Element or function rendered as the row. Functions receive the supplied props and `{ selected, multiple, disabled }` state. Forward the props and ref to the rendered control."
           },
           {
             "name": "selected",
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types, or as `aria-current` when `render` is not a button, such as a link. Omit it for options that navigate or apply without a selection state."
+            "description": "Selected state for standalone options. Options inside a `SelectionGroup` derive it from their owner. Grouped picker options expose `aria-selected`, menu options expose `aria-checked`, and panel options expose `aria-pressed`."
           },
           {
             "name": "shortcut",
@@ -11431,6 +12637,67 @@
             "required": false,
             "defaultValue": null,
             "description": "Inline styles applied to the row."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Stable option identifier within its nearest `SelectionGroup`. The group supplies selected state and commits this value on activation."
+          }
+        ]
+      },
+      {
+        "name": "SelectionGroup",
+        "props": [
+          {
+            "name": "closeOnSelect",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Default close policy for owned options: true for single selection, false for multiple selection. Individual options can override it."
+          },
+          {
+            "name": "defaultValue",
+            "type": "string | string[] | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Initial uncontrolled selection. Defaults to null for single selection and an empty array for multiple selection."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Stable identifier unique within the dropdown root. Required for uncontrolled groups, whose values persist under it across popup close and page navigation. Optional for controlled groups."
+          },
+          {
+            "name": "multiple",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Uses an array of selected identifiers when true. Otherwise the value is one identifier or null."
+          },
+          {
+            "name": "onValueChange",
+            "type": "((value: string | null, eventDetails: DropdownSelectionGroupChangeEventDetails) => void) | ((value: string[], eventDetails: DropdownSelectionGroupChangeEventDetails) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called with the next value and cancellable event details: `event`, `reason`, `trigger`, `cancel` and `isCanceled`. Calling `cancel()` preserves the value and keeps the popup open. Repeated single selection does not emit another change."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DropdownSelectionGroupState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Element or function rendered as the group. Functions receive supplied props and `{ value, multiple }` state. Forward the props and ref."
+          },
+          {
+            "name": "value",
+            "type": "string | string[] | null",
+            "required": false,
+            "defaultValue": null,
+            "description": "Controlled selection: a string or null for single selection, or an array for multiple selection. Undefined leaves selection uncontrolled."
           }
         ]
       },
@@ -11604,10 +12871,10 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
+            "type": "\"below\" | \"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
           },
           {
             "name": "endIcon",
@@ -11696,7 +12963,7 @@
             "type": "boolean",
             "required": false,
             "defaultValue": null,
-            "description": "Allows selecting several options. Options then keep the popup open and show a checkbox by default."
+            "description": "Default for standalone options. Use `SelectionGroup.multiple` for independently owned selection values."
           },
           {
             "name": "onOpenChange",
@@ -11761,10 +13028,10 @@
           },
           {
             "name": "descriptionPlacement",
-            "type": "\"end\" | \"inline\"",
+            "type": "\"below\" | \"end\" | \"inline\"",
             "required": false,
             "defaultValue": null,
-            "description": "Where the description renders: inline after the content or at the end of\nthe row."
+            "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
           },
           {
             "name": "endIcon",
@@ -12093,10 +13360,10 @@
           },
           {
             "name": "size",
-            "type": "\"lg\" | \"md\" | \"sm\" | \"xs\"",
+            "type": "\"lg\" | \"md\" | \"sm\" | \"xl\" | \"xs\" | \"xxl\"",
             "required": false,
             "defaultValue": "md",
-            "description": "Visual font size, independent of the heading level. Defaults to `md`."
+            "description": "Visual font size from `xs` through `xxl`, independent of the heading level. Uses the matching font token. Defaults to `md`."
           },
           {
             "name": "title",
@@ -12395,6 +13662,13 @@
     "slug": "components/navigation/list-item-button",
     "props": [
       {
+        "name": "active",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Marks the open or current item independently of selection and focus. The caller supplies accessible state."
+      },
+      {
         "name": "color",
         "type": "\"danger\" | \"neutral\"",
         "required": false,
@@ -12410,10 +13684,10 @@
       },
       {
         "name": "descriptionPlacement",
-        "type": "\"end\" | \"inline\"",
+        "type": "\"below\" | \"end\" | \"inline\"",
         "required": false,
         "defaultValue": null,
-        "description": "Where the description renders: inline after the content or at the end of\nthe row."
+        "description": "Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default."
       },
       {
         "name": "disabled",
@@ -12470,6 +13744,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics."
+      },
+      {
+        "name": "selectionAppearance",
+        "type": "\"accent\" | \"default\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background."
       },
       {
         "name": "shortcut",
@@ -12968,10 +14249,10 @@
           },
           {
             "name": "color",
-            "type": "\"accent\" | \"danger\" | \"neutral\" | \"success\"",
+            "type": "\"accent\" | \"danger\" | \"inherit\" | \"neutral\" | \"success\"",
             "required": false,
             "defaultValue": null,
-            "description": "Semantic color of the button."
+            "description": "Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults."
           },
           {
             "name": "elevated",
@@ -13114,6 +14395,13 @@
         "required": false,
         "defaultValue": "false",
         "description": "Removes the standard bottom margin. Compact layouts have no bottom margin."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Fills the available parent width, including padding and borders, and removes the compact layout's 512px maximum. Defaults to false; standard layout already fills its parent."
       },
       {
         "name": "icon",
@@ -13699,552 +14987,6 @@
     ]
   },
   {
-    "name": "MenuItem",
-    "entryPoint": "twenty-ui/components/navigation",
-    "slug": "components/navigation/menu-item",
-    "props": [
-      {
-        "name": "accent",
-        "type": "\"danger\" | \"default\" | \"placeholder\"",
-        "required": false,
-        "defaultValue": "default",
-        "description": "Default, danger, or placeholder row styling."
-      },
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the row."
-      },
-      {
-        "name": "contextualText",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Supporting text beside the main label."
-      },
-      {
-        "name": "contextualTextPosition",
-        "type": "\"left\" | \"right\"",
-        "required": false,
-        "defaultValue": "left",
-        "description": "Position of the supporting text."
-      },
-      {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Disables activation and applies disabled styling."
-      },
-      {
-        "name": "focused",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies focused appearance without moving DOM focus."
-      },
-      {
-        "name": "hasSubMenu",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Shows a submenu chevron; does not create a submenu."
-      },
-      {
-        "name": "iconButtons",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Trailing action elements."
-      },
-      {
-        "name": "iconThemeColor",
-        "type": "ThemeColor | null",
-        "required": false,
-        "defaultValue": null,
-        "description": "Theme color for the leading icon."
-      },
-      {
-        "name": "isIconDisplayedOnHoverOnly",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Reveals trailing action elements only on hover."
-      },
-      {
-        "name": "isSubMenuOpened",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies the open treatment to the submenu chevron."
-      },
-      {
-        "name": "isTooltipOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Accepted for compatibility; currently has no effect."
-      },
-      {
-        "name": "LeftComponent",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Custom leading content."
-      },
-      {
-        "name": "LeftIcon",
-        "type": "IconComponent | null",
-        "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer activation callback. The row itself does not add keyboard or menu semantics."
-      },
-      {
-        "name": "onMouseEnter",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer-entry callback on the row."
-      },
-      {
-        "name": "onMouseLeave",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer-exit callback on the row."
-      },
-      {
-        "name": "RightComponent",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Custom trailing content."
-      },
-      {
-        "name": "RightIcon",
-        "type": "IconComponent | null",
-        "required": false,
-        "defaultValue": null,
-        "description": "Trailing icon component."
-      },
-      {
-        "name": "selected",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Applies selected appearance without owning selection state."
-      },
-      {
-        "name": "shortcut",
-        "type": "ShortcutDefinition",
-        "required": false,
-        "defaultValue": null,
-        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Register handlers in the application."
-      },
-      {
-        "name": "shortcutJoinLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text between sequential shortcut steps. Defaults to `then`."
-      },
-      {
-        "name": "testId",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Value of the row’s data-testid attribute."
-      },
-      {
-        "name": "text",
-        "type": "ReactNode",
-        "required": true,
-        "defaultValue": null,
-        "description": "Main row label."
-      },
-      {
-        "name": "withIconContainer",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Places leading content in an icon container."
-      },
-      {
-        "name": "withIconContainerBackground",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Adds a background to the leading icon container."
-      }
-    ]
-  },
-  {
-    "name": "MenuItemAvatar",
-    "entryPoint": "twenty-ui/components/navigation",
-    "slug": "components/navigation/menu-item-avatar",
-    "props": [
-      {
-        "name": "accent",
-        "type": "\"danger\" | \"default\" | \"placeholder\"",
-        "required": false,
-        "defaultValue": "default",
-        "description": "Default, danger, or placeholder row styling."
-      },
-      {
-        "name": "avatar",
-        "type": "Pick<AvatarProps, \"name\" | \"size\" | \"shape\" | \"src\" | \"colorSeed\"> | null",
-        "required": false,
-        "defaultValue": null,
-        "description": "Avatar name, source, color seed, size, and shape. Omit to hide the avatar."
-      },
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the row."
-      },
-      {
-        "name": "contextualText",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Supporting text beside the main label."
-      },
-      {
-        "name": "hasSubMenu",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Shows a submenu chevron; does not create a submenu."
-      },
-      {
-        "name": "iconButtons",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Trailing action elements."
-      },
-      {
-        "name": "isIconDisplayedOnHoverOnly",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Reveals trailing action elements only on hover."
-      },
-      {
-        "name": "isTooltipOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Accepted for compatibility; currently has no effect."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer activation callback. The row itself does not add keyboard or menu semantics."
-      },
-      {
-        "name": "onMouseEnter",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer-entry callback on the row."
-      },
-      {
-        "name": "onMouseLeave",
-        "type": "((event: MouseEvent<HTMLDivElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer-exit callback on the row."
-      },
-      {
-        "name": "testId",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Value of the row’s data-testid attribute."
-      },
-      {
-        "name": "text",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Main row label."
-      }
-    ]
-  },
-  {
-    "name": "MenuItemDraggable",
-    "entryPoint": "twenty-ui/components/navigation",
-    "slug": "components/navigation/menu-item-draggable",
-    "props": [
-      {
-        "name": "accent",
-        "type": "\"danger\" | \"default\" | \"placeholder\"",
-        "required": false,
-        "defaultValue": "default",
-        "description": "Default, danger, or placeholder row styling."
-      },
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the row."
-      },
-      {
-        "name": "contextualText",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Supporting text beside the main label."
-      },
-      {
-        "name": "gripMode",
-        "type": "\"always\" | \"never\" | \"onHover\"",
-        "required": false,
-        "defaultValue": "never",
-        "description": "Grip visibility: never, always, or onHover. always and onHover render a single leading content (LeftComponent when set, otherwise LeftIcon); onHover swaps it for the grip on hover and shows no grip without leading content. Does not implement dragging."
-      },
-      {
-        "name": "iconButtons",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Trailing action elements."
-      },
-      {
-        "name": "isDragDisabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Disables drag appearance without installing or removing drag handlers."
-      },
-      {
-        "name": "isHoverDisabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Accepted for compatibility; currently has no effect."
-      },
-      {
-        "name": "isIconDisplayedOnHoverOnly",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Reveals trailing action elements only on hover."
-      },
-      {
-        "name": "isTooltipOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Accepted for compatibility; currently has no effect."
-      },
-      {
-        "name": "LeftComponent",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Custom leading content."
-      },
-      {
-        "name": "LeftIcon",
-        "type": "IconComponent",
-        "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component."
-      },
-      {
-        "name": "onClick",
-        "type": "(() => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Pointer activation callback. The row itself does not add keyboard or menu semantics."
-      },
-      {
-        "name": "text",
-        "type": "ReactNode",
-        "required": true,
-        "defaultValue": null,
-        "description": "Main row label."
-      },
-      {
-        "name": "withIconContainer",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Places leading content in an icon container."
-      }
-    ]
-  },
-  {
-    "name": "MenuItemSuggestion",
-    "entryPoint": "twenty-ui/components/navigation",
-    "slug": "components/navigation/menu-item-suggestion",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the row."
-      },
-      {
-        "name": "contextualText",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Supporting text beside the main label."
-      },
-      {
-        "name": "contextualTextPosition",
-        "type": "\"left\" | \"right\"",
-        "required": false,
-        "defaultValue": "left",
-        "description": "Position of the supporting text."
-      },
-      {
-        "name": "LeftIcon",
-        "type": "IconComponent | null",
-        "required": false,
-        "defaultValue": null,
-        "description": "Leading icon component."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLLIElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Activation callback. When supplied, the row gains button semantics, a tab stop, and Enter/Space activation."
-      },
-      {
-        "name": "selected",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Applies selected styling. The application owns selection."
-      },
-      {
-        "name": "text",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Main row label."
-      },
-      {
-        "name": "withIconContainer",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Places leading content in an icon container."
-      }
-    ]
-  },
-  {
-    "name": "MenuPicker",
-    "entryPoint": "twenty-ui/components/navigation",
-    "slug": "components/navigation/menu-picker",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the button."
-      },
-      {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Disables the button."
-      },
-      {
-        "name": "icon",
-        "type": "IconComponent",
-        "required": true,
-        "defaultValue": null,
-        "description": "Leading icon component."
-      },
-      {
-        "name": "id",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Button ID."
-      },
-      {
-        "name": "label",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Button label and accessible name, including when showLabel is false."
-      },
-      {
-        "name": "onClick",
-        "type": "(() => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Activation callback."
-      },
-      {
-        "name": "selected",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Controls selected styling and aria-pressed."
-      },
-      {
-        "name": "showLabel",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Shows the visible label beside the icon."
-      },
-      {
-        "name": "testId",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Value of the button’s data-testid attribute."
-      },
-      {
-        "name": "tooltipContent",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Optional tooltip text."
-      },
-      {
-        "name": "tooltipDelay",
-        "type": "number",
-        "required": false,
-        "defaultValue": "0",
-        "description": "Hover delay in milliseconds."
-      },
-      {
-        "name": "tooltipOffset",
-        "type": "number",
-        "required": false,
-        "defaultValue": "5",
-        "description": "Distance between the button and tooltip in pixels."
-      }
-    ]
-  },
-  {
     "name": "ThemeProvider",
     "entryPoint": "twenty-ui/theme",
     "slug": "theme/theme-provider",
@@ -14444,6 +15186,27 @@
         "required": false,
         "defaultValue": null,
         "description": "Container width in pixels. When omitted, the container has a 300px minimum width."
+      }
+    ]
+  },
+  {
+    "name": "GroupedCatalog",
+    "entryPoint": "twenty-ui/testing",
+    "slug": "testing/grouped-catalog",
+    "props": [
+      {
+        "name": "groups",
+        "type": "{ label: string; examples: CatalogExample[]; }[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Labeled groups of examples. Each example has a unique label within its group and can include additional data for the renderer."
+      },
+      {
+        "name": "renderExample",
+        "type": "(example: CatalogExample) => ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Renders one example, including its visible label or accessible name. The layout supplies the surrounding cell and spacing."
       }
     ]
   }

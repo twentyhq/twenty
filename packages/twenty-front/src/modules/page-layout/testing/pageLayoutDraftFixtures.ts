@@ -1,3 +1,4 @@
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -24,8 +25,8 @@ export const makeWidget = (
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index,
     },
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
+    updatedAt: MOCKED_DATE,
     deletedAt: null,
   }) as unknown as PageLayoutWidget;
 
@@ -46,8 +47,8 @@ export const makeTab = (
   layoutMode,
   pageLayoutId: '',
   widgets,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  createdAt: MOCKED_DATE,
+  updatedAt: MOCKED_DATE,
   deletedAt: null,
   ...overrides,
 });

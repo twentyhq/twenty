@@ -25,6 +25,7 @@ import {
   parseJson,
   relativeDateFilterStringifiedSchema,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 // TODO: finish the implementation of this hook to obtain filter display value and remove deprecated display value property
 export const useGetRecordFilterDisplayValue = () => {
@@ -109,7 +110,7 @@ export const useGetRecordFilterDisplayValue = () => {
             return '';
           }
 
-          const zonedDateTime = recordFilter.value.includes('T')
+          const zonedDateTime = recordFilter.value.includes(doNotTranslate('T'))
             ? Temporal.Instant.from(recordFilter.value).toZonedDateTimeISO(
                 userTimezone,
               )
