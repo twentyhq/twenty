@@ -33,10 +33,6 @@ const StyledEditorContainer = styled.div<{ isEditable: boolean }>`
     isEditable ? themeCssVariables.spacing[5] : 0};
   position: relative;
   width: 100%;
-
-  .tiptap {
-    overflow-wrap: anywhere;
-  }
 `;
 
 type StandaloneRichTextEditorContentProps = {

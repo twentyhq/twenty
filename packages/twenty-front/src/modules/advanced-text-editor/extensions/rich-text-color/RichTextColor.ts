@@ -21,7 +21,9 @@ export const RichTextColor = Extension.create({
         textColor: {
           default: null,
           parseHTML: (element) => element.getAttribute('data-text-color'),
-          renderHTML: ({ textColor }: RichTextColorAttributes) =>
+          renderHTML: ({
+            textColor,
+          }: Pick<RichTextColorAttributes, 'textColor'>) =>
             isNonEmptyString(textColor)
               ? {
                   'data-text-color': textColor,
@@ -32,7 +34,9 @@ export const RichTextColor = Extension.create({
         backgroundColor: {
           default: null,
           parseHTML: (element) => element.getAttribute('data-background-color'),
-          renderHTML: ({ backgroundColor }: RichTextColorAttributes) =>
+          renderHTML: ({
+            backgroundColor,
+          }: Pick<RichTextColorAttributes, 'backgroundColor'>) =>
             isNonEmptyString(backgroundColor)
               ? {
                   'data-background-color': backgroundColor,

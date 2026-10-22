@@ -11,7 +11,13 @@ export type AttachmentInfo = {
   name: string;
 };
 
-const readStringAttribute = (node: TipTapNode, attributeName: string) => {
+const readStringAttribute = ({
+  node,
+  attributeName,
+}: {
+  node: TipTapNode;
+  attributeName: string;
+}) => {
   const value = node.attrs?.[attributeName];
 
   return isNonEmptyString(value) ? value : undefined;
@@ -20,17 +26,23 @@ const readStringAttribute = (node: TipTapNode, attributeName: string) => {
 const getNodeAttachment = (node: TipTapNode): AttachmentInfo | undefined => {
   switch (node.type) {
     case TIPTAP_NODE_TYPES.IMAGE: {
-      const path = readStringAttribute(node, 'src');
+      const path = readStringAttribute({ node, attributeName: 'src' });
 
       return isDefined(path)
-        ? { path, name: readStringAttribute(node, 'alt') ?? '' }
+        ? {
+            path,
+            name: readStringAttribute({ node, attributeName: 'alt' }) ?? '',
+          }
         : undefined;
     }
     case TIPTAP_NODE_TYPES.FILE: {
-      const path = readStringAttribute(node, 'url');
+      const path = readStringAttribute({ node, attributeName: 'url' });
 
       return isDefined(path)
-        ? { path, name: readStringAttribute(node, 'name') ?? '' }
+        ? {
+            path,
+            name: readStringAttribute({ node, attributeName: 'name' }) ?? '',
+          }
         : undefined;
     }
     default:
