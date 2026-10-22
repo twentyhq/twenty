@@ -5,7 +5,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   Callout,
   Dropdown,
-  MenuItem,
+  ListItemButton,
   SearchInput,
   Toaster,
   ToastProvider,
@@ -63,11 +63,9 @@ export const ShortcutLabels: Story = {
       <ListItem shortcut={[['G'], ['S']]} shortcutJoinLabel="followed by">
         Supplied shortcut
       </ListItem>
-      <MenuItem
-        text="Legacy shortcut"
-        shortcut={[['G'], ['L']]}
-        shortcutJoinLabel="next"
-      />
+      <ListItemButton shortcut={[['G'], ['L']]} shortcutJoinLabel="next">
+        Action shortcut
+      </ListItemButton>
     </>
   ),
   play: async ({ canvasElement }) => {

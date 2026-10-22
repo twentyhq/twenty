@@ -40,7 +40,6 @@ describe('transformStripePriceToDatabasePrice', () => {
       stripePriceId: 'price_123',
       active: true,
       stripeProductId: 'prod_123',
-      stripeMeterId: null,
       currency: 'USD',
       nickname: undefined,
       taxBehavior: undefined,
@@ -128,7 +127,7 @@ describe('transformStripePriceToDatabasePrice', () => {
   });
 
   describe('recurring price configurations', () => {
-    it('should handle metered pricing with meter ID', () => {
+    it('should handle metered pricing', () => {
       const mockPrice = createMockPrice({
         recurring: {
           usage_type: 'metered',
@@ -138,7 +137,6 @@ describe('transformStripePriceToDatabasePrice', () => {
       });
       const result = transformStripePriceToDatabasePrice(mockPrice);
 
-      expect(result.stripeMeterId).toBe('meter_123');
       expect(result.usageType).toBe(BillingUsageType.METERED);
     });
 

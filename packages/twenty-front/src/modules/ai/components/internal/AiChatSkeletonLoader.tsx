@@ -14,7 +14,10 @@ const StyledSkeletonContainer = styled(StyledAiChatContentContainer)`
 export const AiChatSkeletonLoader = () => {
   return (
     <StyledSkeletonContainer>
-      <SkeletonLine height={20} borderRadius={8} />
+      <SkeletonLine
+        height={20}
+        borderRadius={themeCssVariables.border.radius.mdRound}
+      />
     </StyledSkeletonContainer>
   );
 };

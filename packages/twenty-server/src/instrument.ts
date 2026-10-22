@@ -133,6 +133,10 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
 
       return span;
     },
+    beforeSendTransaction: (event) =>
+      event.contexts?.trace?.op === 'gen_ai.invoke_agent'
+        ? { ...event, spans: event.spans?.filter(({ op }) => op !== 'db') }
+        : event,
   });
 }
 

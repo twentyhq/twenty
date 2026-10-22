@@ -1,6 +1,4 @@
 import { Button } from 'twenty-ui/primitives/input';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
@@ -14,11 +12,6 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { FormProvider, type UseFormReturn } from 'react-hook-form';
-
-const StyledCenteredButton = styled(Button)`
-  box-sizing: border-box;
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -66,11 +59,11 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         onConfirmClick={saveAsTranslation}
         onClose={cancelPendingSave}
         AdditionalButtons={
-          <StyledCenteredButton
+          <Button
             fullWidth
             onClick={handleRenameForAllLanguages}
             variant="outline"
-          >{t`Rename for all languages`}</StyledCenteredButton>
+          >{t`Rename for all languages`}</Button>
         }
       />
     </FormProvider>

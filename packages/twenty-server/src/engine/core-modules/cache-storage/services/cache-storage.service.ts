@@ -542,8 +542,9 @@ end`;
   }
 
   private isRedisCache(cache: Cache): cache is RedisCache {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    return (cache.store as any)?.name === 'redis';
+    const store: object | null | undefined = cache.store;
+
+    return isDefined(store) && 'name' in store && store.name === 'redis';
   }
 
   private getKey(key: string) {

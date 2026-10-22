@@ -9,6 +9,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFindRecordsFilterValueIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-find-records-filter-value-issues.util';
 import { OBJECT_TARGETING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/object-targeting-action-types.constant';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
 import { getRecordCrudRichTextIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-record-crud-rich-text-issues.util';
@@ -83,6 +84,12 @@ export const getWorkflowRecordStepMetadataIssues = ({
           stepId: step.id,
         });
       }
+    }
+
+    if (step.type === WorkflowActionType.FIND_RECORDS) {
+      issues.push(
+        ...getFindRecordsFilterValueIssues({ step, flatFieldMetadataMaps }),
+      );
     }
 
     const objectRecord =

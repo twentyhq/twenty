@@ -104,6 +104,16 @@ msgstr "도메인 \"{domainName}\"에서 {hostnameCount}개의 호스트 이름�
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel}의 {operationLabel}"
 
+#. js-lingui-id: TJ2Qca
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports connections shared with the workspace."
+msgstr "{providerDisplayName}은 작업 공간과 공유된 연결만 지원합니다."
+
+#. js-lingui-id: Hz1hn8
+#: src/engine/core-modules/application/connection-provider/utils/assert-connection-scope-allowed-by-provider-or-throw.util.ts
+msgid "{providerDisplayName} only supports personal connections."
+msgstr "{providerDisplayName}은 개인 연결만 지원합니다."
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -137,6 +147,11 @@ msgstr "캐시 잠금 오류가 발생했습니다."
 msgctxt "objectMetadata.description"
 msgid "A calendar event target"
 msgstr "캘린더 이벤트 대상"
+
+#. js-lingui-id: K4qBJM
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "A campaign is still sending. Wait for it to finish or cancel it before removing this sender."
+msgstr "캠페인이 아직 전송 중입니다. 이 발신자를 제거하기 전에 전송이 완료될 때까지 기다리거나 캠페인을 취소하세요."
 
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
@@ -769,6 +784,7 @@ msgid "Agent ID"
 msgstr "에이전트 ID"
 
 #. js-lingui-id: s5/Bnr
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -828,6 +844,12 @@ msgstr "에이전트를 찾을 수 없습니다."
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 msgid "Agent step execution failed."
 msgstr "에이전트 단계 실행에 실패했습니다."
+
+#. js-lingui-id: v2qcgN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Agent that reacted, empty for members and the chat assistant"
+msgstr "반응한 에이전트이며, 멤버 및 채팅 어시스턴트의 경우 비어 있음"
 
 #. js-lingui-id: FwHD8A
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1313,11 +1335,6 @@ msgstr "애플리케이션 변수 범위는 변경할 수 없습니다"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
 msgid "Application variable scope cannot be changed after creation"
 msgstr "생성 후에는 애플리케이션 변수 범위를 변경할 수 없습니다"
-
-#. js-lingui-id: TclsKI
-#: src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util.ts
-msgid "Application workflows are not enabled for this workspace."
-msgstr "이 워크스페이스에서는 애플리케이션 워크플로가 활성화되지 않았습니다."
 
 #. js-lingui-id: l/Xlom
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -2407,16 +2424,6 @@ msgstr "마지막 관리자 사용자는 삭제할 수 없습니다."
 msgid "Cannot delete the only view for this object"
 msgstr ""
 
-#. js-lingui-id: aqua7x
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first."
-msgstr "이 역할을 삭제할 수 없습니다. 하나 이상의 에이전트에 여전히 할당되어 있으며, 워크스페이스 기본 역할은 에이전트에 할당할 수 없습니다. 먼저 해당 에이전트들을 다른 역할에 재할당해 주세요."
-
-#. js-lingui-id: mGasIh
-#: src/engine/metadata-modules/role/role.service.ts
-msgid "Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first."
-msgstr "이 역할을 삭제할 수 없습니다. 하나 이상의 API 키에 여전히 할당되어 있으며, 워크스페이스 기본 역할은 API 키에 할당할 수 없습니다. 먼저 해당 API 키들을 다른 역할에 재할당해 주세요."
-
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
@@ -3099,6 +3106,11 @@ msgstr "연결 공급자를 찾을 수 없음."
 msgid "Connection provider oauthConfig.{label} is required"
 msgstr "연결 공급자 oauthConfig.{label}가 필요합니다"
 
+#. js-lingui-id: zPRwem
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "Connection provider scope \"{scope}\" is invalid"
+msgstr "연결 공급자 범위 \"{scope}\"이 유효하지 않음"
+
 #. js-lingui-id: vOKvb8
 #. placeholder {0}: flatConnectionProvider.name
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -3583,6 +3595,11 @@ msgstr "크레딧 부여는 효력 발생 후에 만료되어야 합니다."
 msgid "Credit grant not found."
 msgstr "크레딧 부여를 찾을 수 없음."
 
+#. js-lingui-id: kl0oJu
+#: src/engine/core-modules/application/application-registration/application-registration.service.ts
+msgid "Credits used requires a valid start and end date."
+msgstr "사용한 크레딧에는 유효한 시작일과 종료일이 필요합니다."
+
 #. js-lingui-id: 10rNaV
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
 msgctxt "skill.label"
@@ -3624,6 +3641,17 @@ msgstr "이 워크스페이스에서는 커스텀 도메인이 비활성화되�
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Custom object is missing a label identifier field."
 msgstr "커스텀 객체에 레이블 식별자 필드가 없습니다."
+
+#. js-lingui-id: iHlVsm
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Custom roles are part of the Organization plan."
+msgstr "사용자 지정 역할은 Organization 요금제에 포함되어 있습니다."
+
+#. js-lingui-id: bO/Qn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
+msgid "Custom roles are part of the Organization plan. Upgrade to assign \"{roleLabel}\"."
+msgstr "사용자 지정 역할은 Organization 요금제에 포함됩니다. \"{roleLabel}\"을 할당하려면 업그레이드하세요."
 
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
@@ -4243,6 +4271,7 @@ msgid "Draft"
 msgstr "초안"
 
 #. js-lingui-id: qOjRRW
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service.ts
 msgid "Draft creation failed, please retry"
 msgstr "초안 생성에 실패했습니다. 다시 시도해 주세요"
@@ -5710,6 +5739,11 @@ msgstr "함수가 준비되지 않았습니다."
 msgid "Function not found."
 msgstr "함수를 찾을 수 없음."
 
+#. js-lingui-id: 64+eWA
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Function provider is busy. Try again in a few minutes."
+msgstr "함수 공급자가 사용 중입니다. 몇 분 후에 다시 시도하세요."
+
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "General"
@@ -6481,6 +6515,16 @@ msgstr "잘못된 필터 매개변수입니다."
 msgid "Invalid filter value"
 msgstr "잘못된 필터 값"
 
+#. js-lingui-id: ys8v/n
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{fieldName}\" and \"{referencedFieldName}\" cannot be compared"
+msgstr "잘못된 필터: \"{fieldName}\" 및 \"{referencedFieldName}\"은 비교할 수 없음"
+
+#. js-lingui-id: 8Ng76x
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" expects a field name"
+msgstr "잘못된 필터: \"{operator}\"에는 필드 이름이 필요함"
+
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires a String"
@@ -6491,10 +6535,26 @@ msgstr "잘못된 필터: \"{operator}\" 연산자에는 문자열이 필요합�
 msgid "Invalid filter: \"{operator}\" operator requires an array"
 msgstr "잘못된 필터: \"{operator}\" 연산자에는 배열이 필요합니다."
 
+#. js-lingui-id: xxcw3g
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
+msgstr "잘못된 필터: \"{relationFieldName}\"은 관계 필터가 시작되는 레코드만 참조할 수 있음"
+
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "잘못된 필터: \"isEmptyArray\" 연산자에는 불리언 값이 필요합니다."
+
+#. js-lingui-id: S8iHKo
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: {nameSingular} object doesn't have any \"{referencedFieldName}\" field."
+msgstr "잘못된 필터: {nameSingular} 객체에 \"{referencedFieldName}\" 필드가 없습니다."
+
+#. js-lingui-id: OyCWdj
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: composite fields cannot be compared with another field"
+msgstr "잘못된 필터: 복합 필드는 다른 필드와 비교할 수 없음"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
@@ -6510,6 +6570,11 @@ msgstr "잘못된 필터: 필터 값은 객체여야 합니다"
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "잘못된 필터: 관계 필드 \"{key}\"로 필터링하는 것은 지원되지 않습니다."
+
+#. js-lingui-id: wi8qrB
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: the field to compare with was not found"
+msgstr "잘못된 필터: 비교할 필드를 찾을 수 없음"
 
 #. js-lingui-id: bNNDED
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
@@ -8571,6 +8636,11 @@ msgstr "폼 단계에 입력이 제공되지 않았습니다"
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "이 작업에 연결된 사서함이 없습니다. 설정에서 사서함을 연결하세요."
+
+#. js-lingui-id: vIG1/X
+#: src/modules/emailing/services/message-campaign.service.ts
+msgid "No one on this list can receive the campaign."
+msgstr "이 목록의 누구도 캠페인을 받을 수 없습니다."
 
 #. js-lingui-id: h5oLtl
 #. placeholder {0}: connectedAccount.handle
@@ -10826,6 +10896,11 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
 msgstr ""
 
+#. js-lingui-id: T/H/3z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
+msgstr "역할 \"{roleLabel}\"을 할당할 수 없습니다: 사용자 지정 역할에는 Organization 요금제가 필요합니다"
+
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role cannot be assigned to this entity."
@@ -11678,6 +11753,11 @@ msgstr "소셜"
 msgctxt "viewFieldGroup.name"
 msgid "Social"
 msgstr "소셜"
+
+#. js-lingui-id: Zcuo7n
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "Some campaigns could not be recovered."
+msgstr "일부 캠페인을 복구할 수 없습니다."
 
 #. js-lingui-id: RyE+Of
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util.ts
@@ -12798,6 +12878,17 @@ msgstr "연결 해제 시 실행할 로직 함수가 실패했습니다."
 msgid "The logic function to run on disconnect was not found."
 msgstr "연결 해제 시 실행할 로직 함수를 찾을 수 없습니다."
 
+#. js-lingui-id: CzflYl
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "The MCP request parameters are invalid."
+msgstr "MCP 요청 매개변수가 유효하지 않습니다."
+
+#. js-lingui-id: 9b5Rap
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
+msgid "The Member role cannot be deleted."
+msgstr "Member 역할은 삭제할 수 없습니다."
+
 #. js-lingui-id: gefH0a
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -13282,6 +13373,11 @@ msgstr "작업공간 구독이 비활성 상태인 동안에는 이 캠페인을
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
 msgstr "이 캠페인은 발송할 수 없습니다. 발신자, 제목 또는 수신자 목록이 없거나 이미 발송되었을 수 있습니다."
 
+#. js-lingui-id: x3JegW
+#: src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util.ts
+msgid "This campaign has a variable written in the wrong format: {malformedTemplateVariable}. Write it as {expectedSyntax}."
+msgstr "이 캠페인에는 잘못된 형식으로 작성된 변수가 있습니다: {malformedTemplateVariable}. {expectedSyntax} 형식으로 작성하세요."
+
 #. js-lingui-id: +BWDNB
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign is stopped by an email usage limit set on this workspace. Raise the limit or send to a smaller list."
@@ -13327,6 +13423,16 @@ msgstr "이 연결된 계정은 이 작업에 사용할 수 없습니다."
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
 msgstr "이 연결은 허용되지 않습니다."
+
+#. js-lingui-id: 5G7DBW
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "This connection provider does not support this kind of connection."
+msgstr "이 연결 공급자는 이러한 종류의 연결을 지원하지 않습니다."
+
+#. js-lingui-id: DtHdRF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util.ts
+msgid "This connection provider scope is not supported."
+msgstr "이 연결 공급자 범위는 지원되지 않습니다."
 
 #. js-lingui-id: rTgIgB
 #: src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service.ts
@@ -13515,6 +13621,11 @@ msgstr "이 로그 필터는 유효하지 않습니다."
 msgid "This log table is not valid."
 msgstr "이 로그 테이블은 유효하지 않습니다."
 
+#. js-lingui-id: TgO+QD
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "This MCP method is not supported."
+msgstr "이 MCP 메서드는 지원되지 않습니다."
+
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This member can't reply in this chat, so it can't be assigned to them."
@@ -13667,13 +13778,11 @@ msgstr "이 요청은 아직 준비 중입니다. 잠시 후 다시 시도하세
 
 #. js-lingui-id: rExecr
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "이 역할은 에이전트에 할당할 수 없습니다."
 
 #. js-lingui-id: UP3ZAj
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to API keys."
 msgstr "이 역할은 API 키에 할당할 수 없습니다."
 
@@ -15813,7 +15922,6 @@ msgstr "워크플로우 구축"
 
 #. js-lingui-id: iOv1Fk
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow duplication failed, please retry"
 msgstr "워크플로우 복제에 실패했습니다. 다시 시도해 주세요"
 
@@ -16284,11 +16392,11 @@ msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
 msgstr "스레드를 소유한 워크스페이스 멤버"
 
-#. js-lingui-id: ub9MAI
+#. js-lingui-id: yS8gnT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-reaction-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
-msgid "Workspace member who reacted"
-msgstr "반응한 워크스페이스 멤버"
+msgid "Workspace member who reacted, empty when an agent or the assistant did"
+msgstr "반응한 작업 공간 멤버이며, 에이전트 또는 어시스턴트가 반응한 경우 비어 있음"
 
 #. js-lingui-id: Ws6spT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -16449,6 +16557,11 @@ msgstr "이 함수에 액세스할 권한이 없습니다."
 msgid "You are not allowed to answer this request."
 msgstr "이 요청에 응답할 권한이 없습니다."
 
+#. js-lingui-id: wKAMSo
+#: src/engine/api/mcp/exceptions/mcp.exception.ts
+msgid "You are not allowed to use MCP."
+msgstr "MCP를 사용할 권한이 없습니다."
+
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
@@ -16578,6 +16691,11 @@ msgstr "이 기능에 접근할 권한이 없습니다. 작업 공간 관리자�
 msgid "You do not have permission to access this workflow."
 msgstr "이 워크플로우에 액세스할 권한이 없습니다."
 
+#. js-lingui-id: Uyi+DQ
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
+msgstr "계정을 연결할 권한이 없습니다. 액세스하려면 작업 공간 관리자에게 문의하십시오."
+
 #. js-lingui-id: sjYS9x
 #: src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service.ts
 msgid "You do not have permission to create workspace-level navigation menu items. Please contact your workspace administrator for access."
@@ -16692,6 +16810,11 @@ msgstr "차단 목록을 관리하려면 인증이 필요합니다."
 #: src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "이 작업을 수행하려면 인증이 필요합니다."
+
+#. js-lingui-id: nIaLfQ
+#: src/engine/core-modules/usage-limit/utils/build-quota-exhausted-exception.util.ts
+msgid "Your AI credits for this period are used up."
+msgstr "이 기간의 AI 크레딧을 모두 사용했습니다."
 
 #. js-lingui-id: 8pqpv/
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts

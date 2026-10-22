@@ -28,8 +28,8 @@
   returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="color" type="&quot;accent&quot; | &quot;danger&quot; | &quot;neutral&quot; | &quot;success&quot;" default="neutral">
-  Semantic color of the button.
+<ParamField body="color" type="&quot;accent&quot; | &quot;danger&quot; | &quot;inherit&quot; | &quot;neutral&quot; | &quot;success&quot;" default="neutral">
+  Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults.
 </ParamField>
 
 <ParamField body="elevated" type="boolean">

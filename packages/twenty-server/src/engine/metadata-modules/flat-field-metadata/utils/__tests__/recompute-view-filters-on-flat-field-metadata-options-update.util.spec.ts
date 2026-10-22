@@ -34,6 +34,32 @@ const toOptions = [
   },
 ];
 
+const buildViewFilter = ({
+  operand,
+  value,
+}: Pick<FlatViewFilter, 'operand' | 'value'>): FlatViewFilter => ({
+  id: FILTER_ID,
+  universalIdentifier: FILTER_ID,
+  workspaceId: '55555555-5555-4555-8555-555555555555',
+  applicationId: '66666666-6666-4666-8666-666666666666',
+  applicationUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+  viewId: '77777777-7777-4777-8777-777777777777',
+  viewUniversalIdentifier: '77777777-7777-4777-8777-777777777777',
+  fieldMetadataId: fromFlatFieldMetadata.id,
+  fieldMetadataUniversalIdentifier: fromFlatFieldMetadata.universalIdentifier,
+  operand,
+  value,
+  subFieldName: null,
+  viewFilterGroupId: null,
+  viewFilterGroupUniversalIdentifier: null,
+  positionInViewFilterGroup: null,
+  relationTargetFieldMetadataId: null,
+  relationTargetFieldMetadataUniversalIdentifier: null,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+  deletedAt: null,
+});
+
 const recomputeForViewFilter = (viewFilter: FlatViewFilter) =>
   recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate({
     fromFlatFieldMetadata,
@@ -45,14 +71,11 @@ const recomputeForViewFilter = (viewFilter: FlatViewFilter) =>
   });
 
 describe('recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate', () => {
-  it('updates a legacy scalar select filter value', () => {
-    const viewFilter = {
-      id: FILTER_ID,
-      universalIdentifier: FILTER_ID,
+  it('updates a stringified select filter value', () => {
+    const viewFilter = buildViewFilter({
       operand: ViewFilterOperand.IS,
-      subFieldName: null,
-      value: 'SHORTLISTED',
-    } as FlatViewFilter;
+      value: '["SHORTLISTED"]',
+    });
 
     expect(recomputeForViewFilter(viewFilter)).toEqual({
       flatViewFiltersToDelete: [],
@@ -60,14 +83,23 @@ describe('recomputeViewFiltersOnFlatFieldMetadataOptionsUpdate', () => {
     });
   });
 
+  it('leaves a filter whose value is not an array of options unchanged', () => {
+    const viewFilter = buildViewFilter({
+      operand: ViewFilterOperand.IS,
+      value: 'SHORTLISTED',
+    });
+
+    expect(recomputeForViewFilter(viewFilter)).toEqual({
+      flatViewFiltersToDelete: [],
+      flatViewFiltersToUpdate: [],
+    });
+  });
+
   it('leaves a value-less select filter unchanged', () => {
-    const viewFilter = {
-      id: FILTER_ID,
-      universalIdentifier: FILTER_ID,
+    const viewFilter = buildViewFilter({
       operand: ViewFilterOperand.IS_NOT_EMPTY,
-      subFieldName: null,
       value: '',
-    } as FlatViewFilter;
+    });
 
     expect(recomputeForViewFilter(viewFilter)).toEqual({
       flatViewFiltersToDelete: [],

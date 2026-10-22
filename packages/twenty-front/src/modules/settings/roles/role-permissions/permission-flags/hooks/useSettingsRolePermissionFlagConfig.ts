@@ -122,8 +122,8 @@ export const useSettingsRolePermissionFlagConfig = ({
       },
       {
         key: PermissionFlagType.APPLICATIONS,
-        name: t`Applications`,
-        description: t`Install and manage applications`,
+        name: t`Workspace Apps`,
+        description: t`Install and manage workspace apps`,
         Icon: IconApps,
         isRelevantForAgents: true,
         isRelevantForApiKeys: true,

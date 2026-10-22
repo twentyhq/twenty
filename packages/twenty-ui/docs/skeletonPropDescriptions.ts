@@ -8,7 +8,7 @@ export const SKELETON_PROP_DESCRIPTIONS = {
   height:
     'Placeholder height in pixels or a CSS length. Defaults to the inherited font height.',
   borderRadius:
-    'Corner radius in pixels or a CSS length. Defaults to 0.25rem and inherits the surrounding corner shape.',
+    'Round corner radius in pixels or a CSS length. Defaults to the 4px smRound theme token. Use mdRound for 8px corners or a custom radius for circles and capsules.',
   baseColor:
     'Placeholder background color. Defaults to the theme tertiary background.',
   highlightColor:

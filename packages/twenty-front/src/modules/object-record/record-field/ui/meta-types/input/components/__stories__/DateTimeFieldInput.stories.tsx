@@ -22,7 +22,7 @@ const {
   handleEnterMocked,
 } = getFieldInputEventContextProviderWithJestMocks();
 
-const formattedDate = new Date(2022, 0, 1, 2, 0, 0);
+const formattedDate = new Date('2022-01-01T02:00:00.000Z');
 
 const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
   const { setFieldValue } = useDateTimeField();

@@ -196,13 +196,13 @@ describe('Application registration instance flags (integration)', () => {
   });
 
   describe('updateAdminApplicationRegistration', () => {
-    it('should fail for a caller without the SECURITY permission flag', async () => {
+    it('should fail for a caller without server admin access', async () => {
       const registrationId = registrationIdByOwnership.owned;
 
       const { errors } = await updateAdminApplicationRegistration({
         id: registrationId,
         update: { isListed: true, isPreInstalled: true, isVetted: true },
-        withGuestRole: true,
+        asNonServerAdmin: true,
         expectToFail: true,
       });
 

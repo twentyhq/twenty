@@ -10,6 +10,7 @@ import { type BadgeSize } from '@ui/primitives/data-display/Badge/types/BadgeSiz
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Tabs } from '@ui/primitives/navigation/Tabs/Tabs';
 import { Text } from '@ui/primitives/typography/Text/Text';
+import { ThemeProvider, themeCssVariables } from '@ui/theme';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -79,12 +80,55 @@ export const Colors: CatalogStory<Story, typeof Badge> = {
             'inherit',
             'primary',
             'secondary',
+            'accent',
           ] satisfies BadgeColor[],
           props: (color: BadgeColor) => ({ color }),
         },
       ],
     },
   },
+};
+
+export const Accent: Story = {
+  parameters: {
+    a11y: {
+      test: 'error',
+      config: { rules: [{ id: 'color-contrast', enabled: true }] },
+    },
+  },
+  render: () => (
+    <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+      {(['light', 'dark'] as const).map((colorScheme) => (
+        <ThemeProvider
+          key={colorScheme}
+          colorScheme={colorScheme}
+          applyToRoot={false}
+        >
+          <Text
+            render={<div />}
+            style={{
+              alignItems: 'center',
+              backgroundColor: themeCssVariables.background.primary,
+              display: 'flex',
+              gap: 8,
+              padding: 16,
+            }}
+          >
+            {(['xs', 'sm', 'md'] as const).map((size) => (
+              <Badge
+                key={size}
+                color="accent"
+                size={size}
+                aria-label={`${colorScheme} accent ${size}`}
+              >
+                Accent
+              </Badge>
+            ))}
+          </Text>
+        </ThemeProvider>
+      ))}
+    </Text>
+  ),
 };
 
 export const VisualRegression: CatalogStory<Story, typeof Badge> = {
@@ -105,6 +149,7 @@ export const VisualRegression: CatalogStory<Story, typeof Badge> = {
             'inherit',
             'primary',
             'secondary',
+            'accent',
           ] satisfies BadgeColor[],
           props: (color: BadgeColor) => ({ color }),
         },
@@ -119,7 +164,7 @@ export const VisualRegression: CatalogStory<Story, typeof Badge> = {
   decorators: [CatalogDecorator],
   play: async ({ canvasElement }) => {
     const badges = within(canvasElement).getAllByText('3');
-    await expect(badges).toHaveLength(24);
+    await expect(badges).toHaveLength(30);
 
     for (const badge of badges) {
       await expect(badge).toBeVisible();

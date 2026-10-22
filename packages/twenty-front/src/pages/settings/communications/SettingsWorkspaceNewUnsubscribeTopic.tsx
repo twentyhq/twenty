@@ -141,6 +141,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
           <SettingsTextInput
             instanceId="unsubscribe-topic-description"
             label={t`Description`}
+            placeholder={t`Product news and tips, once a month`}
             value={description}
             onChange={setDescription}
             disabled={loading}

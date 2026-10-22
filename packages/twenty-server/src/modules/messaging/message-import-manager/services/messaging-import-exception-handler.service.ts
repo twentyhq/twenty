@@ -98,16 +98,12 @@ export class MessageImportExceptionHandlerService {
             message: `${exception.code}: ${exception.message ?? ''}`,
           });
           await this.handleInsufficientPermissionsException(
-            exception,
-            syncStep,
             messageChannel,
             workspaceId,
           );
           break;
         case MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
           await this.handleInsufficientPermissionsException(
-            exception,
-            syncStep,
             messageChannel,
             workspaceId,
           );
@@ -244,20 +240,9 @@ export class MessageImportExceptionHandlerService {
   }
 
   private async handleInsufficientPermissionsException(
-    exception: Error,
-    syncStep: MessageImportSyncStep,
-    messageChannel: Pick<MessageChannelEntity, 'id' | 'connectedAccountId'>,
+    messageChannel: Pick<MessageChannelEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    this.exceptionHandlerService.captureExceptions([exception], {
-      additionalData: {
-        messageChannelId: messageChannel.id,
-        connectedAccountId: messageChannel.connectedAccountId,
-        syncStep,
-      },
-      workspace: { id: workspaceId },
-    });
-
     await this.messageChannelSyncStatusService.markAsFailed({
       messageChannelIds: [messageChannel.id],
       workspaceId,

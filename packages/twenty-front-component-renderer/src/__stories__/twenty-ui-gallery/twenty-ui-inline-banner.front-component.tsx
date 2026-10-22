@@ -1,5 +1,5 @@
 import { Button } from 'twenty-ui/primitives/input';
-import { createElement, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { InlineBanner } from 'twenty-ui/components/feedback';
@@ -22,12 +22,14 @@ const InlineBannerExample = () => {
         aria-label="Inline sync result"
         className="custom-inline-banner"
         style={{ marginTop: 7 }}
-        render={(props, state) =>
-          createElement('section', {
-            ...props,
-            'data-render-status': state.status,
-          })
-        }
+        fullWidth
+        render={(props, state) => (
+          <section
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...props}
+            data-render-status={state.status}
+          />
+        )}
         ref={(element) => {
           if (isDefined(element)) element.dataset.refTag = element.tagName;
         }}

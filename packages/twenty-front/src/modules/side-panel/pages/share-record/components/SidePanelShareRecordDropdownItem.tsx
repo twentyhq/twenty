@@ -1,13 +1,21 @@
 import { type ReactNode, useId } from 'react';
-import { Dropdown, type DropdownType } from 'twenty-ui/components/navigation';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  Dropdown,
+  type DropdownType,
+  ListItemButton,
+} from 'twenty-ui/components/navigation';
 import { type IconComponent } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
 
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useSidePanelListItemFocus } from '@/side-panel/hooks/useSidePanelListItemFocus';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
+import { ListItemSubmenuIndicator } from '@/ui/navigation/list-item/components/ListItemSubmenuIndicator';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type SidePanelShareRecordDropdownItemProps = {
@@ -31,12 +39,15 @@ export const SidePanelShareRecordDropdownItem = ({
   width = 200,
   children,
 }: SidePanelShareRecordDropdownItemProps) => {
+  const theme = useTheme();
   const dropdownId = useId();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
   );
   const { openDropdown } = useOpenDropdown();
+  const { nativeItemRef, isSelectedItemId, handleFocus } =
+    useSidePanelListItemFocus(itemId);
 
   return (
     <SelectableListItem
@@ -50,24 +61,36 @@ export const SidePanelShareRecordDropdownItem = ({
     >
       <DropdownRoot dropdownId={dropdownId} type={type}>
         <Dropdown.Trigger
-          render={<div />}
-          nativeButton={false}
-          disabled={disabled}
-          aria-label={
-            description === undefined ? label : `${label} ${description}`
+          ref={nativeItemRef}
+          render={
+            <ListItemButton
+              startIcon={
+                <ListItemIconContainer>
+                  <Icon
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.sm}
+                  />
+                </ListItemIconContainer>
+              }
+              description={description}
+              descriptionPlacement="end"
+              endIcon={
+                !disabled && (
+                  <ListItemSubmenuIndicator isOpen={isDropdownOpen} />
+                )
+              }
+              focused={!disabled && isSelectedItemId}
+              focusableWhenDisabled
+            >
+              {label}
+            </ListItemButton>
           }
-        >
-          <CommandMenuItem
-            id={itemId}
-            label={label}
-            Icon={Icon}
-            description={description}
-            contextualTextPosition="right"
-            hasSubMenu={!disabled}
-            isSubMenuOpened={isDropdownOpen}
-            disabled={disabled}
-          />
-        </Dropdown.Trigger>
+          disabled={disabled}
+          onFocus={handleFocus}
+          aria-label={
+            isDefined(description) ? `${label} ${description}` : label
+          }
+        />
         <DropdownContent align="end" width={width} aria-label={label}>
           {children}
         </DropdownContent>

@@ -19,7 +19,7 @@ import { Request } from 'express';
 import {
   type CreditAvailability,
   type CreditUnavailableReason,
-} from 'twenty-shared/application';
+} from 'twenty-shared/application-runtime';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 

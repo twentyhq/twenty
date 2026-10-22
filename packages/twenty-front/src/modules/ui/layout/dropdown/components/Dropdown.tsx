@@ -52,6 +52,7 @@ const StyledClickableComponent = styled.div<{
 export type DropdownProps = {
   clickableComponent?: ReactNode;
   clickableComponentWidth?: Width;
+  clickableComponentRole?: 'button' | 'presentation';
   dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
@@ -88,6 +89,7 @@ export const Dropdown = ({
   onClose,
   onOpen,
   clickableComponentWidth = 'auto',
+  clickableComponentRole = 'button',
   excludedClickOutsideIds,
   isDropdownInModal = false,
   disableClickForClickableComponent = false,
@@ -206,6 +208,8 @@ export const Dropdown = ({
     ],
   );
 
+  const hasInteractiveClickableComponent = clickableComponentRole === 'button';
+
   return (
     <DropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}
@@ -214,10 +218,16 @@ export const Dropdown = ({
         <StyledClickableComponent
           ref={refs.setReference}
           onClick={handleClickableComponentClick}
-          aria-controls={`${dropdownId}-options`}
-          aria-expanded={isDropdownOpen}
-          aria-haspopup={true}
-          role="button"
+          aria-controls={
+            hasInteractiveClickableComponent
+              ? `${dropdownId}-options`
+              : undefined
+          }
+          aria-expanded={
+            hasInteractiveClickableComponent ? isDropdownOpen : undefined
+          }
+          aria-haspopup={hasInteractiveClickableComponent || undefined}
+          role={clickableComponentRole}
           width={clickableComponentWidth}
         >
           {clickableComponent}

@@ -1,4 +1,5 @@
 import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
@@ -16,6 +17,7 @@ export type DeleteWorkflowVersionStepInput = Omit<
 };
 
 export const useDeleteWorkflowVersionStep = () => {
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow();
   const apolloCoreClient = useApolloCoreClient();
   const handleCoreMutationError = useWorkflowEditorMutationErrorHandler();
   const [mutateCore] = useMutation(DeleteCoreWorkflowVersionStepDocument, {
@@ -30,6 +32,8 @@ export const useDeleteWorkflowVersionStep = () => {
     input: DeleteWorkflowVersionStepInput,
   ) => {
     const { workflowVersionId, ...stepInput } = input;
+    await savePendingWorkflowFlow();
+
     const result = await mutateCore({
       variables: {
         input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },

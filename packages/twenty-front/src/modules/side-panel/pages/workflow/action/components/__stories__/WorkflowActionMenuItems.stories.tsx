@@ -24,10 +24,17 @@ type Story = StoryObj<typeof meta>;
 
 export const Available: Story = {
   play: async ({ canvasElement, args }) => {
-    await userEvent.click(
-      await within(canvasElement).findByText('Classify (Jev)'),
-    );
+    const button = await within(canvasElement).findByRole('button', {
+      name: 'Classify (Jev)',
+    });
+    await userEvent.click(button);
     await expect(args.onClick).toHaveBeenCalledWith('CLASSIFY');
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+    await expect(button).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
+    await userEvent.keyboard(' ');
+    await expect(args.onClick).toHaveBeenCalledTimes(3);
   },
 };
 
@@ -48,7 +55,11 @@ export const Unavailable: Story = {
     await expect(
       await canvas.findByText(/TypeSafe AI API key missing/),
     ).toBeVisible();
-    await userEvent.click(await canvas.findByText('Classify (Jev)'));
+    const button = await canvas.findByRole('button', {
+      name: /Classify \(Jev\)/,
+    });
+    await expect(button).toBeDisabled();
+    await userEvent.click(button);
     await expect(args.onClick).not.toHaveBeenCalled();
   },
 };

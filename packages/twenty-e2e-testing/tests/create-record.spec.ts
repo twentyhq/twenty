@@ -71,23 +71,26 @@ test('Create and update record', async ({ page }) => {
 
   const randomEmail = `testuser_${Math.random().toString(36).substring(2, 10)}@example.com`;
 
-  const firstNameInput = page.locator('[contenteditable]').filter({
-    has: page.locator('p[data-placeholder="F‌‌irst name"]'),
+  const firstNameInput = page.getByRole('textbox', {
+    name: 'First Name',
+    exact: true,
   });
   await expect(firstNameInput).toBeVisible();
   await firstNameInput.click();
   await expect(firstNameInput).toBeFocused();
   await page.keyboard.type('John');
 
-  const lastNameInput = page.locator('[contenteditable]').filter({
-    has: page.locator('p[data-placeholder="L‌‌ast name"]'),
+  const lastNameInput = page.getByRole('textbox', {
+    name: 'Last Name',
+    exact: true,
   });
   await lastNameInput.click();
   await expect(lastNameInput).toBeFocused();
   await page.keyboard.type('Doe');
 
-  const emailInput = page.locator('[contenteditable]').filter({
-    has: page.locator('p[data-placeholder="Primary Email"]'),
+  const emailInput = page.getByRole('textbox', {
+    name: 'Emails',
+    exact: true,
   });
   await emailInput.click();
   await expect(emailInput).toBeFocused();

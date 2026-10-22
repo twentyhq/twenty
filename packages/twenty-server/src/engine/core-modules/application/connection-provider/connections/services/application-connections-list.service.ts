@@ -6,7 +6,7 @@ import { type FindOptionsWhere, In, Repository } from 'typeorm';
 import {
   CONNECTION_SCOPE_BY_LEGACY_VISIBILITY,
   LEGACY_CONNECTION_VISIBILITY_BY_SCOPE,
-} from 'twenty-shared/application';
+} from 'twenty-shared/application-runtime';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 

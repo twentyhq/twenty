@@ -20,7 +20,7 @@
   word-break: break-word;
   inline-size: max-content;
   max-inline-size: min(
-    var(--tw-tooltip-max-width, var(--available-width)),
+    var(--tw-tooltip-max-width, 300px),
     var(--available-width)
   );
   will-change: opacity;

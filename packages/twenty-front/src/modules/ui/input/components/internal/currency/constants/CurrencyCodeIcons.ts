@@ -204,6 +204,7 @@ export const CURRENCY_CODE_ICONS: Record<CurrencyCode, IconComponent> = {
   WST: IconCoins,
   XOF: IconCoins,
   XCD: IconCurrencyDollar,
+  XCG: IconCurrencyFlorin,
   YER: IconCoins,
   ZAR: IconCoins,
   ZMW: IconCoins,

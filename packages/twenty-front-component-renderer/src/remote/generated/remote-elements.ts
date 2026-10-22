@@ -17,6 +17,7 @@ export type HtmlCommonProperties = {
   title?: string;
   tabIndex?: number;
   hidden?: boolean;
+  inert?: boolean;
   role?: string;
   'aria-label'?: string;
   'aria-hidden'?: boolean;
@@ -142,6 +143,7 @@ const HTML_COMMON_PROPERTIES_CONFIG = {
   title: { type: String },
   tabIndex: { type: Number },
   hidden: { type: Boolean },
+  inert: { type: Boolean },
   role: { type: String },
   'aria-label': { type: String },
   'aria-hidden': { type: Boolean },
@@ -529,6 +531,9 @@ export const HtmlLabelElement = createRemoteElement<
 export type HtmlInputProperties = HtmlCommonProperties & {
   type?: string;
   name?: string;
+  min?: string;
+  max?: string;
+  step?: string;
   value?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -558,6 +563,9 @@ export const HtmlInputElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     type: { type: String },
     name: { type: String },
+    min: { type: String },
+    max: { type: String },
+    step: { type: String },
     value: { type: String },
     placeholder: { type: String },
     disabled: { type: Boolean },

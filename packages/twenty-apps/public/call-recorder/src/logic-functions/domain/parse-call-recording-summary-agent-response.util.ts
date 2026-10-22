@@ -9,7 +9,7 @@ type ParsedCallRecordingSummaryAgentResponse =
   | { outcome: 'not-summarizable'; reason: string };
 
 export const parseCallRecordingSummaryAgentResponse = (
-  agentResult: RunAgentResult,
+  agentResult: Pick<RunAgentResult, 'success' | 'result'>,
 ): ParsedCallRecordingSummaryAgentResponse | undefined => {
   if (!agentResult.success) {
     return undefined;

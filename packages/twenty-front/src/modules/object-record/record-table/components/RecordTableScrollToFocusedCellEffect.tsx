@@ -4,7 +4,10 @@ import { isRecordTableCellFocusActiveComponentState } from '@/object-record/reco
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { getRecordTableCellId } from '@/object-record/record-table/utils/getRecordTableCellId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableScrollToFocusedCellEffect = () => {
@@ -12,6 +15,13 @@ export const RecordTableScrollToFocusedCellEffect = () => {
 
   const isRecordTableCellFocusActive = useAtomComponentStateValue(
     isRecordTableCellFocusActiveComponentState,
+    recordTableId,
+  );
+
+  const store = useStore();
+
+  const allRecordIdsCallbackState = useAtomComponentSelectorCallbackState(
+    recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
@@ -29,12 +39,20 @@ export const RecordTableScrollToFocusedCellEffect = () => {
       return;
     }
 
+    const recordId = store.get(allRecordIdsCallbackState)[
+      recordTableFocusPosition.row
+    ];
+
+    if (!isDefined(recordId)) {
+      return;
+    }
+
     const focusElement = document.getElementById(
-      getRecordTableCellId(
+      getRecordTableCellId({
         recordTableId,
-        recordTableFocusPosition.column,
-        recordTableFocusPosition.row,
-      ),
+        columnIndex: recordTableFocusPosition.column,
+        recordId,
+      }),
     );
 
     if (!focusElement) {
@@ -45,10 +63,10 @@ export const RecordTableScrollToFocusedCellEffect = () => {
 
     if (isSecondColumn) {
       const checkBoxColumnCell = document.getElementById(
-        getRecordTableCellId(recordTableId, 0, 0),
+        getRecordTableCellId({ recordTableId, columnIndex: 0, recordId }),
       );
       const firstColumnCell = document.getElementById(
-        getRecordTableCellId(recordTableId, 1, 0),
+        getRecordTableCellId({ recordTableId, columnIndex: 1, recordId }),
       );
 
       if (isDefined(checkBoxColumnCell) && isDefined(firstColumnCell)) {
@@ -69,7 +87,13 @@ export const RecordTableScrollToFocusedCellEffect = () => {
         focusElement.style.scrollMarginBottom = '';
       }
     };
-  }, [recordTableId, recordTableFocusPosition, isRecordTableCellFocusActive]);
+  }, [
+    recordTableId,
+    recordTableFocusPosition,
+    isRecordTableCellFocusActive,
+    allRecordIdsCallbackState,
+    store,
+  ]);
 
   return null;
 };

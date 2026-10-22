@@ -1,7 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -74,22 +73,6 @@ describe('SidePanelSnoozeAiChatPage', () => {
     render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
 
     expect(screen.getByText('Today, 6:00 PM')).toBeInTheDocument();
-  });
-
-  it('opens the day and time picker for the chat in a dropdown', async () => {
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-
-    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
-
-    await user.click(screen.getByText('Day & Time'));
-
-    expect(
-      await screen.findByRole('button', { name: /^Snooze until/ }),
-    ).toBeInTheDocument();
-    expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
-    expect(
-      screen.getByText('Day & Time').closest('[data-focused]'),
-    ).toHaveAttribute('data-focused', 'true');
   });
 
   it('refreshes the options instead of snoozing into the past', () => {

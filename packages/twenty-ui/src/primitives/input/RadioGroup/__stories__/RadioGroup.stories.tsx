@@ -27,3 +27,8 @@ type Story = StoryObj<typeof RadioGroup>;
 export const Display: Story = {
   decorators: [ComponentDecorator],
 };
+
+export const Horizontal: Story = {
+  ...Display,
+  args: { orientation: 'horizontal' },
+};

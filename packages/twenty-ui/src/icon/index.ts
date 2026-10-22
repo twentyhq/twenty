@@ -469,6 +469,7 @@ export {
   IconTarget,
   IconTargetArrow,
   IconTerminal,
+  IconTerminal2,
   IconTestPipe,
   IconTextCaption,
   IconTextSize,

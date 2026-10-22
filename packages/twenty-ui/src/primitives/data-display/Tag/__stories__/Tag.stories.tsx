@@ -62,26 +62,11 @@ export const WithoutTruncation: Story = {
     color: 'green',
     children: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     truncate: false,
-    style: { minWidth: 'fit-content' },
+    title: 'Full category label',
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
     container: { width: 100 },
-  },
-};
-
-export const WithoutPadding: Story = {
-  ...Display,
-  args: {
-    ...Display.args,
-    style: { padding: 0 },
-    title: 'Unpadded category',
-  },
-  play: async ({ canvasElement }) => {
-    const tag = within(canvasElement).getByTitle('Unpadded category');
-
-    await expect(tag).toBeVisible();
-    await expect(getComputedStyle(tag).padding).toBe('0px');
   },
 };
 
@@ -109,11 +94,20 @@ export const Truncation: Story = {
 
 export const FullLabel: Story = {
   ...WithoutTruncation,
+  args: {
+    ...WithoutTruncation.args,
+    variant: 'outline',
+    startIcon: <IconUser />,
+  },
   play: async ({ canvasElement }) => {
     const text = within(canvasElement).getByText(
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     );
 
+    const tag = within(canvasElement).getByTitle('Full category label');
+
+    await expect(tag.getBoundingClientRect().width).toBeGreaterThan(100);
+    await expect(tag.getBoundingClientRect().height).toBe(22);
     await expect(getComputedStyle(text).textOverflow).not.toBe('ellipsis');
     await expect(text.scrollWidth).toBeLessThanOrEqual(text.clientWidth);
     await userEvent.hover(text);
@@ -188,7 +182,6 @@ export const PointerAndKeyboard: Story = {
     ref: fn(),
     color: 'blue',
     variant: 'solid',
-    style: { padding: 0 },
   },
   render: ({ onClick, ...args }) => (
     <Tag {...args} render={<button type="button" onClick={onClick} />} />
@@ -204,7 +197,6 @@ export const PointerAndKeyboard: Story = {
     await expect(control).toHaveFocus();
     await expect(args.ref).toHaveBeenCalledWith(control);
     await expect(control).toHaveAttribute('data-variant', 'solid');
-    await expect(getComputedStyle(control).padding).toBe('0px');
     await expect(args.onClick).toHaveBeenLastCalledWith(
       expect.objectContaining({ type: 'click' }),
     );

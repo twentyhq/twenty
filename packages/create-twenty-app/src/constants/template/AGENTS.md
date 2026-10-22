@@ -118,9 +118,16 @@ The table below lists what `dev:add` can generate.
 ### Front components
 
 - The file is `.tsx` and ends with `export default defineFrontComponent({ ... })` in exactly that shape; the build rewrites it.
-- Components run in a Web Worker with a sandboxed, partial `window` and `document`: DOM queries, measurements and `matchMedia` work, but `ResizeObserver`, `canvas`, `scrollIntoView` and portals into `document.body` do not, and most unsupported calls fail silently. Base layout on width, never on height. Import UI from `twenty-ui` subpaths and never `IconsProvider` or `useIcons`.
+- For every visible front component, follow the `develop-app` skill when installed and use `twenty-ui` components by default. Reuse an equivalent Twenty UI control before writing a custom control or adding another UI library. Plain HTML is appropriate for layout containers and content without a Twenty UI equivalent.
+- Import from public family subpaths: `twenty-ui/components/input` for `MainButton` and `LightButton`, `twenty-ui/primitives/input` for foundational controls, `twenty-ui/primitives/typography` for text, and the matching family for other components. Import individual icons from `twenty-ui/icon`, never `IconsProvider` or `useIcons`. Keep `twenty-ui`, `twenty-sdk` and `twenty-client-sdk` pinned to the same version in `devDependencies`.
+- The renderer supplies styles and the workspace theme. Use `useTheme()` from `twenty-ui/theme` inside the component for spacing, colors, typography and radii. Do not add a root `ThemeProvider`, force a color scheme, or copy standalone stylesheet setup into a front component. Never dereference theme tokens at module top level, since entity files also run during manifest extraction.
+- Use component props before custom styles. Keep layouts compact and responsive to widget width, give inputs visible labels and icon-only actions accessible names, and handle loading, empty, error, disabled and saving states. Verify light and dark themes, narrow widths and long values.
+- Use `openCommandConfirmationModal` or `CommandModal` from `twenty-sdk/front-component` for confirmation dialogs and `enqueueSnackbar` for notifications. Do not render `Dialog`, `AlertDialog`, native `dialog` elements or native browser popovers directly. Use Twenty UI `Dropdown` for menus and pickers.
+- Components run in a Web Worker with a sandboxed, partial `window` and `document`. Prefer CSS for layout and width-based queries. `canvas` and `scrollIntoView` are unsupported; consult the current runtime limitations before using other browser APIs.
 - Read workspace data with `CoreApiClient` from `twenty-client-sdk/core`. Call third-party APIs from a logic function, not from the component. Secret application variables never reach a front component.
 - `useRecordId()` is deprecated; use `useSelectedRecordIds()` from `twenty-sdk/front-component`.
+
+Read the [front component guide](https://docs.twenty.com/developers/extend/apps/layout/front-components.md) before implementation for the renderer setup and runtime limitations. Use [Twenty UI getting started](https://docs.twenty.com/ui/getting-started.md), [components](https://docs.twenty.com/ui/components/overview.md), [primitives](https://docs.twenty.com/ui/primitives/overview.md) and [theming](https://docs.twenty.com/ui/theming.md) to find the relevant component page and check its current props and composition.
 
 ### Logic functions
 

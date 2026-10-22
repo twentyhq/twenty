@@ -1,3 +1,4 @@
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
@@ -14,7 +15,7 @@ import {
 
 import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -77,6 +78,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 export class AgentChatResolver {
   constructor(
     private readonly agentChatService: AgentChatService,
+    private readonly agentChatQueueService: AgentChatQueueService,
     private readonly threadService: AgentChatThreadService,
     private readonly sharingService: AgentChatSharingService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
@@ -314,26 +316,6 @@ export class AgentChatResolver {
       return { messageId: savedMessage.messageId, queued: false };
     }
 
-    if (isNonEmptyString(thread.activeStreamId)) {
-      const queuedMessage = await this.agentChatService.queueMessage({
-        threadId,
-        text,
-        id: messageId,
-        fileAttachments: fileAttachments ?? undefined,
-        workspaceId: workspace.id,
-        userWorkspaceId,
-        workspaceMemberId,
-      });
-
-      await this.eventPublisherService.publish({
-        threadId,
-        workspaceId: workspace.id,
-        event: { type: 'queue-updated' },
-      });
-
-      return { messageId: queuedMessage.id, queued: true };
-    }
-
     const result = await this.agentChatStreamingService.streamAgentChat({
       thread,
       browsingContext: browsingContext ?? null,
@@ -434,7 +416,7 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const message = await this.agentChatService.findQueuedMessage({
+    const message = await this.agentChatQueueService.findQueuedMessage({
       messageId,
       workspaceId: workspace.id,
     });
@@ -451,7 +433,7 @@ export class AgentChatResolver {
       workspaceMemberId,
       workspaceId: workspace.id,
     });
-    const deleted = await this.agentChatService.deleteQueuedMessage({
+    const deleted = await this.agentChatQueueService.deleteQueuedMessage({
       messageId,
       workspaceId: workspace.id,
     });

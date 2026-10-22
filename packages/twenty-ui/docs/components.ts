@@ -10,6 +10,7 @@ import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartProp
 import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
+import { DETAILS_ROW_PROP_DESCRIPTIONS } from './detailsRowPropDescriptions';
 import { PROGRESS_PART_PROP_DESCRIPTIONS } from './progressPartPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
@@ -23,6 +24,7 @@ import { TOAST_PROP_DESCRIPTIONS } from './toastPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
+import { RADIO_GROUP_PROP_DESCRIPTIONS } from './radioGroupPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
@@ -30,11 +32,6 @@ import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescription
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
-import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
-import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
-import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDescriptions';
-import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
-import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
 import { THEME_PROVIDER_PROP_DESCRIPTIONS } from './themeProviderPropDescriptions';
 import { ICON_PROP_DESCRIPTIONS } from './iconPropDescriptions';
 import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescriptions';
@@ -49,6 +46,8 @@ import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
+import { CARD_ACTION_PROP_DESCRIPTIONS } from './cardActionPropDescriptions';
+import { CARD_CONTROL_PROP_DESCRIPTIONS } from './cardControlPropDescriptions';
 import { CARD_CONTENT_PROP_DESCRIPTIONS } from './cardContentPropDescriptions';
 import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
 import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
@@ -67,6 +66,7 @@ import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
+import { REACTION_BUTTON_PROP_DESCRIPTIONS } from './reactionButtonPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
@@ -137,6 +137,14 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: PROGRESS_RING_PROP_DESCRIPTIONS,
   },
   {
+    name: 'DetailsRow',
+    source: 'components/data-display/DetailsRow/DetailsRow.tsx',
+    entryPoint: 'twenty-ui/components/data-display',
+    slug: 'components/data-display/details-row',
+    propDescriptions: DETAILS_ROW_PROP_DESCRIPTIONS,
+    propDefaults: { labelWidth: '7rem' },
+  },
+  {
     name: 'MetricRow',
     source: 'components/data-display/MetricRow/MetricRow.tsx',
     entryPoint: 'twenty-ui/components/data-display',
@@ -192,7 +200,12 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/banner',
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
-    propDefaults: { color: 'status palette', status: 'info', variant: 'solid' },
+    propDefaults: {
+      color: 'status palette',
+      status: 'info',
+      variant: 'solid',
+      closeLabel: 'Close',
+    },
     parts: ['Action'],
     partPropDescriptions: { Action: BUTTON_PROP_DESCRIPTIONS },
   },
@@ -330,6 +343,14 @@ export const DOCUMENTED_COMPONENTS = [
     propDefaults: { variant: 'ghost', size: 'sm' },
   },
   {
+    name: 'ReactionButton',
+    source: 'components/input/ReactionButton/ReactionButton.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/reaction-button',
+    propDescriptions: REACTION_BUTTON_PROP_DESCRIPTIONS,
+    propDefaults: { loading: 'false', disabled: 'false' },
+  },
+  {
     name: 'Button',
     source: 'primitives/input/Button/Button.tsx',
     entryPoint: 'twenty-ui/primitives/input',
@@ -453,6 +474,8 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/RadioGroup/RadioGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio-group',
+    propDescriptions: RADIO_GROUP_PROP_DESCRIPTIONS,
+    propDefaults: { orientation: 'vertical' },
   },
   {
     name: 'Autocomplete',
@@ -485,6 +508,10 @@ export const DOCUMENTED_COMPONENTS = [
       },
     },
     partPropDescriptions: {
+      Item: {
+        descriptionPlacement:
+          'Where the description renders: inline after the content or at the end of the row.',
+      },
       Root: {
         items:
           'Flat items or groups with an items array. Preserves the upstream item type; nullish entries are not supported.',
@@ -554,6 +581,12 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'navigation/list-item',
     propDescriptions: {
       ref: 'Ref to the actual DOM root, including a composed native button or link.',
+      selectionAppearance:
+        'Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background.',
+      active:
+        'Marks the open or current item independently of selection and focus. Does not add accessible state or activate the item.',
+      descriptionPlacement:
+        'Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default.',
       selected:
         'Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner.',
       focused:
@@ -577,6 +610,7 @@ export const DOCUMENTED_COMPONENTS = [
       Tab: {
         endIcon: 'Decorative content after the label and before the badge.',
         highlighted: 'Emphasizes the tab content without changing selection.',
+        size: 'Visual tab size. Compact uses a 24px minimum height, small text, and 4px content padding; sm and md keep a 40px minimum height.',
       },
     },
   },
@@ -587,11 +621,16 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'surfaces/card',
     partPropDescriptions: {
       Root: CARD_PROP_DESCRIPTIONS,
+      Action: CARD_ACTION_PROP_DESCRIPTIONS,
+      Control: CARD_CONTROL_PROP_DESCRIPTIONS,
       Header: CARD_HEADER_PROP_DESCRIPTIONS,
       Content: CARD_CONTENT_PROP_DESCRIPTIONS,
       Footer: CARD_FOOTER_PROP_DESCRIPTIONS,
     },
-    partPropDefaults: { Footer: { divider: 'true' } },
+    partPropDefaults: {
+      Action: { disabled: 'false' },
+      Footer: { divider: 'true' },
+    },
   },
   {
     name: 'Dialog',
@@ -697,6 +736,7 @@ export const DOCUMENTED_COMPONENTS = [
       'Portal',
       'Positioner',
       'Popup',
+      'Body',
       'Arrow',
       'Viewport',
       'Provider',
@@ -863,6 +903,12 @@ export const DOCUMENTED_COMPONENTS = [
       disabled: 'Disables activation and applies the matching row appearance.',
       focusableWhenDisabled:
         'Keeps a disabled button focusable with aria-disabled while preventing activation.',
+      selectionAppearance:
+        'Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background.',
+      active:
+        'Marks the open or current item independently of selection and focus. The caller supplies accessible state.',
+      descriptionPlacement:
+        'Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default.',
       selected:
         'Applies selected styling and a decorative indicator. The caller supplies selection state and accessible semantics.',
       focused: 'Highlights the row without moving DOM focus.',
@@ -955,6 +1001,7 @@ export const DOCUMENTED_COMPONENTS = [
       variant: 'soft',
       layout: 'standard',
       embedded: 'false',
+      fullWidth: 'false',
       icon: 'decorative information icon',
     },
   },
@@ -992,41 +1039,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/layout',
     slug: 'components/layout/animated-icon-crossfade',
     propDescriptions: ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItem',
-    source: 'components/navigation/MenuItem/MenuItem.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item',
-    propDescriptions: MENU_ITEM_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemAvatar',
-    source: 'components/navigation/MenuItemAvatar/MenuItemAvatar.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-avatar',
-    propDescriptions: MENU_ITEM_AVATAR_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemDraggable',
-    source: 'components/navigation/MenuItemDraggable/MenuItemDraggable.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-draggable',
-    propDescriptions: MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuItemSuggestion',
-    source: 'components/navigation/MenuItemSuggestion/MenuItemSuggestion.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-item-suggestion',
-    propDescriptions: MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'MenuPicker',
-    source: 'components/navigation/MenuPicker/MenuPicker.tsx',
-    entryPoint: 'twenty-ui/components/navigation',
-    slug: 'components/navigation/menu-picker',
-    propDescriptions: MENU_PICKER_PROP_DESCRIPTIONS,
   },
   {
     name: 'ThemeProvider',

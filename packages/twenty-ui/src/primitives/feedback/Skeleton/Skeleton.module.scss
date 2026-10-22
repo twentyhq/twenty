@@ -3,7 +3,8 @@
   --skeleton-highlight-color: var(--t-background-transparent-lighter);
 
   background-color: var(--skeleton-base-color);
-  border-radius: 0.25rem;
+  border-radius: var(--t-border-radius-sm-round);
+  corner-shape: round;
   display: block;
   height: 1em;
   max-inline-size: 100%;

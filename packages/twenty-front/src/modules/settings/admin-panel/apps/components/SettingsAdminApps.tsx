@@ -216,6 +216,7 @@ export const SettingsAdminApps = () => {
                     checked={showPreInstalledOnly}
                   >{t`Pre-installed only`}</SettingsRow>
                 </Dropdown.Section>
+                <Dropdown.Separator />
                 <Dropdown.Section label={t`Source`}>
                   {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
                     <SettingsRow
@@ -227,6 +228,7 @@ export const SettingsAdminApps = () => {
                     </SettingsRow>
                   ))}
                 </Dropdown.Section>
+                <Dropdown.Separator />
                 <Dropdown.Section label={t`Listed`}>
                   <SettingsRow
                     onCheckedChange={() =>
@@ -245,6 +247,7 @@ export const SettingsAdminApps = () => {
                     checked={isListedFilter === false}
                   >{t`Not listed`}</SettingsRow>
                 </Dropdown.Section>
+                <Dropdown.Separator />
                 <Dropdown.Section label={t`Configured`}>
                   <SettingsRow
                     onCheckedChange={() =>

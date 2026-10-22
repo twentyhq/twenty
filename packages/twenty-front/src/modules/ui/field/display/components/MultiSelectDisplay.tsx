@@ -17,10 +17,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledSelectedOptionTag = styled(Tag)`
-  min-width: fit-content;
-`;
-
 export const MultiSelectDisplay = ({
   values,
   options,
@@ -39,7 +35,7 @@ export const MultiSelectDisplay = ({
   return (
     <StyledContainer className={className}>
       {selectedOptions.map((selectedOption, index) => (
-        <StyledSelectedOptionTag
+        <Tag
           truncate={false}
           key={index}
           color={selectedOption.color ?? 'transparent'}
@@ -48,7 +44,7 @@ export const MultiSelectDisplay = ({
           }
         >
           {selectedOption.label}
-        </StyledSelectedOptionTag>
+        </Tag>
       ))}
     </StyledContainer>
   );

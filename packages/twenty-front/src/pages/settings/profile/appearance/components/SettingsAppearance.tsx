@@ -13,7 +13,6 @@ import { SettingsAppearanceOption } from '~/pages/settings/profile/appearance/co
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
 const StyledChoices = styled.div`
-  flex-direction: row;
   gap: ${themeCssVariables.spacing[4]};
   width: 100%;
 
@@ -36,6 +35,7 @@ export const SettingsAppearance = () => {
     <Section.Root>
       <Section.Header title={t`Appearance`} />
       <RadioGroup
+        orientation="horizontal"
         render={<StyledChoices />}
         aria-label={t`Appearance`}
         value={colorScheme}

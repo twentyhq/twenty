@@ -148,6 +148,12 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/side-panel/pages/page-layout/components/ChartTypeSelectionSection.tsx',
+    reason:
+      'Chart type icon tiles preserve their border, shape and selection colors',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/spreadsheet-import/components/SpreadSheetImportModalWrapper.tsx',
     reason: 'Dialog.Popup keeps the xl height across import steps',
   },
@@ -160,6 +166,12 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
     filePath:
       'packages/twenty-front/src/modules/spreadsheet-import/components/StepNavigationButton.tsx',
     reason: 'Dialog.Footer laid out as the import step navigation bar',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection.tsx',
+    reason:
+      'Dropdown.Section preserves the chart settings list height inside the side panel',
   },
   {
     filePath:
@@ -184,8 +196,19 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/ui/layout/draggable-list/components/DraggableListRow.tsx',
+    reason: 'Drag host grip swapping and placement of separate row actions',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/ui/layout/tab-list/components/TabListRoot.tsx',
     reason: 'Tabs.Root rendered as a display contents adapter',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/ui/suggestion/components/SuggestionListItem.tsx',
+    reason:
+      'Editor integration keeps the active suggestion fill while focus stays in the editor',
   },
   {
     filePath:

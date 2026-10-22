@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import {
   IconApi,
-  IconAt,
+  IconApps,
   IconCalendarEvent,
   IconCode,
   IconDownload,
@@ -130,9 +130,9 @@ export const useActionRolePermissionFlagConfig = ({
       },
       {
         key: PermissionFlagType.CONNECTED_ACCOUNTS,
-        name: t`Sync Account`,
-        description: t`Sync email and calendar accounts`,
-        Icon: IconAt,
+        name: t`User Apps`,
+        description: t`Manage own app preferences and accounts`,
+        Icon: IconApps,
         isToolPermission: true,
         isRelevantForAgents: false,
         isRelevantForApiKeys: false,

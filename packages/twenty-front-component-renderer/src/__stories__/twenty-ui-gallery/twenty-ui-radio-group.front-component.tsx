@@ -112,7 +112,7 @@ const RadioGroupExample = () => {
         <RadioGroup
           aria-label="Reading mode"
           defaultValue="summary"
-          style={{ flexDirection: 'row' }}
+          orientation="horizontal"
         >
           <Radio value="summary">Summary</Radio>
           <Radio value="full">Full detail</Radio>

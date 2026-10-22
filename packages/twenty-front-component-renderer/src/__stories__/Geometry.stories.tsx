@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, waitFor, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
@@ -72,6 +72,57 @@ export const MirrorsElementGeometryIntoTheWorker: Story = createGeometryStory(
       { timeout: GEOMETRY_TIMEOUT },
     );
 
+    expect(errorHandler).not.toHaveBeenCalled();
+  },
+);
+
+export const ObservesSvgShapeSizes: Story = createGeometryStory(
+  'svg-resize-observer',
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'svg-resize-observer-component',
+      {},
+      { timeout: GEOMETRY_TIMEOUT },
+    );
+
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByTestId('svg-resize-observer-svg-size'),
+        ).toHaveTextContent('svg: 200x120');
+        expect(
+          canvas.getByTestId('svg-resize-observer-group-size'),
+        ).toHaveTextContent('group: 80x40');
+        expect(
+          canvas.getByTestId('svg-resize-observer-rect-size'),
+        ).toHaveTextContent('rect: 80x40');
+      },
+      { timeout: GEOMETRY_TIMEOUT },
+    );
+
+    expect(
+      canvas.getByTestId('svg-resize-observer-rect-notifications'),
+    ).toHaveTextContent('rect notifications: 1');
+
+    await userEvent.click(canvas.getByTestId('svg-resize-observer-grow'));
+
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByTestId('svg-resize-observer-group-size'),
+        ).toHaveTextContent('group: 120x40');
+        expect(
+          canvas.getByTestId('svg-resize-observer-rect-size'),
+        ).toHaveTextContent('rect: 120x40');
+      },
+      { timeout: GEOMETRY_TIMEOUT },
+    );
+
+    expect(
+      canvas.getByTestId('svg-resize-observer-rect-notifications'),
+    ).toHaveTextContent('rect notifications: 2');
     expect(errorHandler).not.toHaveBeenCalled();
   },
 );

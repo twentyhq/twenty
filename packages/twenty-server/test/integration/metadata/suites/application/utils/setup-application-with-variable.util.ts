@@ -17,15 +17,18 @@ export type ApplicationWithVariable = {
   variableKey: string;
 };
 
-// Application settings components need APPLICATIONS by default; tests can
-// override the permissions to exercise narrower access.
 export const setupApplicationWithVariable = async ({
   name,
   variableKey,
   variableScope,
   isSecret = false,
   value = variableScope === 'USER' ? undefined : 'initial',
-  permissionFlagUniversalIdentifiers = [SystemPermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers = variableScope === 'USER'
+    ? [
+        SystemPermissionFlag.APPLICATIONS,
+        SystemPermissionFlag.CONNECTED_ACCOUNTS,
+      ]
+    : [SystemPermissionFlag.APPLICATIONS],
   objectPermissions = [],
 }: {
   name: string;

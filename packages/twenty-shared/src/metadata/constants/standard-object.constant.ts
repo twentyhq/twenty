@@ -1268,6 +1268,9 @@ export const STANDARD_OBJECTS = {
       messageCampaignIdIndex: {
         universalIdentifier: 'e808e721-91cc-4b9b-b24b-806d64b4d5e2',
       },
+      linkedRecordIdIndex: {
+        universalIdentifier: '00e9bf50-0e98-4105-8cb7-31c94995ff55',
+      },
     },
     views: {
       allTimelineActivities: buildStandardObjectIndexView({

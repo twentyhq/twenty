@@ -1,0 +1,28 @@
+@use '../../../styles/abstracts/mixins' as *;
+
+.action {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  inset: 0;
+  padding: 0;
+  position: absolute;
+  z-index: 0;
+
+  &:is(button, a[href], [role='button'], [role='link']) {
+    @include focus-ring;
+
+    &:focus-visible {
+      outline-offset: -2px;
+    }
+  }
+
+  &:is(:disabled, [aria-disabled='true'], [data-disabled]) {
+    cursor: default;
+    pointer-events: none;
+  }
+}

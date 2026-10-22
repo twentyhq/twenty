@@ -1,5 +1,4 @@
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
-import { styled } from '@linaria/react';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -7,19 +6,14 @@ type SettingsSectionSkeletonLoaderProps = {
   rowCount?: number;
 };
 
-const StyledRows = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
-`;
-
 export const SettingsSectionSkeletonLoader = ({
   rowCount = 4,
 }: SettingsSectionSkeletonLoaderProps) => {
   return (
-    <StyledRows>
-      <SkeletonLine count={rowCount} height={SKELETON_HEIGHT_SIZES.l} />
-    </StyledRows>
+    <SkeletonLine
+      count={rowCount}
+      height={SKELETON_HEIGHT_SIZES.l}
+      gap={themeCssVariables.spacing[2]}
+    />
   );
 };

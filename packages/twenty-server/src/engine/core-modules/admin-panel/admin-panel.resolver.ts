@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type GraphQLResolveInfo } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { AI_MODEL_TIERS } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -95,8 +94,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiModelTier } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
@@ -128,7 +127,7 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
     oauthClient: false,
     application: false,
   }),
-  SettingsPermissionGuard(PermissionFlagType.SECURITY),
+  NoPermissionGuard,
 )
 export class AdminPanelResolver {
   constructor(

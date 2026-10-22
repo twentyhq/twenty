@@ -1,10 +1,13 @@
-import { useRecordTableRowFocusId } from '@/object-record/record-table/record-table-row/hooks/useRecordTableRowFocusId';
 import { useRecordTableRowHotkeys } from '@/object-record/record-table/record-table-row/hooks/useRecordTableRowHotkeys';
 
-export const RecordTableRowHotkeyEffect = () => {
-  const recordTableRowFocusId = useRecordTableRowFocusId();
+type RecordTableRowHotkeyEffectProps = {
+  focusId: string;
+};
 
-  useRecordTableRowHotkeys(recordTableRowFocusId);
+export const RecordTableRowHotkeyEffect = ({
+  focusId,
+}: RecordTableRowHotkeyEffectProps) => {
+  useRecordTableRowHotkeys(focusId);
 
   return null;
 };

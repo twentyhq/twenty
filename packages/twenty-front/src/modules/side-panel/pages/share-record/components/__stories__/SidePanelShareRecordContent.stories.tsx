@@ -146,14 +146,27 @@ type Story = StoryObj<typeof SidePanelShareRecordContent>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    await expect(
-      await page.findByRole('button', { name: 'Restricted' }),
-    ).toBeVisible();
+    const generalAccess = await page.findByRole('button', {
+      name: 'Restricted',
+    });
+    const addPeople = page.getByRole('button', { name: 'Add people or roles' });
+    const recipient = page.getByRole('button', { name: 'Phil Schiler Editor' });
+    await expect(generalAccess).toBeVisible();
     await expect(page.getByText('You')).toBeVisible();
     await expect(page.getByText('Owner')).toBeVisible();
-    await userEvent.click(
-      page.getByRole('button', { name: 'Phil Schiler Editor' }),
-    );
+    await userEvent.tab();
+    await expect(addPeople).toHaveFocus();
+    await userEvent.tab();
+    await expect(generalAccess).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(
+      await page.findByRole('menuitemradio', { name: 'Restricted (default)' }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect(generalAccess).toHaveFocus();
+    await userEvent.tab();
+    await expect(recipient).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
     await userEvent.click(
       await page.findByRole('menuitemradio', { name: 'Full access' }),
     );
@@ -172,10 +185,42 @@ export const AddPeople: Story = {
     await userEvent.click(
       await page.findByRole('button', { name: 'Add people or roles' }),
     );
-    await expect(
-      await page.findByPlaceholderText('Search people or roles'),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(page.getByPlaceholderText('Search people or roles')).toBeVisible(),
+    );
     await expect(page.getByText('Jane Austen')).toBeVisible();
+  },
+};
+
+export const Saving: Story = {
+  args: {
+    sharingState: {
+      sharing: SHARING,
+      loading: false,
+      error: undefined,
+      saving: true,
+      setGeneralAccess,
+      setShare,
+      removeShare,
+      refetch,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const addPeople = await page.findByRole('button', {
+      name: 'Add people or roles',
+    });
+    await expect(addPeople).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(addPeople);
+    await expect(
+      page.queryByPlaceholderText('Search people or roles'),
+    ).not.toBeInTheDocument();
+    await userEvent.tab();
+    await expect(addPeople).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(
+      page.queryByPlaceholderText('Search people or roles'),
+    ).not.toBeInTheDocument();
   },
 };
 

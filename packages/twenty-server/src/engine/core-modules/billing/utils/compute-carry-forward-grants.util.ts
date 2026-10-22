@@ -84,12 +84,14 @@ const compareSpendingOrder = (a: CreditBucket, b: CreditBucket): number => {
 
 export const computeCarryForwardGrants = ({
   allowanceMicro,
+  seatAllowanceMicro = 0,
   liveGrants,
   usageMicro,
   rolloverCapMicro,
   boundary,
 }: {
   allowanceMicro: number;
+  seatAllowanceMicro?: number;
   liveGrants: CarryForwardGrantInput[];
   usageMicro: number;
   rolloverCapMicro: number;
@@ -108,7 +110,7 @@ export const computeCarryForwardGrants = ({
     ...liveGrants.filter((grant) => grant.amountMicro > 0),
   ].sort(compareSpendingOrder);
 
-  let remainingUsageMicro = Math.max(0, usageMicro);
+  let remainingUsageMicro = Math.max(0, usageMicro - seatAllowanceMicro);
 
   const unspentBuckets = buckets.map((bucket) => {
     const consumedMicro = Math.min(bucket.amountMicro, remainingUsageMicro);

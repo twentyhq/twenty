@@ -160,7 +160,7 @@ A variable's scope is set when it is created and cannot change. To change it, de
 
 User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`. Values are encrypted at rest.
 
-For user variables, `isRequired` describes a per-member requirement. It does not affect the workspace configuration warning. Personal configuration warnings and enforcement are not available yet.
+For user variables, `isRequired` describes a per-member requirement. A member with no value for it, their own or a default, sees your app marked **Missing configuration** in App preferences, with a banner naming the variables. It does not affect the workspace configuration warning, and nothing enforces it at runtime: your code still decides what an unset value means.
 
 A user variable is injected with the value of the member your code runs for, or its default until they set their own:
 
@@ -185,7 +185,9 @@ const { myUserApplicationVariables } = await client.query({
 
 Values are strings, in the same format as `process.env` (see [Variable types](#variable-types)).
 
-A member saves their own value with `updateMyUserApplicationVariable`, which takes your app's `applicationUniversalIdentifier` and needs no `APPLICATIONS` permission. It takes the member's own session only: an application token is refused, your app's included, so only the member changes their settings.
+`updateMyUserApplicationVariable` saves a member's own value. It takes your app's `applicationUniversalIdentifier` and writes the value of the person behind the token: the member's own session, or your app's token when a member is behind it, such as in a front component or a logic function run for a member. Your app's token can only name your own app, and a token with nobody behind it, such as in a cron job or an install hook, is refused. An empty value removes the member's own value, so they read the default again, or an empty string for a variable without one.
+
+It needs no `APPLICATIONS` permission, but it needs `CONNECTED_ACCOUNTS`: on the member's role, and, when your app's token makes the call, on your app's default role too, if it declares one. If your app saves user variables, add `SystemPermissionFlag.CONNECTED_ACCOUNTS` to `permissionFlagUniversalIdentifiers` in its [role](/developers/extend/apps/config/roles).
 
 ## Default function role
 

@@ -30,6 +30,8 @@ export enum PermissionsExceptionCode {
   INVALID_SETTING = 'INVALID_SETTING_PERMISSIONS',
   ROLE_NOT_EDITABLE = 'ROLE_NOT_EDITABLE',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'DEFAULT_ROLE_CANNOT_BE_DELETED',
+  MEMBER_ROLE_CANNOT_BE_DELETED = 'MEMBER_ROLE_CANNOT_BE_DELETED',
+  CUSTOM_ROLES_NOT_ENTITLED = 'CUSTOM_ROLES_NOT_ENTITLED',
   NO_PERMISSIONS_FOUND_IN_DATASOURCE = 'NO_PERMISSIONS_FOUND_IN_DATASOURCE',
   CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT',
   CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT = 'CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT',
@@ -50,8 +52,6 @@ export enum PermissionsExceptionCode {
   COMPOSITE_TYPE_NOT_FOUND = 'COMPOSITE_TYPE_NOT_FOUND',
   ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET',
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
-  ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS = 'ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS',
-  ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS = 'ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS',
   APPLICATION_ROLE_NOT_FOUND = 'APPLICATION_ROLE_NOT_FOUND',
   ROLE_BELONGS_TO_ANOTHER_APPLICATION = 'ROLE_BELONGS_TO_ANOTHER_APPLICATION',
 }
@@ -110,6 +110,10 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`This role cannot be edited.`;
     case PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED:
       return msg`The default role cannot be deleted.`;
+    case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
+      return msg`The Member role cannot be deleted.`;
+    case PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:
+      return msg`Custom roles are part of the Organization plan.`;
     case PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE:
       return msg`No permissions found in datasource.`;
     case PermissionsExceptionCode.CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT:
@@ -150,10 +154,6 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Role must have at least one target.`;
     case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS:
       return msg`This role cannot be assigned to users.`;
-    case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS:
-      return msg`This role cannot be assigned to API keys.`;
-    case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
-      return msg`This role cannot be assigned to agents.`;
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
       return msg`No role assigned to the application.`;
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
@@ -195,6 +195,7 @@ export enum PermissionsExceptionMessage {
   INVALID_SETTING = 'Invalid permission setting (unknown value)',
   ROLE_NOT_EDITABLE = 'Role is not editable',
   DEFAULT_ROLE_CANNOT_BE_DELETED = 'Default role cannot be deleted',
+  MEMBER_ROLE_CANNOT_BE_DELETED = 'Member role cannot be deleted',
   CANNOT_ADD_OBJECT_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add object permission on system object',
   CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT = 'Cannot add field permission on system object',
   CANNOT_GIVE_WRITING_PERMISSION_ON_NON_READABLE_OBJECT = 'Cannot give update permission to non-readable object',

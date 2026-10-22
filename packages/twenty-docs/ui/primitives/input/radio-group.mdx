@@ -37,6 +37,34 @@ export const BillingFrequency = () => (
 
 The group's `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
 
+### Horizontal layout
+
+Groups use a vertical column by default. Set `orientation="horizontal"` for a row. The prop controls visual layout through `data-orientation`; it does not set `aria-orientation` or change keyboard navigation. Both horizontal and vertical arrow keys retain the existing Base UI behavior, including right-to-left navigation through [DirectionProvider](/ui/primitives/layout/direction-provider).
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const HorizontalBillingFrequency = () => (
+  <RadioGroup
+    orientation="horizontal"
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+<StoryEmbed
+  storyId="ui-input-radiogroup--horizontal"
+  title="Horizontal RadioGroup"
+  height={80}
+/>
+
+The default gap stays the same in either direction.
+
 ## Anatomy
 
 Put each `Radio` or `Radio.Root` inside the group and associate it with a label. Use `Radio.Indicator` to compose a custom indicator. `RadioGroup` and `Radio` are separate exports.
@@ -95,7 +123,7 @@ export const BillingFrequency = () => {
 };
 ```
 
-`onValueChange` receives the next value and event details. The generic value type is inferred from the props. Use `disabled` on the group to disable every option, or on an individual radio to disable one choice. Arrow keys navigate and select enabled options; Tab moves out of the group. The installed Base UI version supports both horizontal and vertical arrow keys and does not expose an orientation prop. Use [DirectionProvider](/ui/primitives/layout/direction-provider) for right-to-left horizontal navigation. Visual row or column layout does not replace the upstream keyboard behavior.
+`onValueChange` receives the next value and event details. The generic value type is inferred from the props. Use `disabled` on the group to disable every option, or on an individual radio to disable one choice. Arrow keys navigate and select enabled options; Tab moves out of the group. The installed Base UI version supports both horizontal and vertical arrow keys. RadioGroup adds the visual-only `orientation` prop without changing that keyboard contract.
 
 ## Native integration and event details
 

@@ -19,6 +19,7 @@ export const isValidationRuleEnforcementEnabled = ({
 }): boolean =>
   featureFlagsMap[FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED] === true &&
   isEntitlementActive({
+    key: BillingEntitlementKey.VALIDATION_RULES,
     hasValidEnterprisePlan,
     isBillingEnabled,
     stripeEntitlementValue:

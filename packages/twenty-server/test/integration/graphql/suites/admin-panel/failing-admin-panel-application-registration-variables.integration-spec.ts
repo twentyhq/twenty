@@ -2,6 +2,7 @@ import {
   findAdminApplicationRegistrationVariables,
   updateAdminApplicationRegistrationVariable,
 } from 'test/integration/graphql/suites/admin-panel/utils/admin-application-registration-variable-api.util';
+import { getNonServerAdminAccessToken } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-as-non-server-admin.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,10 +13,9 @@ import {
   type SeededRegistration,
 } from 'test/integration/graphql/suites/admin-panel/utils/seed-registration-with-variables.util';
 
-/* global APPLE_PHIL_GUEST_ACCESS_TOKEN */
-
-describe('Admin panel application registration variables should fail without the SECURITY permission flag', () => {
+describe('Admin panel application registration variables should fail without server admin access', () => {
   let registration: SeededRegistration;
+  let nonServerAdminAccessToken: string;
 
   const normalizeMessage = (message: string) =>
     message
@@ -32,6 +32,7 @@ describe('Admin panel application registration variables should fail without the
     registration = await seedRegistrationOwnedByAnotherWorkspace(
       'failing-admin-panel-variables-registration',
     );
+    nonServerAdminAccessToken = await getNonServerAdminAccessToken();
   });
 
   afterAll(async () => {
@@ -45,7 +46,7 @@ describe('Admin panel application registration variables should fail without the
   it('should refuse to read them', async () => {
     const { data, errors } = await findAdminApplicationRegistrationVariables({
       applicationRegistrationId: registration.applicationRegistrationId,
-      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      token: nonServerAdminAccessToken,
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors, normalizeMessage });
@@ -60,7 +61,7 @@ describe('Admin panel application registration variables should fail without the
     const { data, errors } = await updateAdminApplicationRegistrationVariable({
       id: registration.secretVariableId,
       value: 'value-from-a-caller-without-the-flag',
-      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      token: nonServerAdminAccessToken,
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors, normalizeMessage });

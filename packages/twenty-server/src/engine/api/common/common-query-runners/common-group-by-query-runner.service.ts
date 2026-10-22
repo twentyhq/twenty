@@ -265,14 +265,19 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         options: field.options as PartialFieldMetadataItemOption[],
       }));
 
-    const filtersFromView = computeRecordGqlOperationFilterFromFlatMaps({
-      recordFilters,
-      recordFilterGroups: recordFilterGroups,
-      flatFieldMetadataMaps,
+    const filtersFromView = this.filterArgProcessor.process({
+      filter: computeRecordGqlOperationFilterFromFlatMaps({
+        recordFilters,
+        recordFilterGroups: recordFilterGroups,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        filterValueDependencies: {
+          timeZone: 'UTC', // TODO: see if we use workspace member timezone here
+        },
+      }),
+      flatObjectMetadata,
       flatObjectMetadataMaps,
-      filterValueDependencies: {
-        timeZone: 'UTC', // TODO: see if we use workspace member timezone here
-      },
+      flatFieldMetadataMaps,
     });
 
     const viewFromFilter = viewFilters[0]?.view;

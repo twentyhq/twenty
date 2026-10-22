@@ -16,17 +16,12 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v5 as uuidv5 } from 'uuid';
 
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { type AgentTurn } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
-import { FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job-name.constant';
-import { type FlushQueuedAgentChatMessagesJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages-job.types';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -45,6 +40,10 @@ import { findAwaitingCallText } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import { hasReplyText } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-reply-text.util';
 import { findLastMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-last-message-text.util';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import {
+  mapErrorToStreamError,
+  type StreamErrorPayload,
+} from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapAgentChatTurnOutcomeToTurnStatus } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-agent-chat-turn-outcome-to-turn-status.util';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
@@ -52,8 +51,6 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
-import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
-import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import {
@@ -84,11 +81,46 @@ export type AgentTurnStreamResult = {
   modelConfig: AiModelConfig | null;
 };
 
+export type AgentTurnCompletion = {
+  modelId: string;
+  stopReason: StepDebitResult['stopReason'];
+  isWaiting?: boolean;
+  usage?: AgentTurnStreamUsage;
+};
+
 export type AgentTurnFinish = {
   outcome: AgentChatTurnOutcome;
   isAwaitingAnswer: boolean;
   // the thread as it was before this turn, absent when another stream took the thread over
   threadBefore: AgentChatThreadWorkspaceEntity | null;
+};
+
+const getTurnWithoutTextReason = ({
+  isAborted,
+  streamError,
+  stopReason,
+}: {
+  isAborted: boolean;
+  streamError: unknown;
+  stopReason: StepDebitResult['stopReason'];
+}): string => {
+  if (isAborted) {
+    return 'user-cancelled';
+  }
+
+  if (isDefined(streamError)) {
+    return 'stream-error';
+  }
+
+  if (stopReason === 'userAllowance') {
+    return 'user-credits-exhausted';
+  }
+
+  if (stopReason === 'workspaceAllowance') {
+    return 'credits-exhausted';
+  }
+
+  return 'empty-completion';
 };
 
 @Injectable()
@@ -98,10 +130,6 @@ export class AgentTurnStreamService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentMessage')
-    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
-    @InjectMessageQueue(MessageQueue.aiStreamQueue)
-    private readonly chatMessageQueueService: MessageQueueService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly streamHeartbeatService: AgentChatStreamHeartbeatService,
@@ -111,8 +139,7 @@ export class AgentTurnStreamService {
     private readonly threadService: AgentChatThreadService,
   ) {}
 
-  // Keeps the claim alive and stoppable while the work runs, and releases it however the work ends.
-  // Messages queued meanwhile are sent then, unless the member stopped the turn
+  // Keeps the claim alive and stoppable while the work runs, and releases it however the work ends
   async runClaimed<TResult>({
     claim,
     jobAbortSignal,
@@ -123,83 +150,132 @@ export class AgentTurnStreamService {
     work: (abortSignal: AbortSignal) => Promise<TResult>;
   }): Promise<TResult> {
     const { threadId, streamId } = claim;
-
-    await this.eventPublisherService.resetStreamState(threadId);
-
     const abortController = new AbortController();
     const cancelChannel = getCancelChannel(threadId, streamId);
-    const stopHeartbeat = this.streamHeartbeatService.startRunning(streamId);
-
-    await this.cancelSubscriberService.subscribe(cancelChannel, () => {
-      abortController.abort();
-    });
-
-    jobAbortSignal?.addEventListener(
-      'abort',
-      () => {
-        abortController.abort(
-          new AiException(
-            'The response was interrupted before it could finish.',
-            AiExceptionCode.STREAM_INTERRUPTED,
-          ),
-        );
-      },
-      { once: true },
-    );
+    let stopHeartbeat: (() => void) | undefined;
+    let isStoppedByMember = false;
+    let turnError: StreamErrorPayload | undefined;
 
     try {
+      await this.eventPublisherService.startStreamState({
+        threadId,
+        streamId,
+      });
+      stopHeartbeat = this.streamHeartbeatService.startRunning(streamId);
+
+      await this.cancelSubscriberService.subscribe(cancelChannel, () => {
+        isStoppedByMember = true;
+        abortController.abort();
+      });
+
+      jobAbortSignal?.addEventListener(
+        'abort',
+        () => {
+          abortController.abort(
+            new AiException(
+              'The response was interrupted before it could finish.',
+              AiExceptionCode.STREAM_INTERRUPTED,
+            ),
+          );
+        },
+        { once: true },
+      );
+
       return await work(abortController.signal);
     } catch (error) {
-      await this.failStream({ claim, error });
+      turnError = mapErrorToStreamError(error);
 
       throw error;
     } finally {
-      stopHeartbeat();
+      stopHeartbeat?.();
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
-      await this.streamRecoveryService.releaseStreamClaim(claim);
-
-      if (!abortController.signal.aborted) {
-        await this.flushQueuedMessages(claim);
-      }
+      // what a member queued while they stopped the turn stays queued; a worker shutdown sends it
+      await this.streamRecoveryService.release({
+        ...claim,
+        turnError,
+        shouldFlush: !isStoppedByMember,
+      });
     }
   }
 
-  private async flushQueuedMessages({
-    workspaceId,
-    threadId,
-  }: AgentChatStreamClaim): Promise<void> {
-    try {
-      const hasQueuedMessages = await this.messageRepository.existsBy(
-        workspaceId,
-        { threadId, status: AgentMessageStatus.QUEUED },
-      );
-
-      if (hasQueuedMessages) {
-        await this.chatMessageQueueService.add<FlushQueuedAgentChatMessagesJobData>(
-          FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME,
-          { workspaceId, threadId },
-        );
-      }
-    } catch (error) {
-      this.logger.error(
-        `Failed to send the messages queued in thread ${threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
-      );
-    }
-  }
-
-  // ends the turn the claim runs as failed, and tells the conversation's subscribers
-  async failStream({
+  // a turn whose completion fails still records the usage it streamed, as billing does
+  async streamTurn<
+    TStarted extends { source: AgentTurnStreamSource },
+    TCompletion extends AgentTurnCompletion,
+  >({
     claim,
-    error,
+    turnId,
+    abortSignal,
+    startTurn,
+    completeTurn,
+    isBackgroundRun = false,
   }: {
     claim: AgentChatStreamClaim;
-    error: unknown;
-  }): Promise<void> {
-    await this.streamRecoveryService.failStream({ ...claim, error });
+    turnId: string;
+    abortSignal: AbortSignal;
+    startTurn: (
+      writer: UIMessageStreamWriter<ExtendedUIMessage>,
+    ) => Promise<TStarted>;
+    completeTurn: (
+      streamed: AgentTurnStreamResult & { started: TStarted },
+    ) => Promise<TCompletion>;
+    isBackgroundRun?: boolean;
+  }): Promise<{
+    streamed: AgentTurnStreamResult & { started: TStarted };
+    completion: TCompletion;
+    finish: AgentTurnFinish | null;
+  }> {
+    const { workspaceId, threadId } = claim;
+    const streamed = await this.stream({ claim, turnId, startTurn });
+    const completion = await completeTurn(streamed).catch(
+      async (error: unknown) => {
+        await this.turnRecorderService.recordUsage({
+          workspaceId,
+          threadId,
+          turnId,
+          usage: streamed.usage,
+        });
+
+        throw error;
+      },
+    );
+
+    const finish = await this.finishTurn({
+      claim,
+      turnId,
+      result: { ...streamed, usage: completion.usage ?? streamed.usage },
+      modelId: completion.modelId,
+      stopReason: completion.stopReason,
+      isWaiting: completion.isWaiting,
+      isBackgroundRun,
+    });
+
+    // a worker shutting down interrupted the turn, which fails rather than ends as stopped
+    if (abortSignal.reason instanceof AiException) {
+      throw abortSignal.reason;
+    }
+
+    if (isDefined(streamed.streamError)) {
+      throw streamed.streamError;
+    }
+
+    // the end event follows every chunk, so a subscriber that sees it has the whole reply
+    await this.eventPublisherService.publish({
+      threadId,
+      workspaceId,
+      event:
+        completion.stopReason === 'workspaceAllowance'
+          ? { type: 'credits-exhausted' }
+          : {
+              type: 'message-persisted',
+              messageId: streamed.assistantMessageId,
+            },
+    });
+
+    return { streamed, completion, finish };
   }
 
-  // a turn that could not start throws its error; otherwise the caller gets what startTurn returned
-  async stream<TStarted extends { source: AgentTurnStreamSource }>({
+  private async stream<TStarted extends { source: AgentTurnStreamSource }>({
     claim,
     turnId,
     startTurn,
@@ -359,7 +435,7 @@ export class AgentTurnStreamService {
   // Saves the reply and ends the turn, unless another stream took the thread over meanwhile. A turn that
   // waits on a person or an event is recorded as waiting rather than done. A turn whose stream failed
   // only records its usage: its failure is recorded with the stream's claim
-  async finishTurn({
+  private async finishTurn({
     claim,
     turnId,
     result,
@@ -398,6 +474,19 @@ export class AgentTurnStreamService {
       stopReason,
       isTextReplyRequired: !isBackgroundRun,
     });
+
+    if (!isBackgroundRun) {
+      this.logTurnWithoutText({
+        claim,
+        result,
+        modelId,
+        stopReason,
+        hasText,
+        isSilent,
+        hasAwaitingCall: awaitingParts.length > 0,
+      });
+    }
+
     const finishTurn = () =>
       this.turnRecorderService.finish({
         workspaceId,
@@ -490,24 +579,55 @@ export class AgentTurnStreamService {
     return { outcome, isAwaitingAnswer, threadBefore };
   }
 
-  // the end event follows every chunk, so a subscriber that sees it has the whole reply
-  async publishTurnEnd({
-    claim: { workspaceId, threadId },
-    assistantMessageId,
+  private logTurnWithoutText({
+    claim: { threadId, workspaceId },
+    result: { replyParts, isAborted, streamError, usage },
+    modelId,
     stopReason,
+    hasText,
+    isSilent,
+    hasAwaitingCall,
   }: {
-    claim: AgentChatStreamClaim;
-    assistantMessageId: string;
+    claim: Pick<AgentChatStreamClaim, 'threadId' | 'workspaceId'>;
+    result: Pick<
+      AgentTurnStreamResult,
+      'replyParts' | 'isAborted' | 'streamError' | 'usage'
+    >;
+    modelId: string;
     stopReason: StepDebitResult['stopReason'];
-  }): Promise<void> {
-    await this.eventPublisherService.publish({
-      threadId,
-      workspaceId,
-      event:
-        stopReason === 'workspaceAllowance'
-          ? { type: 'credits-exhausted' }
-          : { type: 'message-persisted', messageId: assistantMessageId },
+    hasText: boolean;
+    isSilent: boolean;
+    hasAwaitingCall: boolean;
+  }): void {
+    if ((!isAborted && hasText) || hasAwaitingCall || isSilent) {
+      return;
+    }
+
+    const reason = getTurnWithoutTextReason({
+      isAborted,
+      streamError,
+      stopReason,
     });
+
+    const errorDetail = isDefined(streamError)
+      ? formatErrorWithCause(streamError)
+      : 'none';
+
+    this.logger.warn(
+      `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
+        `reason=${reason}, model=${modelId}, ` +
+        `threadId=${threadId}, workspaceId=${workspaceId}, ` +
+        `isAborted=${isAborted}, stopReason=${stopReason}, hasText=${hasText}, ` +
+        `streamError=${errorDetail}, ` +
+        `inputTokens=${usage.inputTokens},` +
+        `responseMessage.parts=${JSON.stringify(replyParts)}`,
+    );
+
+    if (streamError instanceof Error && isDefined(streamError.stack)) {
+      this.logger.warn(
+        `[AI_CHAT_NO_TEXT] streamError stack — threadId=${threadId}: ${streamError.stack}`,
+      );
+    }
   }
 
   private computeMessageMetadata({

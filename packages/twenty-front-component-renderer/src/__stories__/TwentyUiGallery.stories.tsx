@@ -27,6 +27,7 @@ import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/picke
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonContractsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonContractsTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
+import { navigationControlsTest } from '@/__stories__/twenty-ui-gallery/utils/navigationControlsTest';
 import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/responsiveHooksTest';
 import { RESPONSIVE_HOOKS_WIDGET_SIZING } from '@/__stories__/twenty-ui-gallery/constants/RESPONSIVE_HOOKS_WIDGET_SIZING';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
@@ -230,12 +231,12 @@ export const ResizeHandlePreact: Story = createGalleryStory({
 export const NavigationReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-navigation-gallery',
   runtime: 'react',
-  play: galleryRenderTest,
+  play: navigationControlsTest,
 });
 export const NavigationPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-navigation-gallery',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: navigationControlsTest,
 });
 
 export const SurfacesReact: Story = createGalleryStory({
@@ -832,6 +833,31 @@ const galleryInstancesMountOnlyPlay = createMountOnlyPlay({
   testId: 'front-component-mounted',
   expectedCount: 2,
 });
+
+export const ResizeHandleGesturesReact: Story = {
+  ...ResizeHandleReact,
+  play: galleryMountOnlyPlay,
+};
+export const ResizeHandleGesturesPreact: Story = {
+  ...ResizeHandlePreact,
+  play: galleryMountOnlyPlay,
+};
+export const SliderGesturesReact: Story = {
+  ...SliderReact,
+  play: galleryMountOnlyPlay,
+};
+export const SliderGesturesPreact: Story = {
+  ...SliderPreact,
+  play: galleryMountOnlyPlay,
+};
+export const SliderRangeGesturesReact: Story = {
+  ...SliderRangeReact,
+  play: galleryMountOnlyPlay,
+};
+export const SliderRangeGesturesPreact: Story = {
+  ...SliderRangePreact,
+  play: galleryMountOnlyPlay,
+};
 
 export const PortalGeometryReact: Story = {
   ...PortalBoundsReact,

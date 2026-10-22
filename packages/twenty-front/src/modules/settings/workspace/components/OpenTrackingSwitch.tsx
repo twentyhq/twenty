@@ -6,11 +6,14 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { IconEye } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/components';
-import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
-export const OpenTrackingSwitch = () => {
+type OpenTrackingSwitchProps = {
+  divider?: boolean;
+};
+
+export const OpenTrackingSwitch = ({ divider }: OpenTrackingSwitchProps) => {
   const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -47,16 +50,15 @@ export const OpenTrackingSwitch = () => {
   return (
     <>
       {currentWorkspace ? (
-        <Card.Root>
-          <SettingsOptionCardContentSwitch
-            Icon={IconEye}
-            title={t`Track opens`}
-            description={t`Count opens with an invisible image. Mail apps can block or preload it.`}
-            checked={currentWorkspace.isCampaignOpenTrackingEnabled}
-            disabled={loading}
-            onChange={handleChange}
-          />
-        </Card.Root>
+        <SettingsOptionCardContentSwitch
+          Icon={IconEye}
+          title={t`Track opens`}
+          description={t`Count opens with an invisible image. Mail apps can block or preload it.`}
+          divider={divider}
+          checked={currentWorkspace.isCampaignOpenTrackingEnabled}
+          disabled={loading}
+          onChange={handleChange}
+        />
       ) : null}
     </>
   );

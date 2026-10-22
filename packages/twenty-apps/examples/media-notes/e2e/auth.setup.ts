@@ -55,11 +55,9 @@ setup('authenticate', async ({ page }) => {
     await page.waitForFunction(() => !window.location.href.includes('verify'));
   }
 
-  await page.waitForFunction(
-    () => window.localStorage.getItem('tokenPairState') !== null,
-    undefined,
-    { timeout: 15_000 },
-  );
+  await expect(page.getByRole('button', { name: 'Search' })).toBeVisible({
+    timeout: 15_000,
+  });
 
   fs.mkdirSync(AUTH_DIR, { recursive: true });
   fs.writeFileSync(WORKSPACE_ORIGIN_FILE, new URL(page.url()).origin);

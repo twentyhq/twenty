@@ -50,7 +50,7 @@ export const useCallRecordingWidgetCount = ({
   return {
     callRecordingsCount:
       callRecordingsTotalCount ?? callRecordingCountRecords.length,
-    loading,
+    loading: loading && !isDefined(callRecordingsTotalCount),
     error,
     refetchCallRecordingsCount,
   };

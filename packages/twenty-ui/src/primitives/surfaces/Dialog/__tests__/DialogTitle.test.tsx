@@ -29,7 +29,7 @@ it('labels the dialog and keeps the title level independent of its size', () => 
           <Dialog.Backdrop />
           <Dialog.Viewport>
             <Dialog.Popup initialFocus={false}>
-              <Dialog.Title level={3} size="sm">
+              <Dialog.Title level={3} size="xxl">
                 Grant credits
               </Dialog.Title>
             </Dialog.Popup>
@@ -44,7 +44,7 @@ it('labels the dialog and keeps the title level independent of its size', () => 
     level: 3,
   });
 
-  expect(heading).toHaveAttribute('data-size', 'sm');
+  expect(heading).toHaveAttribute('data-size', 'xxl');
   expect(screen.getByRole('dialog', { name: 'Grant credits' })).toHaveAttribute(
     'aria-labelledby',
     heading.id,

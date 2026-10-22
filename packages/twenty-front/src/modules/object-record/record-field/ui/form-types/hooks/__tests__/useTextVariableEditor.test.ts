@@ -36,6 +36,7 @@ const setup = (
     multiline: boolean;
     readonly: boolean;
     defaultValue: string | null;
+    enableTemplateVariableFallback: boolean;
   }> = {},
 ) => {
   const onUpdate = jest.fn();
@@ -46,6 +47,7 @@ const setup = (
       readonly: opts.readonly ?? false,
       defaultValue: opts.defaultValue ?? undefined,
       onUpdate,
+      enableTemplateVariableFallback: opts.enableTemplateVariableFallback,
     }),
   );
 
@@ -192,6 +194,20 @@ describe('useTextVariableEditor', () => {
 
     it('should fall through for empty clipboard', () => {
       expect(paste(use({ multiline: true }), '')).toBe(false);
+    });
+
+    it('should turn pasted variables into variable tags', () => {
+      const editor = use({ enableTemplateVariableFallback: true });
+
+      expect(paste(editor, 'Hi {{name | default: "there"}}!')).toBe(true);
+      expect(editor.getJSON().content?.[0]?.content).toEqual([
+        { type: 'text', text: 'Hi ' },
+        {
+          type: 'variableTag',
+          attrs: { variable: '{{name | default: "there"}}' },
+        },
+        { type: 'text', text: '!' },
+      ]);
     });
   });
 });

@@ -149,9 +149,9 @@ describe('getFilterValueSchema', () => {
     });
 
     it.each(['OPTION_0', '{bad json'])(
-      'should accept %s as a legacy scalar option value',
+      'should reject %s, which is not a stringified array',
       (value) => {
-        expectAccepted(
+        expectRejected(
           { filterType: 'SELECT', operand: ViewFilterOperand.IS },
           value,
         );

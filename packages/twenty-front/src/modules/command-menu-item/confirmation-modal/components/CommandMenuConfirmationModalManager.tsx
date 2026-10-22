@@ -1,5 +1,3 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 
 import { COMMAND_MENU_CONFIRMATION_MODAL_INSTANCE_ID } from '@/command-menu-item/confirmation-modal/constants/CommandMenuItemConfirmationModalId';
@@ -15,11 +13,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledCenteredNavigationButton = styled(NavigationButton)`
-  box-sizing: border-box;
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
 
 export const CommandMenuConfirmationModalManager = () => {
   const commandMenuItemConfirmationModalConfig = useAtomStateValue(
@@ -78,14 +71,14 @@ export const CommandMenuConfirmationModalManager = () => {
       }
       AdditionalButtons={
         isDefined(linkButton) ? (
-          <StyledCenteredNavigationButton
+          <NavigationButton
             to={linkButton.to}
             onClick={() => emitConfirmationResult('cancel')}
             fullWidth
             variant="outline"
           >
             {linkButton.title}
-          </StyledCenteredNavigationButton>
+          </NavigationButton>
         ) : undefined
       }
     />

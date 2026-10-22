@@ -1,3 +1,4 @@
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
 import { RestPlayground } from '@/settings/developers/components/RestPlayground';
 import { playgroundApiKeyState } from '@/settings/developers/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/developers/types/PlaygroundSchemas';
@@ -14,7 +15,7 @@ const PlaygroundApiKeySetterEffect = () => {
   useEffect(() => {
     setPlaygroundApiKey({
       token: 'test-api-key-123',
-      expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      expiresAt: getMockedDateWithOffset({ hours: 1 }),
     });
   }, [setPlaygroundApiKey]);
 

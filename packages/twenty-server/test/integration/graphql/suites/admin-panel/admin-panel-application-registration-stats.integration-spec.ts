@@ -5,7 +5,7 @@ import { type DataSource } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
+import { makeAdminPanelApiRequestAsNonServerAdmin } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-as-non-server-admin.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import {
@@ -352,7 +352,7 @@ describe('Admin panel application registration stats and installed workspaces (i
       const cacheHits = await getQueryCacheHits();
       expect((await findStats()).body.data).toEqual(response.body.data);
       expect(await getQueryCacheHits()).toBeGreaterThan(cacheHits);
-      const forbidden = await makeAdminPanelApiRequestWithGuestRole({
+      const forbidden = await makeAdminPanelApiRequestAsNonServerAdmin({
         query: findCreditsUsed,
         variables: { id: applicationRegistrationId, ...period },
       });
@@ -456,8 +456,8 @@ describe('Admin panel application registration stats and installed workspaces (i
       ).not.toContain(DELETED_WORKSPACE_ONLY_VERSION);
     });
 
-    it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelApiRequestWithGuestRole({
+    it('rejects a caller without server admin access', async () => {
+      const response = await makeAdminPanelApiRequestAsNonServerAdmin({
         query: FIND_STATS,
         variables: { id: applicationRegistrationId },
       });
@@ -571,8 +571,8 @@ describe('Admin panel application registration stats and installed workspaces (i
       );
     });
 
-    it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelApiRequestWithGuestRole({
+    it('rejects a caller without server admin access', async () => {
+      const response = await makeAdminPanelApiRequestAsNonServerAdmin({
         query: FIND_INSTALLED_WORKSPACES,
         variables: { input: { id: applicationRegistrationId, offset: 0 } },
       });
@@ -620,8 +620,8 @@ describe('Admin panel application registration stats and installed workspaces (i
       expect(result.registrations).toHaveLength(0);
     });
 
-    it('rejects a caller without the SECURITY permission flag', async () => {
-      const response = await makeAdminPanelApiRequestWithGuestRole({
+    it('rejects a caller without server admin access', async () => {
+      const response = await makeAdminPanelApiRequestAsNonServerAdmin({
         query: FIND_ALL_REGISTRATIONS,
         variables: { limit: 25, offset: 0 },
       });

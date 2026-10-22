@@ -8,11 +8,13 @@ import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMe
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { computeContextStoreGraphqlFilterFromStore } from '@/context-store/utils/computeContextStoreGraphqlFilterFromStore';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useStore } from 'jotai';
 import { isValidElement, useContext } from 'react';
 import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
@@ -34,6 +36,7 @@ export const useCommandMenuItemClick = ({
   );
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const mountCommand = useMountCommand();
+  const store = useStore();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
 
   const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
@@ -135,6 +138,10 @@ export const useCommandMenuItemClick = ({
                 contextStoreTargetedRecordsRule.mode === 'selection'
                   ? contextStoreTargetedRecordsRule.selectedRecordIds
                   : [],
+              selectedRecordsFilter: computeContextStoreGraphqlFilterFromStore({
+                store,
+                contextStoreInstanceId,
+              }),
             }
           : undefined,
       });

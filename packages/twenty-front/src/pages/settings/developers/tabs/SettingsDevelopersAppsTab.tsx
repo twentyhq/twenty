@@ -1,5 +1,7 @@
 import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { TWENTY_CLI_CREATE_APP_COMMANDS } from '@/settings/developers/constants/TwentyCliCreateAppCommands';
+import { TWENTY_CLI_LOGIN_COMMAND } from '@/settings/developers/constants/TwentyCliLoginCommand';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -12,7 +14,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { CommandBlock } from 'twenty-ui/components/data-display';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -67,12 +68,10 @@ export const SettingsDevelopersAppsTab = () => {
   const registrations: ApplicationRegistrationListItemFragment[] =
     data?.findManyApplicationRegistrations ?? [];
 
-  const createCommands = doNotTranslate([
-    'npm install -g twenty',
-    'twenty app init my-twenty-app',
-    'cd my-twenty-app',
-    'yarn install',
-  ]);
+  const createCommands = [
+    TWENTY_CLI_LOGIN_COMMAND,
+    ...TWENTY_CLI_CREATE_APP_COMMANDS,
+  ];
 
   const createCopyButton = (
     <Button
@@ -119,8 +118,6 @@ export const SettingsDevelopersAppsTab = () => {
         </StyledButtonContainer>
       </Section.Root>
 
-      {canClaimApplications && <SettingsClaimApplicationSection />}
-
       {registrations.length > 0 && (
         <Section.Root>
           <Section.Header
@@ -165,6 +162,8 @@ export const SettingsDevelopersAppsTab = () => {
           </Table>
         </Section.Root>
       )}
+
+      {canClaimApplications && <SettingsClaimApplicationSection />}
     </>
   );
 };
