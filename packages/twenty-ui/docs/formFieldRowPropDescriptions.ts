@@ -1,8 +1,8 @@
 import { type ComponentProps } from 'react';
 
-import { type ComposerFieldRow } from '../src/components/input/ComposerFieldRow/ComposerFieldRow';
+import { type FormFieldRow } from '../src/components/input/FormFieldRow/FormFieldRow';
 
-export const COMPOSER_FIELD_ROW_PROP_DESCRIPTIONS = {
+export const FORM_FIELD_ROW_PROP_DESCRIPTIONS = {
   label:
     'Optional visible field label and default group name. Supply aria-label or aria-labelledby when the label is omitted. Label each nested input separately.',
   startIcon:
@@ -23,6 +23,4 @@ export const COMPOSER_FIELD_ROW_PROP_DESCRIPTIONS = {
   style: 'Inline styles applied to the group root.',
   ref: 'Ref forwarded to the group root div.',
   render: 'Customizes the group root. Forward its props and ref.',
-} satisfies Partial<
-  Record<keyof ComponentProps<typeof ComposerFieldRow>, string>
->;
+} satisfies Partial<Record<keyof ComponentProps<typeof FormFieldRow>, string>>;

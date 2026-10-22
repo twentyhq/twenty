@@ -1,7 +1,7 @@
 import { type useRender } from '@base-ui/react/use-render';
 import { type CSSProperties, type ReactNode } from 'react';
 
-export type ComposerFieldRowProps = Omit<
+export type FormFieldRowProps = Omit<
   useRender.ComponentProps<'div'>,
   'children'
 > & {

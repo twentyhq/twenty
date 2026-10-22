@@ -10,15 +10,15 @@ import { Switch } from '@ui/primitives/input/Switch/Switch';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
-import { ComposerFieldRow } from '../ComposerFieldRow';
+import { FormFieldRow } from '../FormFieldRow';
 
 const handleShowCcBcc = fn();
 const handleFullDayChange = fn();
 
-const meta: Meta<typeof ComposerFieldRow> = {
-  id: 'ui-input-composerfieldrow',
-  title: 'UI/Components/Input/ComposerFieldRow',
-  component: ComposerFieldRow,
+const meta: Meta<typeof FormFieldRow> = {
+  id: 'ui-input-formfieldrow',
+  title: 'UI/Components/Input/FormFieldRow',
+  component: FormFieldRow,
   decorators: [ComponentDecorator],
   parameters: {
     container: { width: 520 },
@@ -43,7 +43,7 @@ const meta: Meta<typeof ComposerFieldRow> = {
 
 export default meta;
 
-type Story = StoryObj<typeof ComposerFieldRow>;
+type Story = StoryObj<typeof FormFieldRow>;
 
 export const Display: Story = {};
 
@@ -59,7 +59,7 @@ export const Clickable: Story = {
 export const EmailFields: Story = {
   render: (args) => (
     <>
-      <ComposerFieldRow
+      <FormFieldRow
         label="To"
         dir={args.dir}
         startIcon={<IconMail size={16} />}
@@ -76,8 +76,8 @@ export const EmailFields: Story = {
           placeholder="Add recipient"
           style={{ flex: '1 1 100px' }}
         />
-      </ComposerFieldRow>
-      <ComposerFieldRow
+      </FormFieldRow>
+      <FormFieldRow
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...args}
         hasDivider={false}
@@ -89,7 +89,7 @@ export const EmailFields: Story = {
 export const CalendarFields: Story = {
   render: () => (
     <>
-      <ComposerFieldRow
+      <FormFieldRow
         label="Calendar"
         startIcon={<IconCalendarEvent size={16} />}
       >
@@ -119,8 +119,8 @@ export const CalendarFields: Story = {
             </Select.Positioner>
           </Select.Portal>
         </Select.Root>
-      </ComposerFieldRow>
-      <ComposerFieldRow
+      </FormFieldRow>
+      <FormFieldRow
         label="All day"
         hasDivider={false}
         trailing={
@@ -130,7 +130,7 @@ export const CalendarFields: Story = {
         <Text size="md" color="secondary">
           Use dates without a time
         </Text>
-      </ComposerFieldRow>
+      </FormFieldRow>
     </>
   ),
 };
@@ -201,17 +201,17 @@ export const ExplicitHover: Story = {
   parameters: { pseudo: { hover: ['.static-row', '.hoverable-row'] } },
   render: () => (
     <>
-      <ComposerFieldRow label="Static" className="static-row">
+      <FormFieldRow label="Static" className="static-row">
         <Input variant="plain" aria-label="Static" />
-      </ComposerFieldRow>
-      <ComposerFieldRow
+      </FormFieldRow>
+      <FormFieldRow
         label="Hoverable"
         className="hoverable-row"
         isHoverable
         hasDivider={false}
       >
         <Input variant="plain" aria-label="Hoverable" />
-      </ComposerFieldRow>
+      </FormFieldRow>
     </>
   ),
 };
@@ -219,7 +219,7 @@ export const ExplicitHover: Story = {
 export const NarrowLayout: Story = {
   parameters: { container: { width: 280 } },
   render: () => (
-    <ComposerFieldRow
+    <FormFieldRow
       label="Primary recipients"
       labelWidth={120}
       startIcon={<IconMail size={16} />}
@@ -227,7 +227,7 @@ export const NarrowLayout: Story = {
       <Chip>Jordan Lee</Chip>
       <Chip>Alex Morgan</Chip>
       <Text>customer-research-and-product-operations@example.com</Text>
-    </ComposerFieldRow>
+    </FormFieldRow>
   ),
   play: async ({ canvasElement }) => {
     const group = within(canvasElement).getByRole('group', {

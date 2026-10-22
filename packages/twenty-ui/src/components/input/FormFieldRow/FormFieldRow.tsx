@@ -8,10 +8,10 @@ import { Text } from '@ui/primitives/typography/Text/Text';
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import styles from './ComposerFieldRow.module.scss';
-import { type ComposerFieldRowProps } from './types/ComposerFieldRowProps';
+import styles from './FormFieldRow.module.scss';
+import { type FormFieldRowProps } from './types/FormFieldRowProps';
 
-export const ComposerFieldRow = ({
+export const FormFieldRow = ({
   label,
   startIcon,
   trailing,
@@ -24,11 +24,11 @@ export const ComposerFieldRow = ({
   className,
   style,
   ...props
-}: ComposerFieldRowProps) => {
+}: FormFieldRowProps) => {
   const rowStyle: CSSProperties & {
-    '--composer-field-row-label-width': string;
+    '--form-field-row-label-width': string;
   } = {
-    '--composer-field-row-label-width': isNumber(labelWidth)
+    '--form-field-row-label-width': isNumber(labelWidth)
       ? `${labelWidth}px`
       : labelWidth,
     ...style,

@@ -7,8 +7,6 @@
  *                              |___/
  */
 
-export { ComposerFieldRow } from './ComposerFieldRow/ComposerFieldRow';
-export type { ComposerFieldRowProps } from './ComposerFieldRow/types/ComposerFieldRowProps';
 export { CountrySelect } from './CountrySelect/CountrySelect';
 export type { CountryChoice } from './CountrySelect/types/CountryChoice';
 export type { CountrySelectOptionsProps } from './CountrySelect/types/CountrySelectOptionsProps';
@@ -24,6 +22,8 @@ export type { CurrencyPickerProps } from './CurrencyPicker/types/CurrencyPickerP
 export type { CurrencyPickerRootProps } from './CurrencyPicker/types/CurrencyPickerRootProps';
 export type { CurrencyPickerState } from './CurrencyPicker/types/CurrencyPickerState';
 export type { CurrencyPickerTriggerProps } from './CurrencyPicker/types/CurrencyPickerTriggerProps';
+export { FormFieldRow } from './FormFieldRow/FormFieldRow';
+export type { FormFieldRowProps } from './FormFieldRow/types/FormFieldRowProps';
 export { IconButton } from './IconButton/IconButton';
 export type { IconButtonProps } from './IconButton/types/IconButtonProps';
 export type { IconButtonSize } from './IconButton/types/IconButtonSize';

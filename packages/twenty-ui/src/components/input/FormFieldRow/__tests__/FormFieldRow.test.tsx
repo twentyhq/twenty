@@ -5,24 +5,24 @@ import { runComponentConformance } from '@test-utilities/conformance/runComponen
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Input } from '@ui/primitives/input/Input/Input';
 
-import { ComposerFieldRow } from '../ComposerFieldRow';
+import { FormFieldRow } from '../FormFieldRow';
 
 runComponentConformance({
-  name: 'ComposerFieldRow',
-  element: <ComposerFieldRow label="Subject">Project update</ComposerFieldRow>,
+  name: 'FormFieldRow',
+  element: <FormFieldRow label="Subject">Project update</FormFieldRow>,
   refInstanceOf: HTMLDivElement,
   renderPropTagName: 'div',
 });
 
 it('names the group without relabelling its nested controls or announcing decoration', () => {
   render(
-    <ComposerFieldRow
+    <FormFieldRow
       label="To"
       startIcon={<svg role="img" aria-label="Internal artwork" />}
       trailing={<Button>Cc/Bcc</Button>}
     >
       <Input aria-label="Recipient address" variant="plain" />
-    </ComposerFieldRow>,
+    </FormFieldRow>,
   );
 
   const group = screen.getByRole('group', { name: 'To' });
@@ -39,9 +39,9 @@ it('names the group without relabelling its nested controls or announcing decora
 
 it('accepts an external group name without a visible label', () => {
   render(
-    <ComposerFieldRow aria-labelledby="event-options-label" hasDivider={false}>
+    <FormFieldRow aria-labelledby="event-options-label" hasDivider={false}>
       <span id="event-options-label">Event options</span>
-    </ComposerFieldRow>,
+    </FormFieldRow>,
   );
 
   expect(

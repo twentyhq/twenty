@@ -1,7 +1,7 @@
 import { type MouseEvent, type MouseEventHandler, type ReactNode } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
-import { ComposerFieldRow } from 'twenty-ui/components/input';
+import { FormFieldRow } from 'twenty-ui/components/input';
 
 const NESTED_CONTROL_SELECTOR = doNotTranslate(
   'input, textarea, button, a[href], [role="button"]',
@@ -41,7 +41,7 @@ export const ActivityComposerFieldRow = ({
   };
 
   return (
-    <ComposerFieldRow
+    <FormFieldRow
       label={label}
       hasDivider={hasDivider}
       isHoverable={isDefined(onClick)}
@@ -53,6 +53,6 @@ export const ActivityComposerFieldRow = ({
       }
     >
       {children}
-    </ComposerFieldRow>
+    </FormFieldRow>
   );
 };
