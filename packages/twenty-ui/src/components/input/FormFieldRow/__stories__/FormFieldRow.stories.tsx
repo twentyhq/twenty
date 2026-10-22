@@ -14,6 +14,7 @@ import { FormFieldRow } from '../FormFieldRow';
 
 const handleShowCcBcc = fn();
 const handleFullDayChange = fn();
+const handleClearSubject = fn();
 
 const meta: Meta<typeof FormFieldRow> = {
   id: 'ui-input-formfieldrow',
@@ -48,11 +49,26 @@ type Story = StoryObj<typeof FormFieldRow>;
 export const Display: Story = {};
 
 export const Clickable: Story = {
-  args: { onClick: fn() },
-  play: async ({ canvasElement }) => {
-    const group = within(canvasElement).getByRole('group', { name: 'Subject' });
+  args: {
+    onClick: fn(),
+    trailing: <LightButton onClick={handleClearSubject}>Clear</LightButton>,
+    trailingProps: {
+      className: 'subject-field-actions',
+      onClick: (event) => event.stopPropagation(),
+    },
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const group = canvas.getByRole('group', { name: 'Subject' });
+    const action = canvas.getByRole('button', { name: 'Clear' });
 
     await expect(getComputedStyle(group).cursor).toBe('pointer');
+    await expect(action.closest('.subject-field-actions')).toBeInTheDocument();
+    await userEvent.click(action);
+    await expect(handleClearSubject).toHaveBeenCalledOnce();
+    await expect(args.onClick).not.toHaveBeenCalled();
+    await userEvent.click(canvas.getByRole('textbox', { name: 'Subject' }));
+    await expect(args.onClick).toHaveBeenCalledOnce();
   },
 };
 
