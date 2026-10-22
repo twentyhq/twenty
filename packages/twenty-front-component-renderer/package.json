@@ -37,7 +37,7 @@
     "@emotion/styled": "^11.14.0",
     "@monaco-editor/react": "^4.7.0",
     "@mui/material": "^7.3.8",
-    "@storybook/addon-vitest": "^10.4.6",
+    "@storybook/addon-vitest": "^10.6.2",
     "@storybook/react-vite": "^10.4.6",
     "@types/node": "^24.0.0",
     "@types/react": "^19.2.0",

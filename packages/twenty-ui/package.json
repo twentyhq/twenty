@@ -39,7 +39,7 @@
     "@storybook/addon-a11y": "^10.4.6",
     "@storybook/addon-coverage": "^3.0.0",
     "@storybook/addon-links": "^10.4.6",
-    "@storybook/addon-vitest": "^10.4.6",
+    "@storybook/addon-vitest": "^10.6.2",
     "@storybook/react-vite": "^10.4.6",
     "@swc/core": "^1.15.11",
     "@testing-library/dom": "^10.4.0",

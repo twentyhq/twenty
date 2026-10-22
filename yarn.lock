@@ -19355,18 +19355,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-vitest@npm:^10.4.6":
-  version: 10.4.6
-  resolution: "@storybook/addon-vitest@npm:10.4.6"
+"@storybook/addon-vitest@npm:^10.6.2":
+  version: 10.6.2
+  resolution: "@storybook/addon-vitest@npm:10.6.2"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     "@storybook/icons": "npm:^2.0.2"
   peerDependencies:
-    "@vitest/browser": ^3.0.0 || ^4.0.0
-    "@vitest/browser-playwright": ^4.0.0
-    "@vitest/runner": ^3.0.0 || ^4.0.0
-    storybook: ^10.4.6
-    vitest: ^3.0.0 || ^4.0.0
+    "@vitest/browser": ^3.0.0 || ^4.0.0 || ^5.0.0
+    "@vitest/browser-playwright": ^4.0.0 || ^5.0.0
+    "@vitest/runner": ^3.0.0 || ^4.0.0 || ^5.0.0
+    storybook: ^10.6.2
+    vitest: ^3.0.0 || ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
     "@vitest/browser":
       optional: true
@@ -19376,7 +19376,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/df083581c59e68adac567ad09a7a19d4e85d0ee36b033e81a68adc1dc9ed03576e2d981587cec490569fc9399e2ae91bcbd5ef8fd392e9fb8e64bf94ff36dc0b
+  checksum: 10c0/422bb77645eabd7f8ac3d5fbe145221e9ba69249610d5293a5d91c0c6844f27ef4045b8790eed4aad13f0cc4250e6f69f7fdb50361819d04e053468dd693b3d3
   languageName: node
   linkType: hard
 
@@ -50812,7 +50812,7 @@ __metadata:
     "@remote-dom/core": "npm:^1.10.1"
     "@remote-dom/react": "npm:^1.2.2"
     "@sniptt/guards": "npm:^0.2.0"
-    "@storybook/addon-vitest": "npm:^10.4.6"
+    "@storybook/addon-vitest": "npm:^10.6.2"
     "@storybook/react-vite": "npm:^10.4.6"
     "@types/node": "npm:^24.0.0"
     "@types/react": "npm:^19.2.0"
@@ -51388,7 +51388,7 @@ __metadata:
     "@storybook/addon-a11y": "npm:^10.4.6"
     "@storybook/addon-coverage": "npm:^3.0.0"
     "@storybook/addon-links": "npm:^10.4.6"
-    "@storybook/addon-vitest": "npm:^10.4.6"
+    "@storybook/addon-vitest": "npm:^10.6.2"
     "@storybook/react-vite": "npm:^10.4.6"
     "@swc/core": "npm:^1.15.11"
     "@tabler/icons-react": "npm:^3.31.0"
