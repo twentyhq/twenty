@@ -120,7 +120,6 @@ export class CronTriggerCronJob {
                 entry: buildApplicationJobThrottledLogEntry({
                   workspaceId: activeWorkspace.id,
                   application,
-                  skippedJobCount: 1,
                 }),
               });
             }

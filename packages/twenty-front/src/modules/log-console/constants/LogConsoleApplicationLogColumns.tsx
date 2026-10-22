@@ -1,7 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IconApps, IconBrandTypescript } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -9,6 +7,7 @@ import { LOG_CONSOLE_APPLICATION_LOG_APP_COLUMN } from '@/log-console/constants/
 import { LOG_CONSOLE_LEVELS } from '@/log-console/constants/LogConsoleLevels';
 import { LOG_CONSOLE_TIME_COLUMN } from '@/log-console/constants/LogConsoleTimeColumn';
 import { type LogConsoleColumn } from '@/log-console/types/LogConsoleColumn';
+import { getLogConsoleApplicationLogEventIcon } from '@/log-console/utils/getLogConsoleApplicationLogEventIcon';
 import { getApplicationLogFunctionOrEventLabel } from '@/settings/application-monitoring/utils/getApplicationLogFunctionOrEventLabel';
 import { SettingsTableTagCell } from '@/settings/components/SettingsTableTagCell';
 import { SettingsTableTextCell } from '@/settings/components/SettingsTableTextCell';
@@ -36,9 +35,7 @@ export const LOG_CONSOLE_APPLICATION_LOG_COLUMNS: LogConsoleColumn[] = [
     label: msg`Function`,
     gridTrack: '216px',
     renderCell: (entry) => {
-      const EventIcon = isNonEmptyString(entry.event)
-        ? IconBrandTypescript
-        : IconApps;
+      const EventIcon = getLogConsoleApplicationLogEventIcon(entry.event);
 
       return (
         <SettingsTableTextCell

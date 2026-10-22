@@ -153,7 +153,6 @@ export class CallDatabaseEventTriggerJobsJob {
             entry: buildApplicationJobThrottledLogEntry({
               workspaceId: workspaceEventBatch.workspaceId,
               application,
-              skippedJobCount: logicFunctionPayloads.length,
             }),
             occurrenceCount: logicFunctionPayloads.length,
           });
