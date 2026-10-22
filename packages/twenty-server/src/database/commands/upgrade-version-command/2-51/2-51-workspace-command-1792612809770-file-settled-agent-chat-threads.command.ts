@@ -49,47 +49,40 @@ export class FileSettledAgentChatThreadsCommand extends ProvisionedWorkspaceComm
     await this.up(args);
   }
 
-  async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.updateParticipants({
-      ...args,
-      description: 'filed',
+  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    await this.setArchivedAtInBatches({
+      workspaceId,
+      isDryRun: options.dryRun ?? false,
       matchingSql: OPEN_SETTLED_PARTICIPANTS_SQL,
-      setSql: `"archivedAt" = ${FILED_AT_SQL}`,
+      archivedAtSql: FILED_AT_SQL,
+      outcome: 'filed',
     });
   }
 
-  async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.updateParticipants({
-      ...args,
-      description: 'moved back to the inbox',
+  async down({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+    await this.setArchivedAtInBatches({
+      workspaceId,
+      isDryRun: options.dryRun ?? false,
       matchingSql: FILED_PARTICIPANTS_SQL,
-      setSql: `"archivedAt" = NULL`,
+      archivedAtSql: 'NULL',
+      outcome: 'moved back to the inbox',
     });
   }
 
-  private async updateParticipants({
+  private async setArchivedAtInBatches({
     workspaceId,
-    options,
-    description,
+    isDryRun,
     matchingSql,
-    setSql,
-  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'> & {
-    description: string;
+    archivedAtSql,
+    outcome,
+  }: {
+    workspaceId: string;
+    isDryRun: boolean;
     matchingSql: string;
-    setSql: string;
+    archivedAtSql: string;
+    outcome: string;
   }): Promise<void> {
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
-
-    if (
-      !isDefined(
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier
-        ],
-      )
-    ) {
+    if (!(await this.hasParticipantObject(workspaceId))) {
       this.logger.log(
         `agentChatThreadParticipant object not found for workspace ${workspaceId}, skipping`,
       );
@@ -98,45 +91,55 @@ export class FileSettledAgentChatThreadsCommand extends ProvisionedWorkspaceComm
     }
 
     const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-    const fromSql = `${schemaName}."agentChatThreadParticipant" participant
+    const matchingParticipantsSql = `${schemaName}."agentChatThreadParticipant" participant
        JOIN ${schemaName}."agentChatThread" thread ON thread.id = participant."threadId"
        WHERE ${matchingSql}`;
 
-    if (options.dryRun ?? false) {
-      const [{ count }]: { count: number }[] = await this.dataSource.query(
-        `SELECT COUNT(*)::int AS count FROM ${fromSql}`,
+    if (isDryRun) {
+      const [{ count }] = await this.dataSource.query<{ count: number }[]>(
+        `SELECT COUNT(*)::int AS count FROM ${matchingParticipantsSql}`,
       );
 
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId}: ${count} chat participant(s) would be ${description}`,
+        `[DRY RUN] Workspace ${workspaceId}: ${count} chat participant(s) would be ${outcome}`,
       );
 
       return;
     }
 
     let updatedCount = 0;
+    let batchCount: number;
 
-    for (;;) {
-      const [, batchCount]: [unknown[], number] = await this.dataSource.query(
+    do {
+      [, batchCount] = await this.dataSource.query<[unknown[], number]>(
         `UPDATE ${schemaName}."agentChatThreadParticipant" target
-         SET ${setSql}, "updatedAt" = now()
+         SET "archivedAt" = ${archivedAtSql}, "updatedAt" = now()
          FROM ${schemaName}."agentChatThread" thread
          WHERE thread.id = target."threadId"
            AND target.id IN (
-             SELECT participant.id FROM ${fromSql}
+             SELECT participant.id FROM ${matchingParticipantsSql}
              LIMIT ${PARTICIPANT_BATCH_SIZE}
            )`,
       );
 
       updatedCount += batchCount;
-
-      if (batchCount < PARTICIPANT_BATCH_SIZE) {
-        break;
-      }
-    }
+    } while (batchCount === PARTICIPANT_BATCH_SIZE);
 
     this.logger.log(
-      `Workspace ${workspaceId}: ${updatedCount} chat participant(s) ${description}`,
+      `Workspace ${workspaceId}: ${updatedCount} chat participant(s) ${outcome}`,
+    );
+  }
+
+  private async hasParticipantObject(workspaceId: string): Promise<boolean> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier
+      ],
     );
   }
 }
