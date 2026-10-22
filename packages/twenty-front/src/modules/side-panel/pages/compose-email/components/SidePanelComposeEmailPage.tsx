@@ -14,6 +14,7 @@ import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFoot
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { IconPaperclip, IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -53,10 +54,18 @@ export const SidePanelComposeEmailPage = () => {
 
   const { goBackFromSidePanel } = useSidePanelHistory();
 
-  const defaultSender = useDefaultEmailSender();
+  const isReply = isNonEmptyString(composeEmailDefaultInReplyTo);
 
-  const connectedAccountId =
-    defaultSender?.connectedAccountId ?? composeEmailConnectedAccountId;
+  // a reply must stay on the thread's account, so only the handle may change
+  const defaultSender = useDefaultEmailSender({
+    restrictToConnectedAccountId: isReply
+      ? composeEmailConnectedAccountId
+      : undefined,
+  });
+
+  const connectedAccountId = isReply
+    ? composeEmailConnectedAccountId
+    : (defaultSender?.connectedAccountId ?? composeEmailConnectedAccountId);
 
   const composerState = useEmailComposerState({
     connectedAccountId: connectedAccountId ?? '',
