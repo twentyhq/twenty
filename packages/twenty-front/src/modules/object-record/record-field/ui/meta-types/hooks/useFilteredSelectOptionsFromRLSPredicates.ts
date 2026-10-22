@@ -66,10 +66,13 @@ const extractAllowedValuesFromPredicate = (
   }
 };
 
-const filterOptionsByPredicates = <TOption extends SelectOption>(
-  options: TOption[],
-  predicates: RowLevelPermissionPredicate[],
-): TOption[] => {
+const filterOptionsByPredicates = <TOption extends SelectOption>({
+  options,
+  predicates,
+}: {
+  options: TOption[];
+  predicates: RowLevelPermissionPredicate[];
+}): TOption[] => {
   if (predicates.length === 0) {
     return options;
   }
@@ -150,10 +153,10 @@ export const useFilteredSelectOptionsFromRLSPredicates = <
     );
 
     return {
-      filteredOptions: filterOptionsByPredicates(
+      filteredOptions: filterOptionsByPredicates({
         options,
-        restrictingPredicates,
-      ),
+        predicates: restrictingPredicates,
+      }),
       canSelectEmpty: hasIsEmptyPredicate && !hasIsNotEmptyPredicate,
     };
   }, [

@@ -3,6 +3,7 @@ import {
   DEFAULT_SELECT_OPTION_COLOR,
   TAG_COLORS,
 } from 'twenty-shared/constants';
+import { OPTION_DESCRIPTION_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import {
   type FieldMetadataDefaultValue,
   FieldMetadataType,
@@ -439,6 +440,10 @@ export const computeMetadataSchemaComponents = (
                       example: 'OPTION_1',
                     },
                     position: { type: 'number' },
+                    description: {
+                      type: ['string', 'null'],
+                      maxLength: OPTION_DESCRIPTION_MAX_CHAR_LENGTH,
+                    },
                   },
                 },
               },
