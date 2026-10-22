@@ -10,5 +10,5 @@ export interface LocalDriverOptions {
   cacheLockService: CacheLockService;
   workspaceCacheService: WorkspaceCacheService;
   secureHttpClientService: SecureHttpClientService;
-  restrictNetwork: boolean;
+  isNetworkRestricted: boolean;
 }

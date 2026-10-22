@@ -40,7 +40,7 @@ export class LocalDriver implements LogicFunctionDriver {
   private readonly childProcessRunner: LocalChildProcessRunnerService;
   private readonly prebuiltBundle: LocalPrebuiltBundleService;
   private readonly fetchRelay: LocalFetchRelayService;
-  private readonly restrictNetwork: boolean;
+  private readonly isNetworkRestricted: boolean;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
@@ -58,7 +58,7 @@ export class LocalDriver implements LogicFunctionDriver {
     this.fetchRelay = new LocalFetchRelayService(
       options.secureHttpClientService,
     );
-    this.restrictNetwork = options.restrictNetwork;
+    this.isNetworkRestricted = options.isNetworkRestricted;
   }
 
   async transpile({
@@ -136,7 +136,7 @@ export class LocalDriver implements LogicFunctionDriver {
     }
 
     if (
-      this.restrictNetwork &&
+      this.isNetworkRestricted &&
       !process.allowedNodeEnvironmentFlags.has('--allow-net')
     ) {
       throw new LogicFunctionException(
@@ -216,7 +216,7 @@ export class LocalDriver implements LogicFunctionDriver {
           dir: sourceTemporaryDir,
           builtFileAbsPath: inMemoryBuiltHandlerPath,
           handlerName: flatLogicFunction.handlerName,
-          relayFetch: this.restrictNetwork,
+          relayFetch: this.isNetworkRestricted,
         });
 
         const { ok, result, errorType, error, stack, stdout, stderr } =
@@ -234,7 +234,7 @@ export class LocalDriver implements LogicFunctionDriver {
             payload,
             context,
             timeoutMs,
-            fetchRelayHandler: this.restrictNetwork
+            fetchRelayHandler: this.isNetworkRestricted
               ? this.fetchRelay.createHandler({
                   workspaceId: flatLogicFunction.workspaceId,
                   env: env ?? {},

@@ -1,20 +1,20 @@
-// Runs in the handler process before its code loads. Requests leave through
-// the server, which applies the outbound HTTP rules; bodies cross the IPC
-// channel as base64.
+// Runs in the handler process before its code loads; the server performs each request under its outbound HTTP rules.
 export const LOCAL_FETCH_RELAY_BOOTSTRAP_CODE = `
 const pendingRelayedFetches = new Map();
 let nextRelayedFetchId = 0;
 
-const settleRelayedFetch = (msg) => {
-  const pending = pendingRelayedFetches.get(msg.id);
-  if (!pending) return;
-  pendingRelayedFetches.delete(msg.id);
-  pending.cleanup();
-  if (msg.error !== undefined) {
-    pending.reject(new TypeError('fetch failed', { cause: new Error(msg.error) }));
+const settleRelayedFetch = (message) => {
+  const pending = pendingRelayedFetches.get(message.id);
+  if (!pending) {
     return;
   }
-  pending.resolve(msg.response);
+  pendingRelayedFetches.delete(message.id);
+  pending.cleanup();
+  if (message.error !== undefined) {
+    pending.reject(new TypeError('fetch failed', { cause: new Error(message.error) }));
+    return;
+  }
+  pending.resolve(message.response);
 };
 
 globalThis.fetch = async (input, init) => {

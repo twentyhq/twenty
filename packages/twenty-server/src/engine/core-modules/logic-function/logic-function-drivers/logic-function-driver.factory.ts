@@ -63,7 +63,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           cacheLockService: this.cacheLockService,
           workspaceCacheService: this.workspaceCacheService,
           secureHttpClientService: this.secureHttpClientService,
-          restrictNetwork: this.twentyConfigService.get(
+          isNetworkRestricted: this.twentyConfigService.get(
             'LOGIC_FUNCTION_LOCAL_RESTRICT_NETWORK',
           ),
         });

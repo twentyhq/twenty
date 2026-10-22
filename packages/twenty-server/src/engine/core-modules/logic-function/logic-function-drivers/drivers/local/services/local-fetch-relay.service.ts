@@ -24,9 +24,7 @@ export class LocalFetchRelayService {
       { workspaceId, source: 'logic-function' },
     );
 
-    // Self-hosted servers usually sit on a private address the SSRF guard
-    // rejects. Redirects stay off so a route handler cannot bounce a request
-    // to an internal host.
+    // The server often sits on a private address; no redirects so a route handler cannot bounce to an internal host.
     const serverHttpClient = this.secureHttpClientService.getInternalHttpClient(
       {
         maxRedirects: 0,

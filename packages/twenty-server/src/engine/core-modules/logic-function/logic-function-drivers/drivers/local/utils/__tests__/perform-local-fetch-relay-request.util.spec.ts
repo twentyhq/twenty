@@ -1,8 +1,8 @@
 import { createServer, type Server } from 'http';
-import { type AddressInfo } from 'net';
 import { gzipSync } from 'zlib';
 
 import axios from 'axios';
+import { isDefined } from 'twenty-shared/utils';
 
 import { performLocalFetchRelayRequest } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/perform-local-fetch-relay-request.util';
 
@@ -49,7 +49,14 @@ describe('performLocalFetchRelayRequest', () => {
     });
 
     await new Promise<void>((resolve) => server.listen(0, resolve));
-    baseUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+
+    const address = server.address();
+
+    if (!isDefined(address) || typeof address === 'string') {
+      throw new Error('Test server is not listening on a TCP port');
+    }
+
+    baseUrl = `http://127.0.0.1:${address.port}`;
   });
 
   afterAll(async () => {

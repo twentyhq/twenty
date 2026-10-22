@@ -102,17 +102,16 @@ export class LocalChildProcessRunnerService {
 
       ${relayFetch ? LOCAL_FETCH_RELAY_BOOTSTRAP_CODE : 'const settleRelayedFetch = () => {};'}
 
-      // Registered before the import below: a 'message' listener starts the IPC
-      // read, so the run message must be kept until the handler is loaded.
+      // A 'message' listener starts the IPC read, so the run message is kept until the handler loads.
       let resolveRunMessage;
       const runMessage = new Promise((resolve) => {
         resolveRunMessage = resolve;
       });
 
       if (process.send) {
-        process.on('message', (msg) => {
-          if (msg?.type === 'run') resolveRunMessage(msg);
-          if (msg?.type === 'fetchResult') settleRelayedFetch(msg);
+        process.on('message', (message) => {
+          if (message?.type === 'run') resolveRunMessage(message);
+          if (message?.type === 'fetchResult') settleRelayedFetch(message);
         });
       }
 
@@ -127,9 +126,9 @@ export class LocalChildProcessRunnerService {
 
           let payload = undefined;
           if (process.send) {
-            const msg = await runMessage;
+            const { payload: runPayload, context: runContext } = await runMessage;
             try {
-              const out = await handlerFn(msg.payload, msg.context);
+              const out = await handlerFn(runPayload, runContext);
               // Wait for the async IPC flush before exiting, otherwise results
               // larger than the OS pipe buffer are dropped before delivery.
               if (process.send) {
@@ -207,8 +206,7 @@ export class LocalChildProcessRunnerService {
     const nodeFlags = buildLocalChildProcessNodeFlags({
       readableDirectories: [executionDirectory, ...layerDirectories],
       writableDirectory: temporaryDirectory,
-      // Node 25+ denies network access under --permission unless --allow-net
-      // is passed; relayed handlers reach the network through the server only.
+      // Node 25+ needs --allow-net under --permission; relayed handlers only reach the network through the server.
       allowNetwork:
         !isDefined(fetchRelayHandler) &&
         process.allowedNodeEnvironmentFlags.has('--allow-net'),
@@ -262,20 +260,20 @@ export class LocalChildProcessRunnerService {
         }
       };
 
-      child.on('message', (msg: LocalChildProcessMessage) => {
-        if (typeof msg !== 'object' || msg === null) return;
+      child.on('message', (message: LocalChildProcessMessage) => {
+        if (!isDefined(message) || typeof message !== 'object') return;
 
-        if ('type' in msg) {
-          if (msg.type === 'fetch' && isDefined(fetchRelayHandler)) {
-            void relayFetch(msg, fetchRelayHandler);
+        if ('type' in message) {
+          if (message.type === 'fetch' && isDefined(fetchRelayHandler)) {
+            void relayFetch(message, fetchRelayHandler);
           }
 
           return;
         }
 
-        if (typeof msg.ok !== 'boolean' || settled) return;
+        if (typeof message.ok !== 'boolean' || settled) return;
         settled = true;
-        resolve({ ...msg, stdout, stderr });
+        resolve({ ...message, stdout, stderr });
       });
 
       child.on('exit', (code) => {
