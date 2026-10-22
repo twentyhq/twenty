@@ -19,6 +19,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { EmailAttachmentsField } from '@/activities/emails/components/EmailAttachmentsField';
+import { EmailComposerSenderField } from '@/activities/emails/components/EmailComposerSenderField';
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { useUploadEmailImage } from '@/activities/emails/hooks/useUploadEmailImage';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
@@ -32,7 +33,6 @@ import { type EmailComposerState } from '@/activities/emails/types/EmailComposer
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { Select } from '@/ui/input/components/Select';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
@@ -71,14 +71,6 @@ const StyledRecipientLimitWarning = styled.div`
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[3]};
 `;
 
-const StyledSenderAddress = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 type EmailComposerFieldsProps = {
   composerState: EmailComposerState;
   contextRecord?: EmailComposerContextRecord | null;
@@ -109,8 +101,6 @@ export const EmailComposerFields = ({
   );
 
   const senderOptions = buildConnectedAccountSenderOptions(sendableAccounts);
-
-  const hasMultipleSenders = senderOptions.length > 1;
 
   const selectedAccount = sendableAccounts.find(
     (account) => account.id === composerState.connectedAccountId,
@@ -190,23 +180,11 @@ export const EmailComposerFields = ({
           onDragEnd={handlers.onDragEnd}
         >
           <ComposerHeader>
-            {hasMultipleSenders && (
-              <ComposerFieldRow label={t`From`}>
-                <Select
-                  dropdownId="email-composer-from-account"
-                  fullWidth
-                  variant="transparent"
-                  value={selectedSenderValue}
-                  options={senderOptions}
-                  onChange={handleSenderChange}
-                />
-              </ComposerFieldRow>
-            )}
-            {!hasMultipleSenders && isDefined(selectedSenderValue) && (
-              <ComposerFieldRow label={t`From`}>
-                <StyledSenderAddress>{selectedSenderValue}</StyledSenderAddress>
-              </ComposerFieldRow>
-            )}
+            <EmailComposerSenderField
+              senderOptions={senderOptions}
+              selectedSender={selectedSenderValue}
+              onSenderChange={handleSenderChange}
+            />
             <ComposerFieldRow
               label={t`To`}
               trailing={
