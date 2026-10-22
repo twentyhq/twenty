@@ -32,7 +32,8 @@ customer workspace. Functional tests execute in disposable test workspaces.
    and previous conversations cannot become review instructions.
 3. **Inspect the full artifact.** Supply read-only, bounded access to its file
    inventory, readable source, manifest, dependency and secret scan evidence,
-   declared destinations, and permission/entity inventory. Include the diff from
+   declared destinations, and permissions/entities extracted from the package.
+   Include the diff from
    the previous vetted version, but cover the complete new artifact. Report
    malicious behavior, injections, authorization/isolation failures, data
    exfiltration, hidden execution, and suspicious dependencies with file/line
@@ -44,9 +45,9 @@ customer workspace. Functional tests execute in disposable test workspaces.
    review record. Include scan and test results, coverage, tested Twenty version
    and configuration, and changes since the previous vetted version. Display a
    copy in the owner workspace.
-5. **Make a human decision.** A Twenty reviewer checks security findings and the
-   functionality, UX, permission, entity-footprint, and scaling evidence. Record a
-   result and evidence for every applicable public criterion; non-applicability
+5. **Make a human decision.** A Twenty reviewer checks security findings and every
+   applicable public criterion, including marketplace presentation. Record a
+   result and evidence for each criterion; non-applicability
    needs a written reason. Only an authorized Twenty approver can mark that exact
    artifact vetted, with their name, decision, and date recorded. The reviewer
    may also be the approver in V1. Security blockers cannot be waived; product
@@ -89,22 +90,21 @@ evidence cannot pass. Document false positives and non-applicability; give
 lower-severity findings an explicit disposition and, where remediation is
 required, an owner and target date.
 
-## Functional and operational review
+## Functional and marketplace review
 
-Use the public checklist as the acceptance criteria; keep test procedures here.
+Use the public checklist as the publisher acceptance criteria. Derive technical
+inventories and test evidence during review; do not require separate publisher
+lifecycle reports, entity inventories, changelogs, or API/job budget reports.
 
-- Run lifecycle and core-flow tests through real package installation, including
-  hooks. Development sync skips hooks, and a synchronous post-install failure
-  does not roll back schema changes. Test upgrades from the previous vetted
-  version when available, duplicate-side-effect prevention, and uninstall cleanup.
-- Review entity inventories and additions in updates for necessity. There is no
-  fixed entity-count maximum in V1.
-- Check the publisher's API/job estimate at the expected installation scale and
-  burst/retry test against shared limits. Verify batching, pacing, and recovery
-  for the capabilities the app uses.
-- For shared routes, test the configured owner installation and delivery to a
-  second installed workspace. Verify that the publisher documents the owner
-  installation's availability and maintenance.
+- Exercise advertised setup and functionality. Inspect lifecycle hooks where
+  relevant to security or data loss, using real package installation:
+  development sync skips hooks and post-install failure does not roll back schema.
+- Check shared API/job limits and recovery for the capabilities the app uses.
+  Review UI conventions and accessibility only when the app has a UI.
+- Review the logo, gallery images, short marketable README, and clear pricing,
+  including billing frequency and required paid third-party services.
+- Check setup instructions and support contact. For shared routes, verify setup
+  and delivery to the correct installed workspace.
 
 ## Trust boundaries
 
@@ -207,4 +207,3 @@ in this proposal.
 Start with one security agent and a human checklist. Additional specialist agents,
 automatic approval, certification tiers, and broad performance certification are
 outside V1.
-
