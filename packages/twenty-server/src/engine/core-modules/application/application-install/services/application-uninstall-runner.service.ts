@@ -78,7 +78,7 @@ export class ApplicationUninstallRunnerService {
         },
       });
 
-      this.recordUninstallLog({ application, workspaceId, error });
+      await this.recordUninstallLog({ application, workspaceId, error });
 
       throw error;
     }
@@ -92,10 +92,10 @@ export class ApplicationUninstallRunnerService {
       }),
     });
 
-    this.recordUninstallLog({ application, workspaceId });
+    await this.recordUninstallLog({ application, workspaceId });
   }
 
-  private recordUninstallLog({
+  private async recordUninstallLog({
     application,
     workspaceId,
     error,
@@ -108,7 +108,7 @@ export class ApplicationUninstallRunnerService {
       return;
     }
 
-    this.eventLogEmitterService.recordApplicationLogs([
+    await this.eventLogEmitterService.recordApplicationLogs([
       buildApplicationLifecycleLogEntry({
         source: 'UNINSTALL',
         workspaceId,
