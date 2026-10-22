@@ -248,7 +248,7 @@ export const EmailComposerFields = ({
                 </ComposerFieldRow>
               </>
             )}
-            <ComposerFieldRow label={t`Subject`}>
+            <ComposerFieldRow label={t`Subject`} hasDivider={false}>
               <Input
                 variant="plain"
                 type="text"
