@@ -58,8 +58,14 @@ export { canConnectedAccountPerformEmailOperation } from './email/canConnectedAc
 export { formatEmailAddress } from './email/formatEmailAddress';
 export { getEmailProvidersForOperation } from './email/getEmailProvidersForOperation';
 export { getSendableEmailHandles } from './email/getSendableEmailHandles';
+export { normalizeSenderDomain } from './email/normalizeSenderDomain';
 export type { ParsedEmailAddress } from './email/parseEmailAddressList';
 export { parseEmailAddressList } from './email/parseEmailAddressList';
+export type {
+  DefaultEmailSenderAccount,
+  DefaultEmailSender,
+} from './email/resolveDefaultEmailSender';
+export { resolveDefaultEmailSender } from './email/resolveDefaultEmailSender';
 export { CustomError } from './errors/CustomError';
 export { evalFromContext } from './evalFromContext';
 export { getEventLogRetentionInHours } from './event-logs/getEventLogRetentionInHours';
