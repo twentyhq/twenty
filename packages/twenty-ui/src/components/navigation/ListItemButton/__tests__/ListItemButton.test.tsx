@@ -5,6 +5,33 @@ import { createRef } from 'react';
 import { ListItemButton } from '../ListItemButton';
 
 describe('ListItemButton', () => {
+  it('forwards multiline visual state without leaking props to the native button', () => {
+    render(
+      <ListItemButton
+        active
+        selected
+        selectionAppearance="accent"
+        focused
+        descriptionPlacement="below"
+        description="Supporting content"
+      >
+        Document
+      </ListItemButton>,
+    );
+
+    const button = screen.getByRole('button');
+
+    expect(button).toHaveAttribute('data-active');
+    expect(button).toHaveAttribute('data-selected');
+    expect(button).toHaveAttribute('data-selection-appearance', 'accent');
+    expect(button).not.toHaveAttribute('selectionAppearance');
+    expect(button).toHaveAttribute('data-highlighted');
+    expect(button).toHaveAttribute('data-description-placement', 'below');
+    expect(button).not.toHaveAttribute('active');
+    expect(button).not.toHaveAttribute('aria-pressed');
+    expect(button).toHaveTextContent('Supporting content');
+  });
+
   it('activates with pointer, Enter and Space without submitting its form', async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();

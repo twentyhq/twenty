@@ -1,3 +1,5 @@
+import { transformSync } from 'esbuild';
+
 import { unwrapDefineFrontComponentToDirectExport } from '@/cli/utilities/build/common/front-component-build/utils/unwrap-define-front-component-to-direct-export';
 
 const INLINE_EXPRESSION_COMPONENT_SOURCE = `import { defineFrontComponent } from 'twenty-sdk/define';
@@ -46,6 +48,34 @@ export default defineSettingsFrontComponent({
   component: AppSettings,
 });
 `;
+
+const loadRenderer = (render: (element: unknown) => void) => {
+  const source = unwrapDefineFrontComponentToDirectExport(`
+    import { defineFrontComponent } from 'twenty-sdk/define';
+    export default defineFrontComponent({ component: () => null });
+  `);
+  const { code } = transformSync(source, { format: 'cjs' });
+  const bundleModule = { exports: {} };
+  const requireModule = (specifier: string) => {
+    if (specifier === 'react-dom/client') {
+      return { createRoot: () => ({ render }) };
+    }
+    if (specifier === 'react/jsx-runtime') {
+      return {
+        jsx: (component: unknown, props: unknown) => ({ component, props }),
+      };
+    }
+    throw new Error(`Unexpected import: ${specifier}`);
+  };
+
+  new Function('module', 'exports', 'require', code)(
+    bundleModule,
+    bundleModule.exports,
+    requireModule,
+  );
+
+  return bundleModule.exports as { default: (container: object) => unknown };
+};
 
 describe('unwrapDefineFrontComponentToDirectExport', () => {
   it('renders the component when component is an inline factory call', () => {
@@ -108,5 +138,54 @@ export const createSummarizeRecordEffect = () => () => null;
 `;
 
     expect(unwrapDefineFrontComponentToDirectExport(source)).toBe(source);
+  });
+
+  it('keeps the synchronous renderer contract for existing callers', () => {
+    const renderedElements: unknown[] = [];
+    const renderer = loadRenderer((element) => renderedElements.push(element));
+
+    expect(renderer.default({})).toBeUndefined();
+    expect(renderedElements).toEqual([
+      { component: expect.any(Function), props: {} },
+    ]);
+  });
+
+  it('propagates synchronous rendering failures to the caller', () => {
+    const error = new Error('Cannot mount component');
+    const renderer = loadRenderer(() => {
+      throw error;
+    });
+
+    expect(() => renderer.default({})).toThrow(error);
+  });
+
+  it('keeps imports used by a non-default definition', () => {
+    const source =
+      "import { defineFrontComponent } from 'twenty-sdk/define';\nexport const definition = defineFrontComponent({ component: () => null });";
+    expect(unwrapDefineFrontComponentToDirectExport(source)).toBe(source);
+  });
+
+  it('unwraps a multiline import with a trailing comma', () => {
+    const source = IDENTIFIER_COMPONENT_SOURCE.replace(
+      'import { defineFrontComponent }',
+      'import {\n  defineFrontComponent,\n}',
+    );
+    const output = unwrapDefineFrontComponentToDirectExport(source);
+
+    expect(output).not.toContain('defineFrontComponent');
+    expect(output).toContain('__frontComponentDefinition.component');
+  });
+
+  it('handles long whitespace after the definition import without backtracking', () => {
+    const source = IDENTIFIER_COMPONENT_SOURCE.replace(
+      "import { defineFrontComponent } from 'twenty-sdk/define';",
+      `import { defineFrontComponent${' '.repeat(50_000)}! } from 'twenty-sdk/define';`,
+    );
+
+    const startedAt = performance.now();
+    const output = unwrapDefineFrontComponentToDirectExport(source);
+
+    expect(output).toContain('__frontComponentDefinition.component');
+    expect(performance.now() - startedAt).toBeLessThan(1000);
   });
 });

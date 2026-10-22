@@ -1,3 +1,4 @@
+import { PERCENTAGE_VALUE_PRECISION } from '@/object-record/record-field/ui/constants/PercentageValuePrecision';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldInputDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -14,8 +15,6 @@ import { computeEmptyDraftValue } from '@/object-record/record-field/ui/utils/co
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { isDefined } from 'twenty-shared/utils';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
-
-const PERCENTAGE_DRAFT_VALUE_PRECISION = 15;
 
 type computeDraftValueFromFieldValueParams<FieldValue> = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>;
@@ -89,7 +88,7 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
     return (!isDefined(fieldValue)
       ? ''
       : parseFloat(
-          (fieldValue * 100).toPrecision(PERCENTAGE_DRAFT_VALUE_PRECISION),
+          (fieldValue * 100).toPrecision(PERCENTAGE_VALUE_PRECISION),
         ).toString()) as unknown as FieldInputDraftValue<FieldValue>;
   }
 

@@ -1,9 +1,11 @@
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useState } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { Chip } from 'twenty-ui/primitives/data-display';
+import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
@@ -23,19 +25,9 @@ const StyledRowLabel = styled.span`
   width: 32px;
 `;
 
-const StyledInput = styled.input`
-  background: transparent;
-  border: none;
-  color: ${themeCssVariables.font.color.primary};
+const RECIPIENT_INPUT_CLASS_NAME = css`
   flex: 1 0 80px;
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.sm};
   min-width: 80px;
-  outline: none;
-
-  &::placeholder {
-    color: ${themeCssVariables.font.color.light};
-  }
 `;
 
 type AiChatEmailRecipientsRowProps = {
@@ -113,7 +105,9 @@ export const AiChatEmailRecipientsRow = ({
         </Chip>
       ))}
       {!disabled && (
-        <StyledInput
+        <Input
+          variant="plain"
+          className={RECIPIENT_INPUT_CLASS_NAME}
           aria-label={t`Add a recipient to ${label}`}
           placeholder={recipients.length === 0 ? t`Add recipient` : undefined}
           value={draftRecipient}

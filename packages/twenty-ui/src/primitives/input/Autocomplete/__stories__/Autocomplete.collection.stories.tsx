@@ -23,6 +23,17 @@ export const GroupedObjectInteractions: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const input = canvas.getByRole('combobox', { name: 'City' });
+    const group = canvas.getByRole('group');
+    const restingBorderColor = getComputedStyle(group).borderColor;
+
+    await expect(group.getBoundingClientRect().height).toBe(32);
+    await expect(getComputedStyle(group).borderWidth).toBe('1px');
+    await expect(getComputedStyle(input).borderWidth).toBe('0px');
+    await expect(getComputedStyle(input).borderRadius).toBe('0px');
+    await expect(getComputedStyle(input).padding).toBe('0px');
+    await expect(getComputedStyle(input).backgroundColor).toBe(
+      'rgba(0, 0, 0, 0)',
+    );
 
     await userEvent.click(canvas.getByRole('button', { name: 'Show cities' }));
     await body.findByRole('option', { name: 'Paris France' });
@@ -31,6 +42,11 @@ export const GroupedObjectInteractions: Story = {
       expect(body.getByText('Central Europe')).toBeVisible();
     });
     await userEvent.type(input, 'li');
+    await expect(input).toHaveFocus();
+    await expect(getComputedStyle(input).outlineStyle).toBe('none');
+    await expect(getComputedStyle(group).borderColor).not.toBe(
+      restingBorderColor,
+    );
     const lisbon = await body.findByRole('option', { name: 'Lisbon Portugal' });
     const berlin = body.getByRole('option', { name: 'Berlin Germany' });
     await expect(
