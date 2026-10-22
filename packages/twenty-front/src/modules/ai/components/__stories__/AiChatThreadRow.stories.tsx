@@ -226,7 +226,8 @@ export const NarrowDraft: Story = {
       'Quote the annual plan and include the renewal details',
     );
 
-    await userEvent.hover(row);
+    await userEvent.tab();
+    await expect(row).toHaveFocus();
     const doneButton = canvas.getByRole('button', { name: 'Done' });
     await waitFor(() => expect(doneButton).toBeVisible());
     await expect(activityTime).toBeVisible();
@@ -234,10 +235,13 @@ export const NarrowDraft: Story = {
       subtitle.getBoundingClientRect().bottom,
     );
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
-    await userEvent.unhover(row);
     await userEvent.tab();
-    await expect(row).toHaveFocus();
+    await expect(
+      canvas.getByRole('checkbox', { name: 'Select chat' }),
+    ).toHaveFocus();
+    await userEvent.tab();
     const snoozeButton = canvas.getByRole('button', { name: 'Snooze' });
+    await expect(snoozeButton).toHaveFocus();
     await waitFor(() => expect(snoozeButton).toBeVisible());
     await expect(activityTime).toBeVisible();
     await expect(
