@@ -46,7 +46,7 @@ export const SettingsApplicationRegistrationMonitoring = () => {
     },
   );
 
-  const { data, loading, error } = useQuery(
+  const { data, previousData, loading, error } = useQuery(
     FindApplicationRegistrationMonitoringDocument,
     {
       variables: {
@@ -62,7 +62,8 @@ export const SettingsApplicationRegistrationMonitoring = () => {
   );
 
   const registration = registrationData?.findOneApplicationRegistration;
-  const monitoring = data?.findApplicationRegistrationMonitoring;
+  const monitoring = (data ?? previousData)
+    ?.findApplicationRegistrationMonitoring;
   const clickHouseUrlVariableName = doNotTranslate('CLICKHOUSE_URL');
 
   if (!isApplicationMonitoringEnabled || !isDefined(registration)) {
@@ -100,6 +101,12 @@ export const SettingsApplicationRegistrationMonitoring = () => {
         onPeriodChange={(period) =>
           setPeriodRange(buildApplicationMonitoringPeriodRange(period))
         }
+        onRefresh={() =>
+          setPeriodRange(
+            buildApplicationMonitoringPeriodRange(periodRange.period),
+          )
+        }
+        isRefreshing={loading}
       />
     );
   };

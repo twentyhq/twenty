@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { APPLICATION_MONITORING_RETENTION_IN_DAYS } from 'twenty-shared/constants';
+import { IconButton } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
+import { IconRefresh } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ApplicationMonitoringLineChart } from '@/settings/application-monitoring/components/ApplicationMonitoringLineChart';
@@ -24,6 +26,11 @@ const StyledHealth = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
+const StyledHeaderActions = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledRetentionNotice = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
@@ -34,6 +41,8 @@ type ApplicationMonitoringProps = {
   monitoring: ApplicationMonitoringData;
   selectedPeriod: ApplicationMonitoringPeriod;
   onPeriodChange: (period: ApplicationMonitoringPeriod) => void;
+  onRefresh: () => void;
+  isRefreshing?: boolean;
   isAdminView?: boolean;
 };
 
@@ -42,6 +51,8 @@ export const ApplicationMonitoring = ({
   monitoring,
   selectedPeriod,
   onPeriodChange,
+  onRefresh,
+  isRefreshing = false,
   isAdminView = false,
 }: ApplicationMonitoringProps) => {
   const { t, i18n } = useLingui();
@@ -72,12 +83,23 @@ export const ApplicationMonitoring = ({
         <Section.Header
           title={t`Health`}
           actions={
-            <ApplicationMonitoringPeriodSelect
-              dropdownId={`${instanceId}-period`}
-              value={displayedPeriod}
-              lookbackInHours={lookbackInHours}
-              onChange={onPeriodChange}
-            />
+            <StyledHeaderActions>
+              <IconButton
+                size="sm"
+                tooltip={t`Refresh`}
+                aria-label={t`Refresh`}
+                loading={isRefreshing}
+                onClick={onRefresh}
+              >
+                <IconRefresh />
+              </IconButton>
+              <ApplicationMonitoringPeriodSelect
+                dropdownId={`${instanceId}-period`}
+                value={displayedPeriod}
+                lookbackInHours={lookbackInHours}
+                onChange={onPeriodChange}
+              />
+            </StyledHeaderActions>
           }
         />
         <StyledHealth>
