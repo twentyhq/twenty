@@ -140,3 +140,34 @@ export const CopiesLinkUrl: Story = {
     );
   },
 };
+
+export const CurrencyStaysOnOneLine: Story = {
+  decorators: [
+    getFieldDecorator('company', 'annualRecurringRevenue', {
+      amountMicros: 100000000,
+      currencyCode: 'USD',
+    }),
+    getInlineCellContextDecorator({ isDisplayModeFixHeight: true }),
+  ],
+  args: {
+    isHovered: false,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const currencyDisplay = await canvas.findByText('100');
+    const amountRange = document.createRange();
+
+    amountRange.setStart(
+      currencyDisplay,
+      currencyDisplay.childNodes.length - 1,
+    );
+    amountRange.setEnd(currencyDisplay, currencyDisplay.childNodes.length);
+
+    const amountBounds = amountRange.getBoundingClientRect();
+    const displayBounds = currencyDisplay.getBoundingClientRect();
+
+    expect(amountBounds.width).toBeGreaterThan(0);
+    expect(amountBounds.top).toBeGreaterThanOrEqual(displayBounds.top);
+    expect(amountBounds.bottom).toBeLessThanOrEqual(displayBounds.bottom);
+  },
+};

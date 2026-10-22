@@ -19,7 +19,7 @@ import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 
 const StyledCurrencyIconContainer = styled.span`
   align-items: center;
-  display: flex;
+  display: inline-flex;
 `;
 
 type CurrencyDisplayProps = {
