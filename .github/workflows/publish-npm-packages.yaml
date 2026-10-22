@@ -18,7 +18,7 @@ defaults:
 
 jobs:
   publish:
-    if: github.event.sender.login == 'twenty-pr[bot]'
+    if: vars.NPM_RELEASE_APP_BOT_LOGIN != '' && github.event.sender.login == vars.NPM_RELEASE_APP_BOT_LOGIN
     environment: npm-release
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -30,6 +30,16 @@ jobs:
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           persist-credentials: false
+
+      - name: Require release source to be on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          status=$(gh api "repos/twentyhq/twenty/compare/main...$GITHUB_SHA" --jq .status)
+          case "$status" in
+            identical|behind) ;;
+            *) echo '::error::Release source must already be in main history'; exit 1 ;;
+          esac
 
       - name: Read infra publishing plan
         env:
