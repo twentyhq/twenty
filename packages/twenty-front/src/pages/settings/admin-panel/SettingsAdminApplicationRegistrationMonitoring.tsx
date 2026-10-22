@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -16,14 +17,19 @@ import { ApplicationMonitoring } from '@/settings/application-monitoring/compone
 import { ApplicationMonitoringFallback } from '@/settings/application-monitoring/components/ApplicationMonitoringFallback';
 import { buildApplicationMonitoringPeriodRange } from '@/settings/application-monitoring/utils/buildApplicationMonitoringPeriodRange';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
+  FindAdminApplicationRegistrationInstalledWorkspacesDocument,
   FindAdminApplicationRegistrationMonitoringDocument,
   FindOneAdminApplicationRegistrationDocument,
 } from '~/generated-admin/graphql';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+const WORKSPACE_FILTER_LIMIT = 100;
 
 export const SettingsAdminApplicationRegistrationMonitoring = () => {
   const { t } = useLingui();
@@ -38,17 +44,35 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
   }>();
 
   const [periodRange, setPeriodRange] = useState(() =>
-    buildApplicationMonitoringPeriodRange('7d'),
+    buildApplicationMonitoringPeriodRange({ period: '7d' }),
   );
   const [selectedWorkspace, setSelectedWorkspace] =
     useState<AdminApplicationMonitoringWorkspace>();
+  const [refreshedQueryKey, setRefreshedQueryKey] = useState<string | null>(
+    null,
+  );
 
-  const { data: registrationData } = useQuery(
+  const { data: registrationData, loading: isRegistrationLoading } = useQuery(
     FindOneAdminApplicationRegistrationDocument,
     {
       client: apolloAdminClient,
       variables: { id: applicationRegistrationId },
-      skip: !isApplicationMonitoringEnabled || !applicationRegistrationId,
+      skip:
+        !isApplicationMonitoringEnabled ||
+        !isNonEmptyString(applicationRegistrationId),
+    },
+  );
+
+  const { data: installedWorkspacesData } = useQuery(
+    FindAdminApplicationRegistrationInstalledWorkspacesDocument,
+    {
+      client: apolloAdminClient,
+      variables: {
+        input: { id: applicationRegistrationId, limit: WORKSPACE_FILTER_LIMIT },
+      },
+      skip:
+        !isApplicationMonitoringEnabled ||
+        !isNonEmptyString(applicationRegistrationId),
     },
   );
 
@@ -65,16 +89,53 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
       skip:
         !isApplicationMonitoringEnabled ||
         !isClickHouseConfigured ||
-        !applicationRegistrationId,
+        !isNonEmptyString(applicationRegistrationId),
     },
   );
 
   const registration = registrationData?.findOneAdminApplicationRegistration;
-  const monitoring = (data ?? previousData)
-    ?.findAdminApplicationRegistrationMonitoring;
+  const queryKey = `${applicationRegistrationId}:${selectedWorkspace?.workspaceId ?? ''}`;
+  const monitoring = (
+    data ?? (refreshedQueryKey === queryKey ? previousData : undefined)
+  )?.findAdminApplicationRegistrationMonitoring;
+  const installedWorkspaces = (
+    installedWorkspacesData?.findAdminApplicationRegistrationInstalledWorkspaces
+      .workspaces ?? []
+  ).map(({ id, displayName }) => ({
+    workspaceId: id,
+    workspaceName: displayName ?? null,
+  }));
 
-  if (!isApplicationMonitoringEnabled || !isDefined(registration)) {
+  const adminAppsLinks = [
+    {
+      children: t`Other`,
+      href: getSettingsPath(SettingsPath.AdminPanel),
+    },
+    {
+      children: t`Admin Panel - Apps`,
+      href: APPLICATION_REGISTRATION_ADMIN_PATH,
+    },
+  ];
+
+  if (!isApplicationMonitoringEnabled) {
     return null;
+  }
+
+  if (!isDefined(registration)) {
+    if (isRegistrationLoading) {
+      return <SettingsSkeletonLoader />;
+    }
+
+    return (
+      <SettingsPageLayout
+        title={t`Monitoring`}
+        links={[...adminAppsLinks, { children: t`Monitoring` }]}
+      >
+        <SettingsPageContainer>
+          <SettingsEmptyPlaceholder>{t`This app could not be found`}</SettingsEmptyPlaceholder>
+        </SettingsPageContainer>
+      </SettingsPageLayout>
+    );
   }
 
   const renderContent = () => {
@@ -97,20 +158,24 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
           instanceId={instanceId}
           monitoring={monitoring}
           selectedPeriod={periodRange.period}
-          onPeriodChange={(period) =>
-            setPeriodRange(buildApplicationMonitoringPeriodRange(period))
-          }
-          onRefresh={() =>
+          onPeriodChange={(period) => {
+            setRefreshedQueryKey(null);
+            setPeriodRange(buildApplicationMonitoringPeriodRange({ period }));
+          }}
+          onRefresh={() => {
+            setRefreshedQueryKey(queryKey);
             setPeriodRange(
-              buildApplicationMonitoringPeriodRange(periodRange.period),
-            )
-          }
+              buildApplicationMonitoringPeriodRange({
+                period: periodRange.period,
+              }),
+            );
+          }}
           isRefreshing={loading}
           isAdminView
           additionalActions={
             <SettingsAdminApplicationMonitoringWorkspaceSelect
               dropdownId={`${instanceId}-workspace`}
-              workspaces={monitoring.workspaces}
+              workspaces={installedWorkspaces}
               selectedWorkspace={selectedWorkspace}
               onChange={setSelectedWorkspace}
             />
@@ -133,14 +198,7 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
     <SettingsPageLayout
       title={t`Monitoring`}
       links={[
-        {
-          children: t`Other`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
-        },
-        {
-          children: t`Admin Panel - Apps`,
-          href: APPLICATION_REGISTRATION_ADMIN_PATH,
-        },
+        ...adminAppsLinks,
         {
           children: registration.name,
           href: getSettingsPath(
