@@ -1,0 +1,19 @@
+name: ci
+on: pull_request
+jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version-file: .nvmrc, cache: npm }
+      - run: npm ci   # or the repo's frozen-lockfile install
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm test
