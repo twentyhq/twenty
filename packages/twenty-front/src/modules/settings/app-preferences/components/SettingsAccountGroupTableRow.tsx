@@ -10,6 +10,7 @@ import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
 import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
+import { getAppOnlyApplicationIds } from '@/settings/app-preferences/utils/getAppOnlyApplicationIds';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -87,20 +88,8 @@ export const SettingsAccountGroupTableRow = ({
       .filter(({ connectionProviders }) => isNonEmptyArray(connectionProviders))
       .map(({ application }) => application.id),
   );
-  const appOnlyConnectionsApplicationId = isDefined(builtInAccount)
-    ? undefined
-    : group.appAccounts
-        .map(({ applicationId }) => applicationId)
-        .find(
-          (applicationId): applicationId is string =>
-            isDefined(applicationId) &&
-            applicationIdsWithConnectionsTab.has(applicationId),
-        );
-  const appOnlyApplicationId = isDefined(builtInAccount)
-    ? undefined
-    : (appOnlyConnectionsApplicationId ??
-      group.appAccounts[0]?.applicationId ??
-      undefined);
+  const { appOnlyConnectionsApplicationId, appOnlyApplicationId } =
+    getAppOnlyApplicationIds({ group, applicationIdsWithConnectionsTab });
   const settingsPath = getAccountGroupSettingsPath({
     groupId: group.id,
     hasBuiltInAccount: isDefined(builtInAccount),

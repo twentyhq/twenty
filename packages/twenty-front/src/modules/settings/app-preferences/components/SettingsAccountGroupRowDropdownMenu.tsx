@@ -1,19 +1,20 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 import { isConnectedAccountEligibleForProviderReconnect } from '@/settings/accounts/utils/isConnectedAccountEligibleForProviderReconnect';
-import {
-  type AccountGroupAction,
-  SettingsAccountGroupActionDialog,
-} from '@/settings/app-preferences/components/SettingsAccountGroupActionDialog';
+import { SettingsAccountGroupActionDialogSubtitle } from '@/settings/app-preferences/components/SettingsAccountGroupActionDialogSubtitle';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
+import { useRunAccountGroupAction } from '@/settings/app-preferences/hooks/useRunAccountGroupAction';
+import { type AccountGroupAction } from '@/settings/app-preferences/types/AccountGroupAction';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
 import { getAppAccountReconnectLabel } from '@/settings/app-preferences/utils/getAppAccountReconnectLabel';
 import { getApplicationPreferencesConnectionsPath } from '@/settings/app-preferences/utils/getApplicationPreferencesConnectionsPath';
+import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
+import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { canReconnectApplicationConnection } from '@/settings/applications/utils/canReconnectApplicationConnection';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -22,7 +23,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
@@ -52,7 +57,7 @@ export const SettingsAccountGroupRowDropdownMenu = ({
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
   const [accountGroupAction, setAccountGroupAction] =
     useState<AccountGroupAction>();
-  const [isActionPending, setIsActionPending] = useState(false);
+  const { isActionPending, runAccountGroupAction } = useRunAccountGroupAction();
   const dialogId = `account-group-action-${group.id}`;
   const account = group.builtInAccount;
   const channels = getConnectedAccountSettingsChannels(account);
@@ -67,52 +72,29 @@ export const SettingsAccountGroupRowDropdownMenu = ({
     ).values(),
   ];
 
-  const getApplicationName = (connection: ConnectedAccount) => {
-    const application = currentWorkspace?.installedApplications.find(
-      ({ id }) => id === connection.applicationId,
-    );
-
-    return isDefined(application)
-      ? getApplicationDisplayName({ application, currentWorkspace })
-      : t`Application`;
-  };
+  const getApplicationName = (connection: ConnectedAccount) =>
+    getInstalledApplicationDisplayName({
+      applicationId: connection.applicationId,
+      currentWorkspace,
+    });
 
   const getConnectionLabel = (connection: ConnectedAccount) => {
     if (connection.provider === ConnectedAccountProvider.APP) {
-      return `${getApplicationName(connection)}: ${connection.name ?? connection.handle}`;
+      const applicationName = getApplicationName(connection);
+      const connectionName = connection.name ?? connection.handle;
+
+      return t`${applicationName}: ${connectionName}`;
     }
 
-    const {
-      messageChannel,
-      calendarChannel,
-      pendingSetupMessageChannel,
-      pendingSetupCalendarChannel,
-    } = getConnectedAccountSettingsChannels(connection);
-    const hasEmails =
-      isDefined(messageChannel) || isDefined(pendingSetupMessageChannel);
-    const hasCalendar =
-      isDefined(calendarChannel) || isDefined(pendingSetupCalendarChannel);
-    const emailLabel =
-      connection.provider === ConnectedAccountProvider.GOOGLE
-        ? t`Gmail`
-        : connection.provider === ConnectedAccountProvider.MICROSOFT
-          ? t`Outlook email`
-          : t`IMAP email`;
-    const calendarLabel =
-      connection.provider === ConnectedAccountProvider.GOOGLE
-        ? t`Google Calendar`
-        : connection.provider === ConnectedAccountProvider.MICROSOFT
-          ? t`Outlook Calendar`
-          : t`CalDAV calendar`;
+    const builtInAccountAppNames = getBuiltInAccountAppsUsingAccount(
+      connection,
+    ).map((app) => t(app.name));
 
-    return (
-      [
-        hasEmails ? emailLabel : undefined,
-        hasCalendar ? calendarLabel : undefined,
-      ]
-        .filter(isDefined)
-        .join(', ') || connection.handle
-    );
+    if (!isNonEmptyArray(builtInAccountAppNames)) {
+      return connection.handle;
+    }
+
+    return builtInAccountAppNames.join(', ');
   };
 
   const openActionDialog = (action: AccountGroupAction['action']) => {
@@ -274,11 +256,26 @@ export const SettingsAccountGroupRowDropdownMenu = ({
         </DropdownContent>
       </DropdownRoot>
       {isDefined(accountGroupAction) && (
-        <SettingsAccountGroupActionDialog
+        <ConfirmationDialog
           dialogId={dialogId}
-          accountGroupAction={accountGroupAction}
-          isPending={isActionPending}
-          onPendingChange={setIsActionPending}
+          loading={isActionPending}
+          title={
+            accountGroupAction.action === 'disconnect'
+              ? t`Disconnect account`
+              : t`Delete account and synced data?`
+          }
+          subtitle={
+            <SettingsAccountGroupActionDialogSubtitle
+              accountGroupAction={accountGroupAction}
+            />
+          }
+          onConfirmClick={() => runAccountGroupAction(accountGroupAction)}
+          confirmButtonText={
+            accountGroupAction.action === 'disconnect'
+              ? t`Disconnect account`
+              : t`Delete account and data`
+          }
+          shouldWaitForConfirmBeforeClosing
         />
       )}
     </>

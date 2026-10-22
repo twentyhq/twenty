@@ -1,8 +1,8 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type ConnectedAccountGroup } from '@/settings/app-preferences/types/ConnectedAccountGroup';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
+import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -50,19 +50,14 @@ export const SettingsAccountGroupUsedBy = ({
     group.appAccounts.map((account) => account.applicationId).filter(isDefined),
   );
 
-  const appUsages = [...applicationIds].map((applicationId): Usage => {
-    const application = currentWorkspace?.installedApplications.find(
-      (installedApplication) => installedApplication.id === applicationId,
-    );
-
-    return {
-      key: applicationId,
-      title: isDefined(application)
-        ? getApplicationDisplayName({ application, currentWorkspace })
-        : t`Application`,
-      icon: <AppChip applicationId={applicationId} chipOnly />,
-    };
-  });
+  const appUsages = [...applicationIds].map((applicationId): Usage => ({
+    key: applicationId,
+    title: getInstalledApplicationDisplayName({
+      applicationId,
+      currentWorkspace,
+    }),
+    icon: <AppChip applicationId={applicationId} chipOnly />,
+  }));
 
   return (
     <StyledUsedBy>
