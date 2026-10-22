@@ -169,7 +169,7 @@ export class ServerRouteTriggerService {
         isResolvedThroughLegacyIdentifier,
       };
     } catch (error) {
-      await this.recordServerRouteFailure({
+      this.recordServerRouteFailure({
         resolver,
         applicationRegistrationId,
         error,
@@ -179,7 +179,7 @@ export class ServerRouteTriggerService {
     }
   }
 
-  private async recordServerRouteFailure({
+  private recordServerRouteFailure({
     resolver,
     applicationRegistrationId,
     error,
@@ -203,7 +203,7 @@ export class ServerRouteTriggerService {
       );
     }
 
-    await this.applicationRepeatedEventRecorderService.record({
+    this.applicationRepeatedEventRecorderService.record({
       entry: buildServerRouteFailureLogEntry({
         resolver,
         applicationRegistrationId,

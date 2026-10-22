@@ -116,7 +116,7 @@ export class CronTriggerCronJob {
             }
 
             if (isDefined(application)) {
-              await this.applicationRepeatedEventRecorderService.record({
+              this.applicationRepeatedEventRecorderService.record({
                 entry: buildApplicationJobThrottledLogEntry({
                   workspaceId: activeWorkspace.id,
                   application,

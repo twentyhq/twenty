@@ -5,7 +5,7 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -60,13 +60,13 @@ export class ApplicationRepeatedEventRecorderService
     await this.flushMetricEvents();
   }
 
-  async record({
+  record({
     entry,
     occurrenceCount = 1,
   }: {
     entry: ApplicationLogEntry;
     occurrenceCount?: number;
-  }): Promise<void> {
+  }): void {
     if (!this.eventLogEmitterService.isEnabled()) {
       return;
     }
@@ -80,14 +80,12 @@ export class ApplicationRepeatedEventRecorderService
       void this.flushMetricEvents();
     }
 
-    try {
-      await this.recordLogIfFirstInWindow(entry);
-    } catch (error) {
+    this.recordLogIfFirstInWindow(entry).catch((error) => {
       this.logger.error(
         `Failed to record application log for application ${entry.applicationId} in workspace ${entry.workspaceId}`,
         error,
       );
-    }
+    });
   }
 
   private flushMetricEvents(): Promise<void> {
@@ -108,7 +106,7 @@ export class ApplicationRepeatedEventRecorderService
 
     const metricEvents = this.metricEventRollupBuffer.drain();
 
-    if (metricEvents.length > 0) {
+    if (isNonEmptyArray(metricEvents)) {
       await this.eventLogEmitterService.recordApplicationMetricEvents(
         metricEvents,
       );
