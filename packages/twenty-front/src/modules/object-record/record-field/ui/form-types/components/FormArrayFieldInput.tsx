@@ -424,7 +424,6 @@ export const FormArrayFieldInput = ({
                       onEscape={handleNewItemInputEscape}
                       onChange={handleNewItemInputChange}
                       onEnter={handleNewItemInputSubmit}
-                      hasItem
                     />
                   ) : !isLimitReached ? (
                     <Dropdown.Section>

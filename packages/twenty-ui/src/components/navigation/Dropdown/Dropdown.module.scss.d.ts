@@ -1,6 +1,7 @@
 declare const classNames: {
   readonly header: 'header';
   readonly content: 'content';
+  readonly inactivePositioner: 'inactivePositioner';
   readonly page: 'page';
   readonly selectionGroup: 'selectionGroup';
   readonly group: 'group';

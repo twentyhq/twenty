@@ -28,6 +28,8 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
 } satisfies Partial<Record<keyof DropdownRootProps, string>>;
 
 const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
+  descriptionPlacement:
+    'Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default.',
   actions:
     'Trailing controls rendered beside the primary row control. Only supported in picker and panel pages, since a menu may only contain menu items. Secondary actions activate independently of the row.',
   actionsVisibility:

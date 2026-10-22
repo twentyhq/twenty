@@ -1,222 +1,135 @@
-import { ListItemButton } from 'twenty-ui/components/navigation';
-import { ListItem } from 'twenty-ui/primitives/navigation';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { ChartGroupByFieldSelectionCompositeFieldView } from '@/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionCompositeFieldView';
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
+import { useChartGroupByFieldSelectionContextOrThrow } from '@/side-panel/pages/page-layout/hooks/useChartGroupByFieldSelectionContextOrThrow';
 import { isFieldSupportedAsChartGroupBySubField } from '@/side-panel/pages/page-layout/utils/isFieldSupportedAsChartGroupBySubField';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+import { useState } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { useIcons } from 'twenty-ui/icon';
 import { normalizeSearchText } from 'twenty-ui/utilities';
-
-const RECORD_ITEM_ID = 'record';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionTargetObjectFieldsViewProps = {
+  pageId: string;
   targetObjectNameSingular?: string;
   headerLabel: string;
-  currentSubFieldName: string | undefined;
-  isCurrentGroupByField: boolean;
-  onBack: () => void;
-  onSelectSubField: (subFieldName: string) => void;
-  onSelectRecord: () => void;
+  fieldMetadataId: string;
 };
 
 export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
+  pageId,
   targetObjectNameSingular,
   headerLabel,
-  currentSubFieldName,
-  isCurrentGroupByField,
-  onBack,
-  onSelectSubField,
-  onSelectRecord,
+  fieldMetadataId,
 }: ChartGroupByFieldSelectionTargetObjectFieldsViewProps) => {
   const { getIcon } = useIcons();
-
+  const { currentGroupByFieldMetadataId, currentSubFieldName, selectField } =
+    useChartGroupByFieldSelectionContextOrThrow();
+  const isCurrentGroupByField =
+    currentGroupByFieldMetadataId === fieldMetadataId;
   const [searchQuery, setSearchQuery] = useState('');
-
-  const [selectedCompositeField, setSelectedCompositeField] =
-    useState<FieldMetadataItem | null>(null);
-
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   const { objectMetadataItems } = useObjectMetadataItems();
-
-  const targetObjectMetadataItem = useMemo(
-    () =>
-      objectMetadataItems.find(
-        (item) => item.nameSingular === targetObjectNameSingular,
-      ),
-    [objectMetadataItems, targetObjectNameSingular],
+  const targetObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === targetObjectNameSingular,
   );
-
-  const availableFields = useMemo(() => {
-    if (!isDefined(targetObjectMetadataItem)) {
-      return [];
-    }
-
-    return filterBySearchQuery({
-      items: targetObjectMetadataItem.fields.filter(
-        isFieldSupportedAsChartGroupBySubField,
-      ),
-      searchQuery,
-      getSearchableValues: (field) => [field.label, field.name],
-    });
-  }, [targetObjectMetadataItem, searchQuery]);
-
-  const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
-    if (isCompositeFieldType(fieldMetadataItem.type)) {
-      setSelectedCompositeField(fieldMetadataItem);
-    } else {
-      onSelectSubField(fieldMetadataItem.name);
-    }
-  };
-
-  const handleSelectCompositeSubField = (compositeSubFieldName: string) => {
-    if (!isDefined(selectedCompositeField)) {
-      return;
-    }
-    onSelectSubField(`${selectedCompositeField.name}.${compositeSubFieldName}`);
-  };
-
-  const handleBackFromComposite = () => {
-    setSelectedCompositeField(null);
-  };
-
-  const [currentNestedFieldName, currentNestedSubFieldName] =
-    currentSubFieldName?.split('.') ?? [];
-
+  const groupableFields = (targetObjectMetadataItem?.fields ?? []).filter(
+    isFieldSupportedAsChartGroupBySubField,
+  );
+  const availableFields = filterBySearchQuery({
+    items: groupableFields,
+    searchQuery,
+    getSearchableValues: (field) => [field.label, field.name],
+  });
+  const [currentNestedFieldName] = currentSubFieldName?.split('.') ?? [];
   const recordOptionLabel = t`Record`;
-
   const isRecordOptionVisible = normalizeSearchText(recordOptionLabel).includes(
     normalizeSearchText(searchQuery),
   );
 
-  if (isDefined(selectedCompositeField)) {
-    return (
-      <ChartGroupByFieldSelectionCompositeFieldView
-        compositeField={selectedCompositeField}
-        currentSubFieldName={currentNestedSubFieldName}
-        onBack={handleBackFromComposite}
-        onSelectSubField={handleSelectCompositeSubField}
-      />
-    );
-  }
-
   return (
     <>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={onBack}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {headerLabel}
-      </DropdownMenuHeader>
-      <DropdownMenuSearchInput
-        autoFocus
-        type="text"
-        placeholder={t`Search fields`}
-        onChange={(event) => setSearchQuery(event.target.value)}
-        value={searchQuery}
-      />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={[
-            ...(isRecordOptionVisible ? [RECORD_ITEM_ID] : []),
-            ...availableFields.map((field) => field.id),
-          ]}
-        >
+      <Dropdown.Page id={pageId}>
+        <Dropdown.Back>{headerLabel}</Dropdown.Back>
+        <Dropdown.Search
+          placeholder={t`Search fields`}
+          aria-label={t`Search fields`}
+          onValueChange={setSearchQuery}
+          value={searchQuery}
+        />
+        <ChartSettingsDropdownSection>
           {isRecordOptionVisible && (
-            <SelectableListItem
-              itemId={RECORD_ITEM_ID}
-              onEnter={onSelectRecord}
+            <Dropdown.OptionItem
+              onSelect={() => selectField({ fieldId: fieldMetadataId })}
+              selected={
+                isCurrentGroupByField && !isDefined(currentSubFieldName)
+              }
+              startIcon={
+                <SelectOptionIcon
+                  Icon={getIcon(targetObjectMetadataItem?.icon)}
+                />
+              }
             >
-              <ListItemButton
-                focused={selectedItemId === RECORD_ITEM_ID}
-                onClick={onSelectRecord}
-                role="option"
-                aria-selected={
-                  isCurrentGroupByField && !isDefined(currentSubFieldName)
-                }
-                selected={
-                  isCurrentGroupByField && !isDefined(currentSubFieldName)
-                }
-                indicator="check"
-                startIcon={
-                  <SelectOptionIcon
-                    Icon={getIcon(targetObjectMetadataItem?.icon)}
-                  />
-                }
-              >
-                {recordOptionLabel}
-              </ListItemButton>
-            </SelectableListItem>
+              {recordOptionLabel}
+            </Dropdown.OptionItem>
           )}
-          {availableFields.length === 0 && !isRecordOptionVisible ? (
-            <ListItem disabled>{t`No fields available`}</ListItem>
-          ) : (
-            availableFields.map((fieldMetadataItem) => (
-              <SelectableListItem
-                key={fieldMetadataItem.id}
-                itemId={fieldMetadataItem.id}
-                onEnter={() => {
-                  handleSelectField(fieldMetadataItem);
-                }}
-              >
-                <ListItemButton
-                  focused={selectedItemId === fieldMetadataItem.id}
-                  onClick={() => {
-                    handleSelectField(fieldMetadataItem);
-                  }}
-                  role="option"
-                  aria-selected={
-                    !isCompositeFieldType(fieldMetadataItem.type) &&
-                    currentNestedFieldName === fieldMetadataItem.name
-                  }
-                  selected={
-                    !isCompositeFieldType(fieldMetadataItem.type) &&
-                    currentNestedFieldName === fieldMetadataItem.name
-                  }
-                  indicator="check"
-                  hasSubmenu={isCompositeFieldType(fieldMetadataItem.type)}
-                  startIcon={
-                    <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
-                  }
+          {availableFields.map((fieldMetadataItem) => {
+            const fieldIcon = (
+              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+            );
+
+            if (isCompositeFieldType(fieldMetadataItem.type)) {
+              return (
+                <Dropdown.ActionItem
+                  key={fieldMetadataItem.id}
+                  page={`${pageId}:${fieldMetadataItem.id}`}
+                  startIcon={fieldIcon}
                 >
                   {fieldMetadataItem.label}
-                </ListItemButton>
-              </SelectableListItem>
-            ))
+                </Dropdown.ActionItem>
+              );
+            }
+
+            return (
+              <Dropdown.OptionItem
+                key={fieldMetadataItem.id}
+                onSelect={() =>
+                  selectField({
+                    fieldId: fieldMetadataId,
+                    subFieldName: fieldMetadataItem.name,
+                  })
+                }
+                selected={
+                  isCurrentGroupByField &&
+                  currentNestedFieldName === fieldMetadataItem.name
+                }
+                startIcon={fieldIcon}
+              >
+                {fieldMetadataItem.label}
+              </Dropdown.OptionItem>
+            );
+          })}
+          {!isNonEmptyArray(availableFields) && !isRecordOptionVisible && (
+            <Dropdown.Empty>{t`No fields available`}</Dropdown.Empty>
           )}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
+        </ChartSettingsDropdownSection>
+      </Dropdown.Page>
+      {groupableFields
+        .filter((fieldMetadataItem) =>
+          isCompositeFieldType(fieldMetadataItem.type),
+        )
+        .map((fieldMetadataItem) => (
+          <ChartGroupByFieldSelectionCompositeFieldView
+            key={fieldMetadataItem.id}
+            pageId={`${pageId}:${fieldMetadataItem.id}`}
+            compositeField={fieldMetadataItem}
+            fieldMetadataId={fieldMetadataId}
+            subFieldNamePrefix={fieldMetadataItem.name}
+          />
+        ))}
     </>
   );
 };

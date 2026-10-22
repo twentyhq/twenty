@@ -8,6 +8,8 @@ export const SEGMENTED_CONTROL_PROP_DESCRIPTIONS = {
   options:
     'Options with a unique string `value`, a `label` or `startIcon`, and optional `disabled`. Icon-only options require an `aria-label`.',
   size: 'Control height: `sm` (24px) or `md` (32px).',
+  variant:
+    'Shape: `round` is a pill, `rectangle` fills its container with form-field corners.',
   'aria-label': 'Accessible group name. Supply this or `aria-labelledby`.',
   'aria-labelledby':
     'ID of an element that labels the group. Supply this or `aria-label`.',

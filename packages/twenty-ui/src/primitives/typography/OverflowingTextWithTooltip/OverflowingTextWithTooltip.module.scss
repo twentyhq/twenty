@@ -3,13 +3,19 @@
 
   cursor: inherit;
   font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
   height: auto;
   max-width: 100%;
   overflow-wrap: break-word;
   text-decoration: inherit;
   white-space: pre-wrap;
+
+  &:where(:not([data-size])) {
+    font-size: inherit;
+  }
+
+  &:where(:not([data-weight])) {
+    font-weight: inherit;
+  }
 
   &[data-content-overflowing] {
     cursor: pointer;
@@ -21,11 +27,17 @@
 
   cursor: inherit;
   font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
   height: auto;
   max-width: 100%;
   text-decoration: inherit;
+
+  &:where(:not([data-size])) {
+    font-size: inherit;
+  }
+
+  &:where(:not([data-weight])) {
+    font-weight: inherit;
+  }
 
   &[data-content-overflowing] {
     cursor: pointer;

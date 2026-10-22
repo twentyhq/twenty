@@ -20,6 +20,8 @@ export type ListItemProps = Omit<
      * `indicator` is set.
      */
     selected?: boolean;
+    active?: boolean;
+    selectionAppearance?: 'default' | 'accent';
     /** Applies the highlighted style, for example to the focused item of a list. */
     focused?: boolean;
     disabled?: boolean;

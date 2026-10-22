@@ -12,7 +12,7 @@
  */}
 
 <ParamField body="autoResize" type="boolean" default="false">
-  Measures committed controlled values or uncontrolled edits, form resets, row and size changes, and width changes. Overrides blockSize while enabled.
+  Measures committed controlled values or uncontrolled edits, form resets, row, size and variant changes, and width changes. Overrides blockSize while enabled.
 </ParamField>
 
 <ParamField body="className" type="string | ((state: InputState) =&gt; string | undefined)">
@@ -38,4 +38,8 @@
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="md">
   Visual size of the textarea.
+</ParamField>
+
+<ParamField body="variant" type="&quot;default&quot; | &quot;plain&quot;" default="default">
+  default keeps the field frame. plain removes fill, border, radius and padding while retaining rows, automatic sizing and maximum rows. Its outline follows native :focus-visible, including pointer focus or autofocus on textareas; invalid state uses a danger outline.
 </ParamField>
