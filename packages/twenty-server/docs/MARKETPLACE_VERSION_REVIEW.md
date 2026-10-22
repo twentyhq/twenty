@@ -1,7 +1,8 @@
 # Marketplace version review in app owner workspaces
 
 > **Work in progress — implementation proposal.** This document specifies the
-> pipeline; it does not enable review agents or marketplace enforcement.
+> pipeline; it does not enable review agents or marketplace enforcement. The
+> requirements and process may evolve before launch.
 > The publisher-facing checklist is proposed in
 > [twenty#28457](https://github.com/twentyhq/twenty/pull/28457), for
 > [core-team-issues#2974](https://github.com/twentyhq/core-team-issues/issues/2974).
@@ -37,13 +38,19 @@ customer workspace. Functional tests execute in disposable test workspaces.
    exfiltration, hidden execution, and suspicious dependencies with file/line
    evidence. Missing or uninspectable content prevents a completed review.
 4. **Collect evidence.** Accept results only from the platform-started attempt.
-   Persist the artifact hash, owner workspace, official run/thread IDs, policy and
-   agent configuration versions, model, scan coverage, findings, and completion
-   status in a core review record. Display a copy in the owner workspace.
+   Persist the app/version IDs, artifact hash, source commit, provenance
+   verification, owner workspace, official run/thread IDs, policy/checklist and
+   agent configuration versions, model, findings, and completion status in a core
+   review record. Include scan and test results, coverage, tested Twenty version
+   and configuration, and changes since the previous vetted version. Display a
+   copy in the owner workspace.
 5. **Make a human decision.** A Twenty reviewer checks security findings and the
-   functionality, UX, permission, entity-footprint, and scaling evidence. Only an
-   authorized Twenty approver can mark that exact artifact vetted. Confirmed
-   malicious behavior is rejected; blockers or missing evidence remain unvetted.
+   functionality, UX, permission, entity-footprint, and scaling evidence. Record a
+   result and evidence for every applicable public criterion; non-applicability
+   needs a written reason. Only an authorized Twenty approver can mark that exact
+   artifact vetted, with their name, decision, and date recorded. The reviewer
+   may also be the approver in V1. Security blockers cannot be waived; product
+   quality cannot compensate for a failed security review.
 
 ## Internal security gates
 
@@ -71,7 +78,9 @@ reviewers; removing attack lists from the public page does not remove these gate
   storage, HTTPS, retention/deletion, and logging. Scan direct, transitive,
   bundled, and runtime dependencies for vulnerabilities and malicious packages.
   Check deterministic resolution and unreviewed code or remote instructions
-  introduced after approval.
+  introduced after approval. Secrets must not appear in source, frontend bundles,
+  ordinary storage, or logs; the key-value store holds plain JSON. Material
+  changes to hosted behavior or remote instructions require re-review.
 
 Reject confirmed malicious behavior. Block approval for confirmed high/critical
 vulnerabilities, exploitable authorization or isolation failures, unexplained
@@ -79,6 +88,23 @@ data transfers, and unresolved suspicious behavior. Incomplete scans or missing
 evidence cannot pass. Document false positives and non-applicability; give
 lower-severity findings an explicit disposition and, where remediation is
 required, an owner and target date.
+
+## Functional and operational review
+
+Use the public checklist as the acceptance criteria; keep test procedures here.
+
+- Run lifecycle and core-flow tests through real package installation, including
+  hooks. Development sync skips hooks, and a synchronous post-install failure
+  does not roll back schema changes. Test upgrades from the previous vetted
+  version when available, duplicate-side-effect prevention, and uninstall cleanup.
+- Review entity inventories and additions in updates for necessity. There is no
+  fixed entity-count maximum in V1.
+- Check the publisher's API/job estimate at the expected installation scale and
+  burst/retry test against shared limits. Verify batching, pacing, and recovery
+  for the capabilities the app uses.
+- For shared routes, test the configured owner installation and delivery to a
+  second installed workspace. Verify that the publisher documents the owner
+  installation's availability and maintenance.
 
 ## Trust boundaries
 
@@ -118,11 +144,26 @@ means evidence is ready for review; it never means vetted.
 - Preserve previous evidence when retrying. Record findings' dispositions and the
   approver identity/date separately from the agent's output.
 
-Before third-party vetting goes live, marketplace installs and upgrades must
-select an approved version and verify its artifact hash. Retain the previous
-vetted version while a new release is pending. Revocation must block new
-installs/upgrades and support containment of affected installations. Existing
-app-level `isVetted` is not sufficient to enforce these rules.
+## Approval and enforcement
+
+Record each submitted version as **pending** until a human decision is made:
+**vetted**, **changes required**, or **rejected**. Use **revoked** when a previously
+vetted version no longer meets the requirements.
+
+Before piloting third-party vetting, implement these installation and review gates:
+
+- Install the approved artifact and verify its hash; a mutable npm tag cannot
+  identify an approval. Existing app-level `isVetted` is insufficient.
+- Keep the previous vetted version available while its replacement is reviewed.
+  Existing installations must not automatically move to an unvetted version.
+- Require renewed administrator consent for expanded permissions or data access.
+- Re-scan retained versions when new vulnerability information appears.
+- On revocation, block new installs/upgrades and support containment of affected
+  installations. Removing a badge alone is insufficient for known malicious code.
+
+Published community apps and vetted versions remain distinct. Twenty currently
+rejects app downgrades, so recovery must use containment and a vetted corrective
+release rather than promise an automatic rollback.
 
 ## Existing components and required wiring
 
@@ -166,3 +207,4 @@ in this proposal.
 Start with one security agent and a human checklist. Additional specialist agents,
 automatic approval, certification tiers, and broad performance certification are
 outside V1.
+
