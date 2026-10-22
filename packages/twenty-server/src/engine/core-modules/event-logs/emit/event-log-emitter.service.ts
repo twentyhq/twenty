@@ -43,19 +43,21 @@ export class EventLogEmitterService {
   }
 
   async recordApplicationLogs(entries: ApplicationLogEntry[]): Promise<void> {
-    await this.dispatchOrLogError(buildApplicationLogEnvelopes(entries));
+    await this.dispatchOrLogError(() => buildApplicationLogEnvelopes(entries));
   }
 
   async recordApplicationMetricEvents(
     events: ApplicationMetricEvent[],
   ): Promise<void> {
-    await this.dispatchOrLogError(buildApplicationMetricEventEnvelopes(events));
+    await this.dispatchOrLogError(() =>
+      buildApplicationMetricEventEnvelopes(events),
+    );
   }
 
   async recordApplicationPlatformEvents(
     entries: ApplicationLogEntry[],
   ): Promise<void> {
-    await this.dispatchOrLogError([
+    await this.dispatchOrLogError(() => [
       ...buildApplicationLogEnvelopes(entries),
       ...buildApplicationMetricEventEnvelopes(
         entries.map(toApplicationMetricEvent),
@@ -64,10 +66,10 @@ export class EventLogEmitterService {
   }
 
   private async dispatchOrLogError(
-    envelopes: WorkspaceEventEnvelope[],
+    buildEnvelopes: () => WorkspaceEventEnvelope[],
   ): Promise<void> {
     try {
-      await this.dispatch(envelopes);
+      await this.dispatch(buildEnvelopes());
     } catch (error) {
       this.logger.error('Failed to record application events', error);
     }

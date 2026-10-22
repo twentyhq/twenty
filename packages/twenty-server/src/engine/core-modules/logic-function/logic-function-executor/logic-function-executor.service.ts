@@ -585,7 +585,7 @@ export class LogicFunctionExecutorService {
         : []),
     ];
 
-    await this.eventLogEmitterService.recordApplicationLogs(
+    void this.eventLogEmitterService.recordApplicationLogs(
       logLines.map((line) => ({
         ...line,
         workspaceId,
@@ -600,7 +600,7 @@ export class LogicFunctionExecutorService {
       })),
     );
 
-    await this.eventLogEmitterService.recordApplicationMetricEvents([
+    void this.eventLogEmitterService.recordApplicationMetricEvents([
       buildLogicFunctionRunMetricEvent({
         result,
         flatApplication,
