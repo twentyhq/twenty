@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { APPLICATION_MONITORING_TABLE_METRIC_COLUMNS } from '@/settings/application-monitoring/constants/ApplicationMonitoringTableMetricColumns';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -10,7 +11,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-const FUNCTIONS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 96px 96px 112px';
+const FUNCTIONS_GRID_TEMPLATE_COLUMNS = `minmax(0, 1fr) ${APPLICATION_MONITORING_TABLE_METRIC_COLUMNS}`;
 
 type ApplicationMonitoringFunctionsTableProps = {
   functions: ApplicationMonitoringData['functions'];

@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { APPLICATION_MONITORING_TABLE_METRIC_COLUMNS } from '@/settings/application-monitoring/constants/ApplicationMonitoringTableMetricColumns';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -9,7 +10,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-const VERSIONS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 1fr) 96px 96px 96px';
+const VERSIONS_GRID_TEMPLATE_COLUMNS = `minmax(0, 1fr) ${APPLICATION_MONITORING_TABLE_METRIC_COLUMNS}`;
 
 type ApplicationMonitoringVersionsTableProps = {
   versions: ApplicationMonitoringData['versions'];
@@ -32,9 +33,9 @@ export const ApplicationMonitoringVersionsTable = ({
     <Table>
       <TableRow gridTemplateColumns={VERSIONS_GRID_TEMPLATE_COLUMNS}>
         <TableHeader>{t`Version`}</TableHeader>
-        <TableHeader align="right">{activeLabel}</TableHeader>
         <TableHeader align="right">{t`Runs`}</TableHeader>
         <TableHeader align="right">{t`Failed`}</TableHeader>
+        <TableHeader align="right">{activeLabel}</TableHeader>
       </TableRow>
       <TableBody>
         {versions.map((version) => (
@@ -44,9 +45,6 @@ export const ApplicationMonitoringVersionsTable = ({
           >
             <TableCell color={themeCssVariables.font.color.primary}>
               {version.version}
-            </TableCell>
-            <TableCell align="right">
-              {i18n.number(version.activeInstallCount)}
             </TableCell>
             <TableCell align="right">{i18n.number(version.runCount)}</TableCell>
             <TableCell
@@ -58,6 +56,9 @@ export const ApplicationMonitoringVersionsTable = ({
               }
             >
               {i18n.number(version.failedRunCount)}
+            </TableCell>
+            <TableCell align="right">
+              {i18n.number(version.activeInstallCount)}
             </TableCell>
           </TableRow>
         ))}
