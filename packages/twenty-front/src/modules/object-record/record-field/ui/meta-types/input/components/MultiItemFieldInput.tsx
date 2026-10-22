@@ -362,7 +362,6 @@ export const MultiItemFieldInput = <T,>({
               }}
               onEnter={handleEnter}
               preventTabNavigation
-              hasItem={isNonEmptyArray(items)}
               rightComponent={
                 isNonEmptyArray(items) ? (
                   <LightIconButton

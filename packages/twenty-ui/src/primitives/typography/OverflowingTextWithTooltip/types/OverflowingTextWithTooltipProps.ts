@@ -2,12 +2,14 @@ import { type useRender } from '@base-ui/react/use-render';
 import { type ReactNode } from 'react';
 
 import { type TooltipSide } from '@ui/primitives/surfaces/Tooltip/types/TooltipSide';
+import { type TextTypographyProps } from '@ui/primitives/typography/Text/internal/TextTypographyProps';
 import { type TextTruncationProps } from '@ui/primitives/typography/Text/internal/TextTruncationProps';
 
 export type OverflowingTextWithTooltipProps = Omit<
   useRender.ComponentProps<'div'>,
-  'children'
+  'children' | 'color'
 > &
+  TextTypographyProps &
   TextTruncationProps & {
     isTooltipMultiline?: boolean;
     tooltipDelay?: number;

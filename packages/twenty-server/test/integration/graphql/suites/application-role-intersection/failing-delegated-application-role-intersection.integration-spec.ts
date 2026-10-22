@@ -34,6 +34,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -86,7 +87,7 @@ const testCases: EachTestingContext<TestContext>[] = [
     context: {
       attempt: (token) =>
         checkoutSession({
-          input: { recurringInterval: 'Month' },
+          input: { recurringInterval: 'Month', plan: BillingPlanKey.PRO },
           token,
           expectToFail: true,
         }),

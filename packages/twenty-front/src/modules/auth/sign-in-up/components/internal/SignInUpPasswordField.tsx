@@ -1,4 +1,3 @@
-import { Text } from 'twenty-ui/primitives/typography';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpMode } from '@/auth/types/SignInUpMode';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -53,24 +52,16 @@ export const SignInUpPasswordField = ({
               onBlur={onBlur}
               onChange={onChange}
               error={showErrors ? error?.message : undefined}
+              hint={
+                signInUpMode === SignInUpMode.SignUp
+                  ? t`At least 8 characters long.`
+                  : undefined
+              }
               fullWidth
             />
-            {signInUpMode === SignInUpMode.SignUp && (
-              <StyledPasswordHint>{t`At least 8 characters long.`}</StyledPasswordHint>
-            )}
           </StyledInputContainer>
         )}
       />
     </StyledFullWidthMotionDiv>
   );
 };
-
-const StyledPasswordHint = styled(Text)`
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: initial;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  overflow: hidden;
-  padding: ${themeCssVariables.spacing[2]} 0;
-  white-space: nowrap;
-`;

@@ -3,7 +3,7 @@ import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
-import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
+import { useUpdateTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateTrigger';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,7 +19,7 @@ export const SidePanelWorkflowEditStepContent = () => {
     workflowSelectedNodeComponentState,
   );
 
-  const { updateTrigger } = useUpdateWorkflowVersionTrigger();
+  const { updateTrigger } = useUpdateTrigger();
   const { updateStep } = useUpdateStep();
 
   if (!isDefined(workflowSelectedNode)) {

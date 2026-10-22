@@ -1,7 +1,9 @@
+import GoogleCover from '@/settings/app-preferences/assets/built-in-account-apps/google-cover.webp';
 import GoogleLogo from '@/settings/app-preferences/assets/built-in-account-apps/google.svg';
+import ImapCover from '@/settings/app-preferences/assets/built-in-account-apps/imap-cover.webp';
 import ImapLogo from '@/settings/app-preferences/assets/built-in-account-apps/imap.svg';
+import OutlookCover from '@/settings/app-preferences/assets/built-in-account-apps/outlook-cover.webp';
 import OutlookLogo from '@/settings/app-preferences/assets/built-in-account-apps/outlook.svg';
-import CoverPlaceholder from '@/settings/app-preferences/assets/built-in-account-apps/cover-placeholder.webp';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { msg } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -13,7 +15,7 @@ export const BUILT_IN_ACCOUNT_APPS: BuiltInAccountApp[] = [
     name: msg`Gmail and Calendar`,
     description: msg`Sync emails and calendar events from your Google accounts.`,
     logo: GoogleLogo,
-    coverImage: CoverPlaceholder,
+    coverImage: GoogleCover,
     Icon: IconGoogle,
     provider: ConnectedAccountProvider.GOOGLE,
     hasEmails: true,
@@ -41,7 +43,7 @@ export const BUILT_IN_ACCOUNT_APPS: BuiltInAccountApp[] = [
     name: msg`Outlook`,
     description: msg`Sync emails and calendar events from your Microsoft accounts.`,
     logo: OutlookLogo,
-    coverImage: CoverPlaceholder,
+    coverImage: OutlookCover,
     Icon: IconMicrosoftOutlook,
     provider: ConnectedAccountProvider.MICROSOFT,
     hasEmails: true,
@@ -57,7 +59,7 @@ export const BUILT_IN_ACCOUNT_APPS: BuiltInAccountApp[] = [
     name: msg`IMAP`,
     description: msg`Sync emails and calendar events from any IMAP, SMTP and CalDAV server.`,
     logo: ImapLogo,
-    coverImage: CoverPlaceholder,
+    coverImage: ImapCover,
     Icon: IconAt,
     provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
     hasEmails: true,

@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { chargeCredits } from 'twenty-sdk/billing';
 
-import { COMPANY_MATCH_COST_DOLLARS } from 'src/constants/company-match-cost-dollars';
-import { PERSON_MATCH_COST_DOLLARS } from 'src/constants/person-match-cost-dollars';
+import { COMPANY_MATCH_PRICE_DOLLARS } from 'src/constants/company-match-price-dollars';
+import { PERSON_MATCH_PRICE_DOLLARS } from 'src/constants/person-match-price-dollars';
 import { chargeMatchedEnrichments } from 'src/logic-functions/utils/charge-matched-enrichments';
 
 vi.mock('twenty-sdk/billing', () => ({
@@ -14,30 +14,30 @@ describe('chargeMatchedEnrichments', () => {
     vi.clearAllMocks();
   });
 
-  it('charges person matches at PDL list price plus margin', async () => {
+  it('charges 15 cents per person match', async () => {
     await chargeMatchedEnrichments({
       matchedCount: 3,
-      costPerMatchDollars: PERSON_MATCH_COST_DOLLARS,
+      pricePerMatchDollars: PERSON_MATCH_PRICE_DOLLARS,
       resourceContext: 'pdl/person',
     });
 
     expect(chargeCredits).toHaveBeenCalledExactlyOnceWith({
-      creditsUsedMicro: 3 * 336_000,
+      creditsUsedMicro: 450_000,
       operationType: 'CODE_EXECUTION',
       quantity: 3,
       resourceContext: 'pdl/person',
     });
   });
 
-  it('charges company matches at PDL list price plus margin', async () => {
+  it('charges 7.5 cents per company match', async () => {
     await chargeMatchedEnrichments({
       matchedCount: 2,
-      costPerMatchDollars: COMPANY_MATCH_COST_DOLLARS,
+      pricePerMatchDollars: COMPANY_MATCH_PRICE_DOLLARS,
       resourceContext: 'pdl/company',
     });
 
     expect(chargeCredits).toHaveBeenCalledExactlyOnceWith({
-      creditsUsedMicro: 2 * 120_000,
+      creditsUsedMicro: 150_000,
       operationType: 'CODE_EXECUTION',
       quantity: 2,
       resourceContext: 'pdl/company',
@@ -47,7 +47,7 @@ describe('chargeMatchedEnrichments', () => {
   it('does not charge when nothing matched', async () => {
     await chargeMatchedEnrichments({
       matchedCount: 0,
-      costPerMatchDollars: PERSON_MATCH_COST_DOLLARS,
+      pricePerMatchDollars: PERSON_MATCH_PRICE_DOLLARS,
       resourceContext: 'pdl/person',
     });
 

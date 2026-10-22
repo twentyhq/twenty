@@ -1,5 +1,7 @@
+import { Button } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FormProvider } from 'react-hook-form';
 import QRCodeModule from 'react-qr-code';
 
@@ -14,7 +16,7 @@ import { useTwoFactorVerificationForSettings } from '@/settings/two-factor-authe
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -63,22 +65,6 @@ const StyledCopySetupKeyText = styled.div`
   text-align: left;
 `;
 
-const StyledCopySetupKeyLink = styled.button`
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
-  display: inline;
-  font-size: ${themeCssVariables.font.size.sm};
-  margin-left: 0;
-  padding: 0;
-  text-decoration: underline;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.secondary};
-  }
-`;
-
 const StyledDivider = styled.div`
   margin: ${themeCssVariables.spacing[6]} 0;
   width: 100%;
@@ -101,10 +87,12 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
   const shouldShowActionButtons = !has2FAMethod;
 
   const handleCopySetupKey = async () => {
-    if (!qrCode) return;
+    if (!isNonEmptyString(qrCode)) {
+      return;
+    }
 
     const secret = extractSecretFromOtpUri(qrCode);
-    if (secret !== null) {
+    if (isDefined(secret)) {
       await copyToClipboard(secret, t`Setup key copied to clipboard`);
     }
   };
@@ -165,9 +153,13 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                     </StyledQRCodeWrapper>
                     <StyledCopySetupKeyText>
                       <Trans>Can't scan? Copy the</Trans>{' '}
-                      <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick={handleCopySetupKey}
+                      >
                         <Trans>setup key</Trans>
-                      </StyledCopySetupKeyLink>
+                      </Button>
                     </StyledCopySetupKeyText>
                   </>
                 )}
