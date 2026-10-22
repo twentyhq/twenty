@@ -3,7 +3,8 @@ import { type ButtonProps } from '../src/primitives/input/Button/types/ButtonPro
 export const BUTTON_PROP_DESCRIPTIONS = {
   variant:
     'Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; render composition determines native semantics.',
-  color: 'Semantic color of the button.',
+  color:
+    'Semantic color of the button. `inherit` uses the surrounding text color for the label, icons, loader, and outline border, with translucent black interaction surfaces. It supports outline, ghost, soft, and link. Resolving solid with inherit throws, including appearance inherited from ButtonGroup and wrapper defaults.',
   size: 'Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size.',
   fullWidth: 'Expands the button to fill its container width.',
   loading: 'Shows a loading indicator and disables activation.',

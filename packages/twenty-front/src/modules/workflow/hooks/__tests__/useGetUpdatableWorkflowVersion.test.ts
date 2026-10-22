@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react';
 
 const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
 const mockWorkflowId = '123';
+const mockInstanceId = 'workflow-visualizer-instance';
 const mockWorkflow = {
   id: mockWorkflowId,
   currentVersion: {
@@ -38,7 +39,7 @@ describe('useGetUpdatableWorkflowVersionOrThrow', () => {
 
   it('should return draft version id when current version is draft', async () => {
     const { result } = renderHook(() =>
-      useGetUpdatableWorkflowVersionOrThrow(),
+      useGetUpdatableWorkflowVersionOrThrow(mockInstanceId),
     );
     const workflowVersionId =
       await result.current.getUpdatableWorkflowVersion();
@@ -62,7 +63,7 @@ describe('useGetUpdatableWorkflowVersionOrThrow', () => {
     useWorkflowWithCurrentVersion.mockReturnValue(mockActiveWorkflow);
 
     const { result } = renderHook(() =>
-      useGetUpdatableWorkflowVersionOrThrow(),
+      useGetUpdatableWorkflowVersionOrThrow(mockInstanceId),
     );
     const workflowVersionId =
       await result.current.getUpdatableWorkflowVersion();
@@ -81,7 +82,7 @@ describe('useGetUpdatableWorkflowVersionOrThrow', () => {
     useWorkflowWithCurrentVersion.mockReturnValue(undefined);
 
     const { result } = renderHook(() =>
-      useGetUpdatableWorkflowVersionOrThrow(),
+      useGetUpdatableWorkflowVersionOrThrow(mockInstanceId),
     );
 
     await expect(result.current.getUpdatableWorkflowVersion()).rejects.toThrow(

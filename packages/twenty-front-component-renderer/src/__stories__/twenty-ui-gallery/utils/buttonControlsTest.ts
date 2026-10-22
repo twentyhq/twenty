@@ -34,6 +34,17 @@ export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
   await waitFor(() =>
     expect(canvas.getByLabelText('Activations')).toHaveTextContent('3'),
   );
+  const inheritedButton = canvas.getByRole('button', {
+    name: 'Inherited action',
+  });
+  const inheritedColor = getComputedStyle(
+    canvas.getByTestId('inherited-button-surface'),
+  ).color;
+
+  await expect(getComputedStyle(inheritedButton).color).toBe(inheritedColor);
+  await expect(inheritedButton.querySelector('svg')).toHaveStyle({
+    color: inheritedColor,
+  });
   const disabled = canvas.getByRole('button', { name: 'Disabled button' });
   await expect(disabled).toBeDisabled();
   await userEvent.click(disabled);

@@ -53,6 +53,7 @@ const validateOption = ({
     additionalCacheDataMaps: {
       featureFlagsMap:
         {} as WorkspaceMigrationBuilderAdditionalCacheDataMaps['featureFlagsMap'],
+      billingEntitlements: {},
     },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps:
       createEmptyAllFlatEntityMaps(),
