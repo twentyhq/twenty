@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 import { buildResultSchema } from './build-result-schema';
-import { disableAutomaticTriggers } from './disable-automatic-triggers';
+import { disableAutomaticTriggersOrThrow } from './disable-automatic-triggers-or-throw';
 
 const { query, mutation } = vi.hoisted(() => ({
   query: vi.fn(),
@@ -68,7 +68,7 @@ describe('lifecycle trigger isolation', () => {
       { ...logicFunction, applicationId: 'another-app' },
     ]);
 
-    await disableAutomaticTriggers(
+    await disableAutomaticTriggersOrThrow(
       buildResultSchema.parse({ manifest }).manifest,
     );
 
@@ -146,7 +146,7 @@ describe('lifecycle trigger isolation', () => {
       mockInstalledFunctions(functions);
 
       await expect(
-        disableAutomaticTriggers(
+        disableAutomaticTriggersOrThrow(
           buildResultSchema.parse({ manifest }).manifest,
         ),
       ).rejects.toThrow('Automatic triggers were not disabled');
