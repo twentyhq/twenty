@@ -73,11 +73,10 @@ describe('app connection OAuth callback', () => {
     }),
   );
 
-  const readExecutions = (markerUrl: string): string[] => {
-    const executions = markerServer.readMarker(markerUrl).trim();
-
-    return executions === '' ? [] : executions.split('\n');
-  };
+  const readExecutions = (markerUrl: string): string[] =>
+    markerServer.hasMarker(markerUrl)
+      ? markerServer.readMarker(markerUrl).trim().split('\n')
+      : [];
 
   const readAccounts = (): Promise<ConnectedAccountEntity[]> =>
     globalThis.testDataSource.query(
