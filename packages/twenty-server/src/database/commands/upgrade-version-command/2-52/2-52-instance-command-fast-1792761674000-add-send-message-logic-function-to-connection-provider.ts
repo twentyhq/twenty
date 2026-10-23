@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.51.0', 1792747505000)
+@RegisteredInstanceCommand('2.52.0', 1792761674000)
 export class AddSendMessageLogicFunctionToConnectionProviderFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
