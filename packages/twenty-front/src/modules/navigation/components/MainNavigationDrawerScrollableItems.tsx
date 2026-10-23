@@ -46,8 +46,15 @@ export const MainNavigationDrawerScrollableItems = () => {
       ) : (
         <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
           <FavoritesSectionDispatcher />
+          <NavigationMenuItemCustomSections
+            parentId={null}
+            placement="above-items"
+          />
           <WorkspaceSectionDispatcher />
-          <NavigationMenuItemCustomSections parentId={null} />
+          <NavigationMenuItemCustomSections
+            parentId={null}
+            placement="below-items"
+          />
         </Suspense>
       )}
     </StyledScrollableItemsContainer>

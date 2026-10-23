@@ -42,6 +42,10 @@ export const NavigationMenuTabContent = ({
 
   return (
     <>
+      <NavigationMenuItemCustomSections
+        parentId={tab.id}
+        placement="above-items"
+      />
       {(isLayoutCustomizationModeEnabled || items.length > 0) && (
         <WorkspaceSectionContainer
           sectionTitle={tab.name ?? ''}
@@ -53,7 +57,10 @@ export const NavigationMenuTabContent = ({
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
         />
       )}
-      <NavigationMenuItemCustomSections parentId={tab.id} />
+      <NavigationMenuItemCustomSections
+        parentId={tab.id}
+        placement="below-items"
+      />
       {!isLayoutCustomizationModeEnabled && isEmpty && hasLayoutsPermission && (
         <NavigationDrawerSection>
           <NavigationDrawerItem

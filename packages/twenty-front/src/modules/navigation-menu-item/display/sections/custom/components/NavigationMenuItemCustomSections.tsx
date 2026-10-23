@@ -1,5 +1,6 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isNavigationMenuItemAiChatSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAiChatSection';
+import { isNavigationMenuItemSectionAboveContainerItems } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSectionAboveContainerItems';
 import { NavigationMenuItemAiChatSection } from '@/navigation-menu-item/display/sections/ai-chat/components/NavigationMenuItemAiChatSection';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
 import { NavigationMenuItemCustomSection } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSection';
@@ -9,13 +10,19 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 type NavigationMenuItemCustomSectionsProps = {
   parentId: string | null;
+  placement: 'above-items' | 'below-items';
 };
 
 export const NavigationMenuItemCustomSections = ({
   parentId,
+  placement,
 }: NavigationMenuItemCustomSectionsProps) => {
   const isMobile = useIsMobile();
-  const sections = useWorkspaceNavigationMenuSections(parentId);
+  const isAboveItems = placement === 'above-items';
+  const sections = useWorkspaceNavigationMenuSections(parentId).filter(
+    (section) =>
+      isNavigationMenuItemSectionAboveContainerItems(section) === isAboveItems,
+  );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -29,7 +36,7 @@ export const NavigationMenuItemCustomSections = ({
           <NavigationMenuItemCustomSection key={section.id} section={section} />
         ),
       )}
-      {isLayoutCustomizationModeEnabled && !isMobile && (
+      {!isAboveItems && isLayoutCustomizationModeEnabled && !isMobile && (
         <NavigationMenuItemAddSectionButton parentId={parentId} />
       )}
     </>

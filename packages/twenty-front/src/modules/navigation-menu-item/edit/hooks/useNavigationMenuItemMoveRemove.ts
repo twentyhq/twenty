@@ -2,6 +2,7 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION } from '@/navigation-menu-item/common/constants/NavigationMenuContainerItemsSectionPosition';
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
@@ -9,6 +10,8 @@ import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/
 import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
+
+const CONTAINER_ITEMS_SIBLING_ID = 'container-items';
 
 export const useNavigationMenuItemMoveRemove = (
   section: NavigationMenuItemSection,
@@ -18,7 +21,9 @@ export const useNavigationMenuItemMoveRemove = (
   const items = useNavigationMenuItemEditSectionItems(section);
   const visibleItemIds = new Set(items.map((item) => item.id));
 
-  const getSortedSiblings = (navigationMenuItemId: string) => {
+  const getSortedSiblings = (
+    navigationMenuItemId: string,
+  ): Pick<NavigationMenuItem, 'id' | 'position'>[] | null => {
     const currentItem = currentItems.find(
       (item) => item.id === navigationMenuItemId,
     );
@@ -27,17 +32,29 @@ export const useNavigationMenuItemMoveRemove = (
     }
     const folderId = currentItem.folderId ?? null;
     const isTabOrSection = isNavigationMenuItemTabOrSection(currentItem);
+    const isSection = isNavigationMenuItemAnySection(currentItem);
     const isSameKind = (item: NavigationMenuItem) =>
-      isNavigationMenuItemAnySection(currentItem)
+      isSection
         ? isNavigationMenuItemAnySection(item)
         : item.type === currentItem.type;
-    return currentItems
-      .filter(
+    const siblings: Pick<NavigationMenuItem, 'id' | 'position'>[] =
+      currentItems.filter(
         (item) =>
           (item.folderId ?? null) === folderId &&
           (isTabOrSection ? isSameKind(item) : visibleItemIds.has(item.id)),
-      )
-      .sort((a, b) => a.position - b.position);
+      );
+
+    return (
+      isSection
+        ? [
+            ...siblings,
+            {
+              id: CONTAINER_ITEMS_SIBLING_ID,
+              position: NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION,
+            },
+          ]
+        : siblings
+    ).sort((a, b) => a.position - b.position);
   };
 
   const moveUp = async (navigationMenuItemId: string) => {
@@ -132,10 +149,10 @@ export const useNavigationMenuItemMoveRemove = (
         isNavigationMenuItemTabOrSection(item) ===
           isNavigationMenuItemTabOrSection(itemToMove),
     );
-    const maxPositionInTarget =
-      itemsInTargetFolder.length > 0
-        ? Math.max(...itemsInTargetFolder.map((item) => item.position))
-        : -1;
+    const maxPositionInTarget = Math.max(
+      -1,
+      ...itemsInTargetFolder.map((item) => item.position),
+    );
 
     await updateItem(navigationMenuItemId, {
       folderId: targetFolderId ?? null,
