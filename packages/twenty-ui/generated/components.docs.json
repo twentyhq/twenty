@@ -3240,6 +3240,90 @@
     ]
   },
   {
+    "name": "EmojiPicker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/emoji-picker",
+    "props": [
+      {
+        "name": "autoFocus",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Focuses the search input when the picker mounts."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Additional class name applied to the picker root div."
+      },
+      {
+        "name": "emojibaseUrl",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Base URL for caller-hosted Emojibase data. The picker loads data.json and messages.json from the selected locale directory."
+      },
+      {
+        "name": "emptyLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Caller-supplied message displayed when no emoji matches the search."
+      },
+      {
+        "name": "loadingLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Caller-supplied message displayed while emoji data loads."
+      },
+      {
+        "name": "locale",
+        "type": "string",
+        "required": false,
+        "defaultValue": "en",
+        "description": "Emoji catalogue locale. The caller must host its data and message files. Interface labels are supplied separately."
+      },
+      {
+        "name": "onEmojiSelect",
+        "type": "(emoji: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Called with the selected Unicode emoji string. The application owns the selected value, persistence, and popup visibility."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref for the picker root div."
+      },
+      {
+        "name": "searchLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name for the search input. Also supplies its placeholder unless searchPlaceholder is set."
+      },
+      {
+        "name": "searchPlaceholder",
+        "type": "string",
+        "required": false,
+        "defaultValue": "searchLabel",
+        "description": "Optional placeholder overriding the search label."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Native inline styles applied to the picker root div."
+      }
+    ]
+  },
+  {
     "name": "ReactionButton",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/reaction-button",
@@ -7887,6 +7971,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Trailing content, such as buttons, rendered after the content."
+      },
+      {
+        "name": "actionsPlacement",
+        "type": "\"auto\" | \"end\"",
+        "required": false,
+        "defaultValue": "auto",
+        "description": "Keeps actions beside the content at every width when set to `end`. The default `auto` preserves responsive wrapping. Hidden end actions do not reserve width on devices without touch."
       },
       {
         "name": "actionsVisibility",
@@ -13289,6 +13380,48 @@
     ]
   },
   {
+    "name": "LabeledSeparator",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/labeled-separator",
+    "props": [
+      {
+        "name": "children",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Text naming the separator. Supplied and localized by the caller."
+      },
+      {
+        "name": "hasStartMarker",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Show a decorative cap at the beginning of the rule."
+      },
+      {
+        "name": "labelPosition",
+        "type": "\"center\" | \"end\"",
+        "required": false,
+        "defaultValue": "center",
+        "description": "Place the label between two lines or at the end of one line."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "tone",
+        "type": "\"danger\" | \"neutral\"",
+        "required": false,
+        "defaultValue": "neutral",
+        "description": "Neutral divider or red marker with a thicker rule."
+      }
+    ]
+  },
+  {
     "name": "Section",
     "entryPoint": "twenty-ui/components/layout",
     "slug": "components/layout/section",
@@ -13793,6 +13926,104 @@
         "required": false,
         "defaultValue": null,
         "description": "Icon rendered before the content."
+      }
+    ]
+  },
+  {
+    "name": "CountPager",
+    "entryPoint": "twenty-ui/components/navigation",
+    "slug": "components/navigation/count-pager",
+    "props": [
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the root element."
+      },
+      {
+        "name": "count",
+        "type": "number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Number of items in the collection. Empty collections and invalid or noninteger counts disable navigation."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables both navigation buttons without changing the position text."
+      },
+      {
+        "name": "index",
+        "type": "number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled zero-based item index. Navigation is disabled when the index is not an integer within the collection bounds."
+      },
+      {
+        "name": "nextLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the Next button."
+      },
+      {
+        "name": "onIndexChange",
+        "type": "(index: number) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Requests the neighboring index after activating Previous or Next. Prop changes do not call this callback or select a replacement item."
+      },
+      {
+        "name": "positionPlacement",
+        "type": "\"between\" | \"start\"",
+        "required": false,
+        "defaultValue": "between",
+        "description": "Places the position text between the buttons or at the start of the row. Start placement lets the text fill the available width."
+      },
+      {
+        "name": "positionText",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Caller-formatted position text, announced politely when it changes. The caller also supplies text for empty collections."
+      },
+      {
+        "name": "previousLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the Previous button."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the root element while preserving its props and contents."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": "group",
+        "description": "Root semantics. Defaults to a group; the caller supplies its accessible name."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root element."
       }
     ]
   },
