@@ -72,7 +72,7 @@ const StyledTime = styled.div<{
   $isActionMenuOpen: boolean;
   $hasActions: boolean;
 }>`
-  display: ${({ $hasActions }) => ($hasActions ? 'none' : 'block')};
+  display: block;
   flex-shrink: 0;
   white-space: nowrap;
 
@@ -95,18 +95,15 @@ const StyledActions = styled.div`
 `;
 
 const StyledDescription = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
   line-height: calc(
     ${themeCssVariables.spacing[4]} - ${themeCssVariables.spacing[0.5]}
   );
   min-width: 0;
+  overflow: hidden;
 `;
 
-const StyledPreview = styled.div`
-  min-width: 0;
-  overflow: hidden;
+const StyledRequestActions = styled.div`
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 type AiChatThreadRowProps = {
@@ -212,18 +209,18 @@ export const AiChatThreadRow = ({
         </StyledLeading>
       }
       description={
-        <StyledDescription>
-          <StyledPreview>{subtitle}</StyledPreview>
+        <>
+          <StyledDescription>{subtitle}</StyledDescription>
           {isDefined(children) && (
-            <div
+            <StyledRequestActions
               data-select-disable
               onClick={stopPropagation}
               onContextMenu={stopPropagation}
             >
               {children}
-            </div>
+            </StyledRequestActions>
           )}
-        </StyledDescription>
+        </>
       }
       actions={
         isDefined(actions) && (

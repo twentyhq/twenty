@@ -330,6 +330,9 @@ export const CompactSnoozed: Story = {
     const subtitle = canvas.getByText(
       'Sarah: I drafted five check-in emails for the October renewals.',
     );
+    const canHoverWithoutTouch = window.matchMedia(
+      '(hover: hover) and (not (any-pointer: coarse))',
+    ).matches;
 
     await trustedUserEvent.unhover(row);
     await expect(row.getBoundingClientRect().height).toBe(65);
@@ -340,7 +343,9 @@ export const CompactSnoozed: Story = {
     const wakeButton = canvas.getByRole('button', { name: 'Wake now' });
     await waitFor(() => expect(changeButton).toBeVisible());
     await expect(wakeButton).toBeVisible();
-    await expect(activityTime).not.toBeVisible();
+    await expect(activityTime.getBoundingClientRect().width > 0).toBe(
+      !canHoverWithoutTouch,
+    );
     await expect(row.getBoundingClientRect().height).toBe(65);
     await expect(changeButton.getBoundingClientRect().height).toBe(24);
     await expect(wakeButton.getBoundingClientRect().height).toBe(24);
@@ -358,7 +363,9 @@ export const CompactSnoozed: Story = {
     await userEvent.tab();
     await expect(row).toHaveFocus();
     await waitFor(() => expect(changeButton).toBeVisible());
-    await expect(activityTime).not.toBeVisible();
+    await expect(activityTime.getBoundingClientRect().width > 0).toBe(
+      !canHoverWithoutTouch,
+    );
     await expect(row.getBoundingClientRect().height).toBe(65);
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
   },
