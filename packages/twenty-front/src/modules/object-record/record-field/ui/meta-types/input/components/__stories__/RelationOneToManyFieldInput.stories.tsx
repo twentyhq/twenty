@@ -51,6 +51,9 @@ const FIELD_INPUT_INSTANCE_ID = getRecordFieldInputInstanceId({
 });
 const PERSON_NAME = `${mockedPersonRecords[0].name.firstName} ${mockedPersonRecords[0].name.lastName}`;
 const updatePerson = fn();
+const submitFieldInput = fn<FieldInputEvent>();
+const tabFromFieldInput = fn<FieldInputEvent>();
+const shiftTabFromFieldInput = fn<FieldInputEvent>();
 
 const personMetadata = getMockObjectMetadataItemOrThrow('person');
 const companyMetadata = getMockObjectMetadataItemOrThrow('company');
@@ -64,16 +67,10 @@ const peopleFieldOnCompany = getMockFieldMetadataItemOrThrow({
 });
 
 type RelationOneToManyFieldInputWithContextProps = {
-  onSubmit: FieldInputEvent;
-  onTab: FieldInputEvent;
-  onShiftTab: FieldInputEvent;
   isInline?: boolean;
 };
 
 const RelationOneToManyFieldInputWithContext = ({
-  onSubmit,
-  onTab,
-  onShiftTab,
   isInline = false,
 }: RelationOneToManyFieldInputWithContextProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -186,15 +183,15 @@ const RelationOneToManyFieldInputWithContext = ({
           <FieldInputEventContext.Provider
             value={{
               onSubmit: (args) => {
-                onSubmit(args);
+                submitFieldInput(args);
                 handleClose();
               },
               onTab: (args) => {
-                onTab(args);
+                tabFromFieldInput(args);
                 handleClose();
               },
               onShiftTab: (args) => {
-                onShiftTab(args);
+                shiftTabFromFieldInput(args);
                 handleClose();
               },
             }}
@@ -226,9 +223,11 @@ const openRelationFieldInputStory = async (canvasElement: HTMLElement) => {
 const meta: Meta<typeof RelationOneToManyFieldInputWithContext> = {
   title: 'UI/Data/Field/Input/RelationOneToManyFieldInput',
   component: RelationOneToManyFieldInputWithContext,
-  args: { onSubmit: fn(), onTab: fn(), onShiftTab: fn() },
   beforeEach: () => {
     updatePerson.mockClear();
+    submitFieldInput.mockClear();
+    tabFromFieldInput.mockClear();
+    shiftTabFromFieldInput.mockClear();
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
 
@@ -294,7 +293,7 @@ export const Default: Story = {
 };
 
 export const ToggleThenEscape: Story = {
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     await openRelationFieldInputStory(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const popup = await body.findByRole('dialog', { name: 'People' });
@@ -312,30 +311,30 @@ export const ToggleThenEscape: Story = {
       }),
     );
     expect(popup).toBeVisible();
-    expect(args.onSubmit).not.toHaveBeenCalled();
+    expect(submitFieldInput).not.toHaveBeenCalled();
     await userEvent.keyboard('{Escape}');
     await waitFor(() => {
-      expect(args.onSubmit).toHaveBeenCalledWith({ skipPersist: true });
+      expect(submitFieldInput).toHaveBeenCalledWith({ skipPersist: true });
       expect(body.queryByRole('dialog')).not.toBeInTheDocument();
     });
   },
 };
 
 export const OutsideInput: Story = {
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     await openRelationFieldInputStory(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     await body.findByRole('dialog', { name: 'People' });
     await userEvent.click(body.getByRole('textbox', { name: 'Outside input' }));
     await waitFor(() => {
-      expect(args.onSubmit).toHaveBeenCalledWith({ skipPersist: true });
+      expect(submitFieldInput).toHaveBeenCalledWith({ skipPersist: true });
       expect(body.queryByRole('dialog')).not.toBeInTheDocument();
     });
   },
 };
 
 export const Tab: Story = {
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     await openRelationFieldInputStory(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const popup = await body.findByRole('dialog', { name: 'People' });
@@ -344,15 +343,15 @@ export const Tab: Story = {
     );
     await userEvent.tab();
     await waitFor(() => {
-      expect(args.onTab).toHaveBeenCalledWith({ skipPersist: true });
+      expect(tabFromFieldInput).toHaveBeenCalledWith({ skipPersist: true });
       expect(body.queryByRole('dialog')).not.toBeInTheDocument();
     });
-    expect(args.onSubmit).not.toHaveBeenCalled();
+    expect(submitFieldInput).not.toHaveBeenCalled();
   },
 };
 
 export const ShiftTab: Story = {
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     await openRelationFieldInputStory(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const popup = await body.findByRole('dialog', { name: 'People' });
@@ -361,10 +360,12 @@ export const ShiftTab: Story = {
     );
     await userEvent.tab({ shift: true });
     await waitFor(() => {
-      expect(args.onShiftTab).toHaveBeenCalledWith({ skipPersist: true });
+      expect(shiftTabFromFieldInput).toHaveBeenCalledWith({
+        skipPersist: true,
+      });
       expect(body.queryByRole('dialog')).not.toBeInTheDocument();
     });
-    expect(args.onSubmit).not.toHaveBeenCalled();
+    expect(submitFieldInput).not.toHaveBeenCalled();
   },
 };
 
