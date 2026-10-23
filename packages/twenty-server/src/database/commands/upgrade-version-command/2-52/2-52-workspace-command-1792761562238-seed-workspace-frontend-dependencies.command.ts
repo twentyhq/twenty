@@ -1,7 +1,6 @@
 import { Command } from 'nest-commander';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { text } from 'stream/consumers';
 import { FileFolder } from 'twenty-shared/types';
 import { ASSET_PATH } from 'src/constants/assets-path';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -17,7 +16,7 @@ import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-funct
 @Command({
   name: 'upgrade:2-52:seed-workspace-frontend-dependencies',
   description:
-    'Add locked frontend dependencies to unchanged Workspace app defaults',
+    'Replace Workspace app dependencies with frontend-ready defaults',
 })
 export class SeedWorkspaceFrontendDependenciesCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -28,104 +27,61 @@ export class SeedWorkspaceFrontendDependenciesCommand extends ProvisionedWorkspa
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.up(args);
-  }
-  async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.replaceDefaults({ ...args, direction: 'up' });
-  }
-  async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.replaceDefaults({ ...args, direction: 'down' });
-  }
-
-  private async replaceDefaults({
+  override async runOnWorkspace({
     workspaceId,
     options,
-    direction,
-  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'> & {
-    direction: 'up' | 'down';
-  }): Promise<void> {
+  }: RunOnWorkspaceArgs): Promise<void> {
+    if (options.dryRun) {
+      this.logger.log(
+        `Workspace ${workspaceId}: would replace app dependency files`,
+      );
+
+      return;
+    }
+
     const { workspaceCustomFlatApplication: application } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
-    const [before, after] = await Promise.all(
-      ['before', 'after'].map(async (state) => {
-        const directory = join(
-          ASSET_PATH,
-          'database/commands/upgrade-version-command/2-52/workspace-frontend-dependencies',
-          state,
-        );
-        const [packageJson, yarnLock] = await Promise.all(
-          ['package.snapshot.json', 'yarn.snapshot.lock'].map((name) =>
-            readFile(join(directory, name), 'utf8'),
-          ),
-        );
-        return {
-          packageJson,
-          yarnLock,
-          packageJsonChecksum: logicFunctionCreateHash(
-            JSON.stringify(JSON.parse(packageJson)),
-          ),
-          yarnLockChecksum: logicFunctionCreateHash(yarnLock),
-        };
-      }),
+    const directory = join(
+      ASSET_PATH,
+      'database/commands/upgrade-version-command/2-52/workspace-frontend-dependencies',
     );
-    const previous = direction === 'up' ? before : after;
-    const next = direction === 'up' ? after : before;
-    if (
-      application.packageJsonChecksum !== previous.packageJsonChecksum ||
-      application.yarnLockChecksum !== previous.yarnLockChecksum
-    ) {
-      return;
-    }
-    if (options.dryRun) {
-      this.logger.log(
-        `Workspace ${workspaceId}: would update unchanged app dependency defaults`,
-      );
-      return;
-    }
+    const [packageJson, yarnLock] = await Promise.all([
+      readFile(join(directory, 'package.snapshot.json'), 'utf8'),
+      readFile(join(directory, 'yarn.snapshot.lock'), 'utf8'),
+    ]);
+
     const resource = {
       workspaceId,
       applicationId: application.id,
       applicationUniversalIdentifier: application.universalIdentifier,
       fileFolder: FileFolder.Dependencies,
     };
-    for (const [resourcePath, previousContents, nextContents] of [
-      ['package.json', previous.packageJson, next.packageJson],
-      ['yarn.lock', previous.yarnLock, next.yarnLock],
-    ]) {
-      const stored = await text(
-        await this.fileStorageService.readFile({ ...resource, resourcePath }),
-      );
-      // Accept target bytes when retrying an interrupted file upload.
-      if (stored !== previousContents && stored !== nextContents) {
-        throw new Error(
-          `Workspace ${workspaceId}: app dependency files changed during upgrade`,
-        );
-      }
-    }
-    const packageFile = await this.fileStorageService.writeFile({
+    const packageJsonFile = await this.fileStorageService.writeFile({
       ...resource,
       resourcePath: 'package.json',
-      sourceFile: next.packageJson,
+      sourceFile: packageJson,
       settings: { isTemporaryFile: false, toDelete: false },
     });
-    const lockFile = await this.fileStorageService.writeFile({
+    const yarnLockFile = await this.fileStorageService.writeFile({
       ...resource,
       resourcePath: 'yarn.lock',
-      sourceFile: next.yarnLock,
+      sourceFile: yarnLock,
       settings: { isTemporaryFile: false, toDelete: false },
     });
+
     await this.applicationService.update(application.id, {
       workspaceId,
-      packageJsonFileId: packageFile.id,
-      yarnLockFileId: lockFile.id,
-      packageJsonChecksum: next.packageJsonChecksum,
-      yarnLockChecksum: next.yarnLockChecksum,
+      packageJsonFileId: packageJsonFile.id,
+      yarnLockFileId: yarnLockFile.id,
+      packageJsonChecksum: logicFunctionCreateHash(
+        JSON.stringify(JSON.parse(packageJson)),
+      ),
+      yarnLockChecksum: logicFunctionCreateHash(yarnLock),
       availablePackages: parseAvailablePackagesFromPackageJsonAndYarnLock(
-        next.packageJson,
-        next.yarnLock,
+        packageJson,
+        yarnLock,
       ),
     });
   }
