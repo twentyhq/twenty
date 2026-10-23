@@ -87,6 +87,7 @@ export class ListNavigationMenuItemsTool extends BaseTool<
             targetRecordId: item.targetRecordId,
             viewId: item.viewId,
             pageLayoutId: item.pageLayoutId,
+            agentChatChannelId: item.agentChatChannelId,
           })),
           count: items.length,
         },
