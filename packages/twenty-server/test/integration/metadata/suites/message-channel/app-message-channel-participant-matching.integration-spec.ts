@@ -544,6 +544,48 @@ describe('app message channel participant matching (e2e)', () => {
     });
   });
 
+  it('stores one participant when a message lists two spellings of the same handle', async () => {
+    const response = await asApplication({
+      query: INGEST_MESSAGES_MUTATION,
+      variables: {
+        input: {
+          messageChannelId,
+          messages: [
+            {
+              externalId: 'two-spellings',
+              threadExternalId: 'thread-two-spellings',
+              text: 'Hello',
+              receivedAt: '2026-10-20T10:00:00.000Z',
+              participants: [
+                {
+                  role: MessageParticipantRole.FROM,
+                  handle: '+33 6 44 44 44 44',
+                },
+                { role: MessageParticipantRole.FROM, handle: '+33644444444' },
+                {
+                  role: MessageParticipantRole.TO,
+                  handle: '+33 6 00 00 00 00',
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
+
+    const [{ messageId }] = response.body.data.ingestAppMessages.messages;
+    const senders = await globalThis.testDataSource.query(
+      `SELECT handle FROM "${WORKSPACE_SCHEMA}"."messageParticipant"
+        WHERE "messageId" = $1 AND role = $2`,
+      [messageId, MessageParticipantRole.FROM],
+    );
+
+    expect(senders).toEqual([{ handle: '+33644444444' }]);
+  });
+
   it('rejects a handle that has no phone digits', async () => {
     const response = await ingestFrom({
       externalId: 'from-nobody',

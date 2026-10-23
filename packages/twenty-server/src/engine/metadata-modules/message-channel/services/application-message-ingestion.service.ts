@@ -224,23 +224,42 @@ export class ApplicationMessageIngestionService {
     message: AppMessageInput;
     personHandleField: Pick<PersonHandleField, 'type'>;
   }): AppMessageInput {
+    // spellings of one handle collapse to the same canonical form, which must stay one participant per role
+    const participantsByRoleAndHandle = new Map<
+      string,
+      AppMessageInput['participants'][number]
+    >();
+
+    for (const participant of message.participants) {
+      const handle = canonicalizePersonHandle({
+        type: personHandleField.type,
+        value: participant.handle,
+      });
+
+      if (!isDefined(handle)) {
+        throw new MessageChannelException(
+          `Participant handle ${participant.handle} on message ${message.externalId} is not a valid ${personHandleField.type} value`,
+          MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+        );
+      }
+
+      const key = `${participant.role}:${handle}`;
+      const earlierParticipant = participantsByRoleAndHandle.get(key);
+
+      participantsByRoleAndHandle.set(key, {
+        role: participant.role,
+        handle,
+        displayName: earlierParticipant?.displayName ?? participant.displayName,
+        personId: earlierParticipant?.personId ?? participant.personId,
+        workspaceMemberId:
+          earlierParticipant?.workspaceMemberId ??
+          participant.workspaceMemberId,
+      });
+    }
+
     return {
       ...message,
-      participants: message.participants.map((participant) => {
-        const handle = canonicalizePersonHandle({
-          type: personHandleField.type,
-          value: participant.handle,
-        });
-
-        if (!isDefined(handle)) {
-          throw new MessageChannelException(
-            `Participant handle ${participant.handle} on message ${message.externalId} is not a valid ${personHandleField.type} value`,
-            MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
-          );
-        }
-
-        return { ...participant, handle };
-      }),
+      participants: [...participantsByRoleAndHandle.values()],
     };
   }
 
