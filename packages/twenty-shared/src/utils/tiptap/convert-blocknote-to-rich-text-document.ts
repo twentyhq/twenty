@@ -379,7 +379,13 @@ const convertBlockContent = (block: BlockNoteObject): TipTapNode[] => {
   }
 };
 
-const indentNode = (node: TipTapNode, indent: number): TipTapNode =>
+const indentNode = ({
+  node,
+  indent,
+}: {
+  node: TipTapNode;
+  indent: number;
+}): TipTapNode =>
   indent > 0 && RICH_TEXT_INDENTABLE_NODE_TYPES.includes(node.type)
     ? {
         ...node,
@@ -405,13 +411,16 @@ const getToggleSummaryNode = (
   }
 };
 
-const createToggleNode = (
-  block: BlockNoteObject,
-  summaryNode: TipTapNode,
-): TipTapNode => ({
+const createToggleNode = ({
+  block,
+  summaryNode,
+}: {
+  block: BlockNoteObject;
+  summaryNode: TipTapNode;
+}): TipTapNode => ({
   type: TIPTAP_NODE_TYPES.TOGGLE,
   attrs: { id: isNonEmptyString(block.id) ? block.id : null },
-  content: [summaryNode, ...convertBlocks(block.children)],
+  content: [summaryNode, ...convertBlocks({ blocks: block.children })],
 });
 
 const getListNodeType = (blockType: unknown): ListNodeType | undefined => {
@@ -452,7 +461,7 @@ const createListItemNode = ({
 }): TipTapNode => {
   const content = [
     createParagraphNode(block),
-    ...convertBlocks(block.children),
+    ...convertBlocks({ blocks: block.children }),
   ];
 
   return listNodeType === TIPTAP_NODE_TYPES.TASK_LIST
@@ -464,7 +473,13 @@ const createListItemNode = ({
     : { type: TIPTAP_NODE_TYPES.LIST_ITEM, content };
 };
 
-const convertBlocks = (blocks: unknown, indent = 0): TipTapNode[] => {
+const convertBlocks = ({
+  blocks,
+  indent = 0,
+}: {
+  blocks: unknown;
+  indent?: number;
+}): TipTapNode[] => {
   const nodes: TipTapNode[] = [];
   let currentListNode: TipTapNode | undefined;
 
@@ -478,14 +493,19 @@ const convertBlocks = (blocks: unknown, indent = 0): TipTapNode[] => {
 
       if (isDefined(toggleSummaryNode)) {
         nodes.push(
-          indentNode(createToggleNode(block, toggleSummaryNode), indent),
+          indentNode({
+            node: createToggleNode({ block, summaryNode: toggleSummaryNode }),
+            indent,
+          }),
         );
         continue;
       }
 
       nodes.push(
-        ...convertBlockContent(block).map((node) => indentNode(node, indent)),
-        ...convertBlocks(block.children, indent + 1),
+        ...convertBlockContent(block).map((node) =>
+          indentNode({ node, indent }),
+        ),
+        ...convertBlocks({ blocks: block.children, indent: indent + 1 }),
       );
       continue;
     }
@@ -495,10 +515,10 @@ const convertBlocks = (blocks: unknown, indent = 0): TipTapNode[] => {
       listNodeType === TIPTAP_NODE_TYPES.ORDERED_LIST && isNumber(props.start);
 
     if (currentListNode?.type !== listNodeType || restartsNumbering) {
-      currentListNode = indentNode(
-        createListNode({ listNodeType, firstItemProps: props }),
+      currentListNode = indentNode({
+        node: createListNode({ listNodeType, firstItemProps: props }),
         indent,
-      );
+      });
       nodes.push(currentListNode);
     }
 
@@ -517,7 +537,7 @@ export const convertBlockNoteToRichTextDocument = (
     return undefined;
   }
 
-  const content = convertBlocks(blocks);
+  const content = convertBlocks({ blocks });
 
   return {
     type: TIPTAP_NODE_TYPES.DOCUMENT,

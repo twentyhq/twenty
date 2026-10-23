@@ -46,12 +46,24 @@ const getToggleContext = (editor: Editor) => {
   };
 };
 
-const withIndent = (node: ProseMirrorNode, indent: number) =>
+const withIndent = ({
+  node,
+  indent,
+}: {
+  node: ProseMirrorNode;
+  indent: number;
+}) =>
   RICH_TEXT_INDENTABLE_NODE_TYPES.includes(node.type.name)
     ? node.type.create({ ...node.attrs, indent }, node.content, node.marks)
     : node;
 
-const isToggleOpen = (editor: Editor, togglePosition: number) => {
+const isToggleOpen = ({
+  editor,
+  togglePosition,
+}: {
+  editor: Editor;
+  togglePosition: number;
+}) => {
   const toggleElement = editor.view.nodeDOM(togglePosition);
 
   return (
@@ -60,14 +72,17 @@ const isToggleOpen = (editor: Editor, togglePosition: number) => {
   );
 };
 
-const splitSummary = (
-  editor: Editor,
-  {
-    $from,
-    toggle,
-    togglePosition,
-  }: { $from: ResolvedPos; toggle: ProseMirrorNode; togglePosition: number },
-) => {
+const splitSummary = ({
+  editor,
+  $from,
+  toggle,
+  togglePosition,
+}: {
+  editor: Editor;
+  $from: ResolvedPos;
+  toggle: ProseMirrorNode;
+  togglePosition: number;
+}) => {
   const { schema } = editor.state;
   const paragraph = schema.nodes[TIPTAP_NODE_TYPES.PARAGRAPH].create(
     { indent: toggle.attrs.indent },
@@ -80,17 +95,19 @@ const splitSummary = (
           { indent: toggle.attrs.indent },
           paragraph.type.create(null, paragraph.content),
         );
-  const tr = editor.state.tr.delete($from.pos, $from.end());
-  const insertPosition = tr.mapping.map(togglePosition + toggle.nodeSize);
+  const transaction = editor.state.tr.delete($from.pos, $from.end());
+  const insertPosition = transaction.mapping.map(
+    togglePosition + toggle.nodeSize,
+  );
 
-  tr.insert(insertPosition, sibling);
-  tr.setSelection(
+  transaction.insert(insertPosition, sibling);
+  transaction.setSelection(
     TextSelection.create(
-      tr.doc,
+      transaction.doc,
       insertPosition + (sibling.type === toggle.type ? 2 : 1),
     ),
   );
-  editor.view.dispatch(tr.scrollIntoView());
+  editor.view.dispatch(transaction.scrollIntoView());
 
   return true;
 };
@@ -115,23 +132,27 @@ const handleEnter = (editor: Editor) => {
       return false;
     }
 
-    const tr = editor.state.tr.delete($from.before(), $from.after());
-    const insertPosition = tr.mapping.map(togglePosition + toggle.nodeSize);
+    const transaction = editor.state.tr.delete($from.before(), $from.after());
+    const insertPosition = transaction.mapping.map(
+      togglePosition + toggle.nodeSize,
+    );
 
-    tr.insert(
+    transaction.insert(
       insertPosition,
       schema.nodes[TIPTAP_NODE_TYPES.PARAGRAPH].create({
         indent: toggle.attrs.indent,
       }),
     );
-    tr.setSelection(TextSelection.create(tr.doc, insertPosition + 1));
-    editor.view.dispatch(tr.scrollIntoView());
+    transaction.setSelection(
+      TextSelection.create(transaction.doc, insertPosition + 1),
+    );
+    editor.view.dispatch(transaction.scrollIntoView());
 
     return true;
   }
 
   if ($from.parent.content.size === 0 && toggle.childCount === 1) {
-    const tr = editor.state.tr.replaceWith(
+    const transaction = editor.state.tr.replaceWith(
       togglePosition,
       togglePosition + toggle.nodeSize,
       schema.nodes[TIPTAP_NODE_TYPES.PARAGRAPH].create({
@@ -139,8 +160,10 @@ const handleEnter = (editor: Editor) => {
       }),
     );
 
-    tr.setSelection(TextSelection.create(tr.doc, togglePosition + 1));
-    editor.view.dispatch(tr);
+    transaction.setSelection(
+      TextSelection.create(transaction.doc, togglePosition + 1),
+    );
+    editor.view.dispatch(transaction);
 
     return true;
   }
@@ -150,21 +173,23 @@ const handleEnter = (editor: Editor) => {
   if (
     isCursorAtSummaryEnd &&
     toggle.childCount > 1 &&
-    isToggleOpen(editor, togglePosition)
+    isToggleOpen({ editor, togglePosition })
   ) {
     const insertPosition = $from.after();
-    const tr = editor.state.tr.insert(
+    const transaction = editor.state.tr.insert(
       insertPosition,
       schema.nodes[TIPTAP_NODE_TYPES.PARAGRAPH].create(),
     );
 
-    tr.setSelection(TextSelection.create(tr.doc, insertPosition + 1));
-    editor.view.dispatch(tr.scrollIntoView());
+    transaction.setSelection(
+      TextSelection.create(transaction.doc, insertPosition + 1),
+    );
+    editor.view.dispatch(transaction.scrollIntoView());
 
     return true;
   }
 
-  return splitSummary(editor, context);
+  return splitSummary({ editor, $from, toggle, togglePosition });
 };
 
 const handleBackspace = (editor: Editor) => {
@@ -183,17 +208,24 @@ const handleBackspace = (editor: Editor) => {
   const unwrappedNodes: ProseMirrorNode[] = [];
 
   toggle.forEach((child, _offset, index) =>
-    unwrappedNodes.push(withIndent(child, index === 0 ? indent : indent + 1)),
+    unwrappedNodes.push(
+      withIndent({
+        node: child,
+        indent: index === 0 ? indent : indent + 1,
+      }),
+    ),
   );
 
-  const tr = editor.state.tr.replaceWith(
+  const transaction = editor.state.tr.replaceWith(
     togglePosition,
     togglePosition + toggle.nodeSize,
     Fragment.from(unwrappedNodes),
   );
 
-  tr.setSelection(TextSelection.create(tr.doc, togglePosition + 1));
-  editor.view.dispatch(tr);
+  transaction.setSelection(
+    TextSelection.create(transaction.doc, togglePosition + 1),
+  );
+  editor.view.dispatch(transaction);
 
   return true;
 };
@@ -226,11 +258,11 @@ export const ToggleNode = Node.create({
   addCommands: () => ({
     setToggle:
       ({ level } = {}) =>
-      ({ state, tr, dispatch }) => {
+      ({ state, tr: transaction, dispatch }) => {
         const { $from } = state.selection;
         const textBlock = $from.parent;
 
-        if (!textBlock.isTextblock || textBlock.type.spec.code === true) {
+        if (!textBlock.isTextblock || textBlock.type.spec.code) {
           return false;
         }
 
@@ -261,10 +293,10 @@ export const ToggleNode = Node.create({
         if (isDefined(dispatch)) {
           const blockPosition = $from.before();
 
-          tr.replaceWith(blockPosition, $from.after(), toggle);
-          tr.setSelection(
+          transaction.replaceWith(blockPosition, $from.after(), toggle);
+          transaction.setSelection(
             TextSelection.create(
-              tr.doc,
+              transaction.doc,
               blockPosition + 2 + $from.parentOffset,
             ),
           );
@@ -285,13 +317,17 @@ export const ToggleNode = Node.create({
     return [
       new Plugin({
         key: new PluginKey('toggleIds'),
-        appendTransaction: (transactions, _oldState, newState) => {
-          if (!transactions.some((transaction) => transaction.docChanged)) {
+        appendTransaction: (appliedTransactions, _oldState, newState) => {
+          if (
+            !appliedTransactions.some(
+              (appliedTransaction) => appliedTransaction.docChanged,
+            )
+          ) {
             return null;
           }
 
           const seenIds = new Set<string>();
-          const tr = newState.tr;
+          const transaction = newState.tr;
 
           newState.doc.descendants((node, position) => {
             if (node.type.name !== TIPTAP_NODE_TYPES.TOGGLE) {
@@ -307,10 +343,12 @@ export const ToggleNode = Node.create({
               return;
             }
 
-            tr.setNodeAttribute(position, 'id', v4());
+            transaction.setNodeAttribute(position, 'id', v4());
           });
 
-          return tr.docChanged ? tr.setMeta('addToHistory', false) : null;
+          return transaction.docChanged
+            ? transaction.setMeta('addToHistory', false)
+            : null;
         },
       }),
     ];

@@ -46,7 +46,7 @@ const findIndentedBlockDepth = ($from: ResolvedPos): number | undefined => {
   return undefined;
 };
 
-const changeIndent = (editor: Editor, delta: number) => {
+const changeIndent = ({ editor, delta }: { editor: Editor; delta: number }) => {
   const { $from } = editor.state.selection;
   const depth = findIndentedBlockDepth($from);
 
@@ -95,8 +95,8 @@ export const Indent = Extension.create({
 
   addKeyboardShortcuts() {
     return {
-      Tab: () => changeIndent(this.editor, 1),
-      'Shift-Tab': () => changeIndent(this.editor, -1),
+      Tab: () => changeIndent({ editor: this.editor, delta: 1 }),
+      'Shift-Tab': () => changeIndent({ editor: this.editor, delta: -1 }),
       Backspace: () => {
         const { $from, empty } = this.editor.state.selection;
 
@@ -105,7 +105,7 @@ export const Indent = Extension.create({
           $from.parentOffset === 0 &&
           $from.parent.attrs.indent > 0 &&
           findIndentedBlockDepth($from) === $from.depth &&
-          changeIndent(this.editor, -1)
+          changeIndent({ editor: this.editor, delta: -1 })
         );
       },
     };

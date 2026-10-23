@@ -25,6 +25,8 @@ export type TurnIntoBlockOptions = {
   icon: IconComponent;
 };
 
+const HEADING_LEVELS: Level[] = [1, 2, 3, 4, 5, 6];
+
 const HEADING_ICONS: Record<number, IconComponent> = {
   1: IconH1,
   2: IconH2,
@@ -52,6 +54,11 @@ export const useTurnIntoBlockOptions = (editor: Editor) => {
     const liftOutOfBlockquote = (chain: ChainedCommands) =>
       isInBlockquote ? chain.lift(TIPTAP_NODE_TYPES.BLOCKQUOTE) : chain;
 
+    const configuredHeadingLevels: number[] =
+      currentEditor.extensionManager.extensions.find(
+        ({ name }) => name === TIPTAP_NODE_TYPES.HEADING,
+      )?.options.levels ?? [];
+
     return [
       {
         id: 'paragraph',
@@ -71,10 +78,8 @@ export const useTurnIntoBlockOptions = (editor: Editor) => {
           return currentEditor.isActive('paragraph') && !isInBlockquote;
         },
       },
-      ...(
-        (currentEditor.extensionManager.extensions.find(
-          ({ name }) => name === TIPTAP_NODE_TYPES.HEADING,
-        )?.options.levels ?? []) as Level[]
+      ...HEADING_LEVELS.filter((level) =>
+        configuredHeadingLevels.includes(level),
       ).map((level) => ({
         id: `heading${level}`,
         title: headingTitles[level],

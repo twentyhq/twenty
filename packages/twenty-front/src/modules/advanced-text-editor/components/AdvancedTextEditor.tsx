@@ -150,9 +150,9 @@ const StyledEditorContainer = styled.div<{
       padding: 0;
 
       &::before {
-        border-bottom: 4px solid transparent;
-        border-left: 6px solid currentColor;
-        border-top: 4px solid transparent;
+        border-bottom: ${themeCssVariables.spacing[1]} solid transparent;
+        border-left: ${themeCssVariables.spacing['1.5']} solid currentColor;
+        border-top: ${themeCssVariables.spacing[1]} solid transparent;
         content: '';
         display: inline-block;
         transition: transform
