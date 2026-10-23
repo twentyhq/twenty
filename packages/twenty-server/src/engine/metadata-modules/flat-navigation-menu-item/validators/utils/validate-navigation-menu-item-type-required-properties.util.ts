@@ -53,6 +53,7 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
     targetObjectMetadataUniversalIdentifier,
     viewUniversalIdentifier,
     pageLayoutUniversalIdentifier,
+    agentChatChannelUniversalIdentifier,
   } = flatNavigationMenuItem;
 
   if (!isDefined(type)) {
@@ -118,6 +119,13 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
         value: pageLayoutUniversalIdentifier,
         message: t`A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type`,
         userFriendlyMessage: msg`A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type`,
+      });
+    }
+    case NavigationMenuItemType.AGENT_CHAT_CHANNEL: {
+      return validateUuidProperty({
+        value: agentChatChannelUniversalIdentifier,
+        message: t`A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type`,
+        userFriendlyMessage: msg`A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type`,
       });
     }
     default: {

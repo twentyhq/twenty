@@ -19,6 +19,10 @@
     color: var(--t-font-color-secondary);
   }
 
+  &[data-focus-ring='false'] {
+    --tw-input-group-border-color: var(--t-border-color-medium);
+  }
+
   &:has([aria-invalid='true'], [data-invalid]) {
     --tw-input-group-border-color: var(--t-border-color-danger);
   }

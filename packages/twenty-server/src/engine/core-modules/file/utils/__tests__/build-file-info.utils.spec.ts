@@ -1,6 +1,6 @@
 import { v4 as uuidV4 } from 'uuid';
 
-import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.util';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(),

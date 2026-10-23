@@ -9,16 +9,9 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   userId: string;
   userWorkspaceId: string;
   scope: ConnectedAccountScope;
-  // Read by previous-release servers that complete the callback mid rollout
-  visibility: 'user' | 'workspace';
   // If set, the callback updates this existing connectedAccount row instead
   // of creating a new one (used by the UI's "Reconnect" action).
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
   codeVerifier: string | null;
 };
-
-export type LegacyAppOAuthStateJwtPayload = Omit<
-  AppOAuthStateJwtPayload,
-  'scope'
->;

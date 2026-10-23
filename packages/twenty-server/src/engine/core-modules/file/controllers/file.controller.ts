@@ -34,7 +34,7 @@ import {
 } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 import { PUBLIC_ASSET_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
+import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.util';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';

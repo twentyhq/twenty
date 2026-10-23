@@ -26,7 +26,7 @@
   },
   "license": "AGPL-3.0",
   "name": "twenty-monorepo",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.1",
   "resolutions": {
     "zapier-platform-core/form-data": "4.0.6",
     "@remote-dom/react/@types/react": "^19.2.0",
