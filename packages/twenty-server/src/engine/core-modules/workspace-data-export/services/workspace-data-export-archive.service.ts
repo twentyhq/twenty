@@ -33,7 +33,6 @@ export class WorkspaceDataExportArchiveService {
     onPartAdded: () => Promise<void>;
   }): Promise<number> {
     const archive = archiver('zip', { zlib: { level: 1 } });
-    // archiver emits a readable-stream v4 stream, which the S3 multipart upload rejects as not a Node Readable.
     const archiveBody = new PassThrough();
 
     archive.once('error', (error) => archiveBody.destroy(error));
