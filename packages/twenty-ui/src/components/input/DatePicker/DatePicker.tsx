@@ -158,6 +158,32 @@ export const DatePicker = ({
     },
   };
 
+  const renderCalendar = () => {
+    if (isDefined(highlightedRange)) {
+      return (
+        <ReactDatePickerLibrary
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          {...calendarProps}
+          selectsRange
+          startDate={parseDatePickerLocalDateOrThrow(highlightedRange.start)}
+          endDate={parseDatePickerLocalDateOrThrow(highlightedRange.end)}
+          onChange={() => undefined}
+        />
+      );
+    }
+
+    return (
+      <ReactDatePickerLibrary
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...calendarProps}
+        selected={
+          isDefined(value) ? parseDatePickerLocalDateOrThrow(value) : null
+        }
+        onChange={handleDateChange}
+      />
+    );
+  };
+
   return useRender({
     render,
     ref,
@@ -183,27 +209,7 @@ export const DatePicker = ({
             engineViewedMonthRef={engineViewedMonthRef}
             viewedMonth={viewedMonth}
           />
-          {isDefined(highlightedRange) ? (
-            <ReactDatePickerLibrary
-              // oxlint-disable-next-line react/jsx-props-no-spreading
-              {...calendarProps}
-              selectsRange
-              startDate={parseDatePickerLocalDateOrThrow(
-                highlightedRange.start,
-              )}
-              endDate={parseDatePickerLocalDateOrThrow(highlightedRange.end)}
-              onChange={() => undefined}
-            />
-          ) : (
-            <ReactDatePickerLibrary
-              // oxlint-disable-next-line react/jsx-props-no-spreading
-              {...calendarProps}
-              selected={
-                isDefined(value) ? parseDatePickerLocalDateOrThrow(value) : null
-              }
-              onChange={handleDateChange}
-            />
-          )}
+          {renderCalendar()}
         </Suspense>
       ),
     },
