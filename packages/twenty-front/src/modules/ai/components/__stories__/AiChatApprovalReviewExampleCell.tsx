@@ -31,7 +31,7 @@ export const AiChatApprovalReviewExampleCell = ({
 }: AiChatApprovalReviewExampleCellProps) => {
   const isEditable = operation !== 'delete';
   const isRecordChip = column?.id === 'name' || column?.id === 'company';
-  const isCompanyAvatar = column?.id === 'company' || operation === 'update';
+  const isAvatarSquare = column?.id === 'company' || operation === 'update';
 
   const renderValue = () => {
     if (!isEditable) {
@@ -73,7 +73,7 @@ export const AiChatApprovalReviewExampleCell = ({
         <Avatar
           name={value}
           size="xs"
-          shape={isCompanyAvatar ? 'square' : 'circle'}
+          shape={isAvatarSquare ? 'square' : 'circle'}
         />
       }
     >
