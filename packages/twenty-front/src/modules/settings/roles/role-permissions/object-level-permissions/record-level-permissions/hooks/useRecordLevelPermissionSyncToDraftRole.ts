@@ -19,6 +19,7 @@ type UseRecordLevelPermissionSyncToDraftRoleProps = {
   currentRecordFilters: RecordFilter[];
   currentRecordFilterGroups: RecordFilterGroup[];
   hasInitialized: boolean;
+  readonly: boolean;
 };
 
 export const useRecordLevelPermissionSyncToDraftRole = ({
@@ -27,6 +28,7 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
   currentRecordFilters,
   currentRecordFilterGroups,
   hasInitialized,
+  readonly,
 }: UseRecordLevelPermissionSyncToDraftRoleProps) => {
   const setSettingsDraftRole = useSetAtomFamilyState(
     settingsDraftRoleFamilyState,
@@ -94,10 +96,10 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
   ]);
 
   useEffect(() => {
-    if (hasInitialized) {
+    if (hasInitialized && !readonly) {
       syncToDraftRole();
     }
-  }, [syncToDraftRole, hasInitialized]);
+  }, [syncToDraftRole, hasInitialized, readonly]);
 
   return { syncToDraftRole };
 };

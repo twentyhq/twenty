@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -38,6 +38,7 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { validateRowLevelPermissionRuleOwnershipOrThrow } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/validate-row-level-permission-rule-ownership.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -55,13 +56,6 @@ export class RowLevelPermissionPredicateService {
   async findByWorkspaceId(
     workspaceId: string,
   ): Promise<RowLevelPermissionPredicateDTO[]> {
-    const hasRowLevelPermissionFeature =
-      await this.hasRowLevelPermissionFeature(workspaceId);
-
-    if (!hasRowLevelPermissionFeature) {
-      return [];
-    }
-
     const { flatRowLevelPermissionPredicateMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -86,14 +80,20 @@ export class RowLevelPermissionPredicateService {
   async upsertRowLevelPermissionPredicates({
     input,
     workspaceId,
+    userWorkspaceId,
   }: {
     input: UpsertRowLevelPermissionPredicatesInput;
     workspaceId: string;
+    userWorkspaceId?: string;
   }): Promise<{
     predicates: RowLevelPermissionPredicateDTO[];
     predicateGroups: RowLevelPermissionPredicateGroupDTO[];
   }> {
-    await this.hasRowLevelPermissionFeatureOrThrow(workspaceId);
+    await this.validateUpsertAllowedOrThrow({
+      input,
+      workspaceId,
+      userWorkspaceId,
+    });
 
     const { roleId, objectMetadataId, predicates, predicateGroups } = input;
 
@@ -499,15 +499,70 @@ export class RowLevelPermissionPredicateService {
     return hasValidEnterprisePlan && isRowLevelPermissionEnabled;
   }
 
-  private async hasRowLevelPermissionFeatureOrThrow(workspaceId: string) {
+  private async validateUpsertAllowedOrThrow({
+    input,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    input: UpsertRowLevelPermissionPredicatesInput;
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<void> {
     const hasRowLevelPermissionFeature =
       await this.hasRowLevelPermissionFeature(workspaceId);
 
-    if (!hasRowLevelPermissionFeature) {
+    if (hasRowLevelPermissionFeature) {
+      return;
+    }
+
+    if (
+      isNonEmptyArray(input.predicates) ||
+      isNonEmptyArray(input.predicateGroups)
+    ) {
       throw new RowLevelPermissionPredicateException(
         'Row level permission predicate feature is disabled',
         RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
       );
     }
+
+    const isAdmin =
+      isDefined(userWorkspaceId) &&
+      (await this.isAdminUserWorkspace({ workspaceId, userWorkspaceId }));
+
+    if (!isAdmin) {
+      throw new RowLevelPermissionPredicateException(
+        'Removing row level permission rules without the feature requires the Admin role',
+        RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN,
+      );
+    }
+  }
+
+  private async isAdminUserWorkspace({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<boolean> {
+    const { userWorkspaceRoleMap, flatRoleMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'flatRoleMaps',
+      ]);
+
+    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+
+    if (!isDefined(roleId)) {
+      return false;
+    }
+
+    const flatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: roleId,
+      flatEntityMaps: flatRoleMaps,
+    });
+
+    return (
+      flatRole?.universalIdentifier === STANDARD_ROLE.admin.universalIdentifier
+    );
   }
 }

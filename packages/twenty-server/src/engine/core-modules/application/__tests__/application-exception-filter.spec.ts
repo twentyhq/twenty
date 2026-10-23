@@ -90,4 +90,18 @@ describe('ApplicationExceptionFilter response error format', () => {
       },
     }).toMatchSnapshot();
   });
+
+  it('should surface a row level permission refusal as BAD_USER_INPUT', () => {
+    const graphqlError = catchAsGraphQLError(
+      new ApplicationException(
+        'Application "Test Application" cannot create or change row level permission rules: the row level permission feature is disabled',
+        ApplicationExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
+      ),
+    );
+
+    expect(graphqlError.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
+    expect(graphqlError.extensions.subCode).toBe(
+      ApplicationExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
+    );
+  });
 });

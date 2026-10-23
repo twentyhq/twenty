@@ -1,7 +1,9 @@
+import { useIsCurrentWorkspaceMemberAdmin } from '@/settings/roles/hooks/useIsCurrentWorkspaceMemberAdmin';
 import { SettingsRolePermissionsObjectLevelTableHeader } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader';
 import { SettingsRolePermissionsObjectLevelTableRow } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRow';
 import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
+import { useHasRecordLevelPermissionEntitlement } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useHasRecordLevelPermissionEntitlement';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -39,6 +41,14 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     settingsDraftRoleFamilyState,
     roleId,
   );
+
+  const hasRecordLevelPermissionEntitlement =
+    useHasRecordLevelPermissionEntitlement();
+
+  const isCurrentWorkspaceMemberAdmin = useIsCurrentWorkspaceMemberAdmin();
+
+  const canRemoveRecordLevelPermissionRules =
+    hasRecordLevelPermissionEntitlement || isCurrentWorkspaceMemberAdmin;
 
   const { objectMetadataItemsThatCanHavePermission } =
     useObjectMetadataItemsThatCanHavePermission();
@@ -85,6 +95,9 @@ export const SettingsRolePermissionsObjectLevelSection = ({
                   roleId={roleId}
                   fromAgentId={fromAgentId}
                   isEditable={isEditable}
+                  canRemoveRecordLevelPermissionRules={
+                    canRemoveRecordLevelPermissionRules
+                  }
                 />
               ),
             )

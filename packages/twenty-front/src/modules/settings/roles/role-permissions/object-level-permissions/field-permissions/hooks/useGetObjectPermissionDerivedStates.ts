@@ -199,6 +199,7 @@ export const useGetObjectPermissionDerivedStates = ({
       objectHasNoOverrideButRowLevelPermissionShouldBeTakenIntoAccount,
       objectPermissionHasOnlyNullPermissions,
       objectHasOverrideOnObjectPermissions,
+      isThereAnyRowLevelPermissionPredicateForThisObject,
     };
   };
 

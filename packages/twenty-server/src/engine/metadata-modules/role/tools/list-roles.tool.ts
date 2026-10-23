@@ -16,7 +16,7 @@ const listRolesInputSchema = z.object({
     .boolean()
     .optional()
     .describe(
-      "When true, include each role's row-level permission predicates and predicate groups (enterprise feature; empty when disabled).",
+      "When true, include each role's row-level permission predicates and predicate groups (enterprise feature; rules kept after a downgrade are still returned and enforced).",
     ),
 });
 

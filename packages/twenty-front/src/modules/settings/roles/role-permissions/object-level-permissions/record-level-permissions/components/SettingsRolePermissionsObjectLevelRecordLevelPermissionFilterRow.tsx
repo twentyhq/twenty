@@ -1,9 +1,11 @@
 /* @license Enterprise */
 
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
 import { AdvancedFilterSidePanelRecordFilterOperandSelect } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelRecordFilterOperandSelect';
 import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterOptionsDropdown';
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
@@ -36,6 +38,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow =
     index,
     recordFilterGroup,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRowProps) => {
+    const { readonly } = useContext(AdvancedFilterContext);
+
     return (
       <ObjectFilterDropdownComponentInstanceContext.Provider
         value={{
@@ -60,9 +64,11 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow =
           <SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput
             recordFilterId={recordFilter.id}
           />
-          <AdvancedFilterRecordFilterOptionsDropdown
-            recordFilterId={recordFilter.id}
-          />
+          {!readonly && (
+            <AdvancedFilterRecordFilterOptionsDropdown
+              recordFilterId={recordFilter.id}
+            />
+          )}
         </StyledFilterRow>
       </ObjectFilterDropdownComponentInstanceContext.Provider>
     );

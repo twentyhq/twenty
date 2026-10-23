@@ -2,11 +2,14 @@
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
 import { AdvancedFilterFieldSelectDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButtonClickableSelect';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
+import { AdvancedFilterSidePanelFieldSelectDisabled } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelFieldSelectDisabled';
+import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectDropdownContent } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectDropdownContent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -25,8 +28,20 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect 
   ({
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectProps) => {
+    const { readonly } = useContext(AdvancedFilterContext);
+
     const { advancedFilterFieldSelectDropdownId } =
       useAdvancedFilterFieldSelectDropdown(recordFilterId);
+
+    if (readonly === true) {
+      return (
+        <StyledContainer>
+          <AdvancedFilterSidePanelFieldSelectDisabled
+            recordFilterId={recordFilterId}
+          />
+        </StyledContainer>
+      );
+    }
 
     return (
       <StyledContainer>

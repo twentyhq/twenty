@@ -1,20 +1,20 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { mapRLSOperandToRecordFilterOperand } from '@/object-record/record-filter/utils/mapRLSOperandToRecordFilterOperand';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTable } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable';
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel';
 import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
+import { useHasRecordLevelPermissionEntitlement } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useHasRecordLevelPermissionEntitlement';
+import { useIsCurrentWorkspaceMemberAdmin } from '@/settings/roles/hooks/useIsCurrentWorkspaceMemberAdmin';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -23,11 +23,7 @@ import {
 } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useQuery } from '@apollo/client/react';
-import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
-import {
-  BillingEntitlementKey,
-  FindOneAgentDocument,
-} from '~/generated-metadata/graphql';
+import { FindOneAgentDocument } from '~/generated-metadata/graphql';
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
   roleId: string;
@@ -41,8 +37,6 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const fromAgentId = searchParams.get('fromAgent');
-
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
@@ -59,10 +53,9 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   });
 
   const isRLSBillingEntitlementEnabled =
-    checkIfBillingEntitlementIsEnabledOnWorkspace(
-      BillingEntitlementKey.RLS,
-      currentWorkspace,
-    );
+    useHasRecordLevelPermissionEntitlement();
+
+  const isCurrentWorkspaceMemberAdmin = useIsCurrentWorkspaceMemberAdmin();
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 
@@ -129,7 +122,8 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     });
   });
 
-  const isFinishDisabled = hasInvalidPredicate;
+  const isFinishDisabled =
+    isRLSBillingEntitlementEnabled && hasInvalidPredicate;
 
   return (
     <SettingsPageLayout
@@ -165,6 +159,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}
           hasOrganizationPlan={isRLSBillingEntitlementEnabled}
+          isCurrentWorkspaceMemberAdmin={isCurrentWorkspaceMemberAdmin}
         />
       </SettingsPageContainer>
     </SettingsPageLayout>

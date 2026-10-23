@@ -9,6 +9,7 @@
 
 export type { AccountType } from './AccountTypes';
 export { ACCOUNT_TYPES } from './AccountTypes';
+export { ADMIN_ROLE_UNIVERSAL_IDENTIFIER } from './AdminRoleUniversalIdentifier';
 export { ALLOWED_FULL_NAME_SORT_SUBFIELDS } from './AllowedFullNameSortSubfields';
 export { BACKEND_BATCH_REQUEST_MAX_COUNT } from './BackendBatchRequestMaxCount';
 export { CalendarStartDay } from './CalendarStartDay';

@@ -1,7 +1,9 @@
 /* @license Enterprise */
 
 import { useEffect, useMemo, useState } from 'react';
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -23,6 +25,7 @@ type UseRecordLevelPermissionFilterInitializationProps = {
   setRecordFilterUsedInAdvancedFilterDropdownRow: (
     filter: RecordFilter,
   ) => void;
+  readonly: boolean;
 };
 
 export const useRecordLevelPermissionFilterInitialization = ({
@@ -33,6 +36,7 @@ export const useRecordLevelPermissionFilterInitialization = ({
   setCurrentRecordFilters,
   setCurrentRecordFilterGroups,
   setRecordFilterUsedInAdvancedFilterDropdownRow,
+  readonly,
 }: UseRecordLevelPermissionFilterInitializationProps) => {
   const [hasInitialized, setHasInitialized] = useState(false);
   const [lastInitializedRoleId, setLastInitializedRoleId] =
@@ -113,10 +117,37 @@ export const useRecordLevelPermissionFilterInitialization = ({
       isDraftRolePopulated && (isRoleOrObjectChanged || !hasInitialized);
 
     if (shouldInitialize) {
-      setCurrentRecordFilters(initialFilters);
-      setCurrentRecordFilterGroups(initialFilterGroups);
+      let filtersToDisplay = initialFilters;
+      let filterGroupsToDisplay = initialFilterGroups;
 
-      for (const filter of initialFilters) {
+      const hasUngroupedFilter = initialFilters.some(
+        (filter) => !isDefined(filter.recordFilterGroupId),
+      );
+
+      const hasRootFilterGroup = initialFilterGroups.some(
+        (group) => !isDefined(group.parentRecordFilterGroupId),
+      );
+
+      // Rows only render under a root group. Readonly only, so this
+      // generated group is never synced to the draft.
+      if (readonly && hasUngroupedFilter && !hasRootFilterGroup) {
+        const rootFilterGroup: RecordFilterGroup = {
+          id: v4(),
+          logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        };
+
+        filtersToDisplay = initialFilters.map((filter) =>
+          isDefined(filter.recordFilterGroupId)
+            ? filter
+            : { ...filter, recordFilterGroupId: rootFilterGroup.id },
+        );
+        filterGroupsToDisplay = [rootFilterGroup, ...initialFilterGroups];
+      }
+
+      setCurrentRecordFilters(filtersToDisplay);
+      setCurrentRecordFilterGroups(filterGroupsToDisplay);
+
+      for (const filter of filtersToDisplay) {
         setRecordFilterUsedInAdvancedFilterDropdownRow(filter);
       }
 
@@ -136,6 +167,7 @@ export const useRecordLevelPermissionFilterInitialization = ({
     setCurrentRecordFilters,
     setCurrentRecordFilterGroups,
     setRecordFilterUsedInAdvancedFilterDropdownRow,
+    readonly,
   ]);
 
   return {

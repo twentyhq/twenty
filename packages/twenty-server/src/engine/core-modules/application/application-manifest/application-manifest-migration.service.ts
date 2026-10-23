@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildApplicationWorkflowCronTriggerCacheEntries } from 'src/engine/core-modules/application/application-manifest/utils/build-application-workflow-cron-trigger-cache-entries.util';
@@ -22,8 +22,10 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -40,6 +42,7 @@ export class ApplicationManifestMigrationService {
     private readonly logger: LoggerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
   ) {}
 
   async syncPreInstallLogicFunctionFromManifest({
@@ -255,6 +258,12 @@ export class ApplicationManifestMigrationService {
         },
       });
 
+    await this.validateRowLevelPermissionRuleChangesAreEntitledOrThrow({
+      allFlatEntityOperationRecordByMetadataName,
+      workspaceId,
+      applicationDisplayName: manifest.application.displayName,
+    });
+
     const connectionProviderIdsToDelete = Object.values(
       allFlatEntityOperationRecordByMetadataName.connectionProvider
         ?.flatEntityToDelete ?? {},
@@ -347,6 +356,43 @@ export class ApplicationManifestMigrationService {
     }
 
     return validateAndBuildResult;
+  }
+
+  private async validateRowLevelPermissionRuleChangesAreEntitledOrThrow({
+    allFlatEntityOperationRecordByMetadataName,
+    workspaceId,
+    applicationDisplayName,
+  }: {
+    allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
+    workspaceId: string;
+    applicationDisplayName: string;
+  }): Promise<void> {
+    // Deletions stay allowed so a workspace without the feature can still drop rules
+    const isCreatingOrUpdatingRowLevelPermissionRules = [
+      allFlatEntityOperationRecordByMetadataName.rowLevelPermissionPredicate,
+      allFlatEntityOperationRecordByMetadataName.rowLevelPermissionPredicateGroup,
+    ].some(
+      (flatEntityOperationRecord) =>
+        isDefined(flatEntityOperationRecord) &&
+        (!isEmptyObject(flatEntityOperationRecord.flatEntityToCreate) ||
+          !isEmptyObject(flatEntityOperationRecord.flatEntityToUpdate)),
+    );
+
+    if (!isCreatingOrUpdatingRowLevelPermissionRules) {
+      return;
+    }
+
+    const hasRowLevelPermissionFeature =
+      await this.rowLevelPermissionPredicateService.hasRowLevelPermissionFeature(
+        workspaceId,
+      );
+
+    if (!hasRowLevelPermissionFeature) {
+      throw new ApplicationException(
+        `Application "${applicationDisplayName}" cannot create or change row level permission rules: the row level permission feature is disabled`,
+        ApplicationExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED,
+      );
+    }
   }
 
   private async syncApplicationReferencesFromManifest({

@@ -39,6 +39,7 @@ const applicationExceptionCodeToHttpStatus = (
     case ApplicationExceptionCode.INVALID_WORKSPACE_VERSION:
     case ApplicationExceptionCode.APPLICATION_NOT_EXPORTABLE:
     case ApplicationExceptionCode.STANDARD_APPLICATION_NOT_EXPORTABLE:
+    case ApplicationExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED:
       return 400;
     case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
     case ApplicationExceptionCode.POST_INSTALL_ERROR:

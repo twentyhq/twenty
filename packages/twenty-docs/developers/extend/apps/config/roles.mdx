@@ -170,14 +170,13 @@ Notes:
 - Give every predicate and group a stable `universalIdentifier` (any uuid) — it keys the entity
   across upgrades, and predicates reference groups by it.
 - Predicates can reference objects and fields owned by your app or by Twenty's standard objects.
-- Row-level security is enforced for workspaces on the **Organization plan or above**. On other
-  plans the predicates declared in an app manifest still sync, they are simply not enforced.
-- The Metadata API behaves differently from the manifest here: without the entitlement,
-  `upsertRowLevelPermissionPredicates` is rejected with
-  `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` rather than syncing. A workspace on a plan that does not
-  include row-level security therefore cannot create predicates outside of an app manifest, even
-  though the `rowLevelPermissionPredicates` field is present on the `Role` type when you introspect
-  the schema.
+- On a workspace without the row-level security entitlement, installing or updating your app is
+  refused with `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` when the sync would create or change a
+  predicate or group. A sync that leaves existing predicates unchanged or removes them, and
+  uninstalling the app, still succeed.
+- Predicates that already exist when a workspace loses the entitlement are kept and stay enforced.
+  They are read-only: the Metadata API refuses any new or changed rule, and only a member with the
+  Admin role can clear the rules of a role on an object, from Settings.
 
 ## The default function role
 

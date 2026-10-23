@@ -409,11 +409,14 @@ export class RoleResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input')
     input: UpsertRowLevelPermissionPredicatesInput,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId?: string,
   ): Promise<UpsertRowLevelPermissionPredicatesResultDTO> {
     return this.rowLevelPermissionPredicateService.upsertRowLevelPermissionPredicates(
       {
         workspaceId: workspace.id,
         input,
+        userWorkspaceId,
       },
     );
   }

@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Row Level Permission Predicate upsert without the entitlement should fail when a non-Admin member with the roles permission clears the rules 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN",
+    "userFriendlyMessage": "Only Admins can remove row level permission rules when the feature is disabled.",
+  },
+  "message": "Removing row level permission rules without the feature requires the Admin role",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert without the entitlement should fail when an API key clears the rules 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN",
+    "userFriendlyMessage": "Only Admins can remove row level permission rules when the feature is disabled.",
+  },
+  "message": "Removing row level permission rules without the feature requires the Admin role",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert without the entitlement should fail when an Admin adds a predicate in a group 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "ROW_LEVEL_PERMISSION_FEATURE_DISABLED",
+    "userFriendlyMessage": "Row level permission predicate feature is disabled.",
+  },
+  "message": "Row level permission predicate feature is disabled",
+  "name": "ForbiddenError",
+}
+`;

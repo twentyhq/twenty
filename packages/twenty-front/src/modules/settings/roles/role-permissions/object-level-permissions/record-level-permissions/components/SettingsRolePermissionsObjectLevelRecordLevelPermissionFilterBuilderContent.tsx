@@ -50,12 +50,14 @@ type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent
   {
     roleId: string;
     objectMetadataItem: EnrichedObjectMetadataItem;
+    readonly?: boolean;
   };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent =
   ({
     roleId,
     objectMetadataItem,
+    readonly = false,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContentProps) => {
     const settingsDraftRole = useAtomFamilyStateValue(
       settingsDraftRoleFamilyState,
@@ -102,6 +104,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
       setCurrentRecordFilters,
       setCurrentRecordFilterGroups,
       setRecordFilterUsedInAdvancedFilterDropdownRow,
+      readonly,
     });
 
     useRecordLevelPermissionSyncToDraftRole({
@@ -110,6 +113,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
       currentRecordFilters,
       currentRecordFilterGroups,
       hasInitialized,
+      readonly,
     });
 
     const { handleCreateFirstFilter, handleAddFilter } =
@@ -118,7 +122,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
       });
 
     return (
-      <AdvancedFilterContext.Provider value={{ objectMetadataItem }}>
+      <AdvancedFilterContext.Provider value={{ objectMetadataItem, readonly }}>
         {isDefined(rootRecordFilterGroup) ? (
           <StyledContainer>
             <StyledFiltersContainer>
@@ -136,26 +140,30 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
                   />
                 ))}
             </StyledFiltersContainer>
-            <StyledActionButtonWrapper>
-              <CommandMenuButton
-                command={{
-                  Icon: IconPlus,
-                  label: t`Add rule`,
-                  shortLabel: t`Add rule`,
-                  key: 'add-rule',
-                }}
-                onClick={() => handleAddFilter(rootRecordFilterGroup)}
-              />
-            </StyledActionButtonWrapper>
+            {!readonly && (
+              <StyledActionButtonWrapper>
+                <CommandMenuButton
+                  command={{
+                    Icon: IconPlus,
+                    label: t`Add rule`,
+                    shortLabel: t`Add rule`,
+                    key: 'add-rule',
+                  }}
+                  onClick={() => handleAddFilter(rootRecordFilterGroup)}
+                />
+              </StyledActionButtonWrapper>
+            )}
           </StyledContainer>
         ) : (
-          <Button
-            startIcon={<IconFilter />}
-            size="sm"
-            onClick={handleCreateFirstFilter}
-            aria-label={t`Add filter`}
-            variant="outline"
-          >{t`Add filter`}</Button>
+          !readonly && (
+            <Button
+              startIcon={<IconFilter />}
+              size="sm"
+              onClick={handleCreateFirstFilter}
+              aria-label={t`Add filter`}
+              variant="outline"
+            >{t`Add filter`}</Button>
+          )
         )}
       </AdvancedFilterContext.Provider>
     );

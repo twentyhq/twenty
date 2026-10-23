@@ -25,6 +25,7 @@ export const useObjectPermissionDerivedStates = ({
     thereAreFieldPermissionsButTheyShouldntBeTakenIntoAccountBecauseObjectPermissionsDontAllowIt,
     objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount,
     objectPermissionHasOnlyNullPermissions,
+    isThereAnyRowLevelPermissionPredicateForThisObject,
   } = getObjectPermissionDerivedStates(objectMetadataItemId);
 
   return {
@@ -40,5 +41,6 @@ export const useObjectPermissionDerivedStates = ({
     thereAreFieldPermissionsButTheyShouldntBeTakenIntoAccountBecauseObjectPermissionsDontAllowIt,
     objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount,
     objectPermissionHasOnlyNullPermissions,
+    isThereAnyRowLevelPermissionPredicateForThisObject,
   };
 };

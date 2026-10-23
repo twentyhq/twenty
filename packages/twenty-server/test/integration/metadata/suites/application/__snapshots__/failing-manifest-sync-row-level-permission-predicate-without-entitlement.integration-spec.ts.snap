@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Manifest sync - row level permission predicates without the entitlement when installing an app that declares a predicate refuses the sync and creates no predicate 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "ROW_LEVEL_PERMISSION_FEATURE_DISABLED",
+    "userFriendlyMessage": "Row level permission rules are not available on this workspace, so this application cannot create or change them.",
+  },
+  "message": "Application "Test Application" cannot create or change row level permission rules: the row level permission feature is disabled",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Manifest sync - row level permission predicates without the entitlement when the app was installed with the entitlement refuses a re-sync that changes the predicate value 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "ROW_LEVEL_PERMISSION_FEATURE_DISABLED",
+    "userFriendlyMessage": "Row level permission rules are not available on this workspace, so this application cannot create or change them.",
+  },
+  "message": "Application "Test Application" cannot create or change row level permission rules: the row level permission feature is disabled",
+  "name": "UserInputError",
+}
+`;

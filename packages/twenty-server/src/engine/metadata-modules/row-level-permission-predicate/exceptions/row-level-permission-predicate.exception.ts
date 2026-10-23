@@ -21,6 +21,8 @@ export const RowLevelPermissionPredicateExceptionCode =
     UNAUTHORIZED_OBJECT_MODIFICATION: 'UNAUTHORIZED_OBJECT_MODIFICATION',
     ROW_LEVEL_PERMISSION_FEATURE_DISABLED:
       'ROW_LEVEL_PERMISSION_FEATURE_DISABLED',
+    ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN:
+      'ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN',
   } as const);
 
 const rowLevelPermissionPredicateExceptionUserFriendlyMessages: Record<
@@ -35,6 +37,7 @@ const rowLevelPermissionPredicateExceptionUserFriendlyMessages: Record<
   UNAUTHORIZED_ROLE_MODIFICATION: msg`Cannot modify predicate belonging to a different role.`,
   UNAUTHORIZED_OBJECT_MODIFICATION: msg`Cannot modify predicate belonging to a different object.`,
   ROW_LEVEL_PERMISSION_FEATURE_DISABLED: msg`Row level permission predicate feature is disabled.`,
+  ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN: msg`Only Admins can remove row level permission rules when the feature is disabled.`,
   INTERNAL_SERVER_ERROR: msg`An unexpected error occurred.`,
 };
 

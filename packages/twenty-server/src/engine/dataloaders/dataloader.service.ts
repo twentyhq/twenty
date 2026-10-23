@@ -62,7 +62,6 @@ import {
   type ApiKeyForRoleDTO,
   type RoleDTO,
 } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export type RelationMetadataLoaderPayload = {
@@ -197,7 +196,6 @@ export class DataloaderService {
     private readonly fieldMetadataConnectionLoaderFactory: FieldMetadataConnectionLoaderFactory,
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -1254,18 +1252,6 @@ export class DataloaderService {
       >
     >(async (dataLoaderParams: RowLevelPermissionsByRoleIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
-
-      const hasRowLevelPermissionFeature =
-        await this.rowLevelPermissionPredicateService.hasRowLevelPermissionFeature(
-          workspaceId,
-        );
-
-      if (!hasRowLevelPermissionFeature) {
-        return dataLoaderParams.map(() => ({
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
-        }));
-      }
 
       const {
         flatRoleMaps,

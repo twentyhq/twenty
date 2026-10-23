@@ -22,6 +22,17 @@ describe('rowLevelPermissionPredicateGraphqlApiExceptionHandler', () => {
     ).toThrow(ForbiddenError);
   });
 
+  it('should throw ForbiddenError for ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN', () => {
+    const exception = new RowLevelPermissionPredicateException(
+      'Removing row level permission rules without the feature requires the Admin role',
+      RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN,
+    );
+
+    expect(() =>
+      rowLevelPermissionPredicateGraphqlApiExceptionHandler(exception),
+    ).toThrow(ForbiddenError);
+  });
+
   it('should throw NotFoundError for ROW_LEVEL_PERMISSION_PREDICATE_NOT_FOUND', () => {
     const exception = new RowLevelPermissionPredicateException(
       'Predicate not found',

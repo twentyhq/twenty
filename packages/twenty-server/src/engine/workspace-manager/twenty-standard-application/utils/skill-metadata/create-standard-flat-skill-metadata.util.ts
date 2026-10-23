@@ -1683,7 +1683,7 @@ Permissions decide who can see and change company data, so a wrong guess is expe
 
 Dropping an override silently widens access. Treat "I only sent the object I changed" as a bug.
 
-\`upsert_row_level_permission_rules\` behaves the same way for a given role + object: the \`predicates\` and \`predicateGroups\` arrays are the complete rule set, anything omitted is deleted, and empty arrays clear all rules.
+\`upsert_row_level_permission_rules\` behaves the same way for a given role + object: the \`predicates\` and \`predicateGroups\` arrays are the complete rule set, anything omitted is deleted, and empty arrays clear all rules. Without the row-level permission entitlement, existing rules stay enforced but are read-only: the tool refuses any change, and only an Admin can remove them from Settings.
 
 ## Permission rules the API enforces
 

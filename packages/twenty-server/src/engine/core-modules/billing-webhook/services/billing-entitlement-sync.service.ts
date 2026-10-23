@@ -10,7 +10,6 @@ import { buildBillingEntitlementStateLockKey } from 'src/engine/core-modules/bil
 import { buildBillingEntitlementsFromLookupKeys } from 'src/engine/core-modules/billing/utils/build-billing-entitlements-from-lookup-keys.util';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
-import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -29,7 +28,6 @@ export class BillingEntitlementSyncService {
   constructor(
     @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
     private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
-    private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly usageLimitStockService: UsageLimitStockService,
     private readonly cacheLockService: CacheLockService,
@@ -101,13 +99,6 @@ export class BillingEntitlementSyncService {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'billingEntitlements',
     ]);
-
-    // After the commit so a failure fails closed (rows stay filtered); checked every pass so a failed cleanup retries
-    if (!isGranted(BillingEntitlementKey.RLS)) {
-      await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
-        workspaceId,
-      );
-    }
 
     return billingEntitlements.map(({ key, value }) => ({ key, value }));
   }

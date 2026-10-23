@@ -1,4 +1,6 @@
+import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
+import { useRemoveRecordLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/hooks/useRemoveRecordLevelPermissionRulesInDraftRole';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { t } from '@lingui/core/macro';
@@ -12,6 +14,7 @@ type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   objectMetadataId: string;
   objectPermissionDetailUrl: string;
   isEditable: boolean;
+  canRemoveRecordLevelPermissionRules: boolean;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
@@ -19,10 +22,41 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
   objectMetadataId,
   objectPermissionDetailUrl,
   isEditable,
+  canRemoveRecordLevelPermissionRules,
 }: SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps) => {
   const dropdownId = `settings-role-object-level-options-${objectMetadataId}`;
 
   const { resetObjectPermission } = useResetObjectPermission(roleId);
+
+  const { removeRecordLevelPermissionRulesInDraftRole } =
+    useRemoveRecordLevelPermissionRulesInDraftRole(roleId);
+
+  const {
+    objectHasNoOverrideOnObjectPermission,
+    objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount,
+  } = useObjectPermissionDerivedStates({
+    roleId,
+    objectMetadataItemId: objectMetadataId,
+  });
+
+  const hasObjectOrFieldPermissionOverride =
+    !objectHasNoOverrideOnObjectPermission ||
+    objectHasNoOverrideButFieldPermissionsShouldBeTakenIntoAccount;
+
+  const isRemoveRuleVisible =
+    canRemoveRecordLevelPermissionRules || hasObjectOrFieldPermissionOverride;
+
+  const handleRemoveRuleClick = () => {
+    resetObjectPermission(objectMetadataId);
+
+    if (canRemoveRecordLevelPermissionRules) {
+      removeRecordLevelPermissionRulesInDraftRole(objectMetadataId);
+    }
+  };
+
+  if (!isEditable) {
+    return null;
+  }
 
   return (
     <DropdownRoot dropdownId={dropdownId} type="menu">
@@ -39,17 +73,17 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
       />
       <DropdownContent align="end">
         <Dropdown.Section>
-          {isEditable && (
-            <Dropdown.ActionItem
-              startIcon={<IconPencil />}
-              render={<Link to={objectPermissionDetailUrl} />}
-            >{t`Edit`}</Dropdown.ActionItem>
-          )}
           <Dropdown.ActionItem
-            startIcon={<IconTrash />}
-            color="danger"
-            onClick={() => resetObjectPermission(objectMetadataId)}
-          >{t`Remove rule`}</Dropdown.ActionItem>
+            startIcon={<IconPencil />}
+            render={<Link to={objectPermissionDetailUrl} />}
+          >{t`Edit`}</Dropdown.ActionItem>
+          {isRemoveRuleVisible && (
+            <Dropdown.ActionItem
+              startIcon={<IconTrash />}
+              color="danger"
+              onClick={handleRemoveRuleClick}
+            >{t`Remove rule`}</Dropdown.ActionItem>
+          )}
         </Dropdown.Section>
       </DropdownContent>
     </DropdownRoot>

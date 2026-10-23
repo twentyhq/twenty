@@ -10,12 +10,14 @@ type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderProps =
   {
     roleId: string;
     objectMetadataItem: EnrichedObjectMetadataItem;
+    readonly?: boolean;
   };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder =
   ({
     roleId,
     objectMetadataItem,
+    readonly,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderProps) => {
     const instanceId = useWorkspaceSurfaceScopedComponentInstanceId(
       `record-level-permission-filter-${roleId}-${objectMetadataItem.id}`,
@@ -29,6 +31,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
           <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent
             roleId={roleId}
             objectMetadataItem={objectMetadataItem}
+            readonly={readonly}
           />
         </RecordFiltersComponentInstanceContext.Provider>
       </RecordFilterGroupsComponentInstanceContext.Provider>

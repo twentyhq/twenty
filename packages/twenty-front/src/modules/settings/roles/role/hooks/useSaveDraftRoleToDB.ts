@@ -12,6 +12,8 @@ import { getOperationName } from '~/utils/getOperationName';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
   type RowLevelPermissionPredicateGroupLogicalOperator,
   type RowLevelPermissionPredicateOperand,
   type Role,
@@ -22,6 +24,7 @@ import {
   UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'label',
@@ -286,6 +289,8 @@ export const useSaveDraftRoleToDB = ({
 
     const persistedPredicates =
       settingsPersistedRole?.rowLevelPermissionPredicates ?? [];
+    const persistedPredicateGroups =
+      settingsPersistedRole?.rowLevelPermissionPredicateGroups ?? [];
     const persistedObjectIds = new Set(
       persistedPredicates.map((predicate) => predicate.objectMetadataId),
     );
@@ -296,17 +301,25 @@ export const useSaveDraftRoleToDB = ({
       }
     }
 
-    for (const [objectMetadataId, objectPredicates] of Object.entries(
-      predicatesByObject,
-    )) {
+    const buildObjectRowLevelPermissionPayload = ({
+      objectMetadataId,
+      objectPredicates,
+      availablePredicateGroups,
+    }: {
+      objectMetadataId: string;
+      objectPredicates: RowLevelPermissionPredicate[];
+      availablePredicateGroups: RowLevelPermissionPredicateGroup[];
+    }) => {
       const objectUsedGroupIds = new Set(
         objectPredicates
-          .map((p) => p.rowLevelPermissionPredicateGroupId)
+          .map((predicate) => predicate.rowLevelPermissionPredicateGroupId)
           .filter(isDefined),
       );
 
       const includeParentGroupsForObject = (groupId: string) => {
-        const group = predicateGroups.find((g) => g.id === groupId);
+        const group = availablePredicateGroups.find(
+          (predicateGroup) => predicateGroup.id === groupId,
+        );
         if (
           isDefined(group?.parentRowLevelPermissionPredicateGroupId) &&
           !objectUsedGroupIds.has(
@@ -326,40 +339,65 @@ export const useSaveDraftRoleToDB = ({
         includeParentGroupsForObject(groupId);
       }
 
-      const objectPredicateGroups = predicateGroups.filter((group) =>
+      const objectPredicateGroups = availablePredicateGroups.filter((group) =>
         objectUsedGroupIds.has(group.id),
       );
+
+      return {
+        predicates: objectPredicates.map((predicate) => ({
+          id: predicate.id,
+          fieldMetadataId: predicate.fieldMetadataId,
+          operand: predicate.operand as RowLevelPermissionPredicateOperand,
+          value: predicate.value,
+          subFieldName: predicate.subFieldName,
+          workspaceMemberFieldMetadataId:
+            predicate.workspaceMemberFieldMetadataId,
+          workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
+          rowLevelPermissionPredicateGroupId:
+            predicate.rowLevelPermissionPredicateGroupId,
+          positionInRowLevelPermissionPredicateGroup:
+            predicate.positionInRowLevelPermissionPredicateGroup,
+        })),
+        predicateGroups: objectPredicateGroups.map((group) => ({
+          id: group.id,
+          objectMetadataId,
+          parentRowLevelPermissionPredicateGroupId:
+            group.parentRowLevelPermissionPredicateGroupId,
+          logicalOperator:
+            group.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
+          positionInRowLevelPermissionPredicateGroup:
+            group.positionInRowLevelPermissionPredicateGroup,
+        })),
+      };
+    };
+
+    for (const [objectMetadataId, objectPredicates] of Object.entries(
+      predicatesByObject,
+    )) {
+      const objectPayload = buildObjectRowLevelPermissionPayload({
+        objectMetadataId,
+        objectPredicates,
+        availablePredicateGroups: predicateGroups,
+      });
+
+      const persistedObjectPayload = buildObjectRowLevelPermissionPayload({
+        objectMetadataId,
+        objectPredicates: persistedPredicates.filter(
+          (predicate) => predicate.objectMetadataId === objectMetadataId,
+        ),
+        availablePredicateGroups: persistedPredicateGroups,
+      });
+
+      if (isDeeplyEqual(objectPayload, persistedObjectPayload)) {
+        continue;
+      }
 
       await upsertRowLevelPermissionPredicates({
         variables: {
           input: {
             roleId: targetRoleId,
             objectMetadataId,
-            predicates: objectPredicates.map((predicate) => ({
-              id: predicate.id,
-              fieldMetadataId: predicate.fieldMetadataId,
-              operand: predicate.operand as RowLevelPermissionPredicateOperand,
-              value: predicate.value,
-              subFieldName: predicate.subFieldName,
-              workspaceMemberFieldMetadataId:
-                predicate.workspaceMemberFieldMetadataId,
-              workspaceMemberSubFieldName:
-                predicate.workspaceMemberSubFieldName,
-              rowLevelPermissionPredicateGroupId:
-                predicate.rowLevelPermissionPredicateGroupId,
-              positionInRowLevelPermissionPredicateGroup:
-                predicate.positionInRowLevelPermissionPredicateGroup,
-            })),
-            predicateGroups: objectPredicateGroups.map((group) => ({
-              id: group.id,
-              objectMetadataId,
-              parentRowLevelPermissionPredicateGroupId:
-                group.parentRowLevelPermissionPredicateGroupId,
-              logicalOperator:
-                group.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
-              positionInRowLevelPermissionPredicateGroup:
-                group.positionInRowLevelPermissionPredicateGroup,
-            })),
+            ...objectPayload,
           },
         },
         refetchQueries: [getOperationName(GET_ROLES) ?? ''],

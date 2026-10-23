@@ -212,6 +212,14 @@ describe('isUserFacingToolExecutionError', () => {
       true,
     ],
     [
+      'a row-level rule removal without the Admin role',
+      new RowLevelPermissionPredicateException(
+        'Removing row level permission rules without the feature requires the Admin role',
+        RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN,
+      ),
+      true,
+    ],
+    [
       'a row-level rule internal failure',
       new RowLevelPermissionPredicateException(
         'Unexpected failure',

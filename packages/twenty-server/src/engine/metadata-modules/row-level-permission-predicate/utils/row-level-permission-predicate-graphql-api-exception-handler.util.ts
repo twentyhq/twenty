@@ -18,6 +18,7 @@ export const rowLevelPermissionPredicateGraphqlApiExceptionHandler = (
 ) => {
   switch (error.code) {
     case RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_FEATURE_DISABLED:
+    case RowLevelPermissionPredicateExceptionCode.ROW_LEVEL_PERMISSION_REMOVAL_REQUIRES_ADMIN:
     case RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION:
     case RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_OBJECT_MODIFICATION:
       throw new ForbiddenError(error);

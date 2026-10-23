@@ -57,12 +57,16 @@ const StyledIconContainer = styled.div`
   }
 `;
 
-const StyledReadOnlyInput = styled.div`
+const StyledReadOnlyInput = styled.div<{ readonly?: boolean }>`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
+  border-bottom-right-radius: ${({ readonly }) =>
+    readonly ? themeCssVariables.border.radius.sm : '0'};
   border-top-left-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${({ readonly }) =>
+    readonly ? themeCssVariables.border.radius.sm : '0'};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
@@ -102,7 +106,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInputProps) => {
     const theme = useTheme();
-    const { objectMetadataItem } = useContext(AdvancedFilterContext);
+    const { objectMetadataItem, readonly } = useContext(AdvancedFilterContext);
 
     const currentRecordFilters = useAtomComponentStateValue(
       currentRecordFiltersComponentState,
@@ -219,19 +223,21 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
             side="bottom"
             positionMethod="fixed"
           >
-            <StyledReadOnlyInput id={tooltipId}>
+            <StyledReadOnlyInput id={tooltipId} readonly={readonly}>
               <StyledMeText>{t`Me`}</StyledMeText>
               {isDefined(workspaceMemberFieldLabel) && (
                 <StyledFieldLabel>{` / ${workspaceMemberFieldLabel}`}</StyledFieldLabel>
               )}
             </StyledReadOnlyInput>
           </Tooltip>
-          <StyledIconContainer
-            onClick={handleResetToStaticValue}
-            aria-label={t`Reset to static value`}
-          >
-            <IconEraser size={theme.icon.size.sm} />
-          </StyledIconContainer>
+          {!readonly && (
+            <StyledIconContainer
+              onClick={handleResetToStaticValue}
+              aria-label={t`Reset to static value`}
+            >
+              <IconEraser size={theme.icon.size.sm} />
+            </StyledIconContainer>
+          )}
         </StyledContainer>
       );
     }
@@ -312,6 +318,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
                 VariablePicker={
                   SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker
                 }
+                readonly={readonly}
                 dropdownWidth={200}
               />
             </StyledFormFieldInputWrapper>
@@ -333,6 +340,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
               VariablePicker={
                 SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker
               }
+              readonly={readonly}
             />
           </StyledFormFieldInputWrapper>
         </RecordLevelPermissionVariablePickerContext.Provider>
