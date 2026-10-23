@@ -323,6 +323,7 @@ export const resolveConfigurationFieldNamesToIds = (
       };
     case WidgetConfigurationType.IFRAME:
     case WidgetConfigurationType.RECORD_TABLE:
+    case WidgetConfigurationType.FRONT_COMPONENT:
       return configuration;
   }
 };

@@ -17,6 +17,7 @@ import {
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
+import { assertFrontComponentWidgetAvailableOnDashboardOrThrow } from 'src/modules/dashboard/tools/utils/assert-front-component-widget-available-on-dashboard-or-throw.util';
 import { computeDashboardIdentifierMaps } from 'src/modules/dashboard/tools/utils/compute-dashboard-identifier-maps.util';
 import {
   getObjectMetadataId,
@@ -78,6 +79,14 @@ Only provide fields you want to change - others remain unchanged.`,
 
       let resolvedObjectMetadataId = rest.objectMetadataId;
       let resolvedConfiguration: AllPageLayoutWidgetConfiguration | undefined;
+
+      if (hasConfigurationUpdate) {
+        await assertFrontComponentWidgetAvailableOnDashboardOrThrow({
+          configuration,
+          deps,
+          context,
+        });
+      }
 
       if (shouldResolveIdentifiers) {
         const identifierMaps = await computeDashboardIdentifierMaps(
