@@ -48,16 +48,19 @@ export const useSidePanelShareRecordInvitation = ({
     isDefined(sharing) &&
     isDefined(currentWorkspace) &&
     !generalAccess.hasGeneralAccess;
-  const everyoneRecipients: RecordSharingInvitationRecipient[] =
-    canInviteEveryone
-      ? [
-          {
-            kind: 'everyone',
-            id: currentWorkspace.id,
-            label: t(generalAccess.label),
-          },
-        ]
-      : [];
+  const getEveryoneRecipients = (): RecordSharingInvitationRecipient[] => {
+    if (!canInviteEveryone) {
+      return [];
+    }
+
+    return [
+      {
+        kind: 'everyone',
+        id: currentWorkspace.id,
+        label: t(generalAccess.label),
+      },
+    ];
+  };
   const recipients = [
     ...getRecordSharingInvitationRecipients({
       workspaceMembers: currentWorkspaceMembers,
@@ -65,7 +68,7 @@ export const useSidePanelShareRecordInvitation = ({
       roles: sharing?.roles ?? [],
       roleLabel: t`Role`,
     }),
-    ...everyoneRecipients,
+    ...getEveryoneRecipients(),
   ];
 
   const onRecipientsChange = (
