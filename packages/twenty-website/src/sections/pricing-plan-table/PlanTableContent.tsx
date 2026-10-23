@@ -108,7 +108,7 @@ const MetricLine = styled.span`
 
 const MetricValue = styled.span`
   color: ${semanticColor.ink};
-  font-size: ${fontSize(4.5)};
+  font-size: ${fontSize(4)};
   font-weight: ${FONT_WEIGHT.medium};
 `;
 
@@ -117,14 +117,14 @@ const MetricUnit = styled.span`
 `;
 
 const MetricDetail = styled.span`
-  color: ${semanticColor.inkSubtle};
+  color: ${semanticColor.inkMuted};
   font-size: ${fontSize(3.5)};
   line-height: ${spacing(5)};
 `;
 
 const CellMark = styled.span`
   align-items: center;
-  column-gap: ${spacing(1.5)};
+  column-gap: ${spacing(2.5)};
   display: flex;
 `;
 
