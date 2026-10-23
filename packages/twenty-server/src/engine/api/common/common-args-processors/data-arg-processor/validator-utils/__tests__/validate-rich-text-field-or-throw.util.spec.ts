@@ -103,6 +103,35 @@ describe('validateRichTextFieldOrThrow', () => {
       expect(validateRichTextFieldOrThrow(value, 'testField')).toEqual(value);
     });
 
+    it('should accept a toggle only when it starts with a paragraph or a heading', () => {
+      const toToggleValue = (summary: object) => ({
+        tiptap: JSON.stringify({
+          type: 'doc',
+          content: [
+            {
+              type: 'toggle',
+              attrs: { id: 'toggle-id', indent: 1 },
+              content: [summary, { type: 'paragraph' }],
+            },
+          ],
+        }),
+      });
+      const headingToggleValue = toToggleValue({
+        type: 'heading',
+        attrs: { level: 6 },
+      });
+
+      expect(
+        validateRichTextFieldOrThrow(headingToggleValue, 'testField'),
+      ).toEqual(headingToggleValue);
+      expect(() =>
+        validateRichTextFieldOrThrow(
+          toToggleValue({ type: 'divider' }),
+          'testField',
+        ),
+      ).toThrow(/Invalid tiptap value/);
+    });
+
     it('should throw when tiptap holds nodes a rich text field cannot store', () => {
       const value = {
         tiptap: JSON.stringify({

@@ -2,9 +2,11 @@ import { Blockquote } from '@/advanced-text-editor/extensions/blockquote/Blockqu
 import { RichTextDividerNode } from '@/advanced-text-editor/extensions/blocks/RichTextDividerNode';
 import { EmptyBlockHint } from '@/advanced-text-editor/extensions/empty-block-hint/EmptyBlockHint';
 import { FileNode } from '@/advanced-text-editor/extensions/file/FileNode';
+import { Indent } from '@/advanced-text-editor/extensions/indent/Indent';
 import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
 import { RichTextColor } from '@/advanced-text-editor/extensions/rich-text-color/RichTextColor';
 import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import { ToggleNode } from '@/advanced-text-editor/extensions/toggle/ToggleNode';
 import { UploadExtension } from '@/advanced-text-editor/extensions/upload/UploadExtension';
 import { type AdvancedTextEditorExtensionContext } from '@/advanced-text-editor/types/AdvancedTextEditorExtensionContext';
 import { MentionTag } from '@/mention/extensions/MentionTag';
@@ -41,6 +43,8 @@ export const buildRecordRichTextExtensions = ({
     types: [TIPTAP_NODE_TYPES.HEADING, TIPTAP_NODE_TYPES.PARAGRAPH],
   }),
   ListKit.configure({ taskItem: { nested: true } }),
+  ToggleNode,
+  Indent,
   Blockquote,
   CodeBlock,
   TableKit.configure({ table: { resizable: true } }),

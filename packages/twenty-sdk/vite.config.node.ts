@@ -1,10 +1,8 @@
-import fs from 'fs';
 import path from 'path';
 import { type PackageJson } from 'type-fest';
 import { defineConfig } from 'vite';
 
 import packageJson from './package.json';
-import { BUILD_DESCRIPTOR } from './src/application-build/build-descriptor';
 
 // Injected at the top of every ESM chunk so bundled CommonJS modules keep
 // working after rolldown inlines them into the `.mjs` output. They call
@@ -28,31 +26,6 @@ const esmNodeGlobalsBanner = [
   'const __dirname = __twentyDirname(__filename);',
 ].join('\n');
 
-const copyCoverAssetsPlugin = () => ({
-  name: 'copy-cover-assets',
-  closeBundle() {
-    const source = path.resolve(
-      __dirname,
-      'src/cli/utilities/build/cover/assets/halftone-backdrop.png',
-    );
-    const destinationDir = path.resolve(__dirname, 'dist/assets');
-
-    fs.mkdirSync(destinationDir, { recursive: true });
-    fs.copyFileSync(source, path.join(destinationDir, 'halftone-backdrop.png'));
-  },
-});
-
-const writeBuildDescriptorPlugin = () => ({
-  name: 'write-build-descriptor',
-  closeBundle() {
-    fs.mkdirSync(path.resolve(__dirname, 'dist/build'), { recursive: true });
-    fs.writeFileSync(
-      path.resolve(__dirname, 'dist/build/descriptor.json'),
-      JSON.stringify(BUILD_DESCRIPTOR, null, 2) + '\n',
-    );
-  },
-});
-
 export default defineConfig(() => {
   return {
     root: __dirname,
@@ -63,15 +36,11 @@ export default defineConfig(() => {
         '@/': path.resolve(__dirname, 'src') + '/',
       },
     },
-    plugins: [copyCoverAssetsPlugin(), writeBuildDescriptorPlugin()],
     build: {
       emptyOutDir: false,
       outDir: 'dist',
       lib: {
         entry: {
-          cli: 'src/cli/cli.ts',
-          operations: 'src/cli/operations/index.ts',
-          build: 'src/application-build/index.ts',
           'front-component-renderer/build':
             'src/front-component-renderer/build/index.ts',
         },
