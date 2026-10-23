@@ -251,6 +251,7 @@ export const PhonesFieldInput = () => {
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
     (!draft.isSingleItemMode || !draft.isInputDisplayed);
+  const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const shouldShowAddButton = !draft.isInputDisplayed && !draft.isLimitReached;
 
   return (
@@ -316,20 +317,18 @@ export const PhonesFieldInput = () => {
         </>
       }
     >
-      {shouldShowItems
-        ? filteredItemEntries.map(({ item: phone, index }) => (
-            <PhonesFieldMenuItem
-              key={index}
-              dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-              showPrimaryIcon={index === 0 && phones.length > 1}
-              showSetAsPrimaryButton={index > 0}
-              phone={phone}
-              onEdit={() => draft.startEditing(index)}
-              onSetAsPrimary={() => handleSetAsPrimary(index)}
-              onDelete={() => handleDelete(index)}
-            />
-          ))
-        : undefined}
+      {visibleItemEntries?.map(({ item: phone, index }) => (
+        <PhonesFieldMenuItem
+          key={index}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+          showPrimaryIcon={index === 0 && phones.length > 1}
+          showSetAsPrimaryButton={index > 0}
+          phone={phone}
+          onEdit={() => draft.startEditing(index)}
+          onSetAsPrimary={() => handleSetAsPrimary(index)}
+          onDelete={() => handleDelete(index)}
+        />
+      ))}
     </OverlayMenuList>
   );
 };

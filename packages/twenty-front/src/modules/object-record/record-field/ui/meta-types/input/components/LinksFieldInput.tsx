@@ -184,6 +184,7 @@ export const LinksFieldInput = () => {
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
     (!draft.isSingleItemMode || !draft.isInputDisplayed);
+  const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const shouldShowAddButton = !draft.isInputDisplayed && !draft.isLimitReached;
 
   return (
@@ -235,21 +236,19 @@ export const LinksFieldInput = () => {
         </>
       }
     >
-      {shouldShowItems
-        ? filteredItemEntries.map(({ item: link, index }) => (
-            <LinksFieldMenuItem
-              key={index}
-              dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-              showPrimaryIcon={index === 0 && links.length > 1}
-              showSetAsPrimaryButton={index > 0}
-              label={link.label}
-              onEdit={() => draft.startEditing(index)}
-              onSetAsPrimary={() => handleSetAsPrimary(index)}
-              onDelete={() => handleDelete(index)}
-              url={link.url}
-            />
-          ))
-        : undefined}
+      {visibleItemEntries?.map(({ item: link, index }) => (
+        <LinksFieldMenuItem
+          key={index}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+          showPrimaryIcon={index === 0 && links.length > 1}
+          showSetAsPrimaryButton={index > 0}
+          label={link.label}
+          onEdit={() => draft.startEditing(index)}
+          onSetAsPrimary={() => handleSetAsPrimary(index)}
+          onDelete={() => handleDelete(index)}
+          url={link.url}
+        />
+      ))}
     </OverlayMenuList>
   );
 };

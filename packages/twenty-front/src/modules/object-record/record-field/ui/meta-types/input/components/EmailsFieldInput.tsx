@@ -171,6 +171,7 @@ export const EmailsFieldInput = () => {
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
     (!draft.isSingleItemMode || !draft.isInputDisplayed);
+  const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const shouldShowAddButton = !draft.isInputDisplayed && !draft.isLimitReached;
 
   return (
@@ -222,22 +223,20 @@ export const EmailsFieldInput = () => {
         </>
       }
     >
-      {shouldShowItems
-        ? filteredItemEntries.map(({ item: email, index }) => (
-            <EmailsFieldMenuItem
-              key={index}
-              dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-              showPrimaryIcon={index === 0 && emails.length > 1}
-              showSetAsPrimaryButton={index > 0}
-              showCopyButton={true}
-              email={email}
-              onEdit={() => draft.startEditing(index)}
-              onSetAsPrimary={() => handleSetAsPrimary(index)}
-              onDelete={() => handleDelete(index)}
-              onCopy={handleCopy}
-            />
-          ))
-        : undefined}
+      {visibleItemEntries?.map(({ item: email, index }) => (
+        <EmailsFieldMenuItem
+          key={index}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+          showPrimaryIcon={index === 0 && emails.length > 1}
+          showSetAsPrimaryButton={index > 0}
+          showCopyButton={true}
+          email={email}
+          onEdit={() => draft.startEditing(index)}
+          onSetAsPrimary={() => handleSetAsPrimary(index)}
+          onDelete={() => handleDelete(index)}
+          onCopy={handleCopy}
+        />
+      ))}
     </OverlayMenuList>
   );
 };

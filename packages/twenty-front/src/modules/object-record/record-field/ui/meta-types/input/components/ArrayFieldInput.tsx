@@ -127,6 +127,7 @@ export const ArrayFieldInput = () => {
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
     (!draft.isSingleItemMode || !draft.isInputDisplayed);
+  const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const shouldShowAddButton = !draft.isInputDisplayed && !draft.isLimitReached;
 
   return (
@@ -178,17 +179,15 @@ export const ArrayFieldInput = () => {
         </>
       }
     >
-      {shouldShowItems
-        ? filteredItemEntries.map(({ item, index }) => (
-            <ArrayFieldMenuItem
-              key={index}
-              dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-              value={item}
-              onEdit={() => draft.startEditing(index)}
-              onDelete={() => handleDelete(index)}
-            />
-          ))
-        : undefined}
+      {visibleItemEntries?.map(({ item, index }) => (
+        <ArrayFieldMenuItem
+          key={index}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+          value={item}
+          onEdit={() => draft.startEditing(index)}
+          onDelete={() => handleDelete(index)}
+        />
+      ))}
     </OverlayMenuList>
   );
 };
