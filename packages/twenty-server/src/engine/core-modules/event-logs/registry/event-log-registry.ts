@@ -98,6 +98,7 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
       'logicFunctionId',
       'applicationId',
       'executionId',
+      'source',
     ],
     normalize: (row) => {
       const record = row as StoredRow<ApplicationLogRow>;

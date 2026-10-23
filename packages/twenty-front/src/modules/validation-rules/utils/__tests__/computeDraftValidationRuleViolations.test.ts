@@ -231,8 +231,8 @@ describe('computeDraftValidationRuleViolations', () => {
 
   it('should leave a rich text rule to the server until the server computes its markdown', () => {
     const descriptionAwaitingMarkdown = {
-      blocknote:
-        '[{"type":"paragraph","content":[{"type":"text","text":"Hello"}]}]',
+      tiptap:
+        '{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"paragraph","content":[{"type":"text","text":"Hello"}]}]}',
       markdown: null,
     };
 
@@ -256,7 +256,7 @@ describe('computeDraftValidationRuleViolations', () => {
       compute({}, [DESCRIPTION_RULE]).map((violation) => violation.ruleId),
     ).toEqual(['description-rule']);
     expect(
-      compute({ description: { blocknote: null, markdown: null } }, [
+      compute({ description: { tiptap: null, markdown: null } }, [
         DESCRIPTION_RULE,
       ]).map((violation) => violation.ruleId),
     ).toEqual(['description-rule']);

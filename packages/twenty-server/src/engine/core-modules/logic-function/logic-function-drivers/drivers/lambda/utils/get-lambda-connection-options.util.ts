@@ -35,6 +35,7 @@ export const getLambdaConnectionOptions = (
       ? { accessKeyId, secretAccessKey }
       : fromNodeProviderChain({ clientConfig: { region } }),
     region,
+    endpoint: twentyConfigService.get('LOGIC_FUNCTION_LAMBDA_ENDPOINT'),
     lambdaRole,
     subhostingRole,
     layerBucket,
