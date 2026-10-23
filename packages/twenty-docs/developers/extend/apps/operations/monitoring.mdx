@@ -6,12 +6,12 @@ icon: "chart-line"
 
 {/* Remove this disclaimer when the IS_APPLICATION_MONITORING_ENABLED feature flag key is removed. */}
 <Warning>
-Monitoring is still behind a feature flag and is not available on every workspace yet. If you don't see the **Monitoring** tab, it is not enabled on your workspace.
+Monitoring is still behind a feature flag and is not available on every workspace yet. If you don't see the **View monitoring** button, it is not enabled on your workspace.
 </Warning>
 
 Once your app is installed in other workspaces, you need to know when it breaks. Twenty records what happens to your app on the platform and shows it in two places:
 
-- **The Monitoring tab** of your app registration, for you as the app owner, aggregated across every install.
+- **The monitoring page** of your app registration, for you as the app owner, aggregated across every install.
 - **The workspace logs**, for the admins of each workspace that installed your app, limited to their own workspace.
 
 ```text
@@ -22,17 +22,17 @@ Once your app is installed in other workspaces, you need to know when it breaks.
               │
       ┌───────┴────────────────────────┐
       ▼                                ▼
-   Monitoring tab (app owner)       Logs (each workspace admin)
+   Monitoring page (app owner)      Logs (each workspace admin)
    all installs, aggregated         one workspace, row by row
 ```
 
-## Open the Monitoring tab
+## Open the monitoring page
 
-Go to **Settings → Developers → Apps**, open your app, then select the **Monitoring** tab. You need the **API keys & webhooks** permission in the workspace that owns the app registration.
+Go to **Settings → Developers → Apps**, open your app, then click **View monitoring** in the **General** tab. You need the **API keys & webhooks** permission in the workspace that owns the app registration.
 
 Pick a period in the header: last 2 hours, 24 hours, 7 days, 30 days or 90 days. Data is kept for **90 days**. Without the **Audit logs** entitlement, only the last 2 hours are visible.
 
-## What the tab shows
+## What the page shows
 
 | Section | What it tells you |
 | --- | --- |
@@ -48,19 +48,19 @@ Counts are exact: every rejected request and every skipped job is counted, even 
 
 ## What gets recorded
 
-Each event is stored as an app log in the workspace where it happened, with a **source** that says where it came from:
+Every event below is counted on the monitoring page. Each one also writes app logs in the workspace where it happened, with a **source** that says where it came from:
 
-| Source | Recorded when |
+| Source | Logged when |
 | --- | --- |
-| `LOGIC_FUNCTION` | A logic function runs, from any trigger. |
+| `LOGIC_FUNCTION` | A logic function writes a log line or fails, from any trigger. Runs that log nothing and succeed are counted on the monitoring page but leave no log row. |
 | `INSTALL` | Your app is installed, with the outcome of the install hooks. |
 | `UPGRADE` | Your app is upgraded to a new version. |
 | `UNINSTALL` | Your app is uninstalled. |
 | `API_RATE_LIMIT` | A request from your app to the API is rejected by rate limiting. |
 | `JOB_RATE_LIMIT` | Trigger jobs for your logic functions are skipped because the job enqueue limit was reached. |
-| `SERVER_ROUTE` | A request to one of your [HTTP routes](/developers/extend/apps/tutorials/document-generator/http-routes) fails before or while your function handles it. |
+| `SERVER_ROUTE` | A request to one of your [HTTP routes](/developers/extend/apps/tutorials/document-generator/http-routes) is refused or fails outside your function, for example a wrong method, failed authentication or a platform error. Errors thrown by your function are logged under `LOGIC_FUNCTION`. |
 
-Rate limit and server route failures can repeat many times a second, so the logs keep **one row per minute** for each install, function and error code. The Monitoring tab still counts every occurrence.
+Rate limit and server route failures can repeat many times a second, so the logs keep **one row per minute** for each install, function and error code. The monitoring page still counts every occurrence.
 
 ## Workspace logs
 
