@@ -144,6 +144,19 @@
   .root:focus-within .actions {
     opacity: 1;
   }
+
+  .root[data-actions-placement='end'][data-actions-visibility='hover'] {
+    > .actions {
+      inset-block-start: 0;
+      inset-inline-end: var(--t-spacing-1);
+      position: absolute;
+    }
+
+    &:hover > .actions,
+    &:focus-within > .actions {
+      position: static;
+    }
+  }
 }
 
 .checkIndicator {
@@ -194,8 +207,22 @@
   }
 }
 
+.root[data-description-placement='below'][data-actions-placement='end'] {
+  flex-wrap: nowrap;
+
+  .label {
+    gap: var(--t-spacing-0_5);
+  }
+
+  .actions {
+    flex-wrap: nowrap;
+    max-inline-size: none;
+  }
+}
+
 @container (max-width: 480px) {
-  .root[data-description-placement='below'] > .actions {
+  .root[data-description-placement='below']:not([data-actions-placement='end'])
+    > .actions {
     flex-basis: 100%;
     max-inline-size: 100%;
   }

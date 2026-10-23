@@ -35,4 +35,6 @@ export const ALL_METADATA_NAME = {
   validationRule: 'validationRule',
   workflow: 'workflow',
   workflowVersion: 'workflowVersion',
+  agentChatChannel: 'agentChatChannel',
+  agentChatChannelRole: 'agentChatChannelRole',
 } as const;

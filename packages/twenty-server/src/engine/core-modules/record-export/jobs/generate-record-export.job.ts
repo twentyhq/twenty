@@ -3,11 +3,7 @@ import { Logger } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { Readable } from 'stream';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import {
-  formatValueForCSV,
-  isDefined,
-  sanitizeValueForCSVExport,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -23,14 +19,14 @@ import {
   RECORD_EXPORT_REQUESTER_REFRESH_INTERVAL_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
-import {
-  RecordExportWorkspaceService,
-  type RecordExportQueryContext,
-} from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
+import { RecordExportQueryService } from 'src/engine/core-modules/record-export/services/record-export-query.service';
+import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
+import { type RecordExportQueryContext } from 'src/engine/core-modules/record-export/types/record-export-query-context.type';
 import {
   type RecordExport,
   type RecordExportProgress,
 } from 'src/engine/core-modules/record-export/types/record-export.type';
+import { formatRecordExportHeader } from 'src/engine/core-modules/record-export/utils/format-record-export-header.util';
 import { formatRecordExportRow } from 'src/engine/core-modules/record-export/utils/format-record-export-row.util';
 import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -44,6 +40,7 @@ export class GenerateRecordExportJob {
 
   constructor(
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
+    private readonly recordExportQueryService: RecordExportQueryService,
     private readonly fileStorageService: FileStorageService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
@@ -74,12 +71,12 @@ export class GenerateRecordExportJob {
       const requester =
         await this.recordExportWorkspaceService.resolveRequester(recordExport);
       locale = getRecordExportLocale(requester);
-      const context = await this.recordExportWorkspaceService.buildContext({
+      const context = await this.recordExportQueryService.buildContext({
         parameters: recordExport.parameters,
         authContext: requester,
       });
       progress.totalRecordCount =
-        await this.recordExportWorkspaceService.countRecords({
+        await this.recordExportQueryService.countRecords({
           parameters: recordExport.parameters,
           context,
         });
@@ -201,14 +198,7 @@ export class GenerateRecordExportJob {
     signal: AbortSignal;
     updateProgress: MessageQueueJobProgressContext['updateProgress'];
   }): AsyncGenerator<string> {
-    const header =
-      '\uFEFF' +
-      context.columns
-        .map((column) =>
-          formatValueForCSV(sanitizeValueForCSVExport(column.label)),
-        )
-        .join(',') +
-      '\n';
+    const header = formatRecordExportHeader(context.columns);
     progress.size += Buffer.byteLength(header);
     yield header;
     let after: string | undefined;
@@ -240,7 +230,7 @@ export class GenerateRecordExportJob {
           context.queryRunnerContext.authContext,
         );
       }
-      const { results } = await this.recordExportWorkspaceService.readPage({
+      const { results } = await this.recordExportQueryService.readPage({
         parameters: recordExport.parameters,
         context,
         after,
