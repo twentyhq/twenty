@@ -572,7 +572,10 @@ export class ConnectionProviderOAuthFlowService {
     scope,
     reconnectingConnectedAccountId,
   }: {
-    provider: ConnectionProviderEntity;
+    provider: Pick<
+      ConnectionProviderEntity,
+      'id' | 'displayName' | 'applicationId'
+    >;
     credentials: ConnectedAccountCredentials | undefined;
     handle: string | undefined;
     identifiedAccount: IdentifiedAccount | null;
