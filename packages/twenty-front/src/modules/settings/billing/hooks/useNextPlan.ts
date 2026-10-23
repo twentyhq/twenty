@@ -1,5 +1,6 @@
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { usePlans } from '@/settings/billing/hooks/usePlans';
+import { findPlanByPhaseItems } from '@/settings/billing/utils/findPlanByPhaseItems';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useNextPlan = () => {
@@ -10,15 +11,10 @@ export const useNextPlan = () => {
 
   const nextPlan =
     isPlansLoaded && isDefined(nextBillingPhase)
-      ? listPlans().find((plan) =>
-          plan.baseProducts.some((product) =>
-            product.prices?.some((price) =>
-              nextBillingPhase.items.some(
-                (item) => item.price === price.stripePriceId,
-              ),
-            ),
-          ),
-        )
+      ? findPlanByPhaseItems({
+          plans: listPlans(),
+          phaseItems: nextBillingPhase.items,
+        })
       : undefined;
 
   return {
