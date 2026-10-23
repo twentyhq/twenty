@@ -116,7 +116,7 @@ const MetricUnit = styled.span`
   color: ${semanticColor.inkMuted};
 `;
 
-const MetricDetail = styled.span`
+const CellDetail = styled.span`
   color: ${semanticColor.inkMuted};
   font-size: ${fontSize(3.5)};
   line-height: ${spacing(5)};
@@ -187,7 +187,14 @@ function CellValue({ cell }: { cell: PlanTableCellType }) {
   const { i18n } = useLingui();
 
   if (cell.kind === 'text') {
-    return <TierText>{i18n._(cell.text)}</TierText>;
+    return (
+      <>
+        <TierText>{i18n._(cell.text)}</TierText>
+        {cell.detail !== undefined ? (
+          <CellDetail>{i18n._(cell.detail)}</CellDetail>
+        ) : null}
+      </>
+    );
   }
 
   if (cell.kind === 'metric') {
@@ -201,7 +208,7 @@ function CellValue({ cell }: { cell: PlanTableCellType }) {
           <MetricUnit>{i18n._(cell.unit)}</MetricUnit>
         </MetricLine>
         {cell.detail !== undefined ? (
-          <MetricDetail>{i18n._(cell.detail)}</MetricDetail>
+          <CellDetail>{i18n._(cell.detail)}</CellDetail>
         ) : null}
       </>
     );
