@@ -1,4 +1,3 @@
-import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -7,14 +6,10 @@ import { GetAiChatUserCreditsUsageDocument } from '~/generated-metadata/graphql'
 
 export const useAiChatUserCreditsUsage = ({
   skip = false,
-  fetchPolicy,
-}: {
-  skip?: boolean;
-  fetchPolicy: WatchQueryFetchPolicy;
-}) => {
+}: { skip?: boolean } = {}) => {
   const { data } = useQuery(GetAiChatUserCreditsUsageDocument, {
     skip,
-    fetchPolicy,
+    fetchPolicy: 'cache-and-network',
   });
 
   const aiChatUserCreditsUsage = data?.aiChatUserCreditsUsage;

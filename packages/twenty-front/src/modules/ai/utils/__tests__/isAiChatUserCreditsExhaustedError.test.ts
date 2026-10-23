@@ -11,7 +11,7 @@ const buildError = (extensions: Record<string, unknown>) =>
   });
 
 describe('isAiChatUserCreditsExhaustedError', () => {
-  it('covers a turn stopped mid-stream and a send refused upfront', () => {
+  it('covers a reopened turn that user credits stopped and a send refused upfront', () => {
     expect(
       isAiChatUserCreditsExhaustedError(
         createAiChatCodedError(

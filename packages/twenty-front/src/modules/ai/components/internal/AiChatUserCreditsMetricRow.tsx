@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { MetricRow } from 'twenty-ui/components/data-display';
-import { IconUser } from 'twenty-ui/icon';
+import { IconCoins } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
@@ -17,9 +17,7 @@ export const AiChatUserCreditsMetricRow = () => {
   const theme = useTheme();
   const { formatUsageValue } = useUsageValueFormatter();
 
-  const { userCreditsUsage } = useAiChatUserCreditsUsage({
-    fetchPolicy: 'cache-and-network',
-  });
+  const { userCreditsUsage } = useAiChatUserCreditsUsage();
 
   if (!isDefined(userCreditsUsage)) {
     return null;
@@ -38,7 +36,7 @@ export const AiChatUserCreditsMetricRow = () => {
 
   return (
     <MetricRow
-      startIcon={<IconUser size={theme.icon.size.sm} />}
+      startIcon={<IconCoins size={theme.icon.size.sm} />}
       progress={progress?.consumedPercentage ?? 0}
       value={label}
       progressValueText={label}

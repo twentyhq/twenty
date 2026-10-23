@@ -16,9 +16,7 @@ export const AiChatUserCreditsExhaustedMessage = ({
 }: AiChatUserCreditsExhaustedMessageProps) => {
   const { t } = useLingui();
 
-  const { userCreditsUsage } = useAiChatUserCreditsUsage({
-    fetchPolicy: 'network-only',
-  });
+  const { userCreditsUsage } = useAiChatUserCreditsUsage();
 
   const daysUntilReset = isDefined(userCreditsUsage)
     ? computeDaysUntilReset(userCreditsUsage.periodEnd)
@@ -29,7 +27,7 @@ export const AiChatUserCreditsExhaustedMessage = ({
       error={error}
       hint={
         isDefined(daysUntilReset)
-          ? t`Your credits renew in ${plural(daysUntilReset, { one: '# day', other: '# days' })}.`
+          ? t`AI credits renew in ${plural(daysUntilReset, { one: '# day', other: '# days' })}.`
           : undefined
       }
     />

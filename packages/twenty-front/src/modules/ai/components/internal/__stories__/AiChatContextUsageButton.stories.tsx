@@ -11,10 +11,12 @@ import {
   type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { billingState } from '@/client-config/states/billingState';
 import {
   GetAiChatUsageDocument,
   GetAiChatUserCreditsUsageDocument,
 } from '~/generated-metadata/graphql';
+import { mockedClientConfig } from '~/testing/mock-data/config';
 
 const USAGE: AgentChatUsageState = {
   conversationSize: 200000,
@@ -57,6 +59,7 @@ const UsageStory = ({
   const [store] = useState(() => {
     const storyStore = createStore();
     storyStore.set(currentAiChatThreadState.atom, 'story-thread');
+    storyStore.set(billingState.atom, mockedClientConfig.billing);
     storyStore.set(
       agentChatUsageFamilyState.atomFamily({ threadId: 'story-thread' }),
       usage,

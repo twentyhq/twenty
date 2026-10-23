@@ -11,7 +11,6 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { findAiChatCreditLimits } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-ai-chat-credit-limits.util';
 import { selectAiChatUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/select-ai-chat-usage.util';
-import { selectAiChatUserCreditsUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/select-ai-chat-user-credits-usage.util';
 
 @Injectable()
 export class AiChatUsageService {
@@ -66,13 +65,11 @@ export class AiChatUsageService {
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<AiChatUserCreditsUsageDTO | null> {
-    const usages = await this.usageLimitQuotaService.getUserAllowanceUsages({
+    return this.usageLimitQuotaService.getUserAllowanceUsage({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType: UsageOperationType.AI_CHAT_TOKEN,
       spenders: { userWorkspaceId },
     });
-
-    return selectAiChatUserCreditsUsage(usages);
   }
 }

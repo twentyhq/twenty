@@ -1,4 +1,4 @@
-export type UserAllowanceUsage = {
+export type AllowanceUsage = {
   limitValue: number;
   consumedValue: number | null;
   periodEnd: Date;

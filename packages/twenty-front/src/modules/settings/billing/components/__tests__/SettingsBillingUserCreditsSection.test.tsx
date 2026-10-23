@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import {
   type CurrentWorkspace,
   currentWorkspaceState,
@@ -13,6 +14,7 @@ import {
 import { SettingsBillingUserCreditsSection } from '@/settings/billing/components/SettingsBillingUserCreditsSection';
 import {
   GetAiChatUserCreditsUsageDocument,
+  PermissionFlagType,
   UpdateUserCreditsFallbackDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
@@ -30,12 +32,21 @@ const BILLING_CUSTOMER_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 const renderSection = ({
   hasUserCredits,
+  hasBillingPermission = true,
   userCreditsFallback,
 }: {
   hasUserCredits: boolean;
+  hasBillingPermission?: boolean;
   userCreditsFallback: UserCreditsFallback;
 }) => {
   const store = createStore();
+
+  store.set(currentUserWorkspaceState.atom, {
+    permissionFlags: hasBillingPermission ? [PermissionFlagType.BILLING] : [],
+    twoFactorAuthenticationMethodSummary: [],
+    objectsPermissions: [],
+    isImpersonating: false,
+  });
 
   store.set(currentWorkspaceState.atom, {
     id: 'workspace',
@@ -121,14 +132,21 @@ describe('SettingsBillingUserCreditsSection', () => {
     expect(toggle).not.toBeChecked();
   });
 
-  it('stays hidden when the plan gives members no credits', async () => {
-    renderSection({
-      hasUserCredits: false,
-      userCreditsFallback: UserCreditsFallback.WORKSPACE_CREDITS,
-    });
+  it.each([
+    { hasUserCredits: false, hasBillingPermission: true },
+    { hasUserCredits: true, hasBillingPermission: false },
+  ])(
+    'stays hidden with %o',
+    async ({ hasUserCredits, hasBillingPermission }) => {
+      renderSection({
+        hasUserCredits,
+        hasBillingPermission,
+        userCreditsFallback: UserCreditsFallback.WORKSPACE_CREDITS,
+      });
 
-    await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(screen.queryByText('User credits')).not.toBeInTheDocument();
-  });
+      expect(screen.queryByText('User credits')).not.toBeInTheDocument();
+    },
+  );
 });

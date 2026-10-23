@@ -32,7 +32,7 @@ import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamin
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatStreamRecoveryAttemptsState } from '@/ai/states/agentChatStreamRecoveryAttemptsState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatUserCreditsFallbackNoticeState } from '@/ai/states/agentChatUserCreditsFallbackNoticeState';
+import { agentChatUserCreditsExhaustedNoticeState } from '@/ai/states/agentChatUserCreditsExhaustedNoticeState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { accumulateAgentChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
@@ -348,20 +348,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             break;
           }
 
-          if (event.isFallingBackToWorkspaceCredits) {
-            store.set(agentChatUserCreditsFallbackNoticeState.atom, {
-              renewsAt: event.renewsAt,
-            });
-            break;
-          }
-
-          store.set(
-            errorAtom,
-            createAiChatCodedError(
-              t`You have used all your AI credits.`,
-              AiChatErrorCode.USER_CREDITS_EXHAUSTED,
-            ),
-          );
+          store.set(agentChatUserCreditsExhaustedNoticeState.atom, {
+            renewsAt: event.renewsAt,
+            isFallingBackToWorkspaceCredits:
+              event.isFallingBackToWorkspaceCredits,
+          });
           break;
         }
       }

@@ -8,17 +8,25 @@ import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage'
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpdateUserCreditsFallback } from '@/settings/billing/hooks/useUpdateUserCreditsFallback';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { UserCreditsFallback } from '~/generated-metadata/graphql';
+import {
+  PermissionFlagType,
+  UserCreditsFallback,
+} from '~/generated-metadata/graphql';
 
 export const SettingsBillingUserCreditsSection = () => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { updateUserCreditsFallback, loading } = useUpdateUserCreditsFallback();
 
+  const hasPermissionToManageBilling = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
+
   // User credits come from the plan, the same for every member, so the viewer's own allowance tells whether the plan has any
   const { userCreditsUsage } = useAiChatUserCreditsUsage({
-    fetchPolicy: 'cache-and-network',
+    skip: !hasPermissionToManageBilling,
   });
 
   const userCreditsFallback =

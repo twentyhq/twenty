@@ -62,19 +62,17 @@ describe('AiChatErrorRenderer with spent user credits', () => {
     jest.useRealTimers();
   });
 
-  it('explains a turn stopped mid-stream and when credits renew, without a retry', async () => {
+  it('explains a reopened turn that user credits stopped, without a retry', async () => {
     renderError(
       createAiChatCodedError(
-        'You have used all your AI credits.',
+        'The member ran out of AI credits.',
         AiChatErrorCode.USER_CREDITS_EXHAUSTED,
       ),
     );
 
+    expect(screen.getByText('The member ran out of AI credits.')).toBeVisible();
     expect(
-      screen.getByText('You have used all your AI credits.'),
-    ).toBeVisible();
-    expect(
-      await screen.findByText('Your credits renew in 3 days.'),
+      await screen.findByText('AI credits renew in 3 days.'),
     ).toBeVisible();
     expect(
       screen.queryByRole('button', { name: 'Retry' }),
@@ -103,7 +101,7 @@ describe('AiChatErrorRenderer with spent user credits', () => {
       screen.getByText('Your AI credits for this period are used up.'),
     ).toBeVisible();
     expect(
-      await screen.findByText('Your credits renew in 3 days.'),
+      await screen.findByText('AI credits renew in 3 days.'),
     ).toBeVisible();
     expect(
       screen.queryByText('Ask an admin to raise the limit.'),

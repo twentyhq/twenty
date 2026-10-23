@@ -13,7 +13,7 @@ import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMe
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
-import { AiChatUserCreditsFallbackBanner } from '@/ai/components/AiChatUserCreditsFallbackBanner';
+import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
@@ -218,7 +218,7 @@ const EditableAiChatEditorSection = () => {
         )}
         {hasReachedAiChatCreditsCap && <AiChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
-        <AiChatUserCreditsFallbackBanner />
+        <AiChatUserCreditsExhaustedBanner />
         <AiChatParticipantMentionBar editor={editor} />
         <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
       </StyledInputArea>
