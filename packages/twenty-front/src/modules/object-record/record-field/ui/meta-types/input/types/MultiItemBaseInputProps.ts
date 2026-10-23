@@ -4,8 +4,9 @@ type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
 
 export type MultiItemBaseInputProps = Pick<
   HTMLInputProps,
-  'autoFocus' | 'className' | 'value' | 'placeholder' | 'onFocus' | 'onBlur'
+  'autoFocus' | 'className' | 'placeholder' | 'onFocus' | 'onBlur'
 > & {
+  value: string;
   onClickOutside?: () => void;
   onEnter?: () => void;
   onEscape?: () => void;

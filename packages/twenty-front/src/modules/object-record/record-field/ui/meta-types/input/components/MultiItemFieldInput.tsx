@@ -1,12 +1,13 @@
-import { ListItemButton } from 'twenty-ui/components/navigation';
 import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
+import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
+import { MultiItemFieldSearchHeader } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSearchHeader';
 import { type MultiItemBaseInputProps } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemBaseInputProps';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
 import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
-import { OverlayMenuListSearchRow } from '@/ui/layout/overlay/components/OverlayMenuListSearchRow';
 import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -14,17 +15,12 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { LightIconButton } from 'twenty-ui/components/input';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
@@ -32,10 +28,6 @@ import { toSpliced } from '~/utils/array/toSpliced';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { normalizeSearchText } from 'twenty-ui/utilities';
-
-const StyledAddItemContainer = styled.div`
-  padding: ${themeCssVariables.spacing[1]};
-`;
 
 type MultiItemFieldInputProps<T> = {
   items: T[];
@@ -324,19 +316,10 @@ export const MultiItemFieldInput = <T,>({
       ref={containerRef}
       header={
         shouldShowSearch && !isInputDisplayed ? (
-          <>
-            <OverlayMenuListSearchRow
-              value={searchFilter}
-              onChange={(event) =>
-                setSearchFilter(
-                  turnIntoEmptyStringIfWhitespacesOnly(
-                    event.currentTarget.value,
-                  ),
-                )
-              }
-            />
-            <OverlayMenuListSeparator />
-          </>
+          <MultiItemFieldSearchHeader
+            value={searchFilter}
+            onChange={setSearchFilter}
+          />
         ) : undefined
       }
       footer={
@@ -364,26 +347,18 @@ export const MultiItemFieldInput = <T,>({
               preventTabNavigation
               rightComponent={
                 isNonEmptyArray(items) ? (
-                  <LightIconButton
+                  <MultiItemFieldSaveButton
+                    isAddingNewItem={isAddingNewItem}
                     onClick={handleEnter}
-                    aria-label={isAddingNewItem ? t`Add item` : t`Save item`}
-                  >
-                    {isAddingNewItem ? <IconPlus /> : <IconCheck />}
-                  </LightIconButton>
+                  />
                 ) : null
               }
             />
           ) : !isLimitReached ? (
-            <StyledAddItemContainer>
-              <ListItemButton
-                onClick={handleAddButtonClick}
-                startIcon={<IconPlus />}
-              >
-                <OverflowingTextWithTooltip
-                  text={newItemLabel || t`Add ${placeholder}`}
-                />
-              </ListItemButton>
-            </StyledAddItemContainer>
+            <MultiItemFieldAddButton
+              label={newItemLabel || t`Add ${placeholder}`}
+              onClick={handleAddButtonClick}
+            />
           ) : null}
         </>
       }
