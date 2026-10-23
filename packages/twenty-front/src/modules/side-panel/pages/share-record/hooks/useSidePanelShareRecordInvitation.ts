@@ -6,13 +6,10 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
+import { getRecordSharingGeneralAccess } from '@/object-record/record-sharing/utils/getRecordSharingGeneralAccess';
+import { getRecordSharingInvitationRecipients } from '@/object-record/record-sharing/utils/getRecordSharingInvitationRecipients';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
-import {
-  RecordShareAccessLevel,
-  RecordSharePrincipalType,
-} from '~/generated-metadata/graphql';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 const DEFAULT_INVITATION_ACCESS_LEVEL = RecordShareAccessLevel.READ;
@@ -43,68 +40,31 @@ export const useSidePanelShareRecordInvitation = ({
   const [errorMessage, setErrorMessage] = useState<string>();
   const canInvite = sharing?.canManageSharing ?? false;
   const isBusy = isSubmitting || saving;
-  const hasExistingShare = ({
-    principalId,
-    principalType,
-  }: {
-    principalId: string;
-    principalType: RecordSharePrincipalType;
-  }) =>
-    sharing?.shares.some(
-      (share) =>
-        share.principalId === principalId &&
-        share.principalType === principalType,
-    ) ?? false;
-  const memberRecipients = currentWorkspaceMembers
-    .filter(
-      (member) =>
-        !hasExistingShare({
-          principalId: member.id,
-          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-        }),
-    )
-    .map((member): RecordSharingInvitationRecipient => ({
-      kind: 'workspaceMember',
-      id: member.id,
-      label: getWorkspaceMemberNameOrEmail(member),
-      description: member.userEmail,
-      avatarUrl: getAbsoluteImageUrl(member.avatarUrl),
-    }));
-  const roleRecipients = (sharing?.roles ?? [])
-    .filter(
-      (role) =>
-        !hasExistingShare({
-          principalId: role.id,
-          principalType: RecordSharePrincipalType.ROLE,
-        }),
-    )
-    .map((role): RecordSharingInvitationRecipient => ({
-      kind: 'role',
-      id: role.id,
-      label: role.label,
-      description: t`Role`,
-    }));
-  const hasGeneralAccess =
-    isDefined(sharing?.generalAccessLevel) &&
-    sharing.generalAccessLevel !== RecordShareAccessLevel.NONE;
+  const generalAccess = getRecordSharingGeneralAccess({
+    sharing,
+    workspaceName: currentWorkspace?.displayName ?? '',
+  });
   const canInviteEveryone =
     isDefined(sharing) &&
     isDefined(currentWorkspace) &&
-    !hasGeneralAccess &&
-    !sharing.hasManagedGeneralAccess;
+    !generalAccess.hasGeneralAccess;
   const everyoneRecipients: RecordSharingInvitationRecipient[] =
     canInviteEveryone
       ? [
           {
             kind: 'everyone',
             id: currentWorkspace.id,
-            label: t`Everyone at ${currentWorkspace.displayName}`,
+            label: t(generalAccess.label),
           },
         ]
       : [];
   const recipients = [
-    ...memberRecipients,
-    ...roleRecipients,
+    ...getRecordSharingInvitationRecipients({
+      workspaceMembers: currentWorkspaceMembers,
+      shares: sharing?.shares ?? [],
+      roles: sharing?.roles ?? [],
+      roleLabel: t`Role`,
+    }),
     ...everyoneRecipients,
   ];
 
