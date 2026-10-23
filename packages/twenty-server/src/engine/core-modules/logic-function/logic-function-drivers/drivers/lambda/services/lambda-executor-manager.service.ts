@@ -294,7 +294,6 @@ export class LambdaExecutorManagerService {
       isDefined(lambdaExecutor) &&
       isActive &&
       !flatApplication.isSdkLayerStale &&
-      this.isOnCurrentSdkClient({ lambdaExecutor, flatApplication }) &&
       this.layerManager.hasExpectedLayers({
         lambdaExecutor,
         flatApplication,
@@ -302,20 +301,6 @@ export class LambdaExecutorManagerService {
       });
 
     return { canSkip, lambdaExecutor };
-  }
-
-  private isOnCurrentSdkClient({
-    lambdaExecutor,
-    flatApplication,
-  }: {
-    lambdaExecutor: GetFunctionCommandOutput;
-    flatApplication: FlatApplication;
-  }): boolean {
-    return (
-      !isDefined(flatApplication.sdkClientCoreChecksum) ||
-      lambdaExecutor.Tags?.[LAMBDA_SDK_CLIENT_CHECKSUM_TAG] ===
-        flatApplication.sdkClientCoreChecksum
-    );
   }
 
   private async ensureExecutor({
