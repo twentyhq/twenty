@@ -97,14 +97,14 @@ export class MessagingMessageParticipantService {
         const identityUpdates = participantsWithExisting.flatMap(
           ({ participant, existingParticipant }) => {
             // app channel rows match without their name, so one stored without it takes a later delivery's
-            const fillsMissingDisplayName =
+            const shouldFillMissingDisplayName =
               !shouldMatchOnDisplayName &&
               !isNonEmptyString(existingParticipant?.displayName) &&
               isNonEmptyString(participant.displayName);
 
             if (
               !isDefined(existingParticipant) ||
-              (!suppliesIdentity(participant) && !fillsMissingDisplayName)
+              (!suppliesIdentity(participant) && !shouldFillMissingDisplayName)
             ) {
               return [];
             }
