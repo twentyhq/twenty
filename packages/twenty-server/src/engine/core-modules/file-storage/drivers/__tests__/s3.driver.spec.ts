@@ -404,6 +404,61 @@ describe('S3Driver.move', () => {
     expect(copyCommands[2].input.CopySourceIfMatch).toBeUndefined();
   });
 
+  it('should fall back to an unconditional copy when the backend answers 409 ConditionalRequestConflict on multipart conditional copy', async () => {
+    const conditionalConflictError = Object.assign(
+      new Error('Concurrent operation occurred during conditional request'),
+      { name: 'ConditionalRequestConflict', $metadata: { httpStatusCode: 409 } },
+    );
+
+    mockS3Send.mockImplementation(async (command) => {
+      if (
+        command instanceof CopyObjectCommand &&
+        isDefined(command.input.CopySourceIfMatch)
+      ) {
+        throw conditionalConflictError;
+      }
+
+      return { ETag: '"etag"' };
+    });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await driver.move(moveParams);
+
+    const copyCommands = getCopyCommands();
+
+    expect(copyCommands).toHaveLength(2);
+    expect(copyCommands[0].input.CopySourceIfMatch).toBe('"etag"');
+    expect(copyCommands[1].input.CopySourceIfMatch).toBeUndefined();
+
+    expect((driver as any).supportsConditionalCopy).toBe(true);
+  });
+
+  it('should rethrow 409 errors that are not ConditionalRequestConflict', async () => {
+    const conflictError = Object.assign(new Error('Other conflict'), {
+      name: 'Conflict',
+      $metadata: { httpStatusCode: 409 },
+    });
+
+    mockS3Send.mockImplementation(async (command) => {
+      if (command instanceof CopyObjectCommand) {
+        throw conflictError;
+      }
+
+      return { ETag: '"etag"' };
+    });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await expect(driver.move(moveParams)).rejects.toThrow('Other conflict');
+  });
+
   it('should still report a failed precondition', async () => {
     mockS3Send.mockImplementation(async (command) => {
       if (command instanceof CopyObjectCommand) {

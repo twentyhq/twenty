@@ -411,14 +411,22 @@ export class S3Driver implements StorageDriver {
           error.name === 'NotImplemented' ||
           error.$metadata?.httpStatusCode === 501;
 
-        if (!isNotImplemented) {
+        if (isNotImplemented) {
+          this.supportsConditionalCopy = false;
+          this.logger.warn(
+            'S3 backend does not support CopySourceIfMatch, falling back to unconditional copies',
+          );
+        } else if (
+          (error.name === 'ConditionalRequestConflict' ||
+            error.Code === 'ConditionalRequestConflict') &&
+          error.$metadata?.httpStatusCode === 409
+        ) {
+          this.logger.warn(
+            `S3 backend returned ConditionalRequestConflict for ${fromKey}, falling back to unconditional copy`,
+          );
+        } else {
           throw error;
         }
-
-        this.supportsConditionalCopy = false;
-        this.logger.warn(
-          'S3 backend does not support CopySourceIfMatch, falling back to unconditional copies',
-        );
       }
     }
 
