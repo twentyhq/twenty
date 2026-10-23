@@ -1,3 +1,4 @@
+import { frontComponentDeleteSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-delete.schema';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { tool, type ToolSet } from 'ai';
 import { z } from 'zod';
@@ -160,10 +161,7 @@ export class AiFrontComponentService {
       delete_front_component: tool({
         description:
           'Delete a saved frontend component from the Workspace custom application. First use list_front_components to identify its exact ID and name. Requires propose_tool_call and explicit human approval; never invoke directly. Components still referenced by widgets, commands or settings cannot be deleted: remove those references only when separately requested. Installed application components cannot be deleted with this tool.',
-        inputSchema: z.object({
-          frontComponentId: z.string().uuid(),
-          name: z.string().min(1).max(100),
-        }),
+        inputSchema: frontComponentDeleteSchema,
         execute: async ({ frontComponentId, name }) => ({
           success: true,
           message: 'Component deleted from the Workspace app.',
@@ -585,6 +583,7 @@ export class AiFrontComponentService {
     ).some(
       (widget) =>
         isDefined(widget) &&
+        !isDefined(widget.deletedAt) &&
         widget.configuration?.configurationType ===
           WidgetConfigurationType.FRONT_COMPONENT &&
         widget.configuration.frontComponentId === frontComponentId,

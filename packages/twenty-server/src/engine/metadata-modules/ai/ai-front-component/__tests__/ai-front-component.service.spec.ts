@@ -876,6 +876,24 @@ describe('AI front component lifecycle', () => {
       },
     );
 
+    it('allows deletion after the only referencing widget was soft-deleted', async () => {
+      widgetEntries.push({
+        id: 'removed-widget',
+        deletedAt: new Date().toISOString(),
+        configuration: {
+          configurationType: 'FRONT_COMPONENT',
+          frontComponentId: componentId,
+        },
+      });
+
+      await service.deleteComponent(componentId, 'Renewals', approvedContext);
+
+      expect(dependencies.components.destroyOne).toHaveBeenCalledWith({
+        id: componentId,
+        workspaceId: WORKSPACE_ID,
+      });
+    });
+
     it('does not delete anything when the component is absent in this workspace', async () => {
       componentEntries = [];
       await expect(
