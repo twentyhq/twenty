@@ -1,8 +1,10 @@
 import { styled } from '@linaria/react';
 import { useInView } from 'react-intersection-observer';
+import { type AgentChatThreadFilterStatus } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useFetchMoreAgentChatThreads } from '@/ai/hooks/useFetchMoreAgentChatThreads';
+import { useFetchMoreAgentChatThreadsInFilterStatus } from '@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -12,18 +14,34 @@ const StyledFetchMoreTrigger = styled.div`
   width: 100%;
 `;
 
-export const AgentChatThreadsFetchMoreTrigger = () => {
+type AgentChatThreadsFetchMoreTriggerProps = {
+  filterStatus?: AgentChatThreadFilterStatus;
+};
+
+export const AgentChatThreadsFetchMoreTrigger = ({
+  filterStatus,
+}: AgentChatThreadsFetchMoreTriggerProps) => {
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
-  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
+  const { fetchMoreAgentChatThreads } = useFetchMoreAgentChatThreads();
+  const { fetchMoreAgentChatThreadsInFilterStatus } =
+    useFetchMoreAgentChatThreadsInFilterStatus();
   const { ref } = useInView({
     onChange: (inView) => {
-      if (inView) {
-        void fetchMoreAgentChatThreads();
+      if (!inView) {
+        return;
       }
+
+      void (isDefined(filterStatus)
+        ? fetchMoreAgentChatThreadsInFilterStatus(filterStatus)
+        : fetchMoreAgentChatThreads());
     },
   });
 
-  if (!isDefined(agentChatThreadList) || !agentChatThreadList.hasNextPage) {
+  const hasNextPage = isDefined(filterStatus)
+    ? agentChatThreadList?.filterStatusPages?.[filterStatus]?.hasNextPage
+    : agentChatThreadList?.hasNextPage;
+
+  if (!hasNextPage) {
     return null;
   }
 

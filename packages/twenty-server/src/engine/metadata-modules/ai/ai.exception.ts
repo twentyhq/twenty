@@ -18,6 +18,8 @@ export enum AiExceptionCode {
   INVALID_CHAT_MESSAGE_REACTION_EMOJI = 'INVALID_CHAT_MESSAGE_REACTION_EMOJI',
   CHAT_THREAD_ASSIGNEE_CANNOT_REPLY = 'CHAT_THREAD_ASSIGNEE_CANNOT_REPLY',
   CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE = 'CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE',
+  INVALID_CHAT_INBOX_TAB_ACTION = 'INVALID_CHAT_INBOX_TAB_ACTION',
+  CHAT_INBOX_TAB_ACTION_TOO_LARGE = 'CHAT_INBOX_TAB_ACTION_TOO_LARGE',
   CHAT_THREAD_NOT_IN_CHANNEL = 'CHAT_THREAD_NOT_IN_CHANNEL',
   CHAT_THREAD_CANNOT_LEAVE_CHANNEL = 'CHAT_THREAD_CANNOT_LEAVE_CHANNEL',
   CHAT_CHANNEL_NOT_FOUND = 'CHAT_CHANNEL_NOT_FOUND',
@@ -76,6 +78,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This member can't reply in this chat, so it can't be assigned to them.`;
     case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
       return msg`Unassign yourself before unsubscribing from this chat.`;
+    case AiExceptionCode.INVALID_CHAT_INBOX_TAB_ACTION:
+      return msg`This action can't be applied to every chat in this list.`;
+    case AiExceptionCode.CHAT_INBOX_TAB_ACTION_TOO_LARGE:
+      return msg`Too many chats are selected. Select fewer and try again.`;
     case AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL:
       return msg`This chat is not in a channel.`;
     case AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL:

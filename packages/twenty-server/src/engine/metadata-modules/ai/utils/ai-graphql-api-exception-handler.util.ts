@@ -35,6 +35,8 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED:
       case AiExceptionCode.INVALID_EVALUATION_REQUEST:
       case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_REPLY:
+      case AiExceptionCode.INVALID_CHAT_INBOX_TAB_ACTION:
+      case AiExceptionCode.CHAT_INBOX_TAB_ACTION_TOO_LARGE:
       case AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL:
       case AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL:
       case AiExceptionCode.INVALID_CHAT_CHANNEL_NAME:

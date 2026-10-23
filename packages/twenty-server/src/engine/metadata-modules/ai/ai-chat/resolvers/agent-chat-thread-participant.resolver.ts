@@ -1,6 +1,11 @@
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Query, registerEnumType } from '@nestjs/graphql';
 
+import {
+  AGENT_CHAT_INBOX_TAB_ACTIONS,
+  AGENT_CHAT_THREAD_FILTER_STATUS,
+  type AgentChatThreadFilterStatus,
+} from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,6 +28,28 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
+
+registerEnumType(AGENT_CHAT_THREAD_FILTER_STATUS, {
+  name: 'AgentChatThreadFilterStatus',
+});
+
+const validateSnoozeTimeOrThrow = ({
+  action,
+  snoozedUntil,
+}: {
+  action: AgentChatInboxAction;
+  snoozedUntil: Date | null;
+}) => {
+  if (
+    action === AgentChatInboxAction.SNOOZE &&
+    (!isDefined(snoozedUntil) || snoozedUntil.getTime() <= Date.now())
+  ) {
+    throw new AiException(
+      'Snooze time must be in the future',
+      AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME,
+    );
+  }
+};
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -69,18 +96,42 @@ export class AgentChatThreadParticipantResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadParticipantDTO[]> {
-    if (
-      action === AgentChatInboxAction.SNOOZE &&
-      (!isDefined(snoozedUntil) || snoozedUntil.getTime() <= Date.now())
-    ) {
-      throw new AiException(
-        'Snooze time must be in the future',
-        AiExceptionCode.INVALID_CHAT_THREAD_SNOOZE_TIME,
-      );
-    }
+    validateSnoozeTimeOrThrow({ action, snoozedUntil });
 
     return this.triageService.updateInboxState({
       threadIds,
+      action,
+      snoozedUntil: snoozedUntil ?? null,
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => [AgentChatThreadParticipantDTO])
+  async updateAgentChatThreadInboxStateInFilterStatus(
+    @Args('filterStatus', { type: () => AGENT_CHAT_THREAD_FILTER_STATUS })
+    filterStatus: AgentChatThreadFilterStatus,
+    @Args('excludedThreadIds', { type: () => [UUIDScalarType] })
+    excludedThreadIds: string[],
+    @Args('action', { type: () => AgentChatInboxAction })
+    action: AgentChatInboxAction,
+    @Args('snoozedUntil', { type: () => Date, nullable: true })
+    snoozedUntil: Date | null,
+    @AuthWorkspaceMemberId() workspaceMemberId: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<AgentChatThreadParticipantDTO[]> {
+    if (!AGENT_CHAT_INBOX_TAB_ACTIONS.has(action)) {
+      throw new AiException(
+        `Cannot apply ${action} to the chats in ${filterStatus}`,
+        AiExceptionCode.INVALID_CHAT_INBOX_TAB_ACTION,
+      );
+    }
+
+    validateSnoozeTimeOrThrow({ action, snoozedUntil });
+
+    return this.participantService.updateInboxStateInFilterStatus({
+      filterStatus,
+      excludedThreadIds,
       action,
       snoozedUntil: snoozedUntil ?? null,
       workspaceMemberId,

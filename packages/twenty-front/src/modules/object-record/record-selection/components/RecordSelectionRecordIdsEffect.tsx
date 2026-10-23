@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
+import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
 import { recordSelectionRangeComponentState } from '@/object-record/record-selection/states/recordSelectionRangeComponentState';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -32,10 +33,28 @@ export const RecordSelectionRecordIdsEffect = ({
       });
     const recordIds = records.map(({ id }) => id);
     const recordIdSet = new Set(recordIds);
+    const previousRecordIds = store.get(recordIdsAtom);
+
+    const previousRecordIdSet = new Set(previousRecordIds);
+    const hasUserSelectedAllRecordsAtom =
+      hasUserSelectedAllRecordsComponentState.atomFamily({ instanceId });
+    const addedRecordIds = store.get(hasUserSelectedAllRecordsAtom)
+      ? recordIds.filter((recordId) => !previousRecordIdSet.has(recordId))
+      : [];
+
+    for (const recordId of addedRecordIds) {
+      store.set(
+        isRecordSelectedComponentFamilyState.atomFamily({
+          instanceId,
+          familyKey: recordId,
+        }),
+        true,
+      );
+    }
 
     // A record that leaves the list leaves the selection too, so it is not
     // selected again when it comes back
-    for (const previousRecordId of store.get(recordIdsAtom)) {
+    for (const previousRecordId of previousRecordIds) {
       if (!recordIdSet.has(previousRecordId)) {
         store.set(
           isRecordSelectedComponentFamilyState.atomFamily({
@@ -45,6 +64,21 @@ export const RecordSelectionRecordIdsEffect = ({
           false,
         );
       }
+    }
+
+    // Once every selected record has left, records loaded later stay unselected
+    if (
+      store.get(hasUserSelectedAllRecordsAtom) &&
+      !recordIds.some((recordId) =>
+        store.get(
+          isRecordSelectedComponentFamilyState.atomFamily({
+            instanceId,
+            familyKey: recordId,
+          }),
+        ),
+      )
+    ) {
+      store.set(hasUserSelectedAllRecordsAtom, false);
     }
 
     const recordSelectionRangeAtom =

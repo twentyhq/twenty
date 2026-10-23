@@ -29,10 +29,12 @@ const StyledButtons = styled.div`
 
 type AiChatInboxSelectionPaneProps = {
   selectedThreads: AgentChatThreadRecord[];
+  selectedThreadCount: number;
 };
 
 export const AiChatInboxSelectionPane = ({
   selectedThreads,
+  selectedThreadCount,
 }: AiChatInboxSelectionPaneProps) => {
   const { t } = useLingui();
   const { resetRecordSelection } = useResetRecordSelection();
@@ -49,7 +51,7 @@ export const AiChatInboxSelectionPane = ({
     <PageCardLayout
       header={
         <PageCardHeader
-          title={plural(selectedThreads.length, {
+          title={plural(selectedThreadCount, {
             one: '# chat',
             other: '# chats',
           })}
@@ -60,7 +62,7 @@ export const AiChatInboxSelectionPane = ({
         <AiChatInboxSelectionPile threads={selectedThreads} />
         <EmptyState.Content>
           <EmptyState.Title>
-            {plural(selectedThreads.length, {
+            {plural(selectedThreadCount, {
               one: '# chat selected',
               other: '# chats selected',
             })}
