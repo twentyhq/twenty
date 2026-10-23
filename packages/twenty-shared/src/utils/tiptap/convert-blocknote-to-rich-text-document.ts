@@ -411,18 +411,6 @@ const getToggleSummaryNode = (
   }
 };
 
-const createToggleNode = ({
-  block,
-  summaryNode,
-}: {
-  block: BlockNoteObject;
-  summaryNode: TipTapNode;
-}): TipTapNode => ({
-  type: TIPTAP_NODE_TYPES.TOGGLE,
-  attrs: { id: isNonEmptyString(block.id) ? block.id : null },
-  content: [summaryNode, ...convertBlocks({ blocks: block.children })],
-});
-
 const getListNodeType = (blockType: unknown): ListNodeType | undefined => {
   switch (blockType) {
     case 'bulletListItem':
@@ -494,7 +482,14 @@ const convertBlocks = ({
       if (isDefined(toggleSummaryNode)) {
         nodes.push(
           indentNode({
-            node: createToggleNode({ block, summaryNode: toggleSummaryNode }),
+            node: {
+              type: TIPTAP_NODE_TYPES.TOGGLE,
+              attrs: { id: isNonEmptyString(block.id) ? block.id : null },
+              content: [
+                toggleSummaryNode,
+                ...convertBlocks({ blocks: block.children }),
+              ],
+            },
             indent,
           }),
         );
