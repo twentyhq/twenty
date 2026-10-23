@@ -9,6 +9,7 @@ import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescription
 import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
+import { COUNT_PAGER_PROP_DESCRIPTIONS } from './countPagerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { DETAILS_ROW_PROP_DESCRIPTIONS } from './detailsRowPropDescriptions';
@@ -29,6 +30,7 @@ import { RADIO_GROUP_PROP_DESCRIPTIONS } from './radioGroupPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
+import { DATE_PICKER_PROP_DESCRIPTIONS } from './datePickerPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
@@ -68,6 +70,7 @@ import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { REACTION_BUTTON_PROP_DESCRIPTIONS } from './reactionButtonPropDescriptions';
+import { EMOJI_PICKER_PROP_DESCRIPTIONS } from './emojiPickerPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
@@ -344,6 +347,18 @@ export const DOCUMENTED_COMPONENTS = [
     propDefaults: { variant: 'ghost', size: 'sm' },
   },
   {
+    name: 'EmojiPicker',
+    source: 'components/input/EmojiPicker/EmojiPicker.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/emoji-picker',
+    propDescriptions: EMOJI_PICKER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      locale: 'en',
+      searchPlaceholder: 'searchLabel',
+      autoFocus: 'false',
+    },
+  },
+  {
     name: 'ReactionButton',
     source: 'components/input/ReactionButton/ReactionButton.tsx',
     entryPoint: 'twenty-ui/components/input',
@@ -600,6 +615,8 @@ export const DOCUMENTED_COMPONENTS = [
         'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
         'When trailing actions are visible: on hover and focus, or always.',
+      actionsPlacement:
+        'Keeps actions beside the content at every width when set to `end`. The default `auto` preserves responsive wrapping. Hidden end actions do not reserve width on devices without touch.',
     },
   },
   {
@@ -870,6 +887,25 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
   },
   {
+    name: 'LabeledSeparator',
+    source: 'components/layout/LabeledSeparator/LabeledSeparator.tsx',
+    entryPoint: 'twenty-ui/components/layout',
+    slug: 'components/layout/labeled-separator',
+    propDescriptions: {
+      children:
+        'Text naming the separator. Supplied and localized by the caller.',
+      labelPosition:
+        'Place the label between two lines or at the end of one line.',
+      tone: 'Neutral divider or red marker with a thicker rule.',
+      hasStartMarker: 'Show a decorative cap at the beginning of the rule.',
+    },
+    propDefaults: {
+      labelPosition: 'center',
+      tone: 'neutral',
+      hasStartMarker: 'false',
+    },
+  },
+  {
     name: 'Section',
     source: 'components/layout/Section/Section.tsx',
     entryPoint: 'twenty-ui/components/layout',
@@ -920,6 +956,18 @@ export const DOCUMENTED_COMPONENTS = [
       hasSubmenu: 'Displays a decorative submenu indicator.',
     },
     propDefaults: { type: 'button', disabled: 'false' },
+  },
+  {
+    name: 'CountPager',
+    source: 'components/navigation/CountPager/CountPager.tsx',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/count-pager',
+    propDescriptions: COUNT_PAGER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      disabled: 'false',
+      positionPlacement: 'between',
+      role: 'group',
+    },
   },
   {
     name: 'TabButton',
@@ -1038,6 +1086,21 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/image-input',
     propDescriptions: IMAGE_INPUT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'DatePicker',
+    source: 'components/input/DatePicker/DatePicker.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/date-picker',
+    propDescriptions: DATE_PICKER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      isKeyboardNavigationDisabled: 'false',
+      loadingFallback: '300px-high Skeleton',
+      disabled: 'false',
+      readOnly: 'false',
+      isGridHidden: 'false',
+      role: 'group',
+    },
   },
   {
     name: 'SearchInput',

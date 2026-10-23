@@ -48,4 +48,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`App preferences`,
     description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
+  [FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED]: {
+    label: msg`App monitoring`,
+    description: msg`Show app owners and instance admins the health of an app across every workspace that installed it.`,
+  },
 };

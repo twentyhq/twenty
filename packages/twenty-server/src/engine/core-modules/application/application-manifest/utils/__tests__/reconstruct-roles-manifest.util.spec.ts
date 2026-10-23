@@ -44,6 +44,7 @@ const PET_SECRET_FIELD_UID = '30000000-0000-4000-8000-000000000002';
 const TOY_NAME_FIELD_UID = '30000000-0000-4000-8000-000000000003';
 const SUPPORT_ROLE_UID = '40000000-0000-4000-8000-000000000001';
 const ADMIN_ROLE_UID = '40000000-0000-4000-8000-000000000002';
+const NON_EDITABLE_ROLE_UID = '40000000-0000-4000-8000-000000000003';
 const EXPORT_PETS_FLAG_UID = '50000000-0000-4000-8000-000000000001';
 const WORKSPACE_FLAG_UID = '50000000-0000-4000-8000-000000000002';
 const PERSON_OBJECT_PERMISSION_UID = '60000000-0000-4000-8000-000000000001';
@@ -779,5 +780,32 @@ describe('reconstructRolesManifest', () => {
           ),
       ]),
     );
+  });
+
+  it('should not export a non-editable role nor report it as covered', () => {
+    const nonEditableRole = {
+      ...buildFlatRole(NON_EDITABLE_ROLE_UID, 'System'),
+      isEditable: false,
+    };
+    const { roles, coverage } = reconstructRolesManifest({
+      applicationAllFlatEntityMaps: buildMaps({
+        roles: [...applicationRoles, nonEditableRole],
+      }),
+      allFlatEntityMaps: buildMaps({
+        roles: [...applicationRoles, nonEditableRole],
+      }),
+      exportedObjectUniversalIdentifiers: new Set(),
+      resolvableFieldUniversalIdentifiers: new Set(),
+    });
+
+    expect(roles.map(({ universalIdentifier }) => universalIdentifier)).toEqual(
+      [SUPPORT_ROLE_UID],
+    );
+    expect(
+      coverage.find(
+        ({ universalIdentifier }) =>
+          universalIdentifier === NON_EDITABLE_ROLE_UID,
+      ),
+    ).toBeUndefined();
   });
 });

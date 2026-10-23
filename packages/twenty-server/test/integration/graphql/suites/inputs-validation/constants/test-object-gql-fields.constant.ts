@@ -63,5 +63,6 @@ export const TEST_OBJECT_GQL_FIELDS = `
     richTextField {
         blocknote
         markdown
+        tiptap
     }
 `;
