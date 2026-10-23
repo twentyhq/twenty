@@ -11,6 +11,17 @@ import {
   type RecordSharingFieldsFragment,
 } from '~/generated-metadata/graphql';
 
+const hasMatchingSearchValue = ({
+  values,
+  normalizedSearch,
+}: {
+  values: (string | null | undefined)[];
+  normalizedSearch: string;
+}) =>
+  values
+    .filter(isDefined)
+    .some((value) => value.toLowerCase().includes(normalizedSearch));
+
 export const getRecordSharingSearchResults = ({
   search,
   sharing,
@@ -51,14 +62,15 @@ export const getRecordSharingSearchResults = ({
       currentWorkspaceMember,
     });
 
-    return [
-      label,
-      member?.name.firstName,
-      member?.name.lastName,
-      member?.userEmail,
-    ]
-      .filter(isDefined)
-      .some((value) => value.toLowerCase().includes(normalizedSearch));
+    return hasMatchingSearchValue({
+      values: [
+        label,
+        member?.name.firstName,
+        member?.name.lastName,
+        member?.userEmail,
+      ],
+      normalizedSearch,
+    });
   });
   const matchingRecipients = recipients.filter(
     (recipient) =>
@@ -68,16 +80,18 @@ export const getRecordSharingSearchResults = ({
           otherRecipient: selectedRecipient,
         }),
       ) &&
-      [recipient.label, recipient.description]
-        .filter(isDefined)
-        .some((value) => value.toLowerCase().includes(normalizedSearch)),
+      hasMatchingSearchValue({
+        values: [recipient.label, recipient.description],
+        normalizedSearch,
+      }),
   );
   const matchesGeneralAccess =
     isInviting &&
     generalAccess.hasGeneralAccess &&
-    [generalAccess.label, generalAccess.workspaceName].some((value) =>
-      value.toLowerCase().includes(normalizedSearch),
-    );
+    hasMatchingSearchValue({
+      values: [generalAccess.label, generalAccess.workspaceName],
+      normalizedSearch,
+    });
 
   return {
     matchingShares,
