@@ -11,19 +11,10 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { isHttpUrl } from 'src/utils/is-http-url.util';
 
 @Injectable()
 export class FlatWebhookValidatorService {
-  private validateTargetUrl(targetUrl: string): boolean {
-    try {
-      const url = new URL(targetUrl);
-
-      return url.protocol === 'http:' || url.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  }
-
   public validateFlatWebhookCreation({
     flatEntityToValidate: flatWebhook,
   }: UniversalFlatEntityValidationArgs<
@@ -46,7 +37,7 @@ export class FlatWebhookValidatorService {
       });
     }
 
-    if (!this.validateTargetUrl(flatWebhook.targetUrl)) {
+    if (!isHttpUrl(flatWebhook.targetUrl)) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
         message: t`Invalid target URL provided`,
@@ -124,10 +115,7 @@ export class FlatWebhookValidatorService {
 
     const targetUrlUpdate = flatEntityUpdate.targetUrl;
 
-    if (
-      isDefined(targetUrlUpdate) &&
-      !this.validateTargetUrl(targetUrlUpdate)
-    ) {
+    if (isDefined(targetUrlUpdate) && !isHttpUrl(targetUrlUpdate)) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
         message: t`Invalid target URL provided`,

@@ -84,6 +84,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'objectPermission':
     case 'fieldPermission':
     case 'webhook':
+    case 'mcpServer':
     case 'applicationVariable':
     case 'workflow':
     case 'workflowVersion':

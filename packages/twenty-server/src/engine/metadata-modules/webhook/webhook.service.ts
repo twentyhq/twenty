@@ -14,6 +14,7 @@ import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dto
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { normalizeUrl } from 'src/utils/normalize-url.util';
 
 @Injectable()
 export class WebhookService {
@@ -22,16 +23,6 @@ export class WebhookService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
   ) {}
-
-  private normalizeTargetUrl(targetUrl: string): string {
-    try {
-      const url = new URL(targetUrl);
-
-      return url.toString();
-    } catch {
-      return targetUrl;
-    }
-  }
 
   async findAll(workspaceId: string): Promise<WebhookDTO[]> {
     const { flatWebhookMaps } =
@@ -69,7 +60,7 @@ export class WebhookService {
     input: CreateWebhookInput,
     workspaceId: string,
   ): Promise<WebhookDTO> {
-    const normalizedTargetUrl = this.normalizeTargetUrl(input.targetUrl);
+    const normalizedTargetUrl = normalizeUrl(input.targetUrl);
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -138,7 +129,7 @@ export class WebhookService {
       update: {
         ...input.update,
         ...(isDefined(input.update.targetUrl) && {
-          targetUrl: this.normalizeTargetUrl(input.update.targetUrl),
+          targetUrl: normalizeUrl(input.update.targetUrl),
         }),
       },
     };
