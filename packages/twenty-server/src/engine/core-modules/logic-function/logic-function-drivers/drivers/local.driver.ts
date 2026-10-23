@@ -17,8 +17,6 @@ import { LocalChildProcessRunnerService } from 'src/engine/core-modules/logic-fu
 import { LocalLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-layer-manager.service';
 import { LocalPrebuiltBundleService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-prebuilt-bundle.service';
 import { type LocalDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-driver.type';
-import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
-import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -205,13 +203,8 @@ export class LocalDriver implements LogicFunctionDriver {
           await this.childProcessRunner.runChildWithEnv({
             runnerPath,
             executionDirectory: sourceTemporaryDir,
-            layerDirectories: [
-              getLocalDepsLayerPath(flatApplication),
-              getLocalSdkLayerPath({
-                workspaceId: flatApplication.workspaceId,
-                applicationUniversalIdentifier,
-              }),
-            ],
+            flatApplication,
+            applicationUniversalIdentifier,
             env: env ?? {},
             payload,
             context,

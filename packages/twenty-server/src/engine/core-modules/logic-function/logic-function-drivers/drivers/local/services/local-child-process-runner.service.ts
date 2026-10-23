@@ -22,17 +22,12 @@ export class LocalChildProcessRunnerService {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const depsNodeModules = join(
-      getLocalDepsLayerPath(flatApplication),
-      'node_modules',
-    );
-    const sdkNodeModules = join(
-      getLocalSdkLayerPath({
-        workspaceId: flatApplication.workspaceId,
-        applicationUniversalIdentifier,
-      }),
-      'node_modules',
-    );
+    const { depsLayerDirectory, sdkLayerDirectory } = this.getLayerDirectories({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+    const depsNodeModules = join(depsLayerDirectory, 'node_modules');
+    const sdkNodeModules = join(sdkLayerDirectory, 'node_modules');
     const execNodeModules = join(sourceTemporaryDir, 'node_modules');
 
     await fs.mkdir(execNodeModules, { recursive: true });
@@ -149,7 +144,8 @@ export class LocalChildProcessRunnerService {
   async runChildWithEnv(options: {
     runnerPath: string;
     executionDirectory: string;
-    layerDirectories: string[];
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
     env: Record<string, string>;
     payload: unknown;
     context: LogicFunctionExecutionContext;
@@ -158,7 +154,8 @@ export class LocalChildProcessRunnerService {
     const {
       runnerPath,
       executionDirectory,
-      layerDirectories,
+      flatApplication,
+      applicationUniversalIdentifier,
       env,
       payload,
       context,
@@ -170,7 +167,15 @@ export class LocalChildProcessRunnerService {
     await fs.mkdir(temporaryDirectory, { recursive: true });
 
     const nodeFlags = buildLocalChildProcessNodeFlags({
-      readableDirectories: [executionDirectory, ...layerDirectories],
+      readableDirectories: [
+        executionDirectory,
+        ...Object.values(
+          this.getLayerDirectories({
+            flatApplication,
+            applicationUniversalIdentifier,
+          }),
+        ),
+      ],
       writableDirectory: temporaryDirectory,
       // Node 25+ denies network access under --permission unless --allow-net is passed.
       allowNetwork: process.allowedNodeEnvironmentFlags.has('--allow-net'),
@@ -260,5 +265,21 @@ export class LocalChildProcessRunnerService {
 
       child.on('close', () => clearTimeout(t));
     });
+  }
+
+  private getLayerDirectories({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
+    return {
+      depsLayerDirectory: getLocalDepsLayerPath(flatApplication),
+      sdkLayerDirectory: getLocalSdkLayerPath({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier,
+      }),
+    };
   }
 }
