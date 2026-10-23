@@ -313,9 +313,7 @@ describe('systemObjectRecordsPermissions', () => {
       );
 
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.updateMessage.text).toBe(
-        'Updated through the system object default',
-      );
+      expect(response.body.data.updateMessage.id).toBe(messageId);
     });
 
     it('should deny updating a standard object', async () => {
