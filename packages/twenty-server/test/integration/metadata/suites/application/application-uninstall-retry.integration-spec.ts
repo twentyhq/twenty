@@ -12,9 +12,11 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type Manifest } from 'twenty-shared/application';
+import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
+import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
 import { type ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -219,12 +221,16 @@ describe('Application uninstall retry', () => {
       .mockResolvedValueOnce(FAILED_EXECUTION_RESULT)
       .mockResolvedValueOnce(SUCCESSFUL_EXECUTION_RESULT);
 
-    await expect(
+    const firstAttempt =
       applicationUninstallService.runUninstallHooksForWorkspaceDeletion({
         workspaceId,
         workspaceDeletedAt,
-      }),
-    ).rejects.toThrow('cleanup failed');
+      });
+
+    await expect(firstAttempt).rejects.toThrow('cleanup failed');
+    await expect(firstAttempt).rejects.toBeInstanceOf(
+      RetryableLogicFunctionError,
+    );
 
     expect(executeSpy).toHaveBeenCalledTimes(2);
 
@@ -312,5 +318,26 @@ describe('Application uninstall retry', () => {
       );
 
     expect(workspaceIdsWithPendingUninstallHooksAfterRetry.size).toBe(0);
+  }, 120000);
+
+  it('reports a platform failure instead of treating it as an app hook failure', async () => {
+    const applicationUninstallService =
+      getAppProviderByClassName<ApplicationUninstallService>(
+        'ApplicationUninstallService',
+      );
+
+    executeSpy.mockClear();
+    executeSpy
+      .mockRejectedValueOnce(new Error('executor unavailable'))
+      .mockResolvedValueOnce(FAILED_EXECUTION_RESULT);
+
+    const attempt =
+      applicationUninstallService.runUninstallHooksForWorkspaceDeletion({
+        workspaceId,
+        workspaceDeletedAt: new Date('2026-08-19T10:00:00.000Z'),
+      });
+
+    await expect(attempt).rejects.toThrow('executor unavailable');
+    await expect(attempt).rejects.toBeInstanceOf(ApplicationException);
   }, 120000);
 });

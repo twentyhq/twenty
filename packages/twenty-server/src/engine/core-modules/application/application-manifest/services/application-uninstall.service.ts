@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 import { In, type Repository } from 'typeorm';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -57,6 +58,7 @@ export class ApplicationUninstallService {
       isApplicationUninstallHookPending(application, workspaceDeletedAt),
     );
     const applicationUninstallHookFailures: string[] = [];
+    let hasPlatformFailure = false;
 
     for (const application of pendingApplications) {
       try {
@@ -74,18 +76,29 @@ export class ApplicationUninstallService {
         const applicationUninstallHookFailure = `${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`;
 
         applicationUninstallHookFailures.push(applicationUninstallHookFailure);
+        hasPlatformFailure ||= !(error instanceof RetryableLogicFunctionError);
         this.logger.warn(
           `workspace-deletion uninstall hook failed: ${applicationUninstallHookFailure}`,
         );
       }
     }
 
-    if (isNonEmptyArray(applicationUninstallHookFailures)) {
-      throw new ApplicationException(
-        `Application uninstall hooks failed for workspace ${workspaceId}: ${applicationUninstallHookFailures.join('; ')}`,
-        ApplicationExceptionCode.UNINSTALL_ERROR,
-      );
+    if (!isNonEmptyArray(applicationUninstallHookFailures)) {
+      return;
     }
+
+    const failureMessage = `Application uninstall hooks failed for workspace ${workspaceId}: ${applicationUninstallHookFailures.join('; ')}`;
+
+    // An app's own hook failing is the app owner's to fix (it lands in their
+    // app logs); only platform failures should reach Sentry. Both still retry.
+    if (!hasPlatformFailure) {
+      throw new RetryableLogicFunctionError(failureMessage);
+    }
+
+    throw new ApplicationException(
+      failureMessage,
+      ApplicationExceptionCode.UNINSTALL_ERROR,
+    );
   }
 
   async runUninstallHooksForWorkspaceDeletionBestEffort({
@@ -226,9 +239,8 @@ export class ApplicationUninstallService {
       });
 
     if (isDefined(logicFunctionExecutionResult.error)) {
-      throw new ApplicationException(
+      throw new RetryableLogicFunctionError(
         logicFunctionExecutionResult.error.errorMessage,
-        ApplicationExceptionCode.UNINSTALL_ERROR,
       );
     }
   }
