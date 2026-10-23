@@ -1522,7 +1522,7 @@ export interface File {
     __typename: 'File'
 }
 
-export type FileFolder = 'AgentChat' | 'AppTarball' | 'BuiltFrontComponent' | 'BuiltLogicFunction' | 'CorePicture' | 'Dependencies' | 'Dpa' | 'EmailAttachment' | 'EmailImage' | 'FilesField' | 'GeneratedSdkClient' | 'PublicAsset' | 'RecordExport' | 'Source' | 'Workflow'
+export type FileFolder = 'AgentChat' | 'AppTarball' | 'BuiltFrontComponent' | 'BuiltLogicFunction' | 'CorePicture' | 'Dependencies' | 'Dpa' | 'EmailAttachment' | 'EmailImage' | 'FilesField' | 'GeneratedSdkClient' | 'PublicAsset' | 'RecordExport' | 'Source' | 'Workflow' | 'WorkspaceDataExport'
 
 export interface FileUploadTarget {
     contentType: Scalars['String']
@@ -11942,7 +11942,8 @@ export const enumFileFolder = {
    PublicAsset: 'PublicAsset' as const,
    RecordExport: 'RecordExport' as const,
    Source: 'Source' as const,
-   Workflow: 'Workflow' as const
+   Workflow: 'Workflow' as const,
+   WorkspaceDataExport: 'WorkspaceDataExport' as const
 }
 
 export const enumGraphOrderBy = {

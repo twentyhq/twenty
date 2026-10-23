@@ -144,11 +144,13 @@
     "reExports": [],
     "values": {
       "AnimatedIconCrossfade": "components/layout/AnimatedIconCrossfade/AnimatedIconCrossfade",
+      "LabeledSeparator": "components/layout/LabeledSeparator/LabeledSeparator",
       "OverflowingList": "components/layout/OverflowingList/OverflowingList",
       "Section": "components/layout/Section/Section"
     },
     "types": {
       "AnimatedIconCrossfadeProps": "components/layout/AnimatedIconCrossfade/types/AnimatedIconCrossfadeProps",
+      "LabeledSeparatorProps": "components/layout/LabeledSeparator/types/LabeledSeparatorProps",
       "OverflowingListProps": "components/layout/OverflowingList/types/OverflowingListProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
       "SectionRootProps": "components/layout/Section/types/SectionRootProps"

@@ -508,7 +508,12 @@ export const MultiplayerConversation: Story = {
 
     await expect(await canvas.findByText('Marco Rossi')).toBeVisible();
     await expect(await canvas.findByText('Assistant')).toBeVisible();
-    await expect(canvas.getByText('New')).toBeVisible();
+    const unreadSeparator = canvas.getByRole('separator', { name: 'New' });
+    await expect(unreadSeparator).toBeVisible();
+    await expect(unreadSeparator).toHaveAttribute(
+      'aria-orientation',
+      'horizontal',
+    );
     const selectedReaction = canvas.getByRole('button', { name: '👍 by You' });
     await expect(selectedReaction).toBeVisible();
     selectedReaction.focus();
