@@ -64,17 +64,15 @@ const CardShell = styled.div<{ $rowTemplate: string }>`
   }
 `;
 
-const CardHeader = styled.div`
-  align-items: flex-start;
-  display: flex;
+const CardHeader = styled.div<{ $iconWidthPx: number }>`
   flex-shrink: 0;
-  gap: ${spacing(3)};
-  justify-content: space-between;
+  padding-right: ${({ $iconWidthPx }) =>
+    `calc(${$iconWidthPx}px + ${spacing(3)})`};
+  position: relative;
 `;
 
 const CardHeaderInfo = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
@@ -101,6 +99,10 @@ const PriceLine = styled.div`
   display: flex;
   flex-wrap: wrap;
   min-width: 0;
+
+  && {
+    margin-top: ${spacing(6)};
+  }
 
   ${mediaUp('md')} {
     flex-wrap: nowrap;
@@ -143,11 +145,11 @@ const CardRule = styled.div`
 
 const CardIcon = styled.div<{ $widthPx: number }>`
   border-radius: ${radius(2)};
-  flex-shrink: 0;
   height: 80px;
-  margin-left: auto;
   overflow: hidden;
-  position: relative;
+  position: absolute;
+  right: 0;
+  top: 0;
   width: ${({ $widthPx }) => `${$widthPx}px`};
 
   img {
@@ -196,7 +198,7 @@ export function PlanCard({
       $rowTemplate={getPlanCardRowTemplate(cell.features.length)}
       data-highlighted={highlighted ? '' : undefined}
     >
-      <CardHeader>
+      <CardHeader $iconWidthPx={iconWidth}>
         <CardHeaderInfo>
           <Heading
             as="h3"
