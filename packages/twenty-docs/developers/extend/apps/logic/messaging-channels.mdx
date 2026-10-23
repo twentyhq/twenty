@@ -157,6 +157,43 @@ There is no way to *clear* an identity yet: a null is treated as "leave it alone
 
 Participants you leave unlinked are still stored and still render in the thread — they simply do not pull the conversation onto a record.
 
+## Sending replies
+
+Declare a `sendMessageLogicFunction` on the connection provider to let Twenty deliver replies to a thread through your app. Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread and the text:
+
+```ts src/connection-providers/linkedin-connection.ts
+export default defineConnectionProvider({
+  // ...
+  sendMessageLogicFunction: {
+    universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
+  },
+});
+```
+
+```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
+import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
+
+export const linkedinSendMessageHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+  text,
+}: SendAppMessagePayload) => {
+  const sent = await sendLinkedinMessage({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+    text,
+  });
+
+  return { externalId: sent.messageUrn, sentAt: sent.createdAt };
+};
+```
+
+The payload carries the conversation's `threadExternalId` as you ingested it, the `text`, and the `recipients` — every participant of the thread other than the channel's own handle. Return the provider's id for the sent message as `externalId`.
+
+Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
+
+The function runs inside the `sendAppChannelMessage` request. If it throws or returns no `externalId`, the mutation fails and nothing is recorded. A channel with `isSyncEnabled: false` refuses replies without calling your function, and a provider without `sendMessageLogicFunction` cannot send.
+
 ## Listing and updating channels
 
 ```ts
@@ -210,6 +247,6 @@ Deleting a channel deletes the messages ingested through it, and any thread left
 ## What a channel does not do
 
 - **It is not polled.** Twenty's import pipeline polls mailbox providers on a cron. App channels are push-only: nothing fetches on your behalf, so your app is responsible for getting messages in, via a webhook route or a cron logic function.
-- **It does not send.** Outbound delivery is not yet routed to apps; a reply composed in Twenty cannot reach your provider. Until it is, link out to the provider's own UI for replies.
+- **It does not start conversations.** Replies go to an existing thread through [`sendMessageLogicFunction`](#sending-replies); a first message to someone new has to be started from your app.
 - **It does not resolve contacts.** Twenty matches email participants to People by email address, which cannot match a LinkedIn URN, so app channels [link participants explicitly at ingestion](#linking-participants-to-people) instead.
 - **It does not create contacts.** Twenty's auto-creation derives people and companies from email domains, which is meaningless for most providers, so it is off for app channels. Create the Person yourself, then pass its `personId`.

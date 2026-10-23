@@ -56,6 +56,9 @@ export type {
   ConnectionCallbackResult,
   IdentifyAccountPayload,
   IdentifyAccountResult,
+  SendAppMessagePayload,
+  SendAppMessageRecipient,
+  SendAppMessageResult,
 } from 'twenty-shared/application';
 
 export { createMessageChannel } from '@/sdk/logic-function/messaging/create-message-channel';

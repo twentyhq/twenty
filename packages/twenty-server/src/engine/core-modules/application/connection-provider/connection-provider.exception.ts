@@ -51,6 +51,10 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`The logic function that completes the connection was not found.`;
     case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED:
       return msg`We could not complete the connection. Please try again.`;
+    case ConnectionProviderExceptionCode.SEND_MESSAGE_LOGIC_FUNCTION_NOT_FOUND:
+      return msg`This connection cannot send messages.`;
+    case ConnectionProviderExceptionCode.SEND_MESSAGE_LOGIC_FUNCTION_FAILED:
+      return msg`We could not send your message. Please try again.`;
     default:
       assertUnreachable(code);
   }
