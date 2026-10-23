@@ -1,3 +1,4 @@
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -30,6 +31,8 @@ export const RecordTableCellPortalContexts = ({
 
   const recordId = allRecordIds.at(position.row);
 
+  const restrictedFieldNames = useRecordRestrictedFieldNames(recordId ?? '');
+
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: recordId ?? '',
     objectMetadataId: objectMetadataItem.id,
@@ -50,6 +53,7 @@ export const RecordTableCellPortalContexts = ({
       value={{
         recordId,
         isSelected: false,
+        restrictedFieldNames,
         pathToShowPage:
           getBasePathToShowPage({
             objectNameSingular: objectMetadataItem.nameSingular,
