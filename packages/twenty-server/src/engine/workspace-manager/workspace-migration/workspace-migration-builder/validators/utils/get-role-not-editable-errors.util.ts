@@ -8,7 +8,7 @@ import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-m
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
-export const validateRoleIsEditable = ({
+export const getRoleNotEditableErrors = ({
   flatRole,
   buildOptions,
 }: {

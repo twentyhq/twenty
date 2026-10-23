@@ -123,6 +123,43 @@ describe('MCP role tools (integration)', () => {
     );
   });
 
+  it('should refuse row-level rules on a non-editable role', async () => {
+    const adminRole = (await listRolesThroughMcp()).find(
+      ({ label }) => label === 'Admin',
+    );
+
+    jestExpectToBeDefined(adminRole);
+
+    const refused = await executeToolThroughMcp({
+      toolName: 'upsert_row_level_permission_rules',
+      toolArguments: {
+        roleId: adminRole.id,
+        objectMetadataId: await findObjectMetadataIdByName('company'),
+        predicates: [],
+        predicateGroups: [{ logicalOperator: 'AND' }],
+      },
+    });
+
+    expect(refused).toMatchObject({
+      success: false,
+      error: expect.stringContaining('Role is not editable'),
+    });
+
+    const rolesWithRules = await executeToolThroughMcp<{
+      roles: (RoleSummary & {
+        rowLevelPermissionPredicateGroups: unknown[];
+      })[];
+    }>({
+      toolName: 'list_roles',
+      toolArguments: { includeRowLevelPermissionRules: true },
+    });
+
+    expect(
+      rolesWithRules.result?.roles.find(({ id }) => id === adminRole.id)
+        ?.rowLevelPermissionPredicateGroups,
+    ).toEqual([]);
+  });
+
   // The seeded member role holds no settings flag, so it lacks ROLES
   describe('for a member without ROLES', () => {
     it('should hide the role category from the catalog', async () => {

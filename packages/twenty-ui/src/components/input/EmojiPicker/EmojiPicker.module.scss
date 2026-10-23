@@ -1,0 +1,50 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 280px;
+  width: 100%;
+
+  [frimousse-category-header] {
+    background: var(--t-background-primary);
+    color: var(--t-font-color-secondary);
+    font-size: var(--t-font-size-xs);
+    padding: var(--t-spacing-1) var(--t-spacing-2);
+  }
+
+  [frimousse-row] {
+    padding: 0 var(--t-spacing-1);
+  }
+
+  [frimousse-emoji] {
+    background: none;
+    border: none;
+    border-radius: var(--t-border-radius-sm);
+    cursor: pointer;
+    font-size: var(--t-font-size-lg);
+    height: var(--t-spacing-8);
+    width: var(--t-spacing-8);
+
+    &[data-active] {
+      background: var(--t-background-transparent-light);
+    }
+  }
+}
+
+.search {
+  margin: var(--t-spacing-2);
+}
+
+.viewport {
+  @include focus-ring;
+
+  flex: 1;
+  min-height: 0;
+}
+
+.message {
+  color: var(--t-font-color-secondary);
+  display: block;
+  font-size: var(--t-font-size-sm);
+  padding: var(--t-spacing-3);
+  text-align: center;
+}

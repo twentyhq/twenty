@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadTriageButtons } from '@/ai/components/AiChatThreadTriageButtons';
-import { useAiChatThreadTriageStatus } from '@/ai/hooks/useAiChatThreadTriageStatus';
+import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
 import { useExecuteAgentChatThreadInboxAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
@@ -12,7 +12,7 @@ type AiChatThreadRowTriageProps = {
 export const AiChatThreadRowTriage = ({
   threadId,
 }: AiChatThreadRowTriageProps) => {
-  const status = useAiChatThreadTriageStatus(threadId);
+  const { status, isInChannel } = useAiChatThreadTriage(threadId);
   const { executeAgentChatThreadInboxAction, isPending } =
     useExecuteAgentChatThreadInboxAction();
 
@@ -21,7 +21,11 @@ export const AiChatThreadRowTriage = ({
   }
 
   const executeInboxAction = (action: AgentChatInboxAction) => {
-    void executeAgentChatThreadInboxAction({ threadIds: [threadId], action });
+    void executeAgentChatThreadInboxAction({
+      threadIds: [threadId],
+      action,
+      isInChannel,
+    });
   };
 
   return (
