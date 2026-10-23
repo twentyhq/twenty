@@ -1,3 +1,4 @@
+import { frontComponentDraftIdSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft-id.schema';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type ProposeToolCallToolInput,
@@ -104,6 +105,15 @@ export const resolveProposedToolCall = async ({
 
   switch (template) {
     case 'frontComponent':
+      if (
+        !frontComponentDraftIdSchema.safeParse(baseProposal.arguments).success
+      ) {
+        return {
+          error:
+            'arguments.draftId must be the draftId returned by preview_front_component.',
+        };
+      }
+      return { proposal: { ...baseProposal, template } };
     case 'frontComponentDelete':
       return { proposal: { ...baseProposal, template } };
     case 'email':

@@ -72,8 +72,10 @@ export class AiFrontComponentService {
   ) {}
 
   async generateTools(context: ToolProviderContext): Promise<ToolSet> {
+    const { userWorkspaceId } = context;
+
     if (
-      !isDefined(context.userWorkspaceId) ||
+      !isDefined(userWorkspaceId) ||
       !(await this.isEnabled(context.workspaceId))
     ) {
       return {};
@@ -125,7 +127,7 @@ export class AiFrontComponentService {
         execute: async ({ draftId }) => {
           const draft = await this.getDraft(
             context.workspaceId,
-            context.userWorkspaceId!,
+            userWorkspaceId,
             draftId,
           );
           const {
