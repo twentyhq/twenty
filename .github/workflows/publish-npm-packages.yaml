@@ -59,32 +59,44 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           SOURCE_SHA=$GITHUB_SHA
-          [[ "$VERSION" =~ ^([0-9]+)\.([0-9]+)\. ]]
+          if ! [[ "$VERSION" =~ ^([0-9]+)\.([0-9]+)\. ]]; then
+            echo '::error::Invalid release version in publishing plan'
+            exit 1
+          fi
           RELEASE_MAJOR=${BASH_REMATCH[1]}
           RELEASE_MINOR=${BASH_REMATCH[2]}
-          status=$(gh api "repos/twentyhq/twenty/compare/main...$SOURCE_SHA" --jq .status)
-          if [[ "$status" != identical && "$status" != behind ]]; then
-            if [[ "$STAGE_ONLY" == true ]]; then
-              echo '::error::Staging validation requires main history'
-              exit 1
-            fi
-            branch="v$RELEASE_MAJOR.$RELEASE_MINOR"
-            branch_data=$(gh api "repos/twentyhq/twenty/branches/$branch")
-            jq -e '.protected == true' <<< "$branch_data" > /dev/null
-            branch_sha=$(jq -r '.commit.sha' <<< "$branch_data")
-            [[ "$branch_sha" =~ ^[a-f0-9]{40}$ ]]
-            gh api "repos/twentyhq/twenty/rules/branches/$branch" | jq -e '
-              any(.[]; .type == "pull_request" and .parameters.required_approving_review_count >= 1)
-              and any(.[]; .type == "creation")
-              and any(.[]; .type == "non_fast_forward")
-              and any(.[]; .type == "deletion")
-            ' > /dev/null
-            status=$(gh api "repos/twentyhq/twenty/compare/$branch_sha...$SOURCE_SHA" --jq .status)
-            case "$status" in
-              identical|behind) ;;
-              *) echo "::error::Release source must belong to main or protected $branch history"; exit 1 ;;
-            esac
+          fail() { echo "::error::$*" >&2; exit 1; }
+
+          [[ "${SOURCE_SHA:-}" =~ ^[a-f0-9]{40}$ ]] || fail 'Expected a full release commit SHA'
+          [[ "${RELEASE_MAJOR:-}" =~ ^(0|[1-9][0-9]*)$ && "${RELEASE_MINOR:-}" =~ ^(0|[1-9][0-9]*)$ ]] || fail 'Expected a valid major.minor release line'
+
+          status=$(gh api "repos/twentyhq/twenty/compare/main...$SOURCE_SHA" --jq .status) || fail 'Could not check release ancestry against main'
+          case "$status" in
+            identical|behind) exit 0 ;;
+            ahead|diverged) ;;
+            *) fail 'GitHub returned an unknown main ancestry status' ;;
+          esac
+
+          if [[ "$STAGE_ONLY" == true ]]; then
+            fail 'Staging validation requires main history'
           fi
+
+          branch="v$RELEASE_MAJOR.$RELEASE_MINOR"
+          branch_data=$(gh api "repos/twentyhq/twenty/branches/$branch") || fail "Could not read release branch $branch"
+          jq -e '.protected == true' <<< "$branch_data" > /dev/null || fail "Release branch $branch must be protected"
+          branch_sha=$(jq -r '.commit.sha' <<< "$branch_data")
+          [[ "$branch_sha" =~ ^[a-f0-9]{40}$ ]] || fail "Invalid head commit for release branch $branch"
+          rules=$(gh api --paginate --slurp "repos/twentyhq/twenty/rules/branches/$branch?per_page=100" | jq 'add') || fail "Could not read effective protection rules for $branch"
+          jq -e 'any(.[]; .type == "pull_request" and .parameters.required_approving_review_count >= 1)' <<< "$rules" > /dev/null || fail "$branch requires at least one PR approval"
+          for rule in creation non_fast_forward deletion; do
+            jq -e --arg rule "$rule" 'any(.[]; .type == $rule)' <<< "$rules" > /dev/null || fail "$branch is missing its $rule protection"
+          done
+
+          status=$(gh api "repos/twentyhq/twenty/compare/$branch_sha...$SOURCE_SHA" --jq .status) || fail "Could not check release ancestry against $branch"
+          case "$status" in
+            identical|behind) ;;
+            *) fail "Release source must belong to main or protected $branch history" ;;
+          esac
 
       - name: Free disk space
         run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet
