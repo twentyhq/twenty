@@ -194,6 +194,10 @@ export const LinksFieldInput = () => {
   const handleSetAsPrimary = (index: number) => {
     const updatedLinks = moveArrayItem(links, { fromIndex: index, toIndex: 0 });
 
+    if (isEditingItemInPlace) {
+      closeInput();
+    }
+
     handleChange(updatedLinks);
     handleSubmit(updatedLinks);
   };

@@ -97,7 +97,9 @@ export const FilesFieldInput = () => {
       return;
     }
 
-    if (!commitEditedItem()) {
+    const currentFiles = commitEditedItem();
+
+    if (!isDefined(currentFiles)) {
       return;
     }
 
@@ -107,8 +109,8 @@ export const FilesFieldInput = () => {
       multiple: true,
       onUpload: async (selectedFiles: File[]) => {
         if (
-          selectedFiles.length > maxNumberOfValues - files.length &&
-          files.length > 0
+          selectedFiles.length > maxNumberOfValues - currentFiles.length &&
+          currentFiles.length > 0
         ) {
           enqueueToast({
             status: 'error',
@@ -127,7 +129,7 @@ export const FilesFieldInput = () => {
           );
 
           if (uploadedFiles.length > 0) {
-            const newFiles = [...files, ...uploadedFiles];
+            const newFiles = [...currentFiles, ...uploadedFiles];
             handleChange(newFiles);
             onEnter?.({ newValue: parseFilesArrayToFilesValue(newFiles) });
           }

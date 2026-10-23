@@ -167,6 +167,10 @@ export const EmailsFieldInput = () => {
       toIndex: 0,
     });
 
+    if (isEditingItemInPlace) {
+      closeInput();
+    }
+
     handleChange(updatedEmails);
     handleSubmit(updatedEmails);
   };

@@ -269,6 +269,10 @@ export const PhonesFieldInput = () => {
       toIndex: 0,
     });
 
+    if (isEditingItemInPlace) {
+      closeInput();
+    }
+
     handleChange(updatedPhones);
     handleSubmit(updatedPhones);
   };

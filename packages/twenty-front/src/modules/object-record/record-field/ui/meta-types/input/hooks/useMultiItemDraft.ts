@@ -66,7 +66,7 @@ export const useMultiItemDraft = <TItem>({
   };
 
   const startAdding = () => {
-    if (isLimitReached || !commitEditedItem()) {
+    if (isLimitReached || !isDefined(commitEditedItem())) {
       return;
     }
 
@@ -137,22 +137,22 @@ export const useMultiItemDraft = <TItem>({
     return updatedItems;
   };
 
-  const commitEditedItem = () => {
+  const commitEditedItem = (): TItem[] | null => {
     if (!isEditingItemInPlace) {
-      return true;
+      return items;
     }
 
     const updatedItems = commitInput();
 
     if (!isDefined(updatedItems)) {
-      return false;
+      return null;
     }
 
     if (!isDeeplyEqual(items, updatedItems)) {
       onItemsSubmit?.(updatedItems);
     }
 
-    return true;
+    return updatedItems;
   };
 
   return {
