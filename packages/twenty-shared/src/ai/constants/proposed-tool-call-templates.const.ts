@@ -4,4 +4,5 @@ export const PROPOSED_TOOL_CALL_TEMPLATES = [
   'recordDelete',
   'email',
   'generic',
+  'frontComponent',
 ] as const;

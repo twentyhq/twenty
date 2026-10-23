@@ -1,3 +1,4 @@
+import { AiChatFrontComponentToolPreview } from '@/ai/components/AiChatFrontComponentToolPreview';
 import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
 import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
@@ -96,6 +97,15 @@ const MessagePartRenderer = ({
         if (getToolName(part) === REQUEST_FORM_TOOL_NAME) {
           return (
             <AiChatFormStatusRenderer
+              toolPart={part}
+              isStreaming={isStreaming}
+            />
+          );
+        }
+
+        if (getEffectiveToolName(part) === 'preview_front_component') {
+          return (
+            <AiChatFrontComponentToolPreview
               toolPart={part}
               isStreaming={isStreaming}
             />

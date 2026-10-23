@@ -1,3 +1,4 @@
+import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -7,4 +8,6 @@ export const shouldToolPartRenderStandalone = (
   toolPart: ToolUIPart | DynamicToolUIPart,
   frontComponentId: string | undefined,
 ): boolean =>
-  isDefined(frontComponentId) && toolPart.state !== 'input-streaming';
+  (isDefined(frontComponentId) ||
+    getEffectiveToolName(toolPart) === 'preview_front_component') &&
+  toolPart.state !== 'input-streaming';
