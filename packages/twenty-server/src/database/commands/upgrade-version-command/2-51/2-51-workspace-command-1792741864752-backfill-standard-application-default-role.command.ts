@@ -48,8 +48,13 @@ export class BackfillStandardApplicationDefaultRoleCommand extends ProvisionedWo
       flatEntityMaps: flatRoleMaps,
     });
 
+    // Without Admin the runtime fallback finds no role either, so behavior is unchanged
     if (!isDefined(adminFlatRole)) {
-      throw new Error(`Workspace ${workspaceId} has no Admin role`);
+      this.logger.warn(
+        `Workspace ${workspaceId}: no Admin role, standard application default role left unset`,
+      );
+
+      return;
     }
 
     if (options.dryRun) {

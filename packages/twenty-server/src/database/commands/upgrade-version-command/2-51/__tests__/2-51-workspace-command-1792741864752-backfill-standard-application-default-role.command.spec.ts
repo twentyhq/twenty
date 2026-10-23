@@ -10,20 +10,24 @@ const ADMIN_ROLE_ID = 'role-admin';
 
 describe('BackfillStandardApplicationDefaultRoleCommand', () => {
   let standardApplicationDefaultRoleId: string | null;
+  let hasAdminRole: boolean;
   let command: BackfillStandardApplicationDefaultRoleCommand;
 
   beforeEach(() => {
     standardApplicationDefaultRoleId = null;
+    hasAdminRole = true;
 
     const workspaceCacheService = {
       getOrRecompute: jest.fn(async () => ({
         flatRoleMaps: {
-          byUniversalIdentifier: {
-            [STANDARD_ROLE.admin.universalIdentifier]: {
-              id: ADMIN_ROLE_ID,
-              universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-            },
-          },
+          byUniversalIdentifier: hasAdminRole
+            ? {
+                [STANDARD_ROLE.admin.universalIdentifier]: {
+                  id: ADMIN_ROLE_ID,
+                  universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+                },
+              }
+            : {},
         },
       })),
     } as unknown as WorkspaceCacheService;
@@ -51,6 +55,7 @@ describe('BackfillStandardApplicationDefaultRoleCommand', () => {
     );
 
     jest.spyOn(command['logger'], 'log').mockImplementation();
+    jest.spyOn(command['logger'], 'warn').mockImplementation();
   });
 
   const run = (dryRun = false) =>
@@ -73,6 +78,14 @@ describe('BackfillStandardApplicationDefaultRoleCommand', () => {
     await run();
 
     expect(standardApplicationDefaultRoleId).toBe('another-role');
+  });
+
+  it('leaves the default role unset in a workspace without an Admin role', async () => {
+    hasAdminRole = false;
+
+    await expect(run()).resolves.toBeUndefined();
+
+    expect(standardApplicationDefaultRoleId).toBeNull();
   });
 
   it('writes nothing in dry-run mode', async () => {
