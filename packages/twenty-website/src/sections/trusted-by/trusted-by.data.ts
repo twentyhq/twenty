@@ -30,11 +30,11 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
     src: '/images/logo-bar/bayer.webp',
   },
   {
-    aspectRatio: 2,
-    grayOpacity: 0.43,
-    heightPx: 26,
-    name: 'PwC',
-    src: '/images/logo-bar/pwc.webp',
+    aspectRatio: 1,
+    grayOpacity: 0.42,
+    heightPx: 34,
+    name: 'Corgi',
+    src: '/images/logo-bar/corgi.webp',
   },
   {
     aspectRatio: 1,
