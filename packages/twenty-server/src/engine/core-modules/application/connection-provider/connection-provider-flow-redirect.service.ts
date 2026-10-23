@@ -115,7 +115,10 @@ export class ConnectionProviderFlowRedirectService {
   }: {
     res: Response;
     error: unknown;
-    workspace: WorkspaceEntity | null;
+    workspace: Pick<
+      WorkspaceEntity,
+      'id' | 'subdomain' | 'customDomain' | 'isCustomDomainEnabled'
+    > | null;
     redirectLocation: string | null;
   }) {
     const { pathname, searchParams, hash } = this.parseRedirectLocation({
