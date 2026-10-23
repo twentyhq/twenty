@@ -1,9 +1,11 @@
+import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadTriageButtons } from '@/ai/components/AiChatThreadTriageButtons';
 import { useExecuteAgentChatThreadInboxAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatThreadInboxStatusByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -13,6 +15,7 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
 const TRIAGE_STATUS_BY_SCOPE = {
   INBOX: 'open',
@@ -34,9 +37,18 @@ export const AiChatThreadRowTriage = ({
   const agentChatThreadParticipants = useAtomStateValue(
     agentChatThreadParticipantsState,
   );
-  const { scope } = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusFamilySelector,
-    threadId,
+  const location = useLocation();
+  const agentChatShownChannelView = useAtomStateValue(
+    agentChatShownChannelViewSelector,
+  );
+  const { [threadId]: inboxStatus } = useAtomFamilySelectorValue(
+    agentChatThreadInboxStatusByThreadIdFamilySelector,
+    {
+      threadIds: [threadId],
+      channelId: isAiChatInboxPath(location.pathname)
+        ? (agentChatShownChannelView?.channelId ?? null)
+        : null,
+    },
   );
   const { executeAgentChatThreadInboxAction, isPending } =
     useExecuteAgentChatThreadInboxAction();
@@ -45,18 +57,23 @@ export const AiChatThreadRowTriage = ({
     !hasAiPermission ||
     !isInboxEnabled ||
     !isDefined(agentChatThreadParticipants) ||
-    scope === 'NONE'
+    !isDefined(inboxStatus) ||
+    inboxStatus.scope === 'NONE'
   ) {
     return null;
   }
 
   const executeInboxAction = (action: AgentChatInboxAction) => {
-    void executeAgentChatThreadInboxAction({ threadIds: [threadId], action });
+    void executeAgentChatThreadInboxAction({
+      threadIds: [threadId],
+      action,
+      isInChannel: inboxStatus.isChannelCopy,
+    });
   };
 
   return (
     <AiChatThreadTriageButtons
-      status={TRIAGE_STATUS_BY_SCOPE[scope]}
+      status={TRIAGE_STATUS_BY_SCOPE[inboxStatus.scope]}
       isPending={isPending}
       onSnooze={() => executeInboxAction(AgentChatInboxAction.SNOOZE)}
       onDone={() => executeInboxAction(AgentChatInboxAction.ARCHIVE)}
