@@ -24,8 +24,9 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NAVIGATION_MENU_ITEM_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-read-access-policy.constant';
+import { NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/navigation-menu-item/constants/navigation-menu-item-write-access-policy.constant';
 import { CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
 import { NavigationMenuItemDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/navigation-menu-item.dto';
 import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
@@ -36,19 +37,6 @@ import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/over
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
-@UseGuards(
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-)
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   NavigationMenuItemGraphqlApiExceptionInterceptor,
@@ -90,7 +78,7 @@ export class NavigationMenuItemResolver {
   }
 
   @Query(() => [NavigationMenuItemDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(NAVIGATION_MENU_ITEM_READ_ACCESS_POLICY))
   @AllowSuspendedWorkspace()
   async navigationMenuItems(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -104,7 +92,7 @@ export class NavigationMenuItemResolver {
   }
 
   @Query(() => NavigationMenuItemDTO, { nullable: true })
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(NAVIGATION_MENU_ITEM_READ_ACCESS_POLICY))
   async navigationMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -116,7 +104,7 @@ export class NavigationMenuItemResolver {
   }
 
   @Mutation(() => [NavigationMenuItemDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY))
   async createManyNavigationMenuItems(
     @Args('inputs', { type: () => [CreateNavigationMenuItemInput] })
     inputs: CreateNavigationMenuItemInput[],
@@ -137,7 +125,7 @@ export class NavigationMenuItemResolver {
   }
 
   @Mutation(() => NavigationMenuItemDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY))
   async createNavigationMenuItem(
     @Args('input') input: CreateNavigationMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -157,7 +145,7 @@ export class NavigationMenuItemResolver {
   }
 
   @Mutation(() => [NavigationMenuItemDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY))
   async updateManyNavigationMenuItems(
     @Args('inputs', { type: () => [UpdateOneNavigationMenuItemInput] })
     inputs: UpdateOneNavigationMenuItemInput[],
@@ -178,7 +166,7 @@ export class NavigationMenuItemResolver {
   }
 
   @Mutation(() => NavigationMenuItemDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY))
   async updateNavigationMenuItem(
     @Args('input') input: UpdateOneNavigationMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -198,7 +186,7 @@ export class NavigationMenuItemResolver {
   }
 
   @Mutation(() => [NavigationMenuItemDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY))
   async deleteManyNavigationMenuItems(
     @Args('ids', { type: () => [UUIDScalarType] }) ids: string[],
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -218,7 +206,7 @@ export class NavigationMenuItemResolver {
   }
 
   @Mutation(() => NavigationMenuItemDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(NAVIGATION_MENU_ITEM_WRITE_ACCESS_POLICY))
   async deleteNavigationMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

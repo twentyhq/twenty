@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -25,6 +26,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
     ApiKeyModule,
     PermissionsModule,
+    FeatureFlagModule,
     ObjectPermissionModule,
     RolePermissionFlagModule,
     RowLevelPermissionModule,
