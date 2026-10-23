@@ -1,9 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconTool } from 'twenty-ui/icon';
-import {
-  type NavigationMenuItem,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -18,15 +15,15 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuTabContentProps = {
-  tab: NavigationMenuItem;
+  tabId: string | null;
 };
 
 export const NavigationMenuTabContent = ({
-  tab,
+  tabId,
 }: NavigationMenuTabContentProps) => {
   const { t } = useLingui();
-  const items = useNavigationMenuItemSectionItems(tab.id);
-  const sections = useWorkspaceNavigationMenuSections(tab.id);
+  const items = useNavigationMenuItemSectionItems(tabId);
+  const sections = useWorkspaceNavigationMenuSections(tabId);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -43,14 +40,14 @@ export const NavigationMenuTabContent = ({
   return (
     <>
       <NavigationMenuItemCustomSections
-        parentId={tab.id}
+        parentId={tabId}
         placement="above-items"
       />
-      {(isLayoutCustomizationModeEnabled || items.length > 0) && (
+      {(items.length > 0 || (isLayoutCustomizationModeEnabled && isEmpty)) && (
         <WorkspaceSectionContainer
-          sectionTitle={tab.name ?? ''}
+          sectionTitle=""
           items={items}
-          containerId={tab.id}
+          containerId={tabId}
           isTitleHidden
           selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
@@ -58,7 +55,7 @@ export const NavigationMenuTabContent = ({
         />
       )}
       <NavigationMenuItemCustomSections
-        parentId={tab.id}
+        parentId={tabId}
         placement="below-items"
       />
       {!isLayoutCustomizationModeEnabled && isEmpty && hasLayoutsPermission && (

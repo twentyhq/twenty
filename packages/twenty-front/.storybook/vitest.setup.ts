@@ -34,7 +34,6 @@ await Promise.all([
   import('@/activities/components/ActivityRichTextEditor'),
   import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor'),
   import('@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher'),
-  import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher'),
 ]);
 
 setProjectAnnotations([projectAnnotations]);

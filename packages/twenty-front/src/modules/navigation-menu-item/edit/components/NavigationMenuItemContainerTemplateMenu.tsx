@@ -49,6 +49,7 @@ export const NavigationMenuItemContainerTemplateMenu = ({
                 <NavigationMenuItemSelectableItem
                   key={option.id}
                   item={option}
+                  descriptionPlacement="below"
                 />
               ))}
             </Dropdown.Section>

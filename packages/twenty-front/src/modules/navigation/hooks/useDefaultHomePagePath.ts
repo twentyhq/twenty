@@ -1,7 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
-import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
+import { useNavigationMenuTabItemsInDisplayOrder } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabItemsInDisplayOrder';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { getFirstNavigationMenuItemLink } from '@/navigation/utils/getFirstNavigationMenuItemLink';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
@@ -38,7 +38,8 @@ export const useDefaultHomePagePath = () => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
-  const navigationMenuItemsInDisplayOrder = useNavigationMenuItemSectionItems();
+  const navigationMenuItemsInDisplayOrder =
+    useNavigationMenuTabItemsInDisplayOrder(null);
 
   const readableNonSystemObjectMetadataItems = useMemo(
     () =>

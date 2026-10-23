@@ -5,11 +5,20 @@ import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-m
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
+  workspaceSection: {
+    universalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
+    type: NavigationMenuItemType.SECTION,
+    name: i18nLabel(
+      msg({ message: `Workspace`, context: 'navigationMenuItem.name' }),
+    ),
+    position: 0,
+  },
   allCompanies: {
     universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.company.views.allCompanies.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 0,
   },
   allPeople: {
@@ -17,6 +26,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.person.views.allPeople.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 1,
   },
   allOpportunities: {
@@ -24,6 +34,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.opportunity.views.allOpportunities.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 2,
   },
   allTasks: {
@@ -31,6 +42,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.task.views.allTasks.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 3,
   },
   allNotes: {
@@ -38,6 +50,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.note.views.allNotes.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 4,
   },
   allDashboards: {
@@ -45,6 +58,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.views.allDashboards.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 5,
   },
   allMessageCampaigns: {
@@ -62,6 +76,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
       msg({ message: `Workflows`, context: 'navigationMenuItem.name' }),
     ),
     icon: 'IconSettingsAutomation',
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 6,
   },
   workflowsFolderAllWorkflows: {

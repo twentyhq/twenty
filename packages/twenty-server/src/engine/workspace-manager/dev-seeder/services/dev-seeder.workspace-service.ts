@@ -21,6 +21,7 @@ import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/service
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -58,6 +59,7 @@ import { PrefillFrontComponentService } from 'src/engine/workspace-manager/stand
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { getSeedFrontComponentDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-definitions.util';
 import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
+import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -213,10 +215,20 @@ export class DevSeederWorkspaceService {
       definitions: getSeedFrontComponentDefinitions(workspaceId),
     });
 
+    const { flatNavigationMenuItemMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatNavigationMenuItemMaps',
+      ]);
+
     await seedPageLayouts({
       workspaceId,
       flatApplication: twentyStandardFlatApplication,
       objectMetadataItems,
+      workspaceNavigationMenuSection: findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatNavigationMenuItemMaps,
+        universalIdentifier:
+          STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection.universalIdentifier,
+      }),
       workspaceMigrationValidateBuildAndRunService:
         this.workspaceMigrationValidateBuildAndRunService,
     });

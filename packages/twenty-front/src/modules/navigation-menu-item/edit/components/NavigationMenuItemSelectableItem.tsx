@@ -4,10 +4,14 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 
-type NavigationMenuItemSelectableItemProps = { item: NavigationMenuItemOption };
+type NavigationMenuItemSelectableItemProps = {
+  item: NavigationMenuItemOption;
+  descriptionPlacement?: 'inline' | 'below';
+};
 
 export const NavigationMenuItemSelectableItem = ({
   item,
+  descriptionPlacement,
 }: NavigationMenuItemSelectableItemProps) => {
   const { t } = useLingui();
 
@@ -26,6 +30,7 @@ export const NavigationMenuItemSelectableItem = ({
       description={
         item.isAlreadyInSidebar ? t`Already in sidebar` : item.contextualText
       }
+      descriptionPlacement={descriptionPlacement}
       hasSubmenu={item.hasSubMenu}
     >
       {item.label}

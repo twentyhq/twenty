@@ -8,9 +8,11 @@ import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/uti
 export const getNavigationMenuItemFlatEntitySeeds = ({
   workspaceId,
   flatApplication,
+  workspaceNavigationMenuSection,
 }: {
   workspaceId: string;
   flatApplication: FlatApplication;
+  workspaceNavigationMenuSection?: FlatNavigationMenuItem;
 }): FlatNavigationMenuItem[] => {
   const now = new Date().toISOString();
 
@@ -39,8 +41,9 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
       targetObjectMetadataUniversalIdentifier: null,
       viewId: null,
       viewUniversalIdentifier: null,
-      folderId: null,
-      folderUniversalIdentifier: null,
+      folderId: workspaceNavigationMenuSection?.id ?? null,
+      folderUniversalIdentifier:
+        workspaceNavigationMenuSection?.universalIdentifier ?? null,
       pageLayoutId: generateSeedId(
         workspaceId,
         PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,

@@ -52,6 +52,25 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     byUserWorkspaceIdAndFolderId: {},
   };
 
+  const workspaceSectionDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;
+  const workspaceSectionId = v4();
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem:
+      createStandardNavigationMenuItemContainerFlatMetadata({
+        universalIdentifier: workspaceSectionDefinition.universalIdentifier,
+        type: workspaceSectionDefinition.type,
+        name: workspaceSectionDefinition.name,
+        position: workspaceSectionDefinition.position,
+        navigationMenuItemId: workspaceSectionId,
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      }),
+    flatNavigationMenuItemMaps,
+  });
+
   for (const navigationMenuItemName of FLAT_NAVIGATION_MENU_ITEM_NAMES) {
     const navigationMenuItemDefinition =
       STANDARD_NAVIGATION_MENU_ITEMS[navigationMenuItemName];
@@ -62,6 +81,9 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
         navigationMenuItemName,
         viewUniversalIdentifier:
           navigationMenuItemDefinition.viewUniversalIdentifier,
+        folderId: workspaceSectionId,
+        folderUniversalIdentifier:
+          navigationMenuItemDefinition.folderUniversalIdentifier,
         position: navigationMenuItemDefinition.position,
         navigationMenuItemId: v4(),
         dependencyFlatEntityMaps: {
@@ -85,6 +107,9 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     universalIdentifier: workflowsFolderDefinition.universalIdentifier,
     name: workflowsFolderDefinition.name,
     icon: workflowsFolderDefinition.icon,
+    folderId: workspaceSectionId,
+    folderUniversalIdentifier:
+      workflowsFolderDefinition.folderUniversalIdentifier,
     position: workflowsFolderDefinition.position,
     navigationMenuItemId: workflowsFolderId,
     workspaceId,

@@ -1,6 +1,5 @@
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
-import { NavigationMenuItemCustomSections } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSections';
 import { NavigationMenuTabContent } from '@/navigation-menu-item/display/tab/components/NavigationMenuTabContent';
 import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadata/components/NavigationDrawerWorkspaceSectionSkeletonLoader';
 
@@ -14,14 +13,6 @@ const FavoritesSectionDispatcher = lazy(() =>
   import('@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher').then(
     (module) => ({
       default: module.FavoritesSectionDispatcher,
-    }),
-  ),
-);
-
-const WorkspaceSectionDispatcher = lazy(() =>
-  import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher').then(
-    (module) => ({
-      default: module.WorkspaceSectionDispatcher,
     }),
   ),
 );
@@ -41,20 +32,12 @@ export const MainNavigationDrawerScrollableItems = () => {
       {isDefined(activeNavigationMenuTab) ? (
         <NavigationMenuTabContent
           key={activeNavigationMenuTab.id}
-          tab={activeNavigationMenuTab}
+          tabId={activeNavigationMenuTab.id}
         />
       ) : (
         <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
           <FavoritesSectionDispatcher />
-          <NavigationMenuItemCustomSections
-            parentId={null}
-            placement="above-items"
-          />
-          <WorkspaceSectionDispatcher />
-          <NavigationMenuItemCustomSections
-            parentId={null}
-            placement="below-items"
-          />
+          <NavigationMenuTabContent tabId={null} />
         </Suspense>
       )}
     </StyledScrollableItemsContainer>
