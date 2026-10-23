@@ -10,13 +10,12 @@ import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { useAiChatThreadTriageStatus } from '@/ai/hooks/useAiChatThreadTriageStatus';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
@@ -63,12 +62,12 @@ export const AiChatThreadListItem = ({
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
-  const { scope } = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusFamilySelector,
-    thread.id,
-  );
+  const triageStatus = useAiChatThreadTriageStatus(thread.id);
   const shouldShowMore =
-    isDefined(onDetach) || (scope !== 'SNOOZED' && scope !== 'ARCHIVED');
+    isDefined(onDetach) ||
+    isDefined(thread.deletedAt) ||
+    !isDefined(triageStatus) ||
+    triageStatus === 'open';
 
   return (
     <AiChatThreadRow
