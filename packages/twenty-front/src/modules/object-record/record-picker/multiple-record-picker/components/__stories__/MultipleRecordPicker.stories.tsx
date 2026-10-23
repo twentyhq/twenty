@@ -71,10 +71,10 @@ export const CreateTargetAndSession: Story = {
 
     await userEvent.click(addNewButton);
 
-    let finishCreation: () => void = () => undefined;
+    const finishCreation = fn<() => void>();
     const pendingCreation = new Promise<RecordPickerPickableMorphItem>(
       (resolve) => {
-        finishCreation = () => resolve(CREATED_MORPH_ITEM);
+        finishCreation.mockImplementation(() => resolve(CREATED_MORPH_ITEM));
       },
     );
     createRecord.mockReturnValueOnce(pendingCreation);
