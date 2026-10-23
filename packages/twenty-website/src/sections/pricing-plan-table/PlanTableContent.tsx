@@ -187,13 +187,15 @@ function CellValue({ cell }: { cell: PlanTableCellType }) {
   const { i18n } = useLingui();
 
   if (cell.kind === 'text') {
+    if (cell.suffix === undefined) {
+      return <TierText>{i18n._(cell.text)}</TierText>;
+    }
+
     return (
-      <>
+      <MetricLine>
         <TierText>{i18n._(cell.text)}</TierText>
-        {cell.detail !== undefined ? (
-          <CellDetail>{i18n._(cell.detail)}</CellDetail>
-        ) : null}
-      </>
+        <MetricUnit>{i18n._(cell.suffix)}</MetricUnit>
+      </MetricLine>
     );
   }
 

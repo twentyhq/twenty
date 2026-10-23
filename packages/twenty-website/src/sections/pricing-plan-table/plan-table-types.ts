@@ -13,7 +13,7 @@ export type PlanTableCellType =
       unit: MessageDescriptor;
       value: MessageDescriptor;
     }
-  | { detail?: MessageDescriptor; kind: 'text'; text: MessageDescriptor }
+  | { kind: 'text'; suffix?: MessageDescriptor; text: MessageDescriptor }
   | { kind: 'unlimited' }
   | { kind: 'yes'; label?: MessageDescriptor };
 
