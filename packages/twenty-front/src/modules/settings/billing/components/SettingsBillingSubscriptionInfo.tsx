@@ -29,6 +29,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -70,7 +71,11 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
-  const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
+  const {
+    refetchResourceCreditUsage,
+    isGetResourceCreditUsageQueryLoaded,
+    getResourceCreditUsage,
+  } = useGetResourceCreditUsage();
 
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
 
@@ -261,9 +266,42 @@ export const SettingsBillingSubscriptionInfo = ({
   const creditsSubtotalValue = isDefined(creditsSubtotalDisplay)
     ? `$${creditsSubtotalDisplay}`
     : '-';
-  const creditsSubtotalDetails = isDefined(currentCreditsByPeriod)
-    ? t`(${formatNumber(currentCreditsByPeriod, { decimals: 2 })} credits)`
+  const resourceCreditUsage = isGetResourceCreditUsageQueryLoaded
+    ? getResourceCreditUsage()
     : undefined;
+  const creditsPerSeat =
+    isDefined(resourceCreditUsage) &&
+    resourceCreditUsage.workspaceCreditsSeats > 0
+      ? resourceCreditUsage.workspaceCreditsGrantedForSeats /
+        resourceCreditUsage.workspaceCreditsSeats
+      : 0;
+
+  const getCreditsSubtotalDetails = () => {
+    if (!isDefined(currentCreditsByPeriod)) {
+      return undefined;
+    }
+
+    const packCreditsDisplay = formatNumber(currentCreditsByPeriod, {
+      decimals: 2,
+    });
+
+    if (creditsPerSeat <= 0) {
+      return t`(${packCreditsDisplay} credits)`;
+    }
+
+    const creditsPerSeatDisplay = formatNumber(creditsPerSeat, {
+      decimals: 2,
+    });
+
+    if (currentCreditsByPeriod === 0) {
+      return plural(creditsPerSeat, {
+        one: `(${creditsPerSeatDisplay} credit per user)`,
+        other: `(${creditsPerSeatDisplay} credits per user)`,
+      });
+    }
+
+    return t`(${packCreditsDisplay} credits + ${creditsPerSeatDisplay} per user)`;
+  };
   const totalValue = isDefined(totalDisplay) ? `$${totalDisplay}` : '-';
   const totalIntervalSubtitle = isDefined(totalDisplay)
     ? currentInterval === SubscriptionInterval.Month
@@ -411,7 +449,7 @@ export const SettingsBillingSubscriptionInfo = ({
       <SettingsBillingSubscriptionInfoCard
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
-        creditsSubtotalDetails={creditsSubtotalDetails}
+        creditsSubtotalDetails={getCreditsSubtotalDetails()}
         creditsSubtotalValue={creditsSubtotalValue}
         currentIntervalLabel={currentIntervalLabel}
         displayedSubscriptionDate={displayedSubscriptionDate}
