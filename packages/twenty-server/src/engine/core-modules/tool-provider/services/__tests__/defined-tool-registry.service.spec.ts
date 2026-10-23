@@ -19,6 +19,7 @@ const webhookId = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';
 
 const context: ToolProviderContext = {
   workspaceId: 'workspace-id',
+  authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
 };
 
 const renameWebhookInputSchema = z.object({ id: z.uuid() });

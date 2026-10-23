@@ -85,6 +85,7 @@ const buildListRolesTool = (services: ReturnType<typeof buildServices>) =>
 
 const context: ToolProviderContext = {
   workspaceId,
+  authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
   userWorkspaceId: callerUserWorkspaceId,
   authContext: {
     type: 'user',

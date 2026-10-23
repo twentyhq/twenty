@@ -30,7 +30,10 @@ export class AiWorkspaceStatsService {
         flatMapsKeys: ['flatSkillMaps'],
       }),
       // the full role-scoped catalog, to match the Tools tab
-      this.toolRegistryService.buildToolIndex(workspaceId, { authContext }),
+      this.toolRegistryService.buildToolIndex(workspaceId, {
+        authContext,
+        authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
+      }),
     ]);
 
     const skillsCount = Object.values(

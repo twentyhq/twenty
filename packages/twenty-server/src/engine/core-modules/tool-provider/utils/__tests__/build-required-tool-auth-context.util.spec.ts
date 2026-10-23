@@ -14,6 +14,7 @@ describe('buildRequiredToolAuthContext', () => {
     overrides?: Partial<ToolProviderContext>,
   ): ToolProviderContext => ({
     workspaceId,
+    authPrincipalVariant: undefined,
     ...overrides,
   });
 

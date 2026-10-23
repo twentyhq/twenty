@@ -184,6 +184,7 @@ export class AgentToolsetService {
             locale,
             excludeTools: new Set(excludedToolNames),
             authContext: toolContext.authContext,
+            authPrincipalVariant: toolContext.authPrincipalVariant,
             application: toolContext.application,
           },
         );
@@ -221,6 +222,7 @@ export class AgentToolsetService {
             userId,
             userWorkspaceId,
             authContext: toolContext.authContext,
+            authPrincipalVariant: toolContext.authPrincipalVariant,
             application: toolContext.application,
             categories: [...registryAccess.categories],
             excludeTools: new Set(registryAccess.excludedToolNames),

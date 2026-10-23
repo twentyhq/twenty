@@ -50,6 +50,7 @@ const otherApplication = {
 
 const context: ToolProviderContext = {
   workspaceId,
+  authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
   userWorkspaceId: 'caller-user-workspace-id',
   actorContext: {
     source: FieldActorSource.MANUAL,

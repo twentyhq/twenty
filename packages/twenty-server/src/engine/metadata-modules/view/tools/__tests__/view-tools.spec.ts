@@ -238,6 +238,7 @@ describe('View tools', () => {
     const context: ToolProviderContext = {
       workspaceId,
       userWorkspaceId,
+      authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
       actorContext: workspaceMemberId
         ? {
             source: FieldActorSource.MANUAL,

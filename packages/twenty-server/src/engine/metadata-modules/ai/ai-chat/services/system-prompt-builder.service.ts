@@ -46,6 +46,7 @@ export class SystemPromptBuilderService {
       await Promise.all([
         this.toolRegistry.buildToolIndex(workspaceId, {
           authContext: getWorkspaceAuthContext(),
+          authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
           userId,
           userWorkspaceId,
           excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,

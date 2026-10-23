@@ -28,6 +28,7 @@ import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 
 @Injectable()
 export class ToolRegistryService {
@@ -198,6 +199,7 @@ export class ToolRegistryService {
       userId?: string;
       userWorkspaceId?: string;
       locale?: keyof typeof APP_LOCALES;
+      authPrincipalVariant: AuthPrincipalVariant | undefined;
       categories?: ToolCategory[];
       excludeTools?: Set<string>;
       authContext?: WorkspaceAuthContext;
@@ -206,6 +208,7 @@ export class ToolRegistryService {
   ): Promise<ToolIndexEntry[]> {
     const context = this.buildContextFromToolContext({
       workspaceId,
+      authPrincipalVariant: options.authPrincipalVariant,
       userId: options.userId,
       userWorkspaceId: options.userWorkspaceId,
       locale: options.locale,
@@ -544,6 +547,7 @@ export class ToolRegistryService {
       workspaceId: context.workspaceId,
       approvedToolName: context.approvedToolName,
       authContext: context.authContext,
+      authPrincipalVariant: context.authPrincipalVariant,
       application: context.application,
       actorContext: context.actorContext,
       userId: context.userId,
