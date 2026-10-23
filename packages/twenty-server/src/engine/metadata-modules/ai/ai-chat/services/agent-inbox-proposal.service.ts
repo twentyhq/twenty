@@ -7,6 +7,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import { type ProposedToolCallResolution } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/proposed-tool-call-resolution.type';
 import { isEmailToolName } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/is-email-tool-name.util';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
@@ -63,6 +64,9 @@ export class AgentInboxProposalService {
       workspaceId,
       rolePermissionConfig,
       authContext,
+      authPrincipalVariant: isDefined(authContext)
+        ? classifyWorkspaceAuthContext(authContext)
+        : undefined,
       application,
     };
 
