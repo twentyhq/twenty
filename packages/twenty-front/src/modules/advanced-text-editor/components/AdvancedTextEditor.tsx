@@ -1,15 +1,12 @@
-import { AdvancedTextEditorTableHandles } from '@/advanced-text-editor/components/AdvancedTextEditorTableHandles';
 import { ImageBubbleMenu } from '@/advanced-text-editor/components/ImageBubbleMenu';
 import { LinkBubbleMenu } from '@/advanced-text-editor/components/LinkBubbleMenu';
 import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu';
-import { useHoveredTableCell } from '@/advanced-text-editor/hooks/useHoveredTableCell';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { getAdvancedTextEditorTypographyStyle } from '@/advanced-text-editor/utils/getAdvancedTextEditorTypographyStyle';
 import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
-import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledEditorContainer = styled.div<{
@@ -20,7 +17,6 @@ const StyledEditorContainer = styled.div<{
   display: flex;
   flex-direction: column;
   height: 100%;
-  position: relative;
   width: 100%;
 
   .editor-content {
@@ -288,8 +284,6 @@ const StyledEditorContainer = styled.div<{
     .tableWrapper {
       margin: 0 0 var(--editor-block-spacing);
       overflow-x: auto;
-      padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]}
-        0;
     }
 
     table {
@@ -321,7 +315,6 @@ const StyledEditorContainer = styled.div<{
         background-color: ${themeCssVariables.color.blue3};
         content: '';
         inset: 0;
-        mix-blend-mode: multiply;
         pointer-events: none;
         position: absolute;
       }
@@ -511,34 +504,14 @@ export const AdvancedTextEditor = ({
   const hasTextBubbleMenu = TEXT_BUBBLE_MENU_EXTENSION_NAMES.some(
     (extensionName) => hasEditorExtension(editor, extensionName),
   );
-  const {
-    hoveredTableCell,
-    handleMouseMove,
-    handleMouseLeave,
-    handleTableMenuOpenChange,
-    clearHoveredTableCell,
-  } = useHoveredTableCell({
-    editor,
-    isEnabled: !readonly && hasEditorExtension(editor, TIPTAP_NODE_TYPES.TABLE),
-  });
 
   return (
     <StyledEditorContainer
       readonly={readonly}
       minHeight={minHeight}
       style={getAdvancedTextEditorTypographyStyle(variant)}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
     >
       <EditorContent className="editor-content" editor={editor} />
-      {isDefined(hoveredTableCell) && (
-        <AdvancedTextEditorTableHandles
-          editor={editor}
-          hoveredTableCell={hoveredTableCell}
-          onMenuOpenChange={handleTableMenuOpenChange}
-          onCellCommandRun={clearHoveredTableCell}
-        />
-      )}
       {hasEditorExtension(editor, 'image') &&
         !hasEditorExtension(editor, 'section') && (
           <ImageBubbleMenu editor={editor} />

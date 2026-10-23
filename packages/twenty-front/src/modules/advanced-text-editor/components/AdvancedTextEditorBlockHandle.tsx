@@ -22,17 +22,12 @@ const DRAG_HANDLE_OPTIONS: Pick<
     edgeDetection: 'none',
     rules: [
       {
-        id: 'excludeColumnAndColumnOrTableContent',
+        id: 'excludeColumnAndItsContent',
         evaluate: ({ node, $pos, depth }) =>
           node.type.name === TIPTAP_NODE_TYPES.COLUMN ||
-          Array.from(
-            { length: depth },
-            (_, ancestorDepth) => $pos.node(ancestorDepth).type.name,
-          ).some(
-            (ancestorType) =>
-              ancestorType === TIPTAP_NODE_TYPES.COLUMN ||
-              ancestorType === TIPTAP_NODE_TYPES.TABLE,
-          )
+          Array.from({ length: depth }, (_, ancestorDepth) =>
+            $pos.node(ancestorDepth),
+          ).some((ancestor) => ancestor.type.name === TIPTAP_NODE_TYPES.COLUMN)
             ? 1000
             : 0,
       },
