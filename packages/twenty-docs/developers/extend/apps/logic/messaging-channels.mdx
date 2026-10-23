@@ -159,7 +159,7 @@ Participants you leave unlinked are still stored and still render in the thread 
 
 ## Sending replies
 
-Declare a `sendMessageLogicFunction` on the connection provider, and members can reply to a thread from Twenty through your app:
+Declare a `sendMessageLogicFunction` on the connection provider to let Twenty deliver replies to a thread through your app. Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread and the text:
 
 ```ts src/connection-providers/linkedin-connection.ts
 export default defineConnectionProvider({
@@ -192,7 +192,7 @@ The payload carries the conversation's `threadExternalId` as you ingested it, th
 
 Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
 
-The function runs while the member waits on **Send**. If it throws or returns no `externalId`, the member sees an error and nothing is recorded. A channel with `isSyncEnabled: false` refuses replies without calling your function, and a provider without `sendMessageLogicFunction` cannot send.
+The function runs inside the `sendAppChannelMessage` request. If it throws or returns no `externalId`, the mutation fails and nothing is recorded. A channel with `isSyncEnabled: false` refuses replies without calling your function, and a provider without `sendMessageLogicFunction` cannot send.
 
 ## Listing and updating channels
 

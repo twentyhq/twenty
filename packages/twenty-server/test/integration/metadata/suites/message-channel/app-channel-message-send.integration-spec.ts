@@ -18,7 +18,7 @@ import {
   MessageChannelVisibility,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -142,10 +142,10 @@ describe('sendAppChannelMessage (e2e)', () => {
 
     expect(ingestResponse.body.errors).toBeUndefined();
 
-    const [{ messageThreadId }] =
+    const [{ messageThreadId }]: { messageThreadId: string }[] =
       ingestResponse.body.data.ingestAppMessages.messages;
 
-    return { messageChannelId, messageThreadId: messageThreadId as string };
+    return { messageChannelId, messageThreadId };
   };
 
   const send = (input: {
@@ -265,9 +265,15 @@ export const handler = (payload) => {
     const providers = await findConnectionProvidersByApplication(
       APPLICATION_IDENTIFIER,
     );
-    const providerIdByName = new Map(
-      providers.map((provider) => [provider.name, provider.id]),
-    );
+    const findProviderId = (name: string): string => {
+      const provider = providers.find(
+        (connectionProvider) => connectionProvider.name === name,
+      );
+
+      assertIsDefinedOrThrow(provider);
+
+      return provider.id;
+    };
 
     applicationDbId = providers[0].applicationId;
 
@@ -277,12 +283,8 @@ export const handler = (payload) => {
 
     applicationToken = tokenPair.applicationAccessToken.token;
 
-    sendingConnectionId = await insertConnection(
-      providerIdByName.get('sending') as string,
-    );
-    silentConnectionId = await insertConnection(
-      providerIdByName.get('silent') as string,
-    );
+    sendingConnectionId = await insertConnection(findProviderId('sending'));
+    silentConnectionId = await insertConnection(findProviderId('silent'));
   }, 180000);
 
   beforeEach(() => {
