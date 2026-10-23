@@ -1,28 +1,32 @@
 import { type PermissionFlagType } from 'twenty-shared/constants';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { type AccessPolicyRefusal } from 'src/engine/guards/types/access-policy-refusal.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-principal-variant-accepted.util';
 
-export const isAccessPolicySatisfied = async ({
+// Resolves to undefined when the caller satisfies the policy
+export const findAccessPolicyRefusal = async ({
   accessPolicy: {
     authPrincipals,
     requiredPermissionFlags,
     requiredFeatureFlags = [],
   },
   authPrincipalVariant,
-  featureFlagsMap,
+  isFeatureFlagEnabled,
   isPermissionFlagGranted,
 }: {
   accessPolicy: AccessPolicy;
   authPrincipalVariant: AuthPrincipalVariant | undefined;
-  featureFlagsMap: FeatureFlagMap;
+  isFeatureFlagEnabled: (
+    featureFlag: FeatureFlagKey,
+  ) => boolean | Promise<boolean>;
   isPermissionFlagGranted: (
     permissionFlag: PermissionFlagType,
   ) => Promise<boolean>;
-}): Promise<boolean> => {
+}): Promise<AccessPolicyRefusal | undefined> => {
   if (
     !isDefined(authPrincipalVariant) ||
     !isAuthPrincipalVariantAccepted({
@@ -30,15 +34,13 @@ export const isAccessPolicySatisfied = async ({
       authPrincipalVariant,
     })
   ) {
-    return false;
+    return { reason: 'authPrincipal' };
   }
 
-  if (
-    !requiredFeatureFlags.every(
-      (featureFlag) => featureFlagsMap[featureFlag] === true,
-    )
-  ) {
-    return false;
+  for (const featureFlag of requiredFeatureFlags) {
+    if (!(await isFeatureFlagEnabled(featureFlag))) {
+      return { reason: 'featureFlag', featureFlag };
+    }
   }
 
   const grants = await Promise.all(
@@ -46,6 +48,11 @@ export const isAccessPolicySatisfied = async ({
       isPermissionFlagGranted(permissionFlag),
     ),
   );
+  const refusedPermissionFlag = requiredPermissionFlags.find(
+    (_, index) => !grants[index],
+  );
 
-  return grants.every((isGranted) => isGranted);
+  return isDefined(refusedPermissionFlag)
+    ? { reason: 'permissionFlag', permissionFlag: refusedPermissionFlag }
+    : undefined;
 };

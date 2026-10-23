@@ -21,7 +21,7 @@ import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
-import { isAccessPolicySatisfied } from 'src/engine/guards/utils/is-access-policy-satisfied.util';
+import { findAccessPolicyRefusal } from 'src/engine/guards/utils/find-access-policy-refusal.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 // Tools are built for agents, and an agent's own role already narrows what its
@@ -157,7 +157,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
     return tool.execute({ input: parsedInput.data, context });
   }
 
-  private isToolAvailableToCaller({
+  private async isToolAvailableToCaller({
     definedTool: {
       options: { accessPolicy },
     },
@@ -170,10 +170,11 @@ export class DefinedToolRegistryService implements OnModuleInit {
     featureFlagsMap: FeatureFlagMap;
     grantedByPermissionFlag?: Map<PermissionFlagType, Promise<boolean>>;
   }): Promise<boolean> {
-    return isAccessPolicySatisfied({
+    const refusal = await findAccessPolicyRefusal({
       accessPolicy,
       authPrincipalVariant: withoutAgent(context.authPrincipalVariant),
-      featureFlagsMap,
+      isFeatureFlagEnabled: (featureFlag) =>
+        featureFlagsMap[featureFlag] === true,
       isPermissionFlagGranted: (permissionFlag) => {
         const cachedGrant = grantedByPermissionFlag.get(permissionFlag);
 
@@ -192,6 +193,8 @@ export class DefinedToolRegistryService implements OnModuleInit {
         return grant;
       },
     });
+
+    return !isDefined(refusal);
   }
 
   private register(options: DefineToolOptions, instance: unknown): void {
