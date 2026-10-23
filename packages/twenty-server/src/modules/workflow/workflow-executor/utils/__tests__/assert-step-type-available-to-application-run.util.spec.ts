@@ -13,7 +13,7 @@ describe('assertStepTypeAvailableToApplicationRun', () => {
       expect(() =>
         assertStepTypeAvailableToApplicationRun({
           stepType,
-          runApplicationReach: 'confined',
+          isInstalledApplicationRun: true,
         }),
       ).toThrow(`Applications cannot use ${stepType} steps`);
     },
@@ -23,25 +23,16 @@ describe('assertStepTypeAvailableToApplicationRun', () => {
     expect(() =>
       assertStepTypeAvailableToApplicationRun({
         stepType: WorkflowActionType.CREATE_RECORD,
-        runApplicationReach: 'confined',
+        isInstalledApplicationRun: true,
       }),
     ).not.toThrow();
   });
 
-  it('lets a run of the workspace composer send emails', () => {
+  it('lets a workspace run send emails', () => {
     expect(() =>
       assertStepTypeAvailableToApplicationRun({
         stepType: WorkflowActionType.SEND_EMAIL,
-        runApplicationReach: 'composer',
-      }),
-    ).not.toThrow();
-  });
-
-  it('lets a run without an application send emails', () => {
-    expect(() =>
-      assertStepTypeAvailableToApplicationRun({
-        stepType: WorkflowActionType.SEND_EMAIL,
-        runApplicationReach: 'workspace',
+        isInstalledApplicationRun: false,
       }),
     ).not.toThrow();
   });

@@ -6,9 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type ApplicationReach } from 'src/engine/core-modules/application/types/application-reach.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { resolveApplicationReach } from 'src/engine/core-modules/application/utils/resolve-application-reach.util';
+import { isWorkspaceComposerApplication } from 'src/engine/core-modules/application/utils/is-workspace-composer-application.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
@@ -94,15 +93,15 @@ export class WorkflowExecutionContextService {
     });
   }
 
-  async resolveRunApplicationReach({
+  async isRunBoundToInstalledApplication({
     runApplicationId,
     workspaceId,
   }: {
     runApplicationId: string | undefined;
     workspaceId: string;
-  }): Promise<ApplicationReach> {
+  }): Promise<boolean> {
     if (!isDefined(runApplicationId)) {
-      return 'workspace';
+      return false;
     }
 
     const [{ flatApplicationMaps }, workspace] = await Promise.all([
@@ -119,11 +118,11 @@ export class WorkflowExecutionContextService {
 
     // a run keeps the limits of an application that has since left the workspace
     if (!isDefined(runApplication)) {
-      return 'confined';
+      return true;
     }
 
-    return resolveApplicationReach({
-      callingApplication: runApplication,
+    return !isWorkspaceComposerApplication({
+      application: runApplication,
       workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
     });
   }

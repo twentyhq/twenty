@@ -603,15 +603,14 @@ export class WorkflowExecutorWorkspaceService {
     try {
       await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
-      const runApplicationReach =
-        await this.workflowExecutionContextService.resolveRunApplicationReach({
-          runApplicationId,
-          workspaceId,
-        });
+      const isInstalledApplicationRun =
+        await this.workflowExecutionContextService.isRunBoundToInstalledApplication(
+          { runApplicationId, workspaceId },
+        );
 
       assertStepTypeAvailableToApplicationRun({
         stepType: step.type,
-        runApplicationReach,
+        isInstalledApplicationRun,
       });
 
       const nodeRunRefusal = await this.getNodeRunRefusal({

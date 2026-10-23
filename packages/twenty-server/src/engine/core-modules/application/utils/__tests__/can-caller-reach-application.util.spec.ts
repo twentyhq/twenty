@@ -129,23 +129,13 @@ describe('canCallerReachApplication', () => {
   });
 
   it('should let an OAuth-only application caller reach another application', () => {
-    const callingApplication = {
-      id: CALLING_APPLICATION_ID,
-      universalIdentifier: CALLING_APPLICATION_ID,
-      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-    };
-
     expect(
       canCallerReachApplication({
-        callingApplication,
-        applicationId: OTHER_APPLICATION_ID,
-        access: 'read',
-        workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
-      }),
-    ).toBe(true);
-    expect(
-      canCallerReachApplication({
-        callingApplication,
+        callingApplication: {
+          id: CALLING_APPLICATION_ID,
+          universalIdentifier: CALLING_APPLICATION_ID,
+          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        },
         applicationId: OTHER_APPLICATION_ID,
         access: 'manage',
       }),

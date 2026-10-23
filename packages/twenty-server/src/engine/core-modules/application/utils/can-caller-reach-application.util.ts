@@ -1,6 +1,9 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type ApplicationTargetAccess } from 'src/engine/core-modules/application/types/application-target-access.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { resolveApplicationReach } from 'src/engine/core-modules/application/utils/resolve-application-reach.util';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
+import { isWorkspaceComposerApplication } from 'src/engine/core-modules/application/utils/is-workspace-composer-application.util';
 
 type CallerAccess =
   | { access: 'manage'; workspaceCustomApplicationId?: never }
@@ -24,14 +27,21 @@ export const canCallerReachApplication = ({
     | undefined;
   applicationId: string | null | undefined;
 } & CallerAccess): boolean => {
-  const reach = resolveApplicationReach({
-    callingApplication,
-    workspaceCustomApplicationId,
-  });
+  const scopedCallingApplication =
+    getScopedCallingApplication(callingApplication);
 
-  if (reach === 'workspace' || applicationId === callingApplication?.id) {
+  if (
+    !isDefined(scopedCallingApplication) ||
+    applicationId === scopedCallingApplication.id
+  ) {
     return true;
   }
 
-  return reach === 'composer' && access !== 'manage';
+  return (
+    access !== 'manage' &&
+    isWorkspaceComposerApplication({
+      application: scopedCallingApplication,
+      workspaceCustomApplicationId,
+    })
+  );
 };

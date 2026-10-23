@@ -2,8 +2,10 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
-import { resolveApplicationReach } from 'src/engine/core-modules/application/utils/resolve-application-reach.util';
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
+import { isWorkspaceComposerApplication } from 'src/engine/core-modules/application/utils/is-workspace-composer-application.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -34,13 +36,18 @@ export class WorkflowToolProvider implements ToolProvider {
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
+    const scopedCallingApplication = getScopedCallingApplication(
+      context.application,
+    );
+
     if (
       !this.workflowToolService ||
-      resolveApplicationReach({
-        callingApplication: context.application,
-        workspaceCustomApplicationId:
-          context.authContext?.workspace.workspaceCustomApplicationId,
-      }) === 'confined'
+      (isDefined(scopedCallingApplication) &&
+        !isWorkspaceComposerApplication({
+          application: scopedCallingApplication,
+          workspaceCustomApplicationId:
+            context.authContext?.workspace.workspaceCustomApplicationId,
+        }))
     ) {
       return false;
     }
