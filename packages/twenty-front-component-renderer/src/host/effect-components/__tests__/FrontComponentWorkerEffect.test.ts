@@ -6,6 +6,7 @@ import { createRoot, type Root } from 'react-dom/client';
 
 import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 import { type HostFocusController } from '@/host/focus/types/HostFocusController';
+import { type HostScrollController } from '@/host/scroll/types/HostScrollController';
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
 import { createGeometryTrackerStub } from '@/testing/createGeometryTrackerStub';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
@@ -47,6 +48,11 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 const createHostFocusControllerStub = (): HostFocusController => ({
   callFocusMethod: jest.fn(),
   retryPendingFocus: jest.fn(),
+  reset: jest.fn(),
+});
+
+const createHostScrollControllerStub = (): HostScrollController => ({
+  enqueueScrollCommands: jest.fn(),
   reset: jest.fn(),
 });
 
@@ -114,6 +120,7 @@ describe('FrontComponentWorkerEffect', () => {
           },
           geometryTracker: createGeometryTrackerStub(),
           hostFocusController: createHostFocusControllerStub(),
+          hostScrollController: createHostScrollControllerStub(),
           setReceiver,
           setThread: jest.fn(),
           setError,
