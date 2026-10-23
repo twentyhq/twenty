@@ -84,6 +84,8 @@ export const AiChatThreadDetailsDropdown = ({
     agentChatThreadPermissionsFamilySelector,
     threadId,
   );
+  const canChangeAssignee =
+    (permissions?.canUpdate ?? false) && !isDefined(thread?.deletedAt);
   const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -232,7 +234,7 @@ export const AiChatThreadDetailsDropdown = ({
               startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
               label={t`Assignee`}
               action={
-                permissions?.canUpdate && (
+                canChangeAssignee && (
                   <LightIconButton
                     aria-label={t`Change assignee`}
                     title={t`Change assignee`}

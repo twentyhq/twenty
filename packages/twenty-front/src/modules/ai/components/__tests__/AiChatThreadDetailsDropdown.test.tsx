@@ -175,10 +175,12 @@ const renderDetails = async ({
   permissions = EDITABLE_PERMISSIONS,
   isAiChatInboxEnabled = true,
   shouldOpenDetails = true,
+  deletedAt = null,
 }: {
   permissions?: typeof EDITABLE_PERMISSIONS;
   isAiChatInboxEnabled?: boolean;
   shouldOpenDetails?: boolean;
+  deletedAt?: string | null;
 } = {}) => {
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems: [
@@ -200,7 +202,7 @@ const renderDetails = async ({
         __typename: 'AgentChatThread',
         id: THREAD_ID,
         title: 'Pricing questions',
-        deletedAt: null,
+        deletedAt,
         workspaceMemberId: OWNER_ID,
         writerWorkspaceMemberIds: [WRITER_ID, OWNER_ID],
       });
@@ -363,6 +365,32 @@ describe('AiChatThreadDetailsDropdown', () => {
       screen.queryByRole('button', { name: 'Edit linked records' }),
     ).not.toBeInTheDocument();
   });
+
+  it('offers to change the assignee to a conversation editor', async () => {
+    await renderDetails();
+
+    expect(
+      await screen.findByRole('button', { name: 'Change assignee' }),
+    ).toBeVisible();
+  });
+
+  it.each([
+    [
+      'a shared viewer',
+      { permissions: { ...EDITABLE_PERMISSIONS, canUpdate: false } },
+    ],
+    ['a deleted conversation', { deletedAt: '2026-01-01T00:00:00.000Z' }],
+  ])(
+    'does not offer to change the assignee for %s',
+    async (_description, options) => {
+      await renderDetails(options);
+
+      expect(await screen.findByText('Assignee')).toBeVisible();
+      expect(
+        screen.queryByRole('button', { name: 'Change assignee' }),
+      ).not.toBeInTheDocument();
+    },
+  );
 
   it('reads the links again when one is written elsewhere', async () => {
     await renderDetails();

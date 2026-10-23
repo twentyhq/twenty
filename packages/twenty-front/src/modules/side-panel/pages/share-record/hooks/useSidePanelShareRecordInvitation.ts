@@ -8,9 +8,9 @@ import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useR
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
 import { getRecordSharingGeneralAccess } from '@/object-record/record-sharing/utils/getRecordSharingGeneralAccess';
 import { getRecordSharingInvitationRecipients } from '@/object-record/record-sharing/utils/getRecordSharingInvitationRecipients';
+import { isSameRecordSharingInvitationRecipient } from '@/object-record/record-sharing/utils/isSameRecordSharingInvitationRecipient';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
-import { logError } from '~/utils/logError';
 
 const DEFAULT_INVITATION_ACCESS_LEVEL = RecordShareAccessLevel.READ;
 
@@ -30,37 +30,33 @@ export const useSidePanelShareRecordInvitation = ({
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const [selectedRecipients, setSelectedRecipients] = useState<
+  const [stagedRecipients, setStagedRecipients] = useState<
     RecordSharingInvitationRecipient[]
   >([]);
   const [accessLevel, setAccessLevel] = useState(
     DEFAULT_INVITATION_ACCESS_LEVEL,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>();
   const canInvite = sharing?.canManageSharing ?? false;
   const isBusy = isSubmitting || saving;
-  const generalAccess = getRecordSharingGeneralAccess({
-    sharing,
-    workspaceName: currentWorkspace?.displayName ?? '',
-  });
-  const canInviteEveryone =
-    isDefined(sharing) &&
-    isDefined(currentWorkspace) &&
-    !generalAccess.hasGeneralAccess;
-  const getEveryoneRecipients = (): RecordSharingInvitationRecipient[] => {
-    if (!canInviteEveryone) {
-      return [];
-    }
-
-    return [
-      {
-        kind: 'everyone',
-        id: currentWorkspace.id,
-        label: t(generalAccess.label),
-      },
-    ];
+  const workspaceName = currentWorkspace?.displayName ?? '';
+  const { hasGeneralAccess, label: generalAccessLabel } =
+    getRecordSharingGeneralAccess({ sharing, workspaceName });
+  const generalAccess = {
+    hasGeneralAccess,
+    label: t(generalAccessLabel),
+    workspaceName,
   };
+  const everyoneRecipients: RecordSharingInvitationRecipient[] =
+    isDefined(sharing) && isDefined(currentWorkspace) && !hasGeneralAccess
+      ? [
+          {
+            kind: 'everyone',
+            id: currentWorkspace.id,
+            label: generalAccess.label,
+          },
+        ]
+      : [];
   const recipients = [
     ...getRecordSharingInvitationRecipients({
       workspaceMembers: currentWorkspaceMembers,
@@ -68,8 +64,22 @@ export const useSidePanelShareRecordInvitation = ({
       roles: sharing?.roles ?? [],
       roleLabel: t`Role`,
     }),
-    ...getEveryoneRecipients(),
+    ...everyoneRecipients,
   ];
+  const selectedRecipients = stagedRecipients.filter((stagedRecipient) =>
+    recipients.some((recipient) =>
+      isSameRecordSharingInvitationRecipient({
+        recipient,
+        otherRecipient: stagedRecipient,
+      }),
+    ),
+  );
+  const hasEveryoneRecipient = selectedRecipients.some(
+    (recipient) => recipient.kind === 'everyone',
+  );
+  const hasInvalidAccessLevel =
+    accessLevel === RecordShareAccessLevel.NONE ||
+    (hasEveryoneRecipient && accessLevel === RecordShareAccessLevel.FULL);
 
   const onRecipientsChange = (
     nextRecipients: RecordSharingInvitationRecipient[],
@@ -78,8 +88,7 @@ export const useSidePanelShareRecordInvitation = ({
       return;
     }
 
-    setSelectedRecipients(nextRecipients);
-    setErrorMessage(undefined);
+    setStagedRecipients(nextRecipients);
   };
 
   const onAccessLevelChange = (nextAccessLevel: RecordShareAccessLevel) => {
@@ -88,42 +97,22 @@ export const useSidePanelShareRecordInvitation = ({
     }
 
     setAccessLevel(nextAccessLevel);
-    setErrorMessage(undefined);
   };
 
-  const inviteRecipient = async (
-    recipient: RecordSharingInvitationRecipient,
-  ) => {
-    if (recipient.kind === 'everyone' && !canInviteEveryone) {
-      return undefined;
+  const inviteRecipient = (recipient: RecordSharingInvitationRecipient) => {
+    if (recipient.kind === 'everyone') {
+      return setGeneralAccess(accessLevel);
     }
 
-    try {
-      if (recipient.kind === 'everyone') {
-        return await setGeneralAccess(accessLevel);
-      }
+    const principal =
+      recipient.kind === 'role'
+        ? { roleId: recipient.id }
+        : { workspaceMemberId: recipient.id };
 
-      const principal =
-        recipient.kind === 'role'
-          ? { roleId: recipient.id }
-          : { workspaceMemberId: recipient.id };
-
-      return await setShare({ principal, accessLevel });
-    } catch (error) {
-      logError(error);
-
-      return undefined;
-    }
+    return setShare({ principal, accessLevel });
   };
 
   const onInvite = async (): Promise<boolean> => {
-    const hasEveryoneRecipient = selectedRecipients.some(
-      (recipient) => recipient.kind === 'everyone',
-    );
-    const hasInvalidAccessLevel =
-      accessLevel === RecordShareAccessLevel.NONE ||
-      (hasEveryoneRecipient && accessLevel === RecordShareAccessLevel.FULL);
-
     if (
       isBusy ||
       !canInvite ||
@@ -134,30 +123,21 @@ export const useSidePanelShareRecordInvitation = ({
     }
 
     setIsSubmitting(true);
-    setErrorMessage(undefined);
 
     const failedRecipients: RecordSharingInvitationRecipient[] = [];
 
     try {
       for (const recipient of selectedRecipients) {
-        const result = await inviteRecipient(recipient);
+        const updatedSharing = await inviteRecipient(recipient);
 
-        if (!isDefined(result)) {
+        if (!isDefined(updatedSharing)) {
           failedRecipients.push(recipient);
         }
       }
 
-      setSelectedRecipients(failedRecipients);
+      setStagedRecipients(failedRecipients);
 
-      if (isNonEmptyArray(failedRecipients)) {
-        setErrorMessage(
-          t`Sharing could not be updated for every recipient. Try again.`,
-        );
-
-        return false;
-      }
-
-      return true;
+      return !isNonEmptyArray(failedRecipients);
     } finally {
       setIsSubmitting(false);
     }
@@ -167,9 +147,11 @@ export const useSidePanelShareRecordInvitation = ({
     recipients,
     selectedRecipients,
     accessLevel,
+    generalAccess,
+    hasEveryoneRecipient,
+    hasInvalidAccessLevel,
     canInvite,
     isSubmitting: isBusy,
-    errorMessage,
     onRecipientsChange,
     onAccessLevelChange,
     onInvite,

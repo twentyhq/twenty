@@ -6,16 +6,13 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { RecordSharingAccessLevelOptions } from '@/object-record/record-sharing/components/RecordSharingAccessLevelOptions';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
-import { getRecordShareLabel } from '@/object-record/record-sharing/utils/getRecordShareLabel';
 import { getRecordShareRoleAccessNote } from '@/object-record/record-sharing/utils/getRecordShareRoleAccessNote';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordDropdownItem';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import {
   type ObjectSharingReach,
@@ -34,6 +31,8 @@ const StyledRoleAccessNote = styled.div`
 
 type SidePanelShareRecordRecipientProps = {
   share: RecordSharingFieldsFragment['shares'][number];
+  label: string;
+  member: PartialWorkspaceMember | undefined;
   roles: RecordSharingFieldsFragment['roles'];
   objectLabelPlural: string;
   sharingReach: ObjectSharingReach;
@@ -44,6 +43,8 @@ type SidePanelShareRecordRecipientProps = {
 
 export const SidePanelShareRecordRecipient = ({
   share,
+  label,
+  member,
   roles,
   objectLabelPlural,
   sharingReach,
@@ -53,21 +54,8 @@ export const SidePanelShareRecordRecipient = ({
 }: SidePanelShareRecordRecipientProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const isRole = share.principalType === RecordSharePrincipalType.ROLE;
-  const member = isRole
-    ? undefined
-    : currentWorkspaceMembers.find(({ id }) => id === share.principalId);
   const principalRoleId = isRole ? share.principalId : share.principalRoleId;
-  const label = getRecordShareLabel({
-    share,
-    member,
-    role: roles.find(({ id }) => id === share.principalId),
-    currentWorkspaceMember,
-  });
   const principal = isRole
     ? { roleId: share.principalId }
     : { workspaceMemberId: share.principalId };

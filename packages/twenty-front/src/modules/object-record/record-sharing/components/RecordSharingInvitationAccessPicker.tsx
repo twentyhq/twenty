@@ -1,10 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
+import { useId } from 'react';
 import { Dropdown, ListItemButton } from 'twenty-ui/components/navigation';
 import { IconChevronRight, IconUserPlus } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
 import { RecordSharingAccessLevelOptions } from '@/object-record/record-sharing/components/RecordSharingAccessLevelOptions';
 import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { type RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
@@ -23,9 +26,10 @@ export const RecordSharingInvitationAccessPicker = ({
 }: RecordSharingInvitationAccessPickerProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const dropdownId = useId();
 
   return (
-    <Dropdown.Root type="menu">
+    <DropdownRoot dropdownId={dropdownId} type="menu">
       <Dropdown.Trigger
         disabled={disabled}
         aria-label={t`Invite as ${getRecordShareAccessLevelLabel(value)}`}
@@ -47,7 +51,7 @@ export const RecordSharingInvitationAccessPicker = ({
           </ListItemButton>
         }
       />
-      <Dropdown.Content
+      <DropdownContent
         aria-label={t`Invitation access`}
         align="end"
         sideOffset={4}
@@ -58,7 +62,7 @@ export const RecordSharingInvitationAccessPicker = ({
           onChange={onChange}
           shouldExcludeFullAccess={hasEveryoneRecipient}
         />
-      </Dropdown.Content>
-    </Dropdown.Root>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

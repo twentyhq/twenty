@@ -23,7 +23,7 @@ import { useSidePanelShareRecordInvitation } from '@/side-panel/pages/share-reco
 import { useSidePanelShareRecordSearch } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordSearch';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import {
-  type ObjectSharingReach,
+  ObjectSharingReach,
   RecordSharingMode,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -97,13 +97,14 @@ export const SidePanelShareRecordContent = ({
     sharing,
     recipients: invitation.recipients,
     selectedRecipients: invitation.selectedRecipients,
+    generalAccess: invitation.generalAccess,
   });
   const { copyToClipboard } = useCopyToClipboard();
   const canManageSharing = sharing?.canManageSharing ?? false;
   const isInitialLoading = loading && !isDefined(sharing) && !isDefined(error);
   const recipientGroups = getRecordSharingRecipientGroups({
     isInviting,
-    shares: matchingShares,
+    matchingShares,
   });
   const handleRecipientsChange = (
     recipients: RecordSharingInvitationRecipient[],
@@ -123,9 +124,7 @@ export const SidePanelShareRecordContent = ({
   const accessPicker = (
     <RecordSharingInvitationAccessPicker
       value={invitation.accessLevel}
-      hasEveryoneRecipient={invitation.selectedRecipients.some(
-        (recipient) => recipient.kind === 'everyone',
-      )}
+      hasEveryoneRecipient={invitation.hasEveryoneRecipient}
       disabled={invitation.isSubmitting}
       onChange={invitation.onAccessLevelChange}
     />
@@ -139,10 +138,9 @@ export const SidePanelShareRecordContent = ({
           search={search}
           onSearchChange={onSearchChange}
           selectedRecipients={invitation.selectedRecipients}
-          accessLevel={invitation.accessLevel}
+          hasInvalidAccessLevel={invitation.hasInvalidAccessLevel}
           canInvite={invitation.canInvite}
           isSubmitting={invitation.isSubmitting}
-          errorMessage={invitation.errorMessage}
           onInvite={() => void handleInvite()}
         />
       )}
@@ -188,17 +186,19 @@ export const SidePanelShareRecordContent = ({
                       />
                     </SidePanelShareRecordGroup>
                   )}
-                  {recipientGroups.map(({ heading, shares }) =>
-                    isNonEmptyArray(shares) ? (
+                  {recipientGroups.map(({ heading, matchingShares }) =>
+                    isNonEmptyArray(matchingShares) ? (
                       <SidePanelShareRecordGroup
                         key={heading.id}
                         heading={t(heading)}
                         shouldHideHeading={isInviting && matchesGeneralAccess}
                       >
-                        {shares.map((share) => (
+                        {matchingShares.map(({ share, label, member }) => (
                           <SidePanelShareRecordRecipient
                             key={share.id}
                             share={share}
+                            label={label}
+                            member={member}
                             roles={sharing.roles}
                             objectLabelPlural={objectLabelPlural}
                             sharingReach={sharingReach}
@@ -237,6 +237,14 @@ export const SidePanelShareRecordContent = ({
                   {sharing.sharingMode === RecordSharingMode.INHERITED && (
                     <StyledDescription>{t`Access is also inherited from related records.`}</StyledDescription>
                   )}
+                  {!sharing.hasManagedGeneralAccess &&
+                    sharing.sharingMode !== RecordSharingMode.INHERITED && (
+                      <StyledDescription>
+                        {sharingReach === ObjectSharingReach.WORKSPACE
+                          ? t`People you add get this record even if their role can't access ${objectLabelPlural}. Field permissions still apply.`
+                          : t`Role and field permissions still apply.`}
+                      </StyledDescription>
+                    )}
                 </>
               ) : (
                 <StyledDescription>

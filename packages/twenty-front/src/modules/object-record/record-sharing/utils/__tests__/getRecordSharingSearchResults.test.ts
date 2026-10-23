@@ -80,8 +80,10 @@ describe('getRecordSharingSearchResults', () => {
     });
 
     expect(
-      updatedResults.matchingShares.map((share) => share.principalId),
-    ).toEqual(initialResults.matchingShares.map((share) => share.principalId));
+      updatedResults.matchingShares.map(({ share }) => share.principalId),
+    ).toEqual(
+      initialResults.matchingShares.map(({ share }) => share.principalId),
+    );
   });
 
   it('lists the owner and current member before other recipients in alphabetical order', () => {
@@ -116,12 +118,9 @@ describe('getRecordSharingSearchResults', () => {
       },
     });
 
-    expect(results.matchingShares.map((share) => share.principalId)).toEqual([
-      'owner',
-      MEMBER.id,
-      'alice',
-      'david',
-    ]);
+    expect(
+      results.matchingShares.map(({ share }) => share.principalId),
+    ).toEqual(['owner', MEMBER.id, 'alice', 'david']);
   });
 
   it('keeps recipients with identical names in a stable order', () => {
@@ -140,10 +139,9 @@ describe('getRecordSharingSearchResults', () => {
       },
     });
 
-    expect(results.matchingShares.map((share) => share.principalId)).toEqual([
-      MEMBER.id,
-      'other-member',
-    ]);
+    expect(
+      results.matchingShares.map(({ share }) => share.principalId),
+    ).toEqual([MEMBER.id, 'other-member']);
   });
 
   it('matches the current member email without confusing a role with the same ID', () => {
@@ -164,7 +162,22 @@ describe('getRecordSharingSearchResults', () => {
       },
     });
 
-    expect(results.matchingShares).toEqual([MEMBER_SHARE]);
+    expect(results.matchingShares).toEqual([
+      { share: MEMBER_SHARE, label: 'You', member: MEMBER },
+    ]);
+  });
+
+  it('matches the current member by full name even though their label is You', () => {
+    const results = getSearchResults({
+      search: 'sarah lin',
+      workspaceMembers: [MEMBER],
+      currentWorkspaceMember: { ...MEMBER, colorScheme: 'Light', locale: 'en' },
+      sharing: { shares: [MEMBER_SHARE], roles: [] },
+    });
+
+    expect(results.matchingShares).toEqual([
+      { share: MEMBER_SHARE, label: 'You', member: MEMBER },
+    ]);
   });
 
   it('matches labels and email descriptions while excluding only the selected principal', () => {

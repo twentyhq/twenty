@@ -196,6 +196,20 @@ describe('Share record side panel', () => {
     );
   });
 
+  it.each([
+    [
+      ObjectSharingReach.WORKSPACE,
+      "People you add get this record even if their role can't access Companies. Field permissions still apply.",
+    ],
+    [ObjectSharingReach.ROLE_ACCESS, 'Role and field permissions still apply.'],
+  ])(
+    'tells managers what adding people grants when sharing reach is %s',
+    async (sharingReach, notice) => {
+      renderSharing({ sharingReach });
+      await waitFor(() => expect(screen.getByText(notice)).toBeVisible());
+    },
+  );
+
   it('tells viewers of a record open by default who can change its access', async () => {
     renderSharing({
       sharingOverrides: {

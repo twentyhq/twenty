@@ -43,7 +43,6 @@
   }
 
   &[data-variant='plain'],
-  &[data-variant='inline'],
   &[data-grouped] {
     background-color: transparent;
     block-size: auto;
@@ -51,7 +50,7 @@
     border-radius: 0;
     padding: 0;
 
-    &[data-variant='plain']:not([data-grouped]) {
+    &:not([data-grouped]) {
       &:not([data-focus-ring='false'], [aria-invalid='true'], [data-invalid]) {
         @include focus-ring;
       }
@@ -62,11 +61,6 @@
         outline-offset: 1px;
       }
     }
-  }
-
-  &[data-variant='inline']::placeholder {
-    color: var(--t-font-color-tertiary);
-    font-weight: var(--t-font-weight-regular);
   }
 
   &[data-grouped] {

@@ -583,11 +583,9 @@ export const RetainFailedInvitations: Story = {
     await userEvent.click(page.getByRole('checkbox', { name: /Jane Austen/ }));
     await userEvent.click(page.getByRole('checkbox', { name: /Jony Ive/ }));
     await userEvent.click(page.getByRole('button', { name: 'Invite 2' }));
-    await expect(await page.findByRole('alert')).toHaveTextContent(
-      'Sharing could not be updated for every recipient. Try again.',
-    );
+    await waitFor(() => expect(setShare).toHaveBeenCalledTimes(2));
     await expect(
-      page.getByRole('checkbox', { name: /Jane Austen/ }),
+      await page.findByRole('checkbox', { name: /Jane Austen/ }),
     ).toBeChecked();
     await expect(
       page.queryByRole('checkbox', { name: /Jony Ive/, checked: true }),
@@ -604,7 +602,6 @@ export const RetainFailedInvitations: Story = {
     });
     await expect(page.getByText('Everyone')).toBeVisible();
     await expect(page.queryByText('Selected')).not.toBeInTheDocument();
-    await expect(page.queryByRole('alert')).not.toBeInTheDocument();
     await expect(page.getByRole('button', { name: 'Invite' })).toBeDisabled();
   },
 };

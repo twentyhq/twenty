@@ -1,13 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type Ref } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Button, Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -35,10 +33,9 @@ type RecordSharingInvitationProps = {
   searchInputRef?: Ref<HTMLInputElement>;
   search: string;
   selectedRecipients: RecordSharingInvitationRecipient[];
-  accessLevel: RecordShareAccessLevel;
+  hasInvalidAccessLevel: boolean;
   canInvite: boolean;
   isSubmitting?: boolean;
-  errorMessage?: string;
   onSearchChange: (search: string) => void;
   onInvite: () => void;
 };
@@ -47,22 +44,15 @@ export const RecordSharingInvitation = ({
   searchInputRef,
   search,
   selectedRecipients,
-  accessLevel,
+  hasInvalidAccessLevel,
   canInvite,
   isSubmitting = false,
-  errorMessage,
   onSearchChange,
   onInvite,
 }: RecordSharingInvitationProps) => {
   const { t } = useLingui();
   const isDisabled = !canInvite || isSubmitting;
   const hasSelection = isNonEmptyArray(selectedRecipients);
-  const hasEveryoneRecipient = selectedRecipients.some(
-    (recipient) => recipient.kind === 'everyone',
-  );
-  const hasInvalidAccessLevel =
-    accessLevel === RecordShareAccessLevel.NONE ||
-    (hasEveryoneRecipient && accessLevel === RecordShareAccessLevel.FULL);
   const selectedRecipientCount = selectedRecipients.length;
 
   return (
@@ -75,7 +65,7 @@ export const RecordSharingInvitation = ({
             aria-label={t`Add people or everyone`}
             placeholder={t`Add people or everyone`}
             value={search}
-            variant="inline"
+            variant="plain"
             disabled={isDisabled}
             onValueChange={onSearchChange}
           />
@@ -95,9 +85,6 @@ export const RecordSharingInvitation = ({
         <StyledError role="alert">
           {t`Choose an access level available to all selected recipients.`}
         </StyledError>
-      )}
-      {isNonEmptyString(errorMessage) && (
-        <StyledError role="alert">{errorMessage}</StyledError>
       )}
     </div>
   );

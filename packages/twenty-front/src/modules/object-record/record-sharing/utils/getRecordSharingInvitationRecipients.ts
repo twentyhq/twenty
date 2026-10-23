@@ -38,13 +38,17 @@ export const getRecordSharingInvitationRecipients = ({
           principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
         }),
     )
-    .map((member): RecordSharingInvitationRecipient => ({
-      kind: 'workspaceMember',
-      id: member.id,
-      label: getWorkspaceMemberNameOrEmail(member),
-      description: member.userEmail,
-      avatarUrl: getAbsoluteImageUrl(member.avatarUrl),
-    }));
+    .map((member): RecordSharingInvitationRecipient => {
+      const label = getWorkspaceMemberNameOrEmail(member);
+
+      return {
+        kind: 'workspaceMember',
+        id: member.id,
+        label,
+        description: label === member.userEmail ? undefined : member.userEmail,
+        avatarUrl: getAbsoluteImageUrl(member.avatarUrl),
+      };
+    });
   const roleRecipients = roles
     .filter(
       (role) =>

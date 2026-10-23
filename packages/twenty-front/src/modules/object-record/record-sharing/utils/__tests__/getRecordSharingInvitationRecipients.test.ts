@@ -46,7 +46,7 @@ describe('getRecordSharingInvitationRecipients', () => {
     ]);
   });
 
-  it('keeps email and avatar data when a member has no display name', () => {
+  it('shows the email once and keeps the avatar when a member has no display name', () => {
     expect(
       getRecordSharingInvitationRecipients({
         workspaceMembers: [
@@ -65,7 +65,7 @@ describe('getRecordSharingInvitationRecipients', () => {
         kind: 'workspaceMember',
         id: MEMBER.id,
         label: MEMBER.userEmail,
-        description: MEMBER.userEmail,
+        description: undefined,
         avatarUrl: 'https://example.com/avatar.png',
       },
     ]);

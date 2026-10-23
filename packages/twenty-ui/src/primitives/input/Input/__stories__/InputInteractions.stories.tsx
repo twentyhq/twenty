@@ -179,27 +179,3 @@ export const PlainAppearance: Story = {
     await expect(getComputedStyle(disabledInput).cursor).toBe('not-allowed');
   },
 };
-
-export const InlineAppearance: Story = {
-  args: {
-    variant: 'inline',
-    'aria-label': 'Inline search',
-    placeholder: 'Add people or everyone',
-  },
-  play: async ({ canvasElement, args }) => {
-    const input = within(canvasElement).getByRole('textbox', {
-      name: 'Inline search',
-    });
-
-    await userEvent.tab();
-
-    await expect(input).toHaveFocus();
-    await expect(getComputedStyle(input).outlineStyle).toBe('none');
-    await userEvent.type(input, 'Sarah');
-    await expect(input).toHaveValue('Sarah');
-    await expect(args.onValueChange).toHaveBeenLastCalledWith(
-      'Sarah',
-      expect.anything(),
-    );
-  },
-};

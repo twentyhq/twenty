@@ -6,6 +6,7 @@ import { type RecordSharingInvitationRecipient } from '@/object-record/record-sh
 import { getRecordShareLabel } from '@/object-record/record-sharing/utils/getRecordShareLabel';
 import { isSameRecordSharingInvitationRecipient } from '@/object-record/record-sharing/utils/isSameRecordSharingInvitationRecipient';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import {
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -67,8 +68,7 @@ export const getRecordSharingSearchResults = ({
       const matchesSearch = hasMatchingSearchValue({
         values: [
           label,
-          member?.name.firstName,
-          member?.name.lastName,
+          isDefined(member) ? getWorkspaceMemberNameOrEmail(member) : undefined,
           member?.userEmail,
         ],
         normalizedSearch,
@@ -82,6 +82,7 @@ export const getRecordSharingSearchResults = ({
         {
           share,
           label,
+          member,
           isOwner: share.rowCause === RecordShareRowCause.OWNER,
           isCurrentWorkspaceMember:
             share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER &&
@@ -108,7 +109,7 @@ export const getRecordSharingSearchResults = ({
           secondRecipient.share.rowCause,
         ),
     )
-    .map(({ share }) => share);
+    .map(({ share, label, member }) => ({ share, label, member }));
   const matchingRecipients = recipients.filter(
     (recipient) =>
       !selectedRecipients.some((selectedRecipient) =>

@@ -5,28 +5,32 @@ import {
   type RecordSharingFieldsFragment,
 } from '~/generated-metadata/graphql';
 
-export const getRecordSharingRecipientGroups = ({
+export const getRecordSharingRecipientGroups = <
+  TMatchingShare extends {
+    share: Pick<RecordSharingFieldsFragment['shares'][number], 'principalType'>;
+  },
+>({
   isInviting,
-  shares,
+  matchingShares,
 }: {
   isInviting: boolean;
-  shares: RecordSharingFieldsFragment['shares'];
+  matchingShares: TMatchingShare[];
 }) => {
   if (isInviting) {
-    return [{ heading: msg`Have access`, shares }];
+    return [{ heading: msg`Have access`, matchingShares }];
   }
 
   return [
     {
       heading: msg`Roles`,
-      shares: shares.filter(
-        (share) => share.principalType === RecordSharePrincipalType.ROLE,
+      matchingShares: matchingShares.filter(
+        ({ share }) => share.principalType === RecordSharePrincipalType.ROLE,
       ),
     },
     {
       heading: msg`Users`,
-      shares: shares.filter(
-        (share) =>
+      matchingShares: matchingShares.filter(
+        ({ share }) =>
           share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER,
       ),
     },

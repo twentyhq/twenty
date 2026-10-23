@@ -64,23 +64,6 @@ export const InlineSubject = () => (
 
 `InputGroup` automatically gives its input the plain appearance and keeps the group as the only focus and validation frame. Its `sm` and `md` heights remain 24px and 32px. Standalone plain inputs do not use the fixed height associated with `size`.
 
-## Inline appearance
-
-Use `variant="inline"` when the parent owns the input surface, such as a panel search row. It removes the fill, border, rounded corners and padding and uses natural height. The parent supplies spacing and row dimensions. Inline inputs do not draw a focus or validation outline. Their placeholder uses regular weight and the tertiary text color.
-
-```tsx
-import { Input } from 'twenty-ui/primitives/input';
-
-export const RecipientSearch = () => (
-  <Input
-    variant="inline"
-    role="searchbox"
-    aria-label="Add people or everyone"
-    placeholder="Add people or everyone"
-  />
-);
-```
-
 ## Controlled state
 
 Pass `value` and update it with `onValueChange` to own the same email address in React state. The callback receives the next string value and event details.

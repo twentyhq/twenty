@@ -5,7 +5,6 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { RecordSharingInvitation } from '@/object-record/record-sharing/components/RecordSharingInvitation';
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 const RECIPIENTS: RecordSharingInvitationRecipient[] = [
   { kind: 'workspaceMember', id: 'sarah', label: 'Sarah Lin' },
@@ -16,10 +15,9 @@ const RECIPIENTS: RecordSharingInvitationRecipient[] = [
 
 const InvitationStory = ({
   selectedRecipients,
-  accessLevel,
+  hasInvalidAccessLevel,
   canInvite,
   isSubmitting,
-  errorMessage,
   search: initialSearch,
   onSearchChange,
   onInvite,
@@ -29,10 +27,9 @@ const InvitationStory = ({
   return (
     <RecordSharingInvitation
       selectedRecipients={selectedRecipients}
-      accessLevel={accessLevel}
+      hasInvalidAccessLevel={hasInvalidAccessLevel}
       canInvite={canInvite}
       isSubmitting={isSubmitting}
-      errorMessage={errorMessage}
       search={search}
       onSearchChange={(nextSearch) => {
         setSearch(nextSearch);
@@ -52,7 +49,7 @@ const meta = {
   args: {
     search: '',
     selectedRecipients: [],
-    accessLevel: RecordShareAccessLevel.READ,
+    hasInvalidAccessLevel: false,
     canInvite: true,
     onSearchChange: fn(),
     onInvite: fn(),
@@ -117,26 +114,10 @@ export const ReadOnly: Story = {
   },
 };
 
-export const InvitationFailed: Story = {
-  args: {
-    selectedRecipients: [RECIPIENTS[0], RECIPIENTS[1]],
-    errorMessage: 'Sharing could not be updated. Try again.',
-  },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-
-    await expect(canvas.getByRole('alert')).toHaveTextContent(
-      'Sharing could not be updated. Try again.',
-    );
-    await userEvent.click(canvas.getByRole('button', { name: 'Invite 2' }));
-    await expect(args.onInvite).toHaveBeenCalledTimes(1);
-  },
-};
-
 export const EveryoneCannotReceiveFullAccess: Story = {
   args: {
     selectedRecipients: [RECIPIENTS[3]],
-    accessLevel: RecordShareAccessLevel.FULL,
+    hasInvalidAccessLevel: true,
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
