@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_MCP_SERVER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-mcp-server-upgrade-command-name.constant';
+import { ADD_MCP_SERVER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-52/add-mcp-server-upgrade-command-name.constant';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
