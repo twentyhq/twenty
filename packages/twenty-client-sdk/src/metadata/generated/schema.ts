@@ -493,8 +493,8 @@ export interface ApplicationMonitoring {
 export interface ApplicationMonitoringActivityBucket {
     bucketStart: Scalars['DateTime']
     errorCount: Scalars['Int']
-    infoCount: Scalars['Int']
-    warningCount: Scalars['Int']
+    rateLimitedJobCount: Scalars['Int']
+    rateLimitedRequestCount: Scalars['Int']
     __typename: 'ApplicationMonitoringActivityBucket'
 }
 
@@ -4654,8 +4654,8 @@ export interface ApplicationMonitoringGenqlSelection{
 export interface ApplicationMonitoringActivityBucketGenqlSelection{
     bucketStart?: boolean | number
     errorCount?: boolean | number
-    infoCount?: boolean | number
-    warningCount?: boolean | number
+    rateLimitedJobCount?: boolean | number
+    rateLimitedRequestCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

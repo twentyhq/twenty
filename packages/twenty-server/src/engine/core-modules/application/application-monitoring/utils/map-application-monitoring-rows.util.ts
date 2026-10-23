@@ -41,8 +41,8 @@ export const mapApplicationMonitoringRows = ({
     activity: rows.activity.map((row) => ({
       bucketStart: parseClickHouseDateTime(row.bucketStart),
       errorCount: toNumber(row.errorCount),
-      warningCount: toNumber(row.warningCount),
-      infoCount: toNumber(row.infoCount),
+      rateLimitedRequestCount: toNumber(row.rateLimitedRequestCount),
+      rateLimitedJobCount: toNumber(row.rateLimitedJobCount),
     })),
     lifecycle: rows.lifecycle.map((row) => ({
       bucketStart: parseClickHouseDateTime(row.bucketStart),

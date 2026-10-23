@@ -1298,10 +1298,10 @@ export default {
             "errorCount": [
                 10
             ],
-            "infoCount": [
+            "rateLimitedJobCount": [
                 10
             ],
-            "warningCount": [
+            "rateLimitedRequestCount": [
                 10
             ],
             "__typename": [

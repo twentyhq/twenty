@@ -26,21 +26,21 @@ const MONITORING: ApplicationMonitoringData = {
   runCount: 7930,
   failedRunCount: 139,
   lifecycleFailureCount: 3,
-  rateLimitEventCount: 61,
+  rateLimitEventCount: 3525,
   creditsUsed: 184.5,
   activity: [
-    ['2026-10-13', 12, 20],
-    ['2026-10-14', 18, 22],
-    ['2026-10-15', 9, 15],
-    ['2026-10-16', 14, 19],
-    ['2026-10-17', 41, 33],
-    ['2026-10-18', 30, 28],
-    ['2026-10-19', 18, 24],
-  ].map(([day, errorCount, warningCount]) => ({
+    ['2026-10-13', 12, 120, 0],
+    ['2026-10-14', 18, 0, 0],
+    ['2026-10-15', 9, 340, 12],
+    ['2026-10-16', 14, 0, 0],
+    ['2026-10-17', 41, 2100, 40],
+    ['2026-10-18', 30, 860, 8],
+    ['2026-10-19', 18, 45, 0],
+  ].map(([day, errorCount, rateLimitedRequestCount, rateLimitedJobCount]) => ({
     bucketStart: `${day}T00:00:00.000Z`,
     errorCount: Number(errorCount),
-    warningCount: Number(warningCount),
-    infoCount: 1100,
+    rateLimitedRequestCount: Number(rateLimitedRequestCount),
+    rateLimitedJobCount: Number(rateLimitedJobCount),
   })),
   lifecycle: [
     {
@@ -174,6 +174,7 @@ export const Default: Story = {
       }),
     ).toBeVisible();
     expect(await canvas.findByText('Errors')).toBeVisible();
+    expect(await canvas.findByText('API requests')).toBeVisible();
     expect(
       canvas.getByText('184 credits across every install in this period'),
     ).toBeVisible();
@@ -250,6 +251,7 @@ export const NoActivity: Story = {
     expect(
       canvas.getByText('No errors or warnings in this period'),
     ).toBeVisible();
+    expect(canvas.getByText('No rate limit hit in this period')).toBeVisible();
     expect(canvas.getByText('No credits used in this period')).toBeVisible();
   },
 };

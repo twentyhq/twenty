@@ -70,6 +70,7 @@ export type ApplicationMetricEventRow = {
   level: string;
   errorCode: string;
   durationMs: number;
+  occurrenceCount: number;
 };
 
 // The `table` literals must match the registry's clickHouseTable values (EVENT_LOG_TYPES).

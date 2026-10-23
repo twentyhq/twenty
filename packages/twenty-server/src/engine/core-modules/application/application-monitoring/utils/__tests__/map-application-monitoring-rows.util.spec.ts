@@ -59,8 +59,8 @@ describe('mapApplicationMonitoringRows', () => {
           {
             bucketStart: '2026-10-17 00:00:00.000',
             errorCount: '41',
-            warningCount: '33',
-            infoCount: '1100',
+            rateLimitedRequestCount: '33',
+            rateLimitedJobCount: '4',
           },
         ],
         issues: [
@@ -96,8 +96,8 @@ describe('mapApplicationMonitoringRows', () => {
         {
           bucketStart: new Date('2026-10-17T00:00:00.000Z'),
           errorCount: 41,
-          warningCount: 33,
-          infoCount: 1100,
+          rateLimitedRequestCount: 33,
+          rateLimitedJobCount: 4,
         },
       ],
       issues: [

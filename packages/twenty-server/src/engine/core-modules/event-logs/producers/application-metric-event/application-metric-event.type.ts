@@ -12,4 +12,5 @@ export type ApplicationMetricEvent = {
   level: string;
   errorCode: string;
   durationMs: number;
+  occurrenceCount: number;
 };

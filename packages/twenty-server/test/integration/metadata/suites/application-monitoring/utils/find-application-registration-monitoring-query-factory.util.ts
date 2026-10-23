@@ -19,8 +19,8 @@ const DEFAULT_FIND_APPLICATION_REGISTRATION_MONITORING_GQL_FIELDS = `
   activity {
     bucketStart
     errorCount
-    warningCount
-    infoCount
+    rateLimitedRequestCount
+    rateLimitedJobCount
   }
   issues {
     level

@@ -7,7 +7,9 @@ export const buildApplicationMonitoringActivityChartData = (
     ApplicationMonitoringData,
     'activity' | 'bucketSizeInSeconds' | 'periodStart' | 'periodEnd'
   >,
-): ApplicationMonitoringChartDatum<'errorCount' | 'warningCount'>[] => {
+): ApplicationMonitoringChartDatum<
+  'errorCount' | 'rateLimitedRequestCount' | 'rateLimitedJobCount'
+>[] => {
   const activityByBucketStart = new Map(
     monitoring.activity.map((bucket) => [
       new Date(bucket.bucketStart).toISOString(),
@@ -16,10 +18,15 @@ export const buildApplicationMonitoringActivityChartData = (
   );
 
   return listApplicationMonitoringBucketStarts(monitoring).map(
-    (bucketStart) => ({
-      bucketStart,
-      errorCount: activityByBucketStart.get(bucketStart)?.errorCount ?? 0,
-      warningCount: activityByBucketStart.get(bucketStart)?.warningCount ?? 0,
-    }),
+    (bucketStart) => {
+      const bucket = activityByBucketStart.get(bucketStart);
+
+      return {
+        bucketStart,
+        errorCount: bucket?.errorCount ?? 0,
+        rateLimitedRequestCount: bucket?.rateLimitedRequestCount ?? 0,
+        rateLimitedJobCount: bucket?.rateLimitedJobCount ?? 0,
+      };
+    },
   );
 };

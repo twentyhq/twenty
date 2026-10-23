@@ -8,6 +8,8 @@ const PERIOD_FILTER = `applicationRegistrationId = {applicationRegistrationId:St
 
 const LIFECYCLE_SOURCES = `('INSTALL', 'UPGRADE', 'UNINSTALL')`;
 
+const RATE_LIMIT_SOURCES = `('API_RATE_LIMIT', 'JOB_RATE_LIMIT')`;
+
 const RUNS_ON_VERSION = `NOT (source IN ${LIFECYCLE_SOURCES} AND level = 'ERROR')`;
 
 const BUCKET_START = `toStartOfInterval(timestamp, toIntervalSecond({bucketSizeInSeconds:UInt32}))`;
@@ -15,18 +17,18 @@ const BUCKET_START = `toStartOfInterval(timestamp, toIntervalSecond({bucketSizeI
 export const APPLICATION_MONITORING_QUERIES = {
   totals: `
     SELECT
-      countIf(source = 'LOGIC_FUNCTION') AS runCount,
-      countIf(source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
-      countIf(source IN ${LIFECYCLE_SOURCES} AND level = 'ERROR') AS lifecycleFailureCount,
-      countIf(source IN ('API_RATE_LIMIT', 'JOB_RATE_LIMIT')) AS rateLimitEventCount
+      sumIf(occurrenceCount, source = 'LOGIC_FUNCTION') AS runCount,
+      sumIf(occurrenceCount, source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
+      sumIf(occurrenceCount, source IN ${LIFECYCLE_SOURCES} AND level = 'ERROR') AS lifecycleFailureCount,
+      sumIf(occurrenceCount, source IN ${RATE_LIMIT_SOURCES}) AS rateLimitEventCount
     FROM applicationMetricEvent
     WHERE ${PERIOD_FILTER}`,
   activity: `
     SELECT
       ${BUCKET_START} AS bucketStart,
-      countIf(level = 'ERROR') AS errorCount,
-      countIf(level = 'WARN') AS warningCount,
-      countIf(level NOT IN ('ERROR', 'WARN')) AS infoCount
+      sumIf(occurrenceCount, level = 'ERROR') AS errorCount,
+      sumIf(occurrenceCount, source = 'API_RATE_LIMIT') AS rateLimitedRequestCount,
+      sumIf(occurrenceCount, source = 'JOB_RATE_LIMIT') AS rateLimitedJobCount
     FROM applicationMetricEvent
     WHERE ${PERIOD_FILTER}
     GROUP BY bucketStart
@@ -34,10 +36,10 @@ export const APPLICATION_MONITORING_QUERIES = {
   lifecycle: `
     SELECT
       ${BUCKET_START} AS bucketStart,
-      countIf(source = 'INSTALL' AND level != 'ERROR') AS installCount,
-      countIf(source = 'UPGRADE' AND level != 'ERROR') AS upgradeCount,
-      countIf(source = 'UNINSTALL' AND level != 'ERROR') AS uninstallCount,
-      countIf(level = 'ERROR') AS failedCount
+      sumIf(occurrenceCount, source = 'INSTALL' AND level != 'ERROR') AS installCount,
+      sumIf(occurrenceCount, source = 'UPGRADE' AND level != 'ERROR') AS upgradeCount,
+      sumIf(occurrenceCount, source = 'UNINSTALL' AND level != 'ERROR') AS uninstallCount,
+      sumIf(occurrenceCount, level = 'ERROR') AS failedCount
     FROM applicationMetricEvent
     WHERE ${PERIOD_FILTER} AND source IN ${LIFECYCLE_SOURCES}
     GROUP BY bucketStart
@@ -49,7 +51,7 @@ export const APPLICATION_MONITORING_QUERIES = {
       errorCode,
       logicFunctionName,
       groupUniqArray(applicationVersion) AS versions,
-      count() AS eventCount,
+      sum(occurrenceCount) AS eventCount,
       uniqExact(workspaceId) AS affectedInstallCount,
       max(timestamp) AS lastSeenAt
     FROM applicationMetricEvent
@@ -60,8 +62,8 @@ export const APPLICATION_MONITORING_QUERIES = {
   versions: `
     SELECT
       applicationVersion AS version,
-      countIf(source = 'LOGIC_FUNCTION') AS runCount,
-      countIf(source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
+      sumIf(occurrenceCount, source = 'LOGIC_FUNCTION') AS runCount,
+      sumIf(occurrenceCount, source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
       uniqExact(workspaceId) AS activeInstallCount
     FROM applicationMetricEvent
     WHERE ${PERIOD_FILTER} AND applicationVersion != '' AND ${RUNS_ON_VERSION}
@@ -71,8 +73,8 @@ export const APPLICATION_MONITORING_QUERIES = {
   functions: `
     SELECT
       logicFunctionName,
-      count() AS runCount,
-      countIf(level = 'ERROR') AS failedRunCount,
+      sum(occurrenceCount) AS runCount,
+      sumIf(occurrenceCount, level = 'ERROR') AS failedRunCount,
       quantile(0.95)(durationMs) AS p95DurationMs
     FROM applicationMetricEvent
     WHERE ${PERIOD_FILTER} AND source = 'LOGIC_FUNCTION'
@@ -87,9 +89,9 @@ export const APPLICATION_MONITORING_QUERIES = {
     SELECT
       workspaceId,
       argMaxIf(applicationVersion, timestamp, ${RUNS_ON_VERSION}) AS applicationVersion,
-      countIf(source = 'LOGIC_FUNCTION') AS runCount,
-      countIf(source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
-      countIf(source IN ('API_RATE_LIMIT', 'JOB_RATE_LIMIT')) AS rateLimitEventCount,
+      sumIf(occurrenceCount, source = 'LOGIC_FUNCTION') AS runCount,
+      sumIf(occurrenceCount, source = 'LOGIC_FUNCTION' AND level = 'ERROR') AS failedRunCount,
+      sumIf(occurrenceCount, source IN ${RATE_LIMIT_SOURCES}) AS rateLimitEventCount,
       max(timestamp) AS lastEventAt
     FROM applicationMetricEvent
     WHERE ${PERIOD_FILTER}
