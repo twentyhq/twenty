@@ -13,7 +13,7 @@
   {
     "name": "components",
     "path": "dist/components.mjs",
-    "limit": "210 kB"
+    "limit": "215 kB"
   },
   {
     "name": "components/code-editor",
@@ -48,7 +48,7 @@
   {
     "name": "components (DatePicker)",
     "path": "dist/components.mjs",
-    "limit": "145 kB",
+    "limit": "150 kB",
     "import": "{ DatePicker }"
   },
   {

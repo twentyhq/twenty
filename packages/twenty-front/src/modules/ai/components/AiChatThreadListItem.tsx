@@ -1,11 +1,14 @@
+import { styled } from '@linaria/react';
 import { type MouseEvent, useId } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
 import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
+import { AiChatThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon';
 import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
@@ -15,6 +18,12 @@ import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/u
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+
+const StyledActivityTime = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
@@ -113,7 +122,14 @@ export const AiChatThreadListItem = ({
           <AiChatThreadTitle thread={thread} />
         )
       }
-      activityTime={!isRenaming && <AiChatThreadActivityTime thread={thread} />}
+      activityTime={
+        !isRenaming && (
+          <StyledActivityTime>
+            <AiChatThreadChannelIcon thread={thread} />
+            <AiChatThreadActivityTime thread={thread} />
+          </StyledActivityTime>
+        )
+      }
       subtitle={<AiChatThreadSubtitle thread={thread} />}
       actions={
         <AiChatThreadActionsDropdown

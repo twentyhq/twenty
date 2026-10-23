@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components/input';
-import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
+import { CountPager } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
@@ -18,16 +17,7 @@ const StyledGate = styled.div`
 `;
 
 const StyledStepper = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
   padding: 0 ${themeCssVariables.spacing[1]};
-`;
-
-const StyledStepperLabel = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  flex: 1;
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type AiChatPendingAskGateProps = {
@@ -96,25 +86,16 @@ export const AiChatPendingAskGate = ({
     <StyledGate>
       {requestCount > 1 && (
         <StyledStepper>
-          <StyledStepperLabel>
-            {t`Request ${requestNumber} of ${requestCount}`}
-          </StyledStepperLabel>
-          <LightIconButton
-            size="sm"
-            disabled={currentIndex === 0}
-            onClick={() => selectRequest(currentIndex - 1)}
-            aria-label={t`Previous request`}
-          >
-            <IconChevronLeft />
-          </LightIconButton>
-          <LightIconButton
-            size="sm"
-            disabled={currentIndex === requestCount - 1}
-            onClick={() => selectRequest(currentIndex + 1)}
-            aria-label={t`Next request`}
-          >
-            <IconChevronRight />
-          </LightIconButton>
+          <CountPager
+            aria-label={t`Pending requests`}
+            index={currentIndex}
+            count={requestCount}
+            onIndexChange={selectRequest}
+            positionText={t`Request ${requestNumber} of ${requestCount}`}
+            positionPlacement="start"
+            previousLabel={t`Previous request`}
+            nextLabel={t`Next request`}
+          />
         </StyledStepper>
       )}
       {pendingToolCalls.map((pendingToolCall, index) => (
