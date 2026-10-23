@@ -356,6 +356,7 @@ kbd {
 }
 
 :is(#sidebar-content, #mobile-nav) li > :is(a, button) {
+  border-radius: var(--twenty-radius-1);
   color: var(--twenty-ink-muted);
 }
 
@@ -631,6 +632,7 @@ div:has(> #search-bar-entry) {
 
 #content th {
   padding-bottom: var(--twenty-space-4);
+  color: var(--twenty-ink-muted);
 }
 
 #content :is(th, td):not(:last-child) {
