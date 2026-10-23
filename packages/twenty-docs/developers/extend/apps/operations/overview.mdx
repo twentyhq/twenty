@@ -6,13 +6,13 @@ icon: 'rocket'
 
 The **operations layer** is everything you do _to_ your app rather than _with_ it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, translating its strings, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
 
-```text
-   develop ─▶ test ─▶ build ─▶ deploy / publish
-   ───────    ────    ─────    ─────────────────
-   twenty     yarn    twenty   twenty app publish --private  (tarball → one server)
-   app dev    test    app build
-                               twenty app publish            (npm → marketplace)
-```
+| Step | Command |
+| --- | --- |
+| Develop | `twenty app dev` |
+| Test | `yarn test` |
+| Build | `twenty app build` |
+| Publish to one server | `twenty app publish --private` |
+| Publish to npm | `twenty app publish` |
 
 ## In this section
 
