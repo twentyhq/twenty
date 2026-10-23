@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -29,6 +30,30 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Create: Story = {};
+
+export const KeyboardFieldFocus: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      canvas.getByRole('checkbox', { name: 'Select Sundar Pichai' }),
+    );
+    await userEvent.tab();
+
+    const name = canvas.getByRole('textbox', { name: 'Sundar Pichai People' });
+    const label = name.parentElement;
+
+    await expect(name).toHaveFocus();
+    await expect(getComputedStyle(name).outlineWidth).toBe('2px');
+
+    if (!isDefined(label)) {
+      throw new Error('Editable record label is missing');
+    }
+
+    await expect(getComputedStyle(label).overflowX).toBe('visible');
+    await expect(getComputedStyle(label).overflowY).toBe('visible');
+  },
+};
 
 export const Update: Story = {
   args: { initialActiveIndex: 1 },

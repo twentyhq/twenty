@@ -68,6 +68,7 @@ export const AiChatApprovalReviewExampleCell = ({
   return (
     <Chip
       variant="soft"
+      truncate={!isEditable}
       startElement={
         <Avatar
           name={value}
