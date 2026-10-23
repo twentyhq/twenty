@@ -7,15 +7,19 @@ import { DetailsRow } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
+  IconHash,
   IconLink,
   IconListSearch,
   IconPencil,
   IconPlus,
   IconUsers,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
+import { AiChatThreadChannelPicker } from '@/ai/components/AiChatThreadChannelPicker';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
+import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
@@ -44,6 +48,14 @@ const StyledEmptyValue = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
+const StyledChannel = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 const StyledDetails = styled.dl`
   display: flex;
   flex-direction: column;
@@ -60,6 +72,7 @@ export const AiChatThreadDetailsDropdown = ({
   threadId,
 }: AiChatThreadDetailsDropdownProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(
     `ai-chat-thread-details-${threadId}`,
   );
@@ -77,6 +90,9 @@ export const AiChatThreadDetailsDropdown = ({
   );
   const assignee = currentWorkspaceMembers.find(
     (workspaceMember) => workspaceMember.id === thread?.assigneeId,
+  );
+  const channel = useAtomStateValue(agentChatChannelsState)?.find(
+    ({ id }) => id === thread?.channelId,
   );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -186,6 +202,31 @@ export const AiChatThreadDetailsDropdown = ({
                 )}
               </DetailsRow>
             )}
+            <DetailsRow
+              labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+              startIcon={<IconHash size={themeCssVariables.icon.size.md} />}
+              label={t`Channel`}
+              action={
+                isDefined(thread) && (
+                  <AiChatThreadChannelPicker
+                    thread={thread}
+                    dropdownId={`${dropdownId}-channel-picker`}
+                  />
+                )
+              }
+            >
+              {isDefined(channel) ? (
+                <StyledChannel>
+                  <AgentChatChannelIcon
+                    channel={channel}
+                    size={theme.icon.size.sm}
+                  />
+                  {channel.name}
+                </StyledChannel>
+              ) : (
+                <StyledEmptyValue>{t`None`}</StyledEmptyValue>
+              )}
+            </DetailsRow>
             <DetailsRow
               labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
               startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
