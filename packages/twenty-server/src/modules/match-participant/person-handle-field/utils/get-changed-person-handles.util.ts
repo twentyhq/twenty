@@ -40,11 +40,15 @@ export const getChangedPersonHandles = ({
   const changedPersonIds = new Set<string>();
 
   for (const { personId, before, after } of personChanges) {
-    const handlesBefore = getHandles({ personHandleField, person: before });
-    const handlesAfter = getHandles({ personHandleField, person: after });
+    const handlesBefore = new Set(
+      getHandles({ personHandleField, person: before }),
+    );
+    const handlesAfter = new Set(
+      getHandles({ personHandleField, person: after }),
+    );
     const isUnchanged =
-      handlesBefore.length === handlesAfter.length &&
-      handlesBefore.every((handle) => handlesAfter.includes(handle));
+      handlesBefore.size === handlesAfter.size &&
+      [...handlesBefore].every((handle) => handlesAfter.has(handle));
 
     if (isUnchanged) {
       continue;

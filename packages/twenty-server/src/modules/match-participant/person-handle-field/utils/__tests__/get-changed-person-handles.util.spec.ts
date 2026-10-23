@@ -17,6 +17,33 @@ const buildPerson = (primaryPhoneNumber: string) => ({
 });
 
 describe('getChangedPersonHandles', () => {
+  it('sees a value added next to a duplicated one', () => {
+    const withAdditionalPhone = (number: string) => ({
+      phones: {
+        primaryPhoneNumber: '611111111',
+        primaryPhoneCallingCode: '+33',
+        primaryPhoneCountryCode: 'FR',
+        additionalPhones: [{ number, callingCode: '+33', countryCode: 'FR' }],
+      },
+    });
+
+    expect(
+      getChangedPersonHandles({
+        personHandleField,
+        personChanges: [
+          {
+            personId: 'person-a',
+            before: withAdditionalPhone('611111111'),
+            after: withAdditionalPhone('622222222'),
+          },
+        ],
+      }),
+    ).toEqual({
+      handles: ['+33611111111', '+33622222222'],
+      changedPersonIds: ['person-a'],
+    });
+  });
+
   it('returns the values of a destroyed person', () => {
     expect(
       getChangedPersonHandles({
