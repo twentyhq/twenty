@@ -49,4 +49,5 @@ export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
   global.app = app;
   global.workflowTestServices = createWorkflowTestServices(app);
   global.testDataSource = rawDataSource;
+  global.jobDrainState = { lastStalledFingerprint: null };
 };
