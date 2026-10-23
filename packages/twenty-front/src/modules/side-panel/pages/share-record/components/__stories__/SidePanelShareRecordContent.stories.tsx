@@ -346,6 +346,15 @@ export const InvitePeople: Story = {
     await waitFor(() =>
       expect(page.getByRole('button', { name: 'Invite' })).toBeDisabled(),
     );
+    await expect(search).toHaveValue('');
+    await expect(page.getByText('Everyone')).toBeVisible();
+    await expect(page.getByText('Roles')).toBeVisible();
+    await expect(page.getByText('Users')).toBeVisible();
+    await expect(page.queryByText('Selected')).not.toBeInTheDocument();
+    await expect(
+      page.queryByText('Doesn’t have access'),
+    ).not.toBeInTheDocument();
+    await expect(page.queryByRole('checkbox')).not.toBeInTheDocument();
     await expect(setGeneralAccess).not.toHaveBeenCalled();
   },
 };
@@ -480,10 +489,8 @@ export const RetainFailedInvitations: Story = {
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
     setShare.mockResolvedValueOnce(undefined);
-    await userEvent.type(
-      await page.findByPlaceholderText('Add people or everyone'),
-      'j',
-    );
+    const search = await page.findByPlaceholderText('Add people or everyone');
+    await userEvent.type(search, 'j');
     await userEvent.click(page.getByRole('checkbox', { name: /Jane Austen/ }));
     await userEvent.click(page.getByRole('checkbox', { name: /Jony Ive/ }));
     await userEvent.click(page.getByRole('button', { name: 'Invite 2' }));
@@ -498,6 +505,18 @@ export const RetainFailedInvitations: Story = {
     ).not.toBeInTheDocument();
     await expect(page.getByRole('button', { name: 'Invite 1' })).toBeEnabled();
     await expect(setShare).toHaveBeenCalledTimes(2);
+    await expect(search).toHaveValue('j');
+    await userEvent.click(page.getByRole('button', { name: 'Invite 1' }));
+    await waitFor(() => expect(search).toHaveValue(''));
+    await expect(setShare).toHaveBeenCalledTimes(3);
+    await expect(setShare).toHaveBeenLastCalledWith({
+      principal: { workspaceMemberId: 'invite' },
+      accessLevel: RecordShareAccessLevel.READ,
+    });
+    await expect(page.getByText('Everyone')).toBeVisible();
+    await expect(page.queryByText('Selected')).not.toBeInTheDocument();
+    await expect(page.queryByRole('alert')).not.toBeInTheDocument();
+    await expect(page.getByRole('button', { name: 'Invite' })).toBeDisabled();
   },
 };
 

@@ -113,7 +113,7 @@ export const useSidePanelShareRecordInvitation = ({
     }
   };
 
-  const onInvite = async () => {
+  const onInvite = async (): Promise<boolean> => {
     const hasEveryoneRecipient = selectedRecipients.some(
       (recipient) => recipient.kind === 'everyone',
     );
@@ -127,7 +127,7 @@ export const useSidePanelShareRecordInvitation = ({
       !isNonEmptyArray(selectedRecipients) ||
       hasInvalidAccessLevel
     ) {
-      return;
+      return false;
     }
 
     setIsSubmitting(true);
@@ -150,7 +150,11 @@ export const useSidePanelShareRecordInvitation = ({
         setErrorMessage(
           t`Sharing could not be updated for every recipient. Try again.`,
         );
+
+        return false;
       }
+
+      return true;
     } finally {
       setIsSubmitting(false);
     }

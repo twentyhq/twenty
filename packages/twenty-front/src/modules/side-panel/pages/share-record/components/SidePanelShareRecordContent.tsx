@@ -111,6 +111,15 @@ export const SidePanelShareRecordContent = ({
     invitation.onRecipientsChange(recipients);
     searchInputRef.current?.focus();
   };
+  const handleInvite = async () => {
+    const hasInvitedAllRecipients = await invitation.onInvite();
+
+    if (!hasInvitedAllRecipients) {
+      return;
+    }
+
+    onSearchChange('');
+  };
   const accessPicker = (
     <RecordSharingInvitationAccessPicker
       value={invitation.accessLevel}
@@ -134,7 +143,7 @@ export const SidePanelShareRecordContent = ({
           canInvite={invitation.canInvite}
           isSubmitting={invitation.isSubmitting}
           errorMessage={invitation.errorMessage}
-          onInvite={() => void invitation.onInvite()}
+          onInvite={() => void handleInvite()}
         />
       )}
       <StyledListContainer>
