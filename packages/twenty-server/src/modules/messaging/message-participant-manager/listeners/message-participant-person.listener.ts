@@ -42,9 +42,6 @@ export class MessageParticipantPersonListener {
       return;
     }
 
-    const personIds = personWithEmails.map(
-      (eventPayload) => eventPayload.recordId,
-    );
     const personEmails = personWithEmails.flatMap((eventPayload) =>
       getPersonEmails(eventPayload.properties.after.emails),
     );
@@ -54,7 +51,6 @@ export class MessageParticipantPersonListener {
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds,
           personEmails,
           workspaceMemberIds: [],
         },
@@ -79,9 +75,6 @@ export class MessageParticipantPersonListener {
       return;
     }
 
-    const personIds = personWithUpdatedEmails.map(
-      (eventPayload) => eventPayload.recordId,
-    );
     // emails the person lost must release their participants as much as new ones claim them
     const personEmails = personWithUpdatedEmails.flatMap((eventPayload) => [
       ...getPersonEmails(eventPayload.properties.before.emails),
@@ -93,7 +86,6 @@ export class MessageParticipantPersonListener {
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds,
           personEmails,
           workspaceMemberIds: [],
         },
@@ -120,7 +112,6 @@ export class MessageParticipantPersonListener {
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds: [],
           personEmails,
           workspaceMemberIds: [],
         },

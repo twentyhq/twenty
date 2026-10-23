@@ -19,7 +19,13 @@ describe('participant rematch when a person changes', () => {
   let messageId: string;
   const fixtures: { objectName: string; id: string }[] = [];
 
-  const create = async (objectName: string, input: object) => {
+  const create = async ({
+    objectName,
+    input,
+  }: {
+    objectName: string;
+    input: object;
+  }) => {
     const id = randomUUID();
     const response = await createOneOperation({
       objectMetadataSingularName: objectName,
@@ -71,28 +77,40 @@ describe('participant rematch when a person changes', () => {
   };
 
   beforeEach(async () => {
-    personId = await create('person', {
-      name: { firstName: 'Ada' },
-      emails: { primaryEmail: 'ada@rematch.test', additionalEmails: [] },
+    personId = await create({
+      objectName: 'person',
+      input: {
+        name: { firstName: 'Ada' },
+        emails: { primaryEmail: 'ada@rematch.test', additionalEmails: [] },
+      },
     });
-    messageThreadId = await create('messageThread', {});
-    messageId = await create('message', {
-      messageThreadId,
-      subject: 'Rematch',
-      receivedAt: '2026-01-01T12:00:00.000Z',
+    messageThreadId = await create({ objectName: 'messageThread', input: {} });
+    messageId = await create({
+      objectName: 'message',
+      input: {
+        messageThreadId,
+        subject: 'Rematch',
+        receivedAt: '2026-01-01T12:00:00.000Z',
+      },
     });
-    await create('messageParticipant', {
-      messageId,
-      personId,
-      handle: 'ADA@rematch.test',
-      role: 'FROM',
+    await create({
+      objectName: 'messageParticipant',
+      input: {
+        messageId,
+        personId,
+        handle: 'ADA@rematch.test',
+        role: 'FROM',
+      },
     });
     // linked by an app that resolved the identity itself
-    await create('messageParticipant', {
-      messageId,
-      personId,
-      handle: 'urn:li:person:ada',
-      role: 'TO',
+    await create({
+      objectName: 'messageParticipant',
+      input: {
+        messageId,
+        personId,
+        handle: 'urn:li:person:ada',
+        role: 'TO',
+      },
     });
     await waitForAllJobsToFinish();
   });
@@ -107,8 +125,10 @@ describe('participant rematch when a person changes', () => {
       }),
     );
 
-    for (const { node } of targetsResponse.body.data.messageThreadTargets
-      .edges as { node: { id: string } }[]) {
+    const targetEdges: { node: { id: string } }[] =
+      targetsResponse.body.data.messageThreadTargets.edges;
+
+    for (const { node } of targetEdges) {
       if (!fixtures.some(({ id }) => id === node.id)) {
         fixtures.push({ objectName: 'messageThreadTarget', id: node.id });
       }

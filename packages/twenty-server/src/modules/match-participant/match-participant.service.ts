@@ -33,7 +33,6 @@ type MatchParticipantsForWorkspaceMembersArgs = {
 
 type MatchParticipantsForPeopleArgs = {
   participantMatching: {
-    personIds: string[];
     personEmails: string[];
   };
   objectMetadataName: ObjectMetadataName;
@@ -293,63 +292,28 @@ export class MatchParticipantService<
             transactionScope,
           });
 
-          let participantsMatchingPersonEmails: ParticipantWorkspaceEntity[] =
-            [];
-          let participantsMatchingPersonId: ParticipantWorkspaceEntity[] = [];
-
-          if (participantMatching.personIds.length > 0) {
-            participantsMatchingPersonId = (await participantRepository.find({
-              where: {
-                personId: In(participantMatching.personIds),
-              },
-            })) as ParticipantWorkspaceEntity[];
-          }
-
-          if (participantMatching.personEmails.length > 0) {
-            participantsMatchingPersonEmails =
-              (await participantRepository.find({
-                where: {
-                  handle: In(participantMatching.personEmails),
-                },
-              })) as ParticipantWorkspaceEntity[];
-          }
-
-          const personEmails = new Set(
-            participantMatching.personEmails.map((email) =>
-              email.toLowerCase(),
-            ),
-          );
-
-          // a person's other participants, such as app-linked ones with non-email handles, keep their link
-          const participantsMatchingPersonIdByEmail =
-            participantsMatchingPersonId.filter(
-              (participant) =>
-                isDefined(participant.handle) &&
-                personEmails.has(participant.handle.toLowerCase()),
-            );
-
-          const uniqueParticipants = [
-            ...new Map(
-              [
-                ...participantsMatchingPersonIdByEmail,
-                ...participantsMatchingPersonEmails,
-              ].map((participant) => [participant.id, participant]),
-            ).values(),
-          ];
-
-          const tobeRematchedParticipants = uniqueParticipants.map(
-            (participant) => {
-              return {
-                ...participant,
-                personId: null,
-              };
-            },
-          );
+          // handles are matched case-insensitively, and only the person's emails decide: participants they
+          // linked any other way, such as app channels with non-email handles, keep their link
+          const participantsToRematch =
+            participantMatching.personEmails.length > 0
+              ? await participantRepository
+                  .createQueryBuilder('participant')
+                  .where('LOWER("participant"."handle") IN (:...emails)', {
+                    emails: [
+                      ...new Set(
+                        participantMatching.personEmails.map((email) =>
+                          email.toLowerCase(),
+                        ),
+                      ),
+                    ],
+                  })
+                  .getMany<ParticipantWorkspaceEntity>()
+              : [];
 
           await this.matchParticipants({
             matchWith: 'personOnly',
-            participants: tobeRematchedParticipants,
-            sourceRecordIds: this.getSourceRecordIds(tobeRematchedParticipants),
+            participants: participantsToRematch,
+            sourceRecordIds: this.getSourceRecordIds(participantsToRematch),
             objectMetadataName,
             transactionScope,
           });
