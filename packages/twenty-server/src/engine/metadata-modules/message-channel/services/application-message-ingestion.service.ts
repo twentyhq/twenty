@@ -188,7 +188,7 @@ export class ApplicationMessageIngestionService {
     };
   }
 
-  // stored canonical so person changes can find these participants by an indexed handle lookup
+  // stored canonical so a person change finds these participants by exact handle, whatever format the provider sent
   private withCanonicalParticipantHandles({
     message,
     personHandleField,

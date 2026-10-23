@@ -363,18 +363,17 @@ export class MatchParticipantService<
             associations.map((association) => association.messageId),
           );
 
-          const tobeRematchedParticipants = participantsWithHandle
-            .filter((participant) =>
+          const participantsToRematch = participantsWithHandle.filter(
+            (participant) =>
               messageIdsOnMatchingChannels.has(
                 this.getSourceRecordId(participant),
               ),
-            )
-            .map((participant) => ({ ...participant, personId: null }));
+          );
 
           await this.matchParticipants({
             matchWith: 'personOnly',
-            participants: tobeRematchedParticipants,
-            sourceRecordIds: this.getSourceRecordIds(tobeRematchedParticipants),
+            participants: participantsToRematch,
+            sourceRecordIds: this.getSourceRecordIds(participantsToRematch),
             objectMetadataName: 'messageParticipant',
             personHandleField,
             transactionScope,
