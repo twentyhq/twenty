@@ -71,18 +71,16 @@ export const useUpdateMetadataStoreDraft = () => {
         currentEntry.status === 'up-to-date' &&
         isDeeplyEqual(currentEntry.current, data)
       ) {
-        const adoptedCollectionHash =
-          collectionHash ?? currentEntry.draftCollectionHash;
-
         if (
-          isDefined(adoptedCollectionHash) &&
-          adoptedCollectionHash !== currentEntry.currentCollectionHash
+          isDefined(currentEntry.draftCollectionHash) &&
+          currentEntry.draftCollectionHash !==
+            currentEntry.currentCollectionHash
         ) {
-          store.set(metadataStoreState.atomFamily(key), (previousEntry) => ({
-            ...previousEntry,
-            currentCollectionHash: adoptedCollectionHash,
+          store.set(metadataStoreState.atomFamily(key), {
+            ...currentEntry,
+            currentCollectionHash: currentEntry.draftCollectionHash,
             draftCollectionHash: undefined,
-          }));
+          });
         }
 
         return;
