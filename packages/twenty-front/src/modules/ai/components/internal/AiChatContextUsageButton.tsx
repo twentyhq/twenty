@@ -1,6 +1,8 @@
 import { getAiChatUsageLabel } from '@/ai/utils/getAiChatUsageLabel';
 import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { computeDaysUntilReset } from '@/ai/utils/computeDaysUntilReset';
+import { shouldShowAiChatWorkspaceUsage } from '@/ai/utils/shouldShowAiChatWorkspaceUsage';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -11,14 +13,14 @@ import { MetricRow } from 'twenty-ui/components/data-display';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { IconWindow, IconGauge } from 'twenty-ui/icon';
+import { IconWindow, IconGauge, IconUser } from 'twenty-ui/icon';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
-import { AiChatUserCreditsMetricRow } from '@/ai/components/internal/AiChatUserCreditsMetricRow';
 import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { useAiChatUsage } from '@/ai/hooks/useAiChatUsage';
+import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
@@ -135,6 +137,32 @@ export const AiChatContextUsageButton = () => {
     creditPercentage,
   };
 
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
+  const { userCreditsUsage } = useAiChatUserCreditsUsage({
+    skip: !isOpen || isWorkspaceSetupChat,
+  });
+
+  const personalUsagePercentage = isDefined(userCreditsUsage)
+    ? (computeUsageLimitProgress(userCreditsUsage)?.consumedPercentage ?? null)
+    : null;
+
+  const personalUsageLabelInput = {
+    loading: false,
+    hasError: false,
+    hasUsage: true,
+    daysUntilReset: isDefined(userCreditsUsage)
+      ? computeDaysUntilReset(userCreditsUsage.periodEnd)
+      : null,
+    creditPercentage: personalUsagePercentage,
+  };
+
+  const shouldShowWorkspaceUsage = shouldShowAiChatWorkspaceUsage({
+    userCreditsUsage,
+    userCreditsFallback:
+      currentWorkspace?.billingCustomer?.userCreditsFallback ?? null,
+  });
+
   const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
     duration: shouldReduceMotion ? 0 : { open: 150, close: 100 },
     initial: { opacity: 0 },
@@ -187,7 +215,24 @@ export const AiChatContextUsageButton = () => {
             >
               {t`Context window`}
             </MetricRow>
-            {!isWorkspaceSetupChat && (
+            {!isWorkspaceSetupChat && isDefined(userCreditsUsage) && (
+              <MetricRow
+                startIcon={<IconUser size={theme.icon.size.sm} />}
+                progress={personalUsagePercentage ?? 0}
+                value={getAiChatUsageLabel(personalUsageLabelInput)}
+                progressValueText={getAiChatUsageLabel({
+                  ...personalUsageLabelInput,
+                  unavailableConsumptionLabel: t`Not available`,
+                })}
+                progressColor={getUsageLimitRingColor({
+                  consumedPercentage: personalUsagePercentage ?? 0,
+                  isExhausted: personalUsagePercentage === 100,
+                })}
+              >
+                {t`Personal usage`}
+              </MetricRow>
+            )}
+            {!isWorkspaceSetupChat && shouldShowWorkspaceUsage && (
               <MetricRow
                 startIcon={<IconGauge size={theme.icon.size.sm} />}
                 progress={
@@ -206,7 +251,6 @@ export const AiChatContextUsageButton = () => {
                 {t`Usage`}
               </MetricRow>
             )}
-            {!isWorkspaceSetupChat && <AiChatUserCreditsMetricRow />}
             {showDetails && <AiChatContextUsageDetails />}
             {isDefined(agentChatUsage) && (
               <>

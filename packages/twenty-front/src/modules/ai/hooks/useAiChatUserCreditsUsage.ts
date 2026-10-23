@@ -7,7 +7,7 @@ import { GetAiChatUserCreditsUsageDocument } from '~/generated-metadata/graphql'
 export const useAiChatUserCreditsUsage = ({
   skip = false,
 }: { skip?: boolean } = {}) => {
-  const { data } = useQuery(GetAiChatUserCreditsUsageDocument, {
+  const { data, loading, error } = useQuery(GetAiChatUserCreditsUsageDocument, {
     skip,
     fetchPolicy: 'cache-and-network',
   });
@@ -26,5 +26,5 @@ export const useAiChatUserCreditsUsage = ({
       }
     : null;
 
-  return { userCreditsUsage };
+  return { userCreditsUsage, loading, error };
 };

@@ -13,8 +13,13 @@ import {
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { billingState } from '@/client-config/states/billingState';
 import {
+  type CurrentWorkspace,
+  currentWorkspaceState,
+} from '@/auth/states/currentWorkspaceState';
+import {
   GetAiChatUsageDocument,
   GetAiChatUserCreditsUsageDocument,
+  UserCreditsFallback,
 } from '~/generated-metadata/graphql';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 
@@ -42,6 +47,7 @@ const UsageStory = ({
   error = false,
   loading = false,
   userCreditsUsage = null,
+  userCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
   children,
 }: {
   usage?: AgentChatUsageState | null;
@@ -54,12 +60,16 @@ const UsageStory = ({
     consumedValue: number;
     periodEnd: string;
   } | null;
+  userCreditsFallback?: UserCreditsFallback;
   children?: ReactNode;
 }) => {
   const [store] = useState(() => {
     const storyStore = createStore();
     storyStore.set(currentAiChatThreadState.atom, 'story-thread');
     storyStore.set(billingState.atom, mockedClientConfig.billing);
+    storyStore.set(currentWorkspaceState.atom, {
+      billingCustomer: { id: 'billing-customer', userCreditsFallback },
+    } as CurrentWorkspace);
     storyStore.set(
       agentChatUsageFamilyState.atomFamily({ threadId: 'story-thread' }),
       usage,
@@ -169,13 +179,17 @@ export const Expanded: Story = {
 export const ReopenedConversation: Story = {
   render: () => <UsageStory usage={{ ...USAGE, lastMessage: null }} />,
 };
+const USER_CREDITS_PERIOD_END = new Date(
+  Date.now() + 3 * 86400000,
+).toISOString();
+
 export const WithUserCredits: Story = {
   render: () => (
     <UsageStory
       userCreditsUsage={{
         limitValue: 4160000,
         consumedValue: 1160000,
-        periodEnd: new Date(Date.now() + 3 * 86400000).toISOString(),
+        periodEnd: USER_CREDITS_PERIOD_END,
       }}
     />
   ),
@@ -185,10 +199,36 @@ export const WithUserCredits: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: /^Context and usage/ }),
     );
-    await waitFor(() => expect(page.getByText('Your credits')).toBeVisible());
+    await waitFor(() => expect(page.getByText('Personal usage')).toBeVisible());
     await expect(
-      page.getByRole('progressbar', { name: 'Your credits' }),
-    ).toHaveAttribute('aria-valuetext', '3 credits left, reset in 3 days');
+      page.getByRole('progressbar', { name: 'Personal usage' }),
+    ).toHaveAttribute('aria-valuetext', 'Reset in 3 days (28%)');
+    await expect(page.getByText('Usage')).toBeVisible();
+  },
+};
+export const UserCreditsSpentWithoutFallback: Story = {
+  render: () => (
+    <UsageStory
+      userCreditsUsage={{
+        limitValue: 4160000,
+        consumedValue: 4160000,
+        periodEnd: USER_CREDITS_PERIOD_END,
+      }}
+      userCreditsFallback={UserCreditsFallback.STOP}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: /^Context and usage/ }),
+    );
+    await waitFor(() =>
+      expect(
+        page.getByRole('progressbar', { name: 'Personal usage' }),
+      ).toHaveAttribute('aria-valuetext', 'Reset in 3 days (100%)'),
+    );
+    await expect(page.queryByText('Usage')).not.toBeInTheDocument();
   },
 };
 export const NoLimit: Story = { render: () => <UsageStory limit={null} /> };
