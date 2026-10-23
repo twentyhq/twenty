@@ -172,7 +172,6 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'timestamptz', nullable: true })
   webhookSubscriptionExpiresAt: Date | null;
 
-  // app channels whose participant handles are matched to people through this person field
   @Column({ type: 'uuid', nullable: true })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
