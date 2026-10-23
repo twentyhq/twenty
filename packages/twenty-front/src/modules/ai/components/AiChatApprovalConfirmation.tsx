@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { Plural, useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { Button } from 'twenty-ui/primitives/input';
 import { AlertDialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -28,7 +29,7 @@ type AiChatApprovalConfirmationProps = {
   onConfirm: () => void;
   onCancel: () => void;
   disabled?: boolean;
-  selectionSummary?: string;
+  selectionSummary?: ReactNode;
 };
 
 export const AiChatApprovalConfirmation = ({

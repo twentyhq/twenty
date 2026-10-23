@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatApprovalConfirmation } from '@/ai/components/AiChatApprovalConfirmation';
+import { AiChatApprovalEmailConfirmation } from '@/ai/components/AiChatApprovalEmailConfirmation';
 import { AiChatApprovalEmailReviewDeck } from '@/ai/components/AiChatApprovalEmailReviewDeck';
 import { AI_CHAT_APPROVAL_EMAIL_REVIEW_FIXTURES } from '@/ai/components/__stories__/aiChatApprovalEmailReviewFixtures';
 import { type AiChatApprovalEmailReviewSnapshot } from '@/ai/components/__stories__/AiChatApprovalEmailReviewSnapshot';
@@ -112,18 +112,8 @@ export const AiChatApprovalEmailReviewExample = ({
         disabled={disabled || isDefined(confirmation)}
       />
       {isDefined(confirmation) && (
-        <AiChatApprovalConfirmation
-          cards={confirmation.emails.map((email) => ({
-            id: email.id,
-            title: email.draft.subject,
-            selectedCount: 1,
-            skippedCount: 0,
-          }))}
-          selectionSummary={
-            confirmation.emails.length === 1
-              ? '1 email selected · 0 emails skipped'
-              : `${confirmation.emails.length} emails selected · 0 emails skipped`
-          }
+        <AiChatApprovalEmailConfirmation
+          emails={confirmation.emails}
           onConfirm={handleConfirm}
           onCancel={() => setConfirmation(null)}
         />
