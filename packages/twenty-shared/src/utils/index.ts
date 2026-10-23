@@ -31,6 +31,7 @@ export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMe
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
 export { buildRecordExportColumns } from './csv/buildRecordExportColumns';
+export { expandRecordExportMorphFields } from './csv/expandRecordExportMorphFields';
 export { formatRecordExportHeader } from './csv/formatRecordExportHeader';
 export { formatRecordExportRow } from './csv/formatRecordExportRow';
 export { formatValueForCSV } from './csv/formatValueForCSV';

@@ -10,6 +10,7 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockIndexDownload = jest.fn().mockResolvedValue(undefined);
+const mockCompletedIndexDownload = jest.fn();
 let mockHasMoreRecords = false;
 const mockAsyncDownload = jest.fn().mockResolvedValue(undefined);
 const mockCancelAsyncDownload = jest.fn();
@@ -32,11 +33,17 @@ jest.mock(
   () => ({
     useRecordIndexExportRecords: ({
       onMoreRecords,
+      abortSignal,
     }: {
       onMoreRecords?: () => Promise<void>;
+      abortSignal?: AbortSignal;
     }) => ({
       download: async () => {
         await mockIndexDownload();
+        if (abortSignal?.aborted) {
+          return;
+        }
+        mockCompletedIndexDownload();
         if (mockHasMoreRecords && isDefined(onMoreRecords)) {
           await onMoreRecords();
         }
@@ -58,7 +65,7 @@ jest.mock('@/object-record/record-show/hooks/useExportSingleRecord', () => ({
   useExportSingleRecord: () => ({ download: mockSingleRecordDownload }),
 }));
 
-const renderExport = (enabled?: boolean) => {
+const renderExport = (enabled?: boolean, strictMode = false) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
     onInitializeJotaiStore: (store) => {
@@ -77,6 +84,7 @@ const renderExport = (enabled?: boolean) => {
     },
   });
   return render(<ExportRecordsCommand />, {
+    reactStrictMode: strictMode,
     wrapper: ({ children }: { children: ReactNode }) => (
       <Wrapper>
         <CommandComponentInstanceContext.Provider
@@ -118,6 +126,26 @@ it.each([undefined, false, true])(
       expect(mockAsyncDownload).not.toHaveBeenCalled();
     }
     expect(mockSingleRecordDownload).not.toHaveBeenCalled();
+  },
+);
+
+it.each([false, true])(
+  'keeps index export active through StrictMode remounts, hasMoreRecords=%s',
+  async (hasMoreRecords) => {
+    mockHasMoreRecords = hasMoreRecords;
+    const { unmount } = renderExport(true, true);
+
+    await waitFor(() =>
+      expect(mockCompletedIndexDownload).toHaveBeenCalledTimes(1),
+    );
+    expect(mockAsyncDownload).toHaveBeenCalledTimes(hasMoreRecords ? 1 : 0);
+    expect(mockCancelAsyncDownload).not.toHaveBeenCalled();
+
+    unmount();
+
+    await waitFor(() =>
+      expect(mockCancelAsyncDownload).toHaveBeenCalledTimes(1),
+    );
   },
 );
 

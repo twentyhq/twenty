@@ -225,6 +225,34 @@ describe('csvDownloader', () => {
     );
   });
 
+  it('rejects missing morph target metadata before downloading', () => {
+    const objectMetadataItem =
+      getMockObjectMetadataItemOrThrow('petCareAgreement');
+    const field = objectMetadataItem.fields.find(
+      (field) => field.name === 'caretaker',
+    );
+
+    if (!field) {
+      throw new Error('Caretaker field not found');
+    }
+
+    expect(() =>
+      csvDownloader({
+        filename: 'export.csv',
+        objectMetadataItems: [],
+        columns: [
+          formatFieldMetadataItemAsColumnDefinition({
+            field,
+            objectMetadataItem,
+            position: 0,
+          }),
+        ],
+        rows: [{ id: '1', caretakerPersonId: 'person-1' }],
+      }),
+    ).toThrow('An export field is no longer available.');
+    expect(mockSaveAs).not.toHaveBeenCalled();
+  });
+
   it('exports one join column per morph relation target', async () => {
     csvDownloader({
       filename: 'export.csv',

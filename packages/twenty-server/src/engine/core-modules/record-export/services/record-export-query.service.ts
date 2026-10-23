@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { buildRecordExportColumns, isDefined } from 'twenty-shared/utils';
 
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
@@ -16,7 +15,6 @@ import { expandMorphRelationExportFields } from 'src/engine/core-modules/record-
 import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { resolveEffectiveTranslatedFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-translated-flat-entity.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -92,21 +90,6 @@ export class RecordExportQueryService {
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
         shouldIncludeInactiveFields,
-      }).map((field) => {
-        const exportField = {
-          name: field.name,
-          label: field.label,
-          type: field.type,
-        };
-
-        if (
-          isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
-          isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION)
-        ) {
-          return { ...exportField, relationType: field.settings.relationType };
-        }
-
-        return exportField;
       }),
     );
     const node: CommonSelectedFields = {};

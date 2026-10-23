@@ -1,5 +1,13 @@
+import { BadRequestException } from '@nestjs/common';
+
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import {
+  type buildRecordExportColumns,
+  expandRecordExportMorphFields,
+  isDefined,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -20,7 +28,7 @@ export const expandMorphRelationExportFields = ({
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   shouldIncludeInactiveFields?: boolean;
-}): FlatFieldMetadata[] => {
+}): Parameters<typeof buildRecordExportColumns>[0] => {
   const objectFields = findManyFlatEntityByIdInFlatEntityMaps({
     flatEntityIds: flatObjectMetadata.fieldIds,
     flatEntityMaps: flatFieldMetadataMaps,
@@ -31,13 +39,28 @@ export const expandMorphRelationExportFields = ({
     if (!isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION)) {
       exportedFieldIds.add(field.id);
 
-      return [field];
+      const exportField = {
+        name: field.name,
+        label: field.label,
+        type: field.type,
+      };
+
+      if (isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION)) {
+        return [{ ...exportField, relationType: field.settings.relationType }];
+      }
+
+      return [exportField];
     }
 
-    return objectFields
+    const morphTargets = objectFields
+      .filter((objectField) =>
+        isFlatFieldMetadataOfType(
+          objectField,
+          FieldMetadataType.MORPH_RELATION,
+        ),
+      )
       .filter(
         (objectField) =>
-          objectField.type === FieldMetadataType.MORPH_RELATION &&
           objectField.morphId === field.morphId &&
           (shouldIncludeInactiveFields || objectField.isActive) &&
           !isMorphRelationHead(objectField) &&
@@ -53,12 +76,19 @@ export const expandMorphRelationExportFields = ({
             })
           : undefined;
 
+        if (!isDefined(targetObject)) {
+          throw new BadRequestException(
+            t`An export field is no longer available.`,
+          );
+        }
+
         return {
-          ...target,
-          label: isDefined(targetObject)
-            ? `${field.label} / ${targetObject.labelSingular}`
-            : field.label,
+          fieldName: target.name,
+          labelSingular: targetObject.labelSingular,
+          relationType: target.settings.relationType,
         };
       });
+
+    return expandRecordExportMorphFields({ label: field.label, morphTargets });
   });
 };
