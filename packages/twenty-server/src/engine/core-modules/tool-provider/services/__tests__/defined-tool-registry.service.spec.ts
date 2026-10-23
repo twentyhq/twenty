@@ -12,6 +12,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
@@ -22,6 +23,17 @@ const context: ToolProviderContext = {
   rolePermissionConfig: {
     intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
   },
+  authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
+};
+
+const WEBHOOK_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: true,
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  },
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
 };
 
 const renameWebhookInputSchema = z.object({ id: z.uuid() });
@@ -30,7 +42,7 @@ const renameWebhookInputSchema = z.object({ id: z.uuid() });
   name: 'rename_webhook',
   category: ToolCategory.WEBHOOK,
   description: 'Rename a webhook.',
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  accessPolicy: WEBHOOK_ACCESS_POLICY,
 })
 class RenameWebhookTool extends BaseTool<typeof renameWebhookInputSchema> {
   readonly inputSchema = renameWebhookInputSchema;
@@ -48,7 +60,7 @@ const archiveWebhookInputSchema = z.object({ id: z.uuid() });
   name: 'archive_webhook',
   category: ToolCategory.WEBHOOK,
   description: 'Archive a webhook.',
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  accessPolicy: WEBHOOK_ACCESS_POLICY,
   icon: 'IconWebhook',
 })
 class ArchiveWebhookTool extends BaseTool<typeof archiveWebhookInputSchema> {
@@ -67,8 +79,10 @@ const replayWebhookInputSchema = z.object({ id: z.uuid() });
   name: 'replay_webhook',
   category: ToolCategory.WEBHOOK,
   description: 'Replay a webhook delivery.',
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
-  requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  accessPolicy: {
+    ...WEBHOOK_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
 })
 class ReplayWebhookTool extends BaseTool<typeof replayWebhookInputSchema> {
   readonly inputSchema = replayWebhookInputSchema;
@@ -86,8 +100,10 @@ const pauseWebhookInputSchema = z.object({ id: z.uuid() });
   name: 'pause_webhook',
   category: ToolCategory.WEBHOOK,
   description: 'Pause a webhook.',
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
-  requiredFeatureFlags: [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED],
+  accessPolicy: {
+    ...WEBHOOK_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED],
+  },
 })
 class PauseWebhookTool extends BaseTool<typeof pauseWebhookInputSchema> {
   readonly inputSchema = pauseWebhookInputSchema;
@@ -96,6 +112,34 @@ class PauseWebhookTool extends BaseTool<typeof pauseWebhookInputSchema> {
     input,
   }: ToolExecuteArgs<typeof pauseWebhookInputSchema>): Promise<ToolOutput> {
     return { success: true, message: `Webhook ${input.id} paused` };
+  }
+}
+
+const rotateWebhookSecretInputSchema = z.object({ id: z.uuid() });
+
+@DefineTool({
+  name: 'rotate_webhook_secret',
+  category: ToolCategory.WEBHOOK,
+  description: 'Rotate a webhook signing secret.',
+  accessPolicy: {
+    ...WEBHOOK_ACCESS_POLICY,
+    authPrincipals: {
+      ...WEBHOOK_ACCESS_POLICY.authPrincipals,
+      application: false,
+    },
+  },
+})
+class RotateWebhookSecretTool extends BaseTool<
+  typeof rotateWebhookSecretInputSchema
+> {
+  readonly inputSchema = rotateWebhookSecretInputSchema;
+
+  async execute({
+    input,
+  }: ToolExecuteArgs<
+    typeof rotateWebhookSecretInputSchema
+  >): Promise<ToolOutput> {
+    return { success: true, message: `Webhook ${input.id} secret rotated` };
   }
 }
 
@@ -136,9 +180,10 @@ const buildDefinedToolRegistryService = ({
 
 const listToolNames = async (
   definedToolRegistryService: DefinedToolRegistryService,
+  callerContext: ToolProviderContext = context,
 ) =>
   (
-    await definedToolRegistryService.getAvailableDescriptors(context, {
+    await definedToolRegistryService.getAvailableDescriptors(callerContext, {
       includeSchemas: false,
     })
   ).map(({ name }) => name);
@@ -236,6 +281,60 @@ describe('DefinedToolRegistryService', () => {
     });
   });
 
+  describe('getAvailableDescriptors with auth principals', () => {
+    const tools = [new RenameWebhookTool(), new RotateWebhookSecretTool()];
+
+    it('should hide a tool from a principal its access policy refuses', async () => {
+      const { definedToolRegistryService } = buildDefinedToolRegistryService({
+        tools,
+        isGranted: true,
+      });
+
+      expect(
+        await listToolNames(definedToolRegistryService, {
+          ...context,
+          authPrincipalVariant: {
+            kind: 'application',
+            variant: 'withoutUser',
+            withAgent: false,
+          },
+        }),
+      ).toEqual(['rename_webhook']);
+    });
+
+    it('should not count the agent a caller acts through against the access policy', async () => {
+      const { definedToolRegistryService } = buildDefinedToolRegistryService({
+        tools,
+        isGranted: true,
+      });
+
+      expect(
+        await listToolNames(definedToolRegistryService, {
+          ...context,
+          authPrincipalVariant: {
+            kind: 'application',
+            variant: 'withUser',
+            withAgent: true,
+          },
+        }),
+      ).toEqual(['rename_webhook']);
+    });
+
+    it('should list no tool to a caller with no principal', async () => {
+      const { definedToolRegistryService } = buildDefinedToolRegistryService({
+        tools,
+        isGranted: true,
+      });
+
+      expect(
+        await listToolNames(definedToolRegistryService, {
+          ...context,
+          authPrincipalVariant: undefined,
+        }),
+      ).toEqual([]);
+    });
+  });
+
   describe('execute', () => {
     it('should run the tool with its parsed input when every flag is granted', async () => {
       const { definedToolRegistryService, definedTool } =
@@ -269,6 +368,46 @@ describe('DefinedToolRegistryService', () => {
         message: 'Tool "rename_webhook" is not available',
       });
       expect(executeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should refuse the tool to a principal its access policy refuses', async () => {
+      const tool = new RotateWebhookSecretTool();
+      const { definedToolRegistryService } = buildDefinedToolRegistryService({
+        tools: [tool],
+        isGranted: true,
+      });
+      const definedTool = definedToolRegistryService.findDefinedTool(
+        'rotate_webhook_secret',
+      );
+      const executeSpy = jest.spyOn(tool, 'execute');
+
+      jestExpectToBeDefined(definedTool);
+
+      expect(
+        await definedToolRegistryService.execute({
+          definedTool,
+          args: { id: webhookId },
+          context: { ...context, authPrincipalVariant: { kind: 'apiKey' } },
+        }),
+      ).toMatchObject({ success: true });
+      expect(
+        await definedToolRegistryService.execute({
+          definedTool,
+          args: { id: webhookId },
+          context: {
+            ...context,
+            authPrincipalVariant: {
+              kind: 'application',
+              variant: 'withoutUser',
+              withAgent: false,
+            },
+          },
+        }),
+      ).toMatchObject({
+        success: false,
+        message: 'Tool "rotate_webhook_secret" is not available',
+      });
+      expect(executeSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should refuse the tool when a feature flag is disabled at call time', async () => {

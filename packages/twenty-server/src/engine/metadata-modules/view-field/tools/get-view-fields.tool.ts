@@ -8,6 +8,7 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
 
 const getViewFieldsInputSchema = z.object({
   viewId: z
@@ -21,7 +22,7 @@ const getViewFieldsInputSchema = z.object({
 @DefineTool({
   name: 'get_view_fields',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [],
+  accessPolicy: VIEW_READ_ACCESS_POLICY,
   description:
     'List the columns (fields) displayed in a specific view. A view field controls which columns appear in a table or kanban view, their visibility, width, position, and aggregate operation. Use get_views first to find the view ID, then call this to inspect its column configuration.',
 })
