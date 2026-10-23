@@ -19,6 +19,7 @@ describe('parseSendAppMessageResult', () => {
   it.each([
     ['an ISO time without offset', '2026-10-23T09:30:00', true],
     ['an epoch in milliseconds', 1792747800000, true],
+    ['an epoch in seconds', 1792747800, true],
     ['a time that is not a date', 'today', false],
   ])(
     'accepts %s as the send time, or leaves it out',
@@ -32,6 +33,21 @@ describe('parseSendAppMessageResult', () => {
       expect(result.isValid && 'sentAt' in result.sentMessage).toBe(isKept);
     },
   );
+
+  it('reads an epoch in seconds as seconds', () => {
+    expect(
+      parseSendAppMessageResult({
+        externalId: 'message-a',
+        sentAt: 1792747800,
+      }),
+    ).toEqual({
+      isValid: true,
+      sentMessage: {
+        externalId: 'message-a',
+        sentAt: new Date(1792747800000).toISOString(),
+      },
+    });
+  });
 
   it('leaves the send time out when it is absent or null', () => {
     expect(
