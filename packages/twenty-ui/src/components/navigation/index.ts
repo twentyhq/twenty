@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export { CountPager } from './CountPager/CountPager';
+export type { CountPagerProps } from './CountPager/types/CountPagerProps';
 export { Dropdown } from './Dropdown/Dropdown';
 export { useDropdownPage } from './Dropdown/hooks/useDropdownPage';
 export type { DropdownActionItemProps } from './Dropdown/types/DropdownActionItemProps';

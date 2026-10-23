@@ -5,4 +5,5 @@ export enum NavigationMenuItemType {
   OBJECT = 'OBJECT',
   RECORD = 'RECORD',
   PAGE_LAYOUT = 'PAGE_LAYOUT',
+  AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
 }

@@ -14,6 +14,7 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     icon
     color
     pageLayoutId
+    agentChatChannelId
     position
     applicationId
     createdAt
