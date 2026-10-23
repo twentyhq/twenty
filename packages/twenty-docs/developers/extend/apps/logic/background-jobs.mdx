@@ -1,7 +1,6 @@
 ---
 title: Background Jobs
 description: Hand long or rate-limited work to the Twenty workers by enqueuing another logic function run instead of doing everything inline.
-icon: "layer-group"
 ---
 
 A logic function run is capped by its `timeoutSeconds` (900 seconds maximum). Anything that can't finish in that window — a full re-sync, a per-record fan-out, a third-party API that rate-limits you — has to be split into smaller runs.

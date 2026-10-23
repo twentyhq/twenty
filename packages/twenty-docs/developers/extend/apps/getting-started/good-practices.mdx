@@ -1,7 +1,6 @@
 ---
 title: Good practices
 description: How to develop an app that works and scales well across many workspaces.
-icon: "gauge-high"
 ---
 
 The Twenty API accepts **500 requests per minute per application registration** for the requests an app makes in its own name: runs with no person behind them (cron, webhooks, install hooks) and clients created with `runAs: 'application'`. The budget is shared by every workspace that installed the app, and requests beyond it are refused with a `429`. Requests made as the person who triggered a run count against that person's limits instead. The practices below keep an app inside that budget as its number of installs grows, and inside the limits of the services it calls.

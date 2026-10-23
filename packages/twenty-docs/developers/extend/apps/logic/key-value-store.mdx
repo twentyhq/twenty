@@ -1,7 +1,6 @@
 ---
 title: Key-Value Store
 description: Persist intermediate results, cache data, and share state across logic function runs with the built-in application key-value store.
-icon: "database"
 ---
 
 Logic functions run sandboxed in short-lived Node.js processes — once a run finishes, nothing it kept in memory survives. When you need to **remember something between runs** (cache an expensive API response, store a cursor for incremental syncs, debounce work, or hand state from one function to another), persist it in the built-in key-value store.

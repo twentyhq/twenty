@@ -1,8 +1,9 @@
 ---
 title: Overview
 description: Server-side TypeScript that runs inside Twenty — triggered by HTTP routes, cron schedules, database events, AI tools, or workflow actions.
-icon: "bolt"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; and OAuth connections that let your functions act on a user's behalf in third-party services.
 
@@ -31,7 +32,7 @@ A Twenty app's **logic layer** is the code that *runs* — server-side TypeScrip
   <Card title="Skills & Agents" icon="robot" href="/developers/extend/apps/logic/skills-and-agents">
     Reusable AI agent instructions and assistants with custom system prompts.
   </Card>
-  <Card title="Workflows" icon="diagram-project" href="/developers/extend/apps/logic/workflows">
+  <Card title="Workflows" icon="sitemap" href="/developers/extend/apps/logic/workflows">
     Ready-made workflows installed with your app: triggers, steps, and how they run.
   </Card>
   <Card title="Connections" icon="plug" href="/developers/extend/apps/logic/connections">
@@ -43,7 +44,7 @@ A Twenty app's **logic layer** is the code that *runs* — server-side TypeScrip
   <Card title="Key-Value Store" icon="database" href="/developers/extend/apps/logic/key-value-store">
     Persist state between logic function runs — caches, cursors, and cross-workspace claims.
   </Card>
-  <Card title="Background Jobs" icon="layer-group" href="/developers/extend/apps/logic/background-jobs">
+  <Card title="Background Jobs" icon="stack-2" href="/developers/extend/apps/logic/background-jobs">
     Enqueue a logic function run on the workers to get past the per-run timeout.
   </Card>
   <Card title="Charging Credits" icon="coins" href="/developers/extend/apps/logic/credits">
@@ -70,3 +71,5 @@ Functions run sandboxed in isolated Node.js processes and access the workspace t
 
 The [**health check**](/developers/extend/apps/logic/logic-functions#health-check) shares it too. It declares no trigger: Twenty calls it on demand when the app's settings page opens.
 </Note>
+
+<PageBanner illustration="section-apps-logic" />

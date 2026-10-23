@@ -40,6 +40,7 @@ type GeneratedLanguage = {
 type GeneratedGroup = {
   group: string;
   icon?: string;
+  root?: string;
   pages: Array<string | GeneratedGroup>;
 };
 
@@ -131,9 +132,12 @@ const buildGroup = (
     return null;
   }
 
+  const root = group.root ? formatPageSlug(group.root, language) : null;
+
   return {
     group: translations.groupLabels.get(group.key) ?? group.label,
     ...(group.icon ? { icon: group.icon } : {}),
+    ...(root ? { root } : {}),
     pages,
   };
 };

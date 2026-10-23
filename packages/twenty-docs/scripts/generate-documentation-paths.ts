@@ -7,6 +7,7 @@ type BaseGroup = {
   key: string;
   label: string;
   icon?: string;
+  root?: string;
   pages: BasePage[];
 };
 
@@ -38,6 +39,9 @@ const extractPaths = (pages: BasePage[]): string[] => {
     if (typeof page === 'string') {
       paths.push(page);
     } else {
+      if (page.root) {
+        paths.push(page.root);
+      }
       paths.push(...extractPaths(page.pages));
     }
   }
