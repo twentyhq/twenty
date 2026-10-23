@@ -152,7 +152,7 @@ const CardIcon = styled.div<{ $widthPx: number }>`
 
   img {
     object-fit: contain;
-    object-position: center right;
+    object-position: right top;
   }
 `;
 
