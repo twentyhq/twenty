@@ -91,7 +91,6 @@ export const useMultiItemDraft = <TItem>({
     }
   };
 
-  // Validates the draft and applies it to the items; null means the draft was rejected.
   const commitInput = (): TItem[] | null => {
     const { sanitizedInput, isValid } = sanitizeAndValidateInput(
       inputValue,
