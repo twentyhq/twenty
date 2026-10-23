@@ -92,7 +92,7 @@ export const generateDocumentHandler = async (
     documentTemplates: {
       __args: { filter: { id: { eq: templateId } }, first: 1 },
       edges: {
-        // Regenerate the client after adding `body` to remove this cast.
+        // The generated client still models the rich-text body as a scalar.
         node: {
           id: true,
           name: true,

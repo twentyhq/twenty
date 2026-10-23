@@ -142,8 +142,10 @@ Runs integration tests on every push to `main` and every pull request.
 
 1. Checks out your app's source.
 2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action.
-3. Enables Corepack, sets up Node.js from your `.nvmrc`, and installs dependencies with `yarn install --immutable`.
-4. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
+3. Enables Corepack and sets up Node.js from your `.nvmrc`.
+4. Installs the pinned standalone CLI in the **Install Twenty CLI** step.
+5. Installs dependencies with `yarn install --immutable`, then runs lint, typecheck, and unit tests.
+6. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
 
 **Config knobs:**
 
@@ -166,11 +168,11 @@ Deploys your app to a configured Twenty server on every push to `main`, and opti
 
 | Setting                 | Where                                                      | Purpose                                                                               |
 | ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:3000`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
+| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:2020`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
 | `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server.                                  |
 
 <Note>
-  The default `TWENTY_DEPLOY_URL` of `http://localhost:3000` is a placeholder —
+  The default `TWENTY_DEPLOY_URL` of `http://localhost:2020` is a placeholder —
   it will not reach anything from a GitHub-hosted runner. Update it to your
   server's public URL (or use a self-hosted runner with network access) before
   enabling CD.
@@ -187,7 +189,8 @@ Publishes your app to npm with provenance when you push a version tag (e.g. `v1.
 **What it does:**
 
 1. Checks out your app, sets up Node.js, and updates npm (trusted publishing requires npm 11.5.1 or later).
-2. Runs `twenty app publish`, which builds and packs an isolated app snapshot, then publishes it to npm. In CI it automatically adds `--provenance` and `--access public`, so no flags are needed in the workflow.
+2. Installs the pinned standalone CLI in the **Install Twenty CLI** step, then installs app dependencies with `yarn install --immutable`.
+3. Runs `twenty app publish`, which builds and packs an isolated app snapshot, then publishes it to npm. In CI it automatically adds `--provenance` and `--access public`, so no flags are needed in the workflow.
 
 **One-time setup:**
 
@@ -206,6 +209,12 @@ npm only accepts provenance from **public** source repositories. If you publish 
 Without GitHub provenance, the package cannot be claimed through **Claim with GitHub**. Use a public repository with provenance if you need this ownership flow.
 
 </Note>
+
+### Pinning the CLI version
+
+All three generated workflows pin the standalone CLI to the version of `twenty` that ran `twenty app init`. The **Install Twenty CLI** steps in `ci.yml` and `publish.yml` use `npm install -g twenty@<version>`. In `cd.yml`, both the deploy and install actions receive the same version through their `cli-version` input.
+
+To upgrade, update the two installation commands and both `cli-version` inputs together. These pins are separate from the `TWENTY_VERSION` server version used in CI and the reusable action references below.
 
 ### Pinning the reusable actions
 
