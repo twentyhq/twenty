@@ -2,6 +2,7 @@ import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FormatNumberOptions } from '@/localization/utils/formatNumber';
+import { getCurrencySymbol } from '@/localization/utils/getCurrencySymbol';
 import { BillingProductKey } from '~/generated-metadata/graphql';
 
 const EM_DASH = '—';
@@ -20,24 +21,6 @@ type FormatSubscriptionItemValueArgs = {
     value: number,
     options?: Omit<FormatNumberOptions, 'format'>,
   ) => string;
-};
-
-// Only the symbol comes from Intl; digits use formatNumber to honour the member's number format.
-const getCurrencySymbol = (currency: string): string => {
-  const normalizedCurrency = currency.toUpperCase();
-
-  try {
-    return (
-      new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: normalizedCurrency,
-      })
-        .formatToParts(0)
-        .find((part) => part.type === 'currency')?.value ?? normalizedCurrency
-    );
-  } catch {
-    return normalizedCurrency;
-  }
 };
 
 export const formatSubscriptionItemValue = ({

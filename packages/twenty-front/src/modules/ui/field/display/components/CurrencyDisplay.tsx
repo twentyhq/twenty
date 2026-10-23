@@ -1,27 +1,19 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { getCurrencyLabel } from '@/localization/utils/getCurrencyLabel';
+import { getCurrencySymbol } from '@/localization/utils/getCurrencySymbol';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldCurrencyMetadata,
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { CURRENCY_CODE_ICONS } from '@/ui/input/components/internal/currency/constants/CurrencyCodeIcons';
 import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
-
-const StyledCurrencyIconContainer = styled.span`
-  align-items: center;
-  display: inline-flex;
-  margin-right: ${themeCssVariables.spacing[1]};
-  vertical-align: text-bottom;
-`;
 
 type CurrencyDisplayProps = {
   currencyValue: FieldCurrencyValue | null | undefined;
@@ -32,13 +24,12 @@ export const CurrencyDisplay = ({
   currencyValue,
   fieldDefinition,
 }: CurrencyDisplayProps) => {
-  const theme = useTheme();
   const { i18n } = useLingui();
 
   const currencyCode = currencyValue?.currencyCode;
-  const CurrencyIcon = isDefined(currencyCode)
-    ? CURRENCY_CODE_ICONS[currencyCode]
-    : null;
+  const currencySymbol = isDefined(currencyCode)
+    ? getCurrencySymbol(currencyCode)
+    : undefined;
   const amountToDisplay = !isDefined(currencyValue?.amountMicros)
     ? null
     : currencyValue?.amountMicros / 1000000;
@@ -55,7 +46,7 @@ export const CurrencyDisplay = ({
     ? `${currencyCode}${isDefined(currencyLabel) ? ` - ${currencyLabel}` : ''}`
     : undefined;
   const shouldShowCurrencyTooltip =
-    isDefined(CurrencyIcon) &&
+    isNonEmptyString(currencySymbol) &&
     amountToDisplay !== null &&
     isDefined(currencyTooltipContent);
 
@@ -68,13 +59,7 @@ export const CurrencyDisplay = ({
           side="top"
           positionMethod="fixed"
         >
-          <StyledCurrencyIconContainer>
-            <CurrencyIcon
-              color={theme.font.color.primary}
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          </StyledCurrencyIconContainer>
+          <span>{currencySymbol}</span>
         </Tooltip>
       )}
       {amountToDisplay !== null
