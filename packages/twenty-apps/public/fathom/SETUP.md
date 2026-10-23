@@ -34,13 +34,7 @@ to the workspace that made the connection, so no per-workspace domain is needed.
    yarn install
    ```
 
-2. Start the local Twenty server:
-
-   ```bash
-   yarn twenty docker:start
-   ```
-
-   Check the server status at any time with `yarn twenty docker:status`.
+2. Start a local Twenty server with Docker or the repository development setup. Install the standalone CLI with `npm install -g twenty`, then run `twenty auth login --url http://localhost:2020`.
 
 3. Set `FATHOM_CLIENT_ID` and `FATHOM_CLIENT_SECRET` as server variables in
    Twenty.
@@ -48,7 +42,7 @@ to the workspace that made the connection, so no per-workspace domain is needed.
 4. Start the development server and sync your app:
 
    ```bash
-   yarn twenty dev
+   twenty app dev --create
    ```
 
 5. Open [http://localhost:2020](http://localhost:2020), log in with the default development credentials: `tim@apple.dev` / `tim@apple.dev`, and connect Fathom from Settings. The connection hook registers the signed webhook and starts a 31-day import.

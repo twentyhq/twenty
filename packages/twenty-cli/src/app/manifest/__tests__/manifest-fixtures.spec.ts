@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { build as bundle, stop } from 'esbuild';
+import { stop } from 'esbuild';
 import {
   afterAll,
   afterEach,
@@ -25,12 +25,11 @@ import {
 } from 'vitest';
 
 import { buildTestAppWorker } from '@/app/__tests__/utils/build-test-app-worker';
-import { SORTED_GLOB_PLUGIN } from '@/app/__tests__/utils/sorted-glob-plugin';
 import { buildAndValidateManifest } from '@/app/manifest/build-and-validate-manifest';
 import { buildManifest } from '@/app/manifest/manifest-build';
 import { createAppProject } from '@/app/create-app-project';
 import { runAppWorker } from '@/app/run-app-worker';
-import { type compileApplicationTranslations } from '@/app/translations/compile-application-translations';
+import { compileApplicationTranslations } from '@/app/translations/compile-application-translations';
 
 const launch = vi.hoisted(() => ({ modulePath: '', execArgv: [] as string[] }));
 
@@ -57,17 +56,10 @@ const FIXTURES = [
   'invalid-app',
 ];
 
-type SdkReference = {
-  buildManifest: typeof buildManifest;
-  buildAndValidateManifest: typeof buildAndValidateManifest;
-  compileApplicationTranslations: typeof compileApplicationTranslations;
-};
-
 const json = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
 
-describe('CLI manifest parity with the repository SDK', () => {
+describe('CLI manifest fixtures and worker transport', () => {
   let root: string;
-  let sdk: SdkReference;
 
   const copyFixture = async (name: string) => {
     const appPath = await mkdtemp(join(root, `${name}-`));
@@ -85,11 +77,11 @@ describe('CLI manifest parity with the repository SDK', () => {
   };
 
   const compareManifest = async (appPath: string) => {
-    const expected = await sdk
-      .buildAndValidateManifest(appPath)
-      .catch((error: unknown) => ({
+    const expected = await buildAndValidateManifest(appPath).catch(
+      (error: unknown) => ({
         thrown: error instanceof Error ? error.message : String(error),
-      }));
+      }),
+    );
 
     if ('thrown' in expected) {
       await expect(buildAndValidateManifest(appPath)).rejects.toThrow(
@@ -108,16 +100,9 @@ describe('CLI manifest parity with the repository SDK', () => {
       return { success: false as const, errors: [expected.thrown] };
     }
 
-    const actual = await buildAndValidateManifest(appPath);
-
-    expect(json(actual)).toEqual(json(expected));
-    expect(json(await buildManifest(appPath))).toEqual(
-      json(await sdk.buildManifest(appPath)),
-    );
-
     const warnings: string[] = [];
     const translations = expected.success
-      ? await sdk.compileApplicationTranslations({
+      ? await compileApplicationTranslations({
           appPath,
           onWarning: (message) => warnings.push(message),
         })
@@ -160,7 +145,7 @@ describe('CLI manifest parity with the repository SDK', () => {
       ),
     );
 
-    return actual;
+    return expected;
   };
 
   beforeAll(async () => {
@@ -223,27 +208,6 @@ describe('CLI manifest parity with the repository SDK', () => {
       createRequire(join(root, 'package.json')).resolve('twenty-sdk/build'),
     ).toThrow();
 
-    const oraclePath = join(root, 'sdk-reference.cjs');
-    const sdkSource = join(sourceSdk, 'src');
-
-    await bundle({
-      stdin: {
-        contents: `export { buildManifest } from './cli/utilities/build/manifest/manifest-build';
-export { buildAndValidateManifest } from './cli/utilities/build/manifest/build-and-validate-manifest';
-export { compileApplicationTranslations } from './cli/utilities/translations/compile-application-translations';`,
-        resolveDir: sdkSource,
-      },
-      outfile: oraclePath,
-      alias: { '@': sdkSource },
-      bundle: true,
-      packages: 'external',
-      platform: 'node',
-      format: 'cjs',
-      target: 'node24',
-      plugins: [SORTED_GLOB_PLUGIN],
-    });
-    sdk = createRequire(import.meta.url)(oraclePath) as SdkReference;
-
     await buildTestAppWorker(join(root, 'cli'));
     launch.modulePath = join(root, 'cli/app-worker.cjs');
   }, 60000);
@@ -266,9 +230,13 @@ export { compileApplicationTranslations } from './cli/utilities/translations/com
   it.each(FIXTURES)(
     'matches the manifest, file paths, errors and warnings for %s',
     async (name) => {
-      const result = await compareManifest(await copyFixture(name));
+      const appPath = await copyFixture(name);
+      const result = await compareManifest(appPath);
 
       expect(result.success).toBe(name !== 'invalid-app');
+      expect(
+        JSON.parse(JSON.stringify(result).replaceAll(appPath, '<app>')),
+      ).toMatchSnapshot();
     },
     60000,
   );

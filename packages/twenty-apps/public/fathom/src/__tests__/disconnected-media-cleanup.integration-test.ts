@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { randomUUID } from 'node:crypto';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { functionExecute } from 'twenty-sdk/cli';
+import { executeDeployedFunctionOrThrow } from './execute-deployed-function-or-throw';
 import { describe, expect, it } from 'vitest';
 
 import { createFathomApplicationCoreApiClient } from 'src/__tests__/utils/create-fathom-application-core-api-client.util';
@@ -51,18 +51,13 @@ describe('Fathom disconnected media cleanup', () => {
       });
 
       try {
-        const result = await functionExecute({
-          appPath: process.cwd(),
+        const result = await executeDeployedFunctionOrThrow({
           functionName: 'fathom-reconcile-media-imports',
           payload: { disconnectedAccountId: connectedAccountId },
         });
 
-        if (!result.success) {
-          throw new Error(result.error.message);
-        }
-
-        expect(result.data.status).toBe('SUCCESS');
-        expect(result.data.data).toEqual({
+        expect(result.status).toBe('SUCCESS');
+        expect(result.data).toEqual({
           candidateCount: 1,
           updatedRecordingCount: 1,
           shouldContinue: false,

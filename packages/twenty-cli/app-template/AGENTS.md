@@ -63,23 +63,13 @@ Read the [front component guide](https://docs.twenty.com/developers/extend/apps/
 
 ## Best practice
 
-It's highly recommended to create new app entities using `yarn twenty dev:add`. These are the options:
+It's highly recommended to create new app entities using `twenty app add`. These are the options:
 
-| Entity type          | Command                                  | Generated file                        |
-| -------------------- | ---------------------------------------- | ------------------------------------- |
-| Object               | `yarn twenty dev:add object`             | `src/objects/<name>.ts`               |
-| Field                | `yarn twenty dev:add field`              | `src/fields/<name>.ts`                |
-| Logic function       | `yarn twenty dev:add logicFunction`      | `src/logic-functions/<name>.ts`       |
-| Front component      | `yarn twenty dev:add frontComponent`     | `src/front-components/<name>.tsx`     |
-| Role                 | `yarn twenty dev:add role`               | `src/roles/<name>.ts`                 |
-| Skill                | `yarn twenty dev:add skill`              | `src/skills/<name>.ts`                |
-| Agent                | `yarn twenty dev:add agent`              | `src/agents/<name>.ts`                |
-| View                 | `yarn twenty dev:add view`               | `src/views/<name>.ts`                 |
-| Navigation menu item | `yarn twenty dev:add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout          | `yarn twenty dev:add pageLayout`         | `src/page-layouts/<name>.ts`          |
-| Page layout tab      | `yarn twenty dev:add pageLayoutTab`      | `src/page-layout-tabs/<name>.ts`      |
-| Command menu item    | `yarn twenty dev:add commandMenuItem`    | `src/command-menu-items/<name>.ts`    |
-| View field           | `yarn twenty dev:add viewField`          | `src/view-fields/<name>.ts`           |
-| Connection provider  | `yarn twenty dev:add connectionProvider` | `src/connection-providers/<name>.ts`  |
+| Entity type     | Command                          | Generated file                    |
+| --------------- | -------------------------------- | --------------------------------- |
+| Object          | `twenty app add object`          | `src/objects/<name>.ts`           |
+| Field           | `twenty app add field`           | `src/fields/<name>.ts`            |
+| Logic function  | `twenty app add logic-function`  | `src/logic-functions/<name>.ts`   |
+| Front component | `twenty app add front-component` | `src/front-components/<name>.tsx` |
 
-This helps automatically generate required IDs etc.
+These generators create the required UUID v4 identifiers. For roles, skills, agents, views, navigation items, layouts, commands, and connection providers, use the corresponding `twenty-sdk/define` export and generate UUID v4 identifiers.
