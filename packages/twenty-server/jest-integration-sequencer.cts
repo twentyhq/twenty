@@ -1,8 +1,14 @@
-import fs from 'fs';
-import path from 'path';
+import type { AggregatedResult, Test } from '@jest/test-result';
+import type { ShardOptions } from '@jest/test-sequencer';
 
-import { type AggregatedResult, type Test } from '@jest/test-result';
-import Sequencer, { type ShardOptions } from '@jest/test-sequencer';
+// Jest 29 requires this file as-is and Node only strips the types, so runtime
+// imports must be CommonJS requires: an ESM default import of this package
+// yields its exports object, not the class.
+const fs: typeof import('fs') = require('fs');
+const path: typeof import('path') = require('path');
+const {
+  default: Sequencer,
+}: typeof import('@jest/test-sequencer') = require('@jest/test-sequencer');
 
 type TestWithDuration = {
   test: Test;
@@ -138,4 +144,4 @@ class IntegrationTestSequencer extends Sequencer {
   }
 }
 
-export default IntegrationTestSequencer;
+module.exports = IntegrationTestSequencer;

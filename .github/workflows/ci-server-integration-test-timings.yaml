@@ -36,6 +36,10 @@ jobs:
       # Overlays on the previous timings so specs that failed tonight keep their last known duration.
       - name: Merge shard timings into previous timings
         run: |
+          if ! compgen -G 'shard-timings/*.json' > /dev/null; then
+            echo "::error::No shard recorded timings"
+            exit 1
+          fi
           mkdir -p .cache/integration-test-timings
           timings=.cache/integration-test-timings/timings.json
           [ -f "$timings" ] || echo '{}' > "$timings"
