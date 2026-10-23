@@ -8,16 +8,11 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { msg } from '@lingui/core/macro';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { SETTINGS_PERMISSION_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/settings-permission-guard-config-key.constant';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-  PermissionsExceptionMessage,
-} from 'src/engine/permissions/permissions.exception';
+import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/build-permission-flag-denied-exception.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 export const SettingsPermissionGuard = (
@@ -60,13 +55,7 @@ export const SettingsPermissionGuard = (
           });
 
         if (!hasPermission) {
-          throw new PermissionsException(
-            PermissionsExceptionMessage.PERMISSION_DENIED,
-            PermissionsExceptionCode.PERMISSION_DENIED,
-            {
-              userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
-            },
-          );
+          throw buildPermissionFlagDeniedException();
         }
       }
 

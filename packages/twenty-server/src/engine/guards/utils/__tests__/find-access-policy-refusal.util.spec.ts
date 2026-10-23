@@ -1,9 +1,8 @@
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
-import { isAccessPolicySatisfied } from 'src/engine/guards/utils/is-access-policy-satisfied.util';
+import { findAccessPolicyRefusal } from 'src/engine/guards/utils/find-access-policy-refusal.util';
 
 const ROLE_WRITE_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -16,29 +15,25 @@ const ROLE_WRITE_ACCESS_POLICY: AccessPolicy = {
   requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
 };
 
-const ENABLED_FEATURE_FLAGS = {
-  [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: true,
-} as FeatureFlagMap;
-
-const checkMemberAccess = ({
-  featureFlagsMap = ENABLED_FEATURE_FLAGS,
+const findMemberRefusal = ({
+  isFeatureFlagEnabled = () => true,
   isPermissionFlagGranted = jest.fn().mockResolvedValue(true),
 }: {
-  featureFlagsMap?: FeatureFlagMap;
+  isFeatureFlagEnabled?: () => boolean;
   isPermissionFlagGranted?: jest.Mock;
 } = {}) =>
-  isAccessPolicySatisfied({
+  findAccessPolicyRefusal({
     accessPolicy: ROLE_WRITE_ACCESS_POLICY,
     authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
-    featureFlagsMap,
+    isFeatureFlagEnabled,
     isPermissionFlagGranted,
   });
 
-describe('isAccessPolicySatisfied', () => {
-  it('should admit a principal the policy accepts once its flags are granted', async () => {
+describe('findAccessPolicyRefusal', () => {
+  it('should find no refusal for a principal the policy accepts once its flags are granted', async () => {
     const isPermissionFlagGranted = jest.fn().mockResolvedValue(true);
 
-    expect(await checkMemberAccess({ isPermissionFlagGranted })).toBe(true);
+    expect(await findMemberRefusal({ isPermissionFlagGranted })).toBeUndefined();
     expect(isPermissionFlagGranted).toHaveBeenCalledWith(
       PermissionFlagType.ROLES,
     );
@@ -51,33 +46,39 @@ describe('isAccessPolicySatisfied', () => {
     ],
     ['no principal', undefined],
   ] as const)(
-    'should refuse %s without checking its permission flags',
+    'should refuse %s without checking its flags',
     async (_, authPrincipalVariant) => {
       const isPermissionFlagGranted = jest.fn().mockResolvedValue(true);
 
       expect(
-        await isAccessPolicySatisfied({
+        await findAccessPolicyRefusal({
           accessPolicy: ROLE_WRITE_ACCESS_POLICY,
           authPrincipalVariant,
-          featureFlagsMap: ENABLED_FEATURE_FLAGS,
+          isFeatureFlagEnabled: () => true,
           isPermissionFlagGranted,
         }),
-      ).toBe(false);
+      ).toEqual({ reason: 'authPrincipal' });
       expect(isPermissionFlagGranted).not.toHaveBeenCalled();
     },
   );
 
-  it('should refuse when a required feature flag is off for the workspace', async () => {
+  it('should name the required feature flag that is off for the workspace', async () => {
     expect(
-      await checkMemberAccess({ featureFlagsMap: {} as FeatureFlagMap }),
-    ).toBe(false);
+      await findMemberRefusal({ isFeatureFlagEnabled: () => false }),
+    ).toEqual({
+      reason: 'featureFlag',
+      featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+    });
   });
 
-  it('should refuse when a required permission flag is not granted', async () => {
+  it('should name the required permission flag that is not granted', async () => {
     expect(
-      await checkMemberAccess({
+      await findMemberRefusal({
         isPermissionFlagGranted: jest.fn().mockResolvedValue(false),
       }),
-    ).toBe(false);
+    ).toEqual({
+      reason: 'permissionFlag',
+      permissionFlag: PermissionFlagType.ROLES,
+    });
   });
 });
