@@ -115,7 +115,9 @@ export class CodeInterpreterTool implements Tool {
         this.buildExecutionState(executionId, 'running', code, '', '', []),
       );
 
-      const serverUrl = this.twentyConfigService.get('SERVER_URL');
+      const serverUrl =
+        this.twentyConfigService.get('SERVER_INTERNAL_URL') ||
+        this.twentyConfigService.get('SERVER_URL');
       const sandboxPrincipal = await this.resolveSandboxPrincipal(
         workspaceAuthContextStorage.getStore(),
       );

@@ -1652,6 +1652,17 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'Internal base URL for server and worker self-requests (e.g. behind authenticating proxies). Defaults to SERVER_URL if not set.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsUrl({ require_tld: false, require_protocol: true })
+  @IsOptional()
+  SERVER_INTERNAL_URL?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Express "trust proxy" setting. Controls whether X-Forwarded-* ' +
       'headers are honored — required for request.protocol to return ' +
       '"https" when TLS is terminated upstream (reverse proxy, ingress, ' +

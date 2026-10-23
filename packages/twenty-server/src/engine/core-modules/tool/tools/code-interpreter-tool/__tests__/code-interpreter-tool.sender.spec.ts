@@ -44,6 +44,7 @@ const buildUserContext = (
 const runInterpreter = async (
   authContext?: WorkspaceAuthContext,
   agentId?: string,
+  configOverrides?: Record<string, string>,
 ) => {
   const codeInterpreterService = {
     execute: jest.fn().mockResolvedValue({
@@ -65,7 +66,14 @@ const runInterpreter = async (
       { provide: FileService, useValue: {} },
       { provide: FileUrlService, useValue: {} },
       { provide: SecureHttpClientService, useValue: {} },
-      { provide: TwentyConfigService, useValue: { get: () => SERVER_URL } },
+      {
+        provide: TwentyConfigService,
+        useValue: {
+          get: (key: string) =>
+            configOverrides?.[key] ??
+            (key === 'SERVER_URL' ? SERVER_URL : undefined),
+        },
+      },
       { provide: JwtWrapperService, useValue: jwtWrapperService },
       {
         provide: ApplicationService,
@@ -274,5 +282,26 @@ describe('Code interpreter sandbox token', () => {
 
     expect(directRun.sessionId).toBe(applicationRun.sessionId);
     expect(directRun.actorKey).not.toBe(applicationRun.actorKey);
+  });
+
+  it('uses SERVER_INTERNAL_URL for TWENTY_SERVER_URL when configured', async () => {
+    const { sandboxContext } = await runInterpreter(undefined, undefined, {
+      SERVER_INTERNAL_URL: 'http://twenty:3000',
+      SERVER_URL: 'https://crm.example.com',
+    });
+
+    expect(sandboxContext.env).toEqual({
+      TWENTY_SERVER_URL: 'http://twenty:3000',
+    });
+  });
+
+  it('falls back to SERVER_URL for TWENTY_SERVER_URL when SERVER_INTERNAL_URL is not set', async () => {
+    const { sandboxContext } = await runInterpreter(undefined, undefined, {
+      SERVER_URL: 'https://crm.example.com',
+    });
+
+    expect(sandboxContext.env).toEqual({
+      TWENTY_SERVER_URL: 'https://crm.example.com',
+    });
   });
 });
