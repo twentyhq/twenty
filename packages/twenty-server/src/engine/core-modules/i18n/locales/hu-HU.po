@@ -3646,12 +3646,12 @@ msgstr "Az egyéni objektumból hiányzik a címkeazonosító mező."
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Custom roles are part of the Organization plan."
-msgstr ""
+msgstr "Az egyéni szerepkörök az Organization csomag részét képezik."
 
 #. js-lingui-id: bO/Qn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan. Upgrade to assign \"{roleLabel}\"."
-msgstr ""
+msgstr "Az egyéni szerepkörök az Organization csomag részét képezik. Frissítsen a \"{roleLabel}\" hozzárendeléséhez."
 
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
@@ -6515,6 +6515,16 @@ msgstr "Érvénytelen szűrőparaméter."
 msgid "Invalid filter value"
 msgstr "Érvénytelen szűrőérték"
 
+#. js-lingui-id: ys8v/n
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{fieldName}\" and \"{referencedFieldName}\" cannot be compared"
+msgstr "Érvénytelen szűrő: „{fieldName}” és „{referencedFieldName}” nem hasonlítható össze"
+
+#. js-lingui-id: 8Ng76x
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" expects a field name"
+msgstr "Érvénytelen szűrő: \"{operator}\" mezőnevet vár."
+
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires a String"
@@ -6525,10 +6535,26 @@ msgstr "Érvénytelen szűrő: A(z) \"{operator}\" operátor karakterláncot ig�
 msgid "Invalid filter: \"{operator}\" operator requires an array"
 msgstr "Érvénytelen szűrő: A(z) \"{operator}\" operátor tömböt igényel"
 
+#. js-lingui-id: xxcw3g
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
+msgstr "Érvénytelen szűrő: „{relationFieldName}” csak arra a rekordra hivatkozhat, amelyből a kapcsolatszűrő indul"
+
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "Érvénytelen szűrő: Az \"isEmptyArray\" operátor logikai értéket igényel"
+
+#. js-lingui-id: S8iHKo
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: {nameSingular} object doesn't have any \"{referencedFieldName}\" field."
+msgstr "Érvénytelen szűrő: a {nameSingular} objektumnak nincs \"{referencedFieldName}\" mezője."
+
+#. js-lingui-id: OyCWdj
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: composite fields cannot be compared with another field"
+msgstr "Érvénytelen szűrő: az összetett mezők nem hasonlíthatók össze másik mezővel"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
@@ -6544,6 +6570,11 @@ msgstr "Érvénytelen szűrő: a szűrő értékének objektumnak kell lennie"
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Érvénytelen szűrő: A(z) \"{key}\" kapcsolati mező szerinti szűrés nem támogatott"
+
+#. js-lingui-id: wi8qrB
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: the field to compare with was not found"
+msgstr "Érvénytelen szűrő: az összehasonlítandó mező nem található"
 
 #. js-lingui-id: bNNDED
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
@@ -10868,7 +10899,7 @@ msgstr ""
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
-msgstr ""
+msgstr "A \"{roleLabel}\" szerepkör nem rendelhető hozzá: az egyéni szerepkörökhöz az Organization csomag szükséges"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts

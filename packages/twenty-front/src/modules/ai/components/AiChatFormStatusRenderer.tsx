@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconListDetails } from 'twenty-ui/icon';
 
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
-import { StyledAiChatAskStatusDetail } from '@/ai/components/AiChatAskStyledComponents';
+import { StyledAiChatAskStatusDetail } from '@/ai/components/StyledAiChatAskStatusDetail';
 
 export const AiChatFormStatusRenderer = ({
   toolPart,

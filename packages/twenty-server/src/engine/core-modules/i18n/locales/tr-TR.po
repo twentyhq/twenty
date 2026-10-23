@@ -3646,12 +3646,12 @@ msgstr "Özel nesnenin etiket tanımlayıcı alanı eksik."
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Custom roles are part of the Organization plan."
-msgstr ""
+msgstr "Özel roller, Organization planının bir parçasıdır."
 
 #. js-lingui-id: bO/Qn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan. Upgrade to assign \"{roleLabel}\"."
-msgstr ""
+msgstr "Özel roller, Organization planının bir parçasıdır. \"{roleLabel}\" atamak için yükseltin."
 
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
@@ -6515,6 +6515,16 @@ msgstr "Geçersiz filtre parametresi."
 msgid "Invalid filter value"
 msgstr "Geçersiz filtre değeri"
 
+#. js-lingui-id: ys8v/n
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{fieldName}\" and \"{referencedFieldName}\" cannot be compared"
+msgstr "Geçersiz filtre: \"{fieldName}\" ve \"{referencedFieldName}\" karşılaştırılamaz"
+
+#. js-lingui-id: 8Ng76x
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" expects a field name"
+msgstr "Geçersiz filtre: \"{operator}\" bir alan adı bekliyor"
+
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires a String"
@@ -6525,10 +6535,26 @@ msgstr "Geçersiz filtre: \"{operator}\" operatörü bir dize gerektirir"
 msgid "Invalid filter: \"{operator}\" operator requires an array"
 msgstr "Geçersiz filtre: \"{operator}\" operatörü bir dizi gerektirir"
 
+#. js-lingui-id: xxcw3g
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
+msgstr "Geçersiz filtre: \"{relationFieldName}\" yalnızca ilişki filtresinin başladığı kayda başvurabilir"
+
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "Geçersiz filtre: \"isEmptyArray\" operatörü bir boolean değeri gerektirir"
+
+#. js-lingui-id: S8iHKo
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: {nameSingular} object doesn't have any \"{referencedFieldName}\" field."
+msgstr "Geçersiz filtre: {nameSingular} nesnesinde \"{referencedFieldName}\" alanı bulunmuyor."
+
+#. js-lingui-id: OyCWdj
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: composite fields cannot be compared with another field"
+msgstr "Geçersiz filtre: bileşik alanlar başka bir alanla karşılaştırılamaz"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
@@ -6544,6 +6570,11 @@ msgstr "Geçersiz filtre: filtre değeri bir nesne olmalıdır"
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Geçersiz filtre: \"{key}\" ilişki alanına göre filtreleme desteklenmiyor"
+
+#. js-lingui-id: wi8qrB
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: the field to compare with was not found"
+msgstr "Geçersiz filtre: karşılaştırılacak alan bulunamadı"
 
 #. js-lingui-id: bNNDED
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
@@ -10868,7 +10899,7 @@ msgstr ""
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
-msgstr ""
+msgstr "\"{roleLabel}\" rolü atanamaz: özel roller için Organization planı gerekir"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts

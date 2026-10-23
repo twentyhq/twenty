@@ -24,7 +24,6 @@ export type MultiItemBaseInputProps = Pick<
   ) => ReactNode;
   error?: string | null;
   hasError?: boolean;
-  hasItem: boolean;
   onChange: (value: string) => void;
   instanceId: string;
 };

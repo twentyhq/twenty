@@ -9,10 +9,6 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: var(--t-font-weight-semi-bold);
-
   .section-title-container:hover & {
     color: ${themeCssVariables.font.color.tertiary};
   }
@@ -98,7 +94,9 @@ export const NavigationDrawerSectionTitle = ({
   return (
     <StyledTitle className="section-title-container">
       <StyledLabelContainer onClick={handleTitleClick}>
-        <StyledDisplayLabel>{label}</StyledDisplayLabel>
+        <StyledDisplayLabel size="xs" weight="semibold" color="light">
+          {label}
+        </StyledDisplayLabel>
         {isOpen !== undefined && (
           <StyledChevron>
             <MotionIconChevronRight
