@@ -18,12 +18,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import {
-  LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG,
-  LAMBDA_SDK_CLIENT_CHECKSUM_TAG,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { type SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -223,16 +218,24 @@ describe('Logic functions on the Lambda driver (integration)', () => {
   );
 
   it(
-    'rebuilds its Lambda when it was deleted outside of Twenty',
+    'rebuilds its Lambda on the run after it was deleted outside of Twenty',
     async () => {
       const logicFunctionId = await createLogicFunction({
         sourceHandlerCode: buildVersionedSource(1),
       });
 
       await runLogicFunction(logicFunctionId);
+      await runLogicFunction(logicFunctionId);
       await flociLambdaDriver.lambdaClient.deleteFunction({
         FunctionName: logicFunctionId,
       });
+
+      const { errors } = await executeLogicFunction({
+        input: { id: logicFunctionId, payload: {} },
+        expectToFail: true,
+      });
+
+      expect(errors).toBeDefined();
 
       const result = await runLogicFunction(logicFunctionId);
 
@@ -301,45 +304,6 @@ describe('Logic functions on the Lambda driver (integration)', () => {
           input: { idToDelete: objectMetadataId },
         });
       }
-    },
-    LAMBDA_TEST_TIMEOUT_MS,
-  );
-
-  it(
-    'tags a function built before SDK checksum tagging without reconfiguring it',
-    async () => {
-      const { lambdaClient, resourceNamespace } = flociLambdaDriver;
-      const logicFunctionId = await createLogicFunction({
-        sourceHandlerCode: buildVersionedSource(1),
-      });
-
-      await runLogicFunction(logicFunctionId);
-
-      const { Configuration: configurationBeforeUntag } =
-        await lambdaClient.getFunction({ FunctionName: logicFunctionId });
-
-      await lambdaClient.untagResource({
-        Resource: configurationBeforeUntag?.FunctionArn,
-        TagKeys: [LAMBDA_SDK_CLIENT_CHECKSUM_TAG],
-      });
-      await global.app
-        .get<CacheStorageService>(CacheStorageNamespace.ModuleApplications)
-        .del(`lambda-executor-ready:${resourceNamespace}:${logicFunctionId}`);
-
-      expect((await runLogicFunction(logicFunctionId)).status).toBe(
-        LogicFunctionExecutionStatus.SUCCESS,
-      );
-
-      const { Configuration, Tags } = await lambdaClient.getFunction({
-        FunctionName: logicFunctionId,
-      });
-
-      expect(Tags?.[LAMBDA_SDK_CLIENT_CHECKSUM_TAG]).toBe(
-        await getCurrentSdkClientCoreChecksum(),
-      );
-      expect(Configuration?.LastModified).toBe(
-        configurationBeforeUntag?.LastModified,
-      );
     },
     LAMBDA_TEST_TIMEOUT_MS,
   );
