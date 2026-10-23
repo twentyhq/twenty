@@ -2491,7 +2491,8 @@ export enum FileFolder {
   PublicAsset = 'PublicAsset',
   RecordExport = 'RecordExport',
   Source = 'Source',
-  Workflow = 'Workflow'
+  Workflow = 'Workflow',
+  WorkspaceDataExport = 'WorkspaceDataExport'
 }
 
 export type FileUploadTarget = {

@@ -2357,6 +2357,7 @@ enum FileFolder {
   RecordExport
   Source
   Workflow
+  WorkspaceDataExport
 }
 
 type FileUploadTarget {
