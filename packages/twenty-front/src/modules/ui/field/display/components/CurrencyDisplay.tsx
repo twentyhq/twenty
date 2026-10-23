@@ -5,7 +5,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { getCurrencyLabel } from '@/localization/utils/getCurrencyLabel';
-import { getCurrencySymbol } from '@/localization/utils/getCurrencySymbol';
+import { getCurrencyPrefix } from '@/localization/utils/getCurrencyPrefix';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
   type FieldCurrencyMetadata,
@@ -27,8 +27,8 @@ export const CurrencyDisplay = ({
   const { i18n } = useLingui();
 
   const currencyCode = currencyValue?.currencyCode;
-  const currencySymbol = isDefined(currencyCode)
-    ? getCurrencySymbol(currencyCode)
+  const currencyPrefix = isDefined(currencyCode)
+    ? getCurrencyPrefix(currencyCode)
     : undefined;
   const amountToDisplay = !isDefined(currencyValue?.amountMicros)
     ? null
@@ -46,7 +46,7 @@ export const CurrencyDisplay = ({
     ? `${currencyCode}${isDefined(currencyLabel) ? ` - ${currencyLabel}` : ''}`
     : undefined;
   const shouldShowCurrencyTooltip =
-    isNonEmptyString(currencySymbol) &&
+    isNonEmptyString(currencyPrefix) &&
     amountToDisplay !== null &&
     isDefined(currencyTooltipContent);
 
@@ -59,7 +59,7 @@ export const CurrencyDisplay = ({
           side="top"
           positionMethod="fixed"
         >
-          <span>{currencySymbol}</span>
+          <span>{currencyPrefix}</span>
         </Tooltip>
       )}
       {amountToDisplay !== null

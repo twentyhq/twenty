@@ -2,7 +2,7 @@ import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FormatNumberOptions } from '@/localization/utils/formatNumber';
-import { getCurrencySymbol } from '@/localization/utils/getCurrencySymbol';
+import { getCurrencyPrefix } from '@/localization/utils/getCurrencyPrefix';
 import { BillingProductKey } from '~/generated-metadata/graphql';
 
 const EM_DASH = '—';
@@ -56,7 +56,7 @@ export const formatSubscriptionItemValue = ({
 
   if (isDefined(item.unitAmount)) {
     parts.push(
-      `${getCurrencySymbol(currency)}${formatNumber(item.unitAmount / 100, {
+      `${getCurrencyPrefix(currency)}${formatNumber(item.unitAmount / 100, {
         decimals: 2,
       })}`,
     );
