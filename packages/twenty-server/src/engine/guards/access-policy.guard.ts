@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ACCESS_POLICY_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/access-policy-guard-config-key.constant';
@@ -19,13 +18,8 @@ import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/buil
 import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-principal.util';
 import { findAccessPolicyRefusal } from 'src/engine/guards/utils/find-access-policy-refusal.util';
 import { getRequestOrThrowWhenUnauthenticated } from 'src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util';
+import { isSettingsPermissionGranted } from 'src/engine/guards/utils/is-settings-permission-granted.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-
-// A workspace being created has no roles to check settings permissions against yet
-const WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES = [
-  WorkspaceActivationStatus.PENDING_CREATION,
-  WorkspaceActivationStatus.ONGOING_CREATION,
-];
 
 export const AccessPolicyGuard = (
   accessPolicy: AccessPolicy,
@@ -53,28 +47,12 @@ export const AccessPolicyGuard = (
         isFeatureFlagEnabled: (featureFlag) =>
           isDefined(workspace) &&
           this.featureFlagService.isFeatureEnabled(featureFlag, workspace.id),
-        isPermissionFlagGranted: async (permissionFlag) => {
-          if (!isDefined(workspace)) {
-            return false;
-          }
-
-          if (
-            WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES.includes(
-              workspace.activationStatus,
-            )
-          ) {
-            return true;
-          }
-
-          return this.permissionsService.userHasWorkspaceSettingPermission({
-            userWorkspaceId: request.userWorkspaceId,
-            setting: permissionFlag,
-            workspaceId: workspace.id,
-            apiKeyId: request.apiKey?.id,
-            applicationId: request.application?.id,
-            agentId: request.agentId,
-          });
-        },
+        isPermissionFlagGranted: (permissionFlag) =>
+          isSettingsPermissionGranted({
+            permissionsService: this.permissionsService,
+            request,
+            permissionFlag,
+          }),
       });
 
       if (!isDefined(refusal)) {
