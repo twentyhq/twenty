@@ -118,6 +118,12 @@ export const oneSucceededWorkflowRunQueryResult = {
                         value: 'My text',
                         isLeaf: true,
                       },
+                      tiptap: {
+                        type: 'TEXT',
+                        label: ' Tiptap',
+                        value: 'My text',
+                        isLeaf: true,
+                      },
                     },
                     isLeaf: false,
                   },
@@ -4402,6 +4408,7 @@ export const oneSucceededWorkflowRunQueryResult = {
             bodyV2: {
               markdown: '',
               blocknote: '',
+              tiptap: '',
             },
             position: 0,
             createdAt: '2025-03-06T12:15:43.371Z',
@@ -4582,6 +4589,12 @@ export const oneSucceededWorkflowRunQueryResult = {
                     blocknote: {
                       type: 'TEXT',
                       label: ' Blocknote',
+                      value: 'My text',
+                      isLeaf: true,
+                    },
+                    tiptap: {
+                      type: 'TEXT',
+                      label: ' Tiptap',
                       value: 'My text',
                       isLeaf: true,
                     },

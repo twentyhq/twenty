@@ -30,6 +30,7 @@ import { RADIO_GROUP_PROP_DESCRIPTIONS } from './radioGroupPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PART_PROP_DESCRIPTIONS } from './phoneCountryPickerPartPropDescriptions';
 import { PHONE_COUNTRY_PICKER_PROP_DESCRIPTIONS } from './phoneCountryPickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
+import { DATE_PICKER_PROP_DESCRIPTIONS } from './datePickerPropDescriptions';
 import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { NUMBER_FIELD_PART_PROP_DESCRIPTIONS } from './numberFieldPartPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
@@ -614,6 +615,8 @@ export const DOCUMENTED_COMPONENTS = [
         'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
         'When trailing actions are visible: on hover and focus, or always.',
+      actionsPlacement:
+        'Keeps actions beside the content at every width when set to `end`. The default `auto` preserves responsive wrapping. Hidden end actions do not reserve width on devices without touch.',
     },
   },
   {
@@ -1083,6 +1086,21 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/input',
     slug: 'components/input/image-input',
     propDescriptions: IMAGE_INPUT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'DatePicker',
+    source: 'components/input/DatePicker/DatePicker.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/date-picker',
+    propDescriptions: DATE_PICKER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      isKeyboardNavigationDisabled: 'false',
+      loadingFallback: '300px-high Skeleton',
+      disabled: 'false',
+      readOnly: 'false',
+      isGridHidden: 'false',
+      role: 'group',
+    },
   },
   {
     name: 'SearchInput',
