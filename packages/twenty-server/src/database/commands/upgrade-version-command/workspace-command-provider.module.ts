@@ -1,4 +1,3 @@
-import { V2_51_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-51/2-51-upgrade-version-command.module';
 import { V2_43_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-43/2-43-upgrade-version-command.module';
 import { Module } from '@nestjs/common';
 
@@ -53,7 +52,6 @@ import { V2_9_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-
 
 @Module({
   imports: [
-    V2_51_UpgradeVersionCommandModule,
     V1_21_UpgradeVersionCommandModule,
     V1_22_UpgradeVersionCommandModule,
     V1_23_UpgradeVersionCommandModule,

@@ -65,28 +65,34 @@ describe('Lambda builder deployment', () => {
     jest.spyOn(fs, 'readFile').mockResolvedValue(Buffer.from('zip'));
   });
   afterEach(() => jest.restoreAllMocks());
-  it('uses existing layer and execution role, then waits before invoking a new builder', async () => {
-    send
-      .mockRejectedValueOnce(
-        new ResourceNotFoundException({ message: 'missing', $metadata: {} }),
-      )
-      .mockResolvedValueOnce({});
-    await service.ensureBuilderLambdaExists({
-      functionName: 'workspace-builder',
-      copyFiles,
-    });
-    expect(send.mock.calls[0][0]).toBeInstanceOf(GetFunctionCommand);
-    const command: CreateFunctionCommand = send.mock.calls[1][0];
-    expect(command.input).toMatchObject({
-      FunctionName: 'workspace-builder',
-      Role: options.lambdaRole,
-      Layers: ['existing-layer'],
-      Handler: 'index.handler',
-    });
-    expect(copyFiles).toHaveBeenCalledWith('/tmp/builder-test');
-    expect(waitForActive).toHaveBeenCalledWith('workspace-builder');
-    expect(cleanup).toHaveBeenCalled();
-  });
+  it.each([undefined, 'app-dependency-layer'])(
+    'attaches app dependencies when supplied, preserving the existing role and readiness wait: %s',
+    async (dependencyLayerArn) => {
+      send
+        .mockRejectedValueOnce(
+          new ResourceNotFoundException({ message: 'missing', $metadata: {} }),
+        )
+        .mockResolvedValueOnce({});
+      await service.ensureBuilderLambdaExists({
+        functionName: 'workspace-builder',
+        copyFiles,
+        dependencyLayerArn,
+      });
+      expect(send.mock.calls[0][0]).toBeInstanceOf(GetFunctionCommand);
+      const command: CreateFunctionCommand = send.mock.calls[1][0];
+      expect(command.input).toMatchObject({
+        FunctionName: 'workspace-builder',
+        Role: options.lambdaRole,
+        Layers: dependencyLayerArn
+          ? ['existing-layer', dependencyLayerArn]
+          : ['existing-layer'],
+        Handler: 'index.handler',
+      });
+      expect(copyFiles).toHaveBeenCalledWith('/tmp/builder-test');
+      expect(waitForActive).toHaveBeenCalledWith('workspace-builder');
+      expect(cleanup).toHaveBeenCalled();
+    },
+  );
   it('waits when another first build wins the creation race', async () => {
     send
       .mockRejectedValueOnce(
