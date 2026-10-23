@@ -96,15 +96,21 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       featureLabel: msg`Permissions`,
       selfHostTiers: {
         organization: {
+          detail: msg`down to fields and rows`,
           kind: 'text',
-          text: msg`Custom roles, down to fields and rows`,
+          text: msg`Custom roles`,
         },
-        pro: { kind: 'text', text: msg`Custom roles, down to fields` },
+        pro: {
+          detail: msg`down to fields`,
+          kind: 'text',
+          text: msg`Custom roles`,
+        },
       },
       tiers: {
         organization: {
+          detail: msg`down to fields and rows`,
           kind: 'text',
-          text: msg`Custom roles, down to fields and rows`,
+          text: msg`Custom roles`,
         },
         pro: { kind: 'text', text: msg`Admin & Member` },
       },
