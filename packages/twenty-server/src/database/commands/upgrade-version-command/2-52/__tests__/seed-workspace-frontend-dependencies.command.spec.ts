@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { Readable } from 'stream';
-import { SeedWorkspaceFrontendDependenciesCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792758655147-seed-workspace-frontend-dependencies.command';
+import { SeedWorkspaceFrontendDependenciesCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1792761562238-seed-workspace-frontend-dependencies.command';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';

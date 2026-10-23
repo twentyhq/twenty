@@ -7,7 +7,6 @@ import { AddAgentChatChannelsCommand } from 'src/database/commands/upgrade-versi
 import { BackfillStandardApplicationDefaultRoleCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792741864752-backfill-standard-application-default-role.command';
 import { MigrateRichTextToTiptapCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792748448862-migrate-rich-text-to-tiptap.command';
 import { BackfillWorkspaceCustomApplicationDefaultRoleCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792755720300-backfill-workspace-custom-application-default-role.command';
-import { SeedWorkspaceFrontendDependenciesCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792758655147-seed-workspace-frontend-dependencies.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -28,7 +27,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillStandardApplicationDefaultRoleCommand,
     MigrateRichTextToTiptapCommand,
     BackfillWorkspaceCustomApplicationDefaultRoleCommand,
-    SeedWorkspaceFrontendDependenciesCommand,
   ],
 })
 export class V2_51_UpgradeVersionCommandModule {}

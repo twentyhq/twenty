@@ -49,7 +49,7 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "database/commands/upgrade-version-command/2-51/workspace-frontend-dependencies/**",
+        "include": "database/commands/upgrade-version-command/2-52/workspace-frontend-dependencies/**",
         "outDir": "dist/assets"
       },
       {

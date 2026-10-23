@@ -13,9 +13,9 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 
-@RegisteredWorkspaceCommand('2.51.0', 1792758655147)
+@RegisteredWorkspaceCommand('2.52.0', 1792761562238)
 @Command({
-  name: 'upgrade:2-51:seed-workspace-frontend-dependencies',
+  name: 'upgrade:2-52:seed-workspace-frontend-dependencies',
   description:
     'Add locked frontend dependencies to unchanged Workspace app defaults',
 })
@@ -53,7 +53,7 @@ export class SeedWorkspaceFrontendDependenciesCommand extends ProvisionedWorkspa
       ['before', 'after'].map(async (state) => {
         const directory = join(
           ASSET_PATH,
-          'database/commands/upgrade-version-command/2-51/workspace-frontend-dependencies',
+          'database/commands/upgrade-version-command/2-52/workspace-frontend-dependencies',
           state,
         );
         const [packageJson, yarnLock] = await Promise.all(
