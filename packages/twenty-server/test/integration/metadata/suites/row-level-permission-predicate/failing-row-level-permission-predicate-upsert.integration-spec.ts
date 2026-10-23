@@ -2,6 +2,7 @@ import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphq
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
@@ -18,6 +19,7 @@ import { type UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadat
 
 type TestSetup = {
   createdRoleId: string;
+  adminRoleId: string;
   companyObjectMetadataId: string;
   companyNameFieldMetadataId: string;
 };
@@ -153,10 +155,45 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
         }),
       },
     },
+    {
+      title: 'when adding a predicate to a non-editable role',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.adminRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          predicates: [
+            {
+              fieldMetadataId: testSetup.companyNameFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value: 'Apple',
+            },
+          ],
+          predicateGroups: [],
+        }),
+      },
+    },
+    {
+      title: 'when adding a predicate group to a non-editable role',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.adminRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          predicates: [],
+          predicateGroups: [
+            {
+              objectMetadataId: testSetup.companyObjectMetadataId,
+              logicalOperator:
+                RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            },
+          ],
+        }),
+      },
+    },
   ];
 
 describe('Row Level Permission Predicate upsert should fail', () => {
   let createdRoleId: string;
+  let adminRoleId: string;
   let companyObjectMetadataId: string;
   let companyNameFieldMetadataId: string;
 
@@ -214,6 +251,8 @@ describe('Row Level Permission Predicate upsert should fail', () => {
 
     createdRoleId = roleData?.createOneRole?.id;
     jestExpectToBeDefined(createdRoleId);
+
+    adminRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
   });
 
   afterAll(async () => {
@@ -223,6 +262,23 @@ describe('Row Level Permission Predicate upsert should fail', () => {
         input: { idToDelete: createdRoleId },
       });
     }
+
+    const adminRole = await findOneRoleByLabel({
+      label: 'Admin',
+      gqlFields: `
+        id
+        label
+        rowLevelPermissionPredicates {
+          id
+        }
+        rowLevelPermissionPredicateGroups {
+          id
+        }
+      `,
+    });
+
+    expect(adminRole.rowLevelPermissionPredicates).toEqual([]);
+    expect(adminRole.rowLevelPermissionPredicateGroups).toEqual([]);
   });
 
   it.each(
@@ -232,6 +288,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
       expectToFail: true,
       input: context.input({
         createdRoleId,
+        adminRoleId,
         companyObjectMetadataId,
         companyNameFieldMetadataId,
       }),

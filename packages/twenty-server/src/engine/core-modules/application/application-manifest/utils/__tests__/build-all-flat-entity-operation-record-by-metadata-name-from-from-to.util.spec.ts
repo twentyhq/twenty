@@ -117,6 +117,8 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   folderUniversalIdentifier: null,
   pageLayoutId: null,
   pageLayoutUniversalIdentifier: null,
+  agentChatChannelId: null,
+  agentChatChannelUniversalIdentifier: null,
   position: 0,
 };
 
