@@ -1,6 +1,16 @@
 export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   {
     filePath:
+      'packages/twenty-front/src/modules/ai/components/__stories__/AiChatApprovalReviewExample.tsx',
+    reason: 'Numeric draft inputs align with right-aligned record review cells',
+  },
+  {
+    filePath:
+      'packages/twenty-front/src/modules/ai/components/AiChatApprovalReviewDeck.tsx',
+    reason: 'Compact Card sections around the approval table and action row',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/activities/calendar/components/CalendarDayCardContent.tsx',
     reason: 'Card.Content day row layout and the animation for ended days',
   },
