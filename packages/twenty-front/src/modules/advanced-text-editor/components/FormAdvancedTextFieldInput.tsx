@@ -2,6 +2,8 @@ import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTe
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
+import { type UploadedFile } from '@/advanced-text-editor/types/UploadedFile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -17,6 +19,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { type ComponentType, useEffect, useId, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -99,7 +102,9 @@ type FormAdvancedTextFieldInputProps = {
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
-  onImageUploadError?: (error: Error, file: File) => void;
+  onImageUploadError?: UploadErrorHandler;
+  onFileUpload?: (file: File) => Promise<UploadedFile>;
+  onFileUploadError?: UploadErrorHandler;
   profile: AdvancedTextEditorProfile;
   EditorComponent?: ComponentType<AdvancedTextEditorComponentProps>;
   minHeight?: number;
@@ -119,6 +124,8 @@ export const FormAdvancedTextFieldInput = ({
   VariablePicker,
   onImageUpload,
   onImageUploadError,
+  onFileUpload,
+  onFileUploadError,
   profile,
   EditorComponent = AdvancedTextEditor,
   minHeight,
@@ -169,6 +176,8 @@ export const FormAdvancedTextFieldInput = ({
     },
     onImageUpload,
     onImageUploadError,
+    onFileUpload,
+    onFileUploadError,
   });
 
   useEffect(() => {
@@ -179,12 +188,11 @@ export const FormAdvancedTextFieldInput = ({
     };
   }, [editor, onEditorReady]);
 
-  const handleEnterFullScreen = () => {
-    setIsFullScreen(true);
-  };
-
-  const handleExitFullScreen = () => {
-    setIsFullScreen(false);
+  const handleFullScreenChange = (isFullScreenOpen: boolean) => {
+    flushSync(() => {
+      setIsFullScreen(isFullScreenOpen);
+    });
+    editor?.commands.focus();
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -216,7 +224,7 @@ export const FormAdvancedTextFieldInput = ({
 
   const { renderFullScreenModal } = useFullScreenModal({
     links: breadcrumbLinks,
-    onClose: handleExitFullScreen,
+    onClose: () => handleFullScreenChange(false),
     hasClosePageButton: !isMobile,
   });
 
@@ -274,7 +282,7 @@ export const FormAdvancedTextFieldInput = ({
                   {!readonly && !isFullScreen && (
                     <LightIconButton
                       size="sm"
-                      onClick={handleEnterFullScreen}
+                      onClick={() => handleFullScreenChange(true)}
                       emphasis="subtle"
                       aria-label={t`Expand to full screen`}
                     >

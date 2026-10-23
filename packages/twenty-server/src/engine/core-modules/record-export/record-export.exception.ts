@@ -9,7 +9,8 @@ type RecordExportExceptionCode =
   | 'FILE_SIZE_LIMIT_EXCEEDED'
   | 'CONNECTION_CLOSED'
   | 'PAGINATION_FAILED'
-  | 'RECORD_COUNT_UNAVAILABLE';
+  | 'RECORD_COUNT_UNAVAILABLE'
+  | 'MORPH_TARGET_NOT_FOUND';
 
 export class RecordExportException extends CustomException<RecordExportExceptionCode> {
   constructor(

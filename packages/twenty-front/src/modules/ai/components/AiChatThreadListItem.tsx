@@ -13,6 +13,7 @@ import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -70,6 +71,12 @@ export const AiChatThreadListItem = ({
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
+  const { status: triageStatus } = useAiChatThreadTriage(thread.id);
+  const shouldShowMore =
+    isDefined(onDetach) ||
+    isDefined(thread.deletedAt) ||
+    !isDefined(triageStatus) ||
+    triageStatus === 'open';
 
   return (
     <AiChatThreadRow
@@ -138,6 +145,7 @@ export const AiChatThreadListItem = ({
           onRenameRequested={startRename}
           onDetach={onDetach}
           shouldShowTriageActions
+          shouldShowMore={shouldShowMore}
         />
       }
     />

@@ -1,0 +1,6 @@
+export const DATE_PICKER_CONSTANTS = {
+  MIN_YEAR: 1,
+  MAX_YEAR: 9999,
+  DAYS_PER_WEEK: 7,
+  MONTHS_PER_YEAR: 12,
+} as const;
