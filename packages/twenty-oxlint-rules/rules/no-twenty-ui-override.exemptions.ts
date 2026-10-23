@@ -169,6 +169,12 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection.tsx',
+    reason:
+      'Dropdown.Section preserves the chart settings list height inside the side panel',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/ui/feedback/skeleton/components/SkeletonLine.tsx',
     reason: 'Forwards the caller className and style to Skeleton',
   },

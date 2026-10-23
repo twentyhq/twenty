@@ -19,6 +19,10 @@
   When trailing actions are visible: on hover and focus, or always.
 </ParamField>
 
+<ParamField body="active" type="boolean" default="false">
+  Marks the open or current item independently of selection and focus. Does not add accessible state or activate the item.
+</ParamField>
+
 <ParamField body="color" type="&quot;danger&quot; | &quot;neutral&quot;" default="neutral">
   Color of the text and icons. `danger` marks a destructive action.
 </ParamField>
@@ -27,9 +31,8 @@
   Supporting text, placed according to `descriptionPlacement`.
 </ParamField>
 
-<ParamField body="descriptionPlacement" type="&quot;end&quot; | &quot;inline&quot;" default="inline">
-  Where the description renders: inline after the content or at the end of
-  the row.
+<ParamField body="descriptionPlacement" type="&quot;below&quot; | &quot;end&quot; | &quot;inline&quot;" default="inline">
+  Places supporting content inline after the label, at the end, or below it with wrapping. Inline is the default.
 </ParamField>
 
 <ParamField body="disabled" type="boolean" default="false">
@@ -63,6 +66,10 @@
 
 <ParamField body="selected" type="boolean" default="false">
   Applies selected styling and the configured decorative indicator. Selection state and accessible semantics belong to the owner.
+</ParamField>
+
+<ParamField body="selectionAppearance" type="&quot;accent&quot; | &quot;default&quot;" default="default">
+  Selection styling independent of description placement. `default` preserves indicator-based styling; `accent` fills selected rows with the accent background.
 </ParamField>
 
 <ParamField body="shortcut" type="ShortcutDefinition">

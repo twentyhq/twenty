@@ -30,12 +30,14 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateValidatorService {
   validateFlatRowLevelPermissionPredicateCreation({
     flatEntityToValidate: flatPredicateToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
   >): FailedFlatEntityValidation<'rowLevelPermissionPredicate', 'create'> {
@@ -163,6 +165,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
+    } else {
+      validationResult.errors.push(
+        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+      );
     }
 
     return validationResult;
@@ -204,6 +210,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
   >): FailedFlatEntityValidation<'rowLevelPermissionPredicate', 'update'> {
@@ -374,6 +381,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
+    } else {
+      validationResult.errors.push(
+        ...getRoleNotEditableErrors({ flatRole: role, buildOptions }),
+      );
     }
 
     return validationResult;

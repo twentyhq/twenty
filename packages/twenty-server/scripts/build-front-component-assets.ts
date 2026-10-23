@@ -1,7 +1,6 @@
-import { mkdir, writeFile } from 'fs/promises';
+import { mkdir } from 'fs/promises';
 import { join, resolve } from 'path';
 import { build } from 'esbuild';
-import { buildFrontComponentSharedDependencies } from '../src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
 
 const buildAssets = async () => {
   const directory = resolve(
@@ -9,15 +8,6 @@ const buildAssets = async () => {
     '../src/engine/metadata-modules/ai/ai-front-component/generated',
   );
   await mkdir(directory, { recursive: true });
-  const vendor = await buildFrontComponentSharedDependencies();
-  await writeFile(join(directory, 'shared-dependencies.mjs'), vendor.source);
-  await writeFile(
-    join(directory, 'shared-dependencies.json'),
-    JSON.stringify({
-      checksum: vendor.checksum,
-      exports: Object.fromEntries(vendor.exportNamesBySpecifier),
-    }),
-  );
   await build({
     entryPoints: [
       resolve(
