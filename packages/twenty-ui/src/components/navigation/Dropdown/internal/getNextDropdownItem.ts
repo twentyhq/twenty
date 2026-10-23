@@ -34,10 +34,9 @@ export const getNextDropdownItem = ({
   const isSearchAfterItems =
     isDefined(search) &&
     isDefined(lastItem) &&
-    Boolean(
-      lastItem.compareDocumentPosition(search) &
-      Node.DOCUMENT_POSITION_FOLLOWING,
-    );
+    (lastItem.compareDocumentPosition(search) &
+      Node.DOCUMENT_POSITION_FOLLOWING) !==
+      0;
 
   if (key === 'ArrowDown' && currentIndex === lastIndex && isSearchAfterItems) {
     return search ?? undefined;

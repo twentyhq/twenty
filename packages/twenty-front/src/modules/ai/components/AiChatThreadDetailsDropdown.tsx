@@ -229,8 +229,8 @@ export const AiChatThreadDetailsDropdown = ({
               const activeElement = ownerDocument.activeElement;
               const isFocusStillInsidePicker =
                 activeElement === ownerDocument.body ||
-                recordPickerContentRef.current?.contains(activeElement) ===
-                  true;
+                (recordPickerContentRef.current?.contains(activeElement) ??
+                  false);
 
               return isFocusStillInsidePicker ? detailsTrigger : false;
             }}
