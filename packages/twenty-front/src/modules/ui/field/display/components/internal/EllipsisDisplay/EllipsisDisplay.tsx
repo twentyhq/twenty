@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 const styles = {
   ellipsis: css`
     height: 20px;
+    line-height: 20px;
     max-width: 100%;
     width: 100%;
   `,
