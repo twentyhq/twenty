@@ -178,6 +178,24 @@ $colors: (
   }
 }
 
+.button[data-color='inherit'] {
+  --tw-button-background: transparent;
+  --tw-button-border: transparent;
+  --tw-button-color: currentColor;
+  --tw-button-hover: rgb(0 0 0 / 10%);
+  --tw-button-active: rgb(0 0 0 / 20%);
+
+  &[data-variant='outline'] {
+    --tw-button-border: color-mix(in srgb, currentColor 25%, transparent);
+  }
+
+  &[data-variant='soft'] {
+    --tw-button-background: rgb(0 0 0 / 10%);
+    --tw-button-hover: rgb(0 0 0 / 20%);
+    --tw-button-active: rgb(0 0 0 / 30%);
+  }
+}
+
 .button[data-variant='link'] {
   --tw-button-background: transparent;
   --tw-button-border: transparent;

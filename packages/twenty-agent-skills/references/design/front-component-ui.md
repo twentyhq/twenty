@@ -76,7 +76,7 @@ const ActivitySummary = ({ onRefresh }: { onRefresh: () => void }) => {
 };
 ```
 
-Every `themeCssVariables` value is a CSS reference string. Do not perform arithmetic on it. Use numeric tokens from `useTheme()` when a component prop expects a number, such as an icon's `size`.
+Every `themeCssVariables` value is a CSS reference string. In front components, `useTheme()` also returns CSS references by default, including for tokens typed as numbers. Use these references in CSS styles, without arithmetic. Use an explicit numeric value when a component prop requires a number, such as an icon's `size`.
 
 Prefer component `size`, `variant`, and color props before overriding their styles. Keep custom spacing, radii, borders, and typography consistent with nearby Twenty UI controls. Avoid adding a heavy card frame or shadow when the host already provides the surface.
 

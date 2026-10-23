@@ -2,6 +2,10 @@
 
 All notable changes to this application are documented in this file.
 
+## 1.3.0
+
+- Lower enrichment prices to $0.15 per person match and $0.075 per company match.
+
 ## 1.2.0
 
 - Move the minimum match likelihoods for people and companies from server

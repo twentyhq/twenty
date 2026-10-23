@@ -59,3 +59,12 @@ export const IndependentAction: Story = {
     </div>
   ),
 };
+
+export const Multiline: Story = {
+  args: {
+    children: 'Duplicate document',
+    description: 'Create a copy with the same settings.',
+    descriptionPlacement: 'below',
+    active: true,
+  },
+};

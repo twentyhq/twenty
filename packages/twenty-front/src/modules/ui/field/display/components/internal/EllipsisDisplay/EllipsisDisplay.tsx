@@ -1,17 +1,15 @@
 import { css } from '@linaria/core';
 import { clsx } from 'clsx';
 import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
 const styles = {
   ellipsis: css`
-    & {
-      align-items: center;
-      display: flex;
-      height: 20px;
-      max-width: 100%;
-      width: 100%;
-    }
+    height: ${themeCssVariables.spacing[5]};
+    line-height: ${themeCssVariables.spacing[5]};
+    max-width: 100%;
+    width: 100%;
   `,
 };
 

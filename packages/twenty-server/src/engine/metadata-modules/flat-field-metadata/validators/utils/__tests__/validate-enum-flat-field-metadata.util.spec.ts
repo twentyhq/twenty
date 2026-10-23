@@ -52,6 +52,7 @@ const validateOptionColor = ({
     additionalCacheDataMaps: {
       featureFlagsMap:
         {} as WorkspaceMigrationBuilderAdditionalCacheDataMaps['featureFlagsMap'],
+      billingEntitlements: {},
     },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps:
       createEmptyAllFlatEntityMaps(),

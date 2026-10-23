@@ -1,0 +1,122 @@
+import { useApolloClient } from '@apollo/client/react';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { useLoadAgentChatThreadsByIds } from '@/ai/hooks/useLoadAgentChatThreadsByIds';
+import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
+import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { GetAgentChatChannelThreadIdsDocument } from '~/generated-metadata/graphql';
+
+const AGENT_CHAT_CHANNEL_THREADS_PAGE_SIZE = 30;
+
+export const useLoadAgentChatChannelThreads = () => {
+  const apolloClient = useApolloClient();
+  const store = useStore();
+  const { loadAgentChatThreadsByIds } = useLoadAgentChatThreadsByIds();
+
+  const loadAgentChatChannelThreads = useCallback(
+    async (mode: 'refresh' | 'fetch-more') => {
+      const channelView = store.get(agentChatShownChannelViewSelector.atom);
+
+      if (!isDefined(channelView)) {
+        return;
+      }
+
+      const viewKey = getAgentChatChannelViewKey(channelView);
+      const listBeforeRequest = store.get(agentChatChannelThreadListState.atom);
+      const isFetchMore = mode === 'fetch-more';
+
+      if (
+        isFetchMore &&
+        (listBeforeRequest?.viewKey !== viewKey ||
+          !listBeforeRequest.hasNextPage)
+      ) {
+        return;
+      }
+
+      const page = (
+        await apolloClient
+          .query({
+            query: GetAgentChatChannelThreadIdsDocument,
+            variables: {
+              channelId: channelView.channelId,
+              status: channelView.channelStatus,
+              assignment: channelView.assignment,
+              first: AGENT_CHAT_CHANNEL_THREADS_PAGE_SIZE,
+              after: isFetchMore ? listBeforeRequest?.endCursor : null,
+            },
+            fetchPolicy: 'network-only',
+          })
+          .catch(() => undefined)
+      )?.data?.agentChatChannelThreadIds;
+
+      if (!isDefined(page)) {
+        return;
+      }
+
+      // Chats already listed stay current through record events
+      const listedThreadIds = new Set(
+        store.get(agentChatThreadListState.atom)?.threadIds ?? [],
+      );
+
+      // The cursor only moves past chats that loaded, so none is skipped
+      const loadedThreads = await loadAgentChatThreadsByIds(
+        page.threadIds.filter((threadId) => !listedThreadIds.has(threadId)),
+      );
+
+      if (!isDefined(loadedThreads)) {
+        return;
+      }
+
+      const currentChannelView = store.get(
+        agentChatShownChannelViewSelector.atom,
+      );
+
+      // Another view or page may have replaced the list meanwhile
+      if (
+        (isFetchMore &&
+          store.get(agentChatChannelThreadListState.atom) !==
+            listBeforeRequest) ||
+        !isDefined(currentChannelView) ||
+        getAgentChatChannelViewKey(currentChannelView) !== viewKey
+      ) {
+        return;
+      }
+
+      const previousThreadIds = isFetchMore
+        ? (listBeforeRequest?.threadIds ?? [])
+        : [];
+      const lastPageThreadId = page.threadIds.at(-1);
+      const lastPageThread = isDefined(lastPageThreadId)
+        ? store.get(
+            agentChatThreadRecordFamilySelector.selectorFamily(
+              lastPageThreadId,
+            ),
+          )
+        : null;
+
+      store.set(agentChatChannelThreadListState.atom, {
+        viewKey,
+        threadIds: [
+          ...previousThreadIds,
+          ...page.threadIds.filter(
+            (threadId) => !previousThreadIds.includes(threadId),
+          ),
+        ],
+        hasNextPage: page.hasNextPage,
+        endCursor: page.endCursor ?? null,
+        lastLoadedActivityAt: isDefined(lastPageThread)
+          ? getAgentChatThreadLastActivityAt(lastPageThread)
+          : (listBeforeRequest?.lastLoadedActivityAt ?? null),
+      });
+    },
+    [apolloClient, loadAgentChatThreadsByIds, store],
+  );
+
+  return { loadAgentChatChannelThreads };
+};

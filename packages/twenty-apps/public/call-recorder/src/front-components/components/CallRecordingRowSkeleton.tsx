@@ -1,31 +1,28 @@
-import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useTranslate } from 'twenty-sdk/front-component';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { StyledCallRecordingRowLayout } from 'src/front-components/components/StyledCallRecordingRowLayout';
+import { StyledChipSkeleton } from 'src/front-components/components/StyledChipSkeleton';
 
-const pulse = keyframes`
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+const StyledRightContent = styled.span`
+  display: flex;
+  gap: ${() => themeCssVariables.spacing[2]};
 `;
 
-const StyledSkeletonBlock = styled.span<{ $width: string }>`
-  animation: ${pulse} 1.5s ease-in-out infinite;
-  background: ${() => themeCssVariables.background.transparent.light};
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  flex-shrink: 0;
-  height: ${() => themeCssVariables.spacing[4]};
-  width: ${({ $width }) => $width};
-`;
+export const CallRecordingRowSkeleton = () => {
+  const { t } = useTranslate();
 
-const StyledSkeletonSpacer = styled.span`
-  flex: 1;
-`;
-
-export const CallRecordingRowSkeleton = () => (
-  <StyledCallRecordingRowLayout aria-hidden>
-    <StyledSkeletonBlock $width="40%" />
-    <StyledSkeletonSpacer />
-    <StyledSkeletonBlock $width={themeCssVariables.spacing[20]} />
-  </StyledCallRecordingRowLayout>
-);
+  return (
+    <StyledCallRecordingRowLayout
+      aria-busy
+      aria-label={t('Loading call recordings')}
+    >
+      <StyledChipSkeleton $width={themeCssVariables.spacing[32]} />
+      <StyledRightContent>
+        <StyledChipSkeleton $width={themeCssVariables.spacing[11]} />
+        <StyledChipSkeleton $width={themeCssVariables.spacing[14]} />
+      </StyledRightContent>
+    </StyledCallRecordingRowLayout>
+  );
+};

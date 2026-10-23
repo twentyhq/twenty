@@ -113,3 +113,82 @@ export const CatalogDark: CatalogStory<Story, typeof Text> = {
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };
+
+const TEXT_SIZES = ['xxs', 'xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const;
+
+export const TypographyCatalog: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <Text style={{ display: 'grid', gap: 'var(--t-spacing-2)' }}>
+      {TEXT_SIZES.map((size) => (
+        <Text key={size} size={size} color="primary">
+          {size} text
+        </Text>
+      ))}
+      <Text size="md" weight="regular" color="primary">
+        Regular body text
+      </Text>
+      <Text size="md" weight="medium" color="secondary">
+        Medium secondary text
+      </Text>
+      <Text size="md" weight="semibold" color="primary">
+        Semibold body text
+      </Text>
+    </Text>
+  ),
+};
+
+export const Typography: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <Text
+      role="group"
+      aria-label="Typography examples"
+      size="lg"
+      weight="medium"
+      color="secondary"
+      style={{ display: 'grid', gap: 'var(--t-spacing-2)' }}
+    >
+      <Text>Inherited typography</Text>
+      <Text size="xs" weight="semibold" color="primary">
+        Caption typography
+      </Text>
+      <Text color="secondary" style={{ color: 'var(--t-font-color-primary)' }}>
+        Runtime color
+      </Text>
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const parent = canvas.getByRole('group', { name: 'Typography examples' });
+    const inherited = canvas.getByText('Inherited typography');
+    const caption = canvas.getByText('Caption typography');
+    const runtime = canvas.getByText('Runtime color');
+    const parentStyle = getComputedStyle(parent);
+    const inheritedStyle = getComputedStyle(inherited);
+    const captionStyle = getComputedStyle(caption);
+    const runtimeStyle = getComputedStyle(runtime);
+    const rootFontSize = Number.parseFloat(
+      getComputedStyle(canvasElement.ownerDocument.documentElement).fontSize,
+    );
+
+    for (const property of [
+      'fontSize',
+      'fontWeight',
+      'color',
+      'fontFamily',
+      'lineHeight',
+    ] as const) {
+      await expect(inheritedStyle[property]).toBe(parentStyle[property]);
+    }
+
+    await expect(Number.parseFloat(captionStyle.fontSize)).toBeCloseTo(
+      rootFontSize * 0.85,
+      1,
+    );
+    await expect(captionStyle.fontWeight).toBe('600');
+    await expect(runtimeStyle.color).toBe(
+      runtimeStyle.getPropertyValue('--t-font-color-primary').trim(),
+    );
+  },
+};

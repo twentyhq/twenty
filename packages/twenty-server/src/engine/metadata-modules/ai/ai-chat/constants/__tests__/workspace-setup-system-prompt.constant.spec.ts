@@ -99,16 +99,22 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
       'Then stop writing and make the ask_question call',
     );
     expect(prompt).toContain('leaving any other CRM to the free-text answer');
-    expect(prompt).toContain('follow the migration path below');
+    expect(prompt).toContain('never ask for files at this point');
+    expect(prompt).not.toContain('follow the migration path below');
   });
 
-  it('should request the CRM export in plain text so the upload composer stays available', () => {
+  it('should ask for files in plain text only once the user opts in, so the upload composer stays available', () => {
+    expect(prompt).toContain('continue as if they had chosen to start fresh');
+    expect(prompt).toContain('not that they have its exports at hand');
+    expect(prompt).toContain('uploading their exports first');
+    expect(prompt).toContain('never the recommended one');
+    expect(prompt).toContain(
+      'Ask for files only when they pick it or tell you they have files',
+    );
+    expect(prompt).toContain('one file is enough');
     expect(prompt).toContain('end that reply without calling ask_question');
     expect(prompt).toContain('cannot take attachments');
-    expect(prompt).toContain('upload all their CSV exports at once');
-    expect(prompt).toContain('as separate files');
-    expect(prompt).toContain('spreadsheet their CRM produces');
-    expect(prompt).toContain('continue as if they had chosen to start fresh');
+    expect(prompt).not.toContain('upload all their CSV exports at once');
   });
 
   it('should inspect uploaded exports through code_interpreter before proposing the model', () => {
@@ -282,7 +288,7 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
     expect(prompt).toContain(
       'ends in exactly one of two ways: ask_question calls, one per question, or the complete_workspace_setup call',
     );
-    expect(prompt).toContain('The only exception is the CSV upload request');
+    expect(prompt).toContain('The only exception is the file request');
     expect(prompt).toContain(
       'come after the text of that reply, never instead of it',
     );

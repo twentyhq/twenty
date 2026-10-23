@@ -504,6 +504,7 @@
                 "pages": [
                   "developers/self-host/capabilities/docker-compose",
                   "developers/self-host/capabilities/setup",
+                  "developers/self-host/capabilities/security",
                   "developers/self-host/capabilities/upgrade-guide",
                   "developers/self-host/capabilities/troubleshooting"
                 ]
@@ -629,6 +630,7 @@
                         "pages": [
                           "ui/components/data-display/avatar-group",
                           "ui/components/data-display/command-block",
+                          "ui/components/data-display/details-row",
                           "ui/components/data-display/json-tree",
                           "ui/components/data-display/metric-row",
                           "ui/components/data-display/stack-icon",
@@ -650,9 +652,11 @@
                           "ui/components/input/light-button",
                           "ui/components/input/icon-button",
                           "ui/components/input/light-icon-button",
+                          "ui/components/input/reaction-button",
                           "ui/components/input/country-select",
                           "ui/components/input/currency-picker",
                           "ui/components/input/phone-country-picker",
+                          "ui/components/input/form-field-row",
                           "ui/components/input/image-input",
                           "ui/components/input/search-input",
                           "ui/components/input/number-stepper",
@@ -672,8 +676,6 @@
                         "pages": [
                           "ui/components/navigation/list-item-button",
                           "ui/components/navigation/dropdown",
-                          "ui/components/navigation/menu-items",
-                          "ui/components/navigation/menu-picker",
                           "ui/components/navigation/tab-button"
                         ]
                       },

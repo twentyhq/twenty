@@ -10,6 +10,7 @@ import { isDefined, normalizeAllowedIframeOrigin } from 'twenty-shared/utils';
 
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES } from 'src/engine/core-modules/frontend/constants/document-content-security-policy-directives.constant';
 import { isFrontendDocumentRequest } from 'src/engine/core-modules/frontend/utils/is-frontend-document-request.util';
 import { renderFrontendHtml } from 'src/engine/core-modules/frontend/utils/render-frontend-html.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -109,7 +110,7 @@ export class FrontendService {
     response.setHeader('X-Frame-Options', 'SAMEORIGIN');
     response.setHeader(
       'Content-Security-Policy',
-      "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+      `frame-ancestors 'self'; ${DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES}`,
     );
 
     try {
@@ -141,7 +142,7 @@ export class FrontendService {
       if (allowedOrigins.length > 0) {
         response.setHeader(
           'Content-Security-Policy',
-          `frame-ancestors 'self' ${[...new Set(allowedOrigins)].join(' ')}; object-src 'none'; base-uri 'self'`,
+          `frame-ancestors 'self' ${[...new Set(allowedOrigins)].join(' ')}; ${DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES}`,
         );
         response.removeHeader('X-Frame-Options');
       }

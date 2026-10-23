@@ -1,8 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { TextArea, type TextAreaProps } from '@/ui/input/components/TextArea';
-import { expect, userEvent, within } from 'storybook/test';
+import { TextArea } from '@/ui/input/components/TextArea';
+import { type TextAreaProps } from '@/ui/input/types/TextAreaProps';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = TextAreaProps;
@@ -60,6 +61,22 @@ export const Transparent: Story = {
   args: {
     variant: 'transparent',
     value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  },
+  play: async ({ canvasElement }) => {
+    const textarea = within(canvasElement).getByRole('textbox');
+
+    await expect(textarea).toHaveAttribute('data-variant', 'plain');
+    await expect(getComputedStyle(textarea).borderWidth).toBe('0px');
+    await expect(getComputedStyle(textarea).padding).toBe('0px');
+    const initialHeight = textarea.clientHeight;
+    await userEvent.type(
+      textarea,
+      '{enter}Second{enter}Third{enter}Fourth{enter}Fifth{enter}Sixth',
+    );
+    await waitFor(() =>
+      expect(textarea.scrollHeight).toBeGreaterThan(textarea.clientHeight),
+    );
+    await expect(textarea.clientHeight).toBeGreaterThanOrEqual(initialHeight);
   },
 };
 

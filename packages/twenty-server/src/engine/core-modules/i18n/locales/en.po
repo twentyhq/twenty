@@ -3637,6 +3637,17 @@ msgstr "Custom domains are disabled for this workspace."
 msgid "Custom object is missing a label identifier field."
 msgstr "Custom object is missing a label identifier field."
 
+#. js-lingui-id: iHlVsm
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+msgid "Custom roles are part of the Organization plan."
+msgstr "Custom roles are part of the Organization plan."
+
+#. js-lingui-id: bO/Qn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
+msgid "Custom roles are part of the Organization plan. Upgrade to assign \"{roleLabel}\"."
+msgstr "Custom roles are part of the Organization plan. Upgrade to assign \"{roleLabel}\"."
+
 #. js-lingui-id: 7VVv8j
 #: src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.exception.ts
 msgid "Custom timeline activity type cannot be reset to default."
@@ -6499,6 +6510,16 @@ msgstr "Invalid filter parameter."
 msgid "Invalid filter value"
 msgstr "Invalid filter value"
 
+#. js-lingui-id: ys8v/n
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{fieldName}\" and \"{referencedFieldName}\" cannot be compared"
+msgstr "Invalid filter: \"{fieldName}\" and \"{referencedFieldName}\" cannot be compared"
+
+#. js-lingui-id: 8Ng76x
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" expects a field name"
+msgstr "Invalid filter: \"{operator}\" expects a field name"
+
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires a String"
@@ -6509,10 +6530,26 @@ msgstr "Invalid filter: \"{operator}\" operator requires a String"
 msgid "Invalid filter: \"{operator}\" operator requires an array"
 msgstr "Invalid filter: \"{operator}\" operator requires an array"
 
+#. js-lingui-id: xxcw3g
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
+msgstr "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
+
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "Invalid filter: \"isEmptyArray\" operator requires a boolean"
+
+#. js-lingui-id: S8iHKo
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: {nameSingular} object doesn't have any \"{referencedFieldName}\" field."
+msgstr "Invalid filter: {nameSingular} object doesn't have any \"{referencedFieldName}\" field."
+
+#. js-lingui-id: OyCWdj
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: composite fields cannot be compared with another field"
+msgstr "Invalid filter: composite fields cannot be compared with another field"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
@@ -6528,6 +6565,11 @@ msgstr "Invalid filter: filter value must be an object"
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Invalid filter: filtering by relation field \"{key}\" is not supported"
+
+#. js-lingui-id: wi8qrB
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: the field to compare with was not found"
+msgstr "Invalid filter: the field to compare with was not found"
 
 #. js-lingui-id: bNNDED
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
@@ -10848,6 +10890,11 @@ msgstr "Role \"{roleLabel}\" cannot be assigned to API keys"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
 msgstr "Role \"{roleLabel}\" cannot be assigned to users"
+
+#. js-lingui-id: T/H/3z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
+msgstr "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
