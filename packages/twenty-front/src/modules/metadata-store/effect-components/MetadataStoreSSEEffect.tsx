@@ -30,7 +30,6 @@ export const MetadataStoreSSEEffect = () => {
     useRemoveObjectMetadataItemFromDraft();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
-  // Batches of one migration can arrive in any order; resync if the missing ones never come
   const resyncIfStillInconsistent = useDebouncedCallback(() => {
     if (!applyChanges().isPendingStateConsistent) {
       invalidateMetadataStore();
@@ -101,7 +100,6 @@ export const MetadataStoreSSEEffect = () => {
         }
       }
 
-      // All events of one SSE message are dispatched synchronously, so they are applied together
       queueMicrotask(applyBufferedChanges);
     },
   });
