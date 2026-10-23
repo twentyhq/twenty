@@ -2,8 +2,8 @@ import { useMutation } from '@apollo/client/react';
 import { DeleteOneObjectMetadataItemDocument } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useCleanMorphRelationsTargetingObjectMetadataId } from '@/metadata-store/hooks/useCleanMorphRelationsTargetingObjectMetadataId';
 import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
+import { useRemoveObjectMetadataItemFromDraft } from '@/metadata-store/hooks/useRemoveObjectMetadataItemFromDraft';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -18,10 +18,10 @@ export const useDeleteOneObjectMetadataItem = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueToast } = useToast();
-  const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { applyChanges } = useUpdateMetadataStoreDraft();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
-  const { cleanMorphRelations } =
-    useCleanMorphRelationsTargetingObjectMetadataId();
+  const { removeObjectMetadataItemFromDraft } =
+    useRemoveObjectMetadataItemFromDraft();
 
   const deleteOneObjectMetadataItem = async (
     idToDelete: string,
@@ -37,8 +37,7 @@ export const useDeleteOneObjectMetadataItem = () => {
         },
       });
 
-      removeFromDraft({ key: 'objectMetadataItems', itemIds: [idToDelete] });
-      cleanMorphRelations(idToDelete);
+      removeObjectMetadataItemFromDraft({ objectMetadataId: idToDelete });
       applyChanges();
 
       invalidateMetadataStore();

@@ -6,6 +6,10 @@ import {
   type MetadataStoreItem,
 } from '@/metadata-store/states/metadataStoreState';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
+import {
+  isMetadataStoreSnapshotConsistent,
+  type MetadataStoreSnapshot,
+} from '@/metadata-store/utils/isMetadataStoreSnapshotConsistent';
 import { useStore, type createStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,17 +23,27 @@ const EMPTY_ENTRY: MetadataStoreItem = {
   status: 'empty',
 };
 
-const areViewsConsistentWithObjects = (
-  viewsDraft: object[],
-  objectsCurrent: object[],
-): boolean => {
-  const objectIds = new Set(
-    objectsCurrent.map((item) => (item as { id: string }).id),
-  );
+const getPendingOrCurrentItems = (entry: MetadataStoreItem) =>
+  entry.status === 'draft-pending' ? entry.draft : entry.current;
 
-  return viewsDraft.every((view) =>
-    objectIds.has((view as { objectMetadataId: string }).objectMetadataId),
-  );
+const isPendingStoreStateConsistent = (store: JotaiStore) => {
+  const getItems = (metadataEntityKey: MetadataEntityKey) =>
+    getPendingOrCurrentItems(
+      store.get(metadataStoreState.atomFamily(metadataEntityKey)),
+    );
+
+  return isMetadataStoreSnapshotConsistent({
+    objectMetadataItems: getItems(
+      'objectMetadataItems',
+    ) as MetadataStoreSnapshot['objectMetadataItems'],
+    fieldMetadataItems: getItems(
+      'fieldMetadataItems',
+    ) as MetadataStoreSnapshot['fieldMetadataItems'],
+    indexMetadataItems: getItems(
+      'indexMetadataItems',
+    ) as MetadataStoreSnapshot['indexMetadataItems'],
+    views: getItems('views') as MetadataStoreSnapshot['views'],
+  });
 };
 
 export const resetMetadataStore = (store: JotaiStore) => {
@@ -88,14 +102,18 @@ export const useUpdateMetadataStoreDraft = () => {
 
   const applyChanges = useCallback((): {
     hasPersistedAnyMetadataEntity: boolean;
+    isPendingStateConsistent: boolean;
   } => {
+    if (!isPendingStoreStateConsistent(store)) {
+      return {
+        hasPersistedAnyMetadataEntity: false,
+        isPendingStateConsistent: false,
+      };
+    }
+
     let hasPersistedAnyMetadataEntity = false;
 
     for (const metadataEntityKey of ALL_METADATA_ENTITY_KEYS) {
-      if (metadataEntityKey === 'views') {
-        continue;
-      }
-
       const metadataStoreEntityEntry = store.get(
         metadataStoreState.atomFamily(metadataEntityKey),
       );
@@ -106,22 +124,7 @@ export const useUpdateMetadataStoreDraft = () => {
       }
     }
 
-    const viewsEntry = store.get(metadataStoreState.atomFamily('views'));
-
-    if (viewsEntry.status === 'draft-pending') {
-      const objectsEntry = store.get(
-        metadataStoreState.atomFamily('objectMetadataItems'),
-      );
-
-      if (
-        areViewsConsistentWithObjects(viewsEntry.draft, objectsEntry.current)
-      ) {
-        changeMetadataEntityAsUpToDate(store, 'views');
-        hasPersistedAnyMetadataEntity = true;
-      }
-    }
-
-    return { hasPersistedAnyMetadataEntity };
+    return { hasPersistedAnyMetadataEntity, isPendingStateConsistent: true };
   }, [store]);
 
   const addToDraft = useCallback(

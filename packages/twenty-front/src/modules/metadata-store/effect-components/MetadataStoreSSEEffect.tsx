@@ -1,5 +1,7 @@
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
-import { useCleanMorphRelationsTargetingObjectMetadataId } from '@/metadata-store/hooks/useCleanMorphRelationsTargetingObjectMetadataId';
+import { INCONSISTENT_METADATA_STORE_RESYNC_DELAY_MS } from '@/metadata-store/constants/InconsistentMetadataStoreResyncDelayMs';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
+import { useRemoveObjectMetadataItemFromDraft } from '@/metadata-store/hooks/useRemoveObjectMetadataItemFromDraft';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataEntityKey } from '@/metadata-store/states/metadataStoreState';
 import { type FlatPageLayoutWidget } from '@/metadata-store/types/FlatPageLayoutWidget';
@@ -7,6 +9,7 @@ import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntit
 import { addTypenamesToFlatPageLayoutWidget } from '@/metadata-store/utils/addTypenamesToFlatPageLayoutWidget';
 import { mapAllMetadataNameToEntityKey } from '@/metadata-store/utils/mapAllMetadataNameToEntityKey';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 type AnyMetadataEntity = MetadataEntityTypeMap[MetadataEntityKey];
 
@@ -23,8 +26,25 @@ const toMetadataStoreItem = (
 export const MetadataStoreSSEEffect = () => {
   const { addToDraft, removeFromDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
-  const { cleanMorphRelations } =
-    useCleanMorphRelationsTargetingObjectMetadataId();
+  const { removeObjectMetadataItemFromDraft } =
+    useRemoveObjectMetadataItemFromDraft();
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
+
+  // Batches of one migration can arrive in any order; resync if the missing ones never come
+  const resyncIfStillInconsistent = useDebouncedCallback(() => {
+    if (!applyChanges().isPendingStateConsistent) {
+      invalidateMetadataStore();
+    }
+  }, INCONSISTENT_METADATA_STORE_RESYNC_DELAY_MS);
+
+  const applyBufferedChanges = () => {
+    if (applyChanges().isPendingStateConsistent) {
+      resyncIfStillInconsistent.cancel();
+      return;
+    }
+
+    resyncIfStillInconsistent();
+  };
 
   useListenToMetadataOperationBrowserEvent({
     onMetadataOperationBrowserEvent: (eventDetail) => {
@@ -64,20 +84,25 @@ export const MetadataStoreSSEEffect = () => {
           break;
         }
         case 'delete': {
+          if (entityKey === 'objectMetadataItems') {
+            removeObjectMetadataItemFromDraft({
+              objectMetadataId: eventDetail.operation.deletedRecordId,
+              collectionHash,
+            });
+            break;
+          }
+
           removeFromDraft({
             key: entityKey,
             itemIds: [eventDetail.operation.deletedRecordId],
             collectionHash,
           });
-
-          if (entityKey === 'objectMetadataItems') {
-            cleanMorphRelations(eventDetail.operation.deletedRecordId);
-          }
           break;
         }
       }
 
-      applyChanges();
+      // All events of one SSE message are dispatched synchronously, so they are applied together
+      queueMicrotask(applyBufferedChanges);
     },
   });
 
