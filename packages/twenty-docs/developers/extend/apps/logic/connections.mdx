@@ -93,7 +93,7 @@ Key points:
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
 - Until both `serverVariables` are filled in, the app's General tab shows a "needs server admin" hint and the "Add connection" button is disabled.
-- `type: 'oauth'` is the only supported value today. The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside `oauth`.
+- `type` is `'oauth'` (with an `oauth` block) or `'custom'` (with a `custom` block, see "Custom connection flows"). The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside these.
 
 The OAuth callback URL your provider needs to whitelist is:
 
