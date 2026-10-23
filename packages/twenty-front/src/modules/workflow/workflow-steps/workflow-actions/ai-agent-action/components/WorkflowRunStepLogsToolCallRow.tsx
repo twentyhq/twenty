@@ -8,12 +8,8 @@ import { getToolDisplayMessage } from '@/ai/utils/tool-display/getToolDisplayMes
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components/data-display';
-import {
-  IconCheck,
-  IconChevronDown,
-  IconChevronUp,
-  IconCircleX,
-} from 'twenty-ui/icon';
+import { IconCheck, IconChevronDown, IconCircleX } from 'twenty-ui/icon';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -27,7 +23,7 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledToggleButton = styled.button<{ isExpandable: boolean }>`
+const StyledToggleRow = styled.div<{ isExpandable: boolean }>`
   align-items: center;
   background: none;
   border: none;
@@ -43,7 +39,10 @@ const StyledToggleButton = styled.button<{ isExpandable: boolean }>`
   width: 100%;
 
   &:hover {
-    color: ${themeCssVariables.font.color.primary};
+    color: ${({ isExpandable }) =>
+      isExpandable
+        ? themeCssVariables.font.color.primary
+        : themeCssVariables.font.color.tertiary};
   }
 `;
 
@@ -75,13 +74,13 @@ const StyledDisplayMessage = styled.span`
   white-space: nowrap;
 `;
 
-const StyledToolBadge = styled.span`
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.xs};
-  color: ${themeCssVariables.font.color.light};
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.xs};
-  padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
+const StyledChevron = styled.span`
+  display: flex;
+  transform: rotate(0deg);
+
+  [data-panel-open] & {
+    transform: rotate(180deg);
+  }
 `;
 
 const StyledContentContainer = styled.div`
@@ -145,83 +144,92 @@ export const WorkflowRunStepLogsToolCallRow = ({
     output: toolCall.output,
   });
 
+  const rowContent = (
+    <>
+      <StyledLeftContent>
+        <StyledIconContainer>
+          <ToolIcon size={theme.icon.size.sm} />
+        </StyledIconContainer>
+        <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
+      </StyledLeftContent>
+      <StyledRightContent>
+        <Badge size="sm">{toolCall.toolName}</Badge>
+        <StyledIconContainer style={{ color: statusColor }}>
+          <StatusIcon size={theme.icon.size.sm} />
+        </StyledIconContainer>
+        {isExpandable && (
+          <StyledChevron>
+            <IconChevronDown size={theme.icon.size.sm} />
+          </StyledChevron>
+        )}
+      </StyledRightContent>
+    </>
+  );
+
   return (
-    <StyledContainer>
-      <StyledToggleButton
-        type="button"
-        isExpandable={isExpandable}
-        onClick={() => isExpandable && setIsExpanded(!isExpanded)}
-      >
-        <StyledLeftContent>
-          <StyledIconContainer>
-            <ToolIcon size={theme.icon.size.sm} />
-          </StyledIconContainer>
-          <StyledDisplayMessage>{displayMessage}</StyledDisplayMessage>
-        </StyledLeftContent>
-        <StyledRightContent>
-          <StyledToolBadge>{toolCall.toolName}</StyledToolBadge>
-          <StyledIconContainer style={{ color: statusColor }}>
-            <StatusIcon size={theme.icon.size.sm} />
-          </StyledIconContainer>
-          {isExpandable &&
-            (isExpanded ? (
-              <IconChevronUp size={theme.icon.size.sm} />
-            ) : (
-              <IconChevronDown size={theme.icon.size.sm} />
-            ))}
-        </StyledRightContent>
-      </StyledToggleButton>
+    <Collapsible.Root
+      open={isExpanded}
+      onOpenChange={setIsExpanded}
+      render={<StyledContainer />}
+    >
+      {isExpandable ? (
+        <Collapsible.Trigger
+          render={<StyledToggleRow as="button" isExpandable />}
+        >
+          {rowContent}
+        </Collapsible.Trigger>
+      ) : (
+        <StyledToggleRow isExpandable={false}>{rowContent}</StyledToggleRow>
+      )}
 
       {isExpandable && (
-        <Collapsible.Root open={isExpanded}>
-          <Collapsible.Panel>
-            <StyledContentContainer>
-              {hasError && isDefined(toolCall.errorMessage) ? (
-                <StyledErrorMessage>{toolCall.errorMessage}</StyledErrorMessage>
-              ) : (
-                <Tabs.Root
-                  value={activeTab}
-                  onValueChange={(value) => {
-                    if (value !== 'output' && value !== 'input') {
-                      return;
-                    }
-                    setActiveTab(value);
-                  }}
+        <Collapsible.Panel>
+          <StyledContentContainer>
+            {hasError && isDefined(toolCall.errorMessage) ? (
+              <StyledErrorMessage>{toolCall.errorMessage}</StyledErrorMessage>
+            ) : (
+              <Tabs.Root
+                value={activeTab}
+                onValueChange={(value) => {
+                  if (value !== 'output' && value !== 'input') {
+                    return;
+                  }
+                  setActiveTab(value);
+                }}
+              >
+                <Tabs.List
+                  aria-label={t`Tool call details`}
+                  render={<StyledTabContainer />}
                 >
-                  <Tabs.List
-                    aria-label={t`Tool call details`}
-                    render={<StyledTabContainer />}
-                  >
-                    <Tabs.Tab value="output" size="compact">
-                      {t`Output`}
-                    </Tabs.Tab>
-                    <Tabs.Tab value="input" size="compact">
-                      {t`Input`}
-                    </Tabs.Tab>
-                    <Tabs.Indicator />
-                  </Tabs.List>
-                  {tabPanels.map(({ value, content }) => (
-                    <Tabs.Panel key={value} value={value}>
-                      <StyledJsonTreeContainer>
-                        <JsonTree
-                          value={content as JsonValue}
-                          shouldExpandNodeInitially={() => false}
-                          emptyArrayLabel={t`Empty Array`}
-                          emptyObjectLabel={t`Empty Object`}
-                          emptyStringLabel={t`[empty string]`}
-                          arrowButtonCollapsedLabel={t`Expand`}
-                          arrowButtonExpandedLabel={t`Collapse`}
-                          onNodeValueClick={copyToClipboard}
-                        />
-                      </StyledJsonTreeContainer>
-                    </Tabs.Panel>
-                  ))}
-                </Tabs.Root>
-              )}
-            </StyledContentContainer>
-          </Collapsible.Panel>
-        </Collapsible.Root>
+                  <Tabs.Tab value="output" size="compact">
+                    {t`Output`}
+                  </Tabs.Tab>
+                  <Tabs.Tab value="input" size="compact">
+                    {t`Input`}
+                  </Tabs.Tab>
+                  <Tabs.Indicator />
+                </Tabs.List>
+                {tabPanels.map(({ value, content }) => (
+                  <Tabs.Panel key={value} value={value}>
+                    <StyledJsonTreeContainer>
+                      <JsonTree
+                        value={content as JsonValue}
+                        shouldExpandNodeInitially={() => false}
+                        emptyArrayLabel={t`Empty Array`}
+                        emptyObjectLabel={t`Empty Object`}
+                        emptyStringLabel={t`[empty string]`}
+                        arrowButtonCollapsedLabel={t`Expand`}
+                        arrowButtonExpandedLabel={t`Collapse`}
+                        onNodeValueClick={copyToClipboard}
+                      />
+                    </StyledJsonTreeContainer>
+                  </Tabs.Panel>
+                ))}
+              </Tabs.Root>
+            )}
+          </StyledContentContainer>
+        </Collapsible.Panel>
       )}
-    </StyledContainer>
+    </Collapsible.Root>
   );
 };

@@ -268,6 +268,7 @@ export class MessageCampaignService {
     const sendRefusal = await this.emailBillingService.findEmailSendRefusal({
       workspaceId,
       spenders: { userWorkspaceId },
+      emailCount: sendableRecipients.length,
     });
 
     if (sendableRecipients.length > 0 && isDefined(sendRefusal)) {

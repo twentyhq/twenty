@@ -16,6 +16,9 @@ export class BillingPlanDTO {
   @Field(() => Boolean)
   isSellable: boolean;
 
+  @Field(() => Boolean)
+  isCheckoutDefault: boolean;
+
   @Field(() => [BillingPlanKey])
   upgradePlanKeys: BillingPlanKey[];
 

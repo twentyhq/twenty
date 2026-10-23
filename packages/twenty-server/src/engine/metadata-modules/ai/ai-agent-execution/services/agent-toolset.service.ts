@@ -21,7 +21,7 @@ import {
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/tools/propose-tool-call.tool';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
@@ -81,12 +81,6 @@ type RegistryToolset = {
   isToolAllowed: (toolName: string) => boolean;
 };
 
-const buildUnavailableToolOutput = (toolName: string): ToolOutput => ({
-  success: false,
-  message: `Tool "${toolName}" is not available`,
-  error: `Tool "${toolName}" is not available to this agent.`,
-});
-
 @Injectable()
 export class AgentToolsetService {
   constructor(
@@ -126,7 +120,7 @@ export class AgentToolsetService {
         executeTool: async ({ toolName, args }) =>
           isToolAllowed(toolName)
             ? this.toolRegistry.resolveAndExecute(toolName, args, toolContext)
-            : buildUnavailableToolOutput(toolName),
+            : buildToolNotAvailableOutput(toolName),
       });
 
     const pausingTools: ToolSet = {
@@ -257,7 +251,7 @@ export class AgentToolsetService {
           },
           {
             categories: [...registryAccess.categories],
-            excludeTools: [...registryAccess.excludedToolNames],
+            excludeTools: new Set(registryAccess.excludedToolNames),
           },
         );
         // the context lacks the explicit grants the tools were built with, so calls stay within them

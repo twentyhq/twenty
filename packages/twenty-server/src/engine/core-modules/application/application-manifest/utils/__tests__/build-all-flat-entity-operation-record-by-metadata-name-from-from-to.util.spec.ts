@@ -12,6 +12,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 
@@ -117,6 +118,8 @@ const NAVIGATION_MENU_ITEM: FlatNavigationMenuItem = {
   folderUniversalIdentifier: null,
   pageLayoutId: null,
   pageLayoutUniversalIdentifier: null,
+  agentChatChannelId: null,
+  agentChatChannelUniversalIdentifier: null,
   position: 0,
 };
 
@@ -157,6 +160,23 @@ const withRoleTarget =
     flatRoleTargetMaps: addFlatEntityToFlatEntityMapsOrThrow({
       flatEntity: flatRoleTarget,
       flatEntityMaps: allFlatEntityMaps.flatRoleTargetMaps,
+    }),
+  });
+
+const ROLE = {
+  ...SYNCABLE,
+  id: 'role-id',
+  universalIdentifier: 'role-universal-identifier',
+  label: 'App role',
+  isEditable: true,
+} as FlatRole;
+
+const withRole =
+  (flatRole: FlatRole) => (allFlatEntityMaps: AllFlatEntityMaps) => ({
+    ...allFlatEntityMaps,
+    flatRoleMaps: addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: flatRole,
+      flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
     }),
   });
 
@@ -216,6 +236,20 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
 
     expect(
       result.roleTarget?.flatEntityToDelete?.[ROLE_TARGET.universalIdentifier],
+    ).toBeDefined();
+  });
+
+  it('does not delete a non-editable role the manifest cannot express', () => {
+    const result = inferDeletionOf(withRole({ ...ROLE, isEditable: false }));
+
+    expect(result.role?.flatEntityToDelete).toBeUndefined();
+  });
+
+  it('still deletes an editable role', () => {
+    const result = inferDeletionOf(withRole(ROLE));
+
+    expect(
+      result.role?.flatEntityToDelete?.[ROLE.universalIdentifier],
     ).toBeDefined();
   });
 

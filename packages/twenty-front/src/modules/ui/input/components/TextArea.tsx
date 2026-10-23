@@ -1,45 +1,18 @@
-import { css, cx } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type FocusEventHandler } from 'react';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
+import { type TextAreaProps } from '@/ui/input/types/TextAreaProps';
 import { isDefined } from 'twenty-shared/utils';
 import { Field, Textarea } from 'twenty-ui/primitives/input';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-
-export type TextAreaProps = {
-  textAreaId: string;
-  label?: string;
-  disabled?: boolean;
-  height?: number;
-  minRows?: number;
-  maxRows?: number;
-  onChange?: (value: string) => void;
-  placeholder?: string;
-  value?: string;
-  className?: string;
-  onFocus?: () => void;
-  onBlur?: () => void;
-  readOnly?: boolean;
-  variant?: FormFieldInputVariant;
-};
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-`;
-
-const transparentTextareaClassName = css`
-  background-color: transparent;
-  border: none;
-  border-radius: 0;
-  line-height: inherit;
-  overflow: hidden;
-  padding: 0;
 `;
 
 export const TextArea = ({
@@ -93,7 +66,8 @@ export const TextArea = ({
       <Textarea
         autoResize
         rows={computedMinRows}
-        maxRows={isTransparent ? undefined : maxRows}
+        maxRows={maxRows}
+        variant={isTransparent ? 'plain' : 'default'}
         placeholder={placeholder}
         value={value}
         onChange={(event) =>
@@ -103,11 +77,9 @@ export const TextArea = ({
         onBlur={handleBlur}
         disabled={disabled}
         readOnly={readOnly}
-        className={cx(className, isTransparent && transparentTextareaClassName)}
+        className={className}
         style={{
           height,
-          maxBlockSize:
-            isTransparent && isDefined(maxRows) ? `${maxRows}lh` : undefined,
         }}
       />
     </Field.Root>

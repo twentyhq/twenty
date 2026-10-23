@@ -12,6 +12,11 @@ import {
   type TrackEventProperties,
 } from 'src/engine/core-modules/event-logs/emit/events.type';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
+import { type ApplicationLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/application-log-entry.interface';
+import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
+import { type ApplicationMetricEvent } from 'src/engine/core-modules/event-logs/producers/application-metric-event/application-metric-event.type';
+import { buildApplicationMetricEventEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-metric-event/build-application-metric-event-envelopes';
+import { toApplicationMetricEvent } from 'src/engine/core-modules/event-logs/producers/application-metric-event/to-application-metric-event';
 import {
   type EventContextFields,
   type WorkspaceEventEnvelope,
@@ -35,6 +40,39 @@ export class EventLogEmitterService {
     }
 
     await this.workspaceEventSinkService.ingest(events);
+  }
+
+  async recordApplicationLogs(entries: ApplicationLogEntry[]): Promise<void> {
+    await this.dispatchOrLogError(() => buildApplicationLogEnvelopes(entries));
+  }
+
+  async recordApplicationMetricEvents(
+    events: ApplicationMetricEvent[],
+  ): Promise<void> {
+    await this.dispatchOrLogError(() =>
+      buildApplicationMetricEventEnvelopes(events),
+    );
+  }
+
+  async recordApplicationPlatformEvents(
+    entries: ApplicationLogEntry[],
+  ): Promise<void> {
+    await this.dispatchOrLogError(() => [
+      ...buildApplicationLogEnvelopes(entries),
+      ...buildApplicationMetricEventEnvelopes(
+        entries.map(toApplicationMetricEvent),
+      ),
+    ]);
+  }
+
+  private async dispatchOrLogError(
+    buildEnvelopes: () => WorkspaceEventEnvelope[],
+  ): Promise<void> {
+    try {
+      await this.dispatch(buildEnvelopes());
+    } catch (error) {
+      this.logger.error('Failed to record application events', error);
+    }
   }
 
   createContext(context?: EventContextFields) {

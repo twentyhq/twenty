@@ -9,10 +9,12 @@ export const applyEventTargetProperties = ({
   serializedEvent,
   target,
   includesFormControlState,
+  includesScrollState,
 }: {
   serializedEvent: SerializedEventData;
   target: unknown;
   includesFormControlState: boolean;
+  includesScrollState: boolean;
 }): void => {
   if (!isPlainObject(target)) {
     return;
@@ -22,6 +24,9 @@ export const applyEventTargetProperties = ({
     applyFormControlTargetProperties({ serializedEvent, target });
   }
 
-  applyScrollTargetProperties({ serializedEvent, target });
+  if (includesScrollState) {
+    applyScrollTargetProperties({ serializedEvent, target });
+  }
+
   applyMediaTargetProperties({ serializedEvent, target });
 };

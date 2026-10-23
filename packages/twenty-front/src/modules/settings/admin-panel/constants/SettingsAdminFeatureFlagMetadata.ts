@@ -36,10 +36,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record creation form`,
     description: msg`Use a dedicated form when creating records, and enable validation rules.`,
   },
-  [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
-    label: msg`Logs console`,
-    description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
-  },
   [FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED]: {
     label: msg`Share calendar events across channels`,
     description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
@@ -51,5 +47,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
     label: msg`App preferences`,
     description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
+  },
+  [FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED]: {
+    label: msg`App monitoring`,
+    description: msg`Show app owners and instance admins the health of an app across every workspace that installed it.`,
   },
 };

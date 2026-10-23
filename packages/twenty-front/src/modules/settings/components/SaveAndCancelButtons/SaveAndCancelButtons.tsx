@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import type { IconComponent } from 'twenty-ui/icon';
+import { type ButtonColor } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CancelButton } from './CancelButton';
@@ -17,7 +18,7 @@ type SaveAndCancelButtonsProps = {
   onCancel?: () => void;
   isSaveDisabled?: boolean;
   isCancelDisabled?: boolean;
-  inverted?: boolean;
+  color?: ButtonColor;
   saveIcon?: IconComponent;
 };
 
@@ -27,7 +28,7 @@ export const SaveAndCancelButtons = ({
   onCancel,
   isSaveDisabled,
   isCancelDisabled,
-  inverted = false,
+  color,
   saveIcon,
 }: SaveAndCancelButtonsProps) => {
   return (
@@ -35,13 +36,13 @@ export const SaveAndCancelButtons = ({
       <CancelButton
         onCancel={onCancel}
         disabled={isCancelDisabled}
-        inverted={inverted}
+        color={color}
       />
       <SaveButton
         onSave={onSave}
         disabled={isSaveDisabled}
         isLoading={isLoading}
-        inverted={inverted}
+        color={color}
         saveIcon={saveIcon}
       />
     </StyledContainer>

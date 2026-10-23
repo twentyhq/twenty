@@ -45,8 +45,8 @@ belongs to, so nothing is copied onto the recording.
 - **Call participants** is added to the Home tab of call recording pages. It
   shows the meeting's attendees.
   People in your CRM open their record when clicked; workspace members are
-  shown by name. Attendees that match no one are hidden unless the
-  `CALL_RECORDER_SHOW_UNMATCHED_ATTENDEES` app variable is `true`.
+  shown by name. Attendees that match no one are shown by name, or by email
+  when the invite has no name.
 - **Call recordings** lists the 20 most recent recordings of meetings linked
   to a person, company or opportunity. To show it, edit that record page's
   layout and add the widget from the layout editor.

@@ -14,7 +14,6 @@ import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
@@ -33,8 +32,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const dropdownId = getAdvancedFilterAddFilterRuleSelectDropdownId(
     recordFilterGroup.id,
   );
-
-  const { currentView } = useGetCurrentViewOnly();
 
   const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
 
@@ -97,10 +94,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       throw new Error(
         doNotTranslate('Missing default field metadata item for filter'),
       );
-    }
-
-    if (!isDefined(currentView)) {
-      throw new Error(doNotTranslate('Missing view'));
     }
 
     const newRecordFilterGroupId = v4();

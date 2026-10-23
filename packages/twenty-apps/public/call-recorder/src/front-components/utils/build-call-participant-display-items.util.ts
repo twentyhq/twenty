@@ -137,11 +137,9 @@ const compareDisplayItems = (
 export const buildCallParticipantDisplayItems = ({
   participants,
   areRelationsLoaded,
-  showUnmatchedAttendees,
 }: {
   participants: CallParticipantNode[];
   areRelationsLoaded: boolean;
-  showUnmatchedAttendees: boolean;
 }): BuildCallParticipantDisplayItemsResult => {
   const displayItemsByKey = new Map<string, CallParticipantDisplayItem>();
 
@@ -149,10 +147,6 @@ export const buildCallParticipantDisplayItems = ({
     const displayItem = toDisplayItem({ participant, areRelationsLoaded });
 
     if (isUndefined(displayItem)) {
-      continue;
-    }
-
-    if (displayItem.kind === 'unmatched' && !showUnmatchedAttendees) {
       continue;
     }
 

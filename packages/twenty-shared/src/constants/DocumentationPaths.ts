@@ -80,6 +80,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/workflows',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI:
     '/developers/extend/apps/operations/cli',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_MONITORING:
+    '/developers/extend/apps/operations/monitoring',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
     '/developers/extend/apps/operations/overview',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_PUBLISHING:
@@ -109,6 +111,8 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_INTRODUCTION: '/developers/introduction',
   DEVELOPERS_SELF_HOST_CAPABILITIES_DOCKER_COMPOSE:
     '/developers/self-host/capabilities/docker-compose',
+  DEVELOPERS_SELF_HOST_CAPABILITIES_SECURITY:
+    '/developers/self-host/capabilities/security',
   DEVELOPERS_SELF_HOST_CAPABILITIES_SETUP:
     '/developers/self-host/capabilities/setup',
   DEVELOPERS_SELF_HOST_CAPABILITIES_TROUBLESHOOTING:
@@ -138,6 +142,8 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/data-display/avatar-group',
   UI_COMPONENTS_DATA_DISPLAY_COMMAND_BLOCK:
     '/ui/components/data-display/command-block',
+  UI_COMPONENTS_DATA_DISPLAY_DETAILS_ROW:
+    '/ui/components/data-display/details-row',
   UI_COMPONENTS_DATA_DISPLAY_JSON_TREE: '/ui/components/data-display/json-tree',
   UI_COMPONENTS_DATA_DISPLAY_METRIC_ROW:
     '/ui/components/data-display/metric-row',
@@ -150,6 +156,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_FEEDBACK_TOAST: '/ui/components/feedback/toast',
   UI_COMPONENTS_INPUT_COUNTRY_SELECT: '/ui/components/input/country-select',
   UI_COMPONENTS_INPUT_CURRENCY_PICKER: '/ui/components/input/currency-picker',
+  UI_COMPONENTS_INPUT_FORM_FIELD_ROW: '/ui/components/input/form-field-row',
   UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_IMAGE_INPUT: '/ui/components/input/image-input',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
@@ -159,6 +166,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_INPUT_NUMBER_STEPPER: '/ui/components/input/number-stepper',
   UI_COMPONENTS_INPUT_PHONE_COUNTRY_PICKER:
     '/ui/components/input/phone-country-picker',
+  UI_COMPONENTS_INPUT_REACTION_BUTTON: '/ui/components/input/reaction-button',
   UI_COMPONENTS_INPUT_SEARCH_INPUT: '/ui/components/input/search-input',
   UI_COMPONENTS_INPUT_SEGMENTED_CONTROL:
     '/ui/components/input/segmented-control',
@@ -170,8 +178,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_NAVIGATION_DROPDOWN: '/ui/components/navigation/dropdown',
   UI_COMPONENTS_NAVIGATION_LIST_ITEM_BUTTON:
     '/ui/components/navigation/list-item-button',
-  UI_COMPONENTS_NAVIGATION_MENU_ITEMS: '/ui/components/navigation/menu-items',
-  UI_COMPONENTS_NAVIGATION_MENU_PICKER: '/ui/components/navigation/menu-picker',
   UI_COMPONENTS_NAVIGATION_TAB_BUTTON: '/ui/components/navigation/tab-button',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
   UI_COMPONENTS_SETTINGS_SETTINGS_ROW: '/ui/components/settings/settings-row',

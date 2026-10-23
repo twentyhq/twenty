@@ -1,6 +1,11 @@
 {
   "name": "twenty-sdk",
-  "version": "2.50.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twentyhq/twenty.git",
+    "directory": "packages/twenty-sdk"
+  },
+  "version": "2.52.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"

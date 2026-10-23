@@ -6,6 +6,7 @@ import { type CommandDefinition } from '@/catalog/types/command-definition.type'
 import { type CommandOptionDefinition } from '@/catalog/types/command-option-definition.type';
 import { type OutputMode } from '@/output/types/output-mode.type';
 import { getCommandByPath } from '@/program/find-command-by-path';
+import { formatExamples } from '@/program/format-examples';
 import { runCommand } from '@/program/run-command';
 import { throwParseErrorOnExit } from '@/program/throw-parse-error-on-exit';
 
@@ -32,9 +33,6 @@ const createOption = ({
 
   return option;
 };
-
-const formatExamples = (examples: string[]) =>
-  `\nExamples:\n${examples.map((example) => `  ${example}`).join('\n')}\n`;
 
 export const registerCommand = ({
   program,
