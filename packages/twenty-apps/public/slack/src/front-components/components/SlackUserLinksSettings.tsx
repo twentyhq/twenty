@@ -78,6 +78,7 @@ const SlackUserLinksSettingsContent = () => {
   const {
     slackUserLinks,
     isSlackUserLinksLoading,
+    hasLoadedSlackUserLinks,
     errorMessage,
     hasMoreSlackUserLinks,
     refetchSlackUserLinks,
@@ -88,6 +89,7 @@ const SlackUserLinksSettingsContent = () => {
     unlinkedSlackUsers,
     hasMoreUnlinkedSlackUsers,
     isUnlinkedSlackUsersLoading,
+    hasLoadedUnlinkedSlackUsers,
     unlinkedErrorMessage,
     refetchUnlinkedSlackUsers,
   } = useUnlinkedSlackUsers({ isEnabled: canManage });
@@ -183,6 +185,10 @@ const SlackUserLinksSettingsContent = () => {
   // visible next to the connection itself; the tools below need a working one.
   if (!isSlackConnected || isConnectionBroken) {
     return null;
+  }
+
+  if (!hasLoadedSlackUserLinks || (canManage && !hasLoadedUnlinkedSlackUsers)) {
+    return <SlackUserLinksSettingsSkeleton />;
   }
 
   const shouldWarnAboutRosterMatch =
