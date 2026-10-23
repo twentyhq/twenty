@@ -6,6 +6,7 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
+import { MotionGlobalConfig } from 'framer-motion';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
@@ -509,18 +510,36 @@ export const CloseConversationPane: Story = {
 
     await user.click(within(firstThreadRow).getByText(FIRST_THREAD_TITLE));
     await canvas.findByRole('button', { name: 'Chat details' });
-    await expect(list.getBoundingClientRect().width).toBeLessThan(
-      fullListWidth,
+    await waitFor(() =>
+      expect(list.getBoundingClientRect().width).toBeCloseTo(400, 0),
     );
+
+    const splitListWidth = list.getBoundingClientRect().width;
+    const conversation = canvas.getByRole('region', { name: 'Conversation' });
+    const shouldReduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
 
     await user.click(canvas.getByRole('button', { name: 'Close' }));
     await expect(
       canvas.queryByRole('button', { name: 'Chat details' }),
     ).not.toBeInTheDocument();
-    await expect(list.getBoundingClientRect().width).toBeCloseTo(
-      fullListWidth,
-      0,
-    );
+
+    if (!shouldReduceMotion && !MotionGlobalConfig.skipAnimations) {
+      await expect(conversation).toBeInTheDocument();
+      await expect(conversation).toHaveAttribute('aria-hidden', 'true');
+      await waitFor(() => {
+        const closingListWidth = list.getBoundingClientRect().width;
+
+        expect(closingListWidth).toBeGreaterThan(splitListWidth);
+        expect(closingListWidth).toBeLessThan(fullListWidth);
+      });
+    }
+
+    await waitFor(() => {
+      expect(conversation).not.toBeInTheDocument();
+      expect(list.getBoundingClientRect().width).toBeCloseTo(fullListWidth, 0);
+    });
     await expect(
       getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
     ).toBe(firstThreadRow);
@@ -538,10 +557,19 @@ export const CloseConversationPane: Story = {
     );
     await canvas.findByRole('button', { name: 'Chat details' });
     await expect(canvas.getAllByText(SECOND_THREAD_TITLE)).toHaveLength(2);
-    await expect(list.getBoundingClientRect().width).toBeLessThan(
-      fullListWidth,
+    await waitFor(() =>
+      expect(list.getBoundingClientRect().width).toBeCloseTo(splitListWidth, 0),
     );
+
+    const reopenedConversation = canvas.getByRole('region', {
+      name: 'Conversation',
+    });
+
     await user.click(canvas.getByRole('button', { name: 'Close' }));
+    await waitFor(() => {
+      expect(reopenedConversation).not.toBeInTheDocument();
+      expect(list.getBoundingClientRect().width).toBeCloseTo(fullListWidth, 0);
+    });
   },
 };
 
@@ -587,9 +615,9 @@ export const ClosedConversationHistory: Story = {
     await expect(
       canvas.queryByRole('button', { name: 'Chat details' }),
     ).not.toBeInTheDocument();
-    await expect(
-      canvas.queryByText(FIRST_THREAD_TITLE),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(canvas.queryByText(FIRST_THREAD_TITLE)).not.toBeInTheDocument(),
+    );
     await expect(canvas.getByText(SECOND_THREAD_TITLE)).toBeVisible();
   },
 };

@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { AnimatePresence } from 'framer-motion';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, useRef } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
@@ -6,6 +7,7 @@ import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -17,6 +19,7 @@ import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
 import { AiChatInboxChannelToolbar } from '@/ai/components/AiChatInboxChannelToolbar';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
+import { AiChatInboxConversationPane } from '@/ai/components/AiChatInboxConversationPane';
 import { AiChatInboxListHeader } from '@/ai/components/AiChatInboxListHeader';
 import { AiChatInboxNewThreadChannelEffect } from '@/ai/components/AiChatInboxNewThreadChannelEffect';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
@@ -53,16 +56,28 @@ import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 
 const StyledInbox = styled.div`
+  --inbox-list-pane-width: 400px;
+
   display: flex;
   flex: 1;
   min-height: 0;
   min-width: 0;
+  overflow: hidden;
+  position: relative;
 `;
 
 const StyledListPane = styled.div<{ $isFullWidth: boolean }>`
   display: flex;
-  flex: ${({ $isFullWidth }) => ($isFullWidth ? '1' : '0 0 400px')};
+  flex: 0 0 auto;
   min-width: 0;
+  transition: width calc(${themeCssVariables.animation.duration.normal} * 1s)
+    ease-in-out;
+  width: ${({ $isFullWidth }) =>
+    $isFullWidth ? '100%' : 'var(--inbox-list-pane-width)'};
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const StyledListContent = styled.div`
@@ -275,64 +290,72 @@ const AiChatInboxPageContent = () => {
           />
         )}
       </AiChatInboxCommandMenuScope>
-      {isNewThreadShown && (
-        <>
-          <AiChatPageEffects />
-          <AiChatInboxNewThreadChannelEffect />
-          <AiChatNewThreadPageContent
-            showInformationBanner={!isSplitView}
-            headerActions={
-              isMobile ? (
-                <IconButton
-                  size="sm"
-                  variant="outline"
-                  onClick={() => selectThread(null)}
-                  aria-label={t`Back to inbox`}
-                >
-                  <IconChevronLeft />
-                </IconButton>
-              ) : undefined
-            }
-          />
-        </>
-      )}
-      {isThreadShown && (
-        <>
-          <AiChatPageEffects />
-          <AiChatThreadPageContent
-            threadId={selectedThreadId}
-            headerTitlePrefix={
-              !isSplitView && !isMobile && <AiChatInboxBreadcrumb />
-            }
-            headerActions={
-              isMobile ? (
-                <IconButton
-                  size="sm"
-                  variant="outline"
-                  onClick={() => selectThread(null)}
-                  aria-label={t`Back to inbox`}
-                >
-                  <IconChevronLeft />
-                </IconButton>
-              ) : (
+      {!isSelectionPaneShown && (
+        <AnimatePresence initial={false}>
+          {(isNewThreadShown || isThreadShown) && (
+            <AiChatInboxConversationPane isSplitView={isSplitView}>
+              {isNewThreadShown && (
                 <>
-                  <AiChatInboxThreadPagination
-                    threads={threads}
-                    threadId={selectedThreadId}
-                    onThreadSelect={selectThread}
+                  <AiChatPageEffects />
+                  <AiChatInboxNewThreadChannelEffect />
+                  <AiChatNewThreadPageContent
+                    showInformationBanner={!isSplitView}
+                    headerActions={
+                      isMobile ? (
+                        <IconButton
+                          size="sm"
+                          variant="outline"
+                          onClick={() => selectThread(null)}
+                          aria-label={t`Back to inbox`}
+                        >
+                          <IconChevronLeft />
+                        </IconButton>
+                      ) : undefined
+                    }
                   />
-                  {isSplitView && (
-                    <AiChatCloseButton
-                      destinationPath={getAppPath(AppPath.AiChatInbox, {
-                        threadId: null,
-                      })}
-                    />
-                  )}
                 </>
-              )
-            }
-          />
-        </>
+              )}
+              {isThreadShown && (
+                <>
+                  <AiChatPageEffects />
+                  <AiChatThreadPageContent
+                    threadId={selectedThreadId}
+                    headerTitlePrefix={
+                      !isSplitView && !isMobile && <AiChatInboxBreadcrumb />
+                    }
+                    headerActions={
+                      isMobile ? (
+                        <IconButton
+                          size="sm"
+                          variant="outline"
+                          onClick={() => selectThread(null)}
+                          aria-label={t`Back to inbox`}
+                        >
+                          <IconChevronLeft />
+                        </IconButton>
+                      ) : (
+                        <>
+                          <AiChatInboxThreadPagination
+                            threads={threads}
+                            threadId={selectedThreadId}
+                            onThreadSelect={selectThread}
+                          />
+                          {isSplitView && (
+                            <AiChatCloseButton
+                              destinationPath={getAppPath(AppPath.AiChatInbox, {
+                                threadId: null,
+                              })}
+                            />
+                          )}
+                        </>
+                      )
+                    }
+                  />
+                </>
+              )}
+            </AiChatInboxConversationPane>
+          )}
+        </AnimatePresence>
       )}
     </StyledInbox>
   );
