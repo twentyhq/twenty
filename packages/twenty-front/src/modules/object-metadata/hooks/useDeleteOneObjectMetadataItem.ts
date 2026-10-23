@@ -3,7 +3,6 @@ import { DeleteOneObjectMetadataItemDocument } from '~/generated-metadata/graphq
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
-import { useRemoveObjectMetadataItemFromDraft } from '@/metadata-store/hooks/useRemoveObjectMetadataItemFromDraft';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -18,10 +17,8 @@ export const useDeleteOneObjectMetadataItem = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueToast } = useToast();
-  const { applyChanges } = useUpdateMetadataStoreDraft();
+  const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
-  const { removeObjectMetadataItemFromDraft } =
-    useRemoveObjectMetadataItemFromDraft();
 
   const deleteOneObjectMetadataItem = async (
     idToDelete: string,
@@ -37,7 +34,7 @@ export const useDeleteOneObjectMetadataItem = () => {
         },
       });
 
-      removeObjectMetadataItemFromDraft({ objectMetadataId: idToDelete });
+      removeFromDraft({ key: 'objectMetadataItems', itemIds: [idToDelete] });
       applyChanges();
 
       invalidateMetadataStore();
