@@ -10,6 +10,7 @@ import {
   ComponentDecorator,
   type CatalogStory,
 } from '@ui/testing';
+import { themeCssVariables } from '@ui/theme';
 
 import { ListItem } from '../ListItem';
 import { type ListItemProps } from '../types/ListItemProps';
@@ -97,7 +98,7 @@ export const EndActionInteractions: Story = {
     children: (
       <Text
         render={<span />}
-        style={{ display: 'block', lineHeight: '16px' }}
+        style={{ display: 'block', lineHeight: themeCssVariables.spacing[4] }}
         truncate
       >
         Quarterly planning and the proposed timeline for every team
@@ -106,7 +107,10 @@ export const EndActionInteractions: Story = {
     description: (
       <Text
         render={<span />}
-        style={{ display: 'block', lineHeight: '14px' }}
+        style={{
+          display: 'block',
+          lineHeight: `calc(${themeCssVariables.spacing[4]} - ${themeCssVariables.spacing[0.5]})`,
+        }}
         truncate
       >
         Review the proposed timeline and confirm the next steps with the team.
