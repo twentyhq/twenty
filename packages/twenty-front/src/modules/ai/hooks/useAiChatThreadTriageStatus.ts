@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { getAiChatThreadTriageStatus } from '@/ai/utils/getAiChatThreadTriageStatus';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -10,12 +11,6 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-
-const TRIAGE_STATUS_BY_SCOPE = {
-  INBOX: 'open',
-  SNOOZED: 'snoozed',
-  ARCHIVED: 'done',
-} as const;
 
 export const useAiChatThreadTriageStatus = (threadId: string) => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
@@ -30,14 +25,10 @@ export const useAiChatThreadTriageStatus = (threadId: string) => {
     threadId,
   );
 
-  if (
-    !hasAiPermission ||
-    !isInboxEnabled ||
-    !isDefined(agentChatThreadParticipants) ||
-    scope === 'NONE'
-  ) {
-    return undefined;
-  }
-
-  return TRIAGE_STATUS_BY_SCOPE[scope];
+  return getAiChatThreadTriageStatus({
+    hasAiPermission,
+    isInboxEnabled,
+    areParticipantsLoaded: isDefined(agentChatThreadParticipants),
+    scope,
+  });
 };
