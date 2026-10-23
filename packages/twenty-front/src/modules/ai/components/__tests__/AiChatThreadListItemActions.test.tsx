@@ -3,8 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
@@ -38,9 +37,8 @@ const THREAD_TITLE = 'Qualify the lead';
 const THREAD_ACTIVITY_AT = '2026-10-21T09:00:00.000Z';
 const INBOX_EVENT_AT = '2026-10-22T09:00:00.000Z';
 const SNOOZED_UNTIL = '2026-10-30T09:00:00.000Z';
-
 const SALES_CHANNEL = {
-  id: '20202020-0000-4000-8000-0000000000cc',
+  id: '3d8a1f5c-6b2e-4c9d-8e7f-0a1b2c3d4e5f',
   name: 'Sales',
   icon: 'IconCoins',
   color: 'green',
@@ -61,7 +59,7 @@ const CHAT_OBJECT_METADATA_ITEM = {
   indexMetadatas: [],
 };
 
-type ThreadScope = 'SNOOZED' | 'ARCHIVED';
+type ThreadScope = 'INBOX' | 'SNOOZED' | 'ARCHIVED';
 
 jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
   useAiChatThreadRename: () => ({
@@ -86,15 +84,15 @@ const renderThread = async ({
   hasAiPermission = true,
   isInboxEnabled = true,
   isDeleted = false,
-  isInShownChannel = false,
-  pathname = AppPath.Index,
+  channelStatus,
+  pathname = '/inbox',
   onDetach,
 }: {
   scope?: ThreadScope;
   hasAiPermission?: boolean;
   isInboxEnabled?: boolean;
   isDeleted?: boolean;
-  isInShownChannel?: boolean;
+  channelStatus?: AgentChatChannelThreadStatus;
   pathname?: string;
   onDetach?: () => void;
 } = {}) => {
@@ -108,9 +106,16 @@ const renderThread = async ({
     deletedAt: isDeleted ? INBOX_EVENT_AT : null,
     lastMessageText: 'Prepare the next step',
     workspaceMemberId: mockedWorkspaceMemberData.id,
-    channelId: isInShownChannel ? SALES_CHANNEL.id : null,
-    channelArchivedAt: null,
-    channelSnoozedUntil: null,
+    channelId: isDefined(channelStatus) ? SALES_CHANNEL.id : null,
+    channelArchivedAt:
+      isDefined(channelStatus) &&
+      channelStatus !== AgentChatChannelThreadStatus.OPEN
+        ? INBOX_EVENT_AT
+        : null,
+    channelSnoozedUntil:
+      channelStatus === AgentChatChannelThreadStatus.SNOOZED
+        ? SNOOZED_UNTIL
+        : null,
   };
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems: [
@@ -135,14 +140,14 @@ const renderThread = async ({
       store.set(currentWorkspaceMembersState.atom, [mockedWorkspaceMemberData]);
       store.set(
         agentChatChannelsState.atom,
-        isInShownChannel ? [SALES_CHANNEL] : [],
+        isDefined(channelStatus) ? [SALES_CHANNEL] : [],
       );
       store.set(
         agentChatChannelViewState.atom,
-        isInShownChannel
+        isDefined(channelStatus)
           ? {
               channelId: SALES_CHANNEL.id,
-              channelStatus: AgentChatChannelThreadStatus.OPEN,
+              channelStatus,
               assignment: AgentChatChannelAssignmentFilter.ANY,
             }
           : null,
@@ -160,7 +165,7 @@ const renderThread = async ({
           id: '20202020-0000-4000-8000-0000000000bb',
           threadId: THREAD_ID,
           isSubscribed: true,
-          archivedAt: INBOX_EVENT_AT,
+          archivedAt: scope === 'INBOX' ? null : INBOX_EVENT_AT,
           snoozedUntil: scope === 'SNOOZED' ? SNOOZED_UNTIL : null,
           lastReadAt: THREAD_ACTIVITY_AT,
           updatedAt: INBOX_EVENT_AT,
@@ -170,8 +175,8 @@ const renderThread = async ({
   });
 
   render(
-    <MemoryRouter initialEntries={[pathname]}>
-      <Wrapper>
+    <Wrapper>
+      <MemoryRouter initialEntries={[pathname]}>
         <I18nProvider i18n={i18n}>
           <AiChatThreadListItem
             thread={thread}
@@ -180,8 +185,8 @@ const renderThread = async ({
             onDetach={onDetach}
           />
         </I18nProvider>
-      </Wrapper>
-    </MemoryRouter>,
+      </MemoryRouter>
+    </Wrapper>,
   );
 
   await screen.findByRole('group', { name: THREAD_TITLE });
@@ -247,46 +252,6 @@ describe('AiChatThreadListItem action availability', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows Snooze, Done and More for an open channel copy of a personally snoozed chat', async () => {
-    await renderThread({
-      isInShownChannel: true,
-      pathname: getAppPath(AppPath.AiChatInbox, { threadId: null }),
-    });
-
-    expect(screen.getByRole('button', { name: 'Snooze' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Chat actions' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Change' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Wake now' }),
-    ).not.toBeInTheDocument();
-  });
-
-  it('uses the personal snoozed scope outside the inbox with a retained shown channel', async () => {
-    await renderThread({
-      isInShownChannel: true,
-      pathname: AppPath.TasksPage,
-    });
-
-    expect(screen.getByRole('button', { name: 'Change' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Wake now' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Chat actions' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Snooze' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Done' }),
-    ).not.toBeInTheDocument();
-  });
-
   it('keeps More for a linked snoozed chat with a Detach action', async () => {
     await renderThread({ onDetach: jest.fn() });
 
@@ -307,6 +272,56 @@ describe('AiChatThreadListItem action availability', () => {
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: 'Reopen' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows open channel actions when the personal copy is snoozed', async () => {
+    await renderThread({
+      scope: 'SNOOZED',
+      channelStatus: AgentChatChannelThreadStatus.OPEN,
+    });
+
+    expect(screen.getByRole('button', { name: 'Snooze' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Chat actions' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Wake now' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows done channel actions when the personal copy is open', async () => {
+    await renderThread({
+      scope: 'INBOX',
+      channelStatus: AgentChatChannelThreadStatus.DONE,
+    });
+
+    expect(screen.getByRole('button', { name: 'Reopen' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Chat actions' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Snooze' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('uses the personal copy outside the inbox despite a selected done channel', async () => {
+    await renderThread({
+      scope: 'SNOOZED',
+      channelStatus: AgentChatChannelThreadStatus.DONE,
+      pathname: '/companies',
+    });
+
+    expect(screen.getByRole('button', { name: 'Change' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Wake now' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Reopen' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Chat actions' }),
     ).not.toBeInTheDocument();
   });
 });

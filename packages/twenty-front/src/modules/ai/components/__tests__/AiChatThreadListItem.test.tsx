@@ -3,8 +3,8 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ComponentProps } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { Provider as JotaiProvider } from 'jotai';
+import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -70,14 +70,14 @@ const renderListItem = ({
   isChecked = false,
   onClick = jest.fn(),
   onCheckboxClick,
-}: { thread: AgentChatThreadRecord } & Pick<
+}: Pick<
   ComponentProps<typeof AiChatThreadListItem>,
-  'isChecked' | 'onCheckboxClick'
+  'thread' | 'isChecked' | 'onCheckboxClick'
 > &
   Partial<Pick<ComponentProps<typeof AiChatThreadListItem>, 'onClick'>>) =>
   render(
-    <MemoryRouter>
-      <JotaiProvider store={jotaiStore}>
+    <JotaiProvider store={jotaiStore}>
+      <MemoryRouter initialEntries={['/inbox']}>
         <I18nProvider i18n={i18n}>
           <AiChatThreadListItem
             thread={thread}
@@ -87,8 +87,8 @@ const renderListItem = ({
             onCheckboxClick={onCheckboxClick}
           />
         </I18nProvider>
-      </JotaiProvider>
-    </MemoryRouter>,
+      </MemoryRouter>
+    </JotaiProvider>,
   );
 
 describe('AiChatThreadListItem', () => {
