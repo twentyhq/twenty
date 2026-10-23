@@ -94,6 +94,10 @@ export const buildSystemPromptSections = ({
       title: 'Tool Catalog',
       content: buildToolCatalogSection(toolCatalog, preloadedTools),
     },
+    toolCatalog.some((tool) => tool.name === 'preview_front_component') && {
+      title: 'Component Builder',
+      content: CHAT_SYSTEM_PROMPTS.COMPONENT_BUILDER,
+    },
     isNonEmptyString(skillCatalogSection) && {
       title: 'Skill Catalog',
       content: skillCatalogSection,

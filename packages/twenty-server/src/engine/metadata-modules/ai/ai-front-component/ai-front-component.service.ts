@@ -1,3 +1,8 @@
+import { tool, type ToolSet } from 'ai';
+import { z } from 'zod';
+import { frontComponentDraftSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft.schema';
+import { frontComponentDraftIdSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft-id.schema';
+import { FRONT_COMPONENT_UI_INSTRUCTIONS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-instructions.constant';
 import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/extract-checksum-from-cache-key.util';
@@ -64,6 +69,93 @@ export class AiFrontComponentService {
     private readonly compiler: FrontComponentCompilerService,
     private readonly workspaceDependencies: WorkspaceFrontComponentDependenciesService,
   ) {}
+
+  async generateTools(context: ToolProviderContext): Promise<ToolSet> {
+    if (
+      !isDefined(context.userWorkspaceId) ||
+      !(await this.isEnabled(context.workspaceId))
+    ) {
+      return {};
+    }
+    if (
+      !(await this.permissions.checkRolesPermissions(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.APPLICATIONS,
+      ))
+    ) {
+      return {};
+    }
+
+    return {
+      list_front_components: tool({
+        description:
+          'List registered frontend components and their widget availability. Use an existing component ID when the user asks to add it to a dashboard or page layout; creating a component and placing it are separate actions.',
+        inputSchema: z.object({}),
+        execute: async () => ({
+          success: true,
+          result: (await this.components.findAll(context.workspaceId)).map(
+            ({ id, name, applicationId, isHeadless, widgetAvailability }) => ({
+              id,
+              name,
+              applicationId,
+              isHeadless,
+              widgetAvailability,
+            }),
+          ),
+        }),
+      }),
+      preview_front_component: tool({
+        description:
+          'Create or revise a reusable frontend component preview with SAMPLE data. First inspect accessible object fields. No dashboard, page layout or placement is needed. Choose exactly one pageLayoutType, DASHBOARD or RECORD_PAGE, from the request or context; clarify only if ambiguous. source must export a named Component function or const, with no default export, receiving {records, count, hasNextPage}. Import React or hooks explicitly from react; React is not a global. Use twenty-ui components and local state. query selects top-level CRM fields and at most 100 records; show when hasNextPage is true so partial data is not mistaken for a complete summary; sampleRecords must match that schema. Never hardcode sample records in source. Pass previousDraftId to revise the current draft. Nothing is published. Inspect runtime diagnostics with inspect_front_component after the browser renders. To save the exact draft in the Workspace custom application, use propose_tool_call for publish_front_component, never invoke publication directly.' +
+          FRONT_COMPONENT_UI_INSTRUCTIONS,
+        inputSchema: frontComponentDraftSchema,
+        execute: async (input) => ({
+          success: true,
+          message:
+            'Sample preview built. Await browser rendering before approval.',
+          result: await this.createDraft(input, context),
+        }),
+      }),
+      inspect_front_component: tool({
+        description:
+          'Read a component draft source, sample data, current revision and browser runtime diagnostics. Use this to repair failed previews and revise a draft. Drafts expire after 24 hours.',
+        inputSchema: frontComponentDraftIdSchema,
+        execute: async ({ draftId }) => {
+          const draft = await this.getDraft(
+            context.workspaceId,
+            context.userWorkspaceId!,
+            draftId,
+          );
+          const {
+            compiledSource: _compiledSource,
+            entrySource: _entrySource,
+            ...result
+          } = draft;
+
+          return {
+            success: true,
+            message: 'Component draft retrieved.',
+            result: {
+              ...result,
+              isCurrent: await this.isCurrent(context.workspaceId, draft),
+            },
+          };
+        },
+      }),
+      publish_front_component: tool({
+        description:
+          'Save the exact approved frontend component in the Workspace custom application. Makes it available in the widget picker for its selected surface, without creating or changing any page layout. Requires propose_tool_call and explicit human approval. The revision is immutable. Saved components read live records with each viewer permissions; sample records are never saved to the CRM.',
+        inputSchema: frontComponentDraftIdSchema,
+        execute: async ({ draftId }) => ({
+          success: true,
+          message:
+            'Component saved to the Workspace app. It can now be selected in the widget picker for its selected surface.',
+          result: await this.publish(draftId, context),
+        }),
+      }),
+    };
+  }
 
   private isEnabled(workspaceId: string) {
     return this.featureFlags.isFeatureEnabled(

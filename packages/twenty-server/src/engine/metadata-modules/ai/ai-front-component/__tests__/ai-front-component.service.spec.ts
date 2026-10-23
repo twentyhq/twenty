@@ -1,3 +1,6 @@
+import { generateText, stepCountIs } from 'ai';
+import { MockLanguageModelV4 } from 'ai/test';
+import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 import { createHash } from 'crypto';
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
@@ -216,6 +219,67 @@ describe('AI front component lifecycle', () => {
     });
     return draft;
   };
+
+  it('offers tools during catalog discovery without a resolved execution context', async () => {
+    const tools = await service.generateTools({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: 'author',
+      rolePermissionConfig: CONTEXT.rolePermissionConfig,
+    });
+
+    expect(Object.keys(tools)).toContain('preview_front_component');
+  });
+
+  it('runs prompt-to-preview through the AI SDK with only the model response scripted', async () => {
+    let callCount = 0;
+    const model = new MockLanguageModelV4({
+      doGenerate: async () => ({
+        content:
+          ++callCount === 1
+            ? [
+                {
+                  type: 'tool-call',
+                  toolCallId: 'preview',
+                  toolName: 'preview_front_component',
+                  input: JSON.stringify(INPUT),
+                },
+              ]
+            : [{ type: 'text', text: 'Here is your sample preview.' }],
+        finishReason: {
+          unified: callCount === 1 ? 'tool-calls' : 'stop',
+          raw: undefined,
+        },
+        usage: {
+          inputTokens: {
+            total: 1,
+            noCache: 1,
+            cacheRead: undefined,
+            cacheWrite: undefined,
+          },
+          outputTokens: { total: 1, text: 1, reasoning: undefined },
+        },
+        warnings: [],
+      }),
+    });
+    const result = await generateText({
+      model,
+      tools: await service.generateTools(CONTEXT),
+      prompt: 'Create a renewals widget',
+      stopWhen: stepCountIs(2),
+    });
+
+    expect(result.text).toBe('Here is your sample preview.');
+    expect(result.steps[0].toolResults[0].output).toMatchObject({
+      success: true,
+      result: {
+        draftId: expect.any(String),
+        name: INPUT.name,
+        sampleRecordCount: INPUT.sampleRecords.length,
+      },
+    });
+    expect(dependencies.records.execute).not.toHaveBeenCalled();
+    expect(dependencies.components.createOne).not.toHaveBeenCalled();
+  });
 
   it('previews fixtures with the pinned shared bundle, without app files or live reads', async () => {
     const draft = await service.createDraft(INPUT, CONTEXT);
@@ -480,6 +544,74 @@ describe('AI front component lifecycle', () => {
     await expect(
       service.getPreview('author', draft.draftId, AUTH_CONTEXT!),
     ).rejects.toThrow('expired');
+  });
+
+  it('gates both tool discovery and saved-component reads', async () => {
+    dependencies.featureFlags.isFeatureEnabled.mockResolvedValue(false);
+
+    expect(await service.generateTools(CONTEXT)).toEqual({});
+    await expect(
+      service.getRecords('component', AUTH_CONTEXT!),
+    ).rejects.toThrow('disabled');
+    expect(dependencies.files.readFile).not.toHaveBeenCalled();
+  });
+
+  it('requires application permission for discovery and authoring', async () => {
+    dependencies.permissions.checkRolesPermissions.mockResolvedValue(false);
+    dependencies.permissions.userHasWorkspaceSettingPermission.mockResolvedValue(
+      false,
+    );
+    expect(await service.generateTools(CONTEXT)).toEqual({});
+    await expect(service.createDraft(INPUT, CONTEXT)).rejects.toThrow(
+      'applications',
+    );
+    expect(dependencies.files.writeFile).not.toHaveBeenCalled();
+  });
+
+  it('saves a reusable component without layout permissions', async () => {
+    dependencies.permissions.checkRolesPermissions.mockImplementation(
+      async (_role, _workspace, permission) => permission === 'APPLICATIONS',
+    );
+    dependencies.permissions.userHasWorkspaceSettingPermission.mockImplementation(
+      async ({ setting }) => setting === 'APPLICATIONS',
+    );
+    expect(Object.keys(await service.generateTools(CONTEXT))).toContain(
+      'preview_front_component',
+    );
+    const draft = await makeReadyDraft();
+    await service.publish(draft.draftId, {
+      ...CONTEXT,
+      approvedToolName: 'publish_front_component',
+    });
+    expect(dependencies.components.createOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workspaceId: WORKSPACE_ID,
+        input: expect.objectContaining({
+          id: draft.draftId,
+          universalWidgetAvailability: [
+            { pageLayoutType: INPUT.pageLayoutType },
+          ],
+        }),
+      }),
+    );
+    expect(
+      dependencies.flatMaps.getOrRecomputeManyOrAllFlatEntityMaps,
+    ).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      flatMapsKeys: ['flatFrontComponentMaps'],
+    });
+    const sourceFiles = dependencies.files.writeFile.mock.calls
+      .map(([file]) => file)
+      .filter(({ fileFolder }) => fileFolder === FileFolder.Source);
+    expect(sourceFiles).toHaveLength(1);
+    expect(sourceFiles[0].resourcePath).toBe(
+      `src/ai-front-components/${draft.draftId}.front-component.tsx`,
+    );
+    expect(sourceFiles[0].sourceFile).toContain('renewals');
+    expect(readFrontComponentQuery(sourceFiles[0].sourceFile)).toEqual(
+      INPUT.query,
+    );
+    expect(sourceFiles[0].sourceFile).not.toContain('Example');
   });
 
   it('blocks approval after the feature flag is disabled', async () => {

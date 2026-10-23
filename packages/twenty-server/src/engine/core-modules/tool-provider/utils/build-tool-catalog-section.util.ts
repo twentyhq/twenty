@@ -21,6 +21,8 @@ const getCategoryLabel = (category: ToolCategory): string => {
       return 'View Tools (manage views, fields, filters, and sorts)';
     case ToolCategory.DASHBOARD:
       return 'Dashboard Tools (create/manage dashboards)';
+    case ToolCategory.FRONT_COMPONENT:
+      return 'Frontend Component Tools (preview and save reusable Workspace app components)';
     case ToolCategory.LOGIC_FUNCTION:
       return 'Logic Functions (custom tools)';
     case ToolCategory.NAVIGATION_MENU_ITEM:

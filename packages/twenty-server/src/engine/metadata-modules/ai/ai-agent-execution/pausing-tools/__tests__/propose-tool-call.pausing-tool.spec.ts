@@ -328,3 +328,54 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
     });
   });
 });
+
+describe('frontend component approval', () => {
+  const input = {
+    toolName: 'publish_front_component',
+    arguments: { draftId: 'approved-draft' },
+    summary: 'Save the preview to Sales',
+  };
+  const pending = {
+    success: true,
+    result: {
+      status: 'pending',
+      proposal: {
+        ...input,
+        toolLabel: 'Save component',
+        template: 'frontComponent',
+      },
+    },
+  };
+
+  it('publishes only the proposed revision even when response arguments are edited', async () => {
+    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(input, pending);
+    const executeTool = jest
+      .fn()
+      .mockResolvedValue({ success: true, message: 'Saved' });
+
+    await call!.complete({
+      output: {
+        decision: 'approve',
+        arguments: { draftId: 'different-draft' },
+      },
+      context: { executeTool },
+    });
+
+    expect(executeTool).toHaveBeenCalledWith({
+      toolName: 'publish_front_component',
+      args: { draftId: 'approved-draft' },
+    });
+  });
+
+  it('never publishes a rejected preview', async () => {
+    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(input, pending);
+    const executeTool = jest.fn();
+
+    await call!.complete({
+      output: { decision: 'reject' },
+      context: { executeTool },
+    });
+
+    expect(executeTool).not.toHaveBeenCalled();
+  });
+});

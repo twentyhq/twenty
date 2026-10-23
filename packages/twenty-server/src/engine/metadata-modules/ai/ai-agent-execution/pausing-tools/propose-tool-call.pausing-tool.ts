@@ -132,6 +132,10 @@ const buildApprovedArguments = (
   proposal: ProposedToolCall,
   editedArguments: Record<string, unknown> | undefined,
 ): Record<string, unknown> => {
+  if (proposal.template === 'frontComponent') {
+    return proposal.arguments;
+  }
+
   const toolArguments = editedArguments ?? proposal.arguments;
 
   if (isDefined(proposal.recordId)) {

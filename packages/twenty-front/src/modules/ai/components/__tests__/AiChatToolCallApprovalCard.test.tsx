@@ -1,6 +1,12 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -14,6 +20,12 @@ type RecordFieldsStubProps = {
 };
 
 const answerAgentChatToolCall = jest.fn();
+const refreshFrontComponents = jest.fn();
+jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
+  useRefreshFrontComponents: () => ({
+    refreshFrontComponents,
+  }),
+}));
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
   useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
 }));
@@ -36,6 +48,22 @@ jest.mock('@/ai/components/internal/AiChatToolCallApprovalEmailCard', () => ({
   AiChatToolCallApprovalEmailCard: () => null,
 }));
 
+jest.mock('@/ai/components/AiChatFrontComponentPreview', () => ({
+  AiChatFrontComponentPreview: ({
+    onReadyChange,
+  }: {
+    onReadyChange: (isReady: boolean) => void;
+  }) => (
+    <button
+      onClick={() => {
+        onReadyChange(true);
+      }}
+    >
+      Finish rendering preview
+    </button>
+  ),
+}));
+
 const PROPOSAL: ProposedToolCall = {
   toolName: 'http_request',
   toolLabel: 'HTTP request',
@@ -56,6 +84,7 @@ const renderCard = (proposal: ProposedToolCall = PROPOSAL) =>
 describe('AiChatToolCallApprovalCard', () => {
   beforeEach(() => {
     answerAgentChatToolCall.mockReset();
+    refreshFrontComponents.mockReset();
   });
 
   it('shows what the call does and which tool it runs', () => {
@@ -209,4 +238,44 @@ describe('AiChatToolCallApprovalCard', () => {
       },
     });
   });
+});
+
+it('requires a rendered component preview before saving the immutable draft', async () => {
+  const user = userEvent.setup();
+  let completeApproval: (answered: boolean) => void = () => {};
+  refreshFrontComponents.mockReset();
+  answerAgentChatToolCall.mockReturnValue(
+    new Promise<boolean>((resolve) => {
+      completeApproval = resolve;
+    }),
+  );
+  renderCard({
+    toolName: 'publish_front_component',
+    toolLabel: 'Save component',
+    summary: 'Save Renewals to Workspace app',
+    template: 'frontComponent',
+    arguments: { draftId: 'approved-draft' },
+  });
+
+  expect(
+    screen.getByRole('button', { name: 'Save to Workspace app' }),
+  ).toBeDisabled();
+  expect(
+    screen.queryByRole('textbox', { name: 'Arguments' }),
+  ).not.toBeInTheDocument();
+  await user.click(
+    screen.getByRole('button', { name: 'Finish rendering preview' }),
+  );
+  await user.click(
+    screen.getByRole('button', { name: 'Save to Workspace app' }),
+  );
+
+  expect(answerAgentChatToolCall).toHaveBeenCalledWith({
+    toolCallId: 'call-1',
+    response: { decision: 'approve', arguments: { draftId: 'approved-draft' } },
+    optimisticToolOutput: undefined,
+  });
+  expect(refreshFrontComponents).not.toHaveBeenCalled();
+  await act(async () => completeApproval(true));
+  await waitFor(() => expect(refreshFrontComponents).toHaveBeenCalledWith());
 });

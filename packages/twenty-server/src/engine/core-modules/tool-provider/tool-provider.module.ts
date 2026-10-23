@@ -8,6 +8,7 @@ import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
+import { FrontComponentToolProvider } from 'src/engine/core-modules/tool-provider/providers/front-component-tool.provider';
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
@@ -66,6 +67,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     provideWorkspaceScopedRepository(FileEntity),
     ActionToolProvider,
     DashboardToolProvider,
+    FrontComponentToolProvider,
     DatabaseToolProvider,
     LogicFunctionToolProvider,
     WorkflowToolProvider,
@@ -77,12 +79,14 @@ import { ToolRegistryService } from './services/tool-registry.service';
         logicFunctionProvider: LogicFunctionToolProvider,
         workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
+        frontComponentProvider: FrontComponentToolProvider,
       ) => [
         actionProvider,
         databaseProvider,
         logicFunctionProvider,
         workflowProvider,
         dashboardProvider,
+        frontComponentProvider,
       ],
       inject: [
         ActionToolProvider,
@@ -90,6 +94,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         LogicFunctionToolProvider,
         WorkflowToolProvider,
         DashboardToolProvider,
+        FrontComponentToolProvider,
       ],
     },
     ToolRegistryService,

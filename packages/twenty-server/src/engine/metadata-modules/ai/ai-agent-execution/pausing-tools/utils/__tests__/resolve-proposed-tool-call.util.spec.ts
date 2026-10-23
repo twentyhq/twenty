@@ -279,3 +279,30 @@ describe('resolveProposedToolCall', () => {
     },
   );
 });
+
+it.each([
+  ['publish_front_component', 'frontComponent', { draftId: 'draft' }],
+] as const)(
+  'keeps the approval template for %s',
+  async (toolName, template, toolArguments) => {
+    const result = await resolveProposedToolCall({
+      input: {
+        toolName,
+        arguments: toolArguments,
+        summary: 'Confirm component action',
+      },
+      findTool: async () => ({
+        name: toolName,
+        label: 'Component action',
+        description: '',
+        category: 'FRONT_COMPONENT' as ToolIndexEntry['category'],
+        executionRef: { kind: 'static', toolId: toolName },
+        approval: { template },
+      }),
+      executeTool: jest.fn(),
+    });
+    expect(result).toMatchObject({
+      proposal: { template, arguments: toolArguments },
+    });
+  },
+);
