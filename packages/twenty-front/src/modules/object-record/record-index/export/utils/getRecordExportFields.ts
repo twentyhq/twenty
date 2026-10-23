@@ -2,6 +2,7 @@ import {
   type buildRecordExportColumns,
   computeMorphRelationGqlFieldName,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -31,7 +32,10 @@ export const getRecordExportFields = ({
         ? column.metadata.relationType
         : undefined;
 
-    if (!('morphRelations' in column.metadata)) {
+    if (
+      !('morphRelations' in column.metadata) ||
+      !isNonEmptyArray(column.metadata.morphRelations)
+    ) {
       return [
         {
           name: column.metadata.fieldName,

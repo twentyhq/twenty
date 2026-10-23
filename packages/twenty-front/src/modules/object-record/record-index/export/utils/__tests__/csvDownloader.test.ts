@@ -1,3 +1,4 @@
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { csvDownloader } from '@/object-record/record-index/export/utils/csvDownloader';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -6,6 +7,7 @@ import { i18n } from '@lingui/core';
 import { saveAs } from 'file-saver';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 
@@ -179,6 +181,47 @@ describe('csvDownloader', () => {
 
     expect(Buffer.from(await readBlob(blob)).toString('utf-8')).toBe(
       '\uFEFFId,Amount / Amount,Amount / Currency,Company Id\n1,,,\n2,1.5,EUR,company-1\n',
+    );
+  });
+
+  it('preserves ordinary fields from single-record column definitions', async () => {
+    const objectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+    const singleRecordColumns = ['name', 'city', 'company'].map(
+      (fieldName, position) => {
+        const field = objectMetadataItem.fields.find(
+          (field) => field.name === fieldName,
+        );
+
+        if (!field) {
+          throw new Error(`Field ${fieldName} not found`);
+        }
+
+        return formatFieldMetadataItemAsColumnDefinition({
+          field,
+          objectMetadataItem,
+          position,
+        });
+      },
+    );
+
+    csvDownloader({
+      filename: 'export.csv',
+      objectMetadataItems: [],
+      columns: singleRecordColumns,
+      rows: [
+        {
+          id: '1',
+          name: { firstName: 'Ada', lastName: 'Lovelace' },
+          city: 'Paris',
+          companyId: 'company-1',
+        },
+      ],
+    });
+
+    expect(
+      Buffer.from(await readBlob(getDownloadedBlob())).toString('utf-8'),
+    ).toBe(
+      '\uFEFFId,Name / First Name,Name / Last Name,City,Company Id\n1,Ada,Lovelace,Paris,company-1\n',
     );
   });
 

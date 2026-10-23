@@ -1,10 +1,21 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { useRecordIndexLazyFetchRecords } from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
+import {
+  type UseRecordDataOptions,
+  useRecordIndexLazyFetchRecords,
+} from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
 
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { getRecordExportFields } from '@/object-record/record-index/export/utils/getRecordExportFields';
 import { ViewType } from '@/views/types/ViewType';
+import {
+  buildRecordExportColumns,
+  formatRecordExportHeader,
+  formatRecordExportRow,
+} from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockPerson = {
@@ -156,6 +167,90 @@ describe('useRecordData', () => {
       });
     });
   });
+
+  it.each([false, true])(
+    'exports morph target IDs from visible index fields, singlePage=%s',
+    async (singlePage) => {
+      const morphObjectMetadataItem =
+        getMockObjectMetadataItemOrThrow('petCareAgreement');
+      const morphField = morphObjectMetadataItem.fields.find(
+        (field) => field.name === 'caretaker',
+      );
+
+      if (!morphField) {
+        throw new Error('Caretaker field not found');
+      }
+
+      const callback = jest.fn<
+        void,
+        Parameters<UseRecordDataOptions['callback']>
+      >();
+      const record = {
+        id: 'agreement-1',
+        caretakerPersonId: 'person-1',
+        caretakerCompanyId: null,
+      };
+      mockFetchAllRecords.mockResolvedValue([record]);
+      mockFetchFirstPage.mockResolvedValue({
+        records: [record],
+        hasNextPage: false,
+      });
+      const wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
+        apolloMocks: [],
+        componentInstanceId: recordIndexId,
+        contextStoreTargetedRecordsRule: {
+          mode: 'selection',
+          selectedRecordIds: [],
+        },
+        contextStoreCurrentObjectMetadataNameSingular: 'petCareAgreement',
+        onInitializeJotaiStore: (store) => {
+          store.set(
+            currentRecordFieldsComponentState.atomFamily({
+              instanceId: recordIndexId,
+            }),
+            [
+              {
+                id: 'caretaker-column',
+                fieldMetadataItemId: morphField.id,
+                position: 0,
+                isVisible: true,
+                size: 100,
+              },
+            ],
+          );
+        },
+      });
+      const { result } = renderHook(
+        () =>
+          useRecordIndexLazyFetchRecords({
+            recordIndexId,
+            objectMetadataItem: morphObjectMetadataItem,
+            callback,
+            delayMs: 0,
+            onMoreRecords: singlePage ? jest.fn() : undefined,
+          }),
+        { wrapper },
+      );
+
+      await act(() => result.current.getTableData());
+
+      expect(callback).toHaveBeenCalledTimes(1);
+      const { columns, rows } = callback.mock.calls[0][0];
+      const exportColumns = buildRecordExportColumns(
+        getRecordExportFields({
+          columns,
+          objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+        }),
+      );
+
+      expect(formatRecordExportHeader(exportColumns)).toBe(
+        '\uFEFFId,Caretaker / Person Id,Caretaker / Company Id\n',
+      );
+      expect(
+        formatRecordExportRow({ columns: exportColumns, record: rows[0] }),
+      ).toBe('agreement-1,person-1,\n');
+    },
+  );
 
   describe('single-page exports', () => {
     const callback = jest.fn();

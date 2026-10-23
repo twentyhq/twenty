@@ -139,6 +139,7 @@ export const useRecordIndexLazyFetchRecords = ({
           metadata: {
             fieldName: fieldMetadataItem.name,
             relationType: fieldMetadataItem.relation?.type,
+            morphRelations: fieldMetadataItem.morphRelations ?? [],
           },
         };
       })

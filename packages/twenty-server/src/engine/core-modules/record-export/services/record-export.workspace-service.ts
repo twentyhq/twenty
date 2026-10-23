@@ -676,16 +676,22 @@ export class RecordExportWorkspaceService {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
-      }).map((field) => ({
-        name: field.name,
-        label: field.label,
-        type: field.type,
-        relationType:
+      }).map((field) => {
+        const exportField = {
+          name: field.name,
+          label: field.label,
+          type: field.type,
+        };
+
+        if (
           isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
           isFlatFieldMetadataOfType(field, FieldMetadataType.MORPH_RELATION)
-            ? field.settings.relationType
-            : undefined,
-      })),
+        ) {
+          return { ...exportField, relationType: field.settings.relationType };
+        }
+
+        return exportField;
+      }),
     );
     const node: CommonSelectedFields = {};
 
