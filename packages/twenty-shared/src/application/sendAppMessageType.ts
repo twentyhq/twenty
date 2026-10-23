@@ -8,7 +8,6 @@ export type SendAppMessagePayload = {
   connectionProviderName: string;
   connectedAccountId: string;
   messageChannelId: string;
-  // The provider's id for the conversation, as the app ingested it.
   threadExternalId: string;
   text: string;
   // Everyone in the conversation other than the channel's own handle.
