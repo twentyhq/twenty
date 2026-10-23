@@ -23,14 +23,21 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledPlusButtonWrapper = styled.div`
+  opacity: 0;
+  pointer-events: none;
   position: absolute;
   right: 0;
   top: 0;
   z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
+
+  &:focus-within,
+  ${RecordTableHeaderCellContainer}:hover & {
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 export const RecordTableHeaderFirstCell = () => {
@@ -44,8 +51,6 @@ export const RecordTableHeaderFirstCell = () => {
   const isRecordTableColumnResizable = useAtomComponentStateValue(
     isRecordTableColumnResizableComponentState,
   );
-
-  const [iconIsVisible, setIconIsVisible] = useState(false);
 
   const isRecordTableRowActive = useAtomComponentFamilyStateValue(
     isRecordTableRowActiveComponentFamilyState,
@@ -94,8 +99,6 @@ export const RecordTableHeaderFirstCell = () => {
     <RecordTableHeaderCellContainer
       className={cx('header-cell', getRecordTableColumnFieldWidthClassName(0))}
       key={recordField.fieldMetadataItemId}
-      onMouseEnter={() => setIconIsVisible(true)}
-      onMouseLeave={() => setIconIsVisible(false)}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       isResizing={isResizingAnyColumn}
       isReadOnly={isRecordTableColumnHeadersReadOnly}
@@ -108,11 +111,9 @@ export const RecordTableHeaderFirstCell = () => {
           objectMetadataId={objectMetadataItem.id}
         />
       )}
-      {iconIsVisible && (
-        <StyledPlusButtonWrapper>
-          <RecordTableHeaderLabelIdentifierCellPlusButton />
-        </StyledPlusButtonWrapper>
-      )}
+      <StyledPlusButtonWrapper>
+        <RecordTableHeaderLabelIdentifierCellPlusButton />
+      </StyledPlusButtonWrapper>
 
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler recordFieldIndex={0} position="end" />

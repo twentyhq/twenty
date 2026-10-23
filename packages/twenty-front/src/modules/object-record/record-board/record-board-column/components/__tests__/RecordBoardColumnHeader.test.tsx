@@ -9,24 +9,24 @@ import userEvent from '@testing-library/user-event';
 
 const mockCreateNewIndexRecord = jest.fn();
 const mockUseAtomComponentStateValue = jest.fn();
-const mockCanCreateRecords = jest.fn();
+const mockObjectPermissions = jest.fn();
 const mockHasSoftDeleteFilter = jest.fn();
 
 jest.mock('@/object-record/record-board/contexts/RecordBoardContext', () => ({
   RecordBoardContext: jest.requireActual('react').createContext({
-    objectMetadataItem: { id: 'opportunity' },
+    objectMetadataItem: {
+      id: 'opportunity',
+      isUICreatable: true,
+      isUIEditable: true,
+      isRemote: false,
+      writability: 'OPEN',
+    },
     selectFieldMetadataItem: { name: 'stage' },
   }),
 }));
 jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
-  useObjectPermissionsForObject: () => ({ canUpdateObjectRecords: true }),
+  useObjectPermissionsForObject: () => mockObjectPermissions(),
 }));
-jest.mock(
-  '@/object-record/utils/canCreateRecordsForObjectMetadataItem',
-  () => ({
-    canCreateRecordsForObjectMetadataItem: () => mockCanCreateRecords(),
-  }),
-);
 jest.mock('@/object-record/record-table/hooks/useCreateNewIndexRecord', () => ({
   useCreateNewIndexRecord: () => ({
     createNewIndexRecord: mockCreateNewIndexRecord,
@@ -120,7 +120,7 @@ const renderHeader = () =>
 describe('RecordBoardColumnHeader creation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCanCreateRecords.mockReturnValue(true);
+    mockObjectPermissions.mockReturnValue({ canUpdateObjectRecords: true });
     mockHasSoftDeleteFilter.mockReturnValue(false);
     mockUseAtomComponentStateValue.mockImplementation(
       (state: ComponentState<unknown>) =>
@@ -156,7 +156,7 @@ describe('RecordBoardColumnHeader creation', () => {
   });
 
   it('keeps object creation permissions enforced', () => {
-    mockCanCreateRecords.mockReturnValue(false);
+    mockObjectPermissions.mockReturnValue({ canUpdateObjectRecords: false });
     renderHeader();
 
     expect(

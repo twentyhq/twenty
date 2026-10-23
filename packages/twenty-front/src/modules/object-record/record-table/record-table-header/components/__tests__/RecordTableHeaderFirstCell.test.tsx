@@ -8,16 +8,18 @@ import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-recor
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ComponentState } from '@/ui/utilities/state/jotai/types/ComponentState';
+import { MetadataWritability } from '~/generated-metadata/graphql';
 
 const mockCreateNewIndexRecord = jest.fn();
 const mockUseAtomComponentStateValue = jest.fn();
-const mockCanCreateRecords = jest.fn();
+const mockObjectPermissions = jest.fn();
+const mockObjectMetadataItem = jest.fn();
 const mockHasSoftDeleteFilter = jest.fn();
 
 jest.mock('@/object-record/record-table/contexts/RecordTableContext', () => ({
   useRecordTableContextOrThrow: () => ({
-    objectMetadataItem: { id: 'company', nameSingular: 'company' },
-    objectPermissions: { canUpdateObjectRecords: true },
+    objectMetadataItem: mockObjectMetadataItem(),
+    objectPermissions: mockObjectPermissions(),
     visibleRecordFields: [{ fieldMetadataItemId: 'name', position: 0 }],
   }),
 }));
@@ -26,12 +28,6 @@ jest.mock('@/object-record/record-table/hooks/useCreateNewIndexRecord', () => ({
     createNewIndexRecord: mockCreateNewIndexRecord,
   }),
 }));
-jest.mock(
-  '@/object-record/utils/canCreateRecordsForObjectMetadataItem',
-  () => ({
-    canCreateRecordsForObjectMetadataItem: () => mockCanCreateRecords(),
-  }),
-);
 jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({
@@ -74,10 +70,20 @@ jest.mock(
   }),
 );
 
+const creatableObjectMetadataItem = {
+  id: 'company',
+  nameSingular: 'company',
+  isUICreatable: true,
+  isUIEditable: true,
+  isRemote: false,
+  writability: MetadataWritability.OPEN,
+};
+
 describe('RecordTableHeaderFirstCell creation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCanCreateRecords.mockReturnValue(true);
+    mockObjectPermissions.mockReturnValue({ canUpdateObjectRecords: true });
+    mockObjectMetadataItem.mockReturnValue(creatableObjectMetadataItem);
     mockHasSoftDeleteFilter.mockReturnValue(false);
     mockUseAtomComponentStateValue.mockImplementation(
       (state: ComponentState<unknown>) =>
@@ -101,6 +107,31 @@ describe('RecordTableHeaderFirstCell creation', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('allows keyboard creation without hovering the header', async () => {
+    render(<RecordTableHeaderFirstCell />);
+
+    await userEvent.tab();
+
+    expect(screen.getByRole('button', { name: 'Create record' })).toHaveFocus();
+
+    await userEvent.keyboard('{Enter}');
+
+    expect(mockCreateNewIndexRecord).toHaveBeenCalledWith({
+      position: 'first',
+    });
+  });
+
+  it('keeps keyboard focus when the pointer leaves the header', async () => {
+    render(<RecordTableHeaderFirstCell />);
+    const header = screen.getByText('Name');
+
+    await userEvent.hover(header);
+    await userEvent.tab();
+    await userEvent.unhover(header);
+
+    expect(screen.getByRole('button', { name: 'Create record' })).toHaveFocus();
+  });
+
   it('does not offer creation when the widget records are read-only', async () => {
     mockUseAtomComponentStateValue.mockImplementation(
       (state: ComponentState<unknown>) =>
@@ -117,7 +148,7 @@ describe('RecordTableHeaderFirstCell creation', () => {
   });
 
   it('keeps object creation permissions enforced', async () => {
-    mockCanCreateRecords.mockReturnValue(false);
+    mockObjectPermissions.mockReturnValue({ canUpdateObjectRecords: false });
     render(<RecordTableHeaderFirstCell />);
 
     await userEvent.hover(screen.getByText('Name'));
@@ -126,6 +157,28 @@ describe('RecordTableHeaderFirstCell creation', () => {
       screen.queryByRole('button', { name: 'Create record' }),
     ).not.toBeInTheDocument();
   });
+
+  it.each([
+    { isUICreatable: false },
+    { isUIEditable: false },
+    { isRemote: true },
+    { writability: MetadataWritability.APPLICATION },
+    { writability: MetadataWritability.SYSTEM },
+  ])(
+    'does not create records for restricted object metadata: %j',
+    (overrides) => {
+      mockObjectMetadataItem.mockReturnValue({
+        ...creatableObjectMetadataItem,
+        ...overrides,
+      });
+
+      render(<RecordTableHeaderFirstCell />);
+
+      expect(
+        screen.queryByRole('button', { name: 'Create record' }),
+      ).not.toBeInTheDocument();
+    },
+  );
 
   it('does not offer creation in the deleted-records view', async () => {
     mockHasSoftDeleteFilter.mockReturnValue(true);
