@@ -56,7 +56,7 @@ export const AiChatApprovalEmailReviewDeck = ({
       hint: isNonEmptyArray(email.draft.to) ? (
         <Plural
           value={remainingDraftCount}
-          zero="No more drafts after this one"
+          _0="No more drafts after this one"
           one="# more draft after this one"
           other="# more drafts after this one"
         />
