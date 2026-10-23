@@ -78,7 +78,6 @@ export const useUpdateMetadataStoreDraft = () => {
 
   const applyChanges = useCallback((): {
     hasPersistedAnyMetadataEntity: boolean;
-    isDraftConsistent: boolean;
   } => {
     const isDraftConsistent = isMetadataStoreDraftConsistent(store);
 
@@ -102,7 +101,7 @@ export const useUpdateMetadataStoreDraft = () => {
       }
     }
 
-    return { hasPersistedAnyMetadataEntity, isDraftConsistent };
+    return { hasPersistedAnyMetadataEntity };
   }, [store]);
 
   const addToDraft = useCallback(
