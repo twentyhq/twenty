@@ -6,6 +6,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -91,6 +92,7 @@ export class ToolIndexResolver {
       userId: user?.id,
       userWorkspaceId,
       locale,
+      authContext: getWorkspaceAuthContext(),
       application,
     });
   }
@@ -119,6 +121,7 @@ export class ToolIndexResolver {
         rolePermissionConfig,
         userId: user?.id,
         userWorkspaceId,
+        authContext: getWorkspaceAuthContext(),
         application,
       },
     });

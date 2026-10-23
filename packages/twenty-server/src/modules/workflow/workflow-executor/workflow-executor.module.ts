@@ -24,6 +24,7 @@ import { MailSenderActionModule } from 'src/modules/workflow/workflow-executor/w
 import { SendChatMessageActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message-action.module';
 import { WaitForEventActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/wait-for-event-action.module';
 import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
+import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workflow-step-wait.module';
@@ -32,6 +33,7 @@ import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workf
   imports: [
     WorkflowCoreModule,
     WorkflowRunModule,
+    WorkflowExecutionContextModule,
     CodeActionModule,
     LogicFunctionActionModule,
     DelayActionModule,

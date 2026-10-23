@@ -316,6 +316,7 @@ export class McpProtocolService {
           userId: options?.userId,
           userWorkspaceId: options?.userWorkspaceId,
           excludeTools: MCP_EXCLUDED_TOOL_NAMES,
+          authContext: options?.authContext,
           application: options?.application,
         }),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,

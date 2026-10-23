@@ -106,6 +106,8 @@ export class SkillResolver {
       canCallerReachApplication({
         callingApplication,
         applicationId: skill.applicationId,
+        access: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       }),
     );
   }

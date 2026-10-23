@@ -119,7 +119,8 @@ export class LogicFunctionResolver {
   @Query(() => [LogicFunctionDTO])
   @AllowSuspendedWorkspace()
   async findManyLogicFunctions(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
   ): Promise<LogicFunctionDTO[]> {
@@ -140,6 +141,8 @@ export class LogicFunctionResolver {
             canCallerReachApplication({
               callingApplication,
               applicationId: flatLogicFunction.applicationId,
+              access: 'read',
+              workspaceCustomApplicationId,
             }),
         )
         .map((flatLogicFunction) =>
@@ -403,6 +406,7 @@ export class LogicFunctionResolver {
         canCallerReachApplication({
           callingApplication,
           applicationId: payload.logicFunctionLogs.applicationId,
+          access: 'manage',
         })
           ? payload
           : undefined,
