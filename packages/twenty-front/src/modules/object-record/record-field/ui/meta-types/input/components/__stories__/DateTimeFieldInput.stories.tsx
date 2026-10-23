@@ -24,6 +24,7 @@ const {
 } = getFieldInputEventContextProviderWithJestMocks();
 
 const formattedDate = new Date('2022-01-01T02:00:00.000Z');
+const MONTH_ROW_LABEL_PATTERN = /^Month /;
 
 const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
   const { setFieldValue } = useDateTimeField();
@@ -241,23 +242,26 @@ export const CalendarNavigationDoesNotSubmit: Story = {
       name: 'Date and time',
     });
     const initialValue = dateInput.value;
-    const initialMonth =
-      canvas
-        .getByRole('rowgroup', { name: /^Month / })
-        .getAttribute('aria-label') ?? '';
+    const initialMonth = canvas
+      .getByRole('rowgroup', { name: MONTH_ROW_LABEL_PATTERN })
+      .getAttribute('aria-label');
+
+    await expect(initialMonth).toMatch(MONTH_ROW_LABEL_PATTERN);
 
     nextMonth.focus();
     await userEvent.keyboard('{Enter}');
     await expect(handleEnterMocked).not.toHaveBeenCalled();
     await expect(dateInput).toHaveValue(initialValue);
     await expect(
-      canvas.getByRole('rowgroup', { name: /^Month / }),
+      canvas.getByRole('rowgroup', { name: MONTH_ROW_LABEL_PATTERN }),
     ).not.toHaveAttribute('aria-label', initialMonth);
     canvas.getByRole('button', { name: 'Previous' }).focus();
     await userEvent.keyboard('{Enter}');
-    await expect(
-      canvas.getByRole('rowgroup', { name: initialMonth }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        canvas.getByRole('rowgroup', { name: MONTH_ROW_LABEL_PATTERN }),
+      ).toHaveAttribute('aria-label', initialMonth),
+    );
     await expect(dateInput).toHaveValue(initialValue);
     await expect(handleEnterMocked).not.toHaveBeenCalled();
   },

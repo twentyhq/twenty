@@ -6,6 +6,7 @@ import { DateInput } from '@/ui/field/input/components/DateInput';
 import { DateInputFocusEffect } from '@/ui/field/input/components/__stories__/DateInputFocusEffect';
 
 const INITIAL_DATE = '2026-01-15';
+const MONTH_ROW_LABEL_PATTERN = /^Month /;
 
 const meta: Meta<typeof DateInput> = {
   title: 'UI/Field/Input/DateInput',
@@ -53,25 +54,28 @@ export const CalendarNavigationDoesNotSubmit: Story = {
       name: 'Date',
     });
     const initialValue = dateInput.value;
-    const initialMonth =
-      canvas
-        .getByRole('rowgroup', { name: /^Month / })
-        .getAttribute('aria-label') ?? '';
+    const initialMonth = canvas
+      .getByRole('rowgroup', { name: MONTH_ROW_LABEL_PATTERN })
+      .getAttribute('aria-label');
+
+    await expect(initialMonth).toMatch(MONTH_ROW_LABEL_PATTERN);
 
     nextMonth.focus();
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(
-        canvas.getByRole('rowgroup', { name: /^Month / }),
+        canvas.getByRole('rowgroup', { name: MONTH_ROW_LABEL_PATTERN }),
       ).not.toHaveAttribute('aria-label', initialMonth),
     );
     await expect(dateInput).toHaveValue(initialValue);
 
     canvas.getByRole('button', { name: 'Previous' }).focus();
     await userEvent.keyboard('{Enter}');
-    await expect(
-      await canvas.findByRole('rowgroup', { name: initialMonth }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        canvas.getByRole('rowgroup', { name: MONTH_ROW_LABEL_PATTERN }),
+      ).toHaveAttribute('aria-label', initialMonth),
+    );
     await expect(dateInput).toHaveValue(initialValue);
     await expect(args.onChange).not.toHaveBeenCalled();
     await expect(args.onEnter).not.toHaveBeenCalled();
