@@ -1,4 +1,5 @@
-import { useTrialScheduledPlanLabel } from '@/settings/billing/hooks/useTrialScheduledPlanLabel';
+import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
+import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,17 +18,18 @@ export const StartSubscriptionConfirmationModal = ({
   loading,
 }: StartSubscriptionConfirmationModalProps) => {
   const needsCreditCard = hasPaymentMethod === false;
-  const { trialScheduledPlanLabel } = useTrialScheduledPlanLabel();
+  const { nextPlan } = useNextPlan();
+  const nextPlanLabel = isDefined(nextPlan)
+    ? t(BILLING_PLAN_LABELS[nextPlan.planKey])
+    : undefined;
 
   const getSubtitle = () => {
-    if (isDefined(trialScheduledPlanLabel)) {
-      return needsCreditCard
-        ? t`You will be redirected to add your credit card. Once added, your trial ends and your ${trialScheduledPlanLabel} plan starts now.`
-        : t`Your trial ends and your ${trialScheduledPlanLabel} plan starts now. Do you want to proceed?`;
+    if (needsCreditCard) {
+      return t`You will be redirected to add your credit card. Once added, your subscription will start automatically.`;
     }
 
-    return needsCreditCard
-      ? t`You will be redirected to add your credit card. Once added, your subscription will start automatically.`
+    return isDefined(nextPlanLabel)
+      ? t`Your trial ends and your ${nextPlanLabel} plan starts now. Do you want to proceed?`
       : t`We will activate your paid plan. Do you want to proceed?`;
   };
 

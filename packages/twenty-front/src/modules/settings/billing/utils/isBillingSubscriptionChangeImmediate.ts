@@ -2,7 +2,6 @@ import { type BillingPlanSwitches } from '@/settings/billing/types/BillingPlanSw
 import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import { assertUnreachable } from 'twenty-shared/utils';
 import {
-  type BillingPlan,
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
@@ -13,7 +12,7 @@ export const isBillingSubscriptionChangeImmediate = ({
   subscriptionStatus,
 }: {
   change: BillingSubscriptionChange;
-  currentPlan: BillingPlanSwitches & Pick<BillingPlan, 'trialEndPlanKey'>;
+  currentPlan: BillingPlanSwitches;
   subscriptionStatus: SubscriptionStatus | undefined;
 }) => {
   if (subscriptionStatus === SubscriptionStatus.Trialing) {

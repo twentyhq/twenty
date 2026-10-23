@@ -266,10 +266,6 @@ export class BillingPortalWorkspaceService {
     const paymentIntent = this.findSubscriptionClientSecret(stripeSubscription);
 
     if (isDefined(paymentIntent)) {
-      await this.billingTrialService.scheduleReverseTrialDowngrade(
-        stripeSubscription.id,
-      );
-
       return paymentIntent;
     }
 

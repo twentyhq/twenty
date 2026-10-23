@@ -46,10 +46,8 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     }
   };
 
-  const currentPlanKey = getSubscriptionPlanKey(currentBillingSubscription);
-  const isPlanSwitchScheduled =
-    isDefined(nextPlan) && nextPlan.planKey !== currentPlanKey;
-  const planKey = isPlanSwitchScheduled ? nextPlan.planKey : currentPlanKey;
+  const planKey =
+    nextPlan?.planKey ?? getSubscriptionPlanKey(currentBillingSubscription);
   const billingPlanLabel = isDefined(planKey)
     ? t(BILLING_PLAN_LABELS[planKey])
     : undefined;

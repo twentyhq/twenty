@@ -1,6 +1,7 @@
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AddPaymentMethodForm } from '@/settings/billing/components/AddPaymentMethodForm';
-import { useTrialScheduledPlanLabel } from '@/settings/billing/hooks/useTrialScheduledPlanLabel';
+import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
+import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,7 +21,10 @@ export const AddCreditCardModal = ({
 }: AddCreditCardModalProps) => {
   const { t } = useLingui();
   const { closeDialog } = useDialog();
-  const { trialScheduledPlanLabel } = useTrialScheduledPlanLabel();
+  const { nextPlan } = useNextPlan();
+  const nextPlanLabel = isDefined(nextPlan)
+    ? t(BILLING_PLAN_LABELS[nextPlan.planKey])
+    : undefined;
 
   // Close only after activation so the form keeps its loading state visible
   const handlePaymentMethodAdded = async () => {
@@ -43,8 +47,8 @@ export const AddCreditCardModal = ({
           <Dialog.Header>
             <Dialog.Title>{t`Add your credit card`}</Dialog.Title>
             <Dialog.Description>
-              {isDefined(trialScheduledPlanLabel)
-                ? t`Add your credit card below. Once added, your trial ends and your ${trialScheduledPlanLabel} plan starts now.`
+              {isDefined(nextPlanLabel)
+                ? t`Add your credit card below. Once added, your trial ends and your ${nextPlanLabel} plan starts now.`
                 : t`Add your credit card below. Once added, your subscription will start automatically.`}
             </Dialog.Description>
           </Dialog.Header>

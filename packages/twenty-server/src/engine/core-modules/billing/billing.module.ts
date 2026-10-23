@@ -107,7 +107,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingSubscriptionService,
     BillingCreditAllowanceService,
     BillingSubscriptionUpdateService,
-    BillingTrialService,
     BillingService,
     BillingUsageService,
     BillingCreditRolloverService,

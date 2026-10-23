@@ -85,17 +85,7 @@ describe('isBillingSubscriptionChangeImmediate', () => {
     ).toBe(false);
   });
 
-  it('applies every change immediately while trialing with the legacy config', () => {
-    expect(
-      isBillingSubscriptionChangeImmediate({
-        change: {
-          type: 'SWITCH_PLAN',
-          targetPlanKey: BillingPlanKey.ENTERPRISE,
-        },
-        currentPlan: proPlan,
-        subscriptionStatus: SubscriptionStatus.Trialing,
-      }),
-    ).toBe(true);
+  it('applies every change immediately while trialing', () => {
     expect(
       isBillingSubscriptionChangeImmediate({
         change: { type: 'SWITCH_PLAN', targetPlanKey: BillingPlanKey.PRO },
@@ -123,16 +113,6 @@ describe('isBillingSubscriptionChangeImmediate', () => {
         subscriptionStatus: SubscriptionStatus.Trialing,
       }),
     ).toBe(false);
-  });
-
-  it('applies other changes immediately during a reverse trial', () => {
-    expect(
-      isBillingSubscriptionChangeImmediate({
-        change: { type: 'CANCEL_PLAN_SWITCH' },
-        currentPlan: reverseTrialOrganizationPlan,
-        subscriptionStatus: SubscriptionStatus.Trialing,
-      }),
-    ).toBe(true);
     expect(
       isBillingSubscriptionChangeImmediate({
         change: {

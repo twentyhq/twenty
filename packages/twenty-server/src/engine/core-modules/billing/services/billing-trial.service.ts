@@ -1,12 +1,10 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
-
-import type Stripe from 'stripe';
 
 import { getSubscriptionStatus } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
 import {
@@ -14,7 +12,6 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
@@ -25,16 +22,12 @@ import { StripeSubscriptionService } from 'src/engine/core-modules/billing/strip
 import { SubscriptionUpdateType } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
 import { getReverseTrialPlanKeys } from 'src/engine/core-modules/billing/utils/get-reverse-trial-plan-keys.util';
-import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
 import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
-import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingTrialService {
-  protected readonly logger = new Logger(BillingTrialService.name);
-
   constructor(
     private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -57,25 +50,15 @@ export class BillingTrialService {
       return;
     }
 
-    const { subscription, schedule, currentPhase, nextPhase } =
-      await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
+    const subscription =
+      await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
         stripeSubscriptionId,
       );
 
     if (
       subscription.status !== 'trialing' ||
-      !isDefined(subscription.trial_end)
-    ) {
-      return;
-    }
-
-    if (
-      isDefined(currentPhase) &&
-      isDefined(nextPhase) &&
-      !isSamePhaseSignature(
-        toPhaseUpdateParams(currentPhase),
-        toPhaseUpdateParams(nextPhase),
-      )
+      !isDefined(subscription.trial_end) ||
+      isDefined(subscription.schedule)
     ) {
       return;
     }
@@ -101,25 +84,6 @@ export class BillingTrialService {
         },
         currentPrices,
       );
-
-    if (
-      isDefined(schedule) &&
-      isDefined(currentPhase) &&
-      isDefined(nextPhase)
-    ) {
-      await this.billingSubscriptionUpdateService.runSubscriptionScheduleUpdate(
-        {
-          stripeScheduleId: schedule.id,
-          toUpdateNextPrices,
-          toUpdateCurrentPrices: undefined,
-          currentPhase: toPhaseUpdateParams(currentPhase),
-          nextPhase: toPhaseUpdateParams(nextPhase),
-          subscriptionCurrentPeriodEnd: subscription.trial_end,
-        },
-      );
-
-      return;
-    }
 
     await this.billingSubscriptionUpdateService.createScheduleWithNextPhase({
       stripeSubscriptionId,
@@ -160,8 +124,47 @@ export class BillingTrialService {
       );
     }
 
+    const { schedule, nextPhase } =
+      await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
+        billingSubscription.stripeSubscriptionId,
+      );
+
+    if (isDefined(schedule) && isDefined(nextPhase)) {
+      const nextPhasePrices =
+        await this.billingSubscriptionUpdateService.getSubscriptionPricesFromItems(
+          nextPhase.items,
+        );
+
+      const nextPlanKey = await this.getPlanKeyByPriceIdOrThrow(
+        nextPhasePrices.baseProductPriceId,
+      );
+
+      await this.stripeSubscriptionService.updateSubscription(
+        billingSubscription.stripeSubscriptionId,
+        {
+          items: buildSubscriptionItemsUpdate({
+            billingSubscriptionItems:
+              billingSubscription.billingSubscriptionItems,
+            toUpdatePrices: nextPhasePrices,
+          }),
+          proration_behavior: 'none',
+          metadata: { plan: nextPlanKey },
+        },
+      );
+
+      await this.stripeSubscriptionScheduleService.releaseSubscriptionSchedule(
+        schedule.id,
+      );
+    }
+
     const updatedSubscription =
-      await this.endTrialOnStripe(billingSubscription);
+      await this.stripeSubscriptionService.updateSubscription(
+        billingSubscription.stripeSubscriptionId,
+        {
+          trial_end: 'now',
+          cancel_at_period_end: false,
+        },
+      );
 
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
       billingSubscription.workspaceId,
@@ -172,85 +175,6 @@ export class BillingTrialService {
       status: getSubscriptionStatus(updatedSubscription.status),
       hasPaymentMethod: true,
     };
-  }
-
-  private async endTrialOnStripe(
-    billingSubscription: BillingSubscriptionEntity,
-  ): Promise<Stripe.Subscription> {
-    const { schedule, nextPhase } =
-      await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
-        billingSubscription.stripeSubscriptionId,
-      );
-
-    if (isDefined(schedule) && isDefined(nextPhase)) {
-      return await this.startNextPhaseNow({
-        billingSubscription,
-        stripeScheduleId: schedule.id,
-        nextPhase,
-      });
-    }
-
-    return await this.stripeSubscriptionService.updateSubscription(
-      billingSubscription.stripeSubscriptionId,
-      {
-        trial_end: 'now',
-        cancel_at_period_end: false,
-      },
-    );
-  }
-
-  private async startNextPhaseNow({
-    billingSubscription,
-    stripeScheduleId,
-    nextPhase,
-  }: {
-    billingSubscription: BillingSubscriptionEntity;
-    stripeScheduleId: string;
-    nextPhase: Stripe.SubscriptionSchedule.Phase;
-  }): Promise<Stripe.Subscription> {
-    const nextPhasePrices =
-      await this.billingSubscriptionUpdateService.getSubscriptionPricesFromItems(
-        nextPhase.items,
-      );
-
-    const nextPlanKey = await this.getPlanKeyByPriceIdOrThrow(
-      nextPhasePrices.baseProductPriceId,
-    );
-
-    await this.stripeSubscriptionScheduleService.releaseSubscriptionSchedule(
-      stripeScheduleId,
-    );
-
-    try {
-      return await this.stripeSubscriptionService.updateSubscription(
-        billingSubscription.stripeSubscriptionId,
-        {
-          items: buildSubscriptionItemsUpdate({
-            billingSubscriptionItems:
-              billingSubscription.billingSubscriptionItems,
-            toUpdatePrices: nextPhasePrices,
-          }),
-          trial_end: 'now',
-          cancel_at_period_end: false,
-          proration_behavior: 'none',
-          metadata: { plan: nextPlanKey },
-        },
-      );
-    } catch (error) {
-      await this.billingSubscriptionUpdateService
-        .createScheduleWithNextPhase({
-          stripeSubscriptionId: billingSubscription.stripeSubscriptionId,
-          toUpdateNextPrices: nextPhasePrices,
-          subscriptionCurrentPeriodEnd: nextPhase.start_date,
-        })
-        .catch((restoreError) =>
-          this.logger.error(
-            `Failed to restore the subscription schedule of ${billingSubscription.stripeSubscriptionId}: ${restoreError}`,
-          ),
-        );
-
-      throw error;
-    }
   }
 
   private async getPlanKeyByPriceIdOrThrow(

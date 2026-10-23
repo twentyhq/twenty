@@ -18,16 +18,12 @@ export const getReverseTrialPlanKeys = (
     return undefined;
   }
 
-  const { downgradePlanKeys } = getBillingPlanConfig({
+  const [downgradePlanKey] = getBillingPlanConfig({
     plansConfig,
     planKey: trialPlanKey,
-  });
+  }).downgradePlanKeys;
 
-  const [downgradePlanKey] = downgradePlanKeys;
-
-  if (downgradePlanKeys.length !== 1 || downgradePlanKey === trialPlanKey) {
-    return undefined;
-  }
-
-  return { trialPlanKey, downgradePlanKey };
+  return isDefined(downgradePlanKey)
+    ? { trialPlanKey, downgradePlanKey }
+    : undefined;
 };

@@ -13,7 +13,10 @@ export const useBillingSubscriptionCost = () => {
   const { currentResourceCreditSubscriptionItem } = useCurrentResourceCredit();
   const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
 
-  const isTrialing = subscription?.status === SubscriptionStatus.Trialing;
+  const trialNextPhasePrices =
+    subscription?.status === SubscriptionStatus.Trialing
+      ? splitedPhaseItemsInPrices
+      : undefined;
 
   const baseProductSubscriptionItem = findBaseProductSubscriptionItem(
     subscription?.billingSubscriptionItems,
@@ -23,20 +26,18 @@ export const useBillingSubscriptionCost = () => {
 
   // Subscription prices, not the catalog: superseded prices keep billing the workspaces on them.
   // Per-seat is per subscription interval (a full year for yearly), so subtotals match the charge.
-  const perSeatAmountCents = isTrialing
-    ? (splitedPhaseItemsInPrices.nextBasePrice?.unitAmount ??
-      baseProductSubscriptionItem?.unitAmount)
-    : baseProductSubscriptionItem?.unitAmount;
+  const perSeatAmountCents =
+    trialNextPhasePrices?.nextBasePrice?.unitAmount ??
+    baseProductSubscriptionItem?.unitAmount;
 
   const seatsSubtotalCents =
     isDefined(seats) && isDefined(perSeatAmountCents)
       ? seats * perSeatAmountCents
       : undefined;
 
-  const creditsSubtotalCents = isTrialing
-    ? (splitedPhaseItemsInPrices.nextResourceCreditPrice?.unitAmount ??
-      currentResourceCreditSubscriptionItem?.unitAmount)
-    : currentResourceCreditSubscriptionItem?.unitAmount;
+  const creditsSubtotalCents =
+    trialNextPhasePrices?.nextResourceCreditPrice?.unitAmount ??
+    currentResourceCreditSubscriptionItem?.unitAmount;
 
   const totalCents =
     isDefined(seatsSubtotalCents) && isDefined(creditsSubtotalCents)

@@ -45,7 +45,7 @@ import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/b
 import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-plan-switch-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
-import { isReverseTrialDowngrade } from 'src/engine/core-modules/billing/utils/is-reverse-trial-downgrade.util';
+import { getReverseTrialPlanKeys } from 'src/engine/core-modules/billing/utils/get-reverse-trial-plan-keys.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import { buildSchedulePhasesUpdate } from 'src/engine/core-modules/billing/utils/build-schedule-phases-update.util';
 import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
@@ -620,25 +620,17 @@ export class BillingSubscriptionUpdateService {
     subscription: BillingSubscriptionEntity,
     update: SubscriptionUpdate,
   ): Promise<boolean> {
-    if (subscription.status === SubscriptionStatus.Trialing) {
-      if (update.type === SubscriptionUpdateType.INTERVAL) {
-        return false;
-      }
-
-      if (update.type === SubscriptionUpdateType.PLAN) {
-        const currentPlanKey =
-          getBaseProductSubscriptionItemOrThrow(subscription).billingProduct
-            ?.metadata.planKey;
-
-        return (
-          isDefined(currentPlanKey) &&
-          isReverseTrialDowngrade({
-            plansConfig: this.twentyConfigService.get('BILLING_PLANS'),
-            currentPlanKey,
-            targetPlanKey: update.newPlan,
-          })
-        );
-      }
+    if (
+      subscription.status === SubscriptionStatus.Trialing &&
+      (update.type === SubscriptionUpdateType.INTERVAL ||
+        update.type === SubscriptionUpdateType.PLAN)
+    ) {
+      return (
+        update.type === SubscriptionUpdateType.PLAN &&
+        update.newPlan ===
+          getReverseTrialPlanKeys(this.twentyConfigService.get('BILLING_PLANS'))
+            ?.downgradePlanKey
+      );
     }
 
     switch (update.type) {

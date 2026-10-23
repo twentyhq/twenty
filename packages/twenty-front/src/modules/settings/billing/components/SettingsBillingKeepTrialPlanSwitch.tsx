@@ -5,7 +5,6 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { IconCreditCard } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -21,18 +20,16 @@ const StyledContainer = styled.div`
 type SettingsBillingKeepTrialPlanSwitchProps = {
   trialPlanKey: BillingPlanKey;
   downgradePlanKey: BillingPlanKey;
-  trialEndDate: string | undefined;
   disabled: boolean;
 };
 
 export const SettingsBillingKeepTrialPlanSwitch = ({
   trialPlanKey,
   downgradePlanKey,
-  trialEndDate,
   disabled,
 }: SettingsBillingKeepTrialPlanSwitchProps) => {
   const { t } = useLingui();
-  const { getBillingPlanLabel } = useBillingWording();
+  const { getBeautifiedRenewDate, getBillingPlanLabel } = useBillingWording();
   const { nextPlan } = useNextPlan();
   const {
     applyBillingSubscriptionChange,
@@ -44,6 +41,7 @@ export const SettingsBillingKeepTrialPlanSwitch = ({
 
   const trialPlanLabel = getBillingPlanLabel(trialPlanKey);
   const downgradePlanLabel = getBillingPlanLabel(downgradePlanKey);
+  const trialEndDate = getBeautifiedRenewDate();
 
   const handleChange = (shouldKeepTrialPlan: boolean) =>
     applyBillingSubscriptionChange(
@@ -58,11 +56,7 @@ export const SettingsBillingKeepTrialPlanSwitch = ({
         <SettingsOptionCardContentSwitch
           Icon={IconCreditCard}
           title={t`Keep ${trialPlanLabel} after trial`}
-          description={
-            isDefined(trialEndDate)
-              ? t`Trial ends ${trialEndDate}. If off, you move to the ${downgradePlanLabel} plan on that date`
-              : t`If off, you move to the ${downgradePlanLabel} plan when your trial ends`
-          }
+          description={t`Trial ends ${trialEndDate}. If off, you move to the ${downgradePlanLabel} plan on that date`}
           checked={nextPlan?.planKey !== downgradePlanKey}
           disabled={
             disabled ||
