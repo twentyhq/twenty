@@ -14,10 +14,7 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 
-import {
-  getDefaultApplicationPackageFields,
-  type DefaultApplicationPackageFields,
-} from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -606,7 +603,8 @@ export class ApplicationService {
 
     await this.uploadPackageFilesAndSetFileIds({
       application: workspaceCustomApplication,
-      packageFields: defaultPackageFields,
+      packageJsonContent: defaultPackageFields.packageJsonContent,
+      yarnLockContent: defaultPackageFields.yarnLockContent,
       queryRunner,
     });
 
@@ -653,38 +651,42 @@ export class ApplicationService {
     >,
     queryRunner?: QueryRunner,
   ): Promise<void> {
+    const { packageJsonContent, yarnLockContent } =
+      await getDefaultApplicationPackageFields();
+
     await this.uploadPackageFilesAndSetFileIds({
       application,
+      packageJsonContent,
+      yarnLockContent,
       queryRunner,
-      packageFields: await getDefaultApplicationPackageFields(),
     });
   }
 
-  private async uploadPackageFilesAndSetFileIds({
+  async uploadPackageFilesAndSetFileIds({
     application,
-    packageFields,
+    packageJsonContent,
+    yarnLockContent,
     queryRunner,
   }: {
     application: Pick<
       ApplicationEntity,
       'id' | 'universalIdentifier' | 'workspaceId'
     >;
-    packageFields: DefaultApplicationPackageFields;
+    packageJsonContent: string;
+    yarnLockContent: string;
     queryRunner?: QueryRunner;
   }): Promise<void> {
     const packageJsonChecksum = logicFunctionCreateHash(
-      JSON.stringify(JSON.parse(packageFields.packageJsonContent)),
+      JSON.stringify(JSON.parse(packageJsonContent)),
     );
-    const yarnLockChecksum = logicFunctionCreateHash(
-      packageFields.yarnLockContent,
-    );
+    const yarnLockChecksum = logicFunctionCreateHash(yarnLockContent);
     const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
-      packageFields.packageJsonContent,
-      packageFields.yarnLockContent,
+      packageJsonContent,
+      yarnLockContent,
     );
 
     const packageJsonFile = await this.fileStorageService.writeFile({
-      sourceFile: packageFields.packageJsonContent,
+      sourceFile: packageJsonContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,
@@ -695,7 +697,7 @@ export class ApplicationService {
     });
 
     const yarnLockFile = await this.fileStorageService.writeFile({
-      sourceFile: packageFields.yarnLockContent,
+      sourceFile: yarnLockContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,
