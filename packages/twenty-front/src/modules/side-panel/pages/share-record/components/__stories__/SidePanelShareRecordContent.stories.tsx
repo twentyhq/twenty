@@ -312,6 +312,95 @@ export const AddPeople: Story = {
   },
 };
 
+export const ChangeAccessWithoutMovingRecipients: Story = {
+  args: {
+    sharingState: {
+      sharing: {
+        ...SHARING,
+        shares: [
+          SHARING.shares[0],
+          {
+            ...SHARING.shares[1],
+            id: 'jane-grant',
+            principalId: 'invite',
+          },
+          ...SHARING.shares.slice(1),
+        ],
+      },
+      loading: false,
+      error: undefined,
+      saving: false,
+      setGeneralAccess,
+      setShare,
+      removeShare,
+      refetch,
+    },
+  },
+  render: (args) => {
+    const [sharing, setSharing] = useState(args.sharingState.sharing);
+    const handleSetShare = async (
+      input: Parameters<typeof args.sharingState.setShare>[0],
+    ) => {
+      const result = await args.sharingState.setShare(input);
+
+      if (isDefined(result)) {
+        setSharing(result);
+      }
+
+      return result;
+    };
+
+    return (
+      <SidePanelShareRecordContent
+        recordUrl={args.recordUrl}
+        objectLabelPlural={args.objectLabelPlural}
+        sharingReach={args.sharingReach}
+        sharingState={{
+          ...args.sharingState,
+          sharing,
+          setShare: handleSetShare,
+        }}
+      />
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const jane = await page.findByRole('button', {
+      name: 'Jane Austen Editor',
+    });
+    const phil = page.getByRole('button', { name: 'Phil Schiler Editor' });
+    const janePosition = jane.getBoundingClientRect().top;
+    const philPosition = phil.getBoundingClientRect().top;
+    setShare.mockResolvedValueOnce({
+      ...SHARING,
+      shares: [
+        ...SHARING.shares,
+        {
+          ...SHARING.shares[1],
+          id: 'updated-jane-grant',
+          principalId: 'invite',
+          accessLevel: RecordShareAccessLevel.FULL,
+        },
+      ],
+    });
+
+    await userEvent.click(jane);
+    await userEvent.click(
+      await page.findByRole('menuitemradio', { name: 'Full access' }),
+    );
+    const updatedJane = await page.findByRole('button', {
+      name: 'Jane Austen Full access',
+    });
+
+    await expect(updatedJane.getBoundingClientRect().top).toBe(janePosition);
+    await expect(phil.getBoundingClientRect().top).toBe(philPosition);
+    await expect(setShare).toHaveBeenCalledWith({
+      principal: { workspaceMemberId: 'invite' },
+      accessLevel: RecordShareAccessLevel.FULL,
+    });
+  },
+};
+
 export const InvitePeople: Story = {
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);

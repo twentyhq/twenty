@@ -49,6 +49,103 @@ const getSearchResults = (
   });
 
 describe('getRecordSharingSearchResults', () => {
+  it('keeps recipient order when an access update returns grants in a different order', () => {
+    const otherMember: PartialWorkspaceMember = {
+      ...MEMBER,
+      id: 'other-member',
+      name: { firstName: 'David', lastName: 'Phillips' },
+    };
+    const otherShare = {
+      ...MEMBER_SHARE,
+      id: 'other-share',
+      principalId: otherMember.id,
+    };
+    const initialResults = getSearchResults({
+      workspaceMembers: [MEMBER, otherMember],
+      sharing: { shares: [MEMBER_SHARE, otherShare], roles: [] },
+    });
+    const updatedResults = getSearchResults({
+      workspaceMembers: [MEMBER, otherMember],
+      sharing: {
+        shares: [
+          otherShare,
+          {
+            ...MEMBER_SHARE,
+            id: 'replacement-member-share',
+            accessLevel: RecordShareAccessLevel.READ_WRITE,
+          },
+        ],
+        roles: [],
+      },
+    });
+
+    expect(
+      updatedResults.matchingShares.map((share) => share.principalId),
+    ).toEqual(initialResults.matchingShares.map((share) => share.principalId));
+  });
+
+  it('lists the owner and current member before other recipients in alphabetical order', () => {
+    const results = getSearchResults({
+      currentWorkspaceMember: { ...MEMBER, colorScheme: 'Light', locale: 'en' },
+      workspaceMembers: [
+        MEMBER,
+        {
+          ...MEMBER,
+          id: 'david',
+          name: { firstName: 'David', lastName: 'Phillips' },
+        },
+        {
+          ...MEMBER,
+          id: 'alice',
+          name: { firstName: 'Alice', lastName: 'Smith' },
+        },
+      ],
+      sharing: {
+        shares: [
+          { ...MEMBER_SHARE, id: 'david-share', principalId: 'david' },
+          MEMBER_SHARE,
+          { ...MEMBER_SHARE, id: 'alice-share', principalId: 'alice' },
+          {
+            ...MEMBER_SHARE,
+            id: 'owner-share',
+            principalId: 'owner',
+            rowCause: RecordShareRowCause.OWNER,
+          },
+        ],
+        roles: [],
+      },
+    });
+
+    expect(results.matchingShares.map((share) => share.principalId)).toEqual([
+      'owner',
+      MEMBER.id,
+      'alice',
+      'david',
+    ]);
+  });
+
+  it('keeps recipients with identical names in a stable order', () => {
+    const results = getSearchResults({
+      workspaceMembers: [MEMBER, { ...MEMBER, id: 'other-member' }],
+      sharing: {
+        shares: [
+          {
+            ...MEMBER_SHARE,
+            id: 'first-grant',
+            principalId: 'other-member',
+          },
+          { ...MEMBER_SHARE, id: 'replacement-grant' },
+        ],
+        roles: [],
+      },
+    });
+
+    expect(results.matchingShares.map((share) => share.principalId)).toEqual([
+      MEMBER.id,
+      'other-member',
+    ]);
+  });
+
   it('matches the current member email without confusing a role with the same ID', () => {
     const results = getSearchResults({
       search: '  SARAH@APPLE.DEV  ',

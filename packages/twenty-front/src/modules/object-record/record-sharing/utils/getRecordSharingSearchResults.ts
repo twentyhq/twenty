@@ -8,8 +8,10 @@ import { isSameRecordSharingInvitationRecipient } from '@/object-record/record-s
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import {
   RecordSharePrincipalType,
+  RecordShareRowCause,
   type RecordSharingFieldsFragment,
 } from '~/generated-metadata/graphql';
+import { sortByAscString } from '~/utils/array/sortByAscString';
 
 const hasMatchingSearchValue = ({
   values,
@@ -46,32 +48,67 @@ export const getRecordSharingSearchResults = ({
   const normalizedSearch = search.trim().toLowerCase();
   const hasSelection = isNonEmptyArray(selectedRecipients);
   const isInviting = isNonEmptyString(normalizedSearch) || hasSelection;
-  const matchingShares = (sharing?.shares ?? []).filter((share) => {
-    const member =
-      share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER
-        ? workspaceMembers.find(({ id }) => id === share.principalId)
-        : undefined;
-    const role =
-      share.principalType === RecordSharePrincipalType.ROLE
-        ? sharing?.roles.find(({ id }) => id === share.principalId)
-        : undefined;
-    const label = getRecordShareLabel({
-      share,
-      member,
-      role,
-      currentWorkspaceMember,
-    });
+  const matchingShares = (sharing?.shares ?? [])
+    .flatMap((share) => {
+      const member =
+        share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER
+          ? workspaceMembers.find(({ id }) => id === share.principalId)
+          : undefined;
+      const role =
+        share.principalType === RecordSharePrincipalType.ROLE
+          ? sharing?.roles.find(({ id }) => id === share.principalId)
+          : undefined;
+      const label = getRecordShareLabel({
+        share,
+        member,
+        role,
+        currentWorkspaceMember,
+      });
+      const matchesSearch = hasMatchingSearchValue({
+        values: [
+          label,
+          member?.name.firstName,
+          member?.name.lastName,
+          member?.userEmail,
+        ],
+        normalizedSearch,
+      });
 
-    return hasMatchingSearchValue({
-      values: [
-        label,
-        member?.name.firstName,
-        member?.name.lastName,
-        member?.userEmail,
-      ],
-      normalizedSearch,
-    });
-  });
+      if (!matchesSearch) {
+        return [];
+      }
+
+      return [
+        {
+          share,
+          label,
+          isOwner: share.rowCause === RecordShareRowCause.OWNER,
+          isCurrentWorkspaceMember:
+            share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER &&
+            share.principalId === currentWorkspaceMember?.id,
+        },
+      ];
+    })
+    .sort(
+      (firstRecipient, secondRecipient) =>
+        Number(secondRecipient.isOwner) - Number(firstRecipient.isOwner) ||
+        Number(secondRecipient.isCurrentWorkspaceMember) -
+          Number(firstRecipient.isCurrentWorkspaceMember) ||
+        sortByAscString(firstRecipient.label, secondRecipient.label) ||
+        sortByAscString(
+          firstRecipient.share.principalType,
+          secondRecipient.share.principalType,
+        ) ||
+        sortByAscString(
+          firstRecipient.share.principalId,
+          secondRecipient.share.principalId,
+        ) ||
+        sortByAscString(
+          firstRecipient.share.rowCause,
+          secondRecipient.share.rowCause,
+        ),
+    )
+    .map(({ share }) => share);
   const matchingRecipients = recipients.filter(
     (recipient) =>
       !selectedRecipients.some((selectedRecipient) =>
