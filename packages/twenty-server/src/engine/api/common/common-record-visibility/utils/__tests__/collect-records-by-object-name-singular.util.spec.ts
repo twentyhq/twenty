@@ -89,7 +89,7 @@ const collect = ({
 
 describe('collectRecordsByObjectNameSingular', () => {
   it('should collect root records of a requested object', () => {
-    const event = { id: 'event-1', title: 'Demo' } as ObjectRecord;
+    const event: ObjectRecord = { id: 'event-1', title: 'Demo' };
 
     expect(
       collect({
@@ -104,7 +104,7 @@ describe('collectRecordsByObjectNameSingular', () => {
     const firstEvent = { id: 'event-1', title: 'Demo' };
     const secondEvent = { id: 'event-2', title: 'Sync' };
 
-    const records = [
+    const records: ObjectRecord[] = [
       {
         id: 'person-1',
         calendarEventParticipants: [
@@ -113,7 +113,7 @@ describe('collectRecordsByObjectNameSingular', () => {
           { id: 'participant-3', calendarEvent: null },
         ],
       },
-    ] as unknown as ObjectRecord[];
+    ];
 
     const collectedRecords = collect({
       records,
@@ -131,7 +131,7 @@ describe('collectRecordsByObjectNameSingular', () => {
   it('should collect a record shared by several parents once', () => {
     const sharedEvent = { id: 'event-1', title: 'Demo' };
 
-    const records = [
+    const records: ObjectRecord[] = [
       {
         id: 'person-1',
         calendarEventParticipants: [
@@ -139,7 +139,7 @@ describe('collectRecordsByObjectNameSingular', () => {
           { id: 'participant-2', calendarEvent: sharedEvent },
         ],
       },
-    ] as unknown as ObjectRecord[];
+    ];
 
     expect(
       collect({
@@ -151,9 +151,9 @@ describe('collectRecordsByObjectNameSingular', () => {
   });
 
   it('should collect nothing when no requested object is in the result', () => {
-    const records = [
+    const records: ObjectRecord[] = [
       { id: 'person-1', calendarEventParticipants: [] },
-    ] as unknown as ObjectRecord[];
+    ];
 
     expect(
       collect({

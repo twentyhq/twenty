@@ -1,4 +1,3 @@
-import { isObject } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -50,19 +49,19 @@ export const collectRecordsByObjectNameSingular = ({
     return relationFields;
   };
 
-  const visit = (record: unknown, objectMetadata: FlatObjectMetadata) => {
-    if (!isObject(record)) {
-      return;
-    }
-
-    const objectRecord = record as ObjectRecord;
-
+  const visit = ({
+    record,
+    objectMetadata,
+  }: {
+    record: ObjectRecord;
+    objectMetadata: FlatObjectMetadata;
+  }) => {
     if (objectNameSingulars.has(objectMetadata.nameSingular)) {
       const collectedRecords =
         collectedRecordsByObjectNameSingular.get(objectMetadata.nameSingular) ??
         new Set<ObjectRecord>();
 
-      collectedRecords.add(objectRecord);
+      collectedRecords.add(record);
       collectedRecordsByObjectNameSingular.set(
         objectMetadata.nameSingular,
         collectedRecords,
@@ -70,7 +69,7 @@ export const collectRecordsByObjectNameSingular = ({
     }
 
     for (const relationField of getRelationFields(objectMetadata)) {
-      const relationValue = objectRecord[relationField.name];
+      const relationValue = record[relationField.name];
 
       if (
         !isDefined(relationValue) ||
@@ -88,18 +87,18 @@ export const collectRecordsByObjectNameSingular = ({
         continue;
       }
 
-      const relationRecords = Array.isArray(relationValue)
-        ? relationValue
+      const relationRecords: ObjectRecord[] = Array.isArray(relationValue)
+        ? relationValue.filter(isDefined)
         : [relationValue];
 
       for (const relationRecord of relationRecords) {
-        visit(relationRecord, targetObjectMetadata);
+        visit({ record: relationRecord, objectMetadata: targetObjectMetadata });
       }
     }
   };
 
   for (const record of records) {
-    visit(record, flatObjectMetadata);
+    visit({ record, objectMetadata: flatObjectMetadata });
   }
 
   return new Map(

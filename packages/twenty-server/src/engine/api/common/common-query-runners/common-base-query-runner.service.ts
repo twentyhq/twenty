@@ -209,7 +209,9 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<Output>;
 
   protected getResultRecords(results: Output): ObjectRecord[] {
-    return (Array.isArray(results) ? results : [results]) as ObjectRecord[];
+    return (
+      (Array.isArray(results) ? results : [results]) as ObjectRecord[]
+    ).filter(isDefined);
   }
 
   protected computeQueryComplexity(

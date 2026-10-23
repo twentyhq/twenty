@@ -57,13 +57,15 @@ const findSeededEventIdOnChannels = async (calendarChannelIds: string[]) => {
 
 type CalendarEventNode = { id: string; title: string; description: string };
 
-const expectMaskedByVisibility = (
-  calendarEvents: CalendarEventNode[],
-  {
-    metadataEventId,
-    sharedEventId,
-  }: { metadataEventId: string; sharedEventId: string },
-) => {
+const expectMaskedByVisibility = ({
+  calendarEvents,
+  metadataEventId,
+  sharedEventId,
+}: {
+  calendarEvents: CalendarEventNode[];
+  metadataEventId: string;
+  sharedEventId: string;
+}) => {
   const calendarEventsById = new Map(
     calendarEvents.map((calendarEvent) => [calendarEvent.id, calendarEvent]),
   );
@@ -200,12 +202,13 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    expectMaskedByVisibility(
-      response.body.data.calendarEvents.edges.map(
+    expectMaskedByVisibility({
+      calendarEvents: response.body.data.calendarEvents.edges.map(
         (edge: { node: CalendarEventNode }) => edge.node,
       ),
-      { metadataEventId, sharedEventId },
-    );
+      metadataEventId,
+      sharedEventId,
+    });
   });
 
   it('should mask an event without channel associations in findOne', async () => {
@@ -234,13 +237,14 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    expectMaskedByVisibility(
-      response.body.data.calendarEventParticipants.edges.map(
+    expectMaskedByVisibility({
+      calendarEvents: response.body.data.calendarEventParticipants.edges.map(
         (edge: { node: { calendarEvent: CalendarEventNode } }) =>
           edge.node.calendarEvent,
       ),
-      { metadataEventId, sharedEventId },
-    );
+      metadataEventId,
+      sharedEventId,
+    });
   });
 
   it('should mask events nested under a one-to-many relation', async () => {
@@ -263,13 +267,15 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    expectMaskedByVisibility(
-      response.body.data.person.calendarEventParticipants.edges.map(
-        (edge: { node: { calendarEvent: CalendarEventNode } }) =>
-          edge.node.calendarEvent,
-      ),
-      { metadataEventId, sharedEventId },
-    );
+    expectMaskedByVisibility({
+      calendarEvents:
+        response.body.data.person.calendarEventParticipants.edges.map(
+          (edge: { node: { calendarEvent: CalendarEventNode } }) =>
+            edge.node.calendarEvent,
+        ),
+      metadataEventId,
+      sharedEventId,
+    });
   });
 
   it('should mask events returned by groupBy', async () => {
@@ -287,12 +293,13 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    expectMaskedByVisibility(
-      response.body.data.calendarEventsGroupBy.flatMap(
+    expectMaskedByVisibility({
+      calendarEvents: response.body.data.calendarEventsGroupBy.flatMap(
         (group: { edges: { node: CalendarEventNode }[] }) =>
           group.edges.map((edge) => edge.node),
       ),
-      { metadataEventId, sharedEventId },
-    );
+      metadataEventId,
+      sharedEventId,
+    });
   });
 });
