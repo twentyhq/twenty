@@ -471,6 +471,76 @@ export interface ApplicationHealthCheckResult {
 
 export type ApplicationHealthStatus = 'ERROR' | 'INFO' | 'NEUTRAL' | 'OK' | 'SUCCESS' | 'UNKNOWN' | 'WARNING'
 
+export interface ApplicationMonitoring {
+    activity: ApplicationMonitoringActivityBucket[]
+    bucketSizeInSeconds: Scalars['Int']
+    creditUsage?: ApplicationMonitoringCreditBucket[]
+    creditsUsed?: Scalars['Float']
+    failedRunCount: Scalars['Int']
+    functions: ApplicationMonitoringFunction[]
+    issues: ApplicationMonitoringIssue[]
+    lifecycle: ApplicationMonitoringLifecycleBucket[]
+    lifecycleFailureCount: Scalars['Int']
+    lookbackInHours: Scalars['Int']
+    periodEnd: Scalars['DateTime']
+    periodStart: Scalars['DateTime']
+    rateLimitEventCount: Scalars['Int']
+    runCount: Scalars['Int']
+    versions: ApplicationMonitoringVersion[]
+    __typename: 'ApplicationMonitoring'
+}
+
+export interface ApplicationMonitoringActivityBucket {
+    bucketStart: Scalars['DateTime']
+    errorCount: Scalars['Int']
+    rateLimitedJobCount: Scalars['Int']
+    rateLimitedRequestCount: Scalars['Int']
+    __typename: 'ApplicationMonitoringActivityBucket'
+}
+
+export interface ApplicationMonitoringCreditBucket {
+    bucketStart: Scalars['DateTime']
+    creditsUsed: Scalars['Float']
+    __typename: 'ApplicationMonitoringCreditBucket'
+}
+
+export interface ApplicationMonitoringFunction {
+    failedRunCount: Scalars['Int']
+    logicFunctionName: Scalars['String']
+    p95DurationMs: Scalars['Float']
+    runCount: Scalars['Int']
+    __typename: 'ApplicationMonitoringFunction'
+}
+
+export interface ApplicationMonitoringIssue {
+    affectedInstallCount: Scalars['Int']
+    errorCode: Scalars['String']
+    eventCount: Scalars['Int']
+    lastSeenAt: Scalars['DateTime']
+    level: Scalars['String']
+    logicFunctionName: Scalars['String']
+    source: Scalars['String']
+    versions: Scalars['String'][]
+    __typename: 'ApplicationMonitoringIssue'
+}
+
+export interface ApplicationMonitoringLifecycleBucket {
+    bucketStart: Scalars['DateTime']
+    failedCount: Scalars['Int']
+    installCount: Scalars['Int']
+    uninstallCount: Scalars['Int']
+    upgradeCount: Scalars['Int']
+    __typename: 'ApplicationMonitoringLifecycleBucket'
+}
+
+export interface ApplicationMonitoringVersion {
+    activeInstallCount: Scalars['Int']
+    failedRunCount: Scalars['Int']
+    runCount: Scalars['Int']
+    version: Scalars['String']
+    __typename: 'ApplicationMonitoringVersion'
+}
+
 export interface ApplicationPreferences {
     applicationId: Scalars['UUID']
     settingsMenuItems: SettingsMenuItem[]
@@ -1422,7 +1492,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APPLICATION_MONITORING_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2868,6 +2938,7 @@ export interface Query {
     fields: FieldConnection
     findApplicationRegistrationByClientId?: PublicApplicationRegistration
     findApplicationRegistrationByUniversalIdentifier?: ApplicationRegistration
+    findApplicationRegistrationMonitoring: ApplicationMonitoring
     findApplicationRegistrationStats: ApplicationRegistrationStats
     findApplicationRegistrationVariables: ApplicationRegistrationVariable[]
     findClaimableApplicationRegistration?: ClaimableApplicationRegistration
@@ -4556,6 +4627,83 @@ export interface ApplicationHealthCheckResultGenqlSelection{
     description?: boolean | number
     status?: boolean | number
     title?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationMonitoringGenqlSelection{
+    activity?: ApplicationMonitoringActivityBucketGenqlSelection
+    bucketSizeInSeconds?: boolean | number
+    creditUsage?: ApplicationMonitoringCreditBucketGenqlSelection
+    creditsUsed?: boolean | number
+    failedRunCount?: boolean | number
+    functions?: ApplicationMonitoringFunctionGenqlSelection
+    issues?: ApplicationMonitoringIssueGenqlSelection
+    lifecycle?: ApplicationMonitoringLifecycleBucketGenqlSelection
+    lifecycleFailureCount?: boolean | number
+    lookbackInHours?: boolean | number
+    periodEnd?: boolean | number
+    periodStart?: boolean | number
+    rateLimitEventCount?: boolean | number
+    runCount?: boolean | number
+    versions?: ApplicationMonitoringVersionGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationMonitoringActivityBucketGenqlSelection{
+    bucketStart?: boolean | number
+    errorCount?: boolean | number
+    rateLimitedJobCount?: boolean | number
+    rateLimitedRequestCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationMonitoringCreditBucketGenqlSelection{
+    bucketStart?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationMonitoringFunctionGenqlSelection{
+    failedRunCount?: boolean | number
+    logicFunctionName?: boolean | number
+    p95DurationMs?: boolean | number
+    runCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationMonitoringIssueGenqlSelection{
+    affectedInstallCount?: boolean | number
+    errorCode?: boolean | number
+    eventCount?: boolean | number
+    lastSeenAt?: boolean | number
+    level?: boolean | number
+    logicFunctionName?: boolean | number
+    source?: boolean | number
+    versions?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationMonitoringLifecycleBucketGenqlSelection{
+    bucketStart?: boolean | number
+    failedCount?: boolean | number
+    installCount?: boolean | number
+    uninstallCount?: boolean | number
+    upgradeCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationMonitoringVersionGenqlSelection{
+    activeInstallCount?: boolean | number
+    failedRunCount?: boolean | number
+    runCount?: boolean | number
+    version?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7249,6 +7397,7 @@ export interface QueryGenqlSelection{
     paging: CursorPaging} })
     findApplicationRegistrationByClientId?: (PublicApplicationRegistrationGenqlSelection & { __args: {clientId: Scalars['String']} })
     findApplicationRegistrationByUniversalIdentifier?: (ApplicationRegistrationGenqlSelection & { __args: {universalIdentifier: Scalars['String']} })
+    findApplicationRegistrationMonitoring?: (ApplicationMonitoringGenqlSelection & { __args: {id: Scalars['String'], periodEnd?: (Scalars['DateTime'] | null), periodStart?: (Scalars['DateTime'] | null)} })
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String'], periodEnd?: (Scalars['DateTime'] | null), periodStart?: (Scalars['DateTime'] | null)} })
     findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
@@ -9101,6 +9250,62 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationHealthCheckResult = (obj?: { __typename?: any } | null): obj is ApplicationHealthCheckResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationHealthCheckResult"')
       return ApplicationHealthCheckResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationMonitoring_possibleTypes: string[] = ['ApplicationMonitoring']
+    export const isApplicationMonitoring = (obj?: { __typename?: any } | null): obj is ApplicationMonitoring => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoring"')
+      return ApplicationMonitoring_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationMonitoringActivityBucket_possibleTypes: string[] = ['ApplicationMonitoringActivityBucket']
+    export const isApplicationMonitoringActivityBucket = (obj?: { __typename?: any } | null): obj is ApplicationMonitoringActivityBucket => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringActivityBucket"')
+      return ApplicationMonitoringActivityBucket_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationMonitoringCreditBucket_possibleTypes: string[] = ['ApplicationMonitoringCreditBucket']
+    export const isApplicationMonitoringCreditBucket = (obj?: { __typename?: any } | null): obj is ApplicationMonitoringCreditBucket => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringCreditBucket"')
+      return ApplicationMonitoringCreditBucket_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationMonitoringFunction_possibleTypes: string[] = ['ApplicationMonitoringFunction']
+    export const isApplicationMonitoringFunction = (obj?: { __typename?: any } | null): obj is ApplicationMonitoringFunction => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringFunction"')
+      return ApplicationMonitoringFunction_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationMonitoringIssue_possibleTypes: string[] = ['ApplicationMonitoringIssue']
+    export const isApplicationMonitoringIssue = (obj?: { __typename?: any } | null): obj is ApplicationMonitoringIssue => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringIssue"')
+      return ApplicationMonitoringIssue_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationMonitoringLifecycleBucket_possibleTypes: string[] = ['ApplicationMonitoringLifecycleBucket']
+    export const isApplicationMonitoringLifecycleBucket = (obj?: { __typename?: any } | null): obj is ApplicationMonitoringLifecycleBucket => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringLifecycleBucket"')
+      return ApplicationMonitoringLifecycleBucket_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationMonitoringVersion_possibleTypes: string[] = ['ApplicationMonitoringVersion']
+    export const isApplicationMonitoringVersion = (obj?: { __typename?: any } | null): obj is ApplicationMonitoringVersion => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationMonitoringVersion"')
+      return ApplicationMonitoringVersion_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11880,6 +12085,7 @@ export const enumEventLogTable = {
 
 export const enumFeatureFlagKey = {
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
+   IS_APPLICATION_MONITORING_ENABLED: 'IS_APPLICATION_MONITORING_ENABLED' as const,
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_ASYNC_CSV_EXPORT_ENABLED: 'IS_ASYNC_CSV_EXPORT_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,

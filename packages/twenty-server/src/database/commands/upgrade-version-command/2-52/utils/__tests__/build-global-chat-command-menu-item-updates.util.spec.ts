@@ -8,7 +8,7 @@ import {
   ObjectSharingReach,
 } from 'twenty-shared/types';
 
-import { buildGlobalChatCommandMenuItemUpdates } from 'src/database/commands/upgrade-version-command/2-51/utils/build-global-chat-command-menu-item-updates.util';
+import { buildGlobalChatCommandMenuItemUpdates } from 'src/database/commands/upgrade-version-command/2-52/utils/build-global-chat-command-menu-item-updates.util';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';

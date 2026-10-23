@@ -617,6 +617,76 @@ export enum ApplicationHealthStatus {
   WARNING = 'WARNING'
 }
 
+export type ApplicationMonitoring = {
+  __typename?: 'ApplicationMonitoring';
+  activity: Array<ApplicationMonitoringActivityBucket>;
+  bucketSizeInSeconds: Scalars['Int']['output'];
+  creditUsage?: Maybe<Array<ApplicationMonitoringCreditBucket>>;
+  creditsUsed?: Maybe<Scalars['Float']['output']>;
+  failedRunCount: Scalars['Int']['output'];
+  functions: Array<ApplicationMonitoringFunction>;
+  issues: Array<ApplicationMonitoringIssue>;
+  lifecycle: Array<ApplicationMonitoringLifecycleBucket>;
+  lifecycleFailureCount: Scalars['Int']['output'];
+  lookbackInHours: Scalars['Int']['output'];
+  periodEnd: Scalars['DateTime']['output'];
+  periodStart: Scalars['DateTime']['output'];
+  rateLimitEventCount: Scalars['Int']['output'];
+  runCount: Scalars['Int']['output'];
+  versions: Array<ApplicationMonitoringVersion>;
+};
+
+export type ApplicationMonitoringActivityBucket = {
+  __typename?: 'ApplicationMonitoringActivityBucket';
+  bucketStart: Scalars['DateTime']['output'];
+  errorCount: Scalars['Int']['output'];
+  rateLimitedJobCount: Scalars['Int']['output'];
+  rateLimitedRequestCount: Scalars['Int']['output'];
+};
+
+export type ApplicationMonitoringCreditBucket = {
+  __typename?: 'ApplicationMonitoringCreditBucket';
+  bucketStart: Scalars['DateTime']['output'];
+  creditsUsed: Scalars['Float']['output'];
+};
+
+export type ApplicationMonitoringFunction = {
+  __typename?: 'ApplicationMonitoringFunction';
+  failedRunCount: Scalars['Int']['output'];
+  logicFunctionName: Scalars['String']['output'];
+  p95DurationMs: Scalars['Float']['output'];
+  runCount: Scalars['Int']['output'];
+};
+
+export type ApplicationMonitoringIssue = {
+  __typename?: 'ApplicationMonitoringIssue';
+  affectedInstallCount: Scalars['Int']['output'];
+  errorCode: Scalars['String']['output'];
+  eventCount: Scalars['Int']['output'];
+  lastSeenAt: Scalars['DateTime']['output'];
+  level: Scalars['String']['output'];
+  logicFunctionName: Scalars['String']['output'];
+  source: Scalars['String']['output'];
+  versions: Array<Scalars['String']['output']>;
+};
+
+export type ApplicationMonitoringLifecycleBucket = {
+  __typename?: 'ApplicationMonitoringLifecycleBucket';
+  bucketStart: Scalars['DateTime']['output'];
+  failedCount: Scalars['Int']['output'];
+  installCount: Scalars['Int']['output'];
+  uninstallCount: Scalars['Int']['output'];
+  upgradeCount: Scalars['Int']['output'];
+};
+
+export type ApplicationMonitoringVersion = {
+  __typename?: 'ApplicationMonitoringVersion';
+  activeInstallCount: Scalars['Int']['output'];
+  failedRunCount: Scalars['Int']['output'];
+  runCount: Scalars['Int']['output'];
+  version: Scalars['String']['output'];
+};
+
 export type ApplicationPreferences = {
   __typename?: 'ApplicationPreferences';
   applicationId: Scalars['UUID']['output'];
@@ -2314,6 +2384,7 @@ export type FeatureFlag = {
 
 export enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
+  IS_APPLICATION_MONITORING_ENABLED = 'IS_APPLICATION_MONITORING_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
@@ -5576,6 +5647,7 @@ export type Query = {
   fields: FieldConnection;
   findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
+  findApplicationRegistrationMonitoring: ApplicationMonitoring;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
   findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
   findClaimableApplicationRegistration?: Maybe<ClaimableApplicationRegistration>;
@@ -5838,6 +5910,13 @@ export type QueryFindApplicationRegistrationByClientIdArgs = {
 
 export type QueryFindApplicationRegistrationByUniversalIdentifierArgs = {
   universalIdentifier: Scalars['String']['input'];
+};
+
+
+export type QueryFindApplicationRegistrationMonitoringArgs = {
+  id: Scalars['String']['input'];
+  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
+  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 
@@ -10188,6 +10267,15 @@ export type ApplicationRegistrationTarballUrlQueryVariables = Exact<{
 
 export type ApplicationRegistrationTarballUrlQuery = { __typename?: 'Query', applicationRegistrationTarballUrl?: string | null };
 
+export type FindApplicationRegistrationMonitoringQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
+  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
+}>;
+
+
+export type FindApplicationRegistrationMonitoringQuery = { __typename?: 'Query', findApplicationRegistrationMonitoring: { __typename?: 'ApplicationMonitoring', periodStart: string, periodEnd: string, bucketSizeInSeconds: number, lookbackInHours: number, runCount: number, failedRunCount: number, lifecycleFailureCount: number, rateLimitEventCount: number, creditsUsed?: number | null, activity: Array<{ __typename?: 'ApplicationMonitoringActivityBucket', bucketStart: string, errorCount: number, rateLimitedRequestCount: number, rateLimitedJobCount: number }>, lifecycle: Array<{ __typename?: 'ApplicationMonitoringLifecycleBucket', bucketStart: string, installCount: number, upgradeCount: number, uninstallCount: number, failedCount: number }>, creditUsage?: Array<{ __typename?: 'ApplicationMonitoringCreditBucket', bucketStart: string, creditsUsed: number }> | null, issues: Array<{ __typename?: 'ApplicationMonitoringIssue', level: string, source: string, errorCode: string, logicFunctionName: string, versions: Array<string>, eventCount: number, affectedInstallCount: number, lastSeenAt: string }>, versions: Array<{ __typename?: 'ApplicationMonitoringVersion', version: string, runCount: number, failedRunCount: number, activeInstallCount: number }>, functions: Array<{ __typename?: 'ApplicationMonitoringFunction', logicFunctionName: string, runCount: number, failedRunCount: number, p95DurationMs: number }> } };
+
 export type FindApplicationRegistrationStatsQueryVariables = Exact<{
   id: Scalars['String']['input'];
   periodStart: Scalars['DateTime']['input'];
@@ -11471,6 +11559,7 @@ export const TransferApplicationRegistrationOwnershipDocument = {"kind":"Documen
 export const UpdateApplicationRegistrationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateApplicationRegistration"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateApplicationRegistrationInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateApplicationRegistration"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApplicationRegistrationFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"galleryImagesUrls"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthClientId"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthRedirectUris"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthScopes"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"latestAvailableVersion"}},{"kind":"Field","name":{"kind":"Name","value":"isListed"}},{"kind":"Field","name":{"kind":"Name","value":"isVetted"}},{"kind":"Field","name":{"kind":"Name","value":"isPreInstalled"}},{"kind":"Field","name":{"kind":"Name","value":"isConfigured"}},{"kind":"Field","name":{"kind":"Name","value":"ownerWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UpdateApplicationRegistrationMutation, UpdateApplicationRegistrationMutationVariables>;
 export const UpdateApplicationRegistrationVariableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateApplicationRegistrationVariable"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateApplicationRegistrationVariableInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateApplicationRegistrationVariable"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"isSecret"}},{"kind":"Field","name":{"kind":"Name","value":"isRequired"}},{"kind":"Field","name":{"kind":"Name","value":"isFilled"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<UpdateApplicationRegistrationVariableMutation, UpdateApplicationRegistrationVariableMutationVariables>;
 export const ApplicationRegistrationTarballUrlDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ApplicationRegistrationTarballUrl"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"applicationRegistrationTarballUrl"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<ApplicationRegistrationTarballUrlQuery, ApplicationRegistrationTarballUrlQueryVariables>;
+export const FindApplicationRegistrationMonitoringDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindApplicationRegistrationMonitoring"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodStart"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodEnd"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findApplicationRegistrationMonitoring"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"periodStart"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodStart"}}},{"kind":"Argument","name":{"kind":"Name","value":"periodEnd"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodEnd"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"bucketSizeInSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"lookbackInHours"}},{"kind":"Field","name":{"kind":"Name","value":"runCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRunCount"}},{"kind":"Field","name":{"kind":"Name","value":"lifecycleFailureCount"}},{"kind":"Field","name":{"kind":"Name","value":"rateLimitEventCount"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsed"}},{"kind":"Field","name":{"kind":"Name","value":"activity"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bucketStart"}},{"kind":"Field","name":{"kind":"Name","value":"errorCount"}},{"kind":"Field","name":{"kind":"Name","value":"rateLimitedRequestCount"}},{"kind":"Field","name":{"kind":"Name","value":"rateLimitedJobCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lifecycle"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bucketStart"}},{"kind":"Field","name":{"kind":"Name","value":"installCount"}},{"kind":"Field","name":{"kind":"Name","value":"upgradeCount"}},{"kind":"Field","name":{"kind":"Name","value":"uninstallCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"creditUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bucketStart"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsed"}}]}},{"kind":"Field","name":{"kind":"Name","value":"issues"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"source"}},{"kind":"Field","name":{"kind":"Name","value":"errorCode"}},{"kind":"Field","name":{"kind":"Name","value":"logicFunctionName"}},{"kind":"Field","name":{"kind":"Name","value":"versions"}},{"kind":"Field","name":{"kind":"Name","value":"eventCount"}},{"kind":"Field","name":{"kind":"Name","value":"affectedInstallCount"}},{"kind":"Field","name":{"kind":"Name","value":"lastSeenAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"runCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRunCount"}},{"kind":"Field","name":{"kind":"Name","value":"activeInstallCount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"functions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logicFunctionName"}},{"kind":"Field","name":{"kind":"Name","value":"runCount"}},{"kind":"Field","name":{"kind":"Name","value":"failedRunCount"}},{"kind":"Field","name":{"kind":"Name","value":"p95DurationMs"}}]}}]}}]}}]} as unknown as DocumentNode<FindApplicationRegistrationMonitoringQuery, FindApplicationRegistrationMonitoringQueryVariables>;
 export const FindApplicationRegistrationStatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindApplicationRegistrationStats"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodStart"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"periodEnd"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findApplicationRegistrationStats"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"periodStart"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodStart"}}},{"kind":"Argument","name":{"kind":"Name","value":"periodEnd"},"value":{"kind":"Variable","name":{"kind":"Name","value":"periodEnd"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activeInstalls"}},{"kind":"Field","name":{"kind":"Name","value":"autoUpdateEnabled"}},{"kind":"Field","name":{"kind":"Name","value":"totalCreditsUsed"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsedBreakdown"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"operation"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsed"}}]}},{"kind":"Field","name":{"kind":"Name","value":"suspendedInstalls"}},{"kind":"Field","name":{"kind":"Name","value":"mostInstalledVersion"}},{"kind":"Field","name":{"kind":"Name","value":"versionDistribution"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<FindApplicationRegistrationStatsQuery, FindApplicationRegistrationStatsQueryVariables>;
 export const FindApplicationRegistrationInstallCountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindApplicationRegistrationInstallCount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findApplicationRegistrationStats"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activeInstalls"}}]}}]}}]} as unknown as DocumentNode<FindApplicationRegistrationInstallCountQuery, FindApplicationRegistrationInstallCountQueryVariables>;
 export const FindApplicationRegistrationVariablesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindApplicationRegistrationVariables"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"applicationRegistrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findApplicationRegistrationVariables"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"applicationRegistrationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"applicationRegistrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"isSecret"}},{"kind":"Field","name":{"kind":"Name","value":"isRequired"}},{"kind":"Field","name":{"kind":"Name","value":"isDeprecated"}},{"kind":"Field","name":{"kind":"Name","value":"isFilled"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"options"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<FindApplicationRegistrationVariablesQuery, FindApplicationRegistrationVariablesQueryVariables>;
