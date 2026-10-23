@@ -1,4 +1,4 @@
-import { mkdir } from 'fs/promises';
+import { mkdir, rm } from 'fs/promises';
 import { join, resolve } from 'path';
 import { build } from 'esbuild';
 
@@ -7,6 +7,7 @@ const buildAssets = async () => {
     __dirname,
     '../src/engine/metadata-modules/ai/ai-front-component/generated',
   );
+  await rm(directory, { recursive: true, force: true });
   await mkdir(directory, { recursive: true });
   await build({
     entryPoints: [
