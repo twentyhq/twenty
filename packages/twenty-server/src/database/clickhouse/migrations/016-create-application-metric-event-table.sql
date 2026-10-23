@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS applicationMetricEvent
     `logicFunctionName`         String DEFAULT '',
     `level`                     LowCardinality(String) NOT NULL,
     `errorCode`                 LowCardinality(String) DEFAULT '',
-    `durationMs`                UInt32 DEFAULT 0
+    `durationMs`                UInt32 DEFAULT 0,
+    `occurrenceCount`           UInt32 DEFAULT 1
 )
     ENGINE = MergeTree
 PARTITION BY toYYYYMM(timestamp)
