@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { useTheme } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { getCurrencyLabel } from '@/localization/utils/getCurrencyLabel';
@@ -19,6 +19,7 @@ import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
 const StyledCurrencyIconContainer = styled.span`
   align-items: center;
   display: inline-flex;
+  margin-right: ${themeCssVariables.spacing[1]};
   vertical-align: text-bottom;
 `;
 
