@@ -1,23 +1,10 @@
 import { SentMessageRecordLinkService } from 'src/modules/messaging/message-outbound-manager/services/sent-message-record-link.service';
 
-const OPPORTUNITY_OBJECT_METADATA_ID = 'opportunity-object-metadata-id';
-
-jest.mock(
-  'src/engine/twenty-orm/storage/orm-workspace-context.storage',
-  () => ({
-    getWorkspaceContext: () => ({
-      objectIdByNameSingular: { opportunity: OPPORTUNITY_OBJECT_METADATA_ID },
-    }),
-  }),
-);
-
 const buildService = ({
-  canUpdateOpportunities = true,
-  doesRecordExist = true,
+  canUpdateRecord = true,
   existingMessageThreadTarget = null,
 }: {
-  canUpdateOpportunities?: boolean;
-  doesRecordExist?: boolean;
+  canUpdateRecord?: boolean;
   existingMessageThreadTarget?: {
     id: string;
     isManuallyAssigned: boolean;
@@ -28,41 +15,30 @@ const buildService = ({
     insert: jest.fn(),
     update: jest.fn(),
   };
-  const targetRecordRepository = {
-    exists: jest.fn().mockResolvedValue(doesRecordExist),
-  };
-
   const workspaceOrmManager = {
     executeInWorkspaceContext: jest.fn((callback: () => Promise<void>) =>
       callback(),
     ),
-    getRepository: jest.fn((objectNameSingular: string) =>
-      objectNameSingular === 'messageThreadTarget'
-        ? messageThreadTargetRepository
-        : targetRecordRepository,
-    ),
+    getRepository: jest.fn(() => messageThreadTargetRepository),
   };
-  const permissionsService = {
-    getUserWorkspacePermissions: jest.fn().mockResolvedValue({
-      objectsPermissions: {
-        [OPPORTUNITY_OBJECT_METADATA_ID]: {
-          canUpdateObjectRecords: canUpdateOpportunities,
-        },
-      },
-    }),
+  const recordPermissionsService = {
+    getPermissionsForRecords: jest
+      .fn()
+      .mockResolvedValue(
+        new Map([['opportunity-id', { canUpdate: canUpdateRecord }]]),
+      ),
   };
 
   const service = new SentMessageRecordLinkService(
     workspaceOrmManager as never,
-    permissionsService as never,
+    recordPermissionsService as never,
   );
 
-  return { service, messageThreadTargetRepository };
+  return { service, messageThreadTargetRepository, recordPermissionsService };
 };
 
 const LINK_ARGS = {
-  workspaceId: 'workspace-id',
-  userWorkspaceId: 'user-workspace-id',
+  authContext: { workspace: { id: 'workspace-id' } } as never,
   messageThreadId: 'message-thread-id',
   objectNameSingular: 'opportunity',
   recordId: 'opportunity-id',
@@ -99,25 +75,29 @@ describe('SentMessageRecordLinkService', () => {
     expect(messageThreadTargetRepository.insert).not.toHaveBeenCalled();
   });
 
-  it('does not link when the sender cannot update the record', async () => {
+  it('checks the sender access to the record itself, row-level rules included', async () => {
+    const { service, recordPermissionsService } = buildService({});
+
+    await service.linkSentMessageThreadToRecord(LINK_ARGS);
+
+    expect(
+      recordPermissionsService.getPermissionsForRecords,
+    ).toHaveBeenCalledWith({
+      authContext: LINK_ARGS.authContext,
+      flatObjectMetadata: { nameSingular: 'opportunity' },
+      recordIds: ['opportunity-id'],
+    });
+  });
+
+  it('does not link a record the sender cannot update or does not see', async () => {
     const { service, messageThreadTargetRepository } = buildService({
-      canUpdateOpportunities: false,
+      canUpdateRecord: false,
     });
 
     await service.linkSentMessageThreadToRecord(LINK_ARGS);
 
     expect(messageThreadTargetRepository.insert).not.toHaveBeenCalled();
     expect(messageThreadTargetRepository.update).not.toHaveBeenCalled();
-  });
-
-  it('does not link to a record that does not exist', async () => {
-    const { service, messageThreadTargetRepository } = buildService({
-      doesRecordExist: false,
-    });
-
-    await service.linkSentMessageThreadToRecord(LINK_ARGS);
-
-    expect(messageThreadTargetRepository.insert).not.toHaveBeenCalled();
   });
 
   it('ignores objects that cannot be targeted by a thread', async () => {

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { getTargetFieldNameForObjectRecord } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { RecordPermissionsService } from 'src/engine/metadata-modules/record-permissions/services/record-permissions.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type MessageThreadTargetWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-target.workspace-entity';
@@ -13,18 +13,16 @@ import { type MessageThreadTargetWorkspaceEntity } from 'src/modules/messaging/c
 export class SentMessageRecordLinkService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly permissionsService: PermissionsService,
+    private readonly recordPermissionsService: RecordPermissionsService,
   ) {}
 
   async linkSentMessageThreadToRecord({
-    workspaceId,
-    userWorkspaceId,
+    authContext,
     messageThreadId,
     objectNameSingular,
     recordId,
   }: {
-    workspaceId: string;
-    userWorkspaceId: string;
+    authContext: WorkspaceAuthContext;
     messageThreadId: string;
     objectNameSingular: string;
     recordId: string;
@@ -36,33 +34,19 @@ export class SentMessageRecordLinkService {
       return;
     }
 
-    const { objectsPermissions } =
-      await this.permissionsService.getUserWorkspacePermissions({
-        workspaceId,
-        userWorkspaceId,
+    // The link is written in a system context, so the caller's own access to this record, row-level rules included, gates it
+    const permissionsByRecordId =
+      await this.recordPermissionsService.getPermissionsForRecords({
+        authContext,
+        flatObjectMetadata: { nameSingular: objectNameSingular },
+        recordIds: [recordId],
       });
 
+    if (!permissionsByRecordId.get(recordId)?.canUpdate) {
+      return;
+    }
+
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const targetObjectMetadataId =
-        getWorkspaceContext().objectIdByNameSingular[objectNameSingular];
-
-      // messageThreadTarget is a system object that skips role checks, so the caller's role is checked on the record
-      if (
-        !isDefined(targetObjectMetadataId) ||
-        !objectsPermissions[targetObjectMetadataId]?.canUpdateObjectRecords
-      ) {
-        return;
-      }
-
-      const targetRecordRepository = this.workspaceOrmManager.getRepository(
-        objectNameSingular,
-        { shouldBypassPermissionChecks: true },
-      );
-
-      if (!(await targetRecordRepository.exists({ where: { id: recordId } }))) {
-        return;
-      }
-
       const messageThreadTargetRepository =
         this.workspaceOrmManager.getRepository<MessageThreadTargetWorkspaceEntity>(
           'messageThreadTarget',
@@ -91,6 +75,6 @@ export class SentMessageRecordLinkService {
         isAutomaticallyAssigned: false,
         isManuallyAssigned: true,
       });
-    }, buildSystemAuthContext(workspaceId));
+    }, buildSystemAuthContext(authContext.workspace.id));
   }
 }

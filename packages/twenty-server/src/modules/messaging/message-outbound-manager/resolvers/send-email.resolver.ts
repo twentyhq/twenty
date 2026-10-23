@@ -10,6 +10,7 @@ import { Args, Context, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { FileEmailAttachmentService } from 'src/engine/core-modules/file/file-email-attachment/services/file-email-attachment.service';
@@ -157,8 +158,7 @@ export class SendEmailResolver {
         if (isDefined(input.targetRecord) && isDefined(sentMessageThreadId)) {
           await this.sentMessageRecordLinkService.linkSentMessageThreadToRecord(
             {
-              workspaceId: workspace.id,
-              userWorkspaceId,
+              authContext: getWorkspaceAuthContext(),
               messageThreadId: sentMessageThreadId,
               objectNameSingular: input.targetRecord.objectNameSingular,
               recordId: input.targetRecord.recordId,

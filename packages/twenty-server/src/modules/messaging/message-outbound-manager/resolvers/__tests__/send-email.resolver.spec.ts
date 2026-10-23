@@ -1,4 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import {
@@ -98,6 +99,13 @@ describe('SendEmailResolver errors', () => {
   });
 });
 
+const AUTH_CONTEXT = { workspace: { id: WORKSPACE_ID } };
+
+jest.mock(
+  'src/engine/core-modules/auth/storage/workspace-auth-context.storage',
+  () => ({ getWorkspaceAuthContext: () => AUTH_CONTEXT }),
+);
+
 describe('SendEmailResolver target record linking', () => {
   const workspace = { id: WORKSPACE_ID } as WorkspaceEntity;
   const context: I18nContext = { req: { locale: 'en' } };
@@ -127,7 +135,7 @@ describe('SendEmailResolver target record linking', () => {
       {
         sendComposedEmail: jest.fn().mockResolvedValue({}),
         persistSentMessage: jest.fn().mockResolvedValue(
-          persistedMessageThreadId
+          isDefined(persistedMessageThreadId)
             ? {
                 messageId: 'message-id',
                 messageThreadId: persistedMessageThreadId,
@@ -162,8 +170,7 @@ describe('SendEmailResolver target record linking', () => {
 
     expect(result).toEqual({ success: true, messageThreadId: undefined });
     expect(linkSentMessageThreadToRecord).toHaveBeenCalledWith({
-      workspaceId: WORKSPACE_ID,
-      userWorkspaceId: USER_WORKSPACE_ID,
+      authContext: AUTH_CONTEXT,
       messageThreadId: 'message-thread-id',
       objectNameSingular: 'opportunity',
       recordId: 'opportunity-id',
