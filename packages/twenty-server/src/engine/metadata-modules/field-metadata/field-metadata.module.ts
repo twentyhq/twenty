@@ -10,7 +10,6 @@ import { DerivedFieldMetadataIdsModule } from 'src/engine/metadata-modules/deriv
 import { FieldMetadataController } from 'src/engine/metadata-modules/field-metadata/controllers/field-metadata.controller';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -44,9 +43,8 @@ import { FieldMetadataEntity } from './field-metadata.entity';
   providers: [
     FieldMetadataService,
     FieldMetadataResolver,
-    FieldMetadataToolsFactory,
     provideWorkspaceScopedRepository(FieldMetadataEntity),
   ],
-  exports: [FieldMetadataService, FieldMetadataToolsFactory],
+  exports: [FieldMetadataService],
 })
 export class FieldMetadataModule {}

@@ -22,11 +22,11 @@ function withoutProjectBinaries(pathValue: string) {
     .join(delimiter);
 }
 
-export function runTwenty(args: string[]): Promise<TwentyCliResult> {
+export function runTwenty(cliArguments: string[]): Promise<TwentyCliResult> {
   const executable = process.env.TWENTY_CLI ?? 'twenty';
 
   return new Promise((resolve, reject) => {
-    const child = spawn(executable, [...args, '--json'], {
+    const child = spawn(executable, [...cliArguments, '--json'], {
       env: {
         ...process.env,
         PATH: withoutProjectBinaries(process.env.PATH ?? ''),
@@ -41,12 +41,16 @@ export function runTwenty(args: string[]): Promise<TwentyCliResult> {
     });
 
     child.on('error', (error: NodeJS.ErrnoException) => {
+      if (error.code !== 'ENOENT') {
+        reject(error);
+
+        return;
+      }
+
       reject(
-        error.code === 'ENOENT'
-          ? new Error(
-              `${executable} was not found. Install the Twenty CLI globally, or set TWENTY_CLI to its path.`,
-            )
-          : error,
+        new Error(
+          `${executable} was not found. Install the Twenty CLI globally, or set TWENTY_CLI to its path.`,
+        ),
       );
     });
 
@@ -56,7 +60,7 @@ export function runTwenty(args: string[]): Promise<TwentyCliResult> {
       } catch {
         reject(
           new Error(
-            `${executable} ${args.join(' ')} exited with code ${exitCode} without a JSON result. ` +
+            `${executable} ${cliArguments.join(' ')} exited with code ${exitCode} without a JSON result. ` +
               'Check that it is the Twenty CLI (twenty --version), or set TWENTY_CLI to its path.',
           ),
         );
