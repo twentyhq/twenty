@@ -34,9 +34,10 @@ export class LocalFetchRelayService {
       },
     );
 
-    return (request) =>
+    return (request, signal) =>
       performLocalFetchRelayRequest({
         request,
+        signal,
         httpClient: serverOrigins.has(new URL(request.url).origin)
           ? serverHttpClient
           : outboundHttpClient,

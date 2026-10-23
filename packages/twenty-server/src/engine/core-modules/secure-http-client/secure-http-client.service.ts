@@ -68,9 +68,14 @@ export class SecureHttpClientService {
       : axios.create(boundedAxiosConfig);
 
     client.interceptors.request.use((requestConfig) => {
-      requestConfig.signal = AbortSignal.timeout(
+      const timeoutSignal = AbortSignal.timeout(
         requestConfig.timeout || OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS,
       );
+
+      requestConfig.signal =
+        requestConfig.signal instanceof AbortSignal
+          ? AbortSignal.any([requestConfig.signal, timeoutSignal])
+          : timeoutSignal;
 
       return requestConfig;
     });

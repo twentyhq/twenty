@@ -32,3 +32,5 @@ export const LOCAL_CHILD_PROCESS_INHERITED_ENV_VARIABLE_NAMES = [
   'https_proxy',
   'no_proxy',
 ] as const;
+
+export const LOCAL_FETCH_RELAY_MAX_CONCURRENT_REQUESTS = 16;

@@ -36,6 +36,9 @@ describe('performLocalFetchRelayRequest', () => {
             response.statusCode = 204;
             response.end();
             break;
+          case '/slow':
+            setTimeout(() => response.end('late'), 5_000).unref();
+            break;
           case '/redirect':
             response.statusCode = 302;
             response.setHeader('location', '/echo');
@@ -166,5 +169,24 @@ describe('performLocalFetchRelayRequest', () => {
     expect(followed.status).toBe(200);
     expect(manual.status).toBe(302);
     expect(manual.headers).toContainEqual(['location', '/echo']);
+  });
+
+  it('stops the request when the signal aborts', async () => {
+    const abortController = new AbortController();
+
+    const pendingResponse = performLocalFetchRelayRequest({
+      request: {
+        url: `${baseUrl}/slow`,
+        method: 'GET',
+        headers: [],
+        redirect: 'follow',
+      },
+      httpClient: axios.create(),
+      signal: abortController.signal,
+    });
+
+    abortController.abort();
+
+    await expect(pendingResponse).rejects.toThrow('canceled');
   });
 });

@@ -6,10 +6,12 @@ import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { LOCAL_FETCH_RELAY_MAX_CONCURRENT_REQUESTS } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/constants/local-driver.constant';
 import { LOCAL_FETCH_RELAY_BOOTSTRAP_CODE } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/constants/local-fetch-relay-bootstrap-code.constant';
 import {
   type LocalFetchRelayHandler,
   type LocalFetchRelayRequest,
+  type LocalFetchRelayResponse,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-fetch-relay.type';
 import { buildLocalChildProcessEnv } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-env.util';
 import { buildLocalChildProcessNodeFlags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-node-flags.util';
@@ -249,6 +251,26 @@ export class LocalChildProcessRunnerService {
       child.stdout?.on('data', (d) => (stdout += String(d)));
       child.stderr?.on('data', (d) => (stderr += String(d)));
 
+      // Aborted when the handler process exits so its pending requests stop with it.
+      const relayAbortController = new AbortController();
+      let inFlightRelayedFetchCount = 0;
+
+      const sendFetchResult = (
+        id: number,
+        result: { response: LocalFetchRelayResponse } | { error: string },
+      ) => {
+        if (settled || !child.connected) {
+          return;
+        }
+
+        // Without its reply the handler would wait until the timeout.
+        child.send({ type: 'fetchResult', id, ...result }, (sendError) => {
+          if (isDefined(sendError)) {
+            child.kill('SIGKILL');
+          }
+        });
+      };
+
       const relayFetchRequest = async ({
         message: { id, request },
         handler,
@@ -256,24 +278,32 @@ export class LocalChildProcessRunnerService {
         message: LocalFetchRelayChildMessage;
         handler: LocalFetchRelayHandler;
       }) => {
+        if (
+          inFlightRelayedFetchCount >= LOCAL_FETCH_RELAY_MAX_CONCURRENT_REQUESTS
+        ) {
+          sendFetchResult(id, {
+            error: `Too many concurrent fetch requests (limit ${LOCAL_FETCH_RELAY_MAX_CONCURRENT_REQUESTS})`,
+          });
+
+          return;
+        }
+
+        inFlightRelayedFetchCount++;
+
         // The message comes from handler code, so a malformed request must not throw here.
         const result = await Promise.resolve()
-          .then(() => handler(request))
+          .then(() => handler(request, relayAbortController.signal))
           .then(
             (response) => ({ response }),
             (error: unknown) => ({
               error: error instanceof Error ? error.message : String(error),
             }),
-          );
-
-        if (!settled && child.connected) {
-          // Without its reply the handler would wait until the timeout.
-          child.send({ type: 'fetchResult', id, ...result }, (sendError) => {
-            if (isDefined(sendError)) {
-              child.kill('SIGKILL');
-            }
+          )
+          .finally(() => {
+            inFlightRelayedFetchCount--;
           });
-        }
+
+        sendFetchResult(id, result);
       };
 
       child.on('message', (message: LocalChildProcessMessage) => {
@@ -329,7 +359,10 @@ export class LocalChildProcessRunnerService {
 
       child.send?.({ type: 'run', payload, context });
 
-      child.on('close', () => clearTimeout(t));
+      child.on('close', () => {
+        clearTimeout(t);
+        relayAbortController.abort();
+      });
     });
   }
 

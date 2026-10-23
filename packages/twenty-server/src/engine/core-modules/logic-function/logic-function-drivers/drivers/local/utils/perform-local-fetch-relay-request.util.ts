@@ -28,9 +28,11 @@ const NULL_BODY_STATUSES = new Set([101, 204, 205, 304]);
 export const performLocalFetchRelayRequest = async ({
   request,
   httpClient,
+  signal,
 }: {
   request: LocalFetchRelayRequest;
   httpClient: AxiosInstance;
+  signal?: AbortSignal;
 }): Promise<LocalFetchRelayResponse> => {
   const response = await httpClient.request<ArrayBuffer>({
     url: request.url,
@@ -43,6 +45,7 @@ export const performLocalFetchRelayRequest = async ({
       : undefined,
     responseType: 'arraybuffer',
     validateStatus: () => true,
+    signal,
     ...(request.redirect === 'follow' ? {} : { maxRedirects: 0 }),
   });
 
