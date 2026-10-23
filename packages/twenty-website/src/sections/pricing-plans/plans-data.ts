@@ -301,8 +301,8 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
       src: '/images/pricing/plans/enterprise-icon.webp',
     },
     tagline: {
-      cloud: msg`For large companies with custom usage needs.`,
-      selfHost: msg`For organizations with strict compliance needs.`,
+      cloud: msg`Dedicated scale for large companies.`,
+      selfHost: msg`For strict compliance, at scale.`,
     },
   },
   organization: {
@@ -345,8 +345,8 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
       src: '/images/pricing/plans/organization-icon.webp',
     },
     tagline: {
-      cloud: msg`For growing teams that need more AI and control.`,
-      selfHost: msg`For companies running Twenty in production.`,
+      cloud: msg`More AI and control for several teams.`,
+      selfHost: msg`For several teams, in production.`,
     },
   },
   pro: {
@@ -390,8 +390,8 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
       widthPx: 60,
     },
     tagline: {
-      cloud: msg`For one team to run an agentic CRM its own way.`,
-      selfHost: msg`For developers to run Twenty on their own servers.`,
+      cloud: msg`A custom agentic CRM for one team.`,
+      selfHost: msg`For one team, on your servers.`,
     },
   },
 };
