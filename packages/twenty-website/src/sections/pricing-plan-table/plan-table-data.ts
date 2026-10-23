@@ -82,6 +82,17 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
+      appliesTo: 'cloud',
+      featureLabel: msg`Extra credits`,
+      tiers: {
+        enterprise: { kind: 'text', text: msg`Custom` },
+        organization: { kind: 'text', text: msg`Credit packs` },
+        pro: { kind: 'text', text: msg`Credit packs` },
+      },
+      tooltip: msg`Add a credit pack to your monthly or yearly plan. Unused pack credits roll over, up to twice the pack.`,
+      type: 'row',
+    },
+    {
       featureLabel: msg`Permissions`,
       selfHostTiers: {
         organization: {
