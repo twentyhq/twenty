@@ -23,6 +23,12 @@ export const configVariableMaskSensitiveData = (
         if (url.username) {
           url.username = '********';
         }
+        // unix:// Redis URLs carry credentials as query parameters.
+        for (const key of ['password', 'username']) {
+          if (url.searchParams.has(key)) {
+            url.searchParams.set(key, '********');
+          }
+        }
 
         return url.toString();
       } catch {

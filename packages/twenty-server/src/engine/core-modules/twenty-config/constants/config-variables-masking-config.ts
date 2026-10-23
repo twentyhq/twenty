@@ -13,6 +13,7 @@ type MaskingConfigType = {
   APP_SECRET: LastNCharsConfig;
   PG_DATABASE_URL: HidePasswordConfig;
   REDIS_URL: HidePasswordConfig;
+  REDIS_QUEUE_URL: HidePasswordConfig;
 };
 
 export const CONFIG_VARIABLES_MASKING_CONFIG: MaskingConfigType = {
@@ -24,6 +25,9 @@ export const CONFIG_VARIABLES_MASKING_CONFIG: MaskingConfigType = {
     strategy: ConfigVariablesMaskingStrategies.HIDE_PASSWORD,
   },
   REDIS_URL: {
+    strategy: ConfigVariablesMaskingStrategies.HIDE_PASSWORD,
+  },
+  REDIS_QUEUE_URL: {
     strategy: ConfigVariablesMaskingStrategies.HIDE_PASSWORD,
   },
 } as const;

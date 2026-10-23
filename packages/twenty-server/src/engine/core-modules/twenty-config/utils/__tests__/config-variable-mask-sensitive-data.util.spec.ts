@@ -61,6 +61,17 @@ describe('configVariableMaskSensitiveData', () => {
       expect(result).toBe('postgresql://localhost:5432/db');
     });
 
+    it('should mask credentials in the query string of a unix socket URL', () => {
+      const result = configVariableMaskSensitiveData(
+        'unix:///var/run/redis/redis.sock?db=2&username=app&password=secret',
+        ConfigVariablesMaskingStrategies.HIDE_PASSWORD,
+      );
+
+      expect(result).toBe(
+        'unix:///var/run/redis/redis.sock?db=2&username=********&password=********',
+      );
+    });
+
     it('should throw error for invalid URLs', () => {
       expect(() =>
         configVariableMaskSensitiveData(
