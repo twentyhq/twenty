@@ -71,12 +71,12 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 const renderSharing = ({
   sharingOverrides = {},
   sharingReach = ObjectSharingReach.WORKSPACE,
-  loading = false,
+  isLoading = false,
   error,
 }: {
   sharingOverrides?: Partial<RecordSharingFieldsFragment>;
   sharingReach?: ObjectSharingReach;
-  loading?: boolean;
+  isLoading?: boolean;
   error?: Error;
 } = {}) =>
   render(
@@ -90,7 +90,7 @@ const renderSharing = ({
         setShare,
         removeShare,
         refetch,
-        loading,
+        loading: isLoading,
         saving: false,
         error,
       }}
@@ -131,7 +131,7 @@ describe('Share record side panel', () => {
   });
 
   it('keeps loaded sharing controls available during a refresh', async () => {
-    renderSharing({ loading: true });
+    renderSharing({ isLoading: true });
 
     await waitFor(() =>
       expect(screen.getByRole('button', { name: 'Restricted' })).toBeVisible(),
