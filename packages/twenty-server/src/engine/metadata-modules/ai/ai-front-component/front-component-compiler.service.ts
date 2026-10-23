@@ -22,7 +22,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { InvokeCommand } from '@aws-sdk/client-lambda';
 import { createHash } from 'crypto';
-import { promises as fs } from 'fs';
+import { promises as fileSystemPromises } from 'fs';
 import { join } from 'path';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -106,7 +106,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       this.getCurrentDriver();
     const dependencies =
       await this.workspaceDependencies.readOrThrow(workspaceId);
-    const handlerSource = await fs.readFile(
+    const handlerSource = await fileSystemPromises.readFile(
       join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
       'utf8',
     );
@@ -138,7 +138,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       functionName,
       dependencyLayerArn,
       copyFiles: (directory) =>
-        fs.copyFile(
+        fileSystemPromises.copyFile(
           join(FRONT_COMPONENT_BUILD_ASSETS_DIRECTORY, 'index.js'),
           join(directory, 'index.js'),
         ),
