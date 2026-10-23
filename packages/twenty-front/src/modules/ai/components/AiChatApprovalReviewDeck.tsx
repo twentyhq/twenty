@@ -32,13 +32,10 @@ const StyledStackEdge = styled.div<{ inset: number }>`
   margin: 0 ${({ inset }) => inset}px;
 `;
 
-const StyledHeader = styled(Card.Header)`
+const StyledHeader = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.secondary};
-  border-bottom: 0;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTitle = styled.div`
@@ -64,17 +61,11 @@ const StyledIcon = styled.span<{ destructive?: boolean }>`
   flex-shrink: 0;
 `;
 
-const StyledContent = styled(Card.Content)`
-  padding: 0 ${themeCssVariables.spacing[2]};
-`;
-
-const StyledFooter = styled(Card.Footer)`
+const StyledFooter = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledHint = styled.div`
@@ -153,30 +144,37 @@ export const AiChatApprovalReviewDeck = ({
       {cards.length > 1 && (
         <StyledStackEdge inset={DECK_MIDDLE_EDGE_INSET_PX} />
       )}
-      <Card.Root fullWidth role="group" aria-label={activeCard.title}>
-        <StyledHeader>
-          <StyledTitle>
-            <StyledIcon
-              aria-hidden="true"
-              destructive={activeCard.isDestructive}
-            >
-              {activeCard.icon}
-            </StyledIcon>
-            {activeCard.title}
-          </StyledTitle>
-          {cards.length > 1 && (
-            <CountPager
-              index={activeIndex}
-              count={cards.length}
-              disabled={disabled}
-              onIndexChange={onActiveIndexChange}
-              positionText={`${activeIndex + 1}/${cards.length}`}
-              previousLabel={t`Previous approval`}
-              nextLabel={t`Next approval`}
-            />
-          )}
-        </StyledHeader>
-        <StyledContent>{activeCard.content}</StyledContent>
+      <Card.Root
+        fullWidth
+        variant="compact"
+        role="group"
+        aria-label={activeCard.title}
+      >
+        <Card.Header>
+          <StyledHeader>
+            <StyledTitle>
+              <StyledIcon
+                aria-hidden="true"
+                destructive={activeCard.isDestructive}
+              >
+                {activeCard.icon}
+              </StyledIcon>
+              {activeCard.title}
+            </StyledTitle>
+            {cards.length > 1 && (
+              <CountPager
+                index={activeIndex}
+                count={cards.length}
+                disabled={disabled}
+                onIndexChange={onActiveIndexChange}
+                positionText={`${activeIndex + 1}/${cards.length}`}
+                previousLabel={t`Previous approval`}
+                nextLabel={t`Next approval`}
+              />
+            )}
+          </StyledHeader>
+        </Card.Header>
+        <Card.Content>{activeCard.content}</Card.Content>
         {!isActiveCardPending && (
           <StyledOutcome>
             <AiChatApprovalOutcome
@@ -186,39 +184,41 @@ export const AiChatApprovalReviewDeck = ({
             />
           </StyledOutcome>
         )}
-        <StyledFooter divider={false}>
-          <StyledHint>{hint}</StyledHint>
-          <StyledActions>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={disabled || !isActiveCardPending}
-              onClick={() => onDeny(activeCard.id)}
-            >
-              {t`Deny`}
-            </Button>
-            {pendingCardCount > 1 && (
+        <Card.Footer divider={false}>
+          <StyledFooter>
+            <StyledHint>{hint}</StyledHint>
+            <StyledActions>
               <Button
                 size="sm"
                 variant="outline"
-                disabled={disabled || !hasSelectedItems}
-                onClick={() => onRequestApproval(pendingCardIds)}
+                disabled={disabled || !isActiveCardPending}
+                onClick={() => onDeny(activeCard.id)}
               >
-                {t`Approve all ${pendingCardCount}`}
+                {t`Deny`}
               </Button>
-            )}
-            <Button
-              size="sm"
-              color={activeCard.isDestructive ? 'danger' : 'accent'}
-              variant="solid"
-              disabled={!canApproveActiveCard}
-              loading={activeCard.status === 'running'}
-              onClick={() => onRequestApproval([activeCard.id])}
-            >
-              {activeCard.approveLabel}
-            </Button>
-          </StyledActions>
-        </StyledFooter>
+              {pendingCardCount > 1 && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={disabled || !hasSelectedItems}
+                  onClick={() => onRequestApproval(pendingCardIds)}
+                >
+                  {t`Approve all ${pendingCardCount}`}
+                </Button>
+              )}
+              <Button
+                size="sm"
+                color={activeCard.isDestructive ? 'danger' : 'accent'}
+                variant="solid"
+                disabled={!canApproveActiveCard}
+                loading={activeCard.status === 'running'}
+                onClick={() => onRequestApproval([activeCard.id])}
+              >
+                {activeCard.approveLabel}
+              </Button>
+            </StyledActions>
+          </StyledFooter>
+        </Card.Footer>
       </Card.Root>
     </StyledDeck>
   );
