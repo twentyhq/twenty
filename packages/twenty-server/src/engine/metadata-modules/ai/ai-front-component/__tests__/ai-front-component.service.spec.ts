@@ -1,3 +1,4 @@
+import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 import { createHash } from 'crypto';
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { PageLayoutType } from 'twenty-shared/types';
@@ -5,7 +6,7 @@ import { Test } from '@nestjs/testing';
 import { Readable } from 'stream';
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
+import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
 
@@ -51,12 +52,22 @@ const AUTH_CONTEXT = {
   type: 'user',
   workspace: { id: WORKSPACE_ID },
 } as ToolProviderContext['authContext'];
-const INPUT: Omit<FrontComponentBuildInput, 'componentId'> = {
+const CONTEXT: ToolProviderContext = {
+  workspaceId: WORKSPACE_ID,
+  userWorkspaceId: 'author',
+  threadId: 'thread',
+  rolePermissionConfig: {
+    intersectionOf: { userWorkspaceRoleId: 'author-role' },
+  },
+  authContext: AUTH_CONTEXT,
+};
+const INPUT: FrontComponentDraftInput = {
   pageLayoutType: PageLayoutType.RECORD_PAGE,
   name: 'Renewals',
   source:
     'export function Component({records}) { return <p>{records.length} renewals</p>; }',
   query: { objectName: 'company', select: ['name'], limit: 20 },
+  sampleRecords: [{ id: 'sample', name: 'Example' }],
 };
 
 const flatMap = (entries: Record<string, unknown>[]) => ({
@@ -106,6 +117,7 @@ describe('AI front component lifecycle', () => {
         componentEntries.some((entry) => entry.id === id),
       ),
     },
+    compiler: { build: jest.fn() },
   };
 
   beforeEach(async () => {
@@ -115,6 +127,27 @@ describe('AI front component lifecycle', () => {
     widgetEntries = [];
     commandEntries = [];
     settingsEntries = [];
+    const vendorSource = 'export const vendor = true;';
+    const vendorChecksum = createHash('sha256')
+      .update(vendorSource)
+      .digest('hex');
+    dependencies.compiler.build.mockImplementation(
+      async ({ input }: { input: FrontComponentBuildInput }) => {
+        const compiledSource = `// twenty-ai-shared-dependencies: ${vendorChecksum}\nexport default () => {};`;
+        return {
+          source: buildFrontComponentEntrySource(input),
+          componentName: 'TwentyGeneratedComponent',
+          dependencyRevision: 'dependency-revision',
+          compiledSource,
+          checksum: createHash('sha256').update(compiledSource).digest('hex'),
+          sharedDependencies: {
+            source: vendorSource,
+            checksum: vendorChecksum,
+            exportNamesBySpecifier: new Map(),
+          },
+        };
+      },
+    );
     dependencies.featureFlags.isFeatureEnabled.mockResolvedValue(true);
     dependencies.permissions.checkRolesPermissions.mockResolvedValue(true);
     dependencies.permissions.userHasWorkspaceSettingPermission.mockResolvedValue(
@@ -167,6 +200,82 @@ describe('AI front component lifecycle', () => {
     }).compile();
 
     service = module.get(AiFrontComponentService);
+  });
+
+  it('previews fixtures with the pinned shared bundle, without app files or live reads', async () => {
+    const draft = await service.createDraft(INPUT, CONTEXT);
+    expect(
+      cache.get(`ai-front-component:${WORKSPACE_ID}:${draft.draftId}`),
+    ).toMatchObject({ dependencyRevision: 'dependency-revision' });
+    const preview = await service.getPreview(
+      'author',
+      draft.draftId,
+      AUTH_CONTEXT!,
+    );
+
+    expect(dependencies.compiler.build).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      input: expect.objectContaining({
+        source: INPUT.source,
+        componentId: expect.any(String),
+      }),
+    });
+    expect(
+      dependencies.compiler.build.mock.calls[0][0].input,
+    ).not.toHaveProperty('sampleRecords');
+    expect(preview.componentSource).toBe(
+      (await dependencies.compiler.build.mock.results[0].value).compiledSource,
+    );
+    expect(preview.data.records).toEqual(INPUT.sampleRecords);
+    expect(preview.componentSource).not.toContain('Example');
+    expect(dependencies.records.execute).not.toHaveBeenCalled();
+    expect(
+      dependencies.flatMaps.getOrRecomputeManyOrAllFlatEntityMaps,
+    ).not.toHaveBeenCalled();
+    const checksum = preview.componentSource.split('\n', 1)[0].split(': ')[1];
+    expect(
+      createHash('sha256')
+        .update(preview.sharedDependenciesSource!)
+        .digest('hex'),
+    ).toBe(checksum);
+    const secondDraft = await service.createDraft(INPUT, CONTEXT);
+    const secondPreview = await service.getPreview(
+      'author',
+      secondDraft.draftId,
+      AUTH_CONTEXT!,
+    );
+    expect(secondPreview.sharedDependenciesSource).toBe(
+      preview.sharedDependenciesSource,
+    );
+    const vendorEntries = [...cache.keys()].filter((key) =>
+      key.startsWith('ai-front-component-shared-dependencies:'),
+    );
+    expect(vendorEntries).toHaveLength(1);
+    cache.delete(vendorEntries[0]);
+    await expect(
+      service.getPreview('author', draft.draftId, AUTH_CONTEXT!),
+    ).rejects.toThrow('dependencies are missing or expired');
+    expect(dependencies.files.writeFile).not.toHaveBeenCalled();
+    expect(dependencies.components.createOne).not.toHaveBeenCalled();
+  });
+  it('does not provision a build when the feature is disabled', async () => {
+    dependencies.featureFlags.isFeatureEnabled.mockResolvedValue(false);
+    await expect(service.createDraft(INPUT, CONTEXT)).rejects.toThrow(
+      'disabled',
+    );
+    expect(dependencies.compiler.build).not.toHaveBeenCalled();
+  });
+
+  it('does not cache or save a draft when Lambda compilation fails', async () => {
+    dependencies.compiler.build.mockRejectedValueOnce(
+      new Error('Lambda build unavailable'),
+    );
+    await expect(service.createDraft(INPUT, CONTEXT)).rejects.toThrow(
+      'Lambda build unavailable',
+    );
+    expect(cache.size).toBe(0);
+    expect(dependencies.files.writeFile).not.toHaveBeenCalled();
+    expect(dependencies.components.createOne).not.toHaveBeenCalled();
   });
 
   it.each(['inline', 'application', 'pinned'] as const)(

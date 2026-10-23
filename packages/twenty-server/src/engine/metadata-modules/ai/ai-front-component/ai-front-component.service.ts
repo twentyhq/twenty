@@ -14,8 +14,10 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { text } from 'stream/consumers';
 
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -32,8 +34,14 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type FrontComponentDiagnostic } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-diagnostic.type';
+import { type FrontComponentDraft } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft.type';
+import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-draft-input.type';
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
 import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
+import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
+
+const DRAFT_TTL = 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class AiFrontComponentService {
@@ -51,6 +59,7 @@ export class AiFrontComponentService {
     private readonly records: FindRecordsService,
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
     private readonly componentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
+    private readonly compiler: FrontComponentCompilerService,
   ) {}
 
   private isEnabled(workspaceId: string) {
@@ -66,6 +75,102 @@ export class AiFrontComponentService {
         doNotTranslate('AI component builder is disabled.'),
       );
     }
+  }
+
+  async assertCanAuthor(workspaceId: string, userWorkspaceId: string) {
+    await this.assertEnabled(workspaceId);
+    if (
+      !(await this.permissions.userHasWorkspaceSettingPermission({
+        workspaceId,
+        userWorkspaceId,
+        setting: PermissionFlagType.APPLICATIONS,
+        applicationId: undefined,
+        agentId: undefined,
+      }))
+    ) {
+      throw new ForbiddenException(
+        doNotTranslate('Managing applications is required.'),
+      );
+    }
+  }
+
+  private draftKey(workspaceId: string, draftId: string) {
+    return `ai-front-component:${workspaceId}:${draftId}`;
+  }
+
+  private sharedDependenciesKey(checksum: string) {
+    return `ai-front-component-shared-dependencies:${checksum}`;
+  }
+
+  private async getDraftSharedDependencies(draft: FrontComponentDraft) {
+    const checksum = readFrontComponentSharedDependenciesChecksum(
+      draft.compiledSource,
+    );
+
+    if (!isDefined(checksum)) {
+      return undefined;
+    }
+    const source = await this.cache.get<string>(
+      this.sharedDependenciesKey(checksum),
+    );
+
+    if (
+      !isDefined(source) ||
+      createHash('sha256').update(source).digest('hex') !== checksum
+    ) {
+      throw new NotFoundException(
+        doNotTranslate(
+          'Component draft dependencies are missing or expired. Create a new preview.',
+        ),
+      );
+    }
+
+    return source;
+  }
+
+  private currentKey(workspaceId: string, rootId: string) {
+    return `${this.draftKey(workspaceId, rootId)}:current`;
+  }
+
+  private async saveDraft(workspaceId: string, draft: FrontComponentDraft) {
+    await this.cache.set(
+      this.draftKey(workspaceId, draft.id),
+      draft,
+      Math.max(1, draft.expiresAt - Date.now()),
+    );
+  }
+
+  async getDraft(
+    workspaceId: string,
+    userWorkspaceId: string,
+    draftId: string,
+  ) {
+    await this.assertCanAuthor(workspaceId, userWorkspaceId);
+    const draft = await this.cache.get<FrontComponentDraft>(
+      this.draftKey(workspaceId, draftId),
+    );
+
+    if (
+      !isDefined(draft) ||
+      draft.expiresAt <= Date.now() ||
+      draft.userWorkspaceId !== userWorkspaceId ||
+      !isDefined(draft.compiledSource) ||
+      !isDefined(draft.entrySource)
+    ) {
+      throw new NotFoundException(
+        doNotTranslate('Component draft not found or expired.'),
+      );
+    }
+
+    return draft;
+  }
+
+  private async isCurrent(workspaceId: string, draft: FrontComponentDraft) {
+    return (
+      (await this.cache.get<string>(
+        this.currentKey(workspaceId, draft.rootId),
+      )) === draft.id
+    );
   }
 
   private async validateQuery(
@@ -88,6 +193,166 @@ export class AiFrontComponentService {
         );
       }
     }
+  }
+
+  async createDraft(
+    input: FrontComponentDraftInput,
+    context: ToolProviderContext,
+  ) {
+    if (
+      !isDefined(context.userWorkspaceId) ||
+      !isDefined(context.threadId) ||
+      !isDefined(context.authContext)
+    ) {
+      throw new ForbiddenException(
+        doNotTranslate('A signed-in chat is required.'),
+      );
+    }
+    await this.assertCanAuthor(context.workspaceId, context.userWorkspaceId);
+    await this.validateQuery(
+      input.query,
+      context.authContext,
+      context.rolePermissionConfig,
+    );
+    if (JSON.stringify(input.sampleRecords).length > 100000) {
+      throw new BadRequestException(
+        doNotTranslate('Sample records exceed 100 KB.'),
+      );
+    }
+    if (
+      input.sampleRecords.some((record) =>
+        Object.keys(record).some(
+          (key) => key !== 'id' && !input.query.select.includes(key),
+        ),
+      )
+    ) {
+      throw new BadRequestException(
+        doNotTranslate(
+          'Sample records must only contain selected fields and id.',
+        ),
+      );
+    }
+    const previous = isDefined(input.previousDraftId)
+      ? await this.getDraft(
+          context.workspaceId,
+          context.userWorkspaceId,
+          input.previousDraftId,
+        )
+      : undefined;
+    const id = v4();
+    const rootId = previous?.rootId ?? id;
+    const built = await this.compiler.build({
+      workspaceId: context.workspaceId,
+      input: {
+        componentId: id,
+        name: input.name,
+        source: input.source,
+        query: input.query,
+        pageLayoutType: input.pageLayoutType,
+      },
+    });
+
+    return this.locks.withLock(
+      async () => {
+        if (isDefined(previous)) {
+          const latestPrevious = await this.getDraft(
+            context.workspaceId,
+            context.userWorkspaceId!,
+            previous.id,
+          );
+
+          if (
+            !(await this.isCurrent(context.workspaceId, latestPrevious)) ||
+            latestPrevious.publicationStarted ||
+            latestPrevious.threadId !== context.threadId
+          ) {
+            throw new BadRequestException(
+              doNotTranslate(
+                'This draft was superseded or published. Start a new draft.',
+              ),
+            );
+          }
+        }
+        const draft: FrontComponentDraft = {
+          ...input,
+          compiledSource: built.compiledSource,
+          checksum: built.checksum,
+          dependencyRevision: built.dependencyRevision,
+          entrySource: built.source,
+          componentName: built.componentName,
+          id,
+          rootId,
+          expiresAt: Date.now() + DRAFT_TTL,
+          userWorkspaceId: context.userWorkspaceId!,
+          threadId: context.threadId!,
+        };
+
+        await this.cache.set(
+          this.sharedDependenciesKey(built.sharedDependencies.checksum),
+          built.sharedDependencies.source,
+          DRAFT_TTL,
+        );
+        await this.saveDraft(context.workspaceId, draft);
+        await this.cache.set(
+          this.currentKey(context.workspaceId, rootId),
+          id,
+          DRAFT_TTL,
+        );
+
+        return {
+          draftId: id,
+          checksum: built.checksum,
+          name: input.name,
+          sampleRecordCount: input.sampleRecords.length,
+        };
+      },
+      this.currentKey(context.workspaceId, rootId),
+    );
+  }
+
+  async getPreview(
+    userWorkspaceId: string,
+    draftId: string,
+    authContext: WorkspaceAuthContext,
+  ) {
+    const workspaceId = authContext.workspace.id;
+    const draft = await this.getDraft(workspaceId, userWorkspaceId, draftId);
+
+    return {
+      draftId: draft.id,
+      name: draft.name,
+      isCurrent: await this.isCurrent(workspaceId, draft),
+      published: isDefined(draft.publishedComponentId),
+      componentSource: draft.compiledSource,
+      sharedDependenciesSource: await this.getDraftSharedDependencies(draft),
+      data: {
+        records: draft.sampleRecords,
+        count: draft.sampleRecords.length,
+        hasNextPage: false,
+      },
+    };
+  }
+
+  async recordDiagnostic(
+    workspaceId: string,
+    userWorkspaceId: string,
+    draftId: string,
+    diagnostic: FrontComponentDiagnostic,
+  ) {
+    const draft = await this.getDraft(workspaceId, userWorkspaceId, draftId);
+
+    await this.locks.withLock(
+      async () => {
+        const latest = await this.getDraft(
+          workspaceId,
+          userWorkspaceId,
+          draftId,
+        );
+
+        await this.saveDraft(workspaceId, { ...latest, diagnostic });
+      },
+      this.currentKey(workspaceId, draft.rootId),
+    );
   }
 
   private async readRecords(
