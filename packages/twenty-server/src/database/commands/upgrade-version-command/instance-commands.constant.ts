@@ -251,6 +251,11 @@ import { AddExcludePrivateEventsToCalendarChannelFastInstanceCommand } from 'src
 import { AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792410699010-add-period-max-seats-to-billing-subscription';
 import { DropBillingMeterTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792480059403-drop-billing-meter-table';
 import { AddContentSha256ToFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792581115000-add-content-sha256-to-file';
+import { RepairApplicationRegistrationVersionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792655604265-repair-application-registration-versions';
+import { RepairBackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792655604266-repair-backfill-application-registration-versions';
+import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686569823-add-agent-chat-channel';
+import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792686689823-backfill-role-agent-chat-channel-access';
+import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686749823-add-agent-chat-channel-navigation-menu-item';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -504,4 +509,9 @@ export const INSTANCE_COMMANDS = [
   AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand,
   DropBillingMeterTableFastInstanceCommand,
   AddContentSha256ToFileFastInstanceCommand,
+  RepairApplicationRegistrationVersionsFastInstanceCommand,
+  RepairBackfillApplicationRegistrationVersionsSlowInstanceCommand,
+  AddAgentChatChannelFastInstanceCommand,
+  BackfillRoleAgentChatChannelAccessSlowInstanceCommand,
+  AddAgentChatChannelNavigationMenuItemFastInstanceCommand,
 ];

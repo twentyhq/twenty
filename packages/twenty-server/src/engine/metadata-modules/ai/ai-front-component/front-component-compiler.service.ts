@@ -65,7 +65,10 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
   }
   protected createDriver() {
     const options = getLambdaConnectionOptions(this.twentyConfigService);
-    const awsClient = new LambdaAwsClientService(options);
+    const awsClient = new LambdaAwsClientService({
+      ...options,
+      cacheStorageService: this.cacheStorage,
+    });
     const toolFunctions = new LambdaToolFunctionsService(options, awsClient);
     return {
       awsClient,

@@ -6,6 +6,9 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { DisabledDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/disabled.driver';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
@@ -27,6 +30,8 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleApplications)
+    private readonly cacheStorageService: CacheStorageService,
   ) {
     super(twentyConfigService, configGroupHashService);
   }
@@ -60,6 +65,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
         return new LambdaDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
           cacheLockService: this.cacheLockService,
+          cacheStorageService: this.cacheStorageService,
           workspaceCacheService: this.workspaceCacheService,
           ...getLambdaConnectionOptions(this.twentyConfigService),
           sdkClientArchiveService: this.sdkClientArchiveService,

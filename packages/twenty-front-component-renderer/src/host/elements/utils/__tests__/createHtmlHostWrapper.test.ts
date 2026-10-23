@@ -1,12 +1,14 @@
 import '@/testing/setupServerRenderingGlobals';
 
 import { REMOTE_ELEMENT_PROP } from '@remote-dom/react/host';
+import { isString } from '@sniptt/guards';
 import userEvent from '@testing-library/user-event';
 import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { jsx } from 'react/jsx-runtime';
 
+import { SCROLL_BRIDGE_PROPERTIES } from '@/constants/ScrollBridgeProperties';
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
 
 (
@@ -539,4 +541,72 @@ describe('createHtmlHostWrapper client events', () => {
       expect.objectContaining({ type: 'drop' }),
     );
   });
+});
+
+describe('createHtmlHostWrapper scroll bridge props', () => {
+  let container: HTMLDivElement;
+  let root: Root;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+  });
+
+  afterEach(() => {
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+    jest.restoreAllMocks();
+  });
+
+  it.each(['div', 'input', 'textarea'])(
+    'should not render the scroll bridge props as attributes on the %s element',
+    (htmlTag) => {
+      const consoleErrorSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+      const Wrapper = createHtmlHostWrapper(htmlTag);
+
+      act(() => {
+        root.render(
+          createWrapperElement(Wrapper, {
+            [REMOTE_ELEMENT_PROP]: { id: '7' },
+            [SCROLL_BRIDGE_PROPERTIES.request]: [
+              { sequence: 1, request: { method: 'scrollTo', top: 10 } },
+            ],
+            [SCROLL_BRIDGE_PROPERTIES.update]: jest.fn(),
+          }),
+        );
+      });
+
+      const node = container.firstElementChild;
+
+      expect(node).toBeInstanceOf(HTMLElement);
+
+      if (!(node instanceof HTMLElement)) {
+        return;
+      }
+
+      const scrollBridgePropertyNames = Object.values(SCROLL_BRIDGE_PROPERTIES);
+      const renderedScrollBridgePropertyNames =
+        scrollBridgePropertyNames.filter((scrollBridgePropertyName) =>
+          node.hasAttribute(scrollBridgePropertyName),
+        );
+      const scrollBridgeWarningArguments = consoleErrorSpy.mock.calls
+        .flat()
+        .filter(
+          (warningArgument) =>
+            isString(warningArgument) &&
+            scrollBridgePropertyNames.some((scrollBridgePropertyName) =>
+              warningArgument.includes(scrollBridgePropertyName),
+            ),
+        );
+
+      expect(node.tagName.toLowerCase()).toBe(htmlTag);
+      expect(renderedScrollBridgePropertyNames).toEqual([]);
+      expect(scrollBridgeWarningArguments).toEqual([]);
+    },
+  );
 });

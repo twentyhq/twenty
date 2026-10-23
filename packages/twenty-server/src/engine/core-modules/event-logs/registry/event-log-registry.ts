@@ -105,11 +105,16 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
       return {
         event: record.logicFunctionName ?? '',
         properties: {
+          ...record.properties,
           level: record.level,
           message: record.message,
           executionId: record.executionId,
           logicFunctionId: record.logicFunctionId,
           applicationId: record.applicationId,
+          applicationRegistrationId: record.applicationRegistrationId,
+          applicationVersion: record.applicationVersion,
+          source: record.source,
+          errorCode: record.errorCode,
         },
       };
     },
