@@ -535,6 +535,7 @@ export class ToolRegistryService {
             )
         : undefined,
       workspaceId: context.workspaceId,
+      approvedToolName: context.approvedToolName,
       rolePermissionConfig: context.rolePermissionConfig,
       authContext: context.authContext,
       application: context.application,
