@@ -4,6 +4,7 @@ description: Shape the data your app adds to a workspace — objects, fields, an
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 A Twenty app's **data layer** is the data your app *adds* to a workspace — the new record types it declares, the columns it adds to existing objects, and how those records connect to each other.
 
@@ -26,17 +27,21 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
 
 ## In this section
 
-<CardGroup cols={2}>
-  <Card title="Objects" icon="table" href="/developers/extend/apps/data/objects">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/extend/apps/data/objects" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Objects</CardTitle>
     `defineObject` — declare new record types with their own fields.
   </Card>
-  <Card title="Extending Objects" icon="wand" href="/developers/extend/apps/data/extending-objects">
+  <Card href="/developers/extend/apps/data/extending-objects" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Extending Objects</CardTitle>
     `defineField` — add fields to standard or other apps' objects.
   </Card>
-  <Card title="Relations" icon="sitemap" href="/developers/extend/apps/data/relations">
+  <Card href="/developers/extend/apps/data/relations" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Relations</CardTitle>
     Bidirectional `MANY_TO_ONE` / `ONE_TO_MANY` connections between objects.
   </Card>
-  <Card title="Timeline Activity Types" icon="history" href="/developers/extend/apps/data/timeline-activity-types">
+  <Card href="/developers/extend/apps/data/timeline-activity-types" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Timeline Activity Types</CardTitle>
     Define automatic audit events and explicit app events for record timelines.
   </Card>
 </CardGroup>

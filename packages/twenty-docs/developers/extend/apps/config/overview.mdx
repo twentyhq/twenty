@@ -4,6 +4,7 @@ description: Configure the app itself — its identity, default permissions, and
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 A Twenty app's **config layer** is what describes the app *to the platform* — its identity, the permissions it holds, and the code that runs during install or upgrade. These declarations don't add new data shapes or runtime behavior; they tell Twenty *who the app is* and *how to set it up*.
 
@@ -34,14 +35,17 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
 
 ## In this section
 
-<CardGroup cols={2}>
-  <Card title="Application Config" icon="rocket" href="/developers/extend/apps/config/application">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/extend/apps/config/application" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Application Config</CardTitle>
     `defineApplication` — identity, default role, variables, marketplace metadata.
   </Card>
-  <Card title="Roles & Permissions" icon="shield-half" href="/developers/extend/apps/config/roles">
+  <Card href="/developers/extend/apps/config/roles" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Roles & Permissions</CardTitle>
     `defineRole` — declare what your app's logic functions can read and write.
   </Card>
-  <Card title="Install Hooks" icon="tool" href="/developers/extend/apps/config/install-hooks">
+  <Card href="/developers/extend/apps/config/install-hooks" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Install Hooks</CardTitle>
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and `defineUninstallLogicFunction` — back up data, seed defaults, validate upgrades, clean up on removal.
   </Card>
 </CardGroup>

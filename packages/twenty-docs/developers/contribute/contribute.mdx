@@ -2,6 +2,9 @@
 title: Contribute
 description: Contribute to Twenty's open-source development.
 ---
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Overview
 
 Twenty is open-source and welcomes contributions from the community. Whether you're fixing bugs, adding features, or improving documentation, your contributions help make Twenty better for everyone.
@@ -16,11 +19,13 @@ Twenty is open-source and welcomes contributions from the community. Whether you
 
 ## Getting Started
 
-<CardGroup cols={2}>
-  <Card title="Bug Reports & Requests" icon="bug" href="/developers/contribute/capabilities/bug-and-requests">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/contribute/capabilities/bug-and-requests" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Bug Reports & Requests</CardTitle>
     Report issues or request features
   </Card>
-  <Card title="Frontend Development" icon="browser" href="/developers/contribute/capabilities/frontend-development/folder-architecture-front">
+  <Card href="/developers/contribute/capabilities/frontend-development/folder-architecture-front" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Frontend Development</CardTitle>
     Contribute to the UI
   </Card>
 </CardGroup>

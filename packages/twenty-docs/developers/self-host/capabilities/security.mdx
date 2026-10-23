@@ -3,6 +3,8 @@ title: Securing your instance
 description: Keep Twenty off the public internet and open only the few paths your integrations need.
 ---
 
+import { CardTitle } from "/snippets/card-title.mdx"
+
 Your CRM holds your customers, your deals, your emails and your calendar. When a security fix ships in a Twenty release, the fix itself tells attackers where to look, and every instance that hasn't upgraded yet is a target.
 
 Upgrading quickly is the real fix, but most self-hosted instances run a few versions behind. The best protection while you catch up is simple: **make sure nobody on the internet can reach your instance in the first place.**
@@ -27,14 +29,17 @@ Each path covers everything under it. Open the public and cloud AI zones only if
 
 ## Choose a setup
 
-<CardGroup cols={3}>
-  <Card title="Tailscale" icon="lock" href="#option-1-tailscale">
+<CardGroup cols={3} className="documentation-card-group">
+  <Card href="#option-1-tailscale" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Tailscale</CardTitle>
     Fully private. Simplest setup, best for small teams.
   </Card>
-  <Card title="Cloudflare" icon="cloud" href="#option-2-cloudflare-tunnel-and-access">
+  <Card href="#option-2-cloudflare-tunnel-and-access" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Cloudflare</CardTitle>
     No open ports, login with your identity provider, public paths where needed.
   </Card>
-  <Card title="Reverse proxy" icon="server" href="#option-3-your-own-reverse-proxy">
+  <Card href="#option-3-your-own-reverse-proxy" img="/images/user-guide/halftone/arrow.png">
+    <CardTitle>Reverse proxy</CardTitle>
     Caddy or Nginx with IP allowlists. No third-party service.
   </Card>
 </CardGroup>

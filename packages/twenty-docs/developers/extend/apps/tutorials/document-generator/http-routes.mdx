@@ -3,6 +3,8 @@ title: 3. HTTP routes
 description: Trigger the function over HTTP and render documents as web pages.
 ---
 
+import { CardTitle } from "/snippets/card-title.mdx"
+
 The same handler can also answer HTTP requests. We'll add two routes:
 
 - a **POST** endpoint the UI calls to generate a document, and
@@ -144,6 +146,9 @@ You can also stream a function's logs while testing with
 **After this step:** the app can generate documents over HTTP and serve them as
 web pages. Now let's make it usable without `curl`.
 
-<Card title="Next: building the UI →" icon="layout-columns" href="/developers/extend/apps/tutorials/document-generator/building-the-ui">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/user-guide/halftone/arrow.png">
+  <CardTitle>Next: building the UI →</CardTitle>
   Views, navigation, a command, and a front component.
 </Card>
+</CardGroup>
