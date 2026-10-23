@@ -1,9 +1,12 @@
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 
 import { type DropdownTriggerProps } from '../types/DropdownTriggerProps';
 import { useDropdownContext } from './useDropdownContext';
+import { getDropdownTriggerTabTarget } from './getDropdownTriggerTabTarget';
 import { useRegisterDropdownLabelElement } from './useRegisterDropdownLabelElement';
 
 export const DropdownTrigger = ({
@@ -45,6 +48,20 @@ export const DropdownTrigger = ({
           props.disabled ||
           triggerType === 'panel'
         ) {
+          return;
+        }
+
+        const tabTarget =
+          open &&
+          triggerType === 'picker' &&
+          event.key === 'Tab' &&
+          !event.shiftKey
+            ? getDropdownTriggerTabTarget(event.currentTarget)
+            : undefined;
+
+        if (isDefined(tabTarget)) {
+          event.preventDefault();
+          tabTarget.focus();
           return;
         }
 

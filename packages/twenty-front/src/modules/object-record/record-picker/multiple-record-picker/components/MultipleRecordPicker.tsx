@@ -4,6 +4,7 @@ import {
   useDropdownPlacementOrThrow,
 } from 'twenty-ui/components/navigation';
 import { useRef } from 'react';
+import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
 
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -39,6 +40,15 @@ type MultipleRecordPickerProps = {
   layoutDirection?: RecordPickerLayoutDirection;
   componentInstanceId: string;
 };
+
+const StyledRecordsPage = styled.div<{
+  layoutDirection: RecordPickerLayoutDirection;
+}>`
+  display: flex;
+  flex-direction: ${({ layoutDirection }) =>
+    layoutDirection === 'search-bar-on-bottom' ? 'column-reverse' : 'column'};
+  min-height: 0;
+`;
 
 export const MultipleRecordPicker = ({
   onChange,
@@ -206,19 +216,11 @@ export const MultipleRecordPicker = ({
         />
       </Dropdown.Page>
       <Dropdown.Page id="records">
-        {resolvedLayoutDirection === 'search-bar-on-bottom' && (
-          <>
-            {createNewButtonSection}
-            <MultipleRecordPickerItemsDisplay onChange={onChange} />
-          </>
-        )}
-        <MultipleRecordPickerSearchInput />
-        {resolvedLayoutDirection === 'search-bar-on-top' && (
-          <>
-            <MultipleRecordPickerItemsDisplay onChange={onChange} />
-            {createNewButtonSection}
-          </>
-        )}
+        <StyledRecordsPage layoutDirection={resolvedLayoutDirection}>
+          <MultipleRecordPickerSearchInput />
+          <MultipleRecordPickerItemsDisplay onChange={onChange} />
+          {createNewButtonSection}
+        </StyledRecordsPage>
       </Dropdown.Page>
     </MultipleRecordPickerComponentInstanceContext.Provider>
   );
