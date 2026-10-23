@@ -13,9 +13,9 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.51.0', 1792757032288)
+@RegisteredWorkspaceCommand('2.52.0', 1792764632845)
 @Command({
-  name: 'upgrade:2-51:reconcile-standard-skill-catalog',
+  name: 'upgrade:2-52:reconcile-standard-skill-catalog',
   description:
     'Reconcile the standard skill catalog in existing workspaces again, so the skill content changed since 2.40 reaches them: create the new skills, refresh the catalog-owned fields on existing ones, and delete the skills that left the catalog',
 })
