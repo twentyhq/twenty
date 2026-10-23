@@ -10,7 +10,7 @@ export const handler = async (event: FrontComponentBuilderInput) => {
       const vendor = await buildFrontComponentSharedDependencies({
         resolveDirectory: '/opt/nodejs',
       });
-      return checkResponseSize({
+      return checkResponseSizeOrThrow({
         success: true as const,
         source: vendor.source,
         checksum: vendor.checksum,
@@ -34,7 +34,7 @@ export const handler = async (event: FrontComponentBuilderInput) => {
       checksum,
       sharedDependenciesChecksum,
     };
-    return checkResponseSize(result);
+    return checkResponseSizeOrThrow(result);
   } catch (error) {
     if (
       !(
@@ -53,7 +53,7 @@ export const handler = async (event: FrontComponentBuilderInput) => {
   }
 };
 
-const checkResponseSize = <TResult>(result: TResult): TResult => {
+const checkResponseSizeOrThrow = <TResult>(result: TResult): TResult => {
   if (Buffer.byteLength(JSON.stringify(result)) > 6 * 1024 * 1024) {
     throw new FrontComponentBuildException(
       'Component build exceeds the Lambda response limit.',
