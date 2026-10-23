@@ -55,7 +55,7 @@ const StyledTitle = styled.div`
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledIcon = styled.span<{ destructive: boolean }>`
+const StyledIcon = styled.span<{ destructive?: boolean }>`
   color: ${({ destructive }) =>
     destructive
       ? themeCssVariables.font.color.danger
@@ -158,7 +158,7 @@ export const AiChatApprovalReviewDeck = ({
           <StyledTitle>
             <StyledIcon
               aria-hidden="true"
-              destructive={activeCard.isDestructive === true}
+              destructive={activeCard.isDestructive}
             >
               {activeCard.icon}
             </StyledIcon>
@@ -209,7 +209,7 @@ export const AiChatApprovalReviewDeck = ({
             )}
             <Button
               size="sm"
-              color={activeCard.isDestructive === true ? 'danger' : 'accent'}
+              color={activeCard.isDestructive ? 'danger' : 'accent'}
               variant="solid"
               disabled={!canApproveActiveCard}
               loading={activeCard.status === 'running'}
