@@ -15,6 +15,7 @@ import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-pr
 import { OrderByWithGroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-with-group-by-arg-processor/order-by-with-group-by-arg-processor.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -100,6 +101,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
+  @Inject()
+  protected readonly commonRecordVisibilityService: CommonRecordVisibilityService;
   @Inject()
   protected readonly usageLimitSpeedService: UsageLimitSpeedService;
   @Inject()
@@ -205,6 +208,10 @@ export abstract class CommonBaseQueryRunnerService<
     authContext: WorkspaceAuthContext,
   ): Promise<Output>;
 
+  protected getResultRecords(results: Output): ObjectRecord[] {
+    return (Array.isArray(results) ? results : [results]) as ObjectRecord[];
+  }
+
   protected computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
     _args: CommonExtendedInput<Args>,
@@ -307,6 +314,14 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
       authContext,
     );
+
+    await this.commonRecordVisibilityService.applyVisibilityRestrictions({
+      records: this.getResultRecords(resultWithGetters),
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      authContext,
+    });
 
     const executePostQueryHooks = () =>
       this.workspaceQueryHookService.executePostQueryHooks(
