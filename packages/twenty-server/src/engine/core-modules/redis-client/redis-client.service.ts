@@ -4,6 +4,7 @@ import IORedis from 'ioredis';
 import { isDefined } from 'twenty-shared/utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
+import { parseRedisUrl } from 'src/engine/core-modules/redis-client/utils/parse-redis-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -24,9 +25,11 @@ export class RedisClientService implements OnModuleDestroy {
         throw new Error('REDIS_QUEUE_URL or REDIS_URL must be defined');
       }
 
-      this.redisQueueClient = new IORedis(redisQueueUrl, {
-        maxRetriesPerRequest: null,
-      });
+      const parsed = parseRedisUrl(redisQueueUrl);
+
+      this.redisQueueClient = parsed.isUnixSocket
+        ? new IORedis(parsed.ioRedisOptions)
+        : new IORedis(parsed.url, parsed.ioRedisOptions);
     }
 
     return this.redisQueueClient;
@@ -44,9 +47,11 @@ export class RedisClientService implements OnModuleDestroy {
         throw new Error('REDIS_URL must be defined');
       }
 
-      this.redisClient = new IORedis(redisUrl, {
-        maxRetriesPerRequest: null,
-      });
+      const parsed = parseRedisUrl(redisUrl);
+
+      this.redisClient = parsed.isUnixSocket
+        ? new IORedis(parsed.ioRedisOptions)
+        : new IORedis(parsed.url, parsed.ioRedisOptions);
     }
 
     return this.redisClient;

@@ -52,6 +52,7 @@ import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-confi
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
+import { IsRedisUrl } from 'src/engine/core-modules/twenty-config/decorators/is-redis-url.decorator';
 import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
 import { IsNonNegativeDuration } from 'src/engine/core-modules/twenty-config/decorators/is-non-negative-duration.decorator';
 import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';
@@ -1526,15 +1527,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
-    description: 'Redis connection URL used for cache and queues by default',
+    description:
+      'Redis connection URL used for cache and queues by default. Supports redis://, rediss:// and unix domain sockets (unix:///)',
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
-  @IsUrl({
-    protocols: ['redis', 'rediss'],
-    require_tld: false,
-    allow_underscores: true,
-  })
+  @IsRedisUrl()
   REDIS_URL: string;
 
   @ConfigVariablesMetadata({
@@ -1552,16 +1550,12 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
     description:
-      'Optional separate Redis connection for queues with a different eviction policy (advanced production use case, most self-hosters do not need this)',
+      'Optional separate Redis connection for queues with a different eviction policy (advanced production use case, most self-hosters do not need this). Supports redis://, rediss:// and unix domain sockets (unix:///)',
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  @IsUrl({
-    protocols: ['redis', 'rediss'],
-    require_tld: false,
-    allow_underscores: true,
-  })
+  @IsRedisUrl()
   REDIS_QUEUE_URL: string;
 
   @ConfigVariablesMetadata({
