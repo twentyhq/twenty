@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button, Input } from 'twenty-ui/primitives/input';
 import { FieldInputAnchorDecorator } from '~/testing/decorators/FieldInputAnchorDecorator';
@@ -13,7 +13,6 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -29,16 +28,13 @@ import {
   FieldInputEventContext,
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { RelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RelationOneToManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -67,15 +63,6 @@ const peopleFieldOnCompany = getMockFieldMetadataItemOrThrow({
   fieldName: 'people',
 });
 
-const RelationWorkspaceSetterEffect = () => {
-  useEffect(() => {
-    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
-    jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
-  }, []);
-
-  return null;
-};
-
 type RelationOneToManyFieldInputWithContextProps = {
   onSubmit: FieldInputEvent;
   onTab: FieldInputEvent;
@@ -83,20 +70,38 @@ type RelationOneToManyFieldInputWithContextProps = {
   isInline?: boolean;
 };
 
-const RelationFieldInputInitializationEffect = ({
-  fieldDefinition,
-}: {
-  fieldDefinition: FieldDefinition<FieldRelationMetadata>;
-}) => {
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
-  const { openFieldInput } = useOpenFieldInputEditMode();
+const RelationOneToManyFieldInputWithContext = ({
+  onSubmit,
+  onTab,
+  onShiftTab,
+  isInline = false,
+}: RelationOneToManyFieldInputWithContextProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const fieldDefinition = useMemo(
+    () => ({
+      fieldMetadataId: peopleFieldOnCompany.id,
+      label: 'People',
+      type: FieldMetadataType.RELATION,
+      iconName: 'IconLink',
+      metadata: {
+        fieldName: 'people',
+        relationType: RelationType.ONE_TO_MANY,
+        relationObjectMetadataNamePlural: 'people',
+        relationObjectMetadataNameSingular: CoreObjectNameSingular.Person,
+        relationObjectMetadataId: personMetadata.id,
+        objectMetadataNameSingular: 'company',
+        relationFieldMetadataId: companyFieldOnPerson.id,
+        targetFieldMetadataName: 'company',
+      },
+    }),
+    [],
+  );
 
-  useEffect(() => {
+  const handleOpen = () => {
     const recordsWithMetadata = [
       {
         objectMetadataItem: companyMetadata,
@@ -152,56 +157,14 @@ const RelationFieldInputInitializationEffect = ({
       }),
       [],
     );
-    pushFocusItemToFocusStack({
-      focusId: FIELD_INPUT_INSTANCE_ID,
-      component: {
-        type: FocusComponentType.OPENED_FIELD_INPUT,
-        instanceId: FIELD_INPUT_INSTANCE_ID,
-      },
-    });
     openFieldInput({ fieldDefinition, recordId: COMPANY_RECORD_ID });
+    setIsOpen(true);
+  };
 
-    return () =>
-      removeFocusItemFromFocusStackById({ focusId: FIELD_INPUT_INSTANCE_ID });
-  }, [
-    apolloCoreClient,
-    fieldDefinition,
-    openFieldInput,
-    objectMetadataItems,
-    objectPermissionsByObjectMetadataId,
-    pushFocusItemToFocusStack,
-    removeFocusItemFromFocusStackById,
-  ]);
-
-  return null;
-};
-
-const RelationOneToManyFieldInputWithContext = ({
-  onSubmit,
-  onTab,
-  onShiftTab,
-  isInline = false,
-}: RelationOneToManyFieldInputWithContextProps) => {
-  const [isOpen, setIsOpen] = useState(true);
-  const fieldDefinition = useMemo(
-    () => ({
-      fieldMetadataId: peopleFieldOnCompany.id,
-      label: 'People',
-      type: FieldMetadataType.RELATION,
-      iconName: 'IconLink',
-      metadata: {
-        fieldName: 'people',
-        relationType: RelationType.ONE_TO_MANY,
-        relationObjectMetadataNamePlural: 'people',
-        relationObjectMetadataNameSingular: CoreObjectNameSingular.Person,
-        relationObjectMetadataId: personMetadata.id,
-        objectMetadataNameSingular: 'company',
-        relationFieldMetadataId: companyFieldOnPerson.id,
-        targetFieldMetadataName: 'company',
-      },
-    }),
-    [],
-  );
+  const handleClose = () => {
+    closeFieldInput({ fieldDefinition, recordId: COMPANY_RECORD_ID });
+    setIsOpen(false);
+  };
 
   const picker = isOpen ? <RelationOneToManyFieldInput /> : null;
 
@@ -220,23 +183,19 @@ const RelationOneToManyFieldInputWithContext = ({
             isRecordFieldReadOnly: false,
           }}
         >
-          <RelationWorkspaceSetterEffect />
-          <RelationFieldInputInitializationEffect
-            fieldDefinition={fieldDefinition}
-          />
           <FieldInputEventContext.Provider
             value={{
               onSubmit: (args) => {
                 onSubmit(args);
-                setIsOpen(false);
+                handleClose();
               },
               onTab: (args) => {
                 onTab(args);
-                setIsOpen(false);
+                handleClose();
               },
               onShiftTab: (args) => {
                 onShiftTab(args);
-                setIsOpen(false);
+                handleClose();
               },
             }}
           >
@@ -250,15 +209,35 @@ const RelationOneToManyFieldInputWithContext = ({
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
       </RecordFieldComponentInstanceContext.Provider>
+      <Button onClick={handleOpen}>Edit people</Button>
       <Input aria-label="Outside input" />
       <Button>Outside picker</Button>
     </div>
   );
 };
+const openRelationFieldInputStory = async (canvasElement: HTMLElement) => {
+  const trigger = await within(canvasElement).findByRole('button', {
+    name: 'Edit people',
+  });
+
+  await userEvent.click(trigger);
+};
+
 const meta: Meta<typeof RelationOneToManyFieldInputWithContext> = {
   title: 'UI/Data/Field/Input/RelationOneToManyFieldInput',
   component: RelationOneToManyFieldInputWithContext,
   args: { onSubmit: fn(), onTab: fn(), onShiftTab: fn() },
+  beforeEach: () => {
+    updatePerson.mockClear();
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+
+    return () => {
+      jotaiStore.set(focusStackState.atom, (focusStack) =>
+        focusStack.filter(({ focusId }) => focusId !== FIELD_INPUT_INSTANCE_ID),
+      );
+    };
+  },
   decorators: [
     MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
@@ -308,11 +287,15 @@ export default meta;
 
 type Story = StoryObj<typeof RelationOneToManyFieldInputWithContext>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    await openRelationFieldInputStory(canvasElement);
+  },
+};
 
 export const ToggleThenEscape: Story = {
   play: async ({ canvasElement, args }) => {
-    updatePerson.mockClear();
+    await openRelationFieldInputStory(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const popup = await body.findByRole('dialog', { name: 'People' });
     const firstOption = await within(popup).findByRole('option', {
@@ -340,6 +323,7 @@ export const ToggleThenEscape: Story = {
 
 export const OutsideInput: Story = {
   play: async ({ canvasElement, args }) => {
+    await openRelationFieldInputStory(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     await body.findByRole('dialog', { name: 'People' });
     await userEvent.click(body.getByRole('textbox', { name: 'Outside input' }));
@@ -352,6 +336,7 @@ export const OutsideInput: Story = {
 
 export const Tab: Story = {
   play: async ({ canvasElement, args }) => {
+    await openRelationFieldInputStory(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const popup = await body.findByRole('dialog', { name: 'People' });
     await waitFor(() =>
@@ -368,6 +353,7 @@ export const Tab: Story = {
 
 export const ShiftTab: Story = {
   play: async ({ canvasElement, args }) => {
+    await openRelationFieldInputStory(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const popup = await body.findByRole('dialog', { name: 'People' });
     await waitFor(() =>
@@ -385,6 +371,7 @@ export const ShiftTab: Story = {
 export const InlineAnchor: Story = {
   args: { isInline: true },
   play: async ({ canvasElement }) => {
+    await openRelationFieldInputStory(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const popup = await body.findByRole('dialog', { name: 'People' });
     const anchor = within(canvasElement).getByTestId(
