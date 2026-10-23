@@ -483,11 +483,10 @@ export class ToolCallAnswerService {
           threadId,
         });
 
-        return this.toolRegistryService.resolveAndExecute(
-          toolName,
-          args,
-          await toolContext,
-        );
+        return this.toolRegistryService.resolveAndExecute(toolName, args, {
+          ...(await toolContext),
+          approvedToolName: toolName,
+        });
       },
     };
   }

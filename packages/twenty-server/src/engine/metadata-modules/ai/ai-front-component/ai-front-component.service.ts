@@ -1,3 +1,5 @@
+import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { extractChecksumFromCacheKey } from 'src/engine/core-modules/application/front-component-shared-dependencies/utils/extract-checksum-from-cache-key.util';
 import { getFrontComponentSharedDependenciesPath } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-shared-dependencies-path.util';
 import { readFrontComponentSharedDependenciesChecksum } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-shared-dependencies-checksum.util';
@@ -15,8 +17,8 @@ import { text } from 'stream/consumers';
 
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey, FileFolder, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
@@ -60,6 +62,7 @@ export class AiFrontComponentService {
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
     private readonly componentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     private readonly compiler: FrontComponentCompilerService,
+    private readonly workspaceDependencies: WorkspaceFrontComponentDependenciesService,
   ) {}
 
   private isEnabled(workspaceId: string) {
@@ -538,5 +541,205 @@ export class AiFrontComponentService {
     }
 
     return source;
+  }
+  async publish(draftId: string, context: ToolProviderContext) {
+    if (
+      context.approvedToolName !== 'publish_front_component' ||
+      !isDefined(context.userWorkspaceId) ||
+      !isDefined(context.authContext)
+    ) {
+      throw new ForbiddenException(
+        doNotTranslate('Use propose_tool_call and wait for human approval.'),
+      );
+    }
+    const { workspaceId, userWorkspaceId, authContext } = context;
+    const draft = await this.getDraft(workspaceId, userWorkspaceId, draftId);
+
+    if (draft.threadId !== context.threadId) {
+      throw new ForbiddenException(
+        doNotTranslate('Approve this draft in its original chat.'),
+      );
+    }
+
+    return this.locks.withLock(
+      async () => {
+        const current = await this.getDraft(
+          workspaceId,
+          userWorkspaceId,
+          draftId,
+        );
+
+        if (!(await this.isCurrent(workspaceId, current))) {
+          throw new BadRequestException(
+            doNotTranslate(
+              'This preview has been superseded. Approve the latest revision.',
+            ),
+          );
+        }
+        if (current.diagnostic?.status !== 'ready') {
+          throw new BadRequestException(
+            doNotTranslate(
+              'Open a working preview before saving. Repair any runtime errors first.',
+            ),
+          );
+        }
+        const { workspaceCustomFlatApplication: application } =
+          await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+            { workspaceId },
+          );
+        const checksum = current.checksum;
+        const sourceComponentPath = `src/ai-front-components/${draftId}.front-component.tsx`;
+        const builtComponentPath = `src/ai-front-components/${draftId}.mjs`;
+        const { flatFrontComponentMaps } =
+          await this.flatMaps.getOrRecomputeManyOrAllFlatEntityMaps({
+            workspaceId,
+            flatMapsKeys: ['flatFrontComponentMaps'],
+          });
+        const existing = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: draftId,
+          flatEntityMaps: flatFrontComponentMaps,
+        });
+
+        if (
+          isDefined(existing) &&
+          (existing.applicationId !== application.id ||
+            existing.builtComponentChecksum !== checksum)
+        ) {
+          throw new BadRequestException(
+            doNotTranslate('Published component differs from this draft.'),
+          );
+        }
+        if (!isDefined(existing) && !isDefined(current.publishedComponentId)) {
+          const dependencies =
+            await this.workspaceDependencies.readOrThrow(workspaceId);
+
+          if (current.dependencyRevision !== dependencies.revision) {
+            throw new BadRequestException(
+              doNotTranslate(
+                'Workspace app dependencies changed. Create and approve a new preview.',
+              ),
+            );
+          }
+        }
+        await this.readRecords(
+          current.query,
+          authContext,
+          context.rolePermissionConfig,
+        );
+        await this.saveDraft(workspaceId, {
+          ...current,
+          publicationStarted: true,
+        });
+        if (!isDefined(existing)) {
+          if (isDefined(current.publishedComponentId)) {
+            throw new BadRequestException(
+              doNotTranslate(
+                'This published component was deleted. Create a new preview to save it again.',
+              ),
+            );
+          }
+          const files = [
+            {
+              path: sourceComponentPath,
+              content: current.entrySource,
+              folder: FileFolder.Source,
+            },
+            {
+              path: builtComponentPath,
+              content: current.compiledSource,
+              folder: FileFolder.BuiltFrontComponent,
+            },
+          ];
+          try {
+            const sharedDependenciesSource =
+              await this.getDraftSharedDependencies(current);
+            const sharedDependenciesChecksum =
+              readFrontComponentSharedDependenciesChecksum(
+                current.compiledSource,
+              );
+
+            if (
+              isDefined(sharedDependenciesSource) &&
+              isDefined(sharedDependenciesChecksum)
+            ) {
+              await this.files.writeFile({
+                workspaceId,
+                applicationUniversalIdentifier: application.universalIdentifier,
+                applicationId: application.id,
+                resourcePath: getFrontComponentSharedDependenciesPath(
+                  sharedDependenciesChecksum,
+                ),
+                fileFolder: FileFolder.BuiltFrontComponent,
+                sourceFile: sharedDependenciesSource,
+                settings: { isTemporaryFile: false, toDelete: false },
+              });
+            }
+
+            for (const file of files) {
+              await this.files.writeFile({
+                workspaceId,
+                applicationUniversalIdentifier: application.universalIdentifier,
+                applicationId: application.id,
+                resourcePath: file.path,
+                fileFolder: file.folder,
+                sourceFile: file.content,
+                settings: { isTemporaryFile: false, toDelete: false },
+              });
+            }
+            await this.components.createOne({
+              workspaceId,
+              input: {
+                id: draftId,
+                universalIdentifier: draftId,
+                name: current.name,
+                componentName: current.componentName,
+                universalWidgetAvailability: [
+                  { pageLayoutType: current.pageLayoutType },
+                ],
+                sourceComponentPath,
+                builtComponentPath,
+                builtComponentChecksum: checksum,
+              },
+            });
+          } catch (error) {
+            const registered = await this.componentRepository.existsBy(
+              workspaceId,
+              { id: draftId },
+            );
+            if (!registered) {
+              for (const file of files) {
+                await this.files.deleteFile({
+                  workspaceId,
+                  applicationUniversalIdentifier:
+                    application.universalIdentifier,
+                  applicationId: application.id,
+                  resourcePath: file.path,
+                  fileFolder: file.folder,
+                });
+              }
+              await this.saveDraft(workspaceId, {
+                ...current,
+                publicationStarted: false,
+              });
+            }
+            throw error;
+          }
+        }
+        await this.saveDraft(workspaceId, {
+          ...current,
+          publicationStarted: true,
+          publishedComponentId: draftId,
+        });
+
+        return {
+          frontComponentId: draftId,
+          applicationId: application.id,
+          applicationPath: getSettingsPath(SettingsPath.ApplicationDetail, {
+            applicationId: application.id,
+          }),
+        };
+      },
+      this.currentKey(workspaceId, draft.rootId),
+    );
   }
 }

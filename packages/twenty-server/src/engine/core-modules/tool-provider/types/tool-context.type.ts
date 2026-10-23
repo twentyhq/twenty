@@ -10,6 +10,7 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export type ToolContext = {
   resolveExecutionContext?: () => Promise<ToolContext>;
   workspaceId: string;
+  approvedToolName?: string;
   rolePermissionConfig: RolePermissionConfig;
   authContext?: WorkspaceAuthContext;
   application?: FlatApplication;

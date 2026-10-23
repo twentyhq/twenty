@@ -1,7 +1,7 @@
 import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 import { createHash } from 'crypto';
 import { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from 'twenty-shared/application';
-import { PageLayoutType } from 'twenty-shared/types';
+import { FileFolder, PageLayoutType } from 'twenty-shared/types';
 import { Test } from '@nestjs/testing';
 import { Readable } from 'stream';
 
@@ -118,6 +118,7 @@ describe('AI front component lifecycle', () => {
       ),
     },
     compiler: { build: jest.fn() },
+    workspaceDependencies: { readOrThrow: jest.fn() },
   };
 
   beforeEach(async () => {
@@ -148,6 +149,11 @@ describe('AI front component lifecycle', () => {
         };
       },
     );
+    dependencies.workspaceDependencies.readOrThrow
+      .mockReset()
+      .mockResolvedValue({
+        revision: 'dependency-revision',
+      });
     dependencies.featureFlags.isFeatureEnabled.mockResolvedValue(true);
     dependencies.permissions.checkRolesPermissions.mockResolvedValue(true);
     dependencies.permissions.userHasWorkspaceSettingPermission.mockResolvedValue(
@@ -201,6 +207,15 @@ describe('AI front component lifecycle', () => {
 
     service = module.get(AiFrontComponentService);
   });
+
+  const makeReadyDraft = async () => {
+    const draft = await service.createDraft(INPUT, CONTEXT);
+
+    await service.recordDiagnostic(WORKSPACE_ID, 'author', draft.draftId, {
+      status: 'ready',
+    });
+    return draft;
+  };
 
   it('previews fixtures with the pinned shared bundle, without app files or live reads', async () => {
     const draft = await service.createDraft(INPUT, CONTEXT);
@@ -361,6 +376,255 @@ describe('AI front component lifecycle', () => {
       ).rejects.toThrow('Component source checksum mismatch');
     },
   );
+
+  it('keeps the last working draft after a build error and supersedes it after a successful revision', async () => {
+    const first = await makeReadyDraft();
+
+    dependencies.compiler.build.mockRejectedValueOnce(new Error('Invalid TSX'));
+
+    await expect(
+      service.createDraft(
+        {
+          ...INPUT,
+          previousDraftId: first.draftId,
+          source: 'export default <',
+        },
+        CONTEXT,
+      ),
+    ).rejects.toThrow();
+    expect(
+      (await service.getPreview('author', first.draftId, AUTH_CONTEXT!))
+        .isCurrent,
+    ).toBe(true);
+    const second = await service.createDraft(
+      { ...INPUT, previousDraftId: first.draftId, name: 'Revised renewals' },
+      CONTEXT,
+    );
+
+    expect(second.draftId).not.toBe(first.draftId);
+    expect(
+      (await service.getPreview('author', first.draftId, AUTH_CONTEXT!))
+        .isCurrent,
+    ).toBe(false);
+    await expect(
+      service.publish(first.draftId, {
+        ...CONTEXT,
+        approvedToolName: 'publish_front_component',
+      }),
+    ).rejects.toThrow('superseded');
+  });
+
+  it('requires explicit approval of this tool, working preview and original chat', async () => {
+    const draft = await service.createDraft(INPUT, CONTEXT);
+
+    await expect(service.publish(draft.draftId, CONTEXT)).rejects.toThrow(
+      'human approval',
+    );
+    await expect(
+      service.publish(draft.draftId, {
+        ...CONTEXT,
+        approvedToolName: 'execute_tool',
+      }),
+    ).rejects.toThrow('human approval');
+    await expect(
+      service.publish(draft.draftId, {
+        ...CONTEXT,
+        approvedToolName: 'publish_front_component',
+      }),
+    ).rejects.toThrow('working preview');
+    await service.recordDiagnostic(WORKSPACE_ID, 'author', draft.draftId, {
+      status: 'error',
+      message: 'Broken JSX',
+    });
+    await expect(
+      service.publish(draft.draftId, {
+        ...CONTEXT,
+        approvedToolName: 'publish_front_component',
+      }),
+    ).rejects.toThrow('working preview');
+    await expect(
+      service.publish(draft.draftId, {
+        ...CONTEXT,
+        threadId: 'other',
+        approvedToolName: 'publish_front_component',
+      }),
+    ).rejects.toThrow('original chat');
+    expect(dependencies.files.writeFile).not.toHaveBeenCalled();
+  });
+
+  it('rejects another author, another workspace, expired drafts and lost permissions', async () => {
+    const draft = await makeReadyDraft();
+
+    await expect(
+      service.getPreview('other', draft.draftId, AUTH_CONTEXT!),
+    ).rejects.toThrow('not found');
+    await expect(
+      service.getPreview('author', draft.draftId, {
+        ...AUTH_CONTEXT!,
+        workspace: { ...AUTH_CONTEXT!.workspace, id: 'other' },
+      }),
+    ).rejects.toThrow('not found');
+    dependencies.permissions.userHasWorkspaceSettingPermission.mockResolvedValue(
+      false,
+    );
+    await expect(
+      service.publish(draft.draftId, {
+        ...CONTEXT,
+        approvedToolName: 'publish_front_component',
+      }),
+    ).rejects.toThrow('applications');
+    dependencies.permissions.userHasWorkspaceSettingPermission.mockResolvedValue(
+      true,
+    );
+    cache.clear();
+    await expect(
+      service.getPreview('author', draft.draftId, AUTH_CONTEXT!),
+    ).rejects.toThrow('expired');
+  });
+
+  it('blocks approval after the feature flag is disabled', async () => {
+    const draft = await makeReadyDraft();
+
+    dependencies.featureFlags.isFeatureEnabled.mockResolvedValue(false);
+    await expect(
+      service.publish(draft.draftId, {
+        ...CONTEXT,
+        approvedToolName: 'publish_front_component',
+      }),
+    ).rejects.toThrow('disabled');
+    expect(dependencies.files.writeFile).not.toHaveBeenCalled();
+  });
+
+  it('requires a new preview after app dependencies change and allows revision', async () => {
+    const draft = await makeReadyDraft();
+
+    dependencies.workspaceDependencies.readOrThrow.mockResolvedValue({
+      revision: 'changed-dependency-revision',
+    });
+    await expect(
+      service.publish(draft.draftId, {
+        ...CONTEXT,
+        approvedToolName: 'publish_front_component',
+      }),
+    ).rejects.toThrow('Create and approve a new preview');
+    expect(dependencies.files.writeFile).not.toHaveBeenCalled();
+    expect(dependencies.components.createOne).not.toHaveBeenCalled();
+    await expect(
+      service.createDraft(
+        { ...INPUT, previousDraftId: draft.draftId },
+        CONTEXT,
+      ),
+    ).resolves.toHaveProperty('draftId');
+  });
+
+  it('recovers a lost registration response without duplicating the component', async () => {
+    const draft = await makeReadyDraft();
+    const approvedContext = {
+      ...CONTEXT,
+      approvedToolName: 'publish_front_component',
+    };
+
+    dependencies.components.createOne.mockImplementationOnce(
+      async ({ input }) => {
+        componentEntries.push({ ...input, applicationId: 'application' });
+        throw new Error('Lost registration response');
+      },
+    );
+    await expect(
+      service.publish(draft.draftId, approvedContext),
+    ).rejects.toThrow('Lost registration response');
+    dependencies.workspaceDependencies.readOrThrow.mockRejectedValue(
+      new Error('Dependencies changed after publication'),
+    );
+    const result = await service.publish(draft.draftId, approvedContext);
+    const repeated = await service.publish(draft.draftId, approvedContext);
+
+    expect(result).toEqual(repeated);
+    expect(result).toMatchObject({
+      frontComponentId: draft.draftId,
+      applicationId: 'application',
+    });
+    expect(dependencies.components.createOne).toHaveBeenCalledTimes(1);
+    expect(dependencies.files.writeFile).toHaveBeenCalledTimes(3);
+    expect(dependencies.files.deleteFile).not.toHaveBeenCalled();
+    for (const [file] of dependencies.files.writeFile.mock.calls) {
+      expect(file.sourceFile).not.toContain('Example');
+    }
+  });
+
+  it.each(['vendor', 'source', 'bundle', 'registration'])(
+    'cleans up a failed %s save and allows retry',
+    async (failure) => {
+      const draft = await makeReadyDraft();
+      const approvedContext = {
+        ...CONTEXT,
+        approvedToolName: 'publish_front_component',
+      };
+      if (failure !== 'vendor')
+        dependencies.files.writeFile.mockResolvedValueOnce(undefined);
+      if (failure === 'registration') {
+        dependencies.components.createOne.mockRejectedValueOnce(
+          new Error('Registration failed'),
+        );
+      } else {
+        if (failure === 'bundle') {
+          dependencies.files.writeFile.mockResolvedValueOnce(undefined);
+        }
+        dependencies.files.writeFile.mockRejectedValueOnce(
+          new Error('Storage failed'),
+        );
+      }
+      await expect(
+        service.publish(draft.draftId, approvedContext),
+      ).rejects.toThrow('failed');
+      expect(dependencies.files.deleteFile).toHaveBeenCalledTimes(2);
+      for (const [file] of dependencies.files.deleteFile.mock.calls) {
+        expect(file.resourcePath).not.toContain(
+          'ai-front-component-shared-dependencies/',
+        );
+      }
+      expect(componentEntries).toHaveLength(0);
+      await expect(
+        service.publish(draft.draftId, approvedContext),
+      ).resolves.toMatchObject({ frontComponentId: draft.draftId });
+      expect(componentEntries).toHaveLength(1);
+    },
+  );
+
+  it('publishes the exact component and vendor shown in the preview for one surface', async () => {
+    const draft = await makeReadyDraft();
+    const preview = await service.getPreview(
+      'author',
+      draft.draftId,
+      AUTH_CONTEXT!,
+    );
+    await service.publish(draft.draftId, {
+      ...CONTEXT,
+      approvedToolName: 'publish_front_component',
+    });
+    expect(dependencies.files.writeFile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fileFolder: FileFolder.BuiltFrontComponent,
+        sourceFile: preview.componentSource,
+      }),
+    );
+    expect(dependencies.files.writeFile).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        resourcePath: `ai-front-component-shared-dependencies/${createHash('sha256').update(preview.sharedDependenciesSource!).digest('hex')}.mjs`,
+        sourceFile: preview.sharedDependenciesSource,
+      }),
+    );
+    expect(dependencies.components.createOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: expect.objectContaining({
+          universalWidgetAvailability: [
+            { pageLayoutType: INPUT.pageLayoutType },
+          ],
+        }),
+      }),
+    );
+  });
 
   it('rejects invalid asset paths and disabled workspaces before reading files', async () => {
     await expect(
