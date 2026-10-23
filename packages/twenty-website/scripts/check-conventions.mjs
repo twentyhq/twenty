@@ -73,8 +73,8 @@ const EXTERNAL_LINK_OWNERS = new Set([
 // src/icons/twenty-logo.tsx for the mockup's brand-image-by-URL path).
 const PUBLIC_SVG_BRAND_FILES = new Set([
   'public/images/logo-bar/otiima.svg',
-  'public/images/logo-bar/civicactions.svg',
-  'public/images/logo-bar/fora.svg',
+  'public/images/logo-bar/zabka.svg',
+  'public/images/logo-bar/faz.svg',
   'public/images/logo-bar/wazoku.svg',
   'public/images/shared/companies/logos/linear.svg',
   'public/images/shared/companies/logos/twenty.svg',

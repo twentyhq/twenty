@@ -1,13 +1,12 @@
 import { runTwenty } from './run-twenty';
 
-function validateEnv(): { apiUrl: string; apiKey: string } {
+function validateEnvironmentOrThrow(): { apiUrl: string; apiKey: string } {
   const apiUrl = process.env.TWENTY_API_URL;
   const apiKey = process.env.TWENTY_API_KEY;
 
   if (!apiUrl || !apiKey) {
     throw new Error(
       'TWENTY_API_URL and TWENTY_API_KEY must be set.\n' +
-        'Start a local server: yarn twenty docker:start\n' +
         'Or set them in vitest env config.',
     );
   }
@@ -15,17 +14,13 @@ function validateEnv(): { apiUrl: string; apiKey: string } {
   return { apiUrl, apiKey };
 }
 
-async function checkServer(apiUrl: string) {
-  let response: Response;
-
-  try {
-    response = await fetch(`${apiUrl}/healthz`);
-  } catch {
+async function checkServerOrThrow(apiUrl: string) {
+  const response = await fetch(`${apiUrl}/healthz`).catch(() => {
     throw new Error(
       `Twenty server is not reachable at ${apiUrl}. ` +
         'Make sure the server is running before executing integration tests.',
     );
-  }
+  });
 
   if (!response.ok) {
     throw new Error(`Server at ${apiUrl} returned ${response.status}`);
@@ -33,10 +28,10 @@ async function checkServer(apiUrl: string) {
 }
 
 export async function setup() {
-  const { apiUrl } = validateEnv();
+  const { apiUrl } = validateEnvironmentOrThrow();
 
-  await checkServer(apiUrl);
-  await runTwenty(['app', 'uninstall', '--yes']);
+  await checkServerOrThrow(apiUrl);
+  await teardown();
 
   const result = await runTwenty(['app', 'apply', '--create']);
 
@@ -50,7 +45,9 @@ export async function setup() {
 export async function teardown() {
   const result = await runTwenty(['app', 'uninstall', '--yes']);
 
-  if (!result.ok) {
-    console.warn(`App uninstall failed: ${result.error.message}`);
+  if (!result.ok && result.error.code !== 'APP_NOT_INSTALLED') {
+    throw new Error(
+      `App uninstall failed: ${result.error.code} ${result.error.message}`,
+    );
   }
 }
