@@ -82,6 +82,11 @@ export class WorkspaceManagerService {
         },
       );
 
+    await this.roleService.createWorkspaceCustomApplicationRole({
+      workspaceId,
+      workspaceCustomFlatApplication,
+    });
+
     await this.setupDefaultRoles({
       workspaceId,
       userId,
