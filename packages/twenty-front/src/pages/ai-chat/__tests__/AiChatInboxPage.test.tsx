@@ -752,6 +752,47 @@ describe('AiChatInboxPage', () => {
       expect(jotaiStore.get(agentChatInboxTabSelectionState.atom)).toBeNull();
     });
 
+    it('starts with nothing checked after switching to another tab and back', async () => {
+      jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) =>
+        Object.fromEntries(
+          Object.entries(participants ?? {}).map(([threadId, participant]) => [
+            threadId,
+            threadId === thirdThread.id
+              ? { ...participant, archivedAt: '2099-01-01T00:00:00.000Z' }
+              : participant,
+          ]),
+        ),
+      );
+      jotaiStore.set(
+        aiChatInboxLayoutState.atom,
+        AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+      );
+      renderInbox('/inbox');
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+
+      expect(getRowCheckbox('First chat')).toBeChecked();
+
+      act(() =>
+        jotaiStore.set(
+          agentChatThreadFilterStatusState.atom,
+          AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+        ),
+      );
+
+      expect(getRowCheckbox('Third chat')).not.toBeChecked();
+
+      act(() =>
+        jotaiStore.set(
+          agentChatThreadFilterStatusState.atom,
+          AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+        ),
+      );
+
+      expect(getRowCheckbox('First chat')).not.toBeChecked();
+      expect(screen.queryByText(/chats? selected/)).not.toBeInTheDocument();
+    });
+
     it('stops checking chats that come back once every checked one has left', async () => {
       const setArchivedAt = (archivedAt: string | null) =>
         jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) =>
