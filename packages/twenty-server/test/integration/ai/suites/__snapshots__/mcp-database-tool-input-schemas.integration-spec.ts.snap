@@ -202,15 +202,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
           "bodyV2": {
             "additionalProperties": false,
             "properties": {
-              "blocknote": {
-                "enum": [
-                  "AscNullsFirst",
-                  "AscNullsLast",
-                  "DescNullsFirst",
-                  "DescNullsLast",
-                ],
-                "type": "string",
-              },
               "markdown": {
                 "enum": [
                   "AscNullsFirst",
@@ -486,31 +477,9 @@ exports[`MCP database tool input schemas should list the input schemas of the no
       "type": "object",
     },
     "groupBy": {
-      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: bodyV2.blocknote, bodyV2.markdown, bodyV2.tiptap, createdAt (date), createdBy.source, createdBy.workspaceMemberId, createdBy.name, title, updatedAt (date), updatedBy.source, updatedBy.workspaceMemberId, updatedBy.name.",
+      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: bodyV2.markdown, bodyV2.tiptap, createdAt (date), createdBy.source, createdBy.workspaceMemberId, createdBy.name, title, updatedAt (date), updatedBy.source, updatedBy.workspaceMemberId, updatedBy.name.",
       "items": {
         "anyOf": [
-          {
-            "additionalProperties": false,
-            "properties": {
-              "bodyV2": {
-                "additionalProperties": false,
-                "properties": {
-                  "blocknote": {
-                    "const": true,
-                    "type": "boolean",
-                  },
-                },
-                "required": [
-                  "blocknote",
-                ],
-                "type": "object",
-              },
-            },
-            "required": [
-              "bodyV2",
-            ],
-            "type": "object",
-          },
           {
             "additionalProperties": false,
             "properties": {
