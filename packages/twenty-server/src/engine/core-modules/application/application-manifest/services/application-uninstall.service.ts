@@ -60,11 +60,20 @@ export class ApplicationUninstallService {
 
     for (const application of pendingApplications) {
       try {
-        await this.runUninstallHookForWorkspaceDeletion({
-          application,
-          workspaceId,
-          workspaceDeletedAt,
-        });
+        const hookErrorMessage =
+          await this.runUninstallHookForWorkspaceDeletion({
+            application,
+            workspaceId,
+            workspaceDeletedAt,
+          });
+
+        if (isDefined(hookErrorMessage)) {
+          this.logger.warn(
+            `workspace-deletion uninstall hook failed: ${application.universalIdentifier}: ${hookErrorMessage}`,
+          );
+          continue;
+        }
+
         await this.applicationRepository.update(
           workspaceId,
           { id: application.id },
@@ -161,11 +170,17 @@ export class ApplicationUninstallService {
     workspaceId: string;
   }): Promise<void> {
     try {
-      await this.runUninstallHook({
+      const hookErrorMessage = await this.runUninstallHook({
         application,
         workspaceId,
         payload: { version: application.version ?? undefined },
       });
+
+      if (isDefined(hookErrorMessage)) {
+        this.logger.warn(
+          `Uninstall hook failed for application ${application.universalIdentifier}: ${hookErrorMessage}`,
+        );
+      }
     } catch (error) {
       this.logger.warn(
         `Uninstall hook failed for application ${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`,
@@ -181,8 +196,8 @@ export class ApplicationUninstallService {
     application: ApplicationForUninstallHook;
     workspaceId: string;
     workspaceDeletedAt: Date;
-  }): Promise<void> {
-    await this.runUninstallHook({
+  }): Promise<string | undefined> {
+    return this.runUninstallHook({
       application,
       workspaceId,
       workspaceDeletionRequestTimestamp: workspaceDeletedAt.toISOString(),
@@ -205,9 +220,9 @@ export class ApplicationUninstallService {
     workspaceId: string;
     payload: UninstallHookPayload;
     workspaceDeletionRequestTimestamp?: string;
-  }): Promise<void> {
+  }): Promise<string | undefined> {
     if (!isDefined(application.uninstallLogicFunctionId)) {
-      return;
+      return undefined;
     }
 
     this.logger.log(
@@ -225,11 +240,6 @@ export class ApplicationUninstallService {
           : {}),
       });
 
-    if (isDefined(logicFunctionExecutionResult.error)) {
-      throw new ApplicationException(
-        logicFunctionExecutionResult.error.errorMessage,
-        ApplicationExceptionCode.UNINSTALL_ERROR,
-      );
-    }
+    return logicFunctionExecutionResult.error?.errorMessage;
   }
 }
