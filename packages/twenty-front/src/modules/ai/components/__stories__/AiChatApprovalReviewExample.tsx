@@ -2,20 +2,25 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBuildingSkyscraper, IconTrash, IconUser } from 'twenty-ui/icon';
-import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
-import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatApprovalConfirmation } from '@/ai/components/AiChatApprovalConfirmation';
 import { AiChatApprovalRecordReview } from '@/ai/components/AiChatApprovalRecordReview';
 import { AiChatApprovalReviewDeck } from '@/ai/components/AiChatApprovalReviewDeck';
 import { AI_CHAT_APPROVAL_REVIEW_FIXTURES } from '@/ai/components/__stories__/aiChatApprovalReviewFixtures';
+import { AiChatApprovalReviewExampleCell } from '@/ai/components/__stories__/AiChatApprovalReviewExampleCell';
 import { type AiChatApprovalReviewSnapshot } from '@/ai/components/__stories__/AiChatApprovalReviewSnapshot';
+import { getAiChatApprovalReviewRecordStatus } from '@/ai/components/__stories__/getAiChatApprovalReviewRecordStatus';
 import { type AiChatApprovalReviewCard } from '@/ai/types/AiChatApprovalReviewCard';
 import { type AiChatApprovalReviewStatus } from '@/ai/types/AiChatApprovalReviewStatus';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay/TextDisplay';
 
 const APPROVAL_REVIEW_ICON_SIZE = 16;
+const APPROVAL_REVIEW_ICONS = {
+  create: IconUser,
+  update: IconBuildingSkyscraper,
+  delete: IconTrash,
+};
 
 const StyledExample = styled.div`
   display: flex;
@@ -123,14 +128,7 @@ export const AiChatApprovalReviewExample = ({
       const selectedIds = selectedRecordIds[fixture.id] ?? [];
       const status = statuses[fixture.id] ?? 'pending';
       const isDisabled = status !== 'pending' || isDefined(confirmation);
-      const icon =
-        fixture.operation === 'delete' ? (
-          <IconTrash size={APPROVAL_REVIEW_ICON_SIZE} />
-        ) : fixture.operation === 'update' ? (
-          <IconBuildingSkyscraper size={APPROVAL_REVIEW_ICON_SIZE} />
-        ) : (
-          <IconUser size={APPROVAL_REVIEW_ICON_SIZE} />
-        );
+      const Icon = APPROVAL_REVIEW_ICONS[fixture.operation];
 
       return {
         id: fixture.id,
@@ -139,7 +137,7 @@ export const AiChatApprovalReviewExample = ({
         selectedCount: selectedIds.length,
         skippedCount: fixture.records.length - selectedIds.length,
         status,
-        icon,
+        icon: <Icon size={APPROVAL_REVIEW_ICON_SIZE} />,
         isDestructive: fixture.operation === 'delete',
         hint: fixture.hint,
         progress:
@@ -152,12 +150,10 @@ export const AiChatApprovalReviewExample = ({
             columns={fixture.columns}
             records={fixture.records.map((record) => ({
               ...record,
-              status:
-                status === 'pending'
-                  ? undefined
-                  : selectedIds.includes(record.id)
-                    ? status
-                    : 'skipped',
+              status: getAiChatApprovalReviewRecordStatus({
+                status,
+                isSelected: selectedIds.includes(record.id),
+              }),
             }))}
             selectedRecordIds={selectedIds}
             disabled={isDisabled}
@@ -177,25 +173,15 @@ export const AiChatApprovalReviewExample = ({
               );
               const value = recordValues[recordId]?.[columnId] ?? '';
               const previousValue = record?.previousValues?.[columnId];
-              const isRecordChip =
-                columnId === 'name' || columnId === 'company';
-              const content =
-                fixture.operation === 'delete' ? (
-                  <TextDisplay text={value} />
-                ) : (
-                  <Input
-                    aria-label={`${record?.label} ${column?.label}`}
-                    variant="plain"
-                    size="sm"
+
+              return {
+                value: (
+                  <AiChatApprovalReviewExampleCell
+                    operation={fixture.operation}
+                    column={column}
+                    recordLabel={record?.label}
                     value={value}
-                    disabled={isReadOnly}
-                    style={{
-                      inlineSize:
-                        column?.align === 'right'
-                          ? `${Math.max(value.length, 1)}ch`
-                          : undefined,
-                      textAlign: column?.align,
-                    }}
+                    isReadOnly={isReadOnly}
                     onValueChange={(nextValue) =>
                       setRecordValues((currentValues) => ({
                         ...currentValues,
@@ -206,29 +192,6 @@ export const AiChatApprovalReviewExample = ({
                       }))
                     }
                   />
-                );
-
-              return {
-                value: isRecordChip ? (
-                  <Chip
-                    variant="soft"
-                    startElement={
-                      <Avatar
-                        name={value}
-                        size="xs"
-                        shape={
-                          columnId === 'company' ||
-                          fixture.operation === 'update'
-                            ? 'square'
-                            : 'circle'
-                        }
-                      />
-                    }
-                  >
-                    {content}
-                  </Chip>
-                ) : (
-                  content
                 ),
                 previousValue: isDefined(previousValue) ? (
                   <TextDisplay text={previousValue} />
