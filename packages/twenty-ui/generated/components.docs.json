@@ -7973,6 +7973,13 @@
         "description": "Trailing content, such as buttons, rendered after the content."
       },
       {
+        "name": "actionsPlacement",
+        "type": "\"auto\" | \"end\"",
+        "required": false,
+        "defaultValue": "auto",
+        "description": "Keeps actions beside the content at every width when set to `end`. The default `auto` preserves responsive wrapping. Hidden end actions do not reserve width on devices without touch."
+      },
+      {
         "name": "actionsVisibility",
         "type": "\"always\" | \"hover\"",
         "required": false,
