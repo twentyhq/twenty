@@ -884,6 +884,25 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
   },
   {
+    name: 'LabeledSeparator',
+    source: 'components/layout/LabeledSeparator/LabeledSeparator.tsx',
+    entryPoint: 'twenty-ui/components/layout',
+    slug: 'components/layout/labeled-separator',
+    propDescriptions: {
+      children:
+        'Text naming the separator. Supplied and localized by the caller.',
+      labelPosition:
+        'Place the label between two lines or at the end of one line.',
+      tone: 'Neutral divider or red marker with a thicker rule.',
+      hasStartMarker: 'Show a decorative cap at the beginning of the rule.',
+    },
+    propDefaults: {
+      labelPosition: 'center',
+      tone: 'neutral',
+      hasStartMarker: 'false',
+    },
+  },
+  {
     name: 'Section',
     source: 'components/layout/Section/Section.tsx',
     entryPoint: 'twenty-ui/components/layout',

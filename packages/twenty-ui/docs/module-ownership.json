@@ -63,6 +63,7 @@
     "ImageInput",
     "InlineBanner",
     "JsonTree",
+    "LabeledSeparator",
     "LightButton",
     "LightIconButton",
     "ListItemButton",
