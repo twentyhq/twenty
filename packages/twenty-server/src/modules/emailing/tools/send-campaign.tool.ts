@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -9,6 +8,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-write-access-policy.constant';
 import { SEND_CAMPAIGN_TOOL_NAME } from 'src/modules/emailing/constants/send-campaign-tool-name.constant';
 import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
 
@@ -33,7 +33,7 @@ const sendCampaignInputSchema = z.object({
 @DefineTool({
   name: SEND_CAMPAIGN_TOOL_NAME,
   category: ToolCategory.ACTION,
-  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+  accessPolicy: MESSAGE_CAMPAIGN_WRITE_ACCESS_POLICY,
   description:
     'Send an email campaign to its list now, or schedule it. This emails real people and cannot be undone once sending starts. ' +
     'Only call it after the person explicitly asked to send this campaign and approved the recipient count from preview_campaign_send. ' +

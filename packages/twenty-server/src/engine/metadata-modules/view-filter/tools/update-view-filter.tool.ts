@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -8,6 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { VIEW_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-access-policy.constant';
 
 const updateViewFilterInputSchema = z.object({
   id: z.string().uuid().describe('ID of the view filter to update'),
@@ -33,7 +33,7 @@ const updateViewFilterInputSchema = z.object({
 @DefineTool({
   name: 'update_view_filter',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [PermissionFlagType.VIEWS],
+  accessPolicy: VIEW_WRITE_ACCESS_POLICY,
   description:
     'Update a filter on a view. Use get_view_filters to find the filter ID.',
 })
