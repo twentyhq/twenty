@@ -178,16 +178,17 @@ export const ArrayFieldInput = () => {
         </>
       }
     >
-      {shouldShowItems &&
-        filteredItemEntries.map(({ item, index }) => (
-          <ArrayFieldMenuItem
-            key={index}
-            dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-            value={item}
-            onEdit={() => draft.startEditing(index)}
-            onDelete={() => handleDelete(index)}
-          />
-        ))}
+      {shouldShowItems
+        ? filteredItemEntries.map(({ item, index }) => (
+            <ArrayFieldMenuItem
+              key={index}
+              dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+              value={item}
+              onEdit={() => draft.startEditing(index)}
+              onDelete={() => handleDelete(index)}
+            />
+          ))
+        : undefined}
     </OverlayMenuList>
   );
 };

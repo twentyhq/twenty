@@ -278,17 +278,18 @@ export const FilesFieldInput = () => {
         </>
       }
     >
-      {shouldShowItems &&
-        filteredItemEntries.map(({ item: file, index }) => (
-          <FilesFieldMenuItem
-            key={file.fileId}
-            dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-            file={file}
-            onEdit={() => draft.startEditing(index)}
-            onDelete={() => handleDelete(index)}
-            onClick={() => handlePreview(file)}
-          />
-        ))}
+      {shouldShowItems
+        ? filteredItemEntries.map(({ item: file, index }) => (
+            <FilesFieldMenuItem
+              key={file.fileId}
+              dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+              file={file}
+              onEdit={() => draft.startEditing(index)}
+              onDelete={() => handleDelete(index)}
+              onClick={() => handlePreview(file)}
+            />
+          ))
+        : undefined}
     </OverlayMenuList>
   );
 };

@@ -316,19 +316,20 @@ export const PhonesFieldInput = () => {
         </>
       }
     >
-      {shouldShowItems &&
-        filteredItemEntries.map(({ item: phone, index }) => (
-          <PhonesFieldMenuItem
-            key={index}
-            dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-            showPrimaryIcon={index === 0 && phones.length > 1}
-            showSetAsPrimaryButton={index > 0}
-            phone={phone}
-            onEdit={() => draft.startEditing(index)}
-            onSetAsPrimary={() => handleSetAsPrimary(index)}
-            onDelete={() => handleDelete(index)}
-          />
-        ))}
+      {shouldShowItems
+        ? filteredItemEntries.map(({ item: phone, index }) => (
+            <PhonesFieldMenuItem
+              key={index}
+              dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+              showPrimaryIcon={index === 0 && phones.length > 1}
+              showSetAsPrimaryButton={index > 0}
+              phone={phone}
+              onEdit={() => draft.startEditing(index)}
+              onSetAsPrimary={() => handleSetAsPrimary(index)}
+              onDelete={() => handleDelete(index)}
+            />
+          ))
+        : undefined}
     </OverlayMenuList>
   );
 };
