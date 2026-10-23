@@ -414,6 +414,18 @@ export const handler = (payload) => {
     expect(echoResponse.body.data.ingestAppMessages.messages[0].messageId).toBe(
       sendResponse.body.data.sendAppChannelMessage.messageId,
     );
+
+    const participants: { handle: string; role: string }[] =
+      await globalThis.testDataSource.query(
+        `SELECT handle, role FROM "${WORKSPACE_SCHEMA}"."messageParticipant"
+          WHERE "messageId" = $1 ORDER BY role`,
+        [sendResponse.body.data.sendAppChannelMessage.messageId],
+      );
+
+    expect(participants).toEqual([
+      { handle: CHANNEL_HANDLE, role: MessageParticipantRole.FROM },
+      { handle: CONTACT_HANDLE, role: MessageParticipantRole.TO },
+    ]);
   });
 
   it('records nothing when the app fails to send', async () => {

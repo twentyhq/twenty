@@ -182,7 +182,7 @@ export class ApplicationMessageSendService {
     messageThreadId,
   }: {
     workspaceId: string;
-    messageChannel: MessageChannelEntity;
+    messageChannel: Pick<MessageChannelEntity, 'id' | 'handle'>;
     messageThreadId: string;
   }): Promise<Conversation> {
     const conversation =
