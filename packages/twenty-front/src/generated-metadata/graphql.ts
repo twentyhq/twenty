@@ -617,6 +617,68 @@ export enum ApplicationHealthStatus {
   WARNING = 'WARNING'
 }
 
+export type ApplicationMonitoring = {
+  __typename?: 'ApplicationMonitoring';
+  activity: Array<ApplicationMonitoringActivityBucket>;
+  bucketSizeInSeconds: Scalars['Int']['output'];
+  failedRunCount: Scalars['Int']['output'];
+  functions: Array<ApplicationMonitoringFunction>;
+  issues: Array<ApplicationMonitoringIssue>;
+  lifecycle: Array<ApplicationMonitoringLifecycleBucket>;
+  lifecycleFailureCount: Scalars['Int']['output'];
+  lookbackInHours: Scalars['Int']['output'];
+  periodEnd: Scalars['DateTime']['output'];
+  periodStart: Scalars['DateTime']['output'];
+  rateLimitEventCount: Scalars['Int']['output'];
+  runCount: Scalars['Int']['output'];
+  versions: Array<ApplicationMonitoringVersion>;
+};
+
+export type ApplicationMonitoringActivityBucket = {
+  __typename?: 'ApplicationMonitoringActivityBucket';
+  bucketStart: Scalars['DateTime']['output'];
+  errorCount: Scalars['Int']['output'];
+  infoCount: Scalars['Int']['output'];
+  warningCount: Scalars['Int']['output'];
+};
+
+export type ApplicationMonitoringFunction = {
+  __typename?: 'ApplicationMonitoringFunction';
+  failedRunCount: Scalars['Int']['output'];
+  logicFunctionName: Scalars['String']['output'];
+  p95DurationMs: Scalars['Float']['output'];
+  runCount: Scalars['Int']['output'];
+};
+
+export type ApplicationMonitoringIssue = {
+  __typename?: 'ApplicationMonitoringIssue';
+  affectedInstallCount: Scalars['Int']['output'];
+  errorCode: Scalars['String']['output'];
+  eventCount: Scalars['Int']['output'];
+  lastSeenAt: Scalars['DateTime']['output'];
+  level: Scalars['String']['output'];
+  logicFunctionName: Scalars['String']['output'];
+  source: Scalars['String']['output'];
+  versions: Array<Scalars['String']['output']>;
+};
+
+export type ApplicationMonitoringLifecycleBucket = {
+  __typename?: 'ApplicationMonitoringLifecycleBucket';
+  bucketStart: Scalars['DateTime']['output'];
+  failedCount: Scalars['Int']['output'];
+  installCount: Scalars['Int']['output'];
+  uninstallCount: Scalars['Int']['output'];
+  upgradeCount: Scalars['Int']['output'];
+};
+
+export type ApplicationMonitoringVersion = {
+  __typename?: 'ApplicationMonitoringVersion';
+  activeInstallCount: Scalars['Int']['output'];
+  failedRunCount: Scalars['Int']['output'];
+  runCount: Scalars['Int']['output'];
+  version: Scalars['String']['output'];
+};
+
 export type ApplicationPreferences = {
   __typename?: 'ApplicationPreferences';
   applicationId: Scalars['UUID']['output'];
@@ -2314,6 +2376,7 @@ export type FeatureFlag = {
 
 export enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
+  IS_APPLICATION_MONITORING_ENABLED = 'IS_APPLICATION_MONITORING_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
@@ -5576,6 +5639,7 @@ export type Query = {
   fields: FieldConnection;
   findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
+  findApplicationRegistrationMonitoring: ApplicationMonitoring;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
   findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
   findClaimableApplicationRegistration?: Maybe<ClaimableApplicationRegistration>;
@@ -5838,6 +5902,13 @@ export type QueryFindApplicationRegistrationByClientIdArgs = {
 
 export type QueryFindApplicationRegistrationByUniversalIdentifierArgs = {
   universalIdentifier: Scalars['String']['input'];
+};
+
+
+export type QueryFindApplicationRegistrationMonitoringArgs = {
+  id: Scalars['String']['input'];
+  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
+  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 
