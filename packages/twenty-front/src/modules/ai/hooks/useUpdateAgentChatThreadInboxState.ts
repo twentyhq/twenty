@@ -157,17 +157,9 @@ export const useUpdateAgentChatThreadInboxState = () => {
             },
           });
 
-          // Chats past the loaded ones changed too, so the tab loads again
+          // Unloaded chats moved between tabs too, so every tab loads again
           store.set(agentChatThreadListState.atom, (list) =>
-            isDefined(list)
-              ? {
-                  ...list,
-                  filterStatusPages: {
-                    ...list.filterStatusPages,
-                    [tabSelection.filterStatus]: undefined,
-                  },
-                }
-              : list,
+            isDefined(list) ? { ...list, filterStatusPages: {} } : list,
           );
         } else {
           await client.mutate({

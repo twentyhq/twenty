@@ -271,11 +271,12 @@ describe('useUpdateAgentChatThreadInboxState', () => {
         endCursor: null,
         filterStatusPages: {
           active: { hasNextPage: true, endCursor: 'page-1', totalCount: 40 },
+          done: { hasNextPage: false, endCursor: 'page-1', totalCount: 12 },
         },
       });
     };
 
-    it('applies the action to the whole tab, then loads the tab again', async () => {
+    it('applies the action to the whole tab, then loads every tab again', async () => {
       mutate.mockResolvedValue({});
       const { result, store } = renderUpdateInboxState();
       selectEveryChatOfTheTab(store);
@@ -297,8 +298,8 @@ describe('useUpdateAgentChatThreadInboxState', () => {
         },
       });
       expect(
-        store.get(agentChatThreadListState.atom)?.filterStatusPages?.active,
-      ).toBeUndefined();
+        store.get(agentChatThreadListState.atom)?.filterStatusPages,
+      ).toEqual({});
     });
 
     it.each([
