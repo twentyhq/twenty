@@ -1,8 +1,14 @@
+ARG TARGETARCH
+
 # ===========================================================================
 # Base image
 # ===========================================================================
 
-FROM node:26.12.1-alpine3.23@sha256:bc2b334006f15c7167bbeb2f08f28c2df883f7594a0470e04454ebe7560cfe68 AS node-base
+# s390x has no official node:26 Alpine image, so it stays on the last 24.x base.
+FROM node:26.12.1-alpine3.23@sha256:bc2b334006f15c7167bbeb2f08f28c2df883f7594a0470e04454ebe7560cfe68 AS node-base-amd64
+FROM node:26.12.1-alpine3.23@sha256:bc2b334006f15c7167bbeb2f08f28c2df883f7594a0470e04454ebe7560cfe68 AS node-base-arm64
+FROM s390x/node:24.22.1-alpine3.23@sha256:167260a1ace21f357590810d5d2e1fcacf446089ab88a3592b816705dd5387b0 AS node-base-s390x
+FROM node-base-${TARGETARCH} AS node-base
 
 # Node 26 images no longer bundle Yarn; run the release pinned in .yarnrc.yml.
 RUN printf '%s\n' '#!/bin/sh' 'exec node "/app/$(sed -n "s/^yarnPath: //p" /app/.yarnrc.yml)" "$@"' \
