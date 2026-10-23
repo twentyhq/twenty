@@ -3,10 +3,12 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
+import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 
 import { DatePicker } from '../DatePicker';
 import { DATE_PICKER_WEEKDAY_LABELS } from './datePickerWeekdayLabels';
 import { DatePickerExample } from './DatePickerExample';
+import { DatePickerCssVariableThemeExample } from './DatePickerCssVariableThemeExample';
 import { DatePickerExternalMonthExample } from './DatePickerExternalMonthExample';
 
 const meta: Meta<typeof DatePicker> = {
@@ -347,5 +349,30 @@ export const SupportedYearBoundaries: Story = {
     await expect(previous).toBeDisabled();
     await userEvent.click(previous);
     await expect(args.onViewedMonthChange).not.toHaveBeenCalled();
+  },
+};
+
+export const CssVariableSpacing: Story = {
+  render: () => <DatePickerCssVariableThemeExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const monthTrigger = await canvas.findByRole('combobox', {
+      name: 'Month',
+    });
+
+    await userEvent.click(monthTrigger);
+    const popup = await body.findByRole('listbox');
+
+    await waitFor(() =>
+      expect(
+        popup.getBoundingClientRect().top -
+          monthTrigger.getBoundingClientRect().bottom,
+      ).toBeCloseTo(THEME_COMMON.spacingMultiplicator, 0),
+    );
+    await userEvent.click(
+      within(popup).getByRole('option', { name: 'November' }),
+    );
+    await expect(monthTrigger).toHaveTextContent('November');
   },
 };

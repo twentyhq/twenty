@@ -1,7 +1,7 @@
 import { isNumber } from '@sniptt/guards';
 
 import { Select } from '@ui/primitives/input/Select/Select';
-import { useTheme } from '@ui/theme/useTheme';
+import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 
 import { type DatePickerProps } from '../types/DatePickerProps';
 
@@ -24,8 +24,6 @@ export const DatePickerSelect = ({
   portalContainer,
   onOpenChange,
 }: DatePickerSelectProps) => {
-  const theme = useTheme();
-
   return (
     <Select.Root
       value={value}
@@ -55,7 +53,7 @@ export const DatePickerSelect = ({
       </Select.Trigger>
       <Select.Portal container={portalContainer}>
         <Select.Positioner
-          sideOffset={Number.parseFloat(theme.spacing[1])}
+          sideOffset={THEME_COMMON.spacingMultiplicator}
           alignItemWithTrigger={false}
         >
           <Select.Popup>
