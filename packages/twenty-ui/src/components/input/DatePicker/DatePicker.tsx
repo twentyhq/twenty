@@ -134,7 +134,19 @@ export const DatePicker = ({
         onPreviousMonth: decreaseMonth,
         onNextMonth: increaseMonth,
         onMonthChange: (month: number) => changeMonth(month - 1),
-        onYearChange: changeYear,
+        onYearChange: (year: number) => {
+          const nextDate = new Date(monthDate);
+          nextDate.setFullYear(year);
+          const hasMonthOverflow = nextDate.getMonth() !== monthDate.getMonth();
+
+          if (!hasMonthOverflow) {
+            changeYear(year);
+            return;
+          }
+
+          nextDate.setDate(0);
+          calendarRef.current?.setPreSelection(nextDate);
+        },
         isPreviousMonthDisabled: disabled || prevMonthButtonDisabled,
         isNextMonthDisabled: disabled || nextMonthButtonDisabled,
       };

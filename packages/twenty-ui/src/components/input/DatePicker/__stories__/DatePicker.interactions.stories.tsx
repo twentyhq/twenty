@@ -38,6 +38,8 @@ export default meta;
 type Story = StoryObj<typeof DatePicker>;
 
 const NEXT_YEAR_OPTION_LABEL = /^2027$/;
+const LEAP_YEAR_OPTION_LABEL = /^2024$/;
+const NON_LEAP_YEAR_OPTION_LABEL = /^2025$/;
 
 export const DayKeyboardNavigation: Story = {
   render: ({ onValueChange, onValueSelect, onViewedMonthChange }) => (
@@ -177,6 +179,31 @@ export const MonthBoundaryAndLeapYear: Story = {
       ).toHaveFocus(),
     );
     await expect(args.onValueChange).not.toHaveBeenCalled();
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(canvas.getByRole('combobox', { name: 'Year' }));
+    await userEvent.click(
+      await body.findByRole('option', { name: LEAP_YEAR_OPTION_LABEL }),
+    );
+    await userEvent.click(
+      canvas.getByRole('gridcell', {
+        name: 'Choose Thursday, February 29th, 2024',
+      }),
+    );
+    await expect(args.onValueChange).toHaveBeenLastCalledWith('2024-02-29');
+    await userEvent.click(canvas.getByRole('combobox', { name: 'Year' }));
+    await userEvent.click(
+      await body.findByRole('option', { name: NON_LEAP_YEAR_OPTION_LABEL }),
+    );
+    await expect(
+      canvas.getByRole('combobox', { name: 'Month' }),
+    ).toHaveTextContent('February');
+    await expect(args.onViewedMonthChange).toHaveBeenLastCalledWith('2025-02');
+    await expect(
+      canvas.getByRole('gridcell', {
+        name: 'Choose Friday, February 28th, 2025',
+      }),
+    ).toHaveAttribute('tabindex', '0');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
   },
 };
 
