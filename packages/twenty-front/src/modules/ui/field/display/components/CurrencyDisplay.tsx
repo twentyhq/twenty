@@ -12,7 +12,6 @@ import {
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { CURRENCY_CODE_ICONS } from '@/ui/input/components/internal/currency/constants/CurrencyCodeIcons';
-import { FIELD_DISPLAY_LEADING_ICON_CLASS_NAME } from '@/ui/field/display/constants/FieldDisplayLeadingIconClassName';
 import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { DEFAULT_DECIMAL_VALUE } from '@/localization/utils/formatNumber';
@@ -62,24 +61,20 @@ export const CurrencyDisplay = ({
   return (
     <EllipsisDisplay>
       {shouldShowCurrencyTooltip && (
-        <>
-          <Tooltip
-            content={currencyTooltipContent}
-            delay={TooltipDelay.shortDelay}
-            side="top"
-            positionMethod="fixed"
-          >
-            <StyledCurrencyIconContainer
-              className={FIELD_DISPLAY_LEADING_ICON_CLASS_NAME}
-            >
-              <CurrencyIcon
-                color={theme.font.color.primary}
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-            </StyledCurrencyIconContainer>
-          </Tooltip>{' '}
-        </>
+        <Tooltip
+          content={currencyTooltipContent}
+          delay={TooltipDelay.shortDelay}
+          side="top"
+          positionMethod="fixed"
+        >
+          <StyledCurrencyIconContainer>
+            <CurrencyIcon
+              color={theme.font.color.primary}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          </StyledCurrencyIconContainer>
+        </Tooltip>
       )}
       {amountToDisplay !== null
         ? !isDefined(format) || format === 'short'
