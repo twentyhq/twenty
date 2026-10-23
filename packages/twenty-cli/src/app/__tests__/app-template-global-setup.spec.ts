@@ -44,6 +44,24 @@ describe('app template integration setup', () => {
     expect(runTwenty).toHaveBeenNthCalledWith(2, ['app', 'apply', '--create']);
   });
 
+  it('reports an unreachable server before running app commands', async () => {
+    vi.mocked(fetch).mockRejectedValue(new Error('Connection refused'));
+
+    await expect(setup()).rejects.toThrow(
+      'Twenty server is not reachable at http://localhost:2020.',
+    );
+    expect(runTwenty).not.toHaveBeenCalled();
+  });
+
+  it('preserves HTTP health-check failures before running app commands', async () => {
+    vi.mocked(fetch).mockResolvedValue(new Response(null, { status: 503 }));
+
+    await expect(setup()).rejects.toThrow(
+      'Server at http://localhost:2020 returned 503',
+    );
+    expect(runTwenty).not.toHaveBeenCalled();
+  });
+
   it('does not apply the app when cleanup fails', async () => {
     vi.mocked(runTwenty).mockResolvedValue(uninstallFailed);
 
