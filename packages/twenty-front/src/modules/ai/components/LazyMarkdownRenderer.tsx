@@ -5,6 +5,7 @@ import {
 } from '@/ai/components/LazyMarkdownRendererStyledComponents';
 import { MarkdownRenderer } from '@/ai/components/MarkdownRenderer';
 import { EMPTY_MARKDOWN_BLOCK_SPLIT_CACHE } from '@/ai/constants/EmptyMarkdownBlockSplitCache';
+import { type MarkdownDisplayMode } from '@/ai/types/MarkdownDisplayMode';
 import { getMarkdownBlocksIncrementally } from '@/ai/utils/getMarkdownBlocksIncrementally';
 import { protectChatReferencesForMarkdown } from '@/ai/utils/protectChatReferencesForMarkdown';
 import { memo, Suspense, useRef } from 'react';
@@ -35,11 +36,13 @@ const MemoizedMarkdownBlock = memo(
 type LazyMarkdownContentProps = {
   text: string;
   noImage?: boolean;
+  displayMode?: MarkdownDisplayMode;
 };
 
 export const LazyMarkdownContent = ({
   text,
   noImage,
+  displayMode = 'default',
 }: LazyMarkdownContentProps) => {
   // Not state: only caches the previous split so streaming appends skip settled blocks.
   // oxlint-disable-next-line twenty/no-state-useref
@@ -55,6 +58,7 @@ export const LazyMarkdownContent = ({
   return (
     <StyledMarkdownContainer
       className="markdown-section"
+      displayMode={displayMode}
       data-replay-ignore-mutations="true"
     >
       {markdownBlocks.map((blockText, blockIndex) => (
@@ -73,8 +77,13 @@ type LazyMarkdownRendererProps = LazyMarkdownContentProps;
 export const LazyMarkdownRenderer = ({
   text,
   noImage,
+  displayMode,
 }: LazyMarkdownRendererProps) => (
   <Suspense fallback={<MarkdownLoadingSkeleton />}>
-    <LazyMarkdownContent text={text} noImage={noImage} />
+    <LazyMarkdownContent
+      text={text}
+      noImage={noImage}
+      displayMode={displayMode}
+    />
   </Suspense>
 );

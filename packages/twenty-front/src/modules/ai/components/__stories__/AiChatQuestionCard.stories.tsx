@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
-import { type ReactNode, useEffect } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { useEffect } from 'react';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
@@ -86,7 +86,7 @@ const multiSelectQuestion: AgentChatPendingQuestion = {
   },
 };
 
-const StoreSeeder = ({ children }: { children: ReactNode }) => {
+const StoreSeederEffect = () => {
   const store = useStore();
 
   useEffect(() => {
@@ -94,7 +94,7 @@ const StoreSeeder = ({ children }: { children: ReactNode }) => {
     store.set(agentChatDisplayedThreadState.atom, 'thread-1');
   }, [store]);
 
-  return <>{children}</>;
+  return null;
 };
 
 const meta: Meta<typeof AiChatQuestionCard> = {
@@ -102,11 +102,10 @@ const meta: Meta<typeof AiChatQuestionCard> = {
   component: AiChatQuestionCard,
   decorators: [
     (Story) => (
-      <StoreSeeder>
-        <StyledContainer>
-          <Story />
-        </StyledContainer>
-      </StoreSeeder>
+      <StyledContainer>
+        <StoreSeederEffect />
+        <Story />
+      </StyledContainer>
     ),
     ToastDecorator,
     ComponentDecorator,
@@ -125,6 +124,37 @@ export const SingleQuestion: Story = {
 
 export const MultipleQuestions: Story = {
   args: { pendingQuestion: multipleQuestions },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const previous = await canvas.findByRole('button', { name: 'Previous' });
+    const next = canvas.getByRole('button', { name: 'Next question' });
+
+    expect(previous).toBeDisabled();
+    expect(canvas.getByText('1/2')).toBeVisible();
+    await userEvent.type(
+      canvas.getByPlaceholderText('Type your own answer here'),
+      'Welcome email draft',
+    );
+    await userEvent.click(next);
+
+    expect(canvas.getByText(TONE_QUESTION.question)).toBeVisible();
+    expect(canvas.getByText('2/2')).toBeVisible();
+    expect(next).toBeDisabled();
+    await userEvent.type(
+      canvas.getByPlaceholderText('Type your own answer here'),
+      'Friendly tone draft',
+    );
+    await userEvent.click(previous);
+
+    expect(canvas.getByText(EMAIL_TYPE_QUESTION.question)).toBeVisible();
+    expect(
+      canvas.getByPlaceholderText('Type your own answer here'),
+    ).toHaveValue('Welcome email draft');
+    await userEvent.click(next);
+    expect(
+      canvas.getByPlaceholderText('Type your own answer here'),
+    ).toHaveValue('Friendly tone draft');
+  },
 };
 
 export const LongQuestion: Story = {
@@ -155,5 +185,16 @@ export const MultiSelectQuestion: Story = {
 
     await userEvent.click(otherOption);
     expect(otherOption).toHaveAttribute('aria-pressed', 'true');
+  },
+};
+
+export const SkipQuestion: Story = {
+  args: { pendingQuestion: singleQuestion, onSkip: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByRole('button', { name: 'Skip' }));
+    expect(args.onSkip).toHaveBeenCalledOnce();
+    expect(canvas.getByText(EMAIL_TYPE_QUESTION.question)).toBeVisible();
   },
 };

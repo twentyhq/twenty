@@ -58,6 +58,8 @@ export const useMetadataErrorHandler = () => {
     validationRule: t`validation rule`,
     workflow: t`workflow`,
     workflowVersion: t`workflow version`,
+    agentChatChannel: t`channel`,
+    agentChatChannelRole: t`channel role`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

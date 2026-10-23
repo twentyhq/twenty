@@ -13,6 +13,7 @@ export { AggregateOperations } from './AggregateOperations';
 export type { AllowedFullNameSortSubField } from './AllowedFullNameSortSubField';
 export { ApiPath } from './ApiPath';
 export { AppBasePath } from './AppBasePath';
+export type { ApplicationLogSource } from './ApplicationLogSource';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
@@ -272,6 +273,8 @@ export type {
   FloatFilter,
   DateFilter,
   DateTimeFilter,
+  FieldReferenceFilterOperator,
+  FieldReferenceFilter,
   CurrencyFilter,
   UrlFilter,
   FullNameFilter,
