@@ -4,6 +4,7 @@ import {
   IconCode,
   IconHeart,
   IconInbox,
+  IconLego,
   IconMessage,
   IconNewSection,
   IconPlus,
@@ -19,10 +20,11 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 
-const AI_CHAT_SECTION_OPTIONS = [
+const AI_SECTION_OPTIONS = [
   { type: NavigationMenuItemType.AI_CHAT_TRIAGE, Icon: IconInbox },
   { type: NavigationMenuItemType.AI_CHAT_FAVORITES, Icon: IconHeart },
   { type: NavigationMenuItemType.AI_CHAT_RECENTS, Icon: IconMessage },
+  { type: NavigationMenuItemType.AI_AGENTS, Icon: IconLego },
 ];
 
 type NavigationMenuItemAddSectionButtonProps = {
@@ -37,7 +39,7 @@ export const NavigationMenuItemAddSectionButton = ({
   const sections = useWorkspaceNavigationMenuSections(parentId);
   const { getDefaultAiChatSectionLabel } =
     useNavigationMenuItemAiChatSectionLabel();
-  const { createSection, createAiChatSection } =
+  const { createSection, createAiSection } =
     useCreateNavigationMenuTabOrSection();
 
   return (
@@ -84,10 +86,10 @@ export const NavigationMenuItemAddSectionButton = ({
               ],
             },
             {
-              id: 'inbox',
-              label: t`Inbox`,
+              id: 'ai',
+              label: t`AI`,
               options: hasAiPermission
-                ? AI_CHAT_SECTION_OPTIONS.map(({ type, Icon }) => {
+                ? AI_SECTION_OPTIONS.map(({ type, Icon }) => {
                     const isAlreadyInSidebar = sections.some(
                       (section) => section.type === type,
                     );
@@ -98,7 +100,7 @@ export const NavigationMenuItemAddSectionButton = ({
                       Icon,
                       isDisabled: isAlreadyInSidebar,
                       isAlreadyInSidebar,
-                      onClick: () => createAiChatSection({ parentId, type }),
+                      onClick: () => createAiSection({ parentId, type }),
                     };
                   })
                 : [],

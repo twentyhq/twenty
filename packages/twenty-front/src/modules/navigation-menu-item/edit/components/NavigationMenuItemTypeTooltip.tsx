@@ -7,6 +7,7 @@ import {
   IconBox,
   IconHeart,
   IconInbox,
+  IconLego,
   IconMessage,
   IconFolder,
   IconLayoutList,
@@ -48,6 +49,7 @@ export const NavigationMenuItemTypeTooltip = ({
     AI_CHAT_TRIAGE: { label: t`Triage`, Icon: IconInbox },
     AI_CHAT_FAVORITES: { label: t`Favorite chats`, Icon: IconHeart },
     AI_CHAT_RECENTS: { label: t`Recent chats`, Icon: IconMessage },
+    AI_AGENTS: { label: t`Agents`, Icon: IconLego },
   };
 
   const { label, Icon } = labelsByType[type];

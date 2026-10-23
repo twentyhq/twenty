@@ -13,4 +13,5 @@ export const navigationMenuItemTypeSchema = z.enum([
   NavigationMenuItemType.AI_CHAT_TRIAGE,
   NavigationMenuItemType.AI_CHAT_FAVORITES,
   NavigationMenuItemType.AI_CHAT_RECENTS,
+  NavigationMenuItemType.AI_AGENTS,
 ]);

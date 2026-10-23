@@ -67,6 +67,7 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
       NavigationMenuItemType.AI_CHAT_TRIAGE,
       NavigationMenuItemType.AI_CHAT_FAVORITES,
       NavigationMenuItemType.AI_CHAT_RECENTS,
+      NavigationMenuItemType.AI_AGENTS,
     ]),
     scope: navigationMenuItemScopeSchema,
     name: derivedNameField,
@@ -142,6 +143,7 @@ const toServiceInput = (
     case NavigationMenuItemType.AI_CHAT_TRIAGE:
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
     case NavigationMenuItemType.AI_CHAT_RECENTS:
+    case NavigationMenuItemType.AI_AGENTS:
       return { ...base, name: params.name };
     case NavigationMenuItemType.LINK:
       return { ...base, name: params.name, link: params.link };
@@ -179,6 +181,7 @@ Type chooses the variant:
 - TAB: a sidebar tab next to Home (name required, no parent). Items and sections live in it through folderId.
 - SECTION: a titled group of items inside a tab or at the root of Home (name required).
 - AI_CHAT_TRIAGE, AI_CHAT_FAVORITES, AI_CHAT_RECENTS: built-in inbox sections (triage filters, favorite chats, recent chats) that list the viewer's own chats; they live in a tab or at the root of Home.
+- AI_AGENTS: a built-in section listing the workspace's AI agents, each opening its agent page; it lives in a tab or at the root of Home.
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).

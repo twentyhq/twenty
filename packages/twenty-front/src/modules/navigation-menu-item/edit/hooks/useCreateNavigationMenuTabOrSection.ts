@@ -120,7 +120,7 @@ export const useCreateNavigationMenuTabOrSection = () => {
     }
   };
 
-  const createAiChatSection = ({
+  const createAiSection = ({
     parentId,
     type,
   }: {
@@ -158,5 +158,5 @@ export const useCreateNavigationMenuTabOrSection = () => {
     }
   };
 
-  return { createTab, createSection, createAiChatSection };
+  return { createTab, createSection, createAiSection };
 };

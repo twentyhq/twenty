@@ -7,6 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
+import { isNavigationMenuItemAgentsSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAgentsSection';
 import { isNavigationMenuItemAiChatSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAiChatSection';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -101,13 +102,18 @@ export const MainNavigationDrawerModeSwitcher = () => {
   );
   const isTriageUnread = (parentId: string | null) =>
     hasUnreadInbox && triageSectionParentIds.has(parentId);
-  const hasOnlyAiChatSections = (tabId: string) => {
+  const hasOnlyAiSections = (tabId: string) => {
     const children = workspaceNavigationMenuItems.filter(
       (item) => item.folderId === tabId,
     );
 
     return (
-      children.length > 0 && children.every(isNavigationMenuItemAiChatSection)
+      children.length > 0 &&
+      children.every(
+        (child) =>
+          isNavigationMenuItemAiChatSection(child) ||
+          isNavigationMenuItemAgentsSection(child),
+      )
     );
   };
 
@@ -161,7 +167,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
     (tab) =>
       hasAiPermission ||
       isLayoutCustomizationModeEnabled ||
-      !hasOnlyAiChatSections(tab.id),
+      !hasOnlyAiSections(tab.id),
   );
   const canAddTab =
     isLayoutCustomizationModeEnabled &&

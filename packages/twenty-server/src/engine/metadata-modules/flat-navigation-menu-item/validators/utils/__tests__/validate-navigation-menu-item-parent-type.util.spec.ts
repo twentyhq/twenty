@@ -7,6 +7,7 @@ describe('validateNavigationMenuItemParentType', () => {
   it.each([
     [NavigationMenuItemType.SECTION, NavigationMenuItemType.TAB],
     [NavigationMenuItemType.AI_CHAT_TRIAGE, NavigationMenuItemType.TAB],
+    [NavigationMenuItemType.AI_AGENTS, NavigationMenuItemType.TAB],
     [NavigationMenuItemType.FOLDER, NavigationMenuItemType.TAB],
     [NavigationMenuItemType.FOLDER, NavigationMenuItemType.SECTION],
     [NavigationMenuItemType.VIEW, NavigationMenuItemType.TAB],
@@ -25,6 +26,8 @@ describe('validateNavigationMenuItemParentType', () => {
     [NavigationMenuItemType.SECTION, NavigationMenuItemType.FOLDER],
     [NavigationMenuItemType.AI_CHAT_RECENTS, NavigationMenuItemType.SECTION],
     [NavigationMenuItemType.LINK, NavigationMenuItemType.AI_CHAT_FAVORITES],
+    [NavigationMenuItemType.AI_AGENTS, NavigationMenuItemType.SECTION],
+    [NavigationMenuItemType.VIEW, NavigationMenuItemType.AI_AGENTS],
     [NavigationMenuItemType.FOLDER, NavigationMenuItemType.FOLDER],
     [NavigationMenuItemType.RECORD, NavigationMenuItemType.LINK],
   ])('rejects a %s inside a %s', (type, parentType) => {

@@ -300,23 +300,29 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     expect(mockSwitchNavigationDrawerMode).not.toHaveBeenCalled();
   });
 
-  it('hides a tab holding only chat sections from members without AI access', () => {
-    jest
-      .mocked(useWorkspaceNavigationMenuTabs)
-      .mockReturnValue([inboxTab, developersTab]);
+  it.each([
+    ['chat', NavigationMenuItemType.AI_CHAT_TRIAGE],
+    ['agents', NavigationMenuItemType.AI_AGENTS],
+  ] as const)(
+    'hides a tab holding only %s sections from members without AI access',
+    (_, sectionType) => {
+      jest
+        .mocked(useWorkspaceNavigationMenuTabs)
+        .mockReturnValue([inboxTab, developersTab]);
 
-    renderModeSwitcher({
-      navigationMenuItems: [triageSection],
-      permissionFlags: [],
-    });
+      renderModeSwitcher({
+        navigationMenuItems: [{ ...triageSection, type: sectionType }],
+        permissionFlags: [],
+      });
 
-    expect(
-      screen.queryByRole('button', { name: 'Inbox' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Developers' }),
-    ).toBeInTheDocument();
-  });
+      expect(
+        screen.queryByRole('button', { name: 'Inbox' }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Developers' }),
+      ).toBeInTheDocument();
+    },
+  );
 
   it('offers to add a tab only while editing the layout', () => {
     renderModeSwitcher();

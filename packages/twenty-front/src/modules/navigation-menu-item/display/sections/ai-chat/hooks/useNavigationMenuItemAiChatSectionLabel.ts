@@ -13,6 +13,8 @@ export const useNavigationMenuItemAiChatSectionLabel = () => {
         return t`Triage`;
       case NavigationMenuItemType.AI_CHAT_FAVORITES:
         return t`Favorite chats`;
+      case NavigationMenuItemType.AI_AGENTS:
+        return t`Agents`;
       default:
         return t`Recent chats`;
     }

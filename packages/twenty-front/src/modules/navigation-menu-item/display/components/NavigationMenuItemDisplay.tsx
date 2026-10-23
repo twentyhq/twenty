@@ -27,6 +27,7 @@ export const NavigationMenuItemDisplay = ({
     case NavigationMenuItemType.AI_CHAT_TRIAGE:
     case NavigationMenuItemType.AI_CHAT_FAVORITES:
     case NavigationMenuItemType.AI_CHAT_RECENTS:
+    case NavigationMenuItemType.AI_AGENTS:
       return null;
     case NavigationMenuItemType.FOLDER:
       return (
