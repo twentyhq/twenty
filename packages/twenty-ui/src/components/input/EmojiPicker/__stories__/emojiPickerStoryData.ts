@@ -1,0 +1,58 @@
+export const EMOJI_PICKER_STORY_DATA = {
+  emojis: [
+    {
+      emoji: '👍',
+      label: 'thumbs up',
+      hexcode: '1F44D',
+      group: 1,
+      subgroup: 19,
+      version: 1,
+      type: 1,
+      order: 0,
+      text: '',
+      tags: ['approve', 'good', 'thumb', 'up'],
+    },
+    {
+      emoji: '👀',
+      label: 'eyes',
+      hexcode: '1F440',
+      group: 1,
+      subgroup: 22,
+      version: 1,
+      type: 1,
+      order: 1,
+      text: '',
+      tags: ['look', 'watch'],
+    },
+    {
+      emoji: '🎉',
+      label: 'party popper',
+      hexcode: '1F389',
+      group: 6,
+      subgroup: 60,
+      version: 1,
+      type: 1,
+      order: 2,
+      text: '',
+      tags: ['celebrate', 'celebration', 'party'],
+    },
+  ],
+  messages: {
+    groups: [
+      { key: 'people-body', message: 'people & body', order: 1 },
+      { key: 'activities', message: 'activities', order: 6 },
+    ],
+    subgroups: [
+      { key: 'hand-fingers-closed', message: 'fingers closed', order: 19 },
+      { key: 'body-parts', message: 'body parts', order: 22 },
+      { key: 'event', message: 'events & holidays', order: 60 },
+    ],
+    skinTones: [
+      { key: 'light', message: 'light skin tone' },
+      { key: 'medium-light', message: 'medium-light skin tone' },
+      { key: 'medium', message: 'medium skin tone' },
+      { key: 'medium-dark', message: 'medium-dark skin tone' },
+      { key: 'dark', message: 'dark skin tone' },
+    ],
+  },
+};

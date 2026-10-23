@@ -44,6 +44,7 @@ export type ListItemProps = Omit<
     /** Trailing content, such as buttons, rendered after the content. */
     actions?: ReactNode;
     actionsVisibility?: 'hover' | 'always';
+    actionsPlacement?: 'auto' | 'end';
     /**
      * Keyboard shortcut keys displayed at the end of the row. Registering the
      * shortcut is up to the application.
