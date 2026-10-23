@@ -1,4 +1,5 @@
 import { ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockSlashCommands';
+import { RICH_TEXT_BLOCK_SLASH_COMMANDS } from '@/advanced-text-editor/constants/RichTextBlockSlashCommands';
 import { type SlashCommandConfig } from '@/advanced-text-editor/extensions/slash-command/types/SlashCommandConfig';
 import { msg } from '@lingui/core/macro';
 import {
@@ -7,6 +8,7 @@ import {
   IconH2,
   IconH3,
   IconList,
+  IconListCheck,
   IconListNumbers,
   IconTextSize,
 } from 'twenty-ui/icon';
@@ -92,10 +94,22 @@ const LIST_SLASH_COMMANDS: SlashCommandConfig[] = [
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).toggleOrderedList().run(),
   },
+  {
+    id: 'taskList',
+    title: msg`Check List`,
+    description: msg`List with checkboxes`,
+    icon: IconListCheck,
+    keywords: [msg`check`, msg`todo`, msg`task`, msg`checkbox`],
+    getIsActive: (editor) => editor.isActive('taskList'),
+    getIsVisible: (editor) => editor.can().toggleTaskList?.() ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).toggleTaskList().run(),
+  },
 ];
 
 export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
   ...TEXT_SLASH_COMMANDS,
   ...ADVANCED_TEXT_EDITOR_BLOCK_SLASH_COMMANDS,
   ...LIST_SLASH_COMMANDS,
+  ...RICH_TEXT_BLOCK_SLASH_COMMANDS,
 ];

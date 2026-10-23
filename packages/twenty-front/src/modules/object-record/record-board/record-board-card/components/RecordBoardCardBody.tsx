@@ -1,4 +1,5 @@
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
@@ -63,6 +64,8 @@ export const RecordBoardCardBody = () => {
     setRecordBoardCardHoverPosition(index);
   };
 
+  const restrictedFieldNames = useRecordRestrictedFieldNames(recordId);
+
   return (
     <RecordCardBodyContainer>
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
@@ -80,6 +83,10 @@ export const RecordBoardCardBody = () => {
           return null;
         }
 
+        const isFieldRestricted = restrictedFieldNames.includes(
+          fieldMetadataItem.name,
+        );
+
         return (
           <StopPropagationContainer key={recordField.fieldMetadataItemId}>
             <FieldContext.Provider
@@ -87,13 +94,16 @@ export const RecordBoardCardBody = () => {
                 recordId,
                 maxWidth: 156,
                 isLabelIdentifier: false,
-                isRecordFieldReadOnly: isRecordFieldReadOnly({
-                  isRecordReadOnly,
-                  objectMetadataId: objectMetadataItem.id,
-                  fieldMetadataItem,
-                  fieldDefinition: correspondingFieldDefinition,
-                  objectPermissionsByObjectMetadataId,
-                }),
+                isForbidden: isFieldRestricted,
+                isRecordFieldReadOnly:
+                  isFieldRestricted ||
+                  isRecordFieldReadOnly({
+                    isRecordReadOnly,
+                    objectMetadataId: objectMetadataItem.id,
+                    fieldMetadataItem,
+                    fieldDefinition: correspondingFieldDefinition,
+                    objectPermissionsByObjectMetadataId,
+                  }),
                 fieldDefinition: correspondingFieldDefinition,
                 useUpdateRecord: useUpdateOneRecordHook,
                 isDisplayModeFixHeight: true,

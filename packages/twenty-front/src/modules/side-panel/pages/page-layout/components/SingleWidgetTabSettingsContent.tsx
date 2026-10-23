@@ -1,5 +1,5 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -8,7 +8,9 @@ import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/pag
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { getTabSettingsPlacementItems } from '@/side-panel/pages/page-layout/utils/getTabSettingsPlacementItems';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -57,6 +59,7 @@ export const SingleWidgetTabSettingsContent = ({
 }: SingleWidgetTabSettingsContentProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
+  const { openDropdown } = useOpenDropdown();
 
   const visibilityLabel = useTranslatedVisibilityLabel(
     singleWidget.conditionalAvailabilityExpression,
@@ -94,29 +97,40 @@ export const SingleWidgetTabSettingsContent = ({
         <SidePanelGroup heading={t`Manage`}>
           <SelectableListItem
             itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+            onEnter={() =>
+              openDropdown({
+                dropdownComponentInstanceIdFromProps:
+                  TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION,
+              })
+            }
           >
-            <CommandMenuItemDropdown
-              id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
-              label={t`Visibility restriction`}
-              Icon={IconEyeX}
+            <DropdownRoot
               dropdownId={
                 TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION
               }
-              dropdownComponents={
-                <LegacyDropdownContent>
-                  <SingleWidgetTabVisibilityDropdownContent
-                    widgetId={singleWidget.id}
-                    currentExpression={
-                      singleWidget.conditionalAvailabilityExpression
-                    }
-                    pageLayoutId={pageLayoutId}
-                  />
-                </LegacyDropdownContent>
-              }
-              dropdownPlacement="bottom-end"
-              description={visibilityLabel}
-              contextualTextPosition="right"
-            />
+              type="picker"
+            >
+              <CommandMenuItemDropdownTrigger
+                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
+                label={t`Visibility restriction`}
+                Icon={IconEyeX}
+                description={visibilityLabel}
+                contextualTextPosition="right"
+              />
+              <DropdownContent
+                side="bottom"
+                align="end"
+                collisionPadding={{ left: 0, right: 0 }}
+              >
+                <SingleWidgetTabVisibilityDropdownContent
+                  widgetId={singleWidget.id}
+                  currentExpression={
+                    singleWidget.conditionalAvailabilityExpression
+                  }
+                  pageLayoutId={pageLayoutId}
+                />
+              </DropdownContent>
+            </DropdownRoot>
           </SelectableListItem>
           <Tooltip
             delay={TooltipDelay.mediumDelay}

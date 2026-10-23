@@ -139,7 +139,7 @@ export const richTextFieldDefinition: FieldDefinition<FieldRichTextMetadata> = {
   label: 'Description',
   iconName: 'IconAlignLeft',
   type: FieldMetadataType.RICH_TEXT,
-  defaultValue: { blocknote: null, markdown: null },
+  defaultValue: { markdown: null, tiptap: null },
   metadata: {
     fieldName: 'description',
   },

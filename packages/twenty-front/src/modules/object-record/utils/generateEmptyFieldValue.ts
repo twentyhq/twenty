@@ -99,6 +99,7 @@ export const generateEmptyFieldValue = ({
       return {
         blocknote: null,
         markdown: null,
+        tiptap: null,
       };
     }
     case FieldMetadataType.ACTOR: {

@@ -487,7 +487,8 @@
                       "developers/extend/apps/operations/testing",
                       "developers/extend/apps/operations/translations",
                       "developers/extend/apps/operations/publishing",
-                      "developers/extend/apps/operations/marketplace-vetting"
+                      "developers/extend/apps/operations/marketplace-vetting",
+                      "developers/extend/apps/operations/monitoring"
                     ]
                   }
                 ]
@@ -505,6 +506,7 @@
                 "pages": [
                   "developers/self-host/capabilities/docker-compose",
                   "developers/self-host/capabilities/setup",
+                  "developers/self-host/capabilities/security",
                   "developers/self-host/capabilities/upgrade-guide",
                   "developers/self-host/capabilities/troubleshooting"
                 ]
@@ -656,6 +658,7 @@
                           "ui/components/input/country-select",
                           "ui/components/input/currency-picker",
                           "ui/components/input/phone-country-picker",
+                          "ui/components/input/form-field-row",
                           "ui/components/input/image-input",
                           "ui/components/input/search-input",
                           "ui/components/input/number-stepper",
