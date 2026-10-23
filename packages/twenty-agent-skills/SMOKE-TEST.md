@@ -27,24 +27,27 @@ npx nx start twenty-server
 
 Wait for `http://localhost:3000/healthz` to return 200. This instance is self-hosted for the purposes of the test: a non-`twenty.com` host, over plain HTTP, on a port the user chose.
 
-## 2. Authenticate a remote
+## 2. Install the CLI and authenticate a remote
 
-The scaffolder reuses an existing remote's credentials when one matches the target URL, which is what makes the rest of the run non-interactive. Add one with an API key from the instance's settings:
+Install the standalone CLI. Create an API key in the target instance's settings, then pass it through standard input:
 
 ```bash
-yarn twenty remote:add --url http://localhost:3000 --api-key <api-key> --as selfhosted
+npm install -g twenty
+printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url http://localhost:3000 --name selfhosted
 ```
 
-`DEV_API_KEY` in `twenty-sdk` does not work here. It is signed for the `twenty-app-dev` Docker image's `APP_SECRET`, so a locally built server with its own secret rejects it as `Token invalid`.
+Use a key issued by this instance, not credentials from another test server. For browser sign-in, omit `--with-token` and the pipe.
 
 ## 3. Scaffold, following `create-app`
 
 ```bash
-npx create-twenty-app@latest smoke-crm --url http://localhost:3000 \
-  --name smoke-crm --display-name "Smoke CRM" --description "Self-hosted smoke test app"
+twenty app init smoke-crm --display-name "Smoke CRM" --description "Self-hosted smoke test app"
+cd smoke-crm
+yarn install
+twenty app apply --create --remote selfhosted
 ```
 
-Expect `Authenticating -> Reusing existing credentials`, then `Application created successfully`. Confirm the app registered on the instance rather than only on disk:
+`app init` only creates local files. The first `app apply --create` registers and installs the app. Confirm the app exists on the instance:
 
 ```sql
 select id, "universalIdentifier", version from core.application;
@@ -54,13 +57,14 @@ One row must carry the `APPLICATION_UNIVERSAL_IDENTIFIER` from the generated `sr
 
 ## 4. Develop, following `develop-app`
 
+From the generated app directory:
+
 ```bash
-cd smoke-crm
-yarn twenty dev:add object    # interactive; needs a TTY
-yarn twenty apply
+twenty app add object --name ticket --name-plural tickets --create-view --create-navigation-menu-item --create-page-layout --no-input
+twenty app apply --remote selfhosted
 ```
 
-`apply` prints a plan and then `Synced <app name>`. Confirm the entity reached the instance:
+Confirm the apply command succeeds and the entity reached the instance:
 
 ```sql
 select "nameSingular", "namePlural" from core."objectMetadata" where "nameSingular" = 'ticket';
@@ -69,7 +73,9 @@ select table_schema || '.' || table_name from information_schema.tables where ta
 
 Both must return a row. The second proves the workspace migration ran and the physical table exists, which a successful sync message alone does not.
 
-## Recorded run
+## Historical run with the retired SDK CLI
+
+This record predates the standalone CLI migration. Its commands and output are historical evidence, not instructions for the current procedure above.
 
 Executed against a locally built server on `http://localhost:3000`, Node 24.16.0:
 
@@ -78,5 +84,3 @@ Executed against a locally built server on `http://localhost:3000`, Node 24.16.0
 - `dev:add object` generated `src/objects/ticket.ts` plus its view, record-page fields, navigation menu item, and record page layout.
 - `yarn twenty apply` reported `Plan: 50 to add, 0 to change, 0 to destroy` and `Synced Smoke CRM (5 files)`.
 - `core."objectMetadata"` held `ticket` / `tickets`, `core."navigationMenuItem"` held `ticket`, and the physical table `_ticket` existed in the workspace schema.
-
-Note for whoever runs this next: `create-twenty-app` still calls `yarn twenty dev --once` internally during its install step, while the skills direct agents to `yarn twenty apply`. That is the scaffolder's own behavior, not skill guidance.
