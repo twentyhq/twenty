@@ -10,7 +10,10 @@ import { ParticipantTargetReconciliationService } from 'src/modules/match-partic
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MessageChannelEntity]), WorkspaceCacheModule],
+  imports: [
+    TypeOrmModule.forFeature([MessageChannelEntity]),
+    WorkspaceCacheModule,
+  ],
   providers: [
     MatchParticipantService,
     ParticipantTargetReconciliationService,

@@ -116,16 +116,18 @@ describe('app message channel participant matching (e2e)', () => {
     externalId,
     senderHandle,
     personId,
+    channelId = messageChannelId,
   }: {
     externalId: string;
     senderHandle: string;
     personId?: string;
+    channelId?: string;
   }) => {
     const response = await asApplication({
       query: INGEST_MESSAGES_MUTATION,
       variables: {
         input: {
-          messageChannelId,
+          messageChannelId: channelId,
           messages: [
             {
               externalId,
@@ -384,6 +386,52 @@ describe('app message channel participant matching (e2e)', () => {
     expect((await findSender(messageId)).personId).toBe(katherineId);
 
     await updatePersonPhone({ personId: dorothyId, phone: null });
+    expect((await findSender(messageId)).personId).toBe(katherineId);
+  });
+
+  it('keeps a personId the app passes when a person gains that handle as an email', async () => {
+    const channelResponse = await asApplication({
+      query: CREATE_CHANNEL_MUTATION,
+      variables: {
+        input: {
+          connectedAccountId,
+          handle: 'inbox@example.com',
+          visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+        },
+      },
+    });
+
+    expect(channelResponse.body.errors).toBeUndefined();
+
+    const katherineId = await createPerson({
+      firstName: 'Katherine',
+      phone: null,
+    });
+
+    const { messageId } = await ingestFromOrThrow({
+      externalId: 'from-mary-email',
+      senderHandle: 'mary@example.com',
+      personId: katherineId,
+      channelId: channelResponse.body.data.createAppMessageChannel.id,
+    });
+
+    expect((await findSender(messageId)).personId).toBe(katherineId);
+
+    const maryId = await createPerson({ firstName: 'Mary', phone: null });
+    const response = await makeGraphqlApiRequest(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        recordId: maryId,
+        gqlFields: 'id',
+        data: {
+          emails: { primaryEmail: 'mary@example.com', additionalEmails: [] },
+        },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
+
     expect((await findSender(messageId)).personId).toBe(katherineId);
   });
 
