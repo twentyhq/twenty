@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import archiver, { type Archiver } from 'archiver';
 import { once } from 'events';
-import { Readable } from 'stream';
+import { PassThrough, pipeline, Readable } from 'stream';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -33,13 +33,17 @@ export class WorkspaceDataExportArchiveService {
     onPartAdded: () => Promise<void>;
   }): Promise<number> {
     const archive = archiver('zip', { zlib: { level: 1 } });
+    const archiveBody = new PassThrough();
+
+    pipeline(archive, archiveBody, () => undefined);
+
     const upload = this.fileStorageService.writeFileStream({
       ...buildWorkspaceDataExportResource({
         workspaceId,
         exportId,
         file: { type: 'archive' },
       }),
-      stream: archive,
+      stream: archiveBody,
       mimeType: 'application/zip',
     });
     const failure = new Promise<never>((_, reject) => {
