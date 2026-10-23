@@ -21,7 +21,7 @@ type SidePanelShareRecordGeneralAccessItemProps = {
   defaultGeneralAccessLevel: RecordShareAccessLevel | null | undefined;
   hasManagedGeneralAccess: boolean;
   objectLabelPlural: string;
-  saving: boolean;
+  isSaving: boolean;
   setGeneralAccess: ReturnType<typeof useRecordSharing>['setGeneralAccess'];
 };
 
@@ -30,7 +30,7 @@ export const SidePanelShareRecordGeneralAccessItem = ({
   defaultGeneralAccessLevel,
   hasManagedGeneralAccess,
   objectLabelPlural,
-  saving,
+  isSaving,
   setGeneralAccess,
 }: SidePanelShareRecordGeneralAccessItemProps) => {
   const { t } = useLingui();
@@ -74,13 +74,13 @@ export const SidePanelShareRecordGeneralAccessItem = ({
           ? undefined
           : getRecordShareAccessLevelLabel(generalAccessLevel)
       }
-      disabled={saving}
+      disabled={isSaving}
     >
       <Dropdown.Section>
         <Dropdown.OptionItem
           startIcon={<IconLock />}
           selected={!hasWorkspaceAccess}
-          disabled={isRestricted || saving}
+          disabled={isRestricted || isSaving}
           onSelect={() => {
             void setGeneralAccess(RecordShareAccessLevel.NONE);
           }}
@@ -107,7 +107,7 @@ export const SidePanelShareRecordGeneralAccessItem = ({
               )
             }
             selected={generalAccessLevel === option.value}
-            disabled={generalAccessLevel === option.value || saving}
+            disabled={generalAccessLevel === option.value || isSaving}
             onSelect={() => {
               void setGeneralAccess(option.value);
             }}

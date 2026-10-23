@@ -167,7 +167,7 @@ export const SidePanelShareRecordContent = ({
                       }
                       hasManagedGeneralAccess={sharing.hasManagedGeneralAccess}
                       objectLabelPlural={objectLabelPlural}
-                      saving={invitation.isSubmitting}
+                      isSaving={invitation.isSubmitting}
                       setGeneralAccess={setGeneralAccess}
                     />
                   </SidePanelShareRecordGroup>
