@@ -129,11 +129,15 @@ export const PointerGripReorder: Story = {
       throw new Error('The row action must be a native button');
     }
 
-    const firstItem = rowAction.closest('[aria-roledescription="draggable"]');
+    const firstItem = await waitFor(() => {
+      const dragHost = rowAction.closest('[aria-roledescription="draggable"]');
 
-    if (!(firstItem instanceof HTMLElement)) {
-      throw new Error('The row action must stay inside its drag host');
-    }
+      if (!(dragHost instanceof HTMLElement)) {
+        throw new Error('The row action must stay inside its drag host');
+      }
+
+      return dragHost;
+    });
     const secondItem = canvas.getByRole('button', { name: 'Phone' });
     const firstBounds = firstItem.getBoundingClientRect();
     const secondBounds = secondItem.getBoundingClientRect();

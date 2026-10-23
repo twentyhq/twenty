@@ -1,4 +1,4 @@
-import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
+import { type RecordExportColumn } from 'twenty-shared/types';
 
 export type WorkspaceDataExportObject = {
   objectMetadataId: string;
