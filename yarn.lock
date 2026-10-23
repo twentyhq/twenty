@@ -50269,7 +50269,6 @@ __metadata:
     qs: "npm:^6.15.2"
     react: "npm:^19.2.0"
     react-data-grid: "npm:7.0.0-beta.59"
-    react-datepicker: "npm:^9.1.0"
     react-dom: "npm:^19.2.0"
     react-dropzone: "npm:^14.2.3"
     react-error-boundary: "npm:^4.0.11"
