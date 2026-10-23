@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 
 import {
-  type ConnectedAccountFromCallback,
   type ConnectionCallbackPayload,
   type IdentifiedAccount,
 } from 'twenty-shared/application';
@@ -31,6 +30,7 @@ import { generatePkceVerifier } from 'src/engine/core-modules/application/connec
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -95,6 +95,7 @@ export class ConnectionProviderOAuthFlowService {
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly appConnectionAccessService: AppConnectionAccessService,
+    private readonly cacheLockService: CacheLockService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserEntity)
@@ -254,6 +255,7 @@ export class ConnectionProviderOAuthFlowService {
       handle,
       identifiedAccount,
       workspaceId: statePayload.workspaceId,
+      userId: statePayload.userId,
       userWorkspaceId: statePayload.userWorkspaceId,
       scope: statePayload.scope,
       reconnectingConnectedAccountId:
@@ -317,34 +319,35 @@ export class ConnectionProviderOAuthFlowService {
       return { ...callbackResult, connectedAccountId: null };
     }
 
-    const connectedAccount = await this.persistConnectedAccount({
-      provider,
-      credentials: {
-        accessToken: isDefined(connectedAccountFromCallback.accessToken)
-          ? (connectedAccountFromCallback.accessToken as PlaintextString)
-          : null,
-        refreshToken: null,
-        scopes: null,
-      },
-      handle:
-        connectedAccountFromCallback.handle ??
-        (await this.resolveConnectedAccountHandle({
-          idToken: null,
-          userId: statePayload.userId,
-        })),
-      identifiedAccount: connectedAccountFromCallback,
-      workspaceId: statePayload.workspaceId,
-      userWorkspaceId: statePayload.userWorkspaceId,
-      scope: statePayload.scope,
-      reconnectingConnectedAccountId:
-        statePayload.reconnectingConnectedAccountId ??
-        (await this.findCallerConnectedAccountIdForUpstreamAccount({
+    const { externalAccountId, handle, accessToken } =
+      connectedAccountFromCallback;
+
+    // the redirect and the notification for one authorization often arrive together
+    const connectedAccount = await this.cacheLockService.withLock(
+      async () =>
+        this.persistConnectedAccount({
           provider,
+          // a repeat report without a token or handle keeps the stored ones
+          credentials: isDefined(accessToken)
+            ? { accessToken, refreshToken: null, scopes: null }
+            : undefined,
+          handle,
+          identifiedAccount: { externalAccountId },
           workspaceId: statePayload.workspaceId,
+          userId: statePayload.userId,
           userWorkspaceId: statePayload.userWorkspaceId,
-          connectedAccountFromCallback,
-        })),
-    });
+          scope: statePayload.scope,
+          reconnectingConnectedAccountId:
+            statePayload.reconnectingConnectedAccountId ??
+            (await this.findCallerConnectedAccountIdForUpstreamAccount({
+              provider,
+              workspaceId: statePayload.workspaceId,
+              userWorkspaceId: statePayload.userWorkspaceId,
+              externalAccountId,
+            })),
+        }),
+      `app-custom-connection:${statePayload.workspaceId}:${provider.id}:${statePayload.userWorkspaceId}:${externalAccountId}`,
+    );
 
     await this.connectionProviderLifecycleHookService.dispatchOnConnect({
       provider,
@@ -355,19 +358,17 @@ export class ConnectionProviderOAuthFlowService {
     return { ...callbackResult, connectedAccountId: connectedAccount.id };
   }
 
-  // The upstream service may report the same account more than once for one
-  // authorization (browser return and server notification, retries), so a
-  // repeat updates the caller's existing connection instead of adding one.
+  // services report one account several times (browser return, notification, retries), and each must update one connection
   private async findCallerConnectedAccountIdForUpstreamAccount({
     provider,
     workspaceId,
     userWorkspaceId,
-    connectedAccountFromCallback,
+    externalAccountId,
   }: {
-    provider: ConnectionProviderEntity;
+    provider: Pick<ConnectionProviderEntity, 'id'>;
     workspaceId: string;
     userWorkspaceId: string;
-    connectedAccountFromCallback: ConnectedAccountFromCallback;
+    externalAccountId: string;
   }): Promise<string | null> {
     const existingConnectedAccount =
       await this.connectedAccountRepository.findOne({
@@ -375,7 +376,7 @@ export class ConnectionProviderOAuthFlowService {
           workspaceId,
           connectionProviderId: provider.id,
           userWorkspaceId,
-          externalAccountId: connectedAccountFromCallback.externalAccountId,
+          externalAccountId,
         },
         select: { id: true },
       });
@@ -533,43 +534,48 @@ export class ConnectionProviderOAuthFlowService {
     return user.email;
   }
 
+  // undefined credentials or handle keep what an updated connection already stores
   private async persistConnectedAccount({
     provider,
     credentials,
     handle,
     identifiedAccount,
     workspaceId,
+    userId,
     userWorkspaceId,
     scope,
     reconnectingConnectedAccountId,
   }: {
     provider: ConnectionProviderEntity;
-    credentials: ConnectedAccountCredentials;
-    handle: string;
+    credentials: ConnectedAccountCredentials | undefined;
+    handle: string | undefined;
     identifiedAccount: IdentifiedAccount | null;
     workspaceId: string;
+    userId: string;
     userWorkspaceId: string;
     scope: ConnectedAccountScope;
     reconnectingConnectedAccountId: string | null;
   }): Promise<ConnectedAccountEntity> {
     const sharedFields = {
-      accessToken: this.connectedAccountTokenEncryptionService.encryptNullable({
-        plaintext: credentials.accessToken,
-        workspaceId,
+      ...(isDefined(credentials) && {
+        accessToken:
+          this.connectedAccountTokenEncryptionService.encryptNullable({
+            plaintext: credentials.accessToken,
+            workspaceId,
+          }),
+        refreshToken:
+          this.connectedAccountTokenEncryptionService.encryptNullable({
+            plaintext: credentials.refreshToken,
+            workspaceId,
+          }),
+        scopes: credentials.scopes,
+        lastCredentialsRefreshedAt: new Date(),
       }),
-      refreshToken: this.connectedAccountTokenEncryptionService.encryptNullable(
-        {
-          plaintext: credentials.refreshToken,
-          workspaceId,
-        },
-      ),
-      scopes: credentials.scopes,
-      lastCredentialsRefreshedAt: new Date(),
+      ...(isDefined(handle) && { handle }),
       authFailedAt: null,
       authFailedReason: null,
       archivedAt: null,
       scope,
-      handle,
       externalAccountId: identifiedAccount?.externalAccountId ?? null,
     };
 
@@ -617,6 +623,9 @@ export class ConnectionProviderOAuthFlowService {
 
     const created = this.connectedAccountRepository.create({
       ...sharedFields,
+      handle:
+        handle ??
+        (await this.resolveConnectedAccountHandle({ idToken: null, userId })),
       name,
       scope,
       provider: ConnectedAccountProvider.APP,

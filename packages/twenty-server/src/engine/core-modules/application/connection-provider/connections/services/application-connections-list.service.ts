@@ -285,7 +285,7 @@ export class ApplicationConnectionsListService {
     workspaceId,
   }: {
     account: ConnectedAccountEntity;
-    provider: ConnectionProviderEntity;
+    provider: Pick<ConnectionProviderEntity, 'type'>;
     workspaceId: string;
   }): Promise<string | null> {
     // A custom flow's callback may save an account without any token.

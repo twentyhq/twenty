@@ -45,6 +45,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller(`${ApiPath.Auth}/apps`)
@@ -208,8 +209,7 @@ export class ConnectionProviderOAuthController {
     }
   }
 
-  // Browser return from a custom provider flow: the account may be saved now
-  // or by a server notification to the POST route, before or after.
+  // the account may arrive here or through the POST notification, in either order
   @Get('custom/callback')
   async customCallback(@Req() req: Request, @Res() res: Response) {
     const { state, ...queryStringParameters } = normalizeQueryStringParameters(
@@ -220,8 +220,9 @@ export class ConnectionProviderOAuthController {
       return this.redirectToErrorFromState({
         res,
         state,
-        error: new Error(
+        error: new ConnectionProviderException(
           'Custom connection callback is missing the `state` query parameter',
+          ConnectionProviderExceptionCode.INVALID_REQUEST,
         ),
       });
     }
@@ -248,11 +249,13 @@ export class ConnectionProviderOAuthController {
     }
   }
 
-  // Server-to-server notification from a custom provider flow, authenticated
-  // by the signed state the app put in the notification URL.
+  // public: the signed state in the notification URL is what authenticates the caller
   @Post('custom/callback')
   @HttpCode(200)
-  @UseFilters(ConnectionProviderRestApiExceptionFilter)
+  @UseFilters(
+    ConnectionProviderRestApiExceptionFilter,
+    PermissionsRestApiExceptionFilter,
+  )
   async customCallbackNotification(
     @Req() req: Request,
   ): Promise<{ success: true }> {

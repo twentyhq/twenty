@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import {
   type AuthorizeConnectionPayload,
-  type ConnectedAccountFromCallback,
   type ConnectionCallbackPayload,
   type IdentifiedAccount,
   type IdentifyAccountPayload,
@@ -15,7 +14,10 @@ import { ConnectionProviderException } from 'src/engine/core-modules/application
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { type CustomConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-custom-provider.util';
 import { parseAuthorizeConnectionResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-authorize-connection-result.util';
-import { parseConnectionCallbackResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-connection-callback-result.util';
+import {
+  parseConnectionCallbackResult,
+  type ParsedConnectedAccountFromCallback,
+} from 'src/engine/core-modules/application/connection-provider/utils/parse-connection-callback-result.util';
 import { parseIdentifyAccountResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-identify-account-result.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -180,7 +182,6 @@ export class ConnectionProviderLifecycleHookService {
     return parsedResult.identifiedAccount;
   }
 
-  // Runs inline in /authorize: the returned URL is where the user is sent.
   async runAuthorize({
     provider,
     workspaceId,
@@ -227,8 +228,7 @@ export class ConnectionProviderLifecycleHookService {
     return parsedResult.authorizationUrl;
   }
 
-  // Runs inline on every request to the callback URL; failures propagate so
-  // nothing is saved from a request the app could not read.
+  // failures propagate so nothing is saved from a request the app could not read
   async runCallback({
     provider,
     workspaceId,
@@ -243,7 +243,7 @@ export class ConnectionProviderLifecycleHookService {
       ConnectionCallbackPayload,
       'httpMethod' | 'queryStringParameters' | 'body'
     >;
-  }): Promise<ConnectedAccountFromCallback | null> {
+  }): Promise<ParsedConnectedAccountFromCallback | null> {
     const logicFunctionId = await this.resolveLogicFunctionIdOrThrow({
       hook: 'callback',
       logicFunctionUniversalIdentifier:

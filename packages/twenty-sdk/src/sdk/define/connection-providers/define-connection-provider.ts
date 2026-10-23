@@ -116,7 +116,7 @@ export const defineConnectionProvider: DefineEntity<
   if (config.type === 'custom') {
     const custom = config.custom;
 
-    if (!custom) {
+    if (!isDefined(custom)) {
       errors.push(
         "Connection provider with type 'custom' must declare a `custom` config block",
       );

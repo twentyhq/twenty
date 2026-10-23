@@ -378,22 +378,21 @@ describe('manifestValidate', () => {
       const authorizeLogicFunctionId = '550e8400-e29b-41d4-a716-446655440042';
       const callbackLogicFunctionId = '550e8400-e29b-41d4-a716-446655440043';
 
-      const logicFunctions = [
+      const logicFunctions: Manifest['logicFunctions'] = [
         authorizeLogicFunctionId,
         callbackLogicFunctionId,
-      ].map(
-        (universalIdentifier) =>
-          ({
-            universalIdentifier,
-            name: universalIdentifier,
-            sourceHandlerPath: `src/logic-functions/${universalIdentifier}.ts`,
-            builtHandlerPath: `dist/${universalIdentifier}.js`,
-            builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
-            handlerName: 'handler',
-          }) as unknown as Manifest['logicFunctions'][number],
-      );
+      ].map((universalIdentifier) => ({
+        universalIdentifier,
+        name: universalIdentifier,
+        sourceHandlerPath: `src/logic-functions/${universalIdentifier}.ts`,
+        builtHandlerPath: `dist/${universalIdentifier}.js`,
+        builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
+        handlerName: 'handler',
+      }));
 
-      const connectionProvider = {
+      const connectionProvider: NonNullable<
+        Manifest['connectionProviders']
+      >[number] = {
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440044',
         name: 'linkedin',
         displayName: 'LinkedIn',
@@ -406,7 +405,7 @@ describe('manifestValidate', () => {
             universalIdentifier: callbackLogicFunctionId,
           },
         },
-      } as unknown as NonNullable<Manifest['connectionProviders']>[number];
+      };
 
       const result = manifestValidate({
         ...validManifest,

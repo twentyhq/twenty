@@ -303,6 +303,32 @@ export const handler = ({ connectedAccountId }) => {
     ]);
   });
 
+  it('keeps the stored token when a later report of the account omits it', async () => {
+    await notify(await authorize(), {
+      account_id: 'account-a',
+      token: 'token-a',
+    });
+    const [original] = await readAccounts();
+
+    await notify(await authorize(), { account_id: 'account-a' });
+
+    const connections = await readAccounts();
+
+    expect(connections).toHaveLength(1);
+    expect(connections[0].accessToken).toBe(original.accessToken);
+  });
+
+  it('serialises simultaneous reports of one account into one connection', async () => {
+    const callbackUrl = await authorize();
+
+    await Promise.all([
+      notify(callbackUrl, { account_id: 'account-a' }),
+      notify(callbackUrl, { account_id: 'account-a' }),
+    ]);
+
+    expect(await readAccounts()).toHaveLength(1);
+  });
+
   it('refuses a reconnect that reports a different account and leaves the connection untouched', async () => {
     await notify(await authorize(), { account_id: 'account-a' });
     const [original] = await readAccounts();

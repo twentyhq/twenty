@@ -2,7 +2,16 @@ import { type ConnectedAccountFromCallback } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import {
+  type PlaintextString,
+  plaintextStringSchema,
+} from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { EXTERNAL_ACCOUNT_ID_MAX_LENGTH } from 'src/engine/metadata-modules/connected-account/constants/external-account-id-max-length.constant';
+
+export type ParsedConnectedAccountFromCallback = Omit<
+  ConnectedAccountFromCallback,
+  'accessToken'
+> & { accessToken?: PlaintextString };
 
 const connectedAccountFromCallbackSchema = z.object({
   externalAccountId: z
@@ -11,11 +20,14 @@ const connectedAccountFromCallbackSchema = z.object({
     .min(1)
     .max(EXTERNAL_ACCOUNT_ID_MAX_LENGTH),
   handle: z.string().trim().min(1).nullish(),
-  accessToken: z.string().min(1).nullish(),
+  accessToken: z.string().min(1).pipe(plaintextStringSchema).nullish(),
 });
 
 type ParseConnectionCallbackResultOutcome =
-  | { isValid: true; connectedAccount: ConnectedAccountFromCallback | null }
+  | {
+      isValid: true;
+      connectedAccount: ParsedConnectedAccountFromCallback | null;
+    }
   | { isValid: false; reason: string };
 
 export const parseConnectionCallbackResult = (
