@@ -13,7 +13,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/service
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 
-@RegisteredWorkspaceCommand('2.51.0', 1792743722572)
+@RegisteredWorkspaceCommand('2.51.0', 1792758655147)
 @Command({
   name: 'upgrade:2-51:seed-workspace-frontend-dependencies',
   description:
