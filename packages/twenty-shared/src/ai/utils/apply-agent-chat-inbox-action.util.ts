@@ -1,5 +1,6 @@
 import { type AgentChatInboxAction } from '@/ai/types/AgentChatInboxAction';
 import { type AgentChatInboxState } from '@/ai/types/AgentChatInboxState';
+import { getAgentChatResolvedMentionAt } from '@/ai/utils/get-agent-chat-resolved-mention-at.util';
 import { isDefined } from '@/utils/validation/isDefined';
 
 // What a chat without the member's row reads as: one they can open but do
@@ -9,6 +10,8 @@ const DEFAULT_AGENT_CHAT_INBOX_STATE: AgentChatInboxState = {
   archivedAt: null,
   snoozedUntil: null,
   isSubscribed: false,
+  lastMentionedAt: null,
+  lastResolvedMentionAt: null,
 };
 
 // The server writes each action as one SQL upsert stamped by the database
@@ -47,10 +50,13 @@ export const applyAgentChatInboxAction = ({
     case 'ARCHIVE':
       return {
         ...state,
+        lastResolvedMentionAt: getAgentChatResolvedMentionAt(state),
         archivedAt: now.toISOString(),
         snoozedUntil: null,
         isSubscribed: true,
       };
+    case 'ARCHIVE_IF_SETTLED':
+      return state;
     // A snooze already due is saved as ended, and a snoozed chat is followed
     // again since it is meant to come back
     case 'SNOOZE':

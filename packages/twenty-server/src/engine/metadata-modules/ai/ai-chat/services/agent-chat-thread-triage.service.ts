@@ -137,6 +137,11 @@ export class AgentChatThreadTriageService {
             : null,
         writeThread: channelCopyWrite.write,
       });
+    } else if (change.action === AgentChatInboxAction.ARCHIVE) {
+      await this.participantService.resolveMention({
+        ...args,
+        writeResponse: channelCopyWrite.write,
+      });
     } else {
       await this.threadRepository.query(args.workspaceId, (context) =>
         channelCopyWrite.write({ ...context, threadId: args.threadId }),

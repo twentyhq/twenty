@@ -220,15 +220,13 @@ export class ToolCallAnswerService {
       );
 
       if (isDefined(runningToolResult)) {
-        if (
-          !(await this.toolCallAnswerRecorderService.claimToolCallAnswer({
-            partId: toolPart.id,
-            toolOutput: runningToolResult,
-            workspaceId,
-          }))
-        ) {
-          throw this.notPending();
-        }
+        await this.toolCallAnswerRecorderService.claimToolCallAnswer({
+          threadId,
+          partId: toolPart.id,
+          toolOutput: runningToolResult,
+          workspaceId,
+          workspaceMemberId: args.workspaceMemberId,
+        });
 
         isClaimedAsRunning = true;
       }
@@ -251,6 +249,8 @@ export class ToolCallAnswerService {
         toolOutput: completion.toolResult,
         isLastAnswer,
         workspaceId,
+        workspaceMemberId: args.workspaceMemberId,
+        shouldResolveMention: !isClaimedAsRunning,
       });
 
       answerText = completion.answerText;
@@ -295,6 +295,8 @@ export class ToolCallAnswerService {
     // the answer is recorded and cannot be resubmitted, so failures fail the turn or run for retry
     try {
       const answerMessage = await this.agentChatService.addMessage({
+        shouldResolveMention: false,
+        workspaceMemberId: args.workspaceMemberId,
         threadId,
         userWorkspaceId,
         turnStatus:

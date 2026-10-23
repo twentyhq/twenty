@@ -45,6 +45,7 @@ describe('Attaching a conversation to a record from a chat turn', () => {
       title: 'Renewal prep',
     });
     message = await chat.addMessage({
+      workspaceMemberId,
       workspaceId,
       threadId,
       userWorkspaceId,

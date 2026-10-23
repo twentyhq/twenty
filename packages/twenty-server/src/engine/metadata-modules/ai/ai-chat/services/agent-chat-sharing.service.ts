@@ -1,3 +1,5 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
@@ -70,10 +72,25 @@ export class AgentChatSharingService {
   }
 
   async getParticipantObjectMetadataId(workspaceId: string): Promise<string> {
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
       ]);
+
+    if (
+      !isDefined(
+        flatFieldMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThreadParticipant.fields
+            .lastResolvedMentionAt.universalIdentifier
+        ],
+      )
+    ) {
+      throw new AgentHistoryStorageException(
+        'WORKSPACE_UPGRADE_REQUIRED',
+        'Chat mention resolution requires the workspace upgrade',
+      );
+    }
 
     return (
       findAgentChatFlatObjectMetadata(

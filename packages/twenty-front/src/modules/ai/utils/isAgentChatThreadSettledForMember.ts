@@ -21,7 +21,7 @@ export const isAgentChatThreadSettledForMember = ({
   participant: AgentChatThreadParticipantFieldsFragment | undefined;
   workspaceMemberId: string;
 }) => {
-  const { scope, isUnread } = getAgentChatThreadInboxStatus({
+  const { scope, isUnread, isMentioned } = getAgentChatThreadInboxStatus({
     lastActivityAt: thread.lastActivityAt,
     participant,
   });
@@ -29,6 +29,7 @@ export const isAgentChatThreadSettledForMember = ({
   return (
     scope === 'INBOX' &&
     !isUnread &&
+    !isMentioned &&
     !isDefined(thread.deletedAt) &&
     isDefined(thread.lastActivityAt) &&
     thread.workspaceMemberId === workspaceMemberId &&

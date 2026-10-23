@@ -79,6 +79,7 @@ type AgentChatEvent {
 
 enum AgentChatInboxAction {
   ARCHIVE
+  ARCHIVE_IF_SETTLED
   MOVE_TO_INBOX
   READ
   SNOOZE
@@ -116,6 +117,7 @@ type AgentChatThreadParticipant {
   isSubscribed: Boolean!
   lastMentionedAt: DateTime
   lastReadAt: DateTime
+  lastResolvedMentionAt: DateTime
   snoozedUntil: DateTime
   threadId: UUID!
   updatedAt: DateTime!

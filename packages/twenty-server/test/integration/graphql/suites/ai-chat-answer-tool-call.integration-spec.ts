@@ -8,9 +8,12 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
@@ -45,6 +48,7 @@ describe('Answering a chat tool call', () => {
       workspaceId,
       threadId,
       userWorkspaceId,
+      workspaceMemberId,
       uiMessage: {
         role: AgentMessageRole.USER,
         parts: [{ type: 'text', text: 'Draft a quote' }],
@@ -80,6 +84,37 @@ describe('Answering a chat tool call', () => {
     return { assistantMessageId };
   };
 
+  const pauseOnProposal = async (toolCallId: string) => {
+    await pauseOnQuestions(toolCallId);
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."agentMessagePart"
+       SET "toolName" = 'propose_tool_call', "toolInput" = $2::jsonb,
+         "toolOutput" = $3::jsonb
+       WHERE "toolCallId" = $1`,
+      [
+        toolCallId,
+        JSON.stringify({
+          toolName: 'create_company',
+          arguments: { name: 'Acme' },
+          summary: 'Create Acme',
+        }),
+        JSON.stringify({
+          success: true,
+          result: {
+            status: 'pending',
+            proposal: {
+              toolName: 'create_company',
+              toolLabel: 'Create company',
+              summary: 'Create Acme',
+              arguments: { name: 'Acme' },
+              template: 'generic',
+            },
+          },
+        }),
+      ],
+    );
+  };
+
   const answerQuestions = (toolCallId: string) =>
     answerToolCall({
       toolCall: { threadId, toolCallId },
@@ -101,6 +136,24 @@ describe('Answering a chat tool call', () => {
         [toolCallId],
       )
     )[0]?.toolOutput?.result?.status;
+
+  const markAsMentioned = (memberId = workspaceMemberId) =>
+    getAppProviderByClassName<AgentChatThreadParticipantService>(
+      'AgentChatThreadParticipantService',
+    ).markAsMentioned({ workspaceId, workspaceMemberId: memberId, threadId });
+
+  const readMentionState = async (memberId = workspaceMemberId) => {
+    const [participant]: {
+      lastMentionedAt: Date | null;
+      lastResolvedMentionAt: Date | null;
+    }[] = await global.testDataSource.query(
+      `SELECT "lastMentionedAt", "lastResolvedMentionAt" FROM "${schema}"."agentChatThreadParticipant"
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, memberId],
+    );
+
+    return participant;
+  };
 
   const stopStream = () =>
     makeMetadataApiRequest({
@@ -210,6 +263,227 @@ describe('Answering a chat tool call', () => {
         streamId: last.body.data.answerToolCall.streamId,
       }),
     );
+  });
+
+  it('keeps the mention unresolved when a submitted answer is invalid', async () => {
+    await pauseOnQuestions('invalid-mention-answer');
+    await markAsMentioned();
+
+    const mentionBefore = await readMentionState();
+    const response = await answerToolCall({
+      toolCall: { threadId, toolCallId: 'invalid-mention-answer' },
+      response: { selectedOptionIndices: [] },
+    });
+
+    expect(JSON.stringify(response.body.errors)).toContain(
+      'INVALID_TOOL_CALL_OUTPUT',
+    );
+    expect(await readMentionState()).toEqual(mentionBefore);
+    expect(await readToolCallStatus('invalid-mention-answer')).toBe('pending');
+  });
+
+  it('resolves only the answering member while another request remains pending', async () => {
+    await pauseOnQuestions('mention-first-answer', 'mention-pending-answer');
+    await getAgentChatThreadService().addParticipants({
+      workspaceId,
+      workspaceMemberId,
+      threadId,
+      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
+    await markAsMentioned();
+
+    const otherMemberBefore = await readMentionState(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+    const response = await answerQuestions('mention-first-answer');
+
+    expect(response.body.errors).toBeUndefined();
+
+    const answeringMember = await readMentionState();
+
+    expect(answeringMember.lastResolvedMentionAt).toEqual(
+      answeringMember.lastMentionedAt,
+    );
+    expect(await readMentionState(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY)).toEqual(
+      otherMemberBefore,
+    );
+    expect(await readToolCallStatus('mention-pending-answer')).toBe('pending');
+    expect(await readPendingQuestionMessageId()).not.toBeNull();
+  });
+
+  it('resolves a successfully recorded rejection of a proposed action', async () => {
+    const toolCallId = 'mention-rejected-action';
+
+    await pauseOnProposal(toolCallId);
+    await markAsMentioned();
+
+    const response = await answerToolCall({
+      toolCall: { threadId, toolCallId },
+      response: { decision: 'reject' },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(await readToolCallStatus(toolCallId)).toBe('rejected');
+
+    const participant = await readMentionState();
+
+    expect(participant.lastResolvedMentionAt).toEqual(
+      participant.lastMentionedAt,
+    );
+  });
+
+  it('preserves a new mention arriving while an accepted approval executes', async () => {
+    const toolCallId = 'mention-during-approved-execution';
+
+    await pauseOnProposal(toolCallId);
+    await markAsMentioned();
+
+    const acceptedMention = await readMentionState();
+    const toolRegistry = getAppProviderByClassName<ToolRegistryService>(
+      'ToolRegistryService',
+    );
+    const executeTool = jest
+      .spyOn(toolRegistry, 'resolveAndExecute')
+      .mockImplementationOnce(async () => {
+        const participant = await readMentionState();
+
+        expect(participant.lastResolvedMentionAt).toEqual(
+          acceptedMention.lastMentionedAt,
+        );
+        expect(await readToolCallStatus(toolCallId)).toBe('running');
+
+        await markAsMentioned();
+
+        return { success: true, message: 'Company created', result: {} };
+      });
+
+    try {
+      const response = await answerToolCall({
+        toolCall: { threadId, toolCallId },
+        response: { decision: 'approve' },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(executeTool).toHaveBeenCalledTimes(1);
+      expect(await readToolCallStatus(toolCallId)).toBe('approved');
+
+      const participant = await readMentionState();
+
+      expect(participant.lastResolvedMentionAt).toEqual(
+        acceptedMention.lastMentionedAt,
+      );
+      expect(participant.lastMentionedAt!.getTime()).toBeGreaterThan(
+        participant.lastResolvedMentionAt!.getTime(),
+      );
+    } finally {
+      executeTool.mockRestore();
+    }
+  });
+
+  it('keeps an accepted answer resolved when its authored response cannot be created', async () => {
+    await pauseOnQuestions('accepted-before-message-failure');
+    await markAsMentioned();
+
+    const authoredResponse = jest
+      .spyOn(chat, 'addMessage')
+      .mockRejectedValueOnce(
+        new Error('Authored response could not be created'),
+      );
+
+    try {
+      const response = await answerQuestions('accepted-before-message-failure');
+
+      expect(response.body.errors).toBeDefined();
+      expect(await readToolCallStatus('accepted-before-message-failure')).toBe(
+        'answered',
+      );
+
+      const participant = await readMentionState();
+
+      expect(participant.lastResolvedMentionAt).toEqual(
+        participant.lastMentionedAt,
+      );
+      expect(await readPendingQuestionMessageId()).toBeNull();
+    } finally {
+      authoredResponse.mockRestore();
+    }
+  });
+
+  it('rolls back the recorded answer and pending marker when its resolution transaction fails', async () => {
+    const { assistantMessageId } = await pauseOnQuestions(
+      'rolled-back-mention-answer',
+    );
+
+    await markAsMentioned();
+
+    const mentionBefore = await readMentionState();
+    const participantService =
+      getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      );
+    const resolveMention =
+      participantService.resolveMention.bind(participantService);
+    const responseWrite = jest
+      .spyOn(participantService, 'resolveMention')
+      .mockImplementationOnce((args) =>
+        resolveMention({
+          ...args,
+          writeResponse: async (
+            context: Parameters<AgentChatThreadWriteStep>[0],
+          ) => {
+            await args.writeResponse(context);
+
+            throw new Error('Response transaction could not commit');
+          },
+        }),
+      );
+
+    try {
+      const response = await answerQuestions('rolled-back-mention-answer');
+
+      expect(response.body.errors).toBeDefined();
+      expect(await readToolCallStatus('rolled-back-mention-answer')).toBe(
+        'pending',
+      );
+      expect(await readPendingQuestionMessageId()).toBe(assistantMessageId);
+      expect(await readMentionState()).toEqual(mentionBefore);
+    } finally {
+      responseWrite.mockRestore();
+    }
+  });
+
+  it('preserves a new mention arriving between the accepted answer and its authored response', async () => {
+    await pauseOnQuestions('mention-before-authored-response');
+    await markAsMentioned();
+
+    const previousMention = await readMentionState();
+    const addMessage = chat.addMessage.bind(chat);
+    const authoredResponse = jest
+      .spyOn(chat, 'addMessage')
+      .mockImplementationOnce(async (args) => {
+        await markAsMentioned();
+
+        return addMessage(args);
+      });
+
+    try {
+      const response = await answerQuestions(
+        'mention-before-authored-response',
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const participant = await readMentionState();
+
+      expect(participant.lastResolvedMentionAt).toEqual(
+        previousMention.lastMentionedAt,
+      );
+      expect(participant.lastMentionedAt!.getTime()).toBeGreaterThan(
+        participant.lastResolvedMentionAt!.getTime(),
+      );
+    } finally {
+      authoredResponse.mockRestore();
+    }
   });
 
   it('answers the questions of a step in any order', async () => {

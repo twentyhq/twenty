@@ -85,7 +85,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       ) {
         void updateAgentChatThreadInboxState({
           threadIds: [threadId],
-          action: AgentChatInboxAction.ARCHIVE,
+          action: AgentChatInboxAction.ARCHIVE_IF_SETTLED,
         });
       }
     };

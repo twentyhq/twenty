@@ -328,6 +328,7 @@ export class AgentInboxService {
         threadId: thread.id,
         workspaceMemberId: thread.workspaceMemberId,
         participantWorkspaceMemberIds: newWorkspaceMemberIds,
+        reason: 'delivery',
       });
 
     if (participantWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {

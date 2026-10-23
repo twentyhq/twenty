@@ -9,6 +9,7 @@ import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCal
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -33,6 +34,14 @@ const isAwaitingFirstChunkAtom =
 
 const PENDING_OUTPUT = { result: { questions: [], status: 'pending' } };
 const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };
+const MENTIONED_PARTICIPANT = {
+  id: 'participant-id',
+  threadId: 'thread-id',
+  isSubscribed: true,
+  lastMentionedAt: '2026-10-01T10:00:00.000Z',
+  lastResolvedMentionAt: null,
+  updatedAt: '2026-10-01T10:00:00.000Z',
+};
 
 const readToolOutput = () =>
   (
@@ -69,6 +78,9 @@ describe('useAnswerAgentChatToolCall', () => {
     jest.clearAllMocks();
     resetJotaiStore();
     jotaiStore.set(agentChatDisplayedThreadState.atom, 'thread-id');
+    jotaiStore.set(agentChatThreadParticipantsState.atom, {
+      'thread-id': MENTIONED_PARTICIPANT,
+    });
     jotaiStore.set(messagesAtom, [
       {
         id: 'assistant-1',
@@ -104,6 +116,10 @@ describe('useAnswerAgentChatToolCall', () => {
     );
     expect(readToolOutput()).toEqual(ANSWERED_OUTPUT);
     expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(true);
+    expect(
+      jotaiStore.get(agentChatThreadParticipantsState.atom)?.['thread-id']
+        .lastResolvedMentionAt,
+    ).toBe(MENTIONED_PARTICIPANT.lastMentionedAt);
   });
 
   it('expects no stream when the answer resumes a workflow run', async () => {
@@ -123,6 +139,54 @@ describe('useAnswerAgentChatToolCall', () => {
     expect(readToolOutput()).toEqual(PENDING_OUTPUT);
     expect(jotaiStore.get(isAwaitingFirstChunkAtom)).toBe(false);
     expect(enqueueToast).toHaveBeenCalled();
+    expect(
+      jotaiStore.get(agentChatThreadParticipantsState.atom)?.['thread-id']
+        .lastResolvedMentionAt,
+    ).toBeNull();
+  });
+
+  it('preserves a new mention arriving while an answer is submitted', async () => {
+    const newMentionedAt = '2026-10-01T10:01:00.000Z';
+
+    mutate.mockImplementation(async () => {
+      jotaiStore.set(agentChatThreadParticipantsState.atom, {
+        'thread-id': {
+          ...MENTIONED_PARTICIPANT,
+          lastMentionedAt: newMentionedAt,
+          updatedAt: newMentionedAt,
+        },
+      });
+
+      return { data: { answerToolCall: { streamId: null } } };
+    });
+
+    expect(await answer()).toBe(true);
+    expect(
+      jotaiStore.get(agentChatThreadParticipantsState.atom)?.['thread-id'],
+    ).toMatchObject({
+      lastMentionedAt: newMentionedAt,
+      lastResolvedMentionAt: MENTIONED_PARTICIPANT.lastMentionedAt,
+    });
+  });
+
+  it('preserves the accepted response event when a later server step fails', async () => {
+    const resolvedParticipant = {
+      ...MENTIONED_PARTICIPANT,
+      lastResolvedMentionAt: MENTIONED_PARTICIPANT.lastMentionedAt,
+    };
+
+    mutate.mockImplementation(async () => {
+      jotaiStore.set(agentChatThreadParticipantsState.atom, {
+        'thread-id': resolvedParticipant,
+      });
+
+      throw new Error('Notification failed');
+    });
+
+    expect(await answer()).toBe(false);
+    expect(
+      jotaiStore.get(agentChatThreadParticipantsState.atom)?.['thread-id'],
+    ).toEqual(resolvedParticipant);
   });
 
   it('refetches the conversation instead when the call was already answered elsewhere', async () => {

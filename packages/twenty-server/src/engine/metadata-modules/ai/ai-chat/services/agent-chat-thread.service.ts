@@ -325,9 +325,11 @@ export class AgentChatThreadService {
   // it unread in their inbox even if they had read or archived it
   async addParticipants({
     participantWorkspaceMemberIds,
+    reason = 'mention',
     ...args
   }: AgentChatThreadAccessArgs & {
     participantWorkspaceMemberIds: string[];
+    reason?: 'mention' | 'delivery';
   }): Promise<string[]> {
     const thread = await this.getWritableThread(args);
     const candidateMemberIds = [
@@ -363,11 +365,18 @@ export class AgentChatThreadService {
     );
 
     for (const participantMemberId of participantMemberIds) {
-      await this.participantService.markAsMentioned({
+      const participantArgs = {
         workspaceId: args.workspaceId,
         threadId: args.threadId,
         workspaceMemberId: participantMemberId,
-      });
+      };
+
+      if (reason === 'mention') {
+        await this.participantService.markAsMentioned(participantArgs);
+        continue;
+      }
+
+      await this.participantService.deliverToInbox(participantArgs);
     }
 
     await this.threadRecordEventService.emitThreadUpdated({

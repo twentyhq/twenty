@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectLiteral } from 'typeorm';
+
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -25,6 +27,18 @@ export class AgentHistoryTransactionService {
               );
 
             return work({
+              executeRawQuery: async <TRecord extends ObjectLiteral>({
+                sql,
+                parameters,
+              }: {
+                sql: string;
+                parameters?: unknown[];
+              }) =>
+                (await transactionScope.executeRawQuery(
+                  sql,
+                  parameters,
+                )) as unknown as TRecord[],
+              afterCommit: transactionScope.afterCommit,
               insert: async (name, values) => {
                 await getRepository(name).insert(values);
               },

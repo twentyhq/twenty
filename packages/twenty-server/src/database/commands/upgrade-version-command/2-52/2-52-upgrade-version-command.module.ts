@@ -1,3 +1,4 @@
+import { AddChatMentionResolutionCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-workspace-command-1792768675515-add-chat-mention-resolution.command';
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
@@ -15,6 +16,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
+    AddChatMentionResolutionCommand,
     ReconcileStandardSkillCatalogCommand,
     SeedWorkspaceFrontendDependenciesCommand,
   ],

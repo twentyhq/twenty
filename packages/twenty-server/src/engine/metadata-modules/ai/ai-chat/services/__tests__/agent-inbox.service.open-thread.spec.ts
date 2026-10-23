@@ -119,6 +119,7 @@ describe('AgentInboxService.openThread', () => {
       threadId: THREAD_ID,
       workspaceMemberId: 'member-id',
       participantWorkspaceMemberIds: ['other-member-id'],
+      reason: 'delivery',
     });
   });
 
@@ -289,6 +290,7 @@ describe('AgentInboxService.sendMessage', () => {
       expect.objectContaining({
         threadId: THREAD_ID,
         participantWorkspaceMemberIds: ['other-member-id'],
+        reason: 'delivery',
       }),
     );
   });

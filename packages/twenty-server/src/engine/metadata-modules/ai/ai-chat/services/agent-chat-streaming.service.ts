@@ -506,6 +506,7 @@ export class AgentChatStreamingService {
 
     const savedMessage = await this.agentChatService.addMessage({
       threadId,
+      workspaceMemberId,
       userWorkspaceId,
       id: messageId,
       uiMessage: {

@@ -138,7 +138,7 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
 
       expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
         threadIds: [THREAD_ID],
-        action: 'ARCHIVE',
+        action: 'ARCHIVE_IF_SETTLED',
       });
     });
 
@@ -151,14 +151,14 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
       sidePanelView.unmount();
 
       expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
-        expect.objectContaining({ action: 'ARCHIVE' }),
+        expect.objectContaining({ action: 'ARCHIVE_IF_SETTLED' }),
       );
 
       recordPageView.unmount();
 
       expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
         threadIds: [THREAD_ID],
-        action: 'ARCHIVE',
+        action: 'ARCHIVE_IF_SETTLED',
       });
     });
 
@@ -166,7 +166,7 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
       renderChatView().unmount();
 
       expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
-        expect.objectContaining({ action: 'ARCHIVE' }),
+        expect.objectContaining({ action: 'ARCHIVE_IF_SETTLED' }),
       );
     });
   });

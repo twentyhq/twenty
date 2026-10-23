@@ -20,6 +20,9 @@ import { setManualRecordShare } from 'test/integration/utils/set-manual-record-s
 
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -31,7 +34,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const PARTICIPANT_FIELDS =
-  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt updatedAt';
+  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt lastResolvedMentionAt updatedAt';
 
 const UPDATE_INBOX_STATE = parse(
   `mutation UpdateInboxState($threadIds: [UUID!]!, $action: AgentChatInboxAction!, $snoozedUntil: DateTime) { updateAgentChatThreadInboxState(threadIds: $threadIds, action: $action, snoozedUntil: $snoozedUntil) { ${PARTICIPANT_FIELDS} } }`,
@@ -87,6 +90,7 @@ type Participant = {
   snoozedUntil: string | null;
   isSubscribed: boolean;
   lastMentionedAt: string | null;
+  lastResolvedMentionAt: string | null;
 };
 
 const OPEN_THREADS_SUMMARY = parse(
@@ -1194,6 +1198,247 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     expect((await findOpenThreadsSummary()).openThreadCount).toBe(
       before.openThreadCount + 1,
+    );
+  });
+  it('preserves unresolved mentions while reading, marking unread and snoozing', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    for (const action of ['READ', 'UNREAD', 'SNOOZE']) {
+      const response = await runInboxAction(action, threadId, {
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        snoozedUntil:
+          action === 'SNOOZE' ? buildFutureSnoozedUntil() : undefined,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.updateAgentChatThreadInboxState[0],
+      ).toMatchObject({
+        lastMentionedAt: expect.any(String),
+        lastResolvedMentionAt: null,
+      });
+    }
+  });
+
+  it('resolves only the member who successfully sends a reply', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants(
+      threadId,
+      [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+
+    await getAppProviderByClassName<AgentChatService>(
+      'AgentChatService',
+    ).addMessage({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      threadId,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [{ type: 'text', text: 'I have handled this.' }],
+      },
+    });
+
+    const repliedParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(repliedParticipant!.lastResolvedMentionAt).toBe(
+      repliedParticipant!.lastMentionedAt,
+    );
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      lastMentionedAt: expect.any(String),
+      lastResolvedMentionAt: null,
+    });
+  });
+
+  it('keeps a mention resolved after Done until an explicit new mention arrives', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    const doneParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(doneParticipant!.lastResolvedMentionAt).toBe(
+      doneParticipant!.lastMentionedAt,
+    );
+
+    await getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    ).recordThreadActivity({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      text: 'An unrelated update',
+    });
+    await runInboxAction('MOVE_TO_INBOX', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      lastMentionedAt: doneParticipant!.lastMentionedAt,
+      lastResolvedMentionAt: doneParticipant!.lastResolvedMentionAt,
+    });
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const mentionedAgain = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(
+      new Date(mentionedAgain!.lastMentionedAt!).getTime(),
+    ).toBeGreaterThan(
+      new Date(mentionedAgain!.lastResolvedMentionAt!).getTime(),
+    );
+  });
+
+  it('delivers app recipients without creating or clearing an explicit mention', async () => {
+    const threadId = await createTestThread();
+    const threadService = getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    );
+    const delivery = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId,
+      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      reason: 'delivery' as const,
+    };
+
+    await threadService.addParticipants(delivery);
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      isSubscribed: true,
+      lastReadAt: null,
+      lastMentionedAt: null,
+      lastResolvedMentionAt: null,
+    });
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const mentionedParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    await threadService.addParticipants(delivery);
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      lastMentionedAt: mentionedParticipant!.lastMentionedAt,
+      lastResolvedMentionAt: null,
+    });
+  });
+
+  it('rolls mention resolution back when a response cannot be recorded', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    await expect(
+      getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      ).resolveMention({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        threadId,
+        writeResponse: async () => {
+          throw new Error('The response is invalid');
+        },
+      }),
+    ).rejects.toThrow('The response is invalid');
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ lastResolvedMentionAt: null });
+  });
+
+  it('preserves a newer mention when an older response finishes first', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    let finishResponse: () => void = () => undefined;
+    let responseStarted: () => void = () => undefined;
+    const responseStartedPromise = new Promise<void>((resolve) => {
+      responseStarted = resolve;
+    });
+    const responseFinishedPromise = new Promise<void>((resolve) => {
+      finishResponse = resolve;
+    });
+    const participantService =
+      getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      );
+    const memberArgs = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      threadId,
+    };
+    const response = participantService.resolveMention({
+      ...memberArgs,
+      writeResponse: async () => {
+        responseStarted();
+        await responseFinishedPromise;
+      },
+    });
+
+    await responseStartedPromise;
+
+    const laterMention = participantService.markAsMentioned(memberArgs);
+
+    finishResponse();
+    await Promise.all([response, laterMention]);
+
+    const participant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(new Date(participant!.lastMentionedAt!).getTime()).toBeGreaterThan(
+      new Date(participant!.lastResolvedMentionAt!).getTime(),
+    );
+  });
+
+  it('orders a new mention after the resolved cursor at millisecond precision', async () => {
+    const threadId = await createTestThread();
+    const resolvedAt = new Date(Date.now() + 60_000).toISOString();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThreadParticipant"
+       SET "lastMentionedAt" = $3, "lastResolvedMentionAt" = $3
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY, resolvedAt],
+    );
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const participant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(new Date(participant!.lastMentionedAt!).getTime()).toBe(
+      new Date(resolvedAt).getTime() + 1,
     );
   });
 });
