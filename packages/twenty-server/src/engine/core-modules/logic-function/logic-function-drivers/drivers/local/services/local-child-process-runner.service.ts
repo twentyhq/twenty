@@ -277,7 +277,7 @@ export class LocalChildProcessRunnerService {
         message: { id, request },
         handler,
       }: {
-        message: LocalFetchRelayChildMessage;
+        message: Pick<LocalFetchRelayChildMessage, 'id' | 'request'>;
         handler: LocalFetchRelayHandler;
       }) => {
         if (
@@ -365,7 +365,6 @@ export class LocalChildProcessRunnerService {
         }
       });
 
-      // Also covers a handler that keeps running after reporting a result.
       const t = setTimeout(() => {
         child.kill('SIGKILL');
         if (settled) return;
