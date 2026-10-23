@@ -203,6 +203,17 @@ export class FlatConnectionProviderValidatorService {
       });
     }
 
+    if (
+      isDefined(flatEntityUpdate.type) &&
+      flatEntityUpdate.type !== fromFlatConnectionProvider.type
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier`,
+        userFriendlyMessage: msg`Connection provider type cannot be changed`,
+      });
+    }
+
     return validationResult;
   }
 }

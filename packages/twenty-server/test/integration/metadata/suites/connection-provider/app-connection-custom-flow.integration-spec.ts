@@ -12,6 +12,7 @@ import { uploadApplicationFile } from 'test/integration/metadata/suites/applicat
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { type Manifest } from 'twenty-shared/application';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -21,6 +22,7 @@ import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const APPLICATION_IDENTIFIER = v4();
+const ROLE_IDENTIFIER = v4();
 const PROVIDER_IDENTIFIER = v4();
 const AUTHORIZE_IDENTIFIER = v4();
 const CALLBACK_IDENTIFIER = v4();
@@ -44,6 +46,7 @@ const CALLBACK_SOURCE = `export const handler = ({ httpMethod, body }) => {
 
 describe('app connection custom flow', () => {
   let provider: ConnectionProviderEntity;
+  let logicFunctionManifests: Manifest['logicFunctions'];
   let fixtureDirectory: string;
   let onConnectExecutionsPath: string;
 
@@ -163,22 +166,24 @@ export const handler = ({ connectedAccountId }) => {
       expect(uploaded.errors).toBeUndefined();
     }
 
+    logicFunctionManifests = functions.map((logicFunction) => ({
+      universalIdentifier: logicFunction.universalIdentifier,
+      name: logicFunction.name,
+      handlerName: 'handler',
+      sourceHandlerPath: `src/${logicFunction.name}.ts`,
+      builtHandlerPath: `dist/${logicFunction.name}.mjs`,
+      builtHandlerChecksum: createHash('sha256')
+        .update(logicFunction.source)
+        .digest('hex'),
+      timeoutSeconds: 10,
+    }));
+
     const { errors } = await syncApplication({
       manifest: buildBaseManifest({
         appId: APPLICATION_IDENTIFIER,
-        roleId: v4(),
+        roleId: ROLE_IDENTIFIER,
         overrides: {
-          logicFunctions: functions.map((logicFunction) => ({
-            universalIdentifier: logicFunction.universalIdentifier,
-            name: logicFunction.name,
-            handlerName: 'handler',
-            sourceHandlerPath: `src/${logicFunction.name}.ts`,
-            builtHandlerPath: `dist/${logicFunction.name}.mjs`,
-            builtHandlerChecksum: createHash('sha256')
-              .update(logicFunction.source)
-              .digest('hex'),
-            timeoutSeconds: 10,
-          })),
+          logicFunctions: logicFunctionManifests,
           connectionProviders: [
             {
               universalIdentifier: PROVIDER_IDENTIFIER,
@@ -400,6 +405,46 @@ export const handler = ({ connectedAccountId }) => {
     expect(response.status).toBe(500);
     expect(await readAccounts()).toHaveLength(0);
     expect(readOnConnectExecutions()).toEqual([]);
+  });
+
+  it('refuses turning the provider into an OAuth one and keeps it custom', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildBaseManifest({
+        appId: APPLICATION_IDENTIFIER,
+        roleId: ROLE_IDENTIFIER,
+        overrides: {
+          logicFunctions: logicFunctionManifests,
+          connectionProviders: [
+            {
+              universalIdentifier: PROVIDER_IDENTIFIER,
+              name: 'hosted-provider',
+              displayName: 'Hosted provider',
+              type: 'oauth',
+              oauth: {
+                authorizationEndpoint:
+                  'https://hosted-auth.example.com/authorize',
+                tokenEndpoint: 'https://hosted-auth.example.com/token',
+                scopes: [],
+                clientIdVariable: 'CLIENT_ID',
+                clientSecretVariable: 'CLIENT_SECRET',
+              },
+            },
+          ],
+        },
+      }),
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      'Connection provider type cannot be changed after creation',
+    );
+
+    const [storedProvider] = await globalThis.testDataSource.query(
+      'SELECT type FROM core."connectionProvider" WHERE "universalIdentifier" = $1',
+      [PROVIDER_IDENTIFIER],
+    );
+
+    expect(storedProvider.type).toBe('custom');
   });
 
   it('rejects a notification with a tampered state', async () => {
