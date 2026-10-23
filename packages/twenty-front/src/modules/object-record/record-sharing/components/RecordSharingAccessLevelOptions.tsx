@@ -23,7 +23,7 @@ type RecordSharingAccessLevelOptionsProps = {
   onChange: (value: RecordShareAccessLevel) => void;
   onRemove?: () => void;
   closeOnSelect?: boolean;
-  excludeFullAccess?: boolean;
+  shouldExcludeFullAccess?: boolean;
 };
 
 export const RecordSharingAccessLevelOptions = ({
@@ -31,12 +31,12 @@ export const RecordSharingAccessLevelOptions = ({
   onChange,
   onRemove,
   closeOnSelect,
-  excludeFullAccess = false,
+  shouldExcludeFullAccess = false,
 }: RecordSharingAccessLevelOptionsProps) => {
   const { t } = useLingui();
   const options = RECORD_SHARE_ACCESS_LEVEL_OPTIONS.filter(
     (option) =>
-      !excludeFullAccess || option.value !== RecordShareAccessLevel.FULL,
+      !shouldExcludeFullAccess || option.value !== RecordShareAccessLevel.FULL,
   );
 
   return (

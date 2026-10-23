@@ -61,6 +61,20 @@ const AiChatThreadDetailsFieldsStory = ({
     ...(isFollowing ? [CURRENT_MEMBER] : []),
     ...(isEmpty ? [] : [OTHER_FOLLOWER]),
   ];
+  const handleStatusChange: NonNullable<
+    ComponentProps<typeof AiChatThreadStatusField>['onStatusChange']
+  > = (change) => {
+    onStatusChange(change);
+    setStatus(change.status);
+  };
+  const handleLabelsChange = (labelIds: string[]) => {
+    onLabelsChange(labelIds);
+    setSelectedLabelIds(labelIds);
+  };
+  const handleFollowingChange = (nextIsFollowing: boolean) => {
+    onFollowingChange(nextIsFollowing);
+    setIsFollowing(nextIsFollowing);
+  };
 
   return (
     <StyledFields>
@@ -68,14 +82,7 @@ const AiChatThreadDetailsFieldsStory = ({
         status={status}
         scope={scope}
         isSaving={isSaving}
-        onStatusChange={
-          isReadOnly
-            ? undefined
-            : (change) => {
-                onStatusChange(change);
-                setStatus(change.status);
-              }
-        }
+        onStatusChange={isReadOnly ? undefined : handleStatusChange}
       />
       <DetailsRow
         labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
@@ -108,27 +115,13 @@ const AiChatThreadDetailsFieldsStory = ({
         labels={LABELS}
         selectedLabelIds={selectedLabelIds}
         isSaving={isSaving}
-        onLabelsChange={
-          isReadOnly
-            ? undefined
-            : (labelIds) => {
-                onLabelsChange(labelIds);
-                setSelectedLabelIds(labelIds);
-              }
-        }
+        onLabelsChange={isReadOnly ? undefined : handleLabelsChange}
       />
       <AiChatThreadFollowersField
         followers={followers}
         isFollowing={isFollowing}
         isSaving={isSaving}
-        onFollowingChange={
-          isReadOnly
-            ? undefined
-            : (nextIsFollowing) => {
-                onFollowingChange(nextIsFollowing);
-                setIsFollowing(nextIsFollowing);
-              }
-        }
+        onFollowingChange={isReadOnly ? undefined : handleFollowingChange}
       />
     </StyledFields>
   );

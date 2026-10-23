@@ -56,7 +56,7 @@ export const RecordSharingInvitationAccessPicker = ({
         <RecordSharingAccessLevelOptions
           value={value}
           onChange={onChange}
-          excludeFullAccess={hasEveryoneRecipient}
+          shouldExcludeFullAccess={hasEveryoneRecipient}
         />
       </Dropdown.Content>
     </Dropdown.Root>

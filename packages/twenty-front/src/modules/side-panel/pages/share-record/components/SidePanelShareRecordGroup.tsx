@@ -13,17 +13,17 @@ const StyledHeading = styled.div`
 
 type SidePanelShareRecordGroupProps = {
   heading: string;
-  hideHeading?: boolean;
+  shouldHideHeading?: boolean;
   children: ReactNode;
 };
 
 export const SidePanelShareRecordGroup = ({
   heading,
-  hideHeading = false,
+  shouldHideHeading = false,
   children,
 }: SidePanelShareRecordGroupProps) => (
   <>
-    {!hideHeading && (
+    {!shouldHideHeading && (
       <StyledHeading>
         <Text size="xs" weight="semibold" color="light">
           {heading}

@@ -190,7 +190,7 @@ export const SidePanelShareRecordContent = ({
                     <SidePanelShareRecordGroup
                       key={heading}
                       heading={heading}
-                      hideHeading={isInviting && matchesGeneralAccess}
+                      shouldHideHeading={isInviting && matchesGeneralAccess}
                     >
                       {shares.map((share) => (
                         <SidePanelShareRecordRecipient
