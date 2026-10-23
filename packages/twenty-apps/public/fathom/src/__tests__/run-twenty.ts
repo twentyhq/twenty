@@ -42,12 +42,16 @@ export function runTwenty(cliArguments: string[]): Promise<TwentyCliResult> {
     });
 
     child.on('error', (error: NodeJS.ErrnoException) => {
+      if (error.code !== 'ENOENT') {
+        reject(error);
+
+        return;
+      }
+
       reject(
-        error.code === 'ENOENT'
-          ? new Error(
-              `${executable} was not found. Install the Twenty CLI globally, or set TWENTY_CLI to its path.`,
-            )
-          : error,
+        new Error(
+          `${executable} was not found. Install the Twenty CLI globally, or set TWENTY_CLI to its path.`,
+        ),
       );
     });
 
