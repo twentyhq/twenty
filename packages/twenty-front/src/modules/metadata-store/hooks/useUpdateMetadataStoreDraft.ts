@@ -113,7 +113,7 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems: Array<{ id: string }> = getDraftOrCurrentMetadataItems({
+      const baseItems = getDraftOrCurrentMetadataItems({
         store,
         metadataEntityKey: key,
       });
@@ -121,17 +121,16 @@ export const useUpdateMetadataStoreDraft = () => {
       let newItems = [...baseItems];
 
       for (const item of items) {
-        const newItem = item as unknown as { id: string };
         const existingIndex = newItems.findIndex(
-          (existing) => existing.id === newItem.id,
+          (existing) => existing.id === item.id,
         );
 
         if (existingIndex >= 0) {
-          if (!isDeeplyEqual(newItems[existingIndex], newItem)) {
-            newItems[existingIndex] = newItem;
+          if (!isDeeplyEqual(newItems[existingIndex], item)) {
+            newItems[existingIndex] = item;
           }
         } else {
-          newItems = [...newItems, newItem];
+          newItems = [...newItems, item];
         }
       }
 
@@ -158,16 +157,14 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems: Array<{ id: string }> = getDraftOrCurrentMetadataItems({
+      const baseItems = getDraftOrCurrentMetadataItems({
         store,
         metadataEntityKey: key,
       });
 
       let hasChanged = false;
       const newItems = baseItems.map((existing) => {
-        const updatedItem = (items as unknown as Array<{ id: string }>).find(
-          (item) => item.id === existing.id,
-        );
+        const updatedItem = items.find((item) => item.id === existing.id);
 
         if (!isDefined(updatedItem)) {
           return existing;
@@ -215,7 +212,7 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems: Array<{ id: string }> = getDraftOrCurrentMetadataItems({
+      const baseItems = getDraftOrCurrentMetadataItems({
         store,
         metadataEntityKey: key,
       });
