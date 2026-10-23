@@ -63,11 +63,15 @@ const calendarEvent = getFlatObjectMetadataMock({
   fieldIds: [],
 });
 
-const collect = (
-  records: ObjectRecord[],
-  flatObjectMetadata: FlatObjectMetadata,
-  objectNameSingulars: string[],
-) =>
+const collect = ({
+  records,
+  flatObjectMetadata,
+  objectNameSingulars,
+}: {
+  records: ObjectRecord[];
+  flatObjectMetadata: FlatObjectMetadata;
+  objectNameSingulars: string[];
+}) =>
   collectRecordsByObjectNameSingular({
     records,
     flatObjectMetadata,
@@ -87,9 +91,13 @@ describe('collectRecordsByObjectNameSingular', () => {
   it('should collect root records of a requested object', () => {
     const event = { id: 'event-1', title: 'Demo' } as ObjectRecord;
 
-    expect(collect([event], calendarEvent, ['calendarEvent'])).toEqual(
-      new Map([['calendarEvent', [event]]]),
-    );
+    expect(
+      collect({
+        records: [event],
+        flatObjectMetadata: calendarEvent,
+        objectNameSingulars: ['calendarEvent'],
+      }),
+    ).toEqual(new Map([['calendarEvent', [event]]]));
   });
 
   it('should collect records nested through one-to-many and many-to-one relations', () => {
@@ -107,7 +115,11 @@ describe('collectRecordsByObjectNameSingular', () => {
       },
     ] as unknown as ObjectRecord[];
 
-    const collectedRecords = collect(records, person, ['calendarEvent']);
+    const collectedRecords = collect({
+      records,
+      flatObjectMetadata: person,
+      objectNameSingulars: ['calendarEvent'],
+    });
 
     expect(collectedRecords.get('calendarEvent')).toEqual([
       firstEvent,
@@ -130,7 +142,11 @@ describe('collectRecordsByObjectNameSingular', () => {
     ] as unknown as ObjectRecord[];
 
     expect(
-      collect(records, person, ['calendarEvent']).get('calendarEvent'),
+      collect({
+        records,
+        flatObjectMetadata: person,
+        objectNameSingulars: ['calendarEvent'],
+      }).get('calendarEvent'),
     ).toEqual([sharedEvent]);
   });
 
@@ -139,6 +155,12 @@ describe('collectRecordsByObjectNameSingular', () => {
       { id: 'person-1', calendarEventParticipants: [] },
     ] as unknown as ObjectRecord[];
 
-    expect(collect(records, person, ['message']).size).toBe(0);
+    expect(
+      collect({
+        records,
+        flatObjectMetadata: person,
+        objectNameSingulars: ['message'],
+      }).size,
+    ).toBe(0);
   });
 });

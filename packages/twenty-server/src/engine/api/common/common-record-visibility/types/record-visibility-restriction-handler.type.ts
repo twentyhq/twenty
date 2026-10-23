@@ -3,8 +3,8 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 export type RecordVisibilityRestrictionHandler = {
-  applyVisibilityRestrictions: (
-    records: ObjectRecord[],
-    authContext: WorkspaceAuthContext,
-  ) => Promise<void>;
+  applyVisibilityRestrictions: (args: {
+    records: ObjectRecord[];
+    authContext: WorkspaceAuthContext;
+  }) => Promise<void>;
 };

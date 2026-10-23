@@ -10,7 +10,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 // Runs on every record of a result, nested relations included, so restricted fields cannot leak through a relation
-// TODO: replace with row-level security once it can express channel visibility
+// TODO(@charlesBochet): replace with row-level security once it can express channel visibility
 @Injectable()
 export class CommonRecordVisibilityService {
   private readonly handlersByObjectNameSingular = new Map<
@@ -18,10 +18,13 @@ export class CommonRecordVisibilityService {
     RecordVisibilityRestrictionHandler
   >();
 
-  public registerHandler(
-    objectNameSingular: string,
-    handler: RecordVisibilityRestrictionHandler,
-  ) {
+  public registerHandler({
+    objectNameSingular,
+    handler,
+  }: {
+    objectNameSingular: string;
+    handler: RecordVisibilityRestrictionHandler;
+  }) {
     this.handlersByObjectNameSingular.set(objectNameSingular, handler);
   }
 
@@ -56,7 +59,10 @@ export class CommonRecordVisibilityService {
     ] of recordsByObjectNameSingular) {
       await this.handlersByObjectNameSingular
         .get(objectNameSingular)
-        ?.applyVisibilityRestrictions(collectedRecords, authContext);
+        ?.applyVisibilityRestrictions({
+          records: collectedRecords,
+          authContext,
+        });
     }
   }
 }

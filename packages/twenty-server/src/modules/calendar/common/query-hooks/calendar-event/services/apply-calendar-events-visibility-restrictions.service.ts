@@ -14,7 +14,6 @@ import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/c
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -28,21 +27,25 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
   ) {}
 
   onModuleInit() {
-    this.commonRecordVisibilityService.registerHandler('calendarEvent', this);
+    this.commonRecordVisibilityService.registerHandler({
+      objectNameSingular: 'calendarEvent',
+      handler: this,
+    });
   }
 
-  public async applyVisibilityRestrictions(
-    calendarEvents: ObjectRecord[],
-    authContext: WorkspaceAuthContext,
-  ): Promise<void> {
-    const restrictableCalendarEvents = calendarEvents.filter((calendarEvent) =>
+  public async applyVisibilityRestrictions({
+    records,
+    authContext,
+  }: {
+    records: ObjectRecord[];
+    authContext: WorkspaceAuthContext;
+  }): Promise<void> {
+    const restrictableCalendarEvents = records.filter((calendarEvent) =>
       RESTRICTED_CALENDAR_EVENT_FIELD_NAMES.some(
         (fieldName) => fieldName in calendarEvent,
       ),
@@ -52,10 +55,10 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
       return;
     }
 
-    const visibleCalendarEventIds = await this.findVisibleCalendarEventIds(
-      restrictableCalendarEvents,
+    const visibleCalendarEventIds = await this.findVisibleCalendarEventIds({
+      calendarEvents: restrictableCalendarEvents,
       authContext,
-    );
+    });
 
     for (const calendarEvent of restrictableCalendarEvents) {
       if (visibleCalendarEventIds.has(calendarEvent.id)) {
@@ -71,10 +74,13 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
     }
   }
 
-  private async findVisibleCalendarEventIds(
-    calendarEvents: ObjectRecord[],
-    authContext: WorkspaceAuthContext,
-  ): Promise<Set<string>> {
+  private async findVisibleCalendarEventIds({
+    calendarEvents,
+    authContext,
+  }: {
+    calendarEvents: ObjectRecord[];
+    authContext: WorkspaceAuthContext;
+  }): Promise<Set<string>> {
     const workspaceId = authContext.workspace.id;
 
     const calendarEventIds = [
@@ -114,52 +120,30 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
 
     const calendarChannels = await this.calendarChannelRepository.find({
       where: { id: In(calendarChannelIds), workspaceId },
-      select: ['id', 'visibility', 'connectedAccountId'],
+      select: {
+        id: true,
+        visibility: true,
+        connectedAccount: { id: true, userWorkspaceId: true },
+      },
+      relations: { connectedAccount: true },
     });
+
+    const viewerUserWorkspaceId = isUserAuthContext(authContext)
+      ? authContext.userWorkspaceId
+      : undefined;
 
     const visibleCalendarChannelIds = new Set(
       calendarChannels
         .filter(
           (calendarChannel) =>
             calendarChannel.visibility ===
-            CalendarChannelVisibility.SHARE_EVERYTHING,
+              CalendarChannelVisibility.SHARE_EVERYTHING ||
+            (isDefined(viewerUserWorkspaceId) &&
+              calendarChannel.connectedAccount.userWorkspaceId ===
+                viewerUserWorkspaceId),
         )
         .map((calendarChannel) => calendarChannel.id),
     );
-
-    const restrictedCalendarChannels = calendarChannels.filter(
-      (calendarChannel) => !visibleCalendarChannelIds.has(calendarChannel.id),
-    );
-
-    if (
-      isUserAuthContext(authContext) &&
-      restrictedCalendarChannels.length > 0
-    ) {
-      const ownedConnectedAccounts = await this.connectedAccountRepository.find(
-        {
-          where: {
-            id: In(
-              restrictedCalendarChannels.map(
-                (calendarChannel) => calendarChannel.connectedAccountId,
-              ),
-            ),
-            userWorkspaceId: authContext.userWorkspaceId,
-            workspaceId,
-          },
-          select: ['id'],
-        },
-      );
-
-      const ownedConnectedAccountIds = new Set(
-        ownedConnectedAccounts.map((connectedAccount) => connectedAccount.id),
-      );
-
-      for (const calendarChannel of restrictedCalendarChannels) {
-        if (ownedConnectedAccountIds.has(calendarChannel.connectedAccountId)) {
-          visibleCalendarChannelIds.add(calendarChannel.id);
-        }
-      }
-    }
 
     return new Set(
       calendarChannelEventAssociations
