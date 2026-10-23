@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppConnectionAccessService } from 'src/engine/core-modules/application/connection-provider/app-connection-access.service';
 import { ApplicationConnectionProviderResolver } from 'src/engine/core-modules/application/connection-provider/application-connection-provider.resolver';
+import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
+import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
+import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
@@ -49,14 +52,19 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     provideWorkspaceScopedRepository(ConnectionProviderEntity),
     AppConnectionAccessService,
     ConnectionProviderService,
+    ConnectionProviderAuthorizationStateService,
+    ConnectionProviderConnectedAccountService,
     ConnectionProviderOAuthFlowService,
+    ConnectionProviderCustomFlowService,
     ConnectionProviderLifecycleHookService,
     ApplicationConnectionProviderResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [
     ConnectionProviderService,
+    ConnectionProviderAuthorizationStateService,
     ConnectionProviderOAuthFlowService,
+    ConnectionProviderCustomFlowService,
     ConnectionProviderLifecycleHookService,
   ],
 })
