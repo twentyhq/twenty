@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode, useState } from 'react';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
 
@@ -190,7 +190,25 @@ export const Default: Story = {
     await expect(
       await page.findByRole('menuitemradio', { name: 'Restricted (default)' }),
     ).toBeVisible();
-    await userEvent.keyboard('{Escape}');
+    await expect(
+      page.queryByRole('menuitemradio', { name: 'Full access' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(page.getByRole('menuitemradio', { name: 'Viewer' }));
+    await waitFor(() =>
+      expect(setGeneralAccess).toHaveBeenLastCalledWith(
+        RecordShareAccessLevel.READ,
+      ),
+    );
+    await expect(generalAccess).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await userEvent.click(
+      await page.findByRole('menuitemradio', { name: 'Editor' }),
+    );
+    await waitFor(() =>
+      expect(setGeneralAccess).toHaveBeenLastCalledWith(
+        RecordShareAccessLevel.READ_WRITE,
+      ),
+    );
     await expect(generalAccess).toHaveFocus();
     await userEvent.tab();
     await expect(role).toHaveFocus();
@@ -224,6 +242,14 @@ export const AddPeople: Story = {
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
     const search = await page.findByPlaceholderText('Add people or everyone');
+    await userEvent.type(search, 'No matching recipient');
+    await expect(page.getByText('No matching people or roles')).toBeVisible();
+    await expect(page.queryByRole('checkbox')).not.toBeInTheDocument();
+    await expect(page.getByRole('button', { name: 'Invite' })).toBeDisabled();
+    await userEvent.clear(search);
+    await expect(
+      page.queryByText('No matching people or roles'),
+    ).not.toBeInTheDocument();
     await userEvent.type(search, 'phil@example.com');
     await expect(page.getByText('Have access')).toBeVisible();
     await expect(
@@ -334,6 +360,104 @@ export const InviteEveryone: Story = {
   },
 };
 
+export const InviteRole: Story = {
+  args: {
+    sharingState: {
+      sharing: {
+        ...SHARING,
+        shares: SHARING.shares.filter(
+          (share) => share.principalType !== RecordSharePrincipalType.ROLE,
+        ),
+      },
+      loading: false,
+      error: undefined,
+      saving: false,
+      setGeneralAccess,
+      setShare,
+      removeShare,
+      refetch,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.type(
+      await page.findByPlaceholderText('Add people or everyone'),
+      'sales',
+    );
+    await userEvent.click(page.getByRole('checkbox', { name: 'Sales' }));
+    await expect(page.getByRole('checkbox', { name: 'Sales' })).toBeChecked();
+    await expect(setShare).not.toHaveBeenCalled();
+    await userEvent.click(
+      page.getByRole('button', { name: 'Invite as Viewer' }),
+    );
+    await userEvent.click(
+      await page.findByRole('menuitemradio', { name: 'Full access' }),
+    );
+    await userEvent.click(page.getByRole('button', { name: 'Invite 1' }));
+    await waitFor(() => expect(setShare).toHaveBeenCalledTimes(1));
+    await expect(setShare).toHaveBeenCalledWith({
+      principal: { roleId: 'sales' },
+      accessLevel: RecordShareAccessLevel.FULL,
+    });
+    await expect(setGeneralAccess).not.toHaveBeenCalled();
+  },
+};
+
+export const DefaultGeneralAccess: Story = {
+  args: {
+    sharingState: {
+      sharing: {
+        ...SHARING,
+        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
+        generalAccessLevel: RecordShareAccessLevel.READ_WRITE,
+        defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
+      },
+      loading: false,
+      error: undefined,
+      saving: false,
+      setGeneralAccess,
+      setShare,
+      removeShare,
+      refetch,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const generalAccess = await page.findByRole('button', {
+      name: 'Everyone at Acme Editor',
+    });
+    await userEvent.click(generalAccess);
+    await expect(
+      await page.findByRole('menuitemradio', { name: 'Editor (default)' }),
+    ).toBeVisible();
+    await expect(
+      page.queryByRole('menuitemradio', { name: 'Full access' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      page.getByRole('menuitemradio', { name: 'Restricted' }),
+    );
+    await waitFor(() =>
+      expect(setGeneralAccess).toHaveBeenLastCalledWith(
+        RecordShareAccessLevel.NONE,
+      ),
+    );
+    await userEvent.click(generalAccess);
+    await userEvent.click(
+      await page.findByRole('menuitemradio', { name: 'Viewer' }),
+    );
+    await waitFor(() =>
+      expect(setGeneralAccess).toHaveBeenLastCalledWith(
+        RecordShareAccessLevel.READ,
+      ),
+    );
+    await expect(
+      page.getByRole('button', { name: 'Phil Schiler Editor' }),
+    ).toBeVisible();
+    await expect(setShare).not.toHaveBeenCalled();
+    await expect(removeShare).not.toHaveBeenCalled();
+  },
+};
+
 export const RetainFailedInvitations: Story = {
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
@@ -404,7 +528,7 @@ export const ReadOnly: Story = {
       refetch,
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const page = within(canvasElement.ownerDocument.body);
     await expect(
       await page.findByText(
@@ -415,6 +539,19 @@ export const ReadOnly: Story = {
     await expect(page.queryByText('Roles')).not.toBeInTheDocument();
     await expect(page.queryByText('Users')).not.toBeInTheDocument();
     await expect(page.getByRole('button', { name: 'Copy link' })).toBeVisible();
+    const writeText = spyOn(
+      navigator.clipboard,
+      'writeText',
+    ).mockResolvedValue();
+
+    try {
+      await userEvent.click(page.getByRole('button', { name: 'Copy link' }));
+      await waitFor(() =>
+        expect(writeText).toHaveBeenCalledWith(args.recordUrl),
+      );
+    } finally {
+      writeText.mockRestore();
+    }
   },
 };
 
