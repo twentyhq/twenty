@@ -5,9 +5,11 @@ import { IconChevronRight, IconUserPlus } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
 import { RecordSharingAccessLevelOptions } from '@/object-record/record-sharing/components/RecordSharingAccessLevelOptions';
+import { RECORD_SHARING_ACCESS_MENU_SIDE_OFFSET_IN_PX } from '@/object-record/record-sharing/constants/RecordSharingAccessMenuSideOffsetInPx';
 import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { type RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
@@ -54,8 +56,8 @@ export const RecordSharingInvitationAccessPicker = ({
       <DropdownContent
         aria-label={t`Invitation access`}
         align="end"
-        sideOffset={4}
-        width={160}
+        sideOffset={RECORD_SHARING_ACCESS_MENU_SIDE_OFFSET_IN_PX}
+        width={GenericDropdownContentWidth.Narrow}
       >
         <RecordSharingAccessLevelOptions
           value={value}

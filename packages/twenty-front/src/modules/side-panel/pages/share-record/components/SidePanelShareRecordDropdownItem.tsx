@@ -8,11 +8,11 @@ import {
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
+import { RECORD_SHARING_ACCESS_MENU_SIDE_OFFSET_IN_PX } from '@/object-record/record-sharing/constants/RecordSharingAccessMenuSideOffsetInPx';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
-
-const ACCESS_MENU_OFFSET = 4;
 
 type SidePanelShareRecordDropdownItemProps = {
   label: string;
@@ -32,7 +32,7 @@ export const SidePanelShareRecordDropdownItem = ({
   description,
   disabled = false,
   type = 'menu',
-  width = 160,
+  width = GenericDropdownContentWidth.Narrow,
   children,
 }: SidePanelShareRecordDropdownItemProps) => {
   const theme = useTheme();
@@ -66,7 +66,7 @@ export const SidePanelShareRecordDropdownItem = ({
       />
       <DropdownContent
         align="end"
-        sideOffset={ACCESS_MENU_OFFSET}
+        sideOffset={RECORD_SHARING_ACCESS_MENU_SIDE_OFFSET_IN_PX}
         width={width}
         aria-label={label}
       >
