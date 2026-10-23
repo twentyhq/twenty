@@ -299,7 +299,7 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     icon: {
       alt: 'Enterprise plan icon',
       src: '/images/pricing/plans/enterprise.webp',
-      widthPx: 51,
+      widthPx: 55,
     },
     tagline: {
       cloud: msg`Dedicated scale for large companies.`,
