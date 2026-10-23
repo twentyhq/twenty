@@ -31,15 +31,17 @@ describe('parseConnectionCallbackResult', () => {
     });
   });
 
-  it('treats null as a request without an account to save', () => {
-    expect(parseConnectionCallbackResult(null)).toEqual({
-      isValid: true,
-      connectedAccount: null,
-    });
-  });
+  it.each([null, undefined])(
+    'treats %s as a request without an account to save',
+    (data) => {
+      expect(parseConnectionCallbackResult(data)).toEqual({
+        isValid: true,
+        connectedAccount: null,
+      });
+    },
+  );
 
   it.each([
-    ['a missing result', undefined],
     ['a missing id', { handle: 'Jane Doe' }],
     ['a null id', { externalAccountId: null }],
     ['a blank id', { externalAccountId: '   ' }],

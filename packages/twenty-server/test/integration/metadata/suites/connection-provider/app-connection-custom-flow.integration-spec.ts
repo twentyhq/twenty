@@ -90,7 +90,13 @@ describe('app connection custom flow', () => {
     return new URL(callbackUrl);
   };
 
-  const notify = async (callbackUrl: URL, body: Record<string, string>) => {
+  const notify = async ({
+    callbackUrl,
+    body,
+  }: {
+    callbackUrl: URL;
+    body: Record<string, string>;
+  }) => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .post(`${callbackUrl.pathname}${callbackUrl.search}`)
       .send(body);
@@ -239,8 +245,11 @@ export const handler = ({ connectedAccountId }) => {
   });
 
   it('saves the account the notification reports and runs onConnect for it', async () => {
-    const response = await notify(await authorize(), {
-      account_id: 'account-a',
+    const response = await notify({
+      callbackUrl: await authorize(),
+      body: {
+        account_id: 'account-a',
+      },
     });
     const [connection] = await readAccounts();
 
@@ -268,9 +277,12 @@ export const handler = ({ connectedAccountId }) => {
   });
 
   it('stores an access token the callback returns, encrypted', async () => {
-    await notify(await authorize(), {
-      account_id: 'account-a',
-      token: 'token-a',
+    await notify({
+      callbackUrl: await authorize(),
+      body: {
+        account_id: 'account-a',
+        token: 'token-a',
+      },
     });
     const [connection] = await readAccounts();
 
@@ -289,9 +301,15 @@ export const handler = ({ connectedAccountId }) => {
   it('updates the existing connection when the same account is reported again', async () => {
     const callbackUrl = await authorize();
 
-    await notify(callbackUrl, { account_id: 'account-a' });
-    await notify(callbackUrl, { account_id: 'account-a', token: 'token-a' });
-    await notify(await authorize(), { account_id: 'account-a' });
+    await notify({ callbackUrl, body: { account_id: 'account-a' } });
+    await notify({
+      callbackUrl,
+      body: { account_id: 'account-a', token: 'token-a' },
+    });
+    await notify({
+      callbackUrl: await authorize(),
+      body: { account_id: 'account-a' },
+    });
 
     const connections = await readAccounts();
 
@@ -304,13 +322,19 @@ export const handler = ({ connectedAccountId }) => {
   });
 
   it('keeps the stored token when a later report of the account omits it', async () => {
-    await notify(await authorize(), {
-      account_id: 'account-a',
-      token: 'token-a',
+    await notify({
+      callbackUrl: await authorize(),
+      body: {
+        account_id: 'account-a',
+        token: 'token-a',
+      },
     });
     const [original] = await readAccounts();
 
-    await notify(await authorize(), { account_id: 'account-a' });
+    await notify({
+      callbackUrl: await authorize(),
+      body: { account_id: 'account-a' },
+    });
 
     const connections = await readAccounts();
 
@@ -322,21 +346,26 @@ export const handler = ({ connectedAccountId }) => {
     const callbackUrl = await authorize();
 
     await Promise.all([
-      notify(callbackUrl, { account_id: 'account-a' }),
-      notify(callbackUrl, { account_id: 'account-a' }),
+      notify({ callbackUrl, body: { account_id: 'account-a' } }),
+      notify({ callbackUrl, body: { account_id: 'account-a' } }),
     ]);
 
     expect(await readAccounts()).toHaveLength(1);
   });
 
   it('refuses a reconnect that reports a different account and leaves the connection untouched', async () => {
-    await notify(await authorize(), { account_id: 'account-a' });
+    await notify({
+      callbackUrl: await authorize(),
+      body: { account_id: 'account-a' },
+    });
     const [original] = await readAccounts();
 
-    const response = await notify(
-      await authorize({ reconnectingConnectedAccountId: original.id }),
-      { account_id: 'account-b' },
-    );
+    const response = await notify({
+      callbackUrl: await authorize({
+        reconnectingConnectedAccountId: original.id,
+      }),
+      body: { account_id: 'account-b' },
+    });
     const connections = await readAccounts();
 
     expect(response.status).toBe(400);
@@ -348,8 +377,11 @@ export const handler = ({ connectedAccountId }) => {
   });
 
   it('saves nothing and skips onConnect when the callback function fails', async () => {
-    const response = await notify(await authorize(), {
-      account_id: 'broken',
+    const response = await notify({
+      callbackUrl: await authorize(),
+      body: {
+        account_id: 'broken',
+      },
     });
 
     expect(response.status).toBe(500);
@@ -365,7 +397,10 @@ export const handler = ({ connectedAccountId }) => {
       `${callbackUrl.searchParams.get('state')}tampered`,
     );
 
-    const response = await notify(callbackUrl, { account_id: 'account-a' });
+    const response = await notify({
+      callbackUrl,
+      body: { account_id: 'account-a' },
+    });
 
     expect(response.status).toBe(400);
     expect(await readAccounts()).toHaveLength(0);

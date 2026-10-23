@@ -6,8 +6,7 @@ import { ApiPath } from 'twenty-shared/types';
 export const buildAppOAuthCallbackUrl = (serverUrl: string): string =>
   new URL(`/${ApiPath.Auth}/apps/callback`, serverUrl).toString();
 
-// The signed state rides in the URL because custom flows hand it to the
-// upstream service as both a browser return URL and a notification URL.
+// the state rides in the URL because the service gets it as both a return URL and a notification URL
 export const buildAppCustomConnectionCallbackUrl = ({
   serverUrl,
   state,

@@ -33,7 +33,7 @@ type ParseConnectionCallbackResultOutcome =
 export const parseConnectionCallbackResult = (
   data: unknown,
 ): ParseConnectionCallbackResultOutcome => {
-  if (data === null) {
+  if (!isDefined(data)) {
     return { isValid: true, connectedAccount: null };
   }
 

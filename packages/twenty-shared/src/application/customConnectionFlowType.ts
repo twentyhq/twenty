@@ -1,8 +1,7 @@
 export type AuthorizeConnectionPayload = {
   connectionProviderId: string;
   connectionProviderName: string;
-  // Carries the signed connection state; hand it to the upstream service as
-  // its return URL and/or notification URL.
+  // Carries the signed state; give it to the service as its return and/or notification URL.
   callbackUrl: string;
 };
 
@@ -25,6 +24,5 @@ export type ConnectedAccountFromCallback = {
   accessToken?: string;
 };
 
-// null when the request carries no account to save yet, e.g. the browser
-// returning before the upstream service notified the callback URL.
+// null when the request carries no account yet, e.g. a browser return ahead of the notification.
 export type ConnectionCallbackResult = ConnectedAccountFromCallback | null;

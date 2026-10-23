@@ -28,8 +28,7 @@ export type AppConnection = {
   // The workspace member who created the credential. null when the creating
   // user is no longer a member of the workspace.
   workspaceMemberId: string | null;
-  // null for a `custom` provider whose callback stored no token: the app then
-  // calls the upstream service with its own credentials and `externalAccountId`.
+  // null for a custom connection saved without a token; call the service with the app's own key and externalAccountId
   accessToken: string | null;
   // OAuth scopes actually granted by the upstream provider on the most recent
   // token issuance (may be a subset of what the app requested).
