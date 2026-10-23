@@ -911,6 +911,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
   beforeEach(() => {
     recall = new FakeRecallApi();
+    nextCalendarEventFixtureIndex = 0;
     nextArtifactImportRequestIndex = 0;
     nextFollowUpIndex = 0;
 

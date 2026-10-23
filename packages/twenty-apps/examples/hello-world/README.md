@@ -1,39 +1,39 @@
-This is a [Twenty](https://twenty.com) application project bootstrapped with [`create-twenty-app`](https://www.npmjs.com/package/create-twenty-app).
+This is a [Twenty](https://twenty.com) application project developed with the [Twenty CLI](https://www.npmjs.com/package/twenty).
 
 ## Getting Started
 
 First, authenticate to your workspace:
 
 ```bash
-yarn twenty remote:add --api-url http://localhost:2020 --as local
+twenty auth login --url http://localhost:2020 --name local
 ```
 
 Then, start development mode to sync your app and watch for changes:
 
 ```bash
-yarn twenty dev
+twenty app dev
 ```
 
 Open your Twenty instance and go to `/settings/applications` section to see the result.
 
 ## Available Commands
 
-Run `yarn twenty help` to list all available commands. Common commands:
+Run `twenty --help` to list all available commands. Common commands:
 
 ```bash
 # Remotes & Authentication
-yarn twenty remote:add --api-url http://localhost:2020 --as local     # Authenticate with Twenty
-yarn twenty remote:status         # Check auth status
-yarn twenty remote:use            # Set default remote
-yarn twenty remote:list           # List all configured remotes
-yarn twenty remote:remove <name>  # Remove a remote
+twenty auth login --url http://localhost:2020 --name local     # Authenticate with Twenty
+twenty auth status         # Check auth status
+twenty remote use            # Set default remote
+twenty remote list           # List all configured remotes
+twenty remote remove <name>  # Remove a remote
 
 # Application
-yarn twenty dev            # Start dev mode (watch, build, sync, and auto-generate typed client)
-yarn twenty dev:add        # Scaffold a new entity (object, field, function, front-component, role, view, navigation-menu-item)
-yarn twenty dev:function:logs    # Stream function logs
-yarn twenty dev:function:exec    # Execute a function with JSON payload
-yarn twenty app:uninstall  # Uninstall app from workspace
+twenty app dev            # Start dev mode (watch, build, sync, and auto-generate typed client)
+twenty app add        # Scaffold a new entity (object, field, function, front-component, role, view, navigation-menu-item)
+twenty app logs    # Stream function logs
+twenty app exec    # Execute a function with JSON payload
+twenty app uninstall  # Uninstall app from workspace
 ```
 
 ## Integration Tests

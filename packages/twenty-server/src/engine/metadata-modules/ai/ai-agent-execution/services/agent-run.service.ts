@@ -30,7 +30,10 @@ import { ApplicationLookupService } from 'src/engine/core-modules/application/ap
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
-import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  type ApplicationWorkspaceAuthContext,
+  type UserWorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -57,6 +60,7 @@ import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-e
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import {
   AiException,
   AiExceptionCode,
@@ -103,6 +107,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
   constructor(
     private readonly agentActorContextService: AgentActorContextService,
     private readonly agentRunnerService: AgentRunnerService,
+    private readonly agentChatThreadService: AgentChatThreadService,
     private readonly agentRunSettlementService: AgentRunSettlementService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
@@ -261,6 +266,19 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       responseFormat ?? agent.responseFormat,
     );
 
+    const title = isNonEmptyString(thread?.title) ? thread.title : agent.label;
+
+    if (
+      isContinuingConversation &&
+      isUserAuthContext(executionContext.authContext)
+    ) {
+      await this.claimThreadForMember({
+        threadId,
+        authContext: executionContext.authContext,
+        title,
+      });
+    }
+
     const runId = randomUUID();
 
     await this.agentRunnerService.start({
@@ -272,7 +290,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       },
       spec: {
         agentId: agent.id,
-        title: isNonEmptyString(thread?.title) ? thread.title : agent.label,
+        title,
         baseSystemPrompt: AGENT_RUN_BASE_SYSTEM_PROMPT,
         // kept with the run rather than in its messages, so a run that waits still has them when it goes on
         instructions: input.additionalInstructions ?? null,
@@ -303,6 +321,33 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       threadId,
       ...(settledRun ?? { status: 'RUNNING' }),
     });
+  }
+
+  private async claimThreadForMember({
+    threadId,
+    authContext,
+    title,
+  }: {
+    threadId: string;
+    authContext: Pick<
+      UserWorkspaceAuthContext,
+      'workspace' | 'workspaceMemberId'
+    >;
+    title: string;
+  }): Promise<void> {
+    try {
+      await this.agentChatThreadService.claimThreadForRun({
+        threadId,
+        workspaceId: authContext.workspace.id,
+        workspaceMemberId: authContext.workspaceMemberId,
+        title,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not claim thread ${threadId} of workspace ${authContext.workspace.id} for member ${authContext.workspaceMemberId}`,
+        error,
+      );
+    }
   }
 
   // a call that waits on the run gets how it settled; a run that goes on later lands in its conversation

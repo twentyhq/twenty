@@ -3,7 +3,11 @@ import { Logger } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { Readable } from 'stream';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  formatRecordExportHeader,
+  formatRecordExportRow,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -26,8 +30,6 @@ import {
   type RecordExport,
   type RecordExportProgress,
 } from 'src/engine/core-modules/record-export/types/record-export.type';
-import { formatRecordExportHeader } from 'src/engine/core-modules/record-export/utils/format-record-export-header.util';
-import { formatRecordExportRow } from 'src/engine/core-modules/record-export/utils/format-record-export-row.util';
 import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';

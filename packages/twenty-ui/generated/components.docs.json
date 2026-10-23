@@ -3918,6 +3918,13 @@
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
       },
       {
+        "name": "textAlign",
+        "type": "\"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Aligns text to the logical start or end of the input. Follows the text direction."
+      },
+      {
         "name": "value",
         "type": "string | number | readonly string[]",
         "required": false,
@@ -8414,6 +8421,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Native styles applied to the rendered part."
+          },
+          {
+            "name": "variant",
+            "type": "\"compact\" | \"default\"",
+            "required": false,
+            "defaultValue": "default",
+            "description": "default keeps the standard section appearance. compact uses secondary section backgrounds, 8px header and footer padding, 8px horizontal content padding without vertical padding, and no header divider."
           }
         ]
       },
@@ -12852,6 +12866,13 @@
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           },
           {
+            "name": "textAlign",
+            "type": "\"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Aligns text to the logical start or end of the input. Follows the text direction."
+          },
+          {
             "name": "value",
             "type": "string | number | readonly string[]",
             "required": false,
@@ -15169,6 +15190,216 @@
     ]
   },
   {
+    "name": "DatePicker",
+    "entryPoint": "twenty-ui/components/input",
+    "slug": "components/input/date-picker",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name of the calendar group."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the element that labels the calendar group."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the root element."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables date selection and the default header controls."
+      },
+      {
+        "name": "highlightedRange",
+        "type": "{ start: string; end: string; }",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inclusive YYYY-MM-DD start and end dates to highlight. The application computes the range independently from the selected date."
+      },
+      {
+        "name": "isDateUnavailable",
+        "type": "((date: string) => boolean)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Returns whether a canonical YYYY-MM-DD date cannot be selected. The calendar engine handles unavailable-date presentation and navigation."
+      },
+      {
+        "name": "isGridHidden",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Hides weekday and date rows while retaining the header for a month-only navigator."
+      },
+      {
+        "name": "isKeyboardNavigationDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables keyboard date navigation in the calendar engine for compatibility with existing input wrappers. Header controls retain their native keyboard behavior."
+      },
+      {
+        "name": "loadingFallback",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": "300px-high Skeleton",
+        "description": "Custom Suspense fallback while the calendar engine loads. Defaults to a 300px-high Skeleton."
+      },
+      {
+        "name": "locale",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Locale for the default month/year header and custom weekday titles. Engine day labels retain their existing locale behavior; values remain Gregorian date-only strings."
+      },
+      {
+        "name": "monthLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the default month selector."
+      },
+      {
+        "name": "nextMonthLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the default next-month button."
+      },
+      {
+        "name": "onNavigationOpenChange",
+        "type": "((args: { open: boolean; control: \"month\" | \"year\"; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports { open, control } when a default month or year popup starts opening, and when it finishes closing or its selector unmounts. Header arrow actions do not call this callback."
+      },
+      {
+        "name": "onValueChange",
+        "type": "(date: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Called when choosing an available day changes the selected date. Month and year browsing does not select another date."
+      },
+      {
+        "name": "onValueSelect",
+        "type": "((date: string) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the selected YYYY-MM-DD date after choosing an available day, including the already-selected day. Use it to commit or close a product picker."
+      },
+      {
+        "name": "onViewedMonthChange",
+        "type": "(month: string) => void",
+        "required": true,
+        "defaultValue": null,
+        "description": "Requests the month shown by calendar navigation without changing the selected date."
+      },
+      {
+        "name": "portalContainer",
+        "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Mount container for the default month and year selector popups. Accepts the shared Select portal container contract."
+      },
+      {
+        "name": "previousMonthLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the default previous-month button."
+      },
+      {
+        "name": "readOnly",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents date selection while allowing month and year browsing and displaying the selected date or highlighted range."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Composes the root element while preserving its props and contents."
+      },
+      {
+        "name": "renderHeader",
+        "type": "((props: DatePickerHeaderProps) => ReactNode)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Renders a product header with the viewed month, previous/next actions, month numbers from 1 through 12, year change actions, and navigation-disabled states. Header actions only browse months."
+      },
+      {
+        "name": "role",
+        "type": "AriaRole",
+        "required": false,
+        "defaultValue": "group",
+        "description": "Root semantics. Defaults to a group; the caller supplies its accessible name."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the root element."
+      },
+      {
+        "name": "value",
+        "type": "string | null",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled selected Gregorian date in YYYY-MM-DD form, or null for no selection."
+      },
+      {
+        "name": "viewedMonth",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled Gregorian month in YYYY-MM form. It is independent from the selected date."
+      },
+      {
+        "name": "weekdayLabels",
+        "type": "readonly [string, string, string, string, string, string, string]",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional short weekday labels in Sunday-first order. The calendar engine supplies weekday names when omitted."
+      },
+      {
+        "name": "weekStart",
+        "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
+        "required": true,
+        "defaultValue": null,
+        "description": "First weekday column: 0 for Sunday through 6 for Saturday."
+      },
+      {
+        "name": "yearLabel",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Accessible name of the default year selector."
+      }
+    ]
+  },
+  {
     "name": "SearchInput",
     "entryPoint": "twenty-ui/components/input",
     "slug": "components/input/search-input",
@@ -15284,6 +15515,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "textAlign",
+        "type": "\"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Aligns text to the logical start or end of the input. Follows the text direction."
       },
       {
         "name": "value",

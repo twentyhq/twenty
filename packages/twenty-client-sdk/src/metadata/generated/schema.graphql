@@ -555,6 +555,69 @@ enum ApplicationHealthStatus {
   WARNING
 }
 
+type ApplicationMonitoring {
+  activity: [ApplicationMonitoringActivityBucket!]!
+  bucketSizeInSeconds: Int!
+  creditUsage: [ApplicationMonitoringCreditBucket!]
+  creditsUsed: Float
+  failedRunCount: Int!
+  functions: [ApplicationMonitoringFunction!]!
+  issues: [ApplicationMonitoringIssue!]!
+  lifecycle: [ApplicationMonitoringLifecycleBucket!]!
+  lifecycleFailureCount: Int!
+  lookbackInHours: Int!
+  periodEnd: DateTime!
+  periodStart: DateTime!
+  rateLimitEventCount: Int!
+  runCount: Int!
+  versions: [ApplicationMonitoringVersion!]!
+}
+
+type ApplicationMonitoringActivityBucket {
+  bucketStart: DateTime!
+  errorCount: Int!
+  rateLimitedJobCount: Int!
+  rateLimitedRequestCount: Int!
+}
+
+type ApplicationMonitoringCreditBucket {
+  bucketStart: DateTime!
+  creditsUsed: Float!
+}
+
+type ApplicationMonitoringFunction {
+  failedRunCount: Int!
+  logicFunctionName: String!
+  p95DurationMs: Float!
+  runCount: Int!
+}
+
+type ApplicationMonitoringIssue {
+  affectedInstallCount: Int!
+  errorCode: String!
+  eventCount: Int!
+  lastSeenAt: DateTime!
+  level: String!
+  logicFunctionName: String!
+  source: String!
+  versions: [String!]!
+}
+
+type ApplicationMonitoringLifecycleBucket {
+  bucketStart: DateTime!
+  failedCount: Int!
+  installCount: Int!
+  uninstallCount: Int!
+  upgradeCount: Int!
+}
+
+type ApplicationMonitoringVersion {
+  activeInstallCount: Int!
+  failedRunCount: Int!
+  runCount: Int!
+  version: String!
+}
+
 type ApplicationPreferences {
   applicationId: UUID!
   settingsMenuItems: [SettingsMenuItem!]!
@@ -1995,7 +2058,6 @@ enum EngineComponentKey {
   EXPORT_FROM_RECORD_INDEX
   EXPORT_FROM_RECORD_SHOW
   EXPORT_MULTIPLE_RECORDS
-  EXPORT_NOTE_TO_PDF
   EXPORT_RECORDS
   EXPORT_VIEW
   FRONT_COMPONENT_RENDERER
@@ -2186,6 +2248,7 @@ type FeatureFlag {
 
 enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
+  IS_APPLICATION_MONITORING_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_ASYNC_CSV_EXPORT_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
@@ -3929,6 +3992,7 @@ type Query {
   ): FieldConnection!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
+  findApplicationRegistrationMonitoring(id: String!, periodEnd: DateTime, periodStart: DateTime): ApplicationMonitoring!
   findApplicationRegistrationStats(id: String!, periodEnd: DateTime, periodStart: DateTime): ApplicationRegistrationStats!
   findApplicationRegistrationVariables(applicationRegistrationId: String!): [ApplicationRegistrationVariable!]!
   findClaimableApplicationRegistration(sourcePackage: String, universalIdentifier: String): ClaimableApplicationRegistration
@@ -4182,8 +4246,9 @@ input RevokeApiKeyInput {
 }
 
 type RichTextBody {
-  blocknote: String
+  blocknote: String @deprecated(reason: "Use markdown or tiptap instead. This value is cleared whenever the field is written in another format.")
   markdown: String
+  tiptap: String
 }
 
 type Role {
