@@ -233,6 +233,7 @@ export class ApplicationMessageSendService {
                 displayName: true,
                 personId: true,
                 workspaceMemberId: true,
+                role: true,
               },
             });
 
