@@ -90,7 +90,10 @@ export class ApplicationMessageIngestionService {
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({
         message: isDefined(personHandleField)
-          ? this.withCanonicalParticipantHandles({ message, personHandleField })
+          ? this.withCanonicalParticipantHandlesOrThrow({
+              message,
+              personHandleField,
+            })
           : message,
         applicationId,
         messageChannel,
@@ -213,7 +216,7 @@ export class ApplicationMessageIngestionService {
   }
 
   // stored canonical so a person change finds these participants by exact handle, whatever format the provider sent
-  private withCanonicalParticipantHandles({
+  private withCanonicalParticipantHandlesOrThrow({
     message,
     personHandleField,
   }: {

@@ -177,11 +177,10 @@ export class ApplicationMessageChannelsService {
     workspaceId,
     handle,
     participantHandleFieldUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    handle: string;
-    participantHandleFieldUniversalIdentifier: string | undefined;
-  }): Promise<string> {
+  }: Pick<
+    CreateArgs,
+    'workspaceId' | 'handle' | 'participantHandleFieldUniversalIdentifier'
+  >): Promise<string> {
     if (!isDefined(participantHandleFieldUniversalIdentifier)) {
       return handle;
     }

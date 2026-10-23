@@ -16,7 +16,7 @@ type RawPersonHandles = {
 };
 
 const toRecord = (value: unknown): Record<string, unknown> =>
-  typeof value === 'object' && value !== null
+  isDefined(value) && typeof value === 'object'
     ? Object.fromEntries(Object.entries(value))
     : {};
 

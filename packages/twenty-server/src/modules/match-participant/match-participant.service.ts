@@ -7,6 +7,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any, In, Repository } from 'typeorm';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -175,18 +176,11 @@ export class MatchParticipantService<
         ...new Set(participants.map((participant) => participant.handle)),
       ].filter(isDefined);
 
-      const queryBuilder = isDefined(personHandleField)
-        ? addPersonHandleFiltersToQueryBuilder({
-            queryBuilder: personRepository.createQueryBuilder('person'),
-            personHandleField,
-            handles: uniqueParticipantsHandles,
-          })
-        : addPersonEmailFiltersToQueryBuilder({
-            queryBuilder: personRepository.createQueryBuilder('person'),
-            emails: uniqueParticipantsHandles,
-          });
-
-      const people = await queryBuilder
+      const people = await this.buildPersonQueryBuilder({
+        queryBuilder: personRepository.createQueryBuilder('person'),
+        personHandleField,
+        handles: uniqueParticipantsHandles,
+      })
         .orderBy('person.createdAt', 'ASC')
         .getMany<PersonWorkspaceEntity>();
 
@@ -320,7 +314,7 @@ export class MatchParticipantService<
     personIds,
     workspaceId,
   }: MatchParticipantsForPersonHandlesArgs) {
-    if (messageChannelIds.length === 0 || handles.length === 0) {
+    if (!isNonEmptyArray(messageChannelIds) || !isNonEmptyArray(handles)) {
       return;
     }
 
@@ -339,7 +333,7 @@ export class MatchParticipantService<
             .where('"participant"."handle" IN (:...handles)', { handles })
             .getMany<ParticipantWorkspaceEntity>();
 
-          if (participantsWithHandle.length === 0) {
+          if (!isNonEmptyArray(participantsWithHandle)) {
             return;
           }
 
@@ -496,6 +490,29 @@ export class MatchParticipantService<
       (participant) =>
         !appChannelMessageIds.has(this.getSourceRecordId(participant)),
     );
+  }
+
+  private buildPersonQueryBuilder({
+    queryBuilder,
+    personHandleField,
+    handles,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    personHandleField: PersonHandleField | undefined;
+    handles: string[];
+  }): WorkspaceSelectQueryBuilder {
+    if (!isDefined(personHandleField)) {
+      return addPersonEmailFiltersToQueryBuilder({
+        queryBuilder,
+        emails: handles,
+      });
+    }
+
+    return addPersonHandleFiltersToQueryBuilder({
+      queryBuilder,
+      personHandleField,
+      handles,
+    });
   }
 
   private getSourceRecordIds(
