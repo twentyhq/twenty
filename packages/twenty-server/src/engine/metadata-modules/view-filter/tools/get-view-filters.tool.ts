@@ -6,6 +6,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
 
 const getViewFiltersInputSchema = z.object({
   viewId: z
@@ -19,7 +20,7 @@ const getViewFiltersInputSchema = z.object({
 @DefineTool({
   name: 'get_view_filters',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [],
+  accessPolicy: VIEW_READ_ACCESS_POLICY,
   description:
     'List all filters applied to a view. Each filter defines a condition that records must match to appear in the view.',
 })
