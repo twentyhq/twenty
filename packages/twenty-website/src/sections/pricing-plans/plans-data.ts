@@ -14,6 +14,7 @@ import {
   IconMessages,
   IconServer,
   IconSettingsAutomation,
+  IconShieldCog,
   IconSparkles,
   IconStack2,
   IconUsers,
@@ -209,7 +210,7 @@ const ORGANIZATION_FEATURES_SELF_HOST: PlanFeature[] = [
 
 const ENTERPRISE_FEATURES_CLOUD: PlanFeature[] = [
   {
-    title: msg`Room to grow, without slowdowns`,
+    title: msg`Room to grow, at any scale`,
     description: msg`Dedicated compute and custom API rates`,
     visual: { kind: 'icon', icon: IconGauge },
   },
@@ -219,19 +220,19 @@ const ENTERPRISE_FEATURES_CLOUD: PlanFeature[] = [
     visual: { kind: 'icon', icon: IconServer },
   },
   {
-    title: msg`Access follows your directory`,
-    description: msg`SCIM provisioning`,
-    visual: { kind: 'icon', icon: IconUsers },
+    title: msg`Response times you can count on`,
+    description: msg`Dedicated support & SLA`,
+    visual: { kind: 'icon', icon: IconClock },
+  },
+  {
+    title: msg`Security tailored to your IT`,
+    description: msg`VPN, your own AI providers and more`,
+    visual: { kind: 'icon', icon: IconShieldCog },
   },
   {
     title: msg`Enterprise procurement support`,
     description: msg`Security reviews and custom contracts`,
     visual: { kind: 'icon', icon: IconFileCertificate },
-  },
-  {
-    title: msg`Response times you can count on`,
-    description: msg`Dedicated support & SLA`,
-    visual: { kind: 'icon', icon: IconClock },
   },
 ];
 
