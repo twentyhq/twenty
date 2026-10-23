@@ -111,7 +111,7 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
   const flatViewToDelete = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityMaps: flatViewMaps,
     flatEntityIds: flatObjectMetadataToDelete.viewIds,
-  }).filter((flatView) => flatView.isSystemSideEffect !== true);
+  }).filter((flatView) => !flatView.isSystemSideEffect);
 
   return {
     flatFieldMetadatasToDelete,
