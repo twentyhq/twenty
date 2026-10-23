@@ -54,6 +54,7 @@ type AiChatToolCallApprovalCardLayoutProps = {
   approval: ReturnType<typeof useAnswerToolCallApproval>;
   actions: ReactNode;
   children: ReactNode;
+  hideHeader?: boolean;
 };
 
 export const AiChatToolCallApprovalCardLayout = ({
@@ -62,6 +63,7 @@ export const AiChatToolCallApprovalCardLayout = ({
   approval,
   actions,
   children,
+  hideHeader = false,
 }: AiChatToolCallApprovalCardLayoutProps) => {
   const { t } = useLingui();
   const { handleFieldFocus, handleFieldBlur } = useAiChatAskCardFieldFocus();
@@ -70,12 +72,14 @@ export const AiChatToolCallApprovalCardLayout = ({
 
   return (
     <StyledAiChatAskCard>
-      <StyledHeader>
-        <StyledLabel>{label}</StyledLabel>
-        <StyledSummary>
-          <TextWithChatReferences text={summary} />
-        </StyledSummary>
-      </StyledHeader>
+      {!hideHeader && (
+        <StyledHeader>
+          <StyledLabel>{label}</StyledLabel>
+          <StyledSummary>
+            <TextWithChatReferences text={summary} />
+          </StyledSummary>
+        </StyledHeader>
+      )}
       <StyledBody onFocus={handleFieldFocus} onBlur={handleFieldBlur}>
         {children}
         {isFeedbackShown && (

@@ -69,6 +69,18 @@ Intent gate: purely informational dashboard questions (e.g. "what is a dashboard
 - Do NOT use \`ask_question\` for information you can look up with another tool, or for trivial choices that have an obvious default — make the reasonable choice and proceed. Ask at most a few focused questions per turn, one call per question.
 `,
 
+  COMPONENT_BUILDER: `
+## Custom frontend components
+
+Every component creation request follows preview → approval → save to the Workspace custom application, even when the user only asks to build a component. Do not ask whether they want a preview or require them to mention approval or the Workspace app.
+Learn preview_front_component, inspect_front_component and publish_front_component alongside the object metadata tools. Read accessible object fields, then call preview_front_component with React source, fictional sampleRecords and a bounded read query. Choose exactly one surface, DASHBOARD or RECORD_PAGE, from the request or context; clarify only if ambiguous. No specific dashboard, page layout, tab or position is required. Source must export a named Component function or const with no default export. Creating or revising an unsaved preview does not need confirmation.
+Use twenty-ui components for controls, typography and surfaces, following the supported imports and API examples in preview_front_component. The runtime supplies their styles and theme. Keep each frontend component in one source file; use inline theme tokens for custom layout.
+The tool renders the actual interactive preview in chat. Never describe a markdown table, code block or imagined UI as a rendered component. Only claim a preview exists after the tool succeeds.
+Use inspect_front_component to check browser diagnostics and repair errors with previousDraftId. Do not fetch live CRM records for the sample preview or hardcode fixtures in the component source.
+After a successful preview, call propose_tool_call for publish_front_component with the exact draftId. The approval card enables Save to Workspace app only after that draft renders. Never call publication directly or claim it was saved before approval succeeds.
+Saving registers a reusable frontend component in the Workspace app and makes it available in the widget picker for the selected surface. It does not place a widget or change a layout. Only place an existing component when separately requested, using list_front_components and the normal layout tools and permissions. Do not require a specific placement before creating it.
+`,
+
   BROWSING_CONTEXT_INSTRUCTION: `A <browsing_context> tag may appear in the user's last message. Only use it when directly relevant to the question.`,
 
   CONVERSATION_ATTACHMENT: `

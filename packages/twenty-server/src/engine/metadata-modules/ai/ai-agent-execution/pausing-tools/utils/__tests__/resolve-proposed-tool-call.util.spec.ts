@@ -279,3 +279,61 @@ describe('resolveProposedToolCall', () => {
     },
   );
 });
+
+it.each([
+  [
+    'publish_front_component',
+    'frontComponent',
+    { draftId: '20202020-1111-4111-8111-111111111111' },
+  ],
+] as const)(
+  'keeps the approval template for %s',
+  async (toolName, template, toolArguments) => {
+    const result = await resolveProposedToolCall({
+      input: {
+        toolName,
+        arguments: toolArguments,
+        summary: 'Confirm component action',
+      },
+      findTool: async () => ({
+        name: toolName,
+        label: 'Component action',
+        description: '',
+        category: 'FRONT_COMPONENT' as ToolIndexEntry['category'],
+        executionRef: { kind: 'static', toolId: toolName },
+        approval: { template },
+      }),
+      executeTool: jest.fn(),
+    });
+    expect(result).toMatchObject({
+      proposal: { template, arguments: toolArguments },
+    });
+  },
+);
+
+it.each([{}, { draftId: 123 }, { draftId: 'not-a-draft-id' }])(
+  'rejects malformed component approval arguments %j before displaying the card',
+  async (toolArguments) => {
+    const result = await resolveProposedToolCall({
+      input: {
+        toolName: 'publish_front_component',
+        arguments: toolArguments,
+        summary: 'Save component',
+      },
+      findTool: async () => ({
+        name: 'publish_front_component',
+        label: 'Save component',
+        description: '',
+        category: 'FRONT_COMPONENT' as ToolIndexEntry['category'],
+        executionRef: { kind: 'static', toolId: 'publish_front_component' },
+        approval: { template: 'frontComponent' },
+      }),
+      executeTool: jest.fn(),
+    });
+
+    expect(result).toEqual({
+      error:
+        'arguments.draftId must be the draftId returned by preview_front_component.',
+    });
+  },
+);

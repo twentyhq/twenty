@@ -11,9 +11,11 @@ import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCal
 export const useAnswerToolCallApproval = ({
   toolCallId,
   proposal,
+  onApproved,
 }: {
   toolCallId: string;
   proposal: ProposedToolCall;
+  onApproved?: () => Promise<void>;
 }) => {
   const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
   const [pendingResponse, setPendingResponse] =
@@ -46,6 +48,8 @@ export const useAnswerToolCallApproval = ({
     // The card goes once its call is closed, so it stays disabled until then.
     if (!isAnswered) {
       setPendingResponse(null);
+    } else if (response.decision === 'approve') {
+      await onApproved?.();
     }
   };
 

@@ -1,3 +1,6 @@
+import { ToolCategory } from 'twenty-shared/ai';
+
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { WORKSPACE_SETUP_ALTERNATIVE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-alternative-system-prompt.constant';
 import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.constant';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
@@ -56,6 +59,27 @@ const REFERENCED_SKILL: ReferencedSkill = {
 };
 
 describe('buildFullSystemPrompt', () => {
+  it('should offer component preview and approval guidance only when the builder is available', () => {
+    const previewTool: ToolIndexEntry = {
+      name: 'preview_front_component',
+      label: 'Preview frontend component',
+      description: 'Build a sample preview',
+      category: ToolCategory.FRONT_COMPONENT,
+      executionRef: { kind: 'static', toolId: 'preview_front_component' },
+    };
+    const prompt = buildFullSystemPrompt({
+      toolCatalog: [previewTool],
+      skillCatalog: [],
+      preloadedTools: [],
+      userWorkspaceId: USER_WORKSPACE_ID,
+      workspaceId: EVEN_WORKSPACE_ID,
+    });
+
+    expect(prompt).toContain('## Custom frontend components');
+    expect(prompt).toContain('propose_tool_call for publish_front_component');
+    expect(buildPrompt(false)).not.toContain('## Custom frontend components');
+  });
+
   it('should inline referenced skills after the skill catalog', () => {
     const prompt = buildFullSystemPrompt({
       toolCatalog: [],
