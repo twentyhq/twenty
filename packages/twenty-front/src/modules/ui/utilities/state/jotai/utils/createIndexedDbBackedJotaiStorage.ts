@@ -62,7 +62,6 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
         CrossTabMessage<ValueType>[] | CrossTabMessage<ValueType>
       >,
     ) => {
-      // Tabs still running the previous version send one message per key
       const messages = Array.isArray(event.data) ? event.data : [event.data];
 
       for (const message of messages) {
@@ -103,7 +102,6 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
     }
   };
 
-  // Writes made in one synchronous run reach other tabs together, so they never see half of a commit
   const broadcast = (message: CrossTabMessage<ValueType>): void => {
     if (!isDefined(broadcastChannel)) {
       return;

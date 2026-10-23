@@ -107,7 +107,6 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
         )),
   );
 
-  // Engine-owned views are deleted by the object delete side effect
   const flatViewToDelete = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityMaps: flatViewMaps,
     flatEntityIds: flatObjectMetadataToDelete.viewIds,
