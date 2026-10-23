@@ -18,7 +18,11 @@ export const getToastOptionsFromError = ({
 }: GetToastOptionsFromErrorParams): ToastOptions | undefined => {
   const errorLike = isErrorLike(error) ? error : undefined;
 
-  if (errorLike?.name === 'AbortError') {
+  if (
+    errorLike?.name === 'AbortError' ||
+    (errorLike as any)?.networkError?.name === 'AbortError' ||
+    /^cancel+ed$/i.test(errorLike?.message ?? '')
+  ) {
     return;
   }
 
