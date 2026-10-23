@@ -31,12 +31,8 @@ export const SentryInitEffect = () => {
         setIsSentryInitializing(true);
 
         try {
-          const {
-            init,
-            browserTracingIntegration,
-            replayIntegration,
-            globalHandlersIntegration,
-          } = await import('@sentry/react');
+          const { init, browserTracingIntegration, globalHandlersIntegration } =
+            await import('@sentry/react');
 
           init({
             environment: sentryConfig?.environment ?? undefined,
@@ -48,13 +44,6 @@ export const SentryInitEffect = () => {
             ],
             integrations: [
               browserTracingIntegration({}),
-              replayIntegration({
-                _experiments: {
-                  ignoreMutations: [
-                    `[${SENTRY_REPLAY_IGNORE_MUTATIONS_ATTRIBUTE}]`,
-                  ],
-                },
-              }),
               globalHandlersIntegration({
                 onunhandledrejection: false, // handled in PromiseRejectionEffect
               }),
@@ -89,7 +78,6 @@ export const SentryInitEffect = () => {
         try {
           const { setUser } = await import('@sentry/react');
           setUser({
-            email: currentUser?.email,
             id: currentUser?.id,
             workspaceId: currentWorkspace?.id,
             workspaceMemberId: currentWorkspaceMember?.id,
@@ -110,21 +98,37 @@ export const SentryInitEffect = () => {
       }
     };
 
-    const stopSessionReplayWhenNotShared = async () => {
-      if (
-        isSentryInitialized &&
-        isDefined(currentWorkspace) &&
-        !currentWorkspace.isProductImprovementDataSharingEnabled
-      ) {
-        const { getReplay } = await import('@sentry/react');
+    // replays only start once the workspace is known to share product improvement data
+    const syncSessionReplayWithSharing = async () => {
+      if (!isSentryInitialized || !isDefined(currentWorkspace)) {
+        return;
+      }
 
+      const { addIntegration, getReplay, replayIntegration } =
+        await import('@sentry/react');
+
+      if (!currentWorkspace.isProductImprovementDataSharingEnabled) {
         await getReplay()?.stop();
+
+        return;
+      }
+
+      if (!isDefined(getReplay())) {
+        addIntegration(
+          replayIntegration({
+            _experiments: {
+              ignoreMutations: [
+                `[${SENTRY_REPLAY_IGNORE_MUTATIONS_ATTRIBUTE}]`,
+              ],
+            },
+          }),
+        );
       }
     };
 
     initializeSentry();
     updateSentryUser();
-    stopSessionReplayWhenNotShared();
+    syncSessionReplayWithSharing();
   }, [
     sentryConfig,
     isSentryInitialized,
