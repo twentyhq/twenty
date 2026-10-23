@@ -58,19 +58,28 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
 
   if (broadcastChannel !== null) {
     broadcastChannel.onmessage = (
-      event: MessageEvent<CrossTabMessage<ValueType>>,
+      event: MessageEvent<
+        CrossTabMessage<ValueType>[] | CrossTabMessage<ValueType>
+      >,
     ) => {
-      const message = event.data;
+      // Tabs still running the previous version send one message per key
+      const messages = Array.isArray(event.data) ? event.data : [event.data];
 
-      if (message.type === 'set') {
-        memoryMap.set(message.key, message.value);
-      } else {
-        memoryMap.delete(message.key);
+      for (const message of messages) {
+        if (message.type === 'set') {
+          memoryMap.set(message.key, message.value);
+        } else {
+          memoryMap.delete(message.key);
+        }
       }
 
-      const keySubscribers = subscribers.get(message.key);
+      for (const message of messages) {
+        const keySubscribers = subscribers.get(message.key);
 
-      if (isDefined(keySubscribers)) {
+        if (!isDefined(keySubscribers)) {
+          continue;
+        }
+
         for (const subscriber of keySubscribers) {
           subscriber.callback(
             message.type === 'set' ? message.value : subscriber.initialValue,
@@ -80,12 +89,31 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
     };
   }
 
-  const broadcast = (message: CrossTabMessage<ValueType>): void => {
+  let pendingMessages: CrossTabMessage<ValueType>[] = [];
+
+  const flushPendingMessages = (): void => {
+    const messages = pendingMessages;
+
+    pendingMessages = [];
+
     try {
-      broadcastChannel?.postMessage(message);
+      broadcastChannel?.postMessage(messages);
     } catch (error) {
       logError(error);
     }
+  };
+
+  // Writes made in one synchronous run reach other tabs together, so they never see half of a commit
+  const broadcast = (message: CrossTabMessage<ValueType>): void => {
+    if (broadcastChannel === null) {
+      return;
+    }
+
+    if (pendingMessages.length === 0) {
+      queueMicrotask(flushPendingMessages);
+    }
+
+    pendingMessages.push(message);
   };
 
   const storage: JotaiSyncStorage<ValueType> = {
