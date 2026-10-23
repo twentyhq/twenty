@@ -362,7 +362,10 @@ export class ApplicationMessageSendService {
       recipientsByHandle.set(handleKey, {
         handle: newerRecipient?.handle ?? participant.handle,
         displayName:
-          newerRecipient?.displayName ?? (participant.displayName || undefined),
+          newerRecipient?.displayName ??
+          (isNonEmptyString(participant.displayName)
+            ? participant.displayName
+            : undefined),
         personId: newerRecipient?.personId ?? participant.personId ?? undefined,
         workspaceMemberId:
           newerRecipient?.workspaceMemberId ??
