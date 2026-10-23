@@ -244,7 +244,7 @@ describe('FrontComponentCompilerService', () => {
     expect(await readDependencies()).toEqual({
       packageJson: 'new package',
       yarnLock: 'new lock',
-      installAllDependencies: true,
+      shouldInstallAllDependencies: true,
     });
   });
   it('rejects a corrupt vendor before building authored code', async () => {
