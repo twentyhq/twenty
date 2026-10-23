@@ -18,7 +18,7 @@ O aplicație este un pachet TypeScript care declară **entități** folosind `tw
 
 | Entitate                    | Ce face                                                                                                     |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **Obiecte și câmpuri**      | Tabele de date noi și câmpuri pe obiectele existente — același tratament ca pentru cele încorporate.        |
+| **Obiecte și câmpuri**      | Tabele de date noi și câmpuri pe obiectele existente — același tratament ca pentru cele încorporate         |
 | **Funcții logice**          | TypeScript pe server declanșat de rute HTTP, programări cron sau evenimente din baza de date                |
 | **Componente front-end**    | Componente React sandboxate care se afișează în UI-ul Twenty (panou lateral, widgeturi, meniul de comenzi). |
 | **Abilități și agenți**     | Capabilități AI — instrucțiuni reutilizabile și asistenți autonomi                                          |
@@ -34,8 +34,12 @@ Totul este detectat prin analiză AST în timpul build-ului — fără fișiere 
 
 ## Experiența dezvoltatorului
 
-Scrieți aplicația ca un proiect TypeScript pe mașina dvs. CLI-ul urmărește fișierele sursă și le sincronizează în timp real cu un server Twenty care rulează — editați un fișier și vedeți modificarea în UI în mai puțin de o secundă. Clientul API tipizat este regenerat automat atunci când schema se schimbă. Când sunteți gata, `yarn twenty app:publish --private` publică pe un server de producție, sau `yarn twenty app:publish` vă listează aplicația pe npm și în marketplace-ul Twenty.
+Scrieți aplicația ca un proiect TypeScript pe mașina dvs. CLI-ul urmărește fișierele sursă și le sincronizează în timp real cu un server Twenty care rulează — editați un fișier și vedeți modificarea în UI în mai puțin de o secundă. Clientul API tipizat este regenerat automat atunci când schema se schimbă. Când sunteți gata, `twenty app publish --private` publică pe un server de producție, sau `twenty app publish` vă listează aplicația pe npm și în marketplace-ul Twenty.
 
 <Card title="Creați prima dvs. aplicație" icon="arrow-right" href="/ro/developers/extend/apps/getting-started/quick-start">
+
+
+
+
   Ghid în trei etape — generați scheletul, rulați un server local, sincronizați modificările.
 </Card>

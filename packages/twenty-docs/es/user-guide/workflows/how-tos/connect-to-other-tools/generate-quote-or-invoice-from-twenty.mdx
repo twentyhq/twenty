@@ -37,10 +37,10 @@ El disparador se activa con cualquier actualización de una Oportunidad. El filt
 
 Es posible que el registro de Oportunidad no incluya todos los campos de Empresa que necesitas para la factura. Añade una acción **Search Record**:
 
-| Configuración     | Valor                                     |
-| ----------------- | ----------------------------------------- |
-| **Objeto**        | Empresa                                   |
-| **Coincidir por** | ID igual a `{{trigger.object.companyId}}` |
+| Configuración     | Valor                                               |
+| ----------------- | --------------------------------------------------- |
+| **Objeto**        | Empresa                                             |
+| **Coincidir por** | ID igual a `{{trigger.properties.after.companyId}}` |
 
 Esto recupera el registro completo de Empresa con dirección de facturación, ID fiscal, etc.
 

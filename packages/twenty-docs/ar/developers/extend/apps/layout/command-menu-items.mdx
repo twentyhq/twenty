@@ -32,6 +32,7 @@ export default defineCommandMenuItem({
 | `availabilityType`                      | لا    | يتحكّم في مكان ظهور الأمر: `'GLOBAL'` (متاح دائمًا)، و`'GLOBAL_OBJECT_CONTEXT'` (فقط في الصفحات ذات سياق الكائن — صفحات الفهرس والسجل)، و`'RECORD_SELECTION'` (فقط عند تحديد سجلات)، أو `'FALLBACK'` (يُعرَض عند عدم تطابق أي أوامر أخرى) |
 | `availabilityObjectUniversalIdentifier` | لا    | تقييد الأمر بصفحات نوع كائن معيّن (مثل سجلات Company فقط)                                                                                                                                                                                 |
 | `conditionalAvailabilityExpression`     | لا    | تعبير منطقي يتحكّم ديناميكيًا في الظهور (انظر أدناه)                                                                                                                                                                                      |
+| `conditionalPinnedExpression`           | لا    | تعبير منطقي يضيّق `isPinned`: يظهر الأمر كزر إجراء سريع فقط ما دام متحققًا، ويبقى في قائمة الأوامر بخلاف ذلك. نفس الصياغة والمتغيرات المستخدمة في `conditionalAvailabilityExpression`                                                     |
 
 ## أوامر بدون واجهة
 

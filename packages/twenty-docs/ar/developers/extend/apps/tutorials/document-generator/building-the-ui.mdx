@@ -109,10 +109,13 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-النمط مع متغيرات CSS المضمنة (`var(--t-color-blue)`)، ليس القيم المستوردة من
-`XXui`. تمزق SDK تلك الحزمة أثناء البناء، لذا فإن واردات مستوى الوحدة النمطية من ثوابت السمة
-ستكون 'غير محددة\`. انظر
-[الكامل المكون](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+  اقرأ `useTheme()` أو `themeCssVariables` من `twenty-ui/theme` داخل
+  جسم المكوّن عند التنسيق باستخدام رموز Twenty. تحاكي واجهة CLI سطر الأوامر `twenty-ui`
+  أثناء استخراج البيان، لذا قد يؤدي إلغاء الإشارة إلى ثوابت النسق المستوردة على
+  نطاق الوحدة إلى فشل عملية البناء. راجع النسق ورموز
+  النسق
+  والمكوّن
+  الكامل.
 </Warning>
 
 ## أمر لفتحه
@@ -216,7 +219,10 @@ export default defineFrontComponent({
 `FRONT_COMPONENT` واحدة المكوّن بكامل العرض:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  definePageLayout,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
@@ -233,6 +239,7 @@ export default definePageLayout({
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
       type: 'FRONT_COMPONENT',
+      heightBehavior: 'TAB_VIEWPORT',
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,

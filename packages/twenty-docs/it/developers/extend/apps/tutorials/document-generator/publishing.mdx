@@ -31,7 +31,8 @@ export default defineApplication({
 ```
 
 <Tip>
-Il ruolo predefinito viene dichiarato con `defineApplicationRole()` nel proprio file — non passi più `defaultRoleUniversalIdentifier` qui.
+  Il ruolo predefinito viene dichiarato con `defineApplicationRole()` nel proprio file —
+  non passi più `defaultRoleUniversalIdentifier` qui.
 </Tip>
 
 Aggiungi anche la parola chiave `twenty-app` a `package.json` così l'app è scopribile:
@@ -59,9 +60,9 @@ export default defineApplication({
 ```
 
 <Tip>
-Lead with the payoff: make the first screenshot the finished result (un generated
-document), then show how it's triggered and authored. Usa cattura
-croccanti e ad alta risoluzione — sono la prima cosa che un utente vede.
+  Inizia dal risultato finale: fai in modo che il primo screenshot mostri il risultato completato (un
+  documento generato), quindi mostra come viene attivato e creato. Usa immagini nitide,
+  ad alta risoluzione — sono la prima cosa che un utente vede.
 </Tip>
 
 Dare `README.md` lo stesso trattamento — è la prima pagina su npm e GitHub.
@@ -76,7 +77,7 @@ Eseguire lo stesso cancelli CI fa:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
 Il piano mostra esattamente cosa verrebbe modificato sul server senza applicare effettivamente le modifiche —
@@ -88,49 +89,61 @@ un buon controllo finale di coerenza. Vedi
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-`app:publish` costruisce e pubblica a npm per impostazione predefinita; `--private` carica un tarball
-su un registro privato di Twenty server. Per superficiare un'app pubblicata
-nel marketplace di un'istanza, attiva una sincronizzazione del catalogo:
+`twenty app publish` crea e pubblica su npm per impostazione predefinita; `--private` carica invece un
+tarball nel registro privato di un server Twenty. Per visualizzare un'app pubblicata
+nel marketplace di un'istanza, attendi la sincronizzazione del catalogo marketplace del server.
 
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
+Tutti i dettagli e la checklist di rilascio:
+[Pubblicazione](/it/developers/extend/apps/operations/publishing).
 
-Dettagli completi e la lista di controllo rilascio:
-[Publishing](/it/developers/extend/apps/operations/publishing).
+## Hai creato un'app 🎉
 
-## Hai costruito un'app 🎉
-
-In sei capitoli hai usato la maggior parte della superficie SDK:
+In sei capitoli hai utilizzato la maggior parte delle funzionalità dell'SDK:
 
 * **Oggetti, campi e una relazione** per modellare i dati
-* Una **funzione logica** esposta come **strumento di intelligenza artificiale**, un **workflow action**, e **HTTP routes**
-* **Viste, navigazione, un comando e un componente frontale** per l'interfaccia utente
-* Un **agente + abilità** per la generazione di linguaggio naturale
-* **Marketplace metadata** e il flusso di pubblicazione
+* Una **funzione logica** esposta come **strumento di IA**, **azione del workflow** e **route HTTP**
+* **Viste, navigazione, un comando e un componente front-end** per l'interfaccia utente
+* Un **agente + abilità** per la generazione in linguaggio naturale
+* **Metadati del marketplace** e il flusso di pubblicazione
 
-L'app completata è su
+L'app completa si trova in
 [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
 
-## Dove andare avanti
+## Passaggi successivi
 
 <CardGroup cols={2}>
-  <Card title="Riferimento dei dati" icon="database" href="/it/developers/extend/apps/data/overview">
-    Ogni tipo di campo, relazione e opzione indice.
+  <Card title="Riferimento dati" icon="database" href="/it/developers/extend/apps/data/overview">
+
+
+
+
+    Ogni tipo di campo, relazione e opzione di indice.
   </Card>
-  <Card title="Riferimento logico" icon="bolt" href="/it/developers/extend/apps/logic/overview">
-    Cron e database-event triggers, il key-value store, connessioni OAuth.
+  <Card title="Riferimento logica" icon="bolt" href="/it/developers/extend/apps/logic/overview">
+
+
+
+
+    Trigger Cron e di eventi del database, l'archivio chiave-valore, connessioni OAuth.
   </Card>
-  <Card title="Riferimento del layout" icon="table-columns" href="/it/developers/extend/apps/layout/overview">
-    Layout di pagina, widget dashboard e più superfici dell'interfaccia utente.
+  <Card title="Riferimento layout" icon="table-columns" href="/it/developers/extend/apps/layout/overview">
+
+
+
+
+    Layout di pagina, widget della dashboard e altre superfici dell'interfaccia utente.
   </Card>
   <Card title="Operazioni" icon="rocket" href="/it/developers/extend/apps/operations/overview">
-    CLI, prove, telecomandi e IC.
+
+
+
+
+    CLI, test, remoti e CI.
   </Card>
 </CardGroup>

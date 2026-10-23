@@ -108,12 +108,12 @@ description: Перебирайте массивы записей и выпол�
 ```
 1. Webhook Trigger (receives items array)
 2. Filter (items.length > 0)
-3. Iterator (trigger.body.items)
+3. Iterator (trigger.items)
    └── Create Record
        - Object: Order Items
        - Name: {{iterator.currentItem.name}}
        - Quantity: {{iterator.currentItem.qty}}
-       - Related Order: {{trigger.body.orderId}}
+       - Related Order: {{trigger.orderId}}
 ```
 
 ### Условная обработка внутри цикла

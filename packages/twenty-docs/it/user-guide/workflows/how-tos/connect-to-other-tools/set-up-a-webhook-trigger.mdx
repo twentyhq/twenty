@@ -61,12 +61,12 @@ Ora aggiungi azioni che utilizzano i dati del webhook:
 2. Seleziona l'oggetto **People**
 3. Mappa i campi:
 
-| Campo   | Valore                                            |
-| ------- | ------------------------------------------------- |
-| Nome    | `{{trigger.body.firstName}}`                      |
-| Cognome | `{{trigger.body.lastName}}`                       |
-| Email   | `{{trigger.body.email}}`                          |
-| Azienda | Cerca o crea in base a `{{trigger.body.company}}` |
+| Campo   | Valore                                       |
+| ------- | -------------------------------------------- |
+| Nome    | `{{trigger.firstName}}`                      |
+| Cognome | `{{trigger.lastName}}`                       |
+| Email   | `{{trigger.email}}`                          |
+| Azienda | Cerca o crea in base a `{{trigger.company}}` |
 
 ### Passaggio 5: Testa il webhook
 
@@ -107,7 +107,7 @@ Se il tuo webhook invia dati annidati:
 }
 ```
 
-Fai riferimento con: `{{trigger.body.contact.email}}`
+Fai riferimento con: `{{trigger.contact.email}}`
 
 ### Array
 

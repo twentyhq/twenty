@@ -34,11 +34,11 @@ Creați câmpurile destinație în **Settings → Data Model → Opportunities**
 
 3. **Căutare înregistrări**: Găsiți persoana asociată
    * Obiect: Persoane
-   * Filtru: ID egal cu `{{trigger.object.pointOfContact.id}}`
+   * Filtru: ID egal cu `{{trigger.properties.after.pointOfContactId}}`
 
 4. **Actualizați Înregistrarea**:
    * Obiect: Oportunități
-   * Înregistrare: `{{trigger.object.id}}`
+   * Înregistrare: `{{trigger.properties.after.id}}`
    * Email Contact: `{{searchRecords[0].email}}`
    * Telefon Contact: `{{searchRecords[0].phone}}`
 
@@ -55,16 +55,16 @@ Creați câmpurile destinație în **Settings → Data Model → Opportunities**
 
 2. **Căutare înregistrări**: Găsiți toate oportunitățile pentru această companie
    * Obiect: Oportunități
-   * Filtru: ID Companie egal cu `{{trigger.object.id}}`
+   * Filtru: ID Companie egal cu `{{trigger.properties.after.id}}`
 
 3. **Iterator**: Parcurgeți fiecare oportunitate
 
 4. **Actualizați Înregistrarea** (în interiorul iteratorului):
    * Obiect: Oportunități
    * Înregistrare: `{{iterator.currentItem.id}}`
-   * Industria Companiei: `{{trigger.object.industry}}`
-   * Dimensiunea Companiei: `{{trigger.object.companySize}}`
-   * ARR al Companiei: `{{trigger.object.annualRevenue}}`
+   * Industria Companiei: `{{trigger.properties.after.industry}}`
+   * Dimensiunea Companiei: `{{trigger.properties.after.companySize}}`
+   * ARR al Companiei: `{{trigger.properties.after.annualRevenue}}`
 
 ## Copiere la crearea înregistrării
 
@@ -86,11 +86,11 @@ Creați câmpurile destinație în **Settings → Data Model → Opportunities**
 
 2. **Căutare înregistrări**: Obțineți detaliile companiei asociate
    * Obiect: Companii
-   * Filtru: ID egal cu `{{trigger.object.company.id}}`
+   * Filtru: ID egal cu `{{trigger.properties.after.companyId}}`
 
 3. **Actualizați Înregistrarea**:
    * Obiect: Oportunități
-   * Înregistrare: `{{trigger.object.id}}`
+   * Înregistrare: `{{trigger.properties.after.id}}`
    * Industria Companiei: `{{searchRecords[0].industry}}`
    * Dimensiunea Companiei: `{{searchRecords[0].employees}}`
 

@@ -37,10 +37,10 @@ Il trigger si attiva a ogni aggiornamento di un'Opportunità. Il filtro garantis
 
 Il record Opportunity potrebbe non includere tutti i campi dell'azienda necessari per la fattura. Aggiungi un'azione **Search Record**:
 
-| Impostazione           | Valore                                     |
-| ---------------------- | ------------------------------------------ |
-| **Oggetto**            | Azienda                                    |
-| **Corrispondenza per** | ID uguale a `{{trigger.object.companyId}}` |
+| Impostazione           | Valore                                               |
+| ---------------------- | ---------------------------------------------------- |
+| **Oggetto**            | Azienda                                              |
+| **Corrispondenza per** | ID uguale a `{{trigger.properties.after.companyId}}` |
 
 Questo recupera il record completo dell'azienda con indirizzo di fatturazione, partita IVA, ecc.
 

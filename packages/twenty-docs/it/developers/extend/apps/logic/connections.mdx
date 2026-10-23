@@ -12,7 +12,7 @@ Oggi è supportato solo OAuth 2.0. Tipi di credenziali futuri (token di accesso 
 
 <Accordion title="defineConnectionProvider" description="Dichiara come vengono ottenute le connessioni della tua app">
 
-Un provider di connessione descrive l'handshake OAuth di cui la tua app ha bisogno. L'utente fa clic su "Aggiungi connessione" nelle impostazioni della tua app, completa la schermata di consenso del provider e viene creata una riga `ConnectedAccount` nel suo spazio di lavoro.
+Un provider di connessione descrive l'handshake OAuth di cui la tua app ha bisogno. Per un provider `WORKSPACE` (quello predefinito), un membro fa clic su "Aggiungi connessione" nelle impostazioni della tua app, completa la schermata di consenso del provider e viene creata una riga `ConnectedAccount` nel suo spazio di lavoro. Consulta "Connessioni dello spazio di lavoro o personali" per i provider `USER`.
 
 Una configurazione funzionante richiede **due file** — il provider di connessione e una dichiarazione `serverVariables` corrispondente su `defineApplication` che contiene le credenziali client OAuth.
 
@@ -24,7 +24,11 @@ export default defineConnectionProvider({
   name: 'linear',
   displayName: 'Linear',
   icon: 'IconBrandLinear',
+  // Optional: a logo bundled in your app's public/ folder, shown next to the
+  // provider in the app's General tab.
+  logo: 'public/linear-logomark.svg',
   type: 'oauth',
+  scope: 'WORKSPACE',
   oauth: {
     authorizationEndpoint: 'https://linear.app/oauth/authorize',
     tokenEndpoint: 'https://api.linear.app/oauth/token',
@@ -42,6 +46,10 @@ export default defineConnectionProvider({
     // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
     // revokeEndpoint: 'https://example.com/oauth/revoke',
   },
+  // Optional: a logic function in this app that returns a stable id for the
+  // upstream account, run before the tokens are saved. See "Identify the
+  // connected account".
+  // identifyAccountLogicFunction: { universalIdentifier: '2f1e0d9c-...-...' },
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
@@ -79,10 +87,12 @@ export default defineApplication({
 Punti chiave:
 
 * `name` è la stringa identificativa univoca usata in `listConnections({ providerName })` (kebab-case, deve corrispondere a `^[a-z][a-z0-9-]*$`).
-* `displayName` viene mostrato nella scheda delle impostazioni per app e nell'elenco degli strumenti AI.
+* `displayName` viene mostrato nella scheda Generale dell'app e nell'elenco degli strumenti AI.
+* `scope` stabilisce chi si connette: `'WORKSPACE'` (il valore predefinito) per le connessioni condivise con l'intero spazio di lavoro, `'USER'` per le connessioni che ciascun membro crea per sé. Consulta "Connessioni dello spazio di lavoro o personali" qui sotto.
+* `logo` è un percorso a una risorsa inclusa nella cartella `public/` della tua app, fornita tramite le risorse pubbliche dell'app. Quando omessa, la scheda Generale utilizza un segnaposto creato da `displayName`.
 * `clientIdVariable` / `clientSecretVariable` sono **nomi**, non valori — devono corrispondere alle chiavi dichiarate in `defineApplication.serverVariables`. I `client_id` e `client_secret` effettivi vengono inseriti dall'amministratore del server tramite l'interfaccia di registrazione dell'app e non vengono mai aggiunti al tuo repository.
 * Usa `serverVariables` (non `applicationVariables`) — le credenziali OAuth sono a livello di server e c'è una sola app OAuth per ogni server Twenty.
-* Finché entrambe le `serverVariables` non sono compilate, la scheda delle impostazioni per app mostra un suggerimento "richiede l'amministratore del server" e il pulsante "Aggiungi connessione" è disattivato.
+* Finché entrambe le `serverVariables` non sono compilate, la scheda Generale dell'app mostra un suggerimento "richiede l'amministratore del server" e il pulsante "Aggiungi connessione" è disattivato.
 * `type: 'oauth'` è l'unico valore supportato oggi. Il discriminatore è compatibile con versioni future: tipi futuri (`'pat'`, `'api-key'`, ...) aggiungeranno nuovi blocchi di sotto-configurazione accanto a `oauth`.
 
 L'URL di callback OAuth che il tuo provider deve inserire nella whitelist è:
@@ -90,6 +100,100 @@ L'URL di callback OAuth che il tuo provider deve inserire nella whitelist è:
 ```
 https://<your-twenty-server>/auth/apps/callback
 ```
+
+</Accordion>
+
+<Accordion title="Identifica l'account collegato" description="Impedisci che una riconnessione cambi silenziosamente gli account upstream">
+
+Quando un utente fa clic su **Riconnetti**, nulla gli impedisce di autorizzare un account upstream diverso da quello con cui è stata effettuata la connessione: lo spazio di lavoro Slack B invece dello spazio di lavoro A, un'altra organizzazione GitHub, un altro account Google. Senza un modo per distinguere i due account, Twenty sovrascriverebbe i token di A con quelli di B e tutto ciò che la tua app ha creato su quella connessione inizierebbe silenziosamente a comunicare con B.
+
+Imposta `identifyAccountLogicFunction` su una funzione logica nella stessa app che restituisce un ID stabile per l'account associato al token appena emesso:
+
+```ts src/connection-providers/slack-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+import { SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  identifyAccountLogicFunction: {
+    universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+**Quando viene eseguita.** In modo sincrono all'interno del callback OAuth, subito dopo che il codice di autorizzazione viene scambiato con token e **prima** che venga salvato qualsiasi elemento. L'utente è in attesa del reindirizzamento, quindi, quando l'app viene installata o sincronizzata, Twenty limita `timeoutSeconds` della funzione a 10, indipendentemente da quanto dichiarato dal manifest; limita la richiesta a una sola chiamata all'endpoint "chi sono" del provider. L'hook on-connect, se presente, viene comunque eseguito successivamente, una volta salvata la connessione.
+
+**Payload.** Il gestore riceve il token di accesso provvisorio. Non è ancora stato reso persistente, quindi `getConnection` non può restituirlo; usalo direttamente e non registrarlo nei log.
+
+```ts
+type IdentifyAccountPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  accessToken: string;
+};
+```
+
+**Risultato.** Restituisci l'id dell'account e, facoltativamente, un handle da visualizzare:
+
+```ts
+type IdentifyAccountResult = {
+  externalAccountId: string | null; // non-empty, at most 512 characters; null opts out
+  handle?: string; // non-empty when present
+};
+```
+
+* `externalAccountId` deve essere stabile per tutta la durata dell'account upstream (un id del team, un id dell'organizzazione, un id dell'utente), mai un nome che l'utente può modificare. Twenty lo rimuove e lo memorizza nella connessione al primo collegamento.
+* `handle`, quando restituito, sostituisce l'handle che Twenty altrimenti deriverebbe (l'email OIDC di `id_token` o l'email dell'utente che si collega). Restituisci qualcosa che un utente riconosca, ad esempio il nome dello spazio di lavoro Slack.
+* Restituisci `{ externalAccountId: null }` quando il provider non dispone di un id stabile da offrire. Twenty si comporta quindi come se non fosse stata dichiarata alcuna funzione di identificazione: non viene memorizzato alcun id, una riconnessione cancella qualsiasi id memorizzato in precedenza e le riconnessioni non vengono verificate. Un semplice `null` o un return mancante viene trattato come errore, quindi un gestore che dimentica di restituire un valore non può disabilitare silenziosamente il controllo.
+* Se la funzione genera un'eccezione, supera il timeout o restituisce qualsiasi altra cosa, la connessione **non** viene salvata e l'utente torna alla pagina delle impostazioni con un errore. Genera un'eccezione solo quando non puoi effettivamente identificare l'account.
+
+**Rifiuto della riconnessione.** Durante una riconnessione, Twenty confronta l'`externalAccountId` restituito con quello memorizzato nella connessione. Se differiscono, il callback viene rifiutato prima che venga scritto alcunché: i token esistenti, l'handle e l'ambito restano invariati, l'hook on-connect non viene eseguito e l'utente vede quale account ha autorizzato e a quale account appartiene la connessione. Le connessioni create prima che l'app dichiarasse la funzione non hanno ancora alcun id memorizzato; la loro successiva riconnessione lo memorizza.
+
+Twenty non rimuove i duplicati in base a `externalAccountId`: collegare due volte lo stesso account upstream tramite **Aggiungi connessione** crea due connessioni. L'id è esposto in `listConnections` e `getConnection`, quindi un'app che desidera una connessione per account upstream può rilevare autonomamente i duplicati (ad esempio nel proprio hook on-connect).
+
+**Scrittura della funzione.** La maggior parte dei provider espone un singolo endpoint che descrive il token corrente. Per Slack si tratta di `auth.test`, che restituisce lo spazio di lavoro (`team_id`, `team`) e l'utente associato al token:
+
+```ts src/logic-functions/slack-identify-account.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type {
+  IdentifyAccountPayload,
+  IdentifyAccountResult,
+} from 'twenty-sdk/logic-function';
+
+import { SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineLogicFunction({
+  universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'slack-identify-account',
+  timeoutSeconds: 10,
+  handler: async ({
+    accessToken,
+  }: IdentifyAccountPayload): Promise<IdentifyAccountResult> => {
+    const response = await fetch('https://slack.com/api/auth.test', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const { ok, error, team_id, team } = await response.json();
+
+    if (!ok) {
+      throw new Error(`auth.test failed: ${error}`);
+    }
+
+    return { externalAccountId: team_id, handle: team };
+  },
+});
+```
+
+Altri provider seguono lo stesso schema, indipendentemente dal fatto che il loro endpoint "chi sono" sia REST o GraphQL. Lancia un'eccezione quando il provider rifiuta il token e restituisci l'id come stringa: converti gli id numerici, come gli id utente GitHub, con `String(id)`.
+
+L'identificazione è disponibile con Twenty 2.48.0. Se la tua app dipende da questa funzionalità, dichiara `"engines": { "twenty": ">=2.48.0" }` nel relativo `package.json`.
 
 </Accordion>
 
@@ -129,7 +233,7 @@ Da lì usa `getConnection(connectedAccountId)` per leggere il token di accesso a
 
 <Accordion title="Esegui una funzione logica alla disconnessione" description="Effettua la pulizia quando una connessione viene rimossa">
 
-Qualsiasi elemento che un'app rivendica al momento della connessione deve essere rilasciato quando la connessione viene meno. Un'integrazione Slack che, ad esempio, rivendica un `team_id` al momento della connessione deve rilasciare tale rivendicazione, in modo che un'altra area di lavoro possa connettere lo stesso team Slack. Imposta `onDisconnectLogicFunction` per fare riferimento a una funzione logica nella stessa app, e questa verrà eseguita subito dopo l'eliminazione di `ConnectedAccount`.
+Qualsiasi elemento che un'app rivendica al momento della connessione deve essere rilasciato quando la connessione viene meno. Un'integrazione Slack che, ad esempio, rivendica un `team_id` al momento della connessione deve rilasciare tale rivendicazione, in modo che un'altra area di lavoro possa connettere lo stesso team Slack. Imposta `onDisconnectLogicFunction` in modo che faccia riferimento a una funzione logica nella stessa app; viene eseguita immediatamente prima dell'eliminazione di `ConnectedAccount` e del relativo token, così il gestore può ancora chiamare il provider con `getConnection` per rilasciare tutto ciò che l'hook on-connect ha configurato in remoto.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -147,7 +251,7 @@ export default defineConnectionProvider({
 });
 ```
 
-Come l'hook on-connect, viene eseguito **in modo asincrono nell'area di lavoro in fase di disconnessione** e non blocca mai la disconnessione. L'handler riceve la stessa struttura del payload:
+A differenza dell'hook on-connect, viene eseguito **inline nell'area di lavoro in fase di disconnessione**, una sola volta, senza tentativi: un errore viene registrato e la disconnessione viene comunque completata. L'handler riceve la stessa struttura del payload:
 
 ```ts
 type OnDisconnectPayload = {
@@ -157,7 +261,7 @@ type OnDisconnectPayload = {
 };
 ```
 
-Il `ConnectedAccount` è già stato rimosso quando l'hook viene eseguito, quindi `getConnection(connectedAccountId)` non restituisce più alcun risultato. Tutto ciò di cui la procedura di cleanup ha bisogno (un `team_id`, un id di sottoscrizione esterna) deve essere stato scritto nello [store chiave-valore](/it/developers/extend/apps/logic/key-value-store) al momento della connessione, con chiave `connectedAccountId`.
+`ConnectedAccount` e il relativo token sono ancora presenti quando viene eseguito l'hook, quindi `getConnection(connectedAccountId)` restituisce un token di accesso aggiornato e il gestore può eliminare tutto ciò che ha registrato in remoto. Lo stato che il provider non può restituire (un `team_id`, un id di sottoscrizione esterna) deve comunque essere scritto nello [store chiave-valore](/it/developers/extend/apps/logic/key-value-store) al momento della connessione e indicizzato da `connectedAccountId`. Mantieni breve il gestore: viene eseguito all'interno della richiesta di disconnessione, quindi il relativo `timeoutSeconds` è il limite massimo della durata di tale richiesta.
 
 L'hook viene attivato quando una connessione viene rimossa autonomamente. La disinstallazione dell'app elimina le sue connessioni tramite una cascata del database, quindi in questo caso l'hook non viene eseguito. Dichiara una `uninstallLogicFunction` su `defineApplication` per quel percorso: viene eseguita prima che i metadati dell'app vengano eliminati, così può ancora chiamare `listConnections` ed eseguire il cleanup di ciò che resta.
 
@@ -181,10 +285,10 @@ export const createLinearIssueHandler = async (input: {
   const connections = await listConnections({ providerName: 'linear' });
 
   // Workspace-shared credentials win when present; fall back to the first
-  // user-visibility one. For HTTP-route triggers you typically pick the
+  // personal one. For HTTP-route triggers you typically pick the
   // request user's connection via event.userWorkspaceId instead.
   const connection =
-    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
+    connections.find((c) => c.scope === 'WORKSPACE') ?? connections[0];
 
   if (!connection) {
     return {
@@ -212,16 +316,20 @@ export const createLinearIssueHandler = async (input: {
 
 Ogni connessione ha:
 
-| Campo             | Descrizione                                                                                                                                                                                                                                   |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | ID di riga univoco; passalo a `getConnection(id)` per recuperarne una singola connessione                                                                                                                                                     |
-| `visibility`      | `'user'` (privata per un membro dello spazio di lavoro) oppure `'workspace'` (condivisa con tutti i membri)                                                                                                                                   |
-| `scopes`          | Autorizzazioni OAuth concesse dal provider a monte (distinte da `visibility` — non sono correlate)                                                                                                                                            |
-| `userWorkspaceId` | L'id userWorkspace del proprietario — utile per selezionare "la connessione dell'utente della richiesta" nei trigger di route HTTP                                                                                                            |
-| `accessToken`     | Token di accesso OAuth aggiornato (rinnovato automaticamente se scaduto)                                                                                                                                                                      |
-| `name`            | Il nome visualizzato della connessione (derivato automaticamente al callback OAuth, rinominabile dall'utente)                                                                                                                                 |
-| `handle`          | L'email dell'account upstream connesso, aggiornata su ogni riconnessione; risolto dal file `id_token` di OIDC restituito al token exchange, tornando all'email dell'utente di Twenty di connessione quando il provider non ne restituisce una |
-| `authFailedAt`    | Impostato quando l'aggiornamento più recente non è riuscito; l'utente deve riconnettersi                                                                                                                                                      |
+| Campo               | Descrizione                                                                                                                                                                                                                                                                                |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`                | ID di riga univoco; passalo a `getConnection(id)` per recuperarne una singola connessione                                                                                                                                                                                                  |
+| `scope`             | `'USER'` (privato per un membro dello spazio di lavoro) oppure `'WORKSPACE'` (condiviso con tutti i membri)                                                                                                                                                                                |
+| `visibility`        | Deprecato: `scope` in minuscolo (`'user'` o `'workspace'`). Usa invece `scope`                                                                                                                                                                                                             |
+| `scopes`            | Autorizzazioni OAuth concesse dal provider a monte (distinte da `scope` — non sono correlate)                                                                                                                                                                                              |
+| `userWorkspaceId`   | L'id userWorkspace del proprietario — utile per selezionare "la connessione dell'utente della richiesta" nei trigger di route HTTP                                                                                                                                                         |
+| `workspaceMemberId` | L'id membro dello spazio di lavoro del proprietario, oppure `null` se da allora ha lasciato lo spazio di lavoro                                                                                                                                                                            |
+| `accessToken`       | Token di accesso OAuth aggiornato (rinnovato automaticamente se scaduto)                                                                                                                                                                                                                   |
+| `name`              | Il nome visualizzato della connessione (derivato automaticamente al callback OAuth, rinominabile dall'utente)                                                                                                                                                                              |
+| `handle`            | L'etichetta dell'account upstream collegato, aggiornata a ogni riconnessione: l'`handle` restituito dalla funzione di identificazione quando presente, altrimenti l'email dall'OIDC `id_token` restituito allo scambio del token, con fallback all'email dell'utente Twenty che si collega |
+| `externalAccountId` | Id stabile dell'account upstream restituito dalla funzione di identificazione, oppure `null` quando il provider non ne dichiara alcuno o la connessione è precedente a essa. Non univoco: usalo per rimuovere autonomamente i duplicati delle connessioni                                  |
+| `authFailedAt`      | Impostato quando l'aggiornamento più recente non è riuscito o quando l'app ha segnalato la credenziale come non valida tramite `reportConnectionAuthFailure`; l'utente deve riconnettersi                                                                                                  |
+| `authFailedReason`  | Spiegazione leggibile per l'utente di `authFailedAt`, quando il segnalante ne ha fornita una; visualizzata nella pagina dei dettagli della connessione nelle impostazioni                                                                                                                  |
 
 Punti chiave:
 
@@ -231,12 +339,45 @@ Punti chiave:
 
 </Accordion>
 
-<Accordion title="Visibilità per utente vs condivisa nello spazio di lavoro" description="Come gli utenti scelgono tra credenziali private e condivise">
+<Accordion title="reportConnectionAuthFailure" description="Informa la piattaforma che una credenziale non è valida">
 
-Quando un utente fa clic su "Aggiungi connessione", viene richiesto di scegliere una visibilità:
+La piattaforma imposta autonomamente `authFailedAt` solo quando il rinnovo OAuth non riesce. I provider i cui token non vengono mai rinnovati (ad esempio, un token bot di Slack) non riescono solo al momento della chiamata all'interno dei gestori, pertanto la riga della connessione nelle impostazioni continuerebbe a mostrare **Connesso** mentre ogni chiamata fallisce. Quando il codice rileva un rifiuto di autenticazione definitivo, segnalalo:
 
-* **Solo per me** — la credenziale è privata per l'utente che effettua la connessione. Qualsiasi funzione di logica chiamata per loro conto (trigger di route HTTP con `isAuthRequired: true`) la vede; i trigger cron e gli eventi del database no.
-* **Condivisa nello spazio di lavoro** — qualsiasi membro dello spazio di lavoro può usare la credenziale. Anche i trigger cron/database la vedono, poiché non hanno un utente della richiesta.
+```ts
+import { reportConnectionAuthFailure } from 'twenty-sdk/logic-function';
+
+await reportConnectionAuthFailure({
+  connectionId: connection.id,
+  reason:
+    'Slack rejected the stored token (invalid_auth). Reconnect to restore the integration.',
+});
+```
+
+Ciò imposta `authFailedAt` e il motivo facoltativo sulla connessione. La riga nelle impostazioni passa a **Riconnessione necessaria** con un pulsante Riconnetti, la pagina dei dettagli della connessione mostra il motivo e `getConnection` inizia a generare `AppConnectionAuthFailedError` per quella riga. Il flag e il motivo vengono cancellati automaticamente quando l'utente si riconnette. Un `reason` più lungo di 1000 caratteri viene rifiutato, quindi tronca i payload del provider prima di passarli.
+
+Segnala solo gli errori che una riconnessione risolverebbe effettivamente (un rifiuto della classe `invalid_auth` dal provider), mai errori di rete transitori. Un'app può indicare solo le proprie connessioni e un utente della richiesta può indicare solo le proprie credenziali personali.
+
+La mutazione alla base di questo helper è disponibile con Twenty 2.40.0, quindi chiamarla su un server meno recente non riesce. Se l'app la usa, dichiara la dipendenza nel tuo `package.json`: `"engines": { "twenty": ">=2.40.0" }`.
+
+</Accordion>
+
+<Accordion title="Connessioni dello spazio di lavoro o personali" description="Scegli chi si connette con l'ambito del provider">
+
+Ogni connessione ha uno di due ambiti:
+
+* **Condivisa nello spazio di lavoro** (`'WORKSPACE'`) — qualsiasi membro dello spazio di lavoro può usare la credenziale. Anche i trigger cron/database la vedono, poiché non hanno un utente della richiesta.
+* **Solo per me** (`'USER'`) — la credenziale è privata per il membro che effettua la connessione. Qualsiasi funzione di logica chiamata per loro conto (trigger di route HTTP con `isAuthRequired: true`) la vede; i trigger cron e gli eventi del database no.
+
+Il `scope` del provider stabilisce quale ambito riceveranno le sue nuove connessioni:
+
+* `scope: 'WORKSPACE'` (il valore predefinito) — l'app funziona con connessioni condivise con lo spazio di lavoro. **Aggiungi connessione** nelle impostazioni dell'app crea una connessione condivisa nell'area di lavoro.
+* `scope: 'USER'` — ciascun membro connette il proprio account, creando connessioni personali. I membri si connetteranno dalle **Preferenze dell'app**, che non sono ancora disponibili: fino ad allora, un provider `USER` non dispone di un pulsante **Aggiungi connessione** e le impostazioni dell'app elencano solo le connessioni che un membro può già vedere.
+
+Un provider ha esattamente un ambito. Se la tua app necessita sia di una credenziale condivisa sia di una per membro per lo stesso servizio (ad esempio, un token di bot e l'account di ciascun membro), dichiara due provider.
+
+Una connessione ha sempre l'ambito del proprio provider e l'ambito di un provider fa parte della sua identità: una versione successiva non può modificare lo `scope` di un provider esistente e l'aggiornamento viene rifiutato se tenta di farlo. Per spostare un servizio da un ambito all'altro, dichiara un nuovo provider con un nuovo `universalIdentifier` e rimuovi quello vecchio. L'aggiornamento elimina quindi il vecchio provider e ogni connessione effettuata con esso tramite il normale percorso di disconnessione (`onDisconnectLogicFunction`, revoca del token, pulizia del canale), e i membri si connettono nuovamente tramite il nuovo provider.
+
+L'aggiunta o la riconnessione di una connessione **Solo per me** richiede l'autorizzazione `CONNECTED_ACCOUNTS`, mentre l'aggiunta o la riconnessione di una connessione **Condivisa nell'area di lavoro** richiede l'autorizzazione `APPLICATIONS`.
 
 Usa quella giusta per ciascun handler:
 
@@ -244,13 +385,15 @@ Usa quella giusta per ciascun handler:
 // HTTP-route trigger — prefer the request user's own connection.
 const conn =
   connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
-  connections.find((c) => c.visibility === 'workspace');
+  connections.find((c) => c.scope === 'WORKSPACE');
 
 // Cron trigger — no request user; only shared credentials are sensible.
-const conn = connections.find((c) => c.visibility === 'workspace');
+const conn = connections.find((c) => c.scope === 'WORKSPACE');
 ```
 
 Sono consentite più connessioni per (utente, provider), quindi lo stesso utente può avere affiancate "Linear personale" e "Linear di lavoro".
+
+L'ambito del provider è disponibile a partire da Twenty 2.49.0. Se la tua app dichiara `scope`, dichiara `"engines": { "twenty": ">=2.49.0" }` nel relativo `package.json`. Nella stessa versione, il `scope` di una connessione sostituisce la relativa `visibility`, che rimane disponibile come alias minuscolo deprecato. `listConnections` e `getConnection` di `twenty-sdk` 2.49.0 leggono `scope`, pertanto le app sviluppate con esso richiedono un server 2.49.0.
 
 </Accordion>
 
@@ -262,7 +405,7 @@ Per ciascun provider di connessione, l'amministratore del server deve prima regi
 2. Imposta la **Redirect URI** su `\<SERVER_URL>/auth/apps/callback`.
 3. Copia il **Client ID** e il **Client Secret** generati.
 4. Apri l'app installata in Twenty come amministratore del server → imposta i valori nelle corrispondenti `serverVariables`.
-5. I membri dello spazio di lavoro possono quindi aggiungere connessioni dalla sezione **Connessioni** dell'app.
+5. I membri dello spazio di lavoro possono quindi aggiungere connessioni ai provider `WORKSPACE` dalla sezione **Connessioni** dell'app.
 
 </Accordion>
 

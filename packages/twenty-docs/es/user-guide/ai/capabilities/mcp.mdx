@@ -68,13 +68,13 @@ Si tu cliente MCP no es compatible con OAuth o prefieres credenciales estáticas
 Tu clave de API concede acceso a los datos del espacio de trabajo. Manténla fuera del control de versiones y de dotfiles compartidos.
 </Warning>
 
-Para crear una clave de API, ve a **Settings → MCP & APIs → API → + Create key**. Consulta [APIs](/es/developers/extend/api#create-an-api-key) para más detalles.
+Para crear una clave de API, ve a **Settings → Developers → API → + Create key**. Consulta [APIs](/es/developers/extend/api#create-an-api-key) para más detalles.
 
 ## Inicio rápido
 
 ### 1. Copia la configuración
 
-Ve a **Settings → MCP & APIs → MCP** en Twenty. Elige tu método de autenticación (OAuth o API Key), copia el fragmento JSON (ya usará la URL de tu espacio de trabajo) y pégalo en el archivo de configuración de tu cliente MCP.
+Ve a **Settings → AI → MCP** en Twenty. Elige tu método de autenticación (OAuth o API Key), copia el fragmento JSON (ya usará la URL de tu espacio de trabajo) y pégalo en el archivo de configuración de tu cliente MCP.
 
 | Cliente            | Ubicación del archivo de configuración                                                                                                                              |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -103,6 +103,12 @@ Una vez conectado, el servidor MCP expone herramientas que reflejan la API de Tw
 2. **`execute_tool`** — ejecutar una herramienta
 
 No necesitas recordar los nombres de las herramientas. Pregúntale a tu asistente de IA qué puede hacer y llamará a `learn_tools` automáticamente.
+
+Los nombres de las operaciones de registros siguen una gramática, por lo que un asistente puede crearlos sin una llamada de descubrimiento: `find_many_companies`, `find_one_person`, `update_one_opportunity`. Si un nombre es incorrecto, `learn_tools` lo informa en `notFound` junto con los nombres más parecidos.
+
+Para cualquier otra cosa, `get_tool_catalog` explora las herramientas restantes, una categoría a la vez. Es una alternativa: una llamada sin filtrar devuelve cientos de operaciones y la mayoría de los asistentes truncarán la respuesta.
+
+`/mcp?mode=direct` enumera cada herramienta directamente y necesita un cliente que cargue herramientas bajo demanda.
 
 ## Permisos
 

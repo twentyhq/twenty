@@ -50,6 +50,14 @@
             }
           }
         },
+        "emailCampaigns": {
+          "label": "Campanii de e-mail",
+          "groups": {
+            "emailCampaignsHowTos": {
+              "label": "Ghiduri practice"
+            }
+          }
+        },
         "workflows": {
           "label": "Fluxuri de lucru",
           "groups": {
@@ -196,6 +204,69 @@
         },
         "contribute": {
           "label": "Contribuie"
+        },
+        "uiLibrary": {
+          "label": "Biblioteca UI",
+          "groups": {
+            "uiGuides": {
+              "label": "Ghiduri"
+            },
+            "uiPrimitives": {
+              "label": "Primitive",
+              "groups": {
+                "uiAccessibility": {
+                  "label": "Accesibilitate"
+                },
+                "uiDataDisplay": {
+                  "label": "Afișarea datelor"
+                },
+                "uiFeedback": {
+                  "label": "Feedback"
+                },
+                "uiForms": {
+                  "label": "Formulare"
+                },
+                "uiLayout": {
+                  "label": "Aspect"
+                },
+                "uiNavigation": {
+                  "label": "Navigare"
+                },
+                "uiSurfaces": {
+                  "label": "Suprafețe"
+                },
+                "uiTypography": {
+                  "label": "Tipografie"
+                }
+              }
+            },
+            "uiComponents": {
+              "label": "Componente",
+              "groups": {
+                "uiComponentsDataDisplay": {
+                  "label": "Afișarea datelor"
+                },
+                "uiComponentsFeedback": {
+                  "label": "Feedback"
+                },
+                "uiComponentsInput": {
+                  "label": "Intrare"
+                },
+                "uiComponentsLayout": {
+                  "label": "Aspect"
+                },
+                "uiComponentsNavigation": {
+                  "label": "Navigare"
+                },
+                "uiComponentsSettings": {
+                  "label": "Setări"
+                },
+                "uiComponentsCodeEditor": {
+                  "label": "Editor de cod"
+                }
+              }
+            }
+          }
         }
       }
     }

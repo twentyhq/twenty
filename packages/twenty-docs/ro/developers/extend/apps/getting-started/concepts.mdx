@@ -8,7 +8,7 @@ Aplicațiile Twenty sunt pachete TypeScript care vă extind spațiul de lucru cu
 
 ## Cum funcționează aplicațiile
 
-O aplicație este o colecție de **entități** declarate folosind funcțiile `defineEntity()` din pachetul `twenty-sdk`. SDK-ul detectează aceste declarații prin analiză AST în timpul construirii și produce un **manifest** — o descriere completă a ceea ce aplicația dvs. adaugă unui spațiu de lucru. Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
+O aplicație este o colecție de **entități** declarate folosind funcțiile `defineEntity()` din pachetul `twenty-sdk`. CLI-ul detectează aceste declarații prin analiză AST în timpul construirii și produce un **manifest** — o descriere completă a ceea ce aplicația dvs. adaugă unui spațiu de lucru. Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
 ```
 your-app/
@@ -23,13 +23,15 @@ your-app/
 │   ├── agents/                  ← defineAgent
 │   ├── views/                   ← defineView
 │   ├── navigation-menu-items/   ← defineNavigationMenuItem
+│   ├── settings-menu-items/     ← defineSettingsMenuItem
 │   └── page-layouts/            ← definePageLayout
 ├── public/                      ← Static assets (images, icons)
 └── package.json
 ```
 
 <Note>
-  **Organizarea fișierelor ține de dvs.** Detectarea entităților este bazată pe AST — SDK-ul găsește apelurile `export default defineEntity(...)` indiferent unde se află fișierul. Structura de foldere de mai sus este o convenție, nu o cerință.
+  **Organizarea fișierelor ține de dvs.** Detectarea entităților este bazată pe AST — SDK-ul
+  găsește apelurile `export default defineEntity(...)` indiferent unde se află fișierul. Structura de foldere de mai sus este o convenție, nu o cerință.
 </Note>
 
 ## Tipuri de entități
@@ -44,6 +46,7 @@ your-app/
 | **Funcție logică**                | TypeScript pe partea de server cu declanșatoare                                            | [Funcții logice](/ro/developers/extend/apps/logic/logic-functions)                                                      |
 | **Abilitate**                     | Instrucțiuni reutilizabile pentru agenți AI                                                | [Abilități și agenți](/ro/developers/extend/apps/logic/skills-and-agents)                                               |
 | **Agent**                         | Agenți AI cu prompturi personalizate                                                       | [Abilități și agenți](/ro/developers/extend/apps/logic/skills-and-agents)                                               |
+| **Flux de lucru**                 | Fluxuri de lucru predefinite cu un declanșator și pași                                     | [Fluxuri de lucru](/ro/developers/extend/apps/logic/workflows)                                                          |
 | **Furnizor de conexiune**         | Date de autentificare OAuth pentru API-uri terțe                                           | [Connections](/ro/developers/extend/apps/logic/connections)                                                             |
 | **Vizualizare**                   | Vizualizări preconfigurate ale listelor de înregistrări                                    | [Views](/ro/developers/extend/apps/layout/views)                                                                        |
 | **Element de meniu de navigare**  | Intrări personalizate în bara laterală                                                     | [Navigation Menu Items](/ro/developers/extend/apps/layout/navigation-menu-items)                                        |
@@ -51,6 +54,7 @@ your-app/
 | **Componentă front-end**          | Interfață React izolată (sandboxed) în Twenty                                              | [Componente front-end](/ro/developers/extend/apps/layout/front-components)                                              |
 | **Dependențe partajate**          | Dependențele partajate de componentele front-end ale aplicației, declarate în package.json | [Dependențe partajate](/ro/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
 | **Element din meniul de comenzi** | Acțiuni rapide și intrări Cmd+K                                                            | [Command Menu Items](/ro/developers/extend/apps/layout/command-menu-items)                                              |
+| **Element din meniul de setări**  | Intrări în meniul de setări al aplicației, fiecare redând o componentă front               | [Elemente din meniul de setări](/ro/developers/extend/apps/layout/front-components#settings-menu-items)                 |
 
 ## Izolare (sandboxing)
 
@@ -63,10 +67,10 @@ your-app/
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ Development                                             │
-│   npx create-twenty-app → yarn twenty dev (live sync)   │
+│   twenty app init → twenty app dev (live sync)   │
 ├─────────────────────────────────────────────────────────┤
 │ Build & Deploy                                          │
-│   yarn twenty dev:build → yarn twenty app:publish        │
+│   twenty app build → twenty app publish        │
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
@@ -77,26 +81,42 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — monitorizează fișierele sursă și sincronizează în timp real modificările către un server Twenty conectat. Clientul API tipizat este regenerat automat atunci când schema se schimbă.
-* **`yarn twenty dev:build`** — compilează TypeScript, împachetează funcțiile logice și componentele front-end cu esbuild și produce un manifest.
+* **`twenty app dev`** — monitorizează fișierele sursă și sincronizează în timp real modificările către un server Twenty conectat. Clientul API tipizat este regenerat automat atunci când schema se schimbă.
+* **`twenty app build`** — compilează TypeScript, împachetează funcțiile logice și componentele front-end cu esbuild și produce un manifest.
 * **Hook-uri pre/post-instalare și dezinstalare** — funcții opționale care rulează în timpul instalării sau chiar înainte de eliminare. Vezi [Install Hooks](/ro/developers/extend/apps/config/install-hooks) pentru detalii.
 
 ## Pașii următori
 
 <CardGroup cols={2}>
   <Card title="Configurare" icon="screwdriver-wrench" href="/ro/developers/extend/apps/config/overview">
+
+
+
+
     Identitatea aplicației, rolul implicit și hook-urile de instalare și dezinstalare.
   </Card>
   <Card title="Date" icon="database" href="/ro/developers/extend/apps/data/overview">
+
+
+
+
     Obiecte, câmpuri și relații bidirecționale.
   </Card>
   <Card title="Logică" icon="bolt" href="/ro/developers/extend/apps/logic/overview">
     Funcții logice, abilități, agenți și conexiuni OAuth.
   </Card>
   <Card title="Aspect" icon="table-columns" href="/ro/developers/extend/apps/layout/overview">
+
+
+
+
     Vizualizări, navigare, layouturi de pagină, componente front-end.
   </Card>
   <Card title="Operațiuni" icon="rocket" href="/ro/developers/extend/apps/operations/overview">
+
+
+
+
     CLI, testare, remote-uri, CI și publicarea aplicației.
   </Card>
 </CardGroup>

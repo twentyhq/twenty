@@ -61,12 +61,12 @@ Ahora agrega acciones que utilicen los datos del webhook:
 2. Selecciona el objeto **Personas**
 3. Asigna los campos:
 
-| Campo              | Valor                                           |
-| ------------------ | ----------------------------------------------- |
-| Nombre             | `{{trigger.body.firstName}}`                    |
-| Apellidos          | `{{trigger.body.lastName}}`                     |
-| Correo electrónico | `{{trigger.body.email}}`                        |
-| Empresa            | Buscar o crear según `{{trigger.body.company}}` |
+| Campo              | Valor                                      |
+| ------------------ | ------------------------------------------ |
+| Nombre             | `{{trigger.firstName}}`                    |
+| Apellidos          | `{{trigger.lastName}}`                     |
+| Correo electrónico | `{{trigger.email}}`                        |
+| Empresa            | Buscar o crear según `{{trigger.company}}` |
 
 ### Paso 5: Probar el webhook
 
@@ -107,7 +107,7 @@ Si tu webhook envía datos anidados:
 }
 ```
 
-Haz referencia con: `{{trigger.body.contact.email}}`
+Haz referencia con: `{{trigger.contact.email}}`
 
 ### Arrays
 

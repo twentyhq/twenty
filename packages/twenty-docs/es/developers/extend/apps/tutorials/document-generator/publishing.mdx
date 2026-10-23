@@ -31,8 +31,8 @@ export default defineApplication({
 ```
 
 <Tip>
-El rol por defecto se declara con `defineApplicationRole()` en su propio archivo — usted
-ya no pase `defaultRoleUniversalIdentifier` aquí.
+  El rol predeterminado se declara con `defineApplicationRole()` en su propio archivo —
+  ya no pasas `defaultRoleUniversalIdentifier` aquí.
 </Tip>
 
 También añade la palabra clave `twenty-app` a `package.json` para que la aplicación sea detectable:
@@ -58,9 +58,9 @@ export default defineApplication({
 ```
 
 <Tip>
-Lance con la ganancia: haga la primera captura de pantalla el resultado terminado (un documento
-generado), luego muestre cómo se activa y se autoriza. Usa capturas
-nítidas y de alta resolución, son lo primero que un usuario ve.
+  Empieza por el resultado: haz que la primera captura de pantalla sea el resultado final (un
+  documento generado) y luego muestra cómo se activa y se crea. Usa capturas nítidas
+  y de alta resolución: son lo primero que ve un usuario.
 </Tip>
 
 Dale a `README.md` el mismo tratamiento: es la página principal de npm y GitHub.
@@ -75,7 +75,7 @@ Ejecuta las mismas puertas que CI hace:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
 El plan muestra exactamente qué cambiaría en el servidor sin aplicarlos —
@@ -87,49 +87,61 @@ una buena comprobación final. Ver
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-`app:publish` construye y publica a npm por defecto; `--private` sube un tarball
-a un registro privado del servidor Veinte en su lugar. Para superficiar una aplicación publicada
-en el mercado de una instancia, dispara una sincronización de catálogo:
+`twenty app publish` compila y publica en npm de forma predeterminada; `--private` carga un
+tarball en el registro privado de un servidor de Twenty. Para que una aplicación publicada aparezca
+en el marketplace de una instancia, espera a que se sincronice el catálogo del marketplace del servidor.
 
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
+Todos los detalles y la lista de verificación de publicación:
+[Publicación](/es/developers/extend/apps/operations/publishing).
 
-Detalles completos y la lista de verificación de lanzamiento:
-[Publishing](/es/developers/extend/apps/operations/publishing).
+## Creaste una aplicación 🎉
 
-## Construiste una aplicación 🎉
-
-En seis capítulos utilizaste la mayor parte de la superficie SDK:
+En seis capítulos usaste la mayor parte de las funcionalidades del SDK:
 
 * **Objetos, campos y una relación** para modelar los datos
-* Una **función lógica** expuesta como una **herramienta de IA**, una **acción de flujo de trabajo**, y **rutas HTTP**
-* **Vistas, navegación, un comando y un componente frontal** para la interfaz de usuario
-* Un **agente + habilidad** para generación natural
-* **Metadatos del mercado** y el flujo de publicación
+* Una **función lógica** expuesta como una **herramienta de IA**, una **acción de workflow** y **rutas HTTP**
+* **Vistas, navegación, un comando y un componente de front-end** para la interfaz de usuario
+* Un **agente + habilidad** para la generación de lenguaje natural
+* **Metadatos del marketplace** y el flujo de publicación
 
 La aplicación terminada está en
 [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
 
-## A dónde ir siguiente
+## Qué hacer a continuación
 
 <CardGroup cols={2}>
   <Card title="Referencia de datos" icon="database" href="/es/developers/extend/apps/data/overview">
-    Cada tipo de campo, relación y opción de índice.
+
+
+
+
+    Todos los tipos de campos, relaciones y opciones de índice.
   </Card>
-  <Card title="Referencia lógica" icon="bolt" href="/es/developers/extend/apps/logic/overview">
-    Activadores de eventos Cron y base de datos, el almacén clave-valor, conexiones OAuth.
+  <Card title="Referencia de lógica" icon="bolt" href="/es/developers/extend/apps/logic/overview">
+
+
+
+
+    Desencadenadores de cron y eventos de base de datos, el almacén clave-valor y las conexiones OAuth.
   </Card>
-  <Card title="Referencia del diseño" icon="table-columns" href="/es/developers/extend/apps/layout/overview">
-    Diseños de páginas, widgets de tablero y más superficies de interfaz.
+  <Card title="Referencia de diseño" icon="table-columns" href="/es/developers/extend/apps/layout/overview">
+
+
+
+
+    Diseños de página, widgets de panel y más superficies de la interfaz de usuario.
   </Card>
-  <Card title="Operaciones" icon="rocket" href="/es/developers/extend/apps/operations/overview">
-    CLI, prueba, control remoto, y CI.
+  <Card title="Operaciones" icon="cohete" href="/es/developers/extend/apps/operations/overview">
+
+
+
+
+    CLI, pruebas, remotos y CI.
   </Card>
 </CardGroup>

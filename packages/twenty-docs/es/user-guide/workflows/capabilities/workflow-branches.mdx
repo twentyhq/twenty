@@ -29,9 +29,21 @@ Cada rama es independiente. Añadir una rama no afecta a otras rutas existentes 
 
 Las ramas aparecen como rutas paralelas en el editor de flujos de trabajo. Puedes arrastrar nodos para reorganizar el diseño visual sin afectar la ejecución.
 
-## Ramas condicionales
+## Ramas If/Else
 
-Dado que todas las ramas se ejecutan de forma predeterminada, usa nodos **Filter** para controlar qué rutas se ejecutan realmente:
+Para rutas mutuamente excluyentes —en las que desea que se ejecute exactamente una rama, no varias—, agregue una acción **If/else** en lugar de dividir el lienzo manualmente.
+
+**Configuración**:
+
+* La primera rama (**Si**) tiene una condición de filtro.
+* Haz clic en **Añadir ruta** para insertar ramas **De lo contrario si** adicionales, cada una con su propia condición.
+* La última rama (**De lo contrario**) no tiene condición y captura todo lo que las demás ramas no coincidieron.
+
+**Cómo funciona**: Las condiciones se evalúan en orden, de arriba abajo. El flujo de trabajo continúa por la primera rama cuya condición coincide; todas las demás ramas se omiten.
+
+## Ramas condicionales (manuales, con filtro)
+
+Si/de lo contrario cubre la mayoría de los casos, pero también puedes crear el mismo patrón manualmente: dado que todas las ramas creadas manualmente se ejecutan de forma predeterminada, usa nodos **Filtro** para controlar qué rutas se ejecutan realmente:
 
 | Rama | Condición del filtro  | Acción                        |
 | ---- | --------------------- | ----------------------------- |

@@ -31,14 +31,23 @@ icon: bolt
   <Card title="المهارات والوكلاء" icon="robot" href="/ar/developers/extend/apps/logic/skills-and-agents">
     تعليمات قابلة لإعادة الاستخدام لوكلاء الذكاء الاصطناعي ومساعدين مع مطالبات نظام مخصّصة.
   </Card>
+  <Card title="مسارات العمل" icon="diagram-project" href="/ar/developers/extend/apps/logic/workflows">
+    سير عمل جاهزة مثبّتة مع تطبيقك: المشغّلات والخطوات وكيفية تشغيلها.
+  </Card>
   <Card title="الاتصالات" icon="plug" href="/ar/developers/extend/apps/logic/connections">
     بيانات اعتماد OAuth التي يحتفظ بها تطبيقك للخدمات الخارجية — مثل Linear وGitHub وSlack وغيرها.
+  </Card>
+  <Card title="قنوات الرسائل" icon="الرسائل" href="/ar/developers/extend/apps/logic/messaging-channels">
+    اجلب المحادثات من أي مزود إلى سجلات Message وMessage Thread في Twenty — مع تضمين ربط المحادثات في سلاسل وإزالة التكرار.
   </Card>
   <Card title="مخزن المفاتيح-القيم" icon="قاعدة البيانات" href="/ar/developers/extend/apps/logic/key-value-store">
     الاحتفاظ بالحالة بين تشغيلات دالة المنطق — ذاكرات التخزين المؤقت، والمؤشرات، والمطالبات عبر مساحات العمل.
   </Card>
   <Card title="المهام الخلفية" icon="layer-group" href="/ar/developers/extend/apps/logic/background-jobs">
     ضع في قائمة الانتظار تشغيل دالة منطقية على العمال لتجاوز مهلة كل تشغيل.
+  </Card>
+  <Card title="تحصيل الرصيد" icon="coins" href="/ar/developers/extend/apps/logic/credits">
+    حدّد ما يفرض تطبيقك رسومًا مقابله وحصّل رصيد مساحة العمل لقاء ذلك.
   </Card>
 </CardGroup>
 
@@ -58,4 +67,6 @@ icon: bolt
 
 <Note>
 **خطافات وقت التثبيت** — الشيفرة التي تعمل قبل التثبيت أو بعده — تشارك بيئة التشغيل هذه ولكنها تستخدم دوال تعريف خاصة بها وتوجد ضمن [Config → Install Hooks](/ar/developers/extend/apps/config/install-hooks).
+
+تشاركه [**عملية التحقق من الحالة**](/ar/developers/extend/apps/logic/logic-functions#health-check) أيضًا. لا يعلن عن أي مشغّل: يستدعيه Twenty عند الطلب عند فتح صفحة إعدادات التطبيق.
 </Note>

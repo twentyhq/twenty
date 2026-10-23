@@ -32,6 +32,7 @@ export default defineCommandMenuItem({
 | `availabilityType`                      | No          | Controla dónde aparece el comando: `'GLOBAL'` (siempre disponible), `'GLOBAL_OBJECT_CONTEXT'` (solo en páginas con un contexto de objeto: páginas de índice y de registro), `'RECORD_SELECTION'` (solo cuando hay registros seleccionados) o `'FALLBACK'` (se muestra cuando ningún otro comando coincide) |
 | `availabilityObjectUniversalIdentifier` | No          | Restringe el comando a páginas de un tipo de objeto específico (p. ej., solo en registros de Company)                                                                                                                                                                                                      |
 | `conditionalAvailabilityExpression`     | No          | Una expresión booleana que controla dinámicamente la visibilidad (ver abajo)                                                                                                                                                                                                                               |
+| `conditionalPinnedExpression`           | No          | Una expresión booleana que restringe `isPinned`: el comando se muestra como un botón de acción rápida solo mientras se cumple y, de lo contrario, permanece en el menú de comandos. La misma sintaxis y variables que `conditionalAvailabilityExpression`                                                  |
 
 ## Comandos sin interfaz
 

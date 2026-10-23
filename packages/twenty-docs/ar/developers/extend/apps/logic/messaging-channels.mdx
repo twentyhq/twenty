@@ -1,0 +1,215 @@
+---
+title: قنوات المراسلة
+description: أدخل المحادثات من أي مزود إلى سجلات Message وMessage Thread في Twenty.
+icon: messages
+---
+
+تتيح **قناة مراسلة** لتطبيقك وضع المحادثات من مزود خارجي — LinkedIn أو WhatsApp أو SMS أو صندوق وارد داخل التطبيق — في سجلات `Message` و`Message Thread` نفسها التي يستخدمها Twenty للبريد الإلكتروني. تظهر سلاسل الرسائل التي تستوعبها في سجلات الشخص والشركة والفرصة للأشخاص المشاركين فيها، وفي المخطط الزمني والبحث، دون واجهة مستخدم مخصصة.
+
+نموذج الرسائل في Twenty محايد للقنوات عمدًا: للرسالة مشاركون ونص وطابع زمني وسلسلة رسائل؛ وللمشارك `handle` ورابط اختياري بشخص. لا شيء فيه خاص بالبريد الإلكتروني. القناة هي ما يربط تدفق تلك الرسائل بحساب واحد لدى مزود واحد.
+
+<Note>
+**إصدار تجريبي — وقد لا يكون متاحًا على مثيلك بعد.** قنوات الرسائل المملوكة للتطبيق جديدة؛ وقد تتغير واجهة API الموضحة هنا، وقد لا تكون متاحة في إصدار Twenty الذي تستخدمه. تحقق من وجود `createMessageChannel` في SDK لديك قبل البناء عليه.
+</Note>
+
+## المتطلبات الأساسية
+
+تنتمي القناة دائمًا إلى أحد [الاتصالات](/ar/developers/extend/apps/logic/connections) الخاصة بتطبيقك — بيانات الاعتماد التي تتواصل من خلالها. تحتاج إلى مزود اتصال قبل أن تتمكن من إنشاء قناة.
+
+## إنشاء قناة
+
+أنشئ القناة مرة واحدة لكل حساب متصل، من خطاف `onConnect` الخاص بموفر الاتصال. بهذه الطريقة، يتطابق عمر القناة مع عمر بيانات الاعتماد.
+
+```ts src/logic-functions/handlers/linkedin-register-connection-handler.ts
+import { createMessageChannel, getConnection } from 'twenty-sdk/logic-function';
+import { MessageChannelVisibility } from 'twenty-shared/types';
+
+export const linkedinRegisterConnectionHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const connection = await getConnection(payload.connectedAccountId);
+  const profile = await fetchLinkedinProfile(connection.accessToken);
+
+  const channel = await createMessageChannel({
+    connectedAccountId: connection.id,
+    handle: profile.memberUrn,
+    displayName: profile.name,
+    // LinkedIn DMs are personal, so other members see participants and dates
+    // but not subjects or bodies.
+    visibility: MessageChannelVisibility.METADATA,
+  });
+
+  return { channelId: channel.id };
+};
+```
+
+### `المُعرّف`
+
+هوية الحساب **كما يسميها المزود** — URN لعضو LinkedIn، أو رقم هاتف E.164، أو معرّف مستخدم ضمن مساحة العمل. يتعامل Twenty معه كقيمة غير شفافة. إنه ما تطابق به الحمولات الواردة، وما يحدد ما إذا كانت الرسالة المستوعبة واردة أم صادرة.
+
+اختر أكثر معرّف ثابت يوفره المزود. سيؤدي `handle` الذي يتغير عند إعادة المستخدم تسمية نفسه إلى تقسيم سجله عبر قناتين.
+
+### `visibility`
+
+`visibility` **مطلوب**، من دون قيمة افتراضية، لأنه يحدد من في مساحة العمل يمكنه قراءة هذه المحادثات:
+
+| القيمة             | ما يراه الأعضاء الآخرون         |
+| ------------------ | ------------------------------- |
+| `METADATA`         | المشاركون والتواريخ فقط         |
+| `SUBJECT`          | ما سبق، بالإضافة إلى الموضوع    |
+| `SHARE_EVERYTHING` | ما سبق، بالإضافة إلى نص الرسالة |
+
+يستطيع العضو الذي يملك الاتصال الأساسي دائمًا قراءة رسائله الخاصة كاملةً، مهما كانت قيمة هذا الإعداد.
+
+اختر بناءً على مدى خصوصية رسائل المزود، لا بناءً على ما هو ملائم للعرض. تحتاج صناديق الوارد الشخصية (الرسائل المباشرة في LinkedIn، وWhatsApp الشخصي) إلى `METADATA`؛ بينما تحتاج الصناديق المشتركة (صندوق وارد للدعم، أو رقم فريق) إلى `SHARE_EVERYTHING`.
+
+<Warning>
+`visibility` هو الشيء الوحيد الفاصل بين المحادثات الخاصة لعضو واحد وبقية مساحة العمل. يجعلك Twenty تحدده عمدًا بدلًا من وراثة قيمة افتراضية قد تؤدي إلى مشاركة مفرطة.
+</Warning>
+
+## إدخال الرسائل
+
+بمجرد وجود القناة، تكتب `ingestMessages` المحادثات فيها. تُعالَج سلاسل الرسائل، وإزالة التكرار، وربط القنوات، وخصوصية كل رسالة من جانب الخادم — وهو المسار نفسه الذي يستخدمه استيراد البريد الإلكتروني الخاص بـ Twenty.
+
+```ts src/logic-functions/handlers/linkedin-inbound-handler.ts
+import { ingestMessages } from 'twenty-sdk/logic-function';
+import { MessageParticipantRole } from 'twenty-shared/types';
+
+export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) => {
+  const ingested = await ingestMessages({
+    messageChannelId: payload.channelId,
+    messages: payload.events.map((event) => ({
+      externalId: event.messageUrn,
+      threadExternalId: event.conversationUrn,
+      text: event.body,
+      receivedAt: new Date(event.createdAt),
+      participants: [
+        {
+          role: MessageParticipantRole.FROM,
+          handle: event.sender.memberUrn,
+          displayName: event.sender.name,
+        },
+        ...event.recipients.map((recipient) => ({
+          role: MessageParticipantRole.TO,
+          handle: recipient.memberUrn,
+          displayName: recipient.name,
+        })),
+      ],
+    })),
+  });
+
+  return { ingested: ingested.length };
+};
+```
+
+### ما يفعله الخادم نيابةً عنك
+
+**إزالة التكرار.** `externalId` هو المفتاح. لا يؤدي إدخال الرسالة نفسها مرتين إلى إنشاء أو تغيير أي شيء، لذلك من الآمن إعادة تشغيل ويب هوك أُعيد تسليمه، وقد تتداخل عملية تعبئة بيانات سابقة مع تدفق مباشر. يبقى `messageId` المُعاد ثابتًا عبر عمليات إعادة التشغيل. تُنفَّذ الاستدعاءات الموجَّهة إلى قناة واحدة تسلسليًا، لذا فإن إعادة تسليم تصل بينما لا تزال الرسالة الأصلية قيد الكتابة تنتظر بدلًا من أن تتسابق معها.
+
+**سلاسل الرسائل.** تصل الرسائل التي تشترك في `threadExternalId` إلى سلسلة رسائل واحدة، والتي تظهر بعد ذلك في سجلات الشخص والشركة والفرصة للمشاركين فيها.
+
+**الاتجاه.** يُستنتج ولا يُصرَّح به: تكون الرسالة صادرة عندما يساوي معرّف المشارك `FROM` معرّف القناة، وتكون واردة بخلاف ذلك. يجب أن يحمل مشارك واحد بالضبط `FROM` — إذ يعتمد عليه الاتجاه، وعمود المرسل في سلسلة الرسائل، ومعاينة المخطط الزمني، ولذلك تُرفض الرسالة التي لا تحتوي عليه بدلًا من عرضها كمحادثة فارغة.
+
+**إزالة التكرار محصورة في القناة.** يجب أن يكون `externalId` فريدًا داخل قناة واحدة فقط، وهو ما يضمنه معظم المزوّدين فعليًا — إذ يرقّم كثير منهم الرسائل لكل محادثة أو لكل حساب. والنتيجة هي أن عضوين في محادثة المزوّد نفسها يحصل كل منهما على رسالته الخاصة بدلًا من رسالة مشتركة. هذا مقصود: إذ سيتطلب دمجهما من كل تطبيق ضمان مساحة أسماء عامة لا يتحكم بها، والخطأ في ذلك سيربط نص رسالة أحد الأعضاء بقناة عضو آخر.
+
+**الخصوصية.** ترث كل رسالة `visibility` الخاصة بقناتها. لا يكون أي شيء تدخله أكثر ظهورًا من القناة التي تدخله إليها.
+
+### التجميع على دفعات
+
+كل استدعاء هو معاملة واحدة ضمن مهلة دالة منطقية واحدة، وبحد أقصى **100 رسالة**. قسّم عملية تعبئة بيانات سابقة من المزوّد إلى صفحات بدلًا من إرسالها كاملة:
+
+```ts
+for (const page of chunk(allHistoricalMessages, 100)) {
+  await ingestMessages({ messageChannelId, messages: page });
+}
+```
+
+تُنفَّذ الدفعة بالكامل أو لا يُنفَّذ منها شيء، ويُرفض تكرار `externalId` واحد داخل الدفعة نفسها — أزل التكرار قبل الإرسال. يقتصر حجم نص الرسالة على 256KB.
+
+### ربط المشاركين بالأشخاص
+
+يطابق Twenty المشاركين عبر البريد الإلكتروني مع الأشخاص باستخدام عنوان البريد الإلكتروني. لا يمكن أن يتطابق ذلك مع LinkedIn URN أو رقم هاتف، لذا **يجب أن يحدد التطبيق هوية المشارك** — إذ لا تظهر سلسلة رسائل غير مرتبطة في صفحة سجل أي شخص.
+
+مرّر `personId` إلى جانب المعرّف:
+
+```ts
+participants: [
+  {
+    role: MessageParticipantRole.FROM,
+    handle: event.sender.memberUrn,
+    displayName: event.sender.name,
+    personId: await resolvePersonIdFromLinkedinUrn(event.sender.memberUrn),
+  },
+]
+```
+
+حدّد المعرّف بالطريقة التي تُخزَّن بها هوية موفّر الخدمة لديك — بالاستناد إلى `Person.linkedinLink`، أو إلى حقل هوية أضافه تطبيقك باستخدام [`defineField`](/ar/developers/extend/apps/data/extending-objects). تُرفض المعرّفات غير المعروفة مسبقًا بدلًا من تخزينها كروابط معلّقة.
+
+بمجرد ربط مشارك، ينشئ Twenty أهداف سلسلة الرسائل، وتظهر المحادثة في صفحة سجل ذلك الشخص وفي صفحة سجل شركته، تمامًا كما يحدث مع سلسلة رسائل بريد إلكتروني.
+
+يُقبل أيضًا `workspaceMemberId`، لمشارك يكون عضوًا في مساحة العمل هذه بدلًا من جهة اتصال. هذا **لإسناد المصدر فقط**: تُنشأ أهداف سلسلة الرسائل من `personId` وحده — كما في البريد الإلكتروني — لذا يظهر المشارك المرتبط بعضو مساحة عمل فقط في سلسلة الرسائل، لكنه لا يضيف المحادثة إلى أي صفحة سجل. مرّر `personId` عندما تريد أن تصل سلسلة الرسائل إلى مكان ما.
+
+<Note>
+لا تضيع المطابقة المتأخرة. تؤدي إعادة استيعاب رسالة بهوية حللتها منذ ذلك الحين إلى ربط المشارك الموجود بالفعل — إذ تُطابَق الرسالة والمعرّف والدور، لذلك لا يؤدي اسم العرض الذي تغيّر أو أُغفل في هذه الأثناء إلى تقسيمه إلى اثنين. يُحتفظ بالاسم المُغفل الموجود بالفعل؛ ويستبدله اسم جديد. يؤدي إرسال `personId` مختلف إلى تصحيح رابط سابق بدلًا من إضافة رابط ثانٍ.
+
+لا توجد طريقة *لمسح* هوية حتى الآن: تُعامل القيمة null على أنها "اتركها كما هي"، وليس "أزل الربط". يتطلب تصحيح رابط خاطئ توفير الرابط الصحيح.
+</Note>
+
+تظل المشاركون الذين تتركهم دون ربط مخزّنين ويظلون ظاهرين في سلسلة الرسائل — فهم ببساطة لا يضيفون المحادثة إلى سجل.
+
+## إدراج القنوات وتحديثها
+
+```ts
+import {
+  listMessageChannels,
+  updateMessageChannel,
+} from 'twenty-sdk/logic-function';
+
+// Every channel this app owns, across all its connections
+const channels = await listMessageChannels();
+
+// Just the ones on a given connection
+const forConnection = await listMessageChannels({
+  connectedAccountId: connection.id,
+});
+
+// Rename it, re-scope who can read it, or pause ingestion
+await updateMessageChannel({ id: channel.id, displayName: 'Ada (LinkedIn)' });
+await updateMessageChannel({ id: channel.id, isSyncEnabled: false });
+```
+
+يؤدي تغيير `visibility` عبر `updateMessageChannel` إلى إعادة تحديد نطاق كل رسالة سبق استيعابها في القناة، وليس الرسائل التي تليها فقط. يُرفض الإدخال إلى قناة تحتوي على `isSyncEnabled: false`، لذا يؤدي إيقاف قناة مؤقتًا إلى إيقاف التدفق دون حذف أي شيء.
+
+لا يرى تطبيقك إلا القنوات التي أُنشئت لاتصالاته الخاصة. القنوات التابعة لتطبيقات أخرى، وقنوات البريد الإلكتروني الخاصة بـ Twenty، غير مرئية له.
+
+لا يمكن أيضًا الوصول إلى القناة إلا من قِبل الشخص الذي تتواصل من خلال اتصاله، عندما يكون ذلك الاتصال خاصًا به. لا يمكن لتشغيل يبدأه عضو آخر في مساحة العمل رؤيتها أو تغييرها أو الإدخال إليها؛ أما تشغيل لا يقف وراءه أحد — مهمة cron أو ويب هوك أو خطاف تثبيت — فيتصرف كتطبيق ويصل إلى كل قناة يملكها التطبيق.
+
+## إيقاف قناة
+
+استدعِ `deleteMessageChannel(id)` من خطاف `onDisconnect` الخاص بموفر الاتصال حتى لا تتجاوز القناة عمر بيانات الاعتماد التي تتواصل من خلالها.
+
+```ts src/logic-functions/handlers/linkedin-disconnect-handler.ts
+import {
+  deleteMessageChannel,
+  listMessageChannels,
+} from 'twenty-sdk/logic-function';
+
+export const linkedinDisconnectHandler = async (payload: {
+  connectedAccountId: string;
+}) => {
+  const channels = await listMessageChannels({
+    connectedAccountId: payload.connectedAccountId,
+  });
+
+  await Promise.all(channels.map((channel) => deleteMessageChannel(channel.id)));
+};
+```
+
+يؤدي حذف قناة إلى حذف الرسائل التي استُوعبت من خلالها، وأي سلسلة رسائل لم تعد تحتوي على رسائل. لإيقاف الاستيعاب مع الاحتفاظ بالسجل، عيّن `isSyncEnabled: false` بدلًا من ذلك.
+
+## ما لا تفعله القناة
+
+* **لا يتم استطلاعها.** يقوم مسار الاستيراد في Twenty باستطلاع مزودي صناديق البريد وفق cron. قنوات التطبيق تعتمد على الدفع فقط: لا شيء يجلب البيانات نيابةً عنك، لذا يكون تطبيقك مسؤولًا عن إدخال الرسائل، عبر مسار webhook أو دالة منطق cron.
+* **لا ترسل.** لم يُوجَّه التسليم الصادر إلى التطبيقات بعد؛ ولا يمكن لرد يُنشأ في Twenty أن يصل إلى مزودك. إلى أن يحدث ذلك، ضع رابطًا إلى واجهة المستخدم الخاصة بالمزود للردود.
+* **لا يحل جهات الاتصال.** يطابق Twenty المشاركين في البريد الإلكتروني مع الأشخاص بحسب عنوان البريد الإلكتروني، وهو ما لا يمكن أن يتطابق مع LinkedIn URN، لذا على قنوات التطبيق [ربط المشاركين صراحةً عند الاستيعاب](#linking-participants-to-people) بدلًا من ذلك.
+* **لا ينشئ جهات اتصال.** يستمد الإنشاء التلقائي في Twenty الأشخاص والشركات من نطاقات البريد الإلكتروني، وهو أمر بلا معنى لمعظم المزوّدين، لذا يكون معطّلًا لقنوات التطبيقات. أنشئ الشخص بنفسك، ثم مرّر `personId` الخاص به.

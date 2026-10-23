@@ -31,14 +31,23 @@ La **capa de lógica** de una app de Twenty es el código que *se ejecuta*: cont
   <Card title="Habilidades y agentes" icon="robot" href="/es/developers/extend/apps/logic/skills-and-agents">
     Instrucciones reutilizables para agentes de IA y asistentes con mensajes de sistema personalizados.
   </Card>
+  <Card title="Flujos de trabajo" icon="diagram-project" href="/es/developers/extend/apps/logic/workflows">
+    Flujos de trabajo listos para usar instalados con tu aplicación: desencadenadores, pasos y cómo se ejecutan.
+  </Card>
   <Card title="Conexiones" icon="plug" href="/es/developers/extend/apps/logic/connections">
     Credenciales OAuth que tu app mantiene para servicios de terceros — Linear, GitHub, Slack y más.
+  </Card>
+  <Card title="Canales de mensajes" icon="mensajes" href="/es/developers/extend/apps/logic/messaging-channels">
+    Incorpora conversaciones de cualquier proveedor a los registros Message y Message Thread de Twenty; incluye organización en hilos y eliminación de duplicados.
   </Card>
   <Card title="Almacén de clave-valor" icon="database" href="/es/developers/extend/apps/logic/key-value-store">
     Conserva el estado entre ejecuciones de funciones lógicas — cachés, cursores y declaraciones entre espacios de trabajo.
   </Card>
   <Card title="Trabajos en segundo plano" icon="layer-group" href="/es/developers/extend/apps/logic/background-jobs">
     Encola la ejecución de una función lógica en los workers para evitar el límite de tiempo por ejecución.
+  </Card>
+  <Card title="Cobro de Créditos" icon="coins" href="/es/developers/extend/apps/logic/credits">
+    Declara lo que factura tu aplicación y cobra créditos del espacio de trabajo por ello.
   </Card>
 </CardGroup>
 
@@ -58,4 +67,6 @@ Las funciones se ejecutan en un entorno aislado en procesos independientes de No
 
 <Note>
 **Hooks de instalación**: el código que se ejecuta antes o después de la instalación comparte este entorno de ejecución pero usa sus propias funciones define y se encuentra en [Config → Install Hooks](/es/developers/extend/apps/config/install-hooks).
+
+La [**comprobación de estado**](/es/developers/extend/apps/logic/logic-functions#health-check) también lo comparte. No declara ningún desencadenador: Twenty la llama cuando se abre la página de configuración de la aplicación.
 </Note>

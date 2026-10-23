@@ -31,14 +31,23 @@ icon: bolt
   <Card title="Abilități și agenți" icon="robot" href="/ro/developers/extend/apps/logic/skills-and-agents">
     Instrucțiuni reutilizabile pentru agenți IA și asistenți cu prompturi de sistem personalizate.
   </Card>
+  <Card title="Fluxuri de lucru" icon="diagram-project" href="/ro/developers/extend/apps/logic/workflows">
+    Fluxuri de lucru gata făcute instalate cu aplicația dvs.: declanșatoare, pași și modul în care rulează.
+  </Card>
   <Card title="Conexiuni" icon="plug" href="/ro/developers/extend/apps/logic/connections">
     Credențiale OAuth pe care aplicația ta le deține pentru servicii terțe — Linear, GitHub, Slack și altele.
+  </Card>
+  <Card title="Canale de mesagerie" icon="mesaje" href="/ro/developers/extend/apps/logic/messaging-channels">
+    Aduceți conversațiile de la orice furnizor în înregistrările Mesaj și Fir de mesaje ale Twenty — cu gruparea în fire și eliminarea duplicatelor incluse.
   </Card>
   <Card title="Stocare cheie-valoare" icon="database" href="/ro/developers/extend/apps/logic/key-value-store">
     Păstrează starea între execuțiile funcțiilor de logică — cache-uri, cursoare și revendicări între spații de lucru.
   </Card>
   <Card title="Sarcini în fundal" icon="layer-group" href="/ro/developers/extend/apps/logic/background-jobs">
     Pune în coadă execuția unei funcții logice de către workeri pentru a depăși limita de timp per execuție.
+  </Card>
+  <Card title="Taxarea creditelor" icon="coins" href="/ro/developers/extend/apps/logic/credits">
+    Declarați pentru ce facturează aplicația dvs. și debitați creditele spațiului de lucru pentru aceasta.
   </Card>
 </CardGroup>
 
@@ -58,4 +67,6 @@ Funcțiile rulează în sandbox, în procese Node.js izolate și accesează work
 
 <Note>
 **Hook-uri de instalare** — cod care rulează înainte sau după instalare — folosesc același runtime, dar au propriile lor funcții define și se află sub [Config → Install Hooks](/ro/developers/extend/apps/config/install-hooks).
+
+[**verificarea stării de funcționare**](/ro/developers/extend/apps/logic/logic-functions#health-check) o partajează și ea. Nu declară niciun declanșator: Twenty o apelează la cerere atunci când se deschide pagina de setări a aplicației.
 </Note>

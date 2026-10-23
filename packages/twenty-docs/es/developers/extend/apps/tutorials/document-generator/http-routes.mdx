@@ -71,13 +71,19 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { documentHtmlPage } from 'src/utils/render-document';
 
 const htmlResponse = (html: string, status = 200): Response =>
-  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  new Response(html, {
+    status,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
 
   if (!documentId) {
-    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+    return htmlResponse(
+      documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'),
+      400,
+    );
   }
 
   // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
@@ -90,10 +96,18 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   const document = documents?.edges?.[0]?.node;
   if (!document?.id) {
-    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+    return htmlResponse(
+      documentHtmlPage(
+        'Document not found',
+        `No document with id ${documentId}.`,
+      ),
+      404,
+    );
   }
 
-  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+  return htmlResponse(
+    documentHtmlPage(document.name ?? 'Document', document.content ?? ''),
+  );
 };
 
 export default defineLogicFunction({
@@ -116,8 +130,8 @@ plantilla — el mismo aspecto que el PDF y la vista previa dentro de la aplicac
 
 ## Pruébalo
 
-Con una plantilla y una persona en tu espacio de trabajo, llama a la ruta (toma un token desde
-**Ajustes → APIs & Webhooks**):
+Con una plantilla y una persona en tu espacio de trabajo, llama a la ruta (obtén un token de
+**Configuración → Desarrolladores → API**):
 
 ```bash filename="Terminal"
 curl -X POST http://localhost:2020/s/documents/generate \
@@ -137,14 +151,16 @@ http://localhost:2020/s/documents/view?id=<documentId>
 </Frame>
 
 <Tip>
-También puedes transmitir los registros de una función mientras pruebas con
-`yarn twenty dev:function:logs`, o invocarlo directamente con
-`yarn twenty dev:function:exec`.
+  También puedes transmitir los registros de una función mientras realizas pruebas con `twenty app logs`, o invocarla directamente con `twenty app exec`.
 </Tip>
 
 **Después de este paso:** la aplicación puede generar documentos a través de HTTP y servirlos como
 páginas web. Ahora hagámoslo utilizable sin `curl`.
 
 <Card title="Siguiente: construyendo la interfaz de usuario →" icon="table-columns" href="/Developopers/extend/apps/tutorials/document-generator/building-the-ui">
+
+
+
+
   Vistas, navegación, un comando y un componente frontal.
 </Card>

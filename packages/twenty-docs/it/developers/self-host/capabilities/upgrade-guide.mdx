@@ -25,6 +25,16 @@ Se utilizzi Docker Compose, segui questi passaggi:
 
 All'avvio, il server esegue automaticamente tutte le migrazioni di aggiornamento necessarie. Non è necessario alcun comando manuale.
 
+### Prefisso della cache Redis
+
+`REDIS_CACHE_PREFIX` è facoltativo e per impostazione predefinita è una stringa vuota. Lasciarlo vuoto preserva esattamente i nomi delle chiavi della cache esistenti, senza due punti aggiuntivi né migrazione delle chiavi.
+
+Per le distribuzioni Redis Enterprise o Azure Managed Redis che segnalano errori `CROSSSLOT` durante le operazioni di cache, imposta `REDIS_CACHE_PREFIX={twenty-cache}` su ogni comando del server, del worker e di aggiornamento. Le parentesi graffe fanno sì che tutte le chiavi di archiviazione della cache condividano uno slot hash Redis. Questo non distribuisce i dati della cache tra gli shard. `REDIS_QUEUE_PREFIX` si applica solo alle code e rimane separato.
+
+Ad esempio, `engine:workspace:flatObjectMetadataMaps:123:hash` diventa `{twenty-cache}:engine:workspace:flatObjectMetadataMaps:123:hash` solo quando quel prefisso è configurato. `cache:flush` utilizza automaticamente il prefisso configurato.
+
+La modifica del prefisso passa a uno spazio dei nomi della cache separato. Arresta tutti i server e i worker di Twenty prima di modificarlo, quindi riavviali con lo stesso valore. Le voci esistenti con il prefisso precedente rimangono inalterate. Se riutilizzi un prefisso usato in precedenza, esegui `yarn command:prod cache:flush` con tale valore prima del riavvio per rimuovere le voci obsolete. Le distribuzioni rolling con valori di prefisso diversi non sono supportate.
+
 ## Aggiornamento alla v2.34+ — PostgreSQL 15 minimo
 
 Twenty v2.34 richiede PostgreSQL 15 o una versione successiva. La configurazione ufficiale di Docker Compose utilizza PostgreSQL 16. Se la tua istanza si connette a un database gestito esternamente, aggiornalo prima di avviare il server v2.34.
@@ -70,7 +80,7 @@ Instance
     At:               2026-04-16T11:43:58.823Z
 
 Workspace
-  Apple (20202020-1c25-4d02-bf25-6aeccf7ea419)
+  App*** (20202020-***)
       Inferred version: 1.23.0
       Latest command:   1.23.0_UpdateGlobalObjectContextCommandMenuItemsCommand_1780000005000
       Status:           Up to date
@@ -84,10 +94,11 @@ Summary
 
 ### Opzioni
 
-| Opzione                   | Descrizione                                                                                  |
-| ------------------------- | -------------------------------------------------------------------------------------------- |
-| `-w, --workspace-id <id>` | Filtra per uno specifico spazio di lavoro. Può essere passato più volte.                     |
-| `-f, --failed-only`       | Nasconde gli spazi di lavoro aggiornati; mostra solo quelli arretrati e quelli non riusciti. |
+| Opzione                   | Descrizione                                                                                                                                                                                                                              |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Filtra per uno specifico spazio di lavoro. Può essere passato più volte.                                                                                                                                                                 |
+| `-f, --failed-only`       | Nasconde gli spazi di lavoro aggiornati; mostra solo quelli arretrati e quelli non riusciti.                                                                                                                                             |
+| `--show-full-identifiers` | Visualizza i nomi completi e gli ID degli spazi di lavoro. Per impostazione predefinita, vengono visualizzati solo i primi tre caratteri di ciascun nome dello spazio di lavoro e la prima sezione di ciascun ID dello spazio di lavoro. |
 
 ## Risoluzione dei problemi
 

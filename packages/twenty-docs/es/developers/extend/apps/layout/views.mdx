@@ -17,7 +17,7 @@ export default defineView({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -49,6 +49,7 @@ export default defineView({
 | `criterios de ordenación`                                                                                   | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`         | Orden de clasificación predeterminado.                                                                                                                                                                                     |
 | `isCompact`                                                                                                 | `boolean`                                                                                  | Visualización compacta de filas.                                                                                                                                                                                           |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                          | Agrupar registros (por ejemplo, columnas de kanban) por un campo.                                                                                                                                                          |
+| `groupLoadLimit`                                                                                            | `8` (predeterminado), `25`, `50`, `100`                                                    | Registros cargados por grupo antes de "Cargar más", en las vistas de tabla y lista agrupadas. Los tableros Kanban se paginan según su propio tamaño y lo ignoran.                                                          |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                                    | Agregados y tamaño de columnas kanban.                                                                                                                                                                                     |
 | `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                                | Vistas de calendario: diseño, el campo de fecha que posiciona los registros y un campo de fecha de finalización opcional.                                                                                                  |
 
@@ -70,6 +71,16 @@ filters: [
   },
 ],
 ```
+
+Tres propiedades opcionales refinan un filtro:
+
+| Propiedad                                                          | Descripción                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `subFieldName`                                                     | Se dirige a una parte de un campo compuesto, como `amountMicros` en un campo `CURRENCY` o `primaryLinkUrl` en un campo `LINKS`.                                                                                                                                |
+| `relationTargetFieldMetadataUniversalIdentifier`                   | En un filtro sobre un campo `RELATION`, el campo del objeto relacionado con el que se compara el valor, tal como lo establece el filtro avanzado cuando selecciona un campo del registro relacionado. Omítalo para filtrar por el propio registro relacionado. |
+| `viewFilterGroupUniversalIdentifier` + `positionInViewFilterGroup` | Coloque el filtro en uno de los `filterGroups` de la vista (cada uno con un `logicalOperator` de `AND`, `OR` o `NOT` y un `parentViewFilterGroupUniversalIdentifier` opcional) y ordénelo dentro de ese grupo.                                                 |
+
+`twenty app pull` vuelve a escribir los tres exactamente como los almacenó el espacio de trabajo.
 
 ### Operandos admitidos por tipo de campo
 

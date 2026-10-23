@@ -28,14 +28,22 @@ Installa l'ultima versione stabile di Twenty con un unico comando:
 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-Per installare una versione o un ramo specifico:
+Per installare una versione specifica:
 
 ```bash
-VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+VERSION=v2.38.1 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* Sostituisci x.y.z con il numero di versione desiderato.
-* Sostituisci nome-ramo con il nome del ramo che vuoi installare.
+* `VERSION` deve essere un tag di release completo pubblicato su [Docker Hub](https://hub.docker.com/r/twentycrm/twenty/tags), ad esempio `v2.38.1`. Gli alias come `v2` o `latest` non sono accettati.
+* Il file `docker-compose.yml` corrispondente viene recuperato dal tag git `twenty/<version>`, quindi le release precedenti a questi tag (v2.9.0 e precedenti) non possono essere installate con lo script.
+
+Per recuperare invece i file di configurazione da un ramo, ad esempio per testare modifiche non ancora rilasciate:
+
+```bash
+BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* Sostituisci branch-name con il branch da cui recuperare `docker-compose.yml` e `.env.example`. L'immagine continua a usare per impostazione predefinita l'ultima release, a meno che non sia impostato anche `VERSION`.
 
 ## Opzione 2: Passaggi manuali
 
@@ -73,11 +81,19 @@ Segui questi passaggi per un setup manuale.
 
 4. **Imposta la Password di Postgres**
 
-   Aggiorna il valore `PG_DATABASE_PASSWORD` nel file .env con una password forte senza caratteri speciali.
+   Aggiorna il valore `PG_DATABASE_PASSWORD` nel file .env con una password forte senza caratteri speciali. La password viene inserita senza codifica nell'URL di connessione Postgres, pertanto caratteri quali `@`, `/`, `#` o `%` interrompono la stringa di connessione. Generane uno con:
+
+   ```bash
+   openssl rand -hex 32
+   ```
 
    ```ini
    PG_DATABASE_PASSWORD=my_strong_password
    ```
+
+<Note>
+Le variabili che `docker-compose.yml` inoltra senza un valore predefinito `:-`, come `SERVER_URL` e le variabili `STORAGE_S3_*`, raggiungono il server come stringa vuota quando sono vuote o mancanti in `.env`, e il server considera una stringa vuota come un valore configurato anziché non impostato. Mantieni impostato `SERVER_URL` e, quando `STORAGE_TYPE=S_3`, imposta ogni variabile `STORAGE_S3_*` richiesta: un valore `STORAGE_S3_NAME` vuoto interrompe ogni caricamento. Le variabili con un valore predefinito in `docker-compose.yml`, come le parti `PG_DATABASE_*` e `REDIS_URL`, utilizzano tale valore predefinito quando sono vuote o mancanti.
+</Note>
 
 ### Passo 2: Ottieni il File Docker Compose
 
@@ -126,6 +142,8 @@ SSL (HTTPS) è necessario affinché alcune caratteristiche del browser funzionin
 Ad esempio, l'API degli appunti potrebbe richiedere un contesto sicuro - alcune funzionalità come i pulsanti di copia in tutta l'applicazione potrebbero non funzionare senza HTTPS abilitato.
 
 Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con terminazione SSL per una sicurezza e funzionalità ottimali.
+
+<Tip>Prima di esporre Twenty a Internet, leggi [Protezione dell'istanza](/it/developers/self-host/capabilities/security). La maggior parte dei team può mantenere privata l'app e aprire solo alcuni percorsi.</Tip>
 
 #### Configurare `SERVER_URL`
 

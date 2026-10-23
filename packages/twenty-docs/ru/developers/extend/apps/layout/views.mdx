@@ -17,7 +17,7 @@ export default defineView({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -49,6 +49,7 @@ export default defineView({
 | `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`       | Порядок сортировки по умолчанию.                                                                                                                                                                                                      |
 | `isCompact`                                                                                                 | `boolean`                                                                                | Компактное отображение строк.                                                                                                                                                                                                         |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                        | Группировать записи (например, столбцы канбана) по полю.                                                                                                                                                                              |
+| `groupLoadLimit`                                                                                            | `8` (по умолчанию), `25`, `50`, `100`                                                    | Количество записей, загружаемых для каждой группы перед «Загрузить ещё» в сгруппированных представлениях таблицы и списка. Канбан-доски используют собственный размер страницы и игнорируют этот параметр.                            |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                                  | Агрегирование и ширина столбцов канбана.                                                                                                                                                                                              |
 | `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                              | Календарные представления: макет, поле даты, по которому размещаются записи, и необязательное поле даты окончания.                                                                                                                    |
 
@@ -70,6 +71,16 @@ filters: [
   },
 ],
 ```
+
+Три необязательных свойства уточняют фильтр:
+
+| Свойство                                                           | Описание                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `subFieldName`                                                     | Указывает на одну часть составного поля, например `amountMicros` в поле `CURRENCY` или `primaryLinkUrl` в поле `LINKS`.                                                                                                  |
+| `relationTargetFieldMetadataUniversalIdentifier`                   | В фильтре по полю `RELATION` — поле связанного объекта, с которым сравнивается значение; расширенный фильтр задает его при выборе поля связанной записи. Не указывайте его, чтобы фильтровать по самой связанной записи. |
+| `viewFilterGroupUniversalIdentifier` + `positionInViewFilterGroup` | Поместите фильтр в одну из групп `filterGroups` представления (каждая с `logicalOperator` `AND`, `OR` или `NOT` и необязательным `parentViewFilterGroupUniversalIdentifier`) и задайте его порядок в этой группе.        |
+
+`twenty app pull` записывает все три обратно в точности так, как рабочая область сохранила их.
 
 ### Поддерживаемые операнды по типу поля
 

@@ -8,6 +8,8 @@ Funcțiile logice rulează în sandbox în procese Node.js de scurtă durată �
 
 Fiecare aplicație primește propriul spațiu de nume izolat: intrările sunt asociate cu aplicația autentificată, astfel încât cheile tale nu pot intra niciodată în coliziune cu — sau fi citite de — o altă aplicație.
 
+Magazinul este **persistent**: înregistrările sunt stocate în baza de date PostgreSQL a instanței — nu într-un cache în memorie precum Redis — astfel încât acestea supraviețuiesc repornirilor serverului, implementărilor și actualizărilor aplicației și rămân disponibile până când le ștergeți. Acest lucru îl face fiabil pentru stări durabile, precum cursorii de sincronizare sau configurația per utilizator, nu doar pentru cache-uri de scurtă durată. Valorile sunt stocate ca JSON simplu, fără criptare la nivel de aplicație, așa că nu introduceți secrete în el — păstrați cheile API și alte date de autentificare în [variabilele secrete ale aplicației sau ale serverului](/ro/developers/extend/apps/config/application), care sunt criptate în repaus.
+
 ```text
   ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
   │ Logic function  │ ─────────────────────▶ │ Application KV store     │
@@ -96,7 +98,7 @@ export default defineLogicFunction({
 * **Spații de nume.** Prefixează cheile pentru a păstra domeniile diferite separate — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
 * **Expiry (TTL).** Store-ul nu are expirare integrată. Stochează un timestamp în interiorul valorii (ca în exemplul de cache) și verifică-l la citire sau curăță cheile învechite dintr-o [funcție declanșată de cron](/ro/developers/extend/apps/logic/logic-functions).
 * **Ce să stochezi.** Orice valoare serializabilă JSON — numere, stringuri, array-uri, obiecte. Păstrează intrările mici; acesta este pentru coordonare și caching, nu pentru blob-uri mari sau fișiere. Pentru fișiere, folosește un câmp `FILES` și [`uploadFile`](/ro/developers/extend/apps/logic/logic-functions#uploading-files).
-* **Vizibilitate.** Intrările există în baza de date a instanței, nu ca înregistrări ale workspace-ului — nu apar niciodată în interfața workspace-ului, nu fac parte din modelul de date al aplicației tale și nu necesită permisiuni de rol sau de obiect.
+* **Vizibilitate.** Intrările se află în baza de date Postgres a instanței, nu ca înregistrări ale spațiului de lucru — nu apar niciodată în interfața spațiului de lucru, nu fac parte din modelul de date al aplicației tale și nu necesită permisiuni de rol sau de obiect.
 
 ## Alternativă: un obiect de stocare interogabil
 

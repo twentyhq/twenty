@@ -109,7 +109,9 @@ export default defineField({
 
 ## Relazioni con gli oggetti standard
 
-Per creare una relazione con un oggetto Twenty integrato (Person, Company, ecc.), usa `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+Per creare una relazione con un oggetto Twenty integrato (Person, Company, ecc.), usa `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`.
+
+Una relazione viene sempre dichiarata su entrambi gli oggetti e questo non cambia quando un lato è un oggetto standard: il manifest deve anche definire il campo inverso sull'oggetto standard, con `universalIdentifier` dell'oggetto standard come `objectUniversalIdentifier`. Se il campo inverso è assente, l'app non riesce a sincronizzarsi con `Relation field target metadata not found`.
 
 ```ts src/fields/person-on-self-hosting-user.field.ts
 import {
@@ -139,6 +141,35 @@ export default defineField({
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
     joinColumnName: 'personId',
+  },
+});
+```
+
+```ts src/fields/self-hosting-users-on-person.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+import {
+  PERSON_FIELD_ID,
+  SELF_HOSTING_USER_REVERSE_FIELD_ID,
+} from './person-on-self-hosting-user.field';
+
+export default defineField({
+  universalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  type: FieldType.RELATION,
+  name: 'selfHostingUsers',
+  label: 'Self hosting users',
+  relationTargetObjectMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: PERSON_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
   },
 });
 ```

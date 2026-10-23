@@ -48,9 +48,9 @@ La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu
 | **Campo**                              | Una columna en un objeto. Los campos independientes pueden ampliar objetos que no creaste (por ejemplo, agregar `loyaltyTier` a Company) | `defineField()`                          |
 | **Relación**                           | Un vínculo bidireccional entre dos objetos: ambos lados se declaran como campos                                                          | `defineField()` con `FieldType.RELATION` |
 | **Índice**                             | Un índice de base de datos para acelerar una consulta recurrente sobre uno de tus objetos                                                | `defineIndex()`                          |
-| **Tipo de actividad de la cronología** | Un evento de auditoría automático o un evento de dominio explícito mostrado en las líneas de tiempo de los registros.                    | `defineTimelineActivityType()`           |
+| **Tipo de actividad de la cronología** | Un evento de auditoría automático o un evento de dominio explícito mostrado en las líneas de tiempo de los registros                     | `defineTimelineActivityType()`           |
 
-El SDK detecta estos mediante análisis AST en tiempo de compilación, por lo que la organización de archivos depende de ti; la convención es `src/objects/`, `src/fields/`, `src/indexes/` y `src/timeline-activity-types/`. Los UUID `universalIdentifier` estables vinculan todo a través de los despliegues.
+La CLI detecta estos mediante análisis AST en tiempo de compilación, por lo que la organización de archivos depende de ti; la convención es `src/objects/`, `src/fields/`, `src/indexes/` y `src/timeline-activity-types/`. Los UUID `universalIdentifier` estables vinculan todo a través de los despliegues.
 
 ## Índices (opcional)
 

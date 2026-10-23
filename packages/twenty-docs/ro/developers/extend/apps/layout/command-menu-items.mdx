@@ -32,6 +32,7 @@ export default defineCommandMenuItem({
 | `availabilityType`                      | Nu          | Controlează unde apare comanda: `'GLOBAL'` (mereu disponibilă), `'GLOBAL_OBJECT_CONTEXT'` (doar în paginile cu context de obiect — pagini de index și de înregistrare), `'RECORD_SELECTION'` (doar când sunt selectate înregistrări) sau `'FALLBACK'` (afișată când nicio altă comandă nu se potrivește) |
 | `availabilityObjectUniversalIdentifier` | Nu          | Restricționați comanda la paginile unui anumit tip de obiect (de ex., doar pe înregistrările Company)                                                                                                                                                                                                    |
 | `conditionalAvailabilityExpression`     | Nu          | O expresie booleană care controlează dinamic vizibilitatea (vezi mai jos)                                                                                                                                                                                                                                |
+| `conditionalPinnedExpression`           | Nu          | O expresie booleană care restrânge `isPinned`: comanda apare ca buton de acțiune rapidă numai cât timp este îndeplinită și, în caz contrar, rămâne în meniul de comenzi. Aceeași sintaxă și aceleași variabile ca pentru `conditionalAvailabilityExpression`                                             |
 
 ## Comenzi headless
 

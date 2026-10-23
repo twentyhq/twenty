@@ -50,6 +50,14 @@
             }
           }
         },
+        "emailCampaigns": {
+          "label": "Кампании по электронной почте",
+          "groups": {
+            "emailCampaignsHowTos": {
+              "label": "Инструкции"
+            }
+          }
+        },
         "workflows": {
           "label": "Рабочие процессы",
           "groups": {
@@ -196,6 +204,69 @@
         },
         "contribute": {
           "label": "Внести вклад"
+        },
+        "uiLibrary": {
+          "label": "Библиотека интерфейса",
+          "groups": {
+            "uiGuides": {
+              "label": "Руководства"
+            },
+            "uiPrimitives": {
+              "label": "Примитивы",
+              "groups": {
+                "uiAccessibility": {
+                  "label": "Доступность"
+                },
+                "uiDataDisplay": {
+                  "label": "Отображение данных"
+                },
+                "uiFeedback": {
+                  "label": "Обратная связь"
+                },
+                "uiForms": {
+                  "label": "Формы"
+                },
+                "uiLayout": {
+                  "label": "Макет"
+                },
+                "uiNavigation": {
+                  "label": "Навигация"
+                },
+                "uiSurfaces": {
+                  "label": "Области отображения"
+                },
+                "uiTypography": {
+                  "label": "Типографика"
+                }
+              }
+            },
+            "uiComponents": {
+              "label": "Компоненты",
+              "groups": {
+                "uiComponentsDataDisplay": {
+                  "label": "Отображение данных"
+                },
+                "uiComponentsFeedback": {
+                  "label": "Обратная связь"
+                },
+                "uiComponentsInput": {
+                  "label": "Ввод"
+                },
+                "uiComponentsLayout": {
+                  "label": "Макет"
+                },
+                "uiComponentsNavigation": {
+                  "label": "Навигация"
+                },
+                "uiComponentsSettings": {
+                  "label": "Настройки"
+                },
+                "uiComponentsCodeEditor": {
+                  "label": "Редактор кода"
+                }
+              }
+            }
+          }
         }
       }
     }

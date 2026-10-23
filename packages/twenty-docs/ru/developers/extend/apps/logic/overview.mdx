@@ -31,14 +31,23 @@ icon: bolt
   <Card title="Навыки и агенты" icon="robot" href="/ru/developers/extend/apps/logic/skills-and-agents">
     Повторно используемые инструкции агента ИИ и ассистенты с пользовательскими системными подсказками.
   </Card>
+  <Card title="Рабочие процессы" icon="diagram-project" href="/ru/developers/extend/apps/logic/workflows">
+    Готовые рабочие процессы, установленные вместе с вашим приложением: триггеры, шаги и принцип их выполнения.
+  </Card>
   <Card title="Подключения" icon="plug" href="/ru/developers/extend/apps/logic/connections">
     OAuth-учетные данные, которые ваше приложение хранит для сторонних сервисов — Linear, GitHub, Slack и других.
+  </Card>
+  <Card title="Каналы сообщений" icon="сообщения" href="/ru/developers/extend/apps/logic/messaging-channels">
+    Переносите разговоры от любого провайдера в записи Message и Message Thread в Twenty — с поддержкой ветвления и дедупликации.
   </Card>
   <Card title="Хранилище ключ-значение" icon="database" href="/ru/developers/extend/apps/logic/key-value-store">
     Сохраняйте состояние между запусками логических функций — кэши, курсоры и утверждения между рабочими пространствами.
   </Card>
   <Card title="Фоновые задания" icon="layer-group" href="/ru/developers/extend/apps/logic/background-jobs">
     Поставьте функцию Logic в очередь на исполнение воркерами, чтобы обойти таймаут на один запуск.
+  </Card>
+  <Card title="Списание кредитов" icon="монеты" href="/ru/developers/extend/apps/logic/credits">
+    Укажите, за что ваше приложение взимает плату, и списывайте за это кредиты рабочего пространства.
   </Card>
 </CardGroup>
 
@@ -58,4 +67,6 @@ icon: bolt
 
 <Note>
 **Хуки времени установки** — код, который выполняется до или после установки, — используют то же окружение выполнения, но свои собственные функции `define*` и находятся в разделе [Config → Install Hooks](/ru/developers/extend/apps/config/install-hooks).
+
+[**Проверка работоспособности**](/ru/developers/extend/apps/logic/logic-functions#health-check) также использует его совместно. Она не объявляет триггер: Twenty вызывает ее по требованию при открытии страницы настроек приложения.
 </Note>

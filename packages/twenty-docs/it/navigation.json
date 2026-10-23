@@ -50,6 +50,14 @@
             }
           }
         },
+        "emailCampaigns": {
+          "label": "Campagne email",
+          "groups": {
+            "emailCampaignsHowTos": {
+              "label": "Guide pratiche"
+            }
+          }
+        },
         "workflows": {
           "label": "Flussi di Lavoro",
           "groups": {
@@ -196,6 +204,69 @@
         },
         "contribute": {
           "label": "Contribuire"
+        },
+        "uiLibrary": {
+          "label": "Libreria UI",
+          "groups": {
+            "uiGuides": {
+              "label": "Guide"
+            },
+            "uiPrimitives": {
+              "label": "Elementi di base",
+              "groups": {
+                "uiAccessibility": {
+                  "label": "Accessibilità"
+                },
+                "uiDataDisplay": {
+                  "label": "Visualizzazione dati"
+                },
+                "uiFeedback": {
+                  "label": "Feedback"
+                },
+                "uiForms": {
+                  "label": "Moduli"
+                },
+                "uiLayout": {
+                  "label": "Layout"
+                },
+                "uiNavigation": {
+                  "label": "Navigazione"
+                },
+                "uiSurfaces": {
+                  "label": "Superfici"
+                },
+                "uiTypography": {
+                  "label": "Tipografia"
+                }
+              }
+            },
+            "uiComponents": {
+              "label": "Componenti",
+              "groups": {
+                "uiComponentsDataDisplay": {
+                  "label": "Visualizzazione dati"
+                },
+                "uiComponentsFeedback": {
+                  "label": "Feedback"
+                },
+                "uiComponentsInput": {
+                  "label": "Input"
+                },
+                "uiComponentsLayout": {
+                  "label": "Layout"
+                },
+                "uiComponentsNavigation": {
+                  "label": "Navigazione"
+                },
+                "uiComponentsSettings": {
+                  "label": "Impostazioni"
+                },
+                "uiComponentsCodeEditor": {
+                  "label": "Editor di codice"
+                }
+              }
+            }
+          }
         }
       }
     }

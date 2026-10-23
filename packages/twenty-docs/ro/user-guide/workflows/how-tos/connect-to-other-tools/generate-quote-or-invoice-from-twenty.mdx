@@ -37,10 +37,10 @@ Declanșatorul se activează la orice actualizare a unei Oportunități. Filtrul
 
 Înregistrarea Oportunității s-ar putea să nu includă toate câmpurile Companiei de care aveți nevoie pentru factură. Adăugați o acțiune **Search Record**:
 
-| Setare             | Valoare                                   |
-| ------------------ | ----------------------------------------- |
-| **Obiect**         | Companie                                  |
-| **Potrivire după** | ID egal cu `{{trigger.object.companyId}}` |
+| Setare             | Valoare                                             |
+| ------------------ | --------------------------------------------------- |
+| **Obiect**         | Companie                                            |
+| **Potrivire după** | ID egal cu `{{trigger.properties.after.companyId}}` |
 
 Aceasta preia înregistrarea completă a Companiei cu adresa de facturare, ID fiscal etc.
 

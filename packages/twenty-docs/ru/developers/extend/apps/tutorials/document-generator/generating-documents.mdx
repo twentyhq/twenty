@@ -172,7 +172,7 @@ yarn add pdf-lib marked
 
 Полный помощник
 [`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
-Он анализирует Markdown в токены с `marked. exer`, затем расположите их с помощью
+Он анализирует Markdown в токены с `marked.lexer`, затем расположите их с помощью
 pdf-lib: настоящие заголовки, **черный**/*курсив* пробег, пуля и нумерованные списки,
 blockquotes and rules — отполированный, многостраничный A4 рендеринг самого шаблона
 вместо стенки текста.
@@ -188,8 +188,9 @@ blockquotes and rules — отполированный, многостранич
 встраивание шрифта Unicode.
 </Note>
 
-Затем загрузите его и сохраните ссылку на запись. `uploadFile` маршруты байт
-в поле файлы, принадлежащее приложению; возвращается `id`, что вы сохраните:
+Затем загрузите его и сохраните ссылку на запись. `uploadFile` отправляет
+байты напрямую в файловое хранилище и прикрепляет их к полю файлов вашего приложения;
+возвращаемый `id` — это то, что вы сохраняете:
 
 ```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -199,12 +200,11 @@ const documentName = `${documentTemplate.name} — ${record.displayName}`;
 const bytes = await generateDocumentPdf(documentName, content);
 const fileName = 'proposal.pdf';
 
-const uploaded = await new MetadataApiClient().uploadFile(
-  Buffer.from(bytes),
-  fileName,
-  'application/pdf',
-  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
-);
+const uploaded = await new MetadataApiClient().uploadFile({
+  fileBuffer: Buffer.from(bytes),
+  filename: fileName,
+  fieldMetadataUniversalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+});
 
 await client.mutation({
   updateDocument: {

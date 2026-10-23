@@ -31,14 +31,23 @@ Il **livello logico** di un'app Twenty è il codice che *viene eseguito* — han
   <Card title="Skill e agenti" icon="robot" href="/it/developers/extend/apps/logic/skills-and-agents">
     Istruzioni riutilizzabili per agenti AI e assistenti con prompt di sistema personalizzati.
   </Card>
+  <Card title="Flussi di lavoro" icon="diagram-project" href="/it/developers/extend/apps/logic/workflows">
+    Workflow pronti all'uso installati con la tua app: trigger, passaggi e modalità di esecuzione.
+  </Card>
   <Card title="Connessioni" icon="plug" href="/it/developers/extend/apps/logic/connections">
     Credenziali OAuth che la tua app detiene per servizi di terze parti — Linear, GitHub, Slack e altri.
+  </Card>
+  <Card title="Canali di messaggistica" icon="messaggi" href="/it/developers/extend/apps/logic/messaging-channels">
+    Importa le conversazioni da qualsiasi provider nei record Messaggio e Thread di messaggi di Twenty, con raggruppamento in thread e deduplicazione inclusi.
   </Card>
   <Card title="Archivio chiave-valore" icon="database" href="/it/developers/extend/apps/logic/key-value-store">
     Mantieni lo stato tra le esecuzioni delle funzioni di logica — cache, cursori e asserzioni tra spazi di lavoro.
   </Card>
   <Card title="Job in background" icon="layer-group" href="/it/developers/extend/apps/logic/background-jobs">
     Metti in coda l’esecuzione di una funzione di logica sui worker per superare il timeout per esecuzione.
+  </Card>
+  <Card title="Addebito di crediti" icon="coins" href="/it/developers/extend/apps/logic/credits">
+    Indica per cosa viene fatturata la tua app e addebita i crediti dello spazio di lavoro.
   </Card>
 </CardGroup>
 
@@ -58,4 +67,6 @@ Le funzioni vengono eseguite in sandbox in processi Node.js isolati e accedono a
 
 <Note>
 **Hook di installazione** — codice che viene eseguito prima o dopo l'installazione — condividono questo runtime ma usano le proprie funzioni define e risiedono in [Config → Install Hooks](/it/developers/extend/apps/config/install-hooks).
+
+Anche il [**controllo dello stato**](/it/developers/extend/apps/logic/logic-functions#health-check) lo condivide. Non dichiara alcun trigger: Twenty lo richiama su richiesta quando si apre la pagina delle impostazioni dell'app.
 </Note>

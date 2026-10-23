@@ -47,11 +47,11 @@ icon: wrench
 * Обычное окружение logic-функций (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) инъецируется, поэтому вы можете вызывать Twenty API с токеном своего приложения.
 * Хук автоматически прикрепляется к манифесту приложения на этапе сборки (`preInstallLogicFunction` / `postInstallLogicFunction`) — ничего не нужно указывать в [`defineApplication()`](/ru/developers/extend/apps/config/application).
 * Значение `timeoutSeconds` по умолчанию — 300, чтобы позволить выполнять более длительные задачи настройки, такие как инициализация данных.
-* **Не выполняется в dev-режиме**: `yarn twenty dev` пропускает процесс установки и синхронизирует файлы напрямую, поэтому хуки там никогда не запускаются. Вместо этого запускайте их вручную:
+* **Не выполняется в dev-режиме**: `twenty app dev` пропускает процесс установки и синхронизирует файлы напрямую, поэтому хуки там никогда не запускаются. Вместо этого запускайте их вручную:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
+twenty app exec --post-install
+twenty app exec --pre-install
 ```
 
 <AccordionGroup>
@@ -60,7 +60,10 @@ yarn twenty dev:function:exec --preInstall
 Запускается после завершения установки приложения: метаданные синхронизированы, SDK-клиент сгенерирован, новая схема доступна для запросов. Пример — инициализировать запись по умолчанию при новой установке:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -69,7 +72,9 @@ const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   const client = new CoreApiClient();
   await client.mutation({
     createPostCard: {
-      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
+      __args: {
+        data: { name: 'Welcome to Postcard', content: 'Your first card!' },
+      },
       id: true,
     },
   });
@@ -101,10 +106,16 @@ Pre-install всегда **синхронный** и блокирует уста
 Пример — скопировать значения устаревшего поля перед тем, как миграция его удалит:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePreInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+const handler = async ({
+  previousVersion,
+  newVersion,
+}: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -133,7 +144,8 @@ const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description: 'Backs up legacy notes into description before the v2 migration.',
+  description:
+    'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -156,11 +168,14 @@ export default definePreInstallLogicFunction({
 * Как и установочные хуки, он **не выполняется в режиме разработки** — вместо этого запустите его вручную:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --uninstall
+twenty app exec --uninstall-hook
 ```
 
 ```ts src/logic-functions/uninstall.ts
-import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import {
+  defineUninstallLogicFunction,
+  type UninstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {

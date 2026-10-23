@@ -34,11 +34,11 @@ description: Показывайте данные из связанных зап�
 
 3. **Поиск записей**: найдите связанного контакта
    * Объект: Контакты
-   * Фильтр: ID равен `{{trigger.object.pointOfContact.id}}`
+   * Фильтр: ID равен `{{trigger.properties.after.pointOfContactId}}`
 
 4. **Обновление записи**:
    * Объект: Сделки
-   * Запись: `{{trigger.object.id}}`
+   * Запись: `{{trigger.properties.after.id}}`
    * Email контакта: `{{searchRecords[0].email}}`
    * Телефон контакта: `{{searchRecords[0].phone}}`
 
@@ -55,16 +55,16 @@ description: Показывайте данные из связанных зап�
 
 2. **Поиск записей**: найдите все сделки для этой компании
    * Объект: Сделки
-   * Фильтр: ID компании равен `{{trigger.object.id}}`
+   * Фильтр: ID компании равен `{{trigger.properties.after.id}}`
 
 3. **Итератор**: цикл по каждой сделке
 
 4. **Обновление записи** (внутри итератора):
    * Объект: Сделки
    * Запись: `{{iterator.currentItem.id}}`
-   * Отрасль компании: `{{trigger.object.industry}}`
-   * Размер компании: `{{trigger.object.companySize}}`
-   * ARR компании: `{{trigger.object.annualRevenue}}`
+   * Отрасль компании: `{{trigger.properties.after.industry}}`
+   * Размер компании: `{{trigger.properties.after.companySize}}`
+   * ARR компании: `{{trigger.properties.after.annualRevenue}}`
 
 ## Копирование при создании записи
 
@@ -86,11 +86,11 @@ description: Показывайте данные из связанных зап�
 
 2. **Поиск записей**: получите сведения о связанной компании
    * Объект: Компании
-   * Фильтр: ID равен `{{trigger.object.company.id}}`
+   * Фильтр: ID равен `{{trigger.properties.after.companyId}}`
 
 3. **Обновление записи**:
    * Объект: Сделки
-   * Запись: `{{trigger.object.id}}`
+   * Запись: `{{trigger.properties.after.id}}`
    * Отрасль компании: `{{searchRecords[0].industry}}`
    * Размер компании: `{{searchRecords[0].employees}}`
 

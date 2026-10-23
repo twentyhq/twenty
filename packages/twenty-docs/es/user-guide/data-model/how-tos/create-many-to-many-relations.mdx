@@ -5,12 +5,8 @@ description: Conecta registros en los que muchos elementos en ambos lados pueden
 
 Las relaciones de muchos a muchos te permiten conectar varios registros en ambos lados. Por ejemplo: muchas personas pueden trabajar en muchos proyectos, y cada proyecto puede tener muchas personas.
 
-<Warning>
-**Función beta**: Las relaciones de unión están actualmente en beta. Actívalas en **Settings → Community → Features** antes de seguir esta guía.
-</Warning>
-
 <Note>
-Esta función también requiere que **Advanced mode** esté activado (interruptor en la esquina inferior izquierda de Settings).
+El interruptor **Esta es una relación con un objeto de unión** aparece en un campo de relación de uno a varios con un único objeto de destino, cuando ese destino parece un objeto de unión (sus propias relaciones, ignorando las del sistema, son todas de varios a uno) y tiene otra relación a través de la cual apuntar.
 </Note>
 
 ## Cuándo usar relaciones de muchos a muchos
@@ -40,11 +36,10 @@ Cuando activas el interruptor de relación de unión, Twenty muestra los registr
 
 ## Prerrequisitos
 
-1. **Habilita Junction Relations en Beta Features**: Ve a **Settings → Community → Features** y habilita **Junction Relations**
-2. **Activa Advanced mode**: Activa **Advanced mode** en la parte inferior izquierda de la barra lateral de Settings
-3. Planifica tu modelo de datos:
-   * ¿Qué dos objetos estás conectando?
-   * ¿Cómo debería llamarse el objeto de unión?
+Planifica tu modelo de datos:
+
+* ¿Qué dos objetos estás conectando?
+* ¿Cómo debería llamarse el objeto de unión?
 
 ## Paso 1: Crear el objeto de unión
 

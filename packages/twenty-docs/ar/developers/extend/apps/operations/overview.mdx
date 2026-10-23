@@ -1,32 +1,59 @@
 ---
 title: نظرة عامة
-description: قم ببناء تطبيقك واختباره وإصداره — أوامر CLI، واختبارات التكامل، وCI، والنشر إلى خادم أو إلى npm.
+description: ابنِ تطبيقك واختبره وأصدره — أوامر CLI، واختبارات التكامل، وCI، والترجمات، والنشر إلى خادم أو إلى npm.
 icon: rocket
 ---
 
-**طبقة العمليات** هي كل ما تفعله *على* تطبيقك وليس *به*: استدعاء أوامر CLI، وتشغيل اختبارات التكامل على خادم Twenty حقيقي، وإعداد CI، وإطلاق الإصدارات — إما كملف tarball يُنشر على خادم واحد أو كحزمة npm مُدرجة في المتجر.
+**طبقة العمليات** هي كل ما تفعله *على* تطبيقك بدلًا من *به*: استدعاء أوامر CLI، وتشغيل اختبارات التكامل على خادم Twenty حقيقي، وإعداد CI، وترجمة سلاسله النصية، وإصدار الإصدارات — إما كملف tarball يُنشر على خادم واحد أو كحزمة npm مُدرجة في المتجر.
 
-```text
-   develop ─▶ test ─▶ build ─▶ deploy / publish
-   ───────    ────    ─────    ─────────────────
-   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
-   twenty     test    twenty
-   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
-```
+| الخطوة              | أمر                            |
+| ------------------- | ------------------------------ |
+| التطوير             | `twenty app dev`               |
+| تجربة               | `yarn test`                    |
+| البناء              | `twenty app build`             |
+| النشر إلى خادم واحد | `twenty app publish --private` |
+| النشر على npm       | `twenty app publish`           |
 
 ## في هذا القسم
 
 <CardGroup cols={2}>
   <Card title="CLI" icon="terminal" href="/ar/developers/extend/apps/operations/cli">
-    مرجع `yarn twenty` — exec، logs، uninstall، remotes.
+
+
+
+
+    سجّل الدخول، واستكشف البيانات، وأنشئ التطبيقات، ونفّذ الأوامر، واعرض السجلات، وأزل التثبيت باستخدام واجهة CLI
+    `twenty`.
   </Card>
   <Card title="المزامنة والاستعادة" icon="compass" href="/ar/developers/extend/apps/operations/sync-and-recovery">
+
+
+
+
     أي أمر يُستخدم ومتى، وكيفية قراءة فروق المزامنة، وسلّم الاستعادة.
   </Card>
   <Card title="الاختبار" icon="flask" href="/ar/developers/extend/apps/operations/testing">
+
+
+
+
     إعداد Vitest، اختبارات التكامل، فحص الأنواع، سير عمل CI.
   </Card>
+  <Card title="الترجمات" icon="اللغة" href="/ar/developers/extend/apps/operations/translations">
+
+
+
+
+    علّم السلاسل النصية، واستخرج الكتالوجات، وأصدر تطبيقك بعدة لغات.
+  </Card>
   <Card title="النشر" icon="upload" href="/ar/developers/extend/apps/operations/publishing">
+
+
+
+
     البناء، نشر ملف tarball، النشر إلى npm، التثبيت.
+  </Card>
+  <Card title="المراقبة" icon="chart-line" href="/ar/developers/extend/apps/operations/monitoring">
+    الأخطاء، وحدود المعدل، والأرصدة، وأداء الدوال عبر عمليات التثبيت.
   </Card>
 </CardGroup>
