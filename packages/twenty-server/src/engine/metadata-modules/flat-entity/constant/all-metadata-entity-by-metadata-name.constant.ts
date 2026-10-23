@@ -1,3 +1,5 @@
+import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel-role.entity';
+import { AgentChatChannelEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel.entity';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type AllMetadataName } from 'twenty-shared/metadata';
@@ -75,4 +77,6 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   validationRule: ValidationRuleEntity,
   workflow: WorkflowEntity,
   workflowVersion: WorkflowVersionEntity,
+  agentChatChannel: AgentChatChannelEntity,
+  agentChatChannelRole: AgentChatChannelRoleEntity,
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;
