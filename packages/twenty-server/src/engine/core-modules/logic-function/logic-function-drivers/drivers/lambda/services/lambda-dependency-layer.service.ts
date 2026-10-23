@@ -99,10 +99,8 @@ export class LambdaDependencyLayerService {
 
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    let publishResult;
-
     try {
-      publishResult = await lambdaClient.send(
+      const publishResult = await lambdaClient.send(
         new PublishLayerVersionCommand({
           LayerName: layerName,
           Content: {
@@ -115,6 +113,13 @@ export class LambdaDependencyLayerService {
           ],
         }),
       );
+
+      if (!isDefined(publishResult.LayerVersionArn)) {
+        throw new LogicFunctionException(
+          `PublishLayerVersion did not return a LayerVersionArn for layer '${layerName}'`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+        );
+      }
     } catch (error) {
       if (
         error instanceof InvalidParameterValueException &&
@@ -127,13 +132,6 @@ export class LambdaDependencyLayerService {
       }
 
       throw error;
-    }
-
-    if (!isDefined(publishResult.LayerVersionArn)) {
-      throw new LogicFunctionException(
-        `PublishLayerVersion did not return a LayerVersionArn for layer '${layerName}'`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
-      );
     }
   }
 }
