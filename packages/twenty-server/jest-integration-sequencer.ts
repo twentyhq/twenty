@@ -1,18 +1,36 @@
-const fs = require('fs');
-const path = require('path');
-const Sequencer = require('@jest/test-sequencer').default;
+import fs from 'fs';
+import path from 'path';
 
-const readTimings = (timingsFile) => {
+import { type AggregatedResult, type Test } from '@jest/test-result';
+import Sequencer, { type ShardOptions } from '@jest/test-sequencer';
+
+type TestWithDuration = {
+  test: Test;
+  relativePath: string;
+  duration: number;
+};
+
+type Shard = {
+  duration: number;
+  tests: Test[];
+};
+
+const readTimings = (
+  timingsFile: string | undefined,
+): Record<string, number> => {
   if (!timingsFile || !fs.existsSync(timingsFile)) {
     return {};
   }
 
   try {
-    const timings = JSON.parse(fs.readFileSync(timingsFile, 'utf8'));
+    const timings: Record<string, unknown> = JSON.parse(
+      fs.readFileSync(timingsFile, 'utf8'),
+    );
 
     return Object.fromEntries(
       Object.entries(timings).filter(
-        ([, duration]) => typeof duration === 'number' && duration > 0,
+        (entry): entry is [string, number] =>
+          typeof entry[1] === 'number' && entry[1] > 0,
       ),
     );
   } catch {
@@ -20,13 +38,16 @@ const readTimings = (timingsFile) => {
   }
 };
 
-const getMedian = (values) => {
+const getMedian = (values: number[]): number => {
   const sortedValues = [...values].sort((a, b) => a - b);
 
   return sortedValues[Math.floor(sortedValues.length / 2)];
 };
 
-const compareByDurationThenPath = (a, b) => {
+const compareByDurationThenPath = (
+  a: TestWithDuration,
+  b: TestWithDuration,
+): number => {
   if (a.duration !== b.duration) {
     return b.duration - a.duration;
   }
@@ -35,13 +56,13 @@ const compareByDurationThenPath = (a, b) => {
 };
 
 class IntegrationTestSequencer extends Sequencer {
-  shard(tests, options) {
+  shard(tests: Test[], options: ShardOptions): Test[] | Promise<Test[]> {
     const timings = readTimings(process.env.INTEGRATION_TEST_TIMINGS_FILE);
     const knownDurations = Object.values(timings);
 
     if (knownDurations.length === 0) {
-      console.log(
-        'No integration test timings found, using default shard split',
+      process.stdout.write(
+        'No integration test timings found, using default shard split\n',
       );
 
       return super.shard(tests, options);
@@ -49,7 +70,7 @@ class IntegrationTestSequencer extends Sequencer {
 
     const defaultDuration = getMedian(knownDurations);
 
-    const testsWithDuration = tests
+    const testsWithDuration: TestWithDuration[] = tests
       .map((test) => {
         const relativePath = path.relative(
           test.context.config.rootDir,
@@ -64,7 +85,7 @@ class IntegrationTestSequencer extends Sequencer {
       })
       .sort(compareByDurationThenPath);
 
-    const shards = Array.from({ length: options.shardCount }, () => ({
+    const shards: Shard[] = Array.from({ length: options.shardCount }, () => ({
       duration: 0,
       tests: [],
     }));
@@ -80,14 +101,14 @@ class IntegrationTestSequencer extends Sequencer {
 
     const currentShard = shards[options.shardIndex - 1];
 
-    console.log(
-      `Shard ${options.shardIndex}/${options.shardCount}: ${currentShard.tests.length} specs, ~${Math.round(currentShard.duration / 1000)}s expected`,
+    process.stdout.write(
+      `Shard ${options.shardIndex}/${options.shardCount}: ${currentShard.tests.length} specs, ~${Math.round(currentShard.duration / 1000)}s expected\n`,
     );
 
     return currentShard.tests;
   }
 
-  cacheResults(tests, results) {
+  cacheResults(tests: Test[], results: AggregatedResult): void {
     super.cacheResults(tests, results);
 
     const outputFile = process.env.INTEGRATION_TEST_TIMINGS_OUTPUT_FILE;
@@ -97,7 +118,7 @@ class IntegrationTestSequencer extends Sequencer {
     }
 
     const rootDir = tests[0].context.config.rootDir;
-    const timings = {};
+    const timings: Record<string, number> = {};
 
     for (const testResult of results.testResults) {
       if (
@@ -117,4 +138,4 @@ class IntegrationTestSequencer extends Sequencer {
   }
 }
 
-module.exports = IntegrationTestSequencer;
+export default IntegrationTestSequencer;

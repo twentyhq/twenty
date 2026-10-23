@@ -172,6 +172,8 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@jest/test-result": "29.7.0",
+    "@jest/test-sequencer": "29.7.0",
     "@lingui/cli": "^5.9.5",
     "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
