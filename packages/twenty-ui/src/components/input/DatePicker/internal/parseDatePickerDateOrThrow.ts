@@ -1,6 +1,8 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
+import { DatePickerException } from './DatePickerException';
+
 import { DATE_PICKER_CONSTANTS } from './datePickerConstants';
 
 const DATE_PICKER_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -13,9 +15,9 @@ export const parseDatePickerDateOrThrow = (value: string): Date => {
     !isDefined(dateParts) ||
     value.length !== DATE_PICKER_DATE_STRING_LENGTH
   ) {
-    throw new RangeError(
-      doNotTranslate('Calendar dates must use the YYYY-MM-DD format.'),
-    );
+    throw new DatePickerException({
+      message: doNotTranslate('Calendar dates must use the YYYY-MM-DD format.'),
+    });
   }
 
   const [, yearString, monthString, dayString] = dateParts;
@@ -34,11 +36,11 @@ export const parseDatePickerDateOrThrow = (value: string): Date => {
     date.getUTCDate() === day;
 
   if (!isSupportedDate) {
-    throw new RangeError(
-      doNotTranslate(
+    throw new DatePickerException({
+      message: doNotTranslate(
         'Calendar dates must be valid dates in years 0001 through 9999.',
       ),
-    );
+    });
   }
 
   return date;

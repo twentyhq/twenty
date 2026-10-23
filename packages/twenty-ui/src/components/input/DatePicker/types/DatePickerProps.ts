@@ -16,7 +16,7 @@ export type DatePickerProps = Omit<
   onViewedMonthChange: (month: string) => void;
   highlightedRange?: { start: string; end: string };
   readOnly?: boolean;
-  hideGrid?: boolean;
+  isGridHidden?: boolean;
   weekStart: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   locale: string;
   weekdayLabels?: readonly [
@@ -39,7 +39,7 @@ export type DatePickerProps = Omit<
   }) => void;
   isDateUnavailable?: (date: string) => boolean;
   disabled?: boolean;
-  disabledKeyboardNavigation?: boolean;
+  isKeyboardNavigationDisabled?: boolean;
   loadingFallback?: ReactNode;
   renderHeader?: (props: DatePickerHeaderProps) => ReactNode;
 };

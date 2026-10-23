@@ -294,7 +294,7 @@ export const RangeReadOnlyNavigation: Story = {
 export const HeaderOnly: Story = {
   render: ({ onValueChange, onViewedMonthChange }) => (
     <DatePickerExample
-      hideGrid
+      isGridHidden
       onValueChange={onValueChange}
       onViewedMonthChange={onViewedMonthChange}
     />

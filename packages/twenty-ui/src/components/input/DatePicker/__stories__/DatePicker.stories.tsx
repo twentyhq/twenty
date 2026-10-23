@@ -47,12 +47,12 @@ export const Display: Story = {
     yearLabel: { control: false },
     'aria-label': { control: false },
   },
-  render: ({ disabled, highlightedRange, readOnly, hideGrid }) => (
+  render: ({ disabled, highlightedRange, readOnly, isGridHidden }) => (
     <DatePickerExample
       disabled={disabled}
       highlightedRange={highlightedRange}
       readOnly={readOnly}
-      hideGrid={hideGrid}
+      isGridHidden={isGridHidden}
     />
   ),
 };

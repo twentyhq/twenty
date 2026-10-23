@@ -67,13 +67,13 @@ Day rendering, accessibility markup, keyboard date navigation, and unavailable-d
 
 Set `isDateUnavailable` to prevent selection of dates according to your application's policy. The callback receives a canonical `YYYY-MM-DD` string. Set `disabled` to disable date selection and the default header controls.
 
-`disabledKeyboardNavigation` defaults to `false`. Existing product input adapters can set it to preserve their keyboard behavior. Header controls keep their native keyboard interaction.
+`isKeyboardNavigationDisabled` defaults to `false`. Existing product input adapters can set it to preserve their keyboard behavior. Header controls keep their native keyboard interaction.
 
 ## Highlighted ranges and read-only views
 
 Pass `highlightedRange={{ start: '2026-10-05', end: '2026-10-11' }}` to highlight an inclusive date range. The application computes the range; highlighting does not select multiple dates or change `value`.
 
-Use `readOnly` to display a computed range or selected date while allowing month and year browsing. Use `hideGrid` for a month-only navigator that retains the same header.
+Use `readOnly` to display a computed range or selected date while allowing month and year browsing. Use `isGridHidden` for a month-only navigator that retains the same header.
 
 ## Custom headers
 
@@ -85,7 +85,7 @@ Use `renderHeader` to compose an existing product header with date inputs, time 
 | `onPreviousMonth`, `onNextMonth` | Browse to the adjacent month. |
 | `onMonthChange` | Browse to a month number from 1 through 12. |
 | `onYearChange` | Browse to the supplied year. |
-| `previousMonthDisabled`, `nextMonthDisabled` | Whether each adjacent-month action is unavailable. |
+| `isPreviousMonthDisabled`, `isNextMonthDisabled` | Whether each adjacent-month action is unavailable. |
 
 These header actions change the viewed month and leave the selected date unchanged.
 
@@ -117,8 +117,8 @@ export const CalendarWithProductHeader = () => {
         viewedMonth: month,
         onPreviousMonth,
         onNextMonth,
-        previousMonthDisabled,
-        nextMonthDisabled,
+        isPreviousMonthDisabled,
+        isNextMonthDisabled,
       }) => (
         <Text
           style={{
@@ -127,11 +127,11 @@ export const CalendarWithProductHeader = () => {
             gap: themeCssVariables.spacing[2],
           }}
         >
-          <Button size="sm" disabled={previousMonthDisabled} onClick={onPreviousMonth}>
+          <Button size="sm" disabled={isPreviousMonthDisabled} onClick={onPreviousMonth}>
             Previous month
           </Button>
           <Text>{month}</Text>
-          <Button size="sm" disabled={nextMonthDisabled} onClick={onNextMonth}>
+          <Button size="sm" disabled={isNextMonthDisabled} onClick={onNextMonth}>
             Next month
           </Button>
         </Text>
@@ -149,7 +149,7 @@ Pass `loadingFallback` to preserve a product loading surface while the calendar 
 
 For the default header, `portalContainer` mounts selector popups in a host-provided container. `onNavigationOpenChange` receives `{ open, control }` for `month` or `year`, with `open: true` when opening starts and `open: false` after closing completes. Hosts can retain their popup and focus handling through dismissal. Custom headers own their popup integration.
 
-Keep product headers, text inputs, time editing, timezone conversion, clear actions, and relative-filter computation in `twenty-front`. Date, date-time, and month-only adapters can compose this shared calendar engine with `highlightedRange`, `readOnly`, and `hideGrid` as needed.
+Keep product headers, text inputs, time editing, timezone conversion, clear actions, and relative-filter computation in `twenty-front`. Date, date-time, and month-only adapters can compose this shared calendar engine with `highlightedRange`, `readOnly`, and `isGridHidden` as needed.
 
 ## Props
 

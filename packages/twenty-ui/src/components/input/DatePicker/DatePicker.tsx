@@ -30,7 +30,7 @@ export const DatePicker = ({
   onViewedMonthChange,
   highlightedRange,
   readOnly = false,
-  hideGrid = false,
+  isGridHidden = false,
   weekStart,
   locale,
   weekdayLabels,
@@ -42,7 +42,7 @@ export const DatePicker = ({
   onNavigationOpenChange,
   isDateUnavailable,
   disabled = false,
-  disabledKeyboardNavigation = false,
+  isKeyboardNavigationDisabled = false,
   renderHeader,
   loadingFallback,
   dir,
@@ -89,7 +89,7 @@ export const DatePicker = ({
     minDate: parseDatePickerLocalDateOrThrow('0001-01-01'),
     maxDate: parseDatePickerLocalDateOrThrow('9999-12-31'),
     disabled,
-    disabledKeyboardNavigation,
+    disabledKeyboardNavigation: isKeyboardNavigationDisabled,
     openToDate: parseDatePickerLocalDateOrThrow(`${viewedMonth}-01`),
     calendarStartDay: weekStart,
     onMonthChange: handleViewedMonthChange,
@@ -135,8 +135,8 @@ export const DatePicker = ({
         onNextMonth: increaseMonth,
         onMonthChange: (month: number) => changeMonth(month - 1),
         onYearChange: changeYear,
-        previousMonthDisabled: disabled || prevMonthButtonDisabled,
-        nextMonthDisabled: disabled || nextMonthButtonDisabled,
+        isPreviousMonthDisabled: disabled || prevMonthButtonDisabled,
+        isNextMonthDisabled: disabled || nextMonthButtonDisabled,
       };
 
       return isDefined(renderHeader) ? (
@@ -171,7 +171,7 @@ export const DatePicker = ({
       },
       className: clsx(styles.calendar, className),
       'data-readonly': readOnly || undefined,
-      'data-hide-grid': hideGrid || undefined,
+      'data-hide-grid': isGridHidden || undefined,
       children: (
         <Suspense
           fallback={

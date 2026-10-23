@@ -9,7 +9,7 @@ export const DatePickerExample = ({
   initialViewedMonth = '2026-10',
   highlightedRange,
   readOnly,
-  hideGrid,
+  isGridHidden,
   disabled,
   isDateUnavailable,
   onValueChange,
@@ -20,7 +20,7 @@ export const DatePickerExample = ({
     DatePickerProps,
     | 'highlightedRange'
     | 'readOnly'
-    | 'hideGrid'
+    | 'isGridHidden'
     | 'disabled'
     | 'isDateUnavailable'
     | 'onValueChange'
@@ -50,7 +50,7 @@ export const DatePickerExample = ({
       }}
       highlightedRange={highlightedRange}
       readOnly={readOnly}
-      hideGrid={hideGrid}
+      isGridHidden={isGridHidden}
       weekStart={1}
       locale="en-US"
       weekdayLabels={DATE_PICKER_WEEKDAY_LABELS}

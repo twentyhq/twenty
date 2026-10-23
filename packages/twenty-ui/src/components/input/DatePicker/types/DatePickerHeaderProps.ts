@@ -4,6 +4,6 @@ export type DatePickerHeaderProps = {
   onNextMonth: () => void;
   onMonthChange: (month: number) => void;
   onYearChange: (year: number) => void;
-  previousMonthDisabled: boolean;
-  nextMonthDisabled: boolean;
+  isPreviousMonthDisabled: boolean;
+  isNextMonthDisabled: boolean;
 };

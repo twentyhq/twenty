@@ -26,9 +26,9 @@ export const DATE_PICKER_PROP_DESCRIPTIONS = {
     'Inclusive YYYY-MM-DD start and end dates to highlight. The application computes the range independently from the selected date.',
   readOnly:
     'Prevents date selection while allowing month and year browsing and displaying the selected date or highlighted range.',
-  hideGrid:
+  isGridHidden:
     'Hides weekday and date rows while retaining the header for a month-only navigator.',
-  disabledKeyboardNavigation:
+  isKeyboardNavigationDisabled:
     'Disables keyboard date navigation in the calendar engine for compatibility with existing input wrappers. Header controls retain their native keyboard behavior.',
   loadingFallback:
     'Custom Suspense fallback while the calendar engine loads. Defaults to a 300px-high Skeleton.',

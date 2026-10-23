@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { DatePickerException } from '../DatePickerException';
+
 import { parseDatePickerDateOrThrow } from '../parseDatePickerDateOrThrow';
 
 describe('parseDatePickerDateOrThrow', () => {
@@ -23,6 +25,8 @@ describe('parseDatePickerDateOrThrow', () => {
     '0000-01-01',
     '10000-01-01',
   ])('rejects the invalid or noncanonical date %s', (value) => {
-    expect(() => parseDatePickerDateOrThrow(value)).toThrow(RangeError);
+    expect(() => parseDatePickerDateOrThrow(value)).toThrow(
+      DatePickerException,
+    );
   });
 });

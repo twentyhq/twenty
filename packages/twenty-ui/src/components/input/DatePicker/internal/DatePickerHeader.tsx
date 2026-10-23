@@ -1,5 +1,6 @@
 import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { IconChevronLeft, IconChevronRight } from '@ui/icon';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 import styles from '../DatePicker.module.scss';
 import { type DatePickerProps } from '../types/DatePickerProps';
@@ -16,8 +17,8 @@ export const DatePickerHeader = ({
   onNextMonth,
   onMonthChange,
   onYearChange,
-  previousMonthDisabled,
-  nextMonthDisabled,
+  isPreviousMonthDisabled,
+  isNextMonthDisabled,
   locale,
   previousMonthLabel,
   nextMonthLabel,
@@ -44,7 +45,7 @@ export const DatePickerHeader = ({
   const monthFormatter = new Intl.DateTimeFormat(locale, {
     month: 'long',
     calendar: 'gregory',
-    timeZone: 'UTC',
+    timeZone: doNotTranslate('UTC'),
   });
   const yearFormatter = new Intl.NumberFormat(locale, { useGrouping: false });
   const months = [];
@@ -97,7 +98,7 @@ export const DatePickerHeader = ({
       <div className={styles.navigation}>
         <LightIconButton
           size="md"
-          disabled={disabled || previousMonthDisabled}
+          disabled={disabled || isPreviousMonthDisabled}
           aria-label={previousMonthLabel}
           onClick={onPreviousMonth}
         >
@@ -105,7 +106,7 @@ export const DatePickerHeader = ({
         </LightIconButton>
         <LightIconButton
           size="md"
-          disabled={disabled || nextMonthDisabled}
+          disabled={disabled || isNextMonthDisabled}
           aria-label={nextMonthLabel}
           onClick={onNextMonth}
         >

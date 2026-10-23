@@ -14950,20 +14950,6 @@
         "description": "Disables date selection and the default header controls."
       },
       {
-        "name": "disabledKeyboardNavigation",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Disables keyboard date navigation in the calendar engine for compatibility with existing input wrappers. Header controls retain their native keyboard behavior."
-      },
-      {
-        "name": "hideGrid",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Hides weekday and date rows while retaining the header for a month-only navigator."
-      },
-      {
         "name": "highlightedRange",
         "type": "{ start: string; end: string; }",
         "required": false,
@@ -14976,6 +14962,20 @@
         "required": false,
         "defaultValue": null,
         "description": "Returns whether a canonical YYYY-MM-DD date cannot be selected. The calendar engine handles unavailable-date presentation and navigation."
+      },
+      {
+        "name": "isGridHidden",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Hides weekday and date rows while retaining the header for a month-only navigator."
+      },
+      {
+        "name": "isKeyboardNavigationDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables keyboard date navigation in the calendar engine for compatibility with existing input wrappers. Header controls retain their native keyboard behavior."
       },
       {
         "name": "loadingFallback",

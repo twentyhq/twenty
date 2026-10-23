@@ -1,5 +1,7 @@
 import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
+import { DatePickerException } from './DatePickerException';
+
 import { parseDatePickerDateOrThrow } from './parseDatePickerDateOrThrow';
 
 export const validateDatePickerHighlightedRangeOrThrow = ({
@@ -13,10 +15,10 @@ export const validateDatePickerHighlightedRangeOrThrow = ({
   parseDatePickerDateOrThrow(end);
 
   if (start > end) {
-    throw new RangeError(
-      doNotTranslate(
+    throw new DatePickerException({
+      message: doNotTranslate(
         'Calendar highlighted ranges must end on or after their start date.',
       ),
-    );
+    });
   }
 };

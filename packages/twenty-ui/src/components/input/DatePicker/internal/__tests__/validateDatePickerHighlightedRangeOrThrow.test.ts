@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { DatePickerException } from '../DatePickerException';
+
 import { validateDatePickerHighlightedRangeOrThrow } from '../validateDatePickerHighlightedRangeOrThrow';
 
 describe('validateDatePickerHighlightedRangeOrThrow', () => {
@@ -19,7 +21,7 @@ describe('validateDatePickerHighlightedRangeOrThrow', () => {
     { start: '2026-10-07', end: '2026-02-30' },
   ])('rejects the invalid range from $start to $end', (range) => {
     expect(() => validateDatePickerHighlightedRangeOrThrow(range)).toThrow(
-      RangeError,
+      DatePickerException,
     );
   });
 });
