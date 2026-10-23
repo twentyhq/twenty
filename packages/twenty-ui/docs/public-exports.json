@@ -92,6 +92,7 @@
     "values": {
       "CountrySelect": "components/input/CountrySelect/CountrySelect",
       "CurrencyPicker": "components/input/CurrencyPicker/CurrencyPicker",
+      "DatePicker": "components/input/DatePicker/DatePicker",
       "EmojiPicker": "components/input/EmojiPicker/EmojiPicker",
       "FormFieldRow": "components/input/FormFieldRow/FormFieldRow",
       "IconButton": "components/input/IconButton/IconButton",
@@ -119,6 +120,8 @@
       "CurrencyPickerRootProps": "components/input/CurrencyPicker/types/CurrencyPickerRootProps",
       "CurrencyPickerState": "components/input/CurrencyPicker/types/CurrencyPickerState",
       "CurrencyPickerTriggerProps": "components/input/CurrencyPicker/types/CurrencyPickerTriggerProps",
+      "DatePickerHeaderProps": "components/input/DatePicker/types/DatePickerHeaderProps",
+      "DatePickerProps": "components/input/DatePicker/types/DatePickerProps",
       "EmojiPickerProps": "components/input/EmojiPicker/types/EmojiPickerProps",
       "FormFieldRowProps": "components/input/FormFieldRow/types/FormFieldRowProps",
       "IconButtonProps": "components/input/IconButton/types/IconButtonProps",
