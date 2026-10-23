@@ -134,7 +134,7 @@ const StyledEditorContainer = styled.div<{
       margin: 0 0 var(--editor-list-item-spacing);
 
       &::marker {
-        color: var(--editor-accent-color);
+        color: var(--editor-list-marker-color);
       }
 
       & > p {
