@@ -76,10 +76,9 @@ export const MENU: {
           href: '/apps',
           icon: IconApps,
           preview: {
-            image: '/images/menu/developers.webp',
+            image: '/images/menu/apps.webp',
             imageAlt: msg`Twenty apps marketplace`,
             imagePosition: 'center',
-            imageScale: 1.6,
             title: msg`Vetted apps for your workspace`,
             description: msg`Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty.`,
           },
