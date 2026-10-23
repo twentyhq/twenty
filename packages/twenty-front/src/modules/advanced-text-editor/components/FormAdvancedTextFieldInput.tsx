@@ -1,4 +1,5 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
+import { FormAdvancedTextFieldInputEffect } from '@/advanced-text-editor/components/FormAdvancedTextFieldInputEffect';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
@@ -17,8 +18,9 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isUndefined } from '@sniptt/guards';
 import { type Editor } from '@tiptap/core';
-import { type ComponentType, useEffect, useId, useState } from 'react';
+import { type ComponentType, useId, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -96,7 +98,9 @@ type FormAdvancedTextFieldInputProps = {
   label?: string;
   error?: string;
   hint?: string;
-  defaultValue: string | undefined | null;
+  defaultValue?: string | null;
+  value?: string | null;
+  'aria-label'?: string;
   onChange?: (value: string) => void;
   readonly?: boolean;
   placeholder?: string;
@@ -118,6 +122,8 @@ export const FormAdvancedTextFieldInput = ({
   error,
   hint,
   defaultValue,
+  value,
+  'aria-label': ariaLabel,
   placeholder,
   onChange,
   readonly,
@@ -136,6 +142,7 @@ export const FormAdvancedTextFieldInput = ({
   const { chrome, variant, minHeight: profileMinHeight } = profile;
 
   const editorMinHeight = minHeight ?? profileMinHeight;
+  const accessibleLabel = ariaLabel ?? label;
   const isFullScreenEnabled = enableFullScreen ?? profile.enableFullScreen;
 
   const instanceId = useId();
@@ -155,7 +162,16 @@ export const FormAdvancedTextFieldInput = ({
     profile,
     placeholder: placeholder,
     readonly,
-    defaultValue,
+    defaultValue: isUndefined(value) ? defaultValue : value,
+    editorProps: {
+      attributes: {
+        'aria-multiline': 'true',
+        role: 'textbox',
+        ...(isDefined(accessibleLabel)
+          ? { 'aria-label': accessibleLabel }
+          : {}),
+      },
+    },
     onUpdate: (editor) => {
       onChange?.(serializeAdvancedTextEditorDocument(editor));
     },
@@ -179,14 +195,6 @@ export const FormAdvancedTextFieldInput = ({
     onFileUpload,
     onFileUploadError,
   });
-
-  useEffect(() => {
-    onEditorReady?.(editor);
-
-    return () => {
-      onEditorReady?.(null);
-    };
-  }, [editor, onEditorReady]);
 
   const handleFullScreenChange = (isFullScreenOpen: boolean) => {
     flushSync(() => {
@@ -228,8 +236,18 @@ export const FormAdvancedTextFieldInput = ({
     hasClosePageButton: !isMobile,
   });
 
+  const editorEffect = (
+    <FormAdvancedTextFieldInputEffect
+      editor={editor}
+      value={value}
+      readonly={readonly}
+      parseLegacyDocument={profile.parseLegacyDocument}
+      onEditorReady={onEditorReady}
+    />
+  );
+
   if (!isDefined(editor)) {
-    return null;
+    return editorEffect;
   }
 
   const fullScreenOverlay = isFullScreenEnabled
@@ -250,6 +268,7 @@ export const FormAdvancedTextFieldInput = ({
 
   return (
     <>
+      {editorEffect}
       <StyledAdvancedTextFieldContainerWrapper
         hasFieldChrome={chrome === 'field'}
       >

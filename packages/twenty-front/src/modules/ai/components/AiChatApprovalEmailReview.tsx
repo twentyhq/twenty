@@ -1,7 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type Editor } from '@tiptap/core';
-import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Button, Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -9,7 +7,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { AiChatApprovalEmailBodyEffect } from '@/ai/components/internal/AiChatApprovalEmailBodyEffect';
 import { AiChatEmailRecipientsRow } from '@/ai/components/internal/AiChatEmailRecipientsRow';
 import { type AiChatApprovalReviewEmailDraft } from '@/ai/types/AiChatApprovalReviewEmailDraft';
 
@@ -36,7 +33,6 @@ export const AiChatApprovalEmailReview = ({
   disabled = false,
 }: AiChatApprovalEmailReviewProps) => {
   const { t } = useLingui();
-  const [editor, setEditor] = useState<Editor | null>(null);
   const isCcBccShown =
     draft.isCcBccExpanded ||
     isNonEmptyArray(draft.cc) ||
@@ -99,18 +95,12 @@ export const AiChatApprovalEmailReview = ({
       </ComposerFieldRow>
       <StyledBody role="group" aria-label={t`Body`}>
         <FormAdvancedTextFieldInput
-          defaultValue={draft.body}
+          value={draft.body}
+          aria-label={t`Body`}
           onChange={(body) => updateDraft({ body })}
           readonly={disabled}
           placeholder={t`Write the email`}
           profile={INLINE_EMAIL_BODY_EDITOR_PROFILE}
-          onEditorReady={setEditor}
-        />
-        <AiChatApprovalEmailBodyEffect
-          editor={editor}
-          label={t`Body`}
-          body={draft.body}
-          disabled={disabled}
         />
       </StyledBody>
     </StyledEmail>
