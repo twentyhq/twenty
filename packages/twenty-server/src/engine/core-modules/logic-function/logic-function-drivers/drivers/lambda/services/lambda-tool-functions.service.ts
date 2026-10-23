@@ -263,7 +263,9 @@ export class LambdaToolFunctionsService {
   async ensureBuilderLambdaExists({
     functionName,
     copyFiles,
+    dependencyLayerArn,
   }: {
+    dependencyLayerArn?: string;
     functionName: string;
     copyFiles: (directory: string) => Promise<void>;
   }): Promise<void> {
@@ -300,7 +302,9 @@ export class LambdaToolFunctionsService {
           ZipFile: await fs.readFile(lambdaZipPath),
         },
         FunctionName: functionName,
-        Layers: [commonLayerArn],
+        Layers: isDefined(dependencyLayerArn)
+          ? [commonLayerArn, dependencyLayerArn]
+          : [commonLayerArn],
         Handler: 'index.handler',
         Role: this.options.lambdaRole,
         Runtime: LogicFunctionRuntime.NODE22,

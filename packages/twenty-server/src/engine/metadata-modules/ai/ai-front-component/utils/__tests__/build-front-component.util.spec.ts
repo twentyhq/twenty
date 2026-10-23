@@ -13,7 +13,9 @@ let sharedDependencies: Awaited<
   ReturnType<typeof buildFrontComponentSharedDependencies>
 >;
 beforeAll(async () => {
-  sharedDependencies = await buildFrontComponentSharedDependencies();
+  sharedDependencies = await buildFrontComponentSharedDependencies({
+    resolveDirectory: __dirname,
+  });
 });
 const buildFrontComponent = async (
   input: Parameters<typeof compileFrontComponent>[0]['input'],
@@ -122,7 +124,9 @@ export function Component() {
     );
     const next = await buildFrontComponent(INPUT);
     expect(next.sharedDependencies).toBe(sharedDependencies);
-    const rebuilt = await buildFrontComponentSharedDependencies();
+    const rebuilt = await buildFrontComponentSharedDependencies({
+      resolveDirectory: __dirname,
+    });
     expect(rebuilt.checksum).toBe(sharedDependencies.checksum);
     expect(
       createHash('sha256').update(sharedDependencies.source).digest('hex'),

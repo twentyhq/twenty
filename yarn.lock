@@ -51302,7 +51302,6 @@ __metadata:
     twenty-emails: "workspace:*"
     twenty-oxlint-rules: "workspace:*"
     twenty-shared: "workspace:*"
-    twenty-ui: "workspace:*"
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.31#./patches/typeorm+0.3.31.patch"
     typescript: "npm:^5.9.3"

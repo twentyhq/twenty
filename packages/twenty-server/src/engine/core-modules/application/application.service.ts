@@ -1,3 +1,4 @@
+import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-dirname';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -13,7 +14,10 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
+import {
+  getDefaultApplicationPackageFields,
+  type DefaultApplicationPackageFields,
+} from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -565,7 +569,9 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    const defaultPackageFields = await getDefaultApplicationPackageFields({
+      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRNAME,
+    });
 
     const applicationRegistration =
       await this.createWorkspaceCustomApplicationRegistration(
@@ -598,10 +604,11 @@ export class ApplicationService {
       queryRunner,
     );
 
-    await this.uploadDefaultPackageFilesAndSetFileIds(
-      workspaceCustomApplication,
+    await this.uploadPackageFilesAndSetFileIds({
+      application: workspaceCustomApplication,
+      packageFields: defaultPackageFields,
       queryRunner,
-    );
+    });
 
     return workspaceCustomApplication;
   }
@@ -646,21 +653,38 @@ export class ApplicationService {
     >,
     queryRunner?: QueryRunner,
   ): Promise<void> {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    await this.uploadPackageFilesAndSetFileIds({
+      application,
+      queryRunner,
+      packageFields: await getDefaultApplicationPackageFields(),
+    });
+  }
 
+  private async uploadPackageFilesAndSetFileIds({
+    application,
+    packageFields,
+    queryRunner,
+  }: {
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'workspaceId'
+    >;
+    packageFields: DefaultApplicationPackageFields;
+    queryRunner?: QueryRunner;
+  }): Promise<void> {
     const packageJsonChecksum = logicFunctionCreateHash(
-      JSON.stringify(JSON.parse(defaultPackageFields.packageJsonContent)),
+      JSON.stringify(JSON.parse(packageFields.packageJsonContent)),
     );
     const yarnLockChecksum = logicFunctionCreateHash(
-      defaultPackageFields.yarnLockContent,
+      packageFields.yarnLockContent,
     );
     const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
-      defaultPackageFields.packageJsonContent,
-      defaultPackageFields.yarnLockContent,
+      packageFields.packageJsonContent,
+      packageFields.yarnLockContent,
     );
 
     const packageJsonFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.packageJsonContent,
+      sourceFile: packageFields.packageJsonContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,
@@ -671,7 +695,7 @@ export class ApplicationService {
     });
 
     const yarnLockFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.yarnLockContent,
+      sourceFile: packageFields.yarnLockContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,

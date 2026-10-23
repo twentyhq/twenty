@@ -232,8 +232,7 @@
     "twenty-client-sdk": "workspace:*",
     "twenty-emails": "workspace:*",
     "twenty-oxlint-rules": "workspace:*",
-    "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*"
+    "twenty-shared": "workspace:*"
   },
   "engines": {
     "node": "^24.5.0",

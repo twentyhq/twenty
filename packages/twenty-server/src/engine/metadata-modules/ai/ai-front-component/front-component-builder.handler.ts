@@ -1,19 +1,27 @@
+import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
+import { type FrontComponentBuilderInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-input.type';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
 import { buildFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
 import { frontComponentSharedDependenciesManifestSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-shared-dependencies-manifest.schema';
-import { type FrontComponentBuildInput } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-build-input.type';
 
-export const handler = async (input: FrontComponentBuildInput) => {
-  const manifest = frontComponentSharedDependenciesManifestSchema.parse(
-    JSON.parse(
-      await readFile(join(__dirname, 'shared-dependencies.json'), 'utf8'),
-    ),
-  );
+export const handler = async (event: FrontComponentBuilderInput) => {
   try {
+    if (event.action === 'buildDependencies') {
+      const vendor = await buildFrontComponentSharedDependencies({
+        resolveDirectory: '/opt/nodejs',
+      });
+      return checkResponseSize({
+        success: true as const,
+        source: vendor.source,
+        checksum: vendor.checksum,
+        exports: Object.fromEntries(vendor.exportNamesBySpecifier),
+      });
+    }
+    const manifest = frontComponentSharedDependenciesManifestSchema.parse(
+      event.manifest,
+    );
     const built = await buildFrontComponent({
-      input,
+      input: event.input,
       sharedDependencies: {
         checksum: manifest.checksum,
         exportNamesBySpecifier: new Map(Object.entries(manifest.exports)),
@@ -26,13 +34,7 @@ export const handler = async (input: FrontComponentBuildInput) => {
       checksum,
       sharedDependenciesChecksum,
     };
-    if (Buffer.byteLength(JSON.stringify(result)) > 6 * 1024 * 1024) {
-      throw new FrontComponentBuildException(
-        'Component build exceeds the Lambda response limit.',
-        'INVALID_INPUT',
-      );
-    }
-    return result;
+    return checkResponseSize(result);
   } catch (error) {
     if (
       !(
@@ -49,4 +51,14 @@ export const handler = async (input: FrontComponentBuildInput) => {
       error: error instanceof Error ? error.message : String(error),
     };
   }
+};
+
+const checkResponseSize = <TResult>(result: TResult): TResult => {
+  if (Buffer.byteLength(JSON.stringify(result)) > 6 * 1024 * 1024) {
+    throw new FrontComponentBuildException(
+      'Component build exceeds the Lambda response limit.',
+      'INVALID_INPUT',
+    );
+  }
+  return result;
 };
