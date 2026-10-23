@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   MessageChannelType,
   MessageParticipantRole,
@@ -12,7 +11,6 @@ import { In, Repository } from 'typeorm';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { type AppMessageParticipantInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { type SendAppChannelMessageOutput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.output';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
@@ -20,6 +18,10 @@ import {
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import {
+  type AppMessageReplyRecipient,
+  buildAppMessageReplyRecipients,
+} from 'src/engine/metadata-modules/message-channel/utils/build-app-message-reply-recipients.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -40,7 +42,7 @@ type SendArgs = {
 
 type Conversation = {
   threadExternalId: string;
-  recipients: Omit<AppMessageParticipantInput, 'role'>[];
+  recipients: AppMessageReplyRecipient[];
 };
 
 @Injectable()
@@ -257,7 +259,7 @@ export class ApplicationMessageSendService {
           return {
             threadExternalId,
             recipients: await this.dropLinksToDeletedRecords(
-              this.toRecipients({
+              buildAppMessageReplyRecipients({
                 participants: byRecency(participants),
                 channelHandle: messageChannel.handle,
               }),
@@ -331,49 +333,5 @@ export class ApplicationMessageSendService {
       .find({ where: { id: In(definedIds) }, select: { id: true } });
 
     return new Set(records.map((record) => record.id));
-  }
-
-  // newest first, so a later display name or identity link wins, and an older one fills what it omits
-  private toRecipients({
-    participants,
-    channelHandle,
-  }: {
-    participants: Pick<
-      MessageParticipantWorkspaceEntity,
-      'handle' | 'displayName' | 'personId' | 'workspaceMemberId'
-    >[];
-    channelHandle: string;
-  }): Conversation['recipients'] {
-    const recipientsByHandle = new Map<string, Conversation['recipients'][0]>();
-
-    for (const participant of participants) {
-      if (!isNonEmptyString(participant.handle)) {
-        continue;
-      }
-
-      const handleKey = participant.handle.toLowerCase();
-
-      if (handleKey === channelHandle.toLowerCase()) {
-        continue;
-      }
-
-      const newerRecipient = recipientsByHandle.get(handleKey);
-
-      recipientsByHandle.set(handleKey, {
-        handle: newerRecipient?.handle ?? participant.handle,
-        displayName:
-          newerRecipient?.displayName ??
-          (isNonEmptyString(participant.displayName)
-            ? participant.displayName
-            : undefined),
-        personId: newerRecipient?.personId ?? participant.personId ?? undefined,
-        workspaceMemberId:
-          newerRecipient?.workspaceMemberId ??
-          participant.workspaceMemberId ??
-          undefined,
-      });
-    }
-
-    return [...recipientsByHandle.values()];
   }
 }
