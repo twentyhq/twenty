@@ -17,13 +17,19 @@ export const richTextCompositeType: CompositeType = {
       hidden: false,
       isRequired: false,
     },
+    {
+      name: 'tiptap',
+      type: FieldMetadataType.TEXT,
+      hidden: false,
+      isRequired: false,
+    },
   ],
 };
 
-// with import only markdown subfield is filled, then blocknote is undefined
 export const richTextValueSchema = z.object({
+  tiptap: z.string().nullable().optional(),
+  markdown: z.string().nullable().optional(),
   blocknote: z.string().nullable().optional(),
-  markdown: z.string().nullable(),
 });
 
 export type RichTextMetadata = z.infer<typeof richTextValueSchema>;

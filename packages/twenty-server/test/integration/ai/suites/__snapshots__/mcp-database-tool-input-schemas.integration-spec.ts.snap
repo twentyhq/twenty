@@ -10,9 +10,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
           "bodyV2": {
             "description": "Note body",
             "properties": {
-              "blocknote": {
-                "type": "string",
-              },
               "markdown": {
                 "type": "string",
               },
@@ -60,9 +57,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
     "bodyV2": {
       "description": "Note body",
       "properties": {
-        "blocknote": {
-          "type": "string",
-        },
         "markdown": {
           "type": "string",
         },
@@ -218,6 +212,15 @@ exports[`MCP database tool input schemas should list the input schemas of the no
                 "type": "string",
               },
               "markdown": {
+                "enum": [
+                  "AscNullsFirst",
+                  "AscNullsLast",
+                  "DescNullsFirst",
+                  "DescNullsLast",
+                ],
+                "type": "string",
+              },
+              "tiptap": {
                 "enum": [
                   "AscNullsFirst",
                   "AscNullsLast",
@@ -483,7 +486,7 @@ exports[`MCP database tool input schemas should list the input schemas of the no
       "type": "object",
     },
     "groupBy": {
-      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: bodyV2.blocknote, bodyV2.markdown, createdAt (date), createdBy.source, createdBy.workspaceMemberId, createdBy.name, title, updatedAt (date), updatedBy.source, updatedBy.workspaceMemberId, updatedBy.name.",
+      "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: bodyV2.blocknote, bodyV2.markdown, bodyV2.tiptap, createdAt (date), createdBy.source, createdBy.workspaceMemberId, createdBy.name, title, updatedAt (date), updatedBy.source, updatedBy.workspaceMemberId, updatedBy.name.",
       "items": {
         "anyOf": [
           {
@@ -521,6 +524,28 @@ exports[`MCP database tool input schemas should list the input schemas of the no
                 },
                 "required": [
                   "markdown",
+                ],
+                "type": "object",
+              },
+            },
+            "required": [
+              "bodyV2",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "bodyV2": {
+                "additionalProperties": false,
+                "properties": {
+                  "tiptap": {
+                    "const": true,
+                    "type": "boolean",
+                  },
+                },
+                "required": [
+                  "tiptap",
                 ],
                 "type": "object",
               },
@@ -1082,9 +1107,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
         "bodyV2": {
           "description": "Note body",
           "properties": {
-            "blocknote": {
-              "type": "string",
-            },
             "markdown": {
               "type": "string",
             },
@@ -1133,9 +1155,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
     "bodyV2": {
       "description": "Note body",
       "properties": {
-        "blocknote": {
-          "type": "string",
-        },
         "markdown": {
           "type": "string",
         },
@@ -1184,9 +1203,6 @@ exports[`MCP database tool input schemas should list the input schemas of the no
           "bodyV2": {
             "description": "Note body",
             "properties": {
-              "blocknote": {
-                "type": "string",
-              },
               "markdown": {
                 "type": "string",
               },

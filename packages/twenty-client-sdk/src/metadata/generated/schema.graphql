@@ -4249,6 +4249,7 @@ input RevokeApiKeyInput {
 type RichTextBody {
   blocknote: String
   markdown: String
+  tiptap: String
 }
 
 type Role {
