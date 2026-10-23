@@ -69,5 +69,5 @@ export const renderFrontComponent = async ({
     sharedDependenciesSource: renderContext.sharedDependenciesSource,
   });
 
-  componentModule.default(renderContainer);
+  await componentModule.default(renderContainer, renderContext.componentProps);
 };

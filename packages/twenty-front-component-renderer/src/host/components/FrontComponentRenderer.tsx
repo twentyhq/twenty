@@ -38,11 +38,16 @@ const fallbackComponentRegistry =
 
 type FrontComponentRendererProps = {
   componentUrl: string;
+  componentSource?: string;
+  componentProps?: Record<string, unknown>;
+  sharedDependenciesSource?: string;
+  onReady?: () => void;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   sharedDependenciesUrl?: string;
+  sharedDependenciesCredentials?: RequestCredentials;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   executionContext: FrontComponentExecutionContext;
@@ -55,11 +60,16 @@ type FrontComponentRendererProps = {
 
 export const FrontComponentRenderer = ({
   componentUrl,
+  componentSource,
+  componentProps,
+  sharedDependenciesSource,
+  onReady,
   applicationAccessToken,
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
   sharedDependenciesUrl,
+  sharedDependenciesCredentials,
   applicationVariables,
   storageNamespace,
   executionContext,
@@ -93,11 +103,16 @@ export const FrontComponentRenderer = ({
       <div ref={geometryTracker.setRoot} style={ROOT_CONTAINER_STYLE}>
         <FrontComponentWorkerEffect
           componentUrl={componentUrl}
+          componentSource={componentSource}
+          componentProps={componentProps}
+          sharedDependenciesSource={sharedDependenciesSource}
+          onReady={onReady}
           applicationAccessToken={applicationAccessToken}
           apiUrl={apiUrl}
           functionsBaseUrl={functionsBaseUrl}
           sdkClientUrls={sdkClientUrls}
           sharedDependenciesUrl={sharedDependenciesUrl}
+          sharedDependenciesCredentials={sharedDependenciesCredentials}
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}
           initialExecutionContext={initialExecutionContext}
