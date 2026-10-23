@@ -1,12 +1,20 @@
+import { Fragment, lazy, Suspense } from 'react';
+import { useIsMobile } from 'twenty-ui/utilities';
+
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isNavigationMenuItemAiChatSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAiChatSection';
 import { isNavigationMenuItemSectionAboveContainerItems } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSectionAboveContainerItems';
-import { NavigationMenuItemAiChatSection } from '@/navigation-menu-item/display/sections/ai-chat/components/NavigationMenuItemAiChatSection';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
+import { NavigationMenuItemAiChatSection } from '@/navigation-menu-item/display/sections/ai-chat/components/NavigationMenuItemAiChatSection';
 import { NavigationMenuItemCustomSection } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSection';
 import { NavigationMenuItemAddSectionButton } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddSectionButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsMobile } from 'twenty-ui/utilities';
+
+const LazyNavigationMenuSectionSortable = lazy(() =>
+  import('@/navigation-menu-item/display/dnd/components/NavigationMenuSectionSortable').then(
+    (module) => ({ default: module.NavigationMenuSectionSortable }),
+  ),
+);
 
 type NavigationMenuItemCustomSectionsProps = {
   parentId: string | null;
@@ -19,24 +27,39 @@ export const NavigationMenuItemCustomSections = ({
 }: NavigationMenuItemCustomSectionsProps) => {
   const isMobile = useIsMobile();
   const isAboveItems = placement === 'above-items';
-  const sections = useWorkspaceNavigationMenuSections(parentId).filter(
+  const allSections = useWorkspaceNavigationMenuSections(parentId);
+  const sections = allSections.filter(
     (section) =>
       isNavigationMenuItemSectionAboveContainerItems(section) === isAboveItems,
   );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
+  const isEditable = isLayoutCustomizationModeEnabled && !isMobile;
 
   return (
     <>
-      {sections.map((section) =>
-        isNavigationMenuItemAiChatSection(section) ? (
-          <NavigationMenuItemAiChatSection key={section.id} section={section} />
+      {sections.map((section) => {
+        const sectionContent = isNavigationMenuItemAiChatSection(section) ? (
+          <NavigationMenuItemAiChatSection section={section} />
         ) : (
-          <NavigationMenuItemCustomSection key={section.id} section={section} />
-        ),
-      )}
-      {!isAboveItems && isLayoutCustomizationModeEnabled && !isMobile && (
+          <NavigationMenuItemCustomSection section={section} />
+        );
+
+        return isEditable ? (
+          <Suspense key={section.id} fallback={sectionContent}>
+            <LazyNavigationMenuSectionSortable
+              section={section}
+              index={allSections.indexOf(section)}
+            >
+              {sectionContent}
+            </LazyNavigationMenuSectionSortable>
+          </Suspense>
+        ) : (
+          <Fragment key={section.id}>{sectionContent}</Fragment>
+        );
+      })}
+      {!isAboveItems && isEditable && (
         <NavigationMenuItemAddSectionButton parentId={parentId} />
       )}
     </>

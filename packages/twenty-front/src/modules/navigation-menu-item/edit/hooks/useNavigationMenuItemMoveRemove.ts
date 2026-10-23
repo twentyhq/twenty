@@ -4,6 +4,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NAVIGATION_MENU_CONTAINER_ITEMS_SECTION_POSITION } from '@/navigation-menu-item/common/constants/NavigationMenuContainerItemsSectionPosition';
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
+import { getNavigationMenuItemPositionNextTo } from '@/navigation-menu-item/common/utils/getNavigationMenuItemPositionNextTo';
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
 import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
@@ -93,6 +94,25 @@ export const useNavigationMenuItemMoveRemove = (
     });
   };
 
+  const moveNextTo = async (
+    navigationMenuItemId: string,
+    targetNavigationMenuItemId: string,
+  ) => {
+    const sortedSiblings = getSortedSiblings(navigationMenuItemId);
+    if (!isDefined(sortedSiblings)) {
+      return;
+    }
+    const position = getNavigationMenuItemPositionNextTo({
+      sortedSiblings,
+      navigationMenuItemId,
+      targetNavigationMenuItemId,
+    });
+    if (!isDefined(position)) {
+      return;
+    }
+    await updateItem(navigationMenuItemId, { position });
+  };
+
   const remove = async (navigationMenuItemId: string) => {
     const itemToRemove = currentItems.find(
       (item) => item.id === navigationMenuItemId,
@@ -160,5 +180,13 @@ export const useNavigationMenuItemMoveRemove = (
     });
   };
 
-  return { items, getSortedSiblings, moveUp, moveDown, remove, moveToFolder };
+  return {
+    items,
+    getSortedSiblings,
+    moveUp,
+    moveDown,
+    moveNextTo,
+    remove,
+    moveToFolder,
+  };
 };
