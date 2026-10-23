@@ -95,7 +95,9 @@ describe('ApplicationInstallService', () => {
     {} as MessageQueueService,
     {} as WorkspaceCacheService,
     { incrementCounterBy: jest.fn() } as unknown as MetricsService,
-    { recordApplicationLogs: jest.fn() } as unknown as EventLogEmitterService,
+    {
+      recordApplicationPlatformEvents: jest.fn(),
+    } as unknown as EventLogEmitterService,
   );
 
   const install = () =>
