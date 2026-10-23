@@ -5,13 +5,13 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { DropdownPlacementContext } from '../internal/DropdownPlacementContext';
 
-export const useDropdownPlacement = () => {
+export const useDropdownPlacementOrThrow = () => {
   const placement = useContext(DropdownPlacementContext);
 
   if (!isDefined(placement)) {
     throw new Error(
       doNotTranslate(
-        'useDropdownPlacement must be used within Dropdown.Content',
+        'useDropdownPlacementOrThrow must be used within Dropdown.Content',
       ),
     );
   }

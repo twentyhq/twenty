@@ -4,14 +4,14 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
 
 import { Dropdown } from '../Dropdown';
-import { useDropdownPlacement } from '../hooks/useDropdownPlacement';
+import { useDropdownPlacementOrThrow } from '../hooks/useDropdownPlacementOrThrow';
 
 type DropdownPlacementExampleProps = {
   onContentRef: Ref<HTMLDivElement>;
 };
 
 const ResolvedDropdownPlacement = () => {
-  const { side, align } = useDropdownPlacement();
+  const { side, align } = useDropdownPlacementOrThrow();
 
   return (
     <Text

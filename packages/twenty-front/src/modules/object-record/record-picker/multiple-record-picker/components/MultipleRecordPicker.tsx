@@ -1,7 +1,7 @@
 import {
   Dropdown,
   useDropdownPage,
-  useDropdownPlacement,
+  useDropdownPlacementOrThrow,
 } from 'twenty-ui/components/navigation';
 import { type KeyboardEvent, useRef } from 'react';
 import { useStore } from 'jotai';
@@ -49,7 +49,7 @@ export const MultipleRecordPicker = ({
   isCreatePending = false,
 }: MultipleRecordPickerProps) => {
   const { page, goBack } = useDropdownPage();
-  const { side, align } = useDropdownPlacement();
+  const { side, align } = useDropdownPlacementOrThrow();
   const resolvedLayoutDirection = getMultipleRecordPickerLayoutDirection({
     layoutDirection,
     side,

@@ -463,7 +463,7 @@ export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
 
 Right-clicking elsewhere while the menu is open moves it to the new point.
 
-Call `useDropdownPlacement` inside `Dropdown.Content` to read its resolved `side` and `align`, including collision flips. Use the resolved side to place a picker's search and create controls beside its trigger. Keep the controls in their visual DOM order so keyboard navigation follows the layout. A search below the results receives focus from `ArrowDown` on the last result; `ArrowUp` from that search returns to the last result.
+Call `useDropdownPlacementOrThrow` inside `Dropdown.Content` to read its resolved `side` and `align`, including collision flips. Use the resolved side to place a picker's search and create controls beside its trigger. Keep the controls in their visual DOM order so keyboard navigation follows the layout. A search below the results receives focus from `ArrowDown` on the last result; `ArrowUp` from that search returns to the last result.
 
 ## Labels
 

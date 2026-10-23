@@ -1,9 +1,10 @@
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { isDefined } from 'twenty-shared/utils';
-import { type useDropdownPlacement } from 'twenty-ui/components/navigation';
+import { type useDropdownPlacementOrThrow } from 'twenty-ui/components/navigation';
 
-type GetMultipleRecordPickerLayoutDirectionArgs = ReturnType<
-  typeof useDropdownPlacement
+type GetMultipleRecordPickerLayoutDirectionArgs = Pick<
+  ReturnType<typeof useDropdownPlacementOrThrow>,
+  'side' | 'align'
 > & {
   layoutDirection?: RecordPickerLayoutDirection;
 };
