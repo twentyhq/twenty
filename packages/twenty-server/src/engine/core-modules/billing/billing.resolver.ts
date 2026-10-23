@@ -28,6 +28,7 @@ import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
+import { BillingTrialService } from 'src/engine/core-modules/billing/services/billing-trial.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -63,6 +64,7 @@ export class BillingResolver {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
+    private readonly billingTrialService: BillingTrialService,
     private readonly billingPortalWorkspaceService: BillingPortalWorkspaceService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
@@ -471,8 +473,7 @@ export class BillingResolver {
   async endSubscriptionTrialPeriod(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<BillingEndTrialPeriodDTO> {
-    const result =
-      await this.billingSubscriptionUpdateService.endTrialPeriod(workspace);
+    const result = await this.billingTrialService.endTrialPeriod(workspace);
 
     if (!result.hasPaymentMethod && result.stripeCustomerId) {
       const billingPortalUrl =

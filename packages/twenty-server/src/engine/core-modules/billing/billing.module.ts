@@ -31,6 +31,7 @@ import { BillingPriceService } from 'src/engine/core-modules/billing/services/bi
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
+import { BillingTrialService } from 'src/engine/core-modules/billing/services/billing-trial.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -75,6 +76,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     BillingSubscriptionService,
     BillingSubscriptionUpdateService,
+    BillingTrialService,
     BillingSubscriptionItemService,
     BillingPortalWorkspaceService,
     BillingProductService,
@@ -105,6 +107,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingSubscriptionService,
     BillingCreditAllowanceService,
     BillingSubscriptionUpdateService,
+    BillingTrialService,
     BillingService,
     BillingUsageService,
     BillingCreditRolloverService,

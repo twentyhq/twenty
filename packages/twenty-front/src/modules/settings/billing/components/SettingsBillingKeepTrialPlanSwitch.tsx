@@ -45,9 +45,9 @@ export const SettingsBillingKeepTrialPlanSwitch = ({
   const trialPlanLabel = getBillingPlanLabel(trialPlanKey);
   const downgradePlanLabel = getBillingPlanLabel(downgradePlanKey);
 
-  const handleChange = (keepTrialPlan: boolean) =>
+  const handleChange = (shouldKeepTrialPlan: boolean) =>
     applyBillingSubscriptionChange(
-      keepTrialPlan
+      shouldKeepTrialPlan
         ? { type: 'CANCEL_PLAN_SWITCH' }
         : { type: 'SWITCH_PLAN', targetPlanKey: downgradePlanKey },
     );

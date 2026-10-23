@@ -6,19 +6,14 @@ const TRIAL_START = 1_700_000_000;
 const TRIAL_END = 1_700_604_800;
 const DOWNGRADE_END = 1_703_283_200;
 
-const buildPhase = (startDate: number, endDate: number) => ({
-  start_date: startDate,
-  end_date: endDate,
-});
-
-const trialPhase = buildPhase(TRIAL_START, TRIAL_END);
-const downgradePhase = buildPhase(TRIAL_END, DOWNGRADE_END);
+const trialPhase = { start_date: TRIAL_START, end_date: TRIAL_END };
+const downgradePhase = { start_date: TRIAL_END, end_date: DOWNGRADE_END };
 
 describe('getScheduleCurrentAndNextPhasesOrThrow', () => {
   it('follows the phase Stripe reports as current, with the later phase as next', () => {
     expect(
       getScheduleCurrentAndNextPhasesOrThrow({
-        current_phase: { start_date: TRIAL_START, end_date: TRIAL_END },
+        current_phase: trialPhase,
         phases: [downgradePhase, trialPhase],
       }),
     ).toEqual({ currentPhase: trialPhase, nextPhase: downgradePhase });
@@ -27,7 +22,7 @@ describe('getScheduleCurrentAndNextPhasesOrThrow', () => {
   it('has no next phase once Stripe has moved to the last phase', () => {
     expect(
       getScheduleCurrentAndNextPhasesOrThrow({
-        current_phase: { start_date: TRIAL_END, end_date: DOWNGRADE_END },
+        current_phase: downgradePhase,
         phases: [trialPhase, downgradePhase],
       }),
     ).toEqual({ currentPhase: downgradePhase, nextPhase: undefined });

@@ -19,7 +19,7 @@ import {
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
+import { BillingTrialService } from 'src/engine/core-modules/billing/services/billing-trial.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
@@ -42,7 +42,7 @@ export class BillingPortalWorkspaceService {
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
+    private readonly billingTrialService: BillingTrialService,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
@@ -129,7 +129,7 @@ export class BillingPortalWorkspaceService {
         idempotencyKey: `${customer?.billingSubscriptions.length ?? 0}`,
       });
 
-    await this.billingSubscriptionUpdateService.scheduleReverseTrialDowngrade(
+    await this.billingTrialService.scheduleReverseTrialDowngrade(
       stripeSubscription.id,
     );
 
@@ -179,7 +179,7 @@ export class BillingPortalWorkspaceService {
         },
       );
 
-    await this.billingSubscriptionUpdateService.scheduleReverseTrialDowngrade(
+    await this.billingTrialService.scheduleReverseTrialDowngrade(
       stripeSubscription.id,
     );
 
@@ -266,7 +266,7 @@ export class BillingPortalWorkspaceService {
     const paymentIntent = this.findSubscriptionClientSecret(stripeSubscription);
 
     if (isDefined(paymentIntent)) {
-      await this.billingSubscriptionUpdateService.scheduleReverseTrialDowngrade(
+      await this.billingTrialService.scheduleReverseTrialDowngrade(
         stripeSubscription.id,
       );
 
