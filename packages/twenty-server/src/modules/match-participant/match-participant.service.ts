@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
-import { isDefined } from 'twenty-shared/utils';
-import { Any, In } from 'typeorm';
+import { MessageChannelType } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Any, In, Repository } from 'typeorm';
 
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -12,6 +15,7 @@ import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calend
 import { ParticipantTargetReconciliationService } from 'src/modules/match-participant/participant-target-reconciliation.service';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
+import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -70,6 +74,8 @@ export class MatchParticipantService<
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly participantTargetReconciliationService: ParticipantTargetReconciliationService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
 
   private getParticipantRepository({
@@ -292,22 +298,31 @@ export class MatchParticipantService<
             transactionScope,
           });
 
+          if (!isNonEmptyArray(participantMatching.personEmails)) {
+            return;
+          }
+
           // emails before and after the change pick candidates, so links made any other way are left alone
+          const participantsWithEmailHandle = await participantRepository
+            .createQueryBuilder('participant')
+            .where('LOWER("participant"."handle") IN (:...emails)', {
+              emails: [
+                ...new Set(
+                  participantMatching.personEmails.map((email) =>
+                    email.toLowerCase(),
+                  ),
+                ),
+              ],
+            })
+            .getMany<ParticipantWorkspaceEntity>();
+
           const participantsToRematch =
-            participantMatching.personEmails.length > 0
-              ? await participantRepository
-                  .createQueryBuilder('participant')
-                  .where('LOWER("participant"."handle") IN (:...emails)', {
-                    emails: [
-                      ...new Set(
-                        participantMatching.personEmails.map((email) =>
-                          email.toLowerCase(),
-                        ),
-                      ),
-                    ],
-                  })
-                  .getMany<ParticipantWorkspaceEntity>()
-              : [];
+            await this.withoutAppChannelParticipants({
+              participants: participantsWithEmailHandle,
+              objectMetadataName,
+              workspaceId,
+              transactionScope,
+            });
 
           await this.matchParticipants({
             matchWith: 'personOnly',
@@ -321,13 +336,73 @@ export class MatchParticipantService<
     }, authContext);
   }
 
+  // apps link their own participants, even ones whose handle looks like an email
+  private async withoutAppChannelParticipants({
+    participants,
+    objectMetadataName,
+    workspaceId,
+    transactionScope,
+  }: {
+    participants: ParticipantWorkspaceEntity[];
+    objectMetadataName: ObjectMetadataName;
+    workspaceId: string;
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<ParticipantWorkspaceEntity[]> {
+    if (
+      objectMetadataName !== 'messageParticipant' ||
+      !isNonEmptyArray(participants)
+    ) {
+      return participants;
+    }
+
+    const appMessageChannels = await this.messageChannelRepository.find({
+      where: { workspaceId, type: MessageChannelType.APP },
+      select: { id: true },
+    });
+
+    if (!isNonEmptyArray(appMessageChannels)) {
+      return participants;
+    }
+
+    const appChannelAssociations =
+      await getWorkspaceRepositoryWithOptionalTransaction<MessageChannelMessageAssociationWorkspaceEntity>(
+        {
+          objectMetadataName: 'messageChannelMessageAssociation',
+          transactionScope,
+          workspaceOrmManager: this.workspaceOrmManager,
+          rolePermissionConfig: { shouldBypassPermissionChecks: true },
+        },
+      ).find({
+        where: {
+          messageId: In([...new Set(this.getSourceRecordIds(participants))]),
+          messageChannelId: In(
+            appMessageChannels.map((messageChannel) => messageChannel.id),
+          ),
+        },
+        select: { messageId: true },
+      });
+
+    const appChannelMessageIds = new Set(
+      appChannelAssociations.map((association) => association.messageId),
+    );
+
+    return participants.filter(
+      (participant) =>
+        !appChannelMessageIds.has(this.getSourceRecordId(participant)),
+    );
+  }
+
   private getSourceRecordIds(
     participants: ParticipantWorkspaceEntity[],
   ): string[] {
     return participants.map((participant) =>
-      'messageId' in participant
-        ? participant.messageId
-        : participant.calendarEventId,
+      this.getSourceRecordId(participant),
     );
+  }
+
+  private getSourceRecordId(participant: ParticipantWorkspaceEntity): string {
+    return 'messageId' in participant
+      ? participant.messageId
+      : participant.calendarEventId;
   }
 }
