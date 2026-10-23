@@ -298,7 +298,8 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     heading: { cloud: msg`Enterprise`, selfHost: msg`Enterprise` },
     icon: {
       alt: 'Enterprise plan icon',
-      src: '/images/pricing/plans/enterprise-icon.webp',
+      src: '/images/pricing/plans/enterprise.webp',
+      widthPx: 51,
     },
     tagline: {
       cloud: msg`Dedicated scale for large companies.`,
@@ -342,7 +343,8 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     heading: { cloud: msg`Organization`, selfHost: msg`Organization` },
     icon: {
       alt: 'Organization plan icon',
-      src: '/images/pricing/plans/organization-icon.webp',
+      src: '/images/pricing/plans/organization.webp',
+      widthPx: 84,
     },
     tagline: {
       cloud: msg`More AI and control for several teams.`,
@@ -386,8 +388,8 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     heading: { cloud: msg`Pro`, selfHost: msg`Pro` },
     icon: {
       alt: 'Pro plan icon',
-      src: '/images/pricing/plans/pro-icon.webp',
-      widthPx: 60,
+      src: '/images/pricing/plans/pro.webp',
+      widthPx: 73,
     },
     tagline: {
       cloud: msg`A custom agentic CRM for one team.`,
