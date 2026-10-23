@@ -168,7 +168,7 @@ export default meta;
 type Story = StoryObj<typeof SidePanelShareRecordContent>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const page = within(canvasElement.ownerDocument.body);
     const generalAccess = await page.findByRole('button', {
       name: 'Restricted',
@@ -191,9 +191,23 @@ export const Default: Story = {
     await userEvent.tab();
     await expect(generalAccess).toHaveFocus();
     await userEvent.keyboard('{Enter}');
-    await expect(
-      await page.findByRole('menuitemradio', { name: 'Restricted (default)' }),
-    ).toBeVisible();
+    const restrictedOption = await page.findByRole('menuitemradio', {
+      name: 'Restricted (default)',
+    });
+    await expect(restrictedOption).toBeVisible();
+    const restrictedLabel = within(restrictedOption).getByText(
+      'Restricted (default)',
+    );
+    await canvasElement.ownerDocument.fonts.ready;
+    await expect(restrictedLabel.scrollWidth).toBeLessThanOrEqual(
+      restrictedLabel.clientWidth,
+    );
+    const generalAccessHeading = page.getByText(
+      `Everyone with access to ${args.objectLabelPlural}`,
+    );
+    const headingRange = canvasElement.ownerDocument.createRange();
+    headingRange.selectNodeContents(generalAccessHeading);
+    await expect(headingRange.getClientRects()).toHaveLength(1);
     await expect(
       page.queryByRole('menuitemradio', { name: 'Full access' }),
     ).not.toBeInTheDocument();

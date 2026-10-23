@@ -9,6 +9,7 @@ import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharin
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
 import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordDropdownItem';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -75,6 +76,7 @@ export const SidePanelShareRecordGeneralAccessItem = ({
           : getRecordShareAccessLevelLabel(generalAccessLevel)
       }
       disabled={isSaving}
+      width={GenericDropdownContentWidth.Medium}
     >
       <Dropdown.Section>
         <Dropdown.OptionItem
