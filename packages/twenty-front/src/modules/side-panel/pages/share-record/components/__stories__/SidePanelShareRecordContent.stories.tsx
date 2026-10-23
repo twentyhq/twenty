@@ -665,8 +665,20 @@ export const Saving: Story = {
     await expect(page.getByRole('button', { name: 'Invite' })).toBeDisabled();
     await userEvent.type(addPeople, 'Jane');
     await expect(addPeople).toHaveValue('');
+    for (const name of ['Restricted', 'Sales Viewer', 'Phil Schiler Editor']) {
+      const row = page.getByRole('button', { name });
+      await expect(row).toHaveAttribute('aria-disabled', 'true');
+      await expect(
+        row.querySelector('.tabler-icon-chevron-right'),
+      ).toBeVisible();
+      await userEvent.click(row);
+      row.focus();
+      await userEvent.keyboard('{Enter} {ArrowDown}');
+      await expect(page.queryByRole('menu')).not.toBeInTheDocument();
+    }
     await expect(setShare).not.toHaveBeenCalled();
     await expect(setGeneralAccess).not.toHaveBeenCalled();
+    await expect(removeShare).not.toHaveBeenCalled();
   },
 };
 

@@ -55,7 +55,7 @@ export const SidePanelShareRecordDropdownItem = ({
             }
             description={description}
             descriptionPlacement="end"
-            endIcon={disabled ? undefined : <IconChevronRight />}
+            endIcon={<IconChevronRight />}
             focusableWhenDisabled
           >
             {label}
