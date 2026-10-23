@@ -159,7 +159,7 @@ const PRO_FEATURES_SELF_HOST: PlanFeature[] = [
 
 const ORGANIZATION_FEATURES_CLOUD: PlanFeature[] = [
   {
-    title: msg`Control who can do what, and how much`,
+    title: msg`Control who does what`,
     description: msg`Custom roles, permissions and usage limits`,
     visual: { kind: 'icon', icon: IconLock },
   },
