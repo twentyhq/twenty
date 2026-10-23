@@ -33,6 +33,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { resolveAgentRunCallingApplication } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-calling-application.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
@@ -169,7 +170,11 @@ export class ChatExecutionService {
       locale,
       onCodeExecutionUpdate,
       ...authorization,
-      application: resolveAgentRunCallingApplication(authorization.authContext),
+      // The chat auth context only carries the workspace id, which can't tell the custom application apart
+      application: resolveAgentRunCallingApplication({
+        ...authorization.authContext,
+        workspace: fromWorkspaceEntityToFlat(workspace),
+      }),
       resolveExecutionContext,
     };
 
