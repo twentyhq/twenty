@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull } from 'typeorm';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
@@ -72,21 +73,118 @@ export class AgentChatThreadService {
   // An existing thread is left for the caller to check access to.
   async createThreadIfMissing({
     threadId,
+    title,
+    isSubscribed,
     ...args
-  }: AgentChatThreadAccessArgs & { channelId?: string }): Promise<void> {
+  }: AgentChatThreadAccessArgs & {
+    title?: string;
+    isSubscribed?: boolean;
+    channelId?: string;
+  }): Promise<boolean> {
     if (
       await this.threadRepository.existsBy(args.workspaceId, { id: threadId })
     ) {
-      return;
+      return false;
     }
 
     try {
-      await this.createThread({ ...args, id: threadId });
+      await this.createThread({ ...args, id: threadId, title, isSubscribed });
     } catch (error) {
       if (!isUniqueViolationError(error)) {
         throw error;
       }
+
+      return false;
     }
+
+    return true;
+  }
+
+  async claimThreadForRun({
+    title,
+    ...args
+  }: AgentChatThreadAccessArgs & { title: string }): Promise<void> {
+    const threadBefore = await this.findThread(args);
+
+    if (isDefined(threadBefore)) {
+      return this.claimExistingThread({ args, threadBefore });
+    }
+
+    if (
+      await this.createThreadIfMissing({ ...args, title, isSubscribed: false })
+    ) {
+      return;
+    }
+
+    const threadCreatedMeanwhile = await this.findThread(args);
+
+    if (isDefined(threadCreatedMeanwhile)) {
+      await this.claimExistingThread({
+        args,
+        threadBefore: threadCreatedMeanwhile,
+      });
+    }
+  }
+
+  private findThread(
+    args: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'>,
+  ): Promise<AgentChatThreadWorkspaceEntity | null> {
+    return this.threadRepository.findOne(args.workspaceId, {
+      where: { id: args.threadId },
+    });
+  }
+
+  private async claimExistingThread({
+    args,
+    threadBefore,
+  }: {
+    args: AgentChatThreadAccessArgs;
+    threadBefore: AgentChatThreadWorkspaceEntity;
+  }): Promise<void> {
+    if (!isDefined(threadBefore.workspaceMemberId)) {
+      const claimedThread =
+        await this.sharingService.claimUnownedThreadForRun(args);
+
+      if (isDefined(claimedThread)) {
+        await this.participantService.emitParticipantCreated(args);
+        await this.threadRecordEventService.emitThreadUpdated({
+          workspaceId: args.workspaceId,
+          threadBefore,
+        });
+      }
+    }
+
+    if (isDefined(threadBefore.deletedAt)) {
+      await this.restoreDeletedThread({ args, threadBefore });
+    }
+  }
+
+  async restoreThread(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadWorkspaceEntity> {
+    const threadBefore = await this.findThread(args);
+
+    return this.restoreDeletedThread({ args, threadBefore });
+  }
+
+  private async restoreDeletedThread({
+    args,
+    threadBefore,
+  }: {
+    args: AgentChatThreadAccessArgs;
+    threadBefore: AgentChatThreadWorkspaceEntity | null;
+  }): Promise<AgentChatThreadWorkspaceEntity> {
+    const thread = await this.sharingService.restoreThreadWithAccess(args);
+
+    if (isDefined(threadBefore)) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId: args.workspaceId,
+        threadBefore,
+        action: DatabaseEventAction.RESTORED,
+      });
+    }
+
+    return thread;
   }
 
   // owned threads are skipped so an upsert cannot reassign them

@@ -29,7 +29,6 @@ import {
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-// The full page configs pull in the BlockNote editor, which jest cannot parse
 jest.mock('@/side-panel/constants/SidePanelPagesConfig', () => {
   const { SidePanelPages: Pages } = jest.requireActual('twenty-shared/types');
   const { SidePanelDashboardRecordTableSettings } = jest.requireActual(
