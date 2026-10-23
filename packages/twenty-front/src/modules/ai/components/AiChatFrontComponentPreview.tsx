@@ -173,13 +173,13 @@ export const AiChatFrontComponentPreview = ({
     <StyledPreview>
       <div>
         <Badge>{t`Sample data`}</Badge>
-      {isDefined(preview) && (
-        <Badge>
-          {preview.pageLayoutType === PageLayoutType.DASHBOARD
-            ? t`Dashboard widget`
-            : t`Record page widget`}
-        </Badge>
-      )
+        {isDefined(preview) && (
+          <Badge>
+            {preview.pageLayoutType === PageLayoutType.DASHBOARD
+              ? t`Dashboard widget`
+              : t`Record page widget`}
+          </Badge>
+        )}
       </div>
       {isDefined(preview) && (
         <>
