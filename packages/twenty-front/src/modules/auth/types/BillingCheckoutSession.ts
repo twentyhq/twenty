@@ -4,7 +4,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export type BillingCheckoutSession = {
-  plan: BillingPlanKey;
+  plan?: BillingPlanKey;
   interval: SubscriptionInterval;
   requirePaymentMethod: boolean;
 };
