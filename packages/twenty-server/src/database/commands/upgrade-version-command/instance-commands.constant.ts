@@ -257,7 +257,7 @@ import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/up
 import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792686689823-backfill-role-agent-chat-channel-access';
 import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686749823-add-agent-chat-channel-navigation-menu-item';
 import { AddCustomConfigToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1792909336247-add-custom-config-to-connection-provider';
-import { AddSendMessageLogicFunctionToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1792761674000-add-send-message-logic-function-to-connection-provider';
+import { AddSendMessageLogicFunctionToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1792768373578-add-send-message-logic-function-to-connection-provider';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

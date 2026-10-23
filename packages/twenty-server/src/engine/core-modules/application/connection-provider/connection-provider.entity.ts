@@ -94,7 +94,7 @@ export class ConnectionProviderEntity
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.52.0_AddSendMessageLogicFunctionToConnectionProviderFastInstanceCommand_1792761674000',
+      '2.52.0_AddSendMessageLogicFunctionToConnectionProviderFastInstanceCommand_1792768373578',
   })
   sendMessageLogicFunctionUniversalIdentifier: string | null;
 
