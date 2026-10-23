@@ -63,9 +63,8 @@ export const MENU: {
           icon: IconCode,
           preview: {
             image: '/images/menu/developers.webp',
-            imageAlt: msg`Blue developer illustration with branching arrows`,
+            imageAlt: msg`Blue code window illustration`,
             imagePosition: 'center',
-            imageScale: 1.6,
             title: msg`Build on an open platform`,
             description: msg`APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data.`,
           },
