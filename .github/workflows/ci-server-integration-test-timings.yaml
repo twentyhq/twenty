@@ -4,7 +4,6 @@ on:
   schedule:
     - cron: '0 4 * * *'
   workflow_dispatch:
-  pull_request:
 
 permissions:
   contents: read
@@ -33,7 +32,6 @@ jobs:
           key: integration-test-timings-${{ github.run_id }}
           restore-keys: integration-test-timings-
           path: .cache/integration-test-timings
-      # Overlays on the previous timings so specs that failed tonight keep their last known duration.
       - name: Merge shard timings into previous timings
         run: |
           if ! compgen -G 'shard-timings/*.json' > /dev/null; then
@@ -50,5 +48,5 @@ jobs:
       - name: Save timings
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (save)
         with:
-          key: integration-test-timings-${{ github.run_id }}
+          key: integration-test-timings-${{ github.run_id }}-${{ github.run_attempt }}
           path: .cache/integration-test-timings

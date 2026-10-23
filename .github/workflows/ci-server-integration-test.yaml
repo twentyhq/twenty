@@ -17,8 +17,6 @@ env:
   NODE_COMPILE_CACHE: ${{ github.workspace }}/.cache/node-compile
 
 jobs:
-  # Resolved once per run so every shard splits on identical timings; a shard
-  # restoring a newer cache on its own would skip or duplicate specs.
   server-integration-test-timings:
     timeout-minutes: 5
     runs-on: ubuntu-latest
