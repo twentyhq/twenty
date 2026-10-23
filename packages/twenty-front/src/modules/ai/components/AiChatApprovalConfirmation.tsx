@@ -28,6 +28,7 @@ type AiChatApprovalConfirmationProps = {
   onConfirm: () => void;
   onCancel: () => void;
   disabled?: boolean;
+  selectionSummary?: string;
 };
 
 export const AiChatApprovalConfirmation = ({
@@ -35,6 +36,7 @@ export const AiChatApprovalConfirmation = ({
   onConfirm,
   onCancel,
   disabled = false,
+  selectionSummary,
 }: AiChatApprovalConfirmationProps) => {
   const { t } = useLingui();
   const cardCount = cards.length;
@@ -69,7 +71,8 @@ export const AiChatApprovalConfirmation = ({
                 />
               </AlertDialog.Title>
               <AlertDialog.Description>
-                {t`${selectedCount} records selected · ${skippedCount} records skipped`}
+                {selectionSummary ??
+                  t`${selectedCount} records selected · ${skippedCount} records skipped`}
               </AlertDialog.Description>
             </AlertDialog.Header>
             <AlertDialog.Body>
