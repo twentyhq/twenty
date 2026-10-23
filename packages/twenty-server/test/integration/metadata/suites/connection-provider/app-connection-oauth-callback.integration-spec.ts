@@ -10,10 +10,8 @@ import { uploadApplicationFile } from 'test/integration/metadata/suites/applicat
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
-import {
-  type MarkerServer,
-  startMarkerServer,
-} from 'test/integration/utils/start-marker-server.util';
+import { type MarkerServer } from 'test/integration/types/marker-server.type';
+import { startMarkerServer } from 'test/integration/utils/start-marker-server.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   type LogicFunctionManifest,

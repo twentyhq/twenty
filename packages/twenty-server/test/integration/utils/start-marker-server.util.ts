@@ -1,16 +1,9 @@
 import { createServer } from 'node:http';
 
+import { type MarkerServer } from 'test/integration/types/marker-server.type';
 import { isDefined } from 'twenty-shared/utils';
 
 // Logic functions cannot write outside their execution directory, so tests observe them over HTTP.
-export type MarkerServer = {
-  markerUrl: (name: string) => string;
-  hasMarker: (markerUrl: string) => boolean;
-  readMarker: (markerUrl: string) => string;
-  clearMarker: (markerUrl: string) => void;
-  close: () => Promise<void>;
-};
-
 export const startMarkerServer = async (): Promise<MarkerServer> => {
   const markers = new Map<string, string>();
 
