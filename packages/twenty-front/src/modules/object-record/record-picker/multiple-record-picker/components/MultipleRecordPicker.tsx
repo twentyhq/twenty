@@ -24,6 +24,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Key } from 'ts-key-enum';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
+import { getMultipleRecordPickerLayoutDirection } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerLayoutDirection';
 import { MultipleRecordPickerSessionEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSessionEffect';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
@@ -50,12 +51,11 @@ export const MultipleRecordPicker = ({
 }: MultipleRecordPickerProps) => {
   const { page, goBack } = useDropdownPage();
   const { side, align } = useDropdownPlacement();
-  const resolvedLayoutDirection =
-    layoutDirection ??
-    (side === 'top' ||
-    ((side === 'left' || side === 'right') && align === 'end')
-      ? 'search-bar-on-bottom'
-      : 'search-bar-on-top');
+  const resolvedLayoutDirection = getMultipleRecordPickerLayoutDirection({
+    layoutDirection,
+    side,
+    align,
+  });
   // oxlint-disable-next-line twenty/no-state-useref
   const createInFlightRef = useRef(false);
 
