@@ -171,6 +171,20 @@ describe('performLocalFetchRelayRequest', () => {
     expect(manual.headers).toContainEqual(['location', '/echo']);
   });
 
+  it('rejects a redirect when the request forbids it', async () => {
+    await expect(
+      performLocalFetchRelayRequest({
+        request: {
+          url: `${baseUrl}/redirect`,
+          method: 'GET',
+          headers: [],
+          redirect: 'error',
+        },
+        httpClient: axios.create(),
+      }),
+    ).rejects.toThrow('was not allowed');
+  });
+
   it('stops the request when the signal aborts', async () => {
     const abortController = new AbortController();
 

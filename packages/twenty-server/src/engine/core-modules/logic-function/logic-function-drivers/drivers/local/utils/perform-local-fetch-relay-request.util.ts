@@ -49,6 +49,14 @@ export const performLocalFetchRelayRequest = async ({
     ...(request.redirect === 'follow' ? {} : { maxRedirects: 0 }),
   });
 
+  if (
+    request.redirect === 'error' &&
+    response.status >= 300 &&
+    response.status < 400
+  ) {
+    throw new Error(`Redirect from ${request.url} was not allowed`);
+  }
+
   const headers: [string, string][] = [];
 
   for (const [name, value] of Object.entries(response.headers)) {
