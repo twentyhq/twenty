@@ -1,21 +1,14 @@
 ---
 title: 6. 게시
-icon: 'rocket'
-description: Add marketplace metadata and publish your app.
+icon: rocket
+description: 마켓플레이스 메타데이터를 추가하고 앱을 게시하세요.
 ---
 
-<Note>
-  이 가이드의 번역은 아직 독립형 Twenty CLI에 맞게 업데이트되지 않았습니다.
-  삭제된 명령을 사용하지 않도록 아래에 최신 영어 내용을 임시로 표시합니다.
-</Note>
+앱이 작동합니다. 마지막 단계는 마켓플레이스를 위한 설명을 추가하고 게시하는 것입니다.
 
-Your app works. The last step is to describe it for the marketplace and publish.
+## 마켓플레이스 메타데이터 추가
 
-## Add marketplace metadata
-
-The [application config](/ko/developers/extend/apps/config/application) carries the
-identity that shows up in the marketplace: author, category, logo, and support
-links. Put a logo in `public/` and reference it with `logo`.
+[application config](/ko/developers/extend/apps/config/application)는 마켓플레이스에 표시되는 식별 정보를 포함합니다. 작성자, 카테고리, 로고, 지원 링크 등이 여기에 포함됩니다. `public/`에 로고를 넣고 `logo`로 참조하세요.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -36,21 +29,19 @@ export default defineApplication({
 ```
 
 <Tip>
-  The default role is declared with `defineApplicationRole()` in its own file —
-  you don't pass `defaultRoleUniversalIdentifier` here anymore.
+기본 역할은 자체 파일에서 `defineApplicationRole()`로 선언합니다. 이제 여기에서는 `defaultRoleUniversalIdentifier`를 더 이상 전달하지 않습니다.
 </Tip>
 
-Also add the `twenty-app` keyword to `package.json` so the app is discoverable:
+앱을 쉽게 찾을 수 있도록 `package.json`에 `twenty-app` 키워드도 추가하세요:
 
 ```json filename="package.json"
 { "keywords": ["twenty-app"] }
 ```
 
-## Add gallery screenshots
+## 갤러리 스크린샷 추가
 
-A marketplace listing sells itself with screenshots. Drop a few PNGs in
-`public/gallery/` and reference them with `galleryImages` — they render as a
-gallery on the listing page, in array order.
+마켓플레이스 등록 정보는 스크린샷만으로도 충분히 어필됩니다. 몇 개의 PNG 파일을
+`public/gallery/`에 넣고 `galleryImages`로 참조하세요. 그러면 목록 페이지에서 배열 순서대로 갤러리로 렌더링됩니다.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
@@ -65,90 +56,72 @@ export default defineApplication({
 ```
 
 <Tip>
-  Lead with the payoff: make the first screenshot the finished result (a
-  generated document), then show how it's triggered and authored. Use crisp,
-  high-resolution captures — they're the first thing a user sees.
+핵심 효과부터 보여 주세요. 첫 번째 스크린샷은 최종 결과(생성된 문서)로 두고, 그다음에 어떻게 트리거되고 작성되는지를 보여 주세요. 선명한 고해상도 캡처를 사용하세요. 사용자가 가장 먼저 보게 되는 요소입니다.
 </Tip>
 
-Give `README.md` the same treatment — it's the front page on npm and GitHub.
-Open with the value proposition and a screenshot, list the headline features,
-then keep the build details below the fold.
+`README.md`도 동일한 방식으로 다뤄 주세요. npm과 GitHub에서의 첫 페이지 역할을 합니다.
+가치 제안과 스크린샷으로 시작하고 핵심 기능을 나열한 다음, 빌드 세부 정보는 접힌 영역 아래에 배치하세요.
 
-## Check before you ship
+## 출시 전 점검
 
-Run the same gates CI does:
+CI에서 수행하는 것과 동일한 검증 단계를 실행하세요:
 
 ```bash filename="Terminal"
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-twenty app plan   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-The plan prints exactly what would change on the server without applying it —
-a good final sanity check. See
-[Testing](/ko/developers/extend/apps/operations/testing) and
-[Syncing & recovery](/ko/developers/extend/apps/operations/sync-and-recovery).
+플랜은 서버에 실제로 적용하지 않고 무엇이 변경될지를 그대로 출력합니다.
+마지막으로 확인하기에 좋은 방법입니다. [테스트](/ko/developers/extend/apps/operations/testing)와
+[동기화 및 복구](/ko/developers/extend/apps/operations/sync-and-recovery)를 참조하세요.
 
-## Publish
+## 게시
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-twenty app publish
+yarn twenty app:publish
 
 # Or deploy privately to a specific server's registry
-twenty app publish --private -r <remote>
+yarn twenty app:publish --private -r <remote>
 ```
 
-`twenty app publish` builds and publishes to npm by default; `--private` uploads a
-tarball to a Twenty server's private registry instead. To surface a published app
-in an instance's marketplace, wait for the server's marketplace catalog sync.
+`app:publish`는 기본적으로 빌드하고 npm에 게시합니다. `--private`는 대신 Twenty 서버의 프라이빗 레지스트리에 tarball을 업로드합니다. 배포된 앱을 인스턴스의 마켓플레이스에 표시하려면 카탈로그 동기화를 트리거하세요:
 
-Full details and the release checklist:
-[Publishing](/ko/developers/extend/apps/operations/publishing).
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
 
-## You built an app 🎉
+자세한 내용과 릴리스 체크리스트는
+[게시](/ko/developers/extend/apps/operations/publishing)를 참조하세요.
 
-In six chapters you used most of the SDK surface:
+## 앱을 만들었습니다 🎉
 
-- **Objects, fields, and a relation** to model the data
-- A **logic function** exposed as an **AI tool**, a **workflow action**, and **HTTP routes**
-- **Views, navigation, a command, and a front component** for the UI
-- An **agent + skill** for natural-language generation
-- **Marketplace metadata** and the publish flow
+여섯 개의 장에서 SDK의 대부분 기능 영역을 사용했습니다:
 
-The finished app is at
-[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+* 데이터를 모델링하기 위한 **객체, 필드, 그리고 관계**
+* **AI 도구**, **워크플로 작업**, **HTTP 라우트**로 노출되는 **로직 함수**
+* UI를 위한 **뷰, 내비게이션, 커맨드, 프런트 컴포넌트**
+* 자연어 생성을 위한 **에이전트 + 스킬**
+* **마켓플레이스 메타데이터**와 게시 플로우
 
-## Where to go next
+완성된 앱은
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator)에 있습니다.
+
+## 다음 단계
 
 <CardGroup cols={2}>
-  <Card
-    title="Data reference"
-    icon="database"
-    href="/ko/developers/extend/apps/data/overview"
-  >
-    Every field type, relation, and index option.
+  <Card title="데이터 참고" icon="database" href="/ko/developers/extend/apps/data/overview">
+    모든 필드 타입, 관계, 인덱스 옵션.
   </Card>
-  <Card
-    title="Logic reference"
-    icon="bolt"
-    href="/ko/developers/extend/apps/logic/overview"
-  >
-    Cron and database-event triggers, the key-value store, OAuth connections.
+  <Card title="로직 참고" icon="bolt" href="/ko/developers/extend/apps/logic/overview">
+    Cron 및 데이터베이스 이벤트 트리거, 키-값 저장소, OAuth 연결.
   </Card>
-  <Card
-    title="Layout reference"
-    icon="table-columns"
-    href="/ko/developers/extend/apps/layout/overview"
-  >
-    Page layouts, dashboard widgets, and more UI surfaces.
+  <Card title="레이아웃 참고" icon="table-columns" href="/ko/developers/extend/apps/layout/overview">
+    페이지 레이아웃, 대시보드 위젯, 그 외 다양한 UI 영역.
   </Card>
-  <Card
-    title="Operations"
-    icon="rocket"
-    href="/ko/developers/extend/apps/operations/overview"
-  >
-    CLI, testing, remotes, and CI.
+  <Card title="작업" icon="rocket" href="/ko/developers/extend/apps/operations/overview">
+    CLI, 테스트, 리모트, CI.
   </Card>
 </CardGroup>

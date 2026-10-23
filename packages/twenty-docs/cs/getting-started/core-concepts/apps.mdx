@@ -1,50 +1,41 @@
 ---
 title: Aplikace
-icon: 'cube'
-description: Extend Twenty with code — custom objects, server-side logic, UI components, and AI agents, all as TypeScript packages.
+icon: cube
+description: Rozšiřte Twenty pomocí kódu – vlastních objektů, serverové logiky, UI komponent a AI agentů, to vše jako balíčky TypeScriptu.
 ---
 
-<Note>
-  Překlad tohoto průvodce zatím nezohledňuje samostatné CLI Twenty. Níže dočasně
-  uvádíme aktuální anglický obsah, abyste nepoužívali odstraněné příkazy.
-</Note>
+Většina CRM vám poskytne konfigurační panel. Twenty vám poskytne platformu. Aplikace jsou způsob, jak vývojáři rozšiřují Twenty nad rámec toho, co nabízí uživatelské rozhraní – definují datové modely, serverovou logiku, komponenty uživatelského rozhraní a schopnosti AI jako kód a nasazují je do jednoho nebo více pracovních prostorů.
 
-Most CRMs give you a config panel. Twenty gives you a platform. Apps are how developers extend Twenty beyond what the UI offers — defining data models, server-side logic, UI components, and AI capabilities as code, then deploying them to one or more workspaces.
+## Proč aplikace existují
 
-## Why apps exist
+Pracovní postupy pokrývají automatizaci bez kódu. Ale některé věci vyžadují kód: vlastní cenový modul, proprietární obohacovací datový řetězec, kontrolu souladu, která se spouští při každé aktualizaci záznamu, vlastní panel uživatelského rozhraní, který získává data z interního nástroje.
 
-Workflows cover no-code automation. But some things need code: a custom pricing engine, a proprietary enrichment pipeline, a compliance check that runs on every record update, a custom UI panel that pulls data from an internal tool.
+Aplikace vám umožní budovat tyto věci jako plnohodnotná rozšíření – ne křehké skripty komunikující s API zvenčí, ale kód, který běží na platformě s plným přístupem k typovému systému, modelu oprávnění a UI.
 
-Apps let you build these as first-class extensions — not brittle scripts talking to an API from outside, but code that runs on the platform with full access to the type system, permission model, and UI.
+## Co může aplikace definovat
 
-## What an app can define
+Aplikace je balíček TypeScriptu, který deklaruje **entity** pomocí `twenty-sdk`:
 
-An app is a TypeScript package that declares **entities** using the `twenty-sdk`:
+| Entita                     | K čemu slouží                                                                                                                    |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Objekty a pole**         | Nové datové tabulky a pole na existujících objektech — stejný režim jako pro vestavěné objekty                                   |
+| **Logické funkce**         | Serverový TypeScript spouštěný HTTP trasami, plánovačem cron nebo událostmi databáze                                             |
+| **Frontendové komponenty** | Sandboxované komponenty Reactu, které se vykreslují v uživatelském rozhraní Twenty (postranní panel, widgety, příkazová nabídka) |
+| **Dovednosti a agenti**    | Schopnosti AI — opakovaně použitelné pokyny a autonomní asistenti                                                                |
+| **Pohledy a navigace**     | Předkonfigurované seznamové pohledy a položky postranní nabídky                                                                  |
 
-| Entity                 | What it does                                                                                  |
-| ---------------------- | --------------------------------------------------------------------------------------------- |
-| **Objects & Fields**   | New data tables and fields on existing objects — same treatment as built-in ones              |
-| **Logic Functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events           |
-| **Front Components**   | Sandboxed React components that render inside Twenty's UI (side panel, widgets, command menu) |
-| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                             |
-| **Views & Navigation** | Pre-configured list views and sidebar menu items                                              |
+Vše je detekováno pomocí analýzy AST v čase sestavení — bez konfiguračních souborů a bez registračního boilerplate kódu. Umístěte `export default defineObject(...)` do libovolného souboru `.ts` a SDK ho načte.
 
-Everything is detected via AST analysis at build time — no config files, no registration boilerplate. Put a `export default defineObject(...)` in any `.ts` file and the SDK picks it up.
+## Jak běží
 
-## How they run
+* **Logické funkce** se spouštějí v izolovaných procesech Node.js, sandboxovaných od hostitele. K datům přistupují prostřednictvím typovaného klienta API, jehož rozsah je omezen oprávněními role aplikace.
+* **Frontendové komponenty** běží ve Web Workerech s využitím Remote DOM — jsou oddělené od hlavní stránky, ale vykreslují nativní prvky DOM (nikoli iframy).
+* **Oprávnění** jsou vynucována na úrovni API. Aplikace vidí pouze to, co jí její role dovoluje.
 
-- **Logic functions** execute in isolated Node.js processes, sandboxed from the host. They access data through a typed API client scoped to the app's role permissions.
-- **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes).
-- **Permissions** are enforced at the API level. An app only sees what its role allows.
+## Zkušenost vývojáře
 
-## The developer experience
+Svou aplikaci píšete jako projekt v TypeScriptu na svém počítači. CLI sleduje vaše zdrojové soubory a živě je synchronizuje s běžícím serverem Twenty — upravte soubor a změnu uvidíte v uživatelském rozhraní během sekundy. Typovaný klient API se při změně schématu automaticky znovu vygeneruje. Až budete připraveni, `yarn twenty app:publish --private` nasadí na produkční server a `yarn twenty app:publish` uvede vaši aplikaci na npm a v tržišti Twenty.
 
-You write your app as a TypeScript project on your machine. The CLI watches your source files and live-syncs them to a running Twenty server — edit a file, see the change in the UI within a second. The typed API client regenerates automatically when the schema changes. When you're ready, `twenty app publish --private` pushes to a production server, or `twenty app publish` lists your app on npm and the Twenty marketplace.
-
-<Card
-  title="Build your first app"
-  icon="arrow-right"
-  href="/cs/developers/extend/apps/getting-started/quick-start"
->
-  Three-phase walkthrough — scaffold, run a local server, sync your changes.
+<Card title="Vytvořte svou první aplikaci" icon="arrow-right" href="/cs/developers/extend/apps/getting-started/quick-start">
+  Třífázový průvodce — vytvoření kostry projektu, spuštění lokálního serveru a synchronizace vašich změn.
 </Card>

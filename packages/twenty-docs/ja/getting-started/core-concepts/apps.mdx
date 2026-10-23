@@ -1,50 +1,41 @@
 ---
 title: アプリ
-icon: 'cube'
-description: Extend Twenty with code — custom objects, server-side logic, UI components, and AI agents, all as TypeScript packages.
+icon: cube
+description: コードで Twenty を拡張しましょう。カスタムオブジェクト、サーバーサイドロジック、UI コンポーネント、AI エージェントをすべて TypeScript パッケージとして追加できます。
 ---
 
-<Note>
-  このガイドの翻訳は、Twenty の独立した CLI
-  にまだ対応していません。削除されたコマンドを使用しないよう、以下に最新の英語版を一時的に表示しています。
-</Note>
+ほとんどの CRM は設定パネルを提供します。 Twenty はプラットフォームを提供します。 アプリは、開発者が UI で提供される範囲を超えて Twenty を拡張する方法です。データモデル、サーバーサイドロジック、UI コンポーネント、AI 機能をコードとして定義し、それらを 1 つ以上のワークスペースにデプロイできます。
 
-Most CRMs give you a config panel. Twenty gives you a platform. Apps are how developers extend Twenty beyond what the UI offers — defining data models, server-side logic, UI components, and AI capabilities as code, then deploying them to one or more workspaces.
+## アプリが存在する理由
 
-## Why apps exist
+ワークフローはノーコードの自動化を担います。 しかし、コードが必要なものもあります。たとえば、カスタムの料金算出エンジン、独自のエンリッチメントパイプライン、レコードの更新ごとに実行されるコンプライアンスチェック、社内ツールからデータを取得するカスタム UI パネルなどです。
 
-Workflows cover no-code automation. But some things need code: a custom pricing engine, a proprietary enrichment pipeline, a compliance check that runs on every record update, a custom UI panel that pulls data from an internal tool.
+アプリを使えば、これらを一級の拡張機能として構築できます。外部から API と通信する壊れやすいスクリプトではなく、型システム、権限モデル、UI へ完全にアクセスできる、プラットフォーム上で実行されるコードとして実現できます。
 
-Apps let you build these as first-class extensions — not brittle scripts talking to an API from outside, but code that runs on the platform with full access to the type system, permission model, and UI.
+## アプリで定義できるもの
 
-## What an app can define
+アプリは、`twenty-sdk` を使って **エンティティ** を宣言する TypeScript パッケージです。
 
-An app is a TypeScript package that declares **entities** using the `twenty-sdk`:
+| エンティティ           | 機能                                                                         |
+| ---------------- | -------------------------------------------------------------------------- |
+| **オブジェクトとフィールド** | 既存オブジェクト上の新しいデータテーブルとフィールド — 組み込みのものと同様に扱われます                              |
+| **ロジック関数**       | HTTP ルート、cron スケジュール、またはデータベースイベントによってトリガーされるサーバーサイドの TypeScript           |
+| **フロントコンポーネント**  | サンドボックス化された React コンポーネントで、Twenty の UI（サイドパネル、ウィジェット、コマンドメニュー）内でレンダリングされます |
+| **スキルとエージェント**   | AI 機能 — 再利用可能な指示と自律型アシスタント                                                 |
+| **ビューとナビゲーション**  | 事前設定済みのリストビューとサイドバーのメニュー項目                                                 |
 
-| Entity                 | What it does                                                                                  |
-| ---------------------- | --------------------------------------------------------------------------------------------- |
-| **Objects & Fields**   | New data tables and fields on existing objects — same treatment as built-in ones              |
-| **Logic Functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events           |
-| **Front Components**   | Sandboxed React components that render inside Twenty's UI (side panel, widgets, command menu) |
-| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                             |
-| **Views & Navigation** | Pre-configured list views and sidebar menu items                                              |
+すべてはビルド時に AST 解析によって検出されます — 設定ファイルも登録用のボイラープレートも不要です。 任意の `.ts` ファイルに `export default defineObject(...)` を記述するだけで、SDK がそれを検出します。
 
-Everything is detected via AST analysis at build time — no config files, no registration boilerplate. Put a `export default defineObject(...)` in any `.ts` file and the SDK picks it up.
+## 実行方式
 
-## How they run
+* **ロジック関数**は、ホストからサンドボックス化された分離された Node.js プロセスで実行されます。 それらは、アプリのロール権限の範囲にスコープされた型付き API クライアントを通じてデータにアクセスします。
+* **フロントコンポーネント**は Remote DOM を用いた Web Workers 内で実行されます—メインページからサンドボックス化されつつ、ネイティブの DOM 要素（iframe ではありません）をレンダリングします。
+* **権限**は API レベルで強制されます。 アプリは自分のロールで許可されたものだけを参照できます。
 
-- **Logic functions** execute in isolated Node.js processes, sandboxed from the host. They access data through a typed API client scoped to the app's role permissions.
-- **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes).
-- **Permissions** are enforced at the API level. An app only sees what its role allows.
+## 開発者エクスペリエンス
 
-## The developer experience
+ローカル環境で TypeScript プロジェクトとしてアプリを作成します。 CLI がソースファイルを監視し、実行中の Twenty サーバーとライブ同期します — ファイルを編集すると、1 秒以内に UI に変更が反映されます。 スキーマが変更されると、型付き API クライアントは自動的に再生成されます。 準備ができたら、`yarn twenty app:publish --private` で本番サーバーにプッシュするか、`yarn twenty app:publish` でアプリを npm と Twenty マーケットプレイスに掲載します。
 
-You write your app as a TypeScript project on your machine. The CLI watches your source files and live-syncs them to a running Twenty server — edit a file, see the change in the UI within a second. The typed API client regenerates automatically when the schema changes. When you're ready, `twenty app publish --private` pushes to a production server, or `twenty app publish` lists your app on npm and the Twenty marketplace.
-
-<Card
-  title="Build your first app"
-  icon="arrow-right"
-  href="/ja/developers/extend/apps/getting-started/quick-start"
->
-  Three-phase walkthrough — scaffold, run a local server, sync your changes.
+<Card title="最初のアプリを構築する" icon="arrow-right" href="/ja/developers/extend/apps/getting-started/quick-start">
+  3 フェーズのウォークスルー — 雛形の作成、ローカルサーバーの実行、変更内容の同期。
 </Card>

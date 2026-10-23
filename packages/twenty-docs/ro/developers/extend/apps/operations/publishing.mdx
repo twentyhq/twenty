@@ -1,108 +1,81 @@
 ---
 title: Publicare
-icon: 'upload'
-description: Distribute your Twenty app to the marketplace or deploy it internally.
+icon: upload
+description: Distribuie aplicația ta Twenty în marketplace sau implementeaz-o intern.
 ---
 
-<Note>
-  Traducerea acestui ghid nu a fost încă actualizată pentru CLI-ul independent
-  Twenty. Mai jos este afișat temporar conținutul actual în engleză, pentru a
-  evita utilizarea comenzilor eliminate.
-</Note>
+## Prezentare generală
 
-## Overview
+După ce aplicația ta este [construită și testată local](/ro/developers/extend/apps/getting-started/concepts), ai două căi pentru distribuire:
 
-Once your app is [built and tested locally](/ro/developers/extend/apps/getting-started/concepts), you have two paths for distributing it:
+* **Implementează un tarball** — încarcă aplicația direct pe un server Twenty anume pentru uz intern sau privat.
+* **Publică pe npm** — listează aplicația ta în marketplace-ul Twenty pentru ca orice spațiu de lucru să o poată descoperi și instala.
 
-- **Deploy a tarball** — upload your app directly to a specific Twenty server for internal or private use.
-- **Publish to npm** — publish your package, [claim it in Twenty](#claiming-your-app), and complete its setup so other workspaces can discover and install it.
+Ambele căi pornesc din aceeași etapă de **build**.
 
-Both paths start from the same **build** step.
+## Construirea aplicației
 
-## Registration ownership
-
-Publishing an app creates an **application registration**: the app's identity on the instance, shared by every workspace that installs it. It holds the app's marketplace entry, its OAuth client, and its server-side state — the `serverVariables` an operator configures and the `server`-scoped entries of the [key-value store](/ro/developers/extend/apps/logic/key-value-store).
-
-A `universalIdentifier` is unique across the whole instance and a registration belongs to at most one workspace (its owner) — or none until it is claimed — so installing an app and developing one are two different rights:
-
-| Action                                                | Requirement                                                                                                         |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Installing an app                                     | The app is listed on the marketplace, pre-installed by the operator, or its registration belongs to your workspace. |
-| Developing an app (`twenty app dev`, `apply`, `plan`) | The registration belongs to your workspace.                                                                         |
-
-Syncing code and a manifest under an identifier is a claim of authorship, so being able to install an app never grants the right to publish code under its identity. A workspace that is not the owner is refused, whether the app is listed, pre-installed, or private.
-
-Two situations lead to that refusal:
-
-- **The identifier belongs to another workspace.** Change the `universalIdentifier` in your app config, which is the usual answer when you forked someone else's app. If you need to keep the identifier, the owning workspace has to transfer the registration to yours.
-- **The identifier belongs to no workspace.** Apps imported by the marketplace catalog sync start unowned. [Claim yours with GitHub](#claiming-your-app) before developing on it. Publishing with npm provenance provides proof of authorship; it does not automatically assign an owner workspace in Twenty.
-
-## Building your app
-
-Run the build command to typecheck and bundle your app:
+Rulează comanda `build` pentru a compila aplicația și a genera un `manifest.json` pregătit pentru distribuire:
 
 ```bash filename="Terminal"
-twenty app build
+yarn twenty dev:build
 ```
 
-This typechecks and bundles the app into a temporary CLI snapshot. Use `--json` to inspect the manifest and artifact metadata. `twenty app publish` creates the package itself; no separate tarball build is required.
+Aceasta compilează sursele TypeScript, transpilează funcțiile de logică și componentele de front-end și scrie totul în `.twenty/output/`. Adaugă `--tarball` pentru a produce și un pachet `.tgz` pentru distribuire manuală sau pentru comanda de publish.
 
-## Deploying to a server (tarball)
+## Implementare pe un server (tarball)
 
-For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.
+Pentru aplicațiile pe care nu le dorești disponibile public — instrumente proprietare, integrări doar pentru enterprise sau build-uri experimentale — poți implementa un tarball direct pe un server Twenty.
 
-### Prerequisites
+### Cerințe
 
-Before deploying, you need a configured remote pointing to the target server. Remotes store the server URL and authentication credentials locally in `~/.twenty/config.json`.
+Înainte de implementare, ai nevoie de un remote configurat care să indice serverul țintă. Remote-urile stochează local URL-ul serverului și credențialele de autentificare în `~/.twenty/config.json`.
 
-Add a remote:
+Adaugă un remote:
 
 ```bash filename="Terminal"
-twenty auth login --url https://your-twenty-server.com --name production
+yarn twenty remote:add --url https://your-twenty-server.com --as production
 ```
 
-### Deploying
+### Implementare
 
-Build and upload your app to the server in one step:
+Construiește și încarcă aplicația ta pe server într-un singur pas:
 
 ```bash filename="Terminal"
-twenty app publish --private
+yarn twenty app:publish --private
 # To deploy to a specific remote:
-# twenty app publish --private --remote production
+# yarn twenty app:publish --private --remote production
 ```
 
-### Sharing a deployed app
+### Partajarea unei aplicații implementate
 
-Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
+Aplicațiile tarball nu sunt listate în marketplace-ul public, astfel încât alte spații de lucru de pe același server nu le vor descoperi prin navigare. Pentru a partaja o aplicație implementată:
 
-1. Go to **Settings > Developers > Apps** and open your app under **My apps**
-2. In the **Distribution** tab, click **Copy share link**
-3. Share this link with users on other workspaces — it takes them directly to the app's install page
+1. Mergi la **Setări > Aplicații > Înregistrări** și deschide aplicația ta
+2. În fila **Distribuție**, fă clic pe **Copiază linkul de partajare**
+3. Partajează acest link cu utilizatori din alte spații de lucru — îi duce direct la pagina de instalare a aplicației
 
-The share link uses the server's base URL (without any workspace subdomain) so it works for any workspace on the server.
+Linkul de partajare folosește URL-ul de bază al serverului (fără niciun subdomeniu de spațiu de lucru), astfel încât funcționează pentru orice spațiu de lucru de pe server.
 
-### Version management
+### Gestionarea versiunilor
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected when the server registers the uploaded tarball, which is then dropped again. You'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+Când actualizezi o aplicație tarball deja implementată, serverul solicită ca `version` din `package.json` să fie **strict mai mare** (conform ordonării [semver](https://semver.org)) decât versiunea implementată în prezent. Redeployarea aceleiași versiuni sau trimiterea uneia inferioare este respinsă înainte ca tarball-ul să fie stocat — vei vedea o eroare `VERSION_ALREADY_EXISTS` de la CLI.
 
-To release an update:
+Pentru a lansa o actualizare:
 
-1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
-2. Run `twenty app publish --private` (or `twenty app publish --private --remote production`)
-3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's General tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
+1. Incrementează câmpul `version` din `package.json` (de ex. `1.2.3` → `1.2.4`, `1.3.0` sau `2.0.0`)
+2. Rulează `yarn twenty app:publish --private` (sau `yarn twenty app:publish --private --remote production`)
+3. Spațiile de lucru care au aplicația instalată și au activat actualizarea automată pentru aceasta (în fila Setări a aplicației) sunt actualizate automat în fundal; celelalte vor vedea actualizarea disponibilă în setările lor
 
 <Note>
-  Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is
-  allowed, and a final release like `1.0.0` is correctly recognized as higher
-  than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver
-  string.
+Etichetele de pre-lansare funcționează conform așteptărilor: incrementarea de la `1.0.0-rc.1` la `1.0.0-rc.2` este permisă, iar o lansare finală precum `1.0.0` este recunoscută corect ca fiind mai mare decât `1.0.0-rc.5`. Versiunea din `package.json` trebuie să fie ea însăși un șir semver valid.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
-### Server version compatibility
+### Compatibilitatea versiunii serverului
 
-If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
+Dacă aplicația ta folosește o funcționalitate introdusă într-o anumită versiune de server Twenty (de exemplu, furnizori OAuth adăugați în v2.3.0), ar trebui să declari versiunea minimă de server necesară aplicației folosind câmpul `engines.twenty` din `package.json`:
 
 ```json filename="package.json"
 {
@@ -115,125 +88,107 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 }
 ```
 
-The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
+Valoarea este un [interval semver](https://github.com/npm/node-semver#ranges) standard. Tipare comune:
 
-| Range            | Meaning                                  |
-| ---------------- | ---------------------------------------- |
-| `>=2.3.0`        | Any server from 2.3.0 onward             |
-| `>=2.3.0 <3.0.0` | 2.3.0 or later, but below the next major |
-| `^2.3.0`         | Same as `>=2.3.0 <3.0.0`                 |
+| Interval                           | Semnificație                                           |
+| ---------------------------------- | ------------------------------------------------------ |
+| `>=2.3.0`                          | Orice server de la 2.3.0 încolo                        |
+| `>=2.3.0 \<3.0.0` | 2.3.0 sau ulterior, dar sub următoarea versiune majoră |
+| `^2.3.0`                           | La fel ca `>=2.3.0 \<3.0.0`           |
 
-**What happens at deploy and install time:**
+**Ce se întâmplă în timpul implementării și instalării:**
 
-- If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-- If `engines.twenty` is **not set**, no version check runs and the app is accepted on any server version (backward-compatible with existing apps). A blank value is rejected as an invalid range.
-- The marketplace does not list an app whose latest version declares an `engines.twenty` range the server does not satisfy, or an invalid one. The app stays registered and visible in the admin panel.
-- If the server has no `APP_VERSION` configured, the check is skipped.
+* Dacă `engines.twenty` este setat și versiunea serverului țintă nu respectă intervalul, implementarea (încărcarea arhivei tarball) sau instalarea este respinsă cu eroarea `SERVER_VERSION_INCOMPATIBLE` și cu un mesaj care indică atât intervalul necesar, cât și versiunea efectivă a serverului.
+* Dacă `engines.twenty` nu este setat, aplicația este acceptată pe orice versiune de server (retrocompatibilă cu aplicațiile existente).
+* Dacă serverul nu are nicio `APP_VERSION` configurată, verificarea este omisă.
 
 <Note>
-  The server is the authoritative check — it validates `engines.twenty` on both
-  tarball upload and workspace install. If you deploy a tarball out-of-band or
-  install from the marketplace, the server still enforces compatibility.
+Serverul este verificarea autoritativă — validează `engines.twenty` atât la încărcarea arhivei tarball, cât și la instalarea în spațiul de lucru. Dacă implementezi un tarball în afara fluxului standard sau instalezi din marketplace, serverul impune în continuare compatibilitatea.
 </Note>
 
-## Automated CI/CD (scaffolded workflows)
+## CI/CD automatizat (fluxuri de lucru preconfigurate)
 
-Apps generated with `twenty app init` ship with three GitHub Actions workflows out of the box, under `.github/workflows/`. CI runs with no setup, CD requires a single secret, and publishing to npm requires a one-time npm trusted-publisher setup.
+Aplicațiile generate cu `create-twenty-app` vin, gata de utilizare, cu trei fluxuri de lucru GitHub Actions, în `.github/workflows/`. CI rulează fără nicio configurare, CD necesită un singur secret, iar publicarea pe npm necesită o configurare unică pentru npm trusted publisher.
 
 ### CI — `ci.yml`
 
-Runs integration tests on every push to `main` and every pull request.
+Rulează testele de integrare la fiecare push pe `main` și la fiecare pull request.
 
-**What it does:**
+**Ce face:**
 
-1. Checks out your app's source.
-2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action.
-3. Enables Corepack and sets up Node.js from your `.nvmrc`.
-4. Installs the pinned standalone CLI in the **Install Twenty CLI** step.
-5. Installs dependencies with `yarn install --immutable`, then runs lint, typecheck, and unit tests.
-6. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
+1. Preia codul sursă al aplicației.
+2. Pornește o instanță de test Twenty izolată folosind acțiunea compozită `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (echivalentul din CI al `yarn twenty docker:start --test`).
+3. Activează Corepack, configurează Node.js pe baza fișierului `.nvmrc` și instalează dependențele cu `yarn install --immutable`.
+4. Rulează `yarn test`, transmitând `TWENTY_API_URL` și `TWENTY_API_KEY` din instanța pornită, astfel încât testele să poată comunica cu un server real.
 
-**Config knobs:**
+**Opțiuni de configurare:**
 
-- `TWENTY_VERSION` (env, defaults to `latest`) — pin the Twenty server version used in CI by editing this in `ci.yml`.
-- Concurrency is grouped by `github.ref` and cancels in-progress runs on new pushes.
+* `TWENTY_VERSION` (variabilă de mediu, implicit `latest`) — fixează versiunea serverului Twenty folosită în CI editând acest parametru în `ci.yml`.
+* Concurența este grupată după `github.ref` și anulează execuțiile în desfășurare la noile push-uri.
 
-No secrets are required — the test instance is ephemeral and lives only for the duration of the job.
+Nu sunt necesare secrete — instanța de test este efemeră și există doar pe durata jobului.
 
 ### CD — `cd.yml`
 
-Deploys your app to a configured Twenty server on every push to `main`, and optionally from a pull request when the `deploy` label is applied.
+Implementează aplicația pe un server Twenty configurat la fiecare push pe `main` și, opțional, dintr-un pull request când se aplică eticheta `deploy`.
 
-**What it does:**
+**Ce face:**
 
-1. Checks out the PR head (for labeled PRs) or the pushed commit.
-2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `twenty app publish --private`.
-3. Runs `twentyhq/twenty/.github/actions/install-twenty-app@main` so the newly deployed version is installed into the target workspace.
+1. Preia head-ul PR-ului (pentru PR-urile etichetate) sau commitul împins.
+2. Rulează `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — echivalentul din CI al `yarn twenty app:publish --private`.
+3. Rulează `twentyhq/twenty/.github/actions/install-twenty-app@main` astfel încât versiunea nou implementată să fie instalată în spațiul de lucru țintă.
 
-**Required configuration:**
+**Configurare necesară:**
 
-| Setting                 | Where                                                      | Purpose                                                                               |
-| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:2020`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
-| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server.                                  |
+| Setare                  | Unde                                                       | Scop                                                                                                               |
+| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TWENTY_DEPLOY_URL`     | `env` în `cd.yml` (implicit `http://localhost:3000`)       | Serverul Twenty la care se face implementarea. Modifică-l la URL-ul real al serverului înainte de prima utilizare. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | Cheie API cu permisiune de implementare pe serverul țintă.                                                         |
 
 <Note>
-  The default `TWENTY_DEPLOY_URL` of `http://localhost:2020` is a placeholder —
-  it will not reach anything from a GitHub-hosted runner. Update it to your
-  server's public URL (or use a self-hosted runner with network access) before
-  enabling CD.
+Valoarea implicită a `TWENTY_DEPLOY_URL`, `http://localhost:3000`, este un placeholder — nu va putea accesa nimic dintr-un runner găzduit de GitHub. Actualizează-l la URL-ul public al serverului tău (sau folosește un runner self-hosted cu acces la rețea) înainte de a activa CD.
 </Note>
 
-**Triggering a preview deploy from a PR:**
+**Declanșarea unei implementări de previzualizare dintr-un PR:**
 
-Add the `deploy` label to a pull request. The `if:` guard in `cd.yml` will run the job for that PR using the PR's head commit, letting you validate a change on the target server before merging.
+Adaugă eticheta `deploy` la un pull request. Condiția `if:` din `cd.yml` va rula jobul pentru acel PR folosind commitul head al PR-ului, permițându-ți să validezi o modificare pe serverul țintă înainte de a face merge.
 
-### Publish — `publish.yml`
+### Publicare — `publish.yml`
 
-Publishes your app to npm with provenance when you push a version tag (e.g. `v1.0.0`), or when you run the workflow manually from the Actions tab.
+Publică aplicația pe npm, cu proveniență, când împingi un tag de versiune (de ex. `v1.0.0`) sau când rulezi manual fluxul de lucru din fila Actions.
 
-**What it does:**
+**Ce face:**
 
-1. Checks out your app, sets up Node.js, and updates npm (trusted publishing requires npm 11.5.1 or later).
-2. Installs the pinned standalone CLI in the **Install Twenty CLI** step, then installs app dependencies with `yarn install --immutable`.
-3. Runs `twenty app publish`, which builds and packs an isolated app snapshot, then publishes it to npm. In CI it automatically adds `--provenance` and `--access public`, so no flags are needed in the workflow.
+1. Face checkout al aplicației tale, configurează Node.js și actualizează npm (publicarea de încredere necesită npm 11.5.1 sau o versiune ulterioară).
+2. Rulează `yarn twenty app:publish`, care construiește aplicația și publică `.twenty/output` în npm. În CI adaugă automat `--provenance` și `--access public`, astfel încât nu sunt necesare flaguri în fluxul de lucru.
 
-**One-time setup:**
+**Configurare unică:**
 
-On npmjs.com open your package > **Settings → Trusted Publisher** and register this repository with the `publish.yml` workflow (see the [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers)). Publishing with provenance certifies which GitHub repository built the package. After publishing, [claim ownership in Twenty](#claiming-your-app).
+Pe npmjs.com deschide pachetul tău > **Settings → Trusted Publisher** și înregistrează acest repozitoriu cu fluxul de lucru `publish.yml` (vezi [documentația npm trusted publishing](https://docs.npmjs.com/trusted-publishers)). Publicarea cu provenance certifică ce repozitoriu GitHub a construit pachetul, ceea ce este, de asemenea, modul în care îți revendici proprietatea asupra aplicației tale într-un marketplace Twenty.
 
 <Note>
-npm only accepts provenance from **public** source repositories. If you publish from a private repo, npm rejects the OIDC provenance bundle with an `E422 ... Unsupported GitHub Actions source repository visibility: "private"` error. To publish from a private repo, opt out of provenance by setting `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` in the publish step's `env` (a commented-out hint is included in the scaffolded `publish.yml`):
+npm acceptă doar proveniență din depozite sursă **publice**. Dacă publici dintr-un depozit privat, npm respinge pachetul de proveniență OIDC cu un `E422 ... Eroare „Unsupported GitHub Actions source repository visibility: "private"`.” Pentru a publica dintr-un depozit privat, renunță la proveniență setând `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` în `env` al etapei de publicare (un indiciu comentat este inclus în fișierul generat `publish.yml`):
 
 ```yaml filename=".github/workflows/publish.yml"
-- name: Publish to npm
-  env:
-    TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
-  run: twenty app publish
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
 ```
-
-Without GitHub provenance, the package cannot be claimed through **Claim with GitHub**. Use a public repository with provenance if you need this ownership flow.
-
 </Note>
 
-### Pinning the CLI version
+### Fixarea acțiunilor reutilizabile
 
-All three generated workflows pin the standalone CLI to the version of `twenty` that ran `twenty app init`. The **Install Twenty CLI** steps in `ci.yml` and `publish.yml` use `npm install -g twenty@<version>`. In `cd.yml`, both the deploy and install actions receive the same version through their `cli-version` input.
+Fluxurile de lucru `ci.yml` și `cd.yml` fac referire la acțiuni reutilizabile la `@main`, astfel încât actualizările acțiunilor din repo-ul `twentyhq/twenty` sunt preluate automat. Dacă dorești builduri deterministe, înlocuiește `@main` cu un SHA de commit sau cu un tag de release pe fiecare linie `uses:`.
 
-To upgrade, update the two installation commands and both `cli-version` inputs together. These pins are separate from the `TWENTY_VERSION` server version used in CI and the reusable action references below.
+## Publicarea pe npm
 
-### Pinning the reusable actions
+Publicarea pe npm face ca aplicația ta să poată fi descoperită în marketplace-ul Twenty. Orice spațiu de lucru Twenty poate răsfoi, instala și actualiza aplicațiile din marketplace direct din interfață.
 
-The `ci.yml` and `cd.yml` workflows reference reusable actions at `@main`, so action updates in the `twentyhq/twenty` repo are picked up automatically. If you want deterministic builds, replace `@main` with a commit SHA or release tag on each `uses:` line.
+### Cerințe
 
-## Publishing to npm
-
-Publishing to npm makes your app eligible for the Twenty marketplace. After catalog sync and any required [server-route setup](#setting-up-server-routes), workspaces can browse, install, and upgrade it from the UI. Community apps appear when users turn off the **Vetted only** filter.
-
-### Requirements
-
-- An [npm](https://www.npmjs.com) account
-- The `twenty-app` keyword in your `package.json` `keywords` array (add it manually — it is not included by default in the `twenty app init` template)
+* Un cont [npm](https://www.npmjs.com)
+* Cuvântul cheie `twenty-app` din array-ul `keywords` al fișierului `package.json` (adaugă-l manual — nu este inclus în mod implicit în șablonul `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -243,9 +198,9 @@ Publishing to npm makes your app eligible for the Twenty marketplace. After cata
 }
 ```
 
-### Marketplace metadata
+### Metadate pentru marketplace
 
-The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logo` and `galleryImages` to reference images from the `public/` folder:
+Configurația `defineApplication()` acceptă câmpuri opționale care controlează modul în care aplicația ta apare în marketplace. Folosește `logo` și `galleryImages` pentru a face referire la imaginile din folderul `public/`:
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -253,159 +208,86 @@ export default defineApplication({
   displayName: 'My App',
   description: 'A great app',
   logo: 'public/logo.png',
-  galleryImages: ['public/screenshot-1.png', 'public/screenshot-2.png'],
+  galleryImages: [
+    'public/screenshot-1.png',
+    'public/screenshot-2.png',
+  ],
 });
 ```
 
-See the [defineApplication accordion](/ro/developers/extend/apps/config/application#marketplace-metadata) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+Vezi [acordeonul defineApplication](/ro/developers/extend/apps/config/application#marketplace-metadata) din pagina Building Apps pentru lista completă de câmpuri ale marketplace-ului (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
-#### Recommended gallery image dimensions
+#### Dimensiuni recomandate pentru imaginile din galerie
 
-The marketplace renders `galleryImages` in a fixed `8:5` container (for example, `1600×1000 px`).
+Marketplace-ul redă `galleryImages` într-un container fix cu raport `8:5` (de exemplu, `1600×1000 px`).
 
 <Note>
-  Gallery images of any aspect ratio are displayed in full and are never
-  cropped, but anything significantly taller or narrower than `8:5` will show
-  empty bands on the sides.
+Imaginile din galerie cu orice raport de aspect sunt afișate integral și nu sunt niciodată decupate, însă orice imagine semnificativ mai înaltă sau mai îngustă decât `8:5` va afișa benzi goale pe laterale.
 </Note>
 
-#### Image size limit
+#### Limită de dimensiune pentru imagini
 
-The `logo` and each `galleryImages` file must not exceed **10 MB**. Larger files are skipped when the marketplace rehosts your published assets, so they will not be displayed.
+Fișierul `logo` și fiecare fișier din `galleryImages` nu trebuie să depășească **10 MB**. Fișierele mai mari sunt omise atunci când marketplace-ul re-găzduiește resursele tale publicate, astfel că nu vor fi afișate.
 
-### Publish
+### Publicare
 
 ```bash filename="Terminal"
-twenty app publish
+yarn twenty app:publish
 ```
 
-To publish under a specific dist-tag (e.g., `beta` or `next`):
+Pentru a publica sub un dist-tag specific (de ex., `beta` sau `next`):
 
 ```bash filename="Terminal"
-twenty app publish --tag beta
+yarn twenty app:publish --tag beta
 ```
 
-### How marketplace discovery works
+### Cum funcționează descoperirea în marketplace
 
-The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
+Serverul Twenty sincronizează catalogul marketplace-ului din registrul npm **la fiecare oră**.
 
-The standalone CLI has no catalog-sync command. Wait for the server catalog sync or use the server administration tools.
+Poți declanșa sincronizarea imediat, în loc să aștepți:
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — see [Marketplace metadata](#marketplace-metadata) above.
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync
+# To target a specific remote:
+# yarn twenty dev:catalog-sync --remote production
+```
 
-<Note>
-If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
-
-The About tab renders markdown text only. Images do not render, whether they use markdown syntax or `<img>` tags, and raw HTML such as badges or `<div align="center">` blocks shows as plain text.
-
-</Note>
-
-### CI publishing
-
-The scaffolded `publish.yml` workflow described above publishes to npm automatically on version tags, with provenance. Because `twenty app publish` adds `--provenance` and `--access public` for you when it runs in CI, the workflow needs no npm flags — only the one-time trusted-publisher setup.
-
-For other CI systems (GitLab CI, CircleCI, etc.), run `yarn install` then `twenty app publish`. Provenance is emitted when the environment can mint an OIDC token and skipped automatically otherwise.
+Metadatele afișate în marketplace provin din configurația `defineApplication()` — vezi secțiunea [Metadate pentru marketplace](#marketplace-metadata) de mai sus.
 
 <Note>
-  **npm provenance** adds a trust badge to your npm listing, letting users
-  verify the package was built from a specific commit in a public CI pipeline.
-  It is also what lets you claim ownership of your app in a Twenty marketplace.
-  See the [npm provenance
-  docs](https://docs.npmjs.com/generating-provenance-statements) for details.
+Dacă aplicația ta nu definește un `aboutDescription` în `defineApplication()`, piața va folosi automat fișierul `README.md` al pachetului tău de pe npm drept conținut pentru pagina Despre. Acest lucru înseamnă că poți menține un singur README atât pentru npm, cât și pentru piața Twenty. Dacă vrei o descriere diferită în piață, setează explicit `aboutDescription`.
 </Note>
 
-After the package has synced into the catalog, continue with [Claiming your app](#claiming-your-app). The claim flow requires provenance pointing to a **GitHub** repository.
+### Publicare CI
 
-## Claiming your app
+Fluxul de lucru generat `publish.yml` descris mai sus publică automat pe npm la etichetele de versiune, cu provenance. Deoarece `yarn twenty app:publish` adaugă `--provenance` și `--access public` pentru tine când rulează în CI, fluxul de lucru nu are nevoie de flaguri npm — doar de configurarea unică a Trusted Publisher.
 
-Claiming assigns your app's registration to the Twenty workspace that will manage it. App claiming is available to all workspaces. Your role needs the **Workspace Apps** and **Developers** permissions to claim through the **Apps** tab of **Settings > Developers**.
+Pentru alte sisteme CI (GitLab CI, CircleCI etc.), rulează `yarn install` apoi `yarn twenty app:publish`. Provenance este emisă atunci când mediul poate genera un token OIDC și este omisă automat în caz contrar.
 
-Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the app on a separate self-hosted server. Other workspaces on the same instance install your app without claiming it themselves.
+<Note>
+**npm provenance** adaugă un badge de încredere la listarea ta în npm, permițând utilizatorilor să verifice că pachetul a fost construit dintr-un commit specific într-un pipeline CI public. Este, de asemenea, ceea ce îți permite să revendici proprietatea asupra aplicației tale într-un marketplace Twenty. Vezi [documentația npm provenance](https://docs.npmjs.com/generating-provenance-statements) pentru detalii.
+</Note>
 
-### Before you claim
+## Instalarea aplicațiilor
 
-- Publish your package from a **public GitHub repository** using GitHub Actions and [npm trusted publishing with provenance](#ci-publishing). The version imported into Twenty's catalog must carry the provenance attestation.
-- Include the `twenty-app` keyword in `package.json` and wait for [catalog sync](#how-marketplace-discovery-works).
-- Choose the workspace that will own the app. For apps with server routes, this workspace also runs and pays for the shared resolver.
-- Sign in to GitHub as the **personal account that owns the source repository**, or as an **owner of the organization** that owns it. Repository collaborator access or npm package maintainer access alone is not sufficient.
+După ce o aplicație este publicată (npm) sau implementată (tarball), spațiile de lucru o pot instala prin interfața utilizatorului (UI).
 
-### Claim with GitHub
-
-1. In your intended owner workspace, go to **Settings > Developers > Apps** (`/settings/developers#apps`).
-2. In **Claim an application**, enter the exact npm package name, including its scope (for example, `@your-org/twenty-app`), or the app's `universalIdentifier`.
-3. Click **Look up** and check that the result is your app. If it is not found, click **Sync catalog** if available, wait for the sync to finish, then look it up again.
-4. Click **Claim with GitHub** and authorize Twenty. For an organization-owned repository, grant access to that organization in GitHub's **Organization access** section. Personal repositories do not need an organization grant.
-5. When you return to Twenty, confirm that the app appears under **My apps** with type **NPM**. Open it and check **Distribution > Ownership** for **Claimed by this workspace**.
-
-Claiming does not install the app. If it exposes server routes, complete the setup below before other workspaces depend on its webhooks.
-
-### Setting up server routes
-
-A [server route](/ro/developers/extend/apps/logic/logic-functions#server-route-trigger) receives events for multiple workspaces at one URL. Its resolver runs in the registration's **owner workspace**, then dispatches work to the appropriate installed workspace.
-
-1. Open your app under **My apps** and fill in any required **Server Variables** in the **Config** tab.
-2. In **Distribution**, click **See on marketplace** to open the app page and install it in the **owner workspace**. You can open this page even before the app appears in marketplace search.
-3. Register the server webhook URL with your provider and test an event from a second workspace where the app is installed. Check both the resolver and the target function's logs.
-
-<Warning>
-  An unclaimed app, or an app not installed in its owner workspace, has no
-  server-route resolver to run. Requests return `404`
-  (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed in other
-  workspaces. These apps stay out of marketplace search until claimed, installed
-  on the owner workspace, and configured with all required server variables.
-</Warning>
-
-### Owner workspace costs and availability
-
-See [how logic function runs are metered](/ro/user-guide/billing/capabilities/credits#how-logic-function-runs-are-metered) for credit consumption, pricing, and which workspace is billed.
-
-Uninstalling the app from the owner workspace or deleting that workspace removes the shared resolver and interrupts server webhooks for every install on that instance.
-
-### Ownership after a repository move
-
-Moving the GitHub repository to another personal account or organization does not transfer or remove an existing Twenty claim. The registration remains attached to its owner workspace. Keep the same npm package and app `universalIdentifier`; changing the Twenty owner workspace requires a separate ownership transfer.
-
-### Troubleshooting a claim
-
-If you have trouble claiming your app, contact us on [Discord](https://discord.gg/cx5n4Jzs57) or [open a GitHub issue](https://github.com/twentyhq/twenty/issues/new/choose).
-
-<Accordion title="Self-hosted GitHub claim configuration">
-  The server administrator configures `APP_CLAIM_GITHUB_CLIENT_ID` and
-  `APP_CLAIM_GITHUB_CLIENT_SECRET` with a GitHub OAuth app. Set its
-  authorization callback URL to your `SERVER_URL` followed by
-  `/application-registration-claim/github/callback`, for example
-  `https://twenty.example.com/application-registration-claim/github/callback`.
-  This configuration is already managed for you on Twenty Cloud.
-</Accordion>
-
-## Marketplace visibility and vetting
-
-Claiming establishes ownership; it does not grant a **Vetted** badge. The marketplace defaults to **Vetted only**. To find community apps, go to **Settings > Applications > Marketplace**, open the filter, and uncheck **Vetted only**. You can also share your app's direct install page using **My apps > your app > Distribution > Copy sharing link**.
-
-The Vetted label currently applies to apps maintained by Twenty, for which the team can vouch for security and quality. Third-party apps can be published and installed without this label.
-
-If your app is still missing with **Vetted only** turned off, confirm catalog sync has completed, all required server variables are filled in, and any server-route setup is complete.
-
-## Installing apps
-
-Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
-
-Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+Mergi la pagina **Setări > Aplicații** din Twenty, unde pot fi parcurse și instalate atât aplicațiile din marketplace, cât și cele implementate prin tarball.
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+Poți instala aplicații și din linia de comandă:
 
 ```bash filename="Terminal"
-twenty app install
+yarn twenty app:install
 ```
 
 <Note>
-The server enforces semver versioning on install, mirroring the rules on deploy:
+Serverul impune versionarea semver la instalare, reflectând regulile de la deploy:
 
-- Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
-- Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
+* Instalarea aceleiași versiuni care este deja instalată în spațiul tău de lucru este respinsă cu o eroare `APP_ALREADY_INSTALLED`.
+* Instalarea unei versiuni mai mici decât cea instalată în prezent este respinsă cu o eroare `CANNOT_DOWNGRADE_APPLICATION`.
 
-To install a newer version, deploy or publish it first, then re-run `twenty app install`.
-
+Pentru a instala o versiune mai nouă, fă mai întâi deploy sau public-o, apoi rulează din nou `yarn twenty app:install`.
 </Note>

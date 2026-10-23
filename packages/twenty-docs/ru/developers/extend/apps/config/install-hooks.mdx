@@ -1,18 +1,12 @@
 ---
 title: Установочные хуки
-description: Run logic during the install, upgrade, or uninstall lifecycle — seed data, back up records, validate the upgrade, clean up external resources.
-icon: 'wrench'
+description: Выполняйте логику во время жизненного цикла установки, обновления или удаления — выполняйте начальное заполнение данными, создавайте резервные копии записей, проверяйте корректность обновления, очищайте внешние ресурсы.
+icon: wrench
 ---
 
-<Note>
-  Перевод этого руководства ещё не обновлён для отдельного CLI Twenty. Ниже
-  временно приведён актуальный текст на английском, чтобы избежать использования
-  удалённых команд.
-</Note>
+Установочные хуки — это специальные логические функции, которые выполняются во время жизненного цикла установки, обновления или удаления. Они используют то же окружение выполнения обработчика, что и обычные [logic functions](/ru/developers/extend/apps/logic/logic-functions), но объявляются с помощью собственных функций определения и существуют вне обычной модели триггеров (HTTP, cron, события базы данных). Установочные хуки получают `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` имеет значение `undefined` при новой установке); хук удаления получает `UninstallPayload` (`{ version?: string }` — версия, которая удаляется).
 
-Install hooks are special logic functions that run during the install, upgrade, or uninstall lifecycle. They share the same handler runtime as regular [logic functions](/ru/developers/extend/apps/logic/logic-functions), but they're declared with their own define functions and live outside the normal trigger model (HTTP, cron, database events). Install hooks receive an `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` is `undefined` on a fresh install); the uninstall hook receives an `UninstallPayload` (`{ version?: string }` — the version being removed).
-
-Each app may define **at most one** of each hook (pre-install, post-install, uninstall). The manifest build errors if more than one of any kind is detected.
+Каждое приложение может определить **не более одного** хука каждого типа (предустановочный, постустановочный, хук удаления). Сборка манифеста завершится ошибкой, если будет обнаружено более одного хука любого типа.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -25,51 +19,48 @@ Each app may define **at most one** of each hook (pre-install, post-install, uni
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## At a glance
+## Краткий обзор
 
-|             | `definePreInstallLogicFunction`                                                   | `definePostInstallLogicFunction`                                                                                  |
-| ----------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Runs        | Before the metadata migration — the **previous** schema and data are still intact | After the migration and SDK generation — the **new** schema is in place                                           |
-| Execution   | Always synchronous; blocks the install                                            | Async by default (queued, 3 retries); sync opt-in via `shouldRunSynchronously: true`                              |
-| On failure  | Install is **aborted** before any schema change                                   | Async: retried up to 3 times. Sync: caller receives `POST_INSTALL_ERROR` (schema changes are **not** rolled back) |
-| Typical use | Back up or fix data a migration would lose; refuse a risky upgrade by throwing    | Seed default data, configure the workspace, register external resources                                           |
+|                        | `definePreInstallLogicFunction`                                                                                                            | `definePostInstallLogicFunction`                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Запуски                | До миграции метаданных — **предыдущая** схема и данные остаются нетронутыми                                                                | После миграции и генерации SDK — **новая** схема уже применяется                                                                                    |
+| Выполнение             | Всегда синхронное; блокирует установку                                                                                                     | Асинхронно по умолчанию (постановка в очередь, 3 повторные попытки); синхронный режим по желанию через `shouldRunSynchronously: true`               |
+| При ошибке             | Установка **прерывается** до любых изменений схемы                                                                                         | Асинхронный режим: до 3 повторных попыток. Синхронный режим: вызывающая сторона получает `POST_INSTALL_ERROR` (изменения схемы **не** откатываются) |
+| Типичное использование | Создать резервную копию или исправить данные, которые были бы потеряны при миграции; отклонить рискованное обновление, выбросив исключение | Наполнить данными по умолчанию, настроить рабочее пространство, зарегистрировать внешние ресурсы                                                    |
 
-**Rule of thumb:** default to post-install. Only reach for pre-install when the migration itself is destructive and you need to intercept the previous state before it is gone.
+**Общее практическое правило:** по умолчанию используйте post-install. Обращайтесь к pre-install только тогда, когда сама миграция разрушительна и вам нужно перехватить предыдущее состояние, прежде чем оно исчезнет.
 
-| You want to...                                                        | Use                                                      |
-| --------------------------------------------------------------------- | -------------------------------------------------------- |
-| Seed data, configure the workspace, register external resources       | `post-install`                                           |
-| Long-running work that shouldn't block the install response           | `post-install` (default async mode, with worker retries) |
-| Fast setup the caller relies on immediately after the install returns | `post-install` with `shouldRunSynchronously: true`       |
-| Read or back up data that the upcoming migration would lose           | `pre-install`                                            |
-| Reject an upgrade that would corrupt existing data                    | `pre-install` (throw from the handler)                   |
-| Reconciliation on every upgrade                                       | Either hook with `shouldRunOnVersionUpgrade: true`       |
+| Вы хотите...                                                                                 | Использовать                                                                    |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Инициализировать данные, настроить рабочее пространство, зарегистрировать внешние ресурсы    | `post-install`                                                                  |
+| Длительные операции, которые не должны блокировать ответ установки                           | `post-install` (асинхронный режим по умолчанию, с повторными попытками воркера) |
+| Быстрая настройка, на которую вызывающая сторона полагается сразу после завершения установки | `post-install` с `shouldRunSynchronously: true`                                 |
+| Прочитать или сохранить данные, которые предстоящая миграция может потерять                  | `pre-install`                                                                   |
+| Отклонить обновление, которое повредит существующие данные                                   | `pre-install` (бросьте исключение из обработчика)                               |
+| Согласование при каждом обновлении                                                           | Любой хук с `shouldRunOnVersionUpgrade: true`                                   |
 
-## Behavior shared by both hooks
+## Общее поведение для обоих хуков
 
-- The config is a `defineLogicFunction` config minus the trigger settings, plus `shouldRunOnVersionUpgrade`.
-- **When it runs**: fresh installs only, by default. Set `shouldRunOnVersionUpgrade: true` to also run on upgrades. Use `previousVersion` / `newVersion` to branch on the upgrade path.
-- **Idempotency matters**: async post-install may be retried, and either hook re-runs on upgrades when `shouldRunOnVersionUpgrade` is on.
-- The usual logic-function environment (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) is injected, so you can call the Twenty API with your app's token.
-- The hook is attached to the application manifest automatically at build time (`preInstallLogicFunction` / `postInstallLogicFunction`) — nothing to reference in [`defineApplication()`](/ru/developers/extend/apps/config/application).
-- The default `timeoutSeconds` is 300 to allow longer setup tasks like data seeding.
-- **Not executed in dev mode**: `twenty app dev` skips the install flow and syncs files directly, so hooks never run there. Trigger them manually instead:
+* Конфиг — это конфиг `defineLogicFunction` без настроек триггера, но с `shouldRunOnVersionUpgrade`.
+* **Когда запускается**: по умолчанию только при чистой установке. Установите `shouldRunOnVersionUpgrade: true`, чтобы также запускать его при обновлениях. Используйте `previousVersion` / `newVersion`, чтобы разветвлять логику в зависимости от пути обновления.
+* **Идемпотентность имеет значение**: асинхронный post-install может быть повторно выполнен, и любой хук будет запускаться повторно при обновлениях, если включён `shouldRunOnVersionUpgrade`.
+* Обычное окружение logic-функций (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) инъецируется, поэтому вы можете вызывать Twenty API с токеном своего приложения.
+* Хук автоматически прикрепляется к манифесту приложения на этапе сборки (`preInstallLogicFunction` / `postInstallLogicFunction`) — ничего не нужно указывать в [`defineApplication()`](/ru/developers/extend/apps/config/application).
+* Значение `timeoutSeconds` по умолчанию — 300, чтобы позволить выполнять более длительные задачи настройки, такие как инициализация данных.
+* **Не выполняется в dev-режиме**: `yarn twenty dev` пропускает процесс установки и синхронизирует файлы напрямую, поэтому хуки там никогда не запускаются. Вместо этого запускайте их вручную:
 
 ```bash filename="Terminal"
-twenty app exec --post-install
-twenty app exec --pre-install
+yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 <AccordionGroup>
-<Accordion title="definePostInstallLogicFunction" description="Runs after the workspace metadata migration is applied">
+<Accordion title="definePostInstallLogicFunction" description="Выполняется после применения миграции метаданных рабочего пространства">
 
-Runs once your app has finished installing: metadata synchronized, SDK client generated, new schema queryable. Example — seed a default record on fresh installs:
+Запускается после завершения установки приложения: метаданные синхронизированы, SDK-клиент сгенерирован, новая схема доступна для запросов. Пример — инициализировать запись по умолчанию при новой установке:
 
 ```ts src/logic-functions/post-install.ts
-import {
-  definePostInstallLogicFunction,
-  type InstallPayload,
-} from 'twenty-sdk/define';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -78,9 +69,7 @@ const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   const client = new CoreApiClient();
   await client.mutation({
     createPostCard: {
-      __args: {
-        data: { name: 'Welcome to Postcard', content: 'Your first card!' },
-      },
+      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
       id: true,
     },
   });
@@ -97,31 +86,25 @@ export default definePostInstallLogicFunction({
 });
 ```
 
-The `shouldRunSynchronously` flag controls the execution model:
+Флаг `shouldRunSynchronously` управляет моделью выполнения:
 
-- `false` _(default)_ — enqueued on the message queue (`retryLimit: 3`) and run by a worker. The install response returns as soon as the job is enqueued. **Use for long-running work** — seeding large datasets, slow third-party APIs.
-- `true` — executed inline during the install flow. The install request blocks until the handler finishes; a thrown error surfaces as `POST_INSTALL_ERROR` to the caller (no retries). **Use for fast, must-complete-before-response work.** The migration has already been applied at this point, so a failure does not roll back schema changes — it only surfaces the error.
+* `false` *(по умолчанию)* — ставится в очередь сообщений (`retryLimit: 3`) и выполняется воркером. Ответ установки возвращается, как только задача поставлена в очередь. **Используйте для длительных операций** — инициализация больших наборов данных, медленные сторонние API.
+* `true` — выполняется непосредственно в процессе установки. Запрос на установку блокируется до завершения обработчика; выброшенная ошибка возвращается вызывающей стороне как `POST_INSTALL_ERROR` (без повторных попыток). **Используйте для быстрых операций, которые обязательно должны завершиться до ответа.** На этом этапе миграция уже применена, поэтому сбой не откатывает изменения схемы — он только сообщает об ошибке.
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Runs before the workspace metadata migration is applied">
+<Accordion title="definePreInstallLogicFunction" description="Выполняется до применения миграции метаданных рабочего пространства">
 
-Runs before the metadata migration, against the **previous** schema — the right place to back up data a migration would lose, or to refuse a risky upgrade. Before executing, the server runs a purely additive "pared-down sync" that registers only the new version's pre-install function; everything else — the previous version's objects, fields, and data — is untouched when your handler runs.
+Запускается до миграции метаданных, в контексте **предыдущей** схемы — подходящее место, чтобы создать резервную копию данных, которые были бы потеряны при миграции, или отклонить рискованное обновление. Перед выполнением сервер запускает чисто добавочную «урезанную синхронизацию», которая регистрирует только pre-install функцию новой версии; всё остальное — объекты, поля и данные предыдущей версии — остаётся нетронутым во время выполнения вашего обработчика.
 
-Pre-install is always **synchronous** and blocks the install. If the handler throws, the install is aborted before any schema change — the workspace stays on the previous version in a consistent state. This is intentional: pre-install is your last chance to refuse a risky upgrade.
+Pre-install всегда **синхронный** и блокирует установку. Если обработчик генерирует исключение, установка прерывается до применения каких-либо изменений схемы — рабочее пространство остаётся на предыдущей версии в согласованном состоянии. Это сделано намеренно: pre-install — ваш последний шанс отказать в рискованном обновлении.
 
-Example — copy a legacy field's values before the migration drops it:
+Пример — скопировать значения устаревшего поля перед тем, как миграция его удалит:
 
 ```ts src/logic-functions/pre-install.ts
-import {
-  definePreInstallLogicFunction,
-  type InstallPayload,
-} from 'twenty-sdk/define';
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const handler = async ({
-  previousVersion,
-  newVersion,
-}: InstallPayload): Promise<void> => {
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -150,8 +133,7 @@ const handler = async ({
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description:
-    'Backs up legacy notes into description before the v2 migration.',
+  description: 'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -161,27 +143,24 @@ export default definePreInstallLogicFunction({
 </Accordion>
 </AccordionGroup>
 
-## Uninstall hook
+## Хук удаления
 
-`defineUninstallLogicFunction` declares a hook that runs when a user uninstalls your app. It executes **before** the app's metadata, data, and code are removed — once the deletion migration runs there is nothing left to execute — so your handler can still query the app's objects and records. Use it for cleanup of external resources: deprovision API resources, delete remaining bots, revoke webhooks.
+`defineUninstallLogicFunction` объявляет хук, который выполняется, когда пользователь удаляет ваше приложение. Он выполняется **до того**, как метаданные, данные и код приложения будут удалены — после запуска миграции удаления уже нечему будет выполняться — поэтому ваш обработчик все еще может запрашивать объекты и записи приложения. Используйте его для очистки внешних ресурсов: отмены выделения ресурсов API, удаления оставшихся ботов, отзыва вебхуков.
 
-Notes:
+Заметки:
 
-- The hook is best-effort: it runs synchronously, but a failure is logged and **never blocks the uninstall** — cleanup must not make an app impossible to remove.
-- It receives `UninstallPayload` (`{ version?: string }` — the version being removed).
-- It does **not** run when a failed fresh install is rolled back — the app never finished installing.
-- The hook cannot run after the app is gone, so external cleanup that depends on app data (e.g. bot IDs stored in records) belongs here, not in an external scheduled job.
-- Like the install hooks, it is **not executed in dev mode** — trigger it manually instead:
+* Хук работает по принципу «по возможности»: он выполняется синхронно, но сбой только логируется и **никогда не блокирует удаление** — очистка не должна делать удаление приложения невозможным.
+* Он получает `UninstallPayload` (`{ version?: string }` — версия, которая удаляется).
+* Он **не** выполняется при откате неуспешной новой установки — приложение так и не было полностью установлено.
+* Хук не может выполниться после того, как приложение удалено, поэтому внешняя очистка, которая зависит от данных приложения (например, ID ботов, сохраненные в записях), должна выполняться здесь, а не во внешнем запланированном задании.
+* Как и установочные хуки, он **не выполняется в режиме разработки** — вместо этого запустите его вручную:
 
 ```bash filename="Terminal"
-twenty app exec --uninstall-hook
+yarn twenty dev:function:exec --uninstall
 ```
 
 ```ts src/logic-functions/uninstall.ts
-import {
-  defineUninstallLogicFunction,
-  type UninstallPayload,
-} from 'twenty-sdk/define';
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {

@@ -1,16 +1,10 @@
 ---
 title: Nesneler
-description: Declare new record types — custom tables with their own fields — using defineObject.
-icon: 'table'
+description: defineObject kullanarak, kendi alanlarına sahip özel tablolar olan yeni kayıt türlerini bildirin.
+icon: table
 ---
 
-<Note>
-  Bu kılavuzun çevirisi henüz bağımsız Twenty CLI için güncellenmedi. Kaldırılan
-  komutların kullanılmasını önlemek için aşağıda geçici olarak güncel İngilizce
-  içerik gösterilmektedir.
-</Note>
-
-Custom **objects** are new record types your app adds to a workspace — Post Card, Invoice, Subscription, anything specific to your domain. Each object declares its schema (fields, relations, default values) and a stable universal identifier that survives across syncs and deploys.
+Özel **nesneler**, uygulamanızın bir çalışma alanına eklediği yeni kayıt türleridir — Kartpostal, Fatura, Abonelik, alanınıza özgü herhangi bir şey. Her nesne kendi şemasını (alanlar, ilişkiler, varsayılan değerler) ve eşitlemeler ve dağıtımlar boyunca korunan, kararlı bir evrensel tanımlayıcıyı bildirir.
 
 ```ts src/objects/post-card.object.ts
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -61,30 +55,10 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        {
-          value: PostCardStatus.DRAFT,
-          label: 'Draft',
-          position: 0,
-          color: 'gray',
-        },
-        {
-          value: PostCardStatus.SENT,
-          label: 'Sent',
-          position: 1,
-          color: 'orange',
-        },
-        {
-          value: PostCardStatus.DELIVERED,
-          label: 'Delivered',
-          position: 2,
-          color: 'green',
-        },
-        {
-          value: PostCardStatus.RETURNED,
-          label: 'Returned',
-          position: 3,
-          color: 'orange',
-        },
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
       ],
     },
     {
@@ -100,87 +74,55 @@ export default defineObject({
 });
 ```
 
-## Key points
+## Önemli noktalar
 
-- The `universalIdentifier` must be unique and stable across deployments.
-- Each field requires a `name`, `type`, `label`, and its own stable `universalIdentifier`.
-- The `fields` array is optional — you can define objects without custom fields.
-- `openRecordIn` sets where records of this object open when clicked: `ObjectOpenRecordIn.USER_CHOICE` (the default, following each workspace member's own preference from Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL`, or `ObjectOpenRecordIn.RECORD_PAGE`. Pin it to `RECORD_PAGE` for records that need a full page to be usable, the way workflows and dashboards do, or to `SIDE_PANEL` for records that only make sense as a quick panel, the way calendar events do.
-- `writability` controls who may write records of the object at all, before role permissions apply: `MetadataWritability.OPEN` (the default — workspace roles decide), `MetadataWritability.APPLICATION` (only your app's own logic functions can create, update, or delete records; use this for configuration-like objects whose records grant behavior, so workspace members with broad record access cannot edit them through the API), or `MetadataWritability.SYSTEM` (reserved for platform-managed data). Reads are unaffected — this is enforced server-side, unlike `isUIEditable`, which only hides UI affordances. It also exists per field, where it can only be stricter than the object's level.
-- `readability` declares who may read records of the object: `MetadataReadability.OPEN` (the default — workspace roles decide), `MetadataReadability.PRIVATE` (only principals the record was shared with), `MetadataReadability.INHERITED` (whoever reads the parent record), `MetadataReadability.APPLICATION` (only your app's own logic functions) or `MetadataReadability.SYSTEM` (platform-managed data). All readability policies are always enforced.
-- `readabilityParentFieldUniversalIdentifiers` goes with `MetadataReadability.INHERITED`: the universal identifiers of the relation fields that lead to the parent records.
-  - A many-to-one field names the record the row points to. Declaring one field of a morph relation covers every target of that relation.
-  - A one-to-many field names a child object whose rows point back at the record, such as the join rows of a many-to-many relation. The record is then readable when at least one of those rows leads to a readable record: a note follows the people, companies and opportunities its note targets attach it to.
-  - Several parents combine as a union: one readable parent is enough.
-  - A parent grants access under its complete policy, the one a query of the parent applies: the reader's permission on the parent object, the row-level restrictions of their role and the parent's own readability. A record never shows through a parent its reader could not query. Subscriptions, webhooks, workflows and logic functions decide what an event of an `INHERITED` record reaches by that same policy.
-  - The share rows on the record itself grant access exactly as on a `PRIVATE` record. Its creator gets one when the record is created while record sharing is enabled, so whoever created a record keeps seeing it, and a record whose parent fields are all empty is visible to those it was shared with directly.
-  - An `INHERITED` object that names no usable parent field behaves like a `PRIVATE` one.
-- `sharingReach` sets how far a record of the object can be shared by name: `ObjectSharingReach.WORKSPACE` (the default, a record can be shared with anyone in the workspace, even someone whose role cannot access the object or whose row-level filter hides the record; they get that record only, to view or edit) or `ObjectSharingReach.ROLE_ACCESS` (shares never go beyond role and row-level permissions). Pick `ROLE_ACCESS` for sensitive objects where no access must mean no access. Roles that can update all settings see every record of an `OPEN` object whatever its sharing restrictions; their object permissions and row-level filters still apply. It only applies while record sharing is enabled in the workspace, and only to objects whose records can be shared: `MetadataReadability.OPEN`, `PRIVATE` and `INHERITED` objects that are not system objects. `APPLICATION` and `SYSTEM` objects are never shared.
-- `color` sets the accent color of the object in the UI. Omit it and Twenty picks one for the object.
-- `imageIdentifierFieldMetadataUniversalIdentifier` names the field whose value is shown as the record avatar. Omit it to let Twenty pick the default.
-- `isLabelSyncedWithName`, on an object or on a field, keeps the API name in sync with the label when the label is edited in Settings. It defaults to `false`, so a renamed label leaves the name untouched.
-- `isSearchable: true`, on a field, includes its values in the object's full-text search (global search and the command menu). It requires the object itself to be searchable and a text-compatible field type. An omitted value means not searchable, except for the object's label identifier field, which is always searchable and cannot be opted out. Each sync enforces the declared state, so a field toggled searchable from Settings reverts on your app's next sync unless the manifest declares it.
-- `isAuditLogged: false`, on a field, keeps its changes out of the record timeline. It defaults to `true`, except on a `POSITION` field, whose changes render blank in the timeline and are never logged. Set it on fields your app rewrites on a schedule, such as a last-contact timestamp or a rollup relation, so each sync does not add an activity row to every record it touches. An update whose whole diff is made of non audit logged fields produces no timeline activity at all. Like `isSearchable`, each sync enforces the declared state.
-- Inline fields defined here do **not** need an `objectUniversalIdentifier` — it's inherited from the parent object. Use [`defineField()`](/tr/developers/extend/apps/data/extending-objects) to add fields to objects you don't own.
-- You can scaffold new objects with `twenty app add object`, which guides you through naming, fields, and relationships. See [Architecture → Scaffolding entities](/tr/developers/extend/apps/getting-started/scaffolding).
+* `universalIdentifier` dağıtımlar arasında benzersiz ve kararlı olmalıdır.
+* Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
+* `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
+* `openRecordIn`, bu nesnenin kayıtlarının tıklandığında nerede açılacağını ayarlar: `ObjectOpenRecordIn.USER_CHOICE` (varsayılan; her çalışma alanı üyesinin Ayarlar → Deneyim bölümündeki kendi tercihine uyar), `ObjectOpenRecordIn.SIDE_PANEL` veya `ObjectOpenRecordIn.RECORD_PAGE`. Kayıtların kullanılabilir olması için tam sayfa gerektirdiği durumlarda, iş akışları ve panolarda olduğu gibi `RECORD_PAGE` üzerinde sabitleyin; yalnızca hızlı bir panel olarak anlam ifade eden kayıtlar için ise, takvim etkinliklerinde olduğu gibi `SIDE_PANEL` üzerinde sabitleyin.
+* `writability`, rol izinleri devreye girmeden önce, bir nesnenin kayıtlarını kimin yazabileceğini belirler: `MetadataWritability.OPEN` (varsayılan — kararı çalışma alanı rolleri verir), `MetadataWritability.APPLICATION` (yalnızca uygulamanızın kendi mantık işlevleri kayıt oluşturabilir, güncelleyebilir veya silebilir; bunu, kayıtları uygulamanın davranışını belirleyen yapılandırma benzeri nesneler için kullanın; böylece kayıtlara geniş erişimi olan çalışma alanı üyeleri bunları API üzerinden düzenleyemez), veya `MetadataWritability.SYSTEM` (platform tarafından yönetilen veriler için ayrılmıştır). Okumalar etkilenmez — bu, yalnızca arayüz öğelerini gizleyen `isUIEditable`'ın aksine sunucu tarafında uygulanır. Ayrıca alan başına da mevcuttur ve bu durumda yalnızca nesnenin düzeyinden daha kısıtlayıcı olabilir.
+* Burada tanımlanan satır içi alanların bir `objectUniversalIdentifier`'a **ihtiyacı yoktur** — üst nesneden devralınır. Sahibi olmadığınız nesnelere alan eklemek için [`defineField()`](/tr/developers/extend/apps/data/extending-objects) kullanın.
+* `yarn twenty dev:add object` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz. [Mimari → Varlık iskeleti oluşturma](/tr/developers/extend/apps/getting-started/scaffolding) bölümüne bakın.
 
 <Note>
-  **Base fields are added automatically.** When you define a custom object,
-  Twenty creates standard fields like `id`, `name`, `createdAt`, `updatedAt`,
-  `createdBy`, `updatedBy`, and `deletedAt` for you. You don't need to declare
-  them in your `fields` array — only your custom fields. You can override a
-  default field by declaring one with the same name, but this is rarely a good
-  idea.
+**Temel alanlar otomatik olarak eklenir.** Özel bir nesne tanımladığınızda Twenty, sizin için `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt` gibi standart alanlar oluşturur. Bunları `fields` dizinizde bildirmenize gerek yok — yalnızca özel alanlarınızı ekleyin. Aynı ada sahip bir alan bildirerek varsayılan bir alanı geçersiz kılabilirsiniz, ancak bu nadiren iyi bir fikirdir.
 </Note>
 
-## Field types
+## Alan tipleri
 
-The full set of `FieldType` values, exported from `twenty-sdk/define`:
+`twenty-sdk/define` içinden dışa aktarılan, `FieldType` değerlerinin tam kümesi:
 
-| Category                | Types                                                                                                                                                                                                                                                                                      |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Text                    | `TEXT`, `RICH_TEXT`, `ARRAY` (of strings), `RAW_JSON`                                                                                                                                                                                                                                      |
-| Numeric                 | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (arbitrary precision), `RATING`, `POSITION`                                                                                                                                                           |
-| Dates                   | `DATE`, `DATE_TIME`                                                                                                                                                                                                                                                                        |
-| Choice                  | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                                                                                                                                                                        |
-| Composite               | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS` (`universalSettings.type`: `'url'` (default) / `'domain'` — a domain field stores the bare host, so `https://www.acme.com/careers` is written as `acme.com`, and a value that is not a host is rejected), `CURRENCY`, `ACTOR`, `FILES` |
-| Identifiers & relations | `UUID`, `RELATION`, `MORPH_RELATION` (see [Relations](/tr/developers/extend/apps/data/relations))                                                                                                                                                                                          |
-| System                  | `TS_VECTOR` (full-text search vector, managed by the server)                                                                                                                                                                                                                               |
+| Kategori                    | Türler                                                                                                                           |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Metin                       | `TEXT`, `RICH_TEXT`, `ARRAY` (string dizisi), `RAW_JSON`                                                                         |
+| Sayısal                     | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (sınırsız hassasiyet), `RATING`, `POSITION` |
+| Tarihler                    | `DATE`, `DATE_TIME`                                                                                                              |
+| Seçim                       | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                              |
+| Bileşik                     | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                |
+| Tanımlayıcılar ve ilişkiler | `UUID`, `RELATION`, `MORPH_RELATION` (bkz. [İlişkiler](/tr/developers/extend/apps/data/relations))                                  |
+| Sistem                      | `TS_VECTOR` (sunucu tarafından yönetilen tam metin arama vektörü)                                                                |
 
-Composite types store multiple sub-fields (e.g. `FULL_NAME` = first + last name; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` and `MULTI_SELECT` require an `options` array as in the example above.
+Bileşik tipler birden çok alt alan depolar (ör. `FULL_NAME` = ad + soyad; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` ve `MULTI_SELECT`, yukarıdaki örnekte olduğu gibi bir `options` dizisi gerektirir.
 
-### Select options
+## Varsayılan değerler
 
-For `SELECT` and `MULTI_SELECT`, provide a non-empty `options` array of objects. Each option has a `value`, `label`, and `position`. Its `color` is optional and defaults to `gray` when omitted or null.
+Sabit (literal) dize varsayılanları, dize **içinde** tek tırnak içine alınmış olmalıdır — `defaultValue: "'Draft'"`, `defaultValue: "Draft"` değil. Bu nedenle yukarıdaki `status` alanı `` `'${PostCardStatus.DRAFT}'` `` kullanır.
 
-When provided, `color` must be one of: `red`, `ruby`, `crimson`, `tomato`, `orange`, `amber`, `yellow`, `lime`, `grass`, `green`, `jade`, `mint`, `turquoise`, `cyan`, `sky`, `blue`, `iris`, `violet`, `purple`, `plum`, `pink`, `bronze`, `gold`, `brown`, `gray`.
+Tırnak içine alınmamış dizeler, bir kayıt oluşturulduğunda değerlendirilen, hesaplanmış varsayılanlar için ayrılmıştır:
 
-Both `defineObject()` and `defineField()` return validation errors for unsupported colors or option entries that are null, primitives, or arrays.
+* `'uuid'` — bir UUID üretir (`UUID` alanları için)
+* `'now'` — geçerli zaman damgası (`DATE_TIME` alanları için)
 
-## Default values
+Aynı kural, bileşik varsayılanların string alt alanları için (örneğin bir `ACTOR` alanında `{ source: "'MANUAL'" }`) ve `SELECT`/`MULTI_SELECT` değerleri için de geçerlidir. Tırnak içine alınmamış bir sabit string varsayılan, uygulamanız oluşturulurken bir uyarıya neden olur.
 
-Literal string defaults must be wrapped in single quotes **inside** the string — `defaultValue: "'Draft'"`, not `defaultValue: "Draft"`. That's why the `status` field above uses `` `'${PostCardStatus.DRAFT}'` ``.
+## Boş değer atanabilirliği
 
-Unquoted strings are reserved for computed defaults, evaluated when a record is created:
+`isNullable`, bir alanın `NULL` kabul edip etmediğini kontrol eder. Varsayılan değeri `true`'dur — isteğe bağlı alanlar için bunu belirtmeyin. Bir alanı veritabanı düzeyinde zorunlu yapmak için `isNullable: false` olarak ayarlayın.
 
-- `'uuid'` — generates a UUID (for `UUID` fields)
-- `'now'` — the current timestamp (for `DATE_TIME` fields)
-
-The same convention applies to string sub-fields of composite defaults (e.g. `{ source: "'MANUAL'" }` on an `ACTOR` field) and to `SELECT`/`MULTI_SELECT` values. A literal string default left unquoted raises a warning when your app is built.
-
-## Nullability
-
-`isNullable` controls whether a field accepts `NULL`. It defaults to `true` — omit it for optional fields. Set `isNullable: false` to make a field required at the database level.
-
-Changes to `isNullable` are applied on every sync, including syncs that update an existing field — so you can flip a field's nullability by editing the manifest and re-syncing.
+`isNullable` değişiklikleri, mevcut bir alanı güncelleyenler de dahil olmak üzere her senkronizasyonda uygulanır — bu nedenle manifesti düzenleyip yeniden senkronize ederek bir alanın boş değer atanabilirliğini değiştirebilirsiniz.
 
 <Note>
-  **Making an existing field non-nullable requires a default value.** When you
-  change a field to `isNullable: false`, you must also provide a non-null
-  `defaultValue`. The default backfills any existing `NULL` rows before the `NOT
-  NULL` constraint is applied; without it the sync fails with `Default value
-  cannot be null for non-nullable fields`. Relation fields and `TS_VECTOR`
-  fields are always nullable, so `isNullable` has no effect on them.
+**Var olan bir alanı boş değer kabul etmeyecek (non-nullable) hale getirmek için bir varsayılan değer gereklidir.** Bir alanı `isNullable: false` olarak değiştirdiğinizde, ayrıca boş olmayan (non-null) bir `defaultValue` sağlamanız gerekir. Varsayılan değer, `NOT NULL` kısıtlaması uygulanmadan önce mevcut `NULL` satırlarını doldurur; bu olmadan senkronizasyon, `Default value cannot be null for non-nullable fields` hatasıyla başarısız olur. İlişki alanları (relation fields) ve `TS_VECTOR` alanları her zaman boş değere izin verir (nullable), bu yüzden `isNullable` bunlar üzerinde hiçbir etkiye sahip değildir.
 </Note>
 
 ```ts
@@ -194,8 +136,8 @@ Changes to `isNullable` are applied on every sync, including syncs that update a
 }
 ```
 
-## What's next
+## Sırada ne var
 
-- **Connect this object to others** — see [Relations](/tr/developers/extend/apps/data/relations) for the bidirectional relation pattern.
-- **Add fields to objects from other apps** — see [Extending Objects](/tr/developers/extend/apps/data/extending-objects) for `defineField()`.
-- **Display this object in the UI** — see [Navigation Menu Items](/tr/developers/extend/apps/layout/navigation-menu-items) to add a sidebar entry; see [Views](/tr/developers/extend/apps/layout/views) to add custom list configurations.
+* **Bu nesneyi diğerlerine bağlayın** — çift yönlü ilişki modeli için [İlişkiler](/tr/developers/extend/apps/data/relations) bölümüne bakın.
+* **Diğer uygulamalardaki nesnelere alanlar ekleyin** — `defineField()` için [Nesneleri Genişletme](/tr/developers/extend/apps/data/extending-objects) bölümüne bakın.
+* **Bu nesneyi arayüzde görüntüle** — kenar çubuğuna bir menü öğesi eklemek için [Gezinme Menüsü Öğeleri](/tr/developers/extend/apps/layout/navigation-menu-items) bölümüne bakın; özel liste yapılandırmaları eklemek için [Görünümler](/tr/developers/extend/apps/layout/views) bölümüne bakın.

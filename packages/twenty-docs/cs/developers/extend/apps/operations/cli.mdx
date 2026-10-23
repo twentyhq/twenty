@@ -1,176 +1,131 @@
 ---
 title: CLI
-description: Sign in to a workspace, explore its data and build apps from your terminal with the twenty CLI.
-icon: 'terminal'
+description: příkazy `yarn twenty` pro spouštění funkcí, streamování logů, správu instalací aplikací a přepínání vzdálených serverů.
+icon: terminal
 ---
 
+CLI `yarn twenty` je vaše rozhraní ke všemu, co souvisí s aplikací. Úplný seznam příkazů:
+
+| Příkaz                                          | K čemu slouží                                                                       | Zdokumentováno v                                                                                         |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `dev`                                           | Sleduje zdrojové soubory a živě synchronizuje změny                                 | [Rychlý start](/cs/developers/extend/apps/getting-started/quick-start)                                      |
+| `plán`                                          | Náhled změn metadat bez jejich aplikování                                           | [Synchronizace a obnovení](/cs/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
+| `použít`                                        | Aplikovat změny metadat po zobrazení plánu                                          | [Synchronizace a obnovení](/cs/developers/extend/apps/operations/sync-and-recovery)                         |
+| `dev:build`                                     | Zkompilovat aplikaci a vygenerovat API klienta (`--tarball` pro zabalení do `.tgz`) | [Publikování](/cs/developers/extend/apps/operations/publishing)                                             |
+| `dev:typecheck`                                 | Spustit kontrolu typů TypeScriptu                                                   | [Testování](/cs/developers/extend/apps/operations/testing)                                                  |
+| `dev:add`                                       | Vytvořit kostru nové entity                                                         | [Scaffolding](/cs/developers/extend/apps/getting-started/scaffolding)                                       |
+| `dev:generate-client`                           | Znovu vygenerovat typovaného API klienta                                            | tato stránka                                                                                             |
+| `dev:function:exec` / `dev:function:logs`       | Spustit funkce a streamovat jejich logy                                             | tato stránka                                                                                             |
+| `dev:translations-extract`                      | Extrahovat přeložitelné řetězce do katalogů v `locales/`                            | [Překlady](/cs/developers/extend/apps/operations/translations)                                                |
+| `dev:catalog-sync`                              | Spustit synchronizaci katalogu tržiště                                              | [Publikování](/cs/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)             |
+| `app:publish` / `app:install` / `app:uninstall` | Životní cyklus vydání                                                               | [Publikování](/cs/developers/extend/apps/operations/publishing) a tato stránka                              |
+| `docker:*`                                      | Spravovat kontejner lokálního serveru Twenty                                        | [Lokální server](/cs/developers/extend/apps/getting-started/local-server)                                   |
+| `remote:*`                                      | Spravovat připojení k serveru                                                       | tato stránka                                                                                             |
+
+Každý příkaz přijímá `-r, --remote \<name>` pro zacílení na konkrétní vzdálené připojení místo výchozího.
+
+## Spouštění funkcí (`yarn twenty dev:function:exec`)
+
+Spusťte logickou funkci ručně bez vyvolání přes HTTP, cron nebo databázovou událost:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty dev:function:exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the install and uninstall hooks
+yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
+yarn twenty dev:function:exec --uninstall
+```
+
+## Zobrazení logů funkcí (`yarn twenty dev:function:logs`)
+
+Streamujte výstupní logy běhu logických funkcí vaší aplikace:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty dev:function:logs
+
+# Filter by function name
+yarn twenty dev:function:logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
 <Note>
-  Překlad tohoto průvodce zatím nezohledňuje samostatné CLI Twenty. Níže dočasně
-  uvádíme aktuální anglický obsah, abyste nepoužívali odstraněné příkazy.
+To se liší od `yarn twenty docker:logs`, který zobrazuje logy kontejneru Docker. `yarn twenty dev:function:logs` zobrazuje logy běhu funkcí vaší aplikace ze serveru Twenty.
 </Note>
 
-The `twenty` CLI connects to Twenty workspaces from your terminal. Use it to inspect metadata, read records, send API requests, and create, sync and debug apps. It needs **Node.js 24.5 or later**.
+## Generování typovaného klienta (`yarn twenty dev:generate-client`)
 
-## Running the CLI
-
-Run any command through `npx`, without installing anything:
+Znovu vygenerujte typovaného klienta API (`twenty-client-sdk`) ze schématu aktivního vzdáleného serveru, bez sestavování nebo synchronizace aplikace. Použijte jej k získání typovaného klienta v libovolném projektu – například backendové služby v samostatném repozitáři – který komunikuje s vaší instancí Twenty:
 
 ```bash filename="Terminal"
-npx twenty@latest --version
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
 ```
 
-Or install it once globally and call `twenty` directly:
+Poté klienta importujte ve svém kódu:
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+Spusťte příkaz znovu pokaždé, když se změní váš datový model, abyste aktualizovali vygenerované typy.
+
+<Note>
+Klient je vygenerován uvnitř `node_modules`, takže není verzován spolu s vaším kódem. Spusťte `yarn twenty dev:generate-client` po každé instalaci (například ve skriptu `postinstall` nebo v CI).
+</Note>
+
+## Odinstalace aplikace (`yarn twenty app:uninstall`)
+
+Odeberte svou aplikaci z aktivního pracovního prostoru:
 
 ```bash filename="Terminal"
-npm install -g twenty
-twenty --version
+yarn twenty app:uninstall
+
+# Skip the confirmation prompt
+yarn twenty app:uninstall --yes
 ```
 
-The examples below use `twenty`. Prefix them with `npx twenty@latest` if you did not install it globally. Run `twenty commands` for the full command list and `twenty <command> --help` for the options of one command.
+## Správa vzdálených serverů
 
-| Command    | What it does                                                |
-| ---------- | ----------------------------------------------------------- |
-| `auth`     | Sign in, check and remove credentials                       |
-| `remote`   | List, select, rename and remove saved workspace connections |
-| `metadata` | Inspect objects and fields                                  |
-| `data`     | List and read records                                       |
-| `api`      | Send raw REST or GraphQL requests                           |
-| `open`     | Open the workspace in your browser                          |
-| `app`      | Create, build, sync, debug and uninstall apps               |
-| `doctor`   | Diagnose the CLI, app SDK and workspace connection          |
-
-Every command that talks to a workspace accepts `--remote <name>` to target a saved connection other than the default one, and `--json` for structured output.
-
-## Connecting to a workspace
-
-Sign in with your browser. `--use` makes this connection the default one:
+**Remote** je server Twenty, ke kterému se vaše aplikace připojuje. Během nastavení jej generátor kostry automaticky vytvoří. Můžete kdykoli přidat další vzdálené servery nebo mezi nimi přepínat.
 
 ```bash filename="Terminal"
-twenty auth login --url https://acme.twenty.com --use
-twenty auth status
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote:add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote:add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote:list
+
+# Set the active remote
+yarn twenty remote:use <name>
+
+# Check that the active remote's authentication is still valid
+yarn twenty remote:status
+
+# Remove a remote
+yarn twenty remote:remove <name>
 ```
 
-Use your workspace's address, or the server's address for a local setup: `http://localhost:2020` for the [local Docker server](/cs/developers/extend/apps/getting-started/local-server), `http://localhost:3000` for a source checkout. You can copy the exact command from **Settings > Developers > CLI**. Browser sign-in needs Twenty 2.42 or later.
-
-Keep several connections by naming them:
-
-```bash filename="Terminal"
-twenty auth login --url http://localhost:2020 --name local
-twenty remote list
-twenty remote use local
-```
-
-In CI or scripts, pipe an API key instead of signing in with the browser:
-
-```bash filename="Terminal"
-printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://acme.twenty.com --name ci
-```
-
-You can also set `TWENTY_API_URL` and `TWENTY_API_KEY` for a single run without saving anything. Saved connections live in `~/.twenty/config.json`.
-
-## Exploring your data
-
-```bash filename="Terminal"
-# Objects and fields
-twenty metadata object list
-twenty metadata field list companies
-
-# Records
-twenty data list companies --limit 5
-twenty data list companies --filter 'employees[gte]:5000' --order-by 'employees[DescNullsLast]'
-twenty data get people <id>
-
-# Raw API requests
-twenty api rest '/rest/companies?limit=5'
-twenty api graphql --query '{ companies(first: 2) { edges { node { name } } } }'
-
-# Open the workspace, or a page inside it
-twenty open
-twenty open settings/developers
-```
-
-Object names are exact API names, singular or plural (`company` or `companies`). Raw API writes run without a confirmation step, and your permissions in the workspace still apply.
-
-## Building an app
-
-```bash filename="Terminal"
-npx twenty@latest app init my-app
-cd my-app
-yarn install
-npx twenty@latest app apply --create
-npx twenty@latest app dev
-```
-
-- `app init` writes a new project from the template. It does not install dependencies or contact a workspace.
-- `app apply --create` builds the app, registers it in the workspace, installs it and syncs its metadata.
-- `app dev` watches your source and syncs every successful build.
-
-Other app commands:
-
-| Command                       | What it does                                               |
-| ----------------------------- | ---------------------------------------------------------- |
-| `app add`                     | Scaffold an object, field, logic function or other entity  |
-| `app build` / `app typecheck` | Build or typecheck the app locally                         |
-| `app plan`                    | Preview the metadata changes an apply would make           |
-| `app apply`                   | Build, upload and sync the app                             |
-| `app generate-client`         | Regenerate the typed API client without syncing            |
-| `app pull`                    | Write the installed app's metadata back to local source    |
-| `app translations extract`    | Extract translatable strings into `locales/` catalogs      |
-| `app publish`                 | Publish the app to npm or to a private Twenty registry     |
-| `app install`                 | Install an already registered app package in the workspace |
-| `app uninstall`               | Remove the app and everything it owns from the workspace   |
-
-Definitions missing from your source are deleted from the workspace by default. Pass `--no-delete` to keep them. Deleting objects or fields also deletes their data, so it requires confirmation. See [Syncing & recovery](/cs/developers/extend/apps/operations/sync-and-recovery) for details.
-
-## Executing functions
-
-Run a deployed logic function without triggering it through a route, a cron or a database event. Sync your local changes with `app apply` or `app dev` first.
-
-```bash filename="Terminal"
-twenty app exec --name create-new-post-card
-twenty app exec --name create-new-post-card --payload '{"name": "Hello"}'
-
-# Install and uninstall hooks
-twenty app exec --post-install
-twenty app exec --pre-install
-twenty app exec --uninstall-hook
-```
-
-Executing functions requires a browser sign-in. API keys cannot execute them.
-
-## Watching function logs
-
-Stream the output of your app's logic functions as executions finish:
-
-```bash filename="Terminal"
-twenty app logs
-twenty app logs --name create-new-post-card
-```
-
-It only shows new executions, not past ones.
-
-## Uninstalling an app
-
-```bash filename="Terminal"
-twenty app uninstall
-twenty app uninstall --yes
-```
-
-This runs the app's uninstall hook and deletes everything it owns, including its objects, fields and their data. The app stays registered, so `twenty app apply` can install it again.
-
-## Diagnosing problems
-
-```bash filename="Terminal"
-twenty doctor
-twenty doctor --offline
-```
-
-`doctor` checks your Node version, which `twenty` binary is on your `PATH`, your saved connections and the app SDK, then reports what to fix.
-
-## Scripts and tests
-
-Build output belongs to the CLI. Do not read `.twenty/output/manifest.json` or import internal build code; read `data.manifest` from `twenty app build --json`.
-
-## Full reference
-
-The [command reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) covers every flag, permission, output format and exit code.
+Vaše přihlašovací údaje jsou uloženy v `~/.twenty/config.json`.

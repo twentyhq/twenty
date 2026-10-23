@@ -1,88 +1,70 @@
 ---
-title: 'Tutoriel : Document Generator'
-icon: 'wand-magic-sparkles'
-description: Build a real Twenty app that generates personalized documents from your CRM data.
+title: "Tutoriel : Document Generator"
+icon: wand-magic-sparkles
+description: Créez une véritable application Twenty qui génère des documents personnalisés à partir des données de votre CRM.
 ---
 
-<Note>
-  La traduction de ce guide n’est pas encore à jour pour la CLI autonome de
-  Twenty. Le contenu anglais actuel est présenté ci-dessous temporairement pour
-  éviter l’utilisation de commandes supprimées.
-</Note>
+Dans ce tutoriel, vous allez créer **Document Generator** — une application qui transforme des modèles réutilisables
+en documents personnalisés en utilisant les données déjà présentes dans votre CRM.
 
-In this tutorial you'll build **Document Generator** — an app that turns reusable
-templates into personalized documents using the data already in your CRM.
+Rédigez un modèle une seule fois avec `{{placeholders}}`, puis générez un document rempli
+pour n’importe quelle personne ou entreprise en un clic — depuis le menu de commande, depuis un
+agent IA ou depuis un workflow.
 
-Write a template once with `{{placeholders}}`, then generate a filled-in
-document for any Person or Company in one click — from the command menu, from an
-AI agent, or from a workflow.
-
-<Frame caption="One template, generated for a specific person, opened as a printable page.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png"
-    alt="A generated Sales proposal document"
-  />
+<Frame caption="Un modèle, généré pour une personne spécifique, ouvert comme une page imprimable.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Un document de proposition commerciale généré" />
 </Frame>
 
-## What you'll learn
+## Ce que vous apprendrez
 
-Each chapter adds one capability. By the end you'll have touched most of the SDK.
+Chaque chapitre ajoute une capacité. À la fin, vous aurez utilisé la plupart du SDK.
 
-| Chapter                                                                                                 | Capability                                                                                              | Reference                                                             |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [1. Data model](/fr/developers/extend/apps/tutorials/document-generator/data-model)                     | Objects, fields, and a relation                                                                         | [Data](/fr/developers/extend/apps/data/overview)                      |
-| [2. Generating documents](/fr/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function (AI tool + workflow action) that fills a Markdown template and attaches a polished PDF | [Logic functions](/fr/developers/extend/apps/logic/logic-functions)   |
-| [3. HTTP routes](/fr/developers/extend/apps/tutorials/document-generator/http-routes)                   | Serving JSON and a shareable HTML page from routes                                                      | [Logic functions](/fr/developers/extend/apps/logic/logic-functions)   |
-| [4. Building the UI](/fr/developers/extend/apps/tutorials/document-generator/building-the-ui)           | Views, navigation, command menu, and front components that preview a document and edit a template       | [Layout](/fr/developers/extend/apps/layout/overview)                  |
-| [5. An AI agent](/fr/developers/extend/apps/tutorials/document-generator/ai-agent)                      | Agent + skill                                                                                           | [Skills & agents](/fr/developers/extend/apps/logic/skills-and-agents) |
-| [6. Publishing](/fr/developers/extend/apps/tutorials/document-generator/publishing)                     | Ship it to the marketplace                                                                              | [Publishing](/fr/developers/extend/apps/operations/publishing)        |
+| Chapitre                                                                                                 | Capacité                                                                                                         | Référence                                                                |
+| -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [1. Modèle de données](/fr/developers/extend/apps/tutorials/document-generator/data-model)                  | Objets, champs et une relation                                                                                   | [Données](/fr/developers/extend/apps/data/overview)                         |
+| [2. Générer des documents](/fr/developers/extend/apps/tutorials/document-generator/generating-documents)    | Une fonction logique (outil IA + action de workflow) qui remplit un modèle Markdown et y joint un PDF soigné     | [Fonctions logiques](/fr/developers/extend/apps/logic/logic-functions)      |
+| [3. Routes HTTP](/fr/developers/extend/apps/tutorials/document-generator/http-routes)                       | Servir du JSON et une page HTML partageable depuis des routes                                                    | [Fonctions logiques](/fr/developers/extend/apps/logic/logic-functions)      |
+| [4. Créer l’interface utilisateur](/fr/developers/extend/apps/tutorials/document-generator/building-the-ui) | Vues, navigation, menu de commandes et composants frontaux qui prévisualisent un document et modifient un modèle | [Mise en page](/fr/developers/extend/apps/layout/overview)                  |
+| [5. Un agent IA](/fr/developers/extend/apps/tutorials/document-generator/ai-agent)                          | Agent + compétence                                                                                               | [Compétences et agents](/fr/developers/extend/apps/logic/skills-and-agents) |
+| [6. Publication](/fr/developers/extend/apps/tutorials/document-generator/publishing)                        | Publiez-la sur la place de marché                                                                                | [Publication](/fr/developers/extend/apps/operations/publishing)             |
 
-## Prerequisites
+## Prérequis
 
-You should have finished the [Quick Start](/fr/developers/extend/apps/getting-started/quick-start):
-a Twenty workspace (cloud or local) and the CLI authenticated to it.
+Vous devez avoir terminé le [démarrage rapide](/fr/developers/extend/apps/getting-started/quick-start) :
+un serveur Twenty local en cours d’exécution sur le port `2020` et le CLI authentifié dessus.
 
-If the server or authentication is not ready, complete the [Quick Start](/fr/developers/extend/apps/getting-started/quick-start) first. Then create and install the tutorial app:
+Sinon, générez-en un et lancez-le maintenant :
 
 ```bash filename="Terminal"
-twenty app init document-generator
+npx create-twenty-app@latest document-generator
 cd document-generator
-yarn install
-twenty app apply --create
-twenty app dev
+yarn twenty dev
 ```
 
 <Note>
-  Prefer to read the finished code? The complete app lives in
-  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-  Every snippet below is copied from it.
+Vous préférez lire le code finalisé ? L’application complète se trouve dans
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+Chaque extrait ci-dessous en est tiré.
 </Note>
 
-## How the app fits together
+## Comment l’application s’assemble
 
 <Frame>
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg"
-    alt="A template with placeholders is generated into a polished document with a PDF, triggered from the command menu, an AI agent, a workflow, or a shareable link"
-  />
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="Un modèle avec des espaces réservés est transformé en un document soigné avec un PDF, déclenché depuis le menu de commandes, un agent IA, un workflow ou un lien partageable" />
 </Frame>
 
-You write a **template** once in a rich-text editor, with `{{placeholders}}`. Picking a
-template and a CRM record fills the placeholders and stores a polished
-**document** (with a PDF file). Everything else — the command menu, the AI agent,
-the workflow step, the shareable link — is just a different way to trigger that
-one generator.
+Vous rédigez un **modèle** une seule fois dans un éditeur de texte enrichi, avec `{{placeholders}}`. Choisir un
+modèle et un enregistrement CRM remplit les espaces réservés et stocke un
+**document** soigné (avec un fichier PDF). Tout le reste — le menu de commandes, l’agent IA,
+l’étape de workflow, le lien partageable — n’est qu’une façon différente de déclencher ce
+même générateur.
 
-## Keep this loop running
+## Gardez cette boucle en marche
 
-Leave `twenty app dev` running in a terminal for the whole tutorial. Every time
-you add or edit a file under `src/`, it re-syncs to your server within a few
-seconds, so you can watch each capability appear in the UI as you build it.
+Laissez `yarn twenty dev` s’exécuter dans un terminal pendant tout le tutoriel. Chaque fois que
+vous ajoutez ou modifiez un fichier sous `src/`, il est resynchronisé avec votre serveur en quelques
+secondes, afin que vous puissiez voir chaque capacité apparaître dans l’interface utilisateur au fur et à mesure que vous la construisez.
 
-<Card
-  title="Start building →"
-  icon="database"
-  href="/fr/developers/extend/apps/tutorials/document-generator/data-model"
->
-  Chapter 1: model documents and templates.
+<Card title="Commencez à construire →" icon="database" href="/fr/developers/extend/apps/tutorials/document-generator/data-model">
+  Chapitre 1 : modéliser des documents et des modèles.
 </Card>

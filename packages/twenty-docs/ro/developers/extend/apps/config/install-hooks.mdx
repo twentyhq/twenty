@@ -1,18 +1,12 @@
 ---
 title: Hook-uri de instalare
-description: Run logic during the install, upgrade, or uninstall lifecycle — seed data, back up records, validate the upgrade, clean up external resources.
-icon: 'wrench'
+description: Rulați logică în timpul ciclului de viață de instalare, actualizare sau dezinstalare — populați date, faceți backup pentru înregistrări, validați actualizarea, curățați resursele externe.
+icon: wrench
 ---
 
-<Note>
-  Traducerea acestui ghid nu a fost încă actualizată pentru CLI-ul independent
-  Twenty. Mai jos este afișat temporar conținutul actual în engleză, pentru a
-  evita utilizarea comenzilor eliminate.
-</Note>
+Hook-urile de instalare sunt funcții logice speciale care rulează în timpul ciclului de viață de instalare, actualizare sau dezinstalare. Acestea folosesc același runtime de handler ca și [funcțiile logice](/ro/developers/extend/apps/logic/logic-functions) obișnuite, dar sunt declarate cu propriile lor funcții de definire și există în afara modelului obișnuit de declanșatori (HTTP, cron, evenimente de bază de date). Hook-urile de instalare primesc un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` este `undefined` la o instalare nouă); hook-ul de dezinstalare primește un `UninstallPayload` (`{ version?: string }` — versiunea care este eliminată).
 
-Install hooks are special logic functions that run during the install, upgrade, or uninstall lifecycle. They share the same handler runtime as regular [logic functions](/ro/developers/extend/apps/logic/logic-functions), but they're declared with their own define functions and live outside the normal trigger model (HTTP, cron, database events). Install hooks receive an `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` is `undefined` on a fresh install); the uninstall hook receives an `UninstallPayload` (`{ version?: string }` — the version being removed).
-
-Each app may define **at most one** of each hook (pre-install, post-install, uninstall). The manifest build errors if more than one of any kind is detected.
+Fiecare aplicație poate defini **cel mult unul** din fiecare hook (pre-instalare, post-instalare, dezinstalare). Construirea manifestului va genera o eroare dacă se detectează mai mult de unul de orice tip.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -25,51 +19,48 @@ Each app may define **at most one** of each hook (pre-install, post-install, uni
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## At a glance
+## Dintr-o privire
 
-|             | `definePreInstallLogicFunction`                                                   | `definePostInstallLogicFunction`                                                                                  |
-| ----------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Runs        | Before the metadata migration — the **previous** schema and data are still intact | After the migration and SDK generation — the **new** schema is in place                                           |
-| Execution   | Always synchronous; blocks the install                                            | Async by default (queued, 3 retries); sync opt-in via `shouldRunSynchronously: true`                              |
-| On failure  | Install is **aborted** before any schema change                                   | Async: retried up to 3 times. Sync: caller receives `POST_INSTALL_ERROR` (schema changes are **not** rolled back) |
-| Typical use | Back up or fix data a migration would lose; refuse a risky upgrade by throwing    | Seed default data, configure the workspace, register external resources                                           |
+|                  | `definePreInstallLogicFunction`                                                                               | `definePostInstallLogicFunction`                                                                                                |
+| ---------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Rulări           | Înainte de migrarea metadatelor — schema și datele **anterioare** sunt încă intacte                           | După migrare și generarea SDK — schema **nouă** este aplicată                                                                   |
+| Execuție         | Întotdeauna sincronă; blochează instalarea                                                                    | Async în mod implicit (pus în coadă, 3 reîncercări); execuție sincronă opțională prin `shouldRunSynchronously: true`            |
+| La eșec          | Instalarea este **întreruptă** înainte de orice modificare a schemei                                          | Async: reîncercată de până la 3 ori. Sync: apelantul primește `POST_INSTALL_ERROR` (modificările de schemă **nu** sunt anulate) |
+| Utilizare tipică | Faceți backup sau reparați date pe care o migrare le-ar pierde; refuzați un upgrade riscant aruncând o eroare | Populați date implicite, configurați workspace-ul, înregistrați resurse externe                                                 |
 
-**Rule of thumb:** default to post-install. Only reach for pre-install when the migration itself is destructive and you need to intercept the previous state before it is gone.
+**Regulă generală:** folosiți implicit post-install. Apelați la pre-install doar când migrarea în sine este distructivă și trebuie să interceptați starea anterioară înainte să dispară.
 
-| You want to...                                                        | Use                                                      |
-| --------------------------------------------------------------------- | -------------------------------------------------------- |
-| Seed data, configure the workspace, register external resources       | `post-install`                                           |
-| Long-running work that shouldn't block the install response           | `post-install` (default async mode, with worker retries) |
-| Fast setup the caller relies on immediately after the install returns | `post-install` with `shouldRunSynchronously: true`       |
-| Read or back up data that the upcoming migration would lose           | `pre-install`                                            |
-| Reject an upgrade that would corrupt existing data                    | `pre-install` (throw from the handler)                   |
-| Reconciliation on every upgrade                                       | Either hook with `shouldRunOnVersionUpgrade: true`       |
+| Doriți să...                                                                          | Folosiți                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Populați date, configurați workspace-ul, înregistrați resurse externe                 | `post-install`                                                     |
+| Muncă de durată care nu ar trebui să blocheze răspunsul la instalare                  | `post-install` (mod async implicit, cu reîncercări ale workerului) |
+| Configurare rapidă de care apelantul are nevoie imediat după ce instalarea se încheie | `post-install` cu `shouldRunSynchronously: true`                   |
+| Citiți sau faceți backup datelor pe care migrarea iminentă le-ar pierde               | `pre-install`                                                      |
+| Respingeți o actualizare care ar corupe datele existente                              | `pre-install` (aruncați din handler)                               |
+| Reconciliere la fiecare upgrade                                                       | Oricare hook cu `shouldRunOnVersionUpgrade: true`                  |
 
-## Behavior shared by both hooks
+## Comportament partajat de ambele hook-uri
 
-- The config is a `defineLogicFunction` config minus the trigger settings, plus `shouldRunOnVersionUpgrade`.
-- **When it runs**: fresh installs only, by default. Set `shouldRunOnVersionUpgrade: true` to also run on upgrades. Use `previousVersion` / `newVersion` to branch on the upgrade path.
-- **Idempotency matters**: async post-install may be retried, and either hook re-runs on upgrades when `shouldRunOnVersionUpgrade` is on.
-- The usual logic-function environment (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) is injected, so you can call the Twenty API with your app's token.
-- The hook is attached to the application manifest automatically at build time (`preInstallLogicFunction` / `postInstallLogicFunction`) — nothing to reference in [`defineApplication()`](/ro/developers/extend/apps/config/application).
-- The default `timeoutSeconds` is 300 to allow longer setup tasks like data seeding.
-- **Not executed in dev mode**: `twenty app dev` skips the install flow and syncs files directly, so hooks never run there. Trigger them manually instead:
+* Configurația este o configurație `defineLogicFunction` minus setările de declanșare, plus `shouldRunOnVersionUpgrade`.
+* **Când rulează**: doar la instalări noi, în mod implicit. Setați `shouldRunOnVersionUpgrade: true` pentru a rula și la upgrade-uri. Folosiți `previousVersion` / `newVersion` pentru a ramifica în funcție de calea de upgrade.
+* **Idempotența contează**: post-install asincron poate fi reîncercat, iar oricare hook rulează din nou la upgrade-uri când `shouldRunOnVersionUpgrade` este activat.
+* Mediul obișnuit al funcțiilor logice (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) este injectat, astfel încât puteți apela API-ul Twenty cu tokenul aplicației voastre.
+* Hook-ul este atașat automat la manifestul aplicației la build (`preInstallLogicFunction` / `postInstallLogicFunction`) — nu este nevoie să fie referențiat în [`defineApplication()`](/ro/developers/extend/apps/config/application).
+* Valoarea implicită pentru `timeoutSeconds` este 300 pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
+* **Nu este executat în modul dev**: `yarn twenty dev` sare peste fluxul de instalare și sincronizează fișierele direct, astfel încât hook-urile nu rulează acolo. Declanșați-le manual în schimb:
 
 ```bash filename="Terminal"
-twenty app exec --post-install
-twenty app exec --pre-install
+yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 <AccordionGroup>
-<Accordion title="definePostInstallLogicFunction" description="Runs after the workspace metadata migration is applied">
+<Accordion title="definePostInstallLogicFunction" description="Rulează după ce migrarea metadatelor workspace-ului este aplicată">
 
-Runs once your app has finished installing: metadata synchronized, SDK client generated, new schema queryable. Example — seed a default record on fresh installs:
+Rulează după ce aplicația voastră a terminat instalarea: metadate sincronizate, clientul SDK generat, noua schemă poate fi interogată. Exemplu — populează o înregistrare implicită la instalări noi:
 
 ```ts src/logic-functions/post-install.ts
-import {
-  definePostInstallLogicFunction,
-  type InstallPayload,
-} from 'twenty-sdk/define';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -78,9 +69,7 @@ const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   const client = new CoreApiClient();
   await client.mutation({
     createPostCard: {
-      __args: {
-        data: { name: 'Welcome to Postcard', content: 'Your first card!' },
-      },
+      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
       id: true,
     },
   });
@@ -97,31 +86,25 @@ export default definePostInstallLogicFunction({
 });
 ```
 
-The `shouldRunSynchronously` flag controls the execution model:
+Flag-ul `shouldRunSynchronously` controlează modelul de execuție:
 
-- `false` _(default)_ — enqueued on the message queue (`retryLimit: 3`) and run by a worker. The install response returns as soon as the job is enqueued. **Use for long-running work** — seeding large datasets, slow third-party APIs.
-- `true` — executed inline during the install flow. The install request blocks until the handler finishes; a thrown error surfaces as `POST_INSTALL_ERROR` to the caller (no retries). **Use for fast, must-complete-before-response work.** The migration has already been applied at this point, so a failure does not roll back schema changes — it only surfaces the error.
+* `false` *(implicit)* — pus în coada de mesaje (`retryLimit: 3`) și rulat de un worker. Răspunsul la instalare este returnat imediat ce jobul este pus în coadă. **Folosiți pentru muncă de durată** — popularea unor seturi mari de date, API-uri lente ale terților.
+* `true` — executat inline în timpul fluxului de instalare. Cererea de instalare este blocată până când handlerul se termină; o eroare aruncată este expusă apelantului ca `POST_INSTALL_ERROR` (fără reîncercări). **Folosiți pentru muncă rapidă, care trebuie să fie finalizată înainte de răspuns.** Migrarea a fost deja aplicată în acest punct, astfel încât un eșec nu anulează modificările de schemă — doar expune eroarea.
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Runs before the workspace metadata migration is applied">
+<Accordion title="definePreInstallLogicFunction" description="Rulează înainte ca migrarea metadatelor workspace-ului să fie aplicată">
 
-Runs before the metadata migration, against the **previous** schema — the right place to back up data a migration would lose, or to refuse a risky upgrade. Before executing, the server runs a purely additive "pared-down sync" that registers only the new version's pre-install function; everything else — the previous version's objects, fields, and data — is untouched when your handler runs.
+Rulează înainte de migrarea metadatelor, pe schema **anterioară** — locul potrivit pentru a face backup datelor pe care o migrare le-ar pierde sau pentru a refuza un upgrade riscant. Înainte de execuție, serverul rulează un „sync redus”, pur aditiv, care înregistrează doar funcția de pre-instalare a versiunii noi; tot restul — obiectele, câmpurile și datele versiunii anterioare — rămâne neatins atunci când rulează handlerul.
 
-Pre-install is always **synchronous** and blocks the install. If the handler throws, the install is aborted before any schema change — the workspace stays on the previous version in a consistent state. This is intentional: pre-install is your last chance to refuse a risky upgrade.
+Pre-install este întotdeauna **sincron** și blochează instalarea. Dacă handlerul aruncă o eroare, instalarea este întreruptă înainte de orice modificare a schemei — workspace-ul rămâne la versiunea anterioară într-o stare consistentă. Acest lucru este intenționat: pre-install este ultima dvs. șansă de a refuza o actualizare riscantă.
 
-Example — copy a legacy field's values before the migration drops it:
+Exemplu — copiați valorile unui câmp vechi înainte ca migrarea să îl elimine:
 
 ```ts src/logic-functions/pre-install.ts
-import {
-  definePreInstallLogicFunction,
-  type InstallPayload,
-} from 'twenty-sdk/define';
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const handler = async ({
-  previousVersion,
-  newVersion,
-}: InstallPayload): Promise<void> => {
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -150,8 +133,7 @@ const handler = async ({
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description:
-    'Backs up legacy notes into description before the v2 migration.',
+  description: 'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -161,27 +143,24 @@ export default definePreInstallLogicFunction({
 </Accordion>
 </AccordionGroup>
 
-## Uninstall hook
+## Hook de dezinstalare
 
-`defineUninstallLogicFunction` declares a hook that runs when a user uninstalls your app. It executes **before** the app's metadata, data, and code are removed — once the deletion migration runs there is nothing left to execute — so your handler can still query the app's objects and records. Use it for cleanup of external resources: deprovision API resources, delete remaining bots, revoke webhooks.
+`defineUninstallLogicFunction` declară un hook care rulează atunci când un utilizator dezinstalează aplicația ta. Acesta este executat **înainte** ca metadatele, datele și codul aplicației să fie eliminate — odată ce migrarea de ștergere rulează, nu mai rămâne nimic de executat — astfel încât handler-ul tău poate încă interoga obiectele și înregistrările aplicației. Folosește-l pentru curățarea resurselor externe: deprovisionarea resurselor API, ștergerea boților rămași, revocarea webhook-urilor.
 
-Notes:
+Notițe:
 
-- The hook is best-effort: it runs synchronously, but a failure is logged and **never blocks the uninstall** — cleanup must not make an app impossible to remove.
-- It receives `UninstallPayload` (`{ version?: string }` — the version being removed).
-- It does **not** run when a failed fresh install is rolled back — the app never finished installing.
-- The hook cannot run after the app is gone, so external cleanup that depends on app data (e.g. bot IDs stored in records) belongs here, not in an external scheduled job.
-- Like the install hooks, it is **not executed in dev mode** — trigger it manually instead:
+* Hook-ul funcționează după principiul „best-effort“: rulează sincron, dar o eroare este înregistrată și **nu blochează niciodată dezinstalarea** — curățarea nu trebuie să facă imposibilă eliminarea unei aplicații.
+* Acesta primește `UninstallPayload` (`{ version?: string }` — versiunea care este eliminată).
+* Nu rulează atunci când o instalare nouă eșuată este anulată — aplicația nu a terminat niciodată instalarea.
+* Hook-ul nu poate rula după ce aplicația a dispărut, astfel încât curățarea externă care depinde de datele aplicației (de ex. ID-uri de boți stocate în înregistrări) trebuie făcută aici, nu într-un job programat extern.
+* La fel ca hook-urile de instalare, **nu este executat în modul de dezvoltare (dev mode)** — declanșează-l manual în schimb:
 
 ```bash filename="Terminal"
-twenty app exec --uninstall-hook
+yarn twenty dev:function:exec --uninstall
 ```
 
 ```ts src/logic-functions/uninstall.ts
-import {
-  defineUninstallLogicFunction,
-  type UninstallPayload,
-} from 'twenty-sdk/define';
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {

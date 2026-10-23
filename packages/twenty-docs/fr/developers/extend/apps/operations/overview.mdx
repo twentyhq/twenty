@@ -1,69 +1,32 @@
 ---
 title: Vue d'ensemble
-description: Build, test, and ship your app — CLI commands, integration tests, CI, translations, and publishing to a server or to npm.
-icon: 'rocket'
+description: Créez, testez et livrez votre application — commandes CLI, tests d’intégration, CI et publication sur un serveur ou sur npm.
+icon: rocket
 ---
 
-<Note>
-  La traduction de ce guide n’est pas encore à jour pour la CLI autonome de
-  Twenty. Le contenu anglais actuel est présenté ci-dessous temporairement pour
-  éviter l’utilisation de commandes supprimées.
-</Note>
+La **couche d’opérations** regroupe tout ce que vous faites *à* votre application plutôt qu’*avec* elle : lancer des commandes CLI, exécuter des tests d’intégration sur un véritable serveur Twenty, configurer la CI et livrer des versions — soit sous la forme d’une archive tar déployée sur un seul serveur, soit sous la forme d’un package npm répertorié sur la place de marché.
 
-The **operations layer** is everything you do _to_ your app rather than _with_ it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, translating its strings, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
+```text
+   develop ─▶ test ─▶ build ─▶ deploy / publish
+   ───────    ────    ─────    ─────────────────
+   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
+   twenty     test    twenty
+   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
+```
 
-| Step                  | Command                        |
-| --------------------- | ------------------------------ |
-| Develop               | `twenty app dev`               |
-| Test                  | `yarn test`                    |
-| Build                 | `twenty app build`             |
-| Publish to one server | `twenty app publish --private` |
-| Publish to npm        | `twenty app publish`           |
-
-## In this section
+## Dans cette section
 
 <CardGroup cols={2}>
-  <Card
-    title="CLI"
-    icon="terminal"
-    href="/fr/developers/extend/apps/operations/cli"
-  >
-    Sign in, explore data, build apps, exec, logs and uninstall with the
-    `twenty` CLI.
+  <Card title="CLI" icon="terminal" href="/fr/developers/extend/apps/operations/cli">
+    Référence `yarn twenty` — exec, logs, uninstall, remotes.
   </Card>
-  <Card
-    title="Syncing & recovery"
-    icon="compass"
-    href="/fr/developers/extend/apps/operations/sync-and-recovery"
-  >
-    Which command when, reading the sync diff, and a recovery ladder.
+  <Card title="Synchronisation et récupération" icon="compass" href="/fr/developers/extend/apps/operations/sync-and-recovery">
+    Quelle commande utiliser et quand, comment lire le diff de synchronisation, et une procédure de récupération.
   </Card>
-  <Card
-    title="Testing"
-    icon="flask"
-    href="/fr/developers/extend/apps/operations/testing"
-  >
-    Vitest setup, integration tests, type checking, CI workflow.
+  <Card title="Tests" icon="flask" href="/fr/developers/extend/apps/operations/testing">
+    Configuration de Vitest, tests d’intégration, vérification des types, flux de travail CI.
   </Card>
-  <Card
-    title="Translations"
-    icon="language"
-    href="/fr/developers/extend/apps/operations/translations"
-  >
-    Mark strings, extract catalogs, ship your app in several languages.
-  </Card>
-  <Card
-    title="Publishing"
-    icon="upload"
-    href="/fr/developers/extend/apps/operations/publishing"
-  >
-    Build, deploy a tarball, publish to npm, install.
-  </Card>
-  <Card
-    title="Monitoring"
-    icon="chart-line"
-    href="/developers/extend/apps/operations/monitoring"
-  >
-    Errors, rate limits, credits and function performance across installs.
+  <Card title="Publication" icon="upload" href="/fr/developers/extend/apps/operations/publishing">
+    Générer, déployer une archive tar, publier sur npm, installer.
   </Card>
 </CardGroup>

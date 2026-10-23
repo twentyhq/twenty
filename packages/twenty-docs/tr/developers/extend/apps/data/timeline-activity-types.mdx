@@ -1,23 +1,23 @@
 ---
 title: Zaman Çizelgesi Aktivite Türleri
-description: Define automatic audit events and explicit app events that render in record timelines.
-icon: 'clock-rotate-left'
+description: Kayıt zaman çizelgelerinde görüntülenen otomatik denetim olaylarını ve açık uygulama olaylarını tanımlayın.
+icon: clock-rotate-left
 ---
 
-<Note>
-  Bu kılavuzun çevirisi henüz bağımsız Twenty CLI için güncellenmedi. Kaldırılan
-  komutların kullanılmasını önlemek için aşağıda geçici olarak güncel İngilizce
-  içerik gösterilmektedir.
-</Note>
-
-A timeline activity type defines the stable vocabulary for an event shown in a record's timeline. Standard objects and app objects use the same contract: a type has a label and icon, can optionally declare when it is emitted, and can optionally render through one of your app's [front components](/tr/developers/extend/apps/layout/front-components).
+Bir zaman çizelgesi aktivite türü, bir kaydın zaman çizelgesinde gösterilen olay için kararlı sözlüğü tanımlar. Standart nesneler ve uygulama nesneleri aynı sözleşmeyi kullanır: bir türün etiketi ve simgesi vardır, isteğe bağlı olarak ne zaman yayımlandığını bildirebilir ve uygulamanızın [ön bileşenlerinden](/tr/developers/extend/apps/layout/front-components) biri aracılığıyla isteğe bağlı olarak işlenebilir.
 
 <Note>
-  Timeline activity types are in beta, the API can evolve while we learn from
-  app developers' use cases.
+  Zaman çizelgesi aktivite türleri beta aşamasındadır ve yakında Twenty 2.34'te kullanıma sunulacaktır. Uygulama geliştiricilerinin kullanım durumlarından öğrendikçe
+  API gelişebilir.
 </Note>
 
-Define a timeline activity type with `defineTimelineActivityType` from `twenty-sdk/define`:
+Scaffolder ile bir tane oluşturun:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+Veya doğrudan tanımlayın:
 
 ```ts filename="src/timeline-activity-types/post-card-created.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -36,19 +36,19 @@ export default defineTimelineActivityType({
 });
 ```
 
-## Automatic and explicit events
+## Otomatik ve açık olaylar
 
-Add `emit` when Twenty should create this type automatically. `emit.on` supports `created`, `updated`, `deleted`, `restored`, `linked`, and `unlinked`, while `emit.objectUniversalIdentifier` identifies the source object. Only one effective type can handle the same emit key—`on`, object, and optional through relation—in a workspace.
+Twenty'nin bu türü otomatik olarak oluşturması gerektiğinde `emit` ekleyin. `emit.on`, `created`, `updated`, `deleted`, `restored`, `linked` ve `unlinked` değerlerini desteklerken `emit.objectUniversalIdentifier` kaynak nesneyi tanımlar. Bir çalışma alanında aynı yayımlama anahtarını —`on`, nesne ve isteğe bağlı through ilişkisi— yalnızca bir etkin tür işleyebilir.
 
-Without `emit.through`, the event is written on the source record's own timeline. To fan it out to related records, set `emit.through.relationFieldUniversalIdentifier` to either a direct many-to-one relation or a [one-to-many junction relation](/tr/developers/extend/apps/data/relations#junction-relations) on the source object. Morph relations fan out to every member of their morph group, so a single declaration can target several object types.
+`emit.through` olmadan olay, kaynak kaydın kendi zaman çizelgesine yazılır. Bunu ilişkili kayıtlara yaymak için `emit.through.relationFieldUniversalIdentifier` değerini, kaynak nesnedeki doğrudan çoktan-bire ilişkiye veya [bire-çok birleşim ilişkisine](/tr/developers/extend/apps/data/relations#junction-relations) ayarlayın. Morph ilişkileri, morph gruplarının her üyesine yayılır; bu nedenle tek bir bildirim birkaç nesne türünü hedefleyebilir.
 
-For a direct relation, creating or restoring the source record produces `linked`, deleting it produces `unlinked`, and repointing the relation produces `unlinked` on the previous target plus `linked` on the new target. Other source updates do not produce link events. This is the contract used by attachments, whose target is a direct morph relation.
+Doğrudan bir ilişkide kaynak kaydın oluşturulması veya geri yüklenmesi `linked` üretir, silinmesi `unlinked` üretir ve ilişkinin yeniden hedeflenmesi önceki hedefte `unlinked` ile yeni hedefte `linked` üretir. Diğer kaynak güncellemeleri bağlantı olayı üretmez. Bu, hedefi doğrudan bir morph ilişkisi olan ekler tarafından kullanılan sözleşmedir.
 
-For a junction relation, `universalSettings.junctionTargetFieldUniversalIdentifier` identifies the relation from the junction object to the target. Creating or deleting a junction row produces `linked` or `unlinked`. Repointing either side of a junction row also produces a link event; updates to unrelated junction fields do not.
+Bir birleşim ilişkisi için `universalSettings.junctionTargetFieldUniversalIdentifier`, birleşim nesnesinden hedefe olan ilişkiyi tanımlar. Bir birleşim satırının oluşturulması veya silinmesi `linked` ya da `unlinked` üretir. Bir birleşim satırının her iki tarafının yeniden hedeflenmesi de bir bağlantı olayı üretir; ilişkisiz birleşim alanlarındaki güncellemeler üretmez.
 
-`linked` and `unlinked` events require `emit.through`, because their trigger is a change to the configured direct or junction relation.
+`linked` ve `unlinked` olayları `emit.through` gerektirir; çünkü tetikleyicileri yapılandırılmış doğrudan veya birleşim ilişkisindeki bir değişikliktir.
 
-For example, this is the same generic contract used by notes, tasks, messages, and calendar events:
+Örneğin bu, notlar, görevler, mesajlar ve takvim olayları tarafından kullanılan genel sözleşmenin aynısıdır:
 
 ```ts filename="src/timeline-activity-types/post-card-linked.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -72,11 +72,9 @@ export default defineTimelineActivityType({
 });
 ```
 
-An `updated` through event is emitted for every source update by default. Set `emit.through.triggerFieldUniversalIdentifiers` when only changes to selected source fields should appear on the target timelines.
+Varsayılan olarak her kaynak güncellemesi için bir `updated` through olayı yayımlanır. Yalnızca seçili kaynak alanlarındaki değişikliklerin hedef zaman çizelgelerinde görünmesi gerektiğinde `emit.through.triggerFieldUniversalIdentifiers` ayarlayın.
 
-A `linked` event is timestamped at the moment it is written. When the source record carries its own moment in time, set `emit.through.happensAtFieldUniversalIdentifier` to a `DATE_TIME` or `DATE` field on the source object: the timeline anchors the event at that field's value instead, and follows it when the value changes. Twenty's standard email and calendar events use this to anchor at `receivedAt` and `startsAt`.
-
-Omit `emit` for an explicit domain event that your logic function creates itself. This avoids producing both an automatic audit row and an explicit row for the same operation.
+Mantık işlevinizin kendisinin oluşturduğu açık bir etki alanı olayı için `emit` kullanmayın. Bu, aynı işlem için hem otomatik bir denetim satırı hem de açık bir satır oluşturulmasını önler.
 
 ```ts filename="src/timeline-activity-types/post-card-sent.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -89,13 +87,13 @@ export default defineTimelineActivityType({
 });
 ```
 
-Create explicit events with [`createTimelineActivity()`](/tr/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). App code uses stable universal identifiers; Twenty resolves the installation-specific metadata IDs.
+[`createTimelineActivity()`](/tr/developers/extend/apps/logic/logic-functions#create-a-timeline-activity) ile açık olaylar oluşturun. Uygulama kodu kararlı evrensel tanımlayıcılar kullanır; Twenty, yüklemeye özgü meta veri kimliklerini çözümler.
 
-## Custom rendering
+## Özel işleme
 
-Without a front component, Twenty renders a native generic row from the type label, icon, and linked-object metadata. This works for standard and custom objects without an object-specific renderer.
+Bir ön bileşen olmadan Twenty, tür etiketi, simgesi ve bağlantılı nesne meta verilerinden yerel bir genel satır işler. Bu, nesneye özgü bir işleyici olmadan standart ve özel nesneler için çalışır.
 
-For custom details, set `frontComponentUniversalIdentifier` to a front component owned by the same app:
+Özel ayrıntılar için `frontComponentUniversalIdentifier` değerini aynı uygulamanın sahip olduğu bir ön bileşene ayarlayın:
 
 ```ts
 export default defineTimelineActivityType({
@@ -107,11 +105,11 @@ export default defineTimelineActivityType({
 });
 ```
 
-The native row remains the collapsed presentation. Twenty mounts the front component only after the user expands that row, avoiding a sandbox and worker for every visible event. Inside the component, call `useTimelineActivityId()` from `twenty-sdk/front-component` to read the row ID and fetch any data your presentation needs. It returns `null` when the component is rendered outside a timeline row.
+Yerel satır daraltılmış görünüm olarak kalır. Twenty, ön bileşeni yalnızca kullanıcı o satırı genişlettikten sonra bağlar; böylece görünür her olay için bir korumalı alan ve çalışan kullanılması önlenir. Bileşen içinde, satır kimliğini okumak ve görünümünüzün ihtiyaç duyduğu verileri getirmek için `twenty-sdk/front-component` içinden `useTimelineActivityId()` çağrısı yapın. Bileşen bir zaman çizelgesi satırının dışında işlendiğinde `null` döndürür.
 
-## Overriding another application's presentation
+## Başka bir uygulamanın görünümünü geçersiz kılma
 
-An app owns automatic timeline contracts for its own objects. To customize an event on an object owned by another app, declare the existing type explicitly with `replacesTimelineActivityTypeUniversalIdentifier`:
+Bir uygulama, kendi nesneleri için otomatik zaman çizelgesi sözleşmelerine sahiptir. Başka bir uygulamanın sahip olduğu bir nesnedeki olayı özelleştirmek için mevcut türü `replacesTimelineActivityTypeUniversalIdentifier` ile açıkça bildirin:
 
 ```ts
 export default defineTimelineActivityType({
@@ -128,11 +126,11 @@ export default defineTimelineActivityType({
 });
 ```
 
-An override must include `emit`, because it replaces an existing automatic emit slot rather than an explicit-only type. The referenced type must belong to the target object's application and describe the same action and route. Removing the overriding app restores the base type; removing the base type disables the override.
+Bir geçersiz kılma, yalnızca açık tür yerine mevcut bir otomatik yayımlama yuvasını değiştirdiği için `emit` içermelidir. Başvurulan tür, hedef nesnenin uygulamasına ait olmalı ve aynı eylemi ve rotayı açıklamalıdır. Geçersiz kılan uygulamanın kaldırılması temel türü geri yükler; temel türün kaldırılması geçersiz kılmayı devre dışı bırakır.
 
-## Workspace overrides and muting
+## Çalışma alanı geçersiz kılmaları ve sessize alma
 
-Workspace administrators can change a type's presentation or mute its automatic and explicit events without forking the application. Use the metadata API's `updateTimelineActivityType` mutation with the installation-specific type ID:
+Çalışma alanı yöneticileri, uygulamayı çatallamadan bir türün görünümünü değiştirebilir veya otomatik ve açık olaylarını sessize alabilir. Yüklemeye özgü tür kimliğiyle meta veri API'sinin `updateTimelineActivityType` mutasyonunu kullanın:
 
 ```graphql
 mutation CustomizeTimelineActivityType(
@@ -152,9 +150,9 @@ mutation CustomizeTimelineActivityType(
 }
 ```
 
-`label` and `icon` are stored as workspace overrides, so later application updates do not overwrite the administrator's choices. Set `isActive` to `false` to stop automatic emission and reject new explicit events of that type. Existing rows remain visible.
+`label` ve `icon`, çalışma alanı geçersiz kılmaları olarak depolanır; bu nedenle daha sonraki uygulama güncellemeleri yöneticinin seçimlerinin üzerine yazmaz. Otomatik yayımlamayı durdurmak ve bu türdeki yeni açık olayları reddetmek için `isActive` değerini `false` olarak ayarlayın. Mevcut satırlar görünür kalır.
 
-Restore the application defaults, including the active state, with:
+Etkin durum da dahil olmak üzere uygulama varsayılanlarını şununla geri yükleyin:
 
 ```graphql
 mutation ResetTimelineActivityType($id: UUID!) {
@@ -167,21 +165,20 @@ mutation ResetTimelineActivityType($id: UUID!) {
 }
 ```
 
-## Configuration fields
+## Yapılandırma alanları
 
-| Field                                             | Required  | Description                                                                                                |
-| ------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades                                                 |
-| `name`                                            | Yes       | App-local programmatic name; must be unique within the app                                                 |
-| `label`                                           | Yes       | User-facing action text used by the native renderer                                                        |
-| `icon`                                            | No        | Twenty icon name displayed beside the event                                                                |
-| `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types                                               |
-| `emit.on`                                         | With emit | Audit action that causes this type to be written                                                           |
-| `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                                                                        |
-| `emit.through.relationFieldUniversalIdentifier`   | No        | Direct or junction relation used to fan out to related timelines                                           |
-| `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event                                                  |
-| `emit.through.happensAtFieldUniversalIdentifier`  | No        | Source date field used as the event's `happensAt` timestamp for `linked` events, instead of the write time |
-| `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded                                                 |
-| `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                                                               |
+| Alan                                              | Zorunlu  | Açıklama                                                                            |
+| ------------------------------------------------- | -------- | ----------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Evet     | Yüklemeler ve yükseltmeler boyunca tür için kararlı UUID                            |
+| `name`                                            | Evet     | Uygulama yerelinde programatik ad; uygulama içinde benzersiz olmalıdır              |
+| `label`                                           | Evet     | Yerel işleyici tarafından kullanılan, kullanıcıya yönelik eylem metni               |
+| `icon`                                            | Hayır    | Olayın yanında görüntülenen Twenty simge adı                                        |
+| `emit`                                            | Hayır    | Otomatik yayımlama bildirimi; yalnızca açık türler için kullanmayın                 |
+| `emit.on`                                         | Emit ile | Bu türün yazılmasına neden olan denetim eylemi                                      |
+| `emit.objectUniversalIdentifier`                  | Emit ile | Kayıtları bu türü yayımlayan nesne                                                  |
+| `emit.through.relationFieldUniversalIdentifier`   | Hayır    | İlişkili zaman çizelgelerine yaymak için kullanılan doğrudan veya birleşim ilişkisi |
+| `emit.through.triggerFieldUniversalIdentifiers`   | Hayır    | Bir `updated` through olayını tetikleyebilen kaynak alanlar                         |
+| `frontComponentUniversalIdentifier`               | Hayır    | Satır genişletildiğinde bağlanan uygulamaya ait ön uç bileşeni.                     |
+| `replacesTimelineActivityTypeUniversalIdentifier` | Hayır    | Mevcut emit türü değiştirildi; `emit` gerektirir                                    |
 
-Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.
+Twenty, bir olay oluşturulduğunda anlamsal kimliği ve kalıcı sunum geri dönüşlerini anlık görüntüler. Geçmiş satırlar özgün eylem ve nesne anlamlarını korur. Tür yüklüyken, mevcut çevrilmiş etiketi, simgesi ve ön uç bileşeni canlı olarak işlenir; kaldırıldıktan sonra anlık görüntü geri dönüşü satırı okunabilir tutar. Çözümleme evrensel tanımlayıcıyı kullanır, bu nedenle sunum uygulamanın yeniden yüklenmesinden de etkilenmez.

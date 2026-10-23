@@ -1,43 +1,39 @@
 ---
 title: 동기화 및 복구
-description: Which command to use when, how to read the sync output, and a recovery ladder for when local metadata drifts — before reaching a full reset.
-icon: 'compass'
+description: 언제 어떤 명령을 사용할지, 동기화 출력 결과를 읽는 방법, 로컬 메타데이터가 완전 초기화에 이르기 전에 드리프트할 때를 위한 복구 단계별 절차를 다룹니다.
+icon: compass
 ---
 
-<Note>
-  이 가이드의 번역은 아직 독립형 Twenty CLI에 맞게 업데이트되지 않았습니다.
-  삭제된 명령을 사용하지 않도록 아래에 최신 영어 내용을 임시로 표시합니다.
-</Note>
+로컬 앱 개발은 **동기화**를 중심으로 이루어집니다. CLI는 매니페스트를 다시 빌드하고, 서버는 워크스페이스에 이미 있는 메타데이터와의 차이만 적용합니다. 이 페이지에서는 어떤 명령을 사용할지, 동기화로 무엇이 변경되었는지 읽는 방법, 그리고 로컬 상태가 일관되지 않아 보일 때 순서대로 무엇을 해야 하는지를 설명합니다.
 
-Local app development revolves around **syncing**: the CLI rebuilds your manifest and the server applies only the difference between it and the metadata already in your workspace. This page covers which command to reach for, how to read what a sync changed, and what to do — in order — when local state looks inconsistent.
-
-## Which command, when
+## 언제 어떤 명령을 사용할지
 
 <Note>
-  For day-to-day local iteration you almost always want `twenty app dev`.
-  Deploying and publishing are for shipping releases, **not** for the local
-  loop.
+일상적인 로컬 반복 개발에서는 거의 항상 `yarn twenty dev`를 사용하면 됩니다. 배포와 게시(publish)는 릴리스를 배포할 때 사용하는 것이며, 로컬 개발 루프용이 **아닙니다**.
 </Note>
 
-| You want to…                               | Command                        | Notes                                                                                                                                    |
-| ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Iterate locally with live sync             | `twenty app dev`               | Watches your files and syncs on every change.                                                                                            |
-| Sync once and exit (CI, scripts, hooks)    | `twenty app apply`             | One build + sync, then exits. Add `--yes` to skip the destructive-change confirmation.                                                   |
-| Preview changes **without applying them**  | `twenty app plan`              | Computes and prints the diff; writes nothing.                                                                                            |
-| Sync without deleting anything             | `twenty app apply --no-delete` | Creates and updates only: entities that exist in the workspace but not in your source are left alone. Also accepted by `plan` and `dev`. |
-| Regenerate local source from the workspace | `twenty app pull`              | **Experimental.** Writes the installed app back to define files. See below.                                                              |
-| Remove the app from the workspace          | `twenty app uninstall`         | Add `--yes` to skip the prompt.                                                                                                          |
-| Ship a tarball to a server                 | `twenty app publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/ko/developers/extend/apps/operations/publishing).              |
-| Publish to the marketplace (npm)           | `twenty app publish`           | —                                                                                                                                        |
-| Install / upgrade a deployed version       | `twenty app install`           | Installs the version currently deployed.                                                                                                 |
+| 원하는 작업…                      | 명령                                  | 노트                                                                                                                  |
+| ---------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 라이브 동기화로 로컬에서 반복 개발          | `yarn twenty dev`                   | 파일을 감시하고 변경될 때마다 동기화합니다.                                                                                            |
+| 한 번만 동기화하고 종료 (CI, 스크립트, 훅)  | `yarn twenty apply`                 | 한 번 빌드 + 동기화한 뒤 종료합니다. 파괴적인 변경 확인을 건너뛰려면 `--force`를 추가하세요.                                                          |
+| 변경 사항을 **실제로 적용하지 않고** 미리 보기 | `yarn twenty plan`                  | 차이를 계산해 출력만 하고, 아무것도 기록하지 않습니다.                                                                                     |
+| 워크스페이스에서 앱 제거                | `yarn twenty app:uninstall`         | 프롬프트를 건너뛰려면 `--yes`를 추가하세요.                                                                                         |
+| 타르볼을 서버로 전송                  | `yarn twenty app:publish --private` | `package.json`의 버전이 **엄격하게 더 높아야** 합니다. 자세한 내용은 [Publishing](/ko/developers/extend/apps/operations/publishing)을 참고하세요. |
+| 마켓플레이스(npm)에 게시              | `yarn twenty app:publish`           | —                                                                                                                   |
+| 배포된 버전 설치 / 업그레이드            | `yarn twenty app:install`           | 현재 배포된 버전을 설치합니다.                                                                                                   |
+| 로컬 서버를 초기화하고 깨끗하게 시작         | `yarn twenty docker:reset`          | 로컬 데이터 **전체**를 삭제합니다. 최후의 수단입니다.                                                                                    |
 
-### Local sync does not need a version bump
+<Note>
+`yarn twenty dev --once` 및 `yarn twenty dev --once --dry-run`은 여전히 `yarn twenty apply`와 `yarn twenty plan`의 더 이상 사용되지 않는 별칭으로 작동합니다.
+</Note>
 
-The strictly-increasing `version` rule (`VERSION_ALREADY_EXISTS` on deploy, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` on install) applies to **`twenty app publish` / `twenty app install`** — the release path. `twenty app dev` syncs your manifest in place and never requires a version change, so you don't need to touch `package.json` to iterate. If you find yourself bumping the version to test a local change, you're using the release path when you want the dev loop.
+### 로컬 동기화에는 버전 증가가 필요 없음
 
-## Reading the sync output
+엄격히 증가하는 `version` 규칙(`deploy` 시 `VERSION_ALREADY_EXISTS`, `install` 시 `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION`)은 **`app:publish` / `app:install`**, 즉 릴리스 경로에만 적용됩니다. `yarn twenty dev`는 매니페스트를 제자리에서 동기화하므로 버전을 변경할 필요가 없습니다. 따라서 반복 개발을 위해 `package.json`을 수정할 필요가 없습니다. 로컬 변경을 테스트하기 위해 버전을 올리고 있다면, 개발 루프가 아니라 릴리스 경로를 사용하고 있는 것입니다.
 
-Every sync prints the metadata changes it applied (or would apply, with `plan`), Terraform-style — one block per entity with its attributes, then a summary line:
+## 동기화 출력 읽기
+
+각 동기화는 적용된 메타데이터 변경 사항(또는 `plan`으로 했을 때는 적용될 변경 사항)을 Terraform 스타일로 출력합니다. 각 엔티티마다 해당 속성이 포함된 하나의 블록이 출력되고, 그 뒤에 요약 한 줄이 이어집니다:
 
 ```text filename="Terminal"
   # objectMetadata "rocket" will be created
@@ -53,26 +49,24 @@ Plan: 2 to add, 1 to change, 1 to destroy.
 ✓ Synced My App (4 files)
 ```
 
-This is your first diagnostic: it tells you exactly which objects, fields, and layouts changed, so you can confirm a sync did what you expected before checking the UI.
+이 출력이 1차 진단 도구입니다. 어떤 객체, 필드, 레이아웃이 변경되었는지 정확히 알려주므로, UI를 확인하기 전에 동기화가 예상대로 동작했는지 검증할 수 있습니다.
 
-Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--yes` in scripts.
+파괴적인 변경(`to destroy`)은 무엇을 삭제하는지와 함께 나열됩니다(예: `objectMetadata "auditNote" — drops the table and all its rows`), 그리고 대화형 확인이 필요하거나, 스크립트에서는 `--force`가 필요합니다.
 
-A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-delete`, which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted, and the settings component and uninstall hook bindings of the app stay as they are when your source does not declare them. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI.
-
-When a sync fails on a single entity, the error names the offending entity and its `universalIdentifier`, for example:
+동기화가 단일 엔티티에서 실패하면, 오류 메시지에 문제의 엔티티와 그 `universalIdentifier`가 함께 표시됩니다. 예를 들면 다음과 같습니다.
 
 ```text
 Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337) failed
 ```
 
-Use that identifier to find the entity in your manifest (and, if needed, in the workspace) instead of guessing which one conflicts.
+그 식별자를 사용해 매니페스트(필요하다면 워크스페이스)에서 해당 엔티티를 찾아, 어떤 것이 충돌하는지 추측하지 말고 정확히 확인하세요.
 
-## Previewing changes (plan)
+## 변경 사항 미리 보기(plan)
 
-`twenty app plan` builds your manifest, asks the server for the migration plan, and prints it — **without applying anything**. It's the safe way to answer "what would this sync change?" before committing to it.
+`yarn twenty plan`은 매니페스트를 빌드하고, 서버에 마이그레이션 계획을 요청한 뒤, 이를 출력만 합니다. **아무것도 실제로 적용하지 않습니다**. "이 동기화로 무엇이 바뀔까?"에 안전하게 답할 수 있는 방법으로, 실제로 적용하기 전에 확인할 수 있습니다.
 
 ```bash filename="Terminal"
-twenty app plan
+yarn twenty plan
 ```
 
 ```text filename="Terminal"
@@ -87,108 +81,46 @@ Plan: 1 to add, 1 to change, 0 to destroy.
 ✓ Plan complete for My App — no changes were applied
 ```
 
-A plan:
+플랜:
 
-- **Writes nothing** — no metadata migration, no application record update, no default role/tab changes, and no API client generation.
-- Returns the **same diff** a real sync would apply, so you can review created/updated/deleted entities up front.
-- Is useful before a risky change, when reviewing an AI-generated change, or in a script that should fail if an unexpected change is about to land.
+* **아무것도 기록하지 않습니다**. 메타데이터 마이그레이션, 애플리케이션 레코드 업데이트, 기본 역할/탭 변경, API 클라이언트 생성이 모두 수행되지 않습니다.
+* 실제 동기화에서 적용될 **동일한 diff**를 반환하므로, 생성/업데이트/삭제되는 엔티티를 미리 검토할 수 있습니다.
+* 위험한 변경 전에, AI가 생성한 변경 사항을 검토할 때, 또는 예기치 않은 변경이 적용되려 하면 실패해야 하는 스크립트에서 유용합니다.
 
 <Note>
-  A plan only previews **metadata** changes. It also works for an app that was
-  never synced: the server evaluates the manifest against an empty application,
-  so the plan lists everything your source would create.
+plan은 **메타데이터** 변경만 미리 보여 주며, 앱이 최소 한 번 이상 동기화된 상태(워크스페이스가 이 앱을 알고 있는 상태)여야 합니다. 한 번도 동기화된 적이 없는 앱에 대해 dry run을 실행하면, 서버는 앱이 설치되지 않았다고 보고합니다. 먼저 `yarn twenty dev`를 한 번 실행하세요.
 </Note>
 
-## Pulling an installed app back to source
+## 복구 단계별 절차
+
+로컬 메타데이터가 잘못된 것처럼 보일 때는, 아래 순서대로 단계를 진행하면서 문제가 해결되는 즉시 멈추세요. 각 단계는 이전 단계보다 더 많은 영향을 미칩니다.
+
+1. **재동기화.** `yarn twenty apply`를 다시 실행하세요. 동기화는 멱등적이므로, 깨끗한 매니페스트를 다시 실행해도 안전하며 일시적인 오류가 이 방식으로 해결되는 경우가 많습니다.
+2. **계획 미리 보기.** `yarn twenty plan`을 실행해, 다음 동기화가 실제로 적용하지 않고 정확히 무엇을 변경하려 하는지 확인하세요.
+3. **명시적인 오류 읽기.** 동기화가 실패하면, 메시지에 포함된 메타데이터 타입과 `universalIdentifier`(위 참조)를 확인한 뒤, 매니페스트에서 해당 엔티티를 찾으세요. 충돌은 보통 중복되었거나 재사용된 식별자를 가리킵니다.
+4. **삭제 후 재설치.** `yarn twenty app:uninstall`을 실행한 뒤, 다시 동기화합니다(`yarn twenty dev`). 이 방법은 워크스페이스의 나머지 부분은 그대로 둔 채, 앱의 메타데이터를 깨끗한 상태에서 다시 구축합니다.
+5. **전체 초기화(최후의 수단).** `yarn twenty docker:reset`을 실행한 뒤, 다시 시드하고 재동기화합니다.
 
 <Warning>
-  `twenty app pull` is **experimental**. It covers only part of an application
-  today, its output shape may change between releases, and it overwrites the
-  files that define the entities it pulls. It restores published translations
-  into `locales/`, keeping the entries whose source strings are not in your tree
-  yet in `locales/compiled/` so that a push does not lose them. Commit your work
-  before running it, and review the diff.
-</Warning>
-
-`twenty app pull` is the inverse of `apply`: it reads an application out of the workspace and writes it back as define files.
-
-```bash
-twenty app pull --universal-identifier <universalIdentifier>
-```
-
-Pull needs an existing project — scaffold one with `twenty app init` first, then pull into it. Without `--universal-identifier`, pull targets the application your local `defineApplication()` file declares. If `--universal-identifier` names a different application than the one your project declares, pull refuses rather than leaving two applications in one tree: pull that one into its own directory. If the project has an application file whose identifier cannot be read, usually because dependencies are not installed, pull refuses too and asks you to run `yarn install` first. Add `--verbose` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
-
-**What it writes:**
-
-- the application config;
-- objects, with their fields inline;
-- fields your app added to objects it does not own;
-- authored indexes;
-- permission flags your app declares, as `definePermissionFlag()` files;
-- roles, with their object permissions, field permissions, row-level permission predicates and groups, and permission flags inline. Your app's default role is written with `defineApplicationRole()`. An object or field permission whose identifier is the one the build derives is written without it. When the default role is not one of your app's own roles, as for the workspace Custom application, the application config keeps `defaultRoleUniversalIdentifier` instead;
-- views, with their fields, field groups, filters, filter groups, sorts and groups inline;
-- view fields your app added to views it does not own, as standalone `defineViewField()` files;
-- page layouts, with their tabs and widgets inline;
-- tabs your app added to page layouts it does not own, as standalone `definePageLayoutTab()` files;
-- navigation menu items, as `defineNavigationMenuItem()` files, folders included;
-- widgets your app added to tabs it does not own, as standalone `definePageLayoutWidget()` files;
-- published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
-
-Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. A file is also rewritten when it uses a different define function than pull would write, for example a role that became or stopped being the default role. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
-
-**What it does not write:**
-
-- **Not exported yet** — command menu items and settings menu items, logic functions and front components, skills and agents, connection providers, application variables, public assets, timeline activity types, and the stored source of your functions.
-- **Derived by the engine** — system fields, default relations, default views and backing indexes, and the default page layouts of each object. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
-- **Placed on a default or foreign view** — filters, filter groups, sorts, groups and field groups added to an engine default view, or to a view owned by another application, have no source form yet and are reported. View fields added there are written as standalone files, since the view's identifier is known.
-- **Placed on a default or foreign page layout** — tabs and widgets added to an engine default page layout, or to one owned by another application, are written as standalone `definePageLayoutTab()` and `definePageLayoutWidget()` files, since the identifier they attach to is known.
-- **Widgets the export cannot carry yet** — on any layout, including your own, a widget of the deprecated `VIEW` type, a widget showing one of your app's own front components or command menu items, or a widget without a position for its tab's layout mode is reported, and the layout or tab is written without it.
-- **Workspace runtime state** — member and API-key role assignments, webhooks, per-user navigation and navigation items pinned to a record, all excluded by design.
-- **Owned by another application** — reported, never pulled.
-
-The report at the end of a pull lists all of it, grouped by kind and reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `twenty app apply --no-delete` until the missing kinds are covered. A pruning `twenty app apply` would delete them, and `twenty app plan` lists exactly which.
-
-**Workspace-local state.** An entity deactivated in the workspace is written as an active definition, and the overrides the workspace made on an entity, such as a renamed label, are not written. The report lists those rows under "Written without their workspace-local state". Applying the tree back to the same workspace leaves that state untouched; another workspace gets the entity active and without the overrides.
-
-**The base file.** Pull records what it pulled in `.twenty/pull-base.json`, which is gitignored and per checkout. That file is what a later pull compares against to leave untouched the files whose entity did not change, and to delete the file of an entity that is gone from the workspace. A checkout without it simply writes everything and deletes nothing.
-
-## Recovery ladder
-
-When local metadata looks wrong, escalate in this order and stop as soon as you're unblocked. Each step is more disruptive than the last.
-
-1. **Re-sync.** Run `twenty app apply` again. Syncs are idempotent — re-running a clean manifest is safe and often resolves a transient hiccup.
-2. **Preview the plan.** Run `twenty app plan` to see exactly what the next sync intends to change, without applying it.
-3. **Read the named error.** If a sync fails, note the metadata type and `universalIdentifier` in the message (see above) and locate that entity in your manifest. A conflict usually points to a duplicated or re-used identifier.
-4. **Uninstall and reinstall.** `twenty app uninstall`, then sync again (`twenty app dev`). This rebuilds the app's metadata from a clean slate while keeping the rest of your workspace intact.
-5. **Full reset (last resort).** resetting your Docker or repository development database, then re-seed and re-sync.
-
-<Warning>
-  resetting your Docker or repository development database deletes **all** data
-  in your local instance — every workspace, record, and app. Only use it once
-  the earlier steps have failed.
+`yarn twenty docker:reset`은 로컬 인스턴스의 **모든** 데이터를 삭제합니다. 모든 워크스페이스, 레코드, 앱이 제거됩니다. 이전 단계들이 모두 실패했을 때에만 사용하세요.
 </Warning>
 
 <Note>
-  Hit a metadata error? Please [open an
-  issue](https://github.com/twentyhq/twenty/issues/new/choose) and include the
-  failing migration message (with its metadata type and `universalIdentifier`),
-  the `Metadata changes` output from the sync, and the commands you ran.
+메타데이터 오류가 발생했나요? [이슈를 생성](https://github.com/twentyhq/twenty/issues/new/choose)해 주세요. 이때 실패한 마이그레이션 메시지(메타데이터 타입과 `universalIdentifier` 포함), 동기화 시 출력된 `Metadata changes`, 그리고 실행한 명령들을 함께 첨부해 주세요.
 </Note>
 
-## Avoid concurrent syncs on one workspace
+## 하나의 워크스페이스에서 동시 동기화 피하기
 
-Syncing applies metadata migrations. Running several sync, deploy, or install operations against the **same workspace at the same time** — for example, multiple terminals or AI agents iterating in parallel — can interleave those migrations and leave metadata in a partially-applied state.
+동기화는 메타데이터 마이그레이션을 적용합니다. **동일한 워크스페이스에 대해 동시에** 여러 번 동기화, 배포, 설치 작업을 실행하면(예: 여러 터미널이나 AI 에이전트가 병렬로 반복 실행하는 경우), 마이그레이션이 서로 얽혀 메타데이터가 부분적으로만 적용된 상태로 남을 수 있습니다.
 
-The server serializes syncs per workspace to prevent this, but you should still funnel sensitive metadata operations through a **single** process rather than firing them concurrently. If you orchestrate development with multiple agents, route their sync/deploy/install calls through one queue so only one runs at a time.
+서버는 이를 방지하기 위해 워크스페이스별로 동기화를 직렬화하지만, 그럼에도 중요한 메타데이터 작업은 동시에 실행하지 말고 **단일** 프로세스를 통해 순차적으로 실행하는 것이 좋습니다. 여러 에이전트로 개발을 오케스트레이션한다면, 이들의 sync/deploy/install 호출을 하나의 큐로 모아 한 번에 하나씩만 실행되도록 하세요.
 
-## Telling failures apart
+## 실패 유형 구분하기
 
-When something goes wrong, the metadata diff and named errors let you place the failure:
+문제가 발생했을 때, 메타데이터 diff와 명시적인 오류를 통해 실패 지점을 파악할 수 있습니다.
 
-- **Manifest build error** — the CLI fails before syncing (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); fix your app source.
-- **Registration ownership error** — the sync is refused because the app's `universalIdentifier` belongs to another workspace, or to no workspace at all; see [Registration ownership](/ko/developers/extend/apps/operations/publishing#registration-ownership).
-- **Sync / migration error** — the build succeeds but applying the diff fails, naming the entity and `universalIdentifier`; fix the conflicting metadata.
-- **Dependencies size error** — the sync or install fails because the app's production `dependencies` are too large to install as a runtime layer (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); move packages your logic functions do not import at runtime (UI libraries, dev tooling) to `devDependencies`.
-- **Deferred migration in progress** — the sync is refused because a background data model migration from an earlier sync is still running (`DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS`); wait for it to finish, then sync again.
-- **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/ko/developers/extend/apps/operations/cli).
-- **Local instance state** — none of the above and the workspace still looks wrong; work down the recovery ladder.
+* **매니페스트 빌드 오류** — 동기화 전에 CLI가 실패합니다(`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`). 앱 소스를 수정하세요.
+* **동기화 / 마이그레이션 오류** — 빌드는 성공했지만 diff를 적용하는 데 실패하며, 메시지에 엔티티와 `universalIdentifier`가 표시됩니다. 충돌하는 메타데이터를 수정하세요.
+* **종속 항목 크기 오류** — 동기화 또는 설치가 실패했습니다. 앱의 프로덕션 `dependencies`가 런타임 레이어로 설치하기에는 너무 커서 실패했습니다 (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`). 런타임 중에 로직 함수에서 실제로 import하지 않는 패키지(UI 라이브러리, 개발 도구 등)는 `devDependencies`로 이동하세요.
+* **앱 코드 런타임 오류** — 동기화는 성공했지만 로직 함수나 컴포넌트가 런타임에 올바르게 동작하지 않는 경우입니다. [function logs](/ko/developers/extend/apps/operations/cli)를 확인하세요.
+* **로컬 인스턴스 상태** — 위의 어느 경우에도 해당하지 않지만 워크스페이스가 여전히 잘못되어 보이는 경우입니다. 복구 사다리를 순서대로 따라가세요.

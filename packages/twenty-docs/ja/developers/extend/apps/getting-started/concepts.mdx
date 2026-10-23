@@ -1,19 +1,14 @@
 ---
 title: 概念
-description: How Twenty apps work — entity model, sandboxing, and the install lifecycle.
-icon: 'sitemap'
+description: Twenty アプリの動作 — エンティティモデル、サンドボックス化、およびインストールライフサイクル。
+icon: sitemap
 ---
 
-<Note>
-  このガイドの翻訳は、Twenty の独立した CLI
-  にまだ対応していません。削除されたコマンドを使用しないよう、以下に最新の英語版を一時的に表示しています。
-</Note>
+Twenty アプリは、カスタムオブジェクト、ロジック、UI コンポーネント、AI 機能でワークスペースを拡張する TypeScript パッケージです。 それらは、完全なサンドボックス化と権限制御のもとで Twenty プラットフォーム上で実行されます。
 
-Twenty apps are TypeScript packages that extend your workspace with custom objects, logic, UI components, and AI capabilities. They run on the Twenty platform with full sandboxing and permission controls.
+## アプリの仕組み
 
-## How apps work
-
-An app is a collection of **entities** declared using `defineEntity()` functions from the `twenty-sdk` package. The CLI detects these declarations via AST analysis at build time and produces a **manifest** — a complete description of what your app adds to a workspace. These functions validate your configuration at build time and provide IDE autocompletion and type safety.
+アプリは、`twenty-sdk` パッケージの `defineEntity()` 関数を使って宣言された**エンティティ**の集合です。 SDK はビルド時に AST 解析によってこれらの宣言を検出し、**マニフェスト**を生成します—アプリがワークスペースに追加する内容を完全に記述したものです。 これらの関数はビルド時に設定を検証し、IDE の自動補完と型安全性を提供します。
 
 ```
 your-app/
@@ -28,55 +23,50 @@ your-app/
 │   ├── agents/                  ← defineAgent
 │   ├── views/                   ← defineView
 │   ├── navigation-menu-items/   ← defineNavigationMenuItem
-│   ├── settings-menu-items/     ← defineSettingsMenuItem
 │   └── page-layouts/            ← definePageLayout
 ├── public/                      ← Static assets (images, icons)
 └── package.json
 ```
 
 <Note>
-  **File organization is up to you.** Entity detection is AST-based — the SDK
-  finds `export default defineEntity(...)` calls regardless of where the file
-  lives. The folder structure above is a convention, not a requirement.
+  **ファイル構成は自由です。** エンティティの検出は AST ベースです—ファイルの場所に関係なく、SDK は `export default defineEntity(...)` の呼び出しを見つけます。 上記のフォルダー構成は慣例であり、必須条件ではありません。
 </Note>
 
-## Entity types
+## エンティティタイプ
 
-| Entity                   | Purpose                                                                     | Docs                                                                                                                   |
-| ------------------------ | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **Application**          | App identity, default role, variables                                       | [Application Config](/ja/developers/extend/apps/config/application)                                                    |
-| **Role**                 | Permission sets on objects and fields                                       | [Roles & Permissions](/ja/developers/extend/apps/config/roles)                                                         |
-| **Object**               | Custom record types with fields                                             | [Objects](/ja/developers/extend/apps/data/objects)                                                                     |
-| **Field**                | Add fields to objects from other apps                                       | [Extending Objects](/ja/developers/extend/apps/data/extending-objects)                                                 |
-| **Relation**             | Bidirectional links between objects                                         | [Relations](/ja/developers/extend/apps/data/relations)                                                                 |
-| **Logic Function**       | Server-side TypeScript with triggers                                        | [Logic Functions](/ja/developers/extend/apps/logic/logic-functions)                                                    |
-| **Skill**                | Reusable AI agent instructions                                              | [Skills & Agents](/ja/developers/extend/apps/logic/skills-and-agents)                                                  |
-| **Agent**                | AI assistants with custom prompts                                           | [Skills & Agents](/ja/developers/extend/apps/logic/skills-and-agents)                                                  |
-| **Workflow**             | Ready-made workflows with a trigger and steps                               | [Workflows](/developers/extend/apps/logic/workflows)                                                                   |
-| **Connection Provider**  | OAuth credentials for third-party APIs                                      | [Connections](/ja/developers/extend/apps/logic/connections)                                                            |
-| **View**                 | Pre-configured record list views                                            | [Views](/ja/developers/extend/apps/layout/views)                                                                       |
-| **Navigation Menu Item** | Custom sidebar entries                                                      | [Navigation Menu Items](/ja/developers/extend/apps/layout/navigation-menu-items)                                       |
-| **Page Layout**          | Tabs and widgets on a record's detail page                                  | [Page Layouts](/ja/developers/extend/apps/layout/page-layouts)                                                         |
-| **Front Component**      | Sandboxed React UI inside Twenty                                            | [Front Components](/ja/developers/extend/apps/layout/front-components)                                                 |
-| **Shared Dependencies**  | Dependencies shared by the app's front components, declared in package.json | [Shared Dependencies](/ja/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
-| **Command Menu Item**    | Quick actions and Cmd+K entries                                             | [Command Menu Items](/ja/developers/extend/apps/layout/command-menu-items)                                             |
-| **Settings Menu Item**   | Entries in the app's settings menu, each rendering a front component        | [Settings Menu Items](/ja/developers/extend/apps/layout/front-components#settings-menu-items)                          |
+| エンティティ            | 目的                                                | ドキュメント                                                                                                 |
+| ----------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **アプリケーション**      | アプリの識別情報、デフォルトロール、変数                              | [Application Config](/ja/developers/extend/apps/config/application)                                       |
+| **ロール**           | オブジェクトとフィールドの権限セット                                | [Roles & Permissions](/ja/developers/extend/apps/config/roles)                                            |
+| **Object**        | フィールドを持つカスタムレコードタイプ                               | [Objects](/ja/developers/extend/apps/data/objects)                                                        |
+| **フィールド**         | 他のアプリのオブジェクトにフィールドを追加                             | [Extending Objects](/ja/developers/extend/apps/data/extending-objects)                                    |
+| **リレーション**        | オブジェクト間の双方向リンク                                    | [Relations](/ja/developers/extend/apps/data/relations)                                                    |
+| **ロジック関数**        | トリガーを備えたサーバーサイド TypeScript                        | [ロジック関数](/ja/developers/extend/apps/logic/logic-functions)                                                |
+| **スキル**           | 再利用可能な AI エージェントの指示                               | [スキルとエージェント](/ja/developers/extend/apps/logic/skills-and-agents)                                          |
+| **エージェント**        | カスタムプロンプトを備えた AI エージェント                           | [スキルとエージェント](/ja/developers/extend/apps/logic/skills-and-agents)                                          |
+| **接続プロバイダー**      | サードパーティ API 用の OAuth 資格情報                         | [Connections](/ja/developers/extend/apps/logic/connections)                                               |
+| **ビュー**           | 事前設定済みのレコード一覧ビュー                                  | [Views](/ja/developers/extend/apps/layout/views)                                                          |
+| **ナビゲーションメニュー項目** | カスタムのサイドバー項目                                      | [Navigation Menu Items](/ja/developers/extend/apps/layout/navigation-menu-items)                          |
+| **ページレイアウト**      | レコードの詳細ページ上のタブとウィジェット                             | [Page Layouts](/ja/developers/extend/apps/layout/page-layouts)                                            |
+| **フロントコンポーネント**   | Twenty 内でサンドボックス化された React UI                     | [フロントコンポーネント](/ja/developers/extend/apps/layout/front-components)                                         |
+| **共有依存関係**        | アプリのフロントコンポーネント間で共有される依存関係で、package.json 内で宣言されます | [共有依存関係](/ja/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
+| **コマンドメニュー項目**    | クイックアクションと Cmd+K エントリ                             | [Command Menu Items](/ja/developers/extend/apps/layout/command-menu-items)                                |
 
-## Sandboxing
+## サンドボックス化
 
-- **Logic functions** run in isolated Node.js processes on the server. They only access data through the typed API client, which acts either as the person who triggered the run or as the app itself. See [Whose access a call uses](/ja/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
-- **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes). They communicate with Twenty via a message-passing host API.
-- **Permissions** are enforced at the API level. Two runtime tokens are injected, both derived from the role declared with `defineApplicationRole()`; the default one is narrowed further to what the triggering person can do whenever someone is behind the run.
+* **ロジック関数**は、サーバー上の分離された Node.js プロセスで実行されます。 これらは、実行をトリガーしたユーザーまたはアプリ自体として動作する型付き API クライアントを介してのみデータにアクセスします。 [呼び出しで使用されるアクセス権](/ja/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses)を参照してください。
+* **フロントコンポーネント**は Remote DOM を用いた Web Workers 内で実行されます—メインページからサンドボックス化されつつ、ネイティブの DOM 要素（iframe ではありません）をレンダリングします。 メッセージパッシング型のホスト API を介して Twenty と通信します。
+* **権限**は API レベルで強制されます。 `defineApplicationRole()` で宣言されたロールから派生した 2 つのランタイムトークンが挿入されます。デフォルトのトークンは、実行の背後にユーザーがいる場合は常に、そのトリガーとなったユーザーが実行できる操作にさらに制限されます。
 
-## App lifecycle
+## アプリのライフサイクル
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ Development                                             │
-│   twenty app init → twenty app dev (live sync)   │
+│   npx create-twenty-app → yarn twenty dev (live sync)   │
 ├─────────────────────────────────────────────────────────┤
 │ Build & Deploy                                          │
-│   twenty app build → twenty app publish        │
+│   yarn twenty dev:build → yarn twenty app:publish        │
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
@@ -87,46 +77,26 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-- **`twenty app dev`** — watches your source files and live-syncs changes to a connected Twenty server. The typed API client is regenerated automatically when the schema changes.
-- **`twenty app build`** — compiles TypeScript, bundles logic functions and front components with esbuild, and produces a manifest.
-- **Pre/post-install and uninstall hooks** — optional functions that run during installation or right before removal. See [Install Hooks](/ja/developers/extend/apps/config/install-hooks) for details.
+* **`yarn twenty dev`** — ソースファイルを監視し、接続された Twenty サーバーへ変更をライブ同期します。 スキーマが変更されると、型付き API クライアントは自動的に再生成されます。
+* **`yarn twenty dev:build`** — TypeScript をコンパイルし、esbuild でロジック関数とフロントコンポーネントをバンドルして、マニフェストを生成します。
+* **プリ/ポストインストールおよびアンインストールフック** — インストール中またはアンインストール直前に実行されるオプションの関数。 詳細は [Install Hooks](/ja/developers/extend/apps/config/install-hooks) を参照してください。
 
-## Next steps
+## 次のステップ
 
 <CardGroup cols={2}>
-  <Card
-    title="Config"
-    icon="screwdriver-wrench"
-    href="/ja/developers/extend/apps/config/overview"
-  >
-    Application identity, default role, and install and uninstall hooks.
+  <Card title="設定" icon="screwdriver-wrench" href="/ja/developers/extend/apps/config/overview">
+    アプリの識別情報、デフォルトロール、およびインストールフックとアンインストールフック。
   </Card>
-  <Card
-    title="Data"
-    icon="database"
-    href="/ja/developers/extend/apps/data/overview"
-  >
-    Objects, fields, and bidirectional relations.
+  <Card title="データ" icon="database" href="/ja/developers/extend/apps/data/overview">
+    オブジェクト、フィールド、および双方向リレーション。
   </Card>
-  <Card
-    title="Logic"
-    icon="bolt"
-    href="/ja/developers/extend/apps/logic/overview"
-  >
-    Logic functions, skills, agents, and OAuth connections.
+  <Card title="ロジック" icon="bolt" href="/ja/developers/extend/apps/logic/overview">
+    ロジック関数、スキル、エージェント、OAuth 接続。
   </Card>
-  <Card
-    title="Layout"
-    icon="table-columns"
-    href="/ja/developers/extend/apps/layout/overview"
-  >
-    Views, navigation, page layouts, front components.
+  <Card title="レイアウト" icon="table-columns" href="/ja/developers/extend/apps/layout/overview">
+    ビュー、ナビゲーション、ページレイアウト、フロントコンポーネント。
   </Card>
-  <Card
-    title="Operations"
-    icon="rocket"
-    href="/ja/developers/extend/apps/operations/overview"
-  >
-    CLI, testing, remotes, CI, and publishing your app.
+  <Card title="オペレーション" icon="rocket" href="/ja/developers/extend/apps/operations/overview">
+    CLI、テスト、リモート、CI、アプリの公開。
   </Card>
 </CardGroup>

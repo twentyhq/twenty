@@ -1,37 +1,32 @@
 ---
 title: 1. Datový model
-icon: 'database'
-description: Model documents and templates with objects, fields, and a relation.
+icon: database
+description: Vzor dokumentů a šablon s objekty, polími a vztahem.
 ---
 
-<Note>
-  Překlad tohoto průvodce zatím nezohledňuje samostatné CLI Twenty. Níže dočasně
-  uvádíme aktuální anglický obsah, abyste nepoužívali odstraněné příkazy.
-</Note>
+Naše aplikace potřebuje dva vlastní objekty: **šablony dokumentů** (co psát) a
+**dokumenty** (generovaný výsledek). Pojďme je definovat.
 
-Our app needs two custom objects: **document templates** (what to write) and
-**documents** (the generated result). Let's define them.
-
-Scaffold each entity file with the CLI — it generates a valid UUID and the right
+Scaffold each entity file with the CLI — has a valid UUID and the right
 folder for you:
 
 ```bash filename="Terminal"
-twenty app add object
+yarn twenty dev:add object
 ```
 
-Below we show the finished files.
+Níže zobrazujeme dokončené soubory.
 
 <Note>
-  Every `*_UNIVERSAL_IDENTIFIER` constant lives in
-  `src/constants/universal-identifiers.ts` and is imported where used. The
-  snippets below omit those imports for brevity — keep them in your own files.
+Každý `*_UNIVERSAL_IDENTIFIER` trvale žije v
+`src/constants/universal-identifiers.ts` a je importován, pokud je použit. snippety
+níže vynechávají tyto importy pro brevitu - uchovejte je ve svých vlastních souborech.
 </Note>
 
-## The template object
+## Objekt šablony
 
-A template has a `name`, a `body` with `{{placeholders}}`, and a `target` that
-says whether it's written for a Person or a Company. The `body` is a
-`RICH_TEXT` field, so Twenty gives it a full rich-text editor.
+Šablona má `name`, `body` s `{{placeholders}}`, a `cíl`, který
+říká, zda je napsán pro osobu nebo společnost. `Těloy` je
+`RICH_TEXT` pole, takže dvacet jí dává plně bohatý textový editor.
 
 ```ts filename="src/objects/document-template.object.ts"
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -46,74 +41,43 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    {
-      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
-      name: 'name',
-      label: 'Name',
-      icon: 'IconAbc',
-    },
-    {
-      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT,
-      name: 'body',
-      label: 'Body',
-      icon: 'IconFileText',
-      description:
-        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
-    },
-    {
-      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT,
-      name: 'target',
-      label: 'Target',
-      icon: 'IconTarget',
+    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
+    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
+      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
+    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        {
-          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON',
-          label: 'Person',
-          color: 'blue',
-          position: 0,
-        },
-        {
-          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY',
-          label: 'Company',
-          color: 'green',
-          position: 1,
-        },
-      ],
-    },
+        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
+        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
+      ] },
   ],
 });
 ```
 
 <Warning>
-  `SELECT` option **values** must be `UPPER_CASE` (`PERSON`, not `person`), and
-  the `defaultValue` is wrapped in extra quotes: `` `'PERSON'` ``. The `label`
-  is what users see.
+`SELECT` volba **hodnoty** musí být `UPPER_CASE` (`PERSON`, ne `person`) a
+`defaultValue` je zabalena do extra uvozovek: `` `'PERSON'` ``. `Štítek` je to, co vidí
+uživatelé.
 </Warning>
 
-## The document object
+## Objekt dokumentu
 
-The generated document stores the rendered `content` and a `status`. Define it
-the same way, with a `status` select of `DRAFT` / `GENERATED`. Full file:
+Vygenerovaný dokument ukládá vykreslený `content` a `status`. Definujte
+stejným způsobem s `status` výběrem `DRAFT` / `GENERATED`. Celý soubor:
 [`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
 
-## Linking them with a relation
+## Propojení se vztahem
 
-Each document should point back to the template it came from. Relations are
-**bidirectional** — you define both sides, each in its own field file.
+Každý dokument by se měl vrátit ke šabloně, odkud pochází. Vztahy jsou
+**obousměrné** — definujete obě strany, každý ve vlastním souboru polí.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import {
-  defineField,
-  FieldType,
-  OnDeleteAction,
-  RelationType,
-} from 'twenty-sdk/define';
+import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -134,24 +98,21 @@ export default defineField({
 });
 ```
 
-The other side (`template-documents-relation.field.ts`) is a
-`RelationType.ONE_TO_MANY` field named `documents` that points the opposite way.
-See [Relations](/cs/developers/extend/apps/data/relations) for the full pattern.
+Druhá strana (`template-documents-relation.field.ts`) je
+`RelationType.ONE_TO_MANY` pole `documents`, které ukazuje opačnou cestu.
+Celý vzor viz [Relations](/cs/developers/extend/apps/data/relations).
 
-## See it in Twenty
+## Podívejte se na to ve dvaceti letech
 
-With `twenty app dev` running, open **Settings → Data model**. Both objects
-appear, tagged with your app.
+S spuštěním `příze dvacet dev` otevřete **Nastavení → Datový model**. Oba objekty
+se zobrazí a označují vaší aplikací.
 
-<Frame caption="Both custom objects, owned by the Document Generator app.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/01-data-model.png"
-    alt="Data model settings showing Documents and Document templates"
-  />
+<Frame caption="Oba vlastní objekty v aplikaci Generátor dokumentů.">
+  <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="Nastavení datového modelu zobrazující dokumenty a šablony dokumentů" />
 </Frame>
 
-Create one template to test with — name it _Sales proposal_, set **Target** to
-_Person_, and paste a body with a few placeholders:
+Vytvořte jednu šablonu pro testování - pojmenujte ji *návrhem prodeje*, nastavte **Cíl** na
+*Osobní* a vložte tělo s několika zástupnými znaky:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -162,20 +123,13 @@ Best,
 The Team
 ```
 
-<Frame caption="A template record. The body keeps its placeholders until a document is generated.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/03-template-record.png"
-    alt="A Sales proposal template record with placeholder body"
-  />
+<Frame caption="Záznam šablony. Subjekt uchovává své zástupné znaky, dokud není doklad vygenerován.">
+  <img src="/images/docs/developers/extends/apps/document-generator/03-template-record.png" alt="Záznam šablony obchodního návrhu s zástupným tělem" />
 </Frame>
 
-**After this step:** you have `documentTemplate` and `document` objects, linked by
-a relation, and one template to generate from. Next, the logic that fills it in.
+**Po tomto kroku:** máte `documentTemplate` a `document` objekty, propojené
+relací a jednu šablonu, ze které chcete vygenerovat. Dále platí, že logika, která ji naplňuje.
 
-<Card
-  title="Next: generating documents →"
-  icon="bolt"
-  href="/cs/developers/extend/apps/tutorials/document-generator/generating-documents"
->
-  Write the logic function that fills the template.
+<Card title="Další: generování dokumentů →" icon="bolt" href="/cs/developers/extend/apps/tutorials/document-generator/generating-documents">
+  Napište logickou funkci, která vyplňuje šablonu.
 </Card>

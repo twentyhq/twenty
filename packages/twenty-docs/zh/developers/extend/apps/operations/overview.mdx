@@ -1,68 +1,32 @@
 ---
 title: 概览
-description: Build, test, and ship your app — CLI commands, integration tests, CI, translations, and publishing to a server or to npm.
-icon: 'rocket'
+description: 构建、测试并发布你的应用——CLI 命令、集成测试、CI，以及发布到服务器或 npm。
+icon: rocket
 ---
 
-<Note>
-  本指南的翻译尚未更新为 Twenty 独立 CLI
-  的用法。为避免使用已移除的命令，下面暂时显示最新的英文内容。
-</Note>
+**运维层**指的是你对应用*进行*而不是*使用*它所做的一切：调用 CLI 命令、针对真实的 Twenty 服务器运行集成测试、配置 CI，以及发布发行版——可以是部署到单个服务器的 tarball，也可以是发布到应用市场中列出的 npm 包。
 
-The **operations layer** is everything you do _to_ your app rather than _with_ it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, translating its strings, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
+```text
+   develop ─▶ test ─▶ build ─▶ deploy / publish
+   ───────    ────    ─────    ─────────────────
+   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
+   twenty     test    twenty
+   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
+```
 
-| Step                  | Command                        |
-| --------------------- | ------------------------------ |
-| Develop               | `twenty app dev`               |
-| Test                  | `yarn test`                    |
-| Build                 | `twenty app build`             |
-| Publish to one server | `twenty app publish --private` |
-| Publish to npm        | `twenty app publish`           |
-
-## In this section
+## 本节内容
 
 <CardGroup cols={2}>
-  <Card
-    title="CLI"
-    icon="terminal"
-    href="/zh/developers/extend/apps/operations/cli"
-  >
-    Sign in, explore data, build apps, exec, logs and uninstall with the
-    `twenty` CLI.
+  <Card title="CLI" icon="terminal" href="/zh/developers/extend/apps/operations/cli">
+    `yarn twenty` 参考——exec、logs、uninstall、remotes。
   </Card>
-  <Card
-    title="Syncing & recovery"
-    icon="compass"
-    href="/zh/developers/extend/apps/operations/sync-and-recovery"
-  >
-    Which command when, reading the sync diff, and a recovery ladder.
+  <Card title="同步与恢复" icon="compass" href="/zh/developers/extend/apps/operations/sync-and-recovery">
+    在阅读同步差异时应使用哪些命令，以及分步恢复流程。
   </Card>
-  <Card
-    title="Testing"
-    icon="flask"
-    href="/zh/developers/extend/apps/operations/testing"
-  >
-    Vitest setup, integration tests, type checking, CI workflow.
+  <Card title="测试" icon="flask" href="/zh/developers/extend/apps/operations/testing">
+    Vitest 配置、集成测试、类型检查、CI 工作流。
   </Card>
-  <Card
-    title="Translations"
-    icon="language"
-    href="/zh/developers/extend/apps/operations/translations"
-  >
-    Mark strings, extract catalogs, ship your app in several languages.
-  </Card>
-  <Card
-    title="Publishing"
-    icon="upload"
-    href="/zh/developers/extend/apps/operations/publishing"
-  >
-    Build, deploy a tarball, publish to npm, install.
-  </Card>
-  <Card
-    title="Monitoring"
-    icon="chart-line"
-    href="/developers/extend/apps/operations/monitoring"
-  >
-    Errors, rate limits, credits and function performance across installs.
+  <Card title="发布" icon="upload" href="/zh/developers/extend/apps/operations/publishing">
+    构建、部署 tarball、发布到 npm、安装。
   </Card>
 </CardGroup>

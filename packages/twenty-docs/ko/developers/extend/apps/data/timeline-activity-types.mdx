@@ -1,22 +1,23 @@
 ---
 title: 타임라인 활동 유형
-description: Define automatic audit events and explicit app events that render in record timelines.
-icon: 'clock-rotate-left'
+description: 레코드 타임라인에 표시되는 자동 감사 이벤트와 명시적 앱 이벤트를 정의합니다.
+icon: clock-rotate-left
 ---
 
-<Note>
-  이 가이드의 번역은 아직 독립형 Twenty CLI에 맞게 업데이트되지 않았습니다.
-  삭제된 명령을 사용하지 않도록 아래에 최신 영어 내용을 임시로 표시합니다.
-</Note>
-
-A timeline activity type defines the stable vocabulary for an event shown in a record's timeline. Standard objects and app objects use the same contract: a type has a label and icon, can optionally declare when it is emitted, and can optionally render through one of your app's [front components](/ko/developers/extend/apps/layout/front-components).
+타임라인 활동 유형은 레코드의 타임라인에 표시되는 이벤트를 위한 안정적인 어휘를 정의합니다. 표준 객체와 앱 객체는 동일한 계약을 사용합니다. 유형에는 레이블과 아이콘이 있으며, 선택적으로 발생 시점을 선언하고 앱의 [프런트 컴포넌트](/ko/developers/extend/apps/layout/front-components) 중 하나를 통해 렌더링할 수 있습니다.
 
 <Note>
-  Timeline activity types are in beta, the API can evolve while we learn from
-  app developers' use cases.
+  타임라인 활동 유형은 베타 상태이며 Twenty 2.34에서 곧 제공됩니다. 앱 개발자의 사용 사례를 파악하는 동안
+  API는 변경될 수 있습니다.
 </Note>
 
-Define a timeline activity type with `defineTimelineActivityType` from `twenty-sdk/define`:
+스캐폴더로 하나를 생성합니다:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+또는 직접 정의합니다:
 
 ```ts filename="src/timeline-activity-types/post-card-created.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -35,19 +36,19 @@ export default defineTimelineActivityType({
 });
 ```
 
-## Automatic and explicit events
+## 자동 및 명시적 이벤트
 
-Add `emit` when Twenty should create this type automatically. `emit.on` supports `created`, `updated`, `deleted`, `restored`, `linked`, and `unlinked`, while `emit.objectUniversalIdentifier` identifies the source object. Only one effective type can handle the same emit key—`on`, object, and optional through relation—in a workspace.
+Twenty가 이 유형을 자동으로 생성해야 하는 경우 `emit`을 추가합니다. `emit.on`은 `created`, `updated`, `deleted`, `restored`, `linked`, `unlinked`를 지원하며, `emit.objectUniversalIdentifier`는 소스 객체를 식별합니다. 워크스페이스에서는 하나의 유효 유형만 동일한 emit 키, 즉 `on`, 객체 및 선택적 through 관계를 처리할 수 있습니다.
 
-Without `emit.through`, the event is written on the source record's own timeline. To fan it out to related records, set `emit.through.relationFieldUniversalIdentifier` to either a direct many-to-one relation or a [one-to-many junction relation](/ko/developers/extend/apps/data/relations#junction-relations) on the source object. Morph relations fan out to every member of their morph group, so a single declaration can target several object types.
+`emit.through`가 없으면 이벤트는 소스 레코드 자체의 타임라인에 기록됩니다. 연결된 레코드로 확산하려면 `emit.through.relationFieldUniversalIdentifier`를 소스 객체의 직접 다대일 관계 또는 [일대다 정션 관계](/ko/developers/extend/apps/data/relations#junction-relations)로 설정하세요. 모프 관계는 모프 그룹의 모든 멤버로 확산되므로 단일 선언으로 여러 객체 유형을 대상으로 지정할 수 있습니다.
 
-For a direct relation, creating or restoring the source record produces `linked`, deleting it produces `unlinked`, and repointing the relation produces `unlinked` on the previous target plus `linked` on the new target. Other source updates do not produce link events. This is the contract used by attachments, whose target is a direct morph relation.
+직접 관계의 경우 소스 레코드를 생성하거나 복원하면 `linked`가 생성되고, 삭제하면 `unlinked`가 생성되며, 관계의 대상을 변경하면 이전 대상에 `unlinked`와 새 대상에 `linked`가 생성됩니다. 다른 소스 업데이트는 링크 이벤트를 생성하지 않습니다. 이는 대상이 직접 모프 관계인 첨부 파일에서 사용하는 계약입니다.
 
-For a junction relation, `universalSettings.junctionTargetFieldUniversalIdentifier` identifies the relation from the junction object to the target. Creating or deleting a junction row produces `linked` or `unlinked`. Repointing either side of a junction row also produces a link event; updates to unrelated junction fields do not.
+정션 관계의 경우 `universalSettings.junctionTargetFieldUniversalIdentifier`는 정션 객체에서 대상으로의 관계를 식별합니다. 정션 행을 생성하거나 삭제하면 `linked` 또는 `unlinked`가 생성됩니다. 정션 행의 어느 한쪽 대상이 변경되어도 링크 이벤트가 생성되지만, 관련 없는 정션 필드의 업데이트는 생성되지 않습니다.
 
-`linked` and `unlinked` events require `emit.through`, because their trigger is a change to the configured direct or junction relation.
+`linked` 및 `unlinked` 이벤트는 구성된 직접 또는 정션 관계의 변경이 트리거이므로 `emit.through`가 필요합니다.
 
-For example, this is the same generic contract used by notes, tasks, messages, and calendar events:
+예를 들어, 이는 노트, 작업, 메시지, 캘린더 이벤트에서 사용되는 것과 동일한 일반 계약입니다:
 
 ```ts filename="src/timeline-activity-types/post-card-linked.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -71,11 +72,9 @@ export default defineTimelineActivityType({
 });
 ```
 
-An `updated` through event is emitted for every source update by default. Set `emit.through.triggerFieldUniversalIdentifiers` when only changes to selected source fields should appear on the target timelines.
+기본적으로 모든 소스 업데이트에 대해 `updated` through 이벤트가 발생합니다. 선택한 소스 필드의 변경 사항만 대상 타임라인에 표시되어야 하는 경우 `emit.through.triggerFieldUniversalIdentifiers`를 설정합니다.
 
-A `linked` event is timestamped at the moment it is written. When the source record carries its own moment in time, set `emit.through.happensAtFieldUniversalIdentifier` to a `DATE_TIME` or `DATE` field on the source object: the timeline anchors the event at that field's value instead, and follows it when the value changes. Twenty's standard email and calendar events use this to anchor at `receivedAt` and `startsAt`.
-
-Omit `emit` for an explicit domain event that your logic function creates itself. This avoids producing both an automatic audit row and an explicit row for the same operation.
+로직 함수가 직접 생성하는 명시적 도메인 이벤트에는 `emit`을 생략합니다. 이렇게 하면 동일한 작업에 대해 자동 감사 행과 명시적 행이 모두 생성되는 것을 방지할 수 있습니다.
 
 ```ts filename="src/timeline-activity-types/post-card-sent.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -88,13 +87,13 @@ export default defineTimelineActivityType({
 });
 ```
 
-Create explicit events with [`createTimelineActivity()`](/ko/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). App code uses stable universal identifiers; Twenty resolves the installation-specific metadata IDs.
+[`createTimelineActivity()`](/ko/developers/extend/apps/logic/logic-functions#create-a-timeline-activity)로 명시적 이벤트를 생성합니다. 앱 코드는 안정적인 범용 식별자를 사용하며, Twenty는 설치별 메타데이터 ID를 확인합니다.
 
-## Custom rendering
+## 사용자 지정 렌더링
 
-Without a front component, Twenty renders a native generic row from the type label, icon, and linked-object metadata. This works for standard and custom objects without an object-specific renderer.
+프런트 컴포넌트가 없으면 Twenty는 유형 레이블, 아이콘 및 연결된 객체 메타데이터를 기반으로 네이티브 일반 행을 렌더링합니다. 이 방식은 객체별 렌더러 없이 표준 및 사용자 지정 객체에 사용할 수 있습니다.
 
-For custom details, set `frontComponentUniversalIdentifier` to a front component owned by the same app:
+사용자 지정 세부 정보를 위해 `frontComponentUniversalIdentifier`를 동일한 앱이 소유한 프런트 컴포넌트로 설정합니다:
 
 ```ts
 export default defineTimelineActivityType({
@@ -106,11 +105,11 @@ export default defineTimelineActivityType({
 });
 ```
 
-The native row remains the collapsed presentation. Twenty mounts the front component only after the user expands that row, avoiding a sandbox and worker for every visible event. Inside the component, call `useTimelineActivityId()` from `twenty-sdk/front-component` to read the row ID and fetch any data your presentation needs. It returns `null` when the component is rendered outside a timeline row.
+네이티브 행은 접힌 상태의 표시로 유지됩니다. Twenty는 사용자가 해당 행을 확장한 후에만 프런트 컴포넌트를 마운트하므로, 표시되는 모든 이벤트에 대해 샌드박스와 워커가 생성되는 것을 방지합니다. 컴포넌트 내부에서 `twenty-sdk/front-component`의 `useTimelineActivityId()`를 호출하여 행 ID를 읽고 표시에 필요한 데이터를 가져옵니다. 컴포넌트가 타임라인 행 외부에서 렌더링되면 `null`을 반환합니다.
 
-## Overriding another application's presentation
+## 다른 애플리케이션의 표시 재정의
 
-An app owns automatic timeline contracts for its own objects. To customize an event on an object owned by another app, declare the existing type explicitly with `replacesTimelineActivityTypeUniversalIdentifier`:
+앱은 자체 객체에 대한 자동 타임라인 계약을 소유합니다. 다른 앱이 소유한 객체의 이벤트를 사용자 지정하려면 `replacesTimelineActivityTypeUniversalIdentifier`로 기존 유형을 명시적으로 선언합니다:
 
 ```ts
 export default defineTimelineActivityType({
@@ -127,11 +126,11 @@ export default defineTimelineActivityType({
 });
 ```
 
-An override must include `emit`, because it replaces an existing automatic emit slot rather than an explicit-only type. The referenced type must belong to the target object's application and describe the same action and route. Removing the overriding app restores the base type; removing the base type disables the override.
+재정의는 명시적 전용 유형이 아닌 기존 자동 emit 슬롯을 대체하므로 `emit`을 포함해야 합니다. 참조된 유형은 대상 객체의 애플리케이션에 속해야 하며 동일한 작업과 경로를 설명해야 합니다. 재정의 앱을 제거하면 기본 유형이 복원되고, 기본 유형을 제거하면 재정의가 비활성화됩니다.
 
-## Workspace overrides and muting
+## 워크스페이스 재정의 및 음소거
 
-Workspace administrators can change a type's presentation or mute its automatic and explicit events without forking the application. Use the metadata API's `updateTimelineActivityType` mutation with the installation-specific type ID:
+워크스페이스 관리자는 애플리케이션을 포크하지 않고도 유형의 표시를 변경하거나 자동 및 명시적 이벤트를 음소거할 수 있습니다. 설치별 유형 ID와 함께 메타데이터 API의 `updateTimelineActivityType` 뮤테이션을 사용합니다:
 
 ```graphql
 mutation CustomizeTimelineActivityType(
@@ -151,9 +150,9 @@ mutation CustomizeTimelineActivityType(
 }
 ```
 
-`label` and `icon` are stored as workspace overrides, so later application updates do not overwrite the administrator's choices. Set `isActive` to `false` to stop automatic emission and reject new explicit events of that type. Existing rows remain visible.
+`label`과 `icon`은 워크스페이스 재정의로 저장되므로 이후 애플리케이션 업데이트가 관리자의 선택을 덮어쓰지 않습니다. 자동 발생을 중지하고 해당 유형의 새 명시적 이벤트를 거부하려면 `isActive`를 `false`로 설정합니다. 기존 행은 계속 표시됩니다.
 
-Restore the application defaults, including the active state, with:
+활성 상태를 포함한 애플리케이션 기본값을 다음으로 복원합니다:
 
 ```graphql
 mutation ResetTimelineActivityType($id: UUID!) {
@@ -166,21 +165,20 @@ mutation ResetTimelineActivityType($id: UUID!) {
 }
 ```
 
-## Configuration fields
+## 구성 필드
 
-| Field                                             | Required  | Description                                                                                                |
-| ------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades                                                 |
-| `name`                                            | Yes       | App-local programmatic name; must be unique within the app                                                 |
-| `label`                                           | Yes       | User-facing action text used by the native renderer                                                        |
-| `icon`                                            | No        | Twenty icon name displayed beside the event                                                                |
-| `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types                                               |
-| `emit.on`                                         | With emit | Audit action that causes this type to be written                                                           |
-| `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                                                                        |
-| `emit.through.relationFieldUniversalIdentifier`   | No        | Direct or junction relation used to fan out to related timelines                                           |
-| `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event                                                  |
-| `emit.through.happensAtFieldUniversalIdentifier`  | No        | Source date field used as the event's `happensAt` timestamp for `linked` events, instead of the write time |
-| `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded                                                 |
-| `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                                                               |
+| 필드                                                | 필수      | 설명                                     |
+| ------------------------------------------------- | ------- | -------------------------------------- |
+| `universalIdentifier`                             | 예       | 설치 및 업그레이드 전반에서 유형에 대한 안정적인 UUID       |
+| `name`                                            | 예       | 앱 내 프로그래밍 방식 이름이며, 앱 내에서 고유해야 합니다      |
+| `label`                                           | 예       | 네이티브 렌더러에서 사용하는 사용자 대상 작업 텍스트          |
+| `icon`                                            | 아니요     | 이벤트 옆에 표시되는 Twenty 아이콘 이름              |
+| `emit`                                            | 아니요     | 자동 발생 선언; 명시적 전용 유형에서는 생략              |
+| `emit.on`                                         | emit 포함 | 이 유형이 기록되도록 하는 감사 작업                   |
+| `emit.objectUniversalIdentifier`                  | emit 포함 | 레코드가 이 유형을 발생시키는 객체                    |
+| `emit.through.relationFieldUniversalIdentifier`   | 아니요     | 연결된 타임라인으로 확산하는 데 사용되는 직접 또는 정션 관계     |
+| `emit.through.triggerFieldUniversalIdentifiers`   | 아니요     | `updated` through 이벤트를 트리거할 수 있는 소스 필드 |
+| `frontComponentUniversalIdentifier`               | 아니요     | 행이 확장될 때 마운트되는 앱 소유 프런트 컴포넌트.          |
+| `replacesTimelineActivityTypeUniversalIdentifier` | 아니요     | 기존 emit 유형이 대체됨, `emit` 필요             |
 
-Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.
+Twenty는 이벤트가 생성될 때 의미론적 식별 정보와 지속적인 표시 대체 정보를 스냅샷으로 저장합니다. 기존 행은 원래의 작업 및 객체 의미를 유지합니다. 유형이 설치되어 있는 동안에는 현재 번역된 레이블, 아이콘 및 프런트 컴포넌트가 실시간으로 렌더링되며, 제거 후에는 스냅샷 대체 정보가 행의 가독성을 유지합니다. 확인은 범용 식별자를 사용하므로 앱을 다시 설치한 후에도 표시가 유지됩니다.

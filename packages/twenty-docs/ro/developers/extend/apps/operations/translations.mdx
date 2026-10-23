@@ -1,33 +1,26 @@
 ---
 title: Traduceri
-description: Ship your app in multiple languages — translate manifest labels and UI strings through one locales catalog.
-icon: 'language'
+description: Lansează-ți aplicația în mai multe limbi — tradu etichetele din manifest și șirurile UI printr-un singur catalog de locale.
+icon: language
 ---
 
-<Note>
-  Traducerea acestui ghid nu a fost încă actualizată pentru CLI-ul independent
-  Twenty. Mai jos este afișat temporar conținutul actual în engleză, pentru a
-  evita utilizarea comenzilor eliminate.
-</Note>
+Aplicațiile Twenty sunt create în **engleză**: șirurile din sursă și din manifest
+sunt textul sursă în engleză, `en` este localizarea sursă din care traduci, iar
+orice localizare lăsată netradusă revine implicit la aceasta.
 
-Twenty apps are authored in **English**: the strings in your source and manifest
-are the English source text, `en` is the source locale you translate _from_, and
-any locale left untranslated falls back to it.
+Aplicația ta are două tipuri de text traducibil și ambele trec prin același
+catalog `locales/`:
 
-Your app has two kinds of translatable text, and both flow through the same
-`locales/` catalog:
+* **Etichete de manifest** — nume de obiecte și câmpuri, titluri de vizualizări, elemente de meniu și
+  alte șiruri declarate în metadatele aplicației tale.
+* **Șiruri componentă-față** - textul UI al componentelor dvs. React din față.
 
-- **Manifest labels** — object and field names, view titles, menu items, and
-  other strings declared in your app's metadata.
-- **Front-component strings** — the UI text your React front components render.
+Marchează șirurile traduse, le extrag în cataloage per-localizare,
+traduce acele cataloage, iar clădirea servește limba corectă pentru utilizatorul curent* fără cableri suplimentare.
 
-You mark the translatable strings, extract them into per-locale catalogs,
-translate those catalogs, and the build serves the right language for the
-current user — no extra wiring.
+## Marcarea sirurilor componentei frontale
 
-## Marking front-component strings
-
-Import the translation helpers from `twenty-sdk/front-component`:
+Importă ajutătoarele de traducere din `douăzeci de aplicații/front-componente`:
 
 ```tsx
 import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
@@ -53,57 +46,53 @@ const Card = ({ count, name }: { count: number; name: string }) => {
       <p>{t('Saved {count} cards', { count })}</p>
 
       {/* Resolve a lazily-declared descriptor */}
-      <ul>
-        {STATUSES.map((s) => (
-          <li key={s.id}>{t(s.label)}</li>
-        ))}
-      </ul>
+      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
     </section>
   );
 };
 ```
 
-### When to use which
+### Când să utilizaţi care
 
-- **`Trans`** — static text in JSX. Use the `message` and `values` props for
-  interpolation, as in `Trans message="Hi {name}" values={{ name }}`;
-  interpolating directly in the children is not statically extractable.
-- **`useTranslate().t`** — dynamic strings inside a component. Re-renders when the
-  user switches language. Prefer this inside render.
-- **`t(...)`** (imported directly) — eager translation usable **anywhere**,
-  including event handlers, helpers, and module scope — not only inside render.
-- **`msg(...)`** — a lazy descriptor for strings declared as data (constants,
-  config). Resolve it later with `t(descriptor)`.
+* **`Trans`** — text static în JSX. Folosește proprietățile `message` și `values` pentru
+  interpolare, ca în `Trans message="Hi {name}" values={{ name }}`;
+  interpolarea direct în elementele copil nu poate fi extrasă static.
+* **`useTranslate().t`** - șiruri dinamice în interiorul unei componente. Re-randează atunci când utilizatorul
+  schimbă limba. Preferă acest lucru în redare.
+* **`t(...)`** (importat direct) - traducerea mai ușoară **oriunde**,
+  inclusiv manipulatorii de evenimente, ajutoarele și domeniul de aplicare al modulului - nu numai în randare.
+* **`msg(...)`** — un descriptor leneș pentru șiruri declarate ca date (constante,
+  config). Rezolvați-l mai târziu cu `t(descriptor)`.
 
 ### Context
 
-Pass `context` to disambiguate identical source strings that translate
-differently:
+Treceți `context` pentru a disambigua șirurile sursă identice care traduc
+în mod diferit:
 
 ```tsx
 t({ message: 'Open', context: 'door' });
 t({ message: 'Open', context: 'window' });
-<Trans context="card-title">Untitled</Trans>;
+<Trans context="card-title">Untitled</Trans>
 ```
 
-Contextual strings appear in locale catalogs as a group keyed by their
-context: `"<context>": { "<message>": "<translation>" }`. Manifest labels are
-contextual by construction — each one carries the metadata role it plays
-(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), so
-the same word can translate differently as an object name and as a view name.
+Șirurile contextuale apar în cataloagele de localizare ca un grup indexat după
+contextul lor: `"\<context>": { "\<message>": "\<translation>" }`. Etichetele din manifest sunt
+contextuale prin construcție — fiecare poartă rolul de metadată pe care îl joacă
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), astfel încât
+același cuvânt poate fi tradus diferit ca nume de obiect și ca nume de vizualizare.
 
-## Extracting and translating
+## Extragerea și traducerea
 
-Run the extract command from your app directory:
+Rulează comanda de extragere din directorul aplicației:
 
 ```bash
-twenty app translations extract                  # collect strings into locales/en.json
-twenty app translations extract --locale fr-FR   # also scaffold a target locale
+twenty dev:translations-extract                  # collect strings into locales/en.json
+twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extraction collects both your manifest labels and the `t()`/`msg()`/`Trans`
-strings from your front-component source into `locales/<locale>.json`, keyed by
-source string. Fill in the translations:
+Procesul de extragere colectează atât etichetele manifestului, cât și șirurile `t()`/`msg()`/`Trans`
+din sursa front-component în `locales/\<locale>.json`, indexate după
+șirul sursă. Completează traducerile:
 
 ```json
 // locales/fr-FR.json
@@ -120,49 +109,29 @@ source string. Fill in the translations:
 }
 ```
 
-Context-free strings are flat entries; contextual strings — including every
-manifest label — are nested under their context key.
+Șirurile fără context sunt intrări simple; șirurile contextuale — inclusiv fiecare etichetă din manifest — sunt îmbricate sub cheia lor de context.
 
-Placeholders like `{name}` are substituted at runtime — keep them in the
-translation. Any string left empty falls back to the source text.
+Localnicii ca `{name}` sunt substituiți la timp - țineți-le în traducerea
+. Orice şir rămas gol se întoarce la textul sursă.
 
-## How it runs
+## Cum rulează
 
-`twenty app build` compiles the catalogs and serves the right language for the
-current user: manifest labels are resolved server-side, and front-component
-catalogs are baked into each component bundle. At runtime a component reads the
-locale from its execution context (the host's current language) and resolves
-each string against its catalog, falling back to the source when a translation
-is missing. Switching language in the host re-renders `Trans` and
-`useTranslate().t` strings live.
+`douăzeci de dev:build` compilează cataloagele şi serveşte limba corectă pentru utilizatorul curent
+: etichetele manifest sunt rezolvate pe server, iar cataloagele de tip front-component
+sunt copite în fiecare pachet de componente. La runtime, o componentă citește localizarea
+din contextul de execuție (limba curentă a gazdei) și rezolvă
+fiecare șir din catalog, revenind la sursă atunci când lipsește o traducere
+. Schimbarea limbii în gazdă reafișează în timp real șirurile `Trans` și
+`useTranslate().t`.
 
-Manifest labels are compiled on every sync — `twenty app build`, `twenty app apply`
-and the continuous `twenty app dev` watch alike — so editing a locale file and
-syncing is enough to see the new text. Front component catalogs are baked into
-each component bundle at build time, so changing one of those still means
-re-running `twenty app build` (and redeploying).
+Etichetele manifestului sunt compilate la fiecare sincronizare — `twenty dev:build`, `twenty apply`
+și monitorizarea continuă `twenty dev` — astfel că editarea unui fișier de localizare și
+sincronizarea sunt suficiente pentru a vedea textul nou. Cataloagele componentelor Front sunt integrate în
+fiecare pachet de componente la momentul compilării, astfel că modificarea unuia dintre ele înseamnă totuși
+rularea din nou a `twenty dev:build` (și redistribuirea).
 
-## Pulling translations
-
-`twenty app pull` writes an application's published translations back into
-`locales/`. A published catalog is keyed by message id, so pull recovers the
-readable form only for strings whose source it can see: the labels of the
-metadata it pulled and the `t()`/`msg()`/`Trans` strings of front components
-present in the project. Everything else is kept as is in
-`locales/compiled/<locale>.json`, keyed by message id. The build merges those
-files into the catalog (an entry in `locales/<locale>.json` wins over a
-compiled one with the same id), `twenty app translations extract` leaves them alone,
-and every pull rewrites them, so they shrink as more of the app's source lands
-in the tree. Do not edit them by hand; translate in `locales/<locale>.json`.
-
-A project without a `locales/` folder says nothing about translations, so a
-sync from it leaves whatever the app already published untouched. To remove
-published translations on purpose, keep the folder and delete the locale files
-inside it: a `locales/` folder that compiles to no locale is an explicit
-declaration, and the sync prunes accordingly.
-
-`Trans` text children may span multiple lines — whitespace is collapsed the
-same way JSX collapses it, so both of these extract to the key `Welcome back`:
+Elementele text copil ale `Trans` pot acoperi mai multe linii — spațiile albe sunt comprimate în
+același mod în care JSX le comprimă, astfel încât ambele variante sunt extrase cu cheia `Welcome back`:
 
 ```tsx
 <Trans>Welcome back</Trans>

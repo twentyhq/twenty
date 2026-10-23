@@ -1,87 +1,63 @@
 ---
-title: 'チュートリアル: Document Generator'
-icon: 'wand-magic-sparkles'
-description: Build a real Twenty app that generates personalized documents from your CRM data.
+title: "チュートリアル: Document Generator"
+icon: wand-magic-sparkles
+description: 実際の Twenty アプリを構築し、CRM データからパーソナライズされたドキュメントを生成しましょう。
 ---
 
-<Note>
-  このガイドの翻訳は、Twenty の独立した CLI
-  にまだ対応していません。削除されたコマンドを使用しないよう、以下に最新の英語版を一時的に表示しています。
-</Note>
+このチュートリアルでは、再利用可能なテンプレートを、既に CRM にあるデータを使ってパーソナライズされたドキュメントに変換するアプリ **Document Generator** を作成します。
 
-In this tutorial you'll build **Document Generator** — an app that turns reusable
-templates into personalized documents using the data already in your CRM.
+一度テンプレートを作成し、`{{placeholders}}` を記述しておけば、コマンドメニュー、AI エージェント、またはワークフローからワンクリックで、任意の Person または Company 用の入力済みドキュメントを生成できます。
 
-Write a template once with `{{placeholders}}`, then generate a filled-in
-document for any Person or Company in one click — from the command menu, from an
-AI agent, or from a workflow.
-
-<Frame caption="One template, generated for a specific person, opened as a printable page.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png"
-    alt="A generated Sales proposal document"
-  />
+<Frame caption="特定の人物向けに生成され、印刷可能なページとして開かれる 1 つのテンプレート。">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="生成された営業提案書" />
 </Frame>
 
-## What you'll learn
+## 学べること
 
-Each chapter adds one capability. By the end you'll have touched most of the SDK.
+各章で 1 つずつ機能を追加していきます。 最後には、SDK のほとんどの部分に触れ終えていることになります。
 
-| Chapter                                                                                                 | Capability                                                                                              | Reference                                                             |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [1. Data model](/ja/developers/extend/apps/tutorials/document-generator/data-model)                     | Objects, fields, and a relation                                                                         | [Data](/ja/developers/extend/apps/data/overview)                      |
-| [2. Generating documents](/ja/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function (AI tool + workflow action) that fills a Markdown template and attaches a polished PDF | [Logic functions](/ja/developers/extend/apps/logic/logic-functions)   |
-| [3. HTTP routes](/ja/developers/extend/apps/tutorials/document-generator/http-routes)                   | Serving JSON and a shareable HTML page from routes                                                      | [Logic functions](/ja/developers/extend/apps/logic/logic-functions)   |
-| [4. Building the UI](/ja/developers/extend/apps/tutorials/document-generator/building-the-ui)           | Views, navigation, command menu, and front components that preview a document and edit a template       | [Layout](/ja/developers/extend/apps/layout/overview)                  |
-| [5. An AI agent](/ja/developers/extend/apps/tutorials/document-generator/ai-agent)                      | Agent + skill                                                                                           | [Skills & agents](/ja/developers/extend/apps/logic/skills-and-agents) |
-| [6. Publishing](/ja/developers/extend/apps/tutorials/document-generator/publishing)                     | Ship it to the marketplace                                                                              | [Publishing](/ja/developers/extend/apps/operations/publishing)        |
+| 章                                                                                        | 機能                                                              | リファレンス                                                        |
+| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- |
+| [1. データモデル](/ja/developers/extend/apps/tutorials/document-generator/data-model)             | オブジェクト、フィールド、およびリレーション                                          | [Data](/ja/developers/extend/apps/data/overview)                 |
+| [2. ドキュメント生成](/ja/developers/extend/apps/tutorials/document-generator/generating-documents) | Markdown テンプレートを埋めて、整えられた PDF を添付するロジック関数（AI ツール + ワークフローアクション） | [ロジック関数](/ja/developers/extend/apps/logic/logic-functions)       |
+| [3. HTTP ルート](/ja/developers/extend/apps/tutorials/document-generator/http-routes)          | ルートから JSON と共有可能な HTML ページを配信する                                 | [ロジック関数](/ja/developers/extend/apps/logic/logic-functions)       |
+| [4. UI 構築](/ja/developers/extend/apps/tutorials/document-generator/building-the-ui)         | ビュー、ナビゲーション、コマンドメニュー、ドキュメントのプレビューとテンプレート編集用のフロントエンドコンポーネント      | [レイアウト](/ja/developers/extend/apps/layout/overview)              |
+| [5. AI エージェント](/ja/developers/extend/apps/tutorials/document-generator/ai-agent)            | エージェント + スキル                                                    | [スキルとエージェント](/ja/developers/extend/apps/logic/skills-and-agents) |
+| [6. 公開](/ja/developers/extend/apps/tutorials/document-generator/publishing)                 | マーケットプレイスに公開する                                                  | [公開](/ja/developers/extend/apps/operations/publishing)           |
 
-## Prerequisites
+## 前提条件
 
-You should have finished the [Quick Start](/ja/developers/extend/apps/getting-started/quick-start):
-a Twenty workspace (cloud or local) and the CLI authenticated to it.
+[クイックスタート](/ja/developers/extend/apps/getting-started/quick-start)を完了している必要があります。
+ローカルの Twenty サーバーがポート `2020` で動作しており、CLI がそのサーバーに対して認証済みになっている状態です。
 
-If the server or authentication is not ready, complete the [Quick Start](/ja/developers/extend/apps/getting-started/quick-start) first. Then create and install the tutorial app:
+まだであれば、今すぐスキャフォールドして起動してください:
 
 ```bash filename="Terminal"
-twenty app init document-generator
+npx create-twenty-app@latest document-generator
 cd document-generator
-yarn install
-twenty app apply --create
-twenty app dev
+yarn twenty dev
 ```
 
 <Note>
-  Prefer to read the finished code? The complete app lives in
-  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-  Every snippet below is copied from it.
+完成版のコードを読みたいですか？ 完成したアプリは
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator) にあります。
+以下のすべてのスニペットは、そこからコピーしたものです。
 </Note>
 
-## How the app fits together
+## アプリ全体の構成
 
 <Frame>
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg"
-    alt="A template with placeholders is generated into a polished document with a PDF, triggered from the command menu, an AI agent, a workflow, or a shareable link"
-  />
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="プレースホルダー付きテンプレートが、コマンドメニュー、AI エージェント、ワークフロー、または共有可能なリンクからのトリガーによって、PDF 付きの整えられたドキュメントに生成されます" />
 </Frame>
 
-You write a **template** once in a rich-text editor, with `{{placeholders}}`. Picking a
-template and a CRM record fills the placeholders and stores a polished
-**document** (with a PDF file). Everything else — the command menu, the AI agent,
-the workflow step, the shareable link — is just a different way to trigger that
-one generator.
+リッチテキストエディタで `{{placeholders}}` を使って **テンプレート** を一度作成します。 テンプレートと CRM レコードを選ぶと、プレースホルダーが埋められ、整えられた
+**ドキュメント**（PDF ファイル付き）が保存されます。 その他のもの — コマンドメニュー、AI エージェント、
+ワークフローステップ、共有可能なリンク — はすべて、その 1 つのジェネレーターをトリガーする別々の手段にすぎません。
 
-## Keep this loop running
+## このループを動かし続ける
 
-Leave `twenty app dev` running in a terminal for the whole tutorial. Every time
-you add or edit a file under `src/`, it re-syncs to your server within a few
-seconds, so you can watch each capability appear in the UI as you build it.
+チュートリアル全体を通して、ターミナルで `yarn twenty dev` を実行したままにしておいてください。 `src/` 配下のファイルを追加または編集するたびに、数秒以内にサーバーへ再同期されるため、ビルドしながら各機能が UI に現れていく様子を確認できます。
 
-<Card
-  title="Start building →"
-  icon="database"
-  href="/ja/developers/extend/apps/tutorials/document-generator/data-model"
->
-  Chapter 1: model documents and templates.
+<Card title="構築を開始する →" icon="database" href="/ja/developers/extend/apps/tutorials/document-generator/data-model">
+  第 1 章: ドキュメントとテンプレートをモデリングする。
 </Card>

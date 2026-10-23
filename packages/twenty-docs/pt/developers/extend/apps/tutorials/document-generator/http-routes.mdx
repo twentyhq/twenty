@@ -1,29 +1,23 @@
 ---
 title: 3. Rotas HTTP
-icon: 'globe'
-description: Trigger the function over HTTP and render documents as web pages.
+icon: globe
+description: Acionar a função sobre HTTP e renderizar documentos como páginas da web.
 ---
 
-<Note>
-  A tradução deste guia ainda não foi atualizada para a CLI independente do
-  Twenty. Abaixo, apresentamos temporariamente o conteúdo atual em inglês para
-  evitar o uso de comandos removidos.
-</Note>
+O mesmo manipulador também pode responder solicitações HTTP. Vamos adicionar duas rotas:
 
-The same handler can also answer HTTP requests. We'll add two routes:
+* um terminal **POST** aponta as chamadas da UI para gerar um documento e
+* um endpoint de **GET** público que renderiza um documento como uma página web impressa.
 
-- a **POST** endpoint the UI calls to generate a document, and
-- a public **GET** endpoint that renders a document as a printable web page.
+Ambos usam `httpRouteTriggerSettings`. As rotas do aplicativo são acessadas com um caminho `/s/`; em instâncias locais
+e auto-hospedadas, esse caminho é servido pelo seu servidor Twenty
+(por exemplo, `http://localhost:2020/s/documents/generate`). No Twenty Cloud, `RestApiClient`
+resolve o caminho por meio do domínio de funções do espaço de trabalho.
 
-Both use `httpRouteTriggerSettings`. App routes are addressed with an `/s/` path; on local
-and self-hosted instances, that path is served by your Twenty server
-(e.g. `http://localhost:2020/s/documents/generate`). On Twenty Cloud, `RestApiClient`
-resolves the path through the workspace's functions domain.
+## Rota POST - gerar sob demanda
 
-## POST route — generate on demand
-
-This reuses `generateDocumentHandler`, so there's no logic to repeat — just a thin
-adapter that reads the request body.
+Isso reusa `generateDocumentHandler`, então não há lógica para repetir — apenas um adaptador
+fino que lê o corpo da solicitação.
 
 ```ts filename="src/logic-functions/generate-document-route.ts"
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
@@ -59,16 +53,16 @@ export default defineLogicFunction({
 });
 ```
 
-The shared handler returns a suggested `status` on failure, so the route can
-answer with a proper `4xx`/`5xx` code. `isAuthRequired: true` means the caller
-must present a valid token — the front component in the next chapter passes the
-user's access token automatically.
+O manipulador compartilhado retorna um 'status' sugerido durante a falha, então a rota pode
+responder com um código `4xx`/`5xx` apropriado. `isAuthRequired: true` significa que o chamador
+deve apresentar um token válido — o componente frontal no próximo capítulo passa o token de acesso do usuário
+automaticamente.
 
-## GET route — render as a web page
+## Via GET - renderizar como uma página da web
 
-To return HTML instead of JSON, wrap the body in a `Response` with a
-`Content-Type` header. This route is public (`isAuthRequired: false`) so a
-generated document can be shared as a link.
+Para retornar HTML em vez de JSON, encapsule o corpo em um `Response` com um cabeçalho
+`Content-Type`. Esta rota é pública (`isAuthRequired: false`) para que um documento
+gerado possa ser compartilhado como um link.
 
 ```ts filename="src/logic-functions/view-document.ts"
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
@@ -77,19 +71,13 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { documentHtmlPage } from 'src/utils/render-document';
 
 const htmlResponse = (html: string, status = 200): Response =>
-  new Response(html, {
-    status,
-    headers: { 'Content-Type': 'text/html; charset=utf-8' },
-  });
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
 
   if (!documentId) {
-    return htmlResponse(
-      documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'),
-      400,
-    );
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
   }
 
   // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
@@ -102,18 +90,10 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   const document = documents?.edges?.[0]?.node;
   if (!document?.id) {
-    return htmlResponse(
-      documentHtmlPage(
-        'Document not found',
-        `No document with id ${documentId}.`,
-      ),
-      404,
-    );
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
   }
 
-  return htmlResponse(
-    documentHtmlPage(document.name ?? 'Document', document.content ?? ''),
-  );
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
 };
 
 export default defineLogicFunction({
@@ -129,15 +109,14 @@ export default defineLogicFunction({
 });
 ```
 
-`documentHtmlPage` renders the Markdown body to HTML (with [marked](https://marked.js.org/),
-sanitized) and drops it into a clean, printable page that shows just the template
-content — the same look as the PDF and the in-app preview.
-[See the helper](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
+`documentHtmlPage` renderiza o corpo do Markdown para HTML (com [marked](https://marked.js.org/),
+sanitizado) e o coloca em um limpo, página imprimível que mostra apenas o conteúdo do modelo- a mesma aparência que o PDF e a visualização no aplicativo.
+  [Veja o ajudante](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
 
-## Try it
+## Experimente isso
 
-With a template and a Person in your workspace, call the route (grab a token from
-**Settings → Developers → API**):
+Com um modelo e uma pessoa em seu espaço de trabalho, chame a rota (pegue um token do
+**Settings → APIs & Webhooks**):
 
 ```bash filename="Terminal"
 curl -X POST http://localhost:2020/s/documents/generate \
@@ -146,31 +125,25 @@ curl -X POST http://localhost:2020/s/documents/generate \
 # → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
 ```
 
-Open the returned document in your browser:
+Abra o documento retornado no seu navegador:
 
 ```
 http://localhost:2020/s/documents/view?id=<documentId>
 ```
 
-<Frame caption="The public GET route renders the document as a printable page.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png"
-    alt="A rendered document web page"
-  />
+<Frame caption="A rota GET pública renderiza o documento como uma página impressa.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Uma página renderizada do documento web" />
 </Frame>
 
 <Tip>
-  You can also stream a function's logs while testing with `twenty app logs`, or
-  invoke it directly with `twenty app exec`.
+Você também pode transmitir logs de uma função enquanto está testando com
+`yarn twenty dev:function:logs`, ou invocá-los diretamente com
+`yarn twenty dev:function:exec`.
 </Tip>
 
-**After this step:** the app can generate documents over HTTP and serve them as
-web pages. Now let's make it usable without `curl`.
+**Após esse passo:** o aplicativo pode gerar documentos via HTTP e servi-los como páginas
+web. Agora vamos torná-lo utilizável sem `curl`.
 
-<Card
-  title="Next: building the UI →"
-  icon="table-columns"
-  href="/pt/developers/extend/apps/tutorials/document-generator/building-the-ui"
->
-  Views, navigation, a command, and a front component.
+<Card title="Próximo: Construindo a interface do usuário →" icon="table-columns" href="/desenvolvedores/extend/apps/tutorials/document-generator/building-the-ui">
+  Exibir, navegação, um comando e um componente inicial.
 </Card>

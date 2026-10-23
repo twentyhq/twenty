@@ -1,69 +1,32 @@
 ---
 title: Visão Geral
-description: Build, test, and ship your app — CLI commands, integration tests, CI, translations, and publishing to a server or to npm.
-icon: 'rocket'
+description: Crie, teste e envie seu app — comandos de CLI, testes de integração, CI e publicação em um servidor ou no npm.
+icon: rocket
 ---
 
-<Note>
-  A tradução deste guia ainda não foi atualizada para a CLI independente do
-  Twenty. Abaixo, apresentamos temporariamente o conteúdo atual em inglês para
-  evitar o uso de comandos removidos.
-</Note>
+A **camada de operações** é tudo o que você faz *para* o seu app em vez de *com* ele: invocar comandos de CLI, executar testes de integração contra um servidor Twenty real, configurar CI e enviar versões — seja como um tarball implantado em um único servidor ou como um pacote npm listado no marketplace.
 
-The **operations layer** is everything you do _to_ your app rather than _with_ it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, translating its strings, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
+```text
+   develop ─▶ test ─▶ build ─▶ deploy / publish
+   ───────    ────    ─────    ─────────────────
+   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
+   twenty     test    twenty
+   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
+```
 
-| Step                  | Command                        |
-| --------------------- | ------------------------------ |
-| Develop               | `twenty app dev`               |
-| Test                  | `yarn test`                    |
-| Build                 | `twenty app build`             |
-| Publish to one server | `twenty app publish --private` |
-| Publish to npm        | `twenty app publish`           |
-
-## In this section
+## Nesta secção
 
 <CardGroup cols={2}>
-  <Card
-    title="CLI"
-    icon="terminal"
-    href="/pt/developers/extend/apps/operations/cli"
-  >
-    Sign in, explore data, build apps, exec, logs and uninstall with the
-    `twenty` CLI.
+  <Card title="CLI" icon="terminal" href="/pt/developers/extend/apps/operations/cli">
+    Referência do `yarn twenty` — exec, logs, uninstall, remotes.
   </Card>
-  <Card
-    title="Syncing & recovery"
-    icon="compass"
-    href="/pt/developers/extend/apps/operations/sync-and-recovery"
-  >
-    Which command when, reading the sync diff, and a recovery ladder.
+  <Card title="Sincronização e recuperação" icon="compass" href="/pt/developers/extend/apps/operations/sync-and-recovery">
+    Qual comando usar e quando, leitura do diff de sincronização e etapas de recuperação.
   </Card>
-  <Card
-    title="Testing"
-    icon="flask"
-    href="/pt/developers/extend/apps/operations/testing"
-  >
-    Vitest setup, integration tests, type checking, CI workflow.
+  <Card title="Testes" icon="flask" href="/pt/developers/extend/apps/operations/testing">
+    Configuração do Vitest, testes de integração, verificação de tipos, fluxo de trabalho de CI.
   </Card>
-  <Card
-    title="Translations"
-    icon="language"
-    href="/pt/developers/extend/apps/operations/translations"
-  >
-    Mark strings, extract catalogs, ship your app in several languages.
-  </Card>
-  <Card
-    title="Publishing"
-    icon="upload"
-    href="/pt/developers/extend/apps/operations/publishing"
-  >
-    Build, deploy a tarball, publish to npm, install.
-  </Card>
-  <Card
-    title="Monitoring"
-    icon="chart-line"
-    href="/developers/extend/apps/operations/monitoring"
-  >
-    Errors, rate limits, credits and function performance across installs.
+  <Card title="Publicação" icon="upload" href="/pt/developers/extend/apps/operations/publishing">
+    Criar, implantar um tarball, publicar no npm, instalar.
   </Card>
 </CardGroup>

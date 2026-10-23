@@ -1,107 +1,81 @@
 ---
 title: 게시
-icon: 'upload'
-description: Distribute your Twenty app to the marketplace or deploy it internally.
+icon: upload
+description: Twenty 앱을 마켓플레이스에 배포하거나 내부에 배포하세요.
 ---
 
-<Note>
-  이 가이드의 번역은 아직 독립형 Twenty CLI에 맞게 업데이트되지 않았습니다.
-  삭제된 명령을 사용하지 않도록 아래에 최신 영어 내용을 임시로 표시합니다.
-</Note>
+## 개요
 
-## Overview
+앱을 [로컬에서 빌드하고 테스트](/ko/developers/extend/apps/getting-started/concepts)하면, 배포 경로는 두 가지입니다:
 
-Once your app is [built and tested locally](/ko/developers/extend/apps/getting-started/concepts), you have two paths for distributing it:
+* **타르볼 배포** — 내부 또는 비공개 사용을 위해 특정 Twenty 서버에 앱을 직접 업로드합니다.
+* **npm에 게시** — 모든 워크스페이스가 검색하고 설치할 수 있도록 Twenty 마켓플레이스에 앱을 등재합니다.
 
-- **Deploy a tarball** — upload your app directly to a specific Twenty server for internal or private use.
-- **Publish to npm** — publish your package, [claim it in Twenty](#claiming-your-app), and complete its setup so other workspaces can discover and install it.
+두 경로는 동일한 **build** 단계에서 시작합니다.
 
-Both paths start from the same **build** step.
+## 앱 빌드
 
-## Registration ownership
-
-Publishing an app creates an **application registration**: the app's identity on the instance, shared by every workspace that installs it. It holds the app's marketplace entry, its OAuth client, and its server-side state — the `serverVariables` an operator configures and the `server`-scoped entries of the [key-value store](/ko/developers/extend/apps/logic/key-value-store).
-
-A `universalIdentifier` is unique across the whole instance and a registration belongs to at most one workspace (its owner) — or none until it is claimed — so installing an app and developing one are two different rights:
-
-| Action                                                | Requirement                                                                                                         |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Installing an app                                     | The app is listed on the marketplace, pre-installed by the operator, or its registration belongs to your workspace. |
-| Developing an app (`twenty app dev`, `apply`, `plan`) | The registration belongs to your workspace.                                                                         |
-
-Syncing code and a manifest under an identifier is a claim of authorship, so being able to install an app never grants the right to publish code under its identity. A workspace that is not the owner is refused, whether the app is listed, pre-installed, or private.
-
-Two situations lead to that refusal:
-
-- **The identifier belongs to another workspace.** Change the `universalIdentifier` in your app config, which is the usual answer when you forked someone else's app. If you need to keep the identifier, the owning workspace has to transfer the registration to yours.
-- **The identifier belongs to no workspace.** Apps imported by the marketplace catalog sync start unowned. [Claim yours with GitHub](#claiming-your-app) before developing on it. Publishing with npm provenance provides proof of authorship; it does not automatically assign an owner workspace in Twenty.
-
-## Building your app
-
-Run the build command to typecheck and bundle your app:
+앱을 컴파일하고 배포 준비가 된 `manifest.json`을 생성하려면 빌드 명령을 실행하세요:
 
 ```bash filename="Terminal"
-twenty app build
+yarn twenty dev:build
 ```
 
-This typechecks and bundles the app into a temporary CLI snapshot. Use `--json` to inspect the manifest and artifact metadata. `twenty app publish` creates the package itself; no separate tarball build is required.
+이는 TypeScript 소스를 컴파일하고, 로직 함수와 프런트 컴포넌트를 트랜스파일하며, 모든 항목을 `.twenty/output/`에 기록합니다. 수동 배포 또는 publish 명령을 위한 `.tgz` 패키지도 생성하려면 `--tarball`을 추가하세요.
 
-## Deploying to a server (tarball)
+## 서버에 배포(타르볼)
 
-For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.
+공개하고 싶지 않은 앱 — 독점 도구, 엔터프라이즈 전용 통합 또는 실험적 빌드 — 의 경우, 타르볼을 Twenty 서버에 직접 배포할 수 있습니다.
 
-### Prerequisites
+### 사전 준비
 
-Before deploying, you need a configured remote pointing to the target server. Remotes store the server URL and authentication credentials locally in `~/.twenty/config.json`.
+배포 전에 대상 서버를 가리키도록 구성된 원격이 필요합니다. 원격은 서버 URL과 인증 자격 증명을 로컬의 `~/.twenty/config.json`에 저장합니다.
 
-Add a remote:
+원격 추가:
 
 ```bash filename="Terminal"
-twenty auth login --url https://your-twenty-server.com --name production
+yarn twenty remote:add --url https://your-twenty-server.com --as production
 ```
 
-### Deploying
+### 배포
 
-Build and upload your app to the server in one step:
+앱을 한 번에 빌드하여 서버에 업로드:
 
 ```bash filename="Terminal"
-twenty app publish --private
+yarn twenty app:publish --private
 # To deploy to a specific remote:
-# twenty app publish --private --remote production
+# yarn twenty app:publish --private --remote production
 ```
 
-### Sharing a deployed app
+### 배포된 앱 공유
 
-Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
+타르볼 앱은 공개 마켓플레이스에 나열되지 않으므로, 동일한 서버의 다른 워크스페이스는 탐색만으로는 이를 찾을 수 없습니다. 배포된 앱을 공유하려면:
 
-1. Go to **Settings > Developers > Apps** and open your app under **My apps**
-2. In the **Distribution** tab, click **Copy share link**
-3. Share this link with users on other workspaces — it takes them directly to the app's install page
+1. **설정 > 애플리케이션 > 등록**으로 이동하여 앱을 엽니다
+2. **Distribution** 탭에서 **공유 링크 복사**를 클릭합니다
+3. 이 링크를 다른 워크스페이스의 사용자와 공유하세요 — 해당 앱의 설치 페이지로 바로 이동합니다
 
-The share link uses the server's base URL (without any workspace subdomain) so it works for any workspace on the server.
+공유 링크는 서버의 기본 URL(워크스페이스 하위 도메인 없이)을 사용하므로 서버의 모든 워크스페이스에서 동작합니다.
 
-### Version management
+### 버전 관리
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected when the server registers the uploaded tarball, which is then dropped again. You'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+이미 배포된 타르볼 앱을 업데이트할 때, 서버는 `package.json`의 `version`이 현재 배포된 버전보다 [semver](https://semver.org) 순서 기준으로 엄격히 더 높아야 합니다. 동일한 버전을 다시 배포하거나 더 낮은 버전을 푸시하는 경우, 타르볼이 저장되기 전에 거부됩니다 — CLI에서 `VERSION_ALREADY_EXISTS` 오류가 표시됩니다.
 
-To release an update:
+업데이트를 릴리스하려면:
 
-1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
-2. Run `twenty app publish --private` (or `twenty app publish --private --remote production`)
-3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's General tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
+1. `package.json`의 `version` 필드를 올리세요(예: `1.2.3` → `1.2.4`, `1.3.0`, 또는 `2.0.0`)
+2. `yarn twenty app:publish --private`(또는 `yarn twenty app:publish --private --remote production`)를 실행합니다.
+3. 앱이 설치되어 있고 해당 앱의 Settings 탭에서 자동 업그레이드를 활성화한 워크스페이스는 백그라운드에서 자동으로 업그레이드되며, 나머지 워크스페이스는 설정에서 사용 가능한 업그레이드를 확인할 수 있습니다.
 
 <Note>
-  Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is
-  allowed, and a final release like `1.0.0` is correctly recognized as higher
-  than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver
-  string.
+프리릴리스 태그는 예상대로 동작합니다: `1.0.0-rc.1` → `1.0.0-rc.2`로 올리는 것은 허용되며, `1.0.0`과 같은 최종 릴리스는 `1.0.0-rc.5`보다 더 높은 버전으로 올바르게 인식됩니다. `package.json`의 버전은 유효한 semver 문자열이어야 합니다.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
-### Server version compatibility
+### 서버 버전 호환성
 
-If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
+앱이 특정 Twenty 서버 버전에서 도입된 기능(예: v2.3.0에 추가된 OAuth 공급자)을 사용한다면, `package.json`의 `engines.twenty` 필드를 사용하여 앱에 필요한 최소 서버 버전을 선언해야 합니다:
 
 ```json filename="package.json"
 {
@@ -114,125 +88,107 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 }
 ```
 
-The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
+값은 표준 [semver 범위](https://github.com/npm/node-semver#ranges)입니다. 일반적인 패턴:
 
-| Range            | Meaning                                  |
-| ---------------- | ---------------------------------------- |
-| `>=2.3.0`        | Any server from 2.3.0 onward             |
-| `>=2.3.0 <3.0.0` | 2.3.0 or later, but below the next major |
-| `^2.3.0`         | Same as `>=2.3.0 <3.0.0`                 |
+| 범위                                 | 의미                                     |
+| ---------------------------------- | -------------------------------------- |
+| `>=2.3.0`                          | 2.3.0 이상인 모든 서버                        |
+| `>=2.3.0 \<3.0.0` | 2.3.0 이상이지만 다음 메이저 버전 미만               |
+| `^2.3.0`                           | `>=2.3.0 \<3.0.0`과 동일 |
 
-**What happens at deploy and install time:**
+**배포 및 설치 시 동작:**
 
-- If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-- If `engines.twenty` is **not set**, no version check runs and the app is accepted on any server version (backward-compatible with existing apps). A blank value is rejected as an invalid range.
-- The marketplace does not list an app whose latest version declares an `engines.twenty` range the server does not satisfy, or an invalid one. The app stays registered and visible in the admin panel.
-- If the server has no `APP_VERSION` configured, the check is skipped.
+* `engines.twenty`가 설정되어 있고 대상 서버의 버전이 해당 범위를 충족하지 않으면, 배포(tarball 업로드) 또는 설치가 `SERVER_VERSION_INCOMPATIBLE` 오류와 함께 거부되며 필요한 범위와 실제 서버 버전을 모두 나타내는 메시지가 표시됩니다.
+* `engines.twenty`가 **설정되어 있지 않으면**, 앱은 모든 서버 버전에서 허용됩니다(기존 앱과 하위 호환).
+* 서버에 `APP_VERSION`이 구성되어 있지 않으면, 검사가 생략됩니다.
 
 <Note>
-  The server is the authoritative check — it validates `engines.twenty` on both
-  tarball upload and workspace install. If you deploy a tarball out-of-band or
-  install from the marketplace, the server still enforces compatibility.
+서버가 최종 검증을 수행합니다 — 타르볼 업로드와 워크스페이스 설치 모두에서 `engines.twenty`를 검증합니다. 타르볼을 별도 경로로 배포하거나 마켓플레이스에서 설치하더라도, 서버는 여전히 호환성을 강제합니다.
 </Note>
 
-## Automated CI/CD (scaffolded workflows)
+## 자동화된 CI/CD (스캐폴드된 워크플로)
 
-Apps generated with `twenty app init` ship with three GitHub Actions workflows out of the box, under `.github/workflows/`. CI runs with no setup, CD requires a single secret, and publishing to npm requires a one-time npm trusted-publisher setup.
+`create-twenty-app`으로 생성된 앱은 `.github/workflows/` 아래에 기본으로 세 개의 GitHub Actions 워크플로가 포함되어 있습니다. CI는 별도 설정 없이 실행되며, CD는 하나의 시크릿만 필요하고, npm으로의 배포는 한 번만 설정하면 되는 npm trusted-publisher 설정이 필요합니다.
 
 ### CI — `ci.yml`
 
-Runs integration tests on every push to `main` and every pull request.
+`main`으로의 푸시와 풀 리퀘스트마다 통합 테스트를 자동으로 실행합니다.
 
-**What it does:**
+**하는 일:**
 
-1. Checks out your app's source.
-2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action.
-3. Enables Corepack and sets up Node.js from your `.nvmrc`.
-4. Installs the pinned standalone CLI in the **Install Twenty CLI** step.
-5. Installs dependencies with `yarn install --immutable`, then runs lint, typecheck, and unit tests.
-6. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
+1. 앱의 소스 코드를 체크아웃합니다.
+2. `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` 컴포지트 액션을 사용해 격리된 Twenty 테스트 인스턴스를 생성합니다(CI에서 `yarn twenty docker:start --test`와 동등합니다).
+3. Corepack을 활성화하고, `.nvmrc`에 따라 Node.js를 설정하며, `yarn install --immutable`로 의존성을 설치합니다.
+4. 생성된 인스턴스에서 `TWENTY_API_URL`과 `TWENTY_API_KEY`를 전달하여 실제 서버와 통신할 수 있도록 `yarn test`를 실행합니다.
 
-**Config knobs:**
+**구성 옵션:**
 
-- `TWENTY_VERSION` (env, defaults to `latest`) — pin the Twenty server version used in CI by editing this in `ci.yml`.
-- Concurrency is grouped by `github.ref` and cancels in-progress runs on new pushes.
+* `TWENTY_VERSION`(환경 변수, 기본값 `latest`) — `ci.yml`에서 이 값을 수정하여 CI에서 사용하는 Twenty 서버 버전을 고정합니다.
+* 동시 실행은 `github.ref`로 그룹화되며, 새 푸시가 발생하면 진행 중인 실행을 취소합니다.
 
-No secrets are required — the test instance is ephemeral and lives only for the duration of the job.
+시크릿이 필요하지 않습니다 — 테스트 인스턴스는 일시적이며 작업이 진행되는 동안에만 존재합니다.
 
 ### CD — `cd.yml`
 
-Deploys your app to a configured Twenty server on every push to `main`, and optionally from a pull request when the `deploy` label is applied.
+매번 `main`으로 푸시될 때 구성된 Twenty 서버에 앱을 배포하며, `deploy` 라벨이 적용된 경우 풀 리퀘스트에서도 선택적으로 배포합니다.
 
-**What it does:**
+**하는 일:**
 
-1. Checks out the PR head (for labeled PRs) or the pushed commit.
-2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `twenty app publish --private`.
-3. Runs `twentyhq/twenty/.github/actions/install-twenty-app@main` so the newly deployed version is installed into the target workspace.
+1. 라벨이 지정된 PR의 경우 PR 헤드, 아니면 푸시된 커밋을 체크아웃합니다.
+2. `twentyhq/twenty/.github/actions/deploy-twenty-app@main`를 실행합니다 — CI에서의 `yarn twenty app:publish --private`에 해당합니다.
+3. `twentyhq/twenty/.github/actions/install-twenty-app@main`를 실행하여 새로 배포된 버전을 대상 워크스페이스에 설치합니다.
 
-**Required configuration:**
+**필수 구성:**
 
-| Setting                 | Where                                                      | Purpose                                                                               |
-| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:2020`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
-| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server.                                  |
+| 설정                      | 위치                                                        | 목적                                               |
+| ----------------------- | --------------------------------------------------------- | ------------------------------------------------ |
+| `TWENTY_DEPLOY_URL`     | `cd.yml`의 `env`(기본값 `http://localhost:3000`)              | 배포 대상 Twenty 서버입니다. 처음 사용하기 전에 실제 서버 URL로 변경하세요. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub 저장소 **Settings → Secrets and variables → Actions** | 대상 서버에서 배포 권한이 있는 API 키입니다.                      |
 
 <Note>
-  The default `TWENTY_DEPLOY_URL` of `http://localhost:2020` is a placeholder —
-  it will not reach anything from a GitHub-hosted runner. Update it to your
-  server's public URL (or use a self-hosted runner with network access) before
-  enabling CD.
+기본 `TWENTY_DEPLOY_URL` 값 `http://localhost:3000`은 플레이스홀더이며 — GitHub 호스팅 러너에서는 아무 곳에도 도달하지 않습니다. CD를 활성화하기 전에 서버의 퍼블릭 URL로 업데이트하세요(또는 네트워크에 접근 가능한 셀프 호스티드 러너를 사용하세요).
 </Note>
 
-**Triggering a preview deploy from a PR:**
+**PR에서 프리뷰 배포 트리거하기:**
 
-Add the `deploy` label to a pull request. The `if:` guard in `cd.yml` will run the job for that PR using the PR's head commit, letting you validate a change on the target server before merging.
+풀 리퀘스트에 `deploy` 라벨을 추가하세요. `cd.yml`의 `if:` 가드는 해당 PR의 헤드 커밋을 사용해 그 PR에 대한 잡을 실행하므로, 머지 전에 대상 서버에서 변경 사항을 검증할 수 있습니다.
 
-### Publish — `publish.yml`
+### 게시 — `publish.yml`
 
-Publishes your app to npm with provenance when you push a version tag (e.g. `v1.0.0`), or when you run the workflow manually from the Actions tab.
+버전 태그(예: `v1.0.0`)를 푸시하거나 Actions 탭에서 워크플로를 수동으로 실행하면, 출처 정보(provenance)와 함께 앱을 npm에 게시합니다.
 
-**What it does:**
+**하는 일:**
 
-1. Checks out your app, sets up Node.js, and updates npm (trusted publishing requires npm 11.5.1 or later).
-2. Installs the pinned standalone CLI in the **Install Twenty CLI** step, then installs app dependencies with `yarn install --immutable`.
-3. Runs `twenty app publish`, which builds and packs an isolated app snapshot, then publishes it to npm. In CI it automatically adds `--provenance` and `--access public`, so no flags are needed in the workflow.
+1. 앱을 체크아웃하고 Node.js를 설정한 다음 npm을 업데이트합니다(신뢰할 수 있는 게시 기능을 사용하려면 npm 11.5.1 이상이 필요합니다).
+2. `yarn twenty app:publish`를 실행하여 앱을 빌드하고 `.twenty/output`를 npm에 게시합니다. CI에서는 자동으로 `--provenance` 및 `--access public`을 추가하므로, 워크플로에는 플래그가 필요하지 않습니다.
 
-**One-time setup:**
+**한 번만 설정:**
 
-On npmjs.com open your package > **Settings → Trusted Publisher** and register this repository with the `publish.yml` workflow (see the [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers)). Publishing with provenance certifies which GitHub repository built the package. After publishing, [claim ownership in Twenty](#claiming-your-app).
+npmjs.com에서 패키지를 연 다음 **Settings → Trusted Publisher**로 이동하여 이 저장소를 `publish.yml` 워크플로에 등록하세요([npm trusted publishing 문서](https://docs.npmjs.com/trusted-publishers)를 참고하세요). provenance와 함께 게시하면 어떤 GitHub 저장소가 패키지를 빌드했는지 증명되며, 이는 Twenty 마켓플레이스에서 앱 소유권을 주장하는 방법이기도 합니다.
 
 <Note>
-npm only accepts provenance from **public** source repositories. If you publish from a private repo, npm rejects the OIDC provenance bundle with an `E422 ... Unsupported GitHub Actions source repository visibility: "private"` error. To publish from a private repo, opt out of provenance by setting `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` in the publish step's `env` (a commented-out hint is included in the scaffolded `publish.yml`):
+npm은 **공개(public)** 소스 저장소의 provenance만 허용합니다. 비공개 저장소에서 publish를 수행하면, npm은 OIDC provenance 번들을 `E422 ...` 오류와 함께 거부합니다. 지원되지 않는 GitHub Actions 소스 저장소 가시성: "private"`오류입니다. 비공개 저장소에서 publish하려면, publish 단계의`env`에서 `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'`를 설정하여 provenance를 사용하지 않도록(opt out) 해야 합니다(스캐폴딩된 `publish.yml\`에 주석으로 된 힌트가 포함되어 있습니다):
 
 ```yaml filename=".github/workflows/publish.yml"
-- name: Publish to npm
-  env:
-    TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
-  run: twenty app publish
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
 ```
-
-Without GitHub provenance, the package cannot be claimed through **Claim with GitHub**. Use a public repository with provenance if you need this ownership flow.
-
 </Note>
 
-### Pinning the CLI version
+### 재사용 가능한 액션 고정하기
 
-All three generated workflows pin the standalone CLI to the version of `twenty` that ran `twenty app init`. The **Install Twenty CLI** steps in `ci.yml` and `publish.yml` use `npm install -g twenty@<version>`. In `cd.yml`, both the deploy and install actions receive the same version through their `cli-version` input.
+`ci.yml` 및 `cd.yml` 워크플로는 `@main`의 재사용 가능한 액션을 참조하므로, `twentyhq/twenty` 저장소의 액션 업데이트가 자동으로 반영됩니다. 결정적 빌드를 원한다면, 각 `uses:` 줄에서 `@main`을 커밋 SHA 또는 릴리스 태그로 바꾸세요.
 
-To upgrade, update the two installation commands and both `cli-version` inputs together. These pins are separate from the `TWENTY_VERSION` server version used in CI and the reusable action references below.
+## npm에 게시
 
-### Pinning the reusable actions
+npm에 게시하면 Twenty 마켓플레이스에서 앱을 찾을 수 있게 됩니다. 모든 Twenty 워크스페이스는 UI에서 바로 마켓플레이스 앱을 탐색, 설치 및 업그레이드할 수 있습니다.
 
-The `ci.yml` and `cd.yml` workflows reference reusable actions at `@main`, so action updates in the `twentyhq/twenty` repo are picked up automatically. If you want deterministic builds, replace `@main` with a commit SHA or release tag on each `uses:` line.
+### 요구 사항
 
-## Publishing to npm
-
-Publishing to npm makes your app eligible for the Twenty marketplace. After catalog sync and any required [server-route setup](#setting-up-server-routes), workspaces can browse, install, and upgrade it from the UI. Community apps appear when users turn off the **Vetted only** filter.
-
-### Requirements
-
-- An [npm](https://www.npmjs.com) account
-- The `twenty-app` keyword in your `package.json` `keywords` array (add it manually — it is not included by default in the `twenty app init` template)
+* [npm](https://www.npmjs.com) 계정
+* `package.json`의 `keywords` 배열에 있는 `twenty-app` 키워드(수동으로 추가하세요 — `create-twenty-app` 템플릿에 기본적으로 포함되어 있지 않습니다)
 
 ```json filename="package.json"
 {
@@ -242,9 +198,9 @@ Publishing to npm makes your app eligible for the Twenty marketplace. After cata
 }
 ```
 
-### Marketplace metadata
+### 마켓플레이스 메타데이터
 
-The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logo` and `galleryImages` to reference images from the `public/` folder:
+`defineApplication()` 구성은 마켓플레이스에서 앱이 표시되는 방식을 제어하는 선택적 필드를 지원합니다. `public/` 폴더의 이미지를 참조하려면 `logo`와 `galleryImages`를 사용하세요:
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -252,159 +208,86 @@ export default defineApplication({
   displayName: 'My App',
   description: 'A great app',
   logo: 'public/logo.png',
-  galleryImages: ['public/screenshot-1.png', 'public/screenshot-2.png'],
+  galleryImages: [
+    'public/screenshot-1.png',
+    'public/screenshot-2.png',
+  ],
 });
 ```
 
-See the [defineApplication accordion](/ko/developers/extend/apps/config/application#marketplace-metadata) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+마켓플레이스 필드 전체 목록(`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` 등)은 Building Apps 페이지의 [defineApplication 아코디언](/ko/developers/extend/apps/config/application#marketplace-metadata)을 참조하세요.
 
-#### Recommended gallery image dimensions
+#### 권장 갤러리 이미지 크기
 
-The marketplace renders `galleryImages` in a fixed `8:5` container (for example, `1600×1000 px`).
+마켓플레이스는 `galleryImages`를 고정된 `8:5` 컨테이너에 렌더링합니다(예: `1600×1000 px`).
 
 <Note>
-  Gallery images of any aspect ratio are displayed in full and are never
-  cropped, but anything significantly taller or narrower than `8:5` will show
-  empty bands on the sides.
+어떤 종횡비의 갤러리 이미지든 전체가 표시되며 잘리지 않습니다. 그러나 `8:5`보다 훨씬 세로로 길거나 가로로 좁은 경우 양쪽에 빈 띠가 표시됩니다.
 </Note>
 
-#### Image size limit
+#### 이미지 크기 제한
 
-The `logo` and each `galleryImages` file must not exceed **10 MB**. Larger files are skipped when the marketplace rehosts your published assets, so they will not be displayed.
+`logo` 및 각 `galleryImages` 파일은 **10 MB**를 초과해서는 안 됩니다. 마켓플레이스가 게시된 에셋을 다시 호스팅할 때 더 큰 파일은 건너뛰므로 표시되지 않습니다.
 
-### Publish
+### 게시
 
 ```bash filename="Terminal"
-twenty app publish
+yarn twenty app:publish
 ```
 
-To publish under a specific dist-tag (e.g., `beta` or `next`):
+특정 dist-tag(예: `beta` 또는 `next`)로 게시하려면:
 
 ```bash filename="Terminal"
-twenty app publish --tag beta
+yarn twenty app:publish --tag beta
 ```
 
-### How marketplace discovery works
+### 마켓플레이스 검색 방식
 
-The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
+Twenty 서버는 npm 레지스트리에서 마켓플레이스 카탈로그를 **매시간** 동기화합니다.
 
-The standalone CLI has no catalog-sync command. Wait for the server catalog sync or use the server administration tools.
+기다리지 않고 즉시 동기화를 트리거할 수 있습니다:
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — see [Marketplace metadata](#marketplace-metadata) above.
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync
+# To target a specific remote:
+# yarn twenty dev:catalog-sync --remote production
+```
 
-<Note>
-If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
-
-The About tab renders markdown text only. Images do not render, whether they use markdown syntax or `<img>` tags, and raw HTML such as badges or `<div align="center">` blocks shows as plain text.
-
-</Note>
-
-### CI publishing
-
-The scaffolded `publish.yml` workflow described above publishes to npm automatically on version tags, with provenance. Because `twenty app publish` adds `--provenance` and `--access public` for you when it runs in CI, the workflow needs no npm flags — only the one-time trusted-publisher setup.
-
-For other CI systems (GitLab CI, CircleCI, etc.), run `yarn install` then `twenty app publish`. Provenance is emitted when the environment can mint an OIDC token and skipped automatically otherwise.
+마켓플레이스에 표시되는 메타데이터는 `defineApplication()` 구성에서 가져옵니다. 위의 [Marketplace metadata](#marketplace-metadata)를 참고하세요.
 
 <Note>
-  **npm provenance** adds a trust badge to your npm listing, letting users
-  verify the package was built from a specific commit in a public CI pipeline.
-  It is also what lets you claim ownership of your app in a Twenty marketplace.
-  See the [npm provenance
-  docs](https://docs.npmjs.com/generating-provenance-statements) for details.
+앱에서 `defineApplication()`에 `aboutDescription`을 정의하지 않으면, 마켓플레이스는 소개 페이지 콘텐츠로 npm에 게시된 패키지의 `README.md`를 자동으로 사용합니다. 즉, npm과 Twenty 마켓플레이스 모두에서 하나의 README만 관리하면 됩니다. 마켓플레이스에서 다른 설명을 사용하려면 `aboutDescription`을 명시적으로 설정하세요.
 </Note>
 
-After the package has synced into the catalog, continue with [Claiming your app](#claiming-your-app). The claim flow requires provenance pointing to a **GitHub** repository.
+### CI 게시
 
-## Claiming your app
+위에서 설명한 스캐폴딩된 `publish.yml` 워크플로는 버전 태그에 따라 provenance와 함께 npm에 자동으로 게시합니다. `yarn twenty app:publish`는 CI에서 실행될 때 `--provenance` 및 `--access public`을 자동으로 추가하므로, 워크플로에는 npm 플래그가 전혀 필요하지 않고 Trusted Publisher를 한 번만 설정하면 됩니다.
 
-Claiming assigns your app's registration to the Twenty workspace that will manage it. App claiming is available to all workspaces. Your role needs the **Workspace Apps** and **Developers** permissions to claim through the **Apps** tab of **Settings > Developers**.
+다른 CI 시스템(GitLab CI, CircleCI 등)에서는 `yarn install`을 실행한 다음 `yarn twenty app:publish`를 실행하세요. 환경에서 OIDC 토큰을 생성할 수 있을 때는 provenance가 생성되고, 그렇지 않은 경우에는 자동으로 건너뜁니다.
 
-Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the app on a separate self-hosted server. Other workspaces on the same instance install your app without claiming it themselves.
+<Note>
+**npm provenance**는 npm 목록에 신뢰 배지를 추가하여, 사용자가 공개 CI 파이프라인의 특정 커밋에서 패키지가 빌드되었는지 검증할 수 있게 해줍니다. 또한 Twenty 마켓플레이스에서 앱 소유권을 주장할 수 있게 해 주는 요소이기도 합니다. 자세한 내용은 [npm provenance 문서](https://docs.npmjs.com/generating-provenance-statements)를 참고하세요.
+</Note>
 
-### Before you claim
+## 앱 설치
 
-- Publish your package from a **public GitHub repository** using GitHub Actions and [npm trusted publishing with provenance](#ci-publishing). The version imported into Twenty's catalog must carry the provenance attestation.
-- Include the `twenty-app` keyword in `package.json` and wait for [catalog sync](#how-marketplace-discovery-works).
-- Choose the workspace that will own the app. For apps with server routes, this workspace also runs and pays for the shared resolver.
-- Sign in to GitHub as the **personal account that owns the source repository**, or as an **owner of the organization** that owns it. Repository collaborator access or npm package maintainer access alone is not sufficient.
+앱이 게시(npm)되었거나 배포(타르볼)되면, 워크스페이스는 UI를 통해 이를 설치할 수 있습니다.
 
-### Claim with GitHub
-
-1. In your intended owner workspace, go to **Settings > Developers > Apps** (`/settings/developers#apps`).
-2. In **Claim an application**, enter the exact npm package name, including its scope (for example, `@your-org/twenty-app`), or the app's `universalIdentifier`.
-3. Click **Look up** and check that the result is your app. If it is not found, click **Sync catalog** if available, wait for the sync to finish, then look it up again.
-4. Click **Claim with GitHub** and authorize Twenty. For an organization-owned repository, grant access to that organization in GitHub's **Organization access** section. Personal repositories do not need an organization grant.
-5. When you return to Twenty, confirm that the app appears under **My apps** with type **NPM**. Open it and check **Distribution > Ownership** for **Claimed by this workspace**.
-
-Claiming does not install the app. If it exposes server routes, complete the setup below before other workspaces depend on its webhooks.
-
-### Setting up server routes
-
-A [server route](/ko/developers/extend/apps/logic/logic-functions#server-route-trigger) receives events for multiple workspaces at one URL. Its resolver runs in the registration's **owner workspace**, then dispatches work to the appropriate installed workspace.
-
-1. Open your app under **My apps** and fill in any required **Server Variables** in the **Config** tab.
-2. In **Distribution**, click **See on marketplace** to open the app page and install it in the **owner workspace**. You can open this page even before the app appears in marketplace search.
-3. Register the server webhook URL with your provider and test an event from a second workspace where the app is installed. Check both the resolver and the target function's logs.
-
-<Warning>
-  An unclaimed app, or an app not installed in its owner workspace, has no
-  server-route resolver to run. Requests return `404`
-  (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed in other
-  workspaces. These apps stay out of marketplace search until claimed, installed
-  on the owner workspace, and configured with all required server variables.
-</Warning>
-
-### Owner workspace costs and availability
-
-See [how logic function runs are metered](/ko/user-guide/billing/capabilities/credits#how-logic-function-runs-are-metered) for credit consumption, pricing, and which workspace is billed.
-
-Uninstalling the app from the owner workspace or deleting that workspace removes the shared resolver and interrupts server webhooks for every install on that instance.
-
-### Ownership after a repository move
-
-Moving the GitHub repository to another personal account or organization does not transfer or remove an existing Twenty claim. The registration remains attached to its owner workspace. Keep the same npm package and app `universalIdentifier`; changing the Twenty owner workspace requires a separate ownership transfer.
-
-### Troubleshooting a claim
-
-If you have trouble claiming your app, contact us on [Discord](https://discord.gg/cx5n4Jzs57) or [open a GitHub issue](https://github.com/twentyhq/twenty/issues/new/choose).
-
-<Accordion title="Self-hosted GitHub claim configuration">
-  The server administrator configures `APP_CLAIM_GITHUB_CLIENT_ID` and
-  `APP_CLAIM_GITHUB_CLIENT_SECRET` with a GitHub OAuth app. Set its
-  authorization callback URL to your `SERVER_URL` followed by
-  `/application-registration-claim/github/callback`, for example
-  `https://twenty.example.com/application-registration-claim/github/callback`.
-  This configuration is already managed for you on Twenty Cloud.
-</Accordion>
-
-## Marketplace visibility and vetting
-
-Claiming establishes ownership; it does not grant a **Vetted** badge. The marketplace defaults to **Vetted only**. To find community apps, go to **Settings > Applications > Marketplace**, open the filter, and uncheck **Vetted only**. You can also share your app's direct install page using **My apps > your app > Distribution > Copy sharing link**.
-
-The Vetted label currently applies to apps maintained by Twenty, for which the team can vouch for security and quality. Third-party apps can be published and installed without this label.
-
-If your app is still missing with **Vetted only** turned off, confirm catalog sync has completed, all required server variables are filled in, and any server-route setup is complete.
-
-## Installing apps
-
-Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
-
-Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+Twenty UI의 **설정 > 애플리케이션** 페이지로 이동하면 마켓플레이스 앱과 타르볼로 배포된 앱을 모두 탐색하고 설치할 수 있습니다.
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+명령줄에서 앱을 설치할 수도 있습니다:
 
 ```bash filename="Terminal"
-twenty app install
+yarn twenty app:install
 ```
 
 <Note>
-The server enforces semver versioning on install, mirroring the rules on deploy:
+서버는 설치 시 semver 버전 규칙을 강제하며, 배포와 동일한 규칙을 적용합니다:
 
-- Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
-- Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
+* 워크스페이스에 이미 설치된 것과 동일한 버전을 설치하려고 하면 `APP_ALREADY_INSTALLED` 오류와 함께 거부됩니다.
+* 현재 설치된 것보다 낮은 버전을 설치하려고 하면 `CANNOT_DOWNGRADE_APPLICATION` 오류와 함께 거부됩니다.
 
-To install a newer version, deploy or publish it first, then re-run `twenty app install`.
-
+더 최신 버전을 설치하려면 먼저 배포하거나 게시한 다음 `yarn twenty app:install`을 다시 실행하세요.
 </Note>

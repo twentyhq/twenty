@@ -1,37 +1,31 @@
 ---
 title: ١. نموذج البيانات
-icon: 'database'
-description: Model documents and templates with objects, fields, and a relation.
+icon: database
+description: وثائق نموذجية ونماذج ذات كائنات وحقول وعلاقة.
 ---
 
-<Note>
-  لم تُحدَّث ترجمة هذا الدليل بعد لتشمل واجهة سطر أوامر Twenty المستقلة. يُعرض
-  المحتوى الإنجليزي الحالي أدناه مؤقتًا لتجنّب استخدام أوامر أُزيلت.
-</Note>
+يحتاج تطبيقنا إلى عنصرين مخصصين: **قوالب وثيقة** (ما يجب كتابته) و
+**وثائق** (النتيجة المنشأة). دعونا نعرفهم.
 
-Our app needs two custom objects: **document templates** (what to write) and
-**documents** (the generated result). Let's define them.
-
-Scaffold each entity file with the CLI — it generates a valid UUID and the right
-folder for you:
+سكاف كل ملف كيان مع CLI - يخلق مجلد UUID صالح و
+الصحيح لك:
 
 ```bash filename="Terminal"
-twenty app add object
+yarn twenty dev:add object
 ```
 
-Below we show the finished files.
+نعرض أدناه الملفات المكتملة.
 
 <Note>
-  Every `*_UNIVERSAL_IDENTIFIER` constant lives in
-  `src/constants/universal-identifiers.ts` and is imported where used. The
-  snippets below omit those imports for brevity — keep them in your own files.
+كل `*_UNIVERSAL_IDENTIFIER` يعيش باستمرار في
+`src/constants/universal-Identiers.ts` ويتم استيراده حيثما استخدم. كتل الكود
+أسفل أغفل تلك الواردات للإيجاز، أبقيها في ملفاتك.
 </Note>
 
-## The template object
+## عنصر القالب
 
-A template has a `name`, a `body` with `{{placeholders}}`, and a `target` that
-says whether it's written for a Person or a Company. The `body` is a
-`RICH_TEXT` field, so Twenty gives it a full rich-text editor.
+يحتوي القالب على `name`، و `body` يتضمن `{{placeholders}}`، و `target` يحدد ما إذا كان مكتوبًا لشخص أو لشركة. 'body' هو حقل
+'RICH_TEXT' لذا فإن عشرون يمنحه محرر نص ثري كامل.
 
 ```ts filename="src/objects/document-template.object.ts"
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -46,74 +40,42 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    {
-      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
-      name: 'name',
-      label: 'Name',
-      icon: 'IconAbc',
-    },
-    {
-      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT,
-      name: 'body',
-      label: 'Body',
-      icon: 'IconFileText',
-      description:
-        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
-    },
-    {
-      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT,
-      name: 'target',
-      label: 'Target',
-      icon: 'IconTarget',
+    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
+    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
+      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
+    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        {
-          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON',
-          label: 'Person',
-          color: 'blue',
-          position: 0,
-        },
-        {
-          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY',
-          label: 'Company',
-          color: 'green',
-          position: 1,
-        },
-      ],
-    },
+        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
+        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
+      ] },
   ],
 });
 ```
 
 <Warning>
-  `SELECT` option **values** must be `UPPER_CASE` (`PERSON`, not `person`), and
-  the `defaultValue` is wrapped in extra quotes: `` `'PERSON'` ``. The `label`
-  is what users see.
+يجب أن يكون خيار `SELECT` **القيم** `UPER_CASE` (`PERSON`، وليس `person`)، و
+`defaultValue` مغلقاً في اقتباسات إضافية: ` `PERSON`". إن `label\` هو ما يراه المستخدمون.
 </Warning>
 
-## The document object
+## كائن المستند
 
-The generated document stores the rendered `content` and a `status`. Define it
-the same way, with a `status` select of `DRAFT` / `GENERATED`. Full file:
+الوثيقة التي تم إنشاؤها تخزن "المحتوى" و "الحالة". قم بتعريفه
+بنفس الطريقة، مع اختيار 'الحالة' من 'DRAFT` / 'GENERATED`. الملف الكامل:
 [`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
 
-## Linking them with a relation
+## ربطهم بعلاقة
 
-Each document should point back to the template it came from. Relations are
-**bidirectional** — you define both sides, each in its own field file.
+يجب أن يشير كل مستند مرة أخرى إلى النموذج الذي أتى منه. العلاقات هي
+**ثنائية الاتجاه** - أنت تحدد كلا الجانبين، كل منهما في ملف الحقل الخاص به.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import {
-  defineField,
-  FieldType,
-  OnDeleteAction,
-  RelationType,
-} from 'twenty-sdk/define';
+import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -134,24 +96,21 @@ export default defineField({
 });
 ```
 
-The other side (`template-documents-relation.field.ts`) is a
-`RelationType.ONE_TO_MANY` field named `documents` that points the opposite way.
-See [Relations](/ar/developers/extend/apps/data/relations) for the full pattern.
+الجانب الآخر (`template-documents-relation.field.ts`) هو حقل
+`RelationType.ONE_TO_MANY` يسمى `documents` الذي يشير إلى الاتجاه المعاكس.
+انظر [Relations](/ar/developers/extend/apps/data/relations) للاطلاع على النمط الكامل.
 
-## See it in Twenty
+## مشاهدته في العشرين
 
-With `twenty app dev` running, open **Settings → Data model**. Both objects
-appear, tagged with your app.
+مع تشغيل 'yarn 20 inenty dev'، افتح **الإعدادات → البيانات النموذجية**. يظهر كلا العنصرين
+، وسم مع التطبيق الخاص بك.
 
-<Frame caption="Both custom objects, owned by the Document Generator app.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/01-data-model.png"
-    alt="Data model settings showing Documents and Document templates"
-  />
+<Frame caption="كلا العنصرين المخصصين، مملوكين لتطبيق مولد المستندات.">
+  <img src="/images/docs/developers/extends/apps/document-Generator/01-data-model.png" alt="إعدادات نموذج البيانات التي تظهر قوالب المستندات والمستندات" />
 </Frame>
 
-Create one template to test with — name it _Sales proposal_, set **Target** to
-_Person_, and paste a body with a few placeholders:
+قم بإنشاء قالب واحد لاختباره - اسمه *اقتراح المبيعات*، وقم بتعيين **الهدف** إلى
+*Person*، وقم بلصق جسم مع بعض العناصر النائبة:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -162,20 +121,13 @@ Best,
 The Team
 ```
 
-<Frame caption="A template record. The body keeps its placeholders until a document is generated.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/03-template-record.png"
-    alt="A Sales proposal template record with placeholder body"
-  />
+<Frame caption="سجل قالب. وتحافظ هذه الهيئة على الجهات الناقلة لها إلى حين إصدار وثيقة.">
+  <img src="/images/docs/developers/extends/apps/document-Generator/03-template-record.png" alt="سجل قالب مقترح المبيعات مع الهيئة النائبة" />
 </Frame>
 
-**After this step:** you have `documentTemplate` and `document` objects, linked by
-a relation, and one template to generate from. Next, the logic that fills it in.
+**بعد هذه الخطوة:** لديك كائنات 'documentTemplate' و 'document'، مرتبطة بـ
+علاقة، و قالب واحد لتوليد منها. وبعد ذلك، المنطق الذي يعبئه
 
-<Card
-  title="Next: generating documents →"
-  icon="bolt"
-  href="/ar/developers/extend/apps/tutorials/document-generator/generating-documents"
->
-  Write the logic function that fills the template.
+<Card title="التالي: توليد الوثائق →" icon="bolt" href="/ar/developers/extend/apps/tutorials/document-Generator/التوليد-المستندات">
+  اكتب الدالة المنطقية التي تملأ القالب.
 </Card>

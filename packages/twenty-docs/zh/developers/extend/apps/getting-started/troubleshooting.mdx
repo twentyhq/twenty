@@ -1,20 +1,14 @@
 ---
 title: 故障排除
-description: Common first-run issues — Docker, Node version, Yarn, dependencies.
-icon: 'wrench'
+description: 常见的首次运行问题 — Docker、Node 版本、Yarn、依赖项。
+icon: wrench
 ---
 
-<Note>
-  本指南的翻译尚未更新为 Twenty 独立 CLI
-  的用法。为避免使用已移除的命令，下面暂时显示最新的英文内容。
-</Note>
+* **Docker 错误** — 在运行 `yarn twenty docker:start` 之前，请确保 Docker Desktop（或守护进程）已在运行。 错误消息会显示适用于你的操作系统的正确启动命令。
+* **错误的 Node 版本** — 需要 24.5+（`engines.node: ^24.5.0`）。 使用 `node -v` 检查。
+* **缺少 Yarn 4** — 运行 `corepack enable`。
+* **依赖损坏** — `rm -rf node_modules && yarn install`。
+* **`twenty-sdk` 升级到 v2.8.0 后出现错误** — 在 v2.8.0 中，它从 `dependencies` 移动到了 `devDependencies`。 请参阅[项目结构 → 依赖项](/zh/developers/extend/apps/getting-started/project-structure#dependencies)。
+* **`twenty dev:build` 会对 `dependencies` 下的 `twenty-client-sdk` 发出警告** — 它由 Twenty 在运行时提供，因此应与 `twenty-sdk` 一起移动到 `devDependencies` 中。 请参阅[项目结构 → 依赖项](/zh/developers/extend/apps/getting-started/project-structure#dependencies)。
 
-- **Local server errors**, check your Docker or repository development environment. The standalone CLI does not manage containers.
-- **Wrong Node version** — Need 24.5+ (`engines.node: ^24.5.0`). Check with `node -v`.
-- **Yarn 4 missing** — Run `corepack enable`.
-- **Dependencies broken** — `rm -rf node_modules && yarn install`.
-- **Empty `yarn.lock`** — The build fails with "yarn.lock is empty" when the lockfile exists but has no content; run `yarn install` to regenerate it.
-- **`twenty-sdk` errors after upgrading to v2.8.0** — It moved from `dependencies` to `devDependencies` in v2.8.0. See [Project Structure → Dependencies](/zh/developers/extend/apps/getting-started/project-structure#dependencies).
-- **`twenty app build` warns about `twenty-client-sdk` under `dependencies`** — It is provided at runtime by Twenty, so it should be moved to `devDependencies` alongside `twenty-sdk`. See [Project Structure → Dependencies](/zh/developers/extend/apps/getting-started/project-structure#dependencies).
-
-Stuck? Ask on the [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322).
+卡住了吗？ 在 [Twenty 的 Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) 上提问。

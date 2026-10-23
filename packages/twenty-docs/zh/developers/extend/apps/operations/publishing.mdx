@@ -1,107 +1,81 @@
 ---
 title: 发布
-icon: 'upload'
-description: Distribute your Twenty app to the marketplace or deploy it internally.
+icon: upload
+description: 将你的 Twenty 应用分发到应用市场，或进行内部部署。
 ---
 
-<Note>
-  本指南的翻译尚未更新为 Twenty 独立 CLI
-  的用法。为避免使用已移除的命令，下面暂时显示最新的英文内容。
-</Note>
+## 概览
 
-## Overview
+一旦你的应用已[在本地构建并完成测试](/zh/developers/extend/apps/getting-started/concepts)，你可以通过两种方式进行分发：
 
-Once your app is [built and tested locally](/zh/developers/extend/apps/getting-started/concepts), you have two paths for distributing it:
+* **部署 tar 包** — 直接将你的应用上传到特定的 Twenty 服务器，以供内部或私有使用。
+* **发布到 npm** — 将你的应用在 Twenty 应用市场上架，供任何工作区发现并安装。
 
-- **Deploy a tarball** — upload your app directly to a specific Twenty server for internal or private use.
-- **Publish to npm** — publish your package, [claim it in Twenty](#claiming-your-app), and complete its setup so other workspaces can discover and install it.
+两种路径都从同一个**构建**步骤开始。
 
-Both paths start from the same **build** step.
+## 构建你的应用
 
-## Registration ownership
-
-Publishing an app creates an **application registration**: the app's identity on the instance, shared by every workspace that installs it. It holds the app's marketplace entry, its OAuth client, and its server-side state — the `serverVariables` an operator configures and the `server`-scoped entries of the [key-value store](/zh/developers/extend/apps/logic/key-value-store).
-
-A `universalIdentifier` is unique across the whole instance and a registration belongs to at most one workspace (its owner) — or none until it is claimed — so installing an app and developing one are two different rights:
-
-| Action                                                | Requirement                                                                                                         |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Installing an app                                     | The app is listed on the marketplace, pre-installed by the operator, or its registration belongs to your workspace. |
-| Developing an app (`twenty app dev`, `apply`, `plan`) | The registration belongs to your workspace.                                                                         |
-
-Syncing code and a manifest under an identifier is a claim of authorship, so being able to install an app never grants the right to publish code under its identity. A workspace that is not the owner is refused, whether the app is listed, pre-installed, or private.
-
-Two situations lead to that refusal:
-
-- **The identifier belongs to another workspace.** Change the `universalIdentifier` in your app config, which is the usual answer when you forked someone else's app. If you need to keep the identifier, the owning workspace has to transfer the registration to yours.
-- **The identifier belongs to no workspace.** Apps imported by the marketplace catalog sync start unowned. [Claim yours with GitHub](#claiming-your-app) before developing on it. Publishing with npm provenance provides proof of authorship; it does not automatically assign an owner workspace in Twenty.
-
-## Building your app
-
-Run the build command to typecheck and bundle your app:
+运行构建命令来编译你的应用，并生成适用于分发的 `manifest.json`：
 
 ```bash filename="Terminal"
-twenty app build
+yarn twenty dev:build
 ```
 
-This typechecks and bundles the app into a temporary CLI snapshot. Use `--json` to inspect the manifest and artifact metadata. `twenty app publish` creates the package itself; no separate tarball build is required.
+这会编译 TypeScript 源码，转译逻辑函数和前端组件，并将所有内容写入 `.twenty/output/`。 添加 `--tarball`，还可以生成用于手动分发或 publish 命令的 `.tgz` 包。
 
-## Deploying to a server (tarball)
+## 部署到服务器（tar 包）
 
-For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.
+对于你不希望公开的应用（专有工具、仅供企业使用的集成或实验性构建），你可以将 tar 包直接部署到某台 Twenty 服务器。
 
-### Prerequisites
+### 先决条件
 
-Before deploying, you need a configured remote pointing to the target server. Remotes store the server URL and authentication credentials locally in `~/.twenty/config.json`.
+在部署之前，你需要配置一个指向目标服务器的远程。 远程会将服务器 URL 和身份验证凭据本地存储在 `~/.twenty/config.json` 中。
 
-Add a remote:
+添加远程：
 
 ```bash filename="Terminal"
-twenty auth login --url https://your-twenty-server.com --name production
+yarn twenty remote:add --url https://your-twenty-server.com --as production
 ```
 
-### Deploying
+### 部署
 
-Build and upload your app to the server in one step:
+一步构建并将你的应用上传到服务器：
 
 ```bash filename="Terminal"
-twenty app publish --private
+yarn twenty app:publish --private
 # To deploy to a specific remote:
-# twenty app publish --private --remote production
+# yarn twenty app:publish --private --remote production
 ```
 
-### Sharing a deployed app
+### 共享已部署的应用
 
-Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
+通过 tar 包分发的应用不会出现在公共市场中，因此同一服务器上的其他工作区无法通过浏览发现它们。 要共享已部署的应用：
 
-1. Go to **Settings > Developers > Apps** and open your app under **My apps**
-2. In the **Distribution** tab, click **Copy share link**
-3. Share this link with users on other workspaces — it takes them directly to the app's install page
+1. 前往 **Settings > Applications > Registrations** 并打开你的应用
+2. 在 **Distribution** 选项卡中，点击 **Copy share link**
+3. 将此链接分享给其他工作区的用户 — 它会将他们直接带到该应用的安装页面
 
-The share link uses the server's base URL (without any workspace subdomain) so it works for any workspace on the server.
+该分享链接使用服务器的基础 URL（不包含任何工作区子域），因此适用于该服务器上的任意工作区。
 
-### Version management
+### 版本管理
 
-When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected when the server registers the uploaded tarball, which is then dropped again. You'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
+在更新已部署的 tarball 应用时，服务器要求 `package.json` 中的 `version` 必须**严格高于**（按[语义化版本](https://semver.org)排序）当前已部署的版本。 在 tar 包存储之前，重新部署相同版本或推送更低版本都会被拒绝 — 你会在 CLI 中看到 `VERSION_ALREADY_EXISTS` 错误。
 
-To release an update:
+要发布更新：
 
-1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
-2. Run `twenty app publish --private` (or `twenty app publish --private --remote production`)
-3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's General tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
+1. 将 `package.json` 中的 `version` 字段递增（例如：`1.2.3` → `1.2.4`、`1.3.0` 或 `2.0.0`）
+2. 运行 `yarn twenty app:publish --private`（或 `yarn twenty app:publish --private --remote production`）
+3. 已安装此应用并在应用的 Settings 选项卡中启用自动升级的工作区会在后台自动升级；其他工作区会在其设置中看到可用的升级
 
 <Note>
-  Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is
-  allowed, and a final release like `1.0.0` is correctly recognized as higher
-  than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver
-  string.
+预发布标签按预期工作：将 `1.0.0-rc.1` 递增为 `1.0.0-rc.2` 是允许的，并且像 `1.0.0` 这样的正式发布会被正确识别为高于 `1.0.0-rc.5`。 `package.json` 中的版本本身必须是有效的 SemVer 字符串。
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
-### Server version compatibility
+### 服务器版本兼容性
 
-If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
+如果你的应用使用了特定 Twenty 服务器版本中引入的功能（例如在 v2.3.0 中新增的 OAuth 提供方），应当在 `package.json` 的 `engines.twenty` 字段中声明应用所需的最低服务器版本：
 
 ```json filename="package.json"
 {
@@ -114,125 +88,107 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 }
 ```
 
-The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
+该值是标准的 [semver 范围](https://github.com/npm/node-semver#ranges)。 常见模式:
 
-| Range            | Meaning                                  |
-| ---------------- | ---------------------------------------- |
-| `>=2.3.0`        | Any server from 2.3.0 onward             |
-| `>=2.3.0 <3.0.0` | 2.3.0 or later, but below the next major |
-| `^2.3.0`         | Same as `>=2.3.0 <3.0.0`                 |
+| 范围                                 | 含义                                      |
+| ---------------------------------- | --------------------------------------- |
+| `>=2.3.0`                          | 任何 2.3.0 及以上的服务器                        |
+| `>=2.3.0 \<3.0.0` | 2.3.0 或更高，但低于下一个主版本                     |
+| `^2.3.0`                           | 与 `>=2.3.0 \<3.0.0` 相同 |
 
-**What happens at deploy and install time:**
+**在部署和安装时会发生什么：**
 
-- If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-- If `engines.twenty` is **not set**, no version check runs and the app is accepted on any server version (backward-compatible with existing apps). A blank value is rejected as an invalid range.
-- The marketplace does not list an app whose latest version declares an `engines.twenty` range the server does not satisfy, or an invalid one. The app stays registered and visible in the admin panel.
-- If the server has no `APP_VERSION` configured, the check is skipped.
+* 如果已设置 `engines.twenty`，且目标服务器的版本不满足该范围，则部署（tarball 上传）或安装将被拒绝，并返回 `SERVER_VERSION_INCOMPATIBLE` 错误以及一条同时指明所需范围和实际服务器版本的消息。
+* 如果 `engines.twenty` **未设置**，则该应用可在任何服务器版本上被接受（与现有应用向后兼容）。
+* 如果服务器未配置 `APP_VERSION`，则跳过该检查。
 
 <Note>
-  The server is the authoritative check — it validates `engines.twenty` on both
-  tarball upload and workspace install. If you deploy a tarball out-of-band or
-  install from the marketplace, the server still enforces compatibility.
+服务器是权威校验方——它会在 tarball 上传和工作区安装时验证 `engines.twenty`。 即使你通过带外方式部署 tarball 或从应用市场安装，服务器仍会强制执行兼容性要求。
 </Note>
 
-## Automated CI/CD (scaffolded workflows)
+## 自动化 CI/CD（脚手架生成的工作流）
 
-Apps generated with `twenty app init` ship with three GitHub Actions workflows out of the box, under `.github/workflows/`. CI runs with no setup, CD requires a single secret, and publishing to npm requires a one-time npm trusted-publisher setup.
+使用 `create-twenty-app` 生成的应用开箱即带有三个 GitHub Actions 工作流，位于 `.github/workflows/`。 CI 可在无需任何设置的情况下运行，CD 只需要配置一个 secret，而发布到 npm 只需进行一次性的 npm trusted-publisher 设置。
 
 ### CI — `ci.yml`
 
-Runs integration tests on every push to `main` and every pull request.
+它会在每次向 `main` 推送以及拉取请求上自动运行你的集成测试。
 
-**What it does:**
+**作用:**
 
-1. Checks out your app's source.
-2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action.
-3. Enables Corepack and sets up Node.js from your `.nvmrc`.
-4. Installs the pinned standalone CLI in the **Install Twenty CLI** step.
-5. Installs dependencies with `yarn install --immutable`, then runs lint, typecheck, and unit tests.
-6. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
+1. 检出你的应用源代码。
+2. 使用 `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` 组合 action 启动一个隔离的 Twenty 测试实例（相当于 CI 中的 `yarn twenty docker:start --test`）。
+3. 启用 Corepack，从你的 `.nvmrc` 设置 Node.js，并使用 `yarn install --immutable` 安装依赖。
+4. 运行 `yarn test`，并从启动的实例传入 `TWENTY_API_URL` 和 `TWENTY_API_KEY`，以便你的测试可以与真实服务器通信。
 
-**Config knobs:**
+**配置选项:**
 
-- `TWENTY_VERSION` (env, defaults to `latest`) — pin the Twenty server version used in CI by editing this in `ci.yml`.
-- Concurrency is grouped by `github.ref` and cancels in-progress runs on new pushes.
+* `TWENTY_VERSION`（环境变量，默认 `latest`）— 通过在 `ci.yml` 中编辑它来固定 CI 使用的 Twenty 服务器版本。
+* 并发按 `github.ref` 分组，并会在有新的推送时取消进行中的运行。
 
-No secrets are required — the test instance is ephemeral and lives only for the duration of the job.
+不需要任何机密——测试实例是临时的，只在作业持续期间存在。
 
 ### CD — `cd.yml`
 
-Deploys your app to a configured Twenty server on every push to `main`, and optionally from a pull request when the `deploy` label is applied.
+在每次向 `main` 推送时将你的应用部署到已配置的 Twenty 服务器；当为拉取请求添加 `deploy` 标签时，也可从该拉取请求进行部署。
 
-**What it does:**
+**作用:**
 
-1. Checks out the PR head (for labeled PRs) or the pushed commit.
-2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `twenty app publish --private`.
-3. Runs `twentyhq/twenty/.github/actions/install-twenty-app@main` so the newly deployed version is installed into the target workspace.
+1. 检出 PR 的 head（针对已加标签的 PR），或被推送的提交。
+2. 运行 `twentyhq/twenty/.github/actions/deploy-twenty-app@main`——相当于 CI 中的 `yarn twenty app:publish --private`。
+3. 运行 `twentyhq/twenty/.github/actions/install-twenty-app@main`，将新部署的版本安装到目标工作区。
 
-**Required configuration:**
+**必需的配置:**
 
-| Setting                 | Where                                                      | Purpose                                                                               |
-| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:2020`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
-| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server.                                  |
+| 设置                      | 位置                                                       | 目的                                       |
+| ----------------------- | -------------------------------------------------------- | ---------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `cd.yml` 中的 `env`（默认值为 `http://localhost:3000`）          | 要部署到的 Twenty 服务器。 首次使用前将其更改为你真实的服务器 URL。 |
+| `TWENTY_DEPLOY_API_KEY` | GitHub 仓库 **Settings → Secrets and variables → Actions** | 在目标服务器上具有部署权限的 API 密钥。                   |
 
 <Note>
-  The default `TWENTY_DEPLOY_URL` of `http://localhost:2020` is a placeholder —
-  it will not reach anything from a GitHub-hosted runner. Update it to your
-  server's public URL (or use a self-hosted runner with network access) before
-  enabling CD.
+默认的 `TWENTY_DEPLOY_URL` 值 `http://localhost:3000` 只是占位符——从 GitHub 托管的 runner 无法访问任何资源。 在启用 CD 之前，将其更新为你服务器的公网 URL（或使用具有网络访问权限的自托管 runner）。
 </Note>
 
-**Triggering a preview deploy from a PR:**
+**从 PR 触发预览部署:**
 
-Add the `deploy` label to a pull request. The `if:` guard in `cd.yml` will run the job for that PR using the PR's head commit, letting you validate a change on the target server before merging.
+为拉取请求添加 `deploy` 标签。 在 `cd.yml` 中的 `if:` 守卫会使用该 PR 的 head 提交为其运行作业，使你能在合并前在目标服务器上验证更改。
 
-### Publish — `publish.yml`
+### 发布 — `publish.yml`
 
-Publishes your app to npm with provenance when you push a version tag (e.g. `v1.0.0`), or when you run the workflow manually from the Actions tab.
+当你推送版本标签（例如 `v1.0.0`）时，或从 Actions 选项卡中手动运行该工作流时，会将你的应用附带来源证明发布到 npm。
 
-**What it does:**
+**作用:**
 
-1. Checks out your app, sets up Node.js, and updates npm (trusted publishing requires npm 11.5.1 or later).
-2. Installs the pinned standalone CLI in the **Install Twenty CLI** step, then installs app dependencies with `yarn install --immutable`.
-3. Runs `twenty app publish`, which builds and packs an isolated app snapshot, then publishes it to npm. In CI it automatically adds `--provenance` and `--access public`, so no flags are needed in the workflow.
+1. 检出你的应用，设置 Node.js，并更新 npm（受信任发布需要 npm 11.5.1 或更高版本）。
+2. 运行 `yarn twenty app:publish`，它会构建应用并将 `.twenty/output` 发布到 npm。 在 CI 中，它会自动添加 `--provenance` 和 `--access public`，因此在工作流中不需要任何标志。
 
-**One-time setup:**
+**一次性设置：**
 
-On npmjs.com open your package > **Settings → Trusted Publisher** and register this repository with the `publish.yml` workflow (see the [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers)). Publishing with provenance certifies which GitHub repository built the package. After publishing, [claim ownership in Twenty](#claiming-your-app).
+在 npmjs.com 上打开你的包 > **Settings → Trusted Publisher**，并使用 `publish.yml` 工作流为此仓库注册（参见 [npm trusted publishing 文档](https://docs.npmjs.com/trusted-publishers)）。 带有 provenance 的发布会证明是哪个 GitHub 仓库构建了该包，这也同样是你在 Twenty 市场中声明应用所有权的方式。
 
 <Note>
-npm only accepts provenance from **public** source repositories. If you publish from a private repo, npm rejects the OIDC provenance bundle with an `E422 ... Unsupported GitHub Actions source repository visibility: "private"` error. To publish from a private repo, opt out of provenance by setting `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` in the publish step's `env` (a commented-out hint is included in the scaffolded `publish.yml`):
+npm 仅接受来自**公共**源代码仓库的 provenance。 如果你从私有仓库发布，npm 会以 `E422 ...` 错误拒绝 OIDC provenance 包。 Unsupported GitHub Actions source repository visibility: "private"`错误。 要从私有仓库进行发布，请在发布步骤的`env`中将`TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'`设置为退出 provenance（在脚手架生成的`publish.yml\` 中包含了一条已注释的提示）：
 
 ```yaml filename=".github/workflows/publish.yml"
-- name: Publish to npm
-  env:
-    TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
-  run: twenty app publish
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
 ```
-
-Without GitHub provenance, the package cannot be claimed through **Claim with GitHub**. Use a public repository with provenance if you need this ownership flow.
-
 </Note>
 
-### Pinning the CLI version
+### 固定可复用的 actions
 
-All three generated workflows pin the standalone CLI to the version of `twenty` that ran `twenty app init`. The **Install Twenty CLI** steps in `ci.yml` and `publish.yml` use `npm install -g twenty@<version>`. In `cd.yml`, both the deploy and install actions receive the same version through their `cli-version` input.
+`ci.yml` 和 `cd.yml` 工作流引用了 `@main` 上的可复用 actions，因此会自动获取 `twentyhq/twenty` 仓库中的 action 更新。 如果你希望构建具有确定性，请在每个 `uses:` 行中将 `@main` 替换为某个提交的 SHA 或发行标签。
 
-To upgrade, update the two installation commands and both `cli-version` inputs together. These pins are separate from the `TWENTY_VERSION` server version used in CI and the reusable action references below.
+## 发布到 npm
 
-### Pinning the reusable actions
+发布到 npm 可让你的应用在 Twenty 应用市场中被发现。 任何 Twenty 工作区都可以直接通过 UI 浏览、安装和升级应用市场中的应用。
 
-The `ci.yml` and `cd.yml` workflows reference reusable actions at `@main`, so action updates in the `twentyhq/twenty` repo are picked up automatically. If you want deterministic builds, replace `@main` with a commit SHA or release tag on each `uses:` line.
+### 要求
 
-## Publishing to npm
-
-Publishing to npm makes your app eligible for the Twenty marketplace. After catalog sync and any required [server-route setup](#setting-up-server-routes), workspaces can browse, install, and upgrade it from the UI. Community apps appear when users turn off the **Vetted only** filter.
-
-### Requirements
-
-- An [npm](https://www.npmjs.com) account
-- The `twenty-app` keyword in your `package.json` `keywords` array (add it manually — it is not included by default in the `twenty app init` template)
+* 一个 [npm](https://www.npmjs.com) 账户
+* 你在 `package.json` 的 `keywords` 数组中的 `twenty-app` 关键字（需要手动添加 — 在 `create-twenty-app` 模板中默认不包含）
 
 ```json filename="package.json"
 {
@@ -242,9 +198,9 @@ Publishing to npm makes your app eligible for the Twenty marketplace. After cata
 }
 ```
 
-### Marketplace metadata
+### 应用市场元数据
 
-The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logo` and `galleryImages` to reference images from the `public/` folder:
+`defineApplication()` 配置支持可选字段，用于控制你的应用在市场中的展示方式。 使用 `logo` 和 `galleryImages` 来引用 `public/` 文件夹中的图片：
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -252,159 +208,86 @@ export default defineApplication({
   displayName: 'My App',
   description: 'A great app',
   logo: 'public/logo.png',
-  galleryImages: ['public/screenshot-1.png', 'public/screenshot-2.png'],
+  galleryImages: [
+    'public/screenshot-1.png',
+    'public/screenshot-2.png',
+  ],
 });
 ```
 
-See the [defineApplication accordion](/zh/developers/extend/apps/config/application#marketplace-metadata) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+完整的市场字段列表（`author`、`category`、`aboutDescription`、`websiteUrl`、`termsUrl` 等）请参见“构建应用”页面中的 [defineApplication 折叠面板](/zh/developers/extend/apps/config/application#marketplace-metadata)。
 
-#### Recommended gallery image dimensions
+#### 建议的图库图片尺寸
 
-The marketplace renders `galleryImages` in a fixed `8:5` container (for example, `1600×1000 px`).
+该市场会在固定的 `8:5` 容器中渲染 `galleryImages`（例如，`1600×1000 px`）。
 
 <Note>
-  Gallery images of any aspect ratio are displayed in full and are never
-  cropped, but anything significantly taller or narrower than `8:5` will show
-  empty bands on the sides.
+任意纵横比的图库图片都会完整显示，且绝不会被裁剪，但相对于 `8:5` 明显更高或更窄的图片，两侧会出现空白边。
 </Note>
 
-#### Image size limit
+#### 图片大小限制
 
-The `logo` and each `galleryImages` file must not exceed **10 MB**. Larger files are skipped when the marketplace rehosts your published assets, so they will not be displayed.
+`logo` 和每个 `galleryImages` 文件大小不得超过 **10 MB**。 当 marketplace 重新托管你已发布的资源时，较大的文件将被跳过，因此将不会显示。
 
-### Publish
+### 发布
 
 ```bash filename="Terminal"
-twenty app publish
+yarn twenty app:publish
 ```
 
-To publish under a specific dist-tag (e.g., `beta` or `next`):
+要在特定的 dist-tag（例如 `beta` 或 `next`）下发布：
 
 ```bash filename="Terminal"
-twenty app publish --tag beta
+yarn twenty app:publish --tag beta
 ```
 
-### How marketplace discovery works
+### 应用市场的发现机制如何运作
 
-The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
+Twenty 服务器会**每小时**从 npm 注册表同步其市场目录。
 
-The standalone CLI has no catalog-sync command. Wait for the server catalog sync or use the server administration tools.
+你可以立即触发同步，而无需等待：
 
-The metadata shown in the marketplace comes from your `defineApplication()` config — see [Marketplace metadata](#marketplace-metadata) above.
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync
+# To target a specific remote:
+# yarn twenty dev:catalog-sync --remote production
+```
 
-<Note>
-If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
-
-The About tab renders markdown text only. Images do not render, whether they use markdown syntax or `<img>` tags, and raw HTML such as badges or `<div align="center">` blocks shows as plain text.
-
-</Note>
-
-### CI publishing
-
-The scaffolded `publish.yml` workflow described above publishes to npm automatically on version tags, with provenance. Because `twenty app publish` adds `--provenance` and `--access public` for you when it runs in CI, the workflow needs no npm flags — only the one-time trusted-publisher setup.
-
-For other CI systems (GitLab CI, CircleCI, etc.), run `yarn install` then `twenty app publish`. Provenance is emitted when the environment can mint an OIDC token and skipped automatically otherwise.
+在应用市场中显示的元数据来自你的 `defineApplication()` 配置——参见上面的 [应用市场元数据](#marketplace-metadata)。
 
 <Note>
-  **npm provenance** adds a trust badge to your npm listing, letting users
-  verify the package was built from a specific commit in a public CI pipeline.
-  It is also what lets you claim ownership of your app in a Twenty marketplace.
-  See the [npm provenance
-  docs](https://docs.npmjs.com/generating-provenance-statements) for details.
+如果您的应用未在 `defineApplication()` 中定义 `aboutDescription`，市场将自动使用 npm 上您的软件包的 `README.md` 作为关于页面内容。 这意味着您可以为 npm 和 Twenty 市场维护同一个 README。 如果您希望在市场中使用不同的描述，请显式设置 `aboutDescription`。
 </Note>
 
-After the package has synced into the catalog, continue with [Claiming your app](#claiming-your-app). The claim flow requires provenance pointing to a **GitHub** repository.
+### CI 发布
 
-## Claiming your app
+上文所述生成的 `publish.yml` 工作流会在打上版本标签时，自动将包连同 provenance 一并发布到 npm。 由于 `yarn twenty app:publish` 在 CI 中运行时会为你添加 `--provenance` 和 `--access public`，因此该工作流不需要任何 npm 标志——只需要一次性完成受信任发布者的设置。
 
-Claiming assigns your app's registration to the Twenty workspace that will manage it. App claiming is available to all workspaces. Your role needs the **Workspace Apps** and **Developers** permissions to claim through the **Apps** tab of **Settings > Developers**.
+对于其他 CI 系统（GitLab CI、CircleCI 等），先运行 `yarn install`，然后运行 `yarn twenty app:publish`。 当环境可以生成 OIDC 令牌时会发出 provenance，否则会自动跳过。
 
-Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the app on a separate self-hosted server. Other workspaces on the same instance install your app without claiming it themselves.
+<Note>
+**npm provenance** 会在你的 npm 列表中添加可信徽章，使用户可以验证该包是由公共 CI 流水线中的特定提交构建的。 它也同样是你在 Twenty 市场中声明应用所有权的方式。 有关详细信息，请参见 [npm provenance 文档](https://docs.npmjs.com/generating-provenance-statements)。
+</Note>
 
-### Before you claim
+## 安装应用
 
-- Publish your package from a **public GitHub repository** using GitHub Actions and [npm trusted publishing with provenance](#ci-publishing). The version imported into Twenty's catalog must carry the provenance attestation.
-- Include the `twenty-app` keyword in `package.json` and wait for [catalog sync](#how-marketplace-discovery-works).
-- Choose the workspace that will own the app. For apps with server routes, this workspace also runs and pays for the shared resolver.
-- Sign in to GitHub as the **personal account that owns the source repository**, or as an **owner of the organization** that owns it. Repository collaborator access or npm package maintainer access alone is not sufficient.
+一旦应用已发布（npm）或已部署（tarball），各工作区就可以通过 UI 进行安装。
 
-### Claim with GitHub
-
-1. In your intended owner workspace, go to **Settings > Developers > Apps** (`/settings/developers#apps`).
-2. In **Claim an application**, enter the exact npm package name, including its scope (for example, `@your-org/twenty-app`), or the app's `universalIdentifier`.
-3. Click **Look up** and check that the result is your app. If it is not found, click **Sync catalog** if available, wait for the sync to finish, then look it up again.
-4. Click **Claim with GitHub** and authorize Twenty. For an organization-owned repository, grant access to that organization in GitHub's **Organization access** section. Personal repositories do not need an organization grant.
-5. When you return to Twenty, confirm that the app appears under **My apps** with type **NPM**. Open it and check **Distribution > Ownership** for **Claimed by this workspace**.
-
-Claiming does not install the app. If it exposes server routes, complete the setup below before other workspaces depend on its webhooks.
-
-### Setting up server routes
-
-A [server route](/zh/developers/extend/apps/logic/logic-functions#server-route-trigger) receives events for multiple workspaces at one URL. Its resolver runs in the registration's **owner workspace**, then dispatches work to the appropriate installed workspace.
-
-1. Open your app under **My apps** and fill in any required **Server Variables** in the **Config** tab.
-2. In **Distribution**, click **See on marketplace** to open the app page and install it in the **owner workspace**. You can open this page even before the app appears in marketplace search.
-3. Register the server webhook URL with your provider and test an event from a second workspace where the app is installed. Check both the resolver and the target function's logs.
-
-<Warning>
-  An unclaimed app, or an app not installed in its owner workspace, has no
-  server-route resolver to run. Requests return `404`
-  (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed in other
-  workspaces. These apps stay out of marketplace search until claimed, installed
-  on the owner workspace, and configured with all required server variables.
-</Warning>
-
-### Owner workspace costs and availability
-
-See [how logic function runs are metered](/zh/user-guide/billing/capabilities/credits#how-logic-function-runs-are-metered) for credit consumption, pricing, and which workspace is billed.
-
-Uninstalling the app from the owner workspace or deleting that workspace removes the shared resolver and interrupts server webhooks for every install on that instance.
-
-### Ownership after a repository move
-
-Moving the GitHub repository to another personal account or organization does not transfer or remove an existing Twenty claim. The registration remains attached to its owner workspace. Keep the same npm package and app `universalIdentifier`; changing the Twenty owner workspace requires a separate ownership transfer.
-
-### Troubleshooting a claim
-
-If you have trouble claiming your app, contact us on [Discord](https://discord.gg/cx5n4Jzs57) or [open a GitHub issue](https://github.com/twentyhq/twenty/issues/new/choose).
-
-<Accordion title="Self-hosted GitHub claim configuration">
-  The server administrator configures `APP_CLAIM_GITHUB_CLIENT_ID` and
-  `APP_CLAIM_GITHUB_CLIENT_SECRET` with a GitHub OAuth app. Set its
-  authorization callback URL to your `SERVER_URL` followed by
-  `/application-registration-claim/github/callback`, for example
-  `https://twenty.example.com/application-registration-claim/github/callback`.
-  This configuration is already managed for you on Twenty Cloud.
-</Accordion>
-
-## Marketplace visibility and vetting
-
-Claiming establishes ownership; it does not grant a **Vetted** badge. The marketplace defaults to **Vetted only**. To find community apps, go to **Settings > Applications > Marketplace**, open the filter, and uncheck **Vetted only**. You can also share your app's direct install page using **My apps > your app > Distribution > Copy sharing link**.
-
-The Vetted label currently applies to apps maintained by Twenty, for which the team can vouch for security and quality. Third-party apps can be published and installed without this label.
-
-If your app is still missing with **Vetted only** turned off, confirm catalog sync has completed, all required server variables are filled in, and any server-route setup is complete.
-
-## Installing apps
-
-Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
-
-Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+在 Twenty 的 **Settings > Applications** 页面中，既可以浏览也可以安装来自市场或通过 tarball 部署的应用。
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-You can also install apps from the command line:
+你也可以通过命令行安装应用：
 
 ```bash filename="Terminal"
-twenty app install
+yarn twenty app:install
 ```
 
 <Note>
-The server enforces semver versioning on install, mirroring the rules on deploy:
+服务器在安装时强制执行 SemVer 版本控制，与部署时的规则一致：
 
-- Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
-- Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
+* 尝试安装与工作区中已安装版本相同的版本将被拒绝，并返回 `APP_ALREADY_INSTALLED` 错误。
+* 尝试安装低于当前已安装版本的版本将被拒绝，并返回 `CANNOT_DOWNGRADE_APPLICATION` 错误。
 
-To install a newer version, deploy or publish it first, then re-run `twenty app install`.
-
+若要安装较新的版本，请先部署或发布它，然后重新运行 `yarn twenty app:install`。
 </Note>

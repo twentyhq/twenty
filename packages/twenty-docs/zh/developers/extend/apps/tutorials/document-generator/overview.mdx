@@ -1,87 +1,63 @@
 ---
 title: 教程：文档生成器
-icon: 'wand-magic-sparkles'
-description: Build a real Twenty app that generates personalized documents from your CRM data.
+icon: wand-magic-sparkles
+description: 构建一个真实的 Twenty 应用，从你的 CRM 数据生成个性化文档。
 ---
 
-<Note>
-  本指南的翻译尚未更新为 Twenty 独立 CLI
-  的用法。为避免使用已移除的命令，下面暂时显示最新的英文内容。
-</Note>
+在本教程中，你将构建 **Document Generator** —— 一个应用，它将可复用的模板转换为使用你现有 CRM 数据生成的个性化文档。
 
-In this tutorial you'll build **Document Generator** — an app that turns reusable
-templates into personalized documents using the data already in your CRM.
+使用 `{{placeholders}}` 一次性编写模板，然后即可为任意 Person 或 Company 一键生成已填充的文档——可从命令菜单、AI 代理或工作流中发起。
 
-Write a template once with `{{placeholders}}`, then generate a filled-in
-document for any Person or Company in one click — from the command menu, from an
-AI agent, or from a workflow.
-
-<Frame caption="One template, generated for a specific person, opened as a printable page.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png"
-    alt="A generated Sales proposal document"
-  />
+<Frame caption="为特定人员生成的单个模板，以可打印页面的形式打开。">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="生成的销售提案文档" />
 </Frame>
 
-## What you'll learn
+## 您将会学到什么
 
-Each chapter adds one capability. By the end you'll have touched most of the SDK.
+每一章都会增加一项功能。 在本教程结束时，您将接触到 SDK 的大部分内容。
 
-| Chapter                                                                                                 | Capability                                                                                              | Reference                                                             |
-| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [1. Data model](/zh/developers/extend/apps/tutorials/document-generator/data-model)                     | Objects, fields, and a relation                                                                         | [Data](/zh/developers/extend/apps/data/overview)                      |
-| [2. Generating documents](/zh/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function (AI tool + workflow action) that fills a Markdown template and attaches a polished PDF | [Logic functions](/zh/developers/extend/apps/logic/logic-functions)   |
-| [3. HTTP routes](/zh/developers/extend/apps/tutorials/document-generator/http-routes)                   | Serving JSON and a shareable HTML page from routes                                                      | [Logic functions](/zh/developers/extend/apps/logic/logic-functions)   |
-| [4. Building the UI](/zh/developers/extend/apps/tutorials/document-generator/building-the-ui)           | Views, navigation, command menu, and front components that preview a document and edit a template       | [Layout](/zh/developers/extend/apps/layout/overview)                  |
-| [5. An AI agent](/zh/developers/extend/apps/tutorials/document-generator/ai-agent)                      | Agent + skill                                                                                           | [Skills & agents](/zh/developers/extend/apps/logic/skills-and-agents) |
-| [6. Publishing](/zh/developers/extend/apps/tutorials/document-generator/publishing)                     | Ship it to the marketplace                                                                              | [Publishing](/zh/developers/extend/apps/operations/publishing)        |
+| 章节                                                                                   | 功能                                                 | 参考                                                        |
+| ------------------------------------------------------------------------------------ | -------------------------------------------------- | --------------------------------------------------------- |
+| [1. 数据模型](/zh/developers/extend/apps/tutorials/document-generator/data-model)           | 对象、字段和一个关系                                         | [数据](/zh/developers/extend/apps/data/overview)               |
+| [2. 生成文档](/zh/developers/extend/apps/tutorials/document-generator/generating-documents) | 一个逻辑函数（AI 工具 + 工作流操作），用于填充 Markdown 模板并附加一份精美的 PDF | [逻辑函数](/zh/developers/extend/apps/logic/logic-functions)     |
+| [3. HTTP 路由](/zh/developers/extend/apps/tutorials/document-generator/http-routes)       | 从路由提供 JSON 和可分享的 HTML 页面                           | [逻辑函数](/zh/developers/extend/apps/logic/logic-functions)     |
+| [4. 构建 UI](/zh/developers/extend/apps/tutorials/document-generator/building-the-ui)     | 视图、导航、命令菜单，以及用于预览文档和编辑模板的前端组件                      | [布局](/zh/developers/extend/apps/layout/overview)             |
+| [5. 一个 AI 智能体](/zh/developers/extend/apps/tutorials/document-generator/ai-agent)        | 智能体 + 技能                                           | [技能与智能体](/zh/developers/extend/apps/logic/skills-and-agents) |
+| [6. 发布](/zh/developers/extend/apps/tutorials/document-generator/publishing)             | 把它发布到应用市场                                          | [发布](/zh/developers/extend/apps/operations/publishing)       |
 
-## Prerequisites
+## 先决条件
 
-You should have finished the [Quick Start](/zh/developers/extend/apps/getting-started/quick-start):
-a Twenty workspace (cloud or local) and the CLI authenticated to it.
+您应该已经完成了[快速开始](/zh/developers/extend/apps/getting-started/quick-start)：
+一个在端口 `2020` 上运行的本地 Twenty 服务器，以及已通过身份验证并连接到它的 CLI。
 
-If the server or authentication is not ready, complete the [Quick Start](/zh/developers/extend/apps/getting-started/quick-start) first. Then create and install the tutorial app:
+如果还没有，现在就创建并启动一个：
 
 ```bash filename="Terminal"
-twenty app init document-generator
+npx create-twenty-app@latest document-generator
 cd document-generator
-yarn install
-twenty app apply --create
-twenty app dev
+yarn twenty dev
 ```
 
 <Note>
-  Prefer to read the finished code? The complete app lives in
-  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-  Every snippet below is copied from it.
+更想直接阅读完成版代码？ 完整应用位于
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator)。
+下面的每个代码片段都来自该应用。
 </Note>
 
-## How the app fits together
+## 应用如何协同运作
 
 <Frame>
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg"
-    alt="A template with placeholders is generated into a polished document with a PDF, triggered from the command menu, an AI agent, a workflow, or a shareable link"
-  />
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="带有占位符的模板会被生成为一份带 PDF 的精美文档，可以通过命令菜单、AI 智能体、工作流或可分享链接来触发" />
 </Frame>
 
-You write a **template** once in a rich-text editor, with `{{placeholders}}`. Picking a
-template and a CRM record fills the placeholders and stores a polished
-**document** (with a PDF file). Everything else — the command menu, the AI agent,
-the workflow step, the shareable link — is just a different way to trigger that
-one generator.
+您只需在富文本编辑器中编写一次**模板**，其中包含 `{{placeholders}}`。 选择一个
+模板和一条 CRM 记录，就会填充占位符，并存储一份精美的
+**文档**（带有一个 PDF 文件）。 其他所有内容——命令菜单、AI 智能体、工作流步骤、可分享链接——都只是触发同一个生成器的不同方式。
 
-## Keep this loop running
+## 让这个循环持续运行
 
-Leave `twenty app dev` running in a terminal for the whole tutorial. Every time
-you add or edit a file under `src/`, it re-syncs to your server within a few
-seconds, so you can watch each capability appear in the UI as you build it.
+在整个教程期间，在一个终端中保持运行 `yarn twenty dev`。 每当您在 `src/` 下添加或编辑文件时，它都会在几秒钟内重新同步到服务器，这样您就可以在构建的同时，在 UI 中看到每项功能逐步出现。
 
-<Card
-  title="Start building →"
-  icon="database"
-  href="/zh/developers/extend/apps/tutorials/document-generator/data-model"
->
-  Chapter 1: model documents and templates.
+<Card title="开始构建 →" icon="database" href="/zh/developers/extend/apps/tutorials/document-generator/data-model">
+  第 1 章：为文档和模板建模。
 </Card>

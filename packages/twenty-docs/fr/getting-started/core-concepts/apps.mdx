@@ -1,51 +1,41 @@
 ---
 title: Applications
-icon: 'cube'
-description: Extend Twenty with code — custom objects, server-side logic, UI components, and AI agents, all as TypeScript packages.
+icon: cube
+description: Étendez Twenty avec du code — des objets personnalisés, de la logique côté serveur, des composants d’interface utilisateur et des agents IA, tous sous forme de packages TypeScript.
 ---
 
-<Note>
-  La traduction de ce guide n’est pas encore à jour pour la CLI autonome de
-  Twenty. Le contenu anglais actuel est présenté ci-dessous temporairement pour
-  éviter l’utilisation de commandes supprimées.
-</Note>
+La plupart des CRM vous donnent un panneau de configuration. Twenty vous offre une plateforme. Les applications sont le moyen par lequel les développeurs étendent Twenty au-delà de ce que l’interface utilisateur propose — en définissant des modèles de données, de la logique côté serveur, des composants d’interface utilisateur et des fonctionnalités d’IA sous forme de code, puis en les déployant sur un ou plusieurs espaces de travail.
 
-Most CRMs give you a config panel. Twenty gives you a platform. Apps are how developers extend Twenty beyond what the UI offers — defining data models, server-side logic, UI components, and AI capabilities as code, then deploying them to one or more workspaces.
+## Pourquoi les applications existent
 
-## Why apps exist
+Les flux de travail couvrent l’automatisation sans code. Mais certaines choses nécessitent du code : un moteur de tarification personnalisé, un pipeline d’enrichissement propriétaire, une vérification de conformité qui s’exécute à chaque mise à jour d’enregistrement, un panneau d’interface utilisateur personnalisé qui extrait des données d’un outil interne.
 
-Workflows cover no-code automation. But some things need code: a custom pricing engine, a proprietary enrichment pipeline, a compliance check that runs on every record update, a custom UI panel that pulls data from an internal tool.
+Les applications vous permettent de créer ces éléments en tant qu’extensions de première classe — non pas des scripts fragiles qui communiquent avec une API depuis l’extérieur, mais du code qui s’exécute sur la plateforme avec un accès complet au système de types, au modèle d’autorisations et à l’interface utilisateur.
 
-Apps let you build these as first-class extensions — not brittle scripts talking to an API from outside, but code that runs on the platform with full access to the type system, permission model, and UI.
+## Ce qu’une application peut définir
 
-## What an app can define
+Une application est un package TypeScript qui déclare des **entités** en utilisant le `twenty-sdk` :
 
-An app is a TypeScript package that declares **entities** using the `twenty-sdk`:
+| Entité                    | Ce que cela fait                                                                                                        |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Objets et champs**      | Nouvelles tables de données et champs sur des objets existants — même traitement que les objets intégrés                |
+| **Fonctions logiques**    | Fonctions TypeScript côté serveur déclenchées par des routes HTTP, des tâches cron ou des événements de base de données |
+| **Composants frontaux**   | Composants React isolés qui s’affichent dans l’interface de Twenty (panneau latéral, widgets, menu de commandes)        |
+| **Compétences et agents** | Fonctionnalités d’IA — instructions réutilisables et assistants autonomes                                               |
+| **Vues et navigation**    | Vues de liste préconfigurées et éléments de menu de la barre latérale                                                   |
 
-| Entity                 | What it does                                                                                  |
-| ---------------------- | --------------------------------------------------------------------------------------------- |
-| **Objects & Fields**   | New data tables and fields on existing objects — same treatment as built-in ones              |
-| **Logic Functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events           |
-| **Front Components**   | Sandboxed React components that render inside Twenty's UI (side panel, widgets, command menu) |
-| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                             |
-| **Views & Navigation** | Pre-configured list views and sidebar menu items                                              |
+Tout est détecté via une analyse AST au moment de la compilation — aucun fichier de configuration, aucun code générique d’enregistrement. Ajoutez un `export default defineObject(...)` dans n’importe quel fichier `.ts` et le SDK le détectera.
 
-Everything is detected via AST analysis at build time — no config files, no registration boilerplate. Put a `export default defineObject(...)` in any `.ts` file and the SDK picks it up.
+## Leur mode d’exécution
 
-## How they run
+* **Les fonctions logiques** s’exécutent dans des processus Node.js isolés, en bac à sable par rapport à l’hôte. Elles accèdent aux données via un client d’API typé, restreint aux autorisations de rôle de l’application.
+* **Les composants frontaux** s’exécutent dans des Web Workers en utilisant Remote DOM — isolés en bac à sable de la page principale mais rendant des éléments DOM natifs (pas d’iframes).
+* **Les autorisations** sont appliquées au niveau de l’API. Une application ne voit que ce que son rôle autorise.
 
-- **Logic functions** execute in isolated Node.js processes, sandboxed from the host. They access data through a typed API client scoped to the app's role permissions.
-- **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes).
-- **Permissions** are enforced at the API level. An app only sees what its role allows.
+## L’expérience développeur
 
-## The developer experience
+Vous écrivez votre application comme un projet TypeScript sur votre machine. La CLI surveille vos fichiers sources et les synchronise en direct avec un serveur Twenty en cours d’exécution — modifiez un fichier et voyez le changement dans l’interface en une seconde. Le client d’API typé est régénéré automatiquement lorsque le schéma change. Quand vous êtes prêt, `yarn twenty app:publish --private` envoie l’application vers un serveur de production, ou `yarn twenty app:publish` publie votre application sur npm et sur la place de marché Twenty.
 
-You write your app as a TypeScript project on your machine. The CLI watches your source files and live-syncs them to a running Twenty server — edit a file, see the change in the UI within a second. The typed API client regenerates automatically when the schema changes. When you're ready, `twenty app publish --private` pushes to a production server, or `twenty app publish` lists your app on npm and the Twenty marketplace.
-
-<Card
-  title="Build your first app"
-  icon="arrow-right"
-  href="/fr/developers/extend/apps/getting-started/quick-start"
->
-  Three-phase walkthrough — scaffold, run a local server, sync your changes.
+<Card title="Créez votre première application" icon="arrow-right" href="/fr/developers/extend/apps/getting-started/quick-start">
+  Tutoriel en trois phases — création de l’ossature, exécution d’un serveur local, synchronisation de vos modifications.
 </Card>

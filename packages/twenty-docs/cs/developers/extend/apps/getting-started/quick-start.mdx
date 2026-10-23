@@ -1,125 +1,166 @@
 ---
 title: Rychlý start
-icon: 'rocket'
-description: Create your first Twenty app with the standalone CLI.
+icon: rocket
+description: Vytvořte svou první aplikaci Twenty během několika minut.
 ---
 
-<Note>
-  Překlad tohoto průvodce zatím nezohledňuje samostatné CLI Twenty. Níže dočasně
-  uvádíme aktuální anglický obsah, abyste nepoužívali odstraněné příkazy.
-</Note>
+## Předpoklady
 
-Use Node.js 24.5+ and Yarn 4. Install the CLI globally; your app keeps its own SDK dependencies.
+* **Node.js 24.5+** — [Stáhnout](https://nodejs.org/)
+* **Yarn 4** — je součástí Node.js prostřednictvím Corepacku. Povolte jej: `corepack enable`
+* **Docker** — [Stáhnout](https://www.docker.com/products/docker-desktop/). Nutné pro spuštění lokálního serveru Twenty. Přeskočte, pokud už máte Twenty spuštěné jinde.
 
-## Create the project
+Vytváření aplikace Twenty má tři fáze. Generátor kostry je spojuje do jediného příkazu pro ideální scénář, ale každá fáze je samostatný koncept — když se něco nepovede, znalost aktuální fáze napoví, co opravit.
 
-```bash
-npm install -g twenty
-twenty app init my-twenty-app
-cd my-twenty-app
-yarn install
-```
+| Fáze                   | Co děláte                                                | Nástroj                             | Výsledek                                     |
+| ---------------------- | -------------------------------------------------------- | ----------------------------------- | -------------------------------------------- |
+| **1. Vytvořit kostru** | Vygenerovat zdrojový kód aplikace                        | `npx create-twenty-app`             | Projekt v TypeScriptu na disku               |
+| **2. Spustit server**  | Spustit server Twenty, do kterého se bude synchronizovat | Docker + `yarn twenty docker:start` | Běžící instance Twenty                       |
+| **3. Synchronizovat**  | Živě synchronizovat kód na server                        | `yarn twenty dev`                   | Vaše změny se objeví v uživatelském rozhraní |
 
-`app init` writes the template only. It does not install dependencies, initialize Git, start Docker, authenticate, or sync. Customize the display name and description with `--display-name` and `--description`; use `--path` for a different destination.
+---
 
-## Connect to Twenty
+## Fáze 1 — Vytvořte kostru projektu
 
-Use an existing workspace, or start a [local server](/cs/developers/extend/apps/getting-started/local-server), then sign in:
-
-```bash
-twenty auth login --url https://your-workspace.twenty.com --name dev
-```
-
-## Sync your changes
-
-For the first sync, explicitly allow registration and installation:
-
-```bash
-twenty app apply --create
-```
-
-Then start the development watcher:
-
-```bash
-twenty app dev
-```
-
-Use bounded commands for scripts and agents:
-
-```bash
-twenty app plan
-twenty app apply
-```
-
-`plan` previews changes. `apply` uploads and synchronizes once. Use `--no-delete` to keep remote entities missing from source, or `--yes` to permit object and field deletions without a prompt. All three commands require an authenticated remote and registration ownership.
-
-## What you can build
-
-Apps are composed of **entities** — each defined as a TypeScript file with a single `export default`:
-
-| Entity                 | What it does                                                                        |
-| ---------------------- | ----------------------------------------------------------------------------------- |
-| **Objects & Fields**   | Custom data models (Post Card, Invoice, etc.) with typed fields                     |
-| **Logic functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events |
-| **Front components**   | React components that render inside Twenty's UI (side panel, widgets, command menu) |
-| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                   |
-| **Views & Navigation** | Pre-configured list views and sidebar menu items                                    |
-| **Page layouts**       | Custom record detail pages with tabs and widgets                                    |
-
-Full reference: [Concepts](/cs/developers/extend/apps/getting-started/concepts).
-
-## Build with AI agent skills
-
-Official Twenty [Agent Skills](https://skills.sh/) teach coding agents the full app workflow: scaffolding, entity development, sync and deploy operations, and marketplace publishing. They install into Claude Code, Codex, Cursor, Pi, and any other harness supported by the `skills` CLI, and work against any Twenty instance, including self-hosted custom domains and localhost.
+Vytvořte novou aplikaci ze šablony:
 
 ```bash filename="Terminal"
-# List the available skills
-npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --list
-
-# Install the scaffolding and development skills
-npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --skill create-app
-npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --skill develop-app
+npx create-twenty-app@latest my-twenty-app
 ```
 
-Each skill installs with its own reference docs. The `agent-skills` branch becomes available after the first successful publish from `main`; before that, follow the [local build instructions](https://github.com/twentyhq/twenty/tree/main/packages/twenty-agent-skills#local-development).
+Generátor kostry je neinteraktivní: název adresáře se stane názvem aplikace. Předejte `--display-name` a `--description` pro přizpůsobení vygenerovaných metadat (později je můžete také upravit v `src/constants/universal-identifiers.ts`). Tím se v `my-twenty-app/` vytvoří projekt v TypeScriptu se startovacím `application-config.ts`, výchozí rolí, pracovními postupy CI/CD a integračním testem.
 
-## Next steps
+**Po této fázi:** máte na svém počítači zdrojový kód aplikace. Zatím neběží — to je předmětem Fáze 2.
+
+---
+
+## Fáze 2 — Spusťte lokální server Twenty
+
+Vaše aplikace potřebuje server Twenty, do kterého se bude synchronizovat. Server je plnohodnotná instance Twenty — UI, GraphQL API, PostgreSQL — běžící lokálně v Dockeru. Váš lokální kód nahrává své definice na tento server, díky čemuž se objeví v UI.
+
+Nástroj pro vytváření projektů to spustí za vás: při spuštěném Dockeru stáhne image `twentycrm/twenty-app-dev`, spustí ji na portu `2020` a autentizuje CLI vůči předpřipravenému demo workspace (`tim@apple.dev`) — není vyžadováno žádné přihlášení.
+
+Chcete-li se místo toho připojit k existujícímu serveru Twenty, předejte `--url \<your-server-url>`. Vzdálené servery se ověřují pomocí OAuth: otevře se prohlížeč, abyste se mohli přihlásit a kliknout na **Authorize**, čímž udělíte nástroji CLI přístup k vašemu pracovnímu prostoru. (Můžete se také rozhodnout pro OAuth lokálně pomocí `--authentication-method oauth` — přihlaste se pomocí `tim@apple.dev` / `tim@apple.dev`.)
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/login.png" alt="Přihlašovací obrazovka Twenty" />
+</div>
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Autorizační obrazovka Twenty CLI" />
+</div>
+
+Váš terminál potvrdí, že je vše nastaveno.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Aplikace byla úspěšně vygenerována" />
+</div>
+
+**Po této fázi:** máte spuštěný server Twenty na [http://localhost:2020](http://localhost:2020) a vaše CLI má oprávnění se k němu synchronizovat.
+
+<Note>
+Pokud Docker není nainstalovaný nebo neběží, generátor kostry vám sdělí správný příkaz pro spuštění ve vašem operačním systému. Jakmile Docker poběží, můžete pokračovat pomocí `yarn twenty docker:start` — není potřeba znovu vytvářet kostru.
+</Note>
+
+---
+
+## Fáze 3 — Synchronizujte své změny
+
+Toto je vnitřní smyčka, ve které strávíte většinu času.
+
+```bash filename="Terminal"
+cd my-twenty-app
+yarn twenty dev
+```
+
+Tento proces sleduje `src/`, při každé změně znovu sestaví a synchronizuje výsledek na server. Upravte soubor, uložte a během několika vteřin se změna projeví na serveru. V terminálu uvidíte panel se stavem v reálném čase.
+
+Pro podrobnější výstup (protokoly sestavení, požadavky na synchronizaci, stopy chyb) přidejte `--verbose`.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="Výstup terminálu ve vývojovém režimu" />
+</div>
+
+Otevřete [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Vaše aplikace by měla být uvedena v části **Your Apps**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Seznam Your Apps se zobrazenou aplikací My twenty app" />
+</div>
+
+Klikněte na **My twenty app** a zobrazí se jeho **registrace aplikace** — záznam na úrovni serveru, který popisuje vaši aplikaci (název, identifikátor, přihlašovací údaje OAuth, zdroj). Jedna registrace může být nainstalována ve více pracovních prostorech na stejném serveru.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Podrobnosti registrace aplikace" />
+</div>
+
+Klikněte na **View installed app**, abyste zobrazili instalaci v pracovním prostoru. Karta **About** zobrazuje verzi a možnosti správy.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Nainstalovaná aplikace" />
+</div>
+
+**Po této fázi:** máte průběžný vývojový cyklus. Upravte libovolný soubor v `src/` a projeví se to v UI.
+
+### Jednorázová synchronizace pro CI a skripty
+
+Použijte `plan` a `apply` ke spuštění stejné pipeline jednorázově, bez watcheru:
+
+```bash filename="Terminal"
+yarn twenty plan   # preview the metadata changes without applying them
+yarn twenty apply  # show the plan, then apply it
+```
+
+| Příkaz              | Chování                                                                                                                                                                | Kdy použít                                                               |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `yarn twenty dev`   | Sleduje změny a při každé změně znovu synchronizuje. Běží, dokud jej nezastavíte.                                                                                      | Interaktivní lokální vývoj.                                              |
+| `yarn twenty apply` | Jedno sestavení + synchronizace, ukončí se s kódem `0` při úspěchu, `1` při chybě. Vyžádá si potvrzení destruktivních změn (předejte `--force`, abyste to přeskočili). | CI, pre-commit hooky, AI agenti, skriptované pracovní postupy.           |
+| `yarn twenty plan`  | Sestaví a vypíše změny metadat **bez jejich použití**.                                                                                                                 | Kontrola toho, co by synchronizace změnila, ještě před jejím potvrzením. |
+
+Všechny režimy vyžadují autentizovaný vzdálený server. Více informací o `plan` najdete v části [Synchronizace a obnovení](/cs/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan).
+
+<Note>
+`yarn twenty dev --once` a `yarn twenty dev --once --dry-run` jsou zastaralé aliasy pro `yarn twenty apply` a `yarn twenty plan`.
+</Note>
+
+### Možnosti vývojového režimu
+
+| Přepínač                              | Popis                                                                                         |
+| ------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `--force`                             | Aplikuje destruktivní změny (mazání) bez potvrzení.                                           |
+| `--debounceMs \<ms>` | Nastaví prodlevu pro potlačení zákmitů při změnách souborů v milisekundách (výchozí: `1000`). |
+| `--verbose` / `--debug`               | Zobrazí podrobné protokoly sestavení, požadavky synchronizace a trasování chyb.               |
+
+## Co můžete vytvořit
+
+Aplikace se skládají z **entit** — každá je definována jako soubor TypeScriptu s jediným `export default`:
+
+| Entita                     | K čemu slouží                                                                                                       |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Objekty a pole**         | Vlastní datové modely (pohlednice, faktura apod.) s typovanými poli                                                 |
+| **Logické funkce**         | Serverový TypeScript spouštěný HTTP trasami, plánovačem cron nebo událostmi databáze                                |
+| **Frontendové komponenty** | Komponenty Reactu, které se vykreslují v uživatelském rozhraní Twenty (postranní panel, widgety, příkazová nabídka) |
+| **Dovednosti a agenti**    | Schopnosti AI — opakovaně použitelné pokyny a autonomní asistenti                                                   |
+| **Pohledy a navigace**     | Předkonfigurované seznamové pohledy a položky postranní nabídky                                                     |
+| **Rozvržení stránek**      | Vlastní stránky detailu záznamu s kartami a widgety                                                                 |
+
+Úplná reference: [Koncepty](/cs/developers/extend/apps/getting-started/concepts).
+
+## Další kroky
 
 <CardGroup cols={2}>
-  <Card
-    title="Config"
-    icon="screwdriver-wrench"
-    href="/cs/developers/extend/apps/config/overview"
-  >
-    Application identity, default role, install and uninstall hooks, public
-    assets.
+  <Card title="Konfigurace" icon="screwdriver-wrench" href="/cs/developers/extend/apps/config/overview">
+    Identita aplikace, výchozí role, instalační i odinstalační hooky, veřejná aktiva.
   </Card>
-  <Card
-    title="Data"
-    icon="database"
-    href="/cs/developers/extend/apps/data/overview"
-  >
-    Objects, fields, and bidirectional relations.
+  <Card title="Data" icon="database" href="/cs/developers/extend/apps/data/overview">
+    Objekty, pole a obousměrné relace.
   </Card>
-  <Card
-    title="Logic"
-    icon="bolt"
-    href="/cs/developers/extend/apps/logic/overview"
-  >
-    Logic functions, skills, agents, and OAuth connections.
+  <Card title="Logika" icon="bolt" href="/cs/developers/extend/apps/logic/overview">
+    Logické funkce, dovednosti, agenti a připojení přes OAuth.
   </Card>
-  <Card
-    title="Layout"
-    icon="table-columns"
-    href="/cs/developers/extend/apps/layout/overview"
-  >
-    Views, navigation, page layouts, front components.
+  <Card title="Rozvržení" icon="table-columns" href="/cs/developers/extend/apps/layout/overview">
+    Zobrazení, navigace, rozvržení stránek, frontendové komponenty.
   </Card>
-  <Card
-    title="Operations"
-    icon="rocket"
-    href="/cs/developers/extend/apps/operations/overview"
-  >
-    CLI, testing, remotes, CI, and publishing your app.
+  <Card title="Operace" icon="rocket" href="/cs/developers/extend/apps/operations/overview">
+    CLI, testování, vzdálené repozitáře, CI a publikování vaší aplikace.
   </Card>
 </CardGroup>

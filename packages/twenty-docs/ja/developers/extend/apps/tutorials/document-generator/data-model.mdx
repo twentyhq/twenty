@@ -1,37 +1,31 @@
 ---
 title: 1. データモデル
-icon: 'database'
-description: Model documents and templates with objects, fields, and a relation.
+icon: database
+description: オブジェクト、フィールド、および関連を持つモデルドキュメントとテンプレート。
 ---
 
-<Note>
-  このガイドの翻訳は、Twenty の独立した CLI
-  にまだ対応していません。削除されたコマンドを使用しないよう、以下に最新の英語版を一時的に表示しています。
-</Note>
+アプリには2つのカスタムオブジェクトが必要です: **ドキュメントテンプレート** (書き込み内容) と
+**ドキュメント** (生成された結果). 定義してみましょう
 
-Our app needs two custom objects: **document templates** (what to write) and
-**documents** (the generated result). Let's define them.
-
-Scaffold each entity file with the CLI — it generates a valid UUID and the right
-folder for you:
+CLI で各エンティティファイルをScaffold — 有効な UUID と適切な
+フォルダーを生成します。
 
 ```bash filename="Terminal"
-twenty app add object
+yarn twenty dev:add object
 ```
 
-Below we show the finished files.
+以下に完成したファイルを示します。
 
 <Note>
-  Every `*_UNIVERSAL_IDENTIFIER` constant lives in
-  `src/constants/universal-identifiers.ts` and is imported where used. The
-  snippets below omit those imports for brevity — keep them in your own files.
+すべての `*_UNIVERSAL_IDENTIFIER` 定数は
+`src/constants/universal-identifiers.ts` にあり、使用される場所で import されます。 下のスニペット
+は、簡潔にインポートするためにそれらを省略します。あなた自身のファイルに保存します。
 </Note>
 
-## The template object
+## テンプレートオブジェクト
 
-A template has a `name`, a `body` with `{{placeholders}}`, and a `target` that
-says whether it's written for a Person or a Company. The `body` is a
-`RICH_TEXT` field, so Twenty gives it a full rich-text editor.
+テンプレートには `name`、`{{placeholders}}` を含む `body`、そして Person 向けか Company 向けかを示す `target` があります。 `body` は
+`RICH_TEXT` フィールドです。したがって、20 はリッチテキストエディタを提供します。
 
 ```ts filename="src/objects/document-template.object.ts"
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -46,74 +40,43 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    {
-      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
-      name: 'name',
-      label: 'Name',
-      icon: 'IconAbc',
-    },
-    {
-      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT,
-      name: 'body',
-      label: 'Body',
-      icon: 'IconFileText',
-      description:
-        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
-    },
-    {
-      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT,
-      name: 'target',
-      label: 'Target',
-      icon: 'IconTarget',
+    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
+    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
+      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
+    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        {
-          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON',
-          label: 'Person',
-          color: 'blue',
-          position: 0,
-        },
-        {
-          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY',
-          label: 'Company',
-          color: 'green',
-          position: 1,
-        },
-      ],
-    },
+        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
+        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
+      ] },
   ],
 });
 ```
 
 <Warning>
-  `SELECT` option **values** must be `UPPER_CASE` (`PERSON`, not `person`), and
-  the `defaultValue` is wrapped in extra quotes: `` `'PERSON'` ``. The `label`
-  is what users see.
+`SELECT` オプション **values** は `UPPER_CASE` (`Person`ではなく`PERSON`) でなければなりません。そして
+`defaultValue` は余分な引用符で包まれています: \`\`'PERSON'` ``` 。 `label\`は
+ユーザーが見るものです。
 </Warning>
 
-## The document object
+## ドキュメントオブジェクト
 
-The generated document stores the rendered `content` and a `status`. Define it
-the same way, with a `status` select of `DRAFT` / `GENERATED`. Full file:
+生成されたドキュメントには、レンダリングされた `content` と `status` が保存されます。 `DRAFT` / `ジェネレータ`を`status`で選択し、同じ方法で
+を定義します。 フルファイル:
 [`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
 
-## Linking them with a relation
+## リレーションとリンクする
 
-Each document should point back to the template it came from. Relations are
-**bidirectional** — you define both sides, each in its own field file.
+各ドキュメントは、それがから来たテンプレートを指す必要があります。 リレーションは
+**双方向** で、それぞれ独自のフィールドファイルで両側を定義します。
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import {
-  defineField,
-  FieldType,
-  OnDeleteAction,
-  RelationType,
-} from 'twenty-sdk/define';
+import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -134,24 +97,21 @@ export default defineField({
 });
 ```
 
-The other side (`template-documents-relation.field.ts`) is a
-`RelationType.ONE_TO_MANY` field named `documents` that points the opposite way.
-See [Relations](/ja/developers/extend/apps/data/relations) for the full pattern.
+反対側（`template-documents-relation.field.ts`）は、逆方向を指す「ドキュメント」という名前の
+`RelationType.ONE_TO_MANY` フィールドです。
+フルパターンについては [Relations](/ja/developers/extend/apps/data/relations) を参照してください。
 
-## See it in Twenty
+## 二十日で見る
 
-With `twenty app dev` running, open **Settings → Data model**. Both objects
-appear, tagged with your app.
+`yarn tin dev` が実行されている場合は、 **Settings → Data model** を開きます。 両方のオブジェクト
+がアプリでタグ付けされて表示されます。
 
-<Frame caption="Both custom objects, owned by the Document Generator app.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/01-data-model.png"
-    alt="Data model settings showing Documents and Document templates"
-  />
+<Frame caption="ドキュメントジェネレータアプリが所有するカスタムオブジェクトの両方。">
+  <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="ドキュメントとドキュメントテンプレートを表示するデータモデルの設定" />
 </Frame>
 
-Create one template to test with — name it _Sales proposal_, set **Target** to
-_Person_, and paste a body with a few placeholders:
+1つのテンプレートを作成してテストするには、*セールスプロポーザル*という名前を付けてください。**ターゲット**を
+*Person*に設定し、いくつかのプレースホルダーを持つ本体を貼り付けてください：
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -162,20 +122,13 @@ Best,
 The Team
 ```
 
-<Frame caption="A template record. The body keeps its placeholders until a document is generated.">
-  <img
-    src="/images/docs/developers/extends/apps/document-generator/03-template-record.png"
-    alt="A Sales proposal template record with placeholder body"
-  />
+<Frame caption="テンプレートレコード。 本文は、ドキュメントが生成されるまでプレースホルダを保持します。">
+  <img src="/images/docs/developers/extends/apps/document-generator/03-template-record.png" alt="プレースホルダー ボディを持つ販売提案テンプレートの記録" />
 </Frame>
 
-**After this step:** you have `documentTemplate` and `document` objects, linked by
-a relation, and one template to generate from. Next, the logic that fills it in.
+**このステップの後:** `documentTemplate` と `document` オブジェクト、
+リレーションによってリンクされているオブジェクト、 そして生成するテンプレートが 1 つあります。 次に、それを埋めるロジック。
 
-<Card
-  title="Next: generating documents →"
-  icon="bolt"
-  href="/ja/developers/extend/apps/tutorials/document-generator/generating-documents"
->
-  Write the logic function that fills the template.
+<Card title="次へ: ドキュメントの生成 →" icon="bolt" href="/ja/developers/extend/apps/tutorials/document-generator/generating-documents">
+  テンプレートを満たすロジック機能を記述します。
 </Card>

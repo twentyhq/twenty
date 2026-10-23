@@ -1,31 +1,25 @@
 ---
 title: Genel varlıklar
-description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
-icon: 'folder-open'
+description: Uygulamanızla birlikte public/ klasörü aracılığıyla statik dosyalar — görseller, simgeler, yazı tipleri — dağıtın.
+icon: folder-open
 ---
 
-<Note>
-  Bu kılavuzun çevirisi henüz bağımsız Twenty CLI için güncellenmedi. Kaldırılan
-  komutların kullanılmasını önlemek için aşağıda geçici olarak güncel İngilizce
-  içerik gösterilmektedir.
-</Note>
+Uygulamanızın kökündeki `public/` klasörü, statik dosyaları barındırır — görseller, simgeler, yazı tipleri veya uygulamanızın çalışma zamanında ihtiyaç duyduğu diğer varlıklar. Bu dosyalar derlemelere otomatik olarak dahil edilir, geliştirme modunda senkronize edilir ve sunucuya yüklenir.
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+`public/` içine yerleştirilen dosyalar şunlardır:
 
-Files placed in `public/` are:
+* **Herkese açık olarak erişilebilir** — sunucuya senkronize edildikten sonra varlıklar genel bir URL'den sunulur. Onlara erişmek için kimlik doğrulama gerekmez.
+* **Ön uç bileşenlerinde kullanılabilir** — React bileşenlerinizin içinde görseller, simgeler veya herhangi bir medyayı göstermek için varlık URL'lerini kullanın.
+* **Mantık işlevlerinde kullanılabilir** — e-postalarda, API yanıtlarında veya herhangi bir sunucu tarafı mantıkta varlık URL'lerine referans verin.
+* **Pazar yeri üst verileri için kullanılır** — `defineApplication()` içindeki `logo` ve `galleryImages` alanları bu klasördeki dosyalara referans verir (örn. `public/logo.png`). Bunlar, uygulamanız yayımlandığında pazar yerinde görüntülenir. Bu alanlar için harici mutlak URL'ler yok sayılır — bunun yerine görselleri `public/` içine paketleyin. Her görüntü 10 MB'ı geçmemelidir.
+* **Geliştirme modunda otomatik senkronize edilir** — `public/` içinde bir dosya eklediğinizde, güncellediğinizde veya sildiğinizde otomatik olarak sunucuya senkronize edilir. Yeniden başlatma gerekmez.
+* **Derlemelere dahil edilir** — `yarn twenty dev:build`, tüm genel varlıkları dağıtım çıktısına paketler.
 
-- **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-- **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-- **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-- **Used for marketplace metadata** — the `logo` and `galleryImages` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published. External absolute URLs are ignored for these fields — bundle the images in `public/` instead. Each image must not exceed 10 MB.
-- **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-- **Included in builds** — `twenty app build` bundles all public assets into the distribution output.
+## `getPublicAssetUrl` ile genel varlıklara erişme
 
-## Accessing public assets with `getPublicAssetUrl`
+`twenty-sdk` içindeki `getPublicAssetUrl` yardımcı işlevini kullanarak `public/` dizininizdeki bir dosyanın tam URL'sini alın. Hem **mantık işlevlerinde** hem de **ön uç bileşenlerinde** çalışır.
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
-
-**In a logic function:**
+**Bir mantık işlevinde:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -51,7 +45,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**Bir ön uç bileşeninde:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -70,4 +64,4 @@ export default defineFrontComponent({
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+`path` bağımsız değişkeni, uygulamanızın `public/` klasörüne göre görelidir. Hem `getPublicAssetUrl('logo.png')` hem de `getPublicAssetUrl('public/logo.png')` aynı URL'ye çözümlenir — `public/` öneki varsa otomatik olarak kaldırılır.

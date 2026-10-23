@@ -1,23 +1,23 @@
 ---
 title: Tipi Di Attività Timeline
-description: Define automatic audit events and explicit app events that render in record timelines.
-icon: 'clock-rotate-left'
+description: Definire gli eventi di audit automatico e gli eventi espliciti delle app che vengono visualizzati in tempi record.
+icon: clock-rotate-left
 ---
 
-<Note>
-  La traduzione di questa guida non è ancora aggiornata alla CLI autonoma di
-  Twenty. Di seguito viene mostrato temporaneamente il contenuto inglese
-  aggiornato per evitare di usare comandi rimossi.
-</Note>
-
-A timeline activity type defines the stable vocabulary for an event shown in a record's timeline. Standard objects and app objects use the same contract: a type has a label and icon, can optionally declare when it is emitted, and can optionally render through one of your app's [front components](/it/developers/extend/apps/layout/front-components).
+Un tipo di attività della timeline definisce il vocabolario stabile per un evento mostrato nella timeline di un record. Oggetti standard e oggetti app utilizzano lo stesso contratto: un tipo ha un'etichetta e un'icona, può opzionalmente dichiarare quando viene emesso, e può opzionalmente renderizzare attraverso uno dei [componenti anteriori](/it/developers/extend/apps/layout/front-components).
 
 <Note>
-  Timeline activity types are in beta, the API can evolve while we learn from
-  app developers' use cases.
+  I tipi di attività temporali sono in beta e stanno arrivando presto a Twenty 2.34. L'API
+  può evolvere mentre impariamo dai casi d'uso degli sviluppatori di app.
 </Note>
 
-Define a timeline activity type with `defineTimelineActivityType` from `twenty-sdk/define`:
+Creane uno con il ponteggio:
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+O definirlo direttamente:
 
 ```ts filename="src/timeline-activity-types/post-card-created.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -36,19 +36,19 @@ export default defineTimelineActivityType({
 });
 ```
 
-## Automatic and explicit events
+## Eventi automatici ed espliciti
 
-Add `emit` when Twenty should create this type automatically. `emit.on` supports `created`, `updated`, `deleted`, `restored`, `linked`, and `unlinked`, while `emit.objectUniversalIdentifier` identifies the source object. Only one effective type can handle the same emit key—`on`, object, and optional through relation—in a workspace.
+Aggiungi `emit` quando Twenty dovrebbe creare questo tipo automaticamente. `emit.on` supporta `created`, `updated`, `deleted`, `restored`, `linked`, e `unlinked`, mentre `emit.objectUniversalIdentifier` identifica l'oggetto sorgente. Solo un tipo efficace può gestire la stessa chiave di emissione — `on`, oggetto e opzionale attraverso la relazione — in uno spazio di lavoro.
 
-Without `emit.through`, the event is written on the source record's own timeline. To fan it out to related records, set `emit.through.relationFieldUniversalIdentifier` to either a direct many-to-one relation or a [one-to-many junction relation](/it/developers/extend/apps/data/relations#junction-relations) on the source object. Morph relations fan out to every member of their morph group, so a single declaration can target several object types.
+Senza `emit.through`, l'evento è scritto sulla timeline del record di origine. Per adattarlo ai record correlati, imposta `emit.through. elationFieldUniversalIdentifier` o a una relazione diretta tra molti o a una [relazione di giunzione uno-a-molto](/it/developers/extend/apps/data/relations#junction-relations) sull'oggetto sorgente. Amante delle relazioni morph ad ogni membro del loro gruppo morph, in modo da una singola dichiarazione può colpire diversi tipi di oggetti.
 
-For a direct relation, creating or restoring the source record produces `linked`, deleting it produces `unlinked`, and repointing the relation produces `unlinked` on the previous target plus `linked` on the new target. Other source updates do not produce link events. This is the contract used by attachments, whose target is a direct morph relation.
+Per una relazione diretta, la creazione o il ripristino del record di origine produce `linked`, eliminando produce `unlinked`, e ripuntando la relazione produce `unlinked` sul target precedente più `linked` sul nuovo obiettivo. Altri aggiornamenti di origine non producono eventi di collegamento. Questo è il contratto utilizzato dagli allegati, il cui obiettivo è una relazione diretta morfologica.
 
-For a junction relation, `universalSettings.junctionTargetFieldUniversalIdentifier` identifies the relation from the junction object to the target. Creating or deleting a junction row produces `linked` or `unlinked`. Repointing either side of a junction row also produces a link event; updates to unrelated junction fields do not.
+Per una relazione di giunzione, `universalSettings.junctionTargetFieldUniversalIdentifier` identifica la relazione dall'oggetto di giunzione al bersaglio. La creazione o l'eliminazione di una riga di giunzione produce `linked` o `unlinked`. Il riorientamento di entrambi i lati di una riga di giunzione produce anche un evento di collegamento; gli aggiornamenti di campi di giunzione non correlati non.
 
-`linked` and `unlinked` events require `emit.through`, because their trigger is a change to the configured direct or junction relation.
+`linked` e `unlinked` gli eventi richiedono `emit.through`, perché il loro trigger è una modifica al rapporto diretto o di giunzione configurato.
 
-For example, this is the same generic contract used by notes, tasks, messages, and calendar events:
+Ad esempio, questo è lo stesso contratto generico utilizzato da note, compiti, messaggi e eventi di calendario:
 
 ```ts filename="src/timeline-activity-types/post-card-linked.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -72,11 +72,9 @@ export default defineTimelineActivityType({
 });
 ```
 
-An `updated` through event is emitted for every source update by default. Set `emit.through.triggerFieldUniversalIdentifiers` when only changes to selected source fields should appear on the target timelines.
+Per impostazione predefinita, viene emesso un evento `updated` through per ogni aggiornamento della sorgente. Imposta `emit.through.triggerFieldUniversalIdentifiers` quando solo le modifiche ai campi sorgente selezionati devono apparire nelle timeline di destinazione.
 
-A `linked` event is timestamped at the moment it is written. When the source record carries its own moment in time, set `emit.through.happensAtFieldUniversalIdentifier` to a `DATE_TIME` or `DATE` field on the source object: the timeline anchors the event at that field's value instead, and follows it when the value changes. Twenty's standard email and calendar events use this to anchor at `receivedAt` and `startsAt`.
-
-Omit `emit` for an explicit domain event that your logic function creates itself. This avoids producing both an automatic audit row and an explicit row for the same operation.
+Ometti `emit` per un evento di dominio esplicito creato dalla tua funzione logica. In questo modo si evita di produrre sia una riga di audit automatica sia una riga esplicita per la stessa operazione.
 
 ```ts filename="src/timeline-activity-types/post-card-sent.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -89,13 +87,13 @@ export default defineTimelineActivityType({
 });
 ```
 
-Create explicit events with [`createTimelineActivity()`](/it/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). App code uses stable universal identifiers; Twenty resolves the installation-specific metadata IDs.
+Crea eventi espliciti con [`createTimelineActivity()`](/it/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). Il codice dell'app usa identificatori universali stabili; Twenty risolve gli ID dei metadati specifici dell'installazione.
 
-## Custom rendering
+## Rendering personalizzato
 
-Without a front component, Twenty renders a native generic row from the type label, icon, and linked-object metadata. This works for standard and custom objects without an object-specific renderer.
+Senza un componente front, Twenty esegue il rendering di una riga generica nativa a partire dall'etichetta del tipo, dall'icona e dai metadati dell'oggetto collegato. Questo funziona per oggetti standard e personalizzati senza un renderer specifico dell'oggetto.
 
-For custom details, set `frontComponentUniversalIdentifier` to a front component owned by the same app:
+Per dettagli personalizzati, imposta `frontComponentUniversalIdentifier` su un componente front appartenente alla stessa app:
 
 ```ts
 export default defineTimelineActivityType({
@@ -107,11 +105,11 @@ export default defineTimelineActivityType({
 });
 ```
 
-The native row remains the collapsed presentation. Twenty mounts the front component only after the user expands that row, avoiding a sandbox and worker for every visible event. Inside the component, call `useTimelineActivityId()` from `twenty-sdk/front-component` to read the row ID and fetch any data your presentation needs. It returns `null` when the component is rendered outside a timeline row.
+La riga nativa rimane la presentazione compressa. Twenty monta il componente front solo dopo che l'utente espande quella riga, evitando una sandbox e un worker per ogni evento visibile. All'interno del componente, chiama `useTimelineActivityId()` da `twenty-sdk/front-component` per leggere l'ID della riga e recuperare tutti i dati necessari alla presentazione. Restituisce `null` quando il componente viene sottoposto a rendering al di fuori di una riga della timeline.
 
-## Overriding another application's presentation
+## Sovrascrivere la presentazione di un'altra applicazione
 
-An app owns automatic timeline contracts for its own objects. To customize an event on an object owned by another app, declare the existing type explicitly with `replacesTimelineActivityTypeUniversalIdentifier`:
+Un'app possiede contratti automatici della timeline per i propri oggetti. Per personalizzare un evento su un oggetto posseduto da un'altra app, dichiara esplicitamente il tipo esistente con `replacesTimelineActivityTypeUniversalIdentifier`:
 
 ```ts
 export default defineTimelineActivityType({
@@ -128,11 +126,11 @@ export default defineTimelineActivityType({
 });
 ```
 
-An override must include `emit`, because it replaces an existing automatic emit slot rather than an explicit-only type. The referenced type must belong to the target object's application and describe the same action and route. Removing the overriding app restores the base type; removing the base type disables the override.
+Una sostituzione deve includere `emit`, perché sostituisce uno slot di emissione automatica esistente anziché un tipo solo esplicito. Il tipo a cui viene fatto riferimento deve appartenere all'applicazione dell'oggetto di destinazione e descrivere la stessa azione e lo stesso percorso. La rimozione dell'app che effettua la sostituzione ripristina il tipo di base; la rimozione del tipo di base disabilita la sostituzione.
 
-## Workspace overrides and muting
+## Sostituzioni e disattivazione dell'area di lavoro
 
-Workspace administrators can change a type's presentation or mute its automatic and explicit events without forking the application. Use the metadata API's `updateTimelineActivityType` mutation with the installation-specific type ID:
+Gli amministratori dell'area di lavoro possono modificare la presentazione di un tipo o disattivare i relativi eventi automatici ed espliciti senza effettuare un fork dell'applicazione. Usa la mutazione `updateTimelineActivityType` dell'API dei metadati con l'ID del tipo specifico dell'installazione:
 
 ```graphql
 mutation CustomizeTimelineActivityType(
@@ -152,9 +150,9 @@ mutation CustomizeTimelineActivityType(
 }
 ```
 
-`label` and `icon` are stored as workspace overrides, so later application updates do not overwrite the administrator's choices. Set `isActive` to `false` to stop automatic emission and reject new explicit events of that type. Existing rows remain visible.
+`label` e `icon` vengono archiviati come sostituzioni dell'area di lavoro, pertanto gli aggiornamenti successivi dell'applicazione non sovrascrivono le scelte dell'amministratore. Imposta `isActive` su `false` per interrompere l'emissione automatica e rifiutare nuovi eventi espliciti di quel tipo. Le righe esistenti rimangono visibili.
 
-Restore the application defaults, including the active state, with:
+Ripristina le impostazioni predefinite dell'applicazione, incluso lo stato attivo, con:
 
 ```graphql
 mutation ResetTimelineActivityType($id: UUID!) {
@@ -167,21 +165,20 @@ mutation ResetTimelineActivityType($id: UUID!) {
 }
 ```
 
-## Configuration fields
+## Campi di configurazione
 
-| Field                                             | Required  | Description                                                                                                |
-| ------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades                                                 |
-| `name`                                            | Yes       | App-local programmatic name; must be unique within the app                                                 |
-| `label`                                           | Yes       | User-facing action text used by the native renderer                                                        |
-| `icon`                                            | No        | Twenty icon name displayed beside the event                                                                |
-| `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types                                               |
-| `emit.on`                                         | With emit | Audit action that causes this type to be written                                                           |
-| `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                                                                        |
-| `emit.through.relationFieldUniversalIdentifier`   | No        | Direct or junction relation used to fan out to related timelines                                           |
-| `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event                                                  |
-| `emit.through.happensAtFieldUniversalIdentifier`  | No        | Source date field used as the event's `happensAt` timestamp for `linked` events, instead of the write time |
-| `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded                                                 |
-| `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                                                               |
+| Campo                                             | Obbligatorio | Descrizione                                                                     |
+| ------------------------------------------------- | ------------ | ------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Sì           | UUID stabile per il tipo tra installazioni e aggiornamenti                      |
+| `name`                                            | Sì           | Nome programmatico locale dell'app; deve essere univoco all'interno dell'app    |
+| `label`                                           | Sì           | Testo dell'azione rivolto all'utente usato dal renderer nativo                  |
+| `icon`                                            | No           | Nome dell'icona Twenty visualizzata accanto all'evento                          |
+| `emit`                                            | No           | Dichiarazione di emissione automatica; ometti per i tipi solo espliciti         |
+| `emit.on`                                         | Con emit     | Azione di audit che causa la scrittura di questo tipo                           |
+| `emit.objectUniversalIdentifier`                  | Con emit     | Oggetto i cui record emettono questo tipo                                       |
+| `emit.through.relationFieldUniversalIdentifier`   | No           | Relazione diretta o di giunzione utilizzata per ventilare le timeline correlate |
+| `emit.through.triggerFieldUniversalIdentifiers`   | No           | Campi sorgente che possono attivare un evento `updated` through                 |
+| `frontComponentUniversalIdentifier`               | No           | Componente anteriore di proprietà dell'app montato quando la riga è espansa     |
+| `replacesTimelineActivityTypeUniversalIdentifier` | No           | Tipo di emissione esistente sostituito; richiede `emit`                         |
 
-Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.
+Venti istantanee identità semantica e fallback durevoli della presentazione quando viene creato un evento. Le righe storiche mantengono la loro azione originale e il significato dell'oggetto. Mentre il tipo è installato, la sua attuale etichetta, icona e componente frontale rendono live; dopo la disinstallazione, lo snapshot fallback mantiene la riga leggibile. La risoluzione utilizza l'identificatore universale, quindi la presentazione sopravvive anche reinstallando l'app.

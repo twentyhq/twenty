@@ -1,22 +1,16 @@
 ---
 title: 6. Publicare
-icon: 'rocket'
-description: Add marketplace metadata and publish your app.
+icon: rocket
+description: Adăugați metadate de bazar și publicați aplicația dvs.
 ---
 
-<Note>
-  Traducerea acestui ghid nu a fost încă actualizată pentru CLI-ul independent
-  Twenty. Mai jos este afișat temporar conținutul actual în engleză, pentru a
-  evita utilizarea comenzilor eliminate.
-</Note>
+Aplicația dvs. funcționează. Ultimul pas este să îl descriem pentru piață și publicare.
 
-Your app works. The last step is to describe it for the marketplace and publish.
+## Adaugă metadate marketplace
 
-## Add marketplace metadata
-
-The [application config](/ro/developers/extend/apps/config/application) carries the
-identity that shows up in the marketplace: author, category, logo, and support
-links. Put a logo in `public/` and reference it with `logo`.
+[application config](/ro/developers/extend/apps/config/application) posedă identitatea
+care apare în bazar: author, categorie, logo, and support
+link-uri. Pune un logo în `public/` și fă referire la el cu `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -37,21 +31,21 @@ export default defineApplication({
 ```
 
 <Tip>
-  The default role is declared with `defineApplicationRole()` in its own file —
-  you don't pass `defaultRoleUniversalIdentifier` here anymore.
+Rolul implicit este declarat cu `defineApplicationRole()` în propriul său fișier —
+nu mai pasa `defaultRoleUniversalIdentifier`.
 </Tip>
 
-Also add the `twenty-app` keyword to `package.json` so the app is discoverable:
+Adăugați de asemenea cuvântul cheie `douăzeci și douăzeci de aplicații` în `package.json` astfel încât aplicația să poată fi descoperită:
 
 ```json filename="package.json"
 { "keywords": ["twenty-app"] }
 ```
 
-## Add gallery screenshots
+## Adaugă capturi de ecran galerie
 
-A marketplace listing sells itself with screenshots. Drop a few PNGs in
-`public/gallery/` and reference them with `galleryImages` — they render as a
-gallery on the listing page, in array order.
+O listă de marketplace se vinde cu capturi de ecran. Plasează câteva fișiere PNG în
+`public/gallery/` și fă referire la ele cu `galleryImages` — acestea sunt afișate ca o
+galerie pe pagina listării, în ordinea din array.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
@@ -66,90 +60,77 @@ export default defineApplication({
 ```
 
 <Tip>
-  Lead with the payoff: make the first screenshot the finished result (a
-  generated document), then show how it's triggered and authored. Use crisp,
-  high-resolution captures — they're the first thing a user sees.
+Plumb cu plata: fă prima captură de ecran rezultatul final (un document
+generat), apoi arată cum este declanșat și autentic. Utilizează capturi crisp, de înaltă rezoluție- ele sunt primul lucru pe care îl vede utilizatorul.
 </Tip>
 
-Give `README.md` the same treatment — it's the front page on npm and GitHub.
-Open with the value proposition and a screenshot, list the headline features,
-then keep the build details below the fold.
+Dă același tratament `README.md` — este prima pagină pe npm și GitHub.
+Deschideți cu o propunere de valoare și o captură de ecran, listați funcțiile titlului,
+și păstrați detaliile de construcție sub îndoit.
 
-## Check before you ship
+## Verifică înainte de livrare
 
-Run the same gates CI does:
+Rulează aceleași porți CI face:
 
 ```bash filename="Terminal"
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-twenty app plan   # preview the metadata diff
+yarn twenty plan   # preview the metadata diff
 ```
 
-The plan prints exactly what would change on the server without applying it —
-a good final sanity check. See
-[Testing](/ro/developers/extend/apps/operations/testing) and
-[Syncing & recovery](/ro/developers/extend/apps/operations/sync-and-recovery).
+Planul afișează exact ce s-ar schimba pe server, fără a aplica modificările —
+o bună verificare finală. Vezi
+[Testing](/ro/developers/extend/apps/operations/testing) şi
+[Sincronizare şi Recuperare](/ro/developers/extend/apps/operations/sync-and-recovery).
 
-## Publish
+## Publicare
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-twenty app publish
+yarn twenty app:publish
 
 # Or deploy privately to a specific server's registry
-twenty app publish --private -r <remote>
+yarn twenty app:publish --private -r <remote>
 ```
 
-`twenty app publish` builds and publishes to npm by default; `--private` uploads a
-tarball to a Twenty server's private registry instead. To surface a published app
-in an instance's marketplace, wait for the server's marketplace catalog sync.
+`app:publish` construiește și publică în npm în mod implicit; `--private` încarcă în schimb o tarball
+către un registru privat de douăzeci de servere. Pentru a întinde o aplicație publicată
+într-o piață de instanță, activați o sincronizare de catalog:
 
-Full details and the release checklist:
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+Detalii complete şi lista de verificare a versiunii:
 [Publishing](/ro/developers/extend/apps/operations/publishing).
 
-## You built an app 🎉
+## Ai construit o aplicație 🎉
 
-In six chapters you used most of the SDK surface:
+În şase capitole aţi folosit cea mai mare parte a suprafeţei SDK:
 
-- **Objects, fields, and a relation** to model the data
-- A **logic function** exposed as an **AI tool**, a **workflow action**, and **HTTP routes**
-- **Views, navigation, a command, and a front component** for the UI
-- An **agent + skill** for natural-language generation
-- **Marketplace metadata** and the publish flow
+* **Obiecte, câmpuri și o relație** pentru a modela datele
+* O **funcţie logică** expusă ca o unealtă \*\*IA, o **acţiune de flux de lucru**, şi **rute HTTP**
+* **Vezi, navigare, o comandă și o componentă față** pentru UI
+* Un **agent + abilitate** pentru generarea limbajului natural
+* \*\*metadate Marketplace \*\* și fluxul de publicare
 
-The finished app is at
-[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+Aplicația finalizată este la
+[`pachete/douăzeci de aplicații/exemple/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
 
-## Where to go next
+## Unde să mergi mai departe
 
 <CardGroup cols={2}>
-  <Card
-    title="Data reference"
-    icon="database"
-    href="/ro/developers/extend/apps/data/overview"
-  >
-    Every field type, relation, and index option.
+  <Card title="Referință date" icon="database" href="/ro/developers/extend/apps/data/overview">
+    Fiecare tip de câmp, relatie si optiune indice.
   </Card>
-  <Card
-    title="Logic reference"
-    icon="bolt"
-    href="/ro/developers/extend/apps/logic/overview"
-  >
+  <Card title="Referință logică" icon="bolt" href="/ro/developers/extend/apps/logic/overview">
     Cron and database-event triggers, the key-value store, OAuth connections.
   </Card>
-  <Card
-    title="Layout reference"
-    icon="table-columns"
-    href="/ro/developers/extend/apps/layout/overview"
-  >
-    Page layouts, dashboard widgets, and more UI surfaces.
+  <Card title="Referință schemă" icon="table-columns" href="/ro/developers/extend/apps/layout/overview">
+    Aspectele paginii, widget-urile tabloului de bord și mai multe suprafețe ale interfeței.
   </Card>
-  <Card
-    title="Operations"
-    icon="rocket"
-    href="/ro/developers/extend/apps/operations/overview"
-  >
-    CLI, testing, remotes, and CI.
+  <Card title="Operațiuni" icon="rocket" href="/ro/developers/extend/apps/operations/overview">
+    CLI, testare, îndepărtări și CI.
   </Card>
 </CardGroup>

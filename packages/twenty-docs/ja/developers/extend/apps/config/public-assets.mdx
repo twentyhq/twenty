@@ -1,30 +1,25 @@
 ---
 title: 公開アセット
-description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
-icon: 'folder-open'
+description: 静的ファイル（画像、アイコン、フォントなど）を、public/ フォルダーを通じてアプリと一緒に配信します。
+icon: folder-open
 ---
 
-<Note>
-  このガイドの翻訳は、Twenty の独立した CLI
-  にまだ対応していません。削除されたコマンドを使用しないよう、以下に最新の英語版を一時的に表示しています。
-</Note>
+アプリのルートにある `public/` フォルダーには、実行時に必要な画像、アイコン、フォントなどの静的ファイルが格納されます。 これらのファイルはビルドに自動的に含まれ、開発モード中に同期され、サーバーにアップロードされます。
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+`public/` に配置されたファイルは次のとおりです：
 
-Files placed in `public/` are:
+* **公開アクセス可能** — サーバーに同期されると、アセットはパブリック URL で配信されます。 アクセスには認証は不要です。
+* **フロントコンポーネントで利用可能** — アセットの URL を使用して、React コンポーネント内に画像、アイコン、その他のメディアを表示します。
+* **ロジック関数で利用可能** — メール、API レスポンス、その他のサーバーサイドロジックでアセットの URL を参照します。
+* **マーケットプレイスのメタデータに使用** — `logo`と`galleryImages`フィールドの`defineApplication()`参照ファイルのこのフォルダ（例：`public/logo.png`）。 アプリを公開すると、これらがマーケットプレイスに表示されます。 外部の絶対URLはこれらのフィールドでは無視されます — 代わりに`public/`で画像をバンドルします。 各画像のサイズは10 MBを超えてはいけません。
+* **開発モードで自動同期** — `public/` のファイルを追加、更新、削除すると、自動的にサーバーへ同期されます。 再起動は不要です。
+* **ビルドに含まれる** — `yarn twenty dev:build` はすべての公開アセットを配布物にバンドルします。
 
-- **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-- **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-- **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-- **Used for marketplace metadata** — the `logo` and `galleryImages` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published. External absolute URLs are ignored for these fields — bundle the images in `public/` instead. Each image must not exceed 10 MB.
-- **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-- **Included in builds** — `twenty app build` bundles all public assets into the distribution output.
+## `getPublicAssetUrl` で公開アセットにアクセスする
 
-## Accessing public assets with `getPublicAssetUrl`
+`twenty-sdk` の `getPublicAssetUrl` ヘルパーを使用して、`public/` ディレクトリ内のファイルのフル URL を取得します。 これはロジック関数とフロントコンポーネントの両方で機能します。
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
-
-**In a logic function:**
+**ロジック関数内：**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -50,7 +45,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**フロントコンポーネント内：**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -69,4 +64,4 @@ export default defineFrontComponent({
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+`path` 引数はアプリの `public/` フォルダーからの相対パスです。 `getPublicAssetUrl('logo.png')` と `getPublicAssetUrl('public/logo.png')` のどちらも同じ URL に解決されます—`public/` プレフィックスが付いている場合は自動的に取り除かれます。

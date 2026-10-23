@@ -1,17 +1,12 @@
 ---
 title: インストールフック
-description: Run logic during the install, upgrade, or uninstall lifecycle — seed data, back up records, validate the upgrade, clean up external resources.
-icon: 'wrench'
+description: インストール、アップグレード、アンインストールのライフサイクル中にロジックを実行し、データのシード、レコードのバックアップ、アップグレードの検証、外部リソースのクリーンアップを行います。
+icon: wrench
 ---
 
-<Note>
-  このガイドの翻訳は、Twenty の独立した CLI
-  にまだ対応していません。削除されたコマンドを使用しないよう、以下に最新の英語版を一時的に表示しています。
-</Note>
+インストールフックは、インストール、アップグレード、またはアンインストールのライフサイクル中に実行される特別なロジック関数です。 これらは通常の[ロジック関数](/ja/developers/extend/apps/logic/logic-functions)と同じハンドラーランタイムを共有しますが、独自の define 関数で宣言され、通常のトリガーモデル (HTTP、cron、データベースイベント) の外側で動作します。 インストールフックは `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — 新規インストールでは `previousVersion` は `undefined`) を受け取り、アンインストールフックは `UninstallPayload` (`{ version?: string }` — 削除されるバージョン) を受け取ります。
 
-Install hooks are special logic functions that run during the install, upgrade, or uninstall lifecycle. They share the same handler runtime as regular [logic functions](/ja/developers/extend/apps/logic/logic-functions), but they're declared with their own define functions and live outside the normal trigger model (HTTP, cron, database events). Install hooks receive an `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` is `undefined` on a fresh install); the uninstall hook receives an `UninstallPayload` (`{ version?: string }` — the version being removed).
-
-Each app may define **at most one** of each hook (pre-install, post-install, uninstall). The manifest build errors if more than one of any kind is detected.
+各アプリは、各フック (プレインストール、ポストインストール、アンインストール) を **最大 1 つまで** 定義できます。 いずれかが複数検出された場合、マニフェストのビルドはエラーになります。
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -24,51 +19,48 @@ Each app may define **at most one** of each hook (pre-install, post-install, uni
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## At a glance
+## ひと目でわかる概要
 
-|             | `definePreInstallLogicFunction`                                                   | `definePostInstallLogicFunction`                                                                                  |
-| ----------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Runs        | Before the metadata migration — the **previous** schema and data are still intact | After the migration and SDK generation — the **new** schema is in place                                           |
-| Execution   | Always synchronous; blocks the install                                            | Async by default (queued, 3 retries); sync opt-in via `shouldRunSynchronously: true`                              |
-| On failure  | Install is **aborted** before any schema change                                   | Async: retried up to 3 times. Sync: caller receives `POST_INSTALL_ERROR` (schema changes are **not** rolled back) |
-| Typical use | Back up or fix data a migration would lose; refuse a risky upgrade by throwing    | Seed default data, configure the workspace, register external resources                                           |
+|         | `definePreInstallLogicFunction`                          | `definePostInstallLogicFunction`                                                  |
+| ------- | -------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| 実行タイミング | メタデータマイグレーションの前 — **以前の**スキーマとデータはまだそのまま残っている            | マイグレーションと SDK 生成の後 — **新しい**スキーマが適用されている                                          |
+| 実行      | 常に同期的であり、インストールをブロックする                                   | デフォルトでは非同期（キュー投入され、最大 3 回再試行）；`shouldRunSynchronously: true` の指定で同期実行に切り替え可能      |
+| 失敗時     | スキーマ変更の前にインストールが**中止**される                                | 非同期: 最大 3 回まで再試行される。 同期: 呼び出し元は `POST_INSTALL_ERROR` を受け取る（スキーマ変更はロールバック**されない**） |
+| 典型的な用途  | マイグレーションで失われるデータのバックアップや修復を行う；スローすることでリスクの高いアップグレードを拒否する | デフォルトデータのシーディング、ワークスペースの構成、外部リソースの登録                                              |
 
-**Rule of thumb:** default to post-install. Only reach for pre-install when the migration itself is destructive and you need to intercept the previous state before it is gone.
+**経験則:** 既定では post-install を使用する。 マイグレーション自体が破壊的で、消える前の状態を先に扱う必要がある場合にのみ、pre-install を使ってください。
 
-| You want to...                                                        | Use                                                      |
-| --------------------------------------------------------------------- | -------------------------------------------------------- |
-| Seed data, configure the workspace, register external resources       | `post-install`                                           |
-| Long-running work that shouldn't block the install response           | `post-install` (default async mode, with worker retries) |
-| Fast setup the caller relies on immediately after the install returns | `post-install` with `shouldRunSynchronously: true`       |
-| Read or back up data that the upcoming migration would lose           | `pre-install`                                            |
-| Reject an upgrade that would corrupt existing data                    | `pre-install` (throw from the handler)                   |
-| Reconciliation on every upgrade                                       | Either hook with `shouldRunOnVersionUpgrade: true`       |
+| やりたいこと…                                  | 使用                                                 |
+| ---------------------------------------- | -------------------------------------------------- |
+| データのシーディング、ワークスペースの構成、外部リソースの登録          | `post-install`                                     |
+| インストール応答をブロックすべきでない長時間処理を実行する            | `post-install`（既定の非同期モード。ワーカーによる再試行あり）             |
+| インストールが返った直後に呼び出し元がすぐに依存する高速なセットアップを実行する | `post-install`（`shouldRunSynchronously: true` を指定） |
+| 次のマイグレーションで失われるデータを読み取る、またはバックアップする      | `pre-install`                                      |
+| 既存データを破損させる恐れのあるアップグレードを拒否する             | `pre-install`（ハンドラーからスロー）                          |
+| すべてのアップグレードで調整処理を実行する                    | `shouldRunOnVersionUpgrade: true` を指定したいずれかのフック    |
 
-## Behavior shared by both hooks
+## 両方のフックに共通する動作
 
-- The config is a `defineLogicFunction` config minus the trigger settings, plus `shouldRunOnVersionUpgrade`.
-- **When it runs**: fresh installs only, by default. Set `shouldRunOnVersionUpgrade: true` to also run on upgrades. Use `previousVersion` / `newVersion` to branch on the upgrade path.
-- **Idempotency matters**: async post-install may be retried, and either hook re-runs on upgrades when `shouldRunOnVersionUpgrade` is on.
-- The usual logic-function environment (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) is injected, so you can call the Twenty API with your app's token.
-- The hook is attached to the application manifest automatically at build time (`preInstallLogicFunction` / `postInstallLogicFunction`) — nothing to reference in [`defineApplication()`](/ja/developers/extend/apps/config/application).
-- The default `timeoutSeconds` is 300 to allow longer setup tasks like data seeding.
-- **Not executed in dev mode**: `twenty app dev` skips the install flow and syncs files directly, so hooks never run there. Trigger them manually instead:
+* 設定は、トリガー設定を除いた `defineLogicFunction` の設定に `shouldRunOnVersionUpgrade` を加えたものです。
+* **実行タイミング**: 既定では新規インストール時のみ。 アップグレード時にも実行するには、`shouldRunOnVersionUpgrade: true` を設定します。 `previousVersion` / `newVersion` を使って、アップグレードパスに応じて分岐させます。
+* **べき等性が重要です**: 非同期 post-install は再試行される可能性があり、さらに `shouldRunOnVersionUpgrade` が有効な場合はいずれのフックもアップグレード時に再実行されます。
+* 通常のロジック関数の環境（`APPLICATION_ID`、`APP_ACCESS_TOKEN`、`API_URL`）が注入されるため、アプリのトークンを使って Twenty API を呼び出せます。
+* フックはビルド時に自動的にアプリケーションマニフェストにアタッチされます（`preInstallLogicFunction` / `postInstallLogicFunction`）。[`defineApplication()`](/ja/developers/extend/apps/config/application) 内で参照する必要はありません。
+* デフォルトの `timeoutSeconds` は 300 に設定されており、データシーディングのような長めのセットアップ作業を許容します。
+* **開発モードでは実行されません**: `yarn twenty dev` はインストールフローをスキップしてファイルを直接同期するため、フックはそこで一切実行されません。 代わりに手動でトリガーしてください:
 
 ```bash filename="Terminal"
-twenty app exec --post-install
-twenty app exec --pre-install
+yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 <AccordionGroup>
-<Accordion title="definePostInstallLogicFunction" description="Runs after the workspace metadata migration is applied">
+<Accordion title="definePostInstallLogicFunction" description="ワークスペースのメタデータマイグレーションが適用された後に実行されます">
 
-Runs once your app has finished installing: metadata synchronized, SDK client generated, new schema queryable. Example — seed a default record on fresh installs:
+アプリのインストールが完了した後に実行されます: メタデータは同期され、SDK クライアントが生成され、新しいスキーマはクエリ可能な状態になります。 例 — 新規インストール時に既定のレコードをシードする:
 
 ```ts src/logic-functions/post-install.ts
-import {
-  definePostInstallLogicFunction,
-  type InstallPayload,
-} from 'twenty-sdk/define';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -77,9 +69,7 @@ const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   const client = new CoreApiClient();
   await client.mutation({
     createPostCard: {
-      __args: {
-        data: { name: 'Welcome to Postcard', content: 'Your first card!' },
-      },
+      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
       id: true,
     },
   });
@@ -96,31 +86,25 @@ export default definePostInstallLogicFunction({
 });
 ```
 
-The `shouldRunSynchronously` flag controls the execution model:
+`shouldRunSynchronously` フラグは実行モデルを制御します:
 
-- `false` _(default)_ — enqueued on the message queue (`retryLimit: 3`) and run by a worker. The install response returns as soon as the job is enqueued. **Use for long-running work** — seeding large datasets, slow third-party APIs.
-- `true` — executed inline during the install flow. The install request blocks until the handler finishes; a thrown error surfaces as `POST_INSTALL_ERROR` to the caller (no retries). **Use for fast, must-complete-before-response work.** The migration has already been applied at this point, so a failure does not roll back schema changes — it only surfaces the error.
+* `false` *(既定)* — メッセージキューに投入され（`retryLimit: 3`）、ワーカーによって実行される。 ジョブがキューに投入されるとすぐにインストールのレスポンスが返ります。 **長時間実行される処理に使用** — 大規模データセットのシーディング、低速なサードパーティ API など。
+* `true` — インストールフロー中にインラインで実行される。 ハンドラーが終了するまでインストールリクエストはブロックされます。スローされたエラーは `POST_INSTALL_ERROR` として呼び出し元に伝播します（再試行なし）。 **高速かつ、レスポンス前に完了している必要がある処理に使用します。** この時点ではマイグレーションはすでに適用済みであるため、失敗してもスキーマ変更はロールバックされず、エラーが表面化するだけです。
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="Runs before the workspace metadata migration is applied">
+<Accordion title="definePreInstallLogicFunction" description="ワークスペースのメタデータマイグレーションが適用される前に実行されます">
 
-Runs before the metadata migration, against the **previous** schema — the right place to back up data a migration would lose, or to refuse a risky upgrade. Before executing, the server runs a purely additive "pared-down sync" that registers only the new version's pre-install function; everything else — the previous version's objects, fields, and data — is untouched when your handler runs.
+メタデータマイグレーションの前、**以前の**スキーマに対して実行されます — マイグレーションで失われるデータをバックアップしたり、リスクの高いアップグレードを拒否したりするのに適した場所です。 実行前に、サーバーは純粋に追加のみの「簡易同期」を実行し、新しいバージョンのプレインストール関数だけを登録します。あなたのハンドラーが実行される際には、それ以外 — 以前のバージョンのオブジェクト、フィールド、データ — には一切手を触れません。
 
-Pre-install is always **synchronous** and blocks the install. If the handler throws, the install is aborted before any schema change — the workspace stays on the previous version in a consistent state. This is intentional: pre-install is your last chance to refuse a risky upgrade.
+プレインストールは常に**同期的**であり、インストールをブロックします。 ハンドラーがスローした場合、スキーマ変更が行われる前にインストールは中止され、ワークスペースは一貫した状態のまま前のバージョンに留まります。 これは意図的な設計です。プレインストールは、リスクの高いアップグレードを拒否できる最後の機会です。
 
-Example — copy a legacy field's values before the migration drops it:
+例 — マイグレーションでレガシーフィールドが削除される前に、その値をコピーする:
 
 ```ts src/logic-functions/pre-install.ts
-import {
-  definePreInstallLogicFunction,
-  type InstallPayload,
-} from 'twenty-sdk/define';
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const handler = async ({
-  previousVersion,
-  newVersion,
-}: InstallPayload): Promise<void> => {
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -149,8 +133,7 @@ const handler = async ({
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description:
-    'Backs up legacy notes into description before the v2 migration.',
+  description: 'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -160,27 +143,24 @@ export default definePreInstallLogicFunction({
 </Accordion>
 </AccordionGroup>
 
-## Uninstall hook
+## アンインストールフック
 
-`defineUninstallLogicFunction` declares a hook that runs when a user uninstalls your app. It executes **before** the app's metadata, data, and code are removed — once the deletion migration runs there is nothing left to execute — so your handler can still query the app's objects and records. Use it for cleanup of external resources: deprovision API resources, delete remaining bots, revoke webhooks.
+`defineUninstallLogicFunction` は、ユーザーがアプリをアンインストールしたときに実行されるフックを宣言します。 これは、アプリのメタデータ、データ、コードが削除される **前に** 実行されます。削除マイグレーションが実行された後には、実行できるものは何も残らないため、ハンドラーはまだアプリのオブジェクトやレコードをクエリできます。 これを、外部リソースのクリーンアップに使用します。API リソースのプロビジョニング解除、残っているボットの削除、webhook の失効などです。
 
-Notes:
+注記：
 
-- The hook is best-effort: it runs synchronously, but a failure is logged and **never blocks the uninstall** — cleanup must not make an app impossible to remove.
-- It receives `UninstallPayload` (`{ version?: string }` — the version being removed).
-- It does **not** run when a failed fresh install is rolled back — the app never finished installing.
-- The hook cannot run after the app is gone, so external cleanup that depends on app data (e.g. bot IDs stored in records) belongs here, not in an external scheduled job.
-- Like the install hooks, it is **not executed in dev mode** — trigger it manually instead:
+* このフックはベストエフォートで動作します。同期的に実行されますが、失敗してもログに記録されるだけであり、**アンインストールをブロックすることは決してありません**。クリーンアップ処理が原因でアプリを削除できなくなってはなりません。
+* これは `UninstallPayload` (`{ version?: string }` — 削除されるバージョン) を受け取ります。
+* 新規インストールの失敗によりロールバックされた場合には実行されません。アプリのインストールが最後まで完了していないためです。
+* このフックは、アプリが削除された後には実行できないため、アプリデータ (レコードに保存されたボット ID など) に依存する外部クリーンアップ処理は、外部のスケジュールジョブではなく、ここに実装する必要があります。
+* インストールフックと同様に、これは **dev モードでは実行されません**。代わりに手動でトリガーしてください:
 
 ```bash filename="Terminal"
-twenty app exec --uninstall-hook
+yarn twenty dev:function:exec --uninstall
 ```
 
 ```ts src/logic-functions/uninstall.ts
-import {
-  defineUninstallLogicFunction,
-  type UninstallPayload,
-} from 'twenty-sdk/define';
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {

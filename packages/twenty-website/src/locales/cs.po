@@ -9154,10 +9154,10 @@ msgstr "Yemen 🇾🇪"
 msgid "Yes"
 msgstr "Ano"
 
-#. js-lingui-id: DLTd8S
+#. js-lingui-id: bo6pUs
 #: src/sections/faq/faq.data.ts
-msgid "Yes, with our Apps framework. Scaffold an extension with `npx twenty@latest app init my-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
-msgstr "Ano, s naším frameworkem Apps. Vytvořte skeleton rozšíření pomocí `npx twenty@latest app init my-app` a doručte custom objekty, server-side logické funkce, React komponenty, které se vykreslují přímo v UI Twenty, AI dovednosti a agenty, pohledy a navigaci, to vše v TypeScriptu, nasaditelné do libovolného workspace."
+msgid "Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
+msgstr "Ano, s naším frameworkem Apps. Vytvořte skeleton rozšíření pomocí `npx create-twenty-app` a doručte custom objekty, server-side logické funkce, React komponenty, které se vykreslují přímo v UI Twenty, AI dovednosti a agenty, pohledy a navigaci, to vše v TypeScriptu, nasaditelné do libovolného workspace."
 
 #. js-lingui-id: yIcBW6
 #: src/sections/faq/faq.data.ts

@@ -1,30 +1,25 @@
 ---
 title: Veřejné soubory
-description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
-icon: 'folder-open'
+description: Doručujte statické soubory — obrázky, ikony, písma — spolu se svou aplikací prostřednictvím složky public/.
+icon: folder-open
 ---
 
-<Note>
-  Překlad tohoto průvodce zatím nezohledňuje samostatné CLI Twenty. Níže dočasně
-  uvádíme aktuální anglický obsah, abyste nepoužívali odstraněné příkazy.
-</Note>
+Složka `public/` v kořenu vaší aplikace obsahuje statické soubory — obrázky, ikony, písma a další prostředky, které vaše aplikace potřebuje za běhu. Tyto soubory jsou automaticky zahrnuty do buildů, synchronizovány během vývojového režimu a nahrávány na server.
 
-The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
+Soubory umístěné v `public/` jsou:
 
-Files placed in `public/` are:
+* **Veřejně přístupné** — po synchronizaci na server jsou prostředky dostupné na veřejné URL. K přístupu k nim není potřeba žádná autentizace.
+* **Dostupné ve frontendových komponentách** — použijte URL prostředků k zobrazení obrázků, ikon či jiných médií uvnitř komponent Reactu.
+* **Dostupné v logických funkcích** — odkazujte na URL prostředků v e-mailech, odpovědích API či jiné serverové logice.
+* **Používány pro metadata Marketplace** — pole `logo` a `galleryImages` v `defineApplication()` odkazují na soubory z této složky (např. `public/logo.png`). Zobrazují se v Marketplace, když je vaše aplikace zveřejněna. Pro tato pole jsou externí absolutní adresy URL ignorovány — místo toho přibalte obrázky do `public/`. Každý obrázek nesmí přesáhnout velikost 10 MB.
+* **Automaticky synchronizované ve vývojovém režimu** — když v `public/` přidáte, aktualizujete nebo smažete soubor, je automaticky synchronizován na server. Není potřeba restartovat.
+* **Zahrnuté do buildů** — `yarn twenty dev:build` zabalí všechny veřejné prostředky do distribučního výstupu.
 
-- **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
-- **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
-- **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
-- **Used for marketplace metadata** — the `logo` and `galleryImages` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published. External absolute URLs are ignored for these fields — bundle the images in `public/` instead. Each image must not exceed 10 MB.
-- **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
-- **Included in builds** — `twenty app build` bundles all public assets into the distribution output.
+## Přístup k veřejným prostředkům pomocí `getPublicAssetUrl`
 
-## Accessing public assets with `getPublicAssetUrl`
+K získání plné URL souboru ve vaší složce `public/` použijte pomocnou funkci `getPublicAssetUrl` z `twenty-sdk`. Funguje jak v logických funkcích, tak ve frontendových komponentách.
 
-Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
-
-**In a logic function:**
+**V logické funkci:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -50,7 +45,7 @@ export default defineLogicFunction({
 });
 ```
 
-**In a front component:**
+**Ve frontendové komponentě:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -69,4 +64,4 @@ export default defineFrontComponent({
 });
 ```
 
-The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+Argument `path` je relativní ke složce `public/` vaší aplikace. Jak `getPublicAssetUrl('logo.png')`, tak `getPublicAssetUrl('public/logo.png')` se vyhodnotí na stejnou URL — předpona `public/` je, je-li přítomna, automaticky odstraněna.

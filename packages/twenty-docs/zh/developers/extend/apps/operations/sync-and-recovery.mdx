@@ -1,43 +1,39 @@
 ---
 title: 同步与恢复
-description: Which command to use when, how to read the sync output, and a recovery ladder for when local metadata drifts — before reaching a full reset.
-icon: 'compass'
+description: 何时使用哪个命令、如何解读同步输出，以及在本地元数据发生漂移时的恢复阶梯——在不得不执行完全重置之前。
+icon: compass
 ---
 
-<Note>
-  本指南的翻译尚未更新为 Twenty 独立 CLI
-  的用法。为避免使用已移除的命令，下面暂时显示最新的英文内容。
-</Note>
+本地应用开发围绕着**同步**展开：CLI 会重建你的 manifest，而服务器只会应用它与工作区中已存在元数据之间的差异。 本页介绍在不同情况下应使用哪个命令、如何阅读同步修改内容，以及当本地状态看起来不一致时——按顺序——应该怎么做。
 
-Local app development revolves around **syncing**: the CLI rebuilds your manifest and the server applies only the difference between it and the metadata already in your workspace. This page covers which command to reach for, how to read what a sync changed, and what to do — in order — when local state looks inconsistent.
-
-## Which command, when
+## 在什么情况下用哪个命令
 
 <Note>
-  For day-to-day local iteration you almost always want `twenty app dev`.
-  Deploying and publishing are for shipping releases, **not** for the local
-  loop.
+在日常本地迭代中，你几乎总是需要 `yarn twenty dev`。 Deploy 和 publish 用于发布版本，**而不是**用于本地循环。
 </Note>
 
-| You want to…                               | Command                        | Notes                                                                                                                                    |
-| ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Iterate locally with live sync             | `twenty app dev`               | Watches your files and syncs on every change.                                                                                            |
-| Sync once and exit (CI, scripts, hooks)    | `twenty app apply`             | One build + sync, then exits. Add `--yes` to skip the destructive-change confirmation.                                                   |
-| Preview changes **without applying them**  | `twenty app plan`              | Computes and prints the diff; writes nothing.                                                                                            |
-| Sync without deleting anything             | `twenty app apply --no-delete` | Creates and updates only: entities that exist in the workspace but not in your source are left alone. Also accepted by `plan` and `dev`. |
-| Regenerate local source from the workspace | `twenty app pull`              | **Experimental.** Writes the installed app back to define files. See below.                                                              |
-| Remove the app from the workspace          | `twenty app uninstall`         | Add `--yes` to skip the prompt.                                                                                                          |
-| Ship a tarball to a server                 | `twenty app publish --private` | Requires a **strictly higher** `package.json` version — see [Publishing](/zh/developers/extend/apps/operations/publishing).              |
-| Publish to the marketplace (npm)           | `twenty app publish`           | —                                                                                                                                        |
-| Install / upgrade a deployed version       | `twenty app install`           | Installs the version currently deployed.                                                                                                 |
+| 如果你想要……            | 命令                                  | 备注                                                                                               |
+| ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 使用实时同步进行本地迭代       | `yarn twenty dev`                   | 监视你的文件，并在每次更改时执行同步。                                                                              |
+| 同步一次后退出（CI、脚本、钩子）  | `yarn twenty apply`                 | 执行一次构建和同步，然后退出。 添加 `--force` 以跳过破坏性变更确认。                                                         |
+| 在**不应用变更**的前提下预览更改 | `yarn twenty plan`                  | 计算并打印 diff；不写入任何内容。                                                                              |
+| 从工作区中移除该应用         | `yarn twenty app:uninstall`         | 添加 `--yes` 以跳过提示。                                                                                |
+| 将 tar 包发送到服务器      | `yarn twenty app:publish --private` | 需要一个**严格更高的** `package.json` 版本——参见 [Publishing](/zh/developers/extend/apps/operations/publishing)。 |
+| 发布到应用市场（npm）       | `yarn twenty app:publish`           | —                                                                                                |
+| 安装 / 升级已部署的版本      | `yarn twenty app:install`           | 安装当前已部署的版本。                                                                                      |
+| 清空本地服务器并重新开始       | `yarn twenty docker:reset`          | 删除**所有**本地数据——最后的手段。                                                                             |
 
-### Local sync does not need a version bump
+<Note>
+`yarn twenty dev --once` 和 `yarn twenty dev --once --dry-run` 仍然可以作为已弃用的别名使用，对应 `yarn twenty apply` 和 `yarn twenty plan`。
+</Note>
 
-The strictly-increasing `version` rule (`VERSION_ALREADY_EXISTS` on deploy, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` on install) applies to **`twenty app publish` / `twenty app install`** — the release path. `twenty app dev` syncs your manifest in place and never requires a version change, so you don't need to touch `package.json` to iterate. If you find yourself bumping the version to test a local change, you're using the release path when you want the dev loop.
+### 本地同步不需要提升版本号
 
-## Reading the sync output
+严格递增的 `version` 规则（在 deploy 时为 `VERSION_ALREADY_EXISTS`，在 install 时为 `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION`）适用于 **`app:publish` / `app:install`**——即发布路径。 `yarn twenty dev` 就地同步你的 manifest，且从不要求修改版本，因此你无需为了迭代去改动 `package.json`。 如果你发现自己为了测试本地改动而不断提升版本号，说明你在想要使用开发循环时却走了发布路径。
 
-Every sync prints the metadata changes it applied (or would apply, with `plan`), Terraform-style — one block per entity with its attributes, then a summary line:
+## 阅读同步输出
+
+每次同步都会打印它实际应用的（或在使用 `plan` 时将要应用的）元数据更改，Terraform 风格——每个实体一个区块，包含其属性，然后是一行总结：
 
 ```text filename="Terminal"
   # objectMetadata "rocket" will be created
@@ -53,26 +49,24 @@ Plan: 2 to add, 1 to change, 1 to destroy.
 ✓ Synced My App (4 files)
 ```
 
-This is your first diagnostic: it tells you exactly which objects, fields, and layouts changed, so you can confirm a sync did what you expected before checking the UI.
+这是你的首要诊断工具：它会准确告诉你哪些对象、字段和布局发生了变化，这样你就可以在查看 UI 之前确认同步是否按预期进行。
 
-Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--yes` in scripts.
+破坏性更改（`to destroy`）会列出它们会删除的内容（例如 `objectMetadata "auditNote" — drops the table and all its rows`），并且需要交互式确认，或者在脚本中使用 `--force`。
 
-A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-delete`, which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted, and the settings component and uninstall hook bindings of the app stay as they are when your source does not declare them. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI.
-
-When a sync fails on a single entity, the error names the offending entity and its `universalIdentifier`, for example:
+当同步在某个实体上失败时，错误信息会给出有问题的实体及其 `universalIdentifier`，例如：
 
 ```text
 Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337) failed
 ```
 
-Use that identifier to find the entity in your manifest (and, if needed, in the workspace) instead of guessing which one conflicts.
+使用该标识符在 manifest 中（以及在需要时在工作区中）定位该实体，而不是猜测哪个实体发生了冲突。
 
-## Previewing changes (plan)
+## 预览更改（计划）
 
-`twenty app plan` builds your manifest, asks the server for the migration plan, and prints it — **without applying anything**. It's the safe way to answer "what would this sync change?" before committing to it.
+`yarn twenty plan` 会构建你的 manifest，向服务器请求迁移计划并打印出来——**不会实际应用任何内容**。 这是在真正执行前，以安全方式回答“这次同步会改动什么？”的办法。
 
 ```bash filename="Terminal"
-twenty app plan
+yarn twenty plan
 ```
 
 ```text filename="Terminal"
@@ -87,108 +81,46 @@ Plan: 1 to add, 1 to change, 0 to destroy.
 ✓ Plan complete for My App — no changes were applied
 ```
 
-A plan:
+一个计划：
 
-- **Writes nothing** — no metadata migration, no application record update, no default role/tab changes, and no API client generation.
-- Returns the **same diff** a real sync would apply, so you can review created/updated/deleted entities up front.
-- Is useful before a risky change, when reviewing an AI-generated change, or in a script that should fail if an unexpected change is about to land.
+* **不会写入任何内容**——不会进行元数据迁移、不会更新应用记录、不会更改默认角色/标签，也不会生成 API 客户端。
+* 返回与真实同步将要应用的**相同 diff**，这样你可以预先审查将被创建 / 更新 / 删除的实体。
+* 在执行高风险改动之前、在审查 AI 生成的改动时，或在某些如果即将落地意外变更就应当失败的脚本中，dry run 都非常有用。
 
 <Note>
-  A plan only previews **metadata** changes. It also works for an app that was
-  never synced: the server evaluates the manifest against an empty application,
-  so the plan lists everything your source would create.
+计划只会预览**元数据**更改，并且要求应用至少已经同步过一次（这样工作区才知道它的存在）。 如果你在一个从未同步过的应用上运行它，服务器会报告该应用尚未安装——先运行一次 `yarn twenty dev`。
 </Note>
 
-## Pulling an installed app back to source
+## 恢复梯子
+
+当本地元数据看起来不对时，按以下顺序逐步升级，并在问题解决后立即停止。 每一步都比前一步更具破坏性。
+
+1. **重新同步。** 再次运行 `yarn twenty apply`。 同步是幂等的——在干净的 manifest 上重新运行是安全的，并且通常可以解决瞬时故障。
+2. **预览计划。** 运行 `yarn twenty plan`，在不应用变更的前提下，准确查看下一次同步打算修改什么。
+3. **阅读具名错误。** 如果同步失败，记录消息中的元数据类型和 `universalIdentifier`（见上），并在 manifest 中定位该实体。 冲突通常指向重复或被重复使用的标识符。
+4. **卸载并重新安装。** 先执行 `yarn twenty app:uninstall`，然后再次同步（`yarn twenty dev`）。 这会在保留你工作区其余部分不变的情况下，从零重建该应用的元数据。
+5. **完全重置（最后手段）。** 执行 `yarn twenty docker:reset`，然后重新播种并重新同步。
 
 <Warning>
-  `twenty app pull` is **experimental**. It covers only part of an application
-  today, its output shape may change between releases, and it overwrites the
-  files that define the entities it pulls. It restores published translations
-  into `locales/`, keeping the entries whose source strings are not in your tree
-  yet in `locales/compiled/` so that a push does not lose them. Commit your work
-  before running it, and review the diff.
-</Warning>
-
-`twenty app pull` is the inverse of `apply`: it reads an application out of the workspace and writes it back as define files.
-
-```bash
-twenty app pull --universal-identifier <universalIdentifier>
-```
-
-Pull needs an existing project — scaffold one with `twenty app init` first, then pull into it. Without `--universal-identifier`, pull targets the application your local `defineApplication()` file declares. If `--universal-identifier` names a different application than the one your project declares, pull refuses rather than leaving two applications in one tree: pull that one into its own directory. If the project has an application file whose identifier cannot be read, usually because dependencies are not installed, pull refuses too and asks you to run `yarn install` first. Add `--verbose` to expand the coverage sections of the report, which then name up to 20 identifiers per metadata type instead of only the totals.
-
-**What it writes:**
-
-- the application config;
-- objects, with their fields inline;
-- fields your app added to objects it does not own;
-- authored indexes;
-- permission flags your app declares, as `definePermissionFlag()` files;
-- roles, with their object permissions, field permissions, row-level permission predicates and groups, and permission flags inline. Your app's default role is written with `defineApplicationRole()`. An object or field permission whose identifier is the one the build derives is written without it. When the default role is not one of your app's own roles, as for the workspace Custom application, the application config keeps `defaultRoleUniversalIdentifier` instead;
-- views, with their fields, field groups, filters, filter groups, sorts and groups inline;
-- view fields your app added to views it does not own, as standalone `defineViewField()` files;
-- page layouts, with their tabs and widgets inline;
-- tabs your app added to page layouts it does not own, as standalone `definePageLayoutTab()` files;
-- navigation menu items, as `defineNavigationMenuItem()` files, folders included;
-- widgets your app added to tabs it does not own, as standalone `definePageLayoutWidget()` files;
-- published translations, as `locales/<locale>.json` for the strings pull can read back from the pulled metadata and source, and `locales/compiled/<locale>.json` for the rest.
-
-Each entity goes to the file that already defines it, so a second pull rewrites only what changed on the server. A file is also rewritten when it uses a different define function than pull would write, for example a role that became or stopped being the default role. New entities are placed beside existing files of their kind, and a generated name that would land on an unrelated file is qualified rather than overwriting it.
-
-**What it does not write:**
-
-- **Not exported yet** — command menu items and settings menu items, logic functions and front components, skills and agents, connection providers, application variables, public assets, timeline activity types, and the stored source of your functions.
-- **Derived by the engine** — system fields, default relations, default views and backing indexes, and the default page layouts of each object. The server rebuilds them on apply. An object may still point its label identifier at one of them, as junction objects created in the UI do; the pointer is written and the build resolves it without adding a field.
-- **Placed on a default or foreign view** — filters, filter groups, sorts, groups and field groups added to an engine default view, or to a view owned by another application, have no source form yet and are reported. View fields added there are written as standalone files, since the view's identifier is known.
-- **Placed on a default or foreign page layout** — tabs and widgets added to an engine default page layout, or to one owned by another application, are written as standalone `definePageLayoutTab()` and `definePageLayoutWidget()` files, since the identifier they attach to is known.
-- **Widgets the export cannot carry yet** — on any layout, including your own, a widget of the deprecated `VIEW` type, a widget showing one of your app's own front components or command menu items, or a widget without a position for its tab's layout mode is reported, and the layout or tab is written without it.
-- **Workspace runtime state** — member and API-key role assignments, webhooks, per-user navigation and navigation items pinned to a record, all excluded by design.
-- **Owned by another application** — reported, never pulled.
-
-The report at the end of a pull lists all of it, grouped by kind and reason. Everything it names as not written is still in your workspace, so push a pulled tree back with `twenty app apply --no-delete` until the missing kinds are covered. A pruning `twenty app apply` would delete them, and `twenty app plan` lists exactly which.
-
-**Workspace-local state.** An entity deactivated in the workspace is written as an active definition, and the overrides the workspace made on an entity, such as a renamed label, are not written. The report lists those rows under "Written without their workspace-local state". Applying the tree back to the same workspace leaves that state untouched; another workspace gets the entity active and without the overrides.
-
-**The base file.** Pull records what it pulled in `.twenty/pull-base.json`, which is gitignored and per checkout. That file is what a later pull compares against to leave untouched the files whose entity did not change, and to delete the file of an entity that is gone from the workspace. A checkout without it simply writes everything and deletes nothing.
-
-## Recovery ladder
-
-When local metadata looks wrong, escalate in this order and stop as soon as you're unblocked. Each step is more disruptive than the last.
-
-1. **Re-sync.** Run `twenty app apply` again. Syncs are idempotent — re-running a clean manifest is safe and often resolves a transient hiccup.
-2. **Preview the plan.** Run `twenty app plan` to see exactly what the next sync intends to change, without applying it.
-3. **Read the named error.** If a sync fails, note the metadata type and `universalIdentifier` in the message (see above) and locate that entity in your manifest. A conflict usually points to a duplicated or re-used identifier.
-4. **Uninstall and reinstall.** `twenty app uninstall`, then sync again (`twenty app dev`). This rebuilds the app's metadata from a clean slate while keeping the rest of your workspace intact.
-5. **Full reset (last resort).** resetting your Docker or repository development database, then re-seed and re-sync.
-
-<Warning>
-  resetting your Docker or repository development database deletes **all** data
-  in your local instance — every workspace, record, and app. Only use it once
-  the earlier steps have failed.
+`yarn twenty docker:reset` 会删除本地实例中的**所有**数据——包括每个工作区、记录和应用。 只有在前面步骤全部无效时才使用它。
 </Warning>
 
 <Note>
-  Hit a metadata error? Please [open an
-  issue](https://github.com/twentyhq/twenty/issues/new/choose) and include the
-  failing migration message (with its metadata type and `universalIdentifier`),
-  the `Metadata changes` output from the sync, and the commands you ran.
+遇到元数据错误了吗？ 请[提交 issue](https://github.com/twentyhq/twenty/issues/new/choose)，并附上失败的迁移消息（包含其中的元数据类型和 `universalIdentifier`）、同步时的 `Metadata changes` 输出，以及你执行过的命令。
 </Note>
 
-## Avoid concurrent syncs on one workspace
+## 避免在同一工作区上并发同步
 
-Syncing applies metadata migrations. Running several sync, deploy, or install operations against the **same workspace at the same time** — for example, multiple terminals or AI agents iterating in parallel — can interleave those migrations and leave metadata in a partially-applied state.
+同步会应用元数据迁移。 在**同一个工作区同时**运行多个同步、部署或安装操作——例如多个终端或多个 AI 代理并行迭代——会让这些迁移交错执行，从而让元数据处于部分应用的状态。
 
-The server serializes syncs per workspace to prevent this, but you should still funnel sensitive metadata operations through a **single** process rather than firing them concurrently. If you orchestrate development with multiple agents, route their sync/deploy/install calls through one queue so only one runs at a time.
+服务器会按工作区串行化同步以防止这种情况，但你仍然应当通过**单一**进程来处理敏感的元数据操作，而不要并发触发。 如果你使用多个代理来编排开发，请将它们的同步 / 部署 / 安装调用通过一个队列进行排队，这样任何时刻只有一个操作在运行。
 
-## Telling failures apart
+## 区分不同类型的失败
 
-When something goes wrong, the metadata diff and named errors let you place the failure:
+当出现问题时，元数据 diff 和具名错误可以帮助你定位失败位置：
 
-- **Manifest build error** — the CLI fails before syncing (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); fix your app source.
-- **Registration ownership error** — the sync is refused because the app's `universalIdentifier` belongs to another workspace, or to no workspace at all; see [Registration ownership](/zh/developers/extend/apps/operations/publishing#registration-ownership).
-- **Sync / migration error** — the build succeeds but applying the diff fails, naming the entity and `universalIdentifier`; fix the conflicting metadata.
-- **Dependencies size error** — the sync or install fails because the app's production `dependencies` are too large to install as a runtime layer (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); move packages your logic functions do not import at runtime (UI libraries, dev tooling) to `devDependencies`.
-- **Deferred migration in progress** — the sync is refused because a background data model migration from an earlier sync is still running (`DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS`); wait for it to finish, then sync again.
-- **App code runtime error** — the sync succeeds but your logic functions or components misbehave at runtime; check [function logs](/zh/developers/extend/apps/operations/cli).
-- **Local instance state** — none of the above and the workspace still looks wrong; work down the recovery ladder.
+* **Manifest 构建错误**——CLI 在同步前失败（`MANIFEST_BUILD_FAILED`、`TYPECHECK_FAILED`）；请修复你的应用源代码。
+* **同步 / 迁移错误**——构建成功，但在应用 diff 时失败，并给出实体名称和 `universalIdentifier`；请修复冲突的元数据。
+* **依赖项大小错误** — 同步或安装失败，是因为应用的生产环境 `dependencies` 过大，无法作为运行时层进行安装（`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`）；请将逻辑函数在运行时不导入的包（UI 库、开发工具等）移动到 `devDependencies`。
+* **应用代码运行时错误** — 同步成功，但你的逻辑函数或组件在运行时行为异常；请检查[函数日志](/zh/developers/extend/apps/operations/cli)。
+* **本地实例状态** — 不属于以上任何一种情况，但工作区仍然显示异常；请按照恢复步骤逐级排查。

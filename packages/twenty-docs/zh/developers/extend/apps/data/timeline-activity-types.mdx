@@ -1,22 +1,23 @@
 ---
-title: '时间线活动类型们。 '
-description: Define automatic audit events and explicit app events that render in record timelines.
-icon: 'clock-rotate-left'
+title: "时间线活动类型们。 "
+description: 定义在记录时间线上呈现的自动审计事件和显式应用事件。
+icon: clock-rotate-left
 ---
 
-<Note>
-  本指南的翻译尚未更新为 Twenty 独立 CLI
-  的用法。为避免使用已移除的命令，下面暂时显示最新的英文内容。
-</Note>
-
-A timeline activity type defines the stable vocabulary for an event shown in a record's timeline. Standard objects and app objects use the same contract: a type has a label and icon, can optionally declare when it is emitted, and can optionally render through one of your app's [front components](/zh/developers/extend/apps/layout/front-components).
+时间线活动类型定义了在记录时间线上显示的事件所使用的稳定词汇。 标准对象和应用对象使用相同的约定：类型具有标签和图标，可选择声明其发出时间，还可选择通过你的应用的[前端组件](/zh/developers/extend/apps/layout/front-components)之一进行呈现。
 
 <Note>
-  Timeline activity types are in beta, the API can evolve while we learn from
-  app developers' use cases.
+  时间线活动类型目前处于 Beta 阶段，将很快在 Twenty 2.34 中推出。 该
+  API 可能会随着我们了解应用开发者的使用场景而演进。
 </Note>
 
-Define a timeline activity type with `defineTimelineActivityType` from `twenty-sdk/define`:
+使用脚手架工具创建一个：
+
+```bash filename="Terminal"
+yarn twenty dev:add timelineActivityType
+```
+
+或直接定义：
 
 ```ts filename="src/timeline-activity-types/post-card-created.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -35,19 +36,19 @@ export default defineTimelineActivityType({
 });
 ```
 
-## Automatic and explicit events
+## 自动事件和显式事件
 
-Add `emit` when Twenty should create this type automatically. `emit.on` supports `created`, `updated`, `deleted`, `restored`, `linked`, and `unlinked`, while `emit.objectUniversalIdentifier` identifies the source object. Only one effective type can handle the same emit key—`on`, object, and optional through relation—in a workspace.
+当 Twenty 应自动创建此类型时，添加 `emit`。 `emit.on` 支持 `created`、`updated`、`deleted`、`restored`、`linked` 和 `unlinked`，而 `emit.objectUniversalIdentifier` 用于标识源对象。 在一个工作区中，只有一个有效类型可以处理相同的 emit 键——`on`、对象和可选的通过关系。
 
-Without `emit.through`, the event is written on the source record's own timeline. To fan it out to related records, set `emit.through.relationFieldUniversalIdentifier` to either a direct many-to-one relation or a [one-to-many junction relation](/zh/developers/extend/apps/data/relations#junction-relations) on the source object. Morph relations fan out to every member of their morph group, so a single declaration can target several object types.
+如果没有 `emit.through`，事件将写入源记录自身的时间线。 要让它发到相关的记录，请设置 `emit.access'. elationFieldUniversalIdentifier` 指向一个直接的多对一个关系或源对象上的[一个对多的交接关系](/zh/developers/extend/apps/data/relations#junction-relations)。 变形关系向其摩擦组的每个成员粉碎，因此单一声明可以针对几个对象类型。
 
-For a direct relation, creating or restoring the source record produces `linked`, deleting it produces `unlinked`, and repointing the relation produces `unlinked` on the previous target plus `linked` on the new target. Other source updates do not produce link events. This is the contract used by attachments, whose target is a direct morph relation.
+就直接关系而言，创建或恢复源记录产生`链接`，删除它产生`unlined`， 并重新指出关系会在前一个目标上产生`unlinked`加上新目标上的`linked`。 其他源更新不会产生链接事件。 这是附加物所使用的合同，其目标是一种直接的停尸关系。
 
-For a junction relation, `universalSettings.junctionTargetFieldUniversalIdentifier` identifies the relation from the junction object to the target. Creating or deleting a junction row produces `linked` or `unlinked`. Repointing either side of a junction row also produces a link event; updates to unrelated junction fields do not.
+对于联接关系，`universalSettings.crosstionTargetFieldUniversalIdentifier` 可以识别联接对象与目标之间的关系。 创建或删除一个命令行会产生`linked`或`unlinked`。 指明一个联接行的任何一方也会产生一个联接事件；不相关联的联接字段的更新则不会产生联接事件。
 
-`linked` and `unlinked` events require `emit.through`, because their trigger is a change to the configured direct or junction relation.
+`linked`和`unlinked`事件需要`emit.that`, 因为它们的触发是对配置的直接关系或交叉关系的改变。
 
-For example, this is the same generic contract used by notes, tasks, messages, and calendar events:
+例如，这是备注、任务、消息和日历事件所使用的同一通用约定：
 
 ```ts filename="src/timeline-activity-types/post-card-linked.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -71,11 +72,9 @@ export default defineTimelineActivityType({
 });
 ```
 
-An `updated` through event is emitted for every source update by default. Set `emit.through.triggerFieldUniversalIdentifiers` when only changes to selected source fields should appear on the target timelines.
+默认情况下，每次源更新都会发出一个 `updated` 通过事件。 当只有选定源字段的更改应显示在目标时间线上时，设置 `emit.through.triggerFieldUniversalIdentifiers`。
 
-A `linked` event is timestamped at the moment it is written. When the source record carries its own moment in time, set `emit.through.happensAtFieldUniversalIdentifier` to a `DATE_TIME` or `DATE` field on the source object: the timeline anchors the event at that field's value instead, and follows it when the value changes. Twenty's standard email and calendar events use this to anchor at `receivedAt` and `startsAt`.
-
-Omit `emit` for an explicit domain event that your logic function creates itself. This avoids producing both an automatic audit row and an explicit row for the same operation.
+对于由你的逻辑函数自行创建的显式领域事件，请省略 `emit`。 这样可避免针对同一操作同时生成自动审计行和显式行。
 
 ```ts filename="src/timeline-activity-types/post-card-sent.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -88,13 +87,13 @@ export default defineTimelineActivityType({
 });
 ```
 
-Create explicit events with [`createTimelineActivity()`](/zh/developers/extend/apps/logic/logic-functions#create-a-timeline-activity). App code uses stable universal identifiers; Twenty resolves the installation-specific metadata IDs.
+使用 [`createTimelineActivity()`](/zh/developers/extend/apps/logic/logic-functions#create-a-timeline-activity) 创建显式事件。 应用代码使用稳定的通用标识符；Twenty 会解析特定于安装的元数据 ID。
 
-## Custom rendering
+## 自定义呈现
 
-Without a front component, Twenty renders a native generic row from the type label, icon, and linked-object metadata. This works for standard and custom objects without an object-specific renderer.
+如果没有前端组件，Twenty 会根据类型标签、图标和关联对象元数据呈现原生通用行。 这适用于没有对象专用渲染器的标准对象和自定义对象。
 
-For custom details, set `frontComponentUniversalIdentifier` to a front component owned by the same app:
+如需自定义详细信息，请将 `frontComponentUniversalIdentifier` 设置为由同一应用拥有的前端组件：
 
 ```ts
 export default defineTimelineActivityType({
@@ -106,11 +105,11 @@ export default defineTimelineActivityType({
 });
 ```
 
-The native row remains the collapsed presentation. Twenty mounts the front component only after the user expands that row, avoiding a sandbox and worker for every visible event. Inside the component, call `useTimelineActivityId()` from `twenty-sdk/front-component` to read the row ID and fetch any data your presentation needs. It returns `null` when the component is rendered outside a timeline row.
+原生行仍保持为折叠状态下的呈现形式。 Twenty 仅在用户展开该行后才挂载前端组件，从而避免为每个可见事件创建沙盒和工作线程。 在组件内部，从 `twenty-sdk/front-component` 调用 `useTimelineActivityId()` 以读取行 ID，并获取呈现所需的任何数据。 当组件在时间线行外部呈现时，它会返回 `null`。
 
-## Overriding another application's presentation
+## 覆盖其他应用的呈现方式
 
-An app owns automatic timeline contracts for its own objects. To customize an event on an object owned by another app, declare the existing type explicitly with `replacesTimelineActivityTypeUniversalIdentifier`:
+应用拥有其自身对象的自动时间线约定。 要自定义由其他应用拥有的对象上的事件，请使用 `replacesTimelineActivityTypeUniversalIdentifier` 显式声明现有类型：
 
 ```ts
 export default defineTimelineActivityType({
@@ -127,11 +126,11 @@ export default defineTimelineActivityType({
 });
 ```
 
-An override must include `emit`, because it replaces an existing automatic emit slot rather than an explicit-only type. The referenced type must belong to the target object's application and describe the same action and route. Removing the overriding app restores the base type; removing the base type disables the override.
+覆盖必须包含 `emit`，因为它替换的是现有的自动发出槽位，而不是仅显式类型。 被引用的类型必须属于目标对象的应用，并描述相同的操作和路由。 移除覆盖应用会恢复基础类型；移除基础类型会禁用覆盖。
 
-## Workspace overrides and muting
+## 工作区覆盖和静默
 
-Workspace administrators can change a type's presentation or mute its automatic and explicit events without forking the application. Use the metadata API's `updateTimelineActivityType` mutation with the installation-specific type ID:
+工作区管理员无需分叉应用即可更改类型的呈现方式，或将其自动和显式事件设为静默。 使用元数据 API 的 `updateTimelineActivityType` 变更，并传入特定于安装的类型 ID：
 
 ```graphql
 mutation CustomizeTimelineActivityType(
@@ -151,9 +150,9 @@ mutation CustomizeTimelineActivityType(
 }
 ```
 
-`label` and `icon` are stored as workspace overrides, so later application updates do not overwrite the administrator's choices. Set `isActive` to `false` to stop automatic emission and reject new explicit events of that type. Existing rows remain visible.
+`label` 和 `icon` 会存储为工作区覆盖，因此之后的应用更新不会覆盖管理员的选择。 将 `isActive` 设为 `false` 可停止自动发出，并拒绝该类型的新显式事件。 现有行仍然可见。
 
-Restore the application defaults, including the active state, with:
+使用以下方式恢复应用默认值，包括活动状态：
 
 ```graphql
 mutation ResetTimelineActivityType($id: UUID!) {
@@ -166,21 +165,20 @@ mutation ResetTimelineActivityType($id: UUID!) {
 }
 ```
 
-## Configuration fields
+## 配置字段
 
-| Field                                             | Required  | Description                                                                                                |
-| ------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier`                             | Yes       | Stable UUID for the type across installations and upgrades                                                 |
-| `name`                                            | Yes       | App-local programmatic name; must be unique within the app                                                 |
-| `label`                                           | Yes       | User-facing action text used by the native renderer                                                        |
-| `icon`                                            | No        | Twenty icon name displayed beside the event                                                                |
-| `emit`                                            | No        | Automatic emission declaration; omit for explicit-only types                                               |
-| `emit.on`                                         | With emit | Audit action that causes this type to be written                                                           |
-| `emit.objectUniversalIdentifier`                  | With emit | Object whose records emit this type                                                                        |
-| `emit.through.relationFieldUniversalIdentifier`   | No        | Direct or junction relation used to fan out to related timelines                                           |
-| `emit.through.triggerFieldUniversalIdentifiers`   | No        | Source fields that can trigger an `updated` through event                                                  |
-| `emit.through.happensAtFieldUniversalIdentifier`  | No        | Source date field used as the event's `happensAt` timestamp for `linked` events, instead of the write time |
-| `frontComponentUniversalIdentifier`               | No        | App-owned front component mounted when the row is expanded                                                 |
-| `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                                                               |
+| 字段                                                | 必填      | 描述                     |
+| ------------------------------------------------- | ------- | ---------------------- |
+| `universalIdentifier`                             | 是       | 跨安装和升级保持稳定的类型 UUID     |
+| `name`                                            | 是       | 应用内本地编程名称；在应用内必须唯一     |
+| `label`                                           | 是       | 由原生渲染器使用的面向用户的操作文本     |
+| `icon`                                            | 否       | 显示在事件旁的 Twenty 图标名称    |
+| `emit`                                            | 否       | 自动发出声明；对于仅显式类型则省略      |
+| `emit.on`                                         | 使用 emit | 导致写入此类型的审计操作           |
+| `emit.objectUniversalIdentifier`                  | 使用 emit | 其记录会发出此类型的对象           |
+| `emit.through.relationFieldUniversalIdentifier`   | 否       | 用于切换到相关时限的直接或交接关系      |
+| `emit.through.triggerFieldUniversalIdentifiers`   | 否       | 可触发 `updated` 通过事件的源字段 |
+| `frontComponentUniversalIdentifier`               | 否       | 当行扩展时挂载应用前台组件          |
+| `replacesTimelineActivityTypeUniversalIdentifier` | 否       | 现有的发射类型已替换；需要 `emit`   |
 
-Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.
+当创建事件时，二十张快照会出现语义特征和持久演示效果的退缩。 历史行保留其原始动作和对象含义。 此类型已安装，其当前翻译的标签、图标和前面组件正在运行；卸载后，快照回退将保持行可读。 分辨率使用通用标识符，因此在重新安装应用时也可以存活。
