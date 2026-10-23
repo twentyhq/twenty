@@ -148,6 +148,9 @@ export const KeyboardScrollsActiveRowIntoView: Story = {
       name: 'Reaction 80',
     });
 
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
     viewport.scrollTop -= lastEmoji.getBoundingClientRect().height / 2;
     const scrollTopBeforeHover = viewport.scrollTop;
 
