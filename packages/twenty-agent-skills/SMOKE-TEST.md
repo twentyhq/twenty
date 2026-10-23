@@ -13,7 +13,7 @@ npx nx run twenty-agent-skills:build
 npx skills add ./packages/twenty-agent-skills/dist --skill create-app develop-app manage-app
 ```
 
-After the first successful publish from `main`, the same distribution is available at `https://github.com/twentyhq/twenty/tree/agent-skills`. Record the source revision and installation method with each new run. The recorded run below predates the distribution migration and documents the app workflow only.
+After the first successful publish from `main`, the same distribution is available at `https://github.com/twentyhq/twenty/tree/agent-skills`. Record the source revision and installation method with each new run.
 
 ## 1. Bring up a self-hosted instance
 
@@ -72,15 +72,3 @@ select table_schema || '.' || table_name from information_schema.tables where ta
 ```
 
 Both must return a row. The second proves the workspace migration ran and the physical table exists, which a successful sync message alone does not.
-
-## Historical run with the retired SDK CLI
-
-This record predates the standalone CLI migration. Its commands and output are historical evidence, not instructions for the current procedure above.
-
-Executed against a locally built server on `http://localhost:3000`, Node 24.16.0:
-
-- Scaffold reused the `selfhosted` remote credentials, no browser OAuth, and reported `Application created successfully`.
-- `core.application` carried the scaffolded identifier `e606ca1a-4035-4c20-87ac-f49e5af6f05c` at `0.1.0`.
-- `dev:add object` generated `src/objects/ticket.ts` plus its view, record-page fields, navigation menu item, and record page layout.
-- `yarn twenty apply` reported `Plan: 50 to add, 0 to change, 0 to destroy` and `Synced Smoke CRM (5 files)`.
-- `core."objectMetadata"` held `ticket` / `tickets`, `core."navigationMenuItem"` held `ticket`, and the physical table `_ticket` existed in the workspace schema.

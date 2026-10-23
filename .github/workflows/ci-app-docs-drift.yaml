@@ -83,7 +83,6 @@ jobs:
             - Scaffold templates (`packages/twenty-cli/app-template/**`)
               and scaffolder flags/prompts (`packages/twenty-cli/src/commands/app/init/**`,
               `packages/twenty-cli/src/app/create-app-project.ts`)
-            - Retired scaffolder migration instructions (`packages/create-twenty-app/src/cli.ts`)
             - Environment variables injected into logic functions or front components
             - Error codes surfaced to app developers
 
