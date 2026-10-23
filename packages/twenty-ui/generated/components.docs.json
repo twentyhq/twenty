@@ -7973,6 +7973,13 @@
         "description": "Trailing content, such as buttons, rendered after the content."
       },
       {
+        "name": "actionsPlacement",
+        "type": "\"auto\" | \"end\"",
+        "required": false,
+        "defaultValue": "auto",
+        "description": "Keeps actions beside the content at every width when set to `end`. The default `auto` preserves responsive wrapping. Hidden end actions do not reserve width on devices without touch."
+      },
+      {
         "name": "actionsVisibility",
         "type": "\"always\" | \"hover\"",
         "required": false,
@@ -13369,6 +13376,48 @@
         "required": false,
         "defaultValue": null,
         "description": "Popover.Trigger native props, handlers, ref, children and render composition for the count button. Click, mousedown, pointerdown, keydown and keyup stop propagation by default. Each supplied event handler replaces its default. Custom components must forward supplied props and ref."
+      }
+    ]
+  },
+  {
+    "name": "LabeledSeparator",
+    "entryPoint": "twenty-ui/components/layout",
+    "slug": "components/layout/labeled-separator",
+    "props": [
+      {
+        "name": "children",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Text naming the separator. Supplied and localized by the caller."
+      },
+      {
+        "name": "hasStartMarker",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Show a decorative cap at the beginning of the rule."
+      },
+      {
+        "name": "labelPosition",
+        "type": "\"center\" | \"end\"",
+        "required": false,
+        "defaultValue": "center",
+        "description": "Place the label between two lines or at the end of one line."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "tone",
+        "type": "\"danger\" | \"neutral\"",
+        "required": false,
+        "defaultValue": "neutral",
+        "description": "Neutral divider or red marker with a thicker rule."
       }
     ]
   },

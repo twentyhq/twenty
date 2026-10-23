@@ -13,11 +13,13 @@ export const expandMorphRelationExportFields = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
+  shouldIncludeInactiveFields = false,
 }: {
   fields: FlatFieldMetadata[];
   flatObjectMetadata: Pick<FlatObjectMetadata, 'fieldIds'>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  shouldIncludeInactiveFields?: boolean;
 }): FlatFieldMetadata[] => {
   const objectFields = findManyFlatEntityByIdInFlatEntityMaps({
     flatEntityIds: flatObjectMetadata.fieldIds,
@@ -37,7 +39,7 @@ export const expandMorphRelationExportFields = ({
         (objectField) =>
           objectField.type === FieldMetadataType.MORPH_RELATION &&
           objectField.morphId === field.morphId &&
-          objectField.isActive &&
+          (shouldIncludeInactiveFields || objectField.isActive) &&
           !isMorphRelationHead(objectField) &&
           !exportedFieldIds.has(objectField.id),
       )
