@@ -79,9 +79,21 @@ export const SidePanelShareRecordContent = ({
   sharingState,
 }: SidePanelShareRecordContentProps) => {
   const { t } = useLingui();
-  const { sharing, error, setGeneralAccess, setShare, removeShare, refetch } =
-    sharingState;
-  const invitation = useSidePanelShareRecordInvitation({ sharingState });
+  const {
+    sharing,
+    error,
+    saving,
+    setGeneralAccess,
+    setShare,
+    removeShare,
+    refetch,
+  } = sharingState;
+  const invitation = useSidePanelShareRecordInvitation({
+    sharing,
+    saving,
+    setShare,
+    setGeneralAccess,
+  });
   const searchInputRef = useRef<HTMLInputElement>(null);
   const {
     search,

@@ -14,18 +14,18 @@ import { logError } from '~/utils/logError';
 
 const DEFAULT_INVITATION_ACCESS_LEVEL = RecordShareAccessLevel.READ;
 
-type UseSidePanelShareRecordInvitationProps = {
-  sharingState: Pick<
-    ReturnType<typeof useRecordSharing>,
-    'sharing' | 'saving' | 'setShare' | 'setGeneralAccess'
-  >;
-};
+type UseSidePanelShareRecordInvitationProps = Pick<
+  ReturnType<typeof useRecordSharing>,
+  'sharing' | 'saving' | 'setShare' | 'setGeneralAccess'
+>;
 
 export const useSidePanelShareRecordInvitation = ({
-  sharingState,
+  sharing,
+  saving,
+  setShare,
+  setGeneralAccess,
 }: UseSidePanelShareRecordInvitationProps) => {
   const { t } = useLingui();
-  const { sharing, saving, setShare, setGeneralAccess } = sharingState;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
