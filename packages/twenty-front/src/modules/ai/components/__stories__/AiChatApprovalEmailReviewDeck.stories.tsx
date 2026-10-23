@@ -400,6 +400,7 @@ export const ControlledBodyAndReadOnly: Story = {
       expect(editor).toHaveAttribute('contenteditable', 'true'),
     );
     await userEvent.type(editor, ' Editable again.');
-    await expect(editor).toHaveTextContent('Editable again.');
+    await userEvent.keyboard('{ArrowLeft}XY');
+    await expect(editor).toHaveTextContent('Editable againXY.');
   },
 };
