@@ -136,18 +136,22 @@ export const NavigationUnmount: Story = {
     await userEvent.click(
       await canvas.findByRole('combobox', { name: 'Month' }),
     );
-    await expect(args.onNavigationOpenChange).toHaveBeenLastCalledWith({
-      open: true,
-      control: 'month',
-    });
+    await waitFor(() =>
+      expect(args.onNavigationOpenChange).toHaveBeenLastCalledWith({
+        open: true,
+        control: 'month',
+      }),
+    );
     await userEvent.click(
       await body.findByRole('option', { name: 'November' }),
     );
     await expect(canvas.getByText('Calendar hidden')).toBeVisible();
-    await expect(args.onNavigationOpenChange).toHaveBeenLastCalledWith({
-      open: false,
-      control: 'month',
-    });
+    await waitFor(() =>
+      expect(args.onNavigationOpenChange).toHaveBeenLastCalledWith({
+        open: false,
+        control: 'month',
+      }),
+    );
   },
 };
 
