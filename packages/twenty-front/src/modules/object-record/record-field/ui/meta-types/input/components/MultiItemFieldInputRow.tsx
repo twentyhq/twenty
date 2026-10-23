@@ -3,32 +3,24 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledInputRow = styled.div`
+const StyledInputRow = styled.div<{ isInRow: boolean; isInFooter: boolean }>`
   align-items: center;
   box-sizing: border-box;
   display: flex;
+  gap: ${({ isInRow }) => (isInRow ? themeCssVariables.spacing[1] : '0')};
+  height: ${({ isInRow }) => (isInRow ? themeCssVariables.spacing[8] : 'auto')};
+  margin: ${({ isInRow, isInFooter }) =>
+    isInRow && isInFooter ? themeCssVariables.spacing[1] : '0'};
   min-height: ${themeCssVariables.spacing[8]};
-  width: 100%;
-
-  &[data-in-row='true'] {
-    gap: ${themeCssVariables.spacing[1]};
-    height: ${themeCssVariables.spacing[8]};
-  }
-
-  &[data-in-row='true'][data-in-footer='true'] {
-    margin: ${themeCssVariables.spacing[1]};
-    width: auto;
-  }
+  width: ${({ isInRow, isInFooter }) =>
+    isInRow && isInFooter ? 'auto' : '100%'};
 `;
 
-const StyledRightContainer = styled.div`
+const StyledRightContainer = styled.div<{ isInRow: boolean }>`
   display: flex;
   flex-shrink: 0;
-  padding-inline-end: ${themeCssVariables.spacing[2]};
-
-  &[data-in-row='true'] {
-    padding-inline-end: ${themeCssVariables.spacing[1]};
-  }
+  padding-inline-end: ${({ isInRow }) =>
+    isInRow ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
 `;
 
 type MultiItemFieldInputRowProps = {
@@ -44,10 +36,10 @@ export const MultiItemFieldInputRow = ({
   isInRow = false,
   isInFooter = false,
 }: MultiItemFieldInputRowProps) => (
-  <StyledInputRow data-in-row={isInRow} data-in-footer={isInFooter}>
+  <StyledInputRow isInRow={isInRow} isInFooter={isInFooter}>
     {children}
     {isDefined(rightComponent) && (
-      <StyledRightContainer data-in-row={isInRow}>
+      <StyledRightContainer isInRow={isInRow}>
         {rightComponent}
       </StyledRightContainer>
     )}

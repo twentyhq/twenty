@@ -4,18 +4,15 @@ import { type FocusEvent, type Ref } from 'react';
 import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledInputContent = styled.div`
+const StyledInputContent = styled.div<{ isInRow: boolean }>`
   align-items: center;
   align-self: stretch;
   box-sizing: border-box;
   display: flex;
   flex: 1;
   min-width: 0;
-  padding-inline-start: ${themeCssVariables.spacing[2]};
-
-  &[data-in-row='true'] {
-    padding-inline-start: ${themeCssVariables.spacing[1]};
-  }
+  padding-inline-start: ${({ isInRow }) =>
+    isInRow ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
 `;
 
 type MultiItemFieldTextInputProps = {
@@ -51,7 +48,7 @@ export const MultiItemFieldTextInput = ({
   onBlur,
   ref,
 }: MultiItemFieldTextInputProps) => (
-  <StyledInputContent data-in-row={isInRow}>
+  <StyledInputContent isInRow={isInRow}>
     <Input
       variant="plain"
       hasFocusRing={false}

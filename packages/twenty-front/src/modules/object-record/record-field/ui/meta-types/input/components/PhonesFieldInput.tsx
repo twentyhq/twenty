@@ -40,7 +40,9 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 const StyledCustomPhoneInputContainer = styled.div<{
   hasItem: boolean;
   hasError?: boolean;
+  isInRow: boolean;
 }>`
+  align-self: ${({ isInRow }) => (isInRow ? 'stretch' : 'auto')};
   background-color: ${({ hasItem }) =>
     hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
   border: ${({ hasItem, hasError }) =>
@@ -53,20 +55,9 @@ const StyledCustomPhoneInputContainer = styled.div<{
   flex: 1;
   height: ${({ hasItem }) => (hasItem ? '30px' : 'auto')};
   min-width: 0;
-
-  &[data-in-row='true'] {
-    align-self: stretch;
-    height: auto;
-  }
-
-  &[data-in-row='true'] button {
-    border-inline-end: none;
-    border-radius: ${themeCssVariables.border.radius.sm};
-    padding-inline: ${themeCssVariables.spacing[1]};
-  }
 `;
 
-const StyledCustomPhoneInputWrapper = styled.div`
+const StyledCustomPhoneInputWrapper = styled.div<{ isInRow: boolean }>`
   background-color: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
@@ -75,10 +66,6 @@ const StyledCustomPhoneInputWrapper = styled.div`
   font-weight: inherit;
   height: 100%;
   width: 100%;
-
-  &[data-in-row='true'] .PhoneInputInput {
-    padding-left: ${themeCssVariables.spacing[1]};
-  }
 
   .PhoneInput {
     height: 100%;
@@ -90,7 +77,8 @@ const StyledCustomPhoneInputWrapper = styled.div`
     box-sizing: border-box;
     color: ${themeCssVariables.font.color.primary};
     height: 100%;
-    padding-left: ${themeCssVariables.spacing[2]};
+    padding-left: ${({ isInRow }) =>
+      isInRow ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
 
     &::placeholder,
     &::-webkit-input-placeholder {
@@ -310,9 +298,9 @@ export const PhonesFieldInput = () => {
       <StyledCustomPhoneInputContainer
         hasItem={isNonEmptyArray(phones) && !isInputInRow}
         hasError={hasError}
-        data-in-row={isInputInRow}
+        isInRow={isInputInRow}
       >
-        <StyledCustomPhoneInputWrapper data-in-row={isInputInRow}>
+        <StyledCustomPhoneInputWrapper isInRow={isInputInRow}>
           <ReactPhoneNumberInput
             autoFocus
             placeholder={t`Phone`}
