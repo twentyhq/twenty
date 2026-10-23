@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { getDatePickerWeekStart } from '@/ui/input/components/internal/date/utils/getDatePickerWeekStart';
+import { getDatePickerWeekStartOrThrow } from '@/ui/input/components/internal/date/utils/getDatePickerWeekStartOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -62,7 +62,7 @@ export const DatePickerCalendar = ({
       }}
       weekStart={
         weekStart ??
-        getDatePickerWeekStart(currentWorkspaceMember?.calendarStartDay)
+        getDatePickerWeekStartOrThrow(currentWorkspaceMember?.calendarStartDay)
       }
       locale={SOURCE_LOCALE}
       previousMonthLabel={t`Previous`}
