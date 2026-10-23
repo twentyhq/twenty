@@ -101,4 +101,9 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
     allowedMimeTypes: ANY_MIME_TYPE,
   },
+  [FileFolder.WorkspaceDataExport]: {
+    ignoreExpirationToken: false,
+    cacheControl: 'private, no-store',
+    allowedMimeTypes: ['application/zip', 'text/csv', 'application/json'],
+  },
 };

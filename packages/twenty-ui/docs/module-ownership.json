@@ -55,6 +55,7 @@
     "CountPager",
     "CountrySelect",
     "CurrencyPicker",
+    "DatePicker",
     "DetailsRow",
     "Dropdown",
     "EmojiPicker",

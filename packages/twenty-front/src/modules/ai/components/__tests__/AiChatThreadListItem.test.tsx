@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ComponentProps } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
+import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
@@ -64,29 +65,29 @@ const SALES_CHANNEL = {
   roleIds: [],
 };
 
-const renderListItem = (
-  thread: AgentChatThreadRecord,
-  {
-    isChecked = false,
-    onClick = jest.fn(),
-    onCheckboxClick,
-  }: Pick<
-    ComponentProps<typeof AiChatThreadListItem>,
-    'isChecked' | 'onCheckboxClick'
-  > &
-    Partial<Pick<ComponentProps<typeof AiChatThreadListItem>, 'onClick'>> = {},
-) =>
+const renderListItem = ({
+  thread,
+  isChecked = false,
+  onClick = jest.fn(),
+  onCheckboxClick,
+}: Pick<
+  ComponentProps<typeof AiChatThreadListItem>,
+  'thread' | 'isChecked' | 'onCheckboxClick'
+> &
+  Partial<Pick<ComponentProps<typeof AiChatThreadListItem>, 'onClick'>>) =>
   render(
     <JotaiProvider store={jotaiStore}>
-      <I18nProvider i18n={i18n}>
-        <AiChatThreadListItem
-          thread={thread}
-          isSelected={false}
-          isChecked={isChecked}
-          onClick={onClick}
-          onCheckboxClick={onCheckboxClick}
-        />
-      </I18nProvider>
+      <MemoryRouter initialEntries={['/inbox']}>
+        <I18nProvider i18n={i18n}>
+          <AiChatThreadListItem
+            thread={thread}
+            isSelected={false}
+            isChecked={isChecked}
+            onClick={onClick}
+            onCheckboxClick={onCheckboxClick}
+          />
+        </I18nProvider>
+      </MemoryRouter>
     </JotaiProvider>,
   );
 
@@ -101,30 +102,30 @@ describe('AiChatThreadListItem', () => {
   });
 
   it('shows the last message under the title', () => {
-    renderListItem(buildThread({}));
+    renderListItem({ thread: buildThread({}) });
 
     expect(screen.getByText('Which plan should I quote?')).toBeInTheDocument();
     expect(screen.queryByText('Needs input')).not.toBeInTheDocument();
   });
 
   it('shows that the chat needs input while a question waits on an answer', () => {
-    renderListItem(
-      buildThread({
+    renderListItem({
+      thread: buildThread({
         pendingQuestionMessageId: '0b6e3f1a-2c4d-4b8e-9a7f-1d3c5e7a9b20',
       }),
-    );
+    });
 
     expect(screen.getByText('Needs input')).toBeInTheDocument();
     expect(screen.getByText('Which plan should I quote?')).toBeInTheDocument();
   });
 
   it('does not ask for input on a deleted chat', () => {
-    renderListItem(
-      buildThread({
+    renderListItem({
+      thread: buildThread({
         deletedAt: '2026-09-08T00:00:00.000Z',
         pendingQuestionMessageId: '0b6e3f1a-2c4d-4b8e-9a7f-1d3c5e7a9b20',
       }),
-    );
+    });
 
     expect(screen.queryByText('Needs input')).not.toBeInTheDocument();
   });
@@ -138,7 +139,7 @@ describe('AiChatThreadListItem', () => {
       ),
     });
 
-    renderListItem(thread);
+    renderListItem({ thread });
 
     expect(screen.getByText('Draft')).toBeInTheDocument();
     expect(screen.getByText('Quote the **annual** plan')).toBeInTheDocument();
@@ -152,14 +153,14 @@ describe('AiChatThreadListItem', () => {
 
     jotaiStore.set(agentChatDraftsByThreadIdState.atom, { [thread.id]: '' });
 
-    renderListItem(thread);
+    renderListItem({ thread });
 
     expect(screen.queryByText('Draft')).not.toBeInTheDocument();
     expect(screen.getByText('Which plan should I quote?')).toBeInTheDocument();
   });
 
   it('has no checkbox where chats cannot be selected', () => {
-    renderListItem(buildThread({}));
+    renderListItem({ thread: buildThread({}) });
 
     expect(
       screen.queryByRole('checkbox', { name: 'Select chat' }),
@@ -171,7 +172,7 @@ describe('AiChatThreadListItem', () => {
     const onCheckboxClick = jest.fn();
     const thread = buildThread({});
 
-    renderListItem(thread, { onClick, onCheckboxClick });
+    renderListItem({ thread, onClick, onCheckboxClick });
 
     await userEvent.click(
       screen.getByRole('checkbox', { name: 'Select chat' }),
@@ -183,7 +184,8 @@ describe('AiChatThreadListItem', () => {
   });
 
   it('shows a checked chat as checked', () => {
-    renderListItem(buildThread({}), {
+    renderListItem({
+      thread: buildThread({}),
       isChecked: true,
       onCheckboxClick: jest.fn(),
     });
@@ -194,7 +196,7 @@ describe('AiChatThreadListItem', () => {
   it('shows the channel a chat belongs to next to its time', () => {
     jotaiStore.set(agentChatChannelsState.atom, [SALES_CHANNEL]);
 
-    renderListItem(buildThread({ channelId: SALES_CHANNEL.id }));
+    renderListItem({ thread: buildThread({ channelId: SALES_CHANNEL.id }) });
 
     expect(screen.getByTitle('Sales')).toBeInTheDocument();
     expect(screen.getByText('In Sales')).toBeInTheDocument();
@@ -203,7 +205,7 @@ describe('AiChatThreadListItem', () => {
   it('shows no channel for a chat outside channels', () => {
     jotaiStore.set(agentChatChannelsState.atom, [SALES_CHANNEL]);
 
-    renderListItem(buildThread({ channelId: null }));
+    renderListItem({ thread: buildThread({ channelId: null }) });
 
     expect(screen.queryByTitle('Sales')).not.toBeInTheDocument();
   });
@@ -216,7 +218,7 @@ describe('AiChatThreadListItem', () => {
       assignment: AgentChatChannelAssignmentFilter.ANY,
     });
 
-    renderListItem(buildThread({ channelId: SALES_CHANNEL.id }));
+    renderListItem({ thread: buildThread({ channelId: SALES_CHANNEL.id }) });
 
     expect(screen.queryByTitle('Sales')).not.toBeInTheDocument();
   });
