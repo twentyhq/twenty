@@ -210,7 +210,7 @@ const ORGANIZATION_FEATURES_SELF_HOST: PlanFeature[] = [
 const ENTERPRISE_FEATURES_CLOUD: PlanFeature[] = [
   {
     title: msg`Room to grow, without slowdowns`,
-    description: msg`Dedicated compute, custom API rates and usage limits`,
+    description: msg`Dedicated compute and custom API rates`,
     visual: { kind: 'icon', icon: IconGauge },
   },
   {
