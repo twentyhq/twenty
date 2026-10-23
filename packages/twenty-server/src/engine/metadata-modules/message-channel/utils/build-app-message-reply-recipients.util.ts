@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type AppMessageParticipantInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -12,14 +13,17 @@ export const buildAppMessageReplyRecipients = ({
 }: {
   participants: Pick<
     MessageParticipantWorkspaceEntity,
-    'handle' | 'displayName' | 'personId' | 'workspaceMemberId'
+    'handle' | 'displayName' | 'personId' | 'workspaceMemberId' | 'role'
   >[];
   channelHandle: string;
 }): AppMessageReplyRecipient[] => {
   const recipientsByHandle = new Map<string, AppMessageReplyRecipient>();
 
   for (const participant of participants) {
-    if (!isNonEmptyString(participant.handle)) {
+    if (
+      !isNonEmptyString(participant.handle) ||
+      participant.role === MessageParticipantRole.BCC
+    ) {
       continue;
     }
 

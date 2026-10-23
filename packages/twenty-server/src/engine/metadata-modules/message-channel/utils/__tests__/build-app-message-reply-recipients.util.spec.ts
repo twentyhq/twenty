@@ -1,3 +1,5 @@
+import { MessageParticipantRole } from 'twenty-shared/types';
+
 import { buildAppMessageReplyRecipients } from 'src/engine/metadata-modules/message-channel/utils/build-app-message-reply-recipients.util';
 
 const buildParticipant = (
@@ -9,6 +11,7 @@ const buildParticipant = (
   displayName: 'Ada Lovelace',
   personId: null,
   workspaceMemberId: null,
+  role: MessageParticipantRole.FROM,
   ...overrides,
 });
 
@@ -19,6 +22,28 @@ describe('buildAppMessageReplyRecipients', () => {
         participants: [
           buildParticipant({ handle: 'URN:LI:PERSON:JANE' }),
           buildParticipant(),
+        ],
+        channelHandle: 'urn:li:person:jane',
+      }),
+    ).toEqual([
+      {
+        handle: 'urn:li:person:ada',
+        displayName: 'Ada Lovelace',
+        personId: undefined,
+        workspaceMemberId: undefined,
+      },
+    ]);
+  });
+
+  it('leaves out blind copied participants', () => {
+    expect(
+      buildAppMessageReplyRecipients({
+        participants: [
+          buildParticipant({
+            handle: 'urn:li:person:grace',
+            role: MessageParticipantRole.BCC,
+          }),
+          buildParticipant({ role: MessageParticipantRole.CC }),
         ],
         channelHandle: 'urn:li:person:jane',
       }),
