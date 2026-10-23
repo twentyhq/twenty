@@ -39,6 +39,14 @@ const spyOnClipboard = () => {
   return writeText;
 };
 
+const renderCardField = () => (
+  <RecordCardBodyContainer>
+    <FieldFocusStaticFocusedProvider>
+      <RecordInlineCellContainer />
+    </FieldFocusStaticFocusedProvider>
+  </RecordCardBodyContainer>
+);
+
 const meta: Meta<typeof RecordInlineCellDisplayMode> = {
   title: 'Modules/ObjectRecord/RecordInlineCell/RecordInlineCellDisplayMode',
   component: RecordInlineCellDisplayMode,
@@ -145,13 +153,7 @@ export const CopiesLinkUrl: Story = {
 };
 
 export const CurrencyStaysOnOneLine: Story = {
-  render: () => (
-    <RecordCardBodyContainer>
-      <FieldFocusStaticFocusedProvider>
-        <RecordInlineCellContainer />
-      </FieldFocusStaticFocusedProvider>
-    </RecordCardBodyContainer>
-  ),
+  render: renderCardField,
   decorators: [
     getFieldDecorator('company', 'annualRecurringRevenue', {
       amountMicros: 100000000,
@@ -195,13 +197,7 @@ export const CurrencyStaysOnOneLine: Story = {
 };
 
 export const DateTimeVerticallyCentered: Story = {
-  render: () => (
-    <RecordCardBodyContainer>
-      <FieldFocusStaticFocusedProvider>
-        <RecordInlineCellContainer />
-      </FieldFocusStaticFocusedProvider>
-    </RecordCardBodyContainer>
-  ),
+  render: renderCardField,
   decorators: [
     getFieldDecorator('task', 'dueAt', '2026-11-19T07:24:00.000Z'),
     getInlineCellContextDecorator({
