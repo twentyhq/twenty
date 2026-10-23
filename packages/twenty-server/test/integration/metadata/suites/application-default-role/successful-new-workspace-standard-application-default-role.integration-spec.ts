@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { findWorkspaceApplicationDefaultRoles } from 'test/integration/metadata/suites/application-default-role/utils/find-workspace-application-default-roles.util';
+import { findStandardApplicationDefaultRole } from 'test/integration/metadata/suites/application-default-role/utils/find-standard-application-default-role.util';
 import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
@@ -13,6 +13,7 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 
 describe('A new workspace gives the standard application Admin as default role', () => {
   let workspaceId: string | undefined;
+  let accessToken: string;
 
   beforeAll(async () => {
     jest.useRealTimers();
@@ -46,10 +47,9 @@ describe('A new workspace gives the standard application Admin as default role',
       expectToFail: false,
     });
 
-    await activateWorkspace({
-      accessToken: authTokensData.tokens.accessOrWorkspaceAgnosticToken.token,
-      expectToFail: false,
-    });
+    accessToken = authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
+
+    await activateWorkspace({ accessToken, expectToFail: false });
   });
 
   afterAll(async () => {
@@ -60,14 +60,13 @@ describe('A new workspace gives the standard application Admin as default role',
     }
   });
 
-  it('gives the standard application the Admin role it owns', async () => {
-    const { standardApplicationRole } =
-      await findWorkspaceApplicationDefaultRoles(workspaceId as string);
+  it('gives the standard application the Admin role', async () => {
+    const standardApplicationDefaultRole =
+      await findStandardApplicationDefaultRole(accessToken);
 
-    expect(standardApplicationRole).toMatchObject({
-      roleUniversalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-      roleId: expect.any(String),
-      roleApplicationId: standardApplicationRole?.applicationId,
+    expect(standardApplicationDefaultRole).toMatchObject({
+      label: 'Admin',
+      universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
     });
   });
 });
