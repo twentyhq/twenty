@@ -116,14 +116,19 @@ export class ConnectionProviderOAuthController {
         redirectLocation: redirectLocation ?? null,
       };
 
+      if (provider.type === 'custom') {
+        const { authorizationUrl } =
+          await this.customFlowService.startAuthorizationFlow(
+            authorizationArgs,
+          );
+
+        return res.redirect(authorizationUrl);
+      }
+
       const { authorizationUrl } =
-        provider.type === 'custom'
-          ? await this.customFlowService.startAuthorizationFlow(
-              authorizationArgs,
-            )
-          : await this.oauthProviderFlowService.startAuthorizationFlow(
-              authorizationArgs,
-            );
+        await this.oauthProviderFlowService.startAuthorizationFlow(
+          authorizationArgs,
+        );
 
       return res.redirect(authorizationUrl);
     } catch (error) {

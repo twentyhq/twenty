@@ -45,19 +45,13 @@ export class ConnectionProviderAuthorizationStateService {
   }
 
   async verifyOrThrow(state: string): Promise<AppOAuthStateJwtPayload> {
+    let verified: AppOAuthStateJwtPayload;
+
     try {
-      const verified = (await this.jwtWrapperService.verifyJwtToken(
-        state,
-      )) as AppOAuthStateJwtPayload;
-
-      if (verified.type !== JwtTokenTypeEnum.APP_OAUTH_STATE) {
-        throw new Error('Wrong JWT type for OAuth state');
-      }
-
-      return verified;
+      verified = await this.jwtWrapperService.verifyJwtToken(state);
     } catch (error) {
       this.logger.warn(
-        `Rejected OAuth state: ${(error as Error).message ?? 'unknown reason'}`,
+        `Rejected OAuth state: ${error instanceof Error ? error.message : String(error)}`,
       );
 
       throw new ConnectionProviderException(
@@ -65,6 +59,15 @@ export class ConnectionProviderAuthorizationStateService {
         ConnectionProviderExceptionCode.INVALID_STATE,
       );
     }
+
+    if (verified.type !== JwtTokenTypeEnum.APP_OAUTH_STATE) {
+      throw new ConnectionProviderException(
+        'Wrong JWT type for OAuth state',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
+    }
+
+    return verified;
   }
 
   async findErrorRedirectTarget(state: string): Promise<{

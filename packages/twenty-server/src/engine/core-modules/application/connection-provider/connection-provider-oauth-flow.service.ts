@@ -44,9 +44,10 @@ export class ConnectionProviderOAuthFlowService {
   ) {}
 
   async startAuthorizationFlow(
-    args: ConnectionAuthorizationArgs,
+    authorizationArgs: ConnectionAuthorizationArgs,
   ): Promise<{ authorizationUrl: string }> {
-    const { connectionProvider, workspaceId, userWorkspaceId } = args;
+    const { connectionProvider, workspaceId, userWorkspaceId } =
+      authorizationArgs;
 
     assertOAuthProvider(connectionProvider);
 
@@ -55,7 +56,8 @@ export class ConnectionProviderOAuthFlowService {
       workspaceId,
       userWorkspaceId,
       scope: connectionProvider.scope,
-      reconnectingConnectedAccountId: args.reconnectingConnectedAccountId,
+      reconnectingConnectedAccountId:
+        authorizationArgs.reconnectingConnectedAccountId,
     });
 
     const { clientId } =
@@ -67,7 +69,7 @@ export class ConnectionProviderOAuthFlowService {
     const codeVerifier = usePkce ? generatePkceVerifier() : null;
 
     const state = await this.authorizationStateService.sign({
-      ...args,
+      ...authorizationArgs,
       codeVerifier,
       expiresIn: STATE_JWT_EXPIRES_IN,
     });
@@ -97,9 +99,11 @@ export class ConnectionProviderOAuthFlowService {
     return { authorizationUrl: authorizationUrl.toString() };
   }
 
-  async completeAuthorizationFlow(args: CallbackArgs): Promise<CallbackResult> {
+  async completeAuthorizationFlow(
+    callbackArgs: CallbackArgs,
+  ): Promise<CallbackResult> {
     const statePayload = await this.authorizationStateService.verifyOrThrow(
-      args.state,
+      callbackArgs.state,
     );
 
     const provider = await this.oauthProviderService.findOneByIdOrThrow({
@@ -131,7 +135,7 @@ export class ConnectionProviderOAuthFlowService {
         tokenEndpoint: provider.oauthConfig.tokenEndpoint,
         clientId,
         clientSecret,
-        code: args.code,
+        code: callbackArgs.code,
         redirectUri: callbackUrl,
         codeVerifier: statePayload.codeVerifier,
         contentType: provider.oauthConfig.tokenRequestContentType,

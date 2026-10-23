@@ -49,9 +49,10 @@ export class ConnectionProviderCustomFlowService {
   ) {}
 
   async startAuthorizationFlow(
-    args: ConnectionAuthorizationArgs,
+    authorizationArgs: ConnectionAuthorizationArgs,
   ): Promise<{ authorizationUrl: string }> {
-    const { connectionProvider, workspaceId, userWorkspaceId } = args;
+    const { connectionProvider, workspaceId, userWorkspaceId } =
+      authorizationArgs;
 
     assertCustomProvider(connectionProvider);
 
@@ -60,11 +61,12 @@ export class ConnectionProviderCustomFlowService {
       workspaceId,
       userWorkspaceId,
       scope: connectionProvider.scope,
-      reconnectingConnectedAccountId: args.reconnectingConnectedAccountId,
+      reconnectingConnectedAccountId:
+        authorizationArgs.reconnectingConnectedAccountId,
     });
 
     const state = await this.authorizationStateService.sign({
-      ...args,
+      ...authorizationArgs,
       codeVerifier: null,
       expiresIn: STATE_JWT_EXPIRES_IN,
     });
@@ -82,9 +84,11 @@ export class ConnectionProviderCustomFlowService {
     return { authorizationUrl };
   }
 
-  async completeAuthorizationFlow(args: CallbackArgs): Promise<CallbackResult> {
+  async completeAuthorizationFlow(
+    callbackArgs: CallbackArgs,
+  ): Promise<CallbackResult> {
     const statePayload = await this.authorizationStateService.verifyOrThrow(
-      args.state,
+      callbackArgs.state,
     );
 
     const provider = await this.connectionProviderService.findOneByIdOrThrow({
@@ -113,7 +117,7 @@ export class ConnectionProviderCustomFlowService {
       await this.connectionProviderLifecycleHookService.runCallback({
         provider,
         workspaceId: statePayload.workspaceId,
-        request: args.request,
+        request: callbackArgs.request,
       });
 
     if (!isDefined(connectedAccountFromCallback)) {
