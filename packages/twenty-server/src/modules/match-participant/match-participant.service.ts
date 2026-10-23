@@ -292,8 +292,7 @@ export class MatchParticipantService<
             transactionScope,
           });
 
-          // handles are matched case-insensitively, and only the person's emails decide: participants they
-          // linked any other way, such as app channels with non-email handles, keep their link
+          // emails before and after the change pick candidates, so links made any other way are left alone
           const participantsToRematch =
             participantMatching.personEmails.length > 0
               ? await participantRepository
