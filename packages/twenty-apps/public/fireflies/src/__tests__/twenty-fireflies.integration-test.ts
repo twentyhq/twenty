@@ -41,7 +41,7 @@ const getServerCallRecordingStatuses = async (): Promise<string[]> => {
 
   if (statusEnum === undefined) {
     throw new Error(
-      'enumCallRecordingStatusEnum is missing from twenty-client-sdk/core; regenerate the client against a running server (yarn twenty dev) before the integration suite',
+      'enumCallRecordingStatusEnum is missing from twenty-client-sdk/core; regenerate the client against a running server (twenty app generate-client) before the integration suite',
     );
   }
 

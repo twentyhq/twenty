@@ -8,7 +8,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 
-@RegisteredWorkspaceCommand('2.52.0', 1792761562238)
+@RegisteredWorkspaceCommand('2.52.0', 1792766943126)
 @Command({
   name: 'upgrade:2-52:seed-workspace-frontend-dependencies',
   description:

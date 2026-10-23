@@ -15,12 +15,11 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { build as bundle, stop } from 'esbuild';
+import { stop } from 'esbuild';
 import { isPlainObject } from 'twenty-shared/utils';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { buildTestAppWorker } from '@/app/__tests__/utils/build-test-app-worker';
-import { SORTED_GLOB_PLUGIN } from '@/app/__tests__/utils/sorted-glob-plugin';
 import { createAppProject } from '@/app/create-app-project';
 import { pathExists } from '@/app/fs-utils';
 import { runAppWorker } from '@/app/run-app-worker';
@@ -136,9 +135,8 @@ const comparableSnapshot = (build: ToolingBuild) => {
   };
 };
 
-describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () => {
+describe('CLI snapshots produce repeatable artifacts', () => {
   let root: string;
-  let sdkEntryPath: string;
   const copyFixture = async (name: string) => {
     const appPath = await mkdtemp(join(root, `${name}-`));
 
@@ -154,24 +152,18 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
     return appPath;
   };
 
-  const buildSdkSnapshot = async (
-    appPath: string,
-    useHeldSnapshot?: Parameters<typeof runAppWorker>[0]['useHeldSnapshot'],
-  ) => {
-    launch.modulePath = join(root, 'reference/app-worker.cjs');
-    try {
-      return await runAppWorker({
-        request: { type: 'bundleSnapshot', appPath, holdSnapshot: true },
-        signal: new AbortController().signal,
-        useHeldSnapshot: async (snapshot) => {
-          launch.modulePath = join(root, 'cli/app-worker.cjs');
-          await useHeldSnapshot?.(snapshot);
-        },
-      });
-    } finally {
-      launch.modulePath = join(root, 'cli/app-worker.cjs');
-    }
-  };
+  const buildRepeatedSnapshot = ({
+    appPath,
+    useHeldSnapshot,
+  }: {
+    appPath: string;
+    useHeldSnapshot: Parameters<typeof runAppWorker>[0]['useHeldSnapshot'];
+  }) =>
+    runAppWorker({
+      request: { type: 'bundleSnapshot', appPath, holdSnapshot: true },
+      signal: new AbortController().signal,
+      useHeldSnapshot,
+    });
 
   const compareSnapshot = async (appPath: string) => {
     const compareBuild = async ({ result }: { result: unknown }) => {
@@ -290,12 +282,15 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
           (response.result as { diagnostics: unknown }).diagnostics,
         ).toEqual(json(expected.diagnostics));
       }
-      expect(await readdir(join(appPath, '.twenty/cli/snapshots'))).toEqual([]);
     };
-    const reference = await buildSdkSnapshot(appPath, compareBuild);
+    const reference = await buildRepeatedSnapshot({
+      appPath,
+      useHeldSnapshot: compareBuild,
+    });
     if (!reference.isSnapshotHeld) {
       await compareBuild(reference);
     }
+    expect(await readdir(join(appPath, '.twenty/cli/snapshots'))).toEqual([]);
     return reference.result as Awaited<ReturnType<typeof buildSnapshot>>;
   };
   beforeAll(async () => {
@@ -362,32 +357,6 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
       createRequire(join(root, 'package.json')).resolve('twenty-sdk/build'),
     ).toThrow();
 
-    sdkEntryPath = join(root, 'sdk-reference.cjs');
-    const sdkSource = join(sourceSdk, 'src');
-
-    await bundle({
-      stdin: {
-        contents: `export { buildSnapshot as buildSourceSnapshot, releaseSnapshot as releaseSourceSnapshot } from './application-build/build-snapshot';`,
-        resolveDir: sdkSource,
-      },
-      outfile: sdkEntryPath,
-      alias: { '@': sdkSource },
-      bundle: true,
-      packages: 'external',
-      platform: 'node',
-      format: 'cjs',
-      target: 'node24',
-      plugins: [SORTED_GLOB_PLUGIN],
-    });
-
-    await mkdir(join(root, 'assets'));
-    await cp(
-      join(sdkSource, 'cli/utilities/build/cover/assets/halftone-backdrop.png'),
-      join(root, 'assets/halftone-backdrop.png'),
-    );
-    await buildTestAppWorker(join(root, 'reference'), {
-      aliases: { '@/app/worker/build-source-snapshot': sdkEntryPath },
-    });
     await buildTestAppWorker(join(root, 'cli'));
     launch.modulePath = join(root, 'cli/app-worker.cjs');
   }, 60000);
@@ -405,7 +374,7 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
     ).toEqual([...FIXTURES].sort());
   });
   it.each(FIXTURES)(
-    'preserves SDK manifest and non-frontend bytes, validates all artifact hashes for %s',
+    'preserves manifest and non-frontend bytes, validates all artifact hashes for %s',
     async (name) => {
       const result = await compareSnapshot(await copyFixture(name));
       expect(result.success, JSON.stringify(result)).toBe(
@@ -493,7 +462,7 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
     await cp(
       join(
         REPOSITORY_ROOT,
-        'packages/twenty-sdk/src/cli/utilities/build/cover/assets/halftone-backdrop.png',
+        'packages/twenty-cli/src/app/bundles/cover/assets/halftone-backdrop.png',
       ),
       join(appPath, 'public/logo.png'),
     );
@@ -639,12 +608,10 @@ describe('CLI snapshots preserve SDK manifests and non-frontend artifacts', () =
         config.references = [{ path: './referenced' }];
         await writeFile(configPath, JSON.stringify(config));
       }
-      const expected = (await buildSdkSnapshot(appPath)).result;
       const response = await runAppWorker({
         request: { type: 'bundleSnapshot', appPath, holdSnapshot: true },
         signal: new AbortController().signal,
       });
-      expect(response.result).toEqual(json(expected));
       expect(response.result).toMatchObject({
         success: false,
         error: { code: 'TYPECHECK_FAILED' },
