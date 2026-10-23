@@ -21,6 +21,7 @@ import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/compani
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const COMPANY_METADATA = getMockObjectMetadataItemOrThrow('company');
+const PERSON_METADATA = getMockObjectMetadataItemOrThrow('person');
 const COMPANY_RECORD = mockedCompanyRecords[0];
 const CREATED_COMPANY_LABEL_PATTERN = new RegExp(String(COMPANY_RECORD.name));
 const CREATED_MORPH_ITEM: RecordPickerPickableMorphItem = {
@@ -78,12 +79,28 @@ export const CreateTargetAndSession: Story = {
     ).toBeVisible();
     expect(within(picker).queryByRole('searchbox')).not.toBeInTheDocument();
 
+    await userEvent.keyboard('{End}');
+    expect(
+      within(picker).getByRole('button', {
+        name: PERSON_METADATA.labelSingular,
+      }),
+    ).toHaveFocus();
     await userEvent.keyboard('{Escape}');
 
     const addNewButton = await within(picker).findByRole('button', {
       name: 'Add New',
     });
 
+    await waitFor(() => expect(addNewButton).toHaveFocus());
+    expect(search).toHaveValue('New company');
+    expect(picker).toBeVisible();
+
+    await userEvent.click(addNewButton);
+    await userEvent.keyboard('{Home}');
+
+    expect(within(picker).getByRole('button', { name: 'Back' })).toHaveFocus();
+
+    await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(addNewButton).toHaveFocus());
     expect(search).toHaveValue('New company');
     expect(picker).toBeVisible();

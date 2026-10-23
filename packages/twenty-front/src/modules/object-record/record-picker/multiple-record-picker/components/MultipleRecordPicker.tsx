@@ -3,7 +3,7 @@ import {
   useDropdownPage,
   useDropdownPlacementOrThrow,
 } from 'twenty-ui/components/navigation';
-import { type KeyboardEvent, useRef } from 'react';
+import { useRef } from 'react';
 import { useStore } from 'jotai';
 
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
@@ -22,7 +22,6 @@ import { upsertMorphItem } from '@/object-record/record-picker/multiple-record-p
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { Key } from 'ts-key-enum';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { getMultipleRecordPickerLayoutDirection } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerLayoutDirection';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -85,16 +84,6 @@ export const MultipleRecordPicker = ({
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
   const store = useStore();
-
-  const handleCreateTargetKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key !== Key.Escape || event.nativeEvent.isComposing) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-    goBack();
-  };
 
   const creatableObjectMetadataItems = isDefined(onCreate)
     ? multipleRecordPickerSearchableObjectMetadataItems.filter(
@@ -195,15 +184,13 @@ export const MultipleRecordPicker = ({
       value={{ instanceId: componentInstanceId }}
     >
       <Dropdown.Page id="create-target">
-        <div onKeyDownCapture={handleCreateTargetKeyDown}>
-          <MultipleRecordPickerCreateTargetSelect
-            objectMetadataItems={creatableObjectMetadataItems}
-            disabled={isCreatePending}
-            onSelect={(objectMetadataItemId) => {
-              void handleCreate(objectMetadataItemId);
-            }}
-          />
-        </div>
+        <MultipleRecordPickerCreateTargetSelect
+          objectMetadataItems={creatableObjectMetadataItems}
+          disabled={isCreatePending}
+          onSelect={(objectMetadataItemId) => {
+            void handleCreate(objectMetadataItemId);
+          }}
+        />
       </Dropdown.Page>
       <Dropdown.Page id="records">
         {resolvedLayoutDirection === 'search-bar-on-bottom' && (
