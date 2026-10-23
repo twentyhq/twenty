@@ -30,6 +30,10 @@ export const RecordShowPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
+  if (!isRouteObjectMetadataAvailable) {
+    return <Navigate replace to={AppPath.NotFound} />;
+  }
+
   if (
     parameters.objectNameSingular === CoreObjectNameSingular.AgentChatThread &&
     isDefined(parameters.objectRecordId)

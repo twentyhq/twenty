@@ -37,12 +37,8 @@ export const generateDepthRecordGqlFieldsFromFields = ({
             fieldMetadata.relation?.targetObjectMetadata.id,
         );
 
-        if (!targetObjectMetadataItem) {
-          throw new Error(
-            doNotTranslate(
-              `Target object metadata item not found for ${fieldMetadata.name}`,
-            ),
-          );
+        if (!isDefined(targetObjectMetadataItem)) {
+          return recordGqlFields;
         }
 
         const junctionConfig = resolveJunctionConfig({
@@ -99,35 +95,33 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
-        const morphGqlFields = fieldMetadata.morphRelations.map(
+        const morphGqlFields = fieldMetadata.morphRelations.flatMap(
           (morphRelation) => {
             const morphTargetObjectMetadataItem = objectMetadataItems.find(
               (objectMetadataItem) =>
                 objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
             );
 
-            if (!morphTargetObjectMetadataItem) {
-              throw new Error(
-                doNotTranslate(
-                  `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
-                ),
-              );
+            if (!isDefined(morphTargetObjectMetadataItem)) {
+              return [];
             }
 
-            return {
-              gqlField: computeMorphRelationGqlFieldName({
-                fieldName: fieldMetadata.name,
-                relationType: morphRelation.type,
-                targetObjectMetadataNameSingular:
-                  morphRelation.targetObjectMetadata.nameSingular,
-                targetObjectMetadataNamePlural:
-                  morphRelation.targetObjectMetadata.namePlural,
-              }),
-              fieldMetadata,
-              relationIdentifierSubGqlFields: buildIdentifierGqlFields(
-                morphTargetObjectMetadataItem,
-              ),
-            };
+            return [
+              {
+                gqlField: computeMorphRelationGqlFieldName({
+                  fieldName: fieldMetadata.name,
+                  relationType: morphRelation.type,
+                  targetObjectMetadataNameSingular:
+                    morphRelation.targetObjectMetadata.nameSingular,
+                  targetObjectMetadataNamePlural:
+                    morphRelation.targetObjectMetadata.namePlural,
+                }),
+                fieldMetadata,
+                relationIdentifierSubGqlFields: buildIdentifierGqlFields(
+                  morphTargetObjectMetadataItem,
+                ),
+              },
+            ];
           },
         );
 

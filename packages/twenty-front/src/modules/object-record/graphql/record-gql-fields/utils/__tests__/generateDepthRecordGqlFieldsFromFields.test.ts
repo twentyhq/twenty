@@ -32,4 +32,48 @@ describe('generateDepthRecordGqlFieldsFromFields', () => {
       }),
     ).not.toHaveProperty('taskTargets');
   });
+
+  it('skips a relation whose target object is not in the metadata', () => {
+    const taskMetadata = getMockObjectMetadataItemOrThrow('task');
+    const workspaceMemberMetadata =
+      getMockObjectMetadataItemOrThrow('workspaceMember');
+    const assigneeField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskMetadata,
+      fieldName: 'assignee',
+    });
+
+    const recordGqlFields = generateDepthRecordGqlFieldsFromFields({
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock().filter(
+        ({ id }) => id !== workspaceMemberMetadata.id,
+      ),
+      sourceObjectMetadataItem: taskMetadata,
+      fields: [assigneeField],
+      depth: 1,
+    });
+
+    expect(recordGqlFields).toEqual({});
+  });
+
+  it('skips a morph target whose object is not in the metadata', () => {
+    const noteTargetMetadata = getMockObjectMetadataItemOrThrow('noteTarget');
+    const companyMetadata = getMockObjectMetadataItemOrThrow('company');
+    const targetField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: noteTargetMetadata,
+      fieldName: 'target',
+    });
+
+    const recordGqlFields = generateDepthRecordGqlFieldsFromFields({
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock().filter(
+        ({ id }) => id !== companyMetadata.id,
+      ),
+      sourceObjectMetadataItem: noteTargetMetadata,
+      fields: [targetField],
+      depth: 1,
+    });
+
+    expect(recordGqlFields).not.toHaveProperty('targetCompany');
+    expect(recordGqlFields).not.toHaveProperty('targetCompanyId');
+    expect(recordGqlFields).toHaveProperty('targetPerson');
+    expect(recordGqlFields).toHaveProperty('targetPersonId');
+  });
 });

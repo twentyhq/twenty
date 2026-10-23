@@ -142,6 +142,7 @@ describe('RecordShowPage workspace surface composition', () => {
   });
 
   it('delegates core-owned records through the generic core show page', () => {
+    mockObjectMetadataItems = [{ nameSingular: 'workflow' }];
     mockParameters = {
       objectNameSingular: 'workflow',
       objectRecordId: 'workspace-workflow-1',
@@ -225,6 +226,15 @@ describe('RecordShowPage workspace surface composition', () => {
     );
 
     expect(screen.getByTestId('route-unavailable')).toBeInTheDocument();
+    expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
+  });
+
+  it('sends a removed object to the not found page on the main surface', () => {
+    mockObjectMetadataItems = [];
+
+    render(<RecordShowPage />);
+
+    expect(screen.getByTestId('navigate')).toHaveTextContent('/not-found');
     expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
   });
 
