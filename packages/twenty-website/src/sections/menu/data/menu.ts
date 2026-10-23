@@ -101,9 +101,9 @@ export const MENU: {
           href: '/releases',
           icon: IconTag,
           preview: {
-            image: LATEST_RELEASE.previewImage,
-            imageAlt: msg`Twenty release ${LATEST_RELEASE.release} — ${LATEST_RELEASE.title}`,
-            imageScale: 1.04,
+            image: '/images/menu/releases.webp',
+            imageAlt: msg`Blue megaphone illustration`,
+            imagePosition: 'center',
             title: msg`See what shipped in ${LATEST_RELEASE.release}`,
             description: msg`Track every release with changelogs, highlights and demos of the newest features.`,
           },
