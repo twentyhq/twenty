@@ -15,10 +15,8 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
-import {
-  type MarkerServer,
-  startMarkerServer,
-} from 'test/integration/utils/start-marker-server.util';
+import { type MarkerServer } from 'test/integration/types/marker-server.type';
+import { startMarkerServer } from 'test/integration/utils/start-marker-server.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
