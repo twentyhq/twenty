@@ -21,7 +21,7 @@ const copyYarnEngine = async (nodejsDir) => {
   await fs.cp('yarn-engine', nodejsDir, { recursive: true });
 };
 
-const runYarnInstall = async (nodejsDir, installAllDependencies) => {
+const runYarnInstall = async ({ nodejsDir, shouldInstallAllDependencies }) => {
   const { execFile } = await import('child_process');
   const { promisify } = await import('util');
   const execFilePromise = promisify(execFile);
@@ -37,7 +37,7 @@ const runYarnInstall = async (nodejsDir, installAllDependencies) => {
       process.execPath,
       [
         YARN_ENGINE_PATH,
-        ...(installAllDependencies
+        ...(shouldInstallAllDependencies
           ? ['install', '--immutable']
           : ['workspaces', 'focus', '--all', '--production']),
       ],
@@ -103,7 +103,7 @@ export const handler = async (event) => {
     packageJson,
     yarnLock,
     presignedUploadUrl,
-    installAllDependencies,
+    shouldInstallAllDependencies,
   } = event;
 
   if (action !== 'createLayer') {
@@ -126,7 +126,7 @@ export const handler = async (event) => {
   try {
     await writePackageFiles(nodejsDir, packageJson, yarnLock);
     await copyYarnEngine(nodejsDir);
-    await runYarnInstall(nodejsDir, installAllDependencies);
+    await runYarnInstall({ nodejsDir, shouldInstallAllDependencies });
     await createZip(buildDir, zipPath);
 
     await uploadToPresignedUrl(zipPath, presignedUploadUrl);

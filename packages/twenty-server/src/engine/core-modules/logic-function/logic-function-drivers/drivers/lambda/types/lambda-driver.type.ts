@@ -17,7 +17,7 @@ export type LambdaDriverExecutorPayload = {
 
 export type YarnInstallLambdaPayload = {
   action: 'createLayer';
-  installAllDependencies?: boolean;
+  shouldInstallAllDependencies?: boolean;
   packageJson: string;
   yarnLock: string;
   presignedUploadUrl: string;

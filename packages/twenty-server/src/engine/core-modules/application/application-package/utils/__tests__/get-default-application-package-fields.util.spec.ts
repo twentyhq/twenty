@@ -1,11 +1,11 @@
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
-import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-dirname';
+import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
 
 describe('application dependency defaults', () => {
   it('keeps frontend packages in the Workspace custom app only', async () => {
     const standard = await getDefaultApplicationPackageFields();
     const custom = await getDefaultApplicationPackageFields({
-      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRNAME,
+      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
     });
     expect(standard.packageJsonChecksum).toBe(
       '19e2309740fef4df0654b2e673626344',
