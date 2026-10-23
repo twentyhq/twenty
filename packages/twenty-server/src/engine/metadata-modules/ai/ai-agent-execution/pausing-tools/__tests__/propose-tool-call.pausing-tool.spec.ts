@@ -379,3 +379,57 @@ describe('frontend component approval', () => {
     expect(executeTool).not.toHaveBeenCalled();
   });
 });
+
+describe('frontend component deletion approval', () => {
+  const input = {
+    toolName: 'delete_front_component',
+    arguments: { frontComponentId: 'approved-component', name: 'Renewals' },
+    summary: 'Delete Renewals from Workspace app',
+  };
+  const pending = {
+    success: true,
+    result: {
+      status: 'pending',
+      proposal: {
+        ...input,
+        toolLabel: 'Delete component',
+        template: 'frontComponentDelete',
+      },
+    },
+  };
+
+  it('deletes only the proposed component even when response arguments are edited', async () => {
+    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(input, pending);
+    const executeTool = jest
+      .fn()
+      .mockResolvedValue({ success: true, message: 'Saved' });
+
+    await call!.complete({
+      output: {
+        decision: 'approve',
+        arguments: {
+          frontComponentId: 'different-component',
+          name: 'Different',
+        },
+      },
+      context: { executeTool },
+    });
+
+    expect(executeTool).toHaveBeenCalledWith({
+      toolName: 'delete_front_component',
+      args: { frontComponentId: 'approved-component', name: 'Renewals' },
+    });
+  });
+
+  it('never deletes a rejected component', async () => {
+    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(input, pending);
+    const executeTool = jest.fn();
+
+    await call!.complete({
+      output: { decision: 'reject' },
+      context: { executeTool },
+    });
+
+    expect(executeTool).not.toHaveBeenCalled();
+  });
+});

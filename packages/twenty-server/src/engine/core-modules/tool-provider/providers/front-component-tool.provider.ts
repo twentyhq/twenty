@@ -44,6 +44,12 @@ export class FrontComponentToolProvider implements ToolProvider {
           approval: { template: 'frontComponent' as const },
         };
       }
+      if (descriptor.name === 'delete_front_component') {
+        return {
+          ...descriptor,
+          approval: { template: 'frontComponentDelete' as const },
+        };
+      }
       return descriptor;
     });
   }

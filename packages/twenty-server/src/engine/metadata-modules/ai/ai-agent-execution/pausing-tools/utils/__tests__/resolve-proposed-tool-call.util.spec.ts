@@ -282,6 +282,14 @@ describe('resolveProposedToolCall', () => {
 
 it.each([
   [
+    'delete_front_component',
+    'frontComponentDelete',
+    {
+      frontComponentId: '20202020-2222-4222-8222-222222222222',
+      name: 'Renewals',
+    },
+  ],
+  [
     'publish_front_component',
     'frontComponent',
     { draftId: '20202020-1111-4111-8111-111111111111' },
@@ -334,6 +342,36 @@ it.each([{}, { draftId: 123 }, { draftId: 'not-a-draft-id' }])(
     expect(result).toEqual({
       error:
         'arguments.draftId must be the draftId returned by preview_front_component.',
+    });
+  },
+);
+
+it.each([
+  {},
+  { frontComponentId: '20202020-2222-4222-8222-222222222222' },
+  { frontComponentId: 'missing-id', name: 'Renewals' },
+])(
+  'rejects a deletion proposal without a valid target %j',
+  async (toolArguments) => {
+    const result = await resolveProposedToolCall({
+      input: {
+        toolName: 'delete_front_component',
+        arguments: toolArguments,
+        summary: 'Delete component',
+      },
+      findTool: async () => ({
+        name: 'delete_front_component',
+        label: 'Delete component',
+        description: '',
+        category: 'FRONT_COMPONENT' as ToolIndexEntry['category'],
+        executionRef: { kind: 'static', toolId: 'delete_front_component' },
+        approval: { template: 'frontComponentDelete' },
+      }),
+      executeTool: jest.fn(),
+    });
+    expect(result).toEqual({
+      error:
+        'arguments.frontComponentId and arguments.name must identify the saved component to delete.',
     });
   },
 );
