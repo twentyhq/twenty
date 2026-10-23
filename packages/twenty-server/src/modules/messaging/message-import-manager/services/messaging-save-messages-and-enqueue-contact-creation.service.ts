@@ -44,13 +44,19 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  async saveMessagesAndEnqueueContactCreation(
-    messagesToSave: MessageWithParticipants[],
-    messageChannel: MessageChannelEntity,
-    connectedAccount: ConnectedAccountEntity,
-    workspaceId: string,
-    personHandleField?: PersonHandleField,
-  ): Promise<
+  async saveMessagesAndEnqueueContactCreation({
+    messagesToSave,
+    messageChannel,
+    connectedAccount,
+    workspaceId,
+    personHandleField,
+  }: {
+    messagesToSave: MessageWithParticipants[];
+    messageChannel: MessageChannelEntity;
+    connectedAccount: ConnectedAccountEntity;
+    workspaceId: string;
+    personHandleField?: PersonHandleField;
+  }): Promise<
     | {
         messageExternalIdsAndIdsMap: Map<string, string>;
         messageExternalIdToMessageThreadIdMap: Map<string, string>;

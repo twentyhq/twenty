@@ -5,17 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { PERSON_HANDLE_FIELD_TYPES } from 'src/modules/match-participant/person-handle-field/constants/person-handle-field-types.constant';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
+import { toPersonHandleFieldType } from 'src/modules/match-participant/person-handle-field/utils/to-person-handle-field-type.util';
 
 type PersonHandleFieldWithUniversalIdentifier = PersonHandleField & {
   universalIdentifier: string;
 };
-
-const toPersonHandleFieldType = (
-  type: string,
-): PersonHandleField['type'] | undefined =>
-  PERSON_HANDLE_FIELD_TYPES.find((handleFieldType) => handleFieldType === type);
 
 @Injectable()
 export class PersonHandleFieldService {

@@ -104,14 +104,14 @@ export class ApplicationMessageIngestionService {
     // locked per channel, the narrowest scope since dedup never spans channels
     const savedMessages = await this.cacheLockService.withLock(
       () =>
-        this.saveMessagesService.saveMessagesAndEnqueueContactCreation(
+        this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
           messagesToSave,
           // the save path only reads inert settings and the id off the channel
           messageChannel,
           connectedAccount,
           workspaceId,
-          personHandleField ?? undefined,
-        ),
+          personHandleField: personHandleField ?? undefined,
+        }),
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
       INGESTION_LOCK_OPTIONS,
     );
