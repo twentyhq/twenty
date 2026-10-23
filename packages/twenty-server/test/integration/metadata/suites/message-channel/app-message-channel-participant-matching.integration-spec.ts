@@ -73,7 +73,13 @@ describe('app message channel participant matching (e2e)', () => {
     additionalPhones: [],
   });
 
-  const createPerson = async (firstName: string, phone: FrenchPhone) => {
+  const createPerson = async ({
+    firstName,
+    phone,
+  }: {
+    firstName: string;
+    phone: FrenchPhone;
+  }) => {
     const id = v4();
     const response = await createOneOperation({
       objectMetadataSingularName: 'person',
@@ -86,7 +92,13 @@ describe('app message channel participant matching (e2e)', () => {
     return id;
   };
 
-  const updatePersonPhone = async (personId: string, phone: FrenchPhone) => {
+  const updatePersonPhone = async ({
+    personId,
+    phone,
+  }: {
+    personId: string;
+    phone: FrenchPhone;
+  }) => {
     const response = await makeGraphqlApiRequest(
       updateOneOperationFactory({
         objectMetadataSingularName: 'person',
@@ -307,7 +319,10 @@ describe('app message channel participant matching (e2e)', () => {
   }, 120000);
 
   it('stores the handle in canonical form and links it to the person with that phone', async () => {
-    const adaId = await createPerson('Ada', { nationalNumber: '612345678' });
+    const adaId = await createPerson({
+      firstName: 'Ada',
+      phone: { nationalNumber: '612345678' },
+    });
 
     const { messageId, messageThreadId } = await ingestFromOrThrow({
       externalId: 'from-ada',
@@ -331,7 +346,7 @@ describe('app message channel participant matching (e2e)', () => {
   });
 
   it('links past conversations when a person gains the value and releases them when they lose it', async () => {
-    const graceId = await createPerson('Grace', null);
+    const graceId = await createPerson({ firstName: 'Grace', phone: null });
 
     const { messageId } = await ingestFromOrThrow({
       externalId: 'from-grace',
@@ -340,16 +355,25 @@ describe('app message channel participant matching (e2e)', () => {
 
     expect((await findSender(messageId)).personId).toBeNull();
 
-    await updatePersonPhone(graceId, { nationalNumber: '699999999' });
+    await updatePersonPhone({
+      personId: graceId,
+      phone: { nationalNumber: '699999999' },
+    });
     expect((await findSender(messageId)).personId).toBe(graceId);
 
-    await updatePersonPhone(graceId, null);
+    await updatePersonPhone({ personId: graceId, phone: null });
     expect((await findSender(messageId)).personId).toBeNull();
   });
 
-  it('keeps a personId the app passes', async () => {
-    const katherineId = await createPerson('Katherine', null);
-    await createPerson('Dorothy', { nationalNumber: '688888888' });
+  it('keeps a personId the app passes, even when another person gains or loses that value', async () => {
+    const katherineId = await createPerson({
+      firstName: 'Katherine',
+      phone: null,
+    });
+    const dorothyId = await createPerson({
+      firstName: 'Dorothy',
+      phone: { nationalNumber: '688888888' },
+    });
 
     const { messageId } = await ingestFromOrThrow({
       externalId: 'from-dorothy-number',
@@ -357,6 +381,9 @@ describe('app message channel participant matching (e2e)', () => {
       personId: katherineId,
     });
 
+    expect((await findSender(messageId)).personId).toBe(katherineId);
+
+    await updatePersonPhone({ personId: dorothyId, phone: null });
     expect((await findSender(messageId)).personId).toBe(katherineId);
   });
 

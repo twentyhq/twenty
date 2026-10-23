@@ -22,19 +22,32 @@ describe('getChangedPersonHandles', () => {
       getChangedPersonHandles({
         personHandleField,
         personChanges: [
-          { before: buildPerson('611111111'), after: buildPerson('622222222') },
+          {
+            personId: 'person-a',
+            before: buildPerson('611111111'),
+            after: buildPerson('622222222'),
+          },
         ],
       }),
-    ).toEqual(['+33611111111', '+33622222222']);
+    ).toEqual({
+      handles: ['+33611111111', '+33622222222'],
+      personIds: ['person-a'],
+    });
   });
 
   it('returns the values of a created person', () => {
     expect(
       getChangedPersonHandles({
         personHandleField,
-        personChanges: [{ before: null, after: buildPerson('611111111') }],
+        personChanges: [
+          {
+            personId: 'person-a',
+            before: null,
+            after: buildPerson('611111111'),
+          },
+        ],
       }),
-    ).toEqual(['+33611111111']);
+    ).toEqual({ handles: ['+33611111111'], personIds: ['person-a'] });
   });
 
   it('ignores people whose values did not change', () => {
@@ -42,9 +55,13 @@ describe('getChangedPersonHandles', () => {
       getChangedPersonHandles({
         personHandleField,
         personChanges: [
-          { before: buildPerson('611111111'), after: buildPerson('611111111') },
+          {
+            personId: 'person-a',
+            before: buildPerson('611111111'),
+            after: buildPerson('611111111'),
+          },
         ],
       }),
-    ).toEqual([]);
+    ).toEqual({ handles: [], personIds: [] });
   });
 });

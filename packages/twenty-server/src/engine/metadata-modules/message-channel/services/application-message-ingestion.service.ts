@@ -81,15 +81,11 @@ export class ApplicationMessageIngestionService {
     this.assertExternalIdsAreUnique(messages);
     await this.assertReferencedIdentitiesExist({ messages, workspaceId });
 
-    const personHandleField = isDefined(
-      messageChannel.participantHandleFieldUniversalIdentifier,
-    )
-      ? await this.personHandleFieldService.findByUniversalIdentifier({
-          workspaceId,
-          fieldUniversalIdentifier:
-            messageChannel.participantHandleFieldUniversalIdentifier,
-        })
-      : null;
+    const personHandleField = await this.findPersonHandleFieldOrThrow({
+      workspaceId,
+      participantHandleFieldUniversalIdentifier:
+        messageChannel.participantHandleFieldUniversalIdentifier,
+    });
 
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({
@@ -186,6 +182,34 @@ export class ApplicationMessageIngestionService {
         workspaceMemberId: participant.workspaceMemberId ?? null,
       })),
     };
+  }
+
+  // raw handles would mix with the canonical ones already stored and stop matching the channel's own handle
+  private async findPersonHandleFieldOrThrow({
+    workspaceId,
+    participantHandleFieldUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    participantHandleFieldUniversalIdentifier: string | null;
+  }): Promise<PersonHandleField | null> {
+    if (!isDefined(participantHandleFieldUniversalIdentifier)) {
+      return null;
+    }
+
+    const personHandleField =
+      await this.personHandleFieldService.findByUniversalIdentifier({
+        workspaceId,
+        fieldUniversalIdentifier: participantHandleFieldUniversalIdentifier,
+      });
+
+    if (!isDefined(personHandleField)) {
+      throw new MessageChannelException(
+        `The person field ${participantHandleFieldUniversalIdentifier} this channel matches participants on no longer exists or is inactive`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    return personHandleField;
   }
 
   // stored canonical so a person change finds these participants by exact handle, whatever format the provider sent

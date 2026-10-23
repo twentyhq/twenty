@@ -51,6 +51,7 @@ export class MessageParticipantPersonListener {
     const personHandleMatching = await this.buildPersonHandleMatching({
       workspaceId: payload.workspaceId,
       personChanges: payload.events.map((eventPayload) => ({
+        personId: eventPayload.recordId,
         before: null,
         after: eventPayload.properties.after,
       })),
@@ -84,6 +85,7 @@ export class MessageParticipantPersonListener {
     const personHandleMatching = await this.buildPersonHandleMatching({
       workspaceId: payload.workspaceId,
       personChanges: payload.events.map((eventPayload) => ({
+        personId: eventPayload.recordId,
         before: eventPayload.properties.before,
         after: eventPayload.properties.after,
       })),
@@ -124,27 +126,28 @@ export class MessageParticipantPersonListener {
   }: {
     workspaceId: string;
     personChanges: {
+      personId: string;
       before: PersonWorkspaceEntity | null;
       after: PersonWorkspaceEntity;
     }[];
   }): Promise<PersonHandleMatching[]> {
     const changedHandlesByFieldUniversalIdentifier = new Map<
       string,
-      string[]
+      { handles: string[]; personIds: string[] }
     >();
 
     for (const personHandleField of await this.personHandleFieldService.findAll(
       workspaceId,
     )) {
-      const handles = getChangedPersonHandles({
+      const changedHandles = getChangedPersonHandles({
         personHandleField,
         personChanges,
       });
 
-      if (handles.length > 0) {
+      if (changedHandles.handles.length > 0) {
         changedHandlesByFieldUniversalIdentifier.set(
           personHandleField.universalIdentifier,
-          handles,
+          changedHandles,
         );
       }
     }
@@ -166,7 +169,7 @@ export class MessageParticipantPersonListener {
     });
 
     return [...changedHandlesByFieldUniversalIdentifier].flatMap(
-      ([fieldUniversalIdentifier, handles]) => {
+      ([fieldUniversalIdentifier, { handles, personIds }]) => {
         const messageChannelIds = messageChannels
           .filter(
             (messageChannel) =>
@@ -176,7 +179,14 @@ export class MessageParticipantPersonListener {
           .map((messageChannel) => messageChannel.id);
 
         return messageChannelIds.length > 0
-          ? [{ fieldUniversalIdentifier, messageChannelIds, handles }]
+          ? [
+              {
+                fieldUniversalIdentifier,
+                messageChannelIds,
+                handles,
+                personIds,
+              },
+            ]
           : [];
       },
     );

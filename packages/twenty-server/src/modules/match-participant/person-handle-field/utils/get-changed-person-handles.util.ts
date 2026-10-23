@@ -23,26 +23,39 @@ const getHandles = ({
   return [...primary, ...additional];
 };
 
-// both sides of each change that moved the field's values; unchanged people contribute nothing
+type PersonChange = {
+  personId: string;
+  before: object | null;
+  after: object;
+};
+
 export const getChangedPersonHandles = ({
   personHandleField,
   personChanges,
 }: {
   personHandleField: PersonHandleField;
-  personChanges: {
-    before: object | null;
-    after: object;
-  }[];
-}): string[] => [
-  ...new Set(
-    personChanges.flatMap(({ before, after }) => {
-      const handlesBefore = getHandles({ personHandleField, person: before });
-      const handlesAfter = getHandles({ personHandleField, person: after });
-      const isUnchanged =
-        handlesBefore.length === handlesAfter.length &&
-        handlesBefore.every((handle) => handlesAfter.includes(handle));
+  personChanges: PersonChange[];
+}): { handles: string[]; personIds: string[] } => {
+  const handles = new Set<string>();
+  const personIds = new Set<string>();
 
-      return isUnchanged ? [] : [...handlesBefore, ...handlesAfter];
-    }),
-  ),
-];
+  for (const { personId, before, after } of personChanges) {
+    const handlesBefore = getHandles({ personHandleField, person: before });
+    const handlesAfter = getHandles({ personHandleField, person: after });
+    const isUnchanged =
+      handlesBefore.length === handlesAfter.length &&
+      handlesBefore.every((handle) => handlesAfter.includes(handle));
+
+    if (isUnchanged) {
+      continue;
+    }
+
+    personIds.add(personId);
+
+    for (const handle of [...handlesBefore, ...handlesAfter]) {
+      handles.add(handle);
+    }
+  }
+
+  return { handles: [...handles], personIds: [...personIds] };
+};

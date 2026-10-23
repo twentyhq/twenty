@@ -1548,6 +1548,7 @@ export type CreateAppMessageChannelInput = {
   connectedAccountId: Scalars['UUID']['input'];
   displayName?: InputMaybe<Scalars['String']['input']>;
   handle: Scalars['String']['input'];
+  participantHandleFieldUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
   visibility: MessageChannelVisibility;
 };
 
@@ -3104,6 +3105,7 @@ export type MessageChannel = {
   isContactAutoCreationEnabled: Scalars['Boolean']['output'];
   isSyncEnabled: Scalars['Boolean']['output'];
   messageFolderImportPolicy: MessageFolderImportPolicy;
+  participantHandleFieldUniversalIdentifier?: Maybe<Scalars['UUID']['output']>;
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction;
   syncStage: MessageChannelSyncStage;
   syncStageStartedAt?: Maybe<Scalars['DateTime']['output']>;

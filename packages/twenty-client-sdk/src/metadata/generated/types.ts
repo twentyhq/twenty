@@ -3119,6 +3119,9 @@ export default {
             "handle": [
                 1
             ],
+            "participantHandleFieldUniversalIdentifier": [
+                515
+            ],
             "visibility": [
                 343
             ],
@@ -6090,6 +6093,9 @@ export default {
             ],
             "messageFolderImportPolicy": [
                 345
+            ],
+            "participantHandleFieldUniversalIdentifier": [
+                515
             ],
             "pendingGroupEmailsAction": [
                 339

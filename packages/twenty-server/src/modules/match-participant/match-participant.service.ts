@@ -42,6 +42,7 @@ type MatchParticipantsForPersonHandlesArgs = {
   personHandleField: PersonHandleField;
   messageChannelIds: string[];
   handles: string[];
+  personIds: string[];
   workspaceId: string;
 };
 
@@ -316,6 +317,7 @@ export class MatchParticipantService<
     personHandleField,
     messageChannelIds,
     handles,
+    personIds,
     workspaceId,
   }: MatchParticipantsForPersonHandlesArgs) {
     if (messageChannelIds.length === 0 || handles.length === 0) {
@@ -364,11 +366,14 @@ export class MatchParticipantService<
             associations.map((association) => association.messageId),
           );
 
+          // a link the app passed to someone else stands: only unlinked participants and those of the changed people move
           const participantsToRematch = participantsWithHandle.filter(
             (participant) =>
               messageIdsOnMatchingChannels.has(
                 this.getSourceRecordId(participant),
-              ),
+              ) &&
+              (!isDefined(participant.personId) ||
+                personIds.includes(participant.personId)),
           );
 
           await this.matchParticipants({

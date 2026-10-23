@@ -152,7 +152,7 @@ Any active person field of type emails, phones, links or text works, including o
 - **links each participant you leave unlinked** to the person whose field holds that value, primary values first, then the oldest person.
 - **re-matches when people change**: adding the value to a person links their past conversations, and removing it releases them.
 
-A `personId` you pass still wins, and the field is set once, at creation.
+A `personId` you pass still wins, including when someone else later gains or loses that value. The field is set once, at creation; if it is deleted or deactivated, ingestion into the channel is refused rather than storing handles Twenty can no longer normalize.
 
 Pick handles that are both stable and stored on contacts. For LinkedIn, that means the public profile URL rather than the member URN; keep your own mapping if you need the URN to call the provider.
 

@@ -3,7 +3,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 
-const canonicalTextSql = (expression: string) => `LOWER(TRIM(${expression}))`;
+// TRIM only strips spaces; the canonical form strips any leading and trailing whitespace
+const canonicalTextSql = (expression: string) =>
+  `LOWER(regexp_replace(${expression}, '^\\s+|\\s+$', '', 'g'))`;
 
 const canonicalPhoneSql = ({
   callingCode,
