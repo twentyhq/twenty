@@ -108,7 +108,7 @@ export const RecordTableHeaderFirstCell = () => {
           objectMetadataId={objectMetadataItem.id}
         />
       )}
-      {iconIsVisible && !isRecordTableColumnHeadersReadOnly && (
+      {iconIsVisible && (
         <StyledPlusButtonWrapper>
           <RecordTableHeaderLabelIdentifierCellPlusButton />
         </StyledPlusButtonWrapper>

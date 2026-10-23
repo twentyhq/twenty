@@ -266,10 +266,10 @@ export const RecordBoardColumnHeader = () => {
                 />
               </StyledAggregateDropdownContainer>
             </StyledLeftContainer>
-            {!isRecordBoardViewSettingsReadOnly && (
-              <StyledHeaderActions
-                data-dropdown-open={isDropdownOpen ? 'true' : undefined}
-              >
+            <StyledHeaderActions
+              data-dropdown-open={isDropdownOpen ? 'true' : undefined}
+            >
+              {!isRecordBoardViewSettingsReadOnly && (
                 <LightIconButton
                   emphasis="subtle"
                   aria-label={t`More options`}
@@ -281,17 +281,17 @@ export const RecordBoardColumnHeader = () => {
                 >
                   <IconDotsVertical />
                 </LightIconButton>
-                {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
-                  <LightIconButton
-                    emphasis="subtle"
-                    aria-label={t`Add new`}
-                    onClick={handleCreateNewRecordClick}
-                  >
-                    <IconPlus />
-                  </LightIconButton>
-                )}
-              </StyledHeaderActions>
-            )}
+              )}
+              {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
+                <LightIconButton
+                  emphasis="subtle"
+                  aria-label={t`Add new`}
+                  onClick={handleCreateNewRecordClick}
+                >
+                  <IconPlus />
+                </LightIconButton>
+              )}
+            </StyledHeaderActions>
           </StyledHeaderContainer>
         </StyledHeader>
       </DragDropItemSortableHandle>

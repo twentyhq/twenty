@@ -2,11 +2,16 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -22,6 +27,13 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
     useRecordTableContextOrThrow();
 
   const isMobile = useIsMobile();
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
+  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
+    isRecordTableCellsNonEditableComponentState,
+  );
+  const isCreateThroughRelationWidget =
+    isDefined(recordTableWidgetContext?.nestedRelationCreateThrough) ||
+    isDefined(recordTableWidgetContext?.junctionCreateThrough);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -42,6 +54,8 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
 
   return (
     !isMobile &&
+    !isRecordTableCellsNonEditable &&
+    !isCreateThroughRelationWidget &&
     !isLayoutCustomizationModeEnabled &&
     !hasAnySoftDeleteFilterOnView &&
     canCreateRecordsForObjectMetadataItem({
@@ -53,7 +67,7 @@ export const RecordTableHeaderLabelIdentifierCellPlusButton = () => {
           size="sm"
           emphasis="subtle"
           onClick={handlePlusButtonClick}
-          aria-label={t`Add field`}
+          aria-label={t`Create record`}
         >
           <IconPlus />
         </LightIconButton>
