@@ -192,9 +192,25 @@ export const PhonesFieldInput = () => {
     recordFieldInputIsFieldInErrorComponentState,
   );
 
-  const draft = useMultiItemDraft({
+  const {
+    isInputDisplayed,
+    inputValue,
+    isAddingNewItem,
+    editedItemIndex,
+    isEditingItemInPlace,
+    hasError,
+    isSingleItemMode,
+    isLimitReached,
+    handleInputChange,
+    startAdding,
+    startEditing,
+    closeInput,
+    resetInputForItems,
+    commitInput,
+  } = useMultiItemDraft({
     items: phones,
     onItemsChange: handleChange,
+    onItemsSubmit: handleSubmit,
     getItemText: getPhoneText,
     validateInput: validatePhone,
     formatInput: formatPhoneInput,
@@ -211,39 +227,19 @@ export const PhonesFieldInput = () => {
   } = useMultiItemSearch({ items: phones, getItemText: getPhoneText });
 
   const handleInputEnter = () => {
-    const updatedItems = draft.commitInput();
+    const updatedItems = commitInput();
 
     if (!isDefined(updatedItems)) {
       return;
     }
 
-    if (draft.isSingleItemMode) {
+    if (isSingleItemMode) {
       onEnter?.({ newValue: parseArrayToPhonesValue(updatedItems) });
     } else if (!isDeeplyEqual(phones, updatedItems)) {
       handleSubmit(updatedItems);
     }
 
-    draft.closeInput();
-  };
-
-  const handleAddClick = () => {
-    if (draft.isLimitReached) {
-      return;
-    }
-
-    if (draft.isEditingItemInPlace) {
-      const updatedItems = draft.commitInput();
-
-      if (!isDefined(updatedItems)) {
-        return;
-      }
-
-      if (!isDeeplyEqual(phones, updatedItems)) {
-        handleSubmit(updatedItems);
-      }
-    }
-
-    draft.startAdding();
+    closeInput();
   };
 
   const handleEscape = () => {
@@ -254,9 +250,7 @@ export const PhonesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = draft.isInputDisplayed
-        ? draft.commitInput()
-        : phones;
+      const updatedItems = isInputDisplayed ? commitInput() : phones;
 
       if (!isDefined(updatedItems)) {
         return;
@@ -284,18 +278,17 @@ export const PhonesFieldInput = () => {
 
     handleChange(updatedPhones);
     handleSubmit(updatedPhones);
-    draft.resetInputForItems(updatedPhones);
+    resetInputForItems(updatedPhones);
   };
 
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
-    (!draft.isSingleItemMode || !draft.isInputDisplayed);
+    (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const visibleItemCount = visibleItemEntries?.length ?? 0;
-  const shouldShowInputInFooter =
-    draft.isInputDisplayed && !draft.isEditingItemInPlace;
-  const shouldShowAddButton = !shouldShowInputInFooter && !draft.isLimitReached;
-  const isInputInRow = isNonEmptyArray(phones) && !draft.isSingleItemMode;
+  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
+  const isInputInRow = isNonEmptyArray(phones) && !isSingleItemMode;
 
   const itemInput = (
     <MultiItemFieldInputRow
@@ -304,7 +297,7 @@ export const PhonesFieldInput = () => {
       rightComponent={
         isNonEmptyArray(phones) ? (
           <MultiItemFieldSaveButton
-            isAddingNewItem={draft.isAddingNewItem}
+            isAddingNewItem={isAddingNewItem}
             onClick={handleInputEnter}
           />
         ) : undefined
@@ -312,17 +305,15 @@ export const PhonesFieldInput = () => {
     >
       <StyledCustomPhoneInputContainer
         hasItem={isNonEmptyArray(phones) && !isInputInRow}
-        hasError={draft.hasError}
+        hasError={hasError}
         data-in-row={isInputInRow}
       >
         <StyledCustomPhoneInputWrapper data-in-row={isInputInRow}>
           <ReactPhoneNumberInput
             autoFocus
             placeholder={t`Phone`}
-            value={draft.inputValue as E164Number}
-            onChange={(value?: E164Number) =>
-              draft.handleInputChange(value ?? '')
-            }
+            value={inputValue as E164Number}
+            onChange={(value?: E164Number) => handleInputChange(value ?? '')}
             onKeyDown={getMultiItemInputKeyDownHandler({
               onEnter: handleInputEnter,
               onEscape: handleEscape,
@@ -342,7 +333,7 @@ export const PhonesFieldInput = () => {
     <OverlayMenuList
       ref={containerRef}
       header={
-        shouldShowSearch && !draft.isInputDisplayed ? (
+        shouldShowSearch && !isInputDisplayed ? (
           <MultiItemFieldSearchHeader
             value={searchFilter}
             onChange={setSearchFilter}
@@ -359,14 +350,14 @@ export const PhonesFieldInput = () => {
           {shouldShowAddButton && (
             <MultiItemFieldAddButton
               label={t`Add Phone`}
-              onClick={handleAddClick}
+              onClick={startAdding}
             />
           )}
         </>
       }
     >
       {visibleItemEntries?.map(({ item: phone, index }, position) =>
-        draft.isEditingItemInPlace && index === draft.editedItemIndex ? (
+        isEditingItemInPlace && index === editedItemIndex ? (
           <MultiItemFieldEditedItem
             key={index}
             hasSeparatorBefore={position > 0}
@@ -381,7 +372,7 @@ export const PhonesFieldInput = () => {
             showPrimaryIcon={index === 0 && phones.length > 1}
             showSetAsPrimaryButton={index > 0}
             phone={phone}
-            onEdit={() => draft.startEditing(index)}
+            onEdit={() => startEditing(index)}
             onSetAsPrimary={() => handleSetAsPrimary(index)}
             onDelete={() => handleDelete(index)}
           />

@@ -16,10 +16,6 @@ const StyledInputContent = styled.div`
   &[data-in-row='true'] {
     padding-inline-start: ${themeCssVariables.spacing[1]};
   }
-
-  &[data-in-row='true'][data-has-error='true'] {
-    color: ${themeCssVariables.color.red};
-  }
 `;
 
 type MultiItemFieldTextInputProps = {
@@ -55,11 +51,11 @@ export const MultiItemFieldTextInput = ({
   onBlur,
   ref,
 }: MultiItemFieldTextInputProps) => (
-  <StyledInputContent data-in-row={isInRow} data-has-error={hasError}>
+  <StyledInputContent data-in-row={isInRow}>
     <Input
       variant="plain"
       hasFocusRing={false}
-      aria-invalid={(hasError && !isInRow) || undefined}
+      aria-invalid={hasError || undefined}
       autoFocus={autoFocus}
       value={value}
       placeholder={placeholder}

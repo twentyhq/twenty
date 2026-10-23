@@ -64,9 +64,25 @@ export const ArrayFieldInput = () => {
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
-  const draft = useMultiItemDraft({
+  const {
+    isInputDisplayed,
+    inputValue,
+    isAddingNewItem,
+    editedItemIndex,
+    isEditingItemInPlace,
+    hasError,
+    isSingleItemMode,
+    isLimitReached,
+    handleInputChange,
+    startAdding,
+    startEditing,
+    closeInput,
+    resetInputForItems,
+    commitInput,
+  } = useMultiItemDraft({
     items: arrayItems,
     onItemsChange: handleChange,
+    onItemsSubmit: handleSubmit,
     getItemText: getArrayItemText,
     maxItemCount: maxNumberOfValues,
   });
@@ -79,39 +95,19 @@ export const ArrayFieldInput = () => {
   } = useMultiItemSearch({ items: arrayItems, getItemText: getArrayItemText });
 
   const handleInputEnter = () => {
-    const updatedItems = draft.commitInput();
+    const updatedItems = commitInput();
 
     if (!isDefined(updatedItems)) {
       return;
     }
 
-    if (draft.isSingleItemMode) {
+    if (isSingleItemMode) {
       onEnter?.({ newValue: parseStringArrayToArrayValue(updatedItems) });
     } else if (!isDeeplyEqual(arrayItems, updatedItems)) {
       handleSubmit(updatedItems);
     }
 
-    draft.closeInput();
-  };
-
-  const handleAddClick = () => {
-    if (draft.isLimitReached) {
-      return;
-    }
-
-    if (draft.isEditingItemInPlace) {
-      const updatedItems = draft.commitInput();
-
-      if (!isDefined(updatedItems)) {
-        return;
-      }
-
-      if (!isDeeplyEqual(arrayItems, updatedItems)) {
-        handleSubmit(updatedItems);
-      }
-    }
-
-    draft.startAdding();
+    closeInput();
   };
 
   const handleEscape = () => {
@@ -122,9 +118,7 @@ export const ArrayFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = draft.isInputDisplayed
-        ? draft.commitInput()
-        : arrayItems;
+      const updatedItems = isInputDisplayed ? commitInput() : arrayItems;
 
       if (!isDefined(updatedItems)) {
         return;
@@ -142,18 +136,17 @@ export const ArrayFieldInput = () => {
 
     handleChange(updatedItems);
     handleSubmit(updatedItems);
-    draft.resetInputForItems(updatedItems);
+    resetInputForItems(updatedItems);
   };
 
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
-    (!draft.isSingleItemMode || !draft.isInputDisplayed);
+    (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const visibleItemCount = visibleItemEntries?.length ?? 0;
-  const shouldShowInputInFooter =
-    draft.isInputDisplayed && !draft.isEditingItemInPlace;
-  const shouldShowAddButton = !shouldShowInputInFooter && !draft.isLimitReached;
-  const isInputInRow = isNonEmptyArray(arrayItems) && !draft.isSingleItemMode;
+  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
+  const isInputInRow = isNonEmptyArray(arrayItems) && !isSingleItemMode;
 
   const itemInput = (
     <MultiItemFieldInputRow
@@ -162,7 +155,7 @@ export const ArrayFieldInput = () => {
       rightComponent={
         isNonEmptyArray(arrayItems) ? (
           <MultiItemFieldSaveButton
-            isAddingNewItem={draft.isAddingNewItem}
+            isAddingNewItem={isAddingNewItem}
             onClick={handleInputEnter}
           />
         ) : undefined
@@ -172,9 +165,9 @@ export const ArrayFieldInput = () => {
         autoFocus
         isInRow={isInputInRow}
         placeholder={t`Enter value`}
-        value={draft.inputValue}
-        hasError={draft.hasError}
-        onChange={draft.handleInputChange}
+        value={inputValue}
+        hasError={hasError}
+        onChange={handleInputChange}
         onEnter={handleInputEnter}
         onEscape={handleEscape}
         shouldPreventTabNavigation
@@ -186,7 +179,7 @@ export const ArrayFieldInput = () => {
     <OverlayMenuList
       ref={containerRef}
       header={
-        shouldShowSearch && !draft.isInputDisplayed ? (
+        shouldShowSearch && !isInputDisplayed ? (
           <MultiItemFieldSearchHeader
             value={searchFilter}
             onChange={setSearchFilter}
@@ -203,14 +196,14 @@ export const ArrayFieldInput = () => {
           {shouldShowAddButton && (
             <MultiItemFieldAddButton
               label={t`Add Item`}
-              onClick={handleAddClick}
+              onClick={startAdding}
             />
           )}
         </>
       }
     >
       {visibleItemEntries?.map(({ item, index }, position) =>
-        draft.isEditingItemInPlace && index === draft.editedItemIndex ? (
+        isEditingItemInPlace && index === editedItemIndex ? (
           <MultiItemFieldEditedItem
             key={index}
             hasSeparatorBefore={position > 0}
@@ -223,7 +216,7 @@ export const ArrayFieldInput = () => {
             key={index}
             dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
             value={item}
-            onEdit={() => draft.startEditing(index)}
+            onEdit={() => startEditing(index)}
             onDelete={() => handleDelete(index)}
           />
         ),

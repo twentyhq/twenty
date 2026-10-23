@@ -91,9 +91,25 @@ export const EmailsFieldInput = () => {
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
-  const draft = useMultiItemDraft({
+  const {
+    isInputDisplayed,
+    inputValue,
+    isAddingNewItem,
+    editedItemIndex,
+    isEditingItemInPlace,
+    hasError,
+    isSingleItemMode,
+    isLimitReached,
+    handleInputChange,
+    startAdding,
+    startEditing,
+    closeInput,
+    resetInputForItems,
+    commitInput,
+  } = useMultiItemDraft({
     items: emails,
     onItemsChange: handleChange,
+    onItemsSubmit: handleSubmit,
     getItemText: getEmailText,
     validateInput: validateEmail,
     maxItemCount: maxNumberOfValues,
@@ -109,39 +125,19 @@ export const EmailsFieldInput = () => {
   } = useMultiItemSearch({ items: emails, getItemText: getEmailText });
 
   const handleInputEnter = () => {
-    const updatedItems = draft.commitInput();
+    const updatedItems = commitInput();
 
     if (!isDefined(updatedItems)) {
       return;
     }
 
-    if (draft.isSingleItemMode) {
+    if (isSingleItemMode) {
       onEnter?.({ newValue: parseStringArrayToEmailsValue(updatedItems) });
     } else if (!isDeeplyEqual(emails, updatedItems)) {
       handleSubmit(updatedItems);
     }
 
-    draft.closeInput();
-  };
-
-  const handleAddClick = () => {
-    if (draft.isLimitReached) {
-      return;
-    }
-
-    if (draft.isEditingItemInPlace) {
-      const updatedItems = draft.commitInput();
-
-      if (!isDefined(updatedItems)) {
-        return;
-      }
-
-      if (!isDeeplyEqual(emails, updatedItems)) {
-        handleSubmit(updatedItems);
-      }
-    }
-
-    draft.startAdding();
+    closeInput();
   };
 
   const handleEscape = () => {
@@ -152,9 +148,7 @@ export const EmailsFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = draft.isInputDisplayed
-        ? draft.commitInput()
-        : emails;
+      const updatedItems = isInputDisplayed ? commitInput() : emails;
 
       if (!isDefined(updatedItems)) {
         return;
@@ -182,7 +176,7 @@ export const EmailsFieldInput = () => {
 
     handleChange(updatedEmails);
     handleSubmit(updatedEmails);
-    draft.resetInputForItems(updatedEmails);
+    resetInputForItems(updatedEmails);
   };
 
   const handleCopy = (email: string) => {
@@ -191,13 +185,12 @@ export const EmailsFieldInput = () => {
 
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
-    (!draft.isSingleItemMode || !draft.isInputDisplayed);
+    (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const visibleItemCount = visibleItemEntries?.length ?? 0;
-  const shouldShowInputInFooter =
-    draft.isInputDisplayed && !draft.isEditingItemInPlace;
-  const shouldShowAddButton = !shouldShowInputInFooter && !draft.isLimitReached;
-  const isInputInRow = isNonEmptyArray(emails) && !draft.isSingleItemMode;
+  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
+  const isInputInRow = isNonEmptyArray(emails) && !isSingleItemMode;
 
   const itemInput = (
     <MultiItemFieldInputRow
@@ -206,7 +199,7 @@ export const EmailsFieldInput = () => {
       rightComponent={
         isNonEmptyArray(emails) ? (
           <MultiItemFieldSaveButton
-            isAddingNewItem={draft.isAddingNewItem}
+            isAddingNewItem={isAddingNewItem}
             onClick={handleInputEnter}
           />
         ) : undefined
@@ -216,9 +209,9 @@ export const EmailsFieldInput = () => {
         autoFocus
         isInRow={isInputInRow}
         placeholder={t`Email`}
-        value={draft.inputValue}
-        hasError={draft.hasError}
-        onChange={draft.handleInputChange}
+        value={inputValue}
+        hasError={hasError}
+        onChange={handleInputChange}
         onEnter={handleInputEnter}
         onEscape={handleEscape}
         shouldPreventTabNavigation
@@ -230,7 +223,7 @@ export const EmailsFieldInput = () => {
     <OverlayMenuList
       ref={containerRef}
       header={
-        shouldShowSearch && !draft.isInputDisplayed ? (
+        shouldShowSearch && !isInputDisplayed ? (
           <MultiItemFieldSearchHeader
             value={searchFilter}
             onChange={setSearchFilter}
@@ -247,14 +240,14 @@ export const EmailsFieldInput = () => {
           {shouldShowAddButton && (
             <MultiItemFieldAddButton
               label={t`Add Email`}
-              onClick={handleAddClick}
+              onClick={startAdding}
             />
           )}
         </>
       }
     >
       {visibleItemEntries?.map(({ item: email, index }, position) =>
-        draft.isEditingItemInPlace && index === draft.editedItemIndex ? (
+        isEditingItemInPlace && index === editedItemIndex ? (
           <MultiItemFieldEditedItem
             key={index}
             hasSeparatorBefore={position > 0}
@@ -270,7 +263,7 @@ export const EmailsFieldInput = () => {
             showSetAsPrimaryButton={index > 0}
             showCopyButton={true}
             email={email}
-            onEdit={() => draft.startEditing(index)}
+            onEdit={() => startEditing(index)}
             onSetAsPrimary={() => handleSetAsPrimary(index)}
             onDelete={() => handleDelete(index)}
             onCopy={handleCopy}

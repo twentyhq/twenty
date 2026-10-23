@@ -97,19 +97,11 @@ export const FilesFieldInput = () => {
       return;
     }
 
-    if (draft.isEditingItemInPlace) {
-      const updatedItems = draft.commitInput();
-
-      if (!isDefined(updatedItems)) {
-        return;
-      }
-
-      if (!isDeeplyEqual(files, updatedItems)) {
-        handleSubmit(updatedItems);
-      }
-
-      draft.closeInput();
+    if (!commitEditedItem()) {
+      return;
     }
+
+    closeInput();
 
     openFileUpload({
       multiple: true,
@@ -167,9 +159,24 @@ export const FilesFieldInput = () => {
     );
   };
 
-  const draft = useMultiItemDraft({
+  const {
+    isInputDisplayed,
+    inputValue,
+    editedItemIndex,
+    isEditingItemInPlace,
+    hasError,
+    isSingleItemMode,
+    isLimitReached,
+    handleInputChange,
+    startEditing,
+    closeInput,
+    resetInputForItems,
+    commitInput,
+    commitEditedItem,
+  } = useMultiItemDraft({
     items: files,
     onItemsChange: handleChange,
+    onItemsSubmit: handleSubmit,
     getItemText: getFileText,
     validateInput: validateFileLabel,
     formatInput: formatFileLabelInputOrThrow,
@@ -187,19 +194,19 @@ export const FilesFieldInput = () => {
   } = useMultiItemSearch({ items: files, getItemText: getFileText });
 
   const handleInputEnter = () => {
-    const updatedItems = draft.commitInput();
+    const updatedItems = commitInput();
 
     if (!isDefined(updatedItems)) {
       return;
     }
 
-    if (draft.isSingleItemMode) {
+    if (isSingleItemMode) {
       onEnter?.({ newValue: parseFilesArrayToFilesValue(updatedItems) });
     } else if (!isDeeplyEqual(files, updatedItems)) {
       handleSubmit(updatedItems);
     }
 
-    draft.closeInput();
+    closeInput();
   };
 
   const handleEscape = () => {
@@ -210,7 +217,7 @@ export const FilesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = draft.isInputDisplayed ? draft.commitInput() : files;
+      const updatedItems = isInputDisplayed ? commitInput() : files;
 
       if (!isDefined(updatedItems)) {
         return;
@@ -228,7 +235,7 @@ export const FilesFieldInput = () => {
 
     handleChange(updatedFiles);
     handleSubmit(updatedFiles);
-    draft.resetInputForItems(updatedFiles);
+    resetInputForItems(updatedFiles);
   };
 
   const handlePreview = (file: FieldFilesValue) => {
@@ -242,18 +249,40 @@ export const FilesFieldInput = () => {
 
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
-    (!draft.isSingleItemMode || !draft.isInputDisplayed);
+    (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const visibleItemCount = visibleItemEntries?.length ?? 0;
-  const shouldShowUploadButton =
-    !draft.isInputDisplayed && !draft.isLimitReached;
-  const editedFile = files[draft.editedItemIndex];
+  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowUploadButton = !shouldShowInputInFooter && !isLimitReached;
+  const editedFile = files[editedItemIndex];
+
+  const fileLabelInput = isDefined(editedFile) && (
+    <MultiItemFieldInputRow
+      isInRow={isEditingItemInPlace}
+      isInFooter={shouldShowInputInFooter}
+      rightComponent={
+        <MultiItemFieldSaveButton
+          isAddingNewItem={false}
+          onClick={handleInputEnter}
+        />
+      }
+    >
+      <FilesFieldLabelInput
+        file={editedFile}
+        value={inputValue}
+        hasError={hasError}
+        onChange={handleInputChange}
+        onEnter={handleInputEnter}
+        onEscape={handleEscape}
+      />
+    </MultiItemFieldInputRow>
+  );
 
   return (
     <OverlayMenuList
       ref={containerRef}
       header={
-        shouldShowSearch && !draft.isInputDisplayed ? (
+        shouldShowSearch && !isInputDisplayed ? (
           <MultiItemFieldSearchHeader
             value={searchFilter}
             onChange={setSearchFilter}
@@ -262,9 +291,11 @@ export const FilesFieldInput = () => {
       }
       footer={
         <>
-          {shouldShowItems && shouldShowUploadButton && (
-            <OverlayMenuListSeparator />
-          )}
+          {shouldShowItems &&
+            (shouldShowInputInFooter || shouldShowUploadButton) && (
+              <OverlayMenuListSeparator />
+            )}
+          {shouldShowInputInFooter && fileLabelInput}
           {shouldShowUploadButton && (
             <MultiItemFieldAddButton
               label={isUploading ? t`Uploading...` : t`Upload file`}
@@ -275,39 +306,20 @@ export const FilesFieldInput = () => {
       }
     >
       {visibleItemEntries?.map(({ item: file, index }, position) =>
-        draft.isEditingItemInPlace &&
-        index === draft.editedItemIndex &&
-        isDefined(editedFile) ? (
+        isEditingItemInPlace && index === editedItemIndex ? (
           <MultiItemFieldEditedItem
             key={file.fileId}
             hasSeparatorBefore={position > 0}
             hasSeparatorAfter={position < visibleItemCount - 1}
           >
-            <MultiItemFieldInputRow
-              isInRow
-              rightComponent={
-                <MultiItemFieldSaveButton
-                  isAddingNewItem={draft.isAddingNewItem}
-                  onClick={handleInputEnter}
-                />
-              }
-            >
-              <FilesFieldLabelInput
-                file={editedFile}
-                value={draft.inputValue}
-                hasError={draft.hasError}
-                onChange={draft.handleInputChange}
-                onEnter={handleInputEnter}
-                onEscape={handleEscape}
-              />
-            </MultiItemFieldInputRow>
+            {fileLabelInput}
           </MultiItemFieldEditedItem>
         ) : (
           <FilesFieldMenuItem
             key={file.fileId}
             dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
             file={file}
-            onEdit={() => draft.startEditing(index)}
+            onEdit={() => startEditing(index)}
             onDelete={() => handleDelete(index)}
             onClick={() => handlePreview(file)}
           />

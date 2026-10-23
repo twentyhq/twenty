@@ -3,12 +3,14 @@ import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-t
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type UseMultiItemDraftParams<TItem> = {
   items: TItem[];
   getItemText: (item: TItem) => string;
   onItemsChange: (items: TItem[]) => void;
+  onItemsSubmit?: (items: TItem[]) => void;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
   formatInput?: (params: { input: string; itemIndex?: number }) => TItem;
   maxItemCount?: number;
@@ -20,6 +22,7 @@ export const useMultiItemDraft = <TItem>({
   items,
   getItemText,
   onItemsChange,
+  onItemsSubmit,
   validateInput,
   formatInput,
   maxItemCount,
@@ -63,7 +66,7 @@ export const useMultiItemDraft = <TItem>({
   };
 
   const startAdding = () => {
-    if (isLimitReached) {
+    if (isLimitReached || !commitEditedItem()) {
       return;
     }
 
@@ -134,6 +137,24 @@ export const useMultiItemDraft = <TItem>({
     return updatedItems;
   };
 
+  const commitEditedItem = () => {
+    if (!isEditingItemInPlace) {
+      return true;
+    }
+
+    const updatedItems = commitInput();
+
+    if (!isDefined(updatedItems)) {
+      return false;
+    }
+
+    if (!isDeeplyEqual(items, updatedItems)) {
+      onItemsSubmit?.(updatedItems);
+    }
+
+    return true;
+  };
+
   return {
     isInputDisplayed,
     inputValue,
@@ -149,5 +170,6 @@ export const useMultiItemDraft = <TItem>({
     closeInput,
     resetInputForItems,
     commitInput,
+    commitEditedItem,
   };
 };
