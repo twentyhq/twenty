@@ -330,7 +330,7 @@ export class MatchParticipantService<
 
           const participantsWithHandle = await participantRepository
             .createQueryBuilder('participant')
-            .where('"participant"."handle" IN (:...handles)', { handles })
+            .where('"participant"."handle" = ANY(:handles)', { handles })
             .getMany<ParticipantWorkspaceEntity>();
 
           if (!isNonEmptyArray(participantsWithHandle)) {
@@ -347,10 +347,10 @@ export class MatchParticipantService<
               },
             ).find({
               where: {
-                messageId: In([
+                messageId: Any([
                   ...new Set(this.getSourceRecordIds(participantsWithHandle)),
                 ]),
-                messageChannelId: In(messageChannelIds),
+                messageChannelId: Any(messageChannelIds),
               },
               select: { messageId: true },
             });

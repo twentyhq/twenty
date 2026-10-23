@@ -43,22 +43,22 @@ const buildCanonicalHandleConditions = ({
   switch (personHandleField.type) {
     case FieldMetadataType.EMAILS:
       return [
-        `${canonicalTextSql(column('PrimaryEmail'))} IN (:...handles)`,
-        `EXISTS (SELECT 1 FROM ${jsonbArrayElementsSql(column('AdditionalEmails'))} AS "email"("value") WHERE ${canonicalTextSql(`"email"."value" #>> '{}'`)} IN (:...handles))`,
+        `${canonicalTextSql(column('PrimaryEmail'))} = ANY(:handles)`,
+        `EXISTS (SELECT 1 FROM ${jsonbArrayElementsSql(column('AdditionalEmails'))} AS "email"("value") WHERE ${canonicalTextSql(`"email"."value" #>> '{}'`)} = ANY(:handles))`,
       ];
     case FieldMetadataType.PHONES:
       return [
-        `${canonicalPhoneSql({ callingCode: column('PrimaryPhoneCallingCode'), number: column('PrimaryPhoneNumber') })} IN (:...handles)`,
-        `EXISTS (SELECT 1 FROM ${jsonbArrayElementsSql(column('AdditionalPhones'))} AS "phone"("value") WHERE ${canonicalPhoneSql({ callingCode: `"phone"."value" ->> 'callingCode'`, number: `"phone"."value" ->> 'number'` })} IN (:...handles))`,
+        `${canonicalPhoneSql({ callingCode: column('PrimaryPhoneCallingCode'), number: column('PrimaryPhoneNumber') })} = ANY(:handles)`,
+        `EXISTS (SELECT 1 FROM ${jsonbArrayElementsSql(column('AdditionalPhones'))} AS "phone"("value") WHERE ${canonicalPhoneSql({ callingCode: `"phone"."value" ->> 'callingCode'`, number: `"phone"."value" ->> 'number'` })} = ANY(:handles))`,
       ];
     case FieldMetadataType.LINKS:
       return [
-        `${canonicalLinkSql(column('PrimaryLinkUrl'))} IN (:...handles)`,
-        `EXISTS (SELECT 1 FROM ${jsonbArrayElementsSql(column('SecondaryLinks'))} AS "link"("value") WHERE ${canonicalLinkSql(`"link"."value" ->> 'url'`)} IN (:...handles))`,
+        `${canonicalLinkSql(column('PrimaryLinkUrl'))} = ANY(:handles)`,
+        `EXISTS (SELECT 1 FROM ${jsonbArrayElementsSql(column('SecondaryLinks'))} AS "link"("value") WHERE ${canonicalLinkSql(`"link"."value" ->> 'url'`)} = ANY(:handles))`,
       ];
     case FieldMetadataType.TEXT:
       return [
-        `${canonicalTextSql(`"${alias}"."${personHandleField.name}"`)} IN (:...handles)`,
+        `${canonicalTextSql(`"${alias}"."${personHandleField.name}"`)} = ANY(:handles)`,
       ];
   }
 };
