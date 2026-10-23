@@ -287,6 +287,8 @@ export const ApplyColors: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const editor = await canvas.findByRole('textbox');
+    await userEvent.click(canvas.getByText('Shared instructions'));
+    await waitFor(() => expect(editor).toHaveFocus());
     await userEvent.tripleClick(canvas.getByText('Shared instructions'));
     await userEvent.click(
       await body.findByRole('button', { name: 'Text and background colors' }),
