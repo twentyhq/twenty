@@ -16,6 +16,15 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "attachments": {
         "universalIdentifier": "2a0e0b57-e55b-5432-9ec1-04a43f4cd8b8",
       },
+      "channelArchivedAt": {
+        "universalIdentifier": "ec6f5b94-277e-4f06-85f9-08d724518eda",
+      },
+      "channelId": {
+        "universalIdentifier": "5a3f55ff-a486-4a69-a673-7873deb306bd",
+      },
+      "channelSnoozedUntil": {
+        "universalIdentifier": "6d2963a4-7266-42b9-8d76-a06c3f2b7520",
+      },
       "contextWindowTokens": {
         "universalIdentifier": "c58dc0b0-bd0e-4ee2-8a80-615a2d8fc7c8",
       },
@@ -89,6 +98,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "indexes": {
       "assigneeIndex": {
         "universalIdentifier": "a65524f8-c999-448b-b9f4-c9ecce15fd13",
+      },
+      "channelLastActivityIndex": {
+        "universalIdentifier": "bd129bd1-db66-4c74-a64e-819d2edd3062",
       },
       "workspaceMemberIndex": {
         "universalIdentifier": "079f2dd7-6c11-4eae-be8a-cce2d1bee0fb",

@@ -6,11 +6,9 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatInboxLayoutDropdown } from '@/ai/components/AiChatInboxLayoutDropdown';
 import { AiChatInboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTriageCommandMenuItems';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
+import { useAgentChatInboxViewHeading } from '@/ai/hooks/useAgentChatInboxViewHeading';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
@@ -18,7 +16,6 @@ import { RecordIndexPageHeaderTitle } from '@/object-record/record-index/compone
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type AiChatInboxListHeaderProps = {
   selectedThreadCount: number;
@@ -29,11 +26,7 @@ export const AiChatInboxListHeader = ({
 }: AiChatInboxListHeaderProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const agentChatThreadFilterStatus = useAtomStateValue(
-    agentChatThreadFilterStatusState,
-  );
-  const FilterStatusIcon =
-    AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
+  const { HeadingIcon, headingLabel } = useAgentChatInboxViewHeading();
   const isMobile = useIsMobile();
   const isSplitView = useIsAiChatInboxSplitView();
   const { switchToNewChat } = useSwitchToNewAiChat({
@@ -48,12 +41,10 @@ export const AiChatInboxListHeader = ({
 
   return (
     <PageCardHeader
-      icon={<FilterStatusIcon size={theme.icon.size.md} />}
+      icon={<HeadingIcon size={theme.icon.size.md} />}
       title={
         <RecordIndexPageHeaderTitle
-          label={t(
-            AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus],
-          )}
+          label={headingLabel}
           numberOfSelectedRecords={selectedThreadCount}
         />
       }

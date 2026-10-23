@@ -101,6 +101,7 @@ export const Default: Story = {
     await canvas.findByText('Connect ChatGPT to your account', undefined, {
       timeout: 5000,
     });
+    await canvas.findByText('chatgpt.com');
   },
 };
 

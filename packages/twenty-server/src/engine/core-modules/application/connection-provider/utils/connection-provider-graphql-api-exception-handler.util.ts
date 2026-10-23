@@ -26,7 +26,6 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT:
       case ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS:
       case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
-      case ConnectionProviderExceptionCode.CONNECTION_SCOPE_NOT_ALLOWED:
         throw new UserInputError(error);
       case ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED:
       case ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED:

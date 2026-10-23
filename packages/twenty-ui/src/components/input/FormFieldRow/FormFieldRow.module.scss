@@ -1,0 +1,64 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  min-block-size: 40px;
+  min-inline-size: 0;
+
+  &[data-clickable] {
+    cursor: pointer;
+  }
+
+  @include hover-capable {
+    &[data-hoverable]:hover {
+      background-color: var(--t-background-transparent-lighter);
+    }
+  }
+}
+
+.surface {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  gap: var(--t-spacing-3);
+  min-inline-size: 0;
+  padding-block: var(--t-spacing-1);
+  padding-inline: var(--t-spacing-3) var(--t-spacing-1);
+}
+
+.icon {
+  align-items: center;
+  color: var(--t-font-color-tertiary);
+  display: flex;
+  flex-shrink: 0;
+}
+
+.label {
+  flex-shrink: 0;
+  inline-size: var(--form-field-row-label-width);
+  max-inline-size: 40%;
+  overflow-wrap: anywhere;
+}
+
+.content {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: var(--t-spacing-1);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  padding-inline: var(--t-spacing-2);
+}
+
+.trailing {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--t-spacing-1);
+}
+
+.divider {
+  background-color: var(--t-border-color-light);
+}

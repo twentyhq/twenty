@@ -93,6 +93,8 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
       'Element or function rendered as the group. Functions receive supplied props and `{ value, multiple }` state. Forward the props and ref.',
   } satisfies Partial<Record<keyof DropdownSelectionGroupProps, string>>,
   Search: {
+    hasFocusRing:
+      'Shows the search input focus outline. Defaults to false for all dropdown searches. Set true to opt in. Error styling remains visible.',
     onValueChange:
       'Called with the search text on every change. The application filters the results.',
   } satisfies Partial<Record<keyof DropdownSearchProps, string>>,
