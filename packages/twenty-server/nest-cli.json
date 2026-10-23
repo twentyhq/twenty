@@ -69,10 +69,6 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "database/commands/upgrade-version-command/2-51/workspace-frontend-dependencies/**",
-        "outDir": "dist/assets"
-      },
-      {
         "include": "engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**",
         "outDir": "dist/assets"
       }
