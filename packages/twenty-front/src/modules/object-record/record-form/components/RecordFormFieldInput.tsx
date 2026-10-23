@@ -105,6 +105,7 @@ export const RecordFormFieldInput = ({
           isFieldNumberValue(defaultValue) ? defaultValue : undefined
         }
         onChange={onChange}
+        onError={onError}
         readonly={readonly}
       />
     );

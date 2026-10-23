@@ -37,6 +37,7 @@ import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
@@ -136,8 +137,8 @@ const SidePanelRecordCreationForm = ({
     useState<ValidationRuleViolation[]>([]);
   const [serverValidationRuleViolations, setServerValidationRuleViolations] =
     useState<ValidationRuleViolation[]>([]);
-  const [fieldErrorsByFieldMetadataId, setFieldErrorsByFieldMetadataId] =
-    useState<Record<string, string>>({});
+  const [fieldMetadataIdsWithInputError, setFieldMetadataIdsWithInputError] =
+    useState<string[]>([]);
 
   const { validationRules } = useValidationRules({ objectMetadataId });
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
@@ -223,20 +224,36 @@ const SidePanelRecordCreationForm = ({
   const handleFieldError = (
     fieldMetadataId: string,
     error: string | undefined,
-  ) => {
-    setFieldErrorsByFieldMetadataId((previousFieldErrors) => {
-      if (isDefined(error) && error.length > 0) {
-        return {
-          ...previousFieldErrors,
-          [fieldMetadataId]: error,
-        };
+  ) =>
+    setFieldMetadataIdsWithInputError((previousFieldMetadataIds) => {
+      const hasError = isNonEmptyString(error);
+
+      if (hasError === previousFieldMetadataIds.includes(fieldMetadataId)) {
+        return previousFieldMetadataIds;
       }
 
-      const { [fieldMetadataId]: _, ...remainingFieldErrors } =
-        previousFieldErrors;
-
-      return remainingFieldErrors;
+      return hasError
+        ? [...previousFieldMetadataIds, fieldMetadataId]
+        : previousFieldMetadataIds.filter((id) => id !== fieldMetadataId);
     });
+
+  const handleHiddenFieldsToggleClick = () => {
+    // Hidden inputs unmount and drop their error, so it must not keep blocking submission.
+    if (recordCreationFormAreHiddenFieldsShown) {
+      const hiddenFieldMetadataIds = hiddenFieldMetadataItems.map(
+        (fieldMetadataItem) => fieldMetadataItem.id,
+      );
+
+      setFieldMetadataIdsWithInputError((previousFieldMetadataIds) =>
+        previousFieldMetadataIds.filter(
+          (id) => !hiddenFieldMetadataIds.includes(id),
+        ),
+      );
+    }
+
+    setRecordCreationFormAreHiddenFieldsShown(
+      !recordCreationFormAreHiddenFieldsShown,
+    );
   };
 
   const revealHiddenFieldsIfTargeted = (
@@ -263,9 +280,11 @@ const SidePanelRecordCreationForm = ({
   }: {
     shouldKeepOpen: boolean;
   }) => {
-    const hasFieldErrors = Object.keys(fieldErrorsByFieldMetadataId).length > 0;
+    if (isSubmitting) {
+      return;
+    }
 
-    if (isSubmitting || hasFieldErrors) {
+    if (fieldMetadataIdsWithInputError.length > 0) {
       scrollToFirstFieldViolation();
       return;
     }
@@ -305,7 +324,7 @@ const SidePanelRecordCreationForm = ({
         if (shouldKeepOpen) {
           setRecordCreationFormDraft(null);
           setDraftValidationRuleViolations([]);
-          setFieldErrorsByFieldMetadataId({});
+          setFieldMetadataIdsWithInputError([]);
           setRecordCreationFormAreHiddenFieldsShown(false);
           setFormResetCount(
             (previousFormResetCount) => previousFormResetCount + 1,
@@ -395,11 +414,7 @@ const SidePanelRecordCreationForm = ({
                   <IconChevronDown />
                 )
               }
-              onClick={() =>
-                setRecordCreationFormAreHiddenFieldsShown(
-                  !recordCreationFormAreHiddenFieldsShown,
-                )
-              }
+              onClick={handleHiddenFieldsToggleClick}
             >
               {recordCreationFormAreHiddenFieldsShown
                 ? t`Hide fields`

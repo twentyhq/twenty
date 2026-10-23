@@ -599,4 +599,17 @@ describe('SidePanelRecordCreationFormPage', () => {
       shouldKeepOpen: false,
     });
   });
+
+  it('stops blocking creation once a hidden field with an input error is collapsed', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
+    await user.type(screen.getByLabelText('Nickname'), 'invalid');
+    await user.click(screen.getByRole('button', { name: 'Hide fields' }));
+    await user.click(screen.getByTestId('record-creation-form-create-button'));
+
+    expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);
+  });
 });
