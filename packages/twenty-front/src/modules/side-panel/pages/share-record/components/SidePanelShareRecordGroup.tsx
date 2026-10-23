@@ -12,7 +12,7 @@ const StyledHeading = styled.div`
 `;
 
 type SidePanelShareRecordGroupProps = {
-  heading: string;
+  heading: ReactNode;
   shouldHideHeading?: boolean;
   children: ReactNode;
 };

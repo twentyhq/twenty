@@ -487,6 +487,40 @@ export const RetainFailedInvitations: Story = {
   },
 };
 
+export const Loading: Story = {
+  args: {
+    sharingState: {
+      sharing: undefined,
+      loading: true,
+      error: undefined,
+      saving: false,
+      setGeneralAccess,
+      setShare,
+      removeShare,
+      refetch,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const loading = await page.findByRole('status', {
+      name: 'Loading sharing settings',
+    });
+
+    await expect(loading).toBeVisible();
+    await expect(loading).toHaveAttribute('aria-busy', 'true');
+    await expect(page.queryByRole('searchbox')).not.toBeInTheDocument();
+    await expect(
+      page.queryByRole('button', { name: /^Invite/ }),
+    ).not.toBeInTheDocument();
+    const copyLink = page.getByRole('button', { name: 'Copy link' });
+    await expect(copyLink).toBeVisible();
+    const footer = copyLink.closest('[data-variant="compact"]');
+    await expect(footer?.getBoundingClientRect().height).toBe(40);
+    await expect(setShare).not.toHaveBeenCalled();
+    await expect(setGeneralAccess).not.toHaveBeenCalled();
+  },
+};
+
 export const Saving: Story = {
   args: {
     sharingState: {

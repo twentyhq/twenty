@@ -18,6 +18,7 @@ import { SidePanelShareRecordGroup } from '@/side-panel/pages/share-record/compo
 import { SidePanelShareRecordList } from '@/side-panel/pages/share-record/components/SidePanelShareRecordList';
 import { SidePanelShareRecordRecipient } from '@/side-panel/pages/share-record/components/SidePanelShareRecordRecipient';
 import { SidePanelShareRecordRetryItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordRetryItem';
+import { SidePanelShareRecordSkeleton } from '@/side-panel/pages/share-record/components/SidePanelShareRecordSkeleton';
 import { useSidePanelShareRecordInvitation } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordInvitation';
 import { useSidePanelShareRecordSearch } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordSearch';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
@@ -69,6 +70,7 @@ export const SidePanelShareRecordContent = ({
   const { t } = useLingui();
   const {
     sharing,
+    loading,
     error,
     saving,
     setGeneralAccess,
@@ -98,6 +100,7 @@ export const SidePanelShareRecordContent = ({
   });
   const { copyToClipboard } = useCopyToClipboard();
   const canManageSharing = sharing?.canManageSharing ?? false;
+  const isInitialLoading = loading && !isDefined(sharing) && !isDefined(error);
   const recipientGroups = getRecordSharingRecipientGroups({
     isInviting,
     shares: matchingShares,
@@ -135,104 +138,109 @@ export const SidePanelShareRecordContent = ({
         />
       )}
       <StyledListContainer>
-        <SidePanelShareRecordList>
-          {isDefined(error) ? (
-            <>
-              <StyledDescription role="alert">{t`Sharing settings could not be loaded.`}</StyledDescription>
-              <SidePanelShareRecordRetryItem refetch={refetch} />
-            </>
-          ) : (
-            isDefined(sharing) &&
-            (canManageSharing ? (
+        {isInitialLoading && <SidePanelShareRecordSkeleton />}
+        {!isInitialLoading && (
+          <SidePanelShareRecordList>
+            {isDefined(error) ? (
               <>
-                {hasSelection && (
-                  <SidePanelShareRecordGroup heading={t`Selected`}>
-                    {accessPicker}
-                    <RecordSharingInvitationRecipientPicker
-                      recipients={invitation.selectedRecipients}
-                      selectedRecipients={invitation.selectedRecipients}
-                      disabled={invitation.isSubmitting}
-                      onRecipientsChange={handleRecipientsChange}
-                    />
-                  </SidePanelShareRecordGroup>
-                )}
-                {(!isInviting || matchesGeneralAccess) && (
-                  <SidePanelShareRecordGroup
-                    heading={isInviting ? t`Have access` : t`Everyone`}
-                  >
-                    <SidePanelShareRecordGeneralAccessItem
-                      generalAccessLevel={sharing.generalAccessLevel}
-                      defaultGeneralAccessLevel={
-                        sharing.defaultGeneralAccessLevel
-                      }
-                      hasManagedGeneralAccess={sharing.hasManagedGeneralAccess}
-                      objectLabelPlural={objectLabelPlural}
-                      isSaving={invitation.isSubmitting}
-                      setGeneralAccess={setGeneralAccess}
-                    />
-                  </SidePanelShareRecordGroup>
-                )}
-                {recipientGroups.map(({ heading, shares }) =>
-                  isNonEmptyArray(shares) ? (
-                    <SidePanelShareRecordGroup
-                      key={heading.id}
-                      heading={t(heading)}
-                      shouldHideHeading={isInviting && matchesGeneralAccess}
-                    >
-                      {shares.map((share) => (
-                        <SidePanelShareRecordRecipient
-                          key={share.id}
-                          share={share}
-                          roles={sharing.roles}
-                          objectLabelPlural={objectLabelPlural}
-                          sharingReach={sharingReach}
-                          isSaving={invitation.isSubmitting}
-                          setShare={setShare}
-                          removeShare={removeShare}
-                        />
-                      ))}
-                    </SidePanelShareRecordGroup>
-                  ) : null,
-                )}
-                {isInviting && (
-                  <SidePanelShareRecordGroup heading={t`Doesn’t have access`}>
-                    {!hasSelection && (
-                      <>
-                        {accessPicker}
-                        <StyledSeparator>
-                          <Separator />
-                        </StyledSeparator>
-                      </>
-                    )}
-                    <RecordSharingInvitationRecipientPicker
-                      recipients={matchingRecipients}
-                      selectedRecipients={invitation.selectedRecipients}
-                      disabled={invitation.isSubmitting}
-                      onRecipientsChange={handleRecipientsChange}
-                    />
-                    {!isNonEmptyArray(matchingRecipients) && (
-                      <StyledDescription>{t`No matching people or roles`}</StyledDescription>
-                    )}
-                  </SidePanelShareRecordGroup>
-                )}
-                {sharing.hasManagedGeneralAccess && (
-                  <StyledDescription>{t`Workspace access is also managed by an application.`}</StyledDescription>
-                )}
-                {sharing.sharingMode === RecordSharingMode.INHERITED && (
-                  <StyledDescription>{t`Access is also inherited from related records.`}</StyledDescription>
-                )}
+                <StyledDescription role="alert">{t`Sharing settings could not be loaded.`}</StyledDescription>
+                <SidePanelShareRecordRetryItem refetch={refetch} />
               </>
             ) : (
-              <StyledDescription>
-                {sharing.sharingMode === RecordSharingMode.ROLE_ONLY
-                  ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
-                  : sharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT
-                    ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
-                    : t`Only the creator of this record and people with full access to it can change who has access.`}
-              </StyledDescription>
-            ))
-          )}
-        </SidePanelShareRecordList>
+              isDefined(sharing) &&
+              (canManageSharing ? (
+                <>
+                  {hasSelection && (
+                    <SidePanelShareRecordGroup heading={t`Selected`}>
+                      {accessPicker}
+                      <RecordSharingInvitationRecipientPicker
+                        recipients={invitation.selectedRecipients}
+                        selectedRecipients={invitation.selectedRecipients}
+                        disabled={invitation.isSubmitting}
+                        onRecipientsChange={handleRecipientsChange}
+                      />
+                    </SidePanelShareRecordGroup>
+                  )}
+                  {(!isInviting || matchesGeneralAccess) && (
+                    <SidePanelShareRecordGroup
+                      heading={isInviting ? t`Have access` : t`Everyone`}
+                    >
+                      <SidePanelShareRecordGeneralAccessItem
+                        generalAccessLevel={sharing.generalAccessLevel}
+                        defaultGeneralAccessLevel={
+                          sharing.defaultGeneralAccessLevel
+                        }
+                        hasManagedGeneralAccess={
+                          sharing.hasManagedGeneralAccess
+                        }
+                        objectLabelPlural={objectLabelPlural}
+                        isSaving={invitation.isSubmitting}
+                        setGeneralAccess={setGeneralAccess}
+                      />
+                    </SidePanelShareRecordGroup>
+                  )}
+                  {recipientGroups.map(({ heading, shares }) =>
+                    isNonEmptyArray(shares) ? (
+                      <SidePanelShareRecordGroup
+                        key={heading.id}
+                        heading={t(heading)}
+                        shouldHideHeading={isInviting && matchesGeneralAccess}
+                      >
+                        {shares.map((share) => (
+                          <SidePanelShareRecordRecipient
+                            key={share.id}
+                            share={share}
+                            roles={sharing.roles}
+                            objectLabelPlural={objectLabelPlural}
+                            sharingReach={sharingReach}
+                            isSaving={invitation.isSubmitting}
+                            setShare={setShare}
+                            removeShare={removeShare}
+                          />
+                        ))}
+                      </SidePanelShareRecordGroup>
+                    ) : null,
+                  )}
+                  {isInviting && (
+                    <SidePanelShareRecordGroup heading={t`Doesn’t have access`}>
+                      {!hasSelection && (
+                        <>
+                          {accessPicker}
+                          <StyledSeparator>
+                            <Separator />
+                          </StyledSeparator>
+                        </>
+                      )}
+                      <RecordSharingInvitationRecipientPicker
+                        recipients={matchingRecipients}
+                        selectedRecipients={invitation.selectedRecipients}
+                        disabled={invitation.isSubmitting}
+                        onRecipientsChange={handleRecipientsChange}
+                      />
+                      {!isNonEmptyArray(matchingRecipients) && (
+                        <StyledDescription>{t`No matching people or roles`}</StyledDescription>
+                      )}
+                    </SidePanelShareRecordGroup>
+                  )}
+                  {sharing.hasManagedGeneralAccess && (
+                    <StyledDescription>{t`Workspace access is also managed by an application.`}</StyledDescription>
+                  )}
+                  {sharing.sharingMode === RecordSharingMode.INHERITED && (
+                    <StyledDescription>{t`Access is also inherited from related records.`}</StyledDescription>
+                  )}
+                </>
+              ) : (
+                <StyledDescription>
+                  {sharing.sharingMode === RecordSharingMode.ROLE_ONLY
+                    ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
+                    : sharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT
+                      ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
+                      : t`Only the creator of this record and people with full access to it can change who has access.`}
+                </StyledDescription>
+              ))
+            )}
+          </SidePanelShareRecordList>
+        )}
       </StyledListContainer>
       <SidePanelFooter
         variant="compact"
