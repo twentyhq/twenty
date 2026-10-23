@@ -9152,10 +9152,10 @@ msgstr "예멘 🇾🇪"
 msgid "Yes"
 msgstr "예"
 
-#. js-lingui-id: bo6pUs
+#. js-lingui-id: DLTd8S
 #: src/sections/faq/faq.data.ts
-msgid "Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
-msgstr "예. 우리의 Apps 프레임워크로 가능합니다. `npx create-twenty-app`으로 익스텐션을 스캐폴딩하고, 커스텀 오브젝트, 서버 사이드 로직 함수, Twenty UI 안에 렌더링되는 React 컴포넌트, AI 스킬과 에이전트, 뷰, 내비게이션 등을 모두 TypeScript로 작성해 어떤 워크스페이스에도 배포할 수 있습니다."
+msgid "Yes, with our Apps framework. Scaffold an extension with `npx twenty@latest app init my-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
+msgstr "예. 우리의 Apps 프레임워크로 가능합니다. `npx twenty@latest app init my-app`으로 익스텐션을 스캐폴딩하고, 커스텀 오브젝트, 서버 사이드 로직 함수, Twenty UI 안에 렌더링되는 React 컴포넌트, AI 스킬과 에이전트, 뷰, 내비게이션 등을 모두 TypeScript로 작성해 어떤 워크스페이스에도 배포할 수 있습니다."
 
 #. js-lingui-id: yIcBW6
 #: src/sections/faq/faq.data.ts
