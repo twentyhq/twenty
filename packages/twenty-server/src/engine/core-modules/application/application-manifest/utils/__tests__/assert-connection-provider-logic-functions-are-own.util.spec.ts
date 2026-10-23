@@ -28,6 +28,7 @@ const buildConnectionProvider = (
     | 'identifyAccountLogicFunction'
     | 'onConnectLogicFunction'
     | 'onDisconnectLogicFunction'
+    | 'sendMessageLogicFunction'
   >,
 ): ConnectionProviderManifest => ({
   universalIdentifier: 'connection-provider',
@@ -83,6 +84,7 @@ describe('assertConnectionProviderLogicFunctionsAreOwn', () => {
     'identifyAccountLogicFunction',
     'onConnectLogicFunction',
     'onDisconnectLogicFunction',
+    'sendMessageLogicFunction',
   ] as const)(
     'rejects %s when it references a logic function outside the application',
     (hook) => {

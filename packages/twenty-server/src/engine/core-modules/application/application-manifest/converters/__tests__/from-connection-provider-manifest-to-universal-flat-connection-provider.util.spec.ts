@@ -56,6 +56,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       identifyAccountLogicFunctionUniversalIdentifier: null,
       onConnectLogicFunctionUniversalIdentifier: null,
       onDisconnectLogicFunctionUniversalIdentifier: null,
+      sendMessageLogicFunctionUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
     });
