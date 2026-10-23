@@ -48,7 +48,7 @@ export const DatePickerWithoutCalendar = ({
       <DatePickerCalendar
         loadingFallback={<DatePickerLoadingFallback />}
         value={plainDate?.toString() ?? null}
-        hideGrid
+        isGridHidden
         onChange={onChange}
         onSelect={onClose}
         renderHeader={(header) => (
@@ -61,8 +61,8 @@ export const DatePickerWithoutCalendar = ({
               onChangeYear={handleChangeYear}
               onAddMonth={handleAddMonth}
               onSubtractMonth={handleSubtractMonth}
-              prevMonthButtonDisabled={header.previousMonthDisabled}
-              nextMonthButtonDisabled={header.nextMonthDisabled}
+              prevMonthButtonDisabled={header.isPreviousMonthDisabled}
+              nextMonthButtonDisabled={header.isNextMonthDisabled}
               hideInput
             />
             <StyledSpacer />

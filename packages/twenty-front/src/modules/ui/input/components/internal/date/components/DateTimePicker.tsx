@@ -150,8 +150,8 @@ export const DateTimePicker = ({
                 )}
                 onPreviousMonth={header.onPreviousMonth}
                 onNextMonth={header.onNextMonth}
-                prevMonthButtonDisabled={header.previousMonthDisabled}
-                nextMonthButtonDisabled={header.nextMonthDisabled}
+                prevMonthButtonDisabled={header.isPreviousMonthDisabled}
+                nextMonthButtonDisabled={header.isNextMonthDisabled}
               />
             ) : (
               <DateTimePickerHeader
@@ -161,8 +161,8 @@ export const DateTimePicker = ({
                 onChange={onChange}
                 onAddMonth={header.onNextMonth}
                 onSubtractMonth={header.onPreviousMonth}
-                prevMonthButtonDisabled={header.previousMonthDisabled}
-                nextMonthButtonDisabled={header.nextMonthDisabled}
+                prevMonthButtonDisabled={header.isPreviousMonthDisabled}
+                nextMonthButtonDisabled={header.isNextMonthDisabled}
                 hideInput={hideHeaderInput}
                 onChangeMonth={header.onMonthChange}
                 onChangeYear={header.onYearChange}

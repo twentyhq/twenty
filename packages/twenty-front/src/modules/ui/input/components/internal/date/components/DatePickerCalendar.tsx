@@ -14,7 +14,7 @@ type DatePickerCalendarProps = {
   onSelect?: (date: string) => void;
   highlightedRange?: { start: string; end: string };
   readOnly?: boolean;
-  hideGrid?: boolean;
+  isGridHidden?: boolean;
   today?: string;
   weekStart?: DatePickerProps['weekStart'];
   onViewedMonthChange?: (month: string) => void;
@@ -28,7 +28,7 @@ export const DatePickerCalendar = ({
   onSelect,
   highlightedRange,
   readOnly,
-  hideGrid,
+  isGridHidden,
   today,
   weekStart,
   onViewedMonthChange,
@@ -71,8 +71,8 @@ export const DatePickerCalendar = ({
       yearLabel={t`Year`}
       highlightedRange={highlightedRange}
       readOnly={readOnly}
-      hideGrid={hideGrid}
-      disabledKeyboardNavigation
+      isGridHidden={isGridHidden}
+      isKeyboardNavigationDisabled
       renderHeader={renderHeader}
       loadingFallback={loadingFallback}
     />
