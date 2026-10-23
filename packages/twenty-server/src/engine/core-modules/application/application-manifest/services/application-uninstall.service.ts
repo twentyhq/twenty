@@ -67,8 +67,6 @@ export class ApplicationUninstallService {
             workspaceDeletedAt,
           });
 
-        // The app's own error is already in its app logs and is not ours to
-        // report; leaving the hook pending lets the cleanup cron retry it.
         if (isDefined(hookErrorMessage)) {
           this.logger.warn(
             `workspace-deletion uninstall hook failed: ${application.universalIdentifier}: ${hookErrorMessage}`,
