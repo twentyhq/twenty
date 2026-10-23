@@ -102,7 +102,6 @@ describe('participant rematch when a person changes', () => {
         role: 'FROM',
       },
     });
-    // linked by an app that resolved the identity itself
     await create({
       objectName: 'messageParticipant',
       input: {
