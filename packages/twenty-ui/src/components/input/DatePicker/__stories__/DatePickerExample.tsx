@@ -15,6 +15,7 @@ export const DatePickerExample = ({
   onValueChange,
   onValueSelect,
   onViewedMonthChange,
+  onNavigationOpenChange,
 }: Partial<
   Pick<
     DatePickerProps,
@@ -26,6 +27,7 @@ export const DatePickerExample = ({
     | 'onValueChange'
     | 'onValueSelect'
     | 'onViewedMonthChange'
+    | 'onNavigationOpenChange'
   >
 > & {
   initialValue?: string | null;
@@ -43,6 +45,7 @@ export const DatePickerExample = ({
         onValueChange?.(date);
       }}
       onValueSelect={onValueSelect}
+      onNavigationOpenChange={onNavigationOpenChange}
       viewedMonth={viewedMonth}
       onViewedMonthChange={(month) => {
         setViewedMonth(month);

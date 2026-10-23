@@ -1,9 +1,11 @@
 import { isNumber } from '@sniptt/guards';
+import { useRef } from 'react';
 
 import { Select } from '@ui/primitives/input/Select/Select';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 
 import { type DatePickerProps } from '../types/DatePickerProps';
+import { DatePickerSelectLifecycleEffect } from './DatePickerSelectLifecycleEffect';
 
 type DatePickerSelectProps = {
   value: number;
@@ -24,6 +26,8 @@ export const DatePickerSelect = ({
   portalContainer,
   onOpenChange,
 }: DatePickerSelectProps) => {
+  const isOpenRef = useRef(false);
+
   return (
     <Select.Root
       value={value}
@@ -31,11 +35,13 @@ export const DatePickerSelect = ({
       disabled={disabled}
       onOpenChange={(open) => {
         if (open) {
+          isOpenRef.current = true;
           onOpenChange?.(true);
         }
       }}
       onOpenChangeComplete={(open) => {
-        if (!open) {
+        if (!open && isOpenRef.current) {
+          isOpenRef.current = false;
           onOpenChange?.(false);
         }
       }}
@@ -47,6 +53,10 @@ export const DatePickerSelect = ({
         onValueChange(nextValue);
       }}
     >
+      <DatePickerSelectLifecycleEffect
+        isOpenRef={isOpenRef}
+        onOpenChange={onOpenChange}
+      />
       <Select.Trigger aria-label={label}>
         <Select.Value />
         <Select.Icon />

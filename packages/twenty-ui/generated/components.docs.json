@@ -15255,7 +15255,7 @@
         "type": "((args: { open: boolean; control: \"month\" | \"year\"; }) => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Reports { open, control } when a default month or year popup starts opening and after it finishes closing. Header arrow actions do not call this callback."
+        "description": "Reports { open, control } when a default month or year popup starts opening, and when it finishes closing or its selector unmounts. Header arrow actions do not call this callback."
       },
       {
         "name": "onValueChange",

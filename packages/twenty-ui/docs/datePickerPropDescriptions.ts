@@ -37,7 +37,7 @@ export const DATE_PICKER_PROP_DESCRIPTIONS = {
   portalContainer:
     'Mount container for the default month and year selector popups. Accepts the shared Select portal container contract.',
   onNavigationOpenChange:
-    'Reports { open, control } when a default month or year popup starts opening and after it finishes closing. Header arrow actions do not call this callback.',
+    'Reports { open, control } when a default month or year popup starts opening, and when it finishes closing or its selector unmounts. Header arrow actions do not call this callback.',
   disabled: 'Disables date selection and the default header controls.',
   render: 'Composes the root element while preserving its props and contents.',
   ref: 'Ref to the root element.',

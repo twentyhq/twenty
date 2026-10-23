@@ -60,7 +60,7 @@
 </ParamField>
 
 <ParamField body="onNavigationOpenChange" type="((args: { open: boolean; control: &quot;month&quot; | &quot;year&quot;; }) =&gt; void)">
-  Reports &#123; open, control &#125; when a default month or year popup starts opening and after it finishes closing. Header arrow actions do not call this callback.
+  Reports &#123; open, control &#125; when a default month or year popup starts opening, and when it finishes closing or its selector unmounts. Header arrow actions do not call this callback.
 </ParamField>
 
 <ParamField body="onValueChange" type="(date: string) =&gt; void" required>

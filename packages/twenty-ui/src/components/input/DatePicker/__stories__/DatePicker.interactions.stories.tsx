@@ -10,6 +10,7 @@ import { DATE_PICKER_WEEKDAY_LABELS } from './datePickerWeekdayLabels';
 import { DatePickerExample } from './DatePickerExample';
 import { DatePickerCssVariableThemeExample } from './DatePickerCssVariableThemeExample';
 import { DatePickerExternalMonthExample } from './DatePickerExternalMonthExample';
+import { DatePickerNavigationUnmountExample } from './DatePickerNavigationUnmountExample';
 
 const meta: Meta<typeof DatePicker> = {
   id: 'ui-components-datepicker-interactions',
@@ -31,6 +32,7 @@ const meta: Meta<typeof DatePicker> = {
     onValueChange: fn(),
     onValueSelect: fn(),
     onViewedMonthChange: fn(),
+    onNavigationOpenChange: fn(),
   },
 };
 
@@ -74,10 +76,11 @@ export const DayKeyboardNavigation: Story = {
 };
 
 export const MonthAndYearControls: Story = {
-  render: ({ onValueChange, onViewedMonthChange }) => (
+  render: ({ onValueChange, onViewedMonthChange, onNavigationOpenChange }) => (
     <DatePickerExample
       onValueChange={onValueChange}
       onViewedMonthChange={onViewedMonthChange}
+      onNavigationOpenChange={onNavigationOpenChange}
     />
   ),
   play: async ({ canvasElement, args }) => {
@@ -110,7 +113,41 @@ export const MonthAndYearControls: Story = {
       canvas.getByRole('combobox', { name: 'Year' }),
     ).toHaveTextContent('2027');
     await expect(args.onViewedMonthChange).toHaveBeenLastCalledWith('2027-12');
+    await waitFor(() =>
+      expect(args.onNavigationOpenChange).toHaveBeenLastCalledWith({
+        open: false,
+        control: 'year',
+      }),
+    );
+    await expect(args.onNavigationOpenChange).toHaveBeenCalledTimes(4);
     await expect(args.onValueChange).not.toHaveBeenCalled();
+  },
+};
+
+export const NavigationUnmount: Story = {
+  render: ({ onNavigationOpenChange }) => (
+    <DatePickerNavigationUnmountExample
+      onNavigationOpenChange={onNavigationOpenChange}
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      await canvas.findByRole('combobox', { name: 'Month' }),
+    );
+    await expect(args.onNavigationOpenChange).toHaveBeenLastCalledWith({
+      open: true,
+      control: 'month',
+    });
+    await userEvent.click(
+      await body.findByRole('option', { name: 'November' }),
+    );
+    await expect(canvas.getByText('Calendar hidden')).toBeVisible();
+    await expect(args.onNavigationOpenChange).toHaveBeenLastCalledWith({
+      open: false,
+      control: 'month',
+    });
   },
 };
 
