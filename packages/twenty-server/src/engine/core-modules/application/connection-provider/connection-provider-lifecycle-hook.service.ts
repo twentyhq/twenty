@@ -426,7 +426,7 @@ export class ConnectionProviderLifecycleHookService {
   }: {
     hook: ConnectionLifecycleHook;
     logicFunctionUniversalIdentifier: string;
-    provider: ConnectionLifecycleHookProvider;
+    provider: Pick<ConnectionLifecycleHookProvider, 'id' | 'applicationId'>;
     workspaceId: string;
   }): Promise<string> {
     const { flatLogicFunctionMaps } =
