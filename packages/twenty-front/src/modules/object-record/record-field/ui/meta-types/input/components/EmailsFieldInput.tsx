@@ -181,45 +181,6 @@ export const EmailsFieldInput = () => {
     (!draft.isSingleItemMode || !draft.isInputDisplayed);
   const shouldShowAddButton = !draft.isInputDisplayed && !draft.isLimitReached;
 
-  const renderFooterContent = () => {
-    if (draft.isInputDisplayed) {
-      return (
-        <MultiItemFieldInputRow
-          rightComponent={
-            isNonEmptyArray(emails) ? (
-              <MultiItemFieldSaveButton
-                isAddingNewItem={draft.isAddingNewItem}
-                onClick={handleInputEnter}
-              />
-            ) : undefined
-          }
-        >
-          <MultiItemFieldTextInput
-            autoFocus={!shouldShowSearch}
-            placeholder={t`Email`}
-            value={draft.inputValue}
-            hasError={draft.hasError}
-            onChange={draft.handleInputChange}
-            onEnter={handleInputEnter}
-            onEscape={handleEscape}
-            preventTabNavigation
-          />
-        </MultiItemFieldInputRow>
-      );
-    }
-
-    if (!shouldShowAddButton) {
-      return null;
-    }
-
-    return (
-      <MultiItemFieldAddButton
-        label={t`Add Email`}
-        onClick={draft.startAdding}
-      />
-    );
-  };
-
   return (
     <OverlayMenuList
       ref={containerRef}
@@ -237,7 +198,35 @@ export const EmailsFieldInput = () => {
             (draft.isInputDisplayed || shouldShowAddButton) && (
               <OverlayMenuListSeparator />
             )}
-          {renderFooterContent()}
+          {draft.isInputDisplayed && (
+            <MultiItemFieldInputRow
+              rightComponent={
+                isNonEmptyArray(emails) ? (
+                  <MultiItemFieldSaveButton
+                    isAddingNewItem={draft.isAddingNewItem}
+                    onClick={handleInputEnter}
+                  />
+                ) : undefined
+              }
+            >
+              <MultiItemFieldTextInput
+                autoFocus={!shouldShowSearch}
+                placeholder={t`Email`}
+                value={draft.inputValue}
+                hasError={draft.hasError}
+                onChange={draft.handleInputChange}
+                onEnter={handleInputEnter}
+                onEscape={handleEscape}
+                preventTabNavigation
+              />
+            </MultiItemFieldInputRow>
+          )}
+          {shouldShowAddButton && (
+            <MultiItemFieldAddButton
+              label={t`Add Email`}
+              onClick={draft.startAdding}
+            />
+          )}
         </>
       }
     >

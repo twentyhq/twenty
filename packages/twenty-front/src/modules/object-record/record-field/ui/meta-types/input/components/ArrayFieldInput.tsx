@@ -137,45 +137,6 @@ export const ArrayFieldInput = () => {
     (!draft.isSingleItemMode || !draft.isInputDisplayed);
   const shouldShowAddButton = !draft.isInputDisplayed && !draft.isLimitReached;
 
-  const renderFooterContent = () => {
-    if (draft.isInputDisplayed) {
-      return (
-        <MultiItemFieldInputRow
-          rightComponent={
-            isNonEmptyArray(arrayItems) ? (
-              <MultiItemFieldSaveButton
-                isAddingNewItem={draft.isAddingNewItem}
-                onClick={handleInputEnter}
-              />
-            ) : undefined
-          }
-        >
-          <MultiItemFieldTextInput
-            autoFocus={!shouldShowSearch}
-            placeholder={t`Enter value`}
-            value={draft.inputValue}
-            hasError={draft.hasError}
-            onChange={draft.handleInputChange}
-            onEnter={handleInputEnter}
-            onEscape={handleEscape}
-            preventTabNavigation
-          />
-        </MultiItemFieldInputRow>
-      );
-    }
-
-    if (!shouldShowAddButton) {
-      return null;
-    }
-
-    return (
-      <MultiItemFieldAddButton
-        label={t`Add Item`}
-        onClick={draft.startAdding}
-      />
-    );
-  };
-
   return (
     <OverlayMenuList
       ref={containerRef}
@@ -193,7 +154,35 @@ export const ArrayFieldInput = () => {
             (draft.isInputDisplayed || shouldShowAddButton) && (
               <OverlayMenuListSeparator />
             )}
-          {renderFooterContent()}
+          {draft.isInputDisplayed && (
+            <MultiItemFieldInputRow
+              rightComponent={
+                isNonEmptyArray(arrayItems) ? (
+                  <MultiItemFieldSaveButton
+                    isAddingNewItem={draft.isAddingNewItem}
+                    onClick={handleInputEnter}
+                  />
+                ) : undefined
+              }
+            >
+              <MultiItemFieldTextInput
+                autoFocus={!shouldShowSearch}
+                placeholder={t`Enter value`}
+                value={draft.inputValue}
+                hasError={draft.hasError}
+                onChange={draft.handleInputChange}
+                onEnter={handleInputEnter}
+                onEscape={handleEscape}
+                preventTabNavigation
+              />
+            </MultiItemFieldInputRow>
+          )}
+          {shouldShowAddButton && (
+            <MultiItemFieldAddButton
+              label={t`Add Item`}
+              onClick={draft.startAdding}
+            />
+          )}
         </>
       }
     >
