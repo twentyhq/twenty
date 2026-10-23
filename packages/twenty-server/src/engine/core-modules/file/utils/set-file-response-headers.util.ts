@@ -4,7 +4,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
+import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.util';
 
 export const setFileResponseHeaders = (
   res: Response,
