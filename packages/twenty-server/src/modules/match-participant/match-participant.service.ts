@@ -314,11 +314,27 @@ export class MatchParticipantService<
               })) as ParticipantWorkspaceEntity[];
           }
 
+          const personEmails = new Set(
+            participantMatching.personEmails.map((email) =>
+              email.toLowerCase(),
+            ),
+          );
+
+          // a person's other participants, such as app-linked ones with non-email handles, keep their link
+          const participantsMatchingPersonIdByEmail =
+            participantsMatchingPersonId.filter(
+              (participant) =>
+                isDefined(participant.handle) &&
+                personEmails.has(participant.handle.toLowerCase()),
+            );
+
           const uniqueParticipants = [
-            ...new Set([
-              ...participantsMatchingPersonId,
-              ...participantsMatchingPersonEmails,
-            ]),
+            ...new Map(
+              [
+                ...participantsMatchingPersonIdByEmail,
+                ...participantsMatchingPersonEmails,
+              ].map((participant) => [participant.id, participant]),
+            ).values(),
           ];
 
           const tobeRematchedParticipants = uniqueParticipants.map(

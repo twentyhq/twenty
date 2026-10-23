@@ -82,9 +82,11 @@ export class CalendarEventParticipantPersonListener {
     const personIds = personWithUpdatedEmails.map(
       (eventPayload) => eventPayload.recordId,
     );
-    const personEmails = personWithUpdatedEmails.flatMap((eventPayload) =>
-      getPersonEmails(eventPayload.properties.after.emails),
-    );
+    // emails the person lost must release their participants as much as new ones claim them
+    const personEmails = personWithUpdatedEmails.flatMap((eventPayload) => [
+      ...getPersonEmails(eventPayload.properties.before.emails),
+      ...getPersonEmails(eventPayload.properties.after.emails),
+    ]);
 
     await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
       CalendarEventParticipantMatchParticipantJob.name,
