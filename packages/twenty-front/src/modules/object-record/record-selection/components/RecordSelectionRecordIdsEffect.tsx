@@ -36,9 +36,9 @@ export const RecordSelectionRecordIdsEffect = ({
     const previousRecordIds = store.get(recordIdsAtom);
 
     const previousRecordIdSet = new Set(previousRecordIds);
-    const addedRecordIds = store.get(
-      hasUserSelectedAllRecordsComponentState.atomFamily({ instanceId }),
-    )
+    const hasUserSelectedAllRecordsAtom =
+      hasUserSelectedAllRecordsComponentState.atomFamily({ instanceId });
+    const addedRecordIds = store.get(hasUserSelectedAllRecordsAtom)
       ? recordIds.filter((recordId) => !previousRecordIdSet.has(recordId))
       : [];
 
@@ -64,6 +64,21 @@ export const RecordSelectionRecordIdsEffect = ({
           false,
         );
       }
+    }
+
+    // Once every selected record has left, records loaded later stay unselected
+    if (
+      store.get(hasUserSelectedAllRecordsAtom) &&
+      !recordIds.some((recordId) =>
+        store.get(
+          isRecordSelectedComponentFamilyState.atomFamily({
+            instanceId,
+            familyKey: recordId,
+          }),
+        ),
+      )
+    ) {
+      store.set(hasUserSelectedAllRecordsAtom, false);
     }
 
     const recordSelectionRangeAtom =

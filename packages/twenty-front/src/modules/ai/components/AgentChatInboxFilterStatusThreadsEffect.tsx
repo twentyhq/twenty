@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_INBOX_FILTER_STATUS_INITIAL_RETRY_DELAY_IN_MS } from '@/ai/constants/AgentChatInboxFilterStatusInitialRetryDelayInMs';
-import { AGENT_CHAT_INBOX_FILTER_STATUS_MAX_RETRY_DELAY_IN_MS } from '@/ai/constants/AgentChatInboxFilterStatusMaxRetryDelayInMs';
+import { AGENT_CHAT_INBOX_FILTER_STATUS_MAX_LOAD_ATTEMPTS } from '@/ai/constants/AgentChatInboxFilterStatusMaxLoadAttempts';
 import { useRefreshAgentChatThreadsInFilterStatus } from '@/ai/hooks/useRefreshAgentChatThreadsInFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -32,11 +32,12 @@ export const AgentChatInboxFilterStatusThreadsEffect = () => {
     let retryTimeout: ReturnType<typeof setTimeout> | undefined;
 
     // A failed or twice-raced first page would otherwise leave the tab without pages
-    const loadFirstPage = async (retryDelayInMs: number) => {
+    const loadFirstPage = async (attempt: number, retryDelayInMs: number) => {
       await refreshAgentChatThreadsInFilterStatus(agentChatThreadFilterStatus);
 
       if (
         isCancelled ||
+        attempt >= AGENT_CHAT_INBOX_FILTER_STATUS_MAX_LOAD_ATTEMPTS ||
         isDefined(
           store.get(agentChatThreadListState.atom)?.filterStatusPages?.[
             agentChatThreadFilterStatus
@@ -47,18 +48,13 @@ export const AgentChatInboxFilterStatusThreadsEffect = () => {
       }
 
       retryTimeout = setTimeout(
-        () =>
-          void loadFirstPage(
-            Math.min(
-              retryDelayInMs * 2,
-              AGENT_CHAT_INBOX_FILTER_STATUS_MAX_RETRY_DELAY_IN_MS,
-            ),
-          ),
+        () => void loadFirstPage(attempt + 1, retryDelayInMs * 2),
         retryDelayInMs,
       );
     };
 
     void loadFirstPage(
+      1,
       AGENT_CHAT_INBOX_FILTER_STATUS_INITIAL_RETRY_DELAY_IN_MS,
     );
 

@@ -73,4 +73,20 @@ describe('AgentChatInboxFilterStatusThreadsEffect', () => {
 
     expect(refreshAgentChatThreadsInFilterStatus).toHaveBeenCalledTimes(2);
   });
+
+  it('stops retrying after a few failed attempts', async () => {
+    refreshAgentChatThreadsInFilterStatus.mockResolvedValue(undefined);
+
+    render(
+      <JotaiProvider store={jotaiStore}>
+        <AgentChatInboxFilterStatusThreadsEffect />
+      </JotaiProvider>,
+    );
+
+    await act(async () => {
+      await jest.advanceTimersByTimeAsync(10 * 60_000);
+    });
+
+    expect(refreshAgentChatThreadsInFilterStatus).toHaveBeenCalledTimes(5);
+  });
 });

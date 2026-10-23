@@ -32,6 +32,7 @@ import { useAiChatInboxSelectedThreadCount } from '@/ai/hooks/useAiChatInboxSele
 import { useAiChatInboxTabSelection } from '@/ai/hooks/useAiChatInboxTabSelection';
 import { useFetchMoreAgentChatInboxShownThreads } from '@/ai/hooks/useFetchMoreAgentChatInboxShownThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
+import { useToggleAiChatInboxThreadSelection } from '@/ai/hooks/useToggleAiChatInboxThreadSelection';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -41,7 +42,6 @@ import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection
 import { useRecordSelectionArrowKeyNavigation } from '@/object-record/record-selection/hooks/useRecordSelectionArrowKeyNavigation';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSelectAllRecords } from '@/object-record/record-selection/hooks/useSelectAllRecords';
-import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
@@ -116,7 +116,7 @@ const AiChatInboxPageContent = () => {
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
   );
-  const { toggleRecordSelection } = useToggleRecordSelection();
+  const { toggleThreadSelection } = useToggleAiChatInboxThreadSelection();
   const threadListContainerRef = useRef<HTMLDivElement>(null);
   const { resetRecordSelection } = useResetRecordSelection();
   const { selectAllRecords } = useSelectAllRecords();
@@ -141,7 +141,7 @@ const AiChatInboxPageContent = () => {
     // A phone has no modifier keys, so once a selection is started a tap
     // adds to it
     if (isMobile && selectedRecordIds.length > 0) {
-      toggleRecordSelection({ recordId: id });
+      toggleThreadSelection({ recordId: id });
       return;
     }
 
@@ -158,10 +158,10 @@ const AiChatInboxPageContent = () => {
       selectedThreadId !== id &&
       threads.some((thread) => thread.id === selectedThreadId)
     ) {
-      toggleRecordSelection({ recordId: selectedThreadId });
+      toggleThreadSelection({ recordId: selectedThreadId });
     }
 
-    toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
+    toggleThreadSelection({ recordId: id, shouldSelectRange: event.shiftKey });
   };
 
   const { navigateWithArrowKey } = useRecordSelectionArrowKeyNavigation({
@@ -175,7 +175,7 @@ const AiChatInboxPageContent = () => {
     { id }: AgentChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) =>
-    toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
+    toggleThreadSelection({ recordId: id, shouldSelectRange: event.shiftKey });
 
   const isSelectionShown = selectedRecordIds.length > 0;
 

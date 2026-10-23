@@ -4,7 +4,7 @@ import {
   type AgentChatThreadFilterStatus,
   computeAgentChatThreadFilterStatusGqlFilter,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -609,7 +609,7 @@ export class AgentChatThreadParticipantService {
               filterStatus,
               workspaceMemberId,
             }),
-            ...(excludedThreadIds.length > 0
+            ...(isNonEmptyArray(excludedThreadIds)
               ? [{ not: { id: { in: excludedThreadIds } } }]
               : []),
           ],

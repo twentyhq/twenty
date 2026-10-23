@@ -228,8 +228,14 @@ export type LeafObjectRecordFilter = {
   [fieldName: string]: LeafFilter;
 };
 
+// A relation field holds a filter on its target records
+export type RelationObjectRecordFilter = {
+  [fieldName: string]: LeafFilter | RecordGqlOperationFilter;
+};
+
 export type RecordGqlOperationFilter =
   | LeafObjectRecordFilter
+  | RelationObjectRecordFilter
   | AndObjectRecordFilter
   | OrObjectRecordFilter
   | NotObjectRecordFilter;

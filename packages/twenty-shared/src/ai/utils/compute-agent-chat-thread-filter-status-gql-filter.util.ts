@@ -3,8 +3,7 @@ import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter'
 
 const throughParticipants = (
   participantFilter: RecordGqlOperationFilter,
-): RecordGqlOperationFilter =>
-  ({ participants: participantFilter }) as RecordGqlOperationFilter;
+): RecordGqlOperationFilter => ({ participants: participantFilter });
 
 // Keep in sync with getAgentChatThreadInboxStatus in twenty-front, which places loaded chats
 export const computeAgentChatThreadFilterStatusGqlFilter = ({

@@ -1,7 +1,7 @@
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { atom, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -725,6 +725,65 @@ describe('AiChatInboxPage', () => {
         selectedThreadIds: [firstThread.id, thirdThread.id],
         excludedThreadIds: [secondThread.id],
       });
+    });
+
+    it('starts a plain selection once every chat is unchecked', async () => {
+      jotaiStore.set(agentChatThreadListState.atom, {
+        threadIds: THREADS.map(({ id }) => id),
+        hasNextPage: false,
+        endCursor: null,
+        filterStatusPages: {
+          active: {
+            hasNextPage: true,
+            endCursor: 'tab-page-1',
+            totalCount: 40,
+          },
+        },
+      });
+      renderInbox();
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+      fireEvent.click(getRowCheckbox('First chat'));
+      fireEvent.click(getRowCheckbox('Second chat'));
+      fireEvent.click(getRowCheckbox('Third chat'));
+      fireEvent.click(getRowCheckbox('First chat'));
+
+      expect(screen.getByText('1 chat selected')).toBeInTheDocument();
+      expect(jotaiStore.get(agentChatInboxTabSelectionState.atom)).toBeNull();
+    });
+
+    it('stops checking chats that come back once every checked one has left', async () => {
+      const setArchivedAt = (archivedAt: string | null) =>
+        jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) =>
+          Object.fromEntries(
+            Object.entries(participants ?? {}).map(
+              ([threadId, participant]) => [
+                threadId,
+                { ...participant, archivedAt },
+              ],
+            ),
+          ),
+        );
+
+      // With no chat on screen nothing navigates, so the selection stays the same
+      jotaiStore.set(
+        aiChatInboxLayoutState.atom,
+        AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+      );
+      renderInbox('/inbox');
+
+      await userEvent.keyboard('{Meta>}a{/Meta}');
+
+      expect(getRowCheckbox('First chat')).toBeChecked();
+
+      act(() => setArchivedAt('2099-01-01T00:00:00.000Z'));
+
+      expect(screen.queryByText('First chat')).not.toBeInTheDocument();
+
+      act(() => setArchivedAt(null));
+
+      expect(getRowCheckbox('First chat')).not.toBeChecked();
+      expect(screen.queryByText(/chats? selected/)).not.toBeInTheDocument();
     });
   });
 
