@@ -344,7 +344,7 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     icon: {
       alt: 'Organization plan icon',
       src: '/images/pricing/plans/organization.webp',
-      widthPx: 84,
+      widthPx: 75,
     },
     tagline: {
       cloud: msg`More AI and control for several teams.`,
@@ -389,7 +389,7 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
     icon: {
       alt: 'Pro plan icon',
       src: '/images/pricing/plans/pro.webp',
-      widthPx: 73,
+      widthPx: 57,
     },
     tagline: {
       cloud: msg`A custom agentic CRM for one team.`,
