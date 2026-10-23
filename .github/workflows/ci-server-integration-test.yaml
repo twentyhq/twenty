@@ -34,8 +34,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          run_id=$(gh api "repos/$REPOSITORY/actions/artifacts?name=integration-test-timings&per_page=100" \
-            --jq '[.artifacts[] | select((.expired | not) and .workflow_run.head_branch == "main" and .workflow_run.head_repository_id == .workflow_run.repository_id)][0].workflow_run.id // empty')
+          run_id=$(gh api "repos/$REPOSITORY/actions/artifacts?name=integration-test-timings-1&per_page=100" \
+            --jq '[.artifacts[] | select((.expired | not) and .workflow_run.head_branch == "ci/integration-shard-timings" and .workflow_run.head_repository_id == .workflow_run.repository_id)][0].workflow_run.id // empty')
           echo "run-id=$run_id" >> "$GITHUB_OUTPUT"
 
   server-integration-test:
@@ -137,7 +137,7 @@ jobs:
         if: needs.server-integration-test-timings.outputs.run-id != ''
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: integration-test-timings
+          name: integration-test-timings-1
           run-id: ${{ needs.server-integration-test-timings.outputs.run-id }}
           github-token: ${{ github.token }}
           path: .cache/integration-test-timings
@@ -145,7 +145,7 @@ jobs:
         if: ${{ !inputs.record-timings }}
         uses: ./.github/actions/nx-affected
         env:
-          INTEGRATION_TEST_TIMINGS_FILE: ${{ github.workspace }}/.cache/integration-test-timings/timings.json
+          INTEGRATION_TEST_TIMINGS_FILE: ${{ github.workspace }}/.cache/integration-test-timings/shard-1.json
         with:
           tag: scope:backend
           tasks: 'test:integration'
