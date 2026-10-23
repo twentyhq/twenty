@@ -128,7 +128,7 @@ export class MessageParticipantPersonListener {
     personChanges: {
       personId: string;
       before: PersonWorkspaceEntity | null;
-      after: PersonWorkspaceEntity;
+      after: PersonWorkspaceEntity | null;
     }[];
   }): Promise<PersonHandleMatching[]> {
     const changedHandlesByFieldUniversalIdentifier = new Map<
@@ -198,23 +198,24 @@ export class MessageParticipantPersonListener {
       ObjectRecordDeleteEvent<PersonWorkspaceEntity>
     >,
   ) {
-    const personEmails = payload.events.flatMap((eventPayload) =>
-      getPersonEmails(eventPayload.properties.before.emails),
-    );
+    const personHandleMatching = await this.buildPersonHandleMatching({
+      workspaceId: payload.workspaceId,
+      personChanges: payload.events.map((eventPayload) => ({
+        personId: eventPayload.recordId,
+        before: eventPayload.properties.before,
+        after: null,
+      })),
+    });
 
-    if (personEmails.length === 0) {
-      return;
-    }
-
-    await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
-      MessageParticipantMatchParticipantJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        participantMatching: {
-          personEmails,
-          workspaceMemberIds: [],
-        },
+    await this.enqueueMatching({
+      workspaceId: payload.workspaceId,
+      participantMatching: {
+        personEmails: payload.events.flatMap((eventPayload) =>
+          getPersonEmails(eventPayload.properties.before.emails),
+        ),
+        workspaceMemberIds: [],
       },
-    );
+      personHandleMatching,
+    });
   }
 }

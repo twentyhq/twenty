@@ -17,6 +17,21 @@ const buildPerson = (primaryPhoneNumber: string) => ({
 });
 
 describe('getChangedPersonHandles', () => {
+  it('returns the values of a destroyed person', () => {
+    expect(
+      getChangedPersonHandles({
+        personHandleField,
+        personChanges: [
+          {
+            personId: 'person-a',
+            before: buildPerson('611111111'),
+            after: null,
+          },
+        ],
+      }),
+    ).toEqual({ handles: ['+33611111111'], personIds: ['person-a'] });
+  });
+
   it('returns the values before and after a change', () => {
     expect(
       getChangedPersonHandles({

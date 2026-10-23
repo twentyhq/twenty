@@ -389,6 +389,38 @@ describe('app message channel participant matching (e2e)', () => {
     expect((await findSender(messageId)).personId).toBe(katherineId);
   });
 
+  it('relinks to the next person with that value when the linked person is destroyed', async () => {
+    const hedyId = await createPerson({
+      firstName: 'Hedy',
+      phone: { nationalNumber: '677777777' },
+    });
+    const radiaId = await createPerson({
+      firstName: 'Radia',
+      phone: { nationalNumber: '677777777' },
+    });
+
+    const { messageId } = await ingestFromOrThrow({
+      externalId: 'from-shared-number',
+      senderHandle: '+33677777777',
+    });
+
+    expect((await findSender(messageId)).personId).toBe(hedyId);
+
+    const response = await makeGraphqlApiRequest(
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        recordId: hedyId,
+        gqlFields: 'id',
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    personIds.splice(personIds.indexOf(hedyId), 1);
+    await waitForAllJobsToFinish();
+
+    expect((await findSender(messageId)).personId).toBe(radiaId);
+  });
+
   it('keeps a personId the app passes when a person gains that handle as an email', async () => {
     const channelResponse = await asApplication({
       query: CREATE_CHANNEL_MUTATION,

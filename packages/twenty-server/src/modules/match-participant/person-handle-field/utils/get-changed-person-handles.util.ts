@@ -26,7 +26,7 @@ const getHandles = ({
 type PersonChange = {
   personId: string;
   before: object | null;
-  after: object;
+  after: object | null;
 };
 
 export const getChangedPersonHandles = ({
