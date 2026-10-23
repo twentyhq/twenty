@@ -212,7 +212,7 @@ export const SidePanelShareRecordContent = ({
                     ) : null,
                   )}
                   {isInviting && (
-                    <SidePanelShareRecordGroup heading={t`Doesn’t have access`}>
+                    <SidePanelShareRecordGroup heading={t`Not shared with`}>
                       {!hasSelection && (
                         <>
                           {accessPicker}

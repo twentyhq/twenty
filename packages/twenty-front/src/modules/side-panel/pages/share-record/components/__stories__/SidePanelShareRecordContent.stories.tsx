@@ -281,7 +281,7 @@ export const AddPeople: Story = {
     await expect(search).toHaveFocus();
     await userEvent.clear(search);
     await userEvent.type(search, 'j');
-    await expect(page.getByText('Doesn’t have access')).toBeVisible();
+    await expect(page.getByText('Not shared with')).toBeVisible();
     const recipientWithoutAvatar = page
       .getByRole('checkbox', {
         name: /Jane Austen/,
@@ -440,7 +440,7 @@ export const InvitePeople: Story = {
     await expect(page.getByText('Roles')).toBeVisible();
     await expect(page.getByText('Users')).toBeVisible();
     await expect(page.queryByText('Selected')).not.toBeInTheDocument();
-    await expect(page.queryByText('Doesn’t have access')).not.toBeInTheDocument();
+    await expect(page.queryByText('Not shared with')).not.toBeInTheDocument();
     await expect(page.queryByRole('checkbox')).not.toBeInTheDocument();
     await expect(setGeneralAccess).not.toHaveBeenCalled();
   },
