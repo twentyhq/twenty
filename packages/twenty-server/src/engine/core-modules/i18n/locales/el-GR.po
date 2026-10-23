@@ -6515,6 +6515,16 @@ msgstr "Μη έγκυρη παράμετρος φίλτρου."
 msgid "Invalid filter value"
 msgstr "Μη έγκυρη τιμή φίλτρου"
 
+#. js-lingui-id: ys8v/n
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{fieldName}\" and \"{referencedFieldName}\" cannot be compared"
+msgstr "Μη έγκυρο φίλτρο: τα \"{fieldName}\" και \"{referencedFieldName}\" δεν μπορούν να συγκριθούν"
+
+#. js-lingui-id: 8Ng76x
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: \"{operator}\" expects a field name"
+msgstr "Μη έγκυρο φίλτρο: το \"{operator}\" αναμένει όνομα πεδίου"
+
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"{operator}\" operator requires a String"
@@ -6525,10 +6535,26 @@ msgstr "Μη έγκυρο φίλτρο: Ο τελεστής \"{operator}\" απ�
 msgid "Invalid filter: \"{operator}\" operator requires an array"
 msgstr "Μη έγκυρο φίλτρο: Ο τελεστής \"{operator}\" απαιτεί έναν πίνακα"
 
+#. js-lingui-id: xxcw3g
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
+msgstr "Μη έγκυρο φίλτρο: το \"{relationFieldName}\" μπορεί να αναφέρεται μόνο στην εγγραφή από την οποία ξεκινά το φίλτρο σχέσης"
+
 #. js-lingui-id: 4eM03h
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util.ts
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "Μη έγκυρο φίλτρο: Ο τελεστής \"isEmptyArray\" απαιτεί μια τιμή boolean"
+
+#. js-lingui-id: S8iHKo
+#: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
+msgid "Invalid filter: {nameSingular} object doesn't have any \"{referencedFieldName}\" field."
+msgstr "Μη έγκυρο φίλτρο: το αντικείμενο {nameSingular} δεν έχει κανένα πεδίο \"{referencedFieldName}\"."
+
+#. js-lingui-id: OyCWdj
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: composite fields cannot be compared with another field"
+msgstr "Μη έγκυρο φίλτρο: τα σύνθετα πεδία δεν μπορούν να συγκριθούν με άλλο πεδίο"
 
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
@@ -6544,6 +6570,11 @@ msgstr "Μη έγκυρο φίλτρο: η τιμή του φίλτρου πρέ
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
 msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "Μη έγκυρο φίλτρο: το φιλτράρισμα με το πεδίο σχέσης \"{key}\" δεν υποστηρίζεται"
+
+#. js-lingui-id: wi8qrB
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+msgid "Invalid filter: the field to compare with was not found"
+msgstr "Μη έγκυρο φίλτρο: δεν βρέθηκε το πεδίο με το οποίο γίνεται η σύγκριση"
 
 #. js-lingui-id: bNNDED
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts

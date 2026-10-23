@@ -1,0 +1,142 @@
+name: Publish npm packages
+run-name: ${{ github.ref_name }}
+
+on:
+  push:
+    tags: ["npm-release/*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-release-publish
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+jobs:
+  publish:
+    if: vars.NPM_RELEASE_APP_BOT_LOGIN != '' && github.event.sender.login == vars.NPM_RELEASE_APP_BOT_LOGIN
+    environment: npm-release
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout release commit
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Require release source to be on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          status=$(gh api "repos/twentyhq/twenty/compare/main...$GITHUB_SHA" --jq .status)
+          case "$status" in
+            identical|behind) ;;
+            *) echo '::error::Release source must already be in main history'; exit 1 ;;
+          esac
+
+      - name: Read infra publishing plan
+        env:
+          RELEASE_REF: ${{ github.ref }}
+        run: |
+          # A shallow checkout can leave the tag ref pointing to its peeled commit.
+          git fetch --no-tags --depth=1 origin "+$RELEASE_REF:$RELEASE_REF"
+          if [[ "$(git cat-file -t "$RELEASE_REF")" != tag ]]; then
+            echo '::error::Expected an annotated publishing tag created by infra'
+            exit 1
+          fi
+          git for-each-ref --format='%(contents)' "$RELEASE_REF" > plan.json
+          jq -e --arg sha "$GITHUB_SHA" '
+            .source_sha == $sha and (.dry_run | type == "boolean")
+            and (.version | type == "string" and test("^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)*$"))
+            and (.dist_tag | type == "string" and test("^[a-zA-Z][a-zA-Z0-9._-]*$"))
+            and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty create-twenty-app"
+              or .packages == "twenty-ui" or .packages == "twenty")
+            and ((.stage_only // false) | type == "boolean")
+            and (.staging_version == null)
+            and (if .stage_only == true then .dry_run == false else true end)
+          ' plan.json > /dev/null
+          jq -r '"PACKAGES=\(.packages)\nVERSION=\(.version)\nDIST_TAG=\(.dist_tag)\nDRY_RUN=\(.dry_run)\nSTAGE_ONLY=\(.stage_only // false)"' plan.json >> "$GITHUB_ENV"
+
+      - name: Free disk space
+        run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+
+      - name: Verify package identity and version
+        run: |
+          for package in $PACKAGES; do
+            directory="packages/$package"
+            if [[ "$package" == twenty ]]; then directory=packages/twenty-cli; fi
+            jq -e --arg name "$package" --arg version "$VERSION" \
+              '.name == $name and .version == $version' "$directory/package.json" > /dev/null
+          done
+
+      - name: Setup Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Build and inspect packages
+        run: |
+          corepack enable
+          yarn install --immutable
+          projects=$(jq -rn --arg packages "$PACKAGES" \
+            '$packages | split(" ") | map(if . == "twenty" then "twenty-cli" else . end) | join(",")')
+          yarn nx run-many --target=build --projects="$projects" --skip-nx-cache
+          for package in $PACKAGES; do
+            yarn workspace "$package" pack --dry-run
+          done
+
+      - name: Stage validation packages without publishing
+        if: env.STAGE_ONLY == 'true'
+        run: |
+          # This test stages the SDK before it is publicly available to the CLI's release-readiness check.
+          jq 'del(.scripts.prepublish)' packages/twenty-cli/package.json > "$RUNNER_TEMP/twenty-cli-staging.json"
+          mv "$RUNNER_TEMP/twenty-cli-staging.json" packages/twenty-cli/package.json
+          for package in $PACKAGES; do
+            yarn workspace "$package" npm publish --staged --provenance --tag "$DIST_TAG" --access public
+            echo "Staged $package@$VERSION for OIDC validation only. Do not approve; reject after verification." >> "$GITHUB_STEP_SUMMARY"
+          done
+
+      - name: Publish packages with provenance
+        if: env.DRY_RUN == 'false' && env.STAGE_ONLY != 'true'
+        run: |
+          # Template lockfiles resolve the released libraries from npm.
+          published_libraries=""
+          for package in $PACKAGES; do
+            if [[ "$package" == twenty || "$package" == create-twenty-app ]]; then
+              for dependency in $published_libraries; do
+                for attempt in $(seq 1 60); do
+                  if npm view "$dependency@$VERSION" version > /dev/null 2>&1; then break; fi
+                  if [[ "$attempt" == 60 ]]; then
+                    echo "::error::$dependency@$VERSION was not served within ten minutes"
+                    exit 1
+                  fi
+                  sleep 10
+                done
+              done
+            fi
+
+            if curl --fail --silent --show-error "https://registry.npmjs.org/$package/$VERSION" > /dev/null; then
+              if [[ "$package" == create-twenty-app ]]; then
+                echo '::error::Scaffolder version already exists; release a new version to ship its lockfile'
+                exit 1
+              fi
+              echo "$package@$VERSION already published; skipping"
+            else
+              if [[ "$package" == create-twenty-app ]]; then
+                yarn nx run create-twenty-app:generate-template-lock --releaseVersion="$VERSION"
+                test -s packages/create-twenty-app/dist/constants/template/yarn.lock
+              fi
+              yarn workspace "$package" npm publish --provenance --tag "$DIST_TAG" --access public
+            fi
+            if [[ "$package" != twenty && "$package" != create-twenty-app ]]; then
+              published_libraries="$published_libraries $package"
+            fi
+          done

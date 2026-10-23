@@ -1,6 +1,9 @@
 import {
+  GetFunctionCommand,
+  type GetFunctionCommandOutput,
   Lambda,
   ListLayerVersionsCommand,
+  ResourceNotFoundException,
   waitUntilFunctionActiveV2,
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
@@ -11,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   CREDENTIALS_DURATION_IN_SECONDS,
+  LAMBDA_FUNCTION_CACHE_TTL_MS,
   LAMBDA_CLIENT_CONNECTION_TIMEOUT_MS,
   LAMBDA_CLIENT_MAX_ATTEMPTS,
   LAMBDA_CLIENT_MAX_SOCKETS,
@@ -112,6 +116,56 @@ export class LambdaAwsClientService {
       { client: await this.getLambdaClient(), maxWaitTime },
       { FunctionName: functionName },
     );
+  }
+
+  async getFunction(
+    functionName: string,
+  ): Promise<GetFunctionCommandOutput | undefined> {
+    const cacheKey = this.getFunctionCacheKey(functionName);
+    const cachedFunction =
+      await this.options.cacheStorageService.get<GetFunctionCommandOutput>(
+        cacheKey,
+      );
+
+    if (isDefined(cachedFunction)) {
+      return cachedFunction;
+    }
+
+    const lambdaClient = await this.getLambdaClient();
+
+    let getFunctionResult: GetFunctionCommandOutput;
+
+    try {
+      getFunctionResult = await lambdaClient.send(
+        new GetFunctionCommand({ FunctionName: functionName }),
+      );
+    } catch (error) {
+      if (error instanceof ResourceNotFoundException) {
+        return undefined;
+      }
+
+      throw error;
+    }
+
+    if (getFunctionResult.Configuration?.State === 'Active') {
+      await this.options.cacheStorageService.set(
+        cacheKey,
+        getFunctionResult,
+        LAMBDA_FUNCTION_CACHE_TTL_MS,
+      );
+    }
+
+    return getFunctionResult;
+  }
+
+  async clearFunctionCache(functionName: string): Promise<void> {
+    await this.options.cacheStorageService.del(
+      this.getFunctionCacheKey(functionName),
+    );
+  }
+
+  private getFunctionCacheKey(functionName: string): string {
+    return `lambda-function:${functionName}`;
   }
 
   async getExistingLayerArn(layerName: string): Promise<string | undefined> {

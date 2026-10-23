@@ -168,7 +168,6 @@ export const SettingsApplicationConnectionsSection = ({
                     triggerAppOAuth({
                       applicationId,
                       providerName: provider.name,
-                      scope: 'WORKSPACE',
                     })
                   }
                   variant="outline"

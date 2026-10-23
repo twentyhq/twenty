@@ -6,6 +6,7 @@ export const mockBillingPlans = {
       __typename: 'BillingPlan',
       planKey: 'PRO',
       isSellable: true,
+      isCheckoutDefault: true,
       upgradePlanKeys: ['ENTERPRISE'],
       downgradePlanKeys: [],
       baseProducts: [
@@ -306,6 +307,7 @@ export const mockBillingPlans = {
       __typename: 'BillingPlan',
       planKey: 'ENTERPRISE',
       isSellable: true,
+      isCheckoutDefault: false,
       upgradePlanKeys: [],
       downgradePlanKeys: ['PRO'],
       baseProducts: [
@@ -606,6 +608,7 @@ export const mockBillingPlans = {
       __typename: 'BillingPlan',
       planKey: 'PRO_V2',
       isSellable: false,
+      isCheckoutDefault: false,
       upgradePlanKeys: [],
       downgradePlanKeys: [],
       baseProducts: [],
@@ -616,6 +619,7 @@ export const mockBillingPlans = {
       __typename: 'BillingPlan',
       planKey: 'ORGANIZATION_V2',
       isSellable: false,
+      isCheckoutDefault: false,
       upgradePlanKeys: [],
       downgradePlanKeys: [],
       baseProducts: [],

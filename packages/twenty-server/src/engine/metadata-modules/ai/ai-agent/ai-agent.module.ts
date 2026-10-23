@@ -9,7 +9,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
-import { AgentToolWorkspaceService } from './tools/services/agent-tool.workspace-service';
 
 import { AgentEntity } from './entities/agent.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -30,13 +29,8 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   providers: [
     AgentResolver,
     AgentService,
-    AgentToolWorkspaceService,
     provideWorkspaceScopedRepository(AgentEntity),
   ],
-  exports: [
-    AgentService,
-    AgentToolWorkspaceService,
-    TypeOrmModule.forFeature([AgentEntity]),
-  ],
+  exports: [AgentService, TypeOrmModule.forFeature([AgentEntity])],
 })
 export class AiAgentModule {}

@@ -29,6 +29,7 @@ export const RecordTableBodyLoading = () => {
             objectNameSingular: '',
             recordId: `${rowIndex}`,
             isSelected: false,
+            restrictedFieldNames: [],
           }}
         >
           <RecordTableRowDraggableContextProvider
