@@ -1,7 +1,11 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+
 export type TrustedByLogo = {
   // Company name (proper noun, untranslated): what a screen reader hears
   // where sighted users read the mark.
   name: string;
+  description: MessageDescriptor;
   src: string;
   // Intrinsic aspect ratio (measured from the asset) so each mark renders at
   // its natural proportions instead of being forced into a uniform box.
@@ -16,6 +20,7 @@ export type TrustedByLogo = {
 export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   {
     aspectRatio: 1.896,
+    description: msg`French government`,
     grayOpacity: 0.52,
     heightPx: 30,
     name: 'République Française',
@@ -23,6 +28,7 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   },
   {
     aspectRatio: 1,
+    description: msg`Life sciences company in health and agriculture`,
     grayBrightness: 0.9,
     grayOpacity: 0.74,
     heightPx: 34,
@@ -31,6 +37,7 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   },
   {
     aspectRatio: 1,
+    description: msg`AI-native insurance carrier for startups`,
     grayOpacity: 0.42,
     heightPx: 34,
     name: 'Corgi',
@@ -38,6 +45,7 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   },
   {
     aspectRatio: 1.677,
+    description: msg`AI voice agents for debt collection`,
     grayOpacity: 0.42,
     heightPx: 22,
     name: 'Murphy',
@@ -45,6 +53,7 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   },
   {
     aspectRatio: 7.188,
+    description: msg`German national daily newspaper`,
     grayOpacity: 0.5,
     heightPx: 17,
     name: 'Frankfurter Allgemeine Zeitung',
@@ -52,6 +61,7 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   },
   {
     aspectRatio: 4.268,
+    description: msg`Idea management and open innovation software`,
     grayOpacity: 0.55,
     heightPx: 22,
     name: 'Wazoku',
@@ -59,6 +69,7 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   },
   {
     aspectRatio: 2.588,
+    description: msg`Poland's largest convenience store chain`,
     grayOpacity: 0.6,
     heightPx: 26,
     name: 'Żabka',
@@ -66,6 +77,7 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   },
   {
     aspectRatio: 5.304,
+    description: msg`Portuguese maker of window and door systems`,
     grayOpacity: 0.41,
     heightPx: 18,
     name: 'OTIIMA',
@@ -73,6 +85,7 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   },
   {
     aspectRatio: 1.483,
+    description: msg`Maker of Cerakote ceramic coatings`,
     grayOpacity: 0.42,
     heightPx: 30,
     name: 'NIC Industries',
@@ -80,6 +93,7 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
   },
   {
     aspectRatio: 3.814,
+    description: msg`Real estate agency in Niigata, Japan`,
     grayBrightness: 0.72,
     grayOpacity: 0.74,
     heightPx: 26,
