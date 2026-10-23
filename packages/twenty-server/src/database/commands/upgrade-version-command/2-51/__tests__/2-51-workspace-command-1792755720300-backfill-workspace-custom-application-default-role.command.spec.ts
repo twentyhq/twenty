@@ -1,5 +1,5 @@
 import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
-import { BackfillWorkspaceCustomApplicationDefaultRoleCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792741969443-backfill-workspace-custom-application-default-role.command';
+import { BackfillWorkspaceCustomApplicationDefaultRoleCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792755720300-backfill-workspace-custom-application-default-role.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,

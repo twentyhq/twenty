@@ -16,7 +16,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.51.0', 1792741969443)
+@RegisteredWorkspaceCommand('2.51.0', 1792755720300)
 @Command({
   name: 'upgrade:2-51:backfill-workspace-custom-application-default-role',
   description:
