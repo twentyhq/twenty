@@ -40,14 +40,6 @@ const StyledRetentionNotice = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-const StyledRateLimitsEmpty = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  border-top: 1px solid ${themeCssVariables.border.color.light};
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
-`;
-
 type ApplicationMonitoringProps = {
   instanceId: string;
   monitoring: ApplicationMonitoringData;
@@ -143,7 +135,9 @@ export const ApplicationMonitoring = ({
           description={t`API requests rejected and trigger jobs skipped`}
         />
         {monitoring.rateLimitEventCount === 0 ? (
-          <StyledRateLimitsEmpty>{t`No rate limit hit in this period`}</StyledRateLimitsEmpty>
+          <SettingsEmptyPlaceholder padding="2" textAlign="left">
+            {t`No rate limit hit in this period`}
+          </SettingsEmptyPlaceholder>
         ) : (
           <ApplicationMonitoringLineChart
             data={activityChartData}

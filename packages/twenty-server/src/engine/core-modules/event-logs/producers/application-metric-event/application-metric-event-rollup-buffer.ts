@@ -11,7 +11,7 @@ const buildRollupKey = (event: ApplicationMetricEvent): string =>
     event.applicationId,
     event.applicationVersion,
     event.source,
-    event.logicFunctionName,
+    event.logicFunctionId,
     event.level,
     event.errorCode,
     Math.floor(event.timestamp.getTime() / MINUTE_IN_MS),

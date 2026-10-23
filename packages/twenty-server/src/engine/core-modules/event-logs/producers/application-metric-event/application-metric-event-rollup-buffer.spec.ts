@@ -48,6 +48,21 @@ describe('ApplicationMetricEventRollupBuffer', () => {
     expect(buffer.drain()).toHaveLength(4);
   });
 
+  it('keeps one row per logic function even when names collide', () => {
+    const buffer = new ApplicationMetricEventRollupBuffer(10);
+    const jobEvent: ApplicationMetricEvent = {
+      ...EVENT,
+      source: 'JOB_RATE_LIMIT',
+      errorCode: 'LIMIT_REACHED',
+      logicFunctionName: 'sync',
+    };
+
+    buffer.increment({ ...jobEvent, logicFunctionId: 'function-1' });
+    buffer.increment({ ...jobEvent, logicFunctionId: 'function-2' });
+
+    expect(buffer.drain()).toHaveLength(2);
+  });
+
   it('keeps counting buffered rows but drops new ones once full', () => {
     const buffer = new ApplicationMetricEventRollupBuffer(1);
 
