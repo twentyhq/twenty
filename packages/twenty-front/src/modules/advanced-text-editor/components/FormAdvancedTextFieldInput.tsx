@@ -1,5 +1,4 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
-import { FormAdvancedTextFieldInputEffect } from '@/advanced-text-editor/components/FormAdvancedTextFieldInputEffect';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
@@ -7,6 +6,7 @@ import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErro
 import { type UploadedFile } from '@/advanced-text-editor/types/UploadedFile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
+import { syncAdvancedTextEditorState } from '@/advanced-text-editor/utils/syncAdvancedTextEditorState';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
@@ -20,7 +20,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isUndefined } from '@sniptt/guards';
 import { type Editor } from '@tiptap/core';
-import { type ComponentType, useId, useState } from 'react';
+import { type ComponentType, useCallback, useId, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -236,18 +236,31 @@ export const FormAdvancedTextFieldInput = ({
     hasClosePageButton: !isMobile,
   });
 
-  const editorEffect = (
-    <FormAdvancedTextFieldInputEffect
-      editor={editor}
-      value={value}
-      readonly={readonly}
-      parseLegacyDocument={profile.parseLegacyDocument}
-      onEditorReady={onEditorReady}
-    />
+  const handleEditorReady = useCallback(
+    (container: HTMLDivElement | null) => {
+      onEditorReady?.(isDefined(container) ? editor : null);
+    },
+    [editor, onEditorReady],
+  );
+
+  const handleEditorContainerChange = useCallback(
+    (container: HTMLDivElement | null) => {
+      if (!isDefined(container) || !isDefined(editor)) {
+        return;
+      }
+
+      syncAdvancedTextEditorState({
+        editor,
+        value,
+        readonly,
+        parseLegacyDocument: profile.parseLegacyDocument,
+      });
+    },
+    [editor, value, readonly, profile.parseLegacyDocument],
   );
 
   if (!isDefined(editor)) {
-    return editorEffect;
+    return null;
   }
 
   const fullScreenOverlay = isFullScreenEnabled
@@ -268,8 +281,8 @@ export const FormAdvancedTextFieldInput = ({
 
   return (
     <>
-      {editorEffect}
       <StyledAdvancedTextFieldContainerWrapper
+        ref={handleEditorReady}
         hasFieldChrome={chrome === 'field'}
       >
         <FormFieldInputContainer
@@ -283,6 +296,7 @@ export const FormAdvancedTextFieldInput = ({
 
           <StyledAdvancedTextFieldFieldContainer>
             <StyledAdvancedTextFieldInnerContainer
+              ref={handleEditorContainerChange}
               hasFieldChrome={chrome === 'field'}
             >
               {!isFullScreen && (
