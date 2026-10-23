@@ -42,12 +42,23 @@ export class HttpTool implements Tool {
         maxBodyLength: HTTP_TOOL_MAX_PAYLOAD_SIZE_BYTES,
       };
 
-      if (isMethodForBody && body) {
-        const contentType = headers?.['content-type'];
+      if (isMethodForBody && isDefined(body)) {
+        const contentTypeHeaderKey = headersCopy
+          ? Object.keys(headersCopy).find(
+              (key) => key.toLowerCase() === 'content-type',
+            )
+          : undefined;
+        const contentType = contentTypeHeaderKey
+          ? headersCopy[contentTypeHeaderKey]
+          : undefined;
 
         axiosConfig.data = parseDataFromContentType(body, contentType);
-        if (isDefined(headersCopy) && contentType === 'multipart/form-data') {
-          delete headersCopy['content-type'];
+        if (
+          isDefined(contentTypeHeaderKey) &&
+          contentType?.toLowerCase().split(';')[0].trim() ===
+            'multipart/form-data'
+        ) {
+          delete headersCopy[contentTypeHeaderKey];
         }
       }
 
