@@ -9,7 +9,6 @@ import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/co
 export type MessageParticipantMatchParticipantJobData = {
   workspaceId: string;
   participantMatching: {
-    personIds: string[];
     personEmails: string[];
     workspaceMemberIds: string[];
   };
@@ -28,10 +27,7 @@ export class MessageParticipantMatchParticipantJob {
   async handle(data: MessageParticipantMatchParticipantJobData): Promise<void> {
     const { participantMatching, workspaceId } = data;
 
-    if (
-      participantMatching.personIds.length > 0 ||
-      participantMatching.personEmails.length > 0
-    ) {
+    if (participantMatching.personEmails.length > 0) {
       await this.matchParticipantService.matchParticipantsForPeople({
         participantMatching,
         objectMetadataName: 'messageParticipant',

@@ -4,8 +4,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -13,7 +14,6 @@ import {
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -22,6 +22,7 @@ export class UserWorkspaceAuthContextService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async resolveWorkspaceMember({
@@ -150,8 +151,21 @@ export class UserWorkspaceAuthContextService {
         );
       }
     }
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
     return buildUserAuthContext({
-      workspace: { id: workspaceId } as FlatWorkspace,
+      workspace,
       application,
       viaApplication: matchingUserContext?.viaApplication,
       userWorkspaceId,

@@ -184,6 +184,11 @@ export class DevSeederPermissionsService {
     workspaceId: string;
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<RoleDTO> {
+    await this.roleService.createWorkspaceCustomApplicationRole({
+      workspaceId,
+      workspaceCustomFlatApplication,
+    });
+
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
       ownerFlatApplication: workspaceCustomFlatApplication,
