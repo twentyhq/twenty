@@ -313,6 +313,7 @@ export enum AllMetadataName {
   frontComponent = 'frontComponent',
   index = 'index',
   logicFunction = 'logicFunction',
+  mcpServer = 'mcpServer',
   navigationMenuItem = 'navigationMenuItem',
   objectMetadata = 'objectMetadata',
   objectPermission = 'objectPermission',
@@ -1623,6 +1624,15 @@ export type CreateLogicFunctionFromSourceInput = {
   workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
 };
 
+export type CreateMcpServerInput = {
+  authorizationHeaderValue?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  isEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  label: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  url: Scalars['String']['input'];
+};
+
 export type CreateMessageSuppressionInput = {
   emailAddress: Scalars['String']['input'];
   unsubscribeTopicId?: InputMaybe<Scalars['UUID']['input']>;
@@ -2319,6 +2329,7 @@ export enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
+  IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
@@ -3002,6 +3013,19 @@ export type MarketplaceAppRoleObjectPermission = {
   universalIdentifier: Scalars['String']['output'];
 };
 
+export type McpServer = {
+  __typename?: 'McpServer';
+  applicationId: Scalars['UUID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  hasAuthorizationHeader: Scalars['Boolean']['output'];
+  id: Scalars['UUID']['output'];
+  isEnabled: Scalars['Boolean']['output'];
+  label: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  url: Scalars['String']['output'];
+};
+
 export type MessageCampaignBodyConfiguration = {
   __typename?: 'MessageCampaignBodyConfiguration';
   configurationType: WidgetConfigurationType;
@@ -3293,6 +3317,7 @@ export type Mutation = {
   createManyViewFieldGroups: Array<ViewFieldGroup>;
   createManyViewFields: Array<ViewField>;
   createManyViewGroups: Array<ViewGroup>;
+  createMcpServer: McpServer;
   createMessageSuppression: MessageSuppression;
   createNavigationMenuItem: NavigationMenuItem;
   createNewWorkspaceLogoUpload: FileUploadTarget;
@@ -3335,6 +3360,7 @@ export type Mutation = {
   deleteEmailingDomain: Scalars['Boolean']['output'];
   deleteFrontComponent: FrontComponent;
   deleteManyNavigationMenuItems: Array<NavigationMenuItem>;
+  deleteMcpServer: McpServer;
   deleteMessageSuppression: Scalars['Boolean']['output'];
   deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
@@ -3484,6 +3510,7 @@ export type Mutation = {
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
   updateManyViewGroups: Array<ViewGroup>;
+  updateMcpServer: McpServer;
   updateMessageChannel: MessageChannel;
   updateMessageFolder: MessageFolder;
   updateMessageFolders: Array<MessageFolder>;
@@ -3752,6 +3779,11 @@ export type MutationCreateManyViewGroupsArgs = {
 };
 
 
+export type MutationCreateMcpServerArgs = {
+  input: CreateMcpServerInput;
+};
+
+
 export type MutationCreateMessageSuppressionArgs = {
   input: CreateMessageSuppressionInput;
 };
@@ -3966,6 +3998,11 @@ export type MutationDeleteFrontComponentArgs = {
 
 export type MutationDeleteManyNavigationMenuItemsArgs = {
   ids: Array<Scalars['UUID']['input']>;
+};
+
+
+export type MutationDeleteMcpServerArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -4692,6 +4729,11 @@ export type MutationUpdateManyObjectsArgs = {
 
 export type MutationUpdateManyViewGroupsArgs = {
   inputs: Array<UpdateViewGroupInput>;
+};
+
+
+export type MutationUpdateMcpServerArgs = {
+  input: UpdateMcpServerInput;
 };
 
 
@@ -5643,6 +5685,8 @@ export type Query = {
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
+  mcpServer?: Maybe<McpServer>;
+  mcpServers: Array<McpServer>;
   messageSuppressions: MessageSuppressionList;
   metadataTranslations: Array<MetadataTranslation>;
   minimalMetadata: MinimalMetadata;
@@ -6090,6 +6134,11 @@ export type QueryIsApplicationStoppedArgs = {
 
 export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
+};
+
+
+export type QueryMcpServerArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -7134,6 +7183,19 @@ export type UpdateLogicFunctionFromSourceInputUpdates = {
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
   toolTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
   workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type UpdateMcpServerInput = {
+  id: Scalars['UUID']['input'];
+  update: UpdateMcpServerInputUpdates;
+};
+
+export type UpdateMcpServerInputUpdates = {
+  authorizationHeaderValue?: InputMaybe<Scalars['String']['input']>;
+  isEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  url?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateMessageChannelInput = {

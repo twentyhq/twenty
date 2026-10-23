@@ -274,6 +274,7 @@ enum AllMetadataName {
   frontComponent
   index
   logicFunction
+  mcpServer
   navigationMenuItem
   objectMetadata
   objectPermission
@@ -1505,6 +1506,15 @@ input CreateLogicFunctionFromSourceInput {
   workflowActionTriggerSettings: JSON
 }
 
+input CreateMcpServerInput {
+  authorizationHeaderValue: String
+  id: UUID
+  isEnabled: Boolean
+  label: String!
+  name: String!
+  url: String!
+}
+
 input CreateMessageSuppressionInput {
   emailAddress: String!
   unsubscribeTopicId: UUID
@@ -2191,6 +2201,7 @@ enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
+  IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_CAMPAIGN_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
@@ -2840,6 +2851,18 @@ type MarketplaceAppRoleObjectPermission {
   universalIdentifier: String!
 }
 
+type McpServer {
+  applicationId: UUID!
+  createdAt: DateTime!
+  hasAuthorizationHeader: Boolean!
+  id: UUID!
+  isEnabled: Boolean!
+  label: String!
+  name: String!
+  updatedAt: DateTime!
+  url: String!
+}
+
 type MessageCampaignBodyConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -3120,6 +3143,7 @@ type Mutation {
   createManyViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [ViewFieldGroup!]!
   createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
   createManyViewGroups(inputs: [CreateViewGroupInput!]!): [ViewGroup!]!
+  createMcpServer(input: CreateMcpServerInput!): McpServer!
   createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
   createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
   createNewWorkspaceLogoUpload(filename: String!, size: Float!, workspaceId: String!): FileUploadTarget!
@@ -3162,6 +3186,7 @@ type Mutation {
   deleteEmailingDomain(id: String!): Boolean!
   deleteFrontComponent(id: UUID!): FrontComponent!
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
+  deleteMcpServer(id: UUID!): McpServer!
   deleteMessageSuppression(id: UUID!): Boolean!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -3307,6 +3332,7 @@ type Mutation {
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
+  updateMcpServer(input: UpdateMcpServerInput!): McpServer!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
@@ -3996,6 +4022,8 @@ type Query {
   isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   lineChartData(input: LineChartDataInput!): LineChartData!
   listPlans: [BillingPlan!]!
+  mcpServer(id: UUID!): McpServer
+  mcpServers: [McpServer!]!
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   minimalMetadata: MinimalMetadata!
@@ -4898,6 +4926,19 @@ input UpdateLogicFunctionFromSourceInputUpdates {
   timeoutSeconds: Float
   toolTriggerSettings: JSON
   workflowActionTriggerSettings: JSON
+}
+
+input UpdateMcpServerInput {
+  id: UUID!
+  update: UpdateMcpServerInputUpdates!
+}
+
+input UpdateMcpServerInputUpdates {
+  authorizationHeaderValue: String
+  isEnabled: Boolean
+  label: String
+  name: String
+  url: String
 }
 
 input UpdateMessageChannelInput {
