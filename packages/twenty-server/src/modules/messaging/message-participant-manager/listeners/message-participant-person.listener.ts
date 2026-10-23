@@ -94,7 +94,6 @@ export class MessageParticipantPersonListener {
     await this.enqueueMatching({
       workspaceId: payload.workspaceId,
       participantMatching: {
-        // emails the person lost must release their participants as much as new ones claim them
         personEmails: personWithUpdatedEmails.flatMap((eventPayload) => [
           ...getPersonEmails(eventPayload.properties.before.emails),
           ...getPersonEmails(eventPayload.properties.after.emails),
