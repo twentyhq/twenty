@@ -10,7 +10,7 @@ const NESTED_CONTROL_SELECTOR = doNotTranslate(
 type ComposerFieldRowProps = {
   label: string;
   children: ReactNode;
-  showLabel?: boolean;
+  isLabelVisible?: boolean;
   trailing?: ReactNode;
   hasDivider?: boolean;
   onClick?: MouseEventHandler<HTMLDivElement>;
@@ -19,7 +19,7 @@ type ComposerFieldRowProps = {
 export const ComposerFieldRow = ({
   label,
   children,
-  showLabel = true,
+  isLabelVisible = true,
   trailing,
   hasDivider,
   onClick,
@@ -44,7 +44,7 @@ export const ComposerFieldRow = ({
 
   return (
     <FormFieldRow
-      label={showLabel ? label : undefined}
+      label={isLabelVisible ? label : undefined}
       aria-label={label}
       hasDivider={hasDivider}
       isHoverable={isDefined(onClick)}

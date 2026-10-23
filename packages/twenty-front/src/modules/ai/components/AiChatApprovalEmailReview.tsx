@@ -54,7 +54,7 @@ export const AiChatApprovalEmailReview = ({
     <StyledEmail>
       <AiChatEmailRecipientsRow
         label={t`To`}
-        showLabel={false}
+        isLabelVisible={false}
         recipients={draft.to}
         disabled={disabled}
         onChange={(to) => updateDraft({ to })}
@@ -87,7 +87,7 @@ export const AiChatApprovalEmailReview = ({
           />
         </>
       )}
-      <ComposerFieldRow label={t`Subject`} showLabel={false}>
+      <ComposerFieldRow label={t`Subject`} isLabelVisible={false}>
         <Input
           variant="plain"
           aria-label={t`Subject`}
