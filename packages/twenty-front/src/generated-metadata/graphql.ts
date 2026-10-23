@@ -3502,6 +3502,7 @@ export type Mutation = {
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
+  sendAppChannelMessage: SendAppChannelMessageOutput;
   sendChatMessage: SendChatMessageResult;
   sendEmail: SendEmailOutput;
   sendInboxMessage: SendInboxMessageResult;
@@ -4488,6 +4489,11 @@ export type MutationSaveImapSmtpCaldavAccountArgs = {
   connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+
+export type MutationSendAppChannelMessageArgs = {
+  input: SendAppChannelMessageInput;
 };
 
 
@@ -6624,6 +6630,18 @@ export type SearchField = {
   position: Scalars['Float']['output'];
   tsVectorFieldMetadataId: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type SendAppChannelMessageInput = {
+  messageChannelId: Scalars['UUID']['input'];
+  messageThreadId: Scalars['UUID']['input'];
+  text: Scalars['String']['input'];
+};
+
+export type SendAppChannelMessageOutput = {
+  __typename?: 'SendAppChannelMessageOutput';
+  messageId: Scalars['UUID']['output'];
+  messageThreadId: Scalars['UUID']['output'];
 };
 
 export type SendChatMessageResult = {

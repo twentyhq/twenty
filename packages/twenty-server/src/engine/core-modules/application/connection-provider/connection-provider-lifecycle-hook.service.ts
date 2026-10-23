@@ -286,8 +286,7 @@ export class ConnectionProviderLifecycleHookService {
     return parsedResult.connectedAccount;
   }
 
-  // Runs inline while the member waits on Send; failures propagate so the
-  // message is never recorded as sent.
+  // failures propagate so a message the app could not deliver is never recorded as sent
   async runSendMessage({
     provider,
     workspaceId,

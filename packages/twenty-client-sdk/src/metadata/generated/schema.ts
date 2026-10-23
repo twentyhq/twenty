@@ -2357,6 +2357,7 @@ export interface Mutation {
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
     saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess
+    sendAppChannelMessage: SendAppChannelMessageOutput
     sendChatMessage: SendChatMessageResult
     sendEmail: SendEmailOutput
     sendInboxMessage: SendInboxMessageResult
@@ -3271,6 +3272,12 @@ export interface SearchField {
     tsVectorFieldMetadataId: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     __typename: 'SearchField'
+}
+
+export interface SendAppChannelMessageOutput {
+    messageId: Scalars['UUID']
+    messageThreadId: Scalars['UUID']
+    __typename: 'SendAppChannelMessageOutput'
 }
 
 export interface SendChatMessageResult {
@@ -6774,6 +6781,7 @@ export interface MutationGenqlSelection{
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     saveImapSmtpCaldavAccount?: (ImapSmtpCaldavConnectionSuccessGenqlSelection & { __args: {connectionParameters: EmailAccountConnectionParameters, handle: Scalars['String'], id?: (Scalars['UUID'] | null)} })
+    sendAppChannelMessage?: (SendAppChannelMessageOutputGenqlSelection & { __args: {input: SendAppChannelMessageInput} })
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {browsingContext?: (Scalars['JSON'] | null), channelId?: (Scalars['UUID'] | null), fileAttachments?: (FileAttachmentInput[] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null), messageId: Scalars['UUID'], modelId?: (Scalars['String'] | null), shouldAssistantReply?: (Scalars['Boolean'] | null), text: Scalars['String'], threadId: Scalars['UUID']} })
     sendEmail?: (SendEmailOutputGenqlSelection & { __args: {input: SendEmailInput} })
     sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
@@ -7759,6 +7767,15 @@ export interface SearchFieldGenqlSelection{
     position?: boolean | number
     tsVectorFieldMetadataId?: boolean | number
     updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface SendAppChannelMessageInput {messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID'],text: Scalars['String']}
+
+export interface SendAppChannelMessageOutputGenqlSelection{
+    messageId?: boolean | number
+    messageThreadId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -11056,6 +11073,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isSearchField = (obj?: { __typename?: any } | null): obj is SearchField => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSearchField"')
       return SearchField_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendAppChannelMessageOutput_possibleTypes: string[] = ['SendAppChannelMessageOutput']
+    export const isSendAppChannelMessageOutput = (obj?: { __typename?: any } | null): obj is SendAppChannelMessageOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendAppChannelMessageOutput"')
+      return SendAppChannelMessageOutput_possibleTypes.includes(obj.__typename)
     }
     
 

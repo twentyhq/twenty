@@ -256,10 +256,12 @@ export class ApplicationMessageSendService {
 
           return {
             threadExternalId,
-            recipients: this.toRecipients({
-              participants: byRecency(participants),
-              channelHandle: messageChannel.handle,
-            }),
+            recipients: await this.dropLinksToDeletedRecords(
+              this.toRecipients({
+                participants: byRecency(participants),
+                channelHandle: messageChannel.handle,
+              }),
+            ),
           };
         },
         buildSystemAuthContext(workspaceId),
@@ -283,7 +285,55 @@ export class ApplicationMessageSendService {
     return conversation;
   }
 
-  // newest first, so a later display name or identity link wins over an older one
+  // ingestion refuses links to deleted records, and by then the provider has already delivered the message
+  private async dropLinksToDeletedRecords(
+    recipients: Conversation['recipients'],
+  ): Promise<Conversation['recipients']> {
+    const existingPersonIds = await this.findExistingRecordIds({
+      objectMetadataName: 'person',
+      ids: recipients.map((recipient) => recipient.personId),
+    });
+    const existingWorkspaceMemberIds = await this.findExistingRecordIds({
+      objectMetadataName: 'workspaceMember',
+      ids: recipients.map((recipient) => recipient.workspaceMemberId),
+    });
+
+    return recipients.map((recipient) => ({
+      ...recipient,
+      personId:
+        isDefined(recipient.personId) &&
+        existingPersonIds.has(recipient.personId)
+          ? recipient.personId
+          : undefined,
+      workspaceMemberId:
+        isDefined(recipient.workspaceMemberId) &&
+        existingWorkspaceMemberIds.has(recipient.workspaceMemberId)
+          ? recipient.workspaceMemberId
+          : undefined,
+    }));
+  }
+
+  private async findExistingRecordIds({
+    objectMetadataName,
+    ids,
+  }: {
+    objectMetadataName: 'person' | 'workspaceMember';
+    ids: (string | undefined)[];
+  }): Promise<Set<string>> {
+    const definedIds = [...new Set(ids.filter(isDefined))];
+
+    if (definedIds.length === 0) {
+      return new Set();
+    }
+
+    const records = await this.workspaceOrmManager
+      .getRepository(objectMetadataName, { shouldBypassPermissionChecks: true })
+      .find({ where: { id: In(definedIds) }, select: { id: true } });
+
+    return new Set(records.map((record) => record.id));
+  }
+
+  // newest first, so a later display name or identity link wins, and an older one fills what it omits
   private toRecipients({
     participants,
     channelHandle,
@@ -303,18 +353,21 @@ export class ApplicationMessageSendService {
 
       const handleKey = participant.handle.toLowerCase();
 
-      if (
-        handleKey === channelHandle.toLowerCase() ||
-        recipientsByHandle.has(handleKey)
-      ) {
+      if (handleKey === channelHandle.toLowerCase()) {
         continue;
       }
 
+      const newerRecipient = recipientsByHandle.get(handleKey);
+
       recipientsByHandle.set(handleKey, {
-        handle: participant.handle,
-        displayName: participant.displayName || undefined,
-        personId: participant.personId ?? undefined,
-        workspaceMemberId: participant.workspaceMemberId ?? undefined,
+        handle: newerRecipient?.handle ?? participant.handle,
+        displayName:
+          newerRecipient?.displayName ?? (participant.displayName || undefined),
+        personId: newerRecipient?.personId ?? participant.personId ?? undefined,
+        workspaceMemberId:
+          newerRecipient?.workspaceMemberId ??
+          participant.workspaceMemberId ??
+          undefined,
       });
     }
 
