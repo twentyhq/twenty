@@ -559,13 +559,13 @@ describe('app message channel participant matching (e2e)', () => {
               participants: [
                 {
                   role: MessageParticipantRole.FROM,
-                  handle: '+33 6 44 44 44 44',
+                  handle: '+33 6 22 22 22 22',
                 },
-                { role: MessageParticipantRole.FROM, handle: '+33644444444' },
                 {
                   role: MessageParticipantRole.TO,
-                  handle: '+33 6 00 00 00 00',
+                  handle: '+33 6 44 44 44 44',
                 },
+                { role: MessageParticipantRole.TO, handle: '+33644444444' },
               ],
             },
           ],
@@ -577,13 +577,13 @@ describe('app message channel participant matching (e2e)', () => {
     await waitForAllJobsToFinish();
 
     const [{ messageId }] = response.body.data.ingestAppMessages.messages;
-    const senders = await globalThis.testDataSource.query(
+    const recipients = await globalThis.testDataSource.query(
       `SELECT handle FROM "${WORKSPACE_SCHEMA}"."messageParticipant"
         WHERE "messageId" = $1 AND role = $2`,
-      [messageId, MessageParticipantRole.FROM],
+      [messageId, MessageParticipantRole.TO],
     );
 
-    expect(senders).toEqual([{ handle: '+33644444444' }]);
+    expect(recipients).toEqual([{ handle: '+33644444444' }]);
   });
 
   it('rejects a handle that has no phone digits', async () => {
