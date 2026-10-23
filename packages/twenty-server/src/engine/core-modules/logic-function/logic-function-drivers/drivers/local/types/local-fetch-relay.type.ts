@@ -13,7 +13,7 @@ export type LocalFetchRelayResponse = {
   body?: string;
 };
 
-export type LocalFetchRelayHandler = (
-  request: LocalFetchRelayRequest,
-  signal: AbortSignal,
-) => Promise<LocalFetchRelayResponse>;
+export type LocalFetchRelayHandler = (params: {
+  request: LocalFetchRelayRequest;
+  signal: AbortSignal;
+}) => Promise<LocalFetchRelayResponse>;

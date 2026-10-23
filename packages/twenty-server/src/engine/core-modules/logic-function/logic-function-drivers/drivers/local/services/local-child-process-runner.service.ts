@@ -299,13 +299,13 @@ export class LocalChildProcessRunnerService {
         // The message comes from handler code, so a malformed request must not throw here.
         const result = await Promise.resolve()
           .then(() =>
-            handler(
+            handler({
               request,
-              AbortSignal.any([
+              signal: AbortSignal.any([
                 relayAbortController.signal,
                 requestAbortController.signal,
               ]),
-            ),
+            }),
           )
           .then(
             (response) => ({ response }),

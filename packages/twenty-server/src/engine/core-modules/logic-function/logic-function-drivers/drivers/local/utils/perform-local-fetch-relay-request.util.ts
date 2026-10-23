@@ -29,10 +29,12 @@ export const performLocalFetchRelayRequest = async ({
   request,
   httpClient,
   signal,
+  timeoutMs,
 }: {
   request: LocalFetchRelayRequest;
   httpClient: AxiosInstance;
   signal?: AbortSignal;
+  timeoutMs?: number;
 }): Promise<LocalFetchRelayResponse> => {
   const response = await httpClient.request<ArrayBuffer>({
     url: request.url,
@@ -46,6 +48,7 @@ export const performLocalFetchRelayRequest = async ({
     responseType: 'arraybuffer',
     validateStatus: () => true,
     signal,
+    timeout: timeoutMs,
     ...(request.redirect === 'follow' ? {} : { maxRedirects: 0 }),
   });
 

@@ -2,7 +2,6 @@ import { type LocalFetchRelayHandler } from 'src/engine/core-modules/logic-funct
 import { getLocalFetchRelayServerOrigin } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-fetch-relay-server-origin.util';
 import { performLocalFetchRelayRequest } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/perform-local-fetch-relay-request.util';
 import { OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-max-payload-size-bytes.constant';
-import { OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-timeout-ms.constant';
 import { type SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
 export class LocalFetchRelayService {
@@ -13,9 +12,11 @@ export class LocalFetchRelayService {
   createHandler({
     workspaceId,
     env,
+    timeoutMs,
   }: {
     workspaceId: string;
     env: Record<string, string>;
+    timeoutMs: number;
   }): LocalFetchRelayHandler {
     const serverOrigin = getLocalFetchRelayServerOrigin(env);
 
@@ -28,16 +29,16 @@ export class LocalFetchRelayService {
     const serverHttpClient = this.secureHttpClientService.getInternalHttpClient(
       {
         maxRedirects: 0,
-        timeout: OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS,
         maxContentLength: OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES,
         maxBodyLength: OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES,
       },
     );
 
-    return (request, signal) =>
+    return ({ request, signal }) =>
       performLocalFetchRelayRequest({
         request,
         signal,
+        timeoutMs,
         httpClient:
           new URL(request.url).origin === serverOrigin
             ? serverHttpClient

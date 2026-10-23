@@ -231,6 +231,7 @@ export class LocalDriver implements LogicFunctionDriver {
               ? this.fetchRelay.createHandler({
                   workspaceId: flatLogicFunction.workspaceId,
                   env: env ?? {},
+                  timeoutMs,
                 })
               : undefined,
           });

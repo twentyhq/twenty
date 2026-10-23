@@ -1,29 +1,38 @@
+import { type GenericAbortSignal } from 'axios';
+
 // Maps each signal built here back to the caller's own signal, so a retried request gets a fresh timeout.
 const CALLER_SIGNAL_BY_REQUEST_SIGNAL = new WeakMap<
   AbortSignal,
   AbortSignal | undefined
 >();
 
+const resolveCallerSignal = (
+  currentSignal: GenericAbortSignal | undefined,
+): AbortSignal | undefined => {
+  if (!(currentSignal instanceof AbortSignal)) {
+    return undefined;
+  }
+
+  if (CALLER_SIGNAL_BY_REQUEST_SIGNAL.has(currentSignal)) {
+    return CALLER_SIGNAL_BY_REQUEST_SIGNAL.get(currentSignal);
+  }
+
+  return currentSignal;
+};
+
 export const createOutboundRequestSignal = ({
   currentSignal,
   timeoutMs,
 }: {
-  currentSignal: unknown;
+  currentSignal: GenericAbortSignal | undefined;
   timeoutMs: number;
 }): AbortSignal => {
-  const callerSignal =
-    currentSignal instanceof AbortSignal
-      ? CALLER_SIGNAL_BY_REQUEST_SIGNAL.has(currentSignal)
-        ? CALLER_SIGNAL_BY_REQUEST_SIGNAL.get(currentSignal)
-        : currentSignal
-      : undefined;
-
+  const callerSignal = resolveCallerSignal(currentSignal);
   const timeoutSignal = AbortSignal.timeout(timeoutMs);
 
-  const requestSignal =
-    callerSignal instanceof AbortSignal
-      ? AbortSignal.any([callerSignal, timeoutSignal])
-      : timeoutSignal;
+  const requestSignal = callerSignal
+    ? AbortSignal.any([callerSignal, timeoutSignal])
+    : timeoutSignal;
 
   CALLER_SIGNAL_BY_REQUEST_SIGNAL.set(requestSignal, callerSignal);
 
