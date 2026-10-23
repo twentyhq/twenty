@@ -47,7 +47,7 @@ export const MultipleRecordPicker = ({
   componentInstanceId,
   isCreatePending = false,
 }: MultipleRecordPickerProps) => {
-  const { page, goBack } = useDropdownPage();
+  const { page, isActive, goBack } = useDropdownPage();
   const { side, align } = useDropdownPlacementOrThrow();
   const resolvedLayoutDirection = getMultipleRecordPickerLayoutDirection({
     layoutDirection,
@@ -84,6 +84,18 @@ export const MultipleRecordPicker = ({
   const { performSearch } = useMultipleRecordPickerPerformSearch();
 
   const store = useStore();
+
+  const handleBackToRecords = () => {
+    if (!isActive || page !== 'create-target') {
+      return;
+    }
+
+    goBack();
+    void performSearch({
+      multipleRecordPickerInstanceId: componentInstanceId,
+      forceSearchFilter: store.get(multipleRecordPickerSearchFilterState),
+    });
+  };
 
   const creatableObjectMetadataItems = isDefined(onCreate)
     ? multipleRecordPickerSearchableObjectMetadataItems.filter(
@@ -187,6 +199,7 @@ export const MultipleRecordPicker = ({
         <MultipleRecordPickerCreateTargetSelect
           objectMetadataItems={creatableObjectMetadataItems}
           disabled={isCreatePending}
+          onBack={handleBackToRecords}
           onSelect={(objectMetadataItemId) => {
             void handleCreate(objectMetadataItemId);
           }}

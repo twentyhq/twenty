@@ -34,7 +34,9 @@ const createRecord = fn(async () => CREATED_MORPH_ITEM);
 const onSearchRequest = fn<(searchInput: string) => void>();
 const HIDDEN_SEARCH_QUERY = 'Hidden record search';
 const ACTIVE_SEARCH_QUERY = 'Active record search';
+const BACK_BUTTON_SEARCH_QUERY = 'Back button record search';
 const CLOSED_SEARCH_QUERY = 'Closed record search';
+const CREATION_AFTER_BACK_SEARCH_QUERY = 'Created after Back';
 const SEARCH_SETTLE_WAIT_IN_MILLISECONDS = 750;
 
 const meta: Meta<typeof MultipleRecordPickerCreationStory> = {
@@ -169,6 +171,75 @@ export const CreateTargetAndSession: Story = {
   },
 };
 
+export const CreateAfterReturningToRecords: Story = {
+  args: {
+    componentInstanceId: 'multiple-record-picker-create-after-back-story',
+  },
+  play: async ({ canvasElement }) => {
+    createRecord.mockClear();
+
+    const finishCreation = fn<() => void>();
+    const pendingCreation = new Promise<RecordPickerPickableMorphItem>(
+      (resolve) => {
+        finishCreation.mockImplementation(() => resolve(CREATED_MORPH_ITEM));
+      },
+    );
+    createRecord.mockReturnValueOnce(pendingCreation);
+
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await canvas.findByRole('button', { name: 'Link records' });
+
+    await userEvent.click(trigger);
+
+    const picker = await body.findByRole('dialog', { name: 'Related records' });
+    const search = within(picker).getByRole('searchbox');
+
+    await userEvent.type(search, CREATION_AFTER_BACK_SEARCH_QUERY);
+    await userEvent.click(
+      within(picker).getByRole('button', { name: 'Add New' }),
+    );
+    await userEvent.click(
+      await within(picker).findByRole('button', {
+        name: COMPANY_METADATA.labelSingular,
+      }),
+    );
+
+    expect(createRecord).toHaveBeenCalledTimes(1);
+    expect(within(picker).getByText('Select a record type')).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+
+    const restoredSearch = await within(picker).findByRole('searchbox');
+
+    expect(restoredSearch).toHaveValue(CREATION_AFTER_BACK_SEARCH_QUERY);
+    expect(picker).toBeVisible();
+    await userEvent.click(restoredSearch);
+    expect(restoredSearch).toHaveFocus();
+
+    finishCreation();
+
+    expect(
+      await within(picker).findByRole('option', {
+        name: CREATED_COMPANY_LABEL_PATTERN,
+        selected: true,
+      }),
+    ).toBeVisible();
+    expect(within(picker).getByRole('searchbox')).toHaveValue(
+      CREATION_AFTER_BACK_SEARCH_QUERY,
+    );
+    expect(restoredSearch).toHaveFocus();
+    expect(picker).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Related records' }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const InactivePagesSkipSearch: Story = {
   args: {
     componentInstanceId: 'multiple-record-picker-inactive-search-story',
@@ -240,12 +311,37 @@ export const InactivePagesSkipSearch: Story = {
 
       expect(restoredSearch).toHaveValue(HIDDEN_SEARCH_QUERY);
 
+      await waitFor(() =>
+        expect(onSearchRequest).toHaveBeenCalledWith(HIDDEN_SEARCH_QUERY),
+      );
+
       await userEvent.clear(restoredSearch);
       await userEvent.type(restoredSearch, ACTIVE_SEARCH_QUERY);
       expect(restoredSearch).toHaveValue(ACTIVE_SEARCH_QUERY);
 
       await waitFor(() =>
         expect(onSearchRequest).toHaveBeenCalledWith(ACTIVE_SEARCH_QUERY),
+      );
+
+      await userEvent.clear(restoredSearch);
+      await userEvent.type(restoredSearch, BACK_BUTTON_SEARCH_QUERY);
+      await userEvent.click(
+        within(picker).getByRole('button', { name: 'Add New' }),
+      );
+      await delay(SEARCH_SETTLE_WAIT_IN_MILLISECONDS);
+
+      expect(onSearchRequest).not.toHaveBeenCalledWith(
+        BACK_BUTTON_SEARCH_QUERY,
+      );
+
+      await userEvent.click(
+        within(picker).getByRole('button', { name: 'Back' }),
+      );
+      expect(await within(picker).findByRole('searchbox')).toHaveValue(
+        BACK_BUTTON_SEARCH_QUERY,
+      );
+      await waitFor(() =>
+        expect(onSearchRequest).toHaveBeenCalledWith(BACK_BUTTON_SEARCH_QUERY),
       );
 
       await userEvent.clear(restoredSearch);
