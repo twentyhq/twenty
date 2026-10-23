@@ -324,6 +324,7 @@ export class AiFrontComponentService {
     return {
       draftId: draft.id,
       name: draft.name,
+      pageLayoutType: draft.pageLayoutType,
       isCurrent: await this.isCurrent(workspaceId, draft),
       published: isDefined(draft.publishedComponentId),
       componentSource: draft.compiledSource,
