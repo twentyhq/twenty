@@ -43,6 +43,8 @@ import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modu
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 
 const STATE_JWT_EXPIRES_IN = '10m';
+// hosted logins can involve 2FA or checkpoints, and the account then arrives by notification
+const CUSTOM_STATE_JWT_EXPIRES_IN = '1h';
 
 type AuthorizeArgs = {
   connectionProvider: ConnectionProviderEntity;
@@ -126,6 +128,7 @@ export class ConnectionProviderOAuthFlowService {
       const state = await this.signAuthorizationState({
         ...args,
         codeVerifier: null,
+        expiresIn: CUSTOM_STATE_JWT_EXPIRES_IN,
       });
 
       const authorizationUrl =
@@ -323,37 +326,54 @@ export class ConnectionProviderOAuthFlowService {
       connectedAccountFromCallback;
 
     // the redirect and the notification for one authorization often arrive together
-    const connectedAccount = await this.cacheLockService.withLock(
-      async () =>
-        this.persistConnectedAccount({
-          provider,
-          // a repeat report without a token or handle keeps the stored ones
-          credentials: isDefined(accessToken)
-            ? { accessToken, refreshToken: null, scopes: null }
-            : undefined,
-          handle,
-          identifiedAccount: { externalAccountId },
-          workspaceId: statePayload.workspaceId,
-          userId: statePayload.userId,
-          userWorkspaceId: statePayload.userWorkspaceId,
-          scope: statePayload.scope,
-          reconnectingConnectedAccountId:
-            statePayload.reconnectingConnectedAccountId ??
-            (await this.findCallerConnectedAccountIdForUpstreamAccount({
+    const { connectedAccount, isRepeatReport } =
+      await this.cacheLockService.withLock(async () => {
+        const activeConnectedAccountId = isDefined(
+          statePayload.reconnectingConnectedAccountId,
+        )
+          ? null
+          : await this.findCallerActiveConnectedAccountIdForUpstreamAccount({
               provider,
               workspaceId: statePayload.workspaceId,
               userWorkspaceId: statePayload.userWorkspaceId,
               externalAccountId,
-            })),
-        }),
-      `app-custom-connection:${statePayload.workspaceId}:${provider.id}:${statePayload.userWorkspaceId}:${externalAccountId}`,
-    );
+            });
 
-    await this.connectionProviderLifecycleHookService.dispatchOnConnect({
-      provider,
-      workspaceId: statePayload.workspaceId,
-      connectedAccountId: connectedAccount.id,
-    });
+        return {
+          isRepeatReport: isDefined(activeConnectedAccountId),
+          connectedAccount: await this.persistConnectedAccount({
+            provider,
+            // a repeat report without a token or handle keeps the stored ones
+            credentials: isDefined(accessToken)
+              ? { accessToken, refreshToken: null, scopes: null }
+              : undefined,
+            handle,
+            identifiedAccount: { externalAccountId },
+            workspaceId: statePayload.workspaceId,
+            userId: statePayload.userId,
+            userWorkspaceId: statePayload.userWorkspaceId,
+            scope: statePayload.scope,
+            reconnectingConnectedAccountId:
+              statePayload.reconnectingConnectedAccountId ??
+              activeConnectedAccountId ??
+              (await this.findCallerConnectedAccountIdForUpstreamAccount({
+                provider,
+                workspaceId: statePayload.workspaceId,
+                userWorkspaceId: statePayload.userWorkspaceId,
+                externalAccountId,
+              })),
+          }),
+        };
+      }, `app-custom-connection:${statePayload.workspaceId}:${provider.id}:${statePayload.userWorkspaceId}:${externalAccountId}`);
+
+    // onConnect sets up remote state once per connection, not once per report
+    if (!isRepeatReport) {
+      await this.connectionProviderLifecycleHookService.dispatchOnConnect({
+        provider,
+        workspaceId: statePayload.workspaceId,
+        connectedAccountId: connectedAccount.id,
+      });
+    }
 
     return { ...callbackResult, connectedAccountId: connectedAccount.id };
   }
@@ -382,6 +402,32 @@ export class ConnectionProviderOAuthFlowService {
       });
 
     return existingConnectedAccount?.id ?? null;
+  }
+  private async findCallerActiveConnectedAccountIdForUpstreamAccount({
+    provider,
+    workspaceId,
+    userWorkspaceId,
+    externalAccountId,
+  }: {
+    provider: Pick<ConnectionProviderEntity, 'id'>;
+    workspaceId: string;
+    userWorkspaceId: string;
+    externalAccountId: string;
+  }): Promise<string | null> {
+    const activeConnectedAccount =
+      await this.connectedAccountRepository.findOne({
+        where: {
+          workspaceId,
+          connectionProviderId: provider.id,
+          userWorkspaceId,
+          externalAccountId,
+          archivedAt: IsNull(),
+          authFailedAt: IsNull(),
+        },
+        select: { id: true },
+      });
+
+    return activeConnectedAccount?.id ?? null;
   }
 
   private async validateCallerCanManageConnection({
@@ -442,25 +488,33 @@ export class ConnectionProviderOAuthFlowService {
     reconnectingConnectedAccountId,
     redirectLocation,
     codeVerifier,
-  }: AuthorizeArgs & { codeVerifier: string | null }): Promise<string> {
-    return this.signState({
-      sub: connectionProvider.id,
-      type: JwtTokenTypeEnum.APP_OAUTH_STATE,
-      connectionProviderId: connectionProvider.id,
-      workspaceId,
-      userId,
-      userWorkspaceId,
-      scope: connectionProvider.scope,
-      reconnectingConnectedAccountId,
-      redirectLocation,
-      codeVerifier,
-    });
+    expiresIn,
+  }: AuthorizeArgs & {
+    codeVerifier: string | null;
+    expiresIn?: string;
+  }): Promise<string> {
+    return this.signState(
+      {
+        sub: connectionProvider.id,
+        type: JwtTokenTypeEnum.APP_OAUTH_STATE,
+        connectionProviderId: connectionProvider.id,
+        workspaceId,
+        userId,
+        userWorkspaceId,
+        scope: connectionProvider.scope,
+        reconnectingConnectedAccountId,
+        redirectLocation,
+        codeVerifier,
+      },
+      expiresIn,
+    );
   }
 
-  private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {
-    return this.jwtWrapperService.signAsyncOrThrow(payload, {
-      expiresIn: STATE_JWT_EXPIRES_IN,
-    });
+  private async signState(
+    payload: AppOAuthStateJwtPayload,
+    expiresIn = STATE_JWT_EXPIRES_IN,
+  ): Promise<string> {
+    return this.jwtWrapperService.signAsyncOrThrow(payload, { expiresIn });
   }
 
   async findErrorRedirectTargetFromState(state: string): Promise<{

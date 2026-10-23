@@ -298,7 +298,7 @@ export const handler = ({ connectedAccountId }) => {
     ).toBe('token-a');
   });
 
-  it('updates the existing connection when the same account is reported again', async () => {
+  it('updates the existing connection and runs onConnect once when the same account is reported again', async () => {
     const callbackUrl = await authorize();
 
     await notify({ callbackUrl, body: { account_id: 'account-a' } });
@@ -314,11 +314,24 @@ export const handler = ({ connectedAccountId }) => {
     const connections = await readAccounts();
 
     expect(connections).toHaveLength(1);
-    expect(readOnConnectExecutions()).toEqual([
-      connections[0].id,
-      connections[0].id,
-      connections[0].id,
-    ]);
+    expect(readOnConnectExecutions()).toEqual([connections[0].id]);
+  });
+
+  it('runs onConnect again when an explicit reconnect reports the same account', async () => {
+    await notify({
+      callbackUrl: await authorize(),
+      body: { account_id: 'account-a' },
+    });
+    const [original] = await readAccounts();
+
+    await notify({
+      callbackUrl: await authorize({
+        reconnectingConnectedAccountId: original.id,
+      }),
+      body: { account_id: 'account-a' },
+    });
+
+    expect(readOnConnectExecutions()).toEqual([original.id, original.id]);
   });
 
   it('keeps the stored token when a later report of the account omits it', async () => {

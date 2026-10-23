@@ -195,7 +195,7 @@ The callback returns:
 | `handle`            | Optional label shown for the connection. Defaults to the member's email.                                                                       |
 | `accessToken`       | Optional per-account token, stored encrypted and returned by `getConnection`. Leave it out when your app calls the service with its own key. |
 
-Both functions run while the member waits on a redirect, so their timeout is capped at 10 seconds. A failure or an invalid return aborts the connection: nothing is saved and `onConnectLogicFunction` does not run. The state expires after 10 minutes, so a notification arriving later is refused.
+Both functions run while the member waits on a redirect, so their timeout is capped at 10 seconds. A failure or an invalid return aborts the connection: nothing is saved and `onConnectLogicFunction` does not run. `onConnectLogicFunction` runs when a connection is created, reconnected or restored, not again when the service reports an account that is already connected. The state expires after an hour, so a notification arriving later is refused.
 
 Twenty does not refresh or revoke custom connections. Release what the service holds for the account in `onDisconnectLogicFunction`.
 
