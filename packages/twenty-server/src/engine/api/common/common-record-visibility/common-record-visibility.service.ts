@@ -10,6 +10,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 // Runs on every record of a result, nested relations included, so restricted fields cannot leak through a relation
+// TODO: replace with row-level security once it can express channel visibility
 @Injectable()
 export class CommonRecordVisibilityService {
   private readonly handlersByObjectNameSingular = new Map<
