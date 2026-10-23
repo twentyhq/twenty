@@ -48,7 +48,9 @@ export const ChangingMonthKeepsPickerOpen: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const displayedDate = await canvas.findByText(/2023/);
-    const initialDateText = displayedDate.textContent ?? '';
+    const initialDateText = displayedDate.textContent;
+
+    expect(initialDateText).toContain('2023');
 
     await userEvent.click(displayedDate);
     const calendarButton = await body.findByRole('button', {
@@ -69,6 +71,6 @@ export const ChangingMonthKeepsPickerOpen: Story = {
         name: /^Choose Wednesday, February 15/,
       }),
     ).toBeVisible();
-    expect(displayedDate).toHaveTextContent(initialDateText);
+    expect(displayedDate.textContent).toBe(initialDateText);
   },
 };
