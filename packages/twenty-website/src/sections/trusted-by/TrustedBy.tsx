@@ -20,7 +20,6 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { CornerMarkers, SectionShell } from '@/ui';
 
 import { TRUSTED_BY_LOGOS, type TrustedByLogo } from './trusted-by.data';
-import { TrustedByLogoTooltip } from './TrustedByLogoTooltip';
 
 const Card = styled.div`
   align-items: stretch;
@@ -124,39 +123,34 @@ const LogoFrame = styled.span`
 
 function Logo({
   aspectRatio,
-  description,
   grayBrightness = 1,
   grayOpacity = 0.72,
   heightPx,
   name,
   src,
 }: TrustedByLogo) {
-  const i18n = getServerI18n();
-
   return (
-    <TrustedByLogoTooltip description={i18n._(description)} name={name}>
-      <LogoFrame
-        style={
-          {
-            aspectRatio: String(aspectRatio),
-            '--logo-h': heightPx,
-          } as CSSProperties
-        }
-      >
-        <NextImage
-          alt={name}
-          fill
-          sizes={`${Math.ceil(heightPx * aspectRatio)}px`}
-          src={src}
-          style={{
-            filter: `grayscale(1) brightness(${grayBrightness})`,
-            objectFit: 'contain',
-            opacity: grayOpacity,
-          }}
-          unoptimized
-        />
-      </LogoFrame>
-    </TrustedByLogoTooltip>
+    <LogoFrame
+      style={
+        {
+          aspectRatio: String(aspectRatio),
+          '--logo-h': heightPx,
+        } as CSSProperties
+      }
+    >
+      <NextImage
+        alt={name}
+        fill
+        sizes={`${Math.ceil(heightPx * aspectRatio)}px`}
+        src={src}
+        style={{
+          filter: `grayscale(1) brightness(${grayBrightness})`,
+          objectFit: 'contain',
+          opacity: grayOpacity,
+        }}
+        unoptimized
+      />
+    </LogoFrame>
   );
 }
 
