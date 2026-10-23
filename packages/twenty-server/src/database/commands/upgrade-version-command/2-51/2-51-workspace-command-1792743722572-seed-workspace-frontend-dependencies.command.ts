@@ -42,7 +42,9 @@ export class SeedWorkspaceFrontendDependenciesCommand extends ProvisionedWorkspa
     workspaceId,
     options,
     direction,
-  }: RunOnWorkspaceArgs & { direction: 'up' | 'down' }): Promise<void> {
+  }: Pick<RunOnWorkspaceArgs, 'workspaceId' | 'options'> & {
+    direction: 'up' | 'down';
+  }): Promise<void> {
     const { workspaceCustomFlatApplication: application } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
