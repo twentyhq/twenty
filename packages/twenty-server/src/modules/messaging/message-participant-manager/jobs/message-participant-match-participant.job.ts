@@ -1,6 +1,6 @@
 import { Scope } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -47,10 +47,9 @@ export class MessageParticipantMatchParticipantJob {
       });
     }
 
-    const personHandleFields =
-      (personHandleMatching ?? []).length > 0
-        ? await this.personHandleFieldService.findAll(workspaceId)
-        : [];
+    const personHandleFields = isNonEmptyArray(personHandleMatching)
+      ? await this.personHandleFieldService.findAll(workspaceId)
+      : [];
 
     for (const {
       fieldUniversalIdentifier,
