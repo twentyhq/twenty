@@ -279,6 +279,9 @@ jobs:
   server-integration-test:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
+    permissions:
+      actions: read
+      contents: read
     uses: ./.github/workflows/ci-server-integration-test.yaml
 
   cross-version-upgrade:
