@@ -18,6 +18,7 @@ import {
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
+import { assertFrontComponentWidgetAvailableOnDashboardOrThrow } from 'src/modules/dashboard/tools/utils/assert-front-component-widget-available-on-dashboard-or-throw.util';
 import { computeDashboardIdentifierMaps } from 'src/modules/dashboard/tools/utils/compute-dashboard-identifier-maps.util';
 import { resolveWidgetFieldNamesToIds } from 'src/modules/dashboard/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
 
@@ -152,6 +153,12 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
 
       for (const widget of widgets) {
         try {
+          await assertFrontComponentWidgetAvailableOnDashboardOrThrow({
+            configuration: widget.configuration,
+            deps,
+            context,
+          });
+
           const widgetWithMetadataIds = identifierMaps
             ? resolveWidgetFieldNamesToIds(widget, identifierMaps)
             : widget;
