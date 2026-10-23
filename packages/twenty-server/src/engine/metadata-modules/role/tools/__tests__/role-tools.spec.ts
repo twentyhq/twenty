@@ -83,6 +83,7 @@ const context: ToolProviderContext = {
   rolePermissionConfig: {
     intersectionOf: { userWorkspaceRoleId: callerRoleId },
   },
+  authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
   userWorkspaceId: callerUserWorkspaceId,
   actorContext: {
     source: FieldActorSource.MANUAL,

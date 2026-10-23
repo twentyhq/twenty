@@ -22,6 +22,7 @@ const context: ToolProviderContext = {
   rolePermissionConfig: {
     intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
   },
+  authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
 };
 
 const renameWebhookInputSchema = z.object({ id: z.uuid() });

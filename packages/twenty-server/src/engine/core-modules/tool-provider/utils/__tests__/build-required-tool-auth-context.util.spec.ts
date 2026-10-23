@@ -15,6 +15,7 @@ describe('buildRequiredToolAuthContext', () => {
   ): ToolProviderContext => ({
     workspaceId,
     rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: 'role-1' } },
+    authPrincipalVariant: undefined,
     ...overrides,
   });
 

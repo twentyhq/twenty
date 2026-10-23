@@ -7,6 +7,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 
 export const GET_TOOL_CATALOG_TOOL_NAME = 'get_tool_catalog';
 
@@ -35,6 +36,7 @@ export const createGetToolCatalogTool = (
   workspaceId: string,
   options: {
     rolePermissionConfig: RolePermissionConfig;
+    authPrincipalVariant: AuthPrincipalVariant | undefined;
     userId?: string;
     userWorkspaceId?: string;
     excludeTools?: Set<string>;
