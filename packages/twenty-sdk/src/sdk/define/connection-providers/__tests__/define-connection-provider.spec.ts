@@ -103,6 +103,7 @@ describe('defineConnectionProvider', () => {
     'identifyAccountLogicFunction',
     'onConnectLogicFunction',
     'onDisconnectLogicFunction',
+    'sendMessageLogicFunction',
   ] as const;
 
   it.each(lifecycleHookKeys)('accepts a valid %s', (lifecycleHookKey) => {

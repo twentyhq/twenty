@@ -340,6 +340,7 @@ describe('manifestValidate', () => {
       'identifyAccountLogicFunction',
       'onConnectLogicFunction',
       'onDisconnectLogicFunction',
+      'sendMessageLogicFunction',
     ] as const)(
       'should not flag a connection provider referencing a logic function via %s as a duplicate',
       (lifecycleHookKey) => {
