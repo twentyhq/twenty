@@ -76,7 +76,7 @@ export const NavigationMenuItemAddSectionButton = ({
                 {
                   id: 'developer-tools',
                   label: t`Developers`,
-                  contextualText: t`API, webhooks, apps, CLI and logs`,
+                  contextualText: t`API, webhooks and more`,
                   Icon: IconCode,
                   onClick: () =>
                     createSection({ parentId, template: 'developer-tools' }),

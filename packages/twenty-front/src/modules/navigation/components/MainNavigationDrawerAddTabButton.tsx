@@ -51,7 +51,7 @@ export const MainNavigationDrawerAddTabButton = ({
             {
               id: 'developer-tools',
               label: t`Developers`,
-              contextualText: t`API, webhooks, apps, CLI and logs`,
+              contextualText: t`API, webhooks and more`,
               Icon: IconCode,
               onClick: () => createTab('developer-tools'),
             },
@@ -60,7 +60,7 @@ export const MainNavigationDrawerAddTabButton = ({
                   {
                     id: 'inbox',
                     label: t`Inbox`,
-                    contextualText: t`Triage, favorite and recent chats`,
+                    contextualText: t`Triage and chats`,
                     Icon: IconInbox,
                     onClick: () => createTab('inbox'),
                   },
