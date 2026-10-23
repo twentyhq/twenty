@@ -1,11 +1,11 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { ROLE_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/role/constants/role-read-access-policy.constant';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { toRoleSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
@@ -23,7 +23,7 @@ const listRolesInputSchema = z.object({
 @DefineTool({
   name: 'list_roles',
   category: ToolCategory.ROLE,
-  requiredPermissionFlags: [PermissionFlagType.ROLES],
+  accessPolicy: ROLE_READ_ACCESS_POLICY,
   description: `List all roles of this workspace with their permissions.
 
 Returns for each role: global record permissions (canReadAllObjectRecords, ...), settings access (canUpdateAllSettings), per-object permission overrides, permission flags, and assignability (users, agents, API keys).
