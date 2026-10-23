@@ -501,7 +501,7 @@ describe('Agent run conversation should be recorded for the caller', () => {
     expect(partTypes).not.toContain('tool-probe');
   });
 
-  it('should show the owner only the text of a turn another member sent in their thread', async () => {
+  it('should show the owner only the text of a turn another member sent in their thread, with the tool output of the turns the application opened', async () => {
     const threadKey = randomUUID();
     const { threadId } = await runAgent({
       token: globalTestContext.jonyApplicationToken,
@@ -511,6 +511,12 @@ describe('Agent run conversation should be recorded for the caller', () => {
 
     await runAgent({
       token: globalTestContext.janeApplicationToken,
+      threadKey,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    await runAgent({
+      token: globalTestContext.applicationToken,
       threadKey,
       steps: TOOL_CALL_STEPS,
     });
@@ -538,6 +544,6 @@ describe('Agent run conversation should be recorded for the caller', () => {
     expect(
       messages.map(({ senderWorkspaceMemberId }) => senderWorkspaceMemberId),
     ).toContain(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
-    expect(partTypes.filter((type) => type === 'tool-probe')).toHaveLength(1);
+    expect(partTypes.filter((type) => type === 'tool-probe')).toHaveLength(2);
   });
 });

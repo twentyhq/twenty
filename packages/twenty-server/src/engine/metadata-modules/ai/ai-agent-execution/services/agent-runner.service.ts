@@ -41,7 +41,6 @@ import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
-import { AgentChatParkedRunsService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-parked-runs.service';
 import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
@@ -49,6 +48,7 @@ import {
   type AgentChatStreamClaim,
   AgentChatStreamRecoveryService,
 } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
+import { AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-run.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
@@ -90,7 +90,7 @@ export class AgentRunnerService {
     private readonly turnStreamService: AgentTurnStreamService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
-    private readonly parkedRunsService: AgentChatParkedRunsService,
+    private readonly waitingRunService: AgentChatWaitingRunService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly featureFlagService: FeatureFlagService,
     @InjectMessageQueue(MessageQueue.aiQueue)
@@ -110,7 +110,7 @@ export class AgentRunnerService {
     const { workspaceId, conversation, caller, parkId } = jobData;
 
     if (
-      !(await this.parkedRunsService.shouldRunParkedJob({
+      !(await this.waitingRunService.shouldRunLegacyParkedCopy({
         threadId: conversation.threadId,
         parkId,
       }))
@@ -143,11 +143,13 @@ export class AgentRunnerService {
     }
 
     if (result === CONVERSATION_BUSY) {
-      await this.parkedRunsService.park({
+      await this.waitingRunService.wait({
         workspaceId,
         threadId: conversation.threadId,
-        jobName: RUN_AGENT_JOB_NAME,
-        jobData,
+        run: {
+          jobName: RUN_AGENT_JOB_NAME,
+          jobData: { ...jobData, parkId: undefined },
+        },
       });
 
       return;
@@ -237,7 +239,10 @@ export class AgentRunnerService {
     const { workspaceId, threadId, wakeUpId, outcome, parkId } = jobData;
 
     if (
-      !(await this.parkedRunsService.shouldRunParkedJob({ threadId, parkId }))
+      !(await this.waitingRunService.shouldRunLegacyParkedCopy({
+        threadId,
+        parkId,
+      }))
     ) {
       return;
     }
@@ -283,11 +288,13 @@ export class AgentRunnerService {
     });
 
     if (continued === CONVERSATION_BUSY) {
-      await this.parkedRunsService.park({
+      await this.waitingRunService.wait({
         workspaceId,
         threadId,
-        jobName: CONTINUE_AGENT_RUN_JOB_NAME,
-        jobData,
+        run: {
+          jobName: CONTINUE_AGENT_RUN_JOB_NAME,
+          jobData: { ...jobData, parkId: undefined },
+        },
       });
 
       return;

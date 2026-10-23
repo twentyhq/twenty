@@ -1,3 +1,6 @@
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
+import { t } from '@lingui/core/macro';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -5,18 +8,9 @@ import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/Ch
 import { getDateGranularityLabel } from '@/side-panel/pages/page-layout/utils/getDateGranularityLabel';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   type FieldsConfiguration,
   type WidgetConfiguration,
@@ -102,17 +96,8 @@ export const ChartDateGranularitySelectionDropdownContent = ({
 
   const currentDateGranularity = getCurrentDateGranularity({
     configuration,
-    axis: axis as 'primary' | 'secondary',
+    axis,
   });
-
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
 
   const dateGranularityOptions: ObjectRecordGroupByDateGranularity[] = [
     ObjectRecordGroupByDateGranularity.DAY,
@@ -128,55 +113,40 @@ export const ChartDateGranularitySelectionDropdownContent = ({
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const { closeDropdown } = useCloseDropdown();
-
   const handleSelectDateGranularityOption = (
     dateGranularityOption: ObjectRecordGroupByDateGranularity,
   ) => {
-    const configToUpdate = axis
-      ? axis === 'primary'
-        ? { primaryAxisDateGranularity: dateGranularityOption }
-        : { secondaryAxisGroupByDateGranularity: dateGranularityOption }
-      : { dateGranularity: dateGranularityOption };
+    if (!isDefined(axis)) {
+      updateCurrentWidgetConfig({
+        configToUpdate: { dateGranularity: dateGranularityOption },
+      });
+      return;
+    }
 
-    updateCurrentWidgetConfig({
-      configToUpdate,
-    });
-    closeDropdown();
+    const configToUpdate =
+      axis === 'primary'
+        ? { primaryAxisDateGranularity: dateGranularityOption }
+        : { secondaryAxisGroupByDateGranularity: dateGranularityOption };
+
+    updateCurrentWidgetConfig({ configToUpdate });
   };
 
   return (
-    <>
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={dateGranularityOptions}
-        >
-          {dateGranularityOptions.map((option) => (
-            <SelectableListItem
-              key={option}
-              itemId={option}
-              onEnter={() => {
-                handleSelectDateGranularityOption(option);
-              }}
-            >
-              <ListItemButton
-                focused={selectedItemId === option}
-                onClick={() => {
-                  handleSelectDateGranularityOption(option);
-                }}
-                role="option"
-                aria-selected={currentDateGranularity === option}
-                selected={currentDateGranularity === option}
-                indicator="check"
-              >
-                {getDateGranularityLabel(option)}
-              </ListItemButton>
-            </SelectableListItem>
-          ))}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
-    </>
+    <ChartSettingsDropdownSection>
+      <Dropdown.SelectionGroup
+        aria-label={t`Date granularity`}
+        value={currentDateGranularity}
+      >
+        {dateGranularityOptions.map((option) => (
+          <Dropdown.OptionItem
+            key={option}
+            value={option}
+            onSelect={() => handleSelectDateGranularityOption(option)}
+          >
+            {getDateGranularityLabel(option)}
+          </Dropdown.OptionItem>
+        ))}
+      </Dropdown.SelectionGroup>
+    </ChartSettingsDropdownSection>
   );
 };

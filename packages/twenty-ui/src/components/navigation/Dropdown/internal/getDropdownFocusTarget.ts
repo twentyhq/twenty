@@ -7,6 +7,8 @@ import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
 import { getDropdownSearch } from './getDropdownSearch';
+import { isActiveDropdownElement } from './isActiveDropdownElement';
+import { isEnabledDropdownItem } from './isEnabledDropdownItem';
 
 export const getDropdownFocusTarget = ({
   content,
@@ -23,7 +25,10 @@ export const getDropdownFocusTarget = ({
     ? content.ownerDocument.getElementById(target.id)
     : null;
 
-  if (isDefined(previousTrigger) && content.contains(previousTrigger)) {
+  if (
+    isDefined(previousTrigger) &&
+    isEnabledDropdownItem({ content, item: previousTrigger })
+  ) {
     return previousTrigger;
   }
 
@@ -59,13 +64,19 @@ export const getDropdownFocusTarget = ({
     return pageTrigger;
   }
 
-  const firstFormControl = content.querySelector<HTMLElement>(
-    'input:not(:disabled):not([type="hidden"]),button:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]',
-  );
+  const firstFormControl = Array.from(
+    content.querySelectorAll<HTMLElement>(
+      'input:not(:disabled):not([type="hidden"]),button:not(:disabled),textarea:not(:disabled),select:not(:disabled),a[href],[tabindex="0"]',
+    ),
+  ).find(isActiveDropdownElement);
 
   const activePage = Array.from(
     content.querySelectorAll<HTMLElement>('[data-dropdown-page-type]'),
-  ).find((page) => page.closest('[data-dropdown-content]') === content);
+  ).find(
+    (page) =>
+      page.closest('[data-dropdown-content]') === content &&
+      isActiveDropdownElement(page),
+  );
   const resolvedType =
     activePage?.dataset.dropdownPageType ?? type ?? content.dataset.type;
 

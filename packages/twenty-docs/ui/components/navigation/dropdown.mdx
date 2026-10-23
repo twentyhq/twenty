@@ -282,7 +282,13 @@ Tab and Shift+Tab close a `menu`, along with its parent menus when focus is in a
 
 ## Pages and submenus
 
-Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row. Closing the dropdown resets its page history.
+Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row.
+
+Pages mount when first visited and stay mounted for that open session. Returning to a page preserves its local search, form drafts and scrollable sections. Inactive pages are hidden and inert: they do not participate in keyboard navigation, focus or the accessibility tree, and their nested Dropdown popups are inactive.
+
+Reopening starts a new session at `defaultPage` with fresh content, including when `Content.keepMounted` is set or the popup reopens during its exit transition. Page history, local search and drafts reset. The closing page remains mounted during its exit transition.
+
+Uncontrolled `SelectionGroup` values stay stored in `Root` under each group's stable `id` and survive reopening. Caller-controlled values remain caller-owned. For example, a search value stored above `Content` stays unchanged until the caller updates it. Put temporary search or draft state in a component inside `Content` or `Page` when it should reset with the session; keep durable application state above `Content`.
 
 A page can override the root's `type`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page; other pages focus their first row after `Back`.
 
@@ -319,7 +325,7 @@ export const FilterMenu = () => (
 );
 ```
 
-To navigate from code, call `useDropdownPage` in a component rendered inside the root. It returns the current `page`, `goToPage(page)`, `goBack()` and `canGoBack`. For example, an option can return to the previous page after a selection while the popup stays open:
+To navigate from code, call `useDropdownPage` in a component rendered inside the root. It returns the current `page`, `goToPage(page)`, `goBack()`, `canGoBack` and `isActive`. Inside a page, `isActive` is true only while that page is active and its dropdown is open. Use `isActive` to show a page's custom portaled popups so they disappear when the page becomes inactive or the dropdown closes. For example, an option can return to the previous page after a selection while the popup stays open:
 
 ```tsx
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';

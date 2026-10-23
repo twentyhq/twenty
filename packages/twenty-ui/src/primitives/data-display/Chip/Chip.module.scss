@@ -28,9 +28,6 @@
   corner-shape: round;
   text-decoration: none;
 
-  & > svg {
-    flex-shrink: 0;
-  }
   &[data-truncate] > .label {
     min-inline-size: 0;
   }

@@ -14,6 +14,7 @@ export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
   const [capturing, setCapturing] = useState(false);
   return (
     <SettingsCardContent
+      hasDivider
       icon={
         <IconCommand
           size={THEME_COMMON.icon.size.md}

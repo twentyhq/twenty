@@ -1,5 +1,5 @@
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.util';
 
 export const prepareFileForStorageOrThrow = async ({
   sourceFile,

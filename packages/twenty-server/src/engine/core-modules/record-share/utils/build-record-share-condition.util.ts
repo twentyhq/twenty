@@ -5,6 +5,7 @@ import { randomBytes } from 'node:crypto';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
+import { buildPostgresSafeAlias } from 'src/engine/twenty-orm/sql/utils/build-postgres-safe-alias.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export const buildRecordShareCondition = ({
@@ -27,7 +28,9 @@ export const buildRecordShareCondition = ({
   const principalIdsParameterName = `recordSharePrincipalIds_${parameterSuffix}`;
   const accessLevelsParameterName = `recordShareAccessLevels_${parameterSuffix}`;
 
-  const recordShareAlias = escapeIdentifier(`${tableAlias}_recordShare`);
+  const recordShareAlias = escapeIdentifier(
+    buildPostgresSafeAlias(`${tableAlias}_recordShare`),
+  );
 
   const recordId = `${escapeIdentifier(tableAlias)}."id"`;
   const grantConditions = [

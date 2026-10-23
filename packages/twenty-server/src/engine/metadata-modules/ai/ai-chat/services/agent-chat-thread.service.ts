@@ -7,6 +7,8 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { AGENT_CHAT_THREAD_ACTIVITY_COLUMNS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-activity-columns.constant';
+import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
+import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
@@ -14,6 +16,7 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadActivity } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-activity.type';
 import { buildAgentChatThreadActivitySetClause } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-activity-set-clause.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
+import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
@@ -34,11 +37,21 @@ export class AgentChatThreadService {
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly participantService: AgentChatThreadParticipantService,
+    private readonly channelAccessService: AgentChatChannelAccessService,
+    private readonly channelGrantService: AgentChatChannelGrantService,
   ) {}
 
   async createThread(
     args: Parameters<AgentChatSharingService['createThread']>[0],
   ) {
+    if (isDefined(args.channelId)) {
+      await this.channelAccessService.assertChannelAccess({
+        workspaceId: args.workspaceId,
+        workspaceMemberId: args.workspaceMemberId,
+        channelId: args.channelId,
+      });
+    }
+
     const savedThread = await this.sharingService.createThread(args);
 
     // Sent first, so the new thread never shows as unread to its owner
@@ -66,6 +79,7 @@ export class AgentChatThreadService {
   }: AgentChatThreadAccessArgs & {
     title?: string;
     isSubscribed?: boolean;
+    channelId?: string;
   }): Promise<boolean> {
     if (
       await this.threadRepository.existsBy(args.workspaceId, { id: threadId })
@@ -113,7 +127,7 @@ export class AgentChatThreadService {
   }
 
   private findThread(
-    args: AgentChatThreadAccessArgs,
+    args: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'>,
   ): Promise<AgentChatThreadWorkspaceEntity | null> {
     return this.threadRepository.findOne(args.workspaceId, {
       where: { id: args.threadId },
@@ -153,7 +167,6 @@ export class AgentChatThreadService {
     return this.restoreDeletedThread({ args, threadBefore });
   }
 
-  // Access-checked writes return raw rows; record events carry ORM records
   private async restoreDeletedThread({
     args,
     threadBefore,
@@ -432,6 +445,87 @@ export class AgentChatThreadService {
       });
     } else {
       await this.threadRepository.query(args.workspaceId, writeAssignment);
+    }
+
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId: args.workspaceId,
+      threadBefore: thread,
+    });
+  }
+
+  async moveToChannel({
+    channelId,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    channelId: string | null;
+  }): Promise<void> {
+    const thread = await this.getWritableThread(args);
+
+    if (isDefined(channelId)) {
+      await this.channelAccessService.assertChannelAccess({
+        ...args,
+        channelId,
+      });
+    }
+
+    if ((thread.channelId ?? null) === channelId) {
+      return;
+    }
+
+    // Owner re-checked in the UPDATE: removing a member clears it on their channel chats
+    const movedThreadIds = await this.threadRepository.query(
+      args.workspaceId,
+      async ({ manager, table }) => {
+        if (isDefined(channelId)) {
+          await lockAgentChatChannelForThreadWriteOrThrow({
+            manager,
+            workspaceId: args.workspaceId,
+            channelId,
+          });
+        }
+
+        const [lockedThread] = await manager.query<
+          { channelId: string | null }[]
+        >(
+          `SELECT "channelId" FROM ${table('agentChatThread')} WHERE id = $1 FOR NO KEY UPDATE`,
+          [args.threadId],
+        );
+
+        if (!isDefined(lockedThread)) {
+          return throwAgentChatThreadNotFound();
+        }
+
+        const movedThreads = await manager.query<{ id: string }[]>(
+          `WITH moved_thread AS (
+             UPDATE ${table('agentChatThread')}
+             SET "channelId" = $2::uuid,
+               "channelArchivedAt" = NULL,
+               "channelSnoozedUntil" = NULL,
+               "updatedAt" = now()
+             WHERE id = $1
+               AND ($2::uuid IS NOT NULL OR "workspaceMemberId" IS NOT NULL)
+             RETURNING id
+           )
+           SELECT id FROM moved_thread`,
+          [args.threadId, channelId],
+        );
+
+        await this.channelGrantService.rewriteThreadGrantsInTransaction({
+          manager,
+          workspaceId: args.workspaceId,
+          threadIds: movedThreads.map(({ id }) => id),
+          affectedChannelIds: [lockedThread.channelId, channelId],
+        });
+
+        return movedThreads;
+      },
+    );
+
+    if (movedThreadIds.length === 0) {
+      throw new AiException(
+        'A chat without an owner cannot leave its channel',
+        AiExceptionCode.CHAT_THREAD_CANNOT_LEAVE_CHANNEL,
+      );
     }
 
     await this.threadRecordEventService.emitThreadUpdated({

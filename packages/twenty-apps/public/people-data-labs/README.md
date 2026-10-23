@@ -12,5 +12,5 @@
 
 Pay only for matches, in Twenty credits — **not found and skipped records are free.**
 
-- **Person match:** $0.336
-- **Company match:** $0.12
+- **Person match:** $0.15
+- **Company match:** $0.075

@@ -3,6 +3,7 @@ import {
   type ExecutionContext,
   Injectable,
   mixin,
+  SetMetadata,
   type Type,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -11,6 +12,7 @@ import { msg } from '@lingui/core/macro';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { SETTINGS_PERMISSION_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/settings-permission-guard-config-key.constant';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -21,7 +23,12 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 export const SettingsPermissionGuard = (
   requiredPermissions: PermissionFlagType | PermissionFlagType[],
 ): Type<CanActivate> => {
+  const requiredPermissionFlags = Array.isArray(requiredPermissions)
+    ? requiredPermissions
+    : [requiredPermissions];
+
   @Injectable()
+  @SetMetadata(SETTINGS_PERMISSION_GUARD_CONFIG_KEY, requiredPermissionFlags)
   class SettingsPermissionMixin implements CanActivate {
     constructor(private readonly permissionsService: PermissionsService) {}
 
@@ -41,11 +48,7 @@ export const SettingsPermissionGuard = (
         return true;
       }
 
-      const settings = Array.isArray(requiredPermissions)
-        ? requiredPermissions
-        : [requiredPermissions];
-
-      for (const setting of settings) {
+      for (const setting of requiredPermissionFlags) {
         const hasPermission =
           await this.permissionsService.userHasWorkspaceSettingPermission({
             userWorkspaceId,
