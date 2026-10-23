@@ -11,7 +11,10 @@ import {
   type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { GetAiChatUsageDocument } from '~/generated-metadata/graphql';
+import {
+  GetAiChatUsageDocument,
+  GetAiChatUserCreditsUsageDocument,
+} from '~/generated-metadata/graphql';
 
 const USAGE: AgentChatUsageState = {
   conversationSize: 200000,
@@ -36,6 +39,7 @@ const UsageStory = ({
   consumed = 800,
   error = false,
   loading = false,
+  userCreditsUsage = null,
   children,
 }: {
   usage?: AgentChatUsageState | null;
@@ -43,6 +47,11 @@ const UsageStory = ({
   consumed?: number | null;
   error?: boolean;
   loading?: boolean;
+  userCreditsUsage?: {
+    limitValue: number;
+    consumedValue: number;
+    periodEnd: string;
+  } | null;
   children?: ReactNode;
 }) => {
   const [store] = useState(() => {
@@ -79,6 +88,18 @@ const UsageStory = ({
                     },
                   },
                 }),
+          },
+          {
+            request: { query: GetAiChatUserCreditsUsageDocument },
+            maxUsageCount: Infinity,
+            result: {
+              data: {
+                aiChatUserCreditsUsage: userCreditsUsage && {
+                  __typename: 'AiChatUserCreditsUsage',
+                  ...userCreditsUsage,
+                },
+              },
+            },
           },
         ]}
       >
@@ -144,6 +165,28 @@ export const Expanded: Story = {
 };
 export const ReopenedConversation: Story = {
   render: () => <UsageStory usage={{ ...USAGE, lastMessage: null }} />,
+};
+export const WithUserCredits: Story = {
+  render: () => (
+    <UsageStory
+      userCreditsUsage={{
+        limitValue: 4160000,
+        consumedValue: 1160000,
+        periodEnd: new Date(Date.now() + 3 * 86400000).toISOString(),
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: /^Context and usage/ }),
+    );
+    await waitFor(() => expect(page.getByText('Your credits')).toBeVisible());
+    await expect(
+      page.getByRole('progressbar', { name: 'Your credits' }),
+    ).toHaveAttribute('aria-valuetext', '3 credits left, reset in 3 days');
+  },
 };
 export const NoLimit: Story = { render: () => <UsageStory limit={null} /> };
 export const UnknownConsumption: Story = {

@@ -243,6 +243,12 @@ type AiChatUsage {
   periodEnd: DateTime
 }
 
+type AiChatUserCreditsUsage {
+  consumedValue: BigInt
+  limitValue: BigInt!
+  periodEnd: DateTime!
+}
+
 enum AiModelTier {
   balanced
   extraFast
@@ -3948,6 +3954,7 @@ type Query {
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
+  aiChatUserCreditsUsage: AiChatUserCreditsUsage
   apiKey(input: GetApiKeyInput!): ApiKey
   apiKeys: [ApiKey!]!
   appConnection(id: ID!): AppConnection!

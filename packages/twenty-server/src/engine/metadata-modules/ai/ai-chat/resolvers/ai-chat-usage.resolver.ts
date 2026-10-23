@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { AiChatUsageDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-chat-usage.dto';
+import { AiChatUserCreditsUsageDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-chat-user-credits-usage.dto';
 import { AiChatUsageService } from 'src/engine/metadata-modules/ai/ai-chat/services/ai-chat-usage.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -37,5 +38,16 @@ export class AiChatUsageResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<AiChatUsageDTO | null> {
     return this.aiChatUsageService.findUsage({ workspaceId, userWorkspaceId });
+  }
+
+  @Query(() => AiChatUserCreditsUsageDTO, { nullable: true })
+  async aiChatUserCreditsUsage(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AiChatUserCreditsUsageDTO | null> {
+    return this.aiChatUsageService.findUserCreditsUsage({
+      workspaceId,
+      userWorkspaceId,
+    });
   }
 }

@@ -32,6 +32,7 @@ import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamin
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatStreamRecoveryAttemptsState } from '@/ai/states/agentChatStreamRecoveryAttemptsState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { agentChatUserCreditsFallbackNoticeState } from '@/ai/states/agentChatUserCreditsFallbackNoticeState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { accumulateAgentChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
@@ -40,6 +41,7 @@ import { createMidStreamAdapter } from '@/ai/utils/createMidStreamAdapter';
 import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
 import { getAgentChatMessageThreadTitle } from '@/ai/utils/getAgentChatMessageThreadTitle';
 import { upsertAgentChatMessage } from '@/ai/utils/upsertAgentChatMessage';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
@@ -334,6 +336,32 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           store.set(isAwaitingPersistedRefetchAtom, true);
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           store.set(isStreamingAtom, false);
+          break;
+        }
+
+        case 'user-credits-exhausted': {
+          // A shared thread broadcasts to every viewer, but only the sender's credits ran out
+          if (
+            event.workspaceMemberId !==
+            store.get(currentWorkspaceMemberState.atom)?.id
+          ) {
+            break;
+          }
+
+          if (event.isFallingBackToWorkspaceCredits) {
+            store.set(agentChatUserCreditsFallbackNoticeState.atom, {
+              renewsAt: event.renewsAt,
+            });
+            break;
+          }
+
+          store.set(
+            errorAtom,
+            createAiChatCodedError(
+              t`You have used all your AI credits.`,
+              AiChatErrorCode.USER_CREDITS_EXHAUSTED,
+            ),
+          );
           break;
         }
       }

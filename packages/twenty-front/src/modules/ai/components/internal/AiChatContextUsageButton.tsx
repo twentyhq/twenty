@@ -1,5 +1,6 @@
 import { getAiChatUsageLabel } from '@/ai/utils/getAiChatUsageLabel';
 import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
+import { computeDaysUntilReset } from '@/ai/utils/computeDaysUntilReset';
 import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -15,6 +16,7 @@ import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
+import { AiChatUserCreditsMetricRow } from '@/ai/components/internal/AiChatUserCreditsMetricRow';
 import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { useAiChatUsage } from '@/ai/hooks/useAiChatUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
@@ -122,12 +124,7 @@ export const AiChatContextUsageButton = () => {
     limitValue === 0 ? 100 : (progress?.consumedPercentage ?? null);
 
   const daysUntilReset = isDefined(creditUsage?.periodEnd)
-    ? Math.max(
-        0,
-        Math.ceil(
-          (new Date(creditUsage.periodEnd).getTime() - Date.now()) / 86400000,
-        ),
-      )
+    ? computeDaysUntilReset(creditUsage.periodEnd)
     : null;
 
   const usageLabelInput = {
@@ -209,6 +206,7 @@ export const AiChatContextUsageButton = () => {
                 {t`Usage`}
               </MetricRow>
             )}
+            {!isWorkspaceSetupChat && <AiChatUserCreditsMetricRow />}
             {showDetails && <AiChatContextUsageDetails />}
             {isDefined(agentChatUsage) && (
               <>

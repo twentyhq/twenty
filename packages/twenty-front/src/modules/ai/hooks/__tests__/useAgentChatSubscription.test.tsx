@@ -11,6 +11,9 @@ import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetche
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatUserCreditsFallbackNoticeState } from '@/ai/states/agentChatUserCreditsFallbackNoticeState';
+import { isAiChatUserCreditsExhaustedError } from '@/ai/utils/isAiChatUserCreditsExhaustedError';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
   jotaiStore,
@@ -346,6 +349,104 @@ describe('Message reactions', () => {
         }),
       ),
     ).toEqual(newerReactions);
+    unmount();
+  });
+});
+
+describe('User credits exhausted', () => {
+  const renewsAt = '2026-10-26T00:00:00.000Z';
+
+  const sendUserCreditsExhausted = ({
+    workspaceMemberId,
+    isFallingBackToWorkspaceCredits,
+  }: {
+    workspaceMemberId: string;
+    isFallingBackToWorkspaceCredits: boolean;
+  }) =>
+    subscribe.mock.calls[0][1].next({
+      data: {
+        onAgentChatEvent: {
+          threadId: 'thread',
+          event: {
+            type: 'user-credits-exhausted',
+            workspaceMemberId,
+            isFallingBackToWorkspaceCredits,
+            renewsAt,
+          },
+        },
+      },
+    });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    resetJotaiStore();
+    subscribe.mockReturnValue(disconnect);
+    jotaiStore.set(sseClientState.atom, { subscribe } as never);
+    jotaiStore.set(currentWorkspaceMemberState.atom, {
+      id: 'julia',
+    } as never);
+  });
+
+  it('notices once that the turn switched to workspace credits', () => {
+    const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
+      wrapper: Wrapper,
+    });
+
+    act(() =>
+      sendUserCreditsExhausted({
+        workspaceMemberId: 'julia',
+        isFallingBackToWorkspaceCredits: true,
+      }),
+    );
+
+    expect(
+      jotaiStore.get(agentChatUserCreditsFallbackNoticeState.atom),
+    ).toEqual({ renewsAt });
+    expect(jotaiStore.get(errorAtom)).toBeNull();
+    unmount();
+  });
+
+  it('reports the stopped turn when user credits do not fall back', () => {
+    const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
+      wrapper: Wrapper,
+    });
+
+    act(() =>
+      sendUserCreditsExhausted({
+        workspaceMemberId: 'julia',
+        isFallingBackToWorkspaceCredits: false,
+      }),
+    );
+
+    expect(isAiChatUserCreditsExhaustedError(jotaiStore.get(errorAtom))).toBe(
+      true,
+    );
+    expect(
+      jotaiStore.get(agentChatUserCreditsFallbackNoticeState.atom),
+    ).toBeNull();
+    unmount();
+  });
+
+  it('ignores the credits of another member of a shared thread', () => {
+    const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      sendUserCreditsExhausted({
+        workspaceMemberId: 'tom',
+        isFallingBackToWorkspaceCredits: true,
+      });
+      sendUserCreditsExhausted({
+        workspaceMemberId: 'tom',
+        isFallingBackToWorkspaceCredits: false,
+      });
+    });
+
+    expect(
+      jotaiStore.get(agentChatUserCreditsFallbackNoticeState.atom),
+    ).toBeNull();
+    expect(jotaiStore.get(errorAtom)).toBeNull();
     unmount();
   });
 });
