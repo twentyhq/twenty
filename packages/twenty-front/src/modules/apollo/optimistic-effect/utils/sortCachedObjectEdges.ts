@@ -29,6 +29,57 @@ const extractOrderByDirection = (value: unknown): OrderBy | null => {
   return null;
 };
 
+type ParsedOrderByCriterion = {
+  fieldName: string;
+  subFieldName?: string;
+  subSubFieldName?: string;
+  isAsc: boolean;
+  isNullsFirst: boolean;
+};
+
+const parseOrderByCriterion = (
+  orderCriterion: Record<string, unknown>,
+): ParsedOrderByCriterion | null => {
+  const entries = Object.entries(orderCriterion);
+  if (entries.length === 0) {
+    return null;
+  }
+
+  const [fieldName, fieldValueOrDirection] = entries[0];
+  const [subFieldName, subFieldValueOrDirection] =
+    isNonEmptyString(fieldValueOrDirection) || !isDefined(fieldValueOrDirection)
+      ? []
+      : (Object.entries(fieldValueOrDirection as Record<string, unknown>)[0] ??
+        []);
+
+  const [subSubFieldName] =
+    isNonEmptyString(subFieldValueOrDirection) ||
+    !isDefined(subFieldValueOrDirection)
+      ? []
+      : (Object.entries(
+          subFieldValueOrDirection as Record<string, unknown>,
+        )[0] ?? []);
+
+  const orderByDirection =
+    extractOrderByDirection(subFieldValueOrDirection) ||
+    extractOrderByDirection(fieldValueOrDirection);
+
+  if (!orderByDirection) {
+    return null;
+  }
+
+  const isAsc = orderByDirection.startsWith(doNotTranslate('Asc'));
+  const isNullsFirst = orderByDirection.endsWith('NullsFirst');
+
+  return {
+    fieldName,
+    subFieldName,
+    subSubFieldName,
+    isAsc,
+    isNullsFirst,
+  };
+};
+
 export const sortCachedObjectEdges = ({
   edges,
   orderBy,
@@ -38,49 +89,46 @@ export const sortCachedObjectEdges = ({
   orderBy: RecordGqlOperationOrderBy;
   readCacheField: ReadFieldFunction;
 }) => {
-  const [orderByFieldName, orderByFieldValueOrDirection] = Object.entries(
-    orderBy[0],
-  )[0];
-  const [orderBySubFieldName, orderBySubFieldValueOrDirection] =
-    isNonEmptyString(orderByFieldValueOrDirection)
-      ? []
-      : Object.entries(orderByFieldValueOrDirection)[0];
+  if (!Array.isArray(orderBy) || orderBy.length === 0) {
+    return edges;
+  }
 
-  // For relation fields with composite nested fields (e.g., accountOwner.name.firstName)
-  const [orderBySubSubFieldNameOrDirection] =
-    isNonEmptyString(orderBySubFieldValueOrDirection) ||
-    !isDefined(orderBySubFieldValueOrDirection)
-      ? []
-      : Object.entries(orderBySubFieldValueOrDirection)[0];
+  const parsedCriteria = orderBy
+    .map((criterion) =>
+      parseOrderByCriterion(criterion as Record<string, unknown>),
+    )
+    .filter(isDefined);
+
+  if (parsedCriteria.length === 0) {
+    return edges;
+  }
 
   const readFieldValueToSort = (
     edge: RecordGqlRefEdge,
+    criterion: ParsedOrderByCriterion,
   ): string | number | null => {
     const recordFromCache = edge.node;
     const fieldValue =
       readCacheField<Reference | StoreObject | string | number | null>(
-        orderByFieldName,
+        criterion.fieldName,
         recordFromCache,
       ) ?? null;
-    const isSubFieldFilter = isDefined(fieldValue) && !!orderBySubFieldName;
-
-    if (!isSubFieldFilter) return fieldValue as string | number | null;
+    if (!isDefined(criterion.subFieldName) || !isDefined(fieldValue)) {
+      return fieldValue as string | number | null;
+    }
 
     const subFieldValue =
       readCacheField<Reference | StoreObject | string | number | null>(
-        orderBySubFieldName,
+        criterion.subFieldName,
         fieldValue as Reference | StoreObject,
       ) ?? null;
 
     // Handle 3-level nesting: relation -> composite field -> sub-field
     // e.g., accountOwner (relation) -> name (composite FULL_NAME) -> firstName
-    if (
-      isDefined(subFieldValue) &&
-      isDefined(orderBySubSubFieldNameOrDirection)
-    ) {
+    if (isDefined(subFieldValue) && isDefined(criterion.subSubFieldName)) {
       const subSubFieldValue =
         readCacheField<string | number | null>(
-          orderBySubSubFieldNameOrDirection,
+          criterion.subSubFieldName,
           // At this level, subFieldValue is the composite object (not a Reference)
           subFieldValue as Reference | StoreObject,
         ) ?? null;
@@ -90,29 +138,31 @@ export const sortCachedObjectEdges = ({
     return subFieldValue as string | number | null;
   };
 
-  const orderByDirection =
-    extractOrderByDirection(orderBySubFieldValueOrDirection) ||
-    extractOrderByDirection(orderByFieldValueOrDirection);
-
-  if (!orderByDirection) {
-    return edges;
-  }
-
-  const isAsc = orderByDirection.startsWith(doNotTranslate('Asc'));
-  const isNullsFirst = orderByDirection.endsWith('NullsFirst');
-
   return [...edges].sort((edgeA, edgeB) => {
-    const fieldValueA = readFieldValueToSort(edgeA);
-    const fieldValueB = readFieldValueToSort(edgeB);
+    for (const criterion of parsedCriteria) {
+      const fieldValueA = readFieldValueToSort(edgeA, criterion);
+      const fieldValueB = readFieldValueToSort(edgeB, criterion);
 
-    if (fieldValueA === null || fieldValueB === null) {
-      return isNullsFirst
-        ? sortNullsFirst(fieldValueA, fieldValueB)
-        : sortNullsLast(fieldValueA, fieldValueB);
+      if (fieldValueA === null || fieldValueB === null) {
+        const nullComparison = criterion.isNullsFirst
+          ? sortNullsFirst(fieldValueA, fieldValueB)
+          : sortNullsLast(fieldValueA, fieldValueB);
+
+        if (nullComparison !== 0) {
+          return nullComparison;
+        }
+        continue;
+      }
+
+      const comparison = criterion.isAsc
+        ? sortAsc(fieldValueA, fieldValueB)
+        : sortDesc(fieldValueA, fieldValueB);
+
+      if (comparison !== 0) {
+        return comparison;
+      }
     }
 
-    return isAsc
-      ? sortAsc(fieldValueA, fieldValueB)
-      : sortDesc(fieldValueA, fieldValueB);
+    return 0;
   });
 };
