@@ -75,7 +75,8 @@ export const DropdownRoot = ({
   }>();
   const [rowIds, setRowIds] = useState<string[]>();
   const [focusedRowId, setFocusedRowId] = useState<string>();
-  const pageId = pageHistory[pageHistory.length - 1]?.id;
+  const currentPage = pageHistory[pageHistory.length - 1];
+  const pageId = currentPage?.id;
   const [initialFocusEdge, setInitialFocusEdge] = useState<'first' | 'last'>(
     'first',
   );
@@ -179,6 +180,10 @@ export const DropdownRoot = ({
 
   const goBack = () => {
     setPageNavigation((navigation) => {
+      if (navigation.history[navigation.history.length - 1] !== currentPage) {
+        return navigation;
+      }
+
       const previousPage = navigation.history[navigation.history.length - 2];
 
       if (!isDefined(previousPage)) {

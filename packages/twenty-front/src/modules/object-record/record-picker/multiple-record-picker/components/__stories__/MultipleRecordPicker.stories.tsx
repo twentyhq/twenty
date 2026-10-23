@@ -240,6 +240,96 @@ export const CreateAfterReturningToRecords: Story = {
   },
 };
 
+export const PendingCreationKeepsNewCreateTargetPage: Story = {
+  args: {
+    componentInstanceId:
+      'multiple-record-picker-pending-new-create-target-story',
+  },
+  play: async ({ canvasElement }) => {
+    createRecord.mockClear();
+
+    const finishCreation = fn<() => void>();
+    const pendingCreation = new Promise<RecordPickerPickableMorphItem>(
+      (resolve) => {
+        finishCreation.mockImplementation(() => resolve(CREATED_MORPH_ITEM));
+      },
+    );
+    createRecord.mockReturnValueOnce(pendingCreation);
+
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Link records' }),
+    );
+
+    const picker = await body.findByRole('dialog', { name: 'Related records' });
+    const search = within(picker).getByRole('searchbox');
+
+    await userEvent.type(search, CREATION_AFTER_BACK_SEARCH_QUERY);
+    await userEvent.click(
+      within(picker).getByRole('button', { name: 'Add New' }),
+    );
+    await userEvent.click(
+      await within(picker).findByRole('button', {
+        name: COMPANY_METADATA.labelSingular,
+      }),
+    );
+
+    expect(createRecord).toHaveBeenCalledTimes(1);
+
+    await userEvent.keyboard('{Escape}');
+
+    expect(await within(picker).findByRole('searchbox')).toHaveValue(
+      CREATION_AFTER_BACK_SEARCH_QUERY,
+    );
+
+    await userEvent.click(
+      within(picker).getByRole('button', { name: 'Add New' }),
+    );
+
+    const createTargetTitle = await within(picker).findByText(
+      'Select a record type',
+    );
+    const personTypeButton = within(picker).getByRole('button', {
+      name: PERSON_METADATA.labelSingular,
+    });
+
+    await userEvent.keyboard('{End}');
+    expect(personTypeButton).toHaveFocus();
+
+    finishCreation();
+    await pendingCreation;
+    await userEvent.keyboard('{End}');
+
+    await waitFor(() => {
+      expect(createTargetTitle).toBeVisible();
+      expect(personTypeButton).toHaveFocus();
+      expect(within(picker).queryByRole('searchbox')).not.toBeInTheDocument();
+    });
+    expect(createRecord).toHaveBeenCalledTimes(1);
+
+    await userEvent.click(within(picker).getByRole('button', { name: 'Back' }));
+
+    expect(await within(picker).findByRole('searchbox')).toHaveValue(
+      CREATION_AFTER_BACK_SEARCH_QUERY,
+    );
+    expect(
+      await within(picker).findByRole('option', {
+        name: CREATED_COMPANY_LABEL_PATTERN,
+        selected: true,
+      }),
+    ).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Related records' }),
+      ).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const InactivePagesSkipSearch: Story = {
   args: {
     componentInstanceId: 'multiple-record-picker-inactive-search-story',
