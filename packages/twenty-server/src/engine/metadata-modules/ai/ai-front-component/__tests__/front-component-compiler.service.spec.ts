@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { Lambda, InvokeCommand } from '@aws-sdk/client-lambda';
 import { createHash } from 'crypto';
-import { promises as fs } from 'fs';
+import { promises as fileSystemPromises } from 'fs';
 import { PageLayoutType } from 'twenty-shared/types';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -73,7 +73,7 @@ describe('FrontComponentCompilerService', () => {
       layerBucket: 'bucket',
       layerBucketRegion: 'eu-west-1',
     });
-    jest.spyOn(fs, 'readFile').mockResolvedValue('handler');
+    jest.spyOn(fileSystemPromises, 'readFile').mockResolvedValue('handler');
     dependencies.mockResolvedValue({
       applicationId: 'custom-app',
       revision: 'revision-a',
