@@ -23,10 +23,9 @@ import {
   RECORD_EXPORT_REQUESTER_REFRESH_INTERVAL_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
-import {
-  RecordExportWorkspaceService,
-  type RecordExportQueryContext,
-} from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
+import { RecordExportQueryService } from 'src/engine/core-modules/record-export/services/record-export-query.service';
+import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
+import { type RecordExportQueryContext } from 'src/engine/core-modules/record-export/types/record-export-query-context.type';
 import {
   type RecordExport,
   type RecordExportProgress,
@@ -43,6 +42,7 @@ export class GenerateRecordExportJob {
 
   constructor(
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
+    private readonly recordExportQueryService: RecordExportQueryService,
     private readonly fileStorageService: FileStorageService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
@@ -73,12 +73,12 @@ export class GenerateRecordExportJob {
       const requester =
         await this.recordExportWorkspaceService.resolveRequester(recordExport);
       locale = getRecordExportLocale(requester);
-      const context = await this.recordExportWorkspaceService.buildContext({
+      const context = await this.recordExportQueryService.buildContext({
         parameters: recordExport.parameters,
         authContext: requester,
       });
       progress.totalRecordCount =
-        await this.recordExportWorkspaceService.countRecords({
+        await this.recordExportQueryService.countRecords({
           parameters: recordExport.parameters,
           context,
         });
@@ -232,7 +232,7 @@ export class GenerateRecordExportJob {
           context.queryRunnerContext.authContext,
         );
       }
-      const { results } = await this.recordExportWorkspaceService.readPage({
+      const { results } = await this.recordExportQueryService.readPage({
         parameters: recordExport.parameters,
         context,
         after,

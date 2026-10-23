@@ -3,7 +3,7 @@ import { formatValueForCSV } from '@/utils/csv/formatValueForCSV';
 import { sanitizeValueForCSVExport } from '@/utils/csv/sanitizeValueForCSVExport';
 
 export const formatRecordExportHeader = (
-  columns: RecordExportColumn[],
+  columns: Pick<RecordExportColumn, 'label'>[],
 ): string =>
   '\uFEFF' +
   columns
