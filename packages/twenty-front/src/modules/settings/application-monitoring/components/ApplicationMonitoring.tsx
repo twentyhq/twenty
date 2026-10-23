@@ -7,6 +7,8 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconRefresh } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { billingState } from '@/client-config/states/billingState';
+import { ApplicationMonitoringCreditsSection } from '@/settings/application-monitoring/components/ApplicationMonitoringCreditsSection';
 import { ApplicationMonitoringLineChart } from '@/settings/application-monitoring/components/ApplicationMonitoringLineChart';
 import { ApplicationMonitoringFunctionsTable } from '@/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable';
 import { ApplicationMonitoringIssuesTable } from '@/settings/application-monitoring/components/ApplicationMonitoringIssuesTable';
@@ -20,6 +22,7 @@ import { buildApplicationMonitoringActivityChartData } from '@/settings/applicat
 import { buildApplicationMonitoringLifecycleChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringLifecycleChartData';
 import { getLargestAllowedApplicationMonitoringPeriod } from '@/settings/application-monitoring/utils/getLargestAllowedApplicationMonitoringPeriod';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledHealth = styled.div`
   display: flex;
@@ -59,6 +62,8 @@ export const ApplicationMonitoring = ({
   additionalActions,
 }: ApplicationMonitoringProps) => {
   const { t, i18n } = useLingui();
+  const billing = useAtomStateValue(billingState);
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
   const fullRetentionInHours = APPLICATION_MONITORING_RETENTION_IN_DAYS * 24;
   const lookbackInHours = monitoring.lookbackInHours;
@@ -127,6 +132,13 @@ export const ApplicationMonitoring = ({
           )}
         </StyledHealth>
       </Section.Root>
+      {isBillingEnabled && (
+        <ApplicationMonitoringCreditsSection
+          monitoring={monitoring}
+          axisLabel={chartAxisLabel}
+          isAdminView={isAdminView}
+        />
+      )}
       <Section.Root>
         <Section.Header
           title={t`Top errors and warnings`}

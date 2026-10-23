@@ -1,9 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
 import { type ApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/application-monitoring.dto';
 import { type ApplicationMonitoringRows } from 'src/engine/core-modules/application/application-monitoring/types/application-monitoring-rows.type';
 import { type ApplicationMonitoringPeriod } from 'src/engine/core-modules/application/application-monitoring/utils/resolve-application-monitoring-period.util';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 const toNumber = (value: number | string | undefined): number =>
   Number(value ?? 0);
@@ -12,10 +14,12 @@ export const mapApplicationMonitoringRows = ({
   period,
   lookbackInHours,
   rows,
+  creditUsage,
 }: {
   period: ApplicationMonitoringPeriod;
   lookbackInHours: number;
   rows: ApplicationMonitoringRows;
+  creditUsage: { bucketStart: Date; creditsUsedMicro: number }[] | null;
 }): ApplicationMonitoringDTO => {
   const [totals] = rows.totals;
 
@@ -26,6 +30,14 @@ export const mapApplicationMonitoringRows = ({
     failedRunCount: toNumber(totals?.failedRunCount),
     lifecycleFailureCount: toNumber(totals?.lifecycleFailureCount),
     rateLimitEventCount: toNumber(totals?.rateLimitEventCount),
+    creditsUsed: isDefined(creditUsage)
+      ? toDisplayCredits(
+          creditUsage.reduce(
+            (total, bucket) => total + bucket.creditsUsedMicro,
+            0,
+          ),
+        )
+      : null,
     activity: rows.activity.map((row) => ({
       bucketStart: parseClickHouseDateTime(row.bucketStart),
       errorCount: toNumber(row.errorCount),
@@ -39,6 +51,11 @@ export const mapApplicationMonitoringRows = ({
       uninstallCount: toNumber(row.uninstallCount),
       failedCount: toNumber(row.failedCount),
     })),
+    creditUsage:
+      creditUsage?.map((bucket) => ({
+        bucketStart: bucket.bucketStart,
+        creditsUsed: toDisplayCredits(bucket.creditsUsedMicro),
+      })) ?? null,
     issues: rows.issues.map((row) => ({
       level: row.level,
       source: row.source,

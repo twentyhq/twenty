@@ -7,6 +7,7 @@ import { type ThemeColor, themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { ApplicationMonitoringChartTooltip } from '@/settings/application-monitoring/components/ApplicationMonitoringChartTooltip';
 import { type ApplicationMonitoringChartDatum } from '@/settings/application-monitoring/types/ApplicationMonitoringChartDatum';
 import { getApplicationMonitoringChartIntegerTickValues } from '@/settings/application-monitoring/utils/getApplicationMonitoringChartIntegerTickValues';
+import { getApplicationMonitoringChartValueFormat } from '@/settings/application-monitoring/utils/getApplicationMonitoringChartValueFormat';
 
 const StyledGraphContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -150,7 +151,10 @@ export const ApplicationMonitoringLineChart = <TSeriesKey extends string>({
                 : maxValue * 1.1,
             stacked: false,
           }}
-          yFormat={isDefined(integerTickValues) ? '>-,.0f' : '>-,.2~f'}
+          yFormat={getApplicationMonitoringChartValueFormat({
+            hasIntegerValues: isDefined(integerTickValues),
+            maxValue,
+          })}
           axisBottom={{
             legend: axisLabel,
             legendOffset: 20,

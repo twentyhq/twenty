@@ -22,6 +22,7 @@ describe('mapApplicationMonitoringRows', () => {
         period: PERIOD,
         lookbackInHours: 2160,
         rows: EMPTY_ROWS,
+        creditUsage: [],
       }),
     ).toEqual({
       ...PERIOD,
@@ -30,8 +31,10 @@ describe('mapApplicationMonitoringRows', () => {
       failedRunCount: 0,
       lifecycleFailureCount: 0,
       rateLimitEventCount: 0,
+      creditsUsed: 0,
       activity: [],
       lifecycle: [],
+      creditUsage: [],
       issues: [],
       versions: [],
       functions: [],
@@ -81,6 +84,7 @@ describe('mapApplicationMonitoringRows', () => {
           },
         ],
       },
+      creditUsage: [],
     });
 
     expect(monitoring).toMatchObject({
@@ -106,5 +110,56 @@ describe('mapApplicationMonitoringRows', () => {
       ],
       functions: [{ runCount: 4210, failedRunCount: 96, p95DurationMs: 1400 }],
     });
+  });
+
+  it('totals the credits used across buckets', () => {
+    expect(
+      mapApplicationMonitoringRows({
+        period: PERIOD,
+        lookbackInHours: 2160,
+        rows: EMPTY_ROWS,
+        creditUsage: [
+          {
+            bucketStart: new Date('2026-10-17T00:00:00.000Z'),
+            creditsUsedMicro: 10_000,
+          },
+          {
+            bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+            creditsUsedMicro: 10_000,
+          },
+          {
+            bucketStart: new Date('2026-10-19T00:00:00.000Z'),
+            creditsUsedMicro: 120_000,
+          },
+        ],
+      }),
+    ).toMatchObject({
+      creditsUsed: 0.14,
+      creditUsage: [
+        {
+          bucketStart: new Date('2026-10-17T00:00:00.000Z'),
+          creditsUsed: 0.01,
+        },
+        {
+          bucketStart: new Date('2026-10-18T00:00:00.000Z'),
+          creditsUsed: 0.01,
+        },
+        {
+          bucketStart: new Date('2026-10-19T00:00:00.000Z'),
+          creditsUsed: 0.12,
+        },
+      ],
+    });
+  });
+
+  it('keeps unavailable credits apart from zero usage', () => {
+    expect(
+      mapApplicationMonitoringRows({
+        period: PERIOD,
+        lookbackInHours: 2160,
+        rows: EMPTY_ROWS,
+        creditUsage: null,
+      }),
+    ).toMatchObject({ creditsUsed: null, creditUsage: null });
   });
 });

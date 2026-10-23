@@ -33,6 +33,15 @@ export class ApplicationMonitoringLifecycleBucketDTO {
   failedCount: number;
 }
 
+@ObjectType('ApplicationMonitoringCreditBucket')
+export class ApplicationMonitoringCreditBucketDTO {
+  @Field(() => Date)
+  bucketStart: Date;
+
+  @Field(() => Float)
+  creditsUsed: number;
+}
+
 @ObjectType('ApplicationMonitoringIssue')
 export class ApplicationMonitoringIssueDTO {
   @Field(() => String)
@@ -116,11 +125,17 @@ export class ApplicationMonitoringDTO {
   @Field(() => Int)
   rateLimitEventCount: number;
 
+  @Field(() => Float, { nullable: true })
+  creditsUsed: number | null;
+
   @Field(() => [ApplicationMonitoringActivityBucketDTO])
   activity: ApplicationMonitoringActivityBucketDTO[];
 
   @Field(() => [ApplicationMonitoringLifecycleBucketDTO])
   lifecycle: ApplicationMonitoringLifecycleBucketDTO[];
+
+  @Field(() => [ApplicationMonitoringCreditBucketDTO], { nullable: true })
+  creditUsage: ApplicationMonitoringCreditBucketDTO[] | null;
 
   @Field(() => [ApplicationMonitoringIssueDTO])
   issues: ApplicationMonitoringIssueDTO[];
