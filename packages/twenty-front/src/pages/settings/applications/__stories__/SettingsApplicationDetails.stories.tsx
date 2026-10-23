@@ -303,7 +303,9 @@ export const BuiltInAccountAppHidesSingleGeneralTab: Story = {
         { timeout: 3000 },
       ),
     ).toBeVisible();
-    expect(canvas.queryByTestId('tab-general')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByRole('link', { name: 'General' }),
+    ).not.toBeInTheDocument();
   },
 };
 
