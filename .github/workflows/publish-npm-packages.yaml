@@ -83,7 +83,6 @@ jobs:
 
           branch="v$RELEASE_MAJOR.$RELEASE_MINOR"
           branch_data=$(gh api "repos/twentyhq/twenty/branches/$branch") || fail "Could not read release branch $branch"
-          jq -e '.protected == true' <<< "$branch_data" > /dev/null || fail "Release branch $branch must be protected"
           branch_sha=$(jq -r '.commit.sha' <<< "$branch_data")
           [[ "$branch_sha" =~ ^[a-f0-9]{40}$ ]] || fail "Invalid head commit for release branch $branch"
           rules=$(gh api --paginate --slurp "repos/twentyhq/twenty/rules/branches/$branch?per_page=100" | jq 'add') || fail "Could not read effective protection rules for $branch"
