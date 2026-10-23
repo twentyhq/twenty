@@ -31,7 +31,7 @@ export const SettingsPrivacySharingWithTwenty = () => {
             title={t`Help improve Twenty`}
             description={t`Share session replays and AI conversations to help us improve Twenty`}
             checked={
-              currentWorkspace?.isProductImprovementDataSharingEnabled ?? true
+              currentWorkspace?.isProductImprovementDataSharingEnabled ?? false
             }
             onChange={(checked) =>
               updateWorkspacePrivacySettings({

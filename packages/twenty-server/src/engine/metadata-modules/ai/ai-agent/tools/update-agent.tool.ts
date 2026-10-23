@@ -14,6 +14,7 @@ import { findManageableAgentOrThrow } from 'src/engine/metadata-modules/ai/ai-ag
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
 import { toAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-triggers.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 
 const updateAgentInputSchema = z.object({
   id: z.uuid().describe('Id of the agent to update'),
@@ -49,6 +50,7 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
   constructor(
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {
     super();
   }
@@ -64,7 +66,12 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     });
 
     if (isDefined(parameters.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability(parameters.modelId);
+      this.aiModelRegistryService.validateModelAvailability(
+        parameters.modelId,
+        await this.workspaceAiDataPolicyService.getAiPrivacySettingsOrThrow(
+          context.workspaceId,
+        ),
+      );
     }
 
     const agent = await this.agentService.updateOneAgent({
