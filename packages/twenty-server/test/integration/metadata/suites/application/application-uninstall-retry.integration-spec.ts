@@ -12,7 +12,6 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type Manifest } from 'twenty-shared/application';
-import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -199,7 +198,7 @@ describe('Application uninstall retry', () => {
     await deleteUser({ accessToken: userAccessToken });
   });
 
-  it('records partial progress and retries only the failed hook', async () => {
+  it('keeps a failed app hook pending without throwing and retries only that hook', async () => {
     const workspaceDeletedAt = new Date('2026-08-18T10:00:00.000Z');
     const applicationUninstallService =
       getAppProviderByClassName<ApplicationUninstallService>(
@@ -221,16 +220,12 @@ describe('Application uninstall retry', () => {
       .mockResolvedValueOnce(FAILED_EXECUTION_RESULT)
       .mockResolvedValueOnce(SUCCESSFUL_EXECUTION_RESULT);
 
-    const firstAttempt =
+    await expect(
       applicationUninstallService.runUninstallHooksForWorkspaceDeletion({
         workspaceId,
         workspaceDeletedAt,
-      });
-
-    await expect(firstAttempt).rejects.toThrow('cleanup failed');
-    await expect(firstAttempt).rejects.toBeInstanceOf(
-      RetryableLogicFunctionError,
-    );
+      }),
+    ).resolves.toBeUndefined();
 
     expect(executeSpy).toHaveBeenCalledTimes(2);
 
@@ -320,7 +315,7 @@ describe('Application uninstall retry', () => {
     expect(workspaceIdsWithPendingUninstallHooksAfterRetry.size).toBe(0);
   }, 120000);
 
-  it('reports a platform failure instead of treating it as an app hook failure', async () => {
+  it('throws on a platform failure but not on an app hook failure', async () => {
     const applicationUninstallService =
       getAppProviderByClassName<ApplicationUninstallService>(
         'ApplicationUninstallService',
@@ -337,7 +332,8 @@ describe('Application uninstall retry', () => {
         workspaceDeletedAt: new Date('2026-08-19T10:00:00.000Z'),
       });
 
-    await expect(attempt).rejects.toThrow('executor unavailable');
     await expect(attempt).rejects.toBeInstanceOf(ApplicationException);
+    await expect(attempt).rejects.toThrow('executor unavailable');
+    await expect(attempt).rejects.not.toThrow('cleanup failed');
   }, 120000);
 });

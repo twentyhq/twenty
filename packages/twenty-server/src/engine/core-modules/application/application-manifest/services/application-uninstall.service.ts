@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 import { In, type Repository } from 'typeorm';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -58,15 +57,25 @@ export class ApplicationUninstallService {
       isApplicationUninstallHookPending(application, workspaceDeletedAt),
     );
     const applicationUninstallHookFailures: string[] = [];
-    let hasPlatformFailure = false;
 
     for (const application of pendingApplications) {
       try {
-        await this.runUninstallHookForWorkspaceDeletion({
-          application,
-          workspaceId,
-          workspaceDeletedAt,
-        });
+        const hookErrorMessage =
+          await this.runUninstallHookForWorkspaceDeletion({
+            application,
+            workspaceId,
+            workspaceDeletedAt,
+          });
+
+        // The app's own error is already in its app logs and is not ours to
+        // report; leaving the hook pending lets the cleanup cron retry it.
+        if (isDefined(hookErrorMessage)) {
+          this.logger.warn(
+            `workspace-deletion uninstall hook failed: ${application.universalIdentifier}: ${hookErrorMessage}`,
+          );
+          continue;
+        }
+
         await this.applicationRepository.update(
           workspaceId,
           { id: application.id },
@@ -76,29 +85,18 @@ export class ApplicationUninstallService {
         const applicationUninstallHookFailure = `${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`;
 
         applicationUninstallHookFailures.push(applicationUninstallHookFailure);
-        hasPlatformFailure ||= !(error instanceof RetryableLogicFunctionError);
         this.logger.warn(
           `workspace-deletion uninstall hook failed: ${applicationUninstallHookFailure}`,
         );
       }
     }
 
-    if (!isNonEmptyArray(applicationUninstallHookFailures)) {
-      return;
+    if (isNonEmptyArray(applicationUninstallHookFailures)) {
+      throw new ApplicationException(
+        `Application uninstall hooks failed for workspace ${workspaceId}: ${applicationUninstallHookFailures.join('; ')}`,
+        ApplicationExceptionCode.UNINSTALL_ERROR,
+      );
     }
-
-    const failureMessage = `Application uninstall hooks failed for workspace ${workspaceId}: ${applicationUninstallHookFailures.join('; ')}`;
-
-    // An app's own hook failing is the app owner's to fix (it lands in their
-    // app logs); only platform failures should reach Sentry. Both still retry.
-    if (!hasPlatformFailure) {
-      throw new RetryableLogicFunctionError(failureMessage);
-    }
-
-    throw new ApplicationException(
-      failureMessage,
-      ApplicationExceptionCode.UNINSTALL_ERROR,
-    );
   }
 
   async runUninstallHooksForWorkspaceDeletionBestEffort({
@@ -174,11 +172,17 @@ export class ApplicationUninstallService {
     workspaceId: string;
   }): Promise<void> {
     try {
-      await this.runUninstallHook({
+      const hookErrorMessage = await this.runUninstallHook({
         application,
         workspaceId,
         payload: { version: application.version ?? undefined },
       });
+
+      if (isDefined(hookErrorMessage)) {
+        this.logger.warn(
+          `Uninstall hook failed for application ${application.universalIdentifier}: ${hookErrorMessage}`,
+        );
+      }
     } catch (error) {
       this.logger.warn(
         `Uninstall hook failed for application ${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`,
@@ -194,8 +198,8 @@ export class ApplicationUninstallService {
     application: ApplicationForUninstallHook;
     workspaceId: string;
     workspaceDeletedAt: Date;
-  }): Promise<void> {
-    await this.runUninstallHook({
+  }): Promise<string | undefined> {
+    return this.runUninstallHook({
       application,
       workspaceId,
       workspaceDeletionRequestTimestamp: workspaceDeletedAt.toISOString(),
@@ -218,9 +222,9 @@ export class ApplicationUninstallService {
     workspaceId: string;
     payload: UninstallHookPayload;
     workspaceDeletionRequestTimestamp?: string;
-  }): Promise<void> {
+  }): Promise<string | undefined> {
     if (!isDefined(application.uninstallLogicFunctionId)) {
-      return;
+      return undefined;
     }
 
     this.logger.log(
@@ -238,10 +242,6 @@ export class ApplicationUninstallService {
           : {}),
       });
 
-    if (isDefined(logicFunctionExecutionResult.error)) {
-      throw new RetryableLogicFunctionError(
-        logicFunctionExecutionResult.error.errorMessage,
-      );
-    }
+    return logicFunctionExecutionResult.error?.errorMessage;
   }
 }
