@@ -66,7 +66,7 @@ const getObjectMetadataInputSchema = z.object({
   requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
   icon: 'IconSettings',
   description:
-    "List object metadata as an array. Filter to a single object by id or objectName (singular or plural). Set includeFields to also return each object's fields ({id, name, type, label}) — enough to build a dashboard or view without a separate get_field_metadata call. System objects are otherwise returned as compact {id, nameSingular, namePlural}. Keep includeFullSystemObjects at its default (false); only set it true when you specifically need a system object's full configuration.",
+    "List object metadata, returned as { objects: [...] } in the result. Filter to a single object by id or objectName (singular or plural). Set includeFields to also return each object's fields ({id, name, type, label}) — enough to build a dashboard or view without a separate get_field_metadata call. System objects are otherwise returned as compact {id, nameSingular, namePlural}. Keep includeFullSystemObjects at its default (false); only set it true when you specifically need a system object's full configuration.",
 })
 export class GetObjectMetadataTool extends BaseTool<
   typeof getObjectMetadataInputSchema

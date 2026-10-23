@@ -55,7 +55,7 @@ const getFieldMetadataInputSchema = z.object({
   requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
   icon: 'IconSettings',
   description:
-    "Returns an array of fields. System fields are returned as compact {id, name, type} — enough to know which fields exist and their types. Keep includeFullSystemFields at its default (false); only set it true when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are excluded.",
+    "Returns { fields: [...] } in the result. System fields are returned as compact {id, name, type} — enough to know which fields exist and their types. Keep includeFullSystemFields at its default (false); only set it true when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are excluded.",
 })
 export class GetFieldMetadataTool extends BaseTool<
   typeof getFieldMetadataInputSchema
