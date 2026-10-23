@@ -1,3 +1,6 @@
+import { styled } from '@linaria/react';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatFrontComponentPreview } from '@/ai/components/AiChatFrontComponentPreview';
 import { isString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
@@ -14,6 +17,18 @@ import { AiChatToolCallApprovalRecord } from '@/ai/components/internal/AiChatToo
 import { AiChatToolCallApprovalRecordFields } from '@/ai/components/internal/AiChatToolCallApprovalRecordFields';
 import { useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
 import { useRefreshFrontComponents } from '@/ai/hooks/useRefreshFrontComponents';
+
+const StyledDeletionTarget = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledTargetIdentifier = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+  overflow-wrap: anywhere;
+`;
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -111,16 +126,18 @@ export const AiChatToolCallApprovalArgumentsCard = ({
       }
     >
       {template === 'frontComponentDelete' && (
-        <div>
-          <p>{t`Delete this component from the Workspace app?`}</p>
+        <StyledDeletionTarget>
+          <Text>{t`Delete this component from the Workspace app?`}</Text>
           {isString(proposal.arguments.name) && (
             <strong>{proposal.arguments.name}</strong>
           )}
           {isString(proposal.arguments.frontComponentId) && (
-            <div>{proposal.arguments.frontComponentId}</div>
+            <StyledTargetIdentifier>
+              {proposal.arguments.frontComponentId}
+            </StyledTargetIdentifier>
           )}
-          <p>{t`It will no longer appear in widget pickers. Components still in use cannot be deleted.`}</p>
-        </div>
+          <Text>{t`It will no longer appear in widget pickers. Components still in use cannot be deleted.`}</Text>
+        </StyledDeletionTarget>
       )}
       {isDefined(objectNameSingular) && isDefined(recordId) && (
         <AiChatToolCallApprovalRecord

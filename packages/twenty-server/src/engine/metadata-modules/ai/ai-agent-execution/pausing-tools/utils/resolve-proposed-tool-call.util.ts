@@ -1,3 +1,4 @@
+import { frontComponentDeleteSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-delete.schema';
 import { frontComponentDraftIdSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft-id.schema';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -115,6 +116,14 @@ export const resolveProposedToolCall = async ({
       }
       return { proposal: { ...baseProposal, template } };
     case 'frontComponentDelete':
+      if (
+        !frontComponentDeleteSchema.safeParse(baseProposal.arguments).success
+      ) {
+        return {
+          error:
+            'arguments.frontComponentId and arguments.name must identify the saved component to delete.',
+        };
+      }
       return { proposal: { ...baseProposal, template } };
     case 'email':
       return buildEmailProposal(baseProposal);
