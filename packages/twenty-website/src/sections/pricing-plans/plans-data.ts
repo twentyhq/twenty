@@ -112,7 +112,7 @@ const PRO_FEATURES_CLOUD: PlanFeature[] = [
   },
   {
     title: msg`Calls recorded, leads enriched`,
-    description: msg`Apps like Call Recorder, People Data Labs and more`,
+    description: msg`And apps like Slack`,
     visual: {
       kind: 'logos',
       logos: [
