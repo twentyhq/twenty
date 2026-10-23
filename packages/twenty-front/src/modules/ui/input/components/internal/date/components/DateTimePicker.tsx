@@ -136,24 +136,28 @@ export const DateTimePicker = ({
           weekStart={convertFirstDayOfTheWeekToCalendarStartDayNumber(
             userFirstDayOfTheWeek,
           )}
-          renderHeader={(header) =>
-            isRelative ? (
-              <RelativeDatePickerHeader
-                instanceId={instanceId}
-                direction={relativeDate?.direction ?? 'PAST'}
-                amount={relativeDate?.amount}
-                unit={relativeUnit}
-                onChange={onRelativeDateChange}
-                allowIntraDayUnits
-                calendarMonthDate={turnPlainDateToShiftedDateInSystemTimeZone(
-                  Temporal.PlainDate.from(`${header.viewedMonth}-01`),
-                )}
-                onPreviousMonth={header.onPreviousMonth}
-                onNextMonth={header.onNextMonth}
-                prevMonthButtonDisabled={header.isPreviousMonthDisabled}
-                nextMonthButtonDisabled={header.isNextMonthDisabled}
-              />
-            ) : (
+          renderHeader={(header) => {
+            if (isRelative) {
+              return (
+                <RelativeDatePickerHeader
+                  instanceId={instanceId}
+                  direction={relativeDate?.direction ?? 'PAST'}
+                  amount={relativeDate?.amount}
+                  unit={relativeUnit}
+                  onChange={onRelativeDateChange}
+                  allowIntraDayUnits
+                  calendarMonthDate={turnPlainDateToShiftedDateInSystemTimeZone(
+                    Temporal.PlainDate.from(`${header.viewedMonth}-01`),
+                  )}
+                  onPreviousMonth={header.onPreviousMonth}
+                  onNextMonth={header.onNextMonth}
+                  prevMonthButtonDisabled={header.isPreviousMonthDisabled}
+                  nextMonthButtonDisabled={header.isNextMonthDisabled}
+                />
+              );
+            }
+
+            return (
               <DateTimePickerHeader
                 instanceId={instanceId}
                 date={dateToUse}
@@ -167,8 +171,8 @@ export const DateTimePicker = ({
                 onChangeMonth={header.onMonthChange}
                 onChangeYear={header.onYearChange}
               />
-            )
-          }
+            );
+          }}
         />
       )}
       {clearable && <DatePickerClearButton onClear={onClear} />}

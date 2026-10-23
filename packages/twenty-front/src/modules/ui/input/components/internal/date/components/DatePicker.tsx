@@ -69,23 +69,27 @@ export const DatePicker = ({
         onSelect={onClose}
         highlightedRange={highlightedRange}
         readOnly={isRelative}
-        renderHeader={(header) =>
-          isRelative ? (
-            <RelativeDatePickerHeader
-              instanceId={instanceId}
-              direction={relativeDate?.direction ?? 'PAST'}
-              amount={relativeDate?.amount}
-              unit={relativeDate?.unit ?? doNotTranslate('DAY')}
-              onChange={onRelativeDateChange}
-              calendarMonthDate={turnPlainDateToShiftedDateInSystemTimeZone(
-                Temporal.PlainDate.from(`${header.viewedMonth}-01`),
-              )}
-              onPreviousMonth={header.onPreviousMonth}
-              onNextMonth={header.onNextMonth}
-              prevMonthButtonDisabled={header.isPreviousMonthDisabled}
-              nextMonthButtonDisabled={header.isNextMonthDisabled}
-            />
-          ) : (
+        renderHeader={(header) => {
+          if (isRelative) {
+            return (
+              <RelativeDatePickerHeader
+                instanceId={instanceId}
+                direction={relativeDate?.direction ?? 'PAST'}
+                amount={relativeDate?.amount}
+                unit={relativeDate?.unit ?? doNotTranslate('DAY')}
+                onChange={onRelativeDateChange}
+                calendarMonthDate={turnPlainDateToShiftedDateInSystemTimeZone(
+                  Temporal.PlainDate.from(`${header.viewedMonth}-01`),
+                )}
+                onPreviousMonth={header.onPreviousMonth}
+                onNextMonth={header.onNextMonth}
+                prevMonthButtonDisabled={header.isPreviousMonthDisabled}
+                nextMonthButtonDisabled={header.isNextMonthDisabled}
+              />
+            );
+          }
+
+          return (
             <DatePickerHeader
               instanceId={instanceId}
               date={plainDate.toString()}
@@ -99,8 +103,8 @@ export const DatePicker = ({
               nextMonthButtonDisabled={header.isNextMonthDisabled}
               hideInput={hideHeaderInput}
             />
-          )
-        }
+          );
+        }}
       />
       {clearable && <DatePickerClearButton onClear={onClear} />}
     </StyledDatePickerContainer>
