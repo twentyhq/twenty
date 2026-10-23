@@ -135,8 +135,8 @@ export const RelationOneToManyFieldInput = () => {
       onDismiss={handleSubmit}
       defaultPage="records"
       multiple
-      skipPersist
-      dismissOnOutsideInput
+      shouldSkipPersist
+      shouldDismissOnOutsideInput
     >
       <MultipleRecordPicker
         componentInstanceId={instanceId}

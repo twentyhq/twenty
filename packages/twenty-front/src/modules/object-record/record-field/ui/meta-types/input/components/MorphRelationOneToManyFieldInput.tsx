@@ -28,8 +28,8 @@ export const MorphRelationOneToManyFieldInput = () => {
       defaultPage="records"
       width={GenericDropdownContentWidth.ExtraLarge}
       multiple
-      skipPersist
-      dismissOnOutsideInput
+      shouldSkipPersist
+      shouldDismissOnOutsideInput
     >
       <MultipleRecordPicker
         componentInstanceId={instanceId}

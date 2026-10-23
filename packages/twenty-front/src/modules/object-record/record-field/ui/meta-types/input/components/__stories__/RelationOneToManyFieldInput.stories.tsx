@@ -80,7 +80,7 @@ type RelationOneToManyFieldInputWithContextProps = {
   onSubmit: FieldInputEvent;
   onTab: FieldInputEvent;
   onShiftTab: FieldInputEvent;
-  inline?: boolean;
+  isInline?: boolean;
 };
 
 const RelationFieldInputInitializationEffect = ({
@@ -180,7 +180,7 @@ const RelationOneToManyFieldInputWithContext = ({
   onSubmit,
   onTab,
   onShiftTab,
-  inline = false,
+  isInline = false,
 }: RelationOneToManyFieldInputWithContextProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const fieldDefinition = useMemo(
@@ -240,7 +240,7 @@ const RelationOneToManyFieldInputWithContext = ({
               },
             }}
           >
-            {inline ? (
+            {isInline ? (
               <div style={{ position: 'relative', width: 200, height: 80 }}>
                 <RecordInlineCellEditMode>{picker}</RecordInlineCellEditMode>
               </div>
@@ -383,7 +383,7 @@ export const ShiftTab: Story = {
 };
 
 export const InlineAnchor: Story = {
-  args: { inline: true },
+  args: { isInline: true },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
     const popup = await body.findByRole('dialog', { name: 'People' });

@@ -15,8 +15,8 @@ type FieldInputDropdownProps<TValue> = {
   multiple?: boolean;
   width?: number;
   defaultPage?: string;
-  skipPersist?: boolean;
-  dismissOnOutsideInput?: boolean;
+  shouldSkipPersist?: boolean;
+  shouldDismissOnOutsideInput?: boolean;
 };
 
 export const FieldInputDropdown = <TValue,>({
@@ -26,8 +26,8 @@ export const FieldInputDropdown = <TValue,>({
   multiple,
   width,
   defaultPage,
-  skipPersist = false,
-  dismissOnOutsideInput = false,
+  shouldSkipPersist = false,
+  shouldDismissOnOutsideInput = false,
 }: FieldInputDropdownProps<TValue>) => {
   const { fieldDefinition } = useContext(FieldContext);
   const { onTab, onShiftTab } = useContext(FieldInputEventContext);
@@ -53,7 +53,7 @@ export const FieldInputDropdown = <TValue,>({
     }
 
     event.preventDefault();
-    handleTab(skipPersist ? { skipPersist: true } : { newValue: value });
+    handleTab(shouldSkipPersist ? { skipPersist: true } : { newValue: value });
   };
 
   return (
@@ -64,7 +64,9 @@ export const FieldInputDropdown = <TValue,>({
       open
       onOpenChange={handleOpenChange}
       onInteractOutside={
-        dismissOnOutsideInput ? undefined : preventDropdownDismissOnInputElement
+        shouldDismissOnOutsideInput
+          ? undefined
+          : preventDropdownDismissOnInputElement
       }
     >
       <DropdownContent
