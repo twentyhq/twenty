@@ -1,6 +1,7 @@
 import { type ComponentProps } from 'react';
 
 import { type SearchInput } from '../src/components/input/SearchInput/SearchInput';
+import { INPUT_PROP_DESCRIPTIONS } from './inputPropDescriptions';
 
 export const SEARCH_INPUT_PROP_DESCRIPTIONS = {
   value: 'Current search text.',
@@ -8,6 +9,7 @@ export const SEARCH_INPUT_PROP_DESCRIPTIONS = {
   onChange: 'Native input change event handler.',
   ref: 'Ref to the native input element.',
   size: 'Visual size of the input group.',
+  textAlign: INPUT_PROP_DESCRIPTIONS.textAlign,
   hasFocusRing:
     'Shows the group focus border. Defaults to false for all search inputs. Set true to opt in. Error styling remains visible.',
   placeholder:
