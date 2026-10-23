@@ -1,5 +1,5 @@
 import { type LocalFetchRelayHandler } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-fetch-relay.type';
-import { getLocalFetchRelayServerOrigins } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-fetch-relay-server-origins.util';
+import { getLocalFetchRelayServerOrigin } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-fetch-relay-server-origin.util';
 import { performLocalFetchRelayRequest } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/perform-local-fetch-relay-request.util';
 import { OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-max-payload-size-bytes.constant';
 import { OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-timeout-ms.constant';
@@ -17,7 +17,7 @@ export class LocalFetchRelayService {
     workspaceId: string;
     env: Record<string, string>;
   }): LocalFetchRelayHandler {
-    const serverOrigins = getLocalFetchRelayServerOrigins(env);
+    const serverOrigin = getLocalFetchRelayServerOrigin(env);
 
     const outboundHttpClient = this.secureHttpClientService.getHttpClient(
       undefined,
@@ -38,9 +38,10 @@ export class LocalFetchRelayService {
       performLocalFetchRelayRequest({
         request,
         signal,
-        httpClient: serverOrigins.has(new URL(request.url).origin)
-          ? serverHttpClient
-          : outboundHttpClient,
+        httpClient:
+          new URL(request.url).origin === serverOrigin
+            ? serverHttpClient
+            : outboundHttpClient,
       });
   }
 }

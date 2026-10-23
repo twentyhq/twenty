@@ -27,6 +27,7 @@ type LocalFetchRelayChildMessage = {
 
 type LocalChildProcessMessage =
   | LocalFetchRelayChildMessage
+  | { type: 'fetchAbort'; id: number }
   | { ok: true; result?: unknown }
   | { ok: false; errorType?: string; error: string; stack?: string };
 
@@ -253,6 +254,7 @@ export class LocalChildProcessRunnerService {
 
       // Aborted when the handler process exits so its pending requests stop with it.
       const relayAbortController = new AbortController();
+      const relayedFetchAbortControllers = new Map<number, AbortController>();
       let inFlightRelayedFetchCount = 0;
 
       const sendFetchResult = (
@@ -290,9 +292,21 @@ export class LocalChildProcessRunnerService {
 
         inFlightRelayedFetchCount++;
 
+        const requestAbortController = new AbortController();
+
+        relayedFetchAbortControllers.set(id, requestAbortController);
+
         // The message comes from handler code, so a malformed request must not throw here.
         const result = await Promise.resolve()
-          .then(() => handler(request, relayAbortController.signal))
+          .then(() =>
+            handler(
+              request,
+              AbortSignal.any([
+                relayAbortController.signal,
+                requestAbortController.signal,
+              ]),
+            ),
+          )
           .then(
             (response) => ({ response }),
             (error: unknown) => ({
@@ -301,6 +315,7 @@ export class LocalChildProcessRunnerService {
           )
           .finally(() => {
             inFlightRelayedFetchCount--;
+            relayedFetchAbortControllers.delete(id);
           });
 
         sendFetchResult(id, result);
@@ -312,6 +327,12 @@ export class LocalChildProcessRunnerService {
         }
 
         if ('type' in message) {
+          if (message.type === 'fetchAbort') {
+            relayedFetchAbortControllers.get(message.id)?.abort();
+
+            return;
+          }
+
           if (message.type !== 'fetch' || !isDefined(fetchRelayHandler)) {
             return;
           }

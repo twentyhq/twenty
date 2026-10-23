@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 
+import { createOutboundRequestSignal } from 'src/engine/core-modules/secure-http-client/utils/create-outbound-request-signal.util';
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 import { ALLOW_ALL_INTERNAL_HOSTS } from 'src/engine/core-modules/secure-http-client/constants/allow-all-internal-hosts.constant';
 import { OUTBOUND_HTTP_DEFAULT_MAX_PAYLOAD_SIZE_BYTES } from 'src/engine/core-modules/secure-http-client/constants/outbound-http-default-max-payload-size-bytes.constant';
@@ -68,14 +69,10 @@ export class SecureHttpClientService {
       : axios.create(boundedAxiosConfig);
 
     client.interceptors.request.use((requestConfig) => {
-      const timeoutSignal = AbortSignal.timeout(
-        requestConfig.timeout || OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS,
-      );
-
-      requestConfig.signal =
-        requestConfig.signal instanceof AbortSignal
-          ? AbortSignal.any([requestConfig.signal, timeoutSignal])
-          : timeoutSignal;
+      requestConfig.signal = createOutboundRequestSignal({
+        currentSignal: requestConfig.signal,
+        timeoutMs: requestConfig.timeout || OUTBOUND_HTTP_DEFAULT_TIMEOUT_MS,
+      });
 
       return requestConfig;
     });

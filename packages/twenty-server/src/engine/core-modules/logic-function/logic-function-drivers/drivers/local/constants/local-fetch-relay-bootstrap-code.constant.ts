@@ -29,6 +29,7 @@ globalThis.fetch = async (input, init) => {
   const response = await new Promise((resolve, reject) => {
     const onAbort = () => {
       pendingRelayedFetches.delete(id);
+      process.send({ type: 'fetchAbort', id });
       reject(request.signal.reason);
     };
     request.signal.addEventListener('abort', onAbort, { once: true });
