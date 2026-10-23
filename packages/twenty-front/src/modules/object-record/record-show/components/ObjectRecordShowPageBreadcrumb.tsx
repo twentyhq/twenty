@@ -10,6 +10,7 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowPageGroupByBreadcrumbInfo } from '@/object-record/record-show/hooks/useRecordShowPageGroupByBreadcrumbInfo';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { getRecordShowPageBreadcrumbPaginationLabel } from '@/object-record/record-show/utils/getRecordShowPageBreadcrumbPaginationLabel';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierFamilySelector';
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
@@ -121,6 +122,12 @@ export const ObjectRecordShowPageBreadcrumb = ({
     fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
   });
 
+  const restrictedFieldNames = useRecordRestrictedFieldNames(objectRecordId);
+
+  const isTitleRestricted =
+    isDefined(labelIdentifierFieldMetadataItem) &&
+    restrictedFieldNames.includes(labelIdentifierFieldMetadataItem.name);
+
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
@@ -197,7 +204,9 @@ export const ObjectRecordShowPageBreadcrumb = ({
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             isCentered: false,
             isDisplayModeFixHeight: true,
-            isRecordFieldReadOnly: isLabelIdentifierReadOnly,
+            isRecordFieldReadOnly:
+              isLabelIdentifierReadOnly || isTitleRestricted,
+            isForbidden: isTitleRestricted,
           }}
         >
           <RecordTitleCell
