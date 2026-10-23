@@ -402,7 +402,7 @@ export class ConnectionProviderLifecycleHookService {
 
   private async resolveLogicFunctionId({
     logicFunctionUniversalIdentifier,
-    ...args
+    ...logicFunctionLookup
   }: {
     hook: ConnectionLifecycleHook;
     logicFunctionUniversalIdentifier: string | null;
@@ -414,7 +414,7 @@ export class ConnectionProviderLifecycleHookService {
     }
 
     return this.resolveLogicFunctionIdOrThrow({
-      ...args,
+      ...logicFunctionLookup,
       logicFunctionUniversalIdentifier,
     });
   }

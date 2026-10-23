@@ -19,10 +19,8 @@ import { ConnectionProviderService } from 'src/engine/core-modules/application/c
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { assertCustomProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-custom-provider.util';
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
-import {
-  buildAppCustomConnectionCallbackUrl,
-  buildAppOAuthCallbackUrl,
-} from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
+import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
+import { buildAppCustomConnectionCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-custom-connection-callback-url.util';
 import { computePkceChallenge } from 'src/engine/core-modules/application/connection-provider/utils/compute-pkce-challenge.util';
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-code-for-token.util';
 import { extractEmailFromIdTokenClaims } from 'src/engine/core-modules/application/connection-provider/utils/extract-email-from-id-token-claims.util';
@@ -328,11 +326,11 @@ export class ConnectionProviderOAuthFlowService {
     // the redirect and the notification for one authorization often arrive together
     const { connectedAccount, isRepeatReport } =
       await this.cacheLockService.withLock(async () => {
-        const activeConnectedAccountId = isDefined(
+        const existingConnectedAccount = isDefined(
           statePayload.reconnectingConnectedAccountId,
         )
           ? null
-          : await this.findCallerActiveConnectedAccountIdForUpstreamAccount({
+          : await this.findCallerConnectedAccountForUpstreamAccount({
               provider,
               workspaceId: statePayload.workspaceId,
               userWorkspaceId: statePayload.userWorkspaceId,
@@ -340,7 +338,10 @@ export class ConnectionProviderOAuthFlowService {
             });
 
         return {
-          isRepeatReport: isDefined(activeConnectedAccountId),
+          isRepeatReport:
+            isDefined(existingConnectedAccount) &&
+            !isDefined(existingConnectedAccount.archivedAt) &&
+            !isDefined(existingConnectedAccount.authFailedAt),
           connectedAccount: await this.persistConnectedAccount({
             provider,
             // a repeat report without a token or handle keeps the stored ones
@@ -355,13 +356,8 @@ export class ConnectionProviderOAuthFlowService {
             scope: statePayload.scope,
             reconnectingConnectedAccountId:
               statePayload.reconnectingConnectedAccountId ??
-              activeConnectedAccountId ??
-              (await this.findCallerConnectedAccountIdForUpstreamAccount({
-                provider,
-                workspaceId: statePayload.workspaceId,
-                userWorkspaceId: statePayload.userWorkspaceId,
-                externalAccountId,
-              })),
+              existingConnectedAccount?.id ??
+              null,
           }),
         };
       }, `app-custom-connection:${statePayload.workspaceId}:${provider.id}:${statePayload.userWorkspaceId}:${externalAccountId}`);
@@ -379,7 +375,7 @@ export class ConnectionProviderOAuthFlowService {
   }
 
   // services report one account several times (browser return, notification, retries), and each must update one connection
-  private async findCallerConnectedAccountIdForUpstreamAccount({
+  private async findCallerConnectedAccountForUpstreamAccount({
     provider,
     workspaceId,
     userWorkspaceId,
@@ -389,45 +385,19 @@ export class ConnectionProviderOAuthFlowService {
     workspaceId: string;
     userWorkspaceId: string;
     externalAccountId: string;
-  }): Promise<string | null> {
-    const existingConnectedAccount =
-      await this.connectedAccountRepository.findOne({
-        where: {
-          workspaceId,
-          connectionProviderId: provider.id,
-          userWorkspaceId,
-          externalAccountId,
-        },
-        select: { id: true },
-      });
-
-    return existingConnectedAccount?.id ?? null;
-  }
-  private async findCallerActiveConnectedAccountIdForUpstreamAccount({
-    provider,
-    workspaceId,
-    userWorkspaceId,
-    externalAccountId,
-  }: {
-    provider: Pick<ConnectionProviderEntity, 'id'>;
-    workspaceId: string;
-    userWorkspaceId: string;
-    externalAccountId: string;
-  }): Promise<string | null> {
-    const activeConnectedAccount =
-      await this.connectedAccountRepository.findOne({
-        where: {
-          workspaceId,
-          connectionProviderId: provider.id,
-          userWorkspaceId,
-          externalAccountId,
-          archivedAt: IsNull(),
-          authFailedAt: IsNull(),
-        },
-        select: { id: true },
-      });
-
-    return activeConnectedAccount?.id ?? null;
+  }): Promise<Pick<
+    ConnectedAccountEntity,
+    'id' | 'archivedAt' | 'authFailedAt'
+  > | null> {
+    return this.connectedAccountRepository.findOne({
+      where: {
+        workspaceId,
+        connectionProviderId: provider.id,
+        userWorkspaceId,
+        externalAccountId,
+      },
+      select: { id: true, archivedAt: true, authFailedAt: true },
+    });
   }
 
   private async validateCallerCanManageConnection({
@@ -493,8 +463,8 @@ export class ConnectionProviderOAuthFlowService {
     codeVerifier: string | null;
     expiresIn?: string;
   }): Promise<string> {
-    return this.signState(
-      {
+    return this.signState({
+      payload: {
         sub: connectionProvider.id,
         type: JwtTokenTypeEnum.APP_OAUTH_STATE,
         connectionProviderId: connectionProvider.id,
@@ -507,13 +477,16 @@ export class ConnectionProviderOAuthFlowService {
         codeVerifier,
       },
       expiresIn,
-    );
+    });
   }
 
-  private async signState(
-    payload: AppOAuthStateJwtPayload,
+  private async signState({
+    payload,
     expiresIn = STATE_JWT_EXPIRES_IN,
-  ): Promise<string> {
+  }: {
+    payload: AppOAuthStateJwtPayload;
+    expiresIn?: string;
+  }): Promise<string> {
     return this.jwtWrapperService.signAsyncOrThrow(payload, { expiresIn });
   }
 
