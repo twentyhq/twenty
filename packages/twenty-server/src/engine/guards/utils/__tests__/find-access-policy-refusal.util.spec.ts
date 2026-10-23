@@ -33,7 +33,9 @@ describe('findAccessPolicyRefusal', () => {
   it('should find no refusal for a principal the policy accepts once its flags are granted', async () => {
     const isPermissionFlagGranted = jest.fn().mockResolvedValue(true);
 
-    expect(await findMemberRefusal({ isPermissionFlagGranted })).toBeUndefined();
+    expect(
+      await findMemberRefusal({ isPermissionFlagGranted }),
+    ).toBeUndefined();
     expect(isPermissionFlagGranted).toHaveBeenCalledWith(
       PermissionFlagType.ROLES,
     );
