@@ -42,14 +42,14 @@ export const SettingsApplicationRegistrationGeneralStats = ({
         registration={registration}
         isAdminView={isAdminView}
       />
-      {isApplicationMonitoringEnabled && !isAdminView && (
+      {isApplicationMonitoringEnabled && (
         <StyledStatsFooterActions>
           <NavigationButton
             to={getSettingsPath(
-              SettingsPath.ApplicationRegistrationMonitoring,
-              {
-                applicationRegistrationId: registration.id,
-              },
+              isAdminView
+                ? SettingsPath.AdminPanelApplicationRegistrationMonitoring
+                : SettingsPath.ApplicationRegistrationMonitoring,
+              { applicationRegistrationId: registration.id },
             )}
             startIcon={<IconHeartRateMonitor />}
             size="sm"

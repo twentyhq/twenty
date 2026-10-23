@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { APPLICATION_MONITORING_RETENTION_IN_DAYS } from 'twenty-shared/constants';
 import { IconButton } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
@@ -44,6 +45,7 @@ type ApplicationMonitoringProps = {
   onRefresh: () => void;
   isRefreshing?: boolean;
   isAdminView?: boolean;
+  additionalActions?: ReactNode;
 };
 
 export const ApplicationMonitoring = ({
@@ -54,6 +56,7 @@ export const ApplicationMonitoring = ({
   onRefresh,
   isRefreshing = false,
   isAdminView = false,
+  additionalActions,
 }: ApplicationMonitoringProps) => {
   const { t, i18n } = useLingui();
 
@@ -84,6 +87,7 @@ export const ApplicationMonitoring = ({
           title={t`Health`}
           actions={
             <StyledHeaderActions>
+              {additionalActions}
               <IconButton
                 size="sm"
                 tooltip={t`Refresh`}

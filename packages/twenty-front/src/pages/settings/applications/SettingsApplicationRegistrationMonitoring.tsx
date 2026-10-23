@@ -2,18 +2,16 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
 
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { ApplicationMonitoring } from '@/settings/application-monitoring/components/ApplicationMonitoring';
+import { ApplicationMonitoringFallback } from '@/settings/application-monitoring/components/ApplicationMonitoringFallback';
 import { buildApplicationMonitoringPeriodRange } from '@/settings/application-monitoring/utils/buildApplicationMonitoringPeriodRange';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -72,7 +70,6 @@ export const SettingsApplicationRegistrationMonitoring = () => {
   const monitoring = (
     data ?? (isRefreshOfSameApplication ? previousData : undefined)
   )?.findApplicationRegistrationMonitoring;
-  const clickHouseUrlVariableName = doNotTranslate('CLICKHOUSE_URL');
 
   const developersLinks = [
     {
@@ -112,26 +109,13 @@ export const SettingsApplicationRegistrationMonitoring = () => {
   }
 
   const renderContent = () => {
-    if (!isClickHouseConfigured) {
+    if (!isClickHouseConfigured || isDefined(error) || !isDefined(monitoring)) {
       return (
-        <Section.Root>
-          <Section.Header title={t`Health`} />
-          <SettingsEmptyPlaceholder>{t`Monitoring needs ClickHouse. Set ${clickHouseUrlVariableName} on the server to collect app logs and metrics.`}</SettingsEmptyPlaceholder>
-        </Section.Root>
+        <ApplicationMonitoringFallback
+          isClickHouseConfigured={isClickHouseConfigured}
+          hasError={isDefined(error)}
+        />
       );
-    }
-
-    if (isDefined(error)) {
-      return (
-        <Section.Root>
-          <Section.Header title={t`Health`} />
-          <SettingsEmptyPlaceholder>{t`Couldn't load monitoring`}</SettingsEmptyPlaceholder>
-        </Section.Root>
-      );
-    }
-
-    if (!isDefined(monitoring)) {
-      return loading ? <SettingsSectionSkeletonLoader /> : null;
     }
 
     return (

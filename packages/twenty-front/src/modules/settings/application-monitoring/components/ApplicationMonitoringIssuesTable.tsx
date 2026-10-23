@@ -1,7 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -9,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { APPLICATION_MONITORING_TABLE_METRIC_COLUMNS } from '@/settings/application-monitoring/constants/ApplicationMonitoringTableMetricColumns';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
-import { getApplicationLogSourceLabel } from '@/settings/application-monitoring/utils/getApplicationLogSourceLabel';
+import { getApplicationLogFunctionOrEventLabel } from '@/settings/application-monitoring/utils/getApplicationLogFunctionOrEventLabel';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -30,22 +29,6 @@ export const ApplicationMonitoringIssuesTable = ({
 }: ApplicationMonitoringIssuesTableProps) => {
   const { t, i18n } = useLingui();
 
-  const getFunctionOrEventLabel = ({
-    logicFunctionName,
-    source,
-  }: Pick<
-    ApplicationMonitoringData['issues'][number],
-    'logicFunctionName' | 'source'
-  >) => {
-    if (isNonEmptyString(logicFunctionName)) {
-      return logicFunctionName;
-    }
-
-    const sourceLabel = getApplicationLogSourceLabel(source);
-
-    return isDefined(sourceLabel) ? i18n._(sourceLabel) : source;
-  };
-
   if (issues.length === 0) {
     return (
       <SettingsEmptyPlaceholder>{t`No errors or warnings in this period`}</SettingsEmptyPlaceholder>
@@ -64,7 +47,7 @@ export const ApplicationMonitoringIssuesTable = ({
       </TableRow>
       <TableBody>
         {issues.map((issue) => {
-          const functionOrEvent = getFunctionOrEventLabel(issue);
+          const functionOrEvent = getApplicationLogFunctionOrEventLabel(issue);
 
           return (
             <TableRow
