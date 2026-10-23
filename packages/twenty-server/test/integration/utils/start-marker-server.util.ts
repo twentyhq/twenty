@@ -33,7 +33,15 @@ export const startMarkerServer = async (): Promise<MarkerServer> => {
   return {
     markerUrl: (name) => `${baseUrl}/${name}`,
     hasMarker: (markerUrl) => markers.has(toName(markerUrl)),
-    readMarker: (markerUrl) => markers.get(toName(markerUrl)) ?? '',
+    readMarker: (markerUrl) => {
+      const marker = markers.get(toName(markerUrl));
+
+      if (!isDefined(marker)) {
+        throw new Error(`No request was received for marker ${markerUrl}`);
+      }
+
+      return marker;
+    },
     clearMarker: (markerUrl) => {
       markers.delete(toName(markerUrl));
     },
