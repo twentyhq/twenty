@@ -1,3 +1,4 @@
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
@@ -8,17 +9,35 @@ import { renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+
+const triageSection: NavigationMenuItem = {
+  id: 'triage-section',
+  type: NavigationMenuItemType.AI_CHAT_TRIAGE,
+  folderId: 'inbox-tab',
+  position: 0,
+  createdAt: '',
+  updatedAt: '',
+};
 
 const renderActiveNavigationDrawerMode = ({
   pathname,
   activeTab = NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+  navigationMenuItems = [],
 }: {
   pathname: string;
   activeTab?: NavigationDrawerActiveTab;
+  navigationMenuItems?: NavigationMenuItem[];
 }) => {
   const store = createStore();
 
   store.set(navigationDrawerActiveTabState.atom, activeTab);
+  store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+    current: navigationMenuItems,
+    draft: [],
+    status: 'up-to-date',
+  });
 
   return renderHook(() => useActiveNavigationDrawerMode(), {
     wrapper: ({ children }: { children: ReactNode }) => (
@@ -63,6 +82,22 @@ describe('useActiveNavigationDrawerMode', () => {
 
     expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
   });
+
+  it.each([
+    ['/inbox', NAVIGATION_DRAWER_TABS.NAVIGATION_MENU],
+    ['/objects/people', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
+  ] as const)(
+    'stays on the navigation menu on %s with %s stored once the menu holds the chat sections',
+    (pathname, activeTab) => {
+      const { result } = renderActiveNavigationDrawerMode({
+        pathname,
+        activeTab,
+        navigationMenuItems: [triageSection],
+      });
+
+      expect(result.current).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+    },
+  );
 
   it('is the navigation menu mode anywhere else', () => {
     const { result } = renderActiveNavigationDrawerMode({

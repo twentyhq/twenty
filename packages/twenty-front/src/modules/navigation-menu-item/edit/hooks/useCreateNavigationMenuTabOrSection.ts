@@ -112,11 +112,6 @@ export const useCreateNavigationMenuTabOrSection = () => {
 
     addToDraft([tab, ...buildTemplateChildren(template, tab.id)]);
 
-    if (template === 'inbox') {
-      setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-      return;
-    }
-
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tab.id);
 

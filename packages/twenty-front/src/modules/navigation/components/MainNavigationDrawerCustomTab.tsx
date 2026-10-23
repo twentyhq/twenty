@@ -20,18 +20,14 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
-import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 type MainNavigationDrawerCustomTabProps = {
   tab: NavigationMenuItem;
   isActive: boolean;
   isExpanded: boolean;
   isTooltipDisabled: boolean;
-  isAiChatTab?: boolean;
   isUnread?: boolean;
 };
 
@@ -40,7 +36,6 @@ export const MainNavigationDrawerCustomTab = ({
   isActive,
   isExpanded,
   isTooltipDisabled,
-  isAiChatTab = false,
   isUnread = false,
 }: MainNavigationDrawerCustomTabProps) => {
   const { t } = useLingui();
@@ -51,11 +46,7 @@ export const MainNavigationDrawerCustomTab = ({
   );
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
-  const { switchNavigationDrawerMode, switchToNavigationMenuTab } =
-    useSwitchNavigationDrawerMode();
-  const setNavigationDrawerActiveTab = useSetAtomState(
-    navigationDrawerActiveTabState,
-  );
+  const { switchToNavigationMenuTab } = useSwitchNavigationDrawerMode();
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
@@ -65,19 +56,7 @@ export const MainNavigationDrawerCustomTab = ({
   const openTabMenu = () =>
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
 
-  const selectTab = () => {
-    if (!isAiChatTab) {
-      switchToNavigationMenuTab(tab.id);
-      return;
-    }
-
-    if (isLayoutCustomizationModeEnabled) {
-      setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-      return;
-    }
-
-    switchNavigationDrawerMode(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-  };
+  const selectTab = () => switchToNavigationMenuTab(tab.id);
 
   return (
     <>

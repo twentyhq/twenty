@@ -1,4 +1,4 @@
-import { useNavigationMenuAiChatTab } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatTab';
+import { useNavigationMenuAiChatSections } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatSections';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
@@ -10,7 +10,7 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 export const MainNavigationDrawerContent = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const { hasAiChatSections } = useNavigationMenuAiChatTab();
+  const hasAiChatSections = useNavigationMenuAiChatSections().length > 0;
 
   const shouldMountAiChatContent = hasAiPermission && !hasAiChatSections;
   const showAiChatContent =

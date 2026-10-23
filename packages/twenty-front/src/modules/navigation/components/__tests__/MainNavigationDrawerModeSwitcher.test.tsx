@@ -8,8 +8,8 @@ import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
-import { useNavigationMenuAiChatTab } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatTab';
 import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
@@ -35,7 +35,6 @@ jest.mock(
   '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs',
 );
 jest.mock('@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab');
-jest.mock('@/navigation-menu-item/display/hooks/useNavigationMenuAiChatTab');
 
 let mockIsAiChatInboxEnabled = true;
 
@@ -71,6 +70,15 @@ const developersTab: NavigationMenuItem = {
   updatedAt: '',
 };
 
+const triageSection: NavigationMenuItem = {
+  id: 'triage-section',
+  type: NavigationMenuItemType.AI_CHAT_TRIAGE,
+  folderId: inboxTab.id,
+  position: 0,
+  createdAt: '',
+  updatedAt: '',
+};
+
 const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
   request: { query: GetAgentChatOpenThreadsSummaryDocument },
   delay: 0,
@@ -91,9 +99,13 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
 const renderModeSwitcher = ({
   isLayoutCustomizationModeEnabled = false,
   hasUnreadOpenThread = false,
+  navigationMenuItems = [],
+  permissionFlags = [PermissionFlagType.AI],
 }: {
   isLayoutCustomizationModeEnabled?: boolean;
   hasUnreadOpenThread?: boolean;
+  navigationMenuItems?: NavigationMenuItem[];
+  permissionFlags?: PermissionFlagType[];
 } = {}) => {
   const store = createStore();
 
@@ -103,7 +115,12 @@ const renderModeSwitcher = ({
   );
   store.set(currentUserWorkspaceState.atom, {
     ...mockedUserData.currentUserWorkspace,
-    permissionFlags: [PermissionFlagType.AI],
+    permissionFlags,
+  });
+  store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+    current: navigationMenuItems,
+    draft: [],
+    status: 'up-to-date',
   });
 
   render(
@@ -155,10 +172,6 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     });
     jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([]);
     jest.mocked(useActiveNavigationMenuTab).mockReturnValue(null);
-    jest.mocked(useNavigationMenuAiChatTab).mockReturnValue({
-      aiChatTab: null,
-      hasAiChatSections: false,
-    });
     jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(true);
   });
 
@@ -268,16 +281,12 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(null);
   });
 
-  it('shows the tab holding the inbox sections in place of the built-in inbox', async () => {
+  it('opens the tab holding the chat sections like any other tab', async () => {
     jest
       .mocked(useWorkspaceNavigationMenuTabs)
       .mockReturnValue([inboxTab, developersTab]);
-    jest.mocked(useNavigationMenuAiChatTab).mockReturnValue({
-      aiChatTab: inboxTab,
-      hasAiChatSections: true,
-    });
 
-    renderModeSwitcher();
+    renderModeSwitcher({ navigationMenuItems: [triageSection] });
 
     expect(
       screen
@@ -287,24 +296,26 @@ describe('MainNavigationDrawerModeSwitcher', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Inbox' }));
 
-    expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
-      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-    );
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(inboxTab.id);
+    expect(mockSwitchNavigationDrawerMode).not.toHaveBeenCalled();
   });
 
-  it('keeps the inbox tab editable while editing the layout', () => {
-    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([inboxTab]);
-    jest.mocked(useNavigationMenuAiChatTab).mockReturnValue({
-      aiChatTab: inboxTab,
-      hasAiChatSections: true,
+  it('hides a tab holding only chat sections from members without AI access', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([inboxTab, developersTab]);
+
+    renderModeSwitcher({
+      navigationMenuItems: [triageSection],
+      permissionFlags: [],
     });
 
-    renderModeSwitcher({ isLayoutCustomizationModeEnabled: true });
-
-    expect(screen.getByRole('button', { name: 'Inbox' })).toHaveAttribute(
-      'aria-disabled',
-      'false',
-    );
+    expect(
+      screen.queryByRole('button', { name: 'Inbox' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Developers' }),
+    ).toBeInTheDocument();
   });
 
   it('offers to add a tab only while editing the layout', () => {
@@ -338,6 +349,28 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       await screen.findByRole('button', { name: 'AI, unread' }),
     ).toBeInTheDocument();
   });
+
+  it.each([
+    ['Inbox', inboxTab.id],
+    ['Home', null],
+  ] as const)(
+    'marks %s while the triage it holds has an unread open chat',
+    async (label, triageParentId) => {
+      jest
+        .mocked(useWorkspaceNavigationMenuTabs)
+        .mockReturnValue([inboxTab, developersTab]);
+      jest.mocked(useActiveNavigationMenuTab).mockReturnValue(developersTab);
+
+      renderModeSwitcher({
+        hasUnreadOpenThread: true,
+        navigationMenuItems: [{ ...triageSection, folderId: triageParentId }],
+      });
+
+      expect(
+        await screen.findByRole('button', { name: `${label}, unread` }),
+      ).toBeInTheDocument();
+    },
+  );
 
   it('does not mark the inbox when its open chats are read', async () => {
     renderModeSwitcher();

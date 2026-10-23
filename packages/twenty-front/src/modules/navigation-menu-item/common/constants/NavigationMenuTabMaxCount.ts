@@ -1,1 +1,1 @@
-export const NAVIGATION_MENU_TAB_MAX_COUNT = 3;
+export const NAVIGATION_MENU_TAB_MAX_COUNT = 4;
