@@ -18,6 +18,9 @@ import { buildAppMessageHeaderMessageId } from 'src/engine/metadata-modules/mess
 import { resolveAppMessageDirection } from 'src/engine/metadata-modules/message-channel/utils/resolve-app-message-direction.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
+import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
+import { canonicalizePersonHandle } from 'src/modules/match-participant/person-handle-field/utils/canonicalize-person-handle.util';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
@@ -49,6 +52,7 @@ export class ApplicationMessageIngestionService {
     private readonly saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly cacheLockService: CacheLockService,
+    private readonly personHandleFieldService: PersonHandleFieldService,
   ) {}
 
   async ingest({
@@ -77,9 +81,21 @@ export class ApplicationMessageIngestionService {
     this.assertExternalIdsAreUnique(messages);
     await this.assertReferencedIdentitiesExist({ messages, workspaceId });
 
+    const personHandleField = isDefined(
+      messageChannel.participantHandleFieldUniversalIdentifier,
+    )
+      ? await this.personHandleFieldService.findByUniversalIdentifier({
+          workspaceId,
+          fieldUniversalIdentifier:
+            messageChannel.participantHandleFieldUniversalIdentifier,
+        })
+      : null;
+
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({
-        message,
+        message: isDefined(personHandleField)
+          ? this.withCanonicalParticipantHandles({ message, personHandleField })
+          : message,
         applicationId,
         messageChannel,
       }),
@@ -169,6 +185,34 @@ export class ApplicationMessageIngestionService {
         personId: participant.personId ?? null,
         workspaceMemberId: participant.workspaceMemberId ?? null,
       })),
+    };
+  }
+
+  // stored canonical so person changes can find these participants by an indexed handle lookup
+  private withCanonicalParticipantHandles({
+    message,
+    personHandleField,
+  }: {
+    message: AppMessageInput;
+    personHandleField: PersonHandleField;
+  }): AppMessageInput {
+    return {
+      ...message,
+      participants: message.participants.map((participant) => {
+        const handle = canonicalizePersonHandle({
+          type: personHandleField.type,
+          value: participant.handle,
+        });
+
+        if (!isDefined(handle)) {
+          throw new MessageChannelException(
+            `Participant handle ${participant.handle} on message ${message.externalId} is not a valid ${personHandleField.type} value`,
+            MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+          );
+        }
+
+        return { ...participant, handle };
+      }),
     };
   }
 

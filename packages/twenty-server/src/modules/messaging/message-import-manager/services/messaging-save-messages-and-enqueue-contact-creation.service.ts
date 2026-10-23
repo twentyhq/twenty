@@ -26,9 +26,11 @@ import {
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
+import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
+import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
@@ -40,6 +42,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly personHandleFieldService: PersonHandleFieldService,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation(
@@ -205,16 +208,21 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       ),
     ];
 
-    // Matching non-email handles as emails would null out caller-supplied identities, so those channels only reconcile targets
-    await this.messageParticipantService.matchMessageParticipants({
-      participants: savedMessagesResult.savedMessageParticipants,
-      messageIds,
-      workspaceId,
-      matchWith:
-        messageChannel.type === MessageChannelType.APP
-          ? 'targetsOnly'
-          : 'workspaceMemberAndPerson',
-    });
+    if (messageChannel.type !== MessageChannelType.APP) {
+      await this.messageParticipantService.matchMessageParticipants({
+        participants: savedMessagesResult.savedMessageParticipants,
+        messageIds,
+        workspaceId,
+        matchWith: 'workspaceMemberAndPerson',
+      });
+    } else {
+      await this.matchAppChannelParticipants({
+        messageChannel,
+        participants: savedMessagesResult.savedMessageParticipants,
+        messageIds,
+        workspaceId,
+      });
+    }
 
     return {
       messageExternalIdsAndIdsMap:
@@ -222,5 +230,39 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       messageExternalIdToMessageThreadIdMap:
         savedMessagesResult.messageExternalIdToMessageThreadIdMap,
     };
+  }
+
+  // Matching non-email handles as emails would null out caller-supplied identities: app channels only match on
+  // the person field they declared, and only participants the app left unlinked
+  private async matchAppChannelParticipants({
+    messageChannel,
+    participants,
+    messageIds,
+    workspaceId,
+  }: {
+    messageChannel: MessageChannelEntity;
+    participants: MessageParticipantWorkspaceEntity[];
+    messageIds: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const personHandleField = isDefined(
+      messageChannel.participantHandleFieldUniversalIdentifier,
+    )
+      ? await this.personHandleFieldService.findByUniversalIdentifier({
+          workspaceId,
+          fieldUniversalIdentifier:
+            messageChannel.participantHandleFieldUniversalIdentifier,
+        })
+      : null;
+
+    await this.messageParticipantService.matchMessageParticipants({
+      participants: isDefined(personHandleField)
+        ? participants.filter((participant) => !isDefined(participant.personId))
+        : [],
+      messageIds,
+      workspaceId,
+      matchWith: isDefined(personHandleField) ? 'personOnly' : 'targetsOnly',
+      personHandleField: personHandleField ?? undefined,
+    });
   }
 }
