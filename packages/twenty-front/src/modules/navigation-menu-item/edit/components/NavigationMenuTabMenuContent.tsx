@@ -8,6 +8,8 @@ import { NavigationMenuItemContainerNameEditor } from '@/navigation-menu-item/ed
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 type NavigationMenuTabMenuContentProps = {
@@ -22,6 +24,9 @@ export const NavigationMenuTabMenuContent = ({
   const { t } = useLingui();
   const setCurrentNavigationMenuTabId = useSetAtomState(
     currentNavigationMenuTabIdState,
+  );
+  const setNavigationDrawerActiveTab = useSetAtomState(
+    navigationDrawerActiveTabState,
   );
   const { getSortedSiblings, moveUp, moveDown, remove } =
     useNavigationMenuItemMoveRemove('workspace');
@@ -56,6 +61,7 @@ export const NavigationMenuTabMenuContent = ({
       onClick: () =>
         run(async () => {
           setCurrentNavigationMenuTabId(null);
+          setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
           await remove(tab.id);
         }),
     },

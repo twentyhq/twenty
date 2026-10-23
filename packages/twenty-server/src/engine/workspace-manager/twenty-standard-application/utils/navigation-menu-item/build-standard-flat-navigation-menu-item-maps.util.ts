@@ -6,6 +6,7 @@ import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/fla
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
+import { createStandardNavigationMenuItemContainerFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-container-flat-metadata.util';
 import { createStandardNavigationMenuItemFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/create-standard-navigation-menu-item-flat-metadata.util';
 import {
   createStandardNavigationMenuItemFolderFlatMetadata,
@@ -25,6 +26,12 @@ const WORKFLOWS_FOLDER_ITEM_NAMES = [
   'workflowsFolderAllWorkflows',
   'workflowsFolderAllWorkflowRuns',
   'workflowsFolderAllWorkflowVersions',
+] as const;
+
+const INBOX_TAB_SECTION_NAMES = [
+  'inboxTabTriage',
+  'inboxTabFavoriteChats',
+  'inboxTabRecentChats',
 ] as const;
 
 export const buildStandardFlatNavigationMenuItemMaps = ({
@@ -110,6 +117,47 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
       flatNavigationMenuItem: folderItem,
+      flatNavigationMenuItemMaps,
+    });
+  }
+
+  const inboxTabDefinition = STANDARD_NAVIGATION_MENU_ITEMS.inboxTab;
+  const inboxTabId = v4();
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem:
+      createStandardNavigationMenuItemContainerFlatMetadata({
+        universalIdentifier: inboxTabDefinition.universalIdentifier,
+        type: inboxTabDefinition.type,
+        name: inboxTabDefinition.name,
+        icon: inboxTabDefinition.icon,
+        position: inboxTabDefinition.position,
+        navigationMenuItemId: inboxTabId,
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      }),
+    flatNavigationMenuItemMaps,
+  });
+
+  for (const inboxTabSectionName of INBOX_TAB_SECTION_NAMES) {
+    const inboxTabSectionDefinition =
+      STANDARD_NAVIGATION_MENU_ITEMS[inboxTabSectionName];
+
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem:
+        createStandardNavigationMenuItemContainerFlatMetadata({
+          universalIdentifier: inboxTabSectionDefinition.universalIdentifier,
+          type: inboxTabSectionDefinition.type,
+          folderId: inboxTabId,
+          folderUniversalIdentifier:
+            inboxTabSectionDefinition.folderUniversalIdentifier,
+          position: inboxTabSectionDefinition.position,
+          navigationMenuItemId: v4(),
+          workspaceId,
+          twentyStandardApplicationId,
+          now,
+        }),
       flatNavigationMenuItemMaps,
     });
   }

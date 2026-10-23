@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { NavigationDrawerAiChatTriageItem } from '@/ai/components/NavigationDrawerAiChatTriageItem';
@@ -20,7 +21,17 @@ const OPEN_SUB_FILTER_STATUSES = [
   AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED,
 ];
 
-export const NavigationDrawerAiChatTriageSection = () => {
+type NavigationDrawerAiChatTriageSectionProps = {
+  label?: string;
+  rightIcon?: ReactNode;
+  alwaysShowRightIcon?: boolean;
+};
+
+export const NavigationDrawerAiChatTriageSection = ({
+  label,
+  rightIcon,
+  alwaysShowRightIcon,
+}: NavigationDrawerAiChatTriageSectionProps = {}) => {
   const { t } = useLingui();
   const location = useLocation();
   const agentChatThreadFilterStatus = useAtomStateValue(
@@ -48,7 +59,9 @@ export const NavigationDrawerAiChatTriageSection = () => {
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID}
-      label={t`Triage`}
+      label={label ?? t`Triage`}
+      rightIcon={rightIcon}
+      alwaysShowRightIcon={alwaysShowRightIcon}
     >
       <NavigationDrawerItemGroup>
         <NavigationDrawerAiChatTriageItem

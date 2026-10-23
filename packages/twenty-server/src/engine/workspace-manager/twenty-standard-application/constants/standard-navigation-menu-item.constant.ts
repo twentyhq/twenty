@@ -89,6 +89,33 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 2,
   },
+  inboxTab: {
+    universalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    type: NavigationMenuItemType.TAB,
+    name: i18nLabel(
+      msg({ message: `Inbox`, context: 'navigationMenuItem.name' }),
+    ),
+    icon: 'IconInbox',
+    position: 0,
+  },
+  inboxTabTriage: {
+    universalIdentifier: '20202020-b00d-4b0d-8b0d-c0aba11c000d',
+    type: NavigationMenuItemType.AI_CHAT_TRIAGE,
+    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    position: 0,
+  },
+  inboxTabFavoriteChats: {
+    universalIdentifier: '20202020-b00e-4b0e-8b0e-c0aba11c000e',
+    type: NavigationMenuItemType.AI_CHAT_FAVORITES,
+    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    position: 1,
+  },
+  inboxTabRecentChats: {
+    universalIdentifier: '20202020-b00f-4b0f-8b0f-c0aba11c000f',
+    type: NavigationMenuItemType.AI_CHAT_RECENTS,
+    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    position: 2,
+  },
 } as const;
 
 export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<

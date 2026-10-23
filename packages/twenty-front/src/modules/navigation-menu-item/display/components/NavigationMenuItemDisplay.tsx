@@ -24,6 +24,9 @@ export const NavigationMenuItemDisplay = ({
   switch (item.type) {
     case NavigationMenuItemType.TAB:
     case NavigationMenuItemType.SECTION:
+    case NavigationMenuItemType.AI_CHAT_TRIAGE:
+    case NavigationMenuItemType.AI_CHAT_FAVORITES:
+    case NavigationMenuItemType.AI_CHAT_RECENTS:
       return null;
     case NavigationMenuItemType.FOLDER:
       return (

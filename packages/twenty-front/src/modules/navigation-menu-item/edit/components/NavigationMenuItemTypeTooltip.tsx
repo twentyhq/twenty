@@ -5,6 +5,9 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconAddressBook,
   IconBox,
+  IconHeart,
+  IconInbox,
+  IconMessage,
   IconFolder,
   IconLayoutList,
   IconLayoutSidebar,
@@ -42,6 +45,9 @@ export const NavigationMenuItemTypeTooltip = ({
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
     TAB: { label: t`Tab`, Icon: IconLayoutSidebar },
     SECTION: { label: t`Section`, Icon: IconLayoutList },
+    AI_CHAT_TRIAGE: { label: t`Triage`, Icon: IconInbox },
+    AI_CHAT_FAVORITES: { label: t`Favorite chats`, Icon: IconHeart },
+    AI_CHAT_RECENTS: { label: t`Recent chats`, Icon: IconMessage },
   };
 
   const { label, Icon } = labelsByType[type];

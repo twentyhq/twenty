@@ -9,6 +9,7 @@ import { IconComment, IconHome, IconSettings } from 'twenty-ui/icon';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useNavigationMenuAiChatTab } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatTab';
 import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
@@ -34,6 +35,7 @@ jest.mock(
   '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs',
 );
 jest.mock('@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab');
+jest.mock('@/navigation-menu-item/display/hooks/useNavigationMenuAiChatTab');
 
 let mockIsAiChatInboxEnabled = true;
 
@@ -48,6 +50,16 @@ jest.mock('twenty-ui/utilities', () => ({
 
 const mockSwitchNavigationDrawerMode = jest.fn();
 const mockSwitchToNavigationMenuTab = jest.fn();
+
+const inboxTab: NavigationMenuItem = {
+  id: 'inbox-tab',
+  type: NavigationMenuItemType.TAB,
+  name: 'Inbox',
+  icon: 'IconInbox',
+  position: 0,
+  createdAt: '',
+  updatedAt: '',
+};
 
 const developersTab: NavigationMenuItem = {
   id: 'developers-tab',
@@ -143,6 +155,10 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     });
     jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([]);
     jest.mocked(useActiveNavigationMenuTab).mockReturnValue(null);
+    jest.mocked(useNavigationMenuAiChatTab).mockReturnValue({
+      aiChatTab: null,
+      hasAiChatSections: false,
+    });
     jest.mocked(useIsNavigationDrawerContentExpanded).mockReturnValue(true);
   });
 
@@ -250,6 +266,45 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Home' }));
 
     expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith(null);
+  });
+
+  it('shows the tab holding the inbox sections in place of the built-in inbox', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuTabs)
+      .mockReturnValue([inboxTab, developersTab]);
+    jest.mocked(useNavigationMenuAiChatTab).mockReturnValue({
+      aiChatTab: inboxTab,
+      hasAiChatSections: true,
+    });
+
+    renderModeSwitcher();
+
+    expect(
+      screen
+        .getAllByRole('button')
+        .map((button) => button.getAttribute('aria-label')),
+    ).toEqual(['Home', 'Inbox', 'Developers', 'Settings']);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Inbox' }));
+
+    expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
+      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+    );
+  });
+
+  it('keeps the inbox tab editable while editing the layout', () => {
+    jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue([inboxTab]);
+    jest.mocked(useNavigationMenuAiChatTab).mockReturnValue({
+      aiChatTab: inboxTab,
+      hasAiChatSections: true,
+    });
+
+    renderModeSwitcher({ isLayoutCustomizationModeEnabled: true });
+
+    expect(screen.getByRole('button', { name: 'Inbox' })).toHaveAttribute(
+      'aria-disabled',
+      'false',
+    );
   });
 
   it('offers to add a tab only while editing the layout', () => {

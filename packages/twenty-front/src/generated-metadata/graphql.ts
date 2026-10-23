@@ -4902,6 +4902,9 @@ export type NavigationMenuItem = {
 };
 
 export enum NavigationMenuItemType {
+  AI_CHAT_FAVORITES = 'AI_CHAT_FAVORITES',
+  AI_CHAT_RECENTS = 'AI_CHAT_RECENTS',
+  AI_CHAT_TRIAGE = 'AI_CHAT_TRIAGE',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   OBJECT = 'OBJECT',

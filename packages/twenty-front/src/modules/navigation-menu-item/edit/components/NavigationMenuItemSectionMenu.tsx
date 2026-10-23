@@ -15,10 +15,12 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 type NavigationMenuItemSectionMenuProps = {
   section: NavigationMenuItem;
+  defaultName?: string;
 };
 
 export const NavigationMenuItemSectionMenu = ({
   section,
+  defaultName,
 }: NavigationMenuItemSectionMenuProps) => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
@@ -52,6 +54,7 @@ export const NavigationMenuItemSectionMenu = ({
       >
         <NavigationMenuItemSectionMenuContent
           section={section}
+          defaultName={defaultName}
           onClose={() => closeDropdown(dropdownId)}
         />
       </DropdownContent>

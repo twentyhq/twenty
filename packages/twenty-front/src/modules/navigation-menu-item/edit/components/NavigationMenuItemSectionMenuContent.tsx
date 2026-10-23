@@ -19,11 +19,13 @@ import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types
 
 type NavigationMenuItemSectionMenuContentProps = {
   section: NavigationMenuItem;
+  defaultName?: string;
   onClose: () => void;
 };
 
 export const NavigationMenuItemSectionMenuContent = ({
   section,
+  defaultName,
   onClose,
 }: NavigationMenuItemSectionMenuContentProps) => {
   const { t } = useLingui();
@@ -95,7 +97,8 @@ export const NavigationMenuItemSectionMenuContent = ({
       <Dropdown.Page id="root">
         <NavigationMenuItemContainerNameEditor
           item={section}
-          placeholder={t`Section name`}
+          placeholder={defaultName ?? t`Section name`}
+          defaultName={defaultName}
         />
         <Dropdown.Separator />
         <Dropdown.Section>

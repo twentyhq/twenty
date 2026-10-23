@@ -133,6 +133,11 @@ export const validateNavigationMenuItemTypeRequiredProperties = ({
             ),
           ];
     }
+    case NavigationMenuItemType.AI_CHAT_TRIAGE:
+    case NavigationMenuItemType.AI_CHAT_FAVORITES:
+    case NavigationMenuItemType.AI_CHAT_RECENTS: {
+      return [];
+    }
     case NavigationMenuItemType.PAGE_LAYOUT: {
       return validateUuidProperty({
         value: pageLayoutUniversalIdentifier,

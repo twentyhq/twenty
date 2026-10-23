@@ -7,6 +7,7 @@ import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThrea
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useNavigationMenuAiChatTab } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatTab';
 import { useWorkspaceNavigationMenuTabs } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuTabs';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerCustomTab } from '@/navigation/components/MainNavigationDrawerCustomTab';
@@ -17,6 +18,7 @@ import {
   useNavigationDrawerModes,
 } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import {
   type NavigationDrawerActiveTab,
@@ -24,7 +26,10 @@ import {
 } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 // Expanded, the row matches the page card header so their borders read as one line.
@@ -56,6 +61,8 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const navigationMenuTabs = useWorkspaceNavigationMenuTabs();
+  const { aiChatTab, hasAiChatSections } = useNavigationMenuAiChatTab();
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { switchNavigationDrawerMode, switchToNavigationMenuTab } =
     useSwitchNavigationDrawerMode();
   const { hasUnreadOpenThread } = useAgentChatOpenThreadsSummary();
@@ -79,11 +86,17 @@ export const MainNavigationDrawerModeSwitcher = () => {
 
   const shouldShowTooltips = !isExpanded && !isMobile;
 
+  const isHomeActive =
+    !isDefined(activeNavigationMenuTab) &&
+    (activeNavigationDrawerMode === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU ||
+      (activeNavigationDrawerMode === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY &&
+        hasAiChatSections));
+
   const renderMode = ({ Icon, label, mode }: NavigationDrawerMode) => {
     const isHome = mode === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
-    const isActive =
-      mode === activeNavigationDrawerMode &&
-      (!isHome || !isDefined(activeNavigationMenuTab));
+    const isActive = isHome
+      ? isHomeActive
+      : mode === activeNavigationDrawerMode;
     // Inside the inbox, its Open item already shows what is unread
     const isUnread =
       isAiChatInboxEnabled &&
@@ -114,15 +127,24 @@ export const MainNavigationDrawerModeSwitcher = () => {
   };
 
   const leadingModes = modes.filter(
-    ({ mode }) => mode !== NAVIGATION_DRAWER_TABS.SETTINGS,
+    ({ mode }) =>
+      mode !== NAVIGATION_DRAWER_TABS.SETTINGS &&
+      (mode !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY || !hasAiChatSections),
   );
   const settingsMode = modes.find(
     ({ mode }) => mode === NAVIGATION_DRAWER_TABS.SETTINGS,
   );
+  const visibleTabs = navigationMenuTabs.filter(
+    (tab) =>
+      tab.id !== aiChatTab?.id ||
+      hasAiPermission ||
+      isLayoutCustomizationModeEnabled,
+  );
   const canAddTab =
     isLayoutCustomizationModeEnabled &&
     !isMobile &&
-    navigationMenuTabs.length < NAVIGATION_MENU_TAB_MAX_COUNT;
+    navigationMenuTabs.filter((tab) => tab.id !== aiChatTab?.id).length <
+      NAVIGATION_MENU_TAB_MAX_COUNT;
 
   return (
     <StyledSwitcher
@@ -132,15 +154,27 @@ export const MainNavigationDrawerModeSwitcher = () => {
     >
       {leadingModes.map(renderMode)}
       {!isMobile &&
-        navigationMenuTabs.map((tab) => (
-          <MainNavigationDrawerCustomTab
-            key={tab.id}
-            tab={tab}
-            isActive={activeNavigationMenuTab?.id === tab.id}
-            isExpanded={isExpanded}
-            isTooltipDisabled={!shouldShowTooltips}
-          />
-        ))}
+        visibleTabs.map((tab) => {
+          const isActive = activeNavigationMenuTab?.id === tab.id;
+          const isAiChatTab = tab.id === aiChatTab?.id;
+
+          return (
+            <MainNavigationDrawerCustomTab
+              key={tab.id}
+              tab={tab}
+              isActive={isActive}
+              isExpanded={isExpanded}
+              isTooltipDisabled={!shouldShowTooltips}
+              isAiChatTab={isAiChatTab}
+              isUnread={
+                isAiChatTab &&
+                isAiChatInboxEnabled &&
+                hasUnreadOpenThread &&
+                !isActive
+              }
+            />
+          );
+        })}
       {canAddTab && (
         <MainNavigationDrawerAddTabButton isExpanded={isExpanded} />
       )}

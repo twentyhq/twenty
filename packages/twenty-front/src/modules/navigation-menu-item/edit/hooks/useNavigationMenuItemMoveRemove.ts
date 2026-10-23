@@ -1,8 +1,10 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { isDefined } from 'twenty-shared/utils';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
 import { getPositionBetween } from '@/navigation-menu-item/common/utils/getPositionBetween';
+import { isNavigationMenuItemAnySection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAnySection';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
@@ -25,13 +27,15 @@ export const useNavigationMenuItemMoveRemove = (
     }
     const folderId = currentItem.folderId ?? null;
     const isTabOrSection = isNavigationMenuItemTabOrSection(currentItem);
+    const isSameKind = (item: NavigationMenuItem) =>
+      isNavigationMenuItemAnySection(currentItem)
+        ? isNavigationMenuItemAnySection(item)
+        : item.type === currentItem.type;
     return currentItems
       .filter(
         (item) =>
           (item.folderId ?? null) === folderId &&
-          (isTabOrSection
-            ? item.type === currentItem.type
-            : visibleItemIds.has(item.id)),
+          (isTabOrSection ? isSameKind(item) : visibleItemIds.has(item.id)),
       )
       .sort((a, b) => a.position - b.position);
   };

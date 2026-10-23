@@ -1,11 +1,29 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconNewSection } from 'twenty-ui/icon';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import {
+  IconCode,
+  IconHeart,
+  IconInbox,
+  IconMessage,
+  IconNewSection,
+  IconPlus,
+} from 'twenty-ui/icon';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
+import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
+import { useNavigationMenuItemAiChatSectionLabel } from '@/navigation-menu-item/display/sections/ai-chat/hooks/useNavigationMenuItemAiChatSectionLabel';
 import { NavigationMenuItemContainerTemplateMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemContainerTemplateMenu';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit/hooks/useCreateNavigationMenuTabOrSection';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+
+const AI_CHAT_SECTION_OPTIONS = [
+  { type: NavigationMenuItemType.AI_CHAT_TRIAGE, Icon: IconInbox },
+  { type: NavigationMenuItemType.AI_CHAT_FAVORITES, Icon: IconHeart },
+  { type: NavigationMenuItemType.AI_CHAT_RECENTS, Icon: IconMessage },
+];
 
 type NavigationMenuItemAddSectionButtonProps = {
   parentId: string | null;
@@ -15,7 +33,12 @@ export const NavigationMenuItemAddSectionButton = ({
   parentId,
 }: NavigationMenuItemAddSectionButtonProps) => {
   const { t } = useLingui();
-  const { createSection } = useCreateNavigationMenuTabOrSection();
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const sections = useWorkspaceNavigationMenuSections(parentId);
+  const { getDefaultAiChatSectionLabel } =
+    useNavigationMenuItemAiChatSectionLabel();
+  const { createSection, createAiChatSection } =
+    useCreateNavigationMenuTabOrSection();
 
   return (
     <NavigationDrawerSection>
@@ -23,7 +46,6 @@ export const NavigationMenuItemAddSectionButton = ({
         <NavigationMenuItemContainerTemplateMenu
           dropdownId={`navigation-menu-add-section-${parentId ?? 'home'}`}
           title={t`Add section`}
-          blankLabel={t`Blank section`}
           isTriggerNativeButton={false}
           trigger={
             <div tabIndex={-1}>
@@ -35,7 +57,53 @@ export const NavigationMenuItemAddSectionButton = ({
               />
             </div>
           }
-          onSelect={(template) => createSection({ parentId, template })}
+          groups={[
+            {
+              id: 'blank',
+              options: [
+                {
+                  id: 'blank',
+                  label: t`Blank section`,
+                  Icon: IconPlus,
+                  onClick: () => createSection({ parentId, template: 'blank' }),
+                },
+              ],
+            },
+            {
+              id: 'templates',
+              label: t`Templates`,
+              options: [
+                {
+                  id: 'developer-tools',
+                  label: t`Developers`,
+                  contextualText: t`API, webhooks, apps, CLI and logs`,
+                  Icon: IconCode,
+                  onClick: () =>
+                    createSection({ parentId, template: 'developer-tools' }),
+                },
+              ],
+            },
+            {
+              id: 'inbox',
+              label: t`Inbox`,
+              options: hasAiPermission
+                ? AI_CHAT_SECTION_OPTIONS.map(({ type, Icon }) => {
+                    const isAlreadyInSidebar = sections.some(
+                      (section) => section.type === type,
+                    );
+
+                    return {
+                      id: type,
+                      label: getDefaultAiChatSectionLabel(type),
+                      Icon,
+                      isDisabled: isAlreadyInSidebar,
+                      isAlreadyInSidebar,
+                      onClick: () => createAiChatSection({ parentId, type }),
+                    };
+                  })
+                : [],
+            },
+          ]}
         />
       </NavigationMenuItemEntrance>
     </NavigationDrawerSection>

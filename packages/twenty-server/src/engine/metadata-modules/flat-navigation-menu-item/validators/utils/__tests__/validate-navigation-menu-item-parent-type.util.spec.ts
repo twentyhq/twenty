@@ -6,6 +6,7 @@ import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/nav
 describe('validateNavigationMenuItemParentType', () => {
   it.each([
     [NavigationMenuItemType.SECTION, NavigationMenuItemType.TAB],
+    [NavigationMenuItemType.AI_CHAT_TRIAGE, NavigationMenuItemType.TAB],
     [NavigationMenuItemType.FOLDER, NavigationMenuItemType.TAB],
     [NavigationMenuItemType.FOLDER, NavigationMenuItemType.SECTION],
     [NavigationMenuItemType.VIEW, NavigationMenuItemType.TAB],
@@ -22,6 +23,8 @@ describe('validateNavigationMenuItemParentType', () => {
     [NavigationMenuItemType.TAB, NavigationMenuItemType.SECTION],
     [NavigationMenuItemType.SECTION, NavigationMenuItemType.SECTION],
     [NavigationMenuItemType.SECTION, NavigationMenuItemType.FOLDER],
+    [NavigationMenuItemType.AI_CHAT_RECENTS, NavigationMenuItemType.SECTION],
+    [NavigationMenuItemType.LINK, NavigationMenuItemType.AI_CHAT_FAVORITES],
     [NavigationMenuItemType.FOLDER, NavigationMenuItemType.FOLDER],
     [NavigationMenuItemType.RECORD, NavigationMenuItemType.LINK],
   ])('rejects a %s inside a %s', (type, parentType) => {

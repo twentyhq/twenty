@@ -18,16 +18,18 @@ const StyledRow = styled.div`
 type NavigationMenuItemContainerNameEditorProps = {
   item: NavigationMenuItem;
   placeholder: string;
+  defaultName?: string;
   hasIconPicker?: boolean;
 };
 
 export const NavigationMenuItemContainerNameEditor = ({
   item,
   placeholder,
+  defaultName,
   hasIconPicker = false,
 }: NavigationMenuItemContainerNameEditorProps) => {
   const { updateItem } = useNavigationMenuItemEditController('workspace');
-  const [name, setName] = useState(item.name ?? '');
+  const [name, setName] = useState(item.name ?? defaultName ?? '');
 
   return (
     <DropdownMenuItemsContainer>

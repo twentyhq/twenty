@@ -63,6 +63,16 @@ const createNavigationMenuItemInputSchema = z.discriminatedUnion('type', [
     ...commonOptionalFields,
   }),
   z.object({
+    type: z.enum([
+      NavigationMenuItemType.AI_CHAT_TRIAGE,
+      NavigationMenuItemType.AI_CHAT_FAVORITES,
+      NavigationMenuItemType.AI_CHAT_RECENTS,
+    ]),
+    scope: navigationMenuItemScopeSchema,
+    name: derivedNameField,
+    ...commonOptionalFields,
+  }),
+  z.object({
     type: z.literal(NavigationMenuItemType.LINK),
     scope: navigationMenuItemScopeSchema,
     name: requiredNameField,
@@ -129,6 +139,9 @@ const toServiceInput = (
     case NavigationMenuItemType.FOLDER:
     case NavigationMenuItemType.TAB:
     case NavigationMenuItemType.SECTION:
+    case NavigationMenuItemType.AI_CHAT_TRIAGE:
+    case NavigationMenuItemType.AI_CHAT_FAVORITES:
+    case NavigationMenuItemType.AI_CHAT_RECENTS:
       return { ...base, name: params.name };
     case NavigationMenuItemType.LINK:
       return { ...base, name: params.name, link: params.link };
@@ -165,6 +178,7 @@ const toServiceInput = (
 Type chooses the variant:
 - TAB: a sidebar tab next to Home (name required, no parent). Items and sections live in it through folderId.
 - SECTION: a titled group of items inside a tab or at the root of Home (name required).
+- AI_CHAT_TRIAGE, AI_CHAT_FAVORITES, AI_CHAT_RECENTS: built-in inbox sections (triage filters, favorite chats, recent chats) that list the viewer's own chats; they live in a tab or at the root of Home.
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
 - OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).

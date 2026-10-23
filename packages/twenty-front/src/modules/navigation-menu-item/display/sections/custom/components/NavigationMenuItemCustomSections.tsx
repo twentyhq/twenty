@@ -1,4 +1,6 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { isNavigationMenuItemAiChatSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAiChatSection';
+import { NavigationMenuItemAiChatSection } from '@/navigation-menu-item/display/sections/ai-chat/components/NavigationMenuItemAiChatSection';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
 import { NavigationMenuItemCustomSection } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSection';
 import { NavigationMenuItemAddSectionButton } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddSectionButton';
@@ -20,9 +22,13 @@ export const NavigationMenuItemCustomSections = ({
 
   return (
     <>
-      {sections.map((section) => (
-        <NavigationMenuItemCustomSection key={section.id} section={section} />
-      ))}
+      {sections.map((section) =>
+        isNavigationMenuItemAiChatSection(section) ? (
+          <NavigationMenuItemAiChatSection key={section.id} section={section} />
+        ) : (
+          <NavigationMenuItemCustomSection key={section.id} section={section} />
+        ),
+      )}
       {isLayoutCustomizationModeEnabled && !isMobile && (
         <NavigationMenuItemAddSectionButton parentId={parentId} />
       )}
