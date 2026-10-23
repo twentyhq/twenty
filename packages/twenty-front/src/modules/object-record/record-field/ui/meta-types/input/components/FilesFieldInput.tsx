@@ -4,11 +4,12 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { useFilesField } from '@/object-record/record-field/ui/meta-types/hooks/useFilesField';
 import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile';
 import { FilesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldMenuItem';
+import { FilesFieldLabelInput } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldLabelInput';
+import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
 import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
 import { MultiItemFieldSearchHeader } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSearchHeader';
-import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { useMultiItemDraft } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemDraft';
 import { useMultiItemFieldDismiss } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemFieldDismiss';
@@ -94,6 +95,20 @@ export const FilesFieldInput = () => {
   const handleUploadClick = () => {
     if (isUploading) {
       return;
+    }
+
+    if (draft.isEditingItemInPlace) {
+      const updatedItems = draft.commitInput();
+
+      if (!isDefined(updatedItems)) {
+        return;
+      }
+
+      if (!isDeeplyEqual(files, updatedItems)) {
+        handleSubmit(updatedItems);
+      }
+
+      draft.closeInput();
     }
 
     openFileUpload({
@@ -229,8 +244,10 @@ export const FilesFieldInput = () => {
     isNonEmptyArray(filteredItemEntries) &&
     (!draft.isSingleItemMode || !draft.isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
+  const visibleItemCount = visibleItemEntries?.length ?? 0;
   const shouldShowUploadButton =
     !draft.isInputDisplayed && !draft.isLimitReached;
+  const editedFile = files[draft.editedItemIndex];
 
   return (
     <OverlayMenuList
@@ -245,30 +262,8 @@ export const FilesFieldInput = () => {
       }
       footer={
         <>
-          {shouldShowItems &&
-            (draft.isInputDisplayed || shouldShowUploadButton) && (
-              <OverlayMenuListSeparator />
-            )}
-          {draft.isInputDisplayed && (
-            <MultiItemFieldInputRow
-              rightComponent={
-                <MultiItemFieldSaveButton
-                  isAddingNewItem={draft.isAddingNewItem}
-                  onClick={handleInputEnter}
-                />
-              }
-            >
-              <MultiItemFieldTextInput
-                autoFocus={!shouldShowSearch}
-                placeholder={t`File label`}
-                value={draft.inputValue}
-                hasError={draft.hasError}
-                onChange={draft.handleInputChange}
-                onEnter={handleInputEnter}
-                onEscape={handleEscape}
-                shouldPreventTabNavigation
-              />
-            </MultiItemFieldInputRow>
+          {shouldShowItems && shouldShowUploadButton && (
+            <OverlayMenuListSeparator />
           )}
           {shouldShowUploadButton && (
             <MultiItemFieldAddButton
@@ -279,16 +274,45 @@ export const FilesFieldInput = () => {
         </>
       }
     >
-      {visibleItemEntries?.map(({ item: file, index }) => (
-        <FilesFieldMenuItem
-          key={file.fileId}
-          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-          file={file}
-          onEdit={() => draft.startEditing(index)}
-          onDelete={() => handleDelete(index)}
-          onClick={() => handlePreview(file)}
-        />
-      ))}
+      {visibleItemEntries?.map(({ item: file, index }, position) =>
+        draft.isEditingItemInPlace &&
+        index === draft.editedItemIndex &&
+        isDefined(editedFile) ? (
+          <MultiItemFieldEditedItem
+            key={file.fileId}
+            hasSeparatorBefore={position > 0}
+            hasSeparatorAfter={position < visibleItemCount - 1}
+          >
+            <MultiItemFieldInputRow
+              isInRow
+              rightComponent={
+                <MultiItemFieldSaveButton
+                  isAddingNewItem={draft.isAddingNewItem}
+                  onClick={handleInputEnter}
+                />
+              }
+            >
+              <FilesFieldLabelInput
+                file={editedFile}
+                value={draft.inputValue}
+                hasError={draft.hasError}
+                onChange={draft.handleInputChange}
+                onEnter={handleInputEnter}
+                onEscape={handleEscape}
+              />
+            </MultiItemFieldInputRow>
+          </MultiItemFieldEditedItem>
+        ) : (
+          <FilesFieldMenuItem
+            key={file.fileId}
+            dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+            file={file}
+            onEdit={() => draft.startEditing(index)}
+            onDelete={() => handleDelete(index)}
+            onClick={() => handlePreview(file)}
+          />
+        ),
+      )}
     </OverlayMenuList>
   );
 };

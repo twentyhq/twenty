@@ -2,6 +2,7 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { useArrayField } from '@/object-record/record-field/ui/meta-types/hooks/useArrayField';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
 import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
+import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
 import { MultiItemFieldSearchHeader } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSearchHeader';
@@ -93,6 +94,26 @@ export const ArrayFieldInput = () => {
     draft.closeInput();
   };
 
+  const handleAddClick = () => {
+    if (draft.isLimitReached) {
+      return;
+    }
+
+    if (draft.isEditingItemInPlace) {
+      const updatedItems = draft.commitInput();
+
+      if (!isDefined(updatedItems)) {
+        return;
+      }
+
+      if (!isDeeplyEqual(arrayItems, updatedItems)) {
+        handleSubmit(updatedItems);
+      }
+    }
+
+    draft.startAdding();
+  };
+
   const handleEscape = () => {
     onEscape?.({ newValue: parseStringArrayToArrayValue(arrayItems) });
   };
@@ -128,7 +149,38 @@ export const ArrayFieldInput = () => {
     isNonEmptyArray(filteredItemEntries) &&
     (!draft.isSingleItemMode || !draft.isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const shouldShowAddButton = !draft.isInputDisplayed && !draft.isLimitReached;
+  const visibleItemCount = visibleItemEntries?.length ?? 0;
+  const shouldShowInputInFooter =
+    draft.isInputDisplayed && !draft.isEditingItemInPlace;
+  const shouldShowAddButton = !shouldShowInputInFooter && !draft.isLimitReached;
+  const isInputInRow = isNonEmptyArray(arrayItems) && !draft.isSingleItemMode;
+
+  const itemInput = (
+    <MultiItemFieldInputRow
+      isInRow={isInputInRow}
+      isInFooter={shouldShowInputInFooter}
+      rightComponent={
+        isNonEmptyArray(arrayItems) ? (
+          <MultiItemFieldSaveButton
+            isAddingNewItem={draft.isAddingNewItem}
+            onClick={handleInputEnter}
+          />
+        ) : undefined
+      }
+    >
+      <MultiItemFieldTextInput
+        autoFocus
+        isInRow={isInputInRow}
+        placeholder={t`Enter value`}
+        value={draft.inputValue}
+        hasError={draft.hasError}
+        onChange={draft.handleInputChange}
+        onEnter={handleInputEnter}
+        onEscape={handleEscape}
+        shouldPreventTabNavigation
+      />
+    </MultiItemFieldInputRow>
+  );
 
   return (
     <OverlayMenuList
@@ -144,50 +196,38 @@ export const ArrayFieldInput = () => {
       footer={
         <>
           {shouldShowItems &&
-            (draft.isInputDisplayed || shouldShowAddButton) && (
+            (shouldShowInputInFooter || shouldShowAddButton) && (
               <OverlayMenuListSeparator />
             )}
-          {draft.isInputDisplayed && (
-            <MultiItemFieldInputRow
-              rightComponent={
-                isNonEmptyArray(arrayItems) ? (
-                  <MultiItemFieldSaveButton
-                    isAddingNewItem={draft.isAddingNewItem}
-                    onClick={handleInputEnter}
-                  />
-                ) : undefined
-              }
-            >
-              <MultiItemFieldTextInput
-                autoFocus={!shouldShowSearch}
-                placeholder={t`Enter value`}
-                value={draft.inputValue}
-                hasError={draft.hasError}
-                onChange={draft.handleInputChange}
-                onEnter={handleInputEnter}
-                onEscape={handleEscape}
-                shouldPreventTabNavigation
-              />
-            </MultiItemFieldInputRow>
-          )}
+          {shouldShowInputInFooter && itemInput}
           {shouldShowAddButton && (
             <MultiItemFieldAddButton
               label={t`Add Item`}
-              onClick={draft.startAdding}
+              onClick={handleAddClick}
             />
           )}
         </>
       }
     >
-      {visibleItemEntries?.map(({ item, index }) => (
-        <ArrayFieldMenuItem
-          key={index}
-          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-          value={item}
-          onEdit={() => draft.startEditing(index)}
-          onDelete={() => handleDelete(index)}
-        />
-      ))}
+      {visibleItemEntries?.map(({ item, index }, position) =>
+        draft.isEditingItemInPlace && index === draft.editedItemIndex ? (
+          <MultiItemFieldEditedItem
+            key={index}
+            hasSeparatorBefore={position > 0}
+            hasSeparatorAfter={position < visibleItemCount - 1}
+          >
+            {itemInput}
+          </MultiItemFieldEditedItem>
+        ) : (
+          <ArrayFieldMenuItem
+            key={index}
+            dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+            value={item}
+            onEdit={() => draft.startEditing(index)}
+            onDelete={() => handleDelete(index)}
+          />
+        ),
+      )}
     </OverlayMenuList>
   );
 };

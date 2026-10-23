@@ -6,11 +6,20 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledInputContent = styled.div`
   align-items: center;
+  align-self: stretch;
   box-sizing: border-box;
   display: flex;
   flex: 1;
   min-width: 0;
   padding-inline-start: ${themeCssVariables.spacing[2]};
+
+  &[data-in-row='true'] {
+    padding-inline-start: ${themeCssVariables.spacing[1]};
+  }
+
+  &[data-in-row='true'][data-has-error='true'] {
+    color: ${themeCssVariables.color.red};
+  }
 `;
 
 type MultiItemFieldTextInputProps = {
@@ -19,6 +28,7 @@ type MultiItemFieldTextInputProps = {
   placeholder?: string;
   autoFocus?: boolean;
   hasError?: boolean;
+  isInRow?: boolean;
   onEnter?: () => void;
   onEscape?: () => void;
   onTab?: () => void;
@@ -35,6 +45,7 @@ export const MultiItemFieldTextInput = ({
   placeholder,
   autoFocus,
   hasError = false,
+  isInRow = false,
   onEnter,
   onEscape,
   onTab,
@@ -44,11 +55,11 @@ export const MultiItemFieldTextInput = ({
   onBlur,
   ref,
 }: MultiItemFieldTextInputProps) => (
-  <StyledInputContent>
+  <StyledInputContent data-in-row={isInRow} data-has-error={hasError}>
     <Input
       variant="plain"
       hasFocusRing={false}
-      aria-invalid={hasError || undefined}
+      aria-invalid={(hasError && !isInRow) || undefined}
       autoFocus={autoFocus}
       value={value}
       placeholder={placeholder}

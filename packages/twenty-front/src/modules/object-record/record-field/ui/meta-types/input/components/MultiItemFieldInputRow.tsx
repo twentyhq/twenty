@@ -10,8 +10,14 @@ const StyledInputRow = styled.div`
   min-height: ${themeCssVariables.spacing[8]};
   width: 100%;
 
-  &:not(:first-of-type) {
-    padding: ${themeCssVariables.spacing[1]};
+  &[data-in-row='true'] {
+    gap: ${themeCssVariables.spacing[1]};
+    height: ${themeCssVariables.spacing[8]};
+  }
+
+  &[data-in-row='true'][data-in-footer='true'] {
+    margin: ${themeCssVariables.spacing[1]};
+    width: auto;
   }
 `;
 
@@ -19,23 +25,31 @@ const StyledRightContainer = styled.div`
   display: flex;
   flex-shrink: 0;
   padding-inline-end: ${themeCssVariables.spacing[2]};
+
+  &[data-in-row='true'] {
+    padding-inline-end: ${themeCssVariables.spacing[1]};
+  }
 `;
 
 type MultiItemFieldInputRowProps = {
   children: ReactNode;
   rightComponent?: ReactNode;
-  className?: string;
+  isInRow?: boolean;
+  isInFooter?: boolean;
 };
 
 export const MultiItemFieldInputRow = ({
   children,
   rightComponent,
-  className,
+  isInRow = false,
+  isInFooter = false,
 }: MultiItemFieldInputRowProps) => (
-  <StyledInputRow className={className}>
+  <StyledInputRow data-in-row={isInRow} data-in-footer={isInFooter}>
     {children}
     {isDefined(rightComponent) && (
-      <StyledRightContainer>{rightComponent}</StyledRightContainer>
+      <StyledRightContainer data-in-row={isInRow}>
+        {rightComponent}
+      </StyledRightContainer>
     )}
   </StyledInputRow>
 );
