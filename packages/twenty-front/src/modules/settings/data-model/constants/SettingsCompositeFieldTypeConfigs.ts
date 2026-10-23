@@ -546,15 +546,18 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     ],
     exampleValues: doNotTranslate([
       {
-        blocknote: '[{"type":"heading","content":"Hello"}]',
+        tiptap:
+          '{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"Hello"}]}]}',
         markdown: '# Hello',
       },
       {
-        blocknote: '[{"type":"heading","content":"Hello World"}]',
+        tiptap:
+          '{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"Hello World"}]}]}',
         markdown: '# Hello World',
       },
       {
-        blocknote: '[{"type":"heading","content":"Hello Again"}]',
+        tiptap:
+          '{"type":"doc","attrs":{"schemaVersion":1},"content":[{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"Hello Again"}]}]}',
         markdown: '# Hello Again',
       },
     ]),

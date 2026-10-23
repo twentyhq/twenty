@@ -51,6 +51,7 @@ const StyledEditorContainer = styled.div<{
     font-weight: ${themeCssVariables.font.weight.regular};
     height: 100%;
     line-height: var(--editor-line-height);
+    overflow-wrap: anywhere;
     padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 
     p.is-editor-empty:first-of-type:not([data-placeholder=''])::before {
@@ -92,7 +93,10 @@ const StyledEditorContainer = styled.div<{
 
     h1,
     h2,
-    h3 {
+    h3,
+    h4,
+    h5,
+    h6 {
       font-weight: var(--editor-heading-font-weight);
       line-height: var(--editor-heading-line-height);
       margin: var(--editor-heading-spacing-top) 0
@@ -109,6 +113,12 @@ const StyledEditorContainer = styled.div<{
 
     h3 {
       font-size: var(--editor-heading-3-font-size);
+    }
+
+    h4,
+    h5,
+    h6 {
+      font-size: var(--editor-font-size);
     }
 
     ul,
@@ -150,8 +160,113 @@ const StyledEditorContainer = styled.div<{
       padding-left: var(--editor-quote-indent);
     }
 
-    .node-image {
+    .node-image,
+    .node-file {
       margin-bottom: var(--editor-block-spacing);
+    }
+
+    code {
+      background-color: ${themeCssVariables.background.transparent.light};
+      border-radius: ${themeCssVariables.border.radius.sm};
+      font-family: ${themeCssVariables.code.font.family};
+      font-size: 0.9em;
+      padding: 0 ${themeCssVariables.spacing[1]};
+    }
+
+    pre {
+      background-color: ${themeCssVariables.background.transparent.lighter};
+      border-radius: ${themeCssVariables.border.radius.md};
+      margin: 0 0 var(--editor-block-spacing);
+      overflow-x: auto;
+      padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+
+      code {
+        background-color: transparent;
+        padding: 0;
+      }
+    }
+
+    ul[data-type='taskList'] {
+      list-style: none;
+      padding-left: 0;
+
+      li {
+        align-items: flex-start;
+        display: flex;
+        gap: ${themeCssVariables.spacing[2]};
+
+        & > label {
+          flex: 0 0 auto;
+          user-select: none;
+        }
+
+        & > div {
+          flex: 1 1 auto;
+          min-width: 0;
+        }
+
+        & > div > p {
+          margin: 0;
+        }
+      }
+
+      li[data-checked='true'] > div {
+        color: ${themeCssVariables.font.color.tertiary};
+        text-decoration: line-through;
+      }
+    }
+
+    .tableWrapper {
+      margin: 0 0 var(--editor-block-spacing);
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      table-layout: fixed;
+      width: 100%;
+
+      td,
+      th {
+        border: 1px solid ${themeCssVariables.border.color.medium};
+        box-sizing: border-box;
+        min-width: 1em;
+        padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+        position: relative;
+        vertical-align: top;
+
+        & > p {
+          margin: 0;
+        }
+      }
+
+      th {
+        background-color: ${themeCssVariables.background.tertiary};
+        font-weight: ${themeCssVariables.font.weight.medium};
+        text-align: left;
+      }
+
+      .selectedCell::after {
+        background-color: ${themeCssVariables.color.blue3};
+        content: '';
+        inset: 0;
+        pointer-events: none;
+        position: absolute;
+      }
+
+      .column-resize-handle {
+        background-color: ${themeCssVariables.color.blue};
+        bottom: 0;
+        pointer-events: none;
+        position: absolute;
+        right: calc(-1 * ${themeCssVariables.spacing['0.5']});
+        top: 0;
+        width: ${themeCssVariables.spacing[1]};
+      }
+    }
+
+    &.resize-cursor {
+      cursor: col-resize;
     }
 
     .block-section {
@@ -217,6 +332,7 @@ const StyledEditorContainer = styled.div<{
       border-bottom: none;
       border-left: none;
       border-right: none;
+      border-top: 1px solid ${themeCssVariables.border.color.medium};
 
       &.ProseMirror-selectednode {
         box-shadow: 0 0 0 ${themeCssVariables.spacing[2]}
