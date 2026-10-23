@@ -282,6 +282,11 @@ describe('resolveProposedToolCall', () => {
 
 it.each([
   ['publish_front_component', 'frontComponent', { draftId: 'draft' }],
+  [
+    'delete_front_component',
+    'frontComponentDelete',
+    { frontComponentId: 'component', name: 'Renewals' },
+  ],
 ] as const)(
   'keeps the approval template for %s',
   async (toolName, template, toolArguments) => {

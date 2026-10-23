@@ -279,3 +279,39 @@ it('requires a rendered component preview before saving the immutable draft', as
   await act(async () => completeApproval(true));
   await waitFor(() => expect(refreshFrontComponents).toHaveBeenCalledWith());
 });
+
+it('shows an immutable deletion target and refreshes pickers only after approval', async () => {
+  const user = userEvent.setup();
+  let completeApproval: (answered: boolean) => void = () => {};
+  refreshFrontComponents.mockReset();
+  answerAgentChatToolCall.mockReset().mockReturnValue(
+    new Promise<boolean>((resolve) => {
+      completeApproval = resolve;
+    }),
+  );
+  renderCard({
+    toolName: 'delete_front_component',
+    toolLabel: 'Delete Front Component',
+    summary: 'Delete Renewals from Workspace app',
+    template: 'frontComponentDelete',
+    arguments: { frontComponentId: 'approved-component', name: 'Renewals' },
+  });
+  expect(screen.getByText('Renewals')).toBeInTheDocument();
+  expect(screen.getByText('approved-component')).toBeInTheDocument();
+  expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole('button', { name: 'Finish rendering preview' }),
+  ).not.toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: 'Delete component' }));
+  expect(answerAgentChatToolCall).toHaveBeenCalledWith({
+    toolCallId: 'call-1',
+    response: {
+      decision: 'approve',
+      arguments: { frontComponentId: 'approved-component', name: 'Renewals' },
+    },
+    optimisticToolOutput: undefined,
+  });
+  expect(refreshFrontComponents).not.toHaveBeenCalled();
+  await act(async () => completeApproval(true));
+  await waitFor(() => expect(refreshFrontComponents).toHaveBeenCalledWith());
+});

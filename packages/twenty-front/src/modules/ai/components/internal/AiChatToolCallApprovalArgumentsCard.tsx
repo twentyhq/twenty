@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconX } from 'twenty-ui/icon';
+import { IconCheck, IconTrash, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 
@@ -30,7 +30,10 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     toolCallId,
     proposal,
     onApproved: async () => {
-      if (proposal.template === 'frontComponent') {
+      if (
+        proposal.template === 'frontComponent' ||
+        proposal.template === 'frontComponentDelete'
+      ) {
         await refreshFrontComponents();
       }
     },
@@ -78,8 +81,14 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           <Button
             size="sm"
             variant="solid"
-            color="accent"
-            startIcon={<IconCheck />}
+            color={template === 'frontComponentDelete' ? 'danger' : 'accent'}
+            startIcon={
+              template === 'frontComponentDelete' ? (
+                <IconTrash />
+              ) : (
+                <IconCheck />
+              )
+            }
             disabled={
               isAnswering ||
               !isDefined(toolArguments) ||
@@ -94,11 +103,25 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           >
             {template === 'frontComponent'
               ? t`Save to Workspace app`
-              : t`Approve`}
+              : template === 'frontComponentDelete'
+                ? t`Delete component`
+                : t`Approve`}
           </Button>
         </>
       }
     >
+      {template === 'frontComponentDelete' && (
+        <div>
+          <p>{t`Delete this component from the Workspace app?`}</p>
+          {isString(proposal.arguments.name) && (
+            <strong>{proposal.arguments.name}</strong>
+          )}
+          {isString(proposal.arguments.frontComponentId) && (
+            <div>{proposal.arguments.frontComponentId}</div>
+          )}
+          <p>{t`It will no longer appear in widget pickers. Components still in use cannot be deleted.`}</p>
+        </div>
+      )}
       {isDefined(objectNameSingular) && isDefined(recordId) && (
         <AiChatToolCallApprovalRecord
           objectNameSingular={objectNameSingular}

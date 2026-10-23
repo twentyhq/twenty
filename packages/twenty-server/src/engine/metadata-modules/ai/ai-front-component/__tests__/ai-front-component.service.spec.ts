@@ -1,3 +1,4 @@
+import { FrontComponentToolProvider } from 'src/engine/core-modules/tool-provider/providers/front-component-tool.provider';
 import { generateText, stepCountIs } from 'ai';
 import { MockLanguageModelV4 } from 'ai/test';
 import { readFrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/utils/read-front-component-query.util';
@@ -767,6 +768,135 @@ describe('AI front component lifecycle', () => {
       service.getSharedDependencies('a'.repeat(64) + '.js', AUTH_CONTEXT!),
     ).rejects.toThrow('disabled');
     expect(dependencies.files.readFile).not.toHaveBeenCalled();
+  });
+
+  describe('delete a saved component', () => {
+    const componentId = '3534129d-2c4f-4aa8-ae8d-39698cb9d636';
+    const approvedContext = {
+      ...CONTEXT,
+      approvedToolName: 'delete_front_component',
+    };
+    beforeEach(() => {
+      componentEntries.push({
+        id: componentId,
+        name: 'Renewals',
+        applicationId: 'application',
+      });
+    });
+
+    it('exposes deletion and runs the normal deletion service after approval', async () => {
+      const provider = new FrontComponentToolProvider(service);
+      expect(await provider.generateDescriptors(approvedContext)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: 'delete_front_component',
+            approval: { template: 'frontComponentDelete' },
+          }),
+        ]),
+      );
+      const result = await provider.executeStaticTool(
+        'delete_front_component',
+        { frontComponentId: componentId, name: 'Renewals' },
+        approvedContext,
+      );
+
+      expect(result).toMatchObject({
+        success: true,
+        result: { frontComponentId: componentId },
+      });
+      expect(dependencies.components.destroyOne).toHaveBeenCalledWith({
+        id: componentId,
+        workspaceId: WORKSPACE_ID,
+      });
+    });
+
+    it.each([undefined, 'publish_front_component'])(
+      'rejects deletion without its own approval (%s)',
+      async (approvedToolName) => {
+        await expect(
+          service.deleteComponent(componentId, 'Renewals', {
+            ...CONTEXT,
+            approvedToolName,
+          }),
+        ).rejects.toThrow('human approval');
+        expect(dependencies.components.destroyOne).not.toHaveBeenCalled();
+      },
+    );
+
+    it.each(['flag', 'permission'])(
+      'rechecks %s at approval time',
+      async (restriction) => {
+        if (restriction === 'flag') {
+          dependencies.featureFlags.isFeatureEnabled.mockResolvedValue(false);
+        } else {
+          dependencies.permissions.userHasWorkspaceSettingPermission.mockResolvedValue(
+            false,
+          );
+        }
+        await expect(
+          service.deleteComponent(componentId, 'Renewals', approvedContext),
+        ).rejects.toThrow();
+        expect(dependencies.components.destroyOne).not.toHaveBeenCalled();
+      },
+    );
+
+    it('rejects installed-app components and a changed name', async () => {
+      componentEntries[0].applicationId = 'installed-app';
+      await expect(
+        service.deleteComponent(componentId, 'Renewals', approvedContext),
+      ).rejects.toThrow('Only Workspace app');
+      componentEntries[0].applicationId = 'application';
+      await expect(
+        service.deleteComponent(componentId, 'Different name', approvedContext),
+      ).rejects.toThrow('name changed');
+      expect(dependencies.components.destroyOne).not.toHaveBeenCalled();
+    });
+
+    it.each(['widget', 'command', 'settings'])(
+      'preserves a component referenced by a %s',
+      async (reference) => {
+        if (reference === 'widget') {
+          widgetEntries.push({
+            id: 'widget',
+            configuration: {
+              configurationType: 'FRONT_COMPONENT',
+              frontComponentId: componentId,
+            },
+          });
+        } else {
+          (reference === 'command' ? commandEntries : settingsEntries).push({
+            id: 'item',
+            frontComponentId: componentId,
+          });
+        }
+        await expect(
+          service.deleteComponent(componentId, 'Renewals', approvedContext),
+        ).rejects.toThrow('still used');
+        expect(dependencies.components.destroyOne).not.toHaveBeenCalled();
+      },
+    );
+
+    it('does not delete anything when the component is absent in this workspace', async () => {
+      componentEntries = [];
+      await expect(
+        service.deleteComponent(componentId, 'Renewals', approvedContext),
+      ).rejects.toThrow('not found');
+      expect(dependencies.components.destroyOne).not.toHaveBeenCalled();
+    });
+
+    it('does not resurrect a deleted component when its old save approval is replayed', async () => {
+      const draft = await makeReadyDraft();
+      const publishContext = {
+        ...CONTEXT,
+        approvedToolName: 'publish_front_component',
+      };
+      await service.publish(draft.draftId, publishContext);
+      componentEntries = [];
+      await expect(
+        service.publish(draft.draftId, publishContext),
+      ).rejects.toThrow('was deleted');
+      expect(dependencies.components.createOne).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('reads live data with current viewer permissions', async () => {

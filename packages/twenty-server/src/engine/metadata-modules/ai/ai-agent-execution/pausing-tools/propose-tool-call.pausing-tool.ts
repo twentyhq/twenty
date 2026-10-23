@@ -132,7 +132,10 @@ const buildApprovedArguments = (
   proposal: ProposedToolCall,
   editedArguments: Record<string, unknown> | undefined,
 ): Record<string, unknown> => {
-  if (proposal.template === 'frontComponent') {
+  if (
+    proposal.template === 'frontComponent' ||
+    proposal.template === 'frontComponentDelete'
+  ) {
     return proposal.arguments;
   }
 

@@ -1,3 +1,4 @@
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { tool, type ToolSet } from 'ai';
 import { z } from 'zod';
 import { frontComponentDraftSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft.schema';
@@ -152,6 +153,19 @@ export class AiFrontComponentService {
           message:
             'Component saved to the Workspace app. It can now be selected in the widget picker for its selected surface.',
           result: await this.publish(draftId, context),
+        }),
+      }),
+      delete_front_component: tool({
+        description:
+          'Delete a saved frontend component from the Workspace custom application. First use list_front_components to identify its exact ID and name. Requires propose_tool_call and explicit human approval; never invoke directly. Components still referenced by widgets, commands or settings cannot be deleted: remove those references only when separately requested. Installed application components cannot be deleted with this tool.',
+        inputSchema: z.object({
+          frontComponentId: z.string().uuid(),
+          name: z.string().min(1).max(100),
+        }),
+        execute: async ({ frontComponentId, name }) => ({
+          success: true,
+          message: 'Component deleted from the Workspace app.',
+          result: await this.deleteComponent(frontComponentId, name, context),
         }),
       }),
     };
@@ -509,6 +523,85 @@ export class AiFrontComponentService {
     const query = readFrontComponentQuery(content);
 
     return this.readRecords(query, authContext);
+  }
+
+  async deleteComponent(
+    frontComponentId: string,
+    name: string,
+    context: ToolProviderContext,
+  ) {
+    if (
+      context.approvedToolName !== 'delete_front_component' ||
+      !isDefined(context.userWorkspaceId) ||
+      !isDefined(context.authContext)
+    ) {
+      throw new ForbiddenException(
+        doNotTranslate('Use propose_tool_call and wait for human approval.'),
+      );
+    }
+    const { workspaceId, userWorkspaceId } = context;
+
+    await this.assertCanAuthor(workspaceId, userWorkspaceId);
+    const { workspaceCustomFlatApplication: application } =
+      await this.applications.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+    const {
+      flatFrontComponentMaps,
+      flatPageLayoutWidgetMaps,
+      flatCommandMenuItemMaps,
+      flatSettingsMenuItemMaps,
+    } = await this.flatMaps.getOrRecomputeManyOrAllFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: [
+        'flatFrontComponentMaps',
+        'flatPageLayoutWidgetMaps',
+        'flatCommandMenuItemMaps',
+        'flatSettingsMenuItemMaps',
+      ],
+    });
+    const component = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: frontComponentId,
+      flatEntityMaps: flatFrontComponentMaps,
+    });
+
+    if (!isDefined(component)) {
+      throw new NotFoundException(doNotTranslate('Component not found.'));
+    }
+    if (component.applicationId !== application.id) {
+      throw new ForbiddenException(
+        doNotTranslate('Only Workspace app components can be deleted.'),
+      );
+    }
+    if (component.name !== name) {
+      throw new BadRequestException(
+        doNotTranslate('Component name changed. Request a new approval.'),
+      );
+    }
+    const isUsedByWidget = Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    ).some(
+      (widget) =>
+        isDefined(widget) &&
+        widget.configuration?.configurationType ===
+          WidgetConfigurationType.FRONT_COMPONENT &&
+        widget.configuration.frontComponentId === frontComponentId,
+    );
+    const isUsedByMenuItem = [
+      ...Object.values(flatCommandMenuItemMaps.byUniversalIdentifier),
+      ...Object.values(flatSettingsMenuItemMaps.byUniversalIdentifier),
+    ].some((item) => item?.frontComponentId === frontComponentId);
+
+    if (isUsedByWidget || isUsedByMenuItem) {
+      throw new BadRequestException(
+        doNotTranslate(
+          'Component is still used by widgets, commands or settings. Remove those references before deleting it. Nothing was deleted.',
+        ),
+      );
+    }
+    await this.components.destroyOne({ id: frontComponentId, workspaceId });
+
+    return { frontComponentId, name, applicationId: application.id };
   }
 
   async getRuntime(componentId: string, authContext: WorkspaceAuthContext) {
