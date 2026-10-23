@@ -8,8 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type RefObject } from 'react';
 import { Key } from 'ts-key-enum';
 
-// Escape and click outside close a multi-item editor only while it is the
-// focused field input, so an overlay opened above it keeps its own dismissal.
+// Only dismiss while this editor is the focused input, so an overlay above it keeps its own dismissal.
 export const useMultiItemFieldDismiss = ({
   containerRef,
   onClickOutside,

@@ -28,7 +28,7 @@ describe('useMultiItemDraft', () => {
     expect(result.current.isSingleItemMode).toBe(true);
   });
 
-  it('appends the typed value when adding', () => {
+  it('appends the typed value when adding', async () => {
     const { result } = renderHook(() =>
       useMultiItemDraft({ items: ['a@b.c'], getItemText, validateInput }),
     );
@@ -36,10 +36,9 @@ describe('useMultiItemDraft', () => {
     act(() => result.current.startAdding());
     act(() => result.current.handleInputChange(' new@b.c '));
 
-    let outcome: { isValid: boolean; updatedItems: string[] } | undefined;
-    act(() => {
-      outcome = result.current.computeItemsFromInput();
-    });
+    const outcome = await act(async () =>
+      result.current.computeItemsFromInput(),
+    );
 
     expect(outcome).toEqual({
       isValid: true,
@@ -47,7 +46,7 @@ describe('useMultiItemDraft', () => {
     });
   });
 
-  it('replaces the edited item and clears it when emptied', () => {
+  it('replaces the edited item and clears it when emptied', async () => {
     const { result } = renderHook(() =>
       useMultiItemDraft({ items: ['a@b.c', 'x@y.z'], getItemText }),
     );
@@ -57,16 +56,15 @@ describe('useMultiItemDraft', () => {
 
     act(() => result.current.handleInputChange('   '));
 
-    let outcome: { isValid: boolean; updatedItems: string[] } | undefined;
-    act(() => {
-      outcome = result.current.computeItemsFromInput();
-    });
+    const outcome = await act(async () =>
+      result.current.computeItemsFromInput(),
+    );
 
     expect(outcome).toEqual({ isValid: true, updatedItems: ['a@b.c'] });
     expect(result.current.isInputDisplayed).toBe(false);
   });
 
-  it('flags an invalid value and keeps the items', () => {
+  it('flags an invalid value and keeps the items', async () => {
     const onError = jest.fn();
     const { result } = renderHook(() =>
       useMultiItemDraft({
@@ -80,10 +78,9 @@ describe('useMultiItemDraft', () => {
     act(() => result.current.startAdding());
     act(() => result.current.handleInputChange('not-an-email'));
 
-    let outcome: { isValid: boolean; updatedItems: string[] } | undefined;
-    act(() => {
-      outcome = result.current.computeItemsFromInput();
-    });
+    const outcome = await act(async () =>
+      result.current.computeItemsFromInput(),
+    );
 
     expect(outcome).toEqual({ isValid: false, updatedItems: ['a@b.c'] });
     expect(result.current.hasError).toBe(true);

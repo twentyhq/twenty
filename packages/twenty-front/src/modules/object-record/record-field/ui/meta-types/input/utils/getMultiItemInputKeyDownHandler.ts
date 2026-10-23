@@ -11,24 +11,14 @@ type MultiItemInputKeyHandlers = {
   preventTabNavigation?: boolean;
 };
 
-const getHandlerForKey = (
-  event: KeyboardEvent<HTMLInputElement>,
-  { onEnter, onEscape, onTab, onShiftTab }: MultiItemInputKeyHandlers,
-) => {
-  switch (event.key) {
-    case Key.Enter:
-      return onEnter;
-    case Key.Escape:
-      return onEscape;
-    case Key.Tab:
-      return event.shiftKey ? onShiftTab : onTab;
-    default:
-      return undefined;
-  }
-};
-
 export const getMultiItemInputKeyDownHandler =
-  (handlers: MultiItemInputKeyHandlers) =>
+  ({
+    onEnter,
+    onEscape,
+    onTab,
+    onShiftTab,
+    preventTabNavigation,
+  }: MultiItemInputKeyHandlers) =>
   (event: KeyboardEvent<HTMLInputElement>) => {
     const hasUnsupportedModifier =
       event.altKey ||
@@ -40,11 +30,17 @@ export const getMultiItemInputKeyDownHandler =
       return;
     }
 
-    if (event.key === Key.Tab && handlers.preventTabNavigation === true) {
+    if (event.key === Key.Tab && preventTabNavigation) {
       event.preventDefault();
     }
 
-    const handler = getHandlerForKey(event, handlers);
+    const handlersByKey: Partial<Record<string, () => void>> = {
+      [Key.Enter]: onEnter,
+      [Key.Escape]: onEscape,
+      [Key.Tab]: event.shiftKey ? onShiftTab : onTab,
+    };
+
+    const handler = handlersByKey[event.key];
 
     if (!isDefined(handler)) {
       return;
