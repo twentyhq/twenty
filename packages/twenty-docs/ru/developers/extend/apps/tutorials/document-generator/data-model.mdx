@@ -1,32 +1,38 @@
 ---
 title: 1. Модель данных
-icon: database
-description: Типовые документы и шаблоны с объектами, полями и отношениями.
+icon: 'database'
+description: Model documents and templates with objects, fields, and a relation.
 ---
 
-Нашему приложению нужны два пользовательских объекта: **шаблоны документов** (что записывать) и
-**документы** (сгенерированный результат). Давайте определим их.
-
-Строительство каждого файла сущности с CLI — он генерирует правильный UUID и правую папку
-для вас:
-
-```bash filename="Terminal"
-yarn twenty dev:add object
-```
-
-Ниже мы показываем готовые файлы.
-
 <Note>
-Каждый `*_UNIVERSAL_IDENTIFIER` живет в константе
-`src/constants/universal-identifiers.ts` и импортируется там, где используется. В приведенных ниже фрагментах
-эти импорты опущены для краткости — в своих файлах не удаляйте их.
+  Перевод этого руководства ещё не обновлён для отдельного CLI Twenty. Ниже
+  временно приведён актуальный текст на английском, чтобы избежать использования
+  удалённых команд.
 </Note>
 
-## Объект шаблона
+Our app needs two custom objects: **document templates** (what to write) and
+**documents** (the generated result). Let's define them.
 
-Шаблон имеет `name`, `body` с `{{placeholders}}` и `target`, который
-указывает, предназначен ли он для Person или Company. `body` — это поле
-`RICH_TEXT`, поэтому двадцать дает ему полный редактор rich-text.
+Scaffold each entity file with the CLI — it generates a valid UUID and the right
+folder for you:
+
+```bash filename="Terminal"
+twenty app add object
+```
+
+Below we show the finished files.
+
+<Note>
+  Every `*_UNIVERSAL_IDENTIFIER` constant lives in
+  `src/constants/universal-identifiers.ts` and is imported where used. The
+  snippets below omit those imports for brevity — keep them in your own files.
+</Note>
+
+## The template object
+
+A template has a `name`, a `body` with `{{placeholders}}`, and a `target` that
+says whether it's written for a Person or a Company. The `body` is a
+`RICH_TEXT` field, so Twenty gives it a full rich-text editor.
 
 ```ts filename="src/objects/document-template.object.ts"
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -41,43 +47,74 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
-    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
-      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
-    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+    {
+      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT,
+      name: 'body',
+      label: 'Body',
+      icon: 'IconFileText',
+      description:
+        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
+    },
+    {
+      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'target',
+      label: 'Target',
+      icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
-        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
-      ] },
+        {
+          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON',
+          label: 'Person',
+          color: 'blue',
+          position: 0,
+        },
+        {
+          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY',
+          label: 'Company',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
   ],
 });
 ```
 
 <Warning>
-Опция `SELECT` **values** должна быть `UPPER_CASE` (`PERSON`, не `person`), а опция
-`defaultValue` завернута в дополнительные кавычки: `` `'PERSON'` ``. `label` - это то, что видят
-пользователей.
+  `SELECT` option **values** must be `UPPER_CASE` (`PERSON`, not `person`), and
+  the `defaultValue` is wrapped in extra quotes: `` `'PERSON'` ``. The `label`
+  is what users see.
 </Warning>
 
-## Объект документа
+## The document object
 
-Генерируемый документ хранит отображенный `content` и `status`. Определите
-так же с параметром `status` из `DRAFT` / `GENERATED`. Полный файл:
+The generated document stores the rendered `content` and a `status`. Define it
+the same way, with a `status` select of `DRAFT` / `GENERATED`. Full file:
 [`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
 
-## Связать их с отношением
+## Linking them with a relation
 
-Каждый документ должен ссылаться на шаблон, из которого он вышел. Отношения
-**двусторонний** — вы определяете обе стороны в своём собственном файле полей.
+Each document should point back to the template it came from. Relations are
+**bidirectional** — you define both sides, each in its own field file.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -98,21 +135,24 @@ export default defineField({
 });
 ```
 
-Другая сторона (`template-documents-relation.field.ts`) — это поле
-`RelationType.ONE_TO_MANY` с именем `documents`, которое указывает на противоположный путь.
-Смотрите раздел [Relations](/ru/developers/extend/apps/data/relations) для полного шаблона.
+The other side (`template-documents-relation.field.ts`) is a
+`RelationType.ONE_TO_MANY` field named `documents` that points the opposite way.
+See [Relations](/ru/developers/extend/apps/data/relations) for the full pattern.
 
-## Смотрите в двадцать
+## See it in Twenty
 
-С запуском `yarn twenty dev` откройте **Settings → Data model**. Оба объекта
-появляются, помеченные вашим приложением.
+With `twenty app dev` running, open **Settings → Data model**. Both objects
+appear, tagged with your app.
 
-<Frame caption="Оба пользовательских объекта, принадлежащие приложению Генератор документов.">
-  <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="Настройки модели данных с отображением шаблонов документов и документов" />
+<Frame caption="Both custom objects, owned by the Document Generator app.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/01-data-model.png"
+    alt="Data model settings showing Documents and Document templates"
+  />
 </Frame>
 
-Создайте один шаблон для тестирования — имя *Предложение продаж*, установите **цель** на
-*Персонал* и вставьте тело с несколькими заполнителями:
+Create one template to test with — name it _Sales proposal_, set **Target** to
+_Person_, and paste a body with a few placeholders:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -123,13 +163,20 @@ Best,
 The Team
 ```
 
-<Frame caption="Запись шаблона. Тело хранит свои заполнители до тех пор, пока документ не будет сгенерирован.">
-  <img src="/images/docs/developers/extends/apps/document-generator/03-template-record.png" alt="Запись шаблона предложения продаж с плейсхолдером" />
+<Frame caption="A template record. The body keeps its placeholders until a document is generated.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/03-template-record.png"
+    alt="A Sales proposal template record with placeholder body"
+  />
 </Frame>
 
-**После этого шага:** у вас есть объекты `documentTemplate` и `document`, связанные
-отношением и одним шаблоном для генерации данных. Далее заполняется логика.
+**After this step:** you have `documentTemplate` and `document` objects, linked by
+a relation, and one template to generate from. Next, the logic that fills it in.
 
-<Card title="Далее: генерация документов →" icon="bolt" href="/ru/developers/extend/apps/tutorials/document-generator/generating-documents">
-  Напишите логическую функцию, которая заполняет шаблон.
+<Card
+  title="Next: generating documents →"
+  icon="bolt"
+  href="/ru/developers/extend/apps/tutorials/document-generator/generating-documents"
+>
+  Write the logic function that fills the template.
 </Card>

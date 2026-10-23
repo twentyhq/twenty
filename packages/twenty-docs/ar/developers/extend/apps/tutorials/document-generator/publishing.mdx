@@ -1,16 +1,21 @@
 ---
 title: 6. النشر
-icon: rocket
-description: إضافة بيانات التعريف للسوق ونشر التطبيق الخاص بك.
+icon: 'rocket'
+description: Add marketplace metadata and publish your app.
 ---
 
-تطبيقك يعمل. والخطوة الأخيرة هي وصف ذلك للسوق والنشر.
+<Note>
+  لم تُحدَّث ترجمة هذا الدليل بعد لتشمل واجهة سطر أوامر Twenty المستقلة. يُعرض
+  المحتوى الإنجليزي الحالي أدناه مؤقتًا لتجنّب استخدام أوامر أُزيلت.
+</Note>
 
-## إضافة بيانات التعريف للسوق
+Your app works. The last step is to describe it for the marketplace and publish.
 
-[config](/ar/developers/extend/apps/config/application) يحمل الهوية
-التي تظهر في السوق: روابط المؤلف والفئة والشعار والدعم
-. ضع شعارًا في `public/` وارجع إليه باستخدام `logo`.
+## Add marketplace metadata
+
+The [application config](/ar/developers/extend/apps/config/application) carries the
+identity that shows up in the marketplace: author, category, logo, and support
+links. Put a logo in `public/` and reference it with `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -31,21 +36,21 @@ export default defineApplication({
 ```
 
 <Tip>
-يتم الإعلان عن الدور الافتراضي مع 'defineApplicationRole()' في ملفه الخاص - أنت
-لا تتجاوز 'defaultRoleUniversalIdentifier' هنا بعد الآن.
+  The default role is declared with `defineApplicationRole()` in its own file —
+  you don't pass `defaultRoleUniversalIdentifier` here anymore.
 </Tip>
 
-أضف أيضا الكلمة المفتاحية `٢٢app` إلى `package.json` حتى يكون التطبيق قابلا للاكتشاف:
+Also add the `twenty-app` keyword to `package.json` so the app is discoverable:
 
 ```json filename="package.json"
 { "keywords": ["twenty-app"] }
 ```
 
-## إضافة لقطات شاشة معرض الصور
+## Add gallery screenshots
 
-قائمة السوق تبيع نفسها مع لقطات شاشة. ضع بعض ملفات PNG في
-`public/gallery/` وارجع إليها باستخدام `galleryImages` — حيث يتم عرضها كمعرض
-على صفحة القائمة، بحسب ترتيبها في المصفوفة.
+A marketplace listing sells itself with screenshots. Drop a few PNGs in
+`public/gallery/` and reference them with `galleryImages` — they render as a
+gallery on the listing page, in array order.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
@@ -60,78 +65,90 @@ export default defineApplication({
 ```
 
 <Tip>
-الرصاص مع الدفع: اجعل أول لقطة للشاشة النتيجة النهائية (وثيقة
-تم إنشاؤها)، ثم اظهر كيف تم تشغيلها وكتابتها. استخدم التقاط
-عالي الدقة - إنها أول شيء يراه المستخدم.
+  Lead with the payoff: make the first screenshot the finished result (a
+  generated document), then show how it's triggered and authored. Use crisp,
+  high-resolution captures — they're the first thing a user sees.
 </Tip>
 
-إعطاء العلاج نفسه 'README.md' - إنها الصفحة الأولى على npm و GitHub.
-افتح مع اقتراح القيمة و لقطة شاشة، قائمة بميزات العنوان،
-ثم ابقي تفاصيل البناء تحت الطبع.
+Give `README.md` the same treatment — it's the front page on npm and GitHub.
+Open with the value proposition and a screenshot, list the headline features,
+then keep the build details below the fold.
 
-## تحقق قبل الشحن
+## Check before you ship
 
-تشغيل نفس البوابات CI :
+Run the same gates CI does:
 
 ```bash filename="Terminal"
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
-تعرض الخطة بالضبط ما سيتغيّر على الخادم من دون تطبيقه —
-وهي فحص نهائي جيّد للسلامة. انظر
-[Testing](/ar/developers/extend/apps/operations/testing) و
-[المزامنة والاسترداد](/ar/developers/extend/apps/operations/sync-and-recovery).
+The plan prints exactly what would change on the server without applying it —
+a good final sanity check. See
+[Testing](/ar/developers/extend/apps/operations/testing) and
+[Syncing & recovery](/ar/developers/extend/apps/operations/sync-and-recovery).
 
-## النشر
+## Publish
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-'app:publish' يبني وينشر إلى npm بشكل افتراضي؛ '--private' يرفع قاعدة
-tarball إلى السجل الخاص لخادم 20 بدلا من ذلك. لتظهر تطبيق منشور
-في سوق مثيل ما، قم بتفعيل مزامنة الكتالوج:
+`twenty app publish` builds and publishes to npm by default; `--private` uploads a
+tarball to a Twenty server's private registry instead. To surface a published app
+in an instance's marketplace, wait for the server's marketplace catalog sync.
 
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
-
-التفاصيل الكاملة وقائمة التحقق من الإصدار:
+Full details and the release checklist:
 [Publishing](/ar/developers/extend/apps/operations/publishing).
 
-## قمت ببناء تطبيق 🎉
+## You built an app 🎉
 
-في ستة فصول استخدمت معظم سطح SDK:
+In six chapters you used most of the SDK surface:
 
-* **الكائنات، الحقول و العلاقة** لنموذج البيانات
-* **دالة منطقية** مكشوفة كأداة \*\*AI \*\*، و **سير العمل**، و **مسارات HTTP**
-* **مشاهدات, تصفح, أمر و مكون أمامي** لواجهة المستخدم
-* **وكيل + مهارة** لتوليد اللغة الطبيعية
-* \*\*البيانات الوصفية للسوق \*\* وتدفق النشر
+- **Objects, fields, and a relation** to model the data
+- A **logic function** exposed as an **AI tool**, a **workflow action**, and **HTTP routes**
+- **Views, navigation, a command, and a front component** for the UI
+- An **agent + skill** for natural-language generation
+- **Marketplace metadata** and the publish flow
 
-التطبيق النهائي هو في
-[`packages/XXapps/examples/document-Generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+The finished app is at
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
 
-## من أين تذهب بعد
+## Where to go next
 
 <CardGroup cols={2}>
-  <Card title="مرجع البيانات" icon="database" href="/ar/developers/extend/apps/data/overview">
-    كل نوع من أنواع الحقول والعلاقة وخيارات الفهرس.
+  <Card
+    title="Data reference"
+    icon="database"
+    href="/ar/developers/extend/apps/data/overview"
+  >
+    Every field type, relation, and index option.
   </Card>
-  <Card title="مرجع منطقي" icon="bolt" href="/ar/developers/extend/apps/logic/overview">
-    مشغلات أحداث Cron وقاعدة البيانات، ومتجر القيمة المفتاح، واتصالات OAuth.
+  <Card
+    title="Logic reference"
+    icon="bolt"
+    href="/ar/developers/extend/apps/logic/overview"
+  >
+    Cron and database-event triggers, the key-value store, OAuth connections.
   </Card>
-  <Card title="مرجع التخطيط" icon="table-columns" href="/ar/developers/extend/apps/layout/overview">
-    مخططات الصفحة، ودويدات لوحة المعلومات، ومزيد من أسطح واجهة المستخدم.
+  <Card
+    title="Layout reference"
+    icon="table-columns"
+    href="/ar/developers/extend/apps/layout/overview"
+  >
+    Page layouts, dashboard widgets, and more UI surfaces.
   </Card>
-  <Card title="العمليات" icon="rocket" href="/ar/developers/extend/apps/operations/overview">
-    () CLI، والاختبار، وعمليات الإزالة، وCI.
+  <Card
+    title="Operations"
+    icon="rocket"
+    href="/ar/developers/extend/apps/operations/overview"
+  >
+    CLI, testing, remotes, and CI.
   </Card>
 </CardGroup>

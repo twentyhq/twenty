@@ -1,32 +1,42 @@
 ---
 title: Composants frontaux
-description: Créez des composants React qui s’affichent dans l’interface utilisateur (UI) de Twenty avec une isolation en bac à sable.
-icon: window-maximize
+description: Build React components that render inside Twenty's UI with sandboxed isolation.
+icon: 'window-maximize'
 ---
 
-Les composants frontaux sont des composants React qui s'affichent directement dans l'interface utilisateur de Twenty. Ils s'exécutent dans un **Web Worker isolé** en utilisant Remote DOM — votre code s'exécute dans un iframe à origine opaque et sandboxé, mais son interface utilisateur continue de s'afficher nativement dans la page plutôt que d'être confinée à cet iframe.
+<Note>
+  La traduction de ce guide n’est pas encore à jour pour la CLI autonome de
+  Twenty. Le contenu anglais actuel est présenté ci-dessous temporairement pour
+  éviter l’utilisation de commandes supprimées.
+</Note>
+
+Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code executes inside a sandboxed, opaque-origin iframe, yet its UI still renders natively in the page rather than being confined to that iframe.
 
 <Warning>
-Les composants Front sont encore en cours de développement actif. Votre code s’exécute sur un DOM partiel, et non sur une véritable page de navigateur, de sorte que les utilisations avancées peuvent échouer, souvent sans message d’erreur. Voir [Limitations actuelles](#current-limitations).
+  Front components are still under active development. Your code runs against a
+  partial DOM, not a real browser page, so advanced usages can fail, often
+  silently. See [Current limitations](#current-limitations).
 </Warning>
 
-## Où les composants frontaux peuvent être utilisés
+## Where front components can be used
 
-Les composants frontaux peuvent s'afficher à trois emplacements au sein de Twenty :
+Front components can render in four locations within Twenty:
 
-* **Panneau latéral** — Les composants frontaux non-headless s'ouvrent dans le panneau latéral droit. Il s'agit du comportement par défaut lorsqu'un composant frontal est déclenché depuis le menu de commande.
-* **Widgets (tableaux de bord et pages d'enregistrement)** — Les composants frontaux peuvent être intégrés comme widgets dans les [mises en page](/fr/developers/extend/apps/layout/page-layouts). Lors de la configuration d'un tableau de bord ou d'une page d'enregistrement, les utilisateurs peuvent ajouter un widget de composant frontal.
-* **Paramètres de l'application** — Défini avec [`defineSettingsFrontComponent()`](#custom-settings-component), le composant frontal s'affiche comme une section dans l'onglet **Settings** de l'application, à la place de l'interface utilisateur par défaut de configuration des variables.
+- **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
+- **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/fr/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
+- **App settings** — Pointed at by a [`defineSettingsMenuItem()`](#settings-menu-items) declaration, the front component renders the page behind one of the app's settings menu items. An app can declare several.
+- **AI chat** — A [logic function exposed as an AI tool](/fr/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) can name a front component, which then renders that tool's calls inline in the chat in place of the default step row.
 
-Un composant frontal seul n'est pas accessible depuis l'interface utilisateur — vous devez l'*exposer*. Les trois façons de le faire sont :
+A front component on its own isn't reachable from the UI — you need to _surface_ it. The four ways to do that are:
 
-* **L'associer à un [élément de menu de commande](/fr/developers/extend/apps/layout/command-menu-items)** — l'enregistre dans le menu de commande (Cmd+K) et, éventuellement, comme action rapide épinglée.
-* **L'intégrer comme widget dans une [mise en page](/fr/developers/extend/apps/layout/page-layouts)** — le place sur la page de détails d'un enregistrement ou sur un tableau de bord.
-* **Le définir avec [`defineSettingsFrontComponent()`](#custom-settings-component)** — l'affiche comme une section dans l'onglet **Settings** de l'application, à la place de l'interface utilisateur par défaut de configuration des variables.
+- **Pair it with a [command menu item](/fr/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
+- **Embed it as a widget in a [page layout](/fr/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
+- **Point a [`defineSettingsMenuItem()`](#settings-menu-items) at it** — renders it behind one of the app's settings menu items.
+- **Name it from a [logic function's `toolTriggerSettings`](/fr/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action)** — renders the tool's calls in the AI chat.
 
-## Exemple de base
+## Basic example
 
-La façon la plus rapide de voir un composant frontal en action est de l'associer à un [`defineCommandMenuItem`](/fr/developers/extend/apps/layout/command-menu-items), afin qu'il apparaisse comme bouton d'action rapide dans le coin supérieur droit de la page :
+The quickest way to see a front component in action is to pair it with a [`defineCommandMenuItem`](/fr/developers/extend/apps/layout/command-menu-items), so it appears as a quick-action button in the top-right corner of the page:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -61,74 +71,146 @@ export default defineCommandMenuItem({
 });
 ```
 
-Après la synchronisation avec `yarn twenty dev` (ou en exécutant une seule fois `yarn twenty apply`), l'action rapide apparaît dans le coin supérieur droit de la page :
+After syncing with `twenty app dev` (or running a one-shot `twenty app apply`), the quick action appears in the top-right corner of the page:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Bouton d'action rapide dans le coin supérieur droit" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Quick action button in the top-right corner"
+  />
 </div>
 
-Cliquez dessus pour afficher le composant en ligne.
+Click it to render the component inline.
 
-## Champs de configuration
+## Configuration fields
 
-| Champ                 | Obligatoire | Description                                                                      |
-| --------------------- | ----------- | -------------------------------------------------------------------------------- |
-| `universalIdentifier` | Oui         | ID unique et stable pour ce composant                                            |
-| `component`           | Oui         | Une fonction de composant React                                                  |
-| `name`                | Non         | Nom d'affichage                                                                  |
-| `description`         | Non         | Description de ce que fait le composant                                          |
-| `isHeadless`          | Non         | Définir sur `true` si le composant n'a pas d'interface visible (voir ci-dessous) |
+| Field                 | Required | Description                                                                                                      |
+| --------------------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Yes      | Stable unique ID for this component                                                                              |
+| `component`           | Yes      | A React component function                                                                                       |
+| `name`                | No       | Display name                                                                                                     |
+| `description`         | No       | Description of what the component does                                                                           |
+| `isHeadless`          | No       | Set to `true` if the component has no visible UI (see below)                                                     |
+| `widgetAvailability`  | No       | Widget picker that offers the component: record pages, optionally narrowed to objects, or dashboards (see below) |
 
-## Placer un composant frontal sur une page
+## Placing a front component on a page
 
-Au-delà des commandes, vous pouvez intégrer un composant frontal directement dans une page d'enregistrement en l'ajoutant comme widget dans une **mise en page**. Voir [mises en page](/fr/developers/extend/apps/layout/page-layouts) pour plus de détails.
+Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See [Page Layouts](/fr/developers/extend/apps/layout/page-layouts) for details.
 
-## Composant de paramètres personnalisé
+`widgetAvailability` decides which widget picker offers the component while a page layout is being edited. A front component is built either for record pages, where it works on the shown record, or for dashboards, so it declares one `pageLayoutType`:
 
-Pour remplacer l'interface utilisateur générée automatiquement pour la configuration des variables dans l'onglet **Settings** de votre application par votre propre composant, définissez-le avec `defineSettingsFrontComponent` au lieu de `defineFrontComponent`. Il utilise les mêmes [champs de configuration](#configuration-fields) (sauf `isHeadless`, qui n’est pas accepté puisqu’un composant de paramètres affiche toujours une interface utilisateur visible) et marque en plus le composant comme interface de paramètres de l’application.
+| `widgetAvailability`                                                                | Offered in                        |
+| ----------------------------------------------------------------------------------- | --------------------------------- |
+| omitted                                                                             | no widget picker                  |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE }`                                    | every record page                 |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE, objectUniversalIdentifiers: [...] }` | the record pages of those objects |
+| `{ pageLayoutType: PageLayoutType.DASHBOARD }`                                      | dashboards                        |
 
-Le composant est affiché comme une section **à l’intérieur** de l’onglet Settings, et non comme un remplacement de l’onglet entier. Les sections gérées par le système de Twenty — mise à niveau automatique, App URL et connexions — sont toujours affichées au-dessus et ne peuvent pas être remplacées par l’application.
+```tsx
+import {
+  defineFrontComponent,
+  PageLayoutType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
-```tsx src/front-components/app-settings.tsx
-import { defineSettingsFrontComponent } from 'twenty-sdk/define';
-
-const AppSettings = () => {
-  return (
-    <div style={{ padding: '20px' }}>
-      <h2>My app settings</h2>
-      {/* render your own configuration UI here */}
-    </div>
-  );
-};
-
-export default defineSettingsFrontComponent({
-  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-  name: 'app-settings',
-  description: "Custom UI for the app's Settings tab",
-  component: AppSettings,
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-notes',
+  component: CompanyNotes,
+  widgetAvailability: {
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+    objectUniversalIdentifiers: [
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+    ],
+  },
 });
 ```
 
-Un seul composant frontal de paramètres est autorisé par application ; en déclarer plus d’un provoque l’échec de la compilation. Lorsqu’il est présent, l’onglet **Settings** de l’application affiche ce composant à la place de l’interface utilisateur de configuration des variables par défaut.
+Leave `widgetAvailability` out for a component that is only opened from a command, a [settings menu item](#settings-menu-items) or a timeline row. It never limits where a component is displayed: commands, settings menu items and the page layouts your app declares render it whatever its value. The build warns about a visible component that declares none and is opened from nowhere else.
+
+## Settings menu items
+
+An app can add its own entries to the settings menu, each rendering a front component. Declare one with `defineSettingsMenuItem()` in its own file, pointing at the component that renders it:
+
+```tsx src/settings-menu-items/sync-settings.ts
+import { defineSettingsMenuItem } from 'twenty-sdk/define';
+
+export default defineSettingsMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+  title: 'Sync',
+  icon: 'IconRefresh',
+  position: 1,
+});
+```
+
+The menu item points at the front component rather than the component declaring itself a settings entry. One component can therefore back several menu items, and an item can be repointed at a different component without touching either.
+
+Each item renders as a tab on the app's page under **Settings > Apps**, after **General**, in `position` order.
+
+Declare as many as you need. Twenty's own **General** item — auto-upgrade, App URL and connections — always comes first and cannot be overridden by an app; App URL only shows when the app has HTTP-triggered functions.
+
+### Fields
+
+| Field                               | Description                                                              |
+| ----------------------------------- | ------------------------------------------------------------------------ |
+| `universalIdentifier`               | A UUID you generate once and own, stable across syncs                    |
+| `frontComponentUniversalIdentifier` | The `universalIdentifier` of the front component this item renders       |
+| `title`                             | The item's label. `General` is reserved and fails the build              |
+| `icon` _(optional)_                 | Icon name, resolved client-side; an unknown name falls back to a default |
+| `position` _(optional)_             | Sort order, ascending. Defaults to `0`                                   |
+| `scope` _(optional)_                | `WORKSPACE` (default) or `USER`                                          |
+
+`position` is a decimal, so an item can be slotted between two existing ones without renumbering. Items sort by ascending `position`, ties broken on `universalIdentifier` so the order is the same in every workspace. Two items of one app cannot share a position in the same scope — the sync refuses it rather than letting install order decide which renders first.
+
+### Workspace and user scope
+
+`scope` says who an item is configured by:
+
+- **`WORKSPACE`** (default) — configured once for the whole workspace, alongside the other workspace settings. These are the items that render as tabs on the app's page.
+- **`USER`** — configured by each member for themselves, under their own user settings.
+
+<Note>
+  A `USER` item renders as a tab on the app's page under **Settings > App
+  preferences**, where only the signed-in member sees it, and only when their
+  role grants the `CONNECTED_ACCOUNTS` permission. That page is not enabled in
+  every workspace yet: where it is not, a `USER` item is persisted and synced
+  but nothing renders it.
+</Note>
+
+A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value, and your component saves it with `updateMyUserApplicationVariable`, which writes that member's value only and needs `SystemPermissionFlag.CONNECTED_ACCOUNTS` in your app's role, if it declares one (see [Reading and updating variables at runtime](#reading-and-updating-variables-at-runtime)). Like a `WORKSPACE` item, a `USER` item replaces the generated **Variables** form, so it should let the member set every user variable your app needs. A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
+
+<Note>
+  `defineSettingsFrontComponent()` is deprecated in favor of
+  `defineSettingsMenuItem()`. An app still using it keeps working — its
+  component is treated as a single **Settings** menu item — but it can only ever
+  declare one, which is what `defineSettingsMenuItem()` exists to lift.
+</Note>
 
 ## Headless vs non-headless
 
-Les composants frontaux existent en deux modes de rendu contrôlés par l’option `isHeadless` :
+Front components come in two rendering modes controlled by the `isHeadless` option:
 
-**Non-headless (par défaut)** — Le composant affiche une interface visible. Lorsqu'il est déclenché depuis le menu de commande, il s'ouvre dans le panneau latéral. Il s'agit du comportement par défaut lorsque `isHeadless` est `false` ou omis.
+**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
 
-**Headless (`isHeadless: true`)** — Le composant se monte de façon invisible en arrière-plan. Il n'ouvre pas le panneau latéral. Les composants headless sont conçus pour des actions qui exécutent une logique puis se démontent — par exemple, lancer une tâche asynchrone, naviguer vers une page ou afficher une fenêtre modale de confirmation. Ils s'associent naturellement aux composants Command du SDK décrits ci-dessous.
+**Headless (`isHeadless: true`)** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  enqueueSnackbar,
+} from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
   const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -143,20 +225,20 @@ export default defineFrontComponent({
 });
 ```
 
-Comme le composant retourne `null`, Twenty n'affiche pas de conteneur pour celui-ci — aucun espace vide n'apparaît dans la mise en page. Le composant a toujours accès à tous les hooks et à l'API de communication de l'hôte.
+Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
 
-## Composants Command du SDK
+## SDK Command components
 
-Le package `twenty-sdk` fournit quatre composants utilitaires Command conçus pour les composants frontaux headless. Chaque composant exécute une action au montage, gère les erreurs en affichant une notification snackbar et démonte automatiquement le composant frontal une fois terminé.
+The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
 
-Importez-les depuis `twenty-sdk/front-component` :
+Import them from `twenty-sdk/front-component`:
 
-* **`Command`** — Exécute un callback asynchrone via la prop `execute`.
-* **`CommandLink`** — Navigue vers un chemin d'application. Props : `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Ouvre une fenêtre modale de confirmation. Si l'utilisateur confirme, exécute le callback `execute`. Props : `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Ouvre une page du panneau latéral. Les propriétés dépendent de `page` — par exemple, `ViewRecord` accepte `recordId` + `objectNameSingular` (plus un identifiant `tab` facultatif pour ouvrir l’enregistrement dans un onglet spécifique), les autres pages acceptent `pageTitle` + `pageIcon`.
+- **`Command`** — Runs an async callback via the `execute` prop.
+- **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — Opens content in the side panel. Routed pages use the same typed `to`, `params`, and `queryParams` props as `CommandLink`, plus optional `hash`, `pageTitle`, and `resetNavigationStack` props. The workspace route registry decides whether the requested `AppPath` supports the side panel. `pageTitle` overrides the panel header title, while `resetNavigationStack` clears earlier panel pages before opening the route. Purpose-built panel tools use their own page-specific props.
 
-Voici un exemple complet d'un composant frontal headless utilisant `Command` pour exécuter une action depuis le menu de commande :
+Here is a full example of a headless front component using `Command` to run an action from the command menu:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -197,7 +279,7 @@ export default defineCommandMenuItem({
 });
 ```
 
-Et un exemple utilisant `CommandModal` pour demander une confirmation avant l'exécution :
+And an example using `CommandModal` to ask for confirmation before executing:
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -228,13 +310,13 @@ export default defineFrontComponent({
 });
 ```
 
-Et un exemple utilisant `CommandOpenSidePanelPage` pour ouvrir l’enregistrement actuel dans le panneau latéral sur un onglet spécifique. `tab` est un identifiant d’onglet de mise en page (les mises en page par défaut utilisent des identifiants comme `company-tab-emails` ou `company-tab-timeline` ; les mises en page personnalisées utilisent l’identifiant propre de l’onglet). Si l’identifiant n’existe pas dans la mise en page de l’enregistrement, l’onglet par défaut s’ouvre à la place :
+And an example using `CommandOpenSidePanelPage` to open the current record in the side panel on a specific tab. `hash` is a page layout tab id without the leading `#` (default layouts use ids like `company-tab-emails` or `company-tab-timeline`; custom layouts use the tab's own id). If the id doesn't exist in the record's layout, the default tab opens instead:
 
 ```tsx src/front-components/open-company-emails.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  AppPath,
   CommandOpenSidePanelPage,
-  SidePanelPages,
   useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 
@@ -248,10 +330,12 @@ const OpenCompanyEmails = () => {
 
   return (
     <CommandOpenSidePanelPage
-      page={SidePanelPages.ViewRecord}
-      recordId={recordId}
-      objectNameSingular="company"
-      tab="company-tab-emails"
+      to={AppPath.RecordShowPage}
+      params={{
+        objectNameSingular: 'company',
+        objectRecordId: recordId,
+      }}
+      hash="company-tab-emails"
       resetNavigationStack={false}
     />
   );
@@ -266,15 +350,15 @@ export default defineFrontComponent({
 });
 ```
 
-## Appel d’une fonction logique
+## Calling a logic function
 
-Les composants front s'exécutent côté navigateur dans un Web Worker isolé (sandboxé) à l'intérieur d'un iframe à origine opaque, tandis que les [fonctions logiques](/fr/developers/extend/apps/logic/logic-functions) s'exécutent côté serveur. Il n’y a aucun appel intra-processus direct entre les deux — à la place, un composant front appelle une fonction logique via HTTP.
+Front components run browser-side in a Web Worker sandboxed inside an opaque-origin iframe, while [logic functions](/fr/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
 
-Une fonction logique déclarée avec `httpRouteTriggerSettings` est accessible via HTTP à son chemin de route. `RestApiClient` traite les chemins commençant par `/s/` comme des routes d’application, les résout vers l’URL à partir de laquelle vos fonctions sont servies et les authentifie avec `TWENTY_APP_ACCESS_TOKEN`.
+A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. `RestApiClient` treats paths starting with `/s/` as app routes, resolves them to the URL your functions are served from, and authenticates them with `TWENTY_APP_ACCESS_TOKEN`.
 
-> **Sur Twenty Cloud, les fonctions logiques déclenchées par HTTP sont servies sur un domaine dédié par espace de travail** à l’adresse `https://\<your-workspace-subdomain>.withtwenty.com\<path>`. Pour les appelants externes, copiez l’URL exacte à partir des paramètres **HTTP trigger** de la fonction ou de l’onglet **Settings** de l’application.
+> **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated per-workspace domain** at `https://<your-workspace-subdomain>.withtwenty.com<path>`. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab.
 
-Un composant front sans interface (headless) peut effectuer l’appel au montage via le composant `Command`, puis se démonter automatiquement :
+A headless front component can run the call on mount via the `Command` component, then unmount automatically:
 
 ```tsx src/front-components/sync-prs.tsx
 import { RestApiClient } from 'twenty-client-sdk/rest';
@@ -301,7 +385,7 @@ export default defineFrontComponent({
 });
 ```
 
-Le chemin transmis à `RestApiClient` est la propriété `httpRouteTriggerSettings.path` de la fonction logique, préfixée par `/s`. Conservez `isAuthRequired: true` ; le `TWENTY_APP_ACCESS_TOKEN` que Twenty génère pour votre composant authentifie la requête :
+The path passed to `RestApiClient` is the logic function's `httpRouteTriggerSettings.path`, prefixed with `/s`. Keep `isAuthRequired: true`; the `TWENTY_APP_ACCESS_TOKEN` Twenty mints for your component authenticates the request:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -326,28 +410,31 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_APP_ACCESS_TOKEN` est injecté automatiquement — voir [Variables d’application](#application-variables). Comme les variables d’application secrètes ne sont jamais exposées aux composants front, conservez les clés d’API et les autres éléments sensibles dans la fonction logique, et non dans le composant front.
+  `TWENTY_APP_ACCESS_TOKEN` is injected automatically — see [Application
+  variables](#application-variables). Because secret application variables are
+  never exposed to front components, keep API keys and other sensitive logic in
+  the logic function, not in the front component.
 </Note>
 
-### Appeler l’API REST de Twenty
+### Calling the Twenty REST API
 
-Pour appeler des routes HTTP d’application ou lire et écrire des enregistrements Twenty depuis un composant frontal, utilisez `RestApiClient` depuis `twenty-client-sdk/rest`. Il envoie les chemins `/s/...` vers l’URL de base des fonctions de votre espace de travail et tous les autres chemins, y compris `/rest/...`, vers `TWENTY_API_URL`.
+To call app HTTP routes or read and write Twenty records from a front component, use `RestApiClient` from `twenty-client-sdk/rest`. It sends `/s/...` paths to your workspace's functions base URL and every other path, including `/rest/...`, to `TWENTY_API_URL`.
 
-Il agit toujours en tant que la personne qui consulte la page. `runAs: 'application'` est une option réservée aux fonctions logiques : un composant ne reçoit jamais le jeton propre à votre application, donc le demander ici génère une erreur. Placez le travail nécessitant l'accès propre à l'application derrière une fonction logique et appelez-la à la place.
+It always acts as the person looking at the page. `runAs: 'application'` is a logic-function option only: a component never receives your application's own token, so asking for it here throws. Put work that needs the app's own access behind a logic function and call that instead.
 
-| Méthode                           | Description                                                                     |
-| --------------------------------- | ------------------------------------------------------------------------------- |
-| `get(path, options?)`             | Envoie une requête `GET`                                                        |
-| `post(path, body?, options?)`     | Envoie une requête `POST`                                                       |
-| `put(path, body?, options?)`      | Envoie une requête `PUT`                                                        |
-| `patch(path, body?, options?)`    | Envoie une requête `PATCH`                                                      |
-| `delete(path, options?)`          | Envoie une requête `DELETE`                                                     |
-| `request(method, path, options?)` | Requête générique avec n’importe quelle méthode HTTP                            |
-| `resolveUrl(path, options?)`      | Résout un chemin vers son URL complète sans envoyer de requête (pour les liens) |
+| Method                            | Description                                                           |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `get(path, options?)`             | Sends a `GET` request                                                 |
+| `post(path, body?, options?)`     | Sends a `POST` request                                                |
+| `put(path, body?, options?)`      | Sends a `PUT` request                                                 |
+| `patch(path, body?, options?)`    | Sends a `PATCH` request                                               |
+| `delete(path, options?)`          | Sends a `DELETE` request                                              |
+| `request(method, path, options?)` | Generic request with any HTTP method                                  |
+| `resolveUrl(path, options?)`      | Resolves a path to its full URL without sending a request (for links) |
 
-`options` accepte `headers`, `query` (un enregistrement de paramètres de chaîne de requête ; les valeurs nullish sont ignorées), et un `AbortSignal` via `signal`. Un objet `body` qui n’est pas de type `FormData` est automatiquement sérialisé en JSON. Sur un `401`, le client actualise une fois le jeton d’accès via l’hôte puis retente la requête.
+`options` accepts `headers`, `query` (a record of query-string params; nullish values are skipped), and an `AbortSignal` via `signal`. A non-`FormData` object `body` is JSON-serialized automatically. On a `401`, the client refreshes the access token once through the host and retries the request.
 
-Par défaut, l’URL de base et le jeton sont résolus à partir de l’environnement. Passez des valeurs de remplacement (overrides) au constructeur lorsque nécessaire — par exemple dans les tests :
+The base URL and token are resolved from the environment by default. Pass overrides to the constructor when needed — for example in tests:
 
 ```ts
 const client = new RestApiClient({
@@ -356,7 +443,7 @@ const client = new RestApiClient({
 });
 ```
 
-Les requêtes ayant échoué lèvent une erreur `RestApiClientError` exposant `status`, `statusText`, `url` et le `body` analysé :
+Failed requests throw a `RestApiClientError` exposing `status`, `statusText`, `url`, and the parsed `body`:
 
 ```tsx
 import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
@@ -374,9 +461,9 @@ try {
 }
 ```
 
-## Accéder au contexte d'exécution
+## Accessing runtime context
 
-Dans votre composant, utilisez les hooks du SDK pour accéder à l'utilisateur actuel, à l'enregistrement et à l'instance du composant :
+Inside your component, use SDK hooks to access the current user, record, and component instance:
 
 ```tsx src/front-components/record-info.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -407,28 +494,83 @@ export default defineFrontComponent({
 });
 ```
 
-Hooks disponibles :
+Available hooks:
 
-| Hook                                          | Renvoie               | Description                                                                                          |
-| --------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` ou `null`    | L'ID de l'utilisateur actuel                                                                         |
-| `useSelectedRecordIds()`                      | `string[]`            | Tous les ID des enregistrements sélectionnés (tableau vide si aucun n'est sélectionné)               |
-| `useRecordId()`                               | `string` ou `null`    | **Obsolète.** Utilisez `useSelectedRecordIds()` à la place                                           |
-| `useFrontComponentId()`                       | `string`              | L'ID de cette instance de composant                                                                  |
-| `useTimelineActivityId()`                     | `string` ou `null`    | L’ID de l’activité actuelle de la chronologie lors du rendu d’une ligne de chronologie personnalisée |
-| `useColorScheme()`                            | `'light'` ou `'dark'` | Schéma de couleur actif de l’interface hôte (`System` est déjà résolu)                               |
-| `useFrontComponentExecutionContext(selector)` | variable              | Accédez au contexte d'exécution complet avec une fonction sélecteur                                  |
+| Hook                                          | Returns                                          | Description                                                                                                      |
+| --------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` or `null`                               | The current user's ID                                                                                            |
+| `useSelectedRecordIds()`                      | `string[]`                                       | All selected record IDs (empty array if none selected)                                                           |
+| `useSelectedRecordsFilter()`                  | `RecordGqlOperationFilter` or `null`             | Filter matching exactly the selected records, including under Select all                                         |
+| `useSelectedObjectMetadata()`                 | `FrontComponentSelectedObjectMetadata` or `null` | The object metadata associated with this front component's record context                                        |
+| `useRecordId()`                               | `string` or `null`                               | **Deprecated.** Use `useSelectedRecordIds()` instead                                                             |
+| `useFrontComponentId()`                       | `string`                                         | This component instance's ID                                                                                     |
+| `useTimelineActivityId()`                     | `string` or `null`                               | The current timeline activity ID when rendering a custom timeline row                                            |
+| `useColorScheme()`                            | `'light'` or `'dark'`                            | The host UI's active color scheme (`System` is already resolved)                                                 |
+| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname, query string, and hash, plus the host app's origin                                    |
+| `useToolCall()`                               | `FrontComponentToolCall` or `null`               | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
+| `useFrontComponentExecutionContext(selector)` | varies                                           | Access the full execution context with a selector function                                                       |
 
-## Variables d'application
+### Object metadata
 
-Les variables d'application définies dans [`defineApplication()`](/fr/developers/extend/apps/config/application) avec `isSecret: false` sont disponibles dans les composants front via l'utilitaire `getApplicationVariable` :
+Use `useSelectedObjectMetadata()` to identify the object associated with a record-page widget, a custom timeline row, an object-scoped command, or a front component opened in the side panel with an object (from a command, or through `openSidePanelPage` with an `objectNameSingular`). This lets an integration select templates or other configuration for the current object without searching across objects for a record ID.
+
+```tsx
+import {
+  useSelectedObjectMetadata,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const TemplatePicker = () => {
+  const objectMetadata = useSelectedObjectMetadata();
+  const selectedRecordIds = useSelectedRecordIds();
+
+  if (!objectMetadata) {
+    return <p>Open a record to select a template.</p>;
+  }
+
+  return (
+    <p>
+      Select a template for {objectMetadata.nameSingular}. Selected records:{' '}
+      {selectedRecordIds.length}
+    </p>
+  );
+};
+```
+
+The result contains `id` (the workspace's object-metadata UUID), `nameSingular`, and `namePlural`. The names are metadata names, such as `person` and `people`, rather than display labels.
+
+Object metadata can be available even when no records are selected. It belongs to this front component's context, so a side panel can expose a different object from the main page. The hook updates when that context changes and returns `null` when the object cannot be resolved, when no object context is supplied, or when running on an older host that does not provide object metadata.
+
+### Host location
+
+Use `useLocation()` to read the route hosting your front component. It returns a `FrontComponentLocation` object with four required string fields: `pathname`, `search`, `hash`, and `origin`. For example, a page at `https://myworkspace.twenty.com/page/page-layout-id?project=abc#details` provides `/page/page-layout-id`, `?project=abc`, `#details`, and `https://myworkspace.twenty.com` respectively. `hash` includes its leading `#` and is `''` when there is no fragment.
+
+`pathname`, `search`, and `hash` follow the component's React Router context, including a routed side panel's own route. `origin` comes from the host app. The hook updates when the route changes. Older hosts may omit `executionContext.location`, so `useLocation()` returns `null` when location is unavailable.
+
+For query parameters, read `useLocation()?.search ?? ''` and parse the result with `URLSearchParams`. `search` includes its leading `?` and is `''` when the route has no query string. The fallback also provides `''` when the host does not provide location.
+
+```tsx
+import { useLocation } from 'twenty-sdk/front-component';
+
+const ProjectDetails = () => {
+  const search = useLocation()?.search ?? '';
+  const projectId = new URLSearchParams(search).get('project');
+
+  return <p>Project: {projectId ?? 'No project selected'}</p>;
+};
+```
+
+## Application variables
+
+Application variables defined in [`defineApplication()`](/fr/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
 
 ```tsx src/front-components/greeting.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { getApplicationVariable } from 'twenty-sdk/front-component';
 
 const Greeting = () => {
-  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+  const recipientName =
+    getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
 
   return <p>Hello, {recipientName}!</p>;
 };
@@ -441,50 +583,111 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Les variables secrètes (`isSecret: true`) ne sont **pas** exposées aux composants front. Elles sont uniquement disponibles dans les [fonctions logiques](/fr/developers/extend/apps/logic/logic-functions), qui s'exécutent côté serveur. Cela empêche l’envoi au navigateur de valeurs sensibles comme les clés d’API.
+  Secret variables (`isSecret: true`) are **not** exposed to front components.
+  They are only available in [logic
+  functions](/fr/developers/extend/apps/logic/logic-functions), which run
+  server-side. This prevents sensitive values like API keys from being sent to
+  the browser.
 </Warning>
 
-`getApplicationVariable` renvoie toujours une **chaîne** (ou `undefined`), quel que soit le `type` déclaré de la variable. La chaîne est sérialisée de manière cohérente selon le type (booléens sous la forme `"true"` / `"false"`, nombres sous forme de chaînes décimales, tableaux / objets en JSON), dans le même format utilisé pour la fonction logique `process.env` — analysez-la vous-même (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). Voir [Types de variables](/fr/developers/extend/apps/config/application#variable-types).
+`getApplicationVariable` always returns a **string** (or `undefined`), regardless of the variable's declared `type`. The string is serialized consistently by type (booleans as `"true"` / `"false"`, numbers as decimal strings, arrays / objects as JSON), the same format used for logic-function `process.env` — parse it yourself (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). See [Variable types](/fr/developers/extend/apps/config/application#variable-types).
 
-Les variables système suivantes sont toujours disponibles via `process.env` :
+### Reading and updating variables at runtime
 
-| Variable                  | Description                                                                                                                                                                                                                     |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `TWENTY_API_URL`          | URL de base de l’API principale de Twenty                                                                                                                                                                                       |
-| `TWENTY_APP_ACCESS_TOKEN` | Jeton à courte durée de vie dont la portée correspond à l'intersection entre le rôle de la personne connectée et celui de votre application, de sorte qu'un composant ne peut jamais faire plus que la personne qui le consulte |
+`getApplicationVariable` returns the values injected when the component loaded, so a value written afterwards only shows up on the next load. To read the stored values, or to write one (what a [settings menu item](#settings-menu-items) does when it saves what the user typed), go through `MetadataApiClient`:
+
+```tsx src/front-components/app-settings.tsx
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER = '39783023-bcac-41e3-b0d2-ff1944d8465d';
+
+const readApplicationVariables = async () => {
+  const { findOneApplication } = await new MetadataApiClient().query({
+    findOneApplication: {
+      __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+      applicationVariables: { key: true, value: true, isSecret: true },
+    },
+  });
+
+  return findOneApplication?.applicationVariables ?? [];
+};
+
+const saveRecipientName = async (recipientName: string) => {
+  await new MetadataApiClient().mutation({
+    updateOneApplicationVariable: {
+      __args: { key: 'DEFAULT_RECIPIENT_NAME', value: recipientName },
+    },
+  });
+};
+
+const saveMyLanguage = async (language: string) => {
+  await new MetadataApiClient().mutation({
+    updateMyUserApplicationVariable: {
+      __args: {
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        key: 'LANGUAGE',
+        value: language,
+      },
+    },
+  });
+};
+```
+
+Notes:
+
+- Your component's token is bound to your own application. `updateOneApplicationVariable` targets it, so `applicationId` is optional and naming another application is refused. Reading the `applicationVariables` of another application is refused the same way, and an application belonging to another workspace reads as not found.
+- The key must be one your app declares in [`defineApplication()`](/fr/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
+- Secret variables read back masked, never as the stored value. Writing them works normally.
+- Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/fr/developers/extend/apps/config/roles).
+- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret. `updateOneApplicationVariable` refuses it: save it with `updateMyUserApplicationVariable`, as `saveMyLanguage` does above. It writes the viewing member's value only and refuses naming another application. It needs no `APPLICATIONS` permission, but it needs the `CONNECTED_ACCOUNTS` permission on the viewing member's role and on your app's role, if it declares one: add `SystemPermissionFlag.CONNECTED_ACCOUNTS` to `permissionFlagUniversalIdentifiers` in your [application role](/fr/developers/extend/apps/config/roles). See [Workspace and user variables](/fr/developers/extend/apps/config/application#workspace-and-user-variables).
+
+### System variables
+
+The following system variables are always available via `process.env`:
+
+| Variable                  | Description                                                                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Base URL of the Twenty core API                                                                                                                     |
+| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to the signed-in person's role intersected with your app's, so a component can never do more than the person looking at it |
 
 ### `TWENTY_FUNCTIONS_URL`
 
-Twenty injecte également `TWENTY_FUNCTIONS_URL` dans les composants frontaux et les fonctions logiques : l’URL de base à partir de laquelle les fonctions logiques déclenchées par HTTP de votre application sont servies.
+Twenty also injects `TWENTY_FUNCTIONS_URL` into front components and logic functions: the base URL your app's HTTP-triggered logic functions are served from.
 
-Elle existe parce que cette URL n’est pas toujours le serveur Twenty lui-même. Sur Twenty Cloud, les routes d’application sont servies sur un domaine dédié par espace de travail (`https://\<your-workspace-subdomain>.withtwenty.com`, ou le domaine public principal de l’application lorsqu’il est configuré) afin que les réponses créées par l’application s’exécutent sur une origine isolée plutôt que sur l’origine de l’application Twenty. Les instances auto-hébergées et locales servent les routes d’application sous le préfixe `/s` sur le serveur lui-même et peuvent ne pas définir la variable du tout. Comme l’URL de base varie selon l’espace de travail et l’instance, votre code ne peut pas la coder en dur — le serveur injecte la bonne valeur à l’exécution.
+It exists because that URL is not always the Twenty server itself. On Twenty Cloud, app routes are served on a dedicated per-workspace domain (`https://<your-workspace-subdomain>.withtwenty.com`, or the application's primary public domain when one is configured) so that app-authored responses run on their own origin rather than on the Twenty app origin. Self-hosted and local instances serve app routes under the `/s` prefix on the server itself and may not set the variable at all. Since the base URL varies per workspace and per instance, your code cannot hard-code it — the server injects the right value at runtime.
 
-Vous avez rarement besoin de la lire directement. Appelez vos routes via `RestApiClient` avec un chemin préfixé par `/s/` et le client résout l’URL pour vous : il retire le préfixe `/s` et cible `TWENTY_FUNCTIONS_URL`, en revenant à `\<TWENTY_API_URL>/s` lorsque la variable n’est pas définie. Utilisez `resolveUrl('/s/\<path>')` pour obtenir l’URL absolue sans envoyer de requête, par exemple pour un lien. Lisez la variable directement uniquement lorsque vous construisez une URL manuellement :
+You rarely need to read it directly. Call your routes through `RestApiClient` with a `/s/`-prefixed path and the client resolves the URL for you: it strips the `/s` prefix and targets `TWENTY_FUNCTIONS_URL`, falling back to `<TWENTY_API_URL>/s` when the variable is not set. Use `resolveUrl('/s/<path>')` to get the absolute URL without sending a request, e.g. for a link. Read the variable directly only when building a URL by hand:
 
 ```ts
 const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
 ```
 
-## API de communication de l'hôte
+## Host communication API
 
-Les composants frontaux peuvent déclencher la navigation, des modales et des notifications en utilisant des fonctions de `twenty-sdk` :
+Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk/front-component`:
 
-| Fonction                                           | Description                                                                                                                                                                                     |
-| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `navigate(to, params?, queryParams?, options?)`    | Naviguer vers une page de l'application                                                                                                                                                         |
-| `openSidePanelPage(params)`                        | Ouvrir un panneau latéral                                                                                                                                                                       |
-| `closeSidePanel()`                                 | Fermer le panneau latéral                                                                                                                                                                       |
-| `openCommandConfirmationModal(params)`             | Afficher une boîte de dialogue de confirmation                                                                                                                                                  |
-| `enqueueSnackbar(params)`                          | Afficher une notification toast                                                                                                                                                                 |
-| `unmountFrontComponent()`                          | Démonter le composant                                                                                                                                                                           |
-| `updateProgress(progress)`                         | Mettre à jour un indicateur de progression                                                                                                                                                      |
-| `uploadFile(file, { fieldMetadataId, fileName? })` | Téléverse un `Blob` dans un champ FILES ; renvoie `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` ou `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }`. |
+| Function                                           | Description                                                                                                                                                                                  |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Navigate to a page in the app                                                                                                                                                                |
+| `openSidePanelPage(params)`                        | Open a side panel                                                                                                                                                                            |
+| `closeSidePanel()`                                 | Close the side panel                                                                                                                                                                         |
+| `openCommandConfirmationModal(params)`             | Show a confirmation dialog                                                                                                                                                                   |
+| `enqueueSnackbar(params)`                          | Show a toast notification                                                                                                                                                                    |
+| `unmountFrontComponent()`                          | Unmount the component                                                                                                                                                                        |
+| `updateProgress(progress)`                         | Update a progress indicator                                                                                                                                                                  |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
-Voici un exemple qui utilise l'API hôte pour afficher une snackbar et fermer le panneau latéral après la fin d'une action :
+Use `openCommandConfirmationModal` from `twenty-sdk/front-component` for dialogs. It accepts structured title, subtitle and button options, and resolves to `'confirm'` or `'cancel'`. Twenty owns the modal, focus management, dismissal and page scrolling. Front components must not render `Dialog`, `AlertDialog`, native `dialog` elements or native browser popovers directly. Supplying a local portal container does not make direct app-owned modality supported.
+
+Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import {
+  enqueueSnackbar,
+  closeSidePanel,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
@@ -524,9 +727,9 @@ export default defineFrontComponent({
 });
 ```
 
-### Stockage
+### Storage
 
-`localStorage` et `sessionStorage` fonctionnent comme sur une page normale, avec l’API synchrone standard. Vos clés sont limitées à votre installation de l’application et à l’utilisateur connecté : aucune autre application ne peut les lire, et un autre utilisateur se connectant dans le même navigateur commence avec un stockage vide. Les valeurs écrites dans `localStorage` restent sur l’appareil entre les rechargements ; `sessionStorage` dure pendant la session du navigateur.
+`localStorage` and `sessionStorage` work as they do in a normal page, with the standard synchronous API. Your keys are scoped to your app install and the signed-in user: no other app can read them, and another user signing into the same browser starts from an empty store. Values written to `localStorage` stay on the device across reloads; `sessionStorage` lasts for the browser session.
 
 ```tsx src/front-components/note-draft.tsx
 import { useState } from 'react';
@@ -541,7 +744,10 @@ const NoteDraft = () => {
   };
 
   return (
-    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+    <textarea
+      value={draft}
+      onChange={(event) => handleChange(event.target.value)}
+    />
   );
 };
 
@@ -553,13 +759,13 @@ export default defineFrontComponent({
 });
 ```
 
-Twenty stocke les valeurs pour le compte de votre application, de sorte qu’une écriture est appliquée localement immédiatement et sauvegardée en arrière-plan. Les lectures ne bloquent jamais sur l’hôte. Rien n’est synchronisé : les valeurs ne suivent pas l’utilisateur vers un autre navigateur ou une autre machine. Utilisez donc le [magasin clé-valeur](/fr/developers/extend/apps/logic/key-value-store) d’une fonction logique pour tout ce qui doit survivre à un changement d’appareil.
+Twenty stores the values on your app's behalf, so a write is applied locally right away and saved in the background. Reads never wait on the host. Nothing is synced: the values do not follow the user to another browser or machine, so use a logic function's [key-value store](/fr/developers/extend/apps/logic/key-value-store) for anything that must survive a device change.
 
-Les écritures sont plafonnées, et chaque limite compte les caractères plutôt que les octets : les clés comportent au maximum 512 caractères, une valeur unique au maximum 262 144 caractères, et chaque stockage au maximum 1 048 576 caractères par application et par utilisateur. Une écriture qui dépasse une limite lève une `QuotaExceededError`, comme avec l’API du navigateur.
+Writes are capped, and every limit counts characters rather than bytes: keys are at most 512 characters, a single value at most 262,144 characters, and each storage at most 1,048,576 characters per app and user. A write that breaks a limit throws a `QuotaExceededError`, like the browser API.
 
-### Travailler avec plusieurs enregistrements
+### Working with multiple records
 
-Utilisez `useSelectedRecordIds()` pour gérer plusieurs enregistrements sélectionnés. C'est utile pour les opérations groupées :
+Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -606,7 +812,7 @@ export default defineFrontComponent({
 });
 ```
 
-Affichez-la avec un [élément de menu de commande](/fr/developers/extend/apps/layout/command-menu-items) limité aux sélections d'enregistrements :
+Surface it with a [command menu item](/fr/developers/extend/apps/layout/command-menu-items) restricted to record selections:
 
 ```ts src/command-menu-items/bulk-export.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -619,9 +825,39 @@ export default defineCommandMenuItem({
 });
 ```
 
-## Ressources publiques
+#### Select all
 
-Les composants frontaux peuvent accéder aux fichiers du répertoire `public/` de l'application à l'aide de `getPublicAssetUrl` :
+When the user selects all records of a view, `useSelectedRecordIds()` returns an empty array: the selection is defined by the view's filters, search and unticked rows, and can hold far more records than fit in memory. `useSelectedRecordsFilter()` returns a filter matching exactly the selected records in every case, so query with it instead of listing IDs:
+
+```tsx
+import { Command, useSelectedRecordsFilter } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const MarkExported = () => {
+  const selectedRecordsFilter = useSelectedRecordsFilter();
+
+  const execute = async () => {
+    if (selectedRecordsFilter === null) {
+      return;
+    }
+
+    await new CoreApiClient().mutation({
+      updateTasks: {
+        __args: { filter: selectedRecordsFilter, data: { exported: true } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+```
+
+For large selections, pass the filter to a [logic function](/fr/developers/extend/apps/logic/logic-functions) and process the records there, page by page.
+
+## Public assets
+
+Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -636,19 +872,23 @@ export default defineFrontComponent({
 });
 ```
 
-Voir la [section sur les ressources publiques](/fr/developers/extend/apps/config/public-assets) pour plus de détails.
+See the [public assets section](/fr/developers/extend/apps/config/public-assets) for details.
 
-## Partage des dépendances entre les composants frontaux
+## Sharing dependencies across front components
 
-Par défaut, chaque composant frontal contient sa propre copie des bibliothèques qu'il importe, donc une application avec cinq composants envoie React cinq fois. Déclarer les dépendances partagées dans le `package de votre application. son` pour construire ces bibliothèques une fois et que chaque composant de l'application les charge à partir d'un fichier mis en cache:
+By default, every front component bundles its own copy of the libraries it imports, so an app with five components ships React five times. Declare shared dependencies in your app's `package.json` to build those libraries once and have every component of the app load them from a single cached file:
 
 ```json package.json
 {
-  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+  "frontComponentSharedDependencies": [
+    "react",
+    "react-dom/client",
+    "twenty-ui/primitives/input"
+  ]
 }
 ```
 
-Chaque composant importe ensuite ses dépendances exactement comme avant, rien ne change dans le code de votre composant:
+Each component then imports its dependencies exactly as before — nothing changes in your component code:
 
 ```tsx src/front-components/counter.tsx
 import { useState } from 'react';
@@ -667,63 +907,99 @@ export default defineFrontComponent({
 });
 ```
 
-Quelques points à connaître :
+A few things to know:
 
-* **Un lot de dépendances partagées par application.** Le bundle est construit à partir des propres dépendances de votre application, de sorte que vous gardez le contrôle total des versions que vous envoyez.
-* **Lister les spécifications exactes que vous importez.** `vingt-ui/input` et `vingt-ui/display` sont deux entrées; un nom de paquet seul ne couvre pas ses sous-chemins. La liste `react` couvre automatiquement `react/jsx-runtime`.
-* **Partagez `react-dom/client` avec `react`.** Chaque composant est rendu via `createRoot`, donc le laisser dehors signifie que chaque composant contient toujours React DOM.
-* \*\*Le bundle est mis en cache. \* Il est servi sous une URL de hachage de contenu avec une cache immuable de longue durée, ainsi il est téléchargé une fois et réutilisé dans tous les composants de l'application jusqu'à ce que l'une de ses dépendances change.
-* **Les composants qui n'importent aucun des paquets partagés ne le téléchargent jamais.**
+- **One shared dependencies bundle per app.** The bundle is built from your app's own dependencies, so you keep full control of the versions you ship.
+- **List the exact specifiers you import.** `twenty-ui/primitives/input` and `twenty-ui/primitives/data-display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
+- **Share `react-dom/client` alongside `react`.** Every component renders through `createRoot`, so leaving it out means each component still bundles React DOM.
+- **The bundle is cached.** It is served under a content-hash URL with a long-lived immutable cache, so it is downloaded once and reused across all components of the app until one of its dependencies changes.
+- **Components that import none of the shared packages never download it.**
 
-## Stylisation
+## Styling
 
-Les composants frontaux prennent en charge plusieurs approches de stylisation. Vous pouvez utiliser :
+Front components support multiple styling approaches. You can use:
 
-* **Styles en ligne** — `style={{ color: 'red' }}`
-* **Composants d’interface utilisateur Twenty** — la bibliothèque de composants propre à Twenty ; voir [Utilisation des composants d’interface utilisateur Twenty](#using-twenty-ui-components) ci-dessous
-* **Emotion** — CSS-in-JS avec `@emotion/react`
-* **Styled-components** — modèles `styled.div`
-* **Tailwind CSS** — classes utilitaires
-* **Toute bibliothèque CSS-in-JS** compatible avec React
+- **Inline styles** — `style={{ color: 'red' }}`
+- **Twenty UI components** — Twenty's own component library; see [Using Twenty UI components](#using-twenty-ui-components) below
+- **Emotion** — CSS-in-JS with `@emotion/react`
+- **Styled-components** — `styled.div` patterns
+- **Tailwind CSS** — utility classes
+- **Any CSS-in-JS library** compatible with React
 
-## Utilisation des composants d’interface utilisateur Twenty
+## Using Twenty UI components
 
-Twenty fournit sa bibliothèque de composants sous forme de package [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Les composants frontaux peuvent l’utiliser pour les boutons, tags, pastilles de statut, chips, avatars, icônes, typographie et jetons de thème qui s’adaptent automatiquement aux thèmes clair et sombre de l’espace de travail.
+Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui) package. Prefer its controls and theme tokens to give front components the same appearance and interactions as the rest of Twenty. Browse the [shared components](/ui/components/overview) and [primitives](/ui/primitives/overview) for examples, props, and composition APIs.
 
 ### Installation
 
-Ajoutez le package à votre application, épinglé à la version livrée avec votre instance Twenty :
+New apps scaffolded with `twenty app init` already include `twenty-ui`. For an existing app, add it as a development dependency, pinned to the same version as `twenty-sdk` and `twenty-client-sdk`. For example, if your SDK packages use `2.51.0`:
 
 ```bash
-yarn add twenty-ui@1.0.0-alpha.1
+yarn add -D twenty-ui@2.51.0
 ```
 
-`twenty-ui` est intégré à votre composant front au moment du build, il n’a donc besoin d’être qu’une dépendance de votre application — il n’y a rien à configurer à l’exécution.
+`twenty-ui` is bundled at build time, either into each front component or into your app's [shared dependencies bundle](#sharing-dependencies-across-front-components). Twenty loads the component and theme stylesheets and applies the workspace's active color scheme. You do not need to import `twenty-ui/style.css`, the theme stylesheets, or add a root `ThemeProvider` as you would in a standalone React application.
 
-### Importation de composants
+### Importing components
 
-Importez depuis le sous-chemin correspondant plutôt que depuis la racine du package, afin que seuls les composants que vous utilisez se retrouvent dans votre bundle :
+Import from the matching public family subpath to keep dependencies focused:
 
-| Sous-chemin                 | Ce qu’il exporte                                         |
-| --------------------------- | -------------------------------------------------------- |
-| `twenty-ui/input`           | `Button` et champs de formulaire                         |
-| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar`, et plus encore        |
-| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info`, et plus encore              |
-| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label`, et plus encore |
-| `twenty-ui/icon`            | Composants `Icon*` (par exemple `IconCheck`)             |
-| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`                     |
+Foundational controls are grouped under `twenty-ui/primitives/<family>`. Shared design presets and app building blocks are grouped under `twenty-ui/components/<family>`. The aggregate `twenty-ui/components` entry point remains available, but family imports make it easier to [share only the dependencies you use](#sharing-dependencies-across-front-components).
+
+| Subpath                              | What it exports                                                               |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| `twenty-ui/components/input`         | Main and light buttons, search and image inputs, and country/currency pickers |
+| `twenty-ui/components/data-display`  | Avatar groups, JSON trees, metrics, command blocks, and icon tiles            |
+| `twenty-ui/components/feedback`      | Callouts, inline banners, and notifications                                   |
+| `twenty-ui/components/layout`        | Sections, overflowing lists, and icon transitions                             |
+| `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                                 |
+| `twenty-ui/components/settings`      | Settings rows                                                                 |
+| `twenty-ui/primitives/accessibility` | Hidden elements                                                               |
+| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators                    |
+| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                                           |
+| `twenty-ui/primitives/input`         | Buttons and form controls                                                     |
+| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                                |
+| `twenty-ui/primitives/navigation`    | Breadcrumbs, list items, and tabs                                             |
+| `twenty-ui/primitives/surfaces`      | Cards, nonmodal popovers, and tooltips                                        |
+| `twenty-ui/primitives/typography`    | Text and headings                                                             |
+| `twenty-ui/icon`                     | `Icon*` components (e.g. `IconCheck`)                                         |
+| `twenty-ui/theme`                    | `useTheme`, `themeCssVariables`, and `ThemeProvider`                          |
+
+Use [`MainButton`](/ui/components/input/main-button) for prominent actions and [`LightButton`](/ui/components/input/light-button) for lightweight actions. Use `Button`, `Field`, `Input`, `Select`, and other primitives from `twenty-ui/primitives/input` for foundational controls and forms. Follow each compound control's documented parts, such as `Field.Root`, `Field.Label`, and `Field.Description`.
+
+Use [`Dropdown`](/ui/components/navigation/dropdown) from `twenty-ui/components/navigation` for action menus, option pickers, and nonmodal form panels. Use `enqueueSnackbar` from `twenty-sdk/front-component` for host notifications.
+
+The standalone `Dialog` and `AlertDialog` APIs are also exported by Twenty UI, but direct use in front components is prohibited. Use the [host communication API](#host-communication-api) for dialogs.
+
+These entry points do not require Monaco. The separate `twenty-ui/components/code-editor` entry point depends on Monaco, whose script loader is unsupported in the front component sandbox, so `CodeEditor` cannot become interactive there.
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Status, Tag } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
+import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { MainButton } from 'twenty-ui/components/input';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
+import { useTheme } from 'twenty-ui/theme';
 
 const StyledWidget = () => {
+  const theme = useTheme();
+
+  const handleClick = async () => {
+    await enqueueSnackbar({ message: 'Clicked!', variant: 'success' });
+  };
+
   return (
-    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
-      <Button title="Click me" onClick={() => alert('Clicked!')} />
-      <Tag text="Active" color="green" />
-      <Status color="green" text="Online" />
+    <div
+      style={{
+        padding: theme.spacing[4],
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: theme.spacing[2],
+      }}
+    >
+      <MainButton onClick={handleClick}>Click me</MainButton>
+      <Tag color="green">Active</Tag>
+      <Status color="green">Online</Status>
     </div>
   );
 };
@@ -735,21 +1011,21 @@ export default defineFrontComponent({
 });
 ```
 
-### Icônes
+### Icons
 
-Importez des icônes individuelles depuis `twenty-ui/icon` :
+Import individual icons from `twenty-ui/icon`:
 
 ```tsx
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Chaque icône nommée bénéficie du tree-shaking ; en importer quelques-unes n’ajoute donc que très peu à votre bundle. Évitez `IconsProvider`, `useIcons` et `iconsState` — ils intègrent l’ensemble complet d’icônes Tabler (plusieurs Mo).
+Each named icon is tree-shaken, so importing a handful adds little to your bundle. Avoid `IconsProvider` and `useIcons` in front components. Front components are bundled without code splitting, so the provider's dynamic icon catalog (the full Tabler set, roughly 2 MB minified) ends up in your bundle. See the [icon reference](/ui/icons) for available exports and supported props.
 
-### Thématisation et jetons de thème
+### Theming and theme tokens
 
-Les composants Twenty UI correspondent automatiquement au thème clair et sombre de l’espace de travail — le moteur de rendu applique le jeu de couleurs actif sur l’hôte, et les composants résolvent leurs couleurs par rapport à celui-ci.
+Twenty UI components automatically match the workspace's light and dark theme. The renderer applies the active color scheme on the host, and the components resolve their CSS variables against it.
 
-Pour utiliser les mêmes jetons de design dans vos propres styles inline, appelez le hook `useTheme()`. Il renvoie les jetons de thème de Twenty (espacement, couleurs, rayons, polices) connectés au thème actif, sans qu’aucune configuration de `ThemeProvider` ne soit nécessaire dans votre composant :
+To use the same design tokens in your own inline styles, call `useTheme()` inside the component body. In front components it returns CSS variable references by default, so styles follow the host's active theme without a local `ThemeProvider`:
 
 ```tsx
 import { useTheme } from 'twenty-ui/theme';
@@ -771,79 +1047,134 @@ const Card = () => {
 };
 ```
 
-Comme `useTheme()` est un hook, vous lisez les jetons à l’intérieur du corps du composant, de sorte que les valeurs reflètent toujours le thème en cours. La même table de jetons est également exportée en tant que constante `themeCssVariables`, mais privilégiez `useTheme()` dans les composants front — une constante au niveau du module qui déréférence `themeCssVariables` peut être indéfinie pendant l’extraction du manifeste de l’application.
+The same CSS references are exported as `themeCssVariables` from `twenty-ui/theme`. Read them inside the component body: the CLI mocks `twenty-ui` during manifest extraction, so dereferencing imported theme constants at module scope can fail the build.
 
-Pour bifurquer explicitement selon le jeu de couleurs actif, lisez-le avec `useColorScheme()` depuis `twenty-sdk/front-component`, qui renvoie `'light'` ou `'dark'`.
+CSS reference strings are not resolved JavaScript numbers, even for tokens such as `theme.icon.size.md`. Do not perform arithmetic on them or pass them to APIs that require numbers. See [Theming](/ui/theming) and [Tokens](/ui/tokens) for semantic paths and CSS variable names.
 
-## Limitations actuelles
+To branch on the active scheme explicitly, read it with `useColorScheme()` from `twenty-sdk/front-component`, which returns `'light'` or `'dark'`.
 
-Les composants Front sont en cours de développement actif. Le rendu, le style, la gestion des événements, la mesure des éléments et le stockage du navigateur fonctionnent bien. Tout ce qui va *au-delà* de ces éléments (appeler une méthode du DOM sur une ref, observer les redimensionnements d’éléments, créer un portail en dehors de votre arbre) est manquant ou incomplet aujourd’hui, et la plupart de ces opérations échouent silencieusement : aucune exception, et aucune erreur TypeScript non plus, puisque l’échafaudage est typé par rapport au DOM complet du navigateur.
+## Current limitations
 
-Si l’un de ces points vous bloque, [ouvrez un ticket](https://github.com/twentyhq/twenty/issues/new/choose) afin qu’il soit priorisé.
+Front components are under active development. Rendering, styling, handling events, measuring elements, body portals and browser storage work well. Anything that reaches _past_ those (calling a DOM method on a ref, for example) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
 
-### Disposition et mesure
+If one of these blocks you, [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) so it gets prioritized.
 
-Les éléments peuvent se mesurer eux-mêmes : l’hôte reflète la géométrie dans le bac à sable, de sorte que les lectures sont traitées localement mais peuvent avoir jusqu’à une image de retard, et la première lecture d’un élément jamais mesuré renvoie des zéros. Après l’écriture, relisez dans un callback `requestAnimationFrame` ou dans un effet.
+### Layout and measurement
 
-| API                                                                                      | Ce qui se passe                                                                                                                               |
-| ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Fonctionne, depuis le miroir ; affecter `scrollTop` / `scrollLeft` est une opération nulle (no-op)                                            |
-| `getClientRects()`, `window.matchMedia()`                                                | Lève une exception                                                                                                                            |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Fonctionnent, en rapportant le **viewport du navigateur** ; la taille propre de votre widget est `document.body.clientWidth` / `clientHeight` |
-| `window.getComputedStyle()`                                                              | Renvoie uniquement les styles inline de l’élément, jamais la cascade calculée de l’hôte                                                       |
-| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (les gardes `typeof` fonctionnent)                                                                                           |
-| `MutationObserver`                                                                       | Fonctionne, y compris `subtree`, `attributeFilter`, les anciennes valeurs et `takeRecords()`                                                  |
+Elements can measure themselves: the host mirrors geometry into the sandbox, so reads are answered locally but can be up to one frame stale, and the first read of a never-measured element returns zeros. After writing, re-read in a `requestAnimationFrame` callback or an effect.
 
-Le positionnement via `getBoundingClientRect` fonctionne désormais, mais tout ce qui surveille les changements de taille via `ResizeObserver` (le `ResponsiveContainer` de recharts, `autoUpdate` de Floating UI) ne fonctionne toujours pas. Préférez de toute façon le CSS pour la mise en page : votre feuille de style atteint la vraie page, donc flexbox, grid, `aspect-ratio`, `clamp()` et `@container` se comportent normalement, sans latence de trame.
+| API                                                                                      | What happens                                                                                                     |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Work, from the mirror; assigning `scrollTop` / `scrollLeft` scrolls the element on the page (see Scrolling)      |
+| `getClientRects()`                                                                       | Throws                                                                                                           |
+| `window.matchMedia()`                                                                    | Works for a fixed set of features, with `change` events (see below)                                              |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Work, reporting the **browser viewport**; your widget's own size is `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Host layout values for measured elements and their parents; the rest, theme variables too, from inline styles    |
+| `ResizeObserver`                                                                         | Works, from the mirror; `document.body` reports your widget's box                                                |
+| `IntersectionObserver`                                                                   | `ReferenceError` (`typeof` guards do work)                                                                       |
+| `MutationObserver`                                                                       | Works, including `subtree`, `attributeFilter`, old values and `takeRecords()`                                    |
+
+Positioning from `getBoundingClientRect` and size observation through `ResizeObserver` both work from the same mirror, so resize callbacks trail the host by about a frame. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
+
+`matchMedia()` evaluates `width`, `height`, `orientation`, `-webkit-device-pixel-ratio`, `resolution`, `hover`, `pointer` and `prefers-color-scheme`, in the `min-`/`max-` form, the Level 4 range form (`(width >= 600px)`, `(400px <= width <= 800px)`) and the valueless form (`(width)`). Widths, heights and `orientation` describe **your widget's box**, not the browser viewport, so they follow `document.body.clientWidth` rather than `window.innerWidth`, and `em` and `rem` count as 16px. `hover` and `pointer` describe the primary input of the user's device. Any other condition counts as unknown, the way browsers treat unknown features: the comma-separated member it appears in evaluates to `false`, even under `not`, unless the rest of that member already decides the result, as in `not print and (prefers-reduced-motion: reduce)`. That covers unknown features and the syntax this parser does not implement inside a condition, such as nested groups like `((min-width: 600px))`, `not` inside a group and `calc()` values. An `or` between conditions makes its member `false`. The `MediaQueryList` and `MediaQueryListEvent` constructors are not exposed either, so `instanceof` checks against them throw a `ReferenceError`.
+
+Because that stylesheet reaches the real page, a `@media (min-width: ...)` rule is evaluated by the host against the browser viewport, while `matchMedia('(min-width: ...)')` answers for your widget's box. To make CSS follow the same box your JavaScript sees, declare your own `container-type` on a wrapper and query that: an `@container` rule without one resolves against the nearest host container, not your widget. The same split applies to color scheme, where a stylesheet `@media (prefers-color-scheme: dark)` follows the browser and OS preference while `matchMedia('(prefers-color-scheme: dark)')` follows the theme selected in Twenty, so style from `useTheme()` tokens when the two must agree.
+
+The height you are handed is your own box as well, and depending on where the host mounts you that box can be sized by your own content. Branching layout on `min-height`, `max-height` or `orientation` can then feed back into itself and oscillate. Prefer width-based queries, or `@container` with `container-type: inline-size`, for layout decisions.
 
 <Note>
-`requestAnimationFrame`, `fetch`, `setTimeout` et `queueMicrotask` fonctionnent sans le préfixe `window.`. Seuls `window.requestAnimationFrame(...)` et les fonctions similaires lèvent une exception.
+  `requestAnimationFrame` works, with or without the `window.` prefix. Only
+  Chrome runs a real animation frame inside a worker; Firefox and Safari get a
+  16 ms timer, so use it to defer a re-read past a write, not to drive an
+  animation.
 </Note>
 
-### Accès au DOM
+### Scrolling
 
-Une `ref` vous donne un élément du bac à sable, pas un `HTMLElement`.
+Assigning `scrollTop` or `scrollLeft`, calling `scrollTo()` or its alias `scroll()`, and calling `scrollIntoView()` scroll the matching element on the page:
 
-| Ce que vous écrivez                                                                                         | Ce qui se passe                                          | À utiliser à la place                                                                                                                                                                                |
-| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Lève une exception                                       | Composants contrôlés ; lisez les valeurs à partir de `event.target`                                                                                                                                  |
-| `element.classList.add(...)`                                                                                | Lève une exception (`classList` est `undefined`)         | Construisez vous-même la chaîne `className`                                                                                                                                                          |
-| `document.createTreeWalker()`                                                                               | Lève une exception                                       | `querySelector()` / `querySelectorAll()` et `getElementById()` fonctionnent ; `getElementsByClassName()` fonctionne aussi, mais renvoie une collection statique, et non une `HTMLCollection` vivante |
-| `document.activeElement`                                                                                    | Toujours `undefined`                                     | Suivez le focus avec `onFocus` / `onBlur`                                                                                                                                                            |
-| `canvas`                                                                                                    | Ne rend rien, pas d’erreur                               | SVG, ou dessiner hors écran et afficher le résultat dans un élément `img`                                                                                                                            |
-| `createPortal(node, document.body)`                                                                         | Ne rend rien, tandis que `isConnected` signale un succès | Superpositions en ligne avec `position: absolute`, ou passez à la bibliothèque votre propre élément conteneur                                                                                        |
+- Scroll changes apply after the next render, in the order your code made them. Within one render, input selection changes apply first, so `setSelectionRange()` followed by a `scrollLeft` write keeps the caret visible.
+- Reads return the value you wrote until the page reports the real position, which the browser clamps to the scrollable range. In right-to-left containers, `scrollLeft` is zero or negative, as in browsers.
+- `scrollIntoView()` accepts `block` and `inline` with `start`, `center`, `end` and `nearest`, aligning `block` vertically and `inline` horizontally, so vertical writing modes are not mapped. It only scrolls your component's own scroll containers, never the widget frame, the page or another component. `focus()` still reveals the focused element the way the browser does.
+- Scrolling is instant: `behavior` and the `container` option are ignored, and `scrollBy()` is not available.
+- Writing back a position you just read, such as `element.scrollTop = element.scrollTop`, does nothing, so it cannot undo a scroll the user made in the meantime. This only holds once the page has measured the element; until then the write is applied.
+- Scrolling `document.documentElement`, `document.body` or `window` stays inside the sandbox and never scrolls the page; `window.scrollTo()`, `scroll()` and `scrollBy()` do nothing.
+- The first read of a container that was never measured returns zeros (see Layout and measurement), so a scrollability check made right after the container appears can report it as not scrollable.
 
-Cet écart lié au portail est la raison pour laquelle les popovers de Radix, Headless UI, MUI et react-select ne rendent rien par défaut. La plupart acceptent une prop de conteneur ; faites-la pointer vers un élément que vous avez rendu.
+### Global scope
 
-### Événements
+The worker's own natives are also aliased onto `window`, so they work with or without the `window.` prefix: `fetch`, `setTimeout`/`clearTimeout`, `setInterval`/`clearInterval`, `queueMicrotask`, `console`, `crypto`, `performance`, `structuredClone`, `btoa`/`atob`, `URL`/`URLSearchParams`, `AbortController`/`AbortSignal`, `Headers`/`Request`/`Response`, `Blob`, `File`, `FormData` and `TextEncoder`/`TextDecoder`.
 
-La souris, le pointeur, le toucher, le glisser, le clavier, le focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` et `animationend`/`transitionend` sont transmis à l’hôte, plus quelques événements propres à chaque élément : `load`/`error` sur `img`, le presse-papiers et la composition sur `input`/`textarea`, les médias sur `video`/`audio`, `toggle` sur `details`/`dialog`. Tout le reste (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, la capture de pointeur, `onLoad` sur `img`) est ignoré sans avertissement.
+### DOM access
 
-`document.addEventListener()` et `window.addEventListener()` s’enregistrent sans erreur mais ne se déclenchent jamais, c’est pourquoi un glisser-déposer s’arrête dès que le pointeur quitte l’élément sur lequel il a commencé. `event.preventDefault()` ne traverse pas non plus ; l’envoi de formulaire, `dragover`/`drop` et les clics sur les liens sont déjà protégés pour vous.
+A `ref` gives you a sandbox element, not an `HTMLElement`.
 
-### Attributs et styles
+| What you write                                 | What happens                                                                                                                             | Use instead                                                                                                                                                                                                                                                                                               |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.blur()`               | Forward to the corresponding element on the page and update the sandbox's active element                                                 | `onFocus` / `onBlur` to observe focus changes                                                                                                                                                                                                                                                             |
+| `ref.current.click()`                          | Dispatches a `click` inside the sandbox: a checkbox or radio toggles and its `onChange` runs, but the element on the page is not clicked | Controlled components for anything the page must do                                                                                                                                                                                                                                                       |
+| `ref.current.select()`, `.setSelectionRange()` | Work on `input` and `textarea`, applied to the element on the page after the next render                                                 | Controlled components for the value itself                                                                                                                                                                                                                                                                |
+| `ref.current.scrollTo()`, `.scrollIntoView()`  | Scroll the component's own scroll containers on the page (see Scrolling)                                                                 | `focus()` when you also want to move focus                                                                                                                                                                                                                                                                |
+| `video.play()`                                 | Throws                                                                                                                                   | Controlled components; read values from `event.target`                                                                                                                                                                                                                                                    |
+| `document.createTreeWalker()`                  | Throws                                                                                                                                   | `querySelector()` / `querySelectorAll()`, `matches()`, `closest()` (including pseudo-classes such as `:disabled` and `:not()`), `getElementById()`, `contains()` and `compareDocumentPosition()` work; `getElementsByClassName()` works too, but returns a static collection, not a live `HTMLCollection` |
+| `document.activeElement`                       | Follows the page's focus inside the component and updates when sandbox code calls `focus()` or `blur()`                                  | `onFocus` / `onBlur` to react to the page's focus                                                                                                                                                                                                                                                         |
+| `canvas`                                       | Renders nothing, no error                                                                                                                | SVG, or draw offscreen and show the result in an `img` element                                                                                                                                                                                                                                            |
+| `createPortal(node, document.body)`            | Renders in a host overlay layer bounded to 200px around the component                                                                    | Keep overlays within this area, or add scrolling for larger content                                                                                                                                                                                                                                       |
 
-Chaque élément transfère ses propres propriétés au DOM hôte (`href` sur `a`, `src`/`alt` sur `img`, `value`/`placeholder`/`disabled` sur `input`, etc.), plus un ensemble commun sur chaque élément : `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` et tout attribut `aria-*` / `data-*` (avec tiret, donc `ariaLabel` est ignoré). Tout ce qui sort de ce cadre est silencieusement supprimé, donc exprimez l’état personnalisé sous forme de `data-*`.
+`element.classList` works, backed by the `class` attribute: `add`, `remove`, `toggle`, `replace`, `contains`, `item`, `length`, `value` and iteration all behave as they do in a browser, and `className` stays in sync. `element.dataset` works the same way, backed by the `data-*` attributes; write `data-*` names in lowercase, since the sandbox keeps attribute names as written instead of lowercasing them like a browser.
 
-Le CSS du composant, qu’il provienne de `import './styles.css'`, de CSS-in-JS ou d’un élément `style`, est injecté dans le `head` de la page hôte **sans portée**. Ainsi, les noms de classes entrent en collision avec ceux de Twenty (préfixez-les, et n’écrivez jamais de `div { ... }` sélecteurs), et `@media` correspond à la fenêtre du navigateur plutôt qu’à votre widget (utilisez `@container` avec votre propre `container-type`). Les props `style` en ligne ne sont pas affectées.
+Body portals can extend up to 200px beyond each edge of your component, including outside a widget's scroll frame. Larger overlays are clipped to this area, so give long menus their own scrolling container. Keyboard navigation in Twenty UI lists such as Autocomplete and Select reveals the highlighted option inside that container. Native top-layer APIs such as `showModal()`, `showPopover()` and `requestFullscreen()` are blocked.
 
-### Stockage et réseau
+### Events
 
-`localStorage` et `sessionStorage` sont fournis par Twenty plutôt que par le navigateur : le composant s’exécute dans un worker avec une origine opaque, donc l’hôte stocke les valeurs pour le compte de votre application. Voir [stockage](#storage) pour leur portée et leurs limites. IndexedDB, les cookies, l’API Cache et `BroadcastChannel` restent indisponibles. Pour conserver l’état entre les appareils, appelez une [fonction logique](/fr/developers/extend/apps/logic/logic-functions) et utilisez son [magasin clé-valeur](/fr/developers/extend/apps/logic/key-value-store).
+Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `img`, clipboard and composition on `input`/`textarea`, media on `video`/`audio`, `toggle` on `details`/`dialog`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `img`) is dropped without warning.
 
-`fetch` fonctionne, avec quelques réserves :
+Handlers receive typed events built from the page event, `PointerEvent`, `MouseEvent`, `KeyboardEvent`, `InputEvent`, `WheelEvent` or `FocusEvent`, and those constructors exist in the sandbox for `dispatchEvent()`. Each forwarded event also carries React's synthetic event surface (`nativeEvent`, `isDefaultPrevented()`, `isPropagationStopped()`, `persist()`), so code written against React events keeps working even though the sandbox hands the event object to your handler directly.
 
-* Les appels à l’API Twenty et aux routes de votre application sont proxifiés par l’hôte, donc privilégiez [`RestApiClient`](#calling-the-twenty-rest-api). Sur les appels proxifiés, `AbortSignal` et les autres options `RequestInit` sont ignorées, et seuls les corps `string` et `URLSearchParams` sont pris en charge.
-* Les autres origines quittent le bac à sable avec `Origin: null`, donc une API tierce répond uniquement si elle envoie `Access-Control-Allow-Origin: *`. Appelez-la plutôt depuis une fonction logique.
-* `fetch('/rest/people')` n’est jamais associé à l’API Twenty, car le bac à sable n’a pas d’URL de page pour résoudre un chemin relatif.
+A page event crosses when the element the user interacted with, or one of its ancestors in your component, has a handler for that event type. It crosses once and then propagates inside the sandbox as it does on the page: `event.target` is the element the user interacted with, `currentTarget` is the element whose handler is running, `stopPropagation()` keeps ancestors' handlers from running, and `relatedTarget` points to the sandbox element focus or the pointer moved from or to, or is `null` when that element is outside your component. Like in React, `onFocus` and `onBlur` also run for focus changes inside the element, and `onClickCapture` and the other capture handlers run during the capture phase.
 
-### Capture de médias
+Handlers a library adds with `React.cloneElement`, such as the ones behind Base UI's `render` prop, run after the element's own handlers instead of replacing them, so passing `onClick: undefined` to `cloneElement` does not remove the element's handler. A handler on a Base UI `render` element can still call `event.preventBaseUIHandler()` to skip Base UI's own handler.
 
-`navigator.mediaDevices.getUserMedia()` et `MediaRecorder` fonctionnent à l’intérieur des composants front-end grâce à des polyfills de sandbox, de sorte que le code d’enregistrement standard s’exécute sans modification et que `MediaRecorder.isTypeSupported` indique si les combinaisons courantes de conteneur/codec sont prises en charge. Des objets de contraintes `getUserMedia` détaillés sont acceptés mais non transmis — l’hôte capture avec ses valeurs par défaut pour les types demandés — et une seule capture peut être active à la fois entre les applications. Stockez un `Blob` enregistré avec la fonction hôte `uploadFile`.
+`event.target.value` and `checked` reflect the control once the browser has applied the user's change: in `input`, `change`, `click`, `blur` and `focusout` handlers, and in `keyup` handlers for `value`. In `keydown`, `beforeinput` and pointer handlers they hold the control's value and checked state as of its last edit, whatever your component listens to: an `Enter` handler reads the text typed so far, but a handler for a printable key does not see that key yet, so read live values from a controlled input or an `onChange` handler.
 
-### Autres lacunes
+`document` listeners receive the events that cross from your component, but nothing that happens elsewhere on the page, so to catch shortcuts with `document.addEventListener('keydown', ...)`, put an `onKeyDown` on an element that wraps your component. `window` listeners only receive `error` and `unhandledrejection`. Pointer moves only cross over elements that have a move handler, and pointer capture stays on the page, which is why a drag stops as soon as the pointer leaves those elements. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
 
-* **Contenu de fichier.** Un `input` de type `file` fournit uniquement à votre gestionnaire les métadonnées du fichier, pas les octets, donc `FileReader` n’est pas disponible. Pour téléverser un `Blob` dont votre code dispose déjà — par exemple celui produit par `MediaRecorder` — utilisez la fonction hôte `uploadFile`.
-* **Charges utiles de glisser-déposer.** Les événements de glisser-déposer se déclenchent, mais `event.dataTransfer` est `undefined`.
-* **Modules natifs Node.** `fs`, `path` et `node:crypto` font échouer la construction, donc déplacez ce travail dans une [fonction logique](/fr/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` et `URL` sont disponibles.
-* **`iframe`** est toujours à nouveau placé dans un bac à sable sans `allow-same-origin`, donc une intégration qui repose sur sa propre session s’affiche comme déconnectée. Il n’a pas non plus de `onLoad`.
+### Attributes and styling
+
+Each element forwards its own properties to the host DOM (`href` on `a`, `src`/`alt` on `img`, `value`/`placeholder`/`disabled` on `input`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+
+Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` element, is injected into the host page's `head` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+
+### Storage and network
+
+`localStorage` and `sessionStorage` are provided by Twenty rather than the browser: the component runs in a worker at an opaque origin, so the host stores the values on your app's behalf. See [storage](#storage) for their scoping and limits. IndexedDB, cookies, the Cache API and `BroadcastChannel` remain unavailable. To persist state across devices, call a [logic function](/fr/developers/extend/apps/logic/logic-functions) and use its [key-value store](/fr/developers/extend/apps/logic/key-value-store).
+
+`fetch` works, with caveats:
+
+- Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
+- Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
+- `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+
+### File selection
+
+File inputs deliver native `File` objects with metadata and readable contents. Use `text()` or `arrayBuffer()` to read a selected file, or pass it to the `uploadFile` host function. Opening the native chooser requires calling `input.click()` within one second of a trusted click inside your component. The SDK-built React and Preact flows are verified in Chromium.
+
+Worker-created object URLs assigned to `img.src` support previews. Revoke your URLs when replacing the image or unmounting your component. Your application owns file validation, upload progress and cancellation.
+
+### Media capture
+
+Declare `microphone`, `camera`, or both in the `requestedCapabilities` array passed to `defineApplication()` so these capabilities appear during installation. Approval is workspace-wide and requires a member who can manage apps.
+
+If an installed app calls `navigator.mediaDevices.getUserMedia()` without the required access, Twenty pauses capture and shows an approval dialog. This also supports older apps without capability declarations. Members who cannot manage apps must ask a workspace administrator to approve access. Cancelling the dialog rejects the request before browser or operating system permissions are requested.
+
+Package updates preserve existing workspace grants and do not automatically grant additional media access. Locally synced development apps receive the capabilities declared in their manifest. Once access is approved, Twenty does not ask again for each capture, but browser and operating system permissions still apply.
+
+An orange dot in the workspace header indicates active capture. Hover over or select the dot to see the apps using the microphone or camera and stop their capture. Pending requests appear as an outlined dot with a cancellation control.
+
+`getUserMedia()` and `MediaRecorder` run through sandbox polyfills, so standard recording code and `MediaRecorder.isTypeSupported()` work unchanged after approval. Detailed constraint objects are accepted but not forwarded. The host captures with its defaults for the requested kinds. Different applications can capture concurrently, and stopping an app affects only its own sessions. Each front component supports one pending or active capture at a time. Store a recorded `Blob` with the `uploadFile` host function.
+
+### Other gaps
+
+- **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
+- **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/fr/developers/extend/apps/logic/logic-functions). Web Crypto replaces `node:crypto`, and `fetch`, `TextEncoder` and `URL` are available too, see [global scope](#global-scope) — but nothing replaces `fs`: the sandbox has no filesystem.
+- **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

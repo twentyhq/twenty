@@ -1,24 +1,32 @@
 ---
 title: 翻译
-description: 以多种语言发布你的应用——通过一个 locales 目录翻译 manifest 标签和 UI 字符串。
-icon: language
+description: Ship your app in multiple languages — translate manifest labels and UI strings through one locales catalog.
+icon: 'language'
 ---
 
-Twenty 应用均以**英文**编写：你的源码和 manifest 中的字符串
-是英文源文本，`en` 是你进行翻译时的源语言环境，任何未被翻译的语言环境都会回退到它。
+<Note>
+  本指南的翻译尚未更新为 Twenty 独立 CLI
+  的用法。为避免使用已移除的命令，下面暂时显示最新的英文内容。
+</Note>
 
-你的应用有两类可翻译文本，并且它们都通过同一个
-`locales/` 目录：
+Twenty apps are authored in **English**: the strings in your source and manifest
+are the English source text, `en` is the source locale you translate _from_, and
+any locale left untranslated falls back to it.
 
-* **Manifest labels** —— 对象和字段名称、视图标题、菜单项，以及
-  在应用元数据中声明的其他字符串。
-* **前端组件字符串** —— 你的 React 前端组件渲染的 UI 文本。
+Your app has two kinds of translatable text, and both flow through the same
+`locales/` catalog:
 
-你标记可翻译字符串，将它们提取到按语言环境划分的目录中，翻译这些目录，然后构建过程会为当前用户提供正确的语言——无需额外配置。
+- **Manifest labels** — object and field names, view titles, menu items, and
+  other strings declared in your app's metadata.
+- **Front-component strings** — the UI text your React front components render.
 
-## 标记前端组件字符串
+You mark the translatable strings, extract them into per-locale catalogs,
+translate those catalogs, and the build serves the right language for the
+current user — no extra wiring.
 
-从 `twenty-sdk/front-component` 中导入翻译辅助函数：
+## Marking front-component strings
+
+Import the translation helpers from `twenty-sdk/front-component`:
 
 ```tsx
 import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
@@ -44,41 +52,57 @@ const Card = ({ count, name }: { count: number; name: string }) => {
       <p>{t('Saved {count} cards', { count })}</p>
 
       {/* Resolve a lazily-declared descriptor */}
-      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+      <ul>
+        {STATUSES.map((s) => (
+          <li key={s.id}>{t(s.label)}</li>
+        ))}
+      </ul>
     </section>
   );
 };
 ```
 
-### 何时使用哪一种
+### When to use which
 
-* **`Trans`** —— JSX 中的静态文本。 使用 `message` 和 `values` 属性进行插值，如 `Trans message="Hi {name}" values={{ name }}`；直接在子节点中插值无法被静态提取。
-* **`useTranslate().t`** —— 组件内部的动态字符串。 当用户切换语言时会重新渲染。 在渲染逻辑中优先使用这个。
-* **`t(...)`**（直接导入）—— 可在**任何地方**使用的即时翻译，包括事件处理函数、辅助函数和模块作用域——不仅仅在渲染逻辑中。
-* **`msg(...)`** —— 以数据形式（常量、配置）声明字符串的惰性描述符。 在之后通过 `t(descriptor)` 来解析它。
+- **`Trans`** — static text in JSX. Use the `message` and `values` props for
+  interpolation, as in `Trans message="Hi {name}" values={{ name }}`;
+  interpolating directly in the children is not statically extractable.
+- **`useTranslate().t`** — dynamic strings inside a component. Re-renders when the
+  user switches language. Prefer this inside render.
+- **`t(...)`** (imported directly) — eager translation usable **anywhere**,
+  including event handlers, helpers, and module scope — not only inside render.
+- **`msg(...)`** — a lazy descriptor for strings declared as data (constants,
+  config). Resolve it later with `t(descriptor)`.
 
-### 上下文
+### Context
 
-传入 `context` 以区分那些源字符串相同但译法不同的情况：
+Pass `context` to disambiguate identical source strings that translate
+differently:
 
 ```tsx
 t({ message: 'Open', context: 'door' });
 t({ message: 'Open', context: 'window' });
-<Trans context="card-title">Untitled</Trans>
+<Trans context="card-title">Untitled</Trans>;
 ```
 
-在区域设置目录中，上下文字符串会作为一组内容出现，其键为对应的上下文：`"\<context>": { "\<message>": "\<translation>" }`。 清单（Manifest）标签在结构上就是带有上下文的——每个标签都携带其所扮演的元数据角色（`objectMetadata.labelSingular`、`fieldMetadata.label`、`view.name` 等），因此同一个词在作为对象名称和作为视图名称时，可以有不同的翻译。
+Contextual strings appear in locale catalogs as a group keyed by their
+context: `"<context>": { "<message>": "<translation>" }`. Manifest labels are
+contextual by construction — each one carries the metadata role it plays
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), so
+the same word can translate differently as an object name and as a view name.
 
-## 提取和翻译
+## Extracting and translating
 
-在你的应用目录中运行提取命令：
+Run the extract command from your app directory:
 
 ```bash
-twenty dev:translations-extract                  # collect strings into locales/en.json
-twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+twenty app translations extract                  # collect strings into locales/en.json
+twenty app translations extract --locale fr-FR   # also scaffold a target locale
 ```
 
-提取会收集你的 manifest 标签以及前端组件源码中的 `t()`/`msg()`/`Trans` 字符串，并将它们放入 `locales/\<locale>.json` 中，以源字符串作为键。 填写翻译：
+Extraction collects both your manifest labels and the `t()`/`msg()`/`Trans`
+strings from your front-component source into `locales/<locale>.json`, keyed by
+source string. Fill in the translations:
 
 ```json
 // locales/fr-FR.json
@@ -95,21 +119,49 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 }
 ```
 
-无上下文字符串是扁平条目；有上下文字符串——包括每个清单标签——都嵌套在其上下文键下。
+Context-free strings are flat entries; contextual strings — including every
+manifest label — are nested under their context key.
 
-像 `{name}` 这样的占位符会在运行时被替换——请在翻译中保留它们。 任何留空的字符串都会回退到源文本。
+Placeholders like `{name}` are substituted at runtime — keep them in the
+translation. Any string left empty falls back to the source text.
 
-## 运行方式
+## How it runs
 
-`twenty dev:build` 会编译目录并为当前用户提供正确的语言：manifest 标签在服务端解析，前端组件目录被打包进每个组件 bundle 中。 在运行时，组件会从其执行上下文（宿主的当前语言）中读取语言环境，并将每个字符串在其目录中解析，当翻译缺失时回退到源文本。 在宿主中切换语言会实时重新渲染 `Trans` 和 `useTranslate().t` 的字符串。
+`twenty app build` compiles the catalogs and serves the right language for the
+current user: manifest labels are resolved server-side, and front-component
+catalogs are baked into each component bundle. At runtime a component reads the
+locale from its execution context (the host's current language) and resolves
+each string against its catalog, falling back to the source when a translation
+is missing. Switching language in the host re-renders `Trans` and
+`useTranslate().t` strings live.
 
-清单标签会在每次同步时编译——`twenty dev:build`、`twenty apply`
-以及持续监视的 `twenty dev` 都是如此——因此，编辑区域设置文件并
-同步即可看到新文本。 Front 组件目录会在构建时被嵌入到
-每个组件包中，因此更改其中之一仍意味着
-需要重新运行 `twenty dev:build`（并重新部署）。
+Manifest labels are compiled on every sync — `twenty app build`, `twenty app apply`
+and the continuous `twenty app dev` watch alike — so editing a locale file and
+syncing is enough to see the new text. Front component catalogs are baked into
+each component bundle at build time, so changing one of those still means
+re-running `twenty app build` (and redeploying).
 
-`Trans` 的文本子节点可以跨多行——空白会以与 JSX 相同的方式被折叠，因此这两种写法都会被提取为键 `Welcome back`：
+## Pulling translations
+
+`twenty app pull` writes an application's published translations back into
+`locales/`. A published catalog is keyed by message id, so pull recovers the
+readable form only for strings whose source it can see: the labels of the
+metadata it pulled and the `t()`/`msg()`/`Trans` strings of front components
+present in the project. Everything else is kept as is in
+`locales/compiled/<locale>.json`, keyed by message id. The build merges those
+files into the catalog (an entry in `locales/<locale>.json` wins over a
+compiled one with the same id), `twenty app translations extract` leaves them alone,
+and every pull rewrites them, so they shrink as more of the app's source lands
+in the tree. Do not edit them by hand; translate in `locales/<locale>.json`.
+
+A project without a `locales/` folder says nothing about translations, so a
+sync from it leaves whatever the app already published untouched. To remove
+published translations on purpose, keep the folder and delete the locale files
+inside it: a `locales/` folder that compiles to no locale is an explicit
+declaration, and the sync prunes accordingly.
+
+`Trans` text children may span multiple lines — whitespace is collapsed the
+same way JSX collapses it, so both of these extract to the key `Welcome back`:
 
 ```tsx
 <Trans>Welcome back</Trans>

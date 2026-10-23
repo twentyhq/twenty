@@ -1,25 +1,31 @@
 ---
 title: Recursos públicos
-description: Envie arquivos estáticos — imagens, ícones, fontes — junto com seu app por meio da pasta public/.
-icon: folder-open
+description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
+icon: 'folder-open'
 ---
 
-A pasta `public/` na raiz do seu app contém arquivos estáticos — imagens, ícones, fontes ou quaisquer outros recursos de que seu app precisa em tempo de execução. Esses arquivos são incluídos automaticamente nas compilações, sincronizados durante o modo de desenvolvimento e enviados para o servidor.
+<Note>
+  A tradução deste guia ainda não foi atualizada para a CLI independente do
+  Twenty. Abaixo, apresentamos temporariamente o conteúdo atual em inglês para
+  evitar o uso de comandos removidos.
+</Note>
 
-Arquivos colocados em `public/` são:
+The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
 
-* **Publicamente acessíveis** — depois de sincronizados com o servidor, os recursos são servidos em uma URL pública. Não é necessária autenticação para acessá-los.
-* **Disponíveis em componentes de front-end** — use URLs de recursos para exibir imagens, ícones ou qualquer mídia dentro de seus componentes React.
-* **Disponíveis em funções lógicas** — referencie URLs de recursos em e-mails, respostas de API ou qualquer lógica no lado do servidor.
-* **Usado para metadados de marketplace** — os campos `logo` e `galleryImages` no arquivo de referência `defineApplication()` desta pasta (por exemplo, `public/logo.png`). Eles são exibidos no marketplace quando seu app é publicado. URLs absolutas externas são ignoradas para esses campos — agrupe as imagens em `public/`. Cada imagem não pode exceder 10 MB.
-* **Sincronizados automaticamente no modo de desenvolvimento** — quando você adiciona, atualiza ou exclui um arquivo em `public/`, ele é sincronizado automaticamente com o servidor. Não é necessário reiniciar.
-* **Incluídos nas compilações** — `yarn twenty dev:build` agrupa todos os recursos públicos na saída de distribuição.
+Files placed in `public/` are:
 
-## Acessando recursos públicos com `getPublicAssetUrl`
+- **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
+- **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
+- **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
+- **Used for marketplace metadata** — the `logo` and `galleryImages` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published. External absolute URLs are ignored for these fields — bundle the images in `public/` instead. Each image must not exceed 10 MB.
+- **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
+- **Included in builds** — `twenty app build` bundles all public assets into the distribution output.
 
-Use o helper `getPublicAssetUrl` de `twenty-sdk` para obter a URL completa de um arquivo no seu diretório `public/`. Funciona tanto em **funções lógicas** quanto em **componentes de front-end**.
+## Accessing public assets with `getPublicAssetUrl`
 
-**Em uma função lógica:**
+Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
+
+**In a logic function:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -45,7 +51,7 @@ export default defineLogicFunction({
 });
 ```
 
-**Em um componente de front-end:**
+**In a front component:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -64,4 +70,4 @@ export default defineFrontComponent({
 });
 ```
 
-O argumento `path` é relativo à pasta `public/` do seu app. Tanto `getPublicAssetUrl('logo.png')` quanto `getPublicAssetUrl('public/logo.png')` resolvem para a mesma URL — o prefixo `public/` é removido automaticamente, se presente.
+The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.

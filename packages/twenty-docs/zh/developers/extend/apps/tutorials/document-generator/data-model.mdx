@@ -1,31 +1,37 @@
 ---
 title: 1. 数据模型
-icon: database
-description: 带有对象、字段和关系的模型文档和模板。
+icon: 'database'
+description: Model documents and templates with objects, fields, and a relation.
 ---
 
-我们的应用需要两个自定义对象：**文档模板**（写什么）和
-**文档**（生成的结果）。 让我们来定义它们。
-
-用CLI扫描每个实体的文件 — — 它为您生成一个有效的 UUID 和
-文件夹：
-
-```bash filename="Terminal"
-yarn twenty dev:add object
-```
-
-在下方显示完成的文件。
-
 <Note>
-每一个 `*_UNIVERSAL_IDENTIFIER' 常住寿命为
-`src/constants/universal-identifiers.ts\` 并且在使用时导入。 下面的
-代码片段省略了这些导入的简洁度 - 将它们保留在您自己的文件中。
+  本指南的翻译尚未更新为 Twenty 独立 CLI
+  的用法。为避免使用已移除的命令，下面暂时显示最新的英文内容。
 </Note>
 
-## 模板对象
+Our app needs two custom objects: **document templates** (what to write) and
+**documents** (the generated result). Let's define them.
 
-一个模板具有一个 `name`、一个包含 `{{placeholders}}` 的 `body`，以及一个 `target`，用于指明它是为 Person 还是 Company 编写的。 `body` 是一个
-`RICH_TEXT` 字段，所以二十个字段给它一个完整的文本编辑器。
+Scaffold each entity file with the CLI — it generates a valid UUID and the right
+folder for you:
+
+```bash filename="Terminal"
+twenty app add object
+```
+
+Below we show the finished files.
+
+<Note>
+  Every `*_UNIVERSAL_IDENTIFIER` constant lives in
+  `src/constants/universal-identifiers.ts` and is imported where used. The
+  snippets below omit those imports for brevity — keep them in your own files.
+</Note>
+
+## The template object
+
+A template has a `name`, a `body` with `{{placeholders}}`, and a `target` that
+says whether it's written for a Person or a Company. The `body` is a
+`RICH_TEXT` field, so Twenty gives it a full rich-text editor.
 
 ```ts filename="src/objects/document-template.object.ts"
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -40,42 +46,74 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
-    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
-      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
-    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+    {
+      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT,
+      name: 'body',
+      label: 'Body',
+      icon: 'IconFileText',
+      description:
+        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
+    },
+    {
+      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'target',
+      label: 'Target',
+      icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
-        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
-      ] },
+        {
+          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON',
+          label: 'Person',
+          color: 'blue',
+          position: 0,
+        },
+        {
+          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY',
+          label: 'Company',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
   ],
 });
 ```
 
 <Warning>
-`SELECT` 选项 **值** 必须是 `UPPER_CASE` (`PERSON`, 而不是`person`)，并且
-`defaultValue` 用额外引号包裹：`` `PERSON` ``。 "label" 是
-用户所看到的。
+  `SELECT` option **values** must be `UPPER_CASE` (`PERSON`, not `person`), and
+  the `defaultValue` is wrapped in extra quotes: `` `'PERSON'` ``. The `label`
+  is what users see.
 </Warning>
 
-## 文档对象
+## The document object
 
-生成的文档存储渲染的 `content` 和 `status` 。 以相同的方式定义它，并添加一个 `status` 选择字段，取值为 `DRAFT` / `GENERATED`。 完整文件：
-[`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts)。
+The generated document stores the rendered `content` and a `status`. Define it
+the same way, with a `status` select of `DRAFT` / `GENERATED`. Full file:
+[`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
 
-## 将它们与关联到关系
+## Linking them with a relation
 
-每个文档都应该回到它所产生的模板。 关系是
-**双向** — — 您在自己的字段文件中定义双方。
+Each document should point back to the template it came from. Relations are
+**bidirectional** — you define both sides, each in its own field file.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -96,20 +134,24 @@ export default defineField({
 });
 ```
 
-另一边(`template-documents-relation.field.ts`) 是一个名为`documents`的
-`RelationType.ONE_TO_MANY` 字段，它指出相反的方向。
-完整模式请参阅 [Relations](/zh/developers/extend/apps/data/relations)。
+The other side (`template-documents-relation.field.ts`) is a
+`RelationType.ONE_TO_MANY` field named `documents` that points the opposite way.
+See [Relations](/zh/developers/extend/apps/data/relations) for the full pattern.
 
-## 在 20 中查看
+## See it in Twenty
 
-用 `yarn 20dev` 运行，打开 **设置 -> 数据模型**。 这两个对象都会出现，并带有你的应用标签。
+With `twenty app dev` running, open **Settings → Data model**. Both objects
+appear, tagged with your app.
 
-<Frame caption="两个自定义对象，由文档生成器应用程序所拥有。">
-  <img src="/images/docs/developers/extends/apps/documents/document-generator/01-data-model.png" alt="显示文档和文档模板的数据模型设置" />
+<Frame caption="Both custom objects, owned by the Document Generator app.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/01-data-model.png"
+    alt="Data model settings showing Documents and Document templates"
+  />
 </Frame>
 
-创建一个模板来测试 — 名称是 *销售建议*, 设置 **Target** 为
-*Person*, 并粘贴一个几个占位符的机构：
+Create one template to test with — name it _Sales proposal_, set **Target** to
+_Person_, and paste a body with a few placeholders:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -120,13 +162,20 @@ Best,
 The Team
 ```
 
-<Frame caption="模板记录。 该机构保留其占位符直到文档生成为止。">
-  <img src="/images/docs/developers/extends/apps/documents/document-generator/03-template-record.png" alt="带占位符主体的销售建议模板记录" />
+<Frame caption="A template record. The body keeps its placeholders until a document is generated.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/03-template-record.png"
+    alt="A Sales proposal template record with placeholder body"
+  />
 </Frame>
 
-**在这个步骤之后：** 你有 `documentTemplate` 和 `document` 对象，用
-的关系链接和一个模板生成它们。 接下来，填充它的逻辑。
+**After this step:** you have `documentTemplate` and `document` objects, linked by
+a relation, and one template to generate from. Next, the logic that fills it in.
 
-<Card title="下一步：生成文档 →" icon="bolt" href="/zh/developers/extend/apps/tutorials/document-generator/generating-document">
-  写下填充模板的逻辑函数。
+<Card
+  title="Next: generating documents →"
+  icon="bolt"
+  href="/zh/developers/extend/apps/tutorials/document-generator/generating-documents"
+>
+  Write the logic function that fills the template.
 </Card>

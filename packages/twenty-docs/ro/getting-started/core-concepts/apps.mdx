@@ -1,41 +1,51 @@
 ---
 title: Aplicații
-icon: cube
-description: Extindeți Twenty cu cod — obiecte personalizate, logică pe partea de server, componente UI și agenți AI, toate sub formă de pachete TypeScript.
+icon: 'cube'
+description: Extend Twenty with code — custom objects, server-side logic, UI components, and AI agents, all as TypeScript packages.
 ---
 
-Majoritatea CRM-urilor vă oferă un panou de configurare. Twenty vă oferă o platformă. Aplicațiile sunt modul în care dezvoltatorii extind Twenty dincolo de ceea ce oferă interfața — definind modele de date, logică pe partea de server, componente UI și capabilități AI ca cod, apoi implementându-le într-unul sau mai multe spații de lucru.
+<Note>
+  Traducerea acestui ghid nu a fost încă actualizată pentru CLI-ul independent
+  Twenty. Mai jos este afișat temporar conținutul actual în engleză, pentru a
+  evita utilizarea comenzilor eliminate.
+</Note>
 
-## De ce există aplicații
+Most CRMs give you a config panel. Twenty gives you a platform. Apps are how developers extend Twenty beyond what the UI offers — defining data models, server-side logic, UI components, and AI capabilities as code, then deploying them to one or more workspaces.
 
-Fluxurile de lucru acoperă automatizările fără cod. Dar unele lucruri au nevoie de cod: un motor de stabilire a prețurilor personalizat, un pipeline proprietar de îmbogățire a datelor, o verificare de conformitate care rulează la fiecare actualizare de înregistrare, un panou UI personalizat care preia date dintr-un instrument intern.
+## Why apps exist
 
-Aplicațiile vă permit să le construiți ca extensii de primă clasă — nu scripturi fragile care comunică cu un API din exterior, ci cod care rulează pe platformă, cu acces complet la sistemul de tipuri, modelul de permisiuni și UI.
+Workflows cover no-code automation. But some things need code: a custom pricing engine, a proprietary enrichment pipeline, a compliance check that runs on every record update, a custom UI panel that pulls data from an internal tool.
 
-## Ce poate defini o aplicație
+Apps let you build these as first-class extensions — not brittle scripts talking to an API from outside, but code that runs on the platform with full access to the type system, permission model, and UI.
 
-O aplicație este un pachet TypeScript care declară **entități** folosind `twenty-sdk`:
+## What an app can define
 
-| Entitate                    | Ce face                                                                                                     |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **Obiecte și câmpuri**      | Tabele de date noi și câmpuri pe obiectele existente — același tratament ca pentru cele încorporate.        |
-| **Funcții logice**          | TypeScript pe server declanșat de rute HTTP, programări cron sau evenimente din baza de date                |
-| **Componente front-end**    | Componente React sandboxate care se afișează în UI-ul Twenty (panou lateral, widgeturi, meniul de comenzi). |
-| **Abilități și agenți**     | Capabilități AI — instrucțiuni reutilizabile și asistenți autonomi                                          |
-| **Vizualizări și navigare** | Vizualizări de listă preconfigurate și elemente de meniu în bara laterală                                   |
+An app is a TypeScript package that declares **entities** using the `twenty-sdk`:
 
-Totul este detectat prin analiză AST în timpul build-ului — fără fișiere de configurare, fără cod boilerplate de înregistrare. Puneți un `export default defineObject(...)` în orice fișier `.ts` și SDK-ul îl va detecta.
+| Entity                 | What it does                                                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| **Objects & Fields**   | New data tables and fields on existing objects — same treatment as built-in ones              |
+| **Logic Functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events           |
+| **Front Components**   | Sandboxed React components that render inside Twenty's UI (side panel, widgets, command menu) |
+| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                             |
+| **Views & Navigation** | Pre-configured list views and sidebar menu items                                              |
 
-## Cum rulează
+Everything is detected via AST analysis at build time — no config files, no registration boilerplate. Put a `export default defineObject(...)` in any `.ts` file and the SDK picks it up.
 
-* **Funcțiile logice** se execută în procese Node.js izolate, sandboxate față de gazdă. Acestea accesează datele printr-un client API tipizat, limitat de permisiunile rolului aplicației.
-* **Componentele front-end** rulează în Web Workers folosind Remote DOM — izolate de pagina principală, dar randând elemente DOM native (nu iframes).
-* **Permisiunile** sunt aplicate la nivelul API-ului. O aplicație vede doar ceea ce îi permite rolul său.
+## How they run
 
-## Experiența dezvoltatorului
+- **Logic functions** execute in isolated Node.js processes, sandboxed from the host. They access data through a typed API client scoped to the app's role permissions.
+- **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes).
+- **Permissions** are enforced at the API level. An app only sees what its role allows.
 
-Scrieți aplicația ca un proiect TypeScript pe mașina dvs. CLI-ul urmărește fișierele sursă și le sincronizează în timp real cu un server Twenty care rulează — editați un fișier și vedeți modificarea în UI în mai puțin de o secundă. Clientul API tipizat este regenerat automat atunci când schema se schimbă. Când sunteți gata, `yarn twenty app:publish --private` publică pe un server de producție, sau `yarn twenty app:publish` vă listează aplicația pe npm și în marketplace-ul Twenty.
+## The developer experience
 
-<Card title="Creați prima dvs. aplicație" icon="arrow-right" href="/ro/developers/extend/apps/getting-started/quick-start">
-  Ghid în trei etape — generați scheletul, rulați un server local, sincronizați modificările.
+You write your app as a TypeScript project on your machine. The CLI watches your source files and live-syncs them to a running Twenty server — edit a file, see the change in the UI within a second. The typed API client regenerates automatically when the schema changes. When you're ready, `twenty app publish --private` pushes to a production server, or `twenty app publish` lists your app on npm and the Twenty marketplace.
+
+<Card
+  title="Build your first app"
+  icon="arrow-right"
+  href="/ro/developers/extend/apps/getting-started/quick-start"
+>
+  Three-phase walkthrough — scaffold, run a local server, sync your changes.
 </Card>

@@ -1,166 +1,128 @@
 ---
 title: Avvio rapido
-icon: rocket
-description: Crea la tua prima app Twenty in pochi minuti.
+icon: 'rocket'
+description: Create your first Twenty app with the standalone CLI.
 ---
-
-## Prerequisiti
-
-* **Node.js 24.5+** — [Scarica](https://nodejs.org/)
-* **Yarn 4** — incluso con Node.js tramite Corepack. Abilitalo: `corepack enable`
-* **Docker** — [Scarica](https://www.docker.com/products/docker-desktop/). Necessario per eseguire un server Twenty locale. Salta se hai già Twenty in esecuzione altrove.
-
-La creazione di un'app Twenty ha tre fasi. Lo strumento di scaffolding le combina in un unico comando per il percorso ottimale, ma ogni fase è un concetto distinto — quando qualcosa fallisce, sapere in quale fase ti trovi indica cosa correggere.
-
-| Fase                    | Cosa fai                                               | Strumento                           | Risultato                          |
-| ----------------------- | ------------------------------------------------------ | ----------------------------------- | ---------------------------------- |
-| **1. Crea struttura**   | Genera il codice sorgente dell'app                     | `npx create-twenty-app`             | Un progetto TypeScript sul disco   |
-| **2. Esegui un server** | Avvia un server Twenty con cui sincronizzare           | Docker + `yarn twenty docker:start` | Un'istanza Twenty in esecuzione    |
-| **3. Sincronizza**      | Sincronizza in tempo reale il tuo codice con il server | `yarn twenty dev`                   | Le tue modifiche compaiono nell'UI |
-
----
-
-## Fase 1 — Crea la struttura del progetto
-
-Crea una nuova app dal modello:
-
-```bash filename="Terminal"
-npx create-twenty-app@latest my-twenty-app
-```
-
-Lo scaffolder è non interattivo: il nome della directory diventa il nome dell'app. Passa `--display-name` e `--description` per personalizzare i metadati generati (puoi anche modificarli in seguito in `src/constants/universal-identifiers.ts`). Questo genera un progetto TypeScript in `my-twenty-app/` con un `application-config.ts` iniziale, un ruolo predefinito, workflow CI/CD e un test di integrazione.
-
-**Dopo questa fase:** hai il codice sorgente dell'app sulla tua macchina. Non è ancora in esecuzione — questa è la Fase 2.
-
----
-
-## Fase 2 — Esegui un server Twenty locale
-
-La tua app ha bisogno di un server Twenty con cui sincronizzarsi. Il server è un'istanza Twenty completa — UI, API GraphQL, PostgreSQL — in esecuzione in locale su Docker. Il tuo codice locale carica le sue definizioni su quel server, che le rende visibili nell'UI.
-
-Lo scaffolder avvia un'istanza per te: con Docker in esecuzione, scarica l'immagine `twentycrm/twenty-app-dev`, la avvia sulla porta `2020` e autentica la CLI sullo spazio di lavoro demo prepopolato (`tim@apple.dev`) — non è necessario effettuare l'accesso.
-
-Per connetterti invece a un server Twenty esistente, passa `--url \<your-server-url>`. I server remoti eseguono l'autenticazione con OAuth: si apre un browser così puoi effettuare l'accesso e fare clic su **Authorize**, concedendo alla CLI l'accesso al tuo spazio di lavoro. (Puoi anche scegliere di utilizzare OAuth in locale con `--authentication-method oauth` — accedi con `tim@apple.dev` / `tim@apple.dev`.)
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Schermata di accesso di Twenty" />
-</div>
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Schermata di autorizzazione della CLI di Twenty" />
-</div>
-
-Il terminale confermerà che tutto è configurato.
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="App creata con successo" />
-</div>
-
-**Dopo questa fase:** hai un server Twenty in esecuzione su [http://localhost:2020](http://localhost:2020) con la tua CLI autorizzata a sincronizzarsi con esso.
 
 <Note>
-Se Docker non è installato o in esecuzione, lo strumento di scaffolding ti indicherà il comando di avvio corretto per il tuo sistema operativo. Quando Docker è attivo, puoi riprendere con `yarn twenty docker:start` — non è necessario rifare lo scaffolding.
+  La traduzione di questa guida non è ancora aggiornata alla CLI autonoma di
+  Twenty. Di seguito viene mostrato temporaneamente il contenuto inglese
+  aggiornato per evitare di usare comandi rimossi.
 </Note>
 
----
+Use Node.js 24.5+ and Yarn 4. Install the CLI globally; your app keeps its own SDK dependencies.
 
-## Fase 3 — Sincronizza le tue modifiche
+## Create the project
 
-Questo è il ciclo interno in cui passerai la maggior parte del tempo.
-
-```bash filename="Terminal"
+```bash
+npm install -g twenty
+twenty app init my-twenty-app
 cd my-twenty-app
-yarn twenty dev
+yarn install
 ```
 
-Questo osserva `src/`, ricompila a ogni modifica e sincronizza il risultato con il server. Modifica un file, salvalo e in pochi secondi il server riflette la modifica. Vedrai un pannello di stato in tempo reale nel terminale.
+`app init` writes the template only. It does not install dependencies, initialize Git, start Docker, authenticate, or sync. Customize the display name and description with `--display-name` and `--description`; use `--path` for a different destination.
 
-Per un output più dettagliato (log di build, richieste di sincronizzazione, tracce di errore), aggiungi `--verbose`.
+## Connect to Twenty
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.png" alt="Output del terminale in modalità sviluppo" />
-</div>
+Use an existing workspace, or start a [local server](/it/developers/extend/apps/getting-started/local-server), then sign in:
 
-Apri [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Dovresti vedere la tua app sotto **Your Apps**.
+```bash
+twenty auth login --url https://your-workspace.twenty.com --name dev
+```
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Elenco Your Apps che mostra My twenty app" />
-</div>
+## Sync your changes
 
-Fai clic su **My twenty app** per vedere la sua **registrazione dell'applicazione** — un record a livello di server che descrive la tua app (nome, identificatore, credenziali OAuth, origine). Una registrazione può essere installata in più spazi di lavoro sullo stesso server.
+For the first sync, explicitly allow registration and installation:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Dettagli della registrazione dell'applicazione" />
-</div>
+```bash
+twenty app apply --create
+```
 
-Fai clic su **View installed app** per vedere l'installazione nello spazio di lavoro. La scheda **About** mostra la versione e le opzioni di gestione.
+Then start the development watcher:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="App installata" />
-</div>
+```bash
+twenty app dev
+```
 
-**Dopo questa fase:** hai un ciclo di sviluppo in tempo reale. Modifica qualsiasi file in `src/` e compare nell'UI.
+Use bounded commands for scripts and agents:
 
-### Sincronizzazione una tantum per CI e script
+```bash
+twenty app plan
+twenty app apply
+```
 
-Usa `plan` e `apply` per eseguire la stessa pipeline una volta, senza watcher:
+`plan` previews changes. `apply` uploads and synchronizes once. Use `--no-delete` to keep remote entities missing from source, or `--yes` to permit object and field deletions without a prompt. All three commands require an authenticated remote and registration ownership.
+
+`create-twenty-app` and the SDK's bundled CLI are retired. See the [CLI migration guide](/it/developers/extend/apps/operations/cli#migrating-from-the-sdk-cli).
+
+## What you can build
+
+Apps are composed of **entities** — each defined as a TypeScript file with a single `export default`:
+
+| Entity                 | What it does                                                                        |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| **Objects & Fields**   | Custom data models (Post Card, Invoice, etc.) with typed fields                     |
+| **Logic functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events |
+| **Front components**   | React components that render inside Twenty's UI (side panel, widgets, command menu) |
+| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                   |
+| **Views & Navigation** | Pre-configured list views and sidebar menu items                                    |
+| **Page layouts**       | Custom record detail pages with tabs and widgets                                    |
+
+Full reference: [Concepts](/it/developers/extend/apps/getting-started/concepts).
+
+## Build with AI agent skills
+
+Official Twenty [Agent Skills](https://skills.sh/) teach coding agents the full app workflow: scaffolding, entity development, sync and deploy operations, and marketplace publishing. They install into Claude Code, Codex, Cursor, Pi, and any other harness supported by the `skills` CLI, and work against any Twenty instance, including self-hosted custom domains and localhost.
 
 ```bash filename="Terminal"
-yarn twenty plan   # preview the metadata changes without applying them
-yarn twenty apply  # show the plan, then apply it
+# List the available skills
+npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --list
+
+# Install the scaffolding and development skills
+npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --skill create-app
+npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --skill develop-app
 ```
 
-| Comando             | Comportamento                                                                                                                                                                       | Quando usarlo                                                                                  |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `yarn twenty dev`   | Monitora e risincronizza a ogni modifica. Rimane in esecuzione finché non lo interrompi.                                                                                            | Sviluppo locale interattivo.                                                                   |
-| `yarn twenty apply` | Singola build + sincronizzazione, termina con codice `0` in caso di successo, `1` in caso di errore. Richiede conferma per le modifiche distruttive (passa `--force` per saltarla). | CI, hook pre-commit, agenti IA, flussi di lavoro scriptati.                                    |
-| `yarn twenty plan`  | Crea e stampa le modifiche ai metadati **senza applicarle**.                                                                                                                        | Ispezionare quali modifiche verrebbero apportate da una sincronizzazione prima di confermarla. |
+Each skill installs with its own reference docs. The `agent-skills` branch becomes available after the first successful publish from `main`; before that, follow the [local build instructions](https://github.com/twentyhq/twenty/tree/main/packages/twenty-agent-skills#local-development).
 
-Tutte le modalità richiedono un remoto autenticato. Vedi [Sincronizzazione e ripristino](/it/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) per maggiori informazioni su `plan`.
-
-<Note>
-`yarn twenty dev --once` e `yarn twenty dev --once --dry-run` sono alias deprecati di `yarn twenty apply` e `yarn twenty plan`.
-</Note>
-
-### Opzioni della modalità di sviluppo
-
-| Opzione                               | Descrizione                                                                                   |
-| ------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `--force`                             | Applica modifiche distruttive (eliminazioni) senza conferma.                                  |
-| `--debounceMs \<ms>` | Imposta il ritardo di debounce delle modifiche ai file in millisecondi (predefinito: `1000`). |
-| `--verbose` / `--debug`               | Mostra log di build dettagliati, richieste di sincronizzazione e tracce di errore.            |
-
-## Cosa puoi creare
-
-Le app sono composte da **entità** — ciascuna definita come un file TypeScript con un singolo `export default`:
-
-| Entità                   | Cosa fa                                                                                                           |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| **Oggetti e campi**      | Modelli di dati personalizzati (Cartolina, Fattura, ecc.) con campi tipizzati                                     |
-| **Funzioni logiche**     | TypeScript lato server attivato da route HTTP, pianificazioni cron o eventi del database                          |
-| **Componenti front-end** | Componenti React che vengono renderizzati all'interno dell'UI di Twenty (pannello laterale, widget, menu comandi) |
-| **Skill e agenti**       | Funzionalità di IA — istruzioni riutilizzabili e assistenti autonomi                                              |
-| **Viste e navigazione**  | Viste elenco preconfigurate e voci di menu della barra laterale                                                   |
-| **Layout di pagina**     | Pagine di dettaglio dei record personalizzate con schede e widget                                                 |
-
-Riferimento completo: [Concetti](/it/developers/extend/apps/getting-started/concepts).
-
-## Prossimi passaggi
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Configurazione" icon="screwdriver-wrench" href="/it/developers/extend/apps/config/overview">
-    Identità dell'applicazione, ruolo predefinito, hook di installazione e disinstallazione, asset pubblici.
+  <Card
+    title="Config"
+    icon="screwdriver-wrench"
+    href="/it/developers/extend/apps/config/overview"
+  >
+    Application identity, default role, install and uninstall hooks, public
+    assets.
   </Card>
-  <Card title="Dati" icon="database" href="/it/developers/extend/apps/data/overview">
-    Oggetti, campi e relazioni bidirezionali.
+  <Card
+    title="Data"
+    icon="database"
+    href="/it/developers/extend/apps/data/overview"
+  >
+    Objects, fields, and bidirectional relations.
   </Card>
-  <Card title="Logica" icon="bolt" href="/it/developers/extend/apps/logic/overview">
-    Funzioni logiche, skill, agenti e connessioni OAuth.
+  <Card
+    title="Logic"
+    icon="bolt"
+    href="/it/developers/extend/apps/logic/overview"
+  >
+    Logic functions, skills, agents, and OAuth connections.
   </Card>
-  <Card title="Layout" icon="table-columns" href="/it/developers/extend/apps/layout/overview">
-    Viste, navigazione, layout di pagina, componenti front-end.
+  <Card
+    title="Layout"
+    icon="table-columns"
+    href="/it/developers/extend/apps/layout/overview"
+  >
+    Views, navigation, page layouts, front components.
   </Card>
-  <Card title="Operazioni" icon="rocket" href="/it/developers/extend/apps/operations/overview">
-    CLI, test, remoti, CI e pubblicazione della tua app.
+  <Card
+    title="Operations"
+    icon="rocket"
+    href="/it/developers/extend/apps/operations/overview"
+  >
+    CLI, testing, remotes, CI, and publishing your app.
   </Card>
 </CardGroup>

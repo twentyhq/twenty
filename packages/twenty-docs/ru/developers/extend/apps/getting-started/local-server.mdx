@@ -1,87 +1,39 @@
 ---
 title: Локальный сервер
-description: Управление локальным Docker-сервером Twenty — запуск, остановка, обновление, параллельный тестовый экземпляр и ручная настройка SDK.
-icon: server
+description: Connect the standalone CLI to a local Twenty server.
+icon: 'server'
 ---
 
-## Управление локальным сервером
-
-Используйте `yarn twenty docker:*` для управления локальным контейнером Twenty:
-
-| Команда                                | Что делает                                           |
-| -------------------------------------- | ---------------------------------------------------- |
-| `yarn twenty docker:start`             | Запустить сервер (при необходимости скачивает образ) |
-| `yarn twenty docker:start 2.2.0`       | Запустить конкретную версию сервера                  |
-| `yarn twenty docker:start --port 3030` | Запустить на пользовательском порту                  |
-| `yarn twenty docker:stop`              | Остановить сервер (данные сохраняются)               |
-| `yarn twenty docker:status`            | Показать URL, версию и учётные данные для входа      |
-| `yarn twenty docker:logs`              | Потоковый вывод журналов сервера                     |
-| `yarn twenty docker:reset`             | Стереть данные и начать заново                       |
-| `yarn twenty docker:upgrade`           | Скачать последний образ `twenty-app-dev`             |
-| `yarn twenty docker:upgrade 2.2.0`     | Обновить до конкретной версии                        |
-
-Данные сохраняются между перезапусками в двух томах Docker (`twenty-app-dev-data` для PostgreSQL, `twenty-app-dev-storage` для файлов). Используйте `reset`, чтобы стереть всё.
-
-## Фиксация версии сервера
-
-Когда версия не передана, `docker:start` определяет версию из диапазона `engines.twenty` вашего приложения в `package.json` — того же диапазона, по которому сервер выполняет проверку при установке вашего приложения. Он запускает самый новый опубликованный образ `twenty-app-dev`, который удовлетворяет диапазону, и использует `latest`, если поле отсутствует или ни одна опубликованная версия не совпадает:
-
-```json filename="package.json"
-{
-  "engines": {
-    "twenty": ">=2.2.0"
-  }
-}
-```
-
-Передайте версию явно, чтобы переопределить диапазон для одного запуска: `yarn twenty docker:start 2.3.0`. Если контейнер уже существует с другой версией, `docker:start` обновляет его на месте (пересоздаёт контейнер с сохранением томов данных).
-
-## Обновление образа сервера
-
-`yarn twenty docker:upgrade` скачивает последний образ, сравнивает дайджесты и пересоздаёт контейнер только если действительно что-то изменилось. Тома сохраняются — заменяется только контейнер. Если был скачан новый образ и контейнер работал, при обновлении автоматически запускается новый контейнер; затем выполните `yarn twenty docker:start`, чтобы дождаться его готовности.
-
-```bash filename="Terminal"
-yarn twenty docker:upgrade            # Latest
-yarn twenty docker:upgrade 2.2.0      # Specific version
-```
-
-Проверьте запущенную версию с помощью `yarn twenty docker:status` (эта команда показывает `APP_VERSION`, встроенную в контейнер).
-
-## Запуск параллельного тестового экземпляра
-
-Передайте `--test` любой команде `docker:*`, чтобы управлять вторым, полностью изолированным экземпляром — это полезно для запуска интеграционных тестов или экспериментов, не затрагивая ваши основные данные разработки:
-
-| Команда                             | Что делает                                              |
-| ----------------------------------- | ------------------------------------------------------- |
-| `yarn twenty docker:start --test`   | Запустить тестовый экземпляр (по умолчанию — порт 2021) |
-| `yarn twenty docker:stop --test`    | Остановить его                                          |
-| `yarn twenty docker:status --test`  | Показать его статус                                     |
-| `yarn twenty docker:logs --test`    | Транслировать его журналы                               |
-| `yarn twenty docker:reset --test`   | Стереть его данные                                      |
-| `yarn twenty docker:upgrade --test` | Обновить его образ                                      |
-
-Тестовый экземпляр запускается в собственном контейнере Docker (`twenty-app-dev-test`) с выделенными томами (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) и собственной конфигурацией, поэтому он может работать параллельно с вашим основным экземпляром без конфликтов. Совместите `--test` с `--port`, чтобы переопределить значение по умолчанию (2021).
-
-## Ручная настройка (без генератора каркаса)
-
-Пропустите генератор каркаса, если вы добавляете SDK в существующий проект:
-
-```bash filename="Terminal"
-yarn add twenty-sdk twenty-client-sdk
-```
-
-Добавьте скрипт в `package.json`:
-
-```json filename="package.json"
-{
-  "scripts": {
-    "twenty": "twenty"
-  }
-}
-```
-
-Теперь вы можете запускать `yarn twenty dev`, `yarn twenty docker:start` и остальные команды.
-
 <Note>
-Не устанавливайте `twenty-sdk` глобально — фиксируйте версию в каждом проекте, чтобы каждое приложение использовало свою собственную версию.
+  Перевод этого руководства ещё не обновлён для отдельного CLI Twenty. Ниже
+  временно приведён актуальный текст на английском, чтобы избежать использования
+  удалённых команд.
 </Note>
+
+The standalone CLI connects to a running Twenty server. It does not start or manage Docker containers, and the SDK's `docker:*` commands have been removed.
+
+Use the [self-hosting guide](/ru/developers/self-host/self-host) to run Twenty with Docker. In a Twenty repository checkout, the existing development environment also works:
+
+```bash
+bash packages/twenty-utils/setup-dev-env.sh
+yarn start
+```
+
+Then authenticate against the server URL for your workspace:
+
+```bash
+twenty auth login --url http://localhost:3000 --name local
+twenty app apply --create --remote local
+```
+
+Use the actual URL and port of your server. For subdomain workspaces, use the workspace's hostname.
+
+## Integration tests
+
+Use a separate disposable server or workspace. Integration test setup installs an app and teardown uninstalls it. Set `TWENTY_API_URL` and `TWENTY_API_KEY` to that test instance before running `yarn test`.
+
+The generated CI workflow provisions an isolated instance through `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` and installs the standalone CLI separately.
+
+## Existing projects
+
+Keep `twenty-sdk` and `twenty-client-sdk` installed per project. Install the `twenty` CLI globally, then run `twenty app typecheck`, `twenty app build`, and `twenty app apply` from the app directory.

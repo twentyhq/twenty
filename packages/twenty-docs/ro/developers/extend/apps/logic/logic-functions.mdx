@@ -1,15 +1,21 @@
 ---
 title: Funcții logice
-description: Definește funcții TypeScript pe partea de server cu declanșatoare HTTP, cron și de evenimente din baza de date.
-icon: bolt
+description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+icon: 'bolt'
 ---
 
-Funcțiile de logică sunt funcții TypeScript pe partea de server care rulează pe platforma Twenty. Acestea pot fi declanșate de solicitări HTTP, programări cron sau evenimente din baza de date — și pot fi, de asemenea, expuse ca instrumente pentru agenți AI.
+<Note>
+  Traducerea acestui ghid nu a fost încă actualizată pentru CLI-ul independent
+  Twenty. Mai jos este afișat temporar conținutul actual în engleză, pentru a
+  evita utilizarea comenzilor eliminate.
+</Note>
+
+Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
 
 <AccordionGroup>
-<Accordion title="defineLogicFunction" description="Definiți funcții logice și declanșatoarele acestora">
+<Accordion title="defineLogicFunction" description="Define logic functions and their triggers">
 
-Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale.
+Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -50,40 +56,49 @@ export default defineLogicFunction({
 });
 ```
 
-Tipuri de declanșatoare disponibile:
-* **httpRoute**: Expune funcția pe o cale și o metodă HTTP. În codul aplicației, prefixează calea rutei cu `/s/` când folosești `RestApiClient`; URL-ul implementat folosește baza injectată `TWENTY_FUNCTIONS_URL` (sau `\<server-url>/s` atunci când nu este setată).
+Available trigger types:
+
+- **httpRoute**: Exposes your function on an HTTP path and method. In app code, prefix the route path with `/s/` when using `RestApiClient`; the deployed URL uses the injected `TWENTY_FUNCTIONS_URL` base (or `<server-url>/s` when it is not set).
 
 <Note>
-Pentru a apela o funcție logică declanșată de o rută dintr-o componentă front-end (headless), consultă [Apelarea unei funcții logice](/ro/developers/extend/apps/layout/front-components#calling-a-logic-function).
+To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/ro/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
-* **cron**: Rulează funcția pe un program folosind o expresie CRON.
-* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
-> de ex. `person.updated`, `*.created`, `company.*`
-* **serverRoute**: Expune o singură rută HTTP la nivelul înregistrării. O funcție de tip **resolver** (declarată cu `serverRouteTriggerSettings`) rulează în workspace-ul proprietar și fie returnează un `Response` sincron, fie workspace-ul țintă ȘI funcția logică de pus în coadă; pe ramura de punere în coadă, platforma confirmă cu `202` și rulează acea **țintă** în coada worker-ului. Consultați [declanșatorul de rută de server](#server-route-trigger).
+- **cron**: Runs your function on a schedule using a CRON expression.
+- **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+> e.g. `person.updated`, `*.created`, `company.*`
+- **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and either returns a sync `Response` or the target workspace AND logic function to enqueue; on the enqueue path the platform acks with `202` and runs that **target** on the worker queue. See [Server route trigger](#server-route-trigger).
 
 <Note>
-Puteți, de asemenea, să executați manual o funcție folosind CLI:
+You can also manually execute a function using the CLI:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
+twenty app exec --name create-new-post-card --payload '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+twenty app exec --universal-identifier e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
-Puteți urmări jurnalele cu:
+You can watch logs with:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:logs
+twenty app logs
 ```
+
 </Note>
 
-#### Payload-ul declanșatorului de rută
+<Note>
+  On the cloud, each run consumes workspace credits: a flat charge per
+  invocation plus a per-millisecond charge for the time the function runs, so
+  keeping `timeoutSeconds` tight and code fast keeps costs down. See
+  [Credits](/ro/user-guide/billing/capabilities/credits) for the rates.
+</Note>
 
-Când un declanșator de rută invocă funcția logică, aceasta primește un obiect `RoutePayload` care urmează
+#### Route trigger payload
+
+When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
 [AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
-Importați tipul `RoutePayload` din `twenty-sdk/logic-function`:
+Import the `RoutePayload` type from `twenty-sdk/logic-function`:
 
 ```ts
 import type { RoutePayload } from 'twenty-sdk/logic-function';
@@ -96,24 +111,23 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-Tipul `RoutePayload` are următoarea structură:
+The `RoutePayload` type has the following structure:
 
-  | Proprietate                  | Tip                                                     | Descriere                                                                                                                                                                                                                                               | Exemplu                                                                    |
-  | ---------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                                                                                                                                                                                          | consultați secțiunea de mai jos                                            |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                                                                                                                                                                                             | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametri de cale extrași din modelul rutei                                                                                                                                                                                                             | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Corpul cererii analizat (JSON)                                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `rawBody`                    | `string \| undefined`                                   | Corpul original al cererii în UTF-8, înainte de parsarea JSON. Util pentru verificarea semnăturilor de tip HMAC pentru webhook-uri (de exemplu, `X-Hub-Signature-256` de la GitHub, Stripe). `undefined` atunci când mediul de execuție nu a păstrat-o. |                                                                            |
-  | `isBase64Encoded`            | `boolean`                                               | Indică dacă corpul este codificat în base64                                                                                                                                                                                                             |                                                                            |
-  | `requestContext.http.method` | `string`                                                | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                                             |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Calea brută a cererii                                                                                                                                                                                                                                   |                                                                            |
-
+| Property                     | Type                                  | Description                                                                                                                                                                                           | Example                                                                    |
+| ---------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                                                                                                                                         | see section below                                                          |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                                                                                                                                          | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern                                                                                                                                                      | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+| `body`                       | `object \| null`                      | Parsed request body (JSON)                                                                                                                                                                            | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+| `rawBody`                    | `string \| undefined`                 | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. |                                                                            |
+| `isBase64Encoded`            | `boolean`                             | Whether the body is base64 encoded                                                                                                                                                                    |                                                                            |
+| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                           |                                                                            |
+| `requestContext.http.path`   | `string`                              | Raw request path                                                                                                                                                                                      |                                                                            |
 
 #### forwardedRequestHeaders
 
-În mod implicit, anteturile HTTP din cererile de intrare **nu** sunt transmise funcției dvs. de logică din motive de securitate.
-Pentru a accesa anumite anteturi, listați-le explicit în array-ul `forwardedRequestHeaders`:
+By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons.
+To access specific headers, list them in the `forwardedRequestHeaders` array:
 
 ```ts
 export default defineLogicFunction({
@@ -129,7 +143,7 @@ export default defineLogicFunction({
 });
 ```
 
-În handler, accesați anteturile transmise mai departe astfel:
+In your handler, access the forwarded headers like this:
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -142,12 +156,13 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Numele anteturilor sunt normalizate la litere mici. Accesați-le folosind chei cu litere mici (de exemplu, `event.headers['content-type']`).
+  Header names are normalized to lowercase. Access them using lowercase keys
+  (e.g., `event.headers['content-type']`).
 </Note>
 
-#### Răspuns HTTP personalizat
+#### Custom HTTP response
 
-În mod implicit, returnarea unei valori simple din handler trimite înapoi un răspuns `200` (JSON pentru obiecte, `text/plain` pentru șiruri). Pentru a controla codul de stare și antetele răspunsului, returnează un `Response` din `twenty-sdk/logic-function`:
+By default, returning a plain value from your handler sends it back as a `200` response (JSON for objects, `text/plain` for strings). To control the status code and response headers, return a `Response` from `twenty-sdk/logic-function`:
 
 ```ts
 import { Response } from 'twenty-sdk/logic-function';
@@ -160,35 +175,36 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-Din motive de securitate, anteturile de răspuns sunt limitate la o listă de antete permise. Orice antet care nu se află pe listă (de exemplu, `Set-Cookie`, anteturi CORS precum `Access-Control-Allow-Origin` sau anteturi personalizate `X-*`) este eliminat în mod silențios înainte ca răspunsul să fie trimis. Anteturile de răspuns permise sunt:
+For security reasons, response headers are restricted to an allow-list. Any header that is not on the list (e.g. `Set-Cookie`, CORS headers such as `Access-Control-Allow-Origin`, or custom `X-*` headers) is silently dropped before the response is sent. The allowed response headers are:
 
-* `content-type`
-* `content-language`
-* `content-disposition`
-* `cache-control`
-* `retry-after`
+- `content-type`
+- `content-language`
+- `content-disposition`
+- `cache-control`
+- `retry-after`
 
 <Note>
-Codul de stare trebuie să fie un cod de stare HTTP valid (între 100 și 599). Numele anteturilor de răspuns sunt comparate fără a ține cont de majuscule și minuscule.
+  The status code must be a valid HTTP status code (between 100 and 599).
+  Response header names are matched case-insensitively.
 </Note>
 
-#### Răspunsuri de eroare ale platformei
+#### Platform error responses
 
-Pe lângă propriile răspunsuri ale handlerului tău, platforma răspunde direct la apelurile către rute în anumite situații: `404` când ruta sau funcția nu există, `403` când aplicația este oprită, `429` când este atinsă limita ratei de execuție și `422` când `dependencies` de producție ale aplicației sunt prea mari pentru a fi instalate — vezi [limite privind dimensiunea dependențelor](/ro/developers/extend/apps/getting-started/project-structure#dependencies).
+Beyond your handler's own responses, the platform answers route calls directly in some situations: `404` when the route or function does not exist, `403` when the application is stopped, `402` when the workspace has exhausted its credit allowance or has no active subscription, `409` when a storage limit is reached, `429` when an execution rate limit or a usage limit is hit, and `422` when the application's production `dependencies` are too large to install — see [dependencies size limits](/ro/developers/extend/apps/getting-started/project-structure#dependencies).
 
-#### Declanșator de rută de server
+#### Server route trigger
 
-`httpRouteTriggerSettings` expune o funcție sub `/s/` și rezolvă spațiul de lucru din gazda cererii — ceea ce funcționează atunci când fiecare spațiu de lucru are propriul domeniu. Furnizorii terți, însă, livrează evenimentele fiecărui tenant către **un** singur URL. Pentru acest caz, folosiți `serverRouteTriggerSettings`.
+`httpRouteTriggerSettings` exposes a function under `/s/` and resolves the workspace from the request host — which works when each workspace has its own domain. Third-party providers, however, deliver every tenant's events to **one** URL. For that case, use `serverRouteTriggerSettings`.
 
-Declanșatorul are două părți:
+The trigger has two parts:
 
-1. O funcție logică de **resolver** — declarată cu `serverRouteTriggerSettings` — rulează în **workspace-ul deținător** (workspace-ul care deține înregistrarea aplicației). Inspectează cererea primită și returnează fie:
+1. A **resolver** logic function — declared with `serverRouteTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). It inspects the incoming request and returns either:
+   - `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — the platform enqueues that target in the resolved workspace and acks with `202 { queued: true }`, or
+   - a `Response` from `twenty-sdk/logic-function` — the platform echoes that HTTP response **synchronously** and does **not** enqueue a target (use this for challenge handshakes such as Slack `url_verification`).
 
-   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — platforma pune în coadă acea țintă în workspace-ul rezolvat și confirmă cu `202 { queued: true }`, sau
-   * un `Response` de la `twenty-sdk/logic-function` — platforma transmite mai departe acel răspuns HTTP **sincron** și **nu** pune în coadă nicio țintă (folosiți acest lucru pentru handshake-uri de tip challenge, cum ar fi Slack `url_verification`).
+   The resolver is the single point of authorization — the URL only carries the resolver's identifier. **This is the preferred place to verify request signatures**: the resolver runs before any side effect, has access to the original `rawBody` and forwarded headers, and can reject without ever touching the target.
 
-   Resolver-ul este singurul punct de autorizare — URL-ul conține doar identificatorul resolver-ului. **Acesta este locul preferat pentru a verifica semnăturile cererilor**: resolver-ul rulează înaintea oricărui efect secundar, are acces la `rawBody` original și la headerele redirecționate și poate respinge fără a atinge vreodată ținta.
-2. O funcție logică **țintă** — o funcție logică obișnuită per-workspace — rulează apoi în workspace-ul rezolvat cu payload-ul returnat de resolver (sau payload-ul original al cererii dacă resolver-ul nu l-a transformat). Valoarea de returnare **nu** este observată de apelantul HTTP atunci când resolver-ul a ales calea de punere în coadă.
+2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value is **not** observed by the HTTP caller when the resolver chose the enqueue path.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
@@ -210,7 +226,9 @@ const handler = async (event: RoutePayload) => {
   const signature = event.headers['x-hub-signature-256'] ?? '';
   const expected =
     'sha256=' +
-    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+    createHmac('sha256', secret)
+      .update(event.rawBody ?? '')
+      .digest('hex');
 
   const a = Buffer.from(signature);
   const b = Buffer.from(expected);
@@ -275,15 +293,34 @@ export default defineLogicFunction({
 });
 ```
 
-Endpoint-ul este accesibil la:
+The endpoint is reachable at:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
 ```
 
-Identificatorul este `universalIdentifier` al resolver-ului din manifestul dvs. Înregistrați acel URL la furnizor.
+The identifier is the resolver's `id`: the primary key the server assigns when the app is first synced into the owner workspace, not the `universalIdentifier` from your manifest. Read it back from the `/metadata` API of the owner workspace, then register that URL with the provider:
 
-**Răspunsul la un GET de verificare.** Unii furnizori verifică un punct final înainte de a livra către acesta, trimițând un `GET` care conține o provocare la același URL către care vor trimite ulterior evenimente prin `POST` — WhatsApp Cloud API de la Meta este unul dintre aceștia. O rută de server răspunde numai la `POST`, cu excepția cazului în care specifici altfel, așa că declară ambele metode:
+```graphql
+query {
+  findManyLogicFunctions {
+    id
+    name
+    universalIdentifier
+  }
+}
+```
+
+<Note>
+  A URL carrying the resolver's `universalIdentifier` still resolves for now,
+  and the response carries a `Deprecation` header. A `universalIdentifier` is
+  unique per workspace, not globally: if another registration owned by a
+  different workspace declares the same one, the platform answers `404` for that
+  URL instead of choosing between them. Move the URLs registered with your
+  providers to the `id` form.
+</Note>
+
+**Answering a verification GET.** Some providers verify an endpoint before they deliver to it, by sending a `GET` carrying a challenge to the same URL they will later `POST` events to — Meta's WhatsApp Cloud API is one. A server route answers `POST` only unless you say otherwise, so declare both methods:
 
 ```ts
 serverRouteTriggerSettings: {
@@ -292,7 +329,7 @@ serverRouteTriggerSettings: {
 }
 ```
 
-Provocarea ajunge în `event.queryStringParameters`, iar returnarea unui `Response` o retransmite furnizorului în aceeași cerere. Un corp de tip șir este trimis ca `text/plain`, ceea ce așteaptă acești furnizori:
+The challenge arrives in `event.queryStringParameters`, and returning a `Response` echoes it back to the provider on the same request. A string body is sent as `text/plain`, which is what these providers expect:
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -303,48 +340,71 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-`httpMethods` înlocuiește valoarea implicită, în loc să se adauge la aceasta, astfel încât doar `['GET']` face ca ruta să respingă `POST`. Sunt acceptate numai `GET` și `POST`. Lăsați-o nesetată, cu excepția cazului în care furnizorul are nevoie de al doilea verb: o rută care declară `GET` își va executa resolverul pentru orice apelant neautentificat, inclusiv pentru crawlerele și serviciile de desfășurare a linkurilor care trimit `GET` fără solicitare. Orice pentru care platforma nu are o metodă primește răspunsul `405`, fără ca resolverul să fie vreodată executat.
+`httpMethods` replaces the default rather than adding to it, so `['GET']` alone makes the route reject `POST`. Only `GET` and `POST` are supported. Leave it unset unless the provider needs the second verb: a route that declares `GET` will have its resolver executed by any unauthenticated caller, including the crawlers and link unfurlers that send `GET` unprompted. Anything the platform does not have a method for is answered `405` without the resolver ever running.
 
 <Note>
-**Aplicația trebuie revendicată și instalată în spațiul de lucru al proprietarului.** Deoarece resolverul rulează în **spațiul de lucru al proprietarului** (spațiul de lucru care deține înregistrarea aplicației), un declanșator de rută de server funcționează doar după ce aplicația a fost *revendicată* — adică are un spațiu de lucru al proprietarului — **și** acea aplicație este **instalată în spațiul de lucru al proprietarului**. Până când ambele condiții sunt adevărate, resolverul nu are unde să ruleze, astfel ruta nu poate fi apelată. O aplicație care expune o funcție logică `serverRouteTriggerSettings` nu poate fi, așadar, listată în marketplace până când nu este revendicată și instalată în spațiul de lucru al proprietarului.
+  **The application must be claimed and installed on its owner workspace.**
+  Follow [Claiming your
+  app](/ro/developers/extend/apps/operations/publishing#claiming-your-app) to
+  assign an owner, then install the app in that workspace. Until both are true,
+  the resolver has nowhere to run and the server route returns `404`
+  (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed elsewhere.
+  Marketplace search hides apps with server routes until this setup and all
+  required server variables are complete. See [owner workspace costs and
+  availability](/ro/developers/extend/apps/operations/publishing#owner-workspace-costs-and-availability)
+  for billing and operational details.
 </Note>
 
-**Contractul resolver-ului.** Tipul `LogicFunctionConfig` din SDK impune acest lucru la compilare: de îndată ce setați `serverRouteTriggerSettings`, handler-ul este constrâns să returneze fie un `Response`, fie `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (sau un `Promise` al uneia dintre acestea). Pe calea de trimitere, `workspaceId` trebuie să fie un workspace în care funcția țintă este instalată, altfel cererea este respinsă cu `404`. Un rezultat care nu corespunde niciuneia dintre forme — inclusiv unul ale cărui identificatoare nu sunt UUID-uri — este respins cu `502`.
+**Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return either a `Response`, or `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of either). On the dispatch path, the `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`. A result that matches neither shape — including one whose identifiers are not UUIDs — is rejected with `502`.
 
-| Câmp                                     | Tip                 | Notițe                                                                            |
-| ---------------------------------------- | ------------------- | --------------------------------------------------------------------------------- |
-| `workspaceId`                            | `șir`               | UUID-ul workspace-ului în care va rula ținta.                                     |
-| `targetLogicFunctionUniversalIdentifier` | `string`            | `universalIdentifier` al funcției logice care trebuie invocată în acel workspace. |
-| `payload`                                | `object` (opțional) | Dacă este setat, înlocuiește corpul cererii trimis către țintă.                   |
+| Field                                    | Type                | Notes                                                                    |
+| ---------------------------------------- | ------------------- | ------------------------------------------------------------------------ |
+| `workspaceId`                            | `string`            | Workspace UUID where the target will run.                                |
+| `targetLogicFunctionUniversalIdentifier` | `string`            | `universalIdentifier` of the logic function to invoke in that workspace. |
+| `payload`                                | `object` (optional) | If set, replaces the request body sent to the target.                    |
 
 <Warning>
-**Verificarea semnăturii este responsabilitatea dvs. — verificați în resolver.** Platforma nu verifică semnăturile cererilor. Resolver-ul este locul recomandat pentru a face acest lucru: rulează primul, cu acces la `event.rawBody` și la headerele pe care le-ați enumerat în `forwardedRequestHeaders`, iar o eroare aruncată (sau orice `workspaceId` care nu se potrivește) oprește livrarea înainte ca ținta să fie invocată. Dacă, în schimb, mutați verificarea în funcția țintă, funcția țintă trebuie să aibă grijă să nu piardă `rawBody` și headerele — adică resolver-ul nu trebuie să returneze un `payload`. Verificați întotdeauna **înainte** de orice efect secundar și folosiți o comparație în timp constant.
+  **Signature verification is your responsibility — verify in the resolver.**
+  The platform does not verify request signatures. The resolver is the
+  recommended place to do it: it runs first, with access to `event.rawBody` and
+  the headers you listed in `forwardedRequestHeaders`, and a thrown error (or
+  any non-matching `workspaceId`) stops the dispatch before the target is
+  invoked. If you instead push verification down into the target, the target
+  must be careful not to lose `rawBody` and headers — i.e. the resolver must not
+  return a `payload`. Always verify **before** any side effect and use a
+  constant-time comparison.
 </Warning>
 
-Pentru semnăturile cererilor, majoritatea furnizorilor semnează cu HMAC-SHA256; părțile care diferă sunt numele headerului, codificarea digestului și șirul de payload semnat. Câteva exemple:
+**Bearer tokens.** Some providers, such as Microsoft Bot Framework, sign each request with a JWT in the `Authorization` header instead of a signature header. A server route can list `authorization` in `forwardedRequestHeaders` to receive it, and the resolver verifies it like any other signature. The platform removes the header if it carries a token issued by Twenty, so a server route never receives a Twenty session. `cookie` and `proxy-authorization` are never forwarded, and HTTP routes cannot forward any of these three headers.
 
-| Furnizor                     | Headere de redirecționat                               | Șir semnat                   | Digest                                                               |
-| ---------------------------- | ------------------------------------------------------ | ---------------------------- | -------------------------------------------------------------------- |
-| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (secretul este în base64 după eliminarea prefixului `whsec_`) |
-| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                                  |
-| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (cu prefixul `sha256=`)                                          |
-| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                               |
-| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (cu prefixul `v0=`)                                              |
+For request signatures, most providers sign with HMAC-SHA256; the parts that differ are the header name, the digest encoding, and the signed-payload string. A few examples:
 
-Exemplul de resolver de mai sus arată deja fluxul GitHub HMAC-SHA256 — adaptați numele headerului, codificarea digestului și șirul de payload semnat în funcție de furnizorul cu care vă integrați.
+| Provider                     | Headers to forward                                     | Signed string                | Digest                                             |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | -------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (secret is base64 after stripping `whsec_`) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (prefixed `sha256=`)                           |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                             |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (prefixed `v0=`)                               |
+
+The resolver example above already shows the GitHub HMAC-SHA256 flow — adapt the header name, digest encoding, and signed-payload string per the provider you're integrating.
 
 <Note>
-Când resolver-ul returnează un obiect de dispatch, ruta răspunde cu `202 { queued: true }`, iar ținta rulează în coada worker-ului — apelantul nu observă niciodată latența, rezultatul sau erorile țintei (acestea sunt înregistrate în jurnalele de execuție). Acest lucru împiedică retrimiterile expeditorului să amplifice încetinirile procesării, ceea ce este de dorit pentru ingestia de webhook-uri.
+When the resolver returns a dispatch object, the route responds `202 { queued: true }` and the target runs on the worker queue — the caller never observes the target's latency, result, or failures (those are recorded in execution logs). This keeps sender redeliveries from amplifying processing slowdowns, which is what you want for webhook ingestion.
 
-Atunci când apelantul trebuie să citească corpul răspunsului în cadrul aceleiași cereri (challenge handshakes, confirmări interactive), returnați în schimb un `Response` din **resolver**. Platforma îl reflectă sincron și omite coada; header-ele acestuia trec prin aceeași listă de permisiuni ca răspunsurile rutelor HTTP. Mențineți resolver-ul rapid — unii furnizori (de ex. Slack) expiră după câteva secunde. Deoarece resolver-ul este accesibil ca endpoint public, protejați-l cu limitare de rată la marginea infrastructurii dvs.
+The resolver runs in the owner workspace and spends its credits, so the route answers `402` when that workspace has exhausted its allowance or has no active subscription, and `429` when a usage limit is hit. Senders that retry on `5xx` will not retry these, which is what you want: the refusal will not clear on the next attempt.
+
+When the caller must read the response body on the same request (challenge handshakes, interactive acknowledgements), return a `Response` from the **resolver** instead. The platform echoes it synchronously and skips the queue; its headers go through the same allow-list as HTTP route responses. Keep the resolver fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
+
 </Note>
 
-#### Payload-ul declanșatorului de eveniment al bazei de date
+#### Database event trigger payload
 
-Când un declanșator de eveniment al bazei de date apelează funcția dvs. logică, aceasta primește un `DatabaseEventPayload` pentru fiecare înregistrare modificată. Payload-ul combină metadatele despre spațiul de lucru și obiectul sursă cu evenimentul la nivel de înregistrare.
+When a database event trigger invokes your logic function, it receives one `DatabaseEventPayload` per changed record (or a `DatabaseEventBatchPayload` covering several records when `batchMode` is enabled). The payload combines metadata about the source workspace and object with the record-level event.
 
 ```ts
 import type {
+  DatabaseEventBatchPayload,
   DatabaseEventPayload,
   ObjectRecordCreateEvent,
   ObjectRecordDestroyEvent,
@@ -357,37 +417,44 @@ type Person = {
 };
 ```
 
-Payload-ul include:
+The payload includes:
 
-| Proprietate                                      | Descriere                                                                                                      |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| `name`                                           | Numele evenimentului, cum ar fi `person.updated`.                                                              |
-| `workspaceId`                                    | Spațiul de lucru în care a avut loc evenimentul.                                                               |
-| `objectMetadata`                                 | Metadate pentru obiectul care s-a modificat.                                                                   |
-| `recordId`                                       | ID-ul înregistrării modificate.                                                                                |
-| `userId`, `userWorkspaceId`, `workspaceMemberId` | Câmpurile actorului atunci când evenimentul a fost cauzat de un utilizator al spațiului de lucru.              |
-| `properties`                                     | Datele înregistrării pentru eveniment, cu `before`, `after`, `diff` și `updatedFields` în funcție de operație. |
+| Property                                         | Description                                                                                                |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `name`                                           | Event name, such as `person.updated`.                                                                      |
+| `workspaceId`                                    | Workspace where the event happened.                                                                        |
+| `objectMetadata`                                 | Metadata for the object that changed.                                                                      |
+| `recordId`                                       | Id of the changed record.                                                                                  |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | Actor fields when the event was caused by a workspace user.                                                |
+| `properties`                                     | Record data for the event, with `before`, `after`, `diff`, and `updatedFields` depending on the operation. |
 
-| Eveniment          | Datele înregistrării                                                                                           |
+| Event              | Record data                                                                                                    |
 | ------------------ | -------------------------------------------------------------------------------------------------------------- |
 | `person.created`   | `event.properties.after`                                                                                       |
 | `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
 | `person.destroyed` | `event.properties.before`                                                                                      |
 
-Pentru ștergeri logice (soft delete), `.deleted` urmează structura de tip update deoarece câmpul `deletedAt` al înregistrării se modifică.
-Pentru ștergeri permanente, folosiți `.destroyed`.
+For soft deletes, `.deleted` follows the update-style shape because the record's `deletedAt` field changes.
+For permanent deletes, use `.destroyed`.
 
 <Note>
-`databaseEventTriggerSettings.updatedFields` filtrează ce evenimente de actualizare declanșează funcția.
-`event.properties.updatedFields` vă indică ce câmpuri s-au modificat efectiv în evenimentul curent.
+  `databaseEventTriggerSettings.updatedFields` filters which update events
+  trigger the function. `event.properties.updatedFields` tells you which fields
+  actually changed on the current event.
 </Note>
 
-Exemplu de eveniment de creare:
+`databaseEventTriggerSettings` accepts:
+
+| Property        | Description                                                                                                                                                              |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `eventName`     | Event to listen on, such as `person.updated`. Supports `*` for the object name, the operation, or both.                                                                  |
+| `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function.                                                              |
+| `batchMode`     | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
+
+Created event example:
 
 ```ts
-type PersonCreatedEvent = DatabaseEventPayload<
-  ObjectRecordCreateEvent<Person>
->;
+type PersonCreatedEvent = DatabaseEventPayload<ObjectRecordCreateEvent<Person>>;
 
 const handler = async (event: PersonCreatedEvent) => {
   const person = event.properties.after;
@@ -399,12 +466,10 @@ const handler = async (event: PersonCreatedEvent) => {
 };
 ```
 
-Exemplu de eveniment de actualizare:
+Updated event example:
 
 ```ts
-type PersonUpdatedEvent = DatabaseEventPayload<
-  ObjectRecordUpdateEvent<Person>
->;
+type PersonUpdatedEvent = DatabaseEventPayload<ObjectRecordUpdateEvent<Person>>;
 
 const handler = async (event: PersonUpdatedEvent) => {
   const { before, after, diff, updatedFields } = event.properties;
@@ -419,7 +484,7 @@ const handler = async (event: PersonUpdatedEvent) => {
 };
 ```
 
-Declanșare doar la actualizări ale e-mailului:
+Trigger only on email updates:
 
 ```ts
 export default defineLogicFunction({
@@ -431,7 +496,7 @@ export default defineLogicFunction({
 });
 ```
 
-Exemplu de eveniment de ștergere:
+Destroyed event example:
 
 ```ts
 type PersonDestroyedEvent = DatabaseEventPayload<
@@ -448,9 +513,50 @@ const handler = async (event: PersonDestroyedEvent) => {
 };
 ```
 
-#### Contextul execuției.
+#### Batching database events
 
-Fiecare gestionar primește un al doilea argument care descrie execuția propriu-zisă, indiferent de ce a declanșat-o. În timp ce primul argument își schimbă forma pentru fiecare declanșator, acesta nu se schimbă:
+A bulk write emits many events at once: importing a mailbox, for instance, can update thousands of records in a single operation, and one call per record floods the queue. Set `batchMode` to receive them together:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    batchMode: true,
+  },
+});
+```
+
+The handler then receives a `DatabaseEventBatchPayload`, which carries the same metadata as `DatabaseEventPayload` but replaces the record-level fields with an `events` array:
+
+```ts
+type PeopleUpdatedBatch = DatabaseEventBatchPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (batch: PeopleUpdatedBatch) => {
+  const updatedEmails = batch.events.map(
+    (event) => event.properties.after.emails?.primaryEmail,
+  );
+
+  return { workspaceId: batch.workspaceId, updatedEmails };
+};
+```
+
+<Note>
+  Batch size is not something a handler can rely on. The server decides how many
+  events a call carries, capped at 200, and a batch holds anything from a single
+  event up to that ceiling depending on how many the originating write produced.
+  Write the handler to loop over `events` whatever its length.
+</Note>
+
+Events are grouped by the user who caused them before being batched, so every call covers a single actor and `context.workspaceMemberId` stays meaningful. `updatedFields` filtering is applied before batching, so a batch only contains records you asked for.
+
+Without `batchMode`, the handler keeps receiving one `DatabaseEventPayload` per record.
+
+#### Execution context
+
+Every handler receives a second argument describing the run itself, whatever triggered it. Where the first argument changes shape per trigger, this one does not:
 
 ```ts
 import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
@@ -467,27 +573,28 @@ const handler = async (
 };
 ```
 
-| Câmp                | Tip              | Descriere                                                                                              |
-| ------------------- | ---------------- | ------------------------------------------------------------------------------------------------------ |
-| `workspaceId`       | `string`         | Spațiul de lucru căruia îi aparține execuția.                                                          |
-| `userWorkspaceId`   | `string \| null` | Persoana care a declanșat execuția, ca membru al acestui spațiu de lucru.                              |
-| `workspaceMemberId` | `string \| null` | Aceeași persoană ca înregistrare de membru al spațiului de lucru, la care conectați înregistrări.      |
-| `retryCount`        | `number`         | `0` la prima încercare. Consultați [sarcini de fundal](/ro/developers/extend/apps/logic/background-jobs). |
-| `maxRetries`        | `number`         | Limita superioară a reîncercărilor solicitate de aplicație.                                            |
+| Field               | Type             | Description                                                                                        |
+| ------------------- | ---------------- | -------------------------------------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | The workspace the run belongs to.                                                                  |
+| `userWorkspaceId`   | `string \| null` | The person who triggered the run, as their membership of this workspace.                           |
+| `workspaceMemberId` | `string \| null` | The same person as a workspace member record, which is what you link records to.                   |
+| `retryCount`        | `number`         | `0` on the first attempt. See [Background jobs](/ro/developers/extend/apps/logic/background-jobs). |
+| `maxRetries`        | `number`         | Upper bound on application-requested retries.                                                      |
 
-`userWorkspaceId` și `workspaceMemberId` sunt `null` atunci când nimeni nu a declanșat execuția: programările cron, hookurile de instalare și webhookurile neautentificate nu au nicio persoană în spatele lor. De asemenea, sunt `null` atunci când persoana nu are o înregistrare de membru al spațiului de lucru sau când aceasta a fost ștearsă.
+`userWorkspaceId` and `workspaceMemberId` are `null` when nobody triggered the run: cron schedules, install hooks and unauthenticated webhooks have no person behind them. They are also `null` when the person has no workspace member record, or theirs has been deleted.
 
 <Note>
-**Contextul vă indică cine a declanșat execuția.** Ceea ce poate *face* execuția este o declarație separată, mai jos.
+  **The context tells you who triggered the run.** What the run may *do* is a
+  separate declaration, below.
 </Note>
 
-#### Ale cui accesări le utilizează un apel
+#### Whose access a call uses
 
-Fiecare client — `CoreApiClient`, `MetadataApiClient` și `RestApiClient` — acționează ca persoana care a declanșat execuția: rolul acesteia se intersectează cu cel al aplicației dvs., astfel încât apelul nu poate face niciodată mai mult decât poate face oricare dintre voi. Acesta este comportamentul implicit și înseamnă că o persoană nu poate folosi niciodată aplicația dvs. pentru a-și depăși propriile permisiuni.
+Every client — `CoreApiClient`, `MetadataApiClient` and `RestApiClient` — acts as the person who triggered the run: their role intersected with your application's, so the call can never do more than either of you. That is the default, and it means a person can never use your app to exceed their own permissions.
 
-Când nimeni nu a declanșat execuția, nu există nicio persoană în numele căreia să se acționeze, astfel încât același client revine la accesul propriu al aplicației dvs.: programările cron, hookurile de instalare și webhookurile neautentificate nu necesită o gestionare specială.
+When nobody triggered the run there is no person to act as, so the same client falls back to your application's own access: cron schedules, install hooks and unauthenticated webhooks need no special handling.
 
-Unele apeluri au nevoie în mod legitim de accesul propriu al aplicației chiar și atunci când o persoană *se află* în spatele execuției — de exemplu, pentru a citi înregistrările de configurare ale aplicației dvs. sau pentru a efectua lucrări pe care persoana respectivă nu le-ar putea face singură. Creați un al doilea client pentru acestea:
+Some calls legitimately need the application's own access even when a person _is_ behind the run — reading your app's configuration records, or doing work that person could not do themselves. Build a second client for those:
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -504,7 +611,7 @@ const handler = async (event: DatabaseEventPayload) => {
 };
 ```
 
-Creați-le pe amândouă o singură dată, la nivel de modul, iar fiecare loc de apel indică apoi accesul utilizat prin clientul pe care îl apelează. `RestApiClient` acceptă aceeași opțiune:
+Build both once, at module scope, and every call site then says which access it uses by which client it calls. `RestApiClient` takes the same option:
 
 ```ts
 import { RestApiClient } from 'twenty-client-sdk/rest';
@@ -513,24 +620,32 @@ const asApplication = new RestApiClient({ runAs: 'application' });
 ```
 
 <Note>
-**O execuție pe care nu a declanșat-o nimeni acționează ca aplicația dvs.** Programările cron, hookurile de instalare și webhookurile neautentificate nu au nicio persoană în spatele lor, astfel încât clientul implicit revine la accesul propriu al aplicației dvs. și continuă să funcționeze. `runAs: 'application'` este necesar doar când doriți acel acces într-o execuție pe care o persoană *a* declanșat-o.
+**A run nobody triggered acts as your application.** Cron schedules, install hooks and unauthenticated webhooks have no person behind them, so the default client falls back to your application's own access and keeps working. `runAs: 'application'` is only needed when you want that access in a run a person *did* trigger.
 
-Verificați `context.workspaceMemberId` atunci când o funcție se comportă diferit în funcție de existența unei persoane în spatele ei, de exemplu pentru a atribui o înregistrare.
+Check `context.workspaceMemberId` when a function behaves differently depending on whether someone is behind it, for instance to attribute a record.
+
 </Note>
 
-Ajutoarele SDK care accesează resursele proprii ale aplicației dvs. folosesc întotdeauna accesul acesteia și ignoră `runAs`: [stocarea cheie-valoare](/ro/developers/extend/apps/logic/key-value-store), [conexiunile](/ro/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` și taxarea creditelor.
+The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/ro/developers/extend/apps/logic/key-value-store), [connections](/ro/developers/extend/apps/logic/connections), [messaging channels](/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` and [credit charging](/developers/extend/apps/logic/credits). `sendInboxMessage` also uses your application's access and ignores `runAs`, though it writes to the chats of the members you name.
 
-#### Expunerea unei funcții ca instrument AI sau ca acțiune în fluxul de lucru
+#### Exposing a function as an AI tool or workflow action
 
-Funcțiile logice pot fi expuse în două locuri, fiecare cu propriul declanșator:
+Logic functions can be exposed on two surfaces, each with its own trigger:
 
-* **`toolTriggerSettings`** — face funcția descoperibilă de către funcționalitățile AI ale Twenty (chat, MCP, apelarea de funcții). Folosește JSON Schema standard, formatul pe care LLM-urile îl înțeleg nativ.
-* **`workflowActionTriggerSettings`** — determină ca funcția să apară ca un pas în constructorul vizual de fluxuri de lucru. Folosește `InputSchema` bogat al Twenty, astfel încât constructorul să poată afișa editori de câmp adecvați, selectoare de variabile și etichete.
+- **`toolTriggerSettings`** — makes the function discoverable by Twenty's AI features (chat, MCP, function calling). Uses standard JSON Schema, the format LLMs natively understand.
+- **`workflowActionTriggerSettings`** — makes the function appear as a step in the visual workflow builder. Uses Twenty's rich `InputSchema` so the builder can render proper field editors, variable pickers, and labels.
 
-O funcție poate opta pentru una, cealaltă sau ambele. Acestea stau alături de `cronTriggerSettings`, `databaseEventTriggerSettings` și `httpRouteTriggerSettings` — același tipar, aceeași formă.
+A function can opt into one, the other, or both. They sit alongside `cronTriggerSettings`, `databaseEventTriggerSettings`, and `httpRouteTriggerSettings` — same pattern, same shape.
 
 <Note>
-**Relația cu acțiunea Code din fluxul de lucru.** Acțiunea integrată **Code** din constructorul de fluxuri de lucru este ea însăși o funcție logică — Twenty creează câte una pentru fiecare pas Code și afișează editorul inline. `workflowActionTriggerSettings` este modul în care transformi acel cod inline, de unică folosință, într-o acțiune **reutilizabilă**: definești funcția o singură dată în aplicația ta și devine selectabilă în orice flux de lucru, în loc să fie copiată și lipită în fiecare pas Code. Vezi [acțiunea Code](/ro/user-guide/workflows/capabilities/workflow-actions#code) în ghidul utilizatorului pentru vizualizarea din perspectiva utilizatorului final.
+  **Relationship to the workflow Code action.** The built-in **Code** action in
+  the workflow builder is itself a logic function — Twenty creates one per Code
+  step and exposes its editor inline. `workflowActionTriggerSettings` is how you
+  turn that one-off, inline code into a **reusable** action: define the function
+  once in your app and it becomes selectable in any workflow, instead of being
+  copy-pasted into each Code step. See the [Code
+  action](/ro/user-guide/workflows/capabilities/workflow-actions#code) in the
+  user guide for the end-user view.
 </Note>
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
@@ -565,10 +680,10 @@ export default defineLogicFunction({
 });
 ```
 
-Puncte cheie:
+Key points:
 
-* O funcție poate combina suprafețele — declară atât `toolTriggerSettings`, cât și `workflowActionTriggerSettings` pentru a o expune atât în chat, cât și în constructorul de fluxuri de lucru.
-* `toolTriggerSettings.inputSchema` și `workflowActionTriggerSettings.inputSchema` sunt ambele opționale. Când sunt omise, generatorul de manifest le deduce din codul sursă al handlerului (JSON Schema pentru instrumentul AI, `InputSchema` al Twenty pentru acțiunea de flux de lucru). Furnizează unul în mod explicit atunci când dorești o tipizare mai bogată — de exemplu, cu câmpuri compatibile cu `FieldMetadataType`, precum `CURRENCY` sau `RELATION` pentru constructorul de fluxuri de lucru, sau cu câmpuri `description` pe care agentul AI le poate citi:
+- A function can mix surfaces — declare both `toolTriggerSettings` and `workflowActionTriggerSettings` to expose it in chat AND in the workflow builder.
+- `toolTriggerSettings.inputSchema` and `workflowActionTriggerSettings.inputSchema` are both optional. When omitted, the manifest builder infers them from the handler source code (JSON Schema for the AI tool, Twenty's `InputSchema` for the workflow action). Provide one explicitly when you want richer typing — for example, with `FieldMetadataType`-aware fields like `CURRENCY` or `RELATION` for the workflow builder, or with `description` fields the AI agent can read:
 
 ```ts
 export default defineLogicFunction({
@@ -592,7 +707,7 @@ export default defineLogicFunction({
 });
 ```
 
-Pentru a declara parametrii **o singură dată** și a deservi ambele suprafețe, definește o singură schemă JSON (`InputJsonSchema`) și convertește-o pentru acțiunea din fluxul de lucru cu `jsonSchemaToInputSchema` din `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` primește direct schema JSON, în timp ce `workflowActionTriggerSettings.inputSchema` necesită `InputSchema` al Twenty:
+To declare your parameters **once** and serve both surfaces, define a single JSON Schema (`InputJsonSchema`) and convert it for the workflow action with `jsonSchemaToInputSchema` from `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` takes the JSON Schema directly, while `workflowActionTriggerSettings.inputSchema` expects Twenty's `InputSchema`:
 
 ```ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -618,22 +733,82 @@ export default defineLogicFunction({
 });
 ```
 
-##### Un exemplu complet de acțiune de flux de lucru
+##### Rendering a tool call with a front component
 
-`workflowActionTriggerSettings` acceptă patru câmpuri:
+By default a tool call shows up in the AI chat as a step row: the tool's name, and a spinner until it returns. Point `toolTriggerSettings.frontComponentUniversalIdentifier` at one of your [front components](/ro/developers/extend/apps/layout/front-components) and the chat renders that component inline instead, for every call to this tool.
 
-| Câmp           | Scop                                                                                                                                                                                              |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`        | Numele afișat pentru acțiune în selectorul de pași al constructorului de fluxuri de lucru. Implicit, este `name` al funcției.                                                                     |
-| `icon`         | Pictograma afișată lângă acțiune (un nume `tabler-icons`, de ex. `IconBuilding`).                                                                                                                 |
-| `inputSchema`  | `InputSchema` avansat al Twenty — ceea ce constructorul afișează ca câmpuri configurabile (cu selectoare de variabile). Opțional; dedus din handler atunci când este omis.                        |
-| `outputSchema` | Declară structura returnată de handler, astfel încât **pașii următori să poată mapa la câmpurile de ieșire ale acesteia**. Opțional; fără acesta, ieșirea este expusă ca o singură valoare opacă. |
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  },
+});
+```
 
-Reunind totul — o funcție expusă ca o acțiune de flux de lucru, cu o ieșire declarată astfel încât pașii următori să poată face referire la `taskId`:
+The component reads the call it is rendering with `useToolCall()`:
+
+```tsx src/front-components/invoice-preview.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useToolCall } from 'twenty-sdk/front-component';
+
+const InvoicePreview = () => {
+  const toolCall = useToolCall();
+
+  if (toolCall === null) {
+    return null;
+  }
+
+  if (toolCall.status !== 'output-available') {
+    return <p>Generating the invoice...</p>;
+  }
+
+  const { invoiceUrl } = toolCall.output ?? {};
+
+  return typeof invoiceUrl === 'string' ? (
+    <a href={invoiceUrl}>Open the invoice</a>
+  ) : (
+    <p>The invoice could not be generated.</p>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'invoice-preview',
+  component: InvoicePreview,
+});
+```
+
+The component mounts as soon as the agent has finished streaming its arguments, so it owns the whole call, not just the result. `toolCall.status` walks through `input-available`, the approval states when the tool needs one, and then `output-available`, `output-denied` or `output-error`; `input` is what the agent proposed, `output` what your handler returned. Render each state you care about, since the step row is no longer there to cover them.
+
+Both `input` and `output` are typed `Record<string, unknown>`, so narrow each field before you use it rather than casting. That matters most for anything you hand to the DOM: a value you drop into an `href` without checking it is a string is a link the tool's output controls.
+
+<Note>
+  If the identifier matches no front component in the app, the chat falls back
+  to the default step row. Front components in the AI chat run under the same
+  [role your app declares](/ro/developers/extend/apps/config/roles), so a widget
+  can only read and write what the app itself is allowed to.
+</Note>
+
+##### A complete workflow action example
+
+`workflowActionTriggerSettings` accepts four fields:
+
+| Field          | Purpose                                                                                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | Name shown for the action in the workflow builder's step picker. Defaults to the function `name`.                                                                   |
+| `icon`         | Icon shown next to the action (a `tabler-icons` name, e.g. `IconBuilding`).                                                                                         |
+| `inputSchema`  | Twenty's rich `InputSchema` — what the builder renders as configurable fields (with variable pickers). Optional; inferred from the handler when omitted.            |
+| `outputSchema` | Declares the shape the handler returns, so **subsequent steps can map to its output fields**. Optional; without it, the output is exposed as a single opaque value. |
+
+Putting it together — a function exposed as a workflow action, with a declared output so later steps can reference `taskId`:
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import {
+  jsonSchemaToInputSchema,
+  type InputJsonSchema,
+} from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const inputSchema: InputJsonSchema = {
@@ -687,17 +862,19 @@ export default defineLogicFunction({
 });
 ```
 
-Odată ce aplicația este instalată, **Enrich Company** apare în selectorul de acțiuni al constructorului de fluxuri de lucru. Constructorul afișează `companyName` și `domain` ca câmpuri de intrare (fiecare putând prelua valori din pașii anteriori), iar pașii ulteriori pot face referire la ieșirile `taskId` și `enriched` ale pasului.
+Once the app is installed, **Enrich Company** appears in the workflow builder's action picker. The builder renders `companyName` and `domain` as input fields (each able to pull values from previous steps), and downstream steps can reference the step's `taskId` and `enriched` outputs.
 
 <Note>
-**Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
+  **Write a good `description`.** AI agents rely on the function's `description`
+  field to decide when to use the tool. Be specific about what the tool does and
+  when it should be called.
 </Note>
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-**Ajutoare la rulare (runtime helpers).** `twenty-sdk/utils` re-exportă mici ajutoare la rulare, astfel încât handlerii să nu importe niciodată direct din `twenty-shared`. De exemplu, `isDefined(value)` returnează `false` atât pentru `null`, cât și pentru `undefined` — folosește-l pentru a restrânge în siguranță intrările opționale ale handlerilor, care pot ajunge drept `null` la rulare, chiar și atunci când sunt tipate `T | undefined`:
+**Runtime helpers.** `twenty-sdk/utils` re-exports small runtime helpers so handlers never import from `twenty-shared` directly. For example, `isDefined(value)` returns `false` for both `null` and `undefined` — use it to safely narrow optional handler inputs, which can arrive as `null` at runtime even when typed `T | undefined`:
 
 ```ts
 import { isDefined } from 'twenty-sdk/utils';
@@ -708,15 +885,80 @@ const handler = async (params: { parentMessageId?: string }) => {
   }
 };
 ```
+
 </Note>
 
 <Note>
-**Hook-uri de instalare** — handleri pre-instalare, post-instalare și dezinstalare — partajează acest runtime, dar sunt declarați cu propriile lor funcții `define` și nu folosesc setări de declanșare. Consultați [Hook-uri de instalare](/ro/developers/extend/apps/config/install-hooks) pentru `definePreInstallLogicFunction`, `definePostInstallLogicFunction` și `defineUninstallLogicFunction`.
+  **Install hooks** — pre-install, post-install, and uninstall handlers — share
+  this runtime but are declared with their own define functions and don't take
+  trigger settings. See [Install
+  Hooks](/ro/developers/extend/apps/config/install-hooks) for
+  `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and
+  `defineUninstallLogicFunction`.
 </Note>
 
-## Creați o activitate pe cronologie.
+## Health check
 
-Utilizați `createTimelineActivity()` pentru a publica un eveniment de domeniu explicit dintr-o funcție logică. Definiți mai întâi evenimentul ca [tip de activitate pe cronologie](/ro/developers/extend/apps/data/timeline-activity-types), apoi faceți referire la tip și la obiecte prin identificatorii lor universali stabili:
+Declare a health check with `defineHealthCheck` to report whether your app is actually able to run. It is for what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. What Twenty can see by itself — a required variable nobody filled in — is covered by [`isRequired`](/ro/developers/extend/apps/config/application) and needs no code.
+
+It runs server-side, so it reads secret variables like any other logic function. The handler takes no arguments.
+
+```ts src/logic-functions/health-check.ts
+import { defineHealthCheck } from 'twenty-sdk/define';
+
+export default defineHealthCheck({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'health-check',
+  handler: async () => {
+    const response = await fetch('https://api.stripe.com/v1/account', {
+      headers: { Authorization: `Bearer ${process.env.API_KEY}` },
+    });
+
+    if (response.status === 401) {
+      return {
+        status: 'ERROR',
+        title: 'Your Stripe key was revoked',
+        description: 'Generate a new one from the Stripe dashboard.',
+        action: { label: 'Add a key', location: '/settings/billing' },
+      };
+    }
+
+    return { status: 'OK' };
+  },
+});
+```
+
+The result is a discriminated union, not a boolean:
+
+| Field         | Required                  | Description                                                                                                                                                                                                                                                                                                           |
+| ------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `status`      | Yes                       | `OK` when there is nothing to report, otherwise `SUCCESS`, `INFO`, `WARNING`, `ERROR` or `NEUTRAL`                                                                                                                                                                                                                    |
+| `title`       | For every status but `OK` | The banner's first line on the app's settings page                                                                                                                                                                                                                                                                    |
+| `description` | No                        | A second line under the title, for what to do about it                                                                                                                                                                                                                                                                |
+| `action`      | No                        | `{ label, location }` for the banner's button. `location` is where the button redirects to: a path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab, or a hash alone such as `#variables` to move to a tab of your own settings page; omit it to land on the app's configuration tab |
+
+`OK` shows no banner at all; every other status renders the title in a banner coloured after it, so pick the one that matches how much the person needs to act. The statuses are Twenty's own `ApplicationHealthStatus`, so the plain string and the enum member are interchangeable:
+
+```ts
+import { ApplicationHealthStatus } from 'twenty-sdk/define';
+
+return {
+  status: ApplicationHealthStatus.WARNING,
+  title: 'Quota almost reached',
+};
+```
+
+Twenty runs the check when the app's settings page opens and shows the result in a banner there. Nothing is stored, so what you report is always what the check just returned.
+
+A check that throws, times out or returns a shape Twenty cannot read is treated as **unknown**, never as an error, and no banner is shown. A third-party outage should not paint every installed app red — if it did, people would learn to ignore the signal.
+
+The location has to stay inside Twenty, so it starts with `/` or `#`: an external, protocol-relative or relative one loses its button rather than becoming a redirect somewhere else. The button is also dropped when the app reports no location and has no configuration tab to fall back to, so a check on an app with no variables and no settings menu items shows its title without a dead button.
+
+Only one health check is allowed per app; declaring more than one fails the build.
+
+## Create a timeline activity
+
+Use `createTimelineActivity()` to publish an explicit domain event from a logic function. Define the event first as a [timeline activity type](/ro/developers/extend/apps/data/timeline-activity-types), then address the type and objects by their stable universal identifiers:
 
 ```ts
 import { createTimelineActivity } from 'twenty-sdk/logic-function';
@@ -733,11 +975,11 @@ await createTimelineActivity({
 });
 ```
 
-Twenty convertește identificatorii universali în ID-urile metadatelor specifice instalării, validează că tipul de activitate pe cronologie aparține aplicației apelante și captează metadatele sale de prezentare în noua activitate.
+Twenty resolves universal identifiers to the installation-specific metadata IDs, validates that the timeline activity type belongs to the calling app, and snapshots its presentation metadata on the new activity.
 
-Parametrii de intrare obligatorii sunt `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` și `targetRecordId`. De asemenea, puteți furniza `happensAt`, `properties` și `workspaceMemberId`. `happensAt` controlează poziția și ora afișată a evenimentului pe cronologie; în mod implicit, este momentul creării.
+The required inputs are `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier`, and `targetRecordId`. You can also provide `happensAt`, `properties`, and `workspaceMemberId`. `happensAt` controls the event's position and displayed time in the timeline; it defaults to the creation time.
 
-Pentru a asocia o altă înregistrare cu evenimentul, furnizați împreună `linkedRecordId` și `linkedObjectMetadataUniversalIdentifier`. În plus, puteți furniza `linkedRecordCachedName` ca alternativă istorică pentru afișare:
+To associate another record with the event, provide `linkedRecordId` and `linkedObjectMetadataUniversalIdentifier` together. You can additionally provide `linkedRecordCachedName` as a historical display fallback:
 
 ```ts
 await createTimelineActivity({
@@ -751,21 +993,21 @@ await createTimelineActivity({
 });
 ```
 
-Rolul funcției logice trebuie să aibă permisiunea de scriere pentru obiectul standard `timelineActivity`. Păstrați tipurile explicite de evenimente nelegate de o `action`; un tip legat de o acțiune primește deja evenimente de audit automate și, în caz contrar, ar produce rânduri duplicate.
+The logic function's role needs write permission on the standard `timelineActivity` object. Keep explicit event types unbound from an `action`; an action-bound type already receives automatic audit events and would otherwise produce duplicate rows.
 
-## Clienți API tipizați (twenty-client-sdk)
+## Typed API clients (twenty-client-sdk)
 
-Pachetul `twenty-client-sdk` oferă doi clienți GraphQL tipați pentru a interacționa cu API-ul Twenty din funcțiile de logică și componentele Front.
+The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.
 
-| Client              | Importați                    | Endpoint                                                            | Generat?                     |
-| ------------------- | ---------------------------- | ------------------------------------------------------------------- | ---------------------------- |
-| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — date ale spațiului de lucru (înregistrări, obiecte)    | Da, în timpul dev/build      |
-| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configurarea spațiului de lucru, încărcări de fișiere | Nu, este livrat preconstruit |
+| Client              | Import                       | Endpoint                                       | Generated?             |
+| ------------------- | ---------------------------- | ---------------------------------------------- | ---------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads   | No, ships pre-built    |
 
 <AccordionGroup>
-<Accordion title="CoreApiClient" description="Interogați și modificați datele spațiului de lucru (înregistrări, obiecte)">
+<Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
 
-`CoreApiClient` este clientul principal pentru interogarea și modificarea datelor din spațiul de lucru. Este **generat din schema spațiului de lucru** în timpul `yarn twenty dev` sau `yarn twenty dev:build`, astfel încât este complet tipizat pentru a corespunde obiectelor și câmpurilor dvs.
+`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** with `twenty app generate-client`, or after a sync with `twenty app apply` or `twenty app dev`, so it is fully typed to match your objects and fields.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -800,17 +1042,40 @@ const { createCompany } = await client.mutation({
     name: true,
   },
 });
+
+// Only on an object whose readability is PRIVATE: choose who can read the created record
+const { createContract } = await client.mutation({
+  createContract: {
+    __args: {
+      data: {
+        name: 'Acme Corp renewal',
+      },
+      shareWith: [
+        {
+          roleId: '7f0c1b6e-2d4a-4c8e-9b3f-5a6d7e8f9a0b',
+          accessLevel: 'READ_WRITE',
+        },
+      ],
+    },
+    id: true,
+  },
+});
 ```
 
-Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare completă a tipurilor, pe baza schemei spațiului dvs. de lucru.
+`shareWith` only matters on an object whose readability is `PRIVATE`; every object is `OPEN` by default, and on an `OPEN` object the argument is ignored. On a `PRIVATE` object it lists who gets access to the created record: each entry targets exactly one of `workspaceMemberId`, `roleId` or `everyone: true` with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. A workspace member creating a record always receives a `FULL` owner grant, so the argument is optional for them; a logic function acting as its application or an API key also receives a `FULL` grant for its role, and such callers, like a system caller, must pass `shareWith` or the create is rejected. Every entry must name a member or a role of the workspace. A logic function or API key shares through its role, so every holder of that role gets the same access to the records it creates; give a key whose records must stay private to it a role of its own.
+
+The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
 
 <Note>
-**CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty dev:build`, va arunca o eroare. Generarea are loc automat — CLI inspectează schema GraphQL a spațiului dvs. de lucru și generează un client tipizat folosind `@genql/cli`.
+  Run `twenty app generate-client` to refresh the client from your workspace's
+  GraphQL schema. `twenty app apply` and `twenty app dev` also regenerate it
+  after syncing. `twenty app build` only builds locally and does not generate
+  the client.
 </Note>
 
-#### Folosirea CoreSchema pentru adnotări de tip
+#### Using CoreSchema for type annotations
 
-`CoreSchema` oferă tipuri TypeScript care corespund obiectelor din spațiul dvs. de lucru — utile pentru tiparea stării componentelor sau a parametrilor funcțiilor:
+`CoreSchema` provides TypeScript types matching your workspace objects — useful for typing component state or function parameters:
 
 ```ts
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -832,9 +1097,13 @@ setCompany(result.company);
 ```
 
 </Accordion>
-<Accordion title="MetadataApiClient" description="Configurația spațiului de lucru, aplicații și încărcări de fișiere">
+<Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
 
-`MetadataApiClient` este livrat preconstruit împreună cu SDK-ul (nu este necesară generarea). Interoghează endpointul `/metadata` pentru configurarea spațiului de lucru, aplicații și încărcări de fișiere. Acceptă aceeași opțiune `runAs` ca `CoreApiClient` — consultați [Ale cui accesări le utilizează un apel](#whose-access-a-call-uses).
+`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads. It takes the same `runAs` option as `CoreApiClient` — see [Whose access a call uses](#whose-access-a-call-uses).
+
+It is also how an app reads and updates its own [application variables](/ro/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime), in a logic function as in a front component. An application token only ever reaches its own application, in its own workspace.
+
+A [user variable](/ro/developers/extend/apps/config/application#workspace-and-user-variables) is in `process.env` with the value of the member who triggered the run, or its default until they set their own. A run nobody triggered gets no user variables. To read every member's value of your app's user variables, for example in a cron job, query `myUserApplicationVariables` with `runAs: 'application'`.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -861,9 +1130,9 @@ const { objects } = await metadataClient.query({
 });
 ```
 
-#### Încărcarea fișierelor
+#### Uploading files
 
-`MetadataApiClient` include o metodă `uploadFile` pentru atașarea fișierelor la câmpuri de tip fișier:
+`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields. The file goes straight to Twenty's file storage: the API issues an upload target, the client sends the bytes there, then the API confirms the upload.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -871,39 +1140,38 @@ import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
 
-const fileBuffer = fs.readFileSync('./invoice.pdf');
-
-const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
-);
+const uploadedFile = await metadataClient.uploadFile({
+  fileBuffer: fs.readFileSync('./invoice.pdf'),
+  filename: 'invoice.pdf',
+  fieldMetadataUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+});
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-| Parametru                          | Tip      | Descriere                                                           |
-| ---------------------------------- | -------- | ------------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                       |
-| `filename`                         | `string` | Numele fișierului (folosit pentru stocare și afișare)               |
-| `contentType`                      | `șir`    | Tipul MIME (implicit `application/octet-stream` dacă este omis)     |
-| `fieldMetadataUniversalIdentifier` | `șir`    | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
+| Parameter                          | Type     | Description                                                     |
+| ---------------------------------- | -------- | --------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | The raw file contents                                           |
+| `filename`                         | `string` | The name of the file (used for storage and display)             |
+| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object |
 
-Puncte cheie:
-* Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.
-* `url` returnat este un URL semnat pe care îl puteți folosi pentru a accesa fișierul încărcat.
+Key points:
+
+- Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
+- The MIME type is detected from the file contents once uploaded, so there is nothing to declare.
+- The returned `url` is a signed URL you can use to access the uploaded file.
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-  Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
+  When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
 
-  * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă pentru accesul implicit: rolul unei persoane se intersectează cu cel al aplicației dvs. atunci când cineva se află în spatele execuției, iar rolul propriu al aplicației dvs. atunci când nu se află nimeni. Persoana este cea care a declanșat execuția într-o funcție logică sau cea care privește pagina într-o componentă front-end.
-  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată numai la rolul propriu al aplicației dvs. Numai funcții logice, injectată întotdeauna acolo și utilizată de `runAs: 'application'`.
+- `TWENTY_API_URL` — Base URL of the Twenty API
+- `TWENTY_APP_ACCESS_TOKEN` — Short-lived key for the default access: a person's role intersected with your application's when someone is behind the run, your application's own role when nobody is. The person is whoever triggered the run in a logic function, whoever is looking at the page in a front component.
+- `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Short-lived key scoped to your application's own role alone. Logic functions only, always injected there, and what `runAs: 'application'` uses.
 
-  Nu trebuie să transmiteți aceste valori clienților — aceștia citesc automat din `process.env`, iar [Ale cui accesări le utilizează un apel](#whose-access-a-call-uses) explică alegerea dintre ele. Permisiunile proprii ale aplicației dvs. sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`); o execuție care acționează ca o persoană nu poate depăși niciodată acel rol sau rolul persoanei.
+You do **not** need to pass these to the clients — they read from `process.env` automatically, and [Whose access a call uses](#whose-access-a-call-uses) covers picking between them. Your application's own permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`); a run acting as a person can never exceed that role, nor theirs.
+
 </Note>

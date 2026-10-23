@@ -1,63 +1,34 @@
 ---
 title: İskelet Oluşturma
-description: Nesne, alan, görünüm, mantık işlevi ve daha fazlasına ait varlık dosyalarını `yarn twenty dev:add` komutuyla etkileşimli olarak oluşturun.
-icon: wand-magic-sparkles
+description: Generate app entities with twenty app add.
+icon: 'wand-magic-sparkles'
 ---
 
-Varlık dosyalarını elle oluşturmak yerine etkileşimli iskelet oluşturucuyu kullanın:
+<Note>
+  Bu kılavuzun çevirisi henüz bağımsız Twenty CLI için güncellenmedi. Kaldırılan
+  komutların kullanılmasını önlemek için aşağıda geçici olarak güncel İngilizce
+  içerik gösterilmektedir.
+</Note>
 
-```bash filename="Terminal"
-yarn twenty dev:add
+Use the standalone CLI to generate an object, field, logic function, or front component:
+
+```bash
+twenty app add
+twenty app add object --name invoice --name-plural invoices --no-input
+twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+twenty app add logic-function --name send-invoice --no-input
+twenty app add front-component --name invoice-panel --no-input
 ```
 
-Bir varlık türü seçmeniz için sizi yönlendirir ve gerekli alanlarda adım adım ilerlemenizi sağlar, ardından sabit bir `universalIdentifier` ve doğru `defineEntity()` çağrısıyla kullanıma hazır bir dosya yazar.
+Without flags, interactive terminals prompt for missing values. For scripts and agents, supply the required fields and use `--no-input` or `--json`.
 
-İlk istemi atlamak için varlık türünü doğrudan da geçebilirsiniz:
+Object generation can also create a view, navigation item, and record page layout:
 
-```bash filename="Terminal"
-yarn twenty dev:add object
-yarn twenty dev:add logicFunction
-yarn twenty dev:add frontComponent
+```bash
+twenty app add object --name invoice --name-plural invoices \
+  --create-view --create-navigation-menu-item --create-page-layout --no-input
 ```
 
-## Kullanılabilir varlık türleri
+For other entity types, write the corresponding `define*` file using `twenty-sdk/define` and a valid UUID v4. Run `twenty app typecheck` and `twenty app plan` before syncing.
 
-| Varlık türü                   | Komut                                      | Oluşturulan dosya                                         |
-| ----------------------------- | ------------------------------------------ | --------------------------------------------------------- |
-| Nesne                         | `yarn twenty dev:add object`               | `src/objects/\<name>.ts`                 |
-| Alan                          | `yarn twenty dev:add field`                | `src/fields/\<name>.ts`                  |
-| Mantık işlevi                 | `yarn twenty dev:add logicFunction`        | `src/logic-functions/\<name>.ts`         |
-| Ön uç bileşeni                | `yarn twenty dev:add frontComponent`       | `src/front-components/\<name>.tsx`       |
-| Rol                           | `yarn twenty dev:add role`                 | `src/roles/\<name>.ts`                   |
-| Beceri                        | `yarn twenty dev:add skill`                | `src/skills/\<name>.ts`                  |
-| Temsilci                      | `yarn twenty dev:add agent`                | `src/agents/\<name>.ts`                  |
-| Görünüm                       | `yarn twenty dev:add view`                 | `src/views/\<name>.ts`                   |
-| Gezinme menüsü öğesi          | `yarn twenty dev:add navigationMenuItem`   | `src/navigation-menu-items/\<name>.ts`   |
-| Sayfa düzeni                  | `yarn twenty dev:add pageLayout`           | `src/page-layouts/\<name>.ts`            |
-| Sayfa düzeni sekmesi          | `yarn twenty dev:add pageLayoutTab`        | `src/page-layout-tabs/\<name>.ts`        |
-| Komut menüsü öğesi            | `yarn twenty dev:add commandMenuItem`      | `src/command-menu-items/\<name>.ts`      |
-| Görünüm alanı                 | `yarn twenty dev:add viewField`            | `src/view-fields/\<name>.ts`             |
-| Bağlantı sağlayıcısı          | `yarn twenty dev:add connectionProvider`   | `src/connection-providers/\<name>.ts`    |
-| Zaman Çizelgesi Aktivite Türü | `yarn twenty dev:add timelineActivityType` | `src/timeline-activity-types/\<name>.ts` |
-
-## İskelet oluşturucunun ürettikleri
-
-Her varlık türünün kendi şablonu vardır. Örneğin, `yarn twenty dev:add object` şunları sorar:
-
-1. **Ad (tekil)** — ör. `invoice`
-2. **Ad (çoğul)** — ör. `invoices`
-3. **Etiket (tekil)** — adından otomatik doldurulur (ör. `Invoice`)
-4. **Etiket (çoğul)** — otomatik doldurulur (ör. `Invoices`)
-5. **Bir görünüm ve gezinme öğesi oluşturulsun mu?** — evet derseniz, iskelet oluşturucu yeni nesne için eşleşen bir görünüm ve kenar çubuğu bağlantısı da üretir.
-
-Diğer varlık türlerinin istemleri daha basittir — çoğu yalnızca bir ad sorar.
-
-`field` varlık türü daha ayrıntılıdır: alan adını, etiketi, türü (`TEXT`, `NUMBER`, `SELECT`, `RELATION` vb. gibi mevcut tüm alan türlerinin listesinden) ve hedef nesnenin `universalIdentifier` değerini sorar.
-
-## Özel çıktı yolu
-
-`--path` bayrağını kullanarak oluşturulan dosyayı özel bir konuma yerleştirin:
-
-```bash filename="Terminal"
-yarn twenty dev:add logicFunction --path src/custom-folder
-```
+`--path` selects the app directory, not a custom output folder. Run `twenty app add --help` for supported options.

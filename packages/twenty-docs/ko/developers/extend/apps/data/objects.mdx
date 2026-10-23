@@ -1,10 +1,15 @@
 ---
 title: 개체
-description: defineObject를 사용하여 고유한 필드를 가진 사용자 정의 테이블인 새 레코드 유형을 선언합니다.
-icon: table
+description: Declare new record types — custom tables with their own fields — using defineObject.
+icon: 'table'
 ---
 
-사용자 정의 **개체**는 워크스페이스에 앱이 추가하는 새로운 레코드 유형입니다. 엽서(Post Card), 송장(Invoice), 구독(Subscription) 등 도메인에 특화된 어떤 것이라도 될 수 있습니다. 각 개체는 스키마(필드, 관계, 기본값)와 동기화 및 배포 간에도 유지되는 안정적인 범용 식별자를 선언합니다.
+<Note>
+  이 가이드의 번역은 아직 독립형 Twenty CLI에 맞게 업데이트되지 않았습니다.
+  삭제된 명령을 사용하지 않도록 아래에 최신 영어 내용을 임시로 표시합니다.
+</Note>
+
+Custom **objects** are new record types your app adds to a workspace — Post Card, Invoice, Subscription, anything specific to your domain. Each object declares its schema (fields, relations, default values) and a stable universal identifier that survives across syncs and deploys.
 
 ```ts src/objects/post-card.object.ts
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -55,10 +60,30 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+        {
+          value: PostCardStatus.DRAFT,
+          label: 'Draft',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          value: PostCardStatus.SENT,
+          label: 'Sent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          value: PostCardStatus.DELIVERED,
+          label: 'Delivered',
+          position: 2,
+          color: 'green',
+        },
+        {
+          value: PostCardStatus.RETURNED,
+          label: 'Returned',
+          position: 3,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -74,55 +99,87 @@ export default defineObject({
 });
 ```
 
-## 핵심 요점
+## Key points
 
-* `universalIdentifier`는 배포 전반에서 고유하고 안정적이어야 합니다.
-* 각 필드는 `name`, `type`, `label` 및 고유하고 안정적인 `universalIdentifier`가 필요합니다.
-* `fields` 배열은 선택 사항입니다. 사용자 정의 필드 없이도 개체를 정의할 수 있습니다.
-* `openRecordIn`은 이 오브젝트의 레코드를 클릭했을 때 어디에서 열릴지 설정합니다: `ObjectOpenRecordIn.USER_CHOICE`(기본값이며, 각 워크스페이스 구성원이 Settings → Experience에서 지정한 개인 설정을 따릅니다), `ObjectOpenRecordIn.SIDE_PANEL`, 또는 `ObjectOpenRecordIn.RECORD_PAGE`. 워크플로와 대시보드처럼 전체 페이지에서 사용해야 하는 레코드의 경우 `RECORD_PAGE`에 고정하고, 캘린더 이벤트처럼 빠른 패널로 볼 때만 의미가 있는 레코드의 경우 `SIDE_PANEL`에 고정하세요.
-* `writability`는 역할 권한이 적용되기 전에, 해당 객체의 레코드를 누가 전반적으로 쓸 수 있는지를 제어합니다. `MetadataWritability.OPEN`(기본값 — 워크스페이스 역할이 결정함), `MetadataWritability.APPLICATION`(앱 자체의 로직 함수만 레코드를 생성, 업데이트 또는 삭제할 수 있음; 레코드가 동작을 부여하는 구성 항목과 유사한 객체에 사용하여, 광범위한 레코드 액세스를 가진 워크스페이스 구성원이 API를 통해 이를 편집하지 못하도록 함), 또는 `MetadataWritability.SYSTEM`(플랫폼이 관리하는 데이터용으로 예약됨) 중 하나입니다. 읽기 작업에는 영향을 주지 않습니다. 이는 서버 측에서 강제되며, UI 제공 요소만 숨기는 `isUIEditable`과는 다릅니다. 이는 필드 단위로도 존재하며, 이 경우 객체 수준보다 더 엄격하게만 설정할 수 있습니다.
-* 여기에서 정의된 인라인 필드는 `objectUniversalIdentifier`가 **필요하지 않습니다** — 상위 개체에서 상속됩니다. 소유하지 않은 개체에 필드를 추가하려면 [`defineField()`](/ko/developers/extend/apps/data/extending-objects)를 사용하세요.
-* `yarn twenty dev:add object`를 사용하여 새 개체를 스캐폴딩할 수 있으며, 이름, 필드, 관계 설정 과정을 안내합니다. [Architecture → Scaffolding entities](/ko/developers/extend/apps/getting-started/scaffolding)를 참조하세요.
+- The `universalIdentifier` must be unique and stable across deployments.
+- Each field requires a `name`, `type`, `label`, and its own stable `universalIdentifier`.
+- The `fields` array is optional — you can define objects without custom fields.
+- `openRecordIn` sets where records of this object open when clicked: `ObjectOpenRecordIn.USER_CHOICE` (the default, following each workspace member's own preference from Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL`, or `ObjectOpenRecordIn.RECORD_PAGE`. Pin it to `RECORD_PAGE` for records that need a full page to be usable, the way workflows and dashboards do, or to `SIDE_PANEL` for records that only make sense as a quick panel, the way calendar events do.
+- `writability` controls who may write records of the object at all, before role permissions apply: `MetadataWritability.OPEN` (the default — workspace roles decide), `MetadataWritability.APPLICATION` (only your app's own logic functions can create, update, or delete records; use this for configuration-like objects whose records grant behavior, so workspace members with broad record access cannot edit them through the API), or `MetadataWritability.SYSTEM` (reserved for platform-managed data). Reads are unaffected — this is enforced server-side, unlike `isUIEditable`, which only hides UI affordances. It also exists per field, where it can only be stricter than the object's level.
+- `readability` declares who may read records of the object: `MetadataReadability.OPEN` (the default — workspace roles decide), `MetadataReadability.PRIVATE` (only principals the record was shared with), `MetadataReadability.INHERITED` (whoever reads the parent record), `MetadataReadability.APPLICATION` (only your app's own logic functions) or `MetadataReadability.SYSTEM` (platform-managed data). All readability policies are always enforced.
+- `readabilityParentFieldUniversalIdentifiers` goes with `MetadataReadability.INHERITED`: the universal identifiers of the relation fields that lead to the parent records.
+  - A many-to-one field names the record the row points to. Declaring one field of a morph relation covers every target of that relation.
+  - A one-to-many field names a child object whose rows point back at the record, such as the join rows of a many-to-many relation. The record is then readable when at least one of those rows leads to a readable record: a note follows the people, companies and opportunities its note targets attach it to.
+  - Several parents combine as a union: one readable parent is enough.
+  - A parent grants access under its complete policy, the one a query of the parent applies: the reader's permission on the parent object, the row-level restrictions of their role and the parent's own readability. A record never shows through a parent its reader could not query. Subscriptions, webhooks, workflows and logic functions decide what an event of an `INHERITED` record reaches by that same policy.
+  - The share rows on the record itself grant access exactly as on a `PRIVATE` record. Its creator gets one when the record is created while record sharing is enabled, so whoever created a record keeps seeing it, and a record whose parent fields are all empty is visible to those it was shared with directly.
+  - An `INHERITED` object that names no usable parent field behaves like a `PRIVATE` one.
+- `sharingReach` sets how far a record of the object can be shared by name: `ObjectSharingReach.WORKSPACE` (the default, a record can be shared with anyone in the workspace, even someone whose role cannot access the object or whose row-level filter hides the record; they get that record only, to view or edit) or `ObjectSharingReach.ROLE_ACCESS` (shares never go beyond role and row-level permissions). Pick `ROLE_ACCESS` for sensitive objects where no access must mean no access. Roles that can update all settings see every record of an `OPEN` object whatever its sharing restrictions; their object permissions and row-level filters still apply. It only applies while record sharing is enabled in the workspace, and only to objects whose records can be shared: `MetadataReadability.OPEN`, `PRIVATE` and `INHERITED` objects that are not system objects. `APPLICATION` and `SYSTEM` objects are never shared.
+- `color` sets the accent color of the object in the UI. Omit it and Twenty picks one for the object.
+- `imageIdentifierFieldMetadataUniversalIdentifier` names the field whose value is shown as the record avatar. Omit it to let Twenty pick the default.
+- `isLabelSyncedWithName`, on an object or on a field, keeps the API name in sync with the label when the label is edited in Settings. It defaults to `false`, so a renamed label leaves the name untouched.
+- `isSearchable: true`, on a field, includes its values in the object's full-text search (global search and the command menu). It requires the object itself to be searchable and a text-compatible field type. An omitted value means not searchable, except for the object's label identifier field, which is always searchable and cannot be opted out. Each sync enforces the declared state, so a field toggled searchable from Settings reverts on your app's next sync unless the manifest declares it.
+- `isAuditLogged: false`, on a field, keeps its changes out of the record timeline. It defaults to `true`, except on a `POSITION` field, whose changes render blank in the timeline and are never logged. Set it on fields your app rewrites on a schedule, such as a last-contact timestamp or a rollup relation, so each sync does not add an activity row to every record it touches. An update whose whole diff is made of non audit logged fields produces no timeline activity at all. Like `isSearchable`, each sync enforces the declared state.
+- Inline fields defined here do **not** need an `objectUniversalIdentifier` — it's inherited from the parent object. Use [`defineField()`](/ko/developers/extend/apps/data/extending-objects) to add fields to objects you don't own.
+- You can scaffold new objects with `twenty app add object`, which guides you through naming, fields, and relationships. See [Architecture → Scaffolding entities](/ko/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
-**기본 필드는 자동으로 추가됩니다.** 사용자 정의 개체를 정의하면 Twenty가 `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, `deletedAt`와 같은 표준 필드를 자동으로 생성합니다. 이 필드들은 `fields` 배열에 선언할 필요가 없습니다 — 사용자 정의 필드만 선언하면 됩니다. 동일한 이름으로 필드를 선언하여 기본 필드를 재정의할 수 있지만, 이는 거의 바람직하지 않습니다.
+  **Base fields are added automatically.** When you define a custom object,
+  Twenty creates standard fields like `id`, `name`, `createdAt`, `updatedAt`,
+  `createdBy`, `updatedBy`, and `deletedAt` for you. You don't need to declare
+  them in your `fields` array — only your custom fields. You can override a
+  default field by declaring one with the same name, but this is rarely a good
+  idea.
 </Note>
 
-## 필드 유형
+## Field types
 
-`twenty-sdk/define`에서 내보낸 `FieldType` 값의 전체 집합:
+The full set of `FieldType` values, exported from `twenty-sdk/define`:
 
-| 카테고리     | 유형                                                                                                                  |
-| -------- | ------------------------------------------------------------------------------------------------------------------- |
-| 텍스트      | `TEXT`, `RICH_TEXT`, `ARRAY` (문자열 배열), `RAW_JSON`                                                                   |
-| 숫자형      | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (임의 정밀도), `RATING`, `POSITION` |
-| 날짜       | `DATE`, `DATE_TIME`                                                                                                 |
-| 선택형      | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                 |
-| 복합       | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                   |
-| 식별자 및 관계 | `UUID`, `RELATION`, `MORPH_RELATION` (자세한 내용은 [Relations](/ko/developers/extend/apps/data/relations)을 참조)              |
-| 시스템      | `TS_VECTOR` (서버에서 관리되는 전체 텍스트 검색 벡터)                                                                                |
+| Category                | Types                                                                                                                                                                                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Text                    | `TEXT`, `RICH_TEXT`, `ARRAY` (of strings), `RAW_JSON`                                                                                                                                                                                                                                      |
+| Numeric                 | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (arbitrary precision), `RATING`, `POSITION`                                                                                                                                                           |
+| Dates                   | `DATE`, `DATE_TIME`                                                                                                                                                                                                                                                                        |
+| Choice                  | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                                                                                                                                                                        |
+| Composite               | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS` (`universalSettings.type`: `'url'` (default) / `'domain'` — a domain field stores the bare host, so `https://www.acme.com/careers` is written as `acme.com`, and a value that is not a host is rejected), `CURRENCY`, `ACTOR`, `FILES` |
+| Identifiers & relations | `UUID`, `RELATION`, `MORPH_RELATION` (see [Relations](/ko/developers/extend/apps/data/relations))                                                                                                                                                                                          |
+| System                  | `TS_VECTOR` (full-text search vector, managed by the server)                                                                                                                                                                                                                               |
 
-복합 타입은 여러 하위 필드를 저장합니다(예: `FULL_NAME` = 이름 + 성; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` 및 `MULTI_SELECT`는 위 예시와 같이 `options` 배열이 필요합니다.
+Composite types store multiple sub-fields (e.g. `FULL_NAME` = first + last name; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` and `MULTI_SELECT` require an `options` array as in the example above.
 
-## 기본값
+### Select options
 
-리터럴 문자열 기본값은 문자열 **내부에서** 작은따옴표로 감싸야 합니다. 즉, `defaultValue: "'Draft'"`처럼 작성해야 하며, `defaultValue: "Draft"`처럼 작성하면 안 됩니다. 그래서 위의 `status` 필드는 `` `'${PostCardStatus.DRAFT}'` ``를 사용합니다.
+For `SELECT` and `MULTI_SELECT`, provide a non-empty `options` array of objects. Each option has a `value`, `label`, and `position`. Its `color` is optional and defaults to `gray` when omitted or null.
 
-따옴표로 감싸지 않은 문자열은 레코드가 생성될 때 평가되는 계산형 기본값으로 예약되어 있습니다.
+When provided, `color` must be one of: `red`, `ruby`, `crimson`, `tomato`, `orange`, `amber`, `yellow`, `lime`, `grass`, `green`, `jade`, `mint`, `turquoise`, `cyan`, `sky`, `blue`, `iris`, `violet`, `purple`, `plum`, `pink`, `bronze`, `gold`, `brown`, `gray`.
 
-* `'uuid'` — UUID를 생성합니다 (`UUID` 필드용).
-* `'now'` — 현재 타임스탬프입니다 (`DATE_TIME` 필드용).
+Both `defineObject()` and `defineField()` return validation errors for unsupported colors or option entries that are null, primitives, or arrays.
 
-동일한 규칙이 복합 기본값의 문자열 하위 필드(예: `ACTOR` 필드의 `{ source: "'MANUAL'" }`)와 `SELECT`/`MULTI_SELECT` 값에도 적용됩니다. 따옴표로 감싸지 않은 리터럴 문자열 기본값은 앱을 빌드할 때 경고를 발생시킵니다.
+## Default values
 
-## Null 허용 여부
+Literal string defaults must be wrapped in single quotes **inside** the string — `defaultValue: "'Draft'"`, not `defaultValue: "Draft"`. That's why the `status` field above uses `` `'${PostCardStatus.DRAFT}'` ``.
 
-`isNullable`는 필드가 `NULL`을 허용하는지 여부를 제어합니다. 기본값은 `true`이며, 선택적 필드의 경우 생략하면 됩니다. 데이터베이스 수준에서 필드를 필수로 만들려면 `isNullable: false`로 설정하세요.
+Unquoted strings are reserved for computed defaults, evaluated when a record is created:
 
-`isNullable`에 대한 변경 사항은 기존 필드를 업데이트하는 동기화를 포함해 모든 동기화 시 적용되므로, 매니페스트를 수정하고 다시 동기화하여 필드의 Null 허용 여부를 전환할 수 있습니다.
+- `'uuid'` — generates a UUID (for `UUID` fields)
+- `'now'` — the current timestamp (for `DATE_TIME` fields)
+
+The same convention applies to string sub-fields of composite defaults (e.g. `{ source: "'MANUAL'" }` on an `ACTOR` field) and to `SELECT`/`MULTI_SELECT` values. A literal string default left unquoted raises a warning when your app is built.
+
+## Nullability
+
+`isNullable` controls whether a field accepts `NULL`. It defaults to `true` — omit it for optional fields. Set `isNullable: false` to make a field required at the database level.
+
+Changes to `isNullable` are applied on every sync, including syncs that update an existing field — so you can flip a field's nullability by editing the manifest and re-syncing.
 
 <Note>
-**기존 필드를 널 불가(non-nullable)로 변경하려면 기본값이 필요합니다.** 필드를 `isNullable: false`로 변경할 때는 널이 아닌 `defaultValue`도 함께 제공해야 합니다. 기본값은 `NOT NULL` 제약 조건이 적용되기 전에 기존의 `NULL` 행들을 모두 채웁니다. 기본값이 없으면 동기화가 실패하며 `Default value cannot be null for non-nullable fields` 오류가 발생합니다. 릴레이션 필드와 `TS_VECTOR` 필드는 항상 널 허용이므로 `isNullable` 설정이 이들 필드에는 영향을 주지 않습니다.
+  **Making an existing field non-nullable requires a default value.** When you
+  change a field to `isNullable: false`, you must also provide a non-null
+  `defaultValue`. The default backfills any existing `NULL` rows before the `NOT
+  NULL` constraint is applied; without it the sync fails with `Default value
+  cannot be null for non-nullable fields`. Relation fields and `TS_VECTOR`
+  fields are always nullable, so `isNullable` has no effect on them.
 </Note>
 
 ```ts
@@ -136,8 +193,8 @@ export default defineObject({
 }
 ```
 
-## 다음 단계
+## What's next
 
-* **이 개체를 다른 개체와 연결** — 양방향 관계 패턴은 [Relations](/ko/developers/extend/apps/data/relations)를 참조하세요.
-* **다른 앱의 개체에 필드 추가** — `defineField()`에 대해서는 [Extending Objects](/ko/developers/extend/apps/data/extending-objects)를 참조하세요.
-* **이 오브젝트를 UI에 표시합니다** — 사이드바 항목을 추가하려면 [Navigation Menu Items](/ko/developers/extend/apps/layout/navigation-menu-items)를, 사용자 지정 목록 구성을 추가하려면 [Views](/ko/developers/extend/apps/layout/views)를 참조하세요.
+- **Connect this object to others** — see [Relations](/ko/developers/extend/apps/data/relations) for the bidirectional relation pattern.
+- **Add fields to objects from other apps** — see [Extending Objects](/ko/developers/extend/apps/data/extending-objects) for `defineField()`.
+- **Display this object in the UI** — see [Navigation Menu Items](/ko/developers/extend/apps/layout/navigation-menu-items) to add a sidebar entry; see [Views](/ko/developers/extend/apps/layout/views) to add custom list configurations.

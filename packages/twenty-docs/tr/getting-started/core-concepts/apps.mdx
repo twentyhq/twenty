@@ -1,41 +1,51 @@
 ---
 title: Uygulamalar
-icon: cube
-description: Kod ile Twenty'yi genişletin — özel nesneler, sunucu tarafı mantık, UI bileşenleri ve yapay zeka ajanları; bunların tümü TypeScript paketleri olarak.
+icon: 'cube'
+description: Extend Twenty with code — custom objects, server-side logic, UI components, and AI agents, all as TypeScript packages.
 ---
 
-Çoğu CRM size bir yapılandırma paneli sunar. Twenty size bir platform sunar. Uygulamalar, geliştiricilerin Twenty'yi UI'nin sunduğunun ötesine genişletme yoludur — veri modellerini, sunucu tarafı mantığını, UI bileşenlerini ve yapay zeka yeteneklerini kod olarak tanımlayıp bunları bir veya daha fazla çalışma alanına dağıtırlar.
+<Note>
+  Bu kılavuzun çevirisi henüz bağımsız Twenty CLI için güncellenmedi. Kaldırılan
+  komutların kullanılmasını önlemek için aşağıda geçici olarak güncel İngilizce
+  içerik gösterilmektedir.
+</Note>
 
-## Uygulamaların var olma nedeni
+Most CRMs give you a config panel. Twenty gives you a platform. Apps are how developers extend Twenty beyond what the UI offers — defining data models, server-side logic, UI components, and AI capabilities as code, then deploying them to one or more workspaces.
 
-İş akışları kodsuz otomasyonu kapsar. Ancak bazı şeyler kod gerektirir: özel bir fiyatlandırma motoru, tescilli bir zenginleştirme hattı, her kayıt güncellemesinde çalışan bir uyumluluk kontrolü, dahili bir araçtan veri çeken özel bir UI paneli.
+## Why apps exist
 
-Uygulamalar, bunları birinci sınıf uzantılar olarak oluşturmanıza olanak tanır — dışarıdan bir API ile konuşan kırılgan komut dosyaları değil, tür sistemi, izin modeli ve UI'ye tam erişimi olan, platformda çalışan kod olarak.
+Workflows cover no-code automation. But some things need code: a custom pricing engine, a proprietary enrichment pipeline, a compliance check that runs on every record update, a custom UI panel that pulls data from an internal tool.
 
-## Bir uygulamanın tanımlayabilecekleri
+Apps let you build these as first-class extensions — not brittle scripts talking to an API from outside, but code that runs on the platform with full access to the type system, permission model, and UI.
 
-Bir uygulama, `twenty-sdk` kullanarak **varlıklar** bildiren bir TypeScript paketidir:
+## What an app can define
 
-| Varlık                    | Ne yapar                                                                                                              |
-| ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Nesneler ve Alanlar**   | Yeni veri tabloları ve mevcut nesneler üzerindeki alanlar — yerleşik olanlarla aynı şekilde ele alınır                |
-| **Mantıksal işlevler**    | HTTP rotaları, cron zamanlamaları veya veritabanı olayları tarafından tetiklenen sunucu tarafı TypeScript             |
-| **Ön uç bileşenleri**     | Twenty'nin arayüzünde (yan panel, widget'lar, komut menüsü) oluşturulan, korumalı alanlarda çalışan React bileşenleri |
-| **Beceriler ve Aracılar** | Yapay zeka yetenekleri — yeniden kullanılabilir yönergeler ve otonom asistanlar                                       |
-| **Görünümler ve Gezinme** | Önceden yapılandırılmış liste görünümleri ve kenar çubuğu menü öğeleri                                                |
+An app is a TypeScript package that declares **entities** using the `twenty-sdk`:
 
-Her şey, derleme zamanında AST analiziyle algılanır — yapılandırma dosyaları yok, kayıt için gereksiz şablon kodu yok. Herhangi bir `.ts` dosyasına `export default defineObject(...)` ekleyin, SDK onu algılar.
+| Entity                 | What it does                                                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| **Objects & Fields**   | New data tables and fields on existing objects — same treatment as built-in ones              |
+| **Logic Functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events           |
+| **Front Components**   | Sandboxed React components that render inside Twenty's UI (side panel, widgets, command menu) |
+| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                             |
+| **Views & Navigation** | Pre-configured list views and sidebar menu items                                              |
 
-## Nasıl çalışırlar
+Everything is detected via AST analysis at build time — no config files, no registration boilerplate. Put a `export default defineObject(...)` in any `.ts` file and the SDK picks it up.
 
-* **Mantıksal işlevler** ana makineden yalıtılmış, izole Node.js süreçlerinde çalışır. Verilere, kapsamı uygulamanın rol izinleriyle sınırlandırılmış tipli bir API istemcisi üzerinden erişirler.
-* **Ön uç bileşenleri**, Remote DOM kullanan Web Worker'larda çalışır — ana sayfadan yalıtılmıştır ancak yerel DOM öğelerini (iframe'ler değil) oluşturur.
-* **İzinler**, API düzeyinde uygulanır. Bir uygulama yalnızca rolünün izin verdiği şeyleri görür.
+## How they run
 
-## Geliştirici deneyimi
+- **Logic functions** execute in isolated Node.js processes, sandboxed from the host. They access data through a typed API client scoped to the app's role permissions.
+- **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes).
+- **Permissions** are enforced at the API level. An app only sees what its role allows.
 
-Uygulamanızı makinenizde bir TypeScript projesi olarak yazarsınız. CLI, kaynak dosyalarınızı izler ve bunları çalışan bir Twenty sunucusuyla canlı olarak senkronize eder — bir dosyayı düzenleyin, bir saniye içinde arayüzde değişikliği görün. Şema değiştiğinde tipli API istemcisi otomatik olarak yeniden oluşturulur. Hazır olduğunuzda, `yarn twenty app:publish --private` bir üretim sunucusuna gönderir veya `yarn twenty app:publish` uygulamanızı npm'de ve Twenty pazarında listeler.
+## The developer experience
 
-<Card title="İlk uygulamanızı oluşturun" icon="arrow-right" href="/tr/developers/extend/apps/getting-started/quick-start">
-  Üç aşamalı bir adım adım rehber — iskelet oluşturun, yerel bir sunucu çalıştırın, değişikliklerinizi senkronize edin.
+You write your app as a TypeScript project on your machine. The CLI watches your source files and live-syncs them to a running Twenty server — edit a file, see the change in the UI within a second. The typed API client regenerates automatically when the schema changes. When you're ready, `twenty app publish --private` pushes to a production server, or `twenty app publish` lists your app on npm and the Twenty marketplace.
+
+<Card
+  title="Build your first app"
+  icon="arrow-right"
+  href="/tr/developers/extend/apps/getting-started/quick-start"
+>
+  Three-phase walkthrough — scaffold, run a local server, sync your changes.
 </Card>

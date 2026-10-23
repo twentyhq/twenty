@@ -1,25 +1,30 @@
 ---
 title: الأصول العامة
-description: وزّع الملفات الثابتة — الصور والأيقونات والخطوط — مع تطبيقك عبر مجلد public/.
-icon: folder-open
+description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
+icon: 'folder-open'
 ---
 
-يحتوي مجلد `public/` في جذر تطبيقك على ملفات ثابتة — صور وأيقونات وخطوط وأي أصول أخرى يحتاجها تطبيقك وقت التشغيل. تُدرج هذه الملفات تلقائيًا في عمليات البناء، وتُزامَن أثناء وضع التطوير، وتُرفَع إلى الخادم.
+<Note>
+  لم تُحدَّث ترجمة هذا الدليل بعد لتشمل واجهة سطر أوامر Twenty المستقلة. يُعرض
+  المحتوى الإنجليزي الحالي أدناه مؤقتًا لتجنّب استخدام أوامر أُزيلت.
+</Note>
 
-الملفات الموضوعة في `public/` هي:
+The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
 
-* **متاحة للعامة** — بمجرد مزامنتها إلى الخادم، تُقدَّم الأصول عبر عنوان URL عام. لا حاجة إلى مصادقة للوصول إليها.
-* **متاحة في المكوّنات الأمامية** — استخدم عناوين الأصول لعرض الصور أو الأيقونات أو أي وسائط داخل مكوّنات React لديك.
-* **متاحة في الدوال المنطقية** — أشِر إلى عناوين الأصول في رسائل البريد الإلكتروني أو استجابات واجهات البرمجة أو أي منطق على جهة الخادم.
-* **مستخدمة لبيانات تعريف السوق** — يشير الحقلان `logo` و`galleryImages` في `defineApplication()` إلى ملفات من هذا المجلد (مثل `public/logo.png`). تُعرَض هذه عند نشر تطبيقك في السوق. يتم تجاهل عناوين URL المطلقة الخارجية لهذه الحقول — بدلاً من ذلك، قم بتجميع الصور في `public/`. يجب ألا يتجاوز حجم كل صورة 10 ميغابايت.
-* **تُزامَن تلقائيًا في وضع التطوير** — عند إضافة ملف في `public/` أو تحديثه أو حذفه، تتم مزامنته إلى الخادم تلقائيًا. لا حاجة لإعادة التشغيل.
-* **مضمَّنة في عمليات البناء** — يقوم `yarn twenty dev:build` بتجميع جميع الأصول العامة ضمن مخرجات التوزيع.
+Files placed in `public/` are:
 
-## الوصول إلى الأصول العامة باستخدام `getPublicAssetUrl`
+- **Publicly accessible** — once synced to the server, assets are served at a public URL. No authentication is needed to access them.
+- **Available in front components** — use asset URLs to display images, icons, or any media inside your React components.
+- **Available in logic functions** — reference asset URLs in emails, API responses, or any server-side logic.
+- **Used for marketplace metadata** — the `logo` and `galleryImages` fields in `defineApplication()` reference files from this folder (e.g., `public/logo.png`). These are displayed in the marketplace when your app is published. External absolute URLs are ignored for these fields — bundle the images in `public/` instead. Each image must not exceed 10 MB.
+- **Auto-synced in dev mode** — when you add, update, or delete a file in `public/`, it is synced to the server automatically. No restart needed.
+- **Included in builds** — `twenty app build` bundles all public assets into the distribution output.
 
-استخدم المساعد `getPublicAssetUrl` من `twenty-sdk` للحصول على العنوان الكامل لملف في دليل `public/` لديك. يعمل ذلك في كلٍ من الدوال المنطقية والمكوّنات الأمامية.
+## Accessing public assets with `getPublicAssetUrl`
 
-**في دالة منطقية:**
+Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a file in your `public/` directory. It works in both **logic functions** and **front components**.
+
+**In a logic function:**
 
 ```ts src/logic-functions/send-invoice.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -45,7 +50,7 @@ export default defineLogicFunction({
 });
 ```
 
-**في مكوّن أمامي:**
+**In a front component:**
 
 ```tsx src/front-components/company-card.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -64,4 +69,4 @@ export default defineFrontComponent({
 });
 ```
 
-وسيطة `path` نسبية إلى مجلد `public/` الخاص بتطبيقك. كلٌّ من `getPublicAssetUrl('logo.png')` و`getPublicAssetUrl('public/logo.png')` يُحلاّن إلى العنوان نفسه — تتم إزالة بادئة `public/` تلقائيًا إن وُجدت.
+The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.

@@ -1,16 +1,22 @@
 ---
 title: 6. Publicación
-icon: rocket
-description: Añade metadatos de mercado y publica tu aplicación.
+icon: 'rocket'
+description: Add marketplace metadata and publish your app.
 ---
 
-Tu app funciona. El último paso es describirlo para el mercado y publicarlo.
+<Note>
+  La traducción de esta guía aún no refleja la CLI independiente de Twenty. A
+  continuación se muestra temporalmente el contenido actual en inglés para
+  evitar el uso de comandos eliminados.
+</Note>
 
-## Añadir metadatos de mercado
+Your app works. The last step is to describe it for the marketplace and publish.
 
-La [configuración de la aplicación](/es/developers/extend/apps/config/application) lleva los enlaces
-que se muestran en el mercado: autor, categoría, logotipo y soporte
-. Coloca un logotipo en `public/` y haz referencia a él con `logo`.
+## Add marketplace metadata
+
+The [application config](/es/developers/extend/apps/config/application) carries the
+identity that shows up in the marketplace: author, category, logo, and support
+links. Put a logo in `public/` and reference it with `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -31,19 +37,21 @@ export default defineApplication({
 ```
 
 <Tip>
-El rol por defecto se declara con `defineApplicationRole()` en su propio archivo — usted
-ya no pase `defaultRoleUniversalIdentifier` aquí.
+  The default role is declared with `defineApplicationRole()` in its own file —
+  you don't pass `defaultRoleUniversalIdentifier` here anymore.
 </Tip>
 
-También añade la palabra clave `twenty-app` a `package.json` para que la aplicación sea detectable:
+Also add the `twenty-app` keyword to `package.json` so the app is discoverable:
 
 ```json filename="package.json"
 { "keywords": ["twenty-app"] }
 ```
 
-## Añadir capturas de pantalla de galería
+## Add gallery screenshots
 
-Un listado de mercado se vende a sí mismo con capturas de pantalla. Coloca algunos PNG en `public/gallery/` y haz referencia a ellos con `galleryImages` — se muestran como una galería en la página de listado, en el orden del array.
+A marketplace listing sells itself with screenshots. Drop a few PNGs in
+`public/gallery/` and reference them with `galleryImages` — they render as a
+gallery on the listing page, in array order.
 
 ```ts filename="src/application-config.ts"
 export default defineApplication({
@@ -58,78 +66,90 @@ export default defineApplication({
 ```
 
 <Tip>
-Lance con la ganancia: haga la primera captura de pantalla el resultado terminado (un documento
-generado), luego muestre cómo se activa y se autoriza. Usa capturas
-nítidas y de alta resolución, son lo primero que un usuario ve.
+  Lead with the payoff: make the first screenshot the finished result (a
+  generated document), then show how it's triggered and authored. Use crisp,
+  high-resolution captures — they're the first thing a user sees.
 </Tip>
 
-Dale a `README.md` el mismo tratamiento: es la página principal de npm y GitHub.
-Abre con la proposición de valor y una captura de pantalla, muestra las características de la línea de cabecera,
-y mantén los detalles de construcción debajo del plano.
+Give `README.md` the same treatment — it's the front page on npm and GitHub.
+Open with the value proposition and a screenshot, list the headline features,
+then keep the build details below the fold.
 
-## Comprobar antes de enviar
+## Check before you ship
 
-Ejecuta las mismas puertas que CI hace:
+Run the same gates CI does:
 
 ```bash filename="Terminal"
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
-El plan muestra exactamente qué cambiaría en el servidor sin aplicarlos —
-una buena comprobación final. Ver
-[Testing](/es/developers/extend/apps/operations/testing) y
-[Sincronizando y recuperando](/es/developers/extend/apps/operations/sync-and-recovery).
+The plan prints exactly what would change on the server without applying it —
+a good final sanity check. See
+[Testing](/es/developers/extend/apps/operations/testing) and
+[Syncing & recovery](/es/developers/extend/apps/operations/sync-and-recovery).
 
-## Publicar
+## Publish
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-`app:publish` construye y publica a npm por defecto; `--private` sube un tarball
-a un registro privado del servidor Veinte en su lugar. Para superficiar una aplicación publicada
-en el mercado de una instancia, dispara una sincronización de catálogo:
+`twenty app publish` builds and publishes to npm by default; `--private` uploads a
+tarball to a Twenty server's private registry instead. To surface a published app
+in an instance's marketplace, wait for the server's marketplace catalog sync.
 
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
-
-Detalles completos y la lista de verificación de lanzamiento:
+Full details and the release checklist:
 [Publishing](/es/developers/extend/apps/operations/publishing).
 
-## Construiste una aplicación 🎉
+## You built an app 🎉
 
-En seis capítulos utilizaste la mayor parte de la superficie SDK:
+In six chapters you used most of the SDK surface:
 
-* **Objetos, campos y una relación** para modelar los datos
-* Una **función lógica** expuesta como una **herramienta de IA**, una **acción de flujo de trabajo**, y **rutas HTTP**
-* **Vistas, navegación, un comando y un componente frontal** para la interfaz de usuario
-* Un **agente + habilidad** para generación natural
-* **Metadatos del mercado** y el flujo de publicación
+- **Objects, fields, and a relation** to model the data
+- A **logic function** exposed as an **AI tool**, a **workflow action**, and **HTTP routes**
+- **Views, navigation, a command, and a front component** for the UI
+- An **agent + skill** for natural-language generation
+- **Marketplace metadata** and the publish flow
 
-La aplicación terminada está en
+The finished app is at
 [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
 
-## A dónde ir siguiente
+## Where to go next
 
 <CardGroup cols={2}>
-  <Card title="Referencia de datos" icon="database" href="/es/developers/extend/apps/data/overview">
-    Cada tipo de campo, relación y opción de índice.
+  <Card
+    title="Data reference"
+    icon="database"
+    href="/es/developers/extend/apps/data/overview"
+  >
+    Every field type, relation, and index option.
   </Card>
-  <Card title="Referencia lógica" icon="bolt" href="/es/developers/extend/apps/logic/overview">
-    Activadores de eventos Cron y base de datos, el almacén clave-valor, conexiones OAuth.
+  <Card
+    title="Logic reference"
+    icon="bolt"
+    href="/es/developers/extend/apps/logic/overview"
+  >
+    Cron and database-event triggers, the key-value store, OAuth connections.
   </Card>
-  <Card title="Referencia del diseño" icon="table-columns" href="/es/developers/extend/apps/layout/overview">
-    Diseños de páginas, widgets de tablero y más superficies de interfaz.
+  <Card
+    title="Layout reference"
+    icon="table-columns"
+    href="/es/developers/extend/apps/layout/overview"
+  >
+    Page layouts, dashboard widgets, and more UI surfaces.
   </Card>
-  <Card title="Operaciones" icon="rocket" href="/es/developers/extend/apps/operations/overview">
-    CLI, prueba, control remoto, y CI.
+  <Card
+    title="Operations"
+    icon="rocket"
+    href="/es/developers/extend/apps/operations/overview"
+  >
+    CLI, testing, remotes, and CI.
   </Card>
 </CardGroup>

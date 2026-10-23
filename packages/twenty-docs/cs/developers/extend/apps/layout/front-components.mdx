@@ -1,32 +1,41 @@
 ---
 title: Frontendové komponenty
-description: Vytvářejte komponenty Reactu, které se vykreslují uvnitř uživatelského rozhraní Twenty se sandboxovou izolací.
-icon: window-maximize
+description: Build React components that render inside Twenty's UI with sandboxed isolation.
+icon: 'window-maximize'
 ---
 
-Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód se spouští uvnitř sandboxovaného iframe s nejasným původem (opaque-origin), ale jeho UI se stále vykresluje nativně na stránce, místo aby bylo omezené na tento iframe.
+<Note>
+  Překlad tohoto průvodce zatím nezohledňuje samostatné CLI Twenty. Níže dočasně
+  uvádíme aktuální anglický obsah, abyste nepoužívali odstraněné příkazy.
+</Note>
+
+Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code executes inside a sandboxed, opaque-origin iframe, yet its UI still renders natively in the page rather than being confined to that iframe.
 
 <Warning>
-Komponenty Front jsou stále aktivně vyvíjeny. Váš kód běží nad částečným DOMem, nikoli nad skutečnou stránkou prohlížeče, takže pokročilé způsoby použití mohou selhávat, často bez zjevných chyb. Viz [Aktuální omezení](#current-limitations).
+  Front components are still under active development. Your code runs against a
+  partial DOM, not a real browser page, so advanced usages can fail, often
+  silently. See [Current limitations](#current-limitations).
 </Warning>
 
-## Kde lze použít frontendové komponenty
+## Where front components can be used
 
-Frontendové komponenty se mohou vykreslovat na třech místech v rámci Twenty:
+Front components can render in four locations within Twenty:
 
-* **Postranní panel** — Frontendové komponenty, které nejsou headless, se otevírají v pravém postranním panelu. Toto je výchozí chování, když je frontendová komponenta vyvolána z příkazového menu.
-* **Widgety (nástěnky a stránky záznamů)** — front komponenty lze vkládat jako widgety do [rozložení stránky](/cs/developers/extend/apps/layout/page-layouts). Při konfiguraci nástěnky nebo rozložení stránky záznamu mohou uživatelé přidat widget frontendové komponenty.
-* **Nastavení aplikace** — Definovaná pomocí [`defineSettingsFrontComponent()`](#custom-settings-component), frontendová komponenta se vykreslí jako sekce na kartě **Settings** (Nastavení) aplikace, místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
+- **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
+- **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/cs/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
+- **App settings** — Pointed at by a [`defineSettingsMenuItem()`](#settings-menu-items) declaration, the front component renders the page behind one of the app's settings menu items. An app can declare several.
+- **AI chat** — A [logic function exposed as an AI tool](/cs/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) can name a front component, which then renders that tool's calls inline in the chat in place of the default step row.
 
-Samotná frontendová komponenta není z uživatelského rozhraní dostupná — je potřeba ji zpřístupnit. Tři způsoby, jak to udělat, jsou:
+A front component on its own isn't reachable from the UI — you need to _surface_ it. The four ways to do that are:
 
-* **Spárujte ji s [položkou příkazové nabídky](/cs/developers/extend/apps/layout/command-menu-items)** — zaregistruje ji v příkazové nabídce (Cmd+K) a volitelně také jako připnutou rychlou akci.
-* **Vložte ji jako widget do [rozložení stránky](/cs/developers/extend/apps/layout/page-layouts)** — umístí ji na detailní stránku záznamu nebo na nástěnku.
-* **Definujte ji pomocí [`defineSettingsFrontComponent()`](#custom-settings-component)** — vykreslí ji jako sekci na kartě **Settings** (Nastavení) aplikace, místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
+- **Pair it with a [command menu item](/cs/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
+- **Embed it as a widget in a [page layout](/cs/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
+- **Point a [`defineSettingsMenuItem()`](#settings-menu-items) at it** — renders it behind one of the app's settings menu items.
+- **Name it from a [logic function's `toolTriggerSettings`](/cs/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action)** — renders the tool's calls in the AI chat.
 
-## Základní příklad
+## Basic example
 
-Nejrychlejší způsob, jak vidět front komponentu v akci, je spárovat ji s [`defineCommandMenuItem`](/cs/developers/extend/apps/layout/command-menu-items), aby se objevila jako tlačítko rychlé akce v pravém horním rohu stránky:
+The quickest way to see a front component in action is to pair it with a [`defineCommandMenuItem`](/cs/developers/extend/apps/layout/command-menu-items), so it appears as a quick-action button in the top-right corner of the page:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -61,74 +70,146 @@ export default defineCommandMenuItem({
 });
 ```
 
-Po synchronizaci pomocí `yarn twenty dev` (nebo po jednorázovém spuštění `yarn twenty apply`) se rychlá akce zobrazí v pravém horním rohu stránky:
+After syncing with `twenty app dev` (or running a one-shot `twenty app apply`), the quick action appears in the top-right corner of the page:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Tlačítko rychlé akce v pravém horním rohu" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Quick action button in the top-right corner"
+  />
 </div>
 
-Kliknutím na něj vykreslíte komponentu přímo ve stránce.
+Click it to render the component inline.
 
-## Konfigurační pole
+## Configuration fields
 
-| Pole                  | Povinné | Popis                                                             |
-| --------------------- | ------- | ----------------------------------------------------------------- |
-| `universalIdentifier` | Ano     | Stabilní jedinečné ID pro tuto komponentu                         |
-| `component`           | Ano     | Funkce komponenty React                                           |
-| `name`                | Ne      | Zobrazovaný název                                                 |
-| `description`         | Ne      | Popis toho, co komponenta dělá                                    |
-| `isHeadless`          | Ne      | Nastavte na `true`, pokud komponenta nemá viditelné UI (viz níže) |
+| Field                 | Required | Description                                                                                                      |
+| --------------------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Yes      | Stable unique ID for this component                                                                              |
+| `component`           | Yes      | A React component function                                                                                       |
+| `name`                | No       | Display name                                                                                                     |
+| `description`         | No       | Description of what the component does                                                                           |
+| `isHeadless`          | No       | Set to `true` if the component has no visible UI (see below)                                                     |
+| `widgetAvailability`  | No       | Widget picker that offers the component: record pages, optionally narrowed to objects, or dashboards (see below) |
 
-## Umístění frontendové komponenty na stránku
+## Placing a front component on a page
 
-Mimo příkazy můžete frontendovou komponentu vložit přímo na stránku záznamu přidáním jako widget v **rozvržení stránky**. Podrobnosti viz [Rozložení stránek](/cs/developers/extend/apps/layout/page-layouts).
+Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See [Page Layouts](/cs/developers/extend/apps/layout/page-layouts) for details.
 
-## Vlastní komponenta nastavení
+`widgetAvailability` decides which widget picker offers the component while a page layout is being edited. A front component is built either for record pages, where it works on the shown record, or for dashboards, so it declares one `pageLayoutType`:
 
-Chcete-li nahradit automaticky generované uživatelské rozhraní pro konfiguraci proměnných na kartě **Settings** (Nastavení) vaší aplikace vlastní komponentou, definujte ji pomocí `defineSettingsFrontComponent` místo `defineFrontComponent`. Používá stejná [konfigurační pole](#configuration-fields) (kromě `isHeadless`, který není podporován, protože komponenta nastavení vždy vykresluje viditelné uživatelské rozhraní) a zároveň označuje komponentu jako uživatelské rozhraní nastavení aplikace.
+| `widgetAvailability`                                                                | Offered in                        |
+| ----------------------------------------------------------------------------------- | --------------------------------- |
+| omitted                                                                             | no widget picker                  |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE }`                                    | every record page                 |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE, objectUniversalIdentifiers: [...] }` | the record pages of those objects |
+| `{ pageLayoutType: PageLayoutType.DASHBOARD }`                                      | dashboards                        |
 
-Komponenta se vykreslí jako sekce **uvnitř** karty Settings, nikoli jako náhrada celé karty. Systémem spravované sekce Twenty — automatická aktualizace, App URL a připojení — se vždy zobrazují nad ní a aplikace je nemůže přebít.
+```tsx
+import {
+  defineFrontComponent,
+  PageLayoutType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
-```tsx src/front-components/app-settings.tsx
-import { defineSettingsFrontComponent } from 'twenty-sdk/define';
-
-const AppSettings = () => {
-  return (
-    <div style={{ padding: '20px' }}>
-      <h2>My app settings</h2>
-      {/* render your own configuration UI here */}
-    </div>
-  );
-};
-
-export default defineSettingsFrontComponent({
-  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-  name: 'app-settings',
-  description: "Custom UI for the app's Settings tab",
-  component: AppSettings,
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-notes',
+  component: CompanyNotes,
+  widgetAvailability: {
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+    objectUniversalIdentifiers: [
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+    ],
+  },
 });
 ```
 
-Na jednu aplikaci je povolena pouze jedna frontová komponenta nastavení; deklarace více než jedné způsobí selhání sestavení. Je-li přítomna, karta **Settings** aplikace vykreslí tuto komponentu místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
+Leave `widgetAvailability` out for a component that is only opened from a command, a [settings menu item](#settings-menu-items) or a timeline row. It never limits where a component is displayed: commands, settings menu items and the page layouts your app declares render it whatever its value. The build warns about a visible component that declares none and is opened from nowhere else.
 
-## Headless vs. ne-headless
+## Settings menu items
 
-Front-endové komponenty existují ve dvou režimech vykreslování řízených volbou `isHeadless`:
+An app can add its own entries to the settings menu, each rendering a front component. Declare one with `defineSettingsMenuItem()` in its own file, pointing at the component that renders it:
 
-**Ne-headless (výchozí)** — Komponenta vykreslí viditelné uživatelské rozhraní. Po vyvolání z menu příkazů se otevře v postranním panelu. Toto je výchozí chování, když je `isHeadless` `false` nebo když tato volba není uvedena.
+```tsx src/settings-menu-items/sync-settings.ts
+import { defineSettingsMenuItem } from 'twenty-sdk/define';
 
-**Headless (`isHeadless: true`)** — Komponenta se neviditelně inicializuje na pozadí. Neotevírá postranní panel. Headless komponenty jsou určené pro akce, které provedou logiku a poté se odpojí — například spuštění asynchronního úkolu, navigaci na stránku nebo zobrazení potvrzovacího modálního okna. Přirozeně se hodí ke komponentám SDK Command popsaným níže.
+export default defineSettingsMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+  title: 'Sync',
+  icon: 'IconRefresh',
+  position: 1,
+});
+```
+
+The menu item points at the front component rather than the component declaring itself a settings entry. One component can therefore back several menu items, and an item can be repointed at a different component without touching either.
+
+Each item renders as a tab on the app's page under **Settings > Apps**, after **General**, in `position` order.
+
+Declare as many as you need. Twenty's own **General** item — auto-upgrade, App URL and connections — always comes first and cannot be overridden by an app; App URL only shows when the app has HTTP-triggered functions.
+
+### Fields
+
+| Field                               | Description                                                              |
+| ----------------------------------- | ------------------------------------------------------------------------ |
+| `universalIdentifier`               | A UUID you generate once and own, stable across syncs                    |
+| `frontComponentUniversalIdentifier` | The `universalIdentifier` of the front component this item renders       |
+| `title`                             | The item's label. `General` is reserved and fails the build              |
+| `icon` _(optional)_                 | Icon name, resolved client-side; an unknown name falls back to a default |
+| `position` _(optional)_             | Sort order, ascending. Defaults to `0`                                   |
+| `scope` _(optional)_                | `WORKSPACE` (default) or `USER`                                          |
+
+`position` is a decimal, so an item can be slotted between two existing ones without renumbering. Items sort by ascending `position`, ties broken on `universalIdentifier` so the order is the same in every workspace. Two items of one app cannot share a position in the same scope — the sync refuses it rather than letting install order decide which renders first.
+
+### Workspace and user scope
+
+`scope` says who an item is configured by:
+
+- **`WORKSPACE`** (default) — configured once for the whole workspace, alongside the other workspace settings. These are the items that render as tabs on the app's page.
+- **`USER`** — configured by each member for themselves, under their own user settings.
+
+<Note>
+  A `USER` item renders as a tab on the app's page under **Settings > App
+  preferences**, where only the signed-in member sees it, and only when their
+  role grants the `CONNECTED_ACCOUNTS` permission. That page is not enabled in
+  every workspace yet: where it is not, a `USER` item is persisted and synced
+  but nothing renders it.
+</Note>
+
+A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value, and your component saves it with `updateMyUserApplicationVariable`, which writes that member's value only and needs `SystemPermissionFlag.CONNECTED_ACCOUNTS` in your app's role, if it declares one (see [Reading and updating variables at runtime](#reading-and-updating-variables-at-runtime)). Like a `WORKSPACE` item, a `USER` item replaces the generated **Variables** form, so it should let the member set every user variable your app needs. A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
+
+<Note>
+  `defineSettingsFrontComponent()` is deprecated in favor of
+  `defineSettingsMenuItem()`. An app still using it keeps working — its
+  component is treated as a single **Settings** menu item — but it can only ever
+  declare one, which is what `defineSettingsMenuItem()` exists to lift.
+</Note>
+
+## Headless vs non-headless
+
+Front components come in two rendering modes controlled by the `isHeadless` option:
+
+**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+
+**Headless (`isHeadless: true`)** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  enqueueSnackbar,
+} from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
   const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -143,20 +224,20 @@ export default defineFrontComponent({
 });
 ```
 
-Protože komponenta vrací `null`, Twenty přeskočí vykreslení kontejneru — v rozvržení se neobjeví žádné prázdné místo. Komponenta má však stále přístup ke všem hookům a API komunikace s hostitelem.
+Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
 
-## Komponenty SDK Command
+## SDK Command components
 
-Balíček `twenty-sdk` poskytuje čtyři pomocné komponenty Command navržené pro headless front-endové komponenty. Každá komponenta při připojení provede akci, chyby zpracuje zobrazením oznámení ve snackbaru a po dokončení automaticky odpojí front-endovou komponentu.
+The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
 
-Importujte je z `twenty-sdk/front-component`:
+Import them from `twenty-sdk/front-component`:
 
-* **`Command`** — Spustí asynchronní callback přes prop `execute`.
-* **`CommandLink`** — Naviguje na cestu v aplikaci. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Otevře potvrzovací modální okno. Pokud uživatel potvrdí, provede callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Otevře stránku postranního panelu. Props závisí na `page` — např. `ViewRecord` bere `recordId` + `objectNameSingular` (plus volitelné id `tab` pro otevření záznamu na konkrétní záložce), ostatní stránky berou `pageTitle` + `pageIcon`.
+- **`Command`** — Runs an async callback via the `execute` prop.
+- **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — Opens content in the side panel. Routed pages use the same typed `to`, `params`, and `queryParams` props as `CommandLink`, plus optional `hash`, `pageTitle`, and `resetNavigationStack` props. The workspace route registry decides whether the requested `AppPath` supports the side panel. `pageTitle` overrides the panel header title, while `resetNavigationStack` clears earlier panel pages before opening the route. Purpose-built panel tools use their own page-specific props.
 
-Zde je kompletní příklad headless front-endové komponenty, která pomocí `Command` spouští akci z menu příkazů:
+Here is a full example of a headless front component using `Command` to run an action from the command menu:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -197,7 +278,7 @@ export default defineCommandMenuItem({
 });
 ```
 
-A příklad s použitím `CommandModal` k vyžádání potvrzení před provedením:
+And an example using `CommandModal` to ask for confirmation before executing:
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -228,13 +309,13 @@ export default defineFrontComponent({
 });
 ```
 
-A zde je příklad použití `CommandOpenSidePanelPage` k otevření aktuálního záznamu v postranním panelu na konkrétní záložce. `tab` je ID záložky rozvržení stránky (výchozí rozvržení používají ID jako `company-tab-emails` nebo `company-tab-timeline`; vlastní rozvržení používají vlastní ID záložky). Pokud ID v rozvržení záznamu neexistuje, místo toho se otevře výchozí záložka:
+And an example using `CommandOpenSidePanelPage` to open the current record in the side panel on a specific tab. `hash` is a page layout tab id without the leading `#` (default layouts use ids like `company-tab-emails` or `company-tab-timeline`; custom layouts use the tab's own id). If the id doesn't exist in the record's layout, the default tab opens instead:
 
 ```tsx src/front-components/open-company-emails.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  AppPath,
   CommandOpenSidePanelPage,
-  SidePanelPages,
   useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 
@@ -248,10 +329,12 @@ const OpenCompanyEmails = () => {
 
   return (
     <CommandOpenSidePanelPage
-      page={SidePanelPages.ViewRecord}
-      recordId={recordId}
-      objectNameSingular="company"
-      tab="company-tab-emails"
+      to={AppPath.RecordShowPage}
+      params={{
+        objectNameSingular: 'company',
+        objectRecordId: recordId,
+      }}
+      hash="company-tab-emails"
       resetNavigationStack={false}
     />
   );
@@ -266,15 +349,15 @@ export default defineFrontComponent({
 });
 ```
 
-## Volání logické funkce
+## Calling a logic function
 
-Front komponenty běží v prohlížeči v sandboxovaném Web Workeru uvnitř iframe s nejasným původem (opaque-origin), zatímco [logické funkce](/cs/developers/extend/apps/logic/logic-functions) běží na serveru. Neexistuje mezi nimi žádné přímé volání v rámci jednoho procesu — místo toho se front komponenta k logické funkci připojuje přes HTTP.
+Front components run browser-side in a Web Worker sandboxed inside an opaque-origin iframe, while [logic functions](/cs/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
 
-Logická funkce deklarovaná pomocí `httpRouteTriggerSettings` je přes HTTP dostupná na své cestě (route path). `RestApiClient` považuje cesty začínající na `/s/` za aplikační trasy, převede je na URL, ze které jsou vaše funkce poskytovány, a autentizuje je pomocí `TWENTY_APP_ACCESS_TOKEN`.
+A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. `RestApiClient` treats paths starting with `/s/` as app routes, resolves them to the URL your functions are served from, and authenticates them with `TWENTY_APP_ACCESS_TOKEN`.
 
-> **V Twenty Cloud jsou logické funkce spouštěné přes HTTP poskytovány na vyhrazené doméně pro každý workspace** na adrese `https://\<your-workspace-subdomain>.withtwenty.com\<path>`. Pro externí volající zkopírujte přesnou URL z nastavení funkce **HTTP trigger** nebo z karty **Settings** aplikace.
+> **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated per-workspace domain** at `https://<your-workspace-subdomain>.withtwenty.com<path>`. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab.
 
-Headless front komponenta může volání spustit při mountu přes komponentu `Command` a poté se automaticky odmountovat:
+A headless front component can run the call on mount via the `Command` component, then unmount automatically:
 
 ```tsx src/front-components/sync-prs.tsx
 import { RestApiClient } from 'twenty-client-sdk/rest';
@@ -301,7 +384,7 @@ export default defineFrontComponent({
 });
 ```
 
-Cesta předaná `RestApiClient` je `httpRouteTriggerSettings.path` logické funkce s předponou `/s`. Ponechte `isAuthRequired: true`; `TWENTY_APP_ACCESS_TOKEN`, který Twenty vygeneruje pro vaši komponentu, požadavek autentizuje:
+The path passed to `RestApiClient` is the logic function's `httpRouteTriggerSettings.path`, prefixed with `/s`. Keep `isAuthRequired: true`; the `TWENTY_APP_ACCESS_TOKEN` Twenty mints for your component authenticates the request:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -326,28 +409,31 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_APP_ACCESS_TOKEN` je vložen automaticky — viz [Proměnné aplikace](#application-variables). Protože tajné proměnné aplikace nejsou nikdy vystaveny front komponentám, ponechte API klíče a další citlivou logiku v logické funkci, ne ve front komponentě.
+  `TWENTY_APP_ACCESS_TOKEN` is injected automatically — see [Application
+  variables](#application-variables). Because secret application variables are
+  never exposed to front components, keep API keys and other sensitive logic in
+  the logic function, not in the front component.
 </Note>
 
-### Volání Twenty REST API
+### Calling the Twenty REST API
 
-Pro volání aplikačních HTTP tras nebo čtení a zápis záznamů Twenty z front komponenty použijte `RestApiClient` z `twenty-client-sdk/rest`. Odesílá cesty `/s/...` na základní URL funkcí vašeho workspace a všechny ostatní cesty, včetně `/rest/...`, na `TWENTY_API_URL`.
+To call app HTTP routes or read and write Twenty records from a front component, use `RestApiClient` from `twenty-client-sdk/rest`. It sends `/s/...` paths to your workspace's functions base URL and every other path, including `/rest/...`, to `TWENTY_API_URL`.
 
-Vždy jedná jako osoba, která si stránku prohlíží. `runAs: 'application'` je pouze volba funkce logiky: komponenta nikdy neobdrží vlastní token vaší aplikace, takže požadavek na něj zde vyvolá chybu. Práci, která vyžaduje vlastní přístup aplikace, vložte do funkce logiky a místo toho volejte ji.
+It always acts as the person looking at the page. `runAs: 'application'` is a logic-function option only: a component never receives your application's own token, so asking for it here throws. Put work that needs the app's own access behind a logic function and call that instead.
 
-| Metoda                            | Popis                                                                |
-| --------------------------------- | -------------------------------------------------------------------- |
-| `get(path, options?)`             | Odešle požadavek `GET`                                               |
-| `post(path, body?, options?)`     | Odešle požadavek `POST`                                              |
-| `put(path, body?, options?)`      | Odešle požadavek `PUT`                                               |
-| `patch(path, body?, options?)`    | Odešle požadavek `PATCH`                                             |
-| `delete(path, options?)`          | Odešle požadavek `DELETE`                                            |
-| `request(method, path, options?)` | Obecný požadavek s libovolnou metodou HTTP                           |
-| `resolveUrl(path, options?)`      | Převede cestu na její úplnou URL bez odeslání požadavku (pro odkazy) |
+| Method                            | Description                                                           |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `get(path, options?)`             | Sends a `GET` request                                                 |
+| `post(path, body?, options?)`     | Sends a `POST` request                                                |
+| `put(path, body?, options?)`      | Sends a `PUT` request                                                 |
+| `patch(path, body?, options?)`    | Sends a `PATCH` request                                               |
+| `delete(path, options?)`          | Sends a `DELETE` request                                              |
+| `request(method, path, options?)` | Generic request with any HTTP method                                  |
+| `resolveUrl(path, options?)`      | Resolves a path to its full URL without sending a request (for links) |
 
-`options` přijímá `headers`, `query` (záznam parametrů dotazovacího řetězce; hodnoty typu nullish jsou vynechány) a `AbortSignal` prostřednictvím `signal`. Objekt `body`, který není typu `FormData`, je automaticky serializován do JSON. Při `401` klient jednou obnoví přístupový token prostřednictvím hostitele a požadavek znovu odešle.
+`options` accepts `headers`, `query` (a record of query-string params; nullish values are skipped), and an `AbortSignal` via `signal`. A non-`FormData` object `body` is JSON-serialized automatically. On a `401`, the client refreshes the access token once through the host and retries the request.
 
-Základní URL a token jsou ve výchozím nastavení odvozeny z prostředí. Podle potřeby předávejte konstruktoru přepsané hodnoty — například v testech:
+The base URL and token are resolved from the environment by default. Pass overrides to the constructor when needed — for example in tests:
 
 ```ts
 const client = new RestApiClient({
@@ -356,7 +442,7 @@ const client = new RestApiClient({
 });
 ```
 
-Neúspěšné požadavky vyvolají `RestApiClientError`, který zpřístupňuje `status`, `statusText`, `url` a parsované `body`:
+Failed requests throw a `RestApiClientError` exposing `status`, `statusText`, `url`, and the parsed `body`:
 
 ```tsx
 import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
@@ -374,9 +460,9 @@ try {
 }
 ```
 
-## Přístup k běhovému kontextu
+## Accessing runtime context
 
-Uvnitř komponenty použijte hooky SDK pro přístup k aktuálnímu uživateli, záznamu a instanci komponenty:
+Inside your component, use SDK hooks to access the current user, record, and component instance:
 
 ```tsx src/front-components/record-info.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -407,28 +493,83 @@ export default defineFrontComponent({
 });
 ```
 
-Dostupné hooky:
+Available hooks:
 
-| Hook                                          | Vrací                   | Popis                                                                                |
-| --------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------ |
-| `useUserId()`                                 | `string` nebo `null`    | ID aktuálního uživatele                                                              |
-| `useSelectedRecordIds()`                      | `string[]`              | Všechna vybraná ID záznamů (prázdné pole, pokud není nic vybráno)                    |
-| `useRecordId()`                               | `string` nebo `null`    | **Zastaralé.** Použijte místo toho `useSelectedRecordIds()`                          |
-| `useFrontComponentId()`                       | `string`                | ID této instance komponenty                                                          |
-| `useTimelineActivityId()`                     | `string` nebo `null`    | ID aktuální aktivity časové osy při vykreslování vlastního řádku časové osy          |
-| `useColorScheme()`                            | `'light'` nebo `'dark'` | Aktivní barevné schéma uživatelského rozhraní hostitele (`System` je již vyhodnocen) |
-| `useFrontComponentExecutionContext(selector)` | různé                   | Přístup k úplnému kontextu běhu pomocí selektorové funkce                            |
+| Hook                                          | Returns                                          | Description                                                                                                      |
+| --------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` or `null`                               | The current user's ID                                                                                            |
+| `useSelectedRecordIds()`                      | `string[]`                                       | All selected record IDs (empty array if none selected)                                                           |
+| `useSelectedRecordsFilter()`                  | `RecordGqlOperationFilter` or `null`             | Filter matching exactly the selected records, including under Select all                                         |
+| `useSelectedObjectMetadata()`                 | `FrontComponentSelectedObjectMetadata` or `null` | The object metadata associated with this front component's record context                                        |
+| `useRecordId()`                               | `string` or `null`                               | **Deprecated.** Use `useSelectedRecordIds()` instead                                                             |
+| `useFrontComponentId()`                       | `string`                                         | This component instance's ID                                                                                     |
+| `useTimelineActivityId()`                     | `string` or `null`                               | The current timeline activity ID when rendering a custom timeline row                                            |
+| `useColorScheme()`                            | `'light'` or `'dark'`                            | The host UI's active color scheme (`System` is already resolved)                                                 |
+| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname, query string, and hash, plus the host app's origin                                    |
+| `useToolCall()`                               | `FrontComponentToolCall` or `null`               | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
+| `useFrontComponentExecutionContext(selector)` | varies                                           | Access the full execution context with a selector function                                                       |
 
-## Aplikační proměnné
+### Object metadata
 
-Aplikační proměnné definované v [`defineApplication()`](/cs/developers/extend/apps/config/application) s `isSecret: false` jsou k dispozici ve front-endových komponentách prostřednictvím pomocné funkce `getApplicationVariable`:
+Use `useSelectedObjectMetadata()` to identify the object associated with a record-page widget, a custom timeline row, an object-scoped command, or a front component opened in the side panel with an object (from a command, or through `openSidePanelPage` with an `objectNameSingular`). This lets an integration select templates or other configuration for the current object without searching across objects for a record ID.
+
+```tsx
+import {
+  useSelectedObjectMetadata,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const TemplatePicker = () => {
+  const objectMetadata = useSelectedObjectMetadata();
+  const selectedRecordIds = useSelectedRecordIds();
+
+  if (!objectMetadata) {
+    return <p>Open a record to select a template.</p>;
+  }
+
+  return (
+    <p>
+      Select a template for {objectMetadata.nameSingular}. Selected records:{' '}
+      {selectedRecordIds.length}
+    </p>
+  );
+};
+```
+
+The result contains `id` (the workspace's object-metadata UUID), `nameSingular`, and `namePlural`. The names are metadata names, such as `person` and `people`, rather than display labels.
+
+Object metadata can be available even when no records are selected. It belongs to this front component's context, so a side panel can expose a different object from the main page. The hook updates when that context changes and returns `null` when the object cannot be resolved, when no object context is supplied, or when running on an older host that does not provide object metadata.
+
+### Host location
+
+Use `useLocation()` to read the route hosting your front component. It returns a `FrontComponentLocation` object with four required string fields: `pathname`, `search`, `hash`, and `origin`. For example, a page at `https://myworkspace.twenty.com/page/page-layout-id?project=abc#details` provides `/page/page-layout-id`, `?project=abc`, `#details`, and `https://myworkspace.twenty.com` respectively. `hash` includes its leading `#` and is `''` when there is no fragment.
+
+`pathname`, `search`, and `hash` follow the component's React Router context, including a routed side panel's own route. `origin` comes from the host app. The hook updates when the route changes. Older hosts may omit `executionContext.location`, so `useLocation()` returns `null` when location is unavailable.
+
+For query parameters, read `useLocation()?.search ?? ''` and parse the result with `URLSearchParams`. `search` includes its leading `?` and is `''` when the route has no query string. The fallback also provides `''` when the host does not provide location.
+
+```tsx
+import { useLocation } from 'twenty-sdk/front-component';
+
+const ProjectDetails = () => {
+  const search = useLocation()?.search ?? '';
+  const projectId = new URLSearchParams(search).get('project');
+
+  return <p>Project: {projectId ?? 'No project selected'}</p>;
+};
+```
+
+## Application variables
+
+Application variables defined in [`defineApplication()`](/cs/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
 
 ```tsx src/front-components/greeting.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { getApplicationVariable } from 'twenty-sdk/front-component';
 
 const Greeting = () => {
-  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+  const recipientName =
+    getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
 
   return <p>Hello, {recipientName}!</p>;
 };
@@ -441,50 +582,111 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Tajné proměnné (`isSecret: true`) **nejsou** zpřístupněny front-endovým komponentám. Jsou k dispozici pouze v [logických funkcích](/cs/developers/extend/apps/logic/logic-functions), které běží na straně serveru. Tím se zabrání odesílání citlivých hodnot, jako jsou API klíče, do prohlížeče.
+  Secret variables (`isSecret: true`) are **not** exposed to front components.
+  They are only available in [logic
+  functions](/cs/developers/extend/apps/logic/logic-functions), which run
+  server-side. This prevents sensitive values like API keys from being sent to
+  the browser.
 </Warning>
 
-`getApplicationVariable` vždy vrací **string** (nebo `undefined`), bez ohledu na deklarovaný `type` proměnné. Řetězec je serializován konzistentně podle typu (logické hodnoty jako `"true"` / `"false"`, čísla jako desetinné řetězce, pole / objekty jako JSON), ve stejném formátu, jaký používá `process.env` v logických funkcích — zpracujte jej sami (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). Viz [Typy proměnných](/cs/developers/extend/apps/config/application#variable-types).
+`getApplicationVariable` always returns a **string** (or `undefined`), regardless of the variable's declared `type`. The string is serialized consistently by type (booleans as `"true"` / `"false"`, numbers as decimal strings, arrays / objects as JSON), the same format used for logic-function `process.env` — parse it yourself (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). See [Variable types](/cs/developers/extend/apps/config/application#variable-types).
 
-Následující systémové proměnné jsou vždy dostupné přes `process.env`:
+### Reading and updating variables at runtime
 
-| Proměnná                  | Popis                                                                                                                                                                           |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `TWENTY_API_URL`          | Základní URL Twenty core API                                                                                                                                                    |
-| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s rozsahem oprávnění omezeným na roli přihlášené osoby v průniku s rolí vaší aplikace, takže komponenta nikdy nemůže dělat víc než osoba, která si ji prohlíží |
+`getApplicationVariable` returns the values injected when the component loaded, so a value written afterwards only shows up on the next load. To read the stored values, or to write one (what a [settings menu item](#settings-menu-items) does when it saves what the user typed), go through `MetadataApiClient`:
+
+```tsx src/front-components/app-settings.tsx
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER = '39783023-bcac-41e3-b0d2-ff1944d8465d';
+
+const readApplicationVariables = async () => {
+  const { findOneApplication } = await new MetadataApiClient().query({
+    findOneApplication: {
+      __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+      applicationVariables: { key: true, value: true, isSecret: true },
+    },
+  });
+
+  return findOneApplication?.applicationVariables ?? [];
+};
+
+const saveRecipientName = async (recipientName: string) => {
+  await new MetadataApiClient().mutation({
+    updateOneApplicationVariable: {
+      __args: { key: 'DEFAULT_RECIPIENT_NAME', value: recipientName },
+    },
+  });
+};
+
+const saveMyLanguage = async (language: string) => {
+  await new MetadataApiClient().mutation({
+    updateMyUserApplicationVariable: {
+      __args: {
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        key: 'LANGUAGE',
+        value: language,
+      },
+    },
+  });
+};
+```
+
+Notes:
+
+- Your component's token is bound to your own application. `updateOneApplicationVariable` targets it, so `applicationId` is optional and naming another application is refused. Reading the `applicationVariables` of another application is refused the same way, and an application belonging to another workspace reads as not found.
+- The key must be one your app declares in [`defineApplication()`](/cs/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
+- Secret variables read back masked, never as the stored value. Writing them works normally.
+- Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/cs/developers/extend/apps/config/roles).
+- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret. `updateOneApplicationVariable` refuses it: save it with `updateMyUserApplicationVariable`, as `saveMyLanguage` does above. It writes the viewing member's value only and refuses naming another application. It needs no `APPLICATIONS` permission, but it needs the `CONNECTED_ACCOUNTS` permission on the viewing member's role and on your app's role, if it declares one: add `SystemPermissionFlag.CONNECTED_ACCOUNTS` to `permissionFlagUniversalIdentifiers` in your [application role](/cs/developers/extend/apps/config/roles). See [Workspace and user variables](/cs/developers/extend/apps/config/application#workspace-and-user-variables).
+
+### System variables
+
+The following system variables are always available via `process.env`:
+
+| Variable                  | Description                                                                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Base URL of the Twenty core API                                                                                                                     |
+| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to the signed-in person's role intersected with your app's, so a component can never do more than the person looking at it |
 
 ### `TWENTY_FUNCTIONS_URL`
 
-Twenty také vkládá `TWENTY_FUNCTIONS_URL` do front komponent a logických funkcí: základní URL, ze které jsou poskytovány vaše logické funkce spouštěné přes HTTP.
+Twenty also injects `TWENTY_FUNCTIONS_URL` into front components and logic functions: the base URL your app's HTTP-triggered logic functions are served from.
 
-Existuje proto, že tato URL není vždy samotný server Twenty. V Twenty Cloud jsou aplikační trasy poskytovány na vyhrazené doméně pro každý workspace (`https://\<your-workspace-subdomain>.withtwenty.com`, nebo hlavní veřejná doména aplikace, pokud je nakonfigurována), aby odpovědi vytvořené aplikací běžely na odděleném původu, a nikoli na původu aplikace Twenty. Self-hostované a lokální instance poskytují aplikační trasy pod předponou `/s` přímo na serveru a proměnnou nemusí vůbec nastavovat. Protože se základní URL liší podle workspace a instance, váš kód ji nemůže napevno zakódovat — server správnou hodnotu vloží za běhu.
+It exists because that URL is not always the Twenty server itself. On Twenty Cloud, app routes are served on a dedicated per-workspace domain (`https://<your-workspace-subdomain>.withtwenty.com`, or the application's primary public domain when one is configured) so that app-authored responses run on their own origin rather than on the Twenty app origin. Self-hosted and local instances serve app routes under the `/s` prefix on the server itself and may not set the variable at all. Since the base URL varies per workspace and per instance, your code cannot hard-code it — the server injects the right value at runtime.
 
-Jen zřídka ji potřebujete číst přímo. Volání svých tras provádějte přes `RestApiClient` s cestou s předponou `/s/` a klient za vás URL vyřeší: odstraní předponu `/s` a zacílí na `TWENTY_FUNCTIONS_URL`, přičemž pokud proměnná není nastavena, použije jako zálohu `\<TWENTY_API_URL>/s`. Použijte `resolveUrl('/s/\<path>')` pro získání absolutní URL bez odeslání požadavku, např. pro odkaz. Proměnnou čtěte přímo pouze při ručním sestavování URL:
+You rarely need to read it directly. Call your routes through `RestApiClient` with a `/s/`-prefixed path and the client resolves the URL for you: it strips the `/s` prefix and targets `TWENTY_FUNCTIONS_URL`, falling back to `<TWENTY_API_URL>/s` when the variable is not set. Use `resolveUrl('/s/<path>')` to get the absolute URL without sending a request, e.g. for a link. Read the variable directly only when building a URL by hand:
 
 ```ts
 const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
 ```
 
-## API komunikace s hostitelem
+## Host communication API
 
-Frontendové komponenty mohou pomocí funkcí z `twenty-sdk` vyvolávat navigaci, modály a oznámení:
+Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk/front-component`:
 
-| Funkce                                             | Popis                                                                                                                                                                              |
-| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `navigate(to, params?, queryParams?, options?)`    | Přejít na stránku v aplikaci                                                                                                                                                       |
-| `openSidePanelPage(params)`                        | Otevřít postranní panel                                                                                                                                                            |
-| `closeSidePanel()`                                 | Zavřít postranní panel                                                                                                                                                             |
-| `openCommandConfirmationModal(params)`             | Zobrazit potvrzovací dialog                                                                                                                                                        |
-| `enqueueSnackbar(params)`                          | Zobrazit oznámení typu toast                                                                                                                                                       |
-| `unmountFrontComponent()`                          | Odpojit komponentu                                                                                                                                                                 |
-| `updateProgress(progress)`                         | Aktualizovat indikátor průběhu                                                                                                                                                     |
-| `uploadFile(file, { fieldMetadataId, fileName? })` | Nahraje `Blob` do pole FILES; vrátí `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` nebo `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
+| Function                                           | Description                                                                                                                                                                                  |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Navigate to a page in the app                                                                                                                                                                |
+| `openSidePanelPage(params)`                        | Open a side panel                                                                                                                                                                            |
+| `closeSidePanel()`                                 | Close the side panel                                                                                                                                                                         |
+| `openCommandConfirmationModal(params)`             | Show a confirmation dialog                                                                                                                                                                   |
+| `enqueueSnackbar(params)`                          | Show a toast notification                                                                                                                                                                    |
+| `unmountFrontComponent()`                          | Unmount the component                                                                                                                                                                        |
+| `updateProgress(progress)`                         | Update a progress indicator                                                                                                                                                                  |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
-Zde je příklad, který používá hostitelské API k zobrazení snackbaru a zavření postranního panelu po dokončení akce:
+Use `openCommandConfirmationModal` from `twenty-sdk/front-component` for dialogs. It accepts structured title, subtitle and button options, and resolves to `'confirm'` or `'cancel'`. Twenty owns the modal, focus management, dismissal and page scrolling. Front components must not render `Dialog`, `AlertDialog`, native `dialog` elements or native browser popovers directly. Supplying a local portal container does not make direct app-owned modality supported.
+
+Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import {
+  enqueueSnackbar,
+  closeSidePanel,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
@@ -524,9 +726,9 @@ export default defineFrontComponent({
 });
 ```
 
-### Úložiště
+### Storage
 
-`localStorage` a `sessionStorage` fungují stejně jako na běžné stránce, se standardním synchronním API. Vaše klíče jsou omezené na instalaci vaší aplikace a přihlášeného uživatele: žádná jiná aplikace je nemůže číst a jiný uživatel, který se přihlásí ve stejném prohlížeči, začne s prázdným úložištěm. Hodnoty zapsané do `localStorage` zůstávají v zařízení i po opětovném načtení; `sessionStorage` trvá po dobu relace prohlížeče.
+`localStorage` and `sessionStorage` work as they do in a normal page, with the standard synchronous API. Your keys are scoped to your app install and the signed-in user: no other app can read them, and another user signing into the same browser starts from an empty store. Values written to `localStorage` stay on the device across reloads; `sessionStorage` lasts for the browser session.
 
 ```tsx src/front-components/note-draft.tsx
 import { useState } from 'react';
@@ -541,7 +743,10 @@ const NoteDraft = () => {
   };
 
   return (
-    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+    <textarea
+      value={draft}
+      onChange={(event) => handleChange(event.target.value)}
+    />
   );
 };
 
@@ -553,13 +758,13 @@ export default defineFrontComponent({
 });
 ```
 
-Twenty ukládá hodnoty jménem vaší aplikace, takže zápis se provede lokálně okamžitě a na pozadí se uloží. Operace čtení nikdy nečekají na hostitele. Nic se nesynchronizuje: hodnoty uživatele se s ním nepřenášejí do jiného prohlížeče nebo počítače, takže pro cokoli, co musí přežít změnu zařízení, použijte [úložiště klíč–hodnota](/cs/developers/extend/apps/logic/key-value-store) logické funkce.
+Twenty stores the values on your app's behalf, so a write is applied locally right away and saved in the background. Reads never wait on the host. Nothing is synced: the values do not follow the user to another browser or machine, so use a logic function's [key-value store](/cs/developers/extend/apps/logic/key-value-store) for anything that must survive a device change.
 
-Zápisy mají limity a všechny limity počítají znaky místo bajtů: klíče mohou mít nejvýše 512 znaků, jedna hodnota nejvýše 262 144 znaků a každé úložiště nejvýše 1 048 576 znaků na aplikaci a uživatele. Zápis, který překročí některý limit, vyvolá `QuotaExceededError`, podobně jako rozhraní API prohlížeče.
+Writes are capped, and every limit counts characters rather than bytes: keys are at most 512 characters, a single value at most 262,144 characters, and each storage at most 1,048,576 characters per app and user. A write that breaks a limit throws a `QuotaExceededError`, like the browser API.
 
-### Práce s více záznamy
+### Working with multiple records
 
-Použijte `useSelectedRecordIds()` pro zpracování více vybraných záznamů. To je užitečné pro hromadné operace:
+Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -606,7 +811,7 @@ export default defineFrontComponent({
 });
 ```
 
-Zobrazte ji pomocí [položky příkazové nabídky](/cs/developers/extend/apps/layout/command-menu-items) omezené na výběry záznamů:
+Surface it with a [command menu item](/cs/developers/extend/apps/layout/command-menu-items) restricted to record selections:
 
 ```ts src/command-menu-items/bulk-export.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -619,9 +824,39 @@ export default defineCommandMenuItem({
 });
 ```
 
-## Veřejné soubory
+#### Select all
 
-Frontendové komponenty mohou přistupovat k souborům ze složky aplikace `public/` pomocí `getPublicAssetUrl`:
+When the user selects all records of a view, `useSelectedRecordIds()` returns an empty array: the selection is defined by the view's filters, search and unticked rows, and can hold far more records than fit in memory. `useSelectedRecordsFilter()` returns a filter matching exactly the selected records in every case, so query with it instead of listing IDs:
+
+```tsx
+import { Command, useSelectedRecordsFilter } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const MarkExported = () => {
+  const selectedRecordsFilter = useSelectedRecordsFilter();
+
+  const execute = async () => {
+    if (selectedRecordsFilter === null) {
+      return;
+    }
+
+    await new CoreApiClient().mutation({
+      updateTasks: {
+        __args: { filter: selectedRecordsFilter, data: { exported: true } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+```
+
+For large selections, pass the filter to a [logic function](/cs/developers/extend/apps/logic/logic-functions) and process the records there, page by page.
+
+## Public assets
+
+Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -636,19 +871,23 @@ export default defineFrontComponent({
 });
 ```
 
-Podrobnosti viz [sekci veřejných souborů](/cs/developers/extend/apps/config/public-assets).
+See the [public assets section](/cs/developers/extend/apps/config/public-assets) for details.
 
-## Sdílení závislostí mezi front komponentami
+## Sharing dependencies across front components
 
-Ve výchozím nastavení si každá front komponenta přibalí vlastní kopii knihoven, které importuje, takže aplikace s pěti komponentami dodává React pětkrát. Deklarujte sdílené závislosti v `package.json` vaší aplikace, aby se tyto knihovny sestavily jen jednou a každá komponenta aplikace je načítala z jednoho společného souboru v mezipaměti:
+By default, every front component bundles its own copy of the libraries it imports, so an app with five components ships React five times. Declare shared dependencies in your app's `package.json` to build those libraries once and have every component of the app load them from a single cached file:
 
 ```json package.json
 {
-  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+  "frontComponentSharedDependencies": [
+    "react",
+    "react-dom/client",
+    "twenty-ui/primitives/input"
+  ]
 }
 ```
 
-Každá komponenta pak importuje své závislosti úplně stejně jako dříve — ve vašem komponentním kódu se nic nemění:
+Each component then imports its dependencies exactly as before — nothing changes in your component code:
 
 ```tsx src/front-components/counter.tsx
 import { useState } from 'react';
@@ -667,63 +906,99 @@ export default defineFrontComponent({
 });
 ```
 
-Několik věcí, které je dobré vědět:
+A few things to know:
 
-* **Jeden sdílený balík závislostí na aplikaci.** Balík je sestaven z vlastních závislostí vaší aplikace, takže máte plnou kontrolu nad verzemi, které dodáváte.
-* **Uveďte přesné specifikátory, které importujete.** `twenty-ui/input` a `twenty-ui/display` jsou dvě položky; samotný název balíčku nepokrývá jeho podcesty. Uvedení `react` automaticky pokrývá `react/jsx-runtime`.
-* **Sdílejte `react-dom/client` spolu s `react`.** Každá komponenta renderuje přes `createRoot`, takže pokud ho vynecháte, každá komponenta si stále přibalí vlastní React DOM.
-* **Balík je cachovaný.** Je poskytován pod URL s hashovaným obsahem s dlouhodobou neměnnou mezipamětí, takže se stáhne jednou a znovu používá ve všech komponentách aplikace, dokud se některá z jeho závislostí nezmění.
-* **Komponenty, které neimportují žádný ze sdílených balíčků, ho nikdy nestáhnou.**
+- **One shared dependencies bundle per app.** The bundle is built from your app's own dependencies, so you keep full control of the versions you ship.
+- **List the exact specifiers you import.** `twenty-ui/primitives/input` and `twenty-ui/primitives/data-display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
+- **Share `react-dom/client` alongside `react`.** Every component renders through `createRoot`, so leaving it out means each component still bundles React DOM.
+- **The bundle is cached.** It is served under a content-hash URL with a long-lived immutable cache, so it is downloaded once and reused across all components of the app until one of its dependencies changes.
+- **Components that import none of the shared packages never download it.**
 
-## Stylování
+## Styling
 
-Frontendové komponenty podporují více přístupů ke stylování. Můžete použít:
+Front components support multiple styling approaches. You can use:
 
-* **Inline styly** — `style={{ color: 'red' }}`
-* **Komponenty Twenty UI** — vlastní knihovna komponent Twenty; podívejte se níže na [Používání komponent Twenty UI](#using-twenty-ui-components)
-* **Emotion** — CSS-in-JS s `@emotion/react`
-* **Styled-components** — vzory `styled.div`
-* **Tailwind CSS** — utilitní třídy
-* **Jakákoli CSS-in-JS knihovna** kompatibilní s Reactem
+- **Inline styles** — `style={{ color: 'red' }}`
+- **Twenty UI components** — Twenty's own component library; see [Using Twenty UI components](#using-twenty-ui-components) below
+- **Emotion** — CSS-in-JS with `@emotion/react`
+- **Styled-components** — `styled.div` patterns
+- **Tailwind CSS** — utility classes
+- **Any CSS-in-JS library** compatible with React
 
-## Používání komponent Twenty UI
+## Using Twenty UI components
 
-Twenty dodává svou knihovnu komponent jako balíček [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Frontendové komponenty jej mohou používat pro tlačítka, tagy, stavové štítky, čipy, avatary, ikony, typografii a tokeny motivu, které se automaticky přizpůsobují světlému a tmavému motivu pracovního prostoru.
+Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui) package. Prefer its controls and theme tokens to give front components the same appearance and interactions as the rest of Twenty. Browse the [shared components](/ui/components/overview) and [primitives](/ui/primitives/overview) for examples, props, and composition APIs.
 
-### Instalace
+### Installation
 
-Přidejte balíček do své aplikace, připnutý k verzi, se kterou je dodána vaše instance Twenty:
+New apps scaffolded with `twenty app init` already include `twenty-ui`. For an existing app, add it as a development dependency, pinned to the same version as `twenty-sdk` and `twenty-client-sdk`. For example, if your SDK packages use `2.51.0`:
 
 ```bash
-yarn add twenty-ui@1.0.0-alpha.1
+yarn add -D twenty-ui@2.51.0
 ```
 
-`twenty-ui` je zabalen do vaší frontendové komponenty při sestavení, takže stačí, aby byl závislostí vaší aplikace — za běhu není třeba nic konfigurovat.
+`twenty-ui` is bundled at build time, either into each front component or into your app's [shared dependencies bundle](#sharing-dependencies-across-front-components). Twenty loads the component and theme stylesheets and applies the workspace's active color scheme. You do not need to import `twenty-ui/style.css`, the theme stylesheets, or add a root `ThemeProvider` as you would in a standalone React application.
 
-### Import komponent
+### Importing components
 
-Importujte z odpovídající podcesty místo z kořene balíčku, aby se do vašeho bundlu dostaly jen komponenty, které používáte:
+Import from the matching public family subpath to keep dependencies focused:
 
-| Podcesta                    | Co exportuje                                     |
-| --------------------------- | ------------------------------------------------ |
-| `twenty-ui/input`           | `Button` a formulářové vstupy                    |
-| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` a další        |
-| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` a další              |
-| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` a další |
-| `twenty-ui/icon`            | Komponenty `Icon*` (např. `IconCheck`)           |
-| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`             |
+Foundational controls are grouped under `twenty-ui/primitives/<family>`. Shared design presets and app building blocks are grouped under `twenty-ui/components/<family>`. The aggregate `twenty-ui/components` entry point remains available, but family imports make it easier to [share only the dependencies you use](#sharing-dependencies-across-front-components).
+
+| Subpath                              | What it exports                                                               |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| `twenty-ui/components/input`         | Main and light buttons, search and image inputs, and country/currency pickers |
+| `twenty-ui/components/data-display`  | Avatar groups, JSON trees, metrics, command blocks, and icon tiles            |
+| `twenty-ui/components/feedback`      | Callouts, inline banners, and notifications                                   |
+| `twenty-ui/components/layout`        | Sections, overflowing lists, and icon transitions                             |
+| `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                                 |
+| `twenty-ui/components/settings`      | Settings rows                                                                 |
+| `twenty-ui/primitives/accessibility` | Hidden elements                                                               |
+| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators                    |
+| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                                           |
+| `twenty-ui/primitives/input`         | Buttons and form controls                                                     |
+| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                                |
+| `twenty-ui/primitives/navigation`    | Breadcrumbs, list items, and tabs                                             |
+| `twenty-ui/primitives/surfaces`      | Cards, nonmodal popovers, and tooltips                                        |
+| `twenty-ui/primitives/typography`    | Text and headings                                                             |
+| `twenty-ui/icon`                     | `Icon*` components (e.g. `IconCheck`)                                         |
+| `twenty-ui/theme`                    | `useTheme`, `themeCssVariables`, and `ThemeProvider`                          |
+
+Use [`MainButton`](/ui/components/input/main-button) for prominent actions and [`LightButton`](/ui/components/input/light-button) for lightweight actions. Use `Button`, `Field`, `Input`, `Select`, and other primitives from `twenty-ui/primitives/input` for foundational controls and forms. Follow each compound control's documented parts, such as `Field.Root`, `Field.Label`, and `Field.Description`.
+
+Use [`Dropdown`](/ui/components/navigation/dropdown) from `twenty-ui/components/navigation` for action menus, option pickers, and nonmodal form panels. Use `enqueueSnackbar` from `twenty-sdk/front-component` for host notifications.
+
+The standalone `Dialog` and `AlertDialog` APIs are also exported by Twenty UI, but direct use in front components is prohibited. Use the [host communication API](#host-communication-api) for dialogs.
+
+These entry points do not require Monaco. The separate `twenty-ui/components/code-editor` entry point depends on Monaco, whose script loader is unsupported in the front component sandbox, so `CodeEditor` cannot become interactive there.
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Status, Tag } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
+import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { MainButton } from 'twenty-ui/components/input';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
+import { useTheme } from 'twenty-ui/theme';
 
 const StyledWidget = () => {
+  const theme = useTheme();
+
+  const handleClick = async () => {
+    await enqueueSnackbar({ message: 'Clicked!', variant: 'success' });
+  };
+
   return (
-    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
-      <Button title="Click me" onClick={() => alert('Clicked!')} />
-      <Tag text="Active" color="green" />
-      <Status color="green" text="Online" />
+    <div
+      style={{
+        padding: theme.spacing[4],
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: theme.spacing[2],
+      }}
+    >
+      <MainButton onClick={handleClick}>Click me</MainButton>
+      <Tag color="green">Active</Tag>
+      <Status color="green">Online</Status>
     </div>
   );
 };
@@ -735,21 +1010,21 @@ export default defineFrontComponent({
 });
 ```
 
-### Ikony
+### Icons
 
-Importujte jednotlivé ikony z `twenty-ui/icon`:
+Import individual icons from `twenty-ui/icon`:
 
 ```tsx
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Každá pojmenovaná ikona je odstraňována tree-shakingem, takže import několika málo ikon přidá do vašeho bundlu jen minimum navíc. Vyhněte se `IconsProvider`, `useIcons` a `iconsState` — natáhnou celou sadu ikon Tabler (několik MB).
+Each named icon is tree-shaken, so importing a handful adds little to your bundle. Avoid `IconsProvider` and `useIcons` in front components. Front components are bundled without code splitting, so the provider's dynamic icon catalog (the full Tabler set, roughly 2 MB minified) ends up in your bundle. See the [icon reference](/ui/icons) for available exports and supported props.
 
-### Témování a tokeny motivu
+### Theming and theme tokens
 
-Komponenty Twenty UI se automaticky přizpůsobí světlému a tmavému motivu pracovního prostoru — renderer použije na hostiteli aktivní barevné schéma a komponenty podle něj odvodí své barvy.
+Twenty UI components automatically match the workspace's light and dark theme. The renderer applies the active color scheme on the host, and the components resolve their CSS variables against it.
 
-Chcete-li ve svých vlastních inline stylech používat stejné design tokeny, zavolejte hook `useTheme()`. Vrací tokeny motivu Twenty (odsazení, barvy, poloměry, písma) napojené na aktivní motiv, aniž by bylo potřeba v komponentě nastavovat `ThemeProvider`:
+To use the same design tokens in your own inline styles, call `useTheme()` inside the component body. In front components it returns CSS variable references by default, so styles follow the host's active theme without a local `ThemeProvider`:
 
 ```tsx
 import { useTheme } from 'twenty-ui/theme';
@@ -771,79 +1046,134 @@ const Card = () => {
 };
 ```
 
-Protože `useTheme()` je hook, čtete tokeny uvnitř těla komponenty, takže hodnoty vždy odrážejí aktuální motiv. Stejná mapa tokenů je také exportována jako konstanta `themeCssVariables`, ale ve frontendových komponentách preferujte `useTheme()` — modulová konstanta, která dereferencuje `themeCssVariables`, může být během extrakce manifestu aplikace nedefinovaná.
+The same CSS references are exported as `themeCssVariables` from `twenty-ui/theme`. Read them inside the component body: the CLI mocks `twenty-ui` during manifest extraction, so dereferencing imported theme constants at module scope can fail the build.
 
-Chcete-li se explicitně větvit podle aktivního schématu, načtěte jej pomocí `useColorScheme()` z `twenty-sdk/front-component`, která vrací `'light'` nebo `'dark'`.
+CSS reference strings are not resolved JavaScript numbers, even for tokens such as `theme.icon.size.md`. Do not perform arithmetic on them or pass them to APIs that require numbers. See [Theming](/ui/theming) and [Tokens](/ui/tokens) for semantic paths and CSS variable names.
 
-## Aktuální omezení
+To branch on the active scheme explicitly, read it with `useColorScheme()` from `twenty-sdk/front-component`, which returns `'light'` or `'dark'`.
 
-Komponenty Front jsou aktivně vyvíjeny. Renderování, stylování, obsluha událostí, měření prvků a úložiště prohlížeče fungují dobře. Cokoli, co sahá *mimo* tyto oblasti (volání metody DOM na refu, sledování změn velikosti prvku, vytváření portálu mimo váš strom) dnes chybí nebo je nekompletní a většinou selhává tiše: bez vyvolání výjimky a bez chyby TypeScriptu, protože kostra je typovaná proti plnému DOMu prohlížeče.
+## Current limitations
 
-Pokud vás něco z toho blokuje, [vytvořte issue](https://github.com/twentyhq/twenty/issues/new/choose), aby to bylo upřednostněno.
+Front components are under active development. Rendering, styling, handling events, measuring elements, body portals and browser storage work well. Anything that reaches _past_ those (calling a DOM method on a ref, for example) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
 
-### Rozvržení a měření
+If one of these blocks you, [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) so it gets prioritized.
 
-Prvky se mohou měřit samy: hostitel zrcadlí geometrii do sandboxu, takže čtení jsou obsloužena lokálně, ale mohou být zastaralá až o jeden snímek, a první čtení nikdy dříve neměřeného prvku vrátí nuly. Po zápisu znovu přečtěte v callbacku `requestAnimationFrame` nebo v efektu.
+### Layout and measurement
 
-| API                                                                                      | Co se stane                                                                                                             |
-| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funguje, z pohledu zrcadla; přiřazení `scrollTop` / `scrollLeft` nic neudělá (no-op)                                    |
-| `getClientRects()`, `window.matchMedia()`                                                | Vyvolá výjimku                                                                                                          |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funguje, hlásí **viewport prohlížeče**; vlastní velikost vašeho widgetu je `document.body.clientWidth` / `clientHeight` |
-| `window.getComputedStyle()`                                                              | Vrací pouze inline styly prvku, nikdy hostem vypočtenou kaskádu                                                         |
-| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (ochrany pomocí `typeof` fungují)                                                                      |
-| `MutationObserver`                                                                       | Funguje, včetně `subtree`, `attributeFilter`, starých hodnot a `takeRecords()`                                          |
+Elements can measure themselves: the host mirrors geometry into the sandbox, so reads are answered locally but can be up to one frame stale, and the first read of a never-measured element returns zeros. After writing, re-read in a `requestAnimationFrame` callback or an effect.
 
-Pozicování pomocí `getBoundingClientRect` nyní funguje, ale vše, co sleduje změny velikosti přes `ResizeObserver` (recharts `ResponsiveContainer`, `autoUpdate` z Floating UI), stále nefunguje. Stejně dávejte přednost CSS pro rozvržení: váš stylesheet se dostane ke skutečné stránce, takže flexbox, grid, `aspect-ratio`, `clamp()` a `@container` se chovají normálně, bez zpoždění o snímek.
+| API                                                                                      | What happens                                                                                                     |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Work, from the mirror; assigning `scrollTop` / `scrollLeft` scrolls the element on the page (see Scrolling)      |
+| `getClientRects()`                                                                       | Throws                                                                                                           |
+| `window.matchMedia()`                                                                    | Works for a fixed set of features, with `change` events (see below)                                              |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Work, reporting the **browser viewport**; your widget's own size is `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Host layout values for measured elements and their parents; the rest, theme variables too, from inline styles    |
+| `ResizeObserver`                                                                         | Works, from the mirror; `document.body` reports your widget's box                                                |
+| `IntersectionObserver`                                                                   | `ReferenceError` (`typeof` guards do work)                                                                       |
+| `MutationObserver`                                                                       | Works, including `subtree`, `attributeFilter`, old values and `takeRecords()`                                    |
+
+Positioning from `getBoundingClientRect` and size observation through `ResizeObserver` both work from the same mirror, so resize callbacks trail the host by about a frame. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
+
+`matchMedia()` evaluates `width`, `height`, `orientation`, `-webkit-device-pixel-ratio`, `resolution`, `hover`, `pointer` and `prefers-color-scheme`, in the `min-`/`max-` form, the Level 4 range form (`(width >= 600px)`, `(400px <= width <= 800px)`) and the valueless form (`(width)`). Widths, heights and `orientation` describe **your widget's box**, not the browser viewport, so they follow `document.body.clientWidth` rather than `window.innerWidth`, and `em` and `rem` count as 16px. `hover` and `pointer` describe the primary input of the user's device. Any other condition counts as unknown, the way browsers treat unknown features: the comma-separated member it appears in evaluates to `false`, even under `not`, unless the rest of that member already decides the result, as in `not print and (prefers-reduced-motion: reduce)`. That covers unknown features and the syntax this parser does not implement inside a condition, such as nested groups like `((min-width: 600px))`, `not` inside a group and `calc()` values. An `or` between conditions makes its member `false`. The `MediaQueryList` and `MediaQueryListEvent` constructors are not exposed either, so `instanceof` checks against them throw a `ReferenceError`.
+
+Because that stylesheet reaches the real page, a `@media (min-width: ...)` rule is evaluated by the host against the browser viewport, while `matchMedia('(min-width: ...)')` answers for your widget's box. To make CSS follow the same box your JavaScript sees, declare your own `container-type` on a wrapper and query that: an `@container` rule without one resolves against the nearest host container, not your widget. The same split applies to color scheme, where a stylesheet `@media (prefers-color-scheme: dark)` follows the browser and OS preference while `matchMedia('(prefers-color-scheme: dark)')` follows the theme selected in Twenty, so style from `useTheme()` tokens when the two must agree.
+
+The height you are handed is your own box as well, and depending on where the host mounts you that box can be sized by your own content. Branching layout on `min-height`, `max-height` or `orientation` can then feed back into itself and oscillate. Prefer width-based queries, or `@container` with `container-type: inline-size`, for layout decisions.
 
 <Note>
-`requestAnimationFrame`, `fetch`, `setTimeout` a `queueMicrotask` fungují bez prefixu `window.`. Pouze `window.requestAnimationFrame(...)` a podobné volání vyvolají výjimku.
+  `requestAnimationFrame` works, with or without the `window.` prefix. Only
+  Chrome runs a real animation frame inside a worker; Firefox and Safari get a
+  16 ms timer, so use it to defer a re-read past a write, not to drive an
+  animation.
 </Note>
 
-### Přístup k DOMu
+### Scrolling
 
-`ref` vám dává sandboxový prvek, ne `HTMLElement`.
+Assigning `scrollTop` or `scrollLeft`, calling `scrollTo()` or its alias `scroll()`, and calling `scrollIntoView()` scroll the matching element on the page:
 
-| Co napíšete                                                                                                 | Co se stane                                         | Co použít místo toho                                                                                                                                                  |
-| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Vyvolá výjimku                                      | Řízené komponenty; čtěte hodnoty z `event.target`                                                                                                                     |
-| `element.classList.add(...)`                                                                                | Vyvolá výjimku (`classList` je `undefined`)         | Sestavte si řetězec `className` sami                                                                                                                                  |
-| `document.createTreeWalker()`                                                                               | Vyvolá výjimku                                      | `querySelector()` / `querySelectorAll()` a `getElementById()` fungují; `getElementsByClassName()` také funguje, ale vrací statickou kolekci, ne živý `HTMLCollection` |
-| `document.activeElement`                                                                                    | Vždy `undefined`                                    | Sledujte fokus pomocí `onFocus` / `onBlur`                                                                                                                            |
-| `canvas`                                                                                                    | Nerenderuje nic, žádná chyba                        | SVG, nebo kreslit mimo obrazovku a výsledek zobrazit v prvku `img`                                                                                                    |
-| `createPortal(node, document.body)`                                                                         | Nerenderuje nic, zatímco `isConnected` hlásí úspěch | Překryvné prvky inline pomocí `position: absolute`, nebo knihovně předávejte vlastní kontejnerový prvek                                                               |
+- Scroll changes apply after the next render, in the order your code made them. Within one render, input selection changes apply first, so `setSelectionRange()` followed by a `scrollLeft` write keeps the caret visible.
+- Reads return the value you wrote until the page reports the real position, which the browser clamps to the scrollable range. In right-to-left containers, `scrollLeft` is zero or negative, as in browsers.
+- `scrollIntoView()` accepts `block` and `inline` with `start`, `center`, `end` and `nearest`, aligning `block` vertically and `inline` horizontally, so vertical writing modes are not mapped. It only scrolls your component's own scroll containers, never the widget frame, the page or another component. `focus()` still reveals the focused element the way the browser does.
+- Scrolling is instant: `behavior` and the `container` option are ignored, and `scrollBy()` is not available.
+- Writing back a position you just read, such as `element.scrollTop = element.scrollTop`, does nothing, so it cannot undo a scroll the user made in the meantime. This only holds once the page has measured the element; until then the write is applied.
+- Scrolling `document.documentElement`, `document.body` or `window` stays inside the sandbox and never scrolls the page; `window.scrollTo()`, `scroll()` and `scrollBy()` do nothing.
+- The first read of a container that was never measured returns zeros (see Layout and measurement), so a scrollability check made right after the container appears can report it as not scrollable.
 
-Kvůli této mezeře v portálu popovery Radix, Headless UI, MUI a react-select ve výchozím stavu nic nevyrenderují. Většina z nich přijímá prop pro kontejner; nasměrujte ho na prvek, který jste vyrenderovali.
+### Global scope
 
-### Události
+The worker's own natives are also aliased onto `window`, so they work with or without the `window.` prefix: `fetch`, `setTimeout`/`clearTimeout`, `setInterval`/`clearInterval`, `queueMicrotask`, `console`, `crypto`, `performance`, `structuredClone`, `btoa`/`atob`, `URL`/`URLSearchParams`, `AbortController`/`AbortSignal`, `Headers`/`Request`/`Response`, `Blob`, `File`, `FormData` and `TextEncoder`/`TextDecoder`.
 
-Události myši, ukazatele, dotyku, přetažení, klávesnice, fokusu, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` a `animationend`/`transitionend` se předávají hostiteli, a navíc několik dalších podle typu prvku: `load`/`error` na `img`, schránka a skládání (composition) na `input`/`textarea`, média na `video`/`audio`, `toggle` na `details`/`dialog`. Cokoli dalšího (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, zachycení ukazatele (pointer capture), `onLoad` na `img`) je bez varování zahazováno.
+### DOM access
 
-`document.addEventListener()` a `window.addEventListener()` se zaregistrují bez chyby, ale nikdy se nespustí, což je důvod, proč se přetažení zastaví, jakmile ukazatel opustí prvek, na kterém začalo. Ani `event.preventDefault()` se nepřenáší; odeslání formuláře, `dragover`/`drop` a kliknutí na odkazy jsou už za vás ošetřené.
+A `ref` gives you a sandbox element, not an `HTMLElement`.
 
-### Atributy a stylování
+| What you write                                 | What happens                                                                                                                             | Use instead                                                                                                                                                                                                                                                                                               |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.blur()`               | Forward to the corresponding element on the page and update the sandbox's active element                                                 | `onFocus` / `onBlur` to observe focus changes                                                                                                                                                                                                                                                             |
+| `ref.current.click()`                          | Dispatches a `click` inside the sandbox: a checkbox or radio toggles and its `onChange` runs, but the element on the page is not clicked | Controlled components for anything the page must do                                                                                                                                                                                                                                                       |
+| `ref.current.select()`, `.setSelectionRange()` | Work on `input` and `textarea`, applied to the element on the page after the next render                                                 | Controlled components for the value itself                                                                                                                                                                                                                                                                |
+| `ref.current.scrollTo()`, `.scrollIntoView()`  | Scroll the component's own scroll containers on the page (see Scrolling)                                                                 | `focus()` when you also want to move focus                                                                                                                                                                                                                                                                |
+| `video.play()`                                 | Throws                                                                                                                                   | Controlled components; read values from `event.target`                                                                                                                                                                                                                                                    |
+| `document.createTreeWalker()`                  | Throws                                                                                                                                   | `querySelector()` / `querySelectorAll()`, `matches()`, `closest()` (including pseudo-classes such as `:disabled` and `:not()`), `getElementById()`, `contains()` and `compareDocumentPosition()` work; `getElementsByClassName()` works too, but returns a static collection, not a live `HTMLCollection` |
+| `document.activeElement`                       | Follows the page's focus inside the component and updates when sandbox code calls `focus()` or `blur()`                                  | `onFocus` / `onBlur` to react to the page's focus                                                                                                                                                                                                                                                         |
+| `canvas`                                       | Renders nothing, no error                                                                                                                | SVG, or draw offscreen and show the result in an `img` element                                                                                                                                                                                                                                            |
+| `createPortal(node, document.body)`            | Renders in a host overlay layer bounded to 200px around the component                                                                    | Keep overlays within this area, or add scrolling for larger content                                                                                                                                                                                                                                       |
 
-Každý prvek předává své vlastní vlastnosti do hostitelského DOM (`href` na `a`, `src`/`alt` na `img`, `value`/`placeholder`/`disabled` na `input` atd.), a navíc má každý prvek společnou sadu: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` a jakýkoli atribut `aria-*` / `data-*` (s pomlčkou; `ariaLabel` je proto ignorována). Cokoli mimo tento rozsah je tiše zahazováno, takže vlastní stav vyjádřete jako `data-*`.
+`element.classList` works, backed by the `class` attribute: `add`, `remove`, `toggle`, `replace`, `contains`, `item`, `length`, `value` and iteration all behave as they do in a browser, and `className` stays in sync. `element.dataset` works the same way, backed by the `data-*` attributes; write `data-*` names in lowercase, since the sandbox keeps attribute names as written instead of lowercasing them like a browser.
 
-Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `style`, je do `head` hostitelské stránky vkládáno **bez ohraničení (unscoped)**. Třídy se tak střetávají s vlastními třídami Twenty (přidávejte jim předpony a nikdy nepište holé `div { ... }` selektory) a `@media` se vztahuje k oknu prohlížeče, nikoli k vašemu widgetu (použijte `@container` s vlastním `container-type`). Inline propy `style` nejsou ovlivněny.
+Body portals can extend up to 200px beyond each edge of your component, including outside a widget's scroll frame. Larger overlays are clipped to this area, so give long menus their own scrolling container. Keyboard navigation in Twenty UI lists such as Autocomplete and Select reveals the highlighted option inside that container. Native top-layer APIs such as `showModal()`, `showPopover()` and `requestFullscreen()` are blocked.
 
-### Úložiště a síť
+### Events
 
-`localStorage` a `sessionStorage` poskytuje Twenty, nikoli prohlížeč: komponenta běží ve workeru v neprůhledném původu, takže hostitel ukládá hodnoty jménem vaší aplikace. Jejich rozsah a limity najdete v části [úložiště](#storage). IndexedDB, cookies, Cache API a `BroadcastChannel` jsou nadále nedostupné. Pro uchování stavu mezi zařízeními zavolejte [logickou funkci](/cs/developers/extend/apps/logic/logic-functions) a použijte její [úložiště klíč–hodnota](/cs/developers/extend/apps/logic/key-value-store).
+Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `img`, clipboard and composition on `input`/`textarea`, media on `video`/`audio`, `toggle` on `details`/`dialog`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `img`) is dropped without warning.
 
-`fetch` funguje, s výhradami:
+Handlers receive typed events built from the page event, `PointerEvent`, `MouseEvent`, `KeyboardEvent`, `InputEvent`, `WheelEvent` or `FocusEvent`, and those constructors exist in the sandbox for `dispatchEvent()`. Each forwarded event also carries React's synthetic event surface (`nativeEvent`, `isDefaultPrevented()`, `isPropagationStopped()`, `persist()`), so code written against React events keeps working even though the sandbox hands the event object to your handler directly.
 
-* Volání na Twenty API a trasy (routes) vaší aplikace jsou proxyována hostitelem, proto upřednostněte [`RestApiClient`](#calling-the-twenty-rest-api). U proxyovaných volání jsou `AbortSignal` a ostatní volby `RequestInit` zahazovány a jsou podporována pouze těla typu `string` a `URLSearchParams`.
-* Jiné původy opouštějí sandbox s `Origin: null`, takže API třetí strany odpoví jen tehdy, pokud posílá `Access-Control-Allow-Origin: *`. Místo toho jej volejte z logické funkce.
-* `fetch('/rest/people')` se nikdy nespáruje s Twenty API, protože sandbox nemá URL stránky, podle které by vyhodnotil relativní cestu.
+A page event crosses when the element the user interacted with, or one of its ancestors in your component, has a handler for that event type. It crosses once and then propagates inside the sandbox as it does on the page: `event.target` is the element the user interacted with, `currentTarget` is the element whose handler is running, `stopPropagation()` keeps ancestors' handlers from running, and `relatedTarget` points to the sandbox element focus or the pointer moved from or to, or is `null` when that element is outside your component. Like in React, `onFocus` and `onBlur` also run for focus changes inside the element, and `onClickCapture` and the other capture handlers run during the capture phase.
 
-### Zachytávání médií
+Handlers a library adds with `React.cloneElement`, such as the ones behind Base UI's `render` prop, run after the element's own handlers instead of replacing them, so passing `onClick: undefined` to `cloneElement` does not remove the element's handler. A handler on a Base UI `render` element can still call `event.preventBaseUIHandler()` to skip Base UI's own handler.
 
-`navigator.mediaDevices.getUserMedia()` a `MediaRecorder` fungují uvnitř frontendových komponent díky sandboxovým polyfillům, takže standardní kód pro nahrávání běží beze změn a `MediaRecorder.isTypeSupported` udává, zda jsou podporovány běžné kombinace kontejneru/kodeku. Detailní objekty omezení `getUserMedia` jsou akceptovány, ale nejsou předávány dál — hostitel zachytává s výchozím nastavením pro požadované druhy — a napříč aplikacemi může být v daný čas aktivní pouze jedno zachytávání. Uložte zaznamenaný `Blob` pomocí hostitelské funkce `uploadFile`.
+`event.target.value` and `checked` reflect the control once the browser has applied the user's change: in `input`, `change`, `click`, `blur` and `focusout` handlers, and in `keyup` handlers for `value`. In `keydown`, `beforeinput` and pointer handlers they hold the control's value and checked state as of its last edit, whatever your component listens to: an `Enter` handler reads the text typed so far, but a handler for a printable key does not see that key yet, so read live values from a controlled input or an `onChange` handler.
 
-### Další omezení
+`document` listeners receive the events that cross from your component, but nothing that happens elsewhere on the page, so to catch shortcuts with `document.addEventListener('keydown', ...)`, put an `onKeyDown` on an element that wraps your component. `window` listeners only receive `error` and `unhandledrejection`. Pointer moves only cross over elements that have a move handler, and pointer capture stays on the page, which is why a drag stops as soon as the pointer leaves those elements. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
 
-* **Obsah souborů.** `input` typu `file` poskytuje vašemu handleru pouze metadata souboru, nikoli samotné bajty, takže `FileReader` není k dispozici. Chcete-li nahrát `Blob`, který váš kód již má k dispozici — např. jeden vytvořený pomocí `MediaRecorder` — použijte hostitelskou funkci `uploadFile`.
-* **Payloady drag-and-drop.** Události tažení se spouštějí, ale `event.dataTransfer` je `undefined`.
-* **Vestavěné moduly Node.** `fs`, `path` a `node:crypto` způsobí chybu při sestavení, takže tuto práci přesuňte do [logické funkce](/cs/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` a `URL` jsou k dispozici.
-* **`iframe`** je vždy znovu zasandboxováno bez `allow-same-origin`, takže vložený obsah spoléhající se na vlastní relaci se vykreslí jako odhlášený. Nemá ani `onLoad`.
+### Attributes and styling
+
+Each element forwards its own properties to the host DOM (`href` on `a`, `src`/`alt` on `img`, `value`/`placeholder`/`disabled` on `input`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+
+Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` element, is injected into the host page's `head` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+
+### Storage and network
+
+`localStorage` and `sessionStorage` are provided by Twenty rather than the browser: the component runs in a worker at an opaque origin, so the host stores the values on your app's behalf. See [storage](#storage) for their scoping and limits. IndexedDB, cookies, the Cache API and `BroadcastChannel` remain unavailable. To persist state across devices, call a [logic function](/cs/developers/extend/apps/logic/logic-functions) and use its [key-value store](/cs/developers/extend/apps/logic/key-value-store).
+
+`fetch` works, with caveats:
+
+- Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
+- Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
+- `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+
+### File selection
+
+File inputs deliver native `File` objects with metadata and readable contents. Use `text()` or `arrayBuffer()` to read a selected file, or pass it to the `uploadFile` host function. Opening the native chooser requires calling `input.click()` within one second of a trusted click inside your component. The SDK-built React and Preact flows are verified in Chromium.
+
+Worker-created object URLs assigned to `img.src` support previews. Revoke your URLs when replacing the image or unmounting your component. Your application owns file validation, upload progress and cancellation.
+
+### Media capture
+
+Declare `microphone`, `camera`, or both in the `requestedCapabilities` array passed to `defineApplication()` so these capabilities appear during installation. Approval is workspace-wide and requires a member who can manage apps.
+
+If an installed app calls `navigator.mediaDevices.getUserMedia()` without the required access, Twenty pauses capture and shows an approval dialog. This also supports older apps without capability declarations. Members who cannot manage apps must ask a workspace administrator to approve access. Cancelling the dialog rejects the request before browser or operating system permissions are requested.
+
+Package updates preserve existing workspace grants and do not automatically grant additional media access. Locally synced development apps receive the capabilities declared in their manifest. Once access is approved, Twenty does not ask again for each capture, but browser and operating system permissions still apply.
+
+An orange dot in the workspace header indicates active capture. Hover over or select the dot to see the apps using the microphone or camera and stop their capture. Pending requests appear as an outlined dot with a cancellation control.
+
+`getUserMedia()` and `MediaRecorder` run through sandbox polyfills, so standard recording code and `MediaRecorder.isTypeSupported()` work unchanged after approval. Detailed constraint objects are accepted but not forwarded. The host captures with its defaults for the requested kinds. Different applications can capture concurrently, and stopping an app affects only its own sessions. Each front component supports one pending or active capture at a time. Store a recorded `Blob` with the `uploadFile` host function.
+
+### Other gaps
+
+- **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
+- **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/cs/developers/extend/apps/logic/logic-functions). Web Crypto replaces `node:crypto`, and `fetch`, `TextEncoder` and `URL` are available too, see [global scope](#global-scope) — but nothing replaces `fs`: the sandbox has no filesystem.
+- **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

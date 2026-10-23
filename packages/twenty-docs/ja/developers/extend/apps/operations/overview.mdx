@@ -1,32 +1,68 @@
 ---
 title: 概要
-description: アプリのビルド、テスト、リリース — CLI コマンド、統合テスト、CI、サーバーまたは npm への公開。
-icon: rocket
+description: Build, test, and ship your app — CLI commands, integration tests, CI, translations, and publishing to a server or to npm.
+icon: 'rocket'
 ---
 
-**オペレーションレイヤー** とは、アプリを使って *何かをする* のではなく、アプリに対して *行う* あらゆる操作を指します。具体的には、CLI コマンドの実行、実際の Twenty サーバーに対する統合テストの実行、CI の設定、そしてリリースの提供です — 単一サーバーにデプロイする tarball として、またはマーケットプレイスに掲載される npm パッケージとして行われます。
+<Note>
+  このガイドの翻訳は、Twenty の独立した CLI
+  にまだ対応していません。削除されたコマンドを使用しないよう、以下に最新の英語版を一時的に表示しています。
+</Note>
 
-```text
-   develop ─▶ test ─▶ build ─▶ deploy / publish
-   ───────    ────    ─────    ─────────────────
-   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
-   twenty     test    twenty
-   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
-```
+The **operations layer** is everything you do _to_ your app rather than _with_ it: invoking CLI commands, running integration tests against a real Twenty server, configuring CI, translating its strings, and shipping releases — either as a tarball deployed to a single server or as an npm package listed in the marketplace.
 
-## このセクションについて
+| Step                  | Command                        |
+| --------------------- | ------------------------------ |
+| Develop               | `twenty app dev`               |
+| Test                  | `yarn test`                    |
+| Build                 | `twenty app build`             |
+| Publish to one server | `twenty app publish --private` |
+| Publish to npm        | `twenty app publish`           |
+
+## In this section
 
 <CardGroup cols={2}>
-  <Card title="CLI" icon="terminal" href="/ja/developers/extend/apps/operations/cli">
-    `yarn twenty` リファレンス — exec、logs、uninstall、remotes。
+  <Card
+    title="CLI"
+    icon="terminal"
+    href="/ja/developers/extend/apps/operations/cli"
+  >
+    Sign in, explore data, build apps, exec, logs and uninstall with the
+    `twenty` CLI.
   </Card>
-  <Card title="同期と復旧" icon="compass" href="/ja/developers/extend/apps/operations/sync-and-recovery">
-    どのコマンドをいつ使うか、同期の差分の読み方、そして復旧の手順。
+  <Card
+    title="Syncing & recovery"
+    icon="compass"
+    href="/ja/developers/extend/apps/operations/sync-and-recovery"
+  >
+    Which command when, reading the sync diff, and a recovery ladder.
   </Card>
-  <Card title="テスト" icon="flask" href="/ja/developers/extend/apps/operations/testing">
-    Vitest のセットアップ、統合テスト、型チェック、CI ワークフロー。
+  <Card
+    title="Testing"
+    icon="flask"
+    href="/ja/developers/extend/apps/operations/testing"
+  >
+    Vitest setup, integration tests, type checking, CI workflow.
   </Card>
-  <Card title="公開" icon="upload" href="/ja/developers/extend/apps/operations/publishing">
-    ビルド、tarball のデプロイ、npm への公開、インストール。
+  <Card
+    title="Translations"
+    icon="language"
+    href="/ja/developers/extend/apps/operations/translations"
+  >
+    Mark strings, extract catalogs, ship your app in several languages.
+  </Card>
+  <Card
+    title="Publishing"
+    icon="upload"
+    href="/ja/developers/extend/apps/operations/publishing"
+  >
+    Build, deploy a tarball, publish to npm, install.
+  </Card>
+  <Card
+    title="Monitoring"
+    icon="chart-line"
+    href="/developers/extend/apps/operations/monitoring"
+  >
+    Errors, rate limits, credits and function performance across installs.
   </Card>
 </CardGroup>

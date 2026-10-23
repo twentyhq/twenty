@@ -1,15 +1,21 @@
 ---
 title: Логические функции
-description: Определяйте серверные функции на TypeScript с триггерами HTTP, cron и событиями базы данных.
-icon: bolt
+description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+icon: 'bolt'
 ---
 
-Функции логики — это серверные функции на TypeScript, которые выполняются на платформе Twenty. Их можно запускать HTTP-запросами, расписаниями cron или событиями базы данных — а также предоставлять как инструменты для ИИ-агентов.
+<Note>
+  Перевод этого руководства ещё не обновлён для отдельного CLI Twenty. Ниже
+  временно приведён актуальный текст на английском, чтобы избежать использования
+  удалённых команд.
+</Note>
+
+Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
 
 <AccordionGroup>
-<Accordion title="defineLogicFunction" description="Определяйте логические функции и их триггеры">
+<Accordion title="defineLogicFunction" description="Define logic functions and their triggers">
 
-Каждый файл функции использует `defineLogicFunction()` для экспорта конфигурации с обработчиком и необязательными триггерами.
+Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -50,39 +56,49 @@ export default defineLogicFunction({
 });
 ```
 
-Доступные типы триггеров:
-* **httpRoute**: Публикует вашу функцию по HTTP-пути и методу. В коде приложения добавляйте префикс `/s/` к пути маршрута при использовании `RestApiClient`; развернутый URL использует внедренную базовую часть `TWENTY_FUNCTIONS_URL` (или `\<server-url>/s`, если она не задана).
+Available trigger types:
+
+- **httpRoute**: Exposes your function on an HTTP path and method. In app code, prefix the route path with `/s/` when using `RestApiClient`; the deployed URL uses the injected `TWENTY_FUNCTIONS_URL` base (or `<server-url>/s` when it is not set).
 
 <Note>
-Чтобы вызвать логическую функцию, запускаемую маршрутом, из фронтенд-компонента (без интерфейса), см. раздел [Вызов логической функции](/ru/developers/extend/apps/layout/front-components#calling-a-logic-function).
+To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/ru/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
-* **cron**: Запускает вашу функцию по расписанию с использованием выражения CRON.
-* **databaseEvent**: Запускается при событиях жизненного цикла объектов рабочего пространства. Когда операция события — `updated`, можно указать конкретные поля для отслеживания в массиве `updatedFields`. Если оставить не заданным или пустым, любое обновление будет вызывать функцию.
-> например, `person.updated`, `*.created`, `company.*`
-* **serverRoute**: открывает один HTTP-маршрут в области регистрации. Функция-резолвер (объявленная с помощью `serverRouteTriggerSettings`) выполняется в рабочем пространстве-владельце и либо возвращает синхронный `Response`, либо целевое рабочее пространство И логическую функцию для постановки в очередь; в случае постановки в очередь платформа отправляет подтверждение с кодом `202` и запускает эту целевую функцию в очереди worker. См. [триггер серверного маршрута](#server-route-trigger).
+- **cron**: Runs your function on a schedule using a CRON expression.
+- **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
+> e.g. `person.updated`, `*.created`, `company.*`
+- **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and either returns a sync `Response` or the target workspace AND logic function to enqueue; on the enqueue path the platform acks with `202` and runs that **target** on the worker queue. See [Server route trigger](#server-route-trigger).
 
 <Note>
-Вы также можете вручную выполнить функцию с помощью CLI:
+You can also manually execute a function using the CLI:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
+twenty app exec --name create-new-post-card --payload '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+twenty app exec --universal-identifier e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
-Вы можете просматривать логи с помощью:
+You can watch logs with:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:logs
+twenty app logs
 ```
+
 </Note>
 
-#### Полезная нагрузка триггера маршрута
+<Note>
+  On the cloud, each run consumes workspace credits: a flat charge per
+  invocation plus a per-millisecond charge for the time the function runs, so
+  keeping `timeoutSeconds` tight and code fast keeps costs down. See
+  [Credits](/ru/user-guide/billing/capabilities/credits) for the rates.
+</Note>
 
-Когда триггер маршрута вызывает вашу логическую функцию, она получает объект `RoutePayload`, который соответствует [формату AWS HTTP API v2](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
-Импортируйте тип `RoutePayload` из `twenty-sdk/logic-function`:
+#### Route trigger payload
+
+When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the
+[AWS HTTP API v2 format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Import the `RoutePayload` type from `twenty-sdk/logic-function`:
 
 ```ts
 import type { RoutePayload } from 'twenty-sdk/logic-function';
@@ -95,24 +111,23 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-Тип `RoutePayload` имеет следующую структуру:
+The `RoutePayload` type has the following structure:
 
-  | Свойство                     | Тип                                                     | Описание                                                                                                                                                                                                                | Пример                                                                     |
-  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | HTTP-заголовки (только перечисленные в `forwardedRequestHeaders`)                                                                                                                                                       | см. раздел ниже                                                            |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Параметры строки запроса (несколько значений объединяются запятыми)                                                                                                                                                     | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Параметры пути, извлечённые из шаблона маршрута                                                                                                                                                                         | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Разобранное тело запроса (JSON)                                                                                                                                                                                         | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `rawBody`                    | `string \| undefined`                                   | Исходное тело запроса в кодировке UTF-8, до разбора JSON. Полезно для проверки подписей вебхуков в стиле HMAC (например, `X-Hub-Signature-256` от GitHub, Stripe). `undefined`, если среда выполнения не сохранила его. |                                                                            |
-  | `isBase64Encoded`            | `boolean`                                               | Является ли тело закодированным в base64                                                                                                                                                                                |                                                                            |
-  | `requestContext.http.method` | `string`                                                | Метод HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                              |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Необработанный путь запроса                                                                                                                                                                                             |                                                                            |
-
+| Property                     | Type                                  | Description                                                                                                                                                                                           | Example                                                                    |
+| ---------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                                                                                                                                         | see section below                                                          |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                                                                                                                                          | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern                                                                                                                                                      | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+| `body`                       | `object \| null`                      | Parsed request body (JSON)                                                                                                                                                                            | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+| `rawBody`                    | `string \| undefined`                 | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. |                                                                            |
+| `isBase64Encoded`            | `boolean`                             | Whether the body is base64 encoded                                                                                                                                                                    |                                                                            |
+| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                           |                                                                            |
+| `requestContext.http.path`   | `string`                              | Raw request path                                                                                                                                                                                      |                                                                            |
 
 #### forwardedRequestHeaders
 
-По умолчанию HTTP-заголовки из входящих запросов **не** передаются в вашу логическую функцию по соображениям безопасности.
-Чтобы получить доступ к определённым заголовкам, перечислите их в массиве `forwardedRequestHeaders`:
+By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons.
+To access specific headers, list them in the `forwardedRequestHeaders` array:
 
 ```ts
 export default defineLogicFunction({
@@ -128,7 +143,7 @@ export default defineLogicFunction({
 });
 ```
 
-В обработчике обращайтесь к переданным заголовкам следующим образом:
+In your handler, access the forwarded headers like this:
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -141,12 +156,13 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Имена заголовков приводятся к нижнему регистру. Обращайтесь к ним, используя ключи в нижнем регистре (например, `event.headers['content-type']`).
+  Header names are normalized to lowercase. Access them using lowercase keys
+  (e.g., `event.headers['content-type']`).
 </Note>
 
-#### Пользовательский HTTP-ответ
+#### Custom HTTP response
 
-По умолчанию возврат простого значения из обработчика отправляет его обратно как ответ `200` (JSON для объектов, `text/plain` для строк). Чтобы управлять статус-кодом и заголовками ответа, верните `Response` из `twenty-sdk/logic-function`:
+By default, returning a plain value from your handler sends it back as a `200` response (JSON for objects, `text/plain` for strings). To control the status code and response headers, return a `Response` from `twenty-sdk/logic-function`:
 
 ```ts
 import { Response } from 'twenty-sdk/logic-function';
@@ -159,35 +175,36 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-По соображениям безопасности заголовки ответа ограничены списком разрешенных заголовков. Любой заголовок, которого нет в этом списке (например, `Set-Cookie`, CORS-заголовки, такие как `Access-Control-Allow-Origin`, или пользовательские заголовки `X-*`), молчаливо удаляется перед отправкой ответа. Разрешенные заголовки ответа:
+For security reasons, response headers are restricted to an allow-list. Any header that is not on the list (e.g. `Set-Cookie`, CORS headers such as `Access-Control-Allow-Origin`, or custom `X-*` headers) is silently dropped before the response is sent. The allowed response headers are:
 
-* `content-type`
-* `content-language`
-* `content-disposition`
-* `cache-control`
-* `retry-after`
+- `content-type`
+- `content-language`
+- `content-disposition`
+- `cache-control`
+- `retry-after`
 
 <Note>
-Код состояния должен быть допустимым кодом состояния HTTP (в диапазоне от 100 до 599). Имена заголовков ответа сравниваются без учета регистра.
+  The status code must be a valid HTTP status code (between 100 and 599).
+  Response header names are matched case-insensitively.
 </Note>
 
-#### Ошибочные ответы платформы
+#### Platform error responses
 
-Помимо собственных ответов вашего обработчика, платформа в некоторых ситуациях отвечает на запросы к маршрутам напрямую: `404`, когда маршрут или функция не существует, `403`, когда приложение остановлено, `429`, когда достигнут предел частоты выполнения, и `422`, когда `dependencies` приложения для продакшена слишком велики для установки — см. раздел [ограничения на размер зависимостей](/ru/developers/extend/apps/getting-started/project-structure#dependencies).
+Beyond your handler's own responses, the platform answers route calls directly in some situations: `404` when the route or function does not exist, `403` when the application is stopped, `402` when the workspace has exhausted its credit allowance or has no active subscription, `409` when a storage limit is reached, `429` when an execution rate limit or a usage limit is hit, and `422` when the application's production `dependencies` are too large to install — see [dependencies size limits](/ru/developers/extend/apps/getting-started/project-structure#dependencies).
 
-#### Триггер серверного маршрута
+#### Server route trigger
 
-`httpRouteTriggerSettings` предоставляет функцию по пути `/s/` и определяет рабочее пространство из хоста запроса — это работает, когда у каждого рабочего пространства свой домен. Поставщики сторонних сервисов, однако, отправляют события всех арендаторов на **один** URL. В этом случае используйте `serverRouteTriggerSettings`.
+`httpRouteTriggerSettings` exposes a function under `/s/` and resolves the workspace from the request host — which works when each workspace has its own domain. Third-party providers, however, deliver every tenant's events to **one** URL. For that case, use `serverRouteTriggerSettings`.
 
-Триггер состоит из двух частей:
+The trigger has two parts:
 
-1. Логическая функция-**резолвер** — объявляется с помощью `serverRouteTriggerSettings` — выполняется в вашем **рабочем пространстве-владельце** (рабочем пространстве, которому принадлежит регистрация приложения). Она анализирует входящий запрос и возвращает либо:
+1. A **resolver** logic function — declared with `serverRouteTriggerSettings` — runs in your **owner workspace** (the workspace that owns the application registration). It inspects the incoming request and returns either:
+   - `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — the platform enqueues that target in the resolved workspace and acks with `202 { queued: true }`, or
+   - a `Response` from `twenty-sdk/logic-function` — the platform echoes that HTTP response **synchronously** and does **not** enqueue a target (use this for challenge handshakes such as Slack `url_verification`).
 
-   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — платформа ставит эту целевую функцию в очередь в определённом рабочем пространстве и отправляет подтверждение с кодом `202 { queued: true }`, или
-   * `Response` из `twenty-sdk/logic-function` — платформа возвращает этот HTTP‑ответ **синхронно** и **не** ставит целевую функцию в очередь (используйте это для challenge‑рукопожатий, таких как Slack `url_verification`).
+   The resolver is the single point of authorization — the URL only carries the resolver's identifier. **This is the preferred place to verify request signatures**: the resolver runs before any side effect, has access to the original `rawBody` and forwarded headers, and can reject without ever touching the target.
 
-   Резолвер является единой точкой авторизации — URL содержит только идентификатор резолвера. **Это предпочтительное место для проверки подписей запросов**: резолвер выполняется до любых побочных эффектов, имеет доступ к исходным `rawBody` и переадресованным заголовкам и может отклонить запрос, не обращаясь к целевой функции.
-2. **Целевая** логическая функция — обычная логическая функция на рабочее пространство — затем выполняется в определенном рабочем пространстве с полезной нагрузкой, возвращенной резолвером (или с исходной полезной нагрузкой запроса, если резолвер ее не преобразовал). Его возвращаемое значение не видит HTTP‑клиент, когда резолвер выбрал путь постановки в очередь.
+2. A **target** logic function — a regular per-workspace logic function — then runs in the resolved workspace with the payload returned by the resolver (or the original request payload if the resolver didn't transform it). Its return value is **not** observed by the HTTP caller when the resolver chose the enqueue path.
 
 ```ts src/logic-functions/resolve-server-route.logic-function.ts
 import { createHmac, timingSafeEqual } from 'crypto';
@@ -209,7 +226,9 @@ const handler = async (event: RoutePayload) => {
   const signature = event.headers['x-hub-signature-256'] ?? '';
   const expected =
     'sha256=' +
-    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+    createHmac('sha256', secret)
+      .update(event.rawBody ?? '')
+      .digest('hex');
 
   const a = Buffer.from(signature);
   const b = Buffer.from(expected);
@@ -274,15 +293,34 @@ export default defineLogicFunction({
 });
 ```
 
-Конечная точка доступна по адресу:
+The endpoint is reachable at:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
 ```
 
-Идентификатор — это `universalIdentifier` резолвера из вашего манифеста. Зарегистрируйте этот URL у поставщика.
+The identifier is the resolver's `id`: the primary key the server assigns when the app is first synced into the owner workspace, not the `universalIdentifier` from your manifest. Read it back from the `/metadata` API of the owner workspace, then register that URL with the provider:
 
-**Ответ на проверочный `GET`.** Некоторые поставщики проверяют конечную точку перед отправкой данных на неё: они отправляют `GET` с проверочным запросом на тот же URL, на который позднее будут `POST` события. Meta's WhatsApp Cloud API — один из них. Маршрут сервера отвечает только на `POST`, если не указано иное, поэтому объявите оба метода:
+```graphql
+query {
+  findManyLogicFunctions {
+    id
+    name
+    universalIdentifier
+  }
+}
+```
+
+<Note>
+  A URL carrying the resolver's `universalIdentifier` still resolves for now,
+  and the response carries a `Deprecation` header. A `universalIdentifier` is
+  unique per workspace, not globally: if another registration owned by a
+  different workspace declares the same one, the platform answers `404` for that
+  URL instead of choosing between them. Move the URLs registered with your
+  providers to the `id` form.
+</Note>
+
+**Answering a verification GET.** Some providers verify an endpoint before they deliver to it, by sending a `GET` carrying a challenge to the same URL they will later `POST` events to — Meta's WhatsApp Cloud API is one. A server route answers `POST` only unless you say otherwise, so declare both methods:
 
 ```ts
 serverRouteTriggerSettings: {
@@ -291,7 +329,7 @@ serverRouteTriggerSettings: {
 }
 ```
 
-Проверочный запрос поступает в `event.queryStringParameters`, а возврат `Response` отправляет его обратно поставщику в рамках того же запроса. Строковое тело отправляется как `text/plain`, что и ожидают эти поставщики:
+The challenge arrives in `event.queryStringParameters`, and returning a `Response` echoes it back to the provider on the same request. A string body is sent as `text/plain`, which is what these providers expect:
 
 ```ts
 const handler = async (event: RoutePayload) => {
@@ -302,48 +340,71 @@ const handler = async (event: RoutePayload) => {
 };
 ```
 
-`httpMethods` заменяет значение по умолчанию, а не дополняет его, поэтому одного `['GET']` достаточно, чтобы маршрут отклонял `POST`. Поддерживаются только `GET` и `POST`. Не задавайте его, если провайдеру не требуется второй метод: резолвер маршрута, объявляющего `GET`, будет выполняться при обращении любого неаутентифицированного вызывающего клиента, включая поисковые роботы и средства предварительного просмотра ссылок, которые отправляют `GET` без запроса. На всё, для чего у платформы нет метода, возвращается `405`, при этом резолвер вообще не запускается.
+`httpMethods` replaces the default rather than adding to it, so `['GET']` alone makes the route reject `POST`. Only `GET` and `POST` are supported. Leave it unset unless the provider needs the second verb: a route that declares `GET` will have its resolver executed by any unauthenticated caller, including the crawlers and link unfurlers that send `GET` unprompted. Anything the platform does not have a method for is answered `405` without the resolver ever running.
 
 <Note>
-**Приложение должно быть закреплено и установлено в рабочем пространстве владельца.** Поскольку резолвер выполняется в **рабочем пространстве владельца** (рабочем пространстве, которому принадлежит регистрация приложения), триггер серверного маршрута будет работать только после того, как приложение будет *закреплено* — то есть у него появится рабочее пространство владельца — **и** это приложение будет **установлено в рабочем пространстве владельца**. Пока оба этих условия не выполнены, резолверу негде выполняться, поэтому маршрут не может быть отправлен на обработку. Приложение, которое предоставляет логическую функцию `serverRouteTriggerSettings`, соответственно, не может быть размещено в маркетплейсе, пока оно не будет закреплено и установлено в рабочем пространстве владельца.
+  **The application must be claimed and installed on its owner workspace.**
+  Follow [Claiming your
+  app](/ru/developers/extend/apps/operations/publishing#claiming-your-app) to
+  assign an owner, then install the app in that workspace. Until both are true,
+  the resolver has nowhere to run and the server route returns `404`
+  (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed elsewhere.
+  Marketplace search hides apps with server routes until this setup and all
+  required server variables are complete. See [owner workspace costs and
+  availability](/ru/developers/extend/apps/operations/publishing#owner-workspace-costs-and-availability)
+  for billing and operational details.
 </Note>
 
-**Контракт резолвера.** Тип `LogicFunctionConfig` в SDK обеспечивает это на этапе компиляции: как только вы задаете `serverRouteTriggerSettings`, ваш обработчик обязан возвращать либо `Response`, либо `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (или `Promise` одного из этих вариантов). На пути диспетчеризации `workspaceId` должен указывать на рабочее пространство, в котором установлена целевая функция, иначе запрос будет отклонен с кодом `404`. Результат, не соответствующий ни одному из этих форматов — включая случай, когда идентификаторы не являются UUID, — отклоняется с кодом `502`.
+**Resolver contract.** The SDK's `LogicFunctionConfig` type enforces this at compile time: as soon as you set `serverRouteTriggerSettings`, your handler is constrained to return either a `Response`, or `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (or a `Promise` of either). On the dispatch path, the `workspaceId` must be a workspace where the target function is installed, otherwise the request is rejected with `404`. A result that matches neither shape — including one whose identifiers are not UUIDs — is rejected with `502`.
 
-| Поле                                     | Тип                       | Заметки                                                                                      |
-| ---------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------- |
-| `workspaceId`                            | `string`                  | UUID рабочего пространства, в котором будет выполняться целевая функция.                     |
-| `targetLogicFunctionUniversalIdentifier` | `string`                  | `universalIdentifier` логической функции, которую нужно вызвать в этом рабочем пространстве. |
-| `payload`                                | `object` (необязательный) | Если задан, заменяет тело запроса, отправляемое целевой функции.                             |
+| Field                                    | Type                | Notes                                                                    |
+| ---------------------------------------- | ------------------- | ------------------------------------------------------------------------ |
+| `workspaceId`                            | `string`            | Workspace UUID where the target will run.                                |
+| `targetLogicFunctionUniversalIdentifier` | `string`            | `universalIdentifier` of the logic function to invoke in that workspace. |
+| `payload`                                | `object` (optional) | If set, replaces the request body sent to the target.                    |
 
 <Warning>
-**Ответственность за проверку подписи лежит на вас — выполняйте проверку в резолвере.** Платформа не проверяет подписи запросов. Резолвер — рекомендуемое место для этого: он выполняется первым, имеет доступ к `event.rawBody` и заголовкам, которые вы указали в `forwardedRequestHeaders`, и выброшенная ошибка (или любой `workspaceId`, не соответствующий ожидаемому) останавливает диспетчеризацию до вызова целевой функции. Если вместо этого вы перенесете проверку в целевую функцию, целевая функция должна позаботиться о том, чтобы не потерять `rawBody` и заголовки — то есть резолвер не должен возвращать `payload`. Всегда выполняйте проверку **до** любых побочных эффектов и используйте сравнение с постоянным временем выполнения.
+  **Signature verification is your responsibility — verify in the resolver.**
+  The platform does not verify request signatures. The resolver is the
+  recommended place to do it: it runs first, with access to `event.rawBody` and
+  the headers you listed in `forwardedRequestHeaders`, and a thrown error (or
+  any non-matching `workspaceId`) stops the dispatch before the target is
+  invoked. If you instead push verification down into the target, the target
+  must be careful not to lose `rawBody` and headers — i.e. the resolver must not
+  return a `payload`. Always verify **before** any side effect and use a
+  constant-time comparison.
 </Warning>
 
-Для подписей запросов большинство провайдеров используют HMAC-SHA256; различаются имя заголовка, кодировка дайджеста и строка подписываемой полезной нагрузки. Несколько примеров:
+**Bearer tokens.** Some providers, such as Microsoft Bot Framework, sign each request with a JWT in the `Authorization` header instead of a signature header. A server route can list `authorization` in `forwardedRequestHeaders` to receive it, and the resolver verifies it like any other signature. The platform removes the header if it carries a token issued by Twenty, so a server route never receives a Twenty session. `cookie` and `proxy-authorization` are never forwarded, and HTTP routes cannot forward any of these three headers.
 
-| Провайдер                    | Заголовки для пересылки                                | Подписываемая строка         | Дайджест                                                          |
-| ---------------------------- | ------------------------------------------------------ | ---------------------------- | ----------------------------------------------------------------- |
-| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (секрет в формате base64 после удаления префикса `whsec_`) |
-| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                               |
-| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (с префиксом `sha256=`)                                       |
-| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                            |
-| Слэк                         | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (с префиксом `v0=`)                                           |
+For request signatures, most providers sign with HMAC-SHA256; the parts that differ are the header name, the digest encoding, and the signed-payload string. A few examples:
 
-Приведенный выше пример резолвера уже показывает поток GitHub HMAC-SHA256 — адаптируйте имя заголовка, кодировку дайджеста и строку подписываемой полезной нагрузки в соответствии с провайдером, с которым вы интегрируетесь.
+| Provider                     | Headers to forward                                     | Signed string                | Digest                                             |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | -------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (secret is base64 after stripping `whsec_`) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (prefixed `sha256=`)                           |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                             |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (prefixed `v0=`)                               |
+
+The resolver example above already shows the GitHub HMAC-SHA256 flow — adapt the header name, digest encoding, and signed-payload string per the provider you're integrating.
 
 <Note>
-Когда резолвер возвращает объект диспетчеризации, маршрут отвечает `202 { queued: true }`, а целевая функция запускается в очереди worker — вызывающая сторона никогда не видит задержку, результат или сбои целевой функции (они записываются в журналах выполнения). Это не позволяет повторным отправкам со стороны отправителя усиливать замедление обработки, что и требуется для приёма вебхуков.
+When the resolver returns a dispatch object, the route responds `202 { queued: true }` and the target runs on the worker queue — the caller never observes the target's latency, result, or failures (those are recorded in execution logs). This keeps sender redeliveries from amplifying processing slowdowns, which is what you want for webhook ingestion.
 
-Когда вызывающей стороне нужно прочитать тело ответа в рамках того же запроса (challenge‑рукопожатия, интерактивные подтверждения), вместо этого верните `Response` из **резолвера**. Платформа синхронно эхо‑возвращает этот ответ и пропускает очередь; его заголовки проходят через тот же allow‑list, что и заголовки ответов HTTP‑маршрутов. Делайте функцию-резолвер быстрой — некоторые провайдеры (например, Slack) прерывают запрос через несколько секунд. Поскольку резолвер доступен как публичная конечная точка, защитите его с помощью ограничения частоты запросов (rate limiting) на вашем периметре (edge).
+The resolver runs in the owner workspace and spends its credits, so the route answers `402` when that workspace has exhausted its allowance or has no active subscription, and `429` when a usage limit is hit. Senders that retry on `5xx` will not retry these, which is what you want: the refusal will not clear on the next attempt.
+
+When the caller must read the response body on the same request (challenge handshakes, interactive acknowledgements), return a `Response` from the **resolver** instead. The platform echoes it synchronously and skips the queue; its headers go through the same allow-list as HTTP route responses. Keep the resolver fast — some providers (e.g. Slack) time out in a few seconds. Because the resolver is reachable as a public endpoint, protect it with rate limiting at your edge.
+
 </Note>
 
-#### Полезная нагрузка триггера события базы данных
+#### Database event trigger payload
 
-Когда триггер события базы данных вызывает вашу функцию логики, она получает по одному `DatabaseEventPayload` на каждую изменённую запись. Полезная нагрузка объединяет метаданные о рабочем пространстве-источнике и объекте с событием на уровне записи.
+When a database event trigger invokes your logic function, it receives one `DatabaseEventPayload` per changed record (or a `DatabaseEventBatchPayload` covering several records when `batchMode` is enabled). The payload combines metadata about the source workspace and object with the record-level event.
 
 ```ts
 import type {
+  DatabaseEventBatchPayload,
   DatabaseEventPayload,
   ObjectRecordCreateEvent,
   ObjectRecordDestroyEvent,
@@ -356,37 +417,44 @@ type Person = {
 };
 ```
 
-Полезная нагрузка включает:
+The payload includes:
 
-| Свойство                                         | Описание                                                                                           |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
-| `name`                                           | Имя события, например `person.updated`.                                                            |
-| `workspaceId`                                    | Рабочее пространство, в котором произошло событие.                                                 |
-| `objectMetadata`                                 | Метаданные для объекта, который изменился.                                                         |
-| `recordId`                                       | Идентификатор измененной записи.                                                                   |
-| `userId`, `userWorkspaceId`, `workspaceMemberId` | Поля инициатора, если событие было вызвано пользователем рабочего пространства.                    |
-| `properties`                                     | Данные записи для события с `before`, `after`, `diff` и `updatedFields` в зависимости от операции. |
+| Property                                         | Description                                                                                                |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `name`                                           | Event name, such as `person.updated`.                                                                      |
+| `workspaceId`                                    | Workspace where the event happened.                                                                        |
+| `objectMetadata`                                 | Metadata for the object that changed.                                                                      |
+| `recordId`                                       | Id of the changed record.                                                                                  |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | Actor fields when the event was caused by a workspace user.                                                |
+| `properties`                                     | Record data for the event, with `before`, `after`, `diff`, and `updatedFields` depending on the operation. |
 
-| Событие            | Данные записи                                                                                                  |
+| Event              | Record data                                                                                                    |
 | ------------------ | -------------------------------------------------------------------------------------------------------------- |
 | `person.created`   | `event.properties.after`                                                                                       |
 | `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
 | `person.destroyed` | `event.properties.before`                                                                                      |
 
-При логическом удалении `.deleted` имеет формат обновления, поскольку изменяется поле `deletedAt` записи.
-Для окончательного удаления используйте `.destroyed`.
+For soft deletes, `.deleted` follows the update-style shape because the record's `deletedAt` field changes.
+For permanent deletes, use `.destroyed`.
 
 <Note>
-`databaseEventTriggerSettings.updatedFields` фильтрует, какие события обновления запускают функцию.
-`event.properties.updatedFields` указывает, какие поля фактически изменились в текущем событии.
+  `databaseEventTriggerSettings.updatedFields` filters which update events
+  trigger the function. `event.properties.updatedFields` tells you which fields
+  actually changed on the current event.
 </Note>
 
-Пример события создания:
+`databaseEventTriggerSettings` accepts:
+
+| Property        | Description                                                                                                                                                              |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `eventName`     | Event to listen on, such as `person.updated`. Supports `*` for the object name, the operation, or both.                                                                  |
+| `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function.                                                              |
+| `batchMode`     | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
+
+Created event example:
 
 ```ts
-type PersonCreatedEvent = DatabaseEventPayload<
-  ObjectRecordCreateEvent<Person>
->;
+type PersonCreatedEvent = DatabaseEventPayload<ObjectRecordCreateEvent<Person>>;
 
 const handler = async (event: PersonCreatedEvent) => {
   const person = event.properties.after;
@@ -398,12 +466,10 @@ const handler = async (event: PersonCreatedEvent) => {
 };
 ```
 
-Пример события обновления:
+Updated event example:
 
 ```ts
-type PersonUpdatedEvent = DatabaseEventPayload<
-  ObjectRecordUpdateEvent<Person>
->;
+type PersonUpdatedEvent = DatabaseEventPayload<ObjectRecordUpdateEvent<Person>>;
 
 const handler = async (event: PersonUpdatedEvent) => {
   const { before, after, diff, updatedFields } = event.properties;
@@ -418,7 +484,7 @@ const handler = async (event: PersonUpdatedEvent) => {
 };
 ```
 
-Триггер только при обновлении email:
+Trigger only on email updates:
 
 ```ts
 export default defineLogicFunction({
@@ -430,7 +496,7 @@ export default defineLogicFunction({
 });
 ```
 
-Пример события уничтожения:
+Destroyed event example:
 
 ```ts
 type PersonDestroyedEvent = DatabaseEventPayload<
@@ -447,9 +513,50 @@ const handler = async (event: PersonDestroyedEvent) => {
 };
 ```
 
-#### Контекст выполнения
+#### Batching database events
 
-Каждый обработчик получает второй аргумент, описывающий сам запуск независимо от того, что его вызвало. Если форма первого аргумента меняется в зависимости от триггера, то форма этого не меняется:
+A bulk write emits many events at once: importing a mailbox, for instance, can update thousands of records in a single operation, and one call per record floods the queue. Set `batchMode` to receive them together:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    batchMode: true,
+  },
+});
+```
+
+The handler then receives a `DatabaseEventBatchPayload`, which carries the same metadata as `DatabaseEventPayload` but replaces the record-level fields with an `events` array:
+
+```ts
+type PeopleUpdatedBatch = DatabaseEventBatchPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (batch: PeopleUpdatedBatch) => {
+  const updatedEmails = batch.events.map(
+    (event) => event.properties.after.emails?.primaryEmail,
+  );
+
+  return { workspaceId: batch.workspaceId, updatedEmails };
+};
+```
+
+<Note>
+  Batch size is not something a handler can rely on. The server decides how many
+  events a call carries, capped at 200, and a batch holds anything from a single
+  event up to that ceiling depending on how many the originating write produced.
+  Write the handler to loop over `events` whatever its length.
+</Note>
+
+Events are grouped by the user who caused them before being batched, so every call covers a single actor and `context.workspaceMemberId` stays meaningful. `updatedFields` filtering is applied before batching, so a batch only contains records you asked for.
+
+Without `batchMode`, the handler keeps receiving one `DatabaseEventPayload` per record.
+
+#### Execution context
+
+Every handler receives a second argument describing the run itself, whatever triggered it. Where the first argument changes shape per trigger, this one does not:
 
 ```ts
 import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
@@ -466,27 +573,28 @@ const handler = async (
 };
 ```
 
-| Поле                | Тип              | Описание                                                                                      |
-| ------------------- | ---------------- | --------------------------------------------------------------------------------------------- |
-| `workspaceId`       | `string`         | Рабочее пространство, к которому относится запуск.                                            |
-| `userWorkspaceId`   | `string \| null` | Человек, вызвавший запуск, представленный своим участием в этом рабочем пространстве.         |
-| `workspaceMemberId` | `string \| null` | Тот же человек в виде записи участника рабочего пространства, к которой привязываются записи. |
-| `retryCount`        | `number`         | `0` при первой попытке. См. [Фоновые задачи](/ru/developers/extend/apps/logic/background-jobs).  |
-| `maxRetries`        | `number`         | Верхняя граница количества повторных попыток, запрошенных приложением.                        |
+| Field               | Type             | Description                                                                                        |
+| ------------------- | ---------------- | -------------------------------------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | The workspace the run belongs to.                                                                  |
+| `userWorkspaceId`   | `string \| null` | The person who triggered the run, as their membership of this workspace.                           |
+| `workspaceMemberId` | `string \| null` | The same person as a workspace member record, which is what you link records to.                   |
+| `retryCount`        | `number`         | `0` on the first attempt. See [Background jobs](/ru/developers/extend/apps/logic/background-jobs). |
+| `maxRetries`        | `number`         | Upper bound on application-requested retries.                                                      |
 
-`userWorkspaceId` и `workspaceMemberId` имеют значение `null`, когда запуск никто не вызвал: у cron-расписаний, хуков установки и неаутентифицированных вебхуков нет человека, стоящего за ними. Они также имеют значение `null`, когда у человека нет записи участника рабочего пространства или когда она была удалена.
+`userWorkspaceId` and `workspaceMemberId` are `null` when nobody triggered the run: cron schedules, install hooks and unauthenticated webhooks have no person behind them. They are also `null` when the person has no workspace member record, or theirs has been deleted.
 
 <Note>
-**Контекст сообщает, кто вызвал запуск.** То, что запуск может *делать*, определяется отдельно, ниже.
+  **The context tells you who triggered the run.** What the run may *do* is a
+  separate declaration, below.
 </Note>
 
-#### Чьи права доступа использует вызов
+#### Whose access a call uses
 
-Каждый клиент — `CoreApiClient`, `MetadataApiClient` и `RestApiClient` — действует от имени человека, вызвавшего запуск: его роль пересекается с ролью вашего приложения, поэтому вызов никогда не может сделать больше, чем позволяет любая из этих ролей. Это поведение по умолчанию, и оно означает, что человек никогда не сможет использовать ваше приложение для превышения собственных разрешений.
+Every client — `CoreApiClient`, `MetadataApiClient` and `RestApiClient` — acts as the person who triggered the run: their role intersected with your application's, so the call can never do more than either of you. That is the default, and it means a person can never use your app to exceed their own permissions.
 
-Когда запуск никто не вызвал, нет человека, от имени которого можно действовать, поэтому тот же клиент использует права доступа самого приложения: cron-расписания, хуки установки и неаутентифицированные вебхуки не требуют специальной обработки.
+When nobody triggered the run there is no person to act as, so the same client falls back to your application's own access: cron schedules, install hooks and unauthenticated webhooks need no special handling.
 
-Для некоторых вызовов правомерно требуются права доступа самого приложения, даже когда за запуском *стоит* человек — например, для чтения записей конфигурации вашего приложения или выполнения работы, которую этот человек не мог бы выполнить сам. Создайте для них второй клиент:
+Some calls legitimately need the application's own access even when a person _is_ behind the run — reading your app's configuration records, or doing work that person could not do themselves. Build a second client for those:
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -503,7 +611,7 @@ const handler = async (event: DatabaseEventPayload) => {
 };
 ```
 
-Создайте оба клиента один раз в области видимости модуля, и тогда каждый сайт вызова будет указывать используемые права доступа через вызываемый клиент. `RestApiClient` принимает тот же параметр:
+Build both once, at module scope, and every call site then says which access it uses by which client it calls. `RestApiClient` takes the same option:
 
 ```ts
 import { RestApiClient } from 'twenty-client-sdk/rest';
@@ -512,24 +620,32 @@ const asApplication = new RestApiClient({ runAs: 'application' });
 ```
 
 <Note>
-**Запуск, который никто не вызвал, действует как ваше приложение.** У cron-расписаний, хуков установки и неаутентифицированных вебхуков нет человека, стоящего за ними, поэтому клиент по умолчанию использует права доступа самого приложения и продолжает работать. `runAs: 'application'` нужен только тогда, когда вам требуются эти права доступа в запуске, который *вызвал* человек.
+**A run nobody triggered acts as your application.** Cron schedules, install hooks and unauthenticated webhooks have no person behind them, so the default client falls back to your application's own access and keeps working. `runAs: 'application'` is only needed when you want that access in a run a person *did* trigger.
 
-Проверяйте `context.workspaceMemberId`, когда функция ведет себя по-разному в зависимости от того, стоит ли за ней кто-то, например чтобы указать автора записи.
+Check `context.workspaceMemberId` when a function behaves differently depending on whether someone is behind it, for instance to attribute a record.
+
 </Note>
 
-Помощники SDK, обращающиеся к собственным ресурсам вашего приложения, всегда используют его права доступа и игнорируют `runAs`: [хранилище ключей и значений](/ru/developers/extend/apps/logic/key-value-store), [подключения](/ru/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` и списание кредитов.
+The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/ru/developers/extend/apps/logic/key-value-store), [connections](/ru/developers/extend/apps/logic/connections), [messaging channels](/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` and [credit charging](/developers/extend/apps/logic/credits). `sendInboxMessage` also uses your application's access and ignores `runAs`, though it writes to the chats of the members you name.
 
-#### Предоставление функции в качестве инструмента ИИ или действия рабочего процесса
+#### Exposing a function as an AI tool or workflow action
 
-Функции логики могут быть представлены в двух интерфейсах, у каждого — свой триггер:
+Logic functions can be exposed on two surfaces, each with its own trigger:
 
-* **`toolTriggerSettings`** — делает функцию обнаруживаемой для возможностей ИИ Twenty (чат, MCP, вызов функций). Использует стандартную JSON Schema — формат, который модели LLM изначально понимают.
-* **`workflowActionTriggerSettings`** — делает функцию доступной как шаг в визуальном конструкторе рабочих процессов. Использует расширенную `InputSchema` от Twenty, чтобы конструктор мог отрисовывать корректные редакторы полей, селекторы переменных и подписи.
+- **`toolTriggerSettings`** — makes the function discoverable by Twenty's AI features (chat, MCP, function calling). Uses standard JSON Schema, the format LLMs natively understand.
+- **`workflowActionTriggerSettings`** — makes the function appear as a step in the visual workflow builder. Uses Twenty's rich `InputSchema` so the builder can render proper field editors, variable pickers, and labels.
 
-Функция может выбрать один, другой или оба варианта. Они идут рядом с `cronTriggerSettings`, `databaseEventTriggerSettings` и `httpRouteTriggerSettings` — тот же шаблон, та же структура.
+A function can opt into one, the other, or both. They sit alongside `cronTriggerSettings`, `databaseEventTriggerSettings`, and `httpRouteTriggerSettings` — same pattern, same shape.
 
 <Note>
-**Связь с действием Code рабочего процесса.** Встроенное действие **Code** в конструкторе рабочих процессов само по себе является логической функцией — Twenty создаёт по одной на каждый шаг Code и отображает его редактор встроенным образом. `workflowActionTriggerSettings` — это способ превратить разовый встроенный код в **повторно используемое** действие: определите функцию один раз в своём приложении, и она станет доступной для выбора в любом рабочем процессе, вместо копирования и вставки в каждый шаг Code. См. [действие Code](/ru/user-guide/workflows/capabilities/workflow-actions#code) в руководстве пользователя, чтобы увидеть, как это выглядит для конечного пользователя.
+  **Relationship to the workflow Code action.** The built-in **Code** action in
+  the workflow builder is itself a logic function — Twenty creates one per Code
+  step and exposes its editor inline. `workflowActionTriggerSettings` is how you
+  turn that one-off, inline code into a **reusable** action: define the function
+  once in your app and it becomes selectable in any workflow, instead of being
+  copy-pasted into each Code step. See the [Code
+  action](/ru/user-guide/workflows/capabilities/workflow-actions#code) in the
+  user guide for the end-user view.
 </Note>
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
@@ -564,10 +680,10 @@ export default defineLogicFunction({
 });
 ```
 
-Основные моменты:
+Key points:
 
-* Функция может сочетать интерфейсы — объявите и `toolTriggerSettings`, и `workflowActionTriggerSettings`, чтобы сделать её доступной и в чате, и в конструкторе рабочих процессов.
-* `toolTriggerSettings.inputSchema` и `workflowActionTriggerSettings.inputSchema` — обе необязательны. Если они опущены, конструктор манифеста выводит их из исходного кода обработчика (JSON Schema — для инструмента ИИ, `InputSchema` от Twenty — для действия рабочего процесса). Укажите её явно, когда вам нужна более богатая типизация — например, с полями, учитывающими `FieldMetadataType`, такими как `CURRENCY` или `RELATION`, для конструктора рабочих процессов, или с полями `description`, которые может прочитать ИИ-агент:
+- A function can mix surfaces — declare both `toolTriggerSettings` and `workflowActionTriggerSettings` to expose it in chat AND in the workflow builder.
+- `toolTriggerSettings.inputSchema` and `workflowActionTriggerSettings.inputSchema` are both optional. When omitted, the manifest builder infers them from the handler source code (JSON Schema for the AI tool, Twenty's `InputSchema` for the workflow action). Provide one explicitly when you want richer typing — for example, with `FieldMetadataType`-aware fields like `CURRENCY` or `RELATION` for the workflow builder, or with `description` fields the AI agent can read:
 
 ```ts
 export default defineLogicFunction({
@@ -591,7 +707,7 @@ export default defineLogicFunction({
 });
 ```
 
-Чтобы объявить параметры **один раз** и использовать их в обоих сценариях, определите одну JSON Schema (`InputJsonSchema`) и преобразуйте её для действия рабочего процесса с помощью `jsonSchemaToInputSchema` из `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` принимает JSON Schema напрямую, в то время как `workflowActionTriggerSettings.inputSchema` ожидает `InputSchema` Twenty:
+To declare your parameters **once** and serve both surfaces, define a single JSON Schema (`InputJsonSchema`) and convert it for the workflow action with `jsonSchemaToInputSchema` from `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` takes the JSON Schema directly, while `workflowActionTriggerSettings.inputSchema` expects Twenty's `InputSchema`:
 
 ```ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -617,22 +733,82 @@ export default defineLogicFunction({
 });
 ```
 
-##### Полный пример действия рабочего процесса
+##### Rendering a tool call with a front component
 
-`workflowActionTriggerSettings` принимает четыре поля:
+By default a tool call shows up in the AI chat as a step row: the tool's name, and a spinner until it returns. Point `toolTriggerSettings.frontComponentUniversalIdentifier` at one of your [front components](/ru/developers/extend/apps/layout/front-components) and the chat renders that component inline instead, for every call to this tool.
 
-| Поле           | Назначение                                                                                                                                                                                                    |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`        | Имя, отображаемое для действия в селекторе шагов конструктора рабочих процессов. По умолчанию используется `name` функции.                                                                                    |
-| `icon`         | Иконка, отображаемая рядом с действием (имя из `tabler-icons`, например, `IconBuilding`).                                                                                                                     |
-| `inputSchema`  | Расширенная схема ввода (`InputSchema`) Twenty — то, что конструктор отображает как настраиваемые поля (с выбором переменных). Необязательно; при отсутствии выводится из обработчика.                        |
-| `outputSchema` | Определяет структуру, которую возвращает обработчик, чтобы **последующие шаги могли сопоставлять свои данные с его выходными полями**. Необязательно; без неё вывод представлен одним непрозрачным значением. |
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  },
+});
+```
 
-Объединяя всё вместе — функция, представленная как действие рабочего процесса, с объявленным выходом, чтобы последующие шаги могли ссылаться на `taskId`:
+The component reads the call it is rendering with `useToolCall()`:
+
+```tsx src/front-components/invoice-preview.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useToolCall } from 'twenty-sdk/front-component';
+
+const InvoicePreview = () => {
+  const toolCall = useToolCall();
+
+  if (toolCall === null) {
+    return null;
+  }
+
+  if (toolCall.status !== 'output-available') {
+    return <p>Generating the invoice...</p>;
+  }
+
+  const { invoiceUrl } = toolCall.output ?? {};
+
+  return typeof invoiceUrl === 'string' ? (
+    <a href={invoiceUrl}>Open the invoice</a>
+  ) : (
+    <p>The invoice could not be generated.</p>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'invoice-preview',
+  component: InvoicePreview,
+});
+```
+
+The component mounts as soon as the agent has finished streaming its arguments, so it owns the whole call, not just the result. `toolCall.status` walks through `input-available`, the approval states when the tool needs one, and then `output-available`, `output-denied` or `output-error`; `input` is what the agent proposed, `output` what your handler returned. Render each state you care about, since the step row is no longer there to cover them.
+
+Both `input` and `output` are typed `Record<string, unknown>`, so narrow each field before you use it rather than casting. That matters most for anything you hand to the DOM: a value you drop into an `href` without checking it is a string is a link the tool's output controls.
+
+<Note>
+  If the identifier matches no front component in the app, the chat falls back
+  to the default step row. Front components in the AI chat run under the same
+  [role your app declares](/ru/developers/extend/apps/config/roles), so a widget
+  can only read and write what the app itself is allowed to.
+</Note>
+
+##### A complete workflow action example
+
+`workflowActionTriggerSettings` accepts four fields:
+
+| Field          | Purpose                                                                                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | Name shown for the action in the workflow builder's step picker. Defaults to the function `name`.                                                                   |
+| `icon`         | Icon shown next to the action (a `tabler-icons` name, e.g. `IconBuilding`).                                                                                         |
+| `inputSchema`  | Twenty's rich `InputSchema` — what the builder renders as configurable fields (with variable pickers). Optional; inferred from the handler when omitted.            |
+| `outputSchema` | Declares the shape the handler returns, so **subsequent steps can map to its output fields**. Optional; without it, the output is exposed as a single opaque value. |
+
+Putting it together — a function exposed as a workflow action, with a declared output so later steps can reference `taskId`:
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import {
+  jsonSchemaToInputSchema,
+  type InputJsonSchema,
+} from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const inputSchema: InputJsonSchema = {
@@ -686,17 +862,19 @@ export default defineLogicFunction({
 });
 ```
 
-После установки приложения **Enrich Company** появляется в селекторе действий конструктора рабочих процессов. Конструктор отображает `companyName` и `domain` как поля ввода (каждое может получать значения из предыдущих шагов), а последующие шаги могут ссылаться на выходные значения шага `taskId` и `enriched`.
+Once the app is installed, **Enrich Company** appears in the workflow builder's action picker. The builder renders `companyName` and `domain` as input fields (each able to pull values from previous steps), and downstream steps can reference the step's `taskId` and `enriched` outputs.
 
 <Note>
-**Напишите хорошее описание в поле `description`.** Агенты ИИ опираются на поле `description` функции, чтобы решить, когда использовать инструмент. Чётко опишите, что делает инструмент и когда его следует вызывать.
+  **Write a good `description`.** AI agents rely on the function's `description`
+  field to decide when to use the tool. Be specific about what the tool does and
+  when it should be called.
 </Note>
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-**Вспомогательные функции времени выполнения.** `twenty-sdk/utils` повторно экспортирует небольшие вспомогательные функции времени выполнения, поэтому обработчики никогда не импортируют напрямую из `twenty-shared`. Например, `isDefined(value)` возвращает `false` как для `null`, так и для `undefined` — используйте её, чтобы безопасно сузить необязательные входные данные обработчика, которые могут приходить как `null` во время выполнения, даже если имеют тип `T | undefined`:
+**Runtime helpers.** `twenty-sdk/utils` re-exports small runtime helpers so handlers never import from `twenty-shared` directly. For example, `isDefined(value)` returns `false` for both `null` and `undefined` — use it to safely narrow optional handler inputs, which can arrive as `null` at runtime even when typed `T | undefined`:
 
 ```ts
 import { isDefined } from 'twenty-sdk/utils';
@@ -707,15 +885,80 @@ const handler = async (params: { parentMessageId?: string }) => {
   }
 };
 ```
+
 </Note>
 
 <Note>
-**Хуки установки** — обработчики до установки, после установки и при удалении — используют тот же рантайм, но объявляются с помощью собственных функций `define` и не принимают настройки триггеров. См. раздел [Install Hooks](/ru/developers/extend/apps/config/install-hooks) для `definePreInstallLogicFunction`, `definePostInstallLogicFunction` и `defineUninstallLogicFunction`.
+  **Install hooks** — pre-install, post-install, and uninstall handlers — share
+  this runtime but are declared with their own define functions and don't take
+  trigger settings. See [Install
+  Hooks](/ru/developers/extend/apps/config/install-hooks) for
+  `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and
+  `defineUninstallLogicFunction`.
 </Note>
 
-## Создание действия на временной шкале.
+## Health check
 
-Используйте `createTimelineActivity()` для публикации явного события домена из логической функции. Сначала определите событие как [тип действия на временной шкале](/ru/developers/extend/apps/data/timeline-activity-types), затем укажите тип и объекты с помощью их стабильных универсальных идентификаторов:
+Declare a health check with `defineHealthCheck` to report whether your app is actually able to run. It is for what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. What Twenty can see by itself — a required variable nobody filled in — is covered by [`isRequired`](/ru/developers/extend/apps/config/application) and needs no code.
+
+It runs server-side, so it reads secret variables like any other logic function. The handler takes no arguments.
+
+```ts src/logic-functions/health-check.ts
+import { defineHealthCheck } from 'twenty-sdk/define';
+
+export default defineHealthCheck({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'health-check',
+  handler: async () => {
+    const response = await fetch('https://api.stripe.com/v1/account', {
+      headers: { Authorization: `Bearer ${process.env.API_KEY}` },
+    });
+
+    if (response.status === 401) {
+      return {
+        status: 'ERROR',
+        title: 'Your Stripe key was revoked',
+        description: 'Generate a new one from the Stripe dashboard.',
+        action: { label: 'Add a key', location: '/settings/billing' },
+      };
+    }
+
+    return { status: 'OK' };
+  },
+});
+```
+
+The result is a discriminated union, not a boolean:
+
+| Field         | Required                  | Description                                                                                                                                                                                                                                                                                                           |
+| ------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `status`      | Yes                       | `OK` when there is nothing to report, otherwise `SUCCESS`, `INFO`, `WARNING`, `ERROR` or `NEUTRAL`                                                                                                                                                                                                                    |
+| `title`       | For every status but `OK` | The banner's first line on the app's settings page                                                                                                                                                                                                                                                                    |
+| `description` | No                        | A second line under the title, for what to do about it                                                                                                                                                                                                                                                                |
+| `action`      | No                        | `{ label, location }` for the banner's button. `location` is where the button redirects to: a path inside Twenty such as `/settings/billing`, optionally with a hash to select a tab, or a hash alone such as `#variables` to move to a tab of your own settings page; omit it to land on the app's configuration tab |
+
+`OK` shows no banner at all; every other status renders the title in a banner coloured after it, so pick the one that matches how much the person needs to act. The statuses are Twenty's own `ApplicationHealthStatus`, so the plain string and the enum member are interchangeable:
+
+```ts
+import { ApplicationHealthStatus } from 'twenty-sdk/define';
+
+return {
+  status: ApplicationHealthStatus.WARNING,
+  title: 'Quota almost reached',
+};
+```
+
+Twenty runs the check when the app's settings page opens and shows the result in a banner there. Nothing is stored, so what you report is always what the check just returned.
+
+A check that throws, times out or returns a shape Twenty cannot read is treated as **unknown**, never as an error, and no banner is shown. A third-party outage should not paint every installed app red — if it did, people would learn to ignore the signal.
+
+The location has to stay inside Twenty, so it starts with `/` or `#`: an external, protocol-relative or relative one loses its button rather than becoming a redirect somewhere else. The button is also dropped when the app reports no location and has no configuration tab to fall back to, so a check on an app with no variables and no settings menu items shows its title without a dead button.
+
+Only one health check is allowed per app; declaring more than one fails the build.
+
+## Create a timeline activity
+
+Use `createTimelineActivity()` to publish an explicit domain event from a logic function. Define the event first as a [timeline activity type](/ru/developers/extend/apps/data/timeline-activity-types), then address the type and objects by their stable universal identifiers:
 
 ```ts
 import { createTimelineActivity } from 'twenty-sdk/logic-function';
@@ -732,11 +975,11 @@ await createTimelineActivity({
 });
 ```
 
-Twenty преобразует универсальные идентификаторы в идентификаторы метаданных, специфичные для установки, проверяет, что тип действия на временной шкале принадлежит вызывающему приложению, и сохраняет снимок его метаданных представления в новом действии.
+Twenty resolves universal identifiers to the installation-specific metadata IDs, validates that the timeline activity type belongs to the calling app, and snapshots its presentation metadata on the new activity.
 
-Обязательные входные параметры: `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` и `targetRecordId`. Также можно указать `happensAt`, `properties` и `workspaceMemberId`. `happensAt` управляет положением события и отображаемым временем на временной шкале; по умолчанию используется время создания.
+The required inputs are `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier`, and `targetRecordId`. You can also provide `happensAt`, `properties`, and `workspaceMemberId`. `happensAt` controls the event's position and displayed time in the timeline; it defaults to the creation time.
 
-Чтобы связать с событием другую запись, укажите вместе `linkedRecordId` и `linkedObjectMetadataUniversalIdentifier`. Кроме того, можно указать `linkedRecordCachedName` в качестве резервного варианта отображения исторического имени:
+To associate another record with the event, provide `linkedRecordId` and `linkedObjectMetadataUniversalIdentifier` together. You can additionally provide `linkedRecordCachedName` as a historical display fallback:
 
 ```ts
 await createTimelineActivity({
@@ -750,21 +993,21 @@ await createTimelineActivity({
 });
 ```
 
-Роли логической функции требуется разрешение на запись в стандартный объект `timelineActivity`. Не связывайте явные типы событий с `action`; тип, связанный с действием, уже получает автоматические события аудита и в противном случае создаст дублирующиеся строки.
+The logic function's role needs write permission on the standard `timelineActivity` object. Keep explicit event types unbound from an `action`; an action-bound type already receives automatic audit events and would otherwise produce duplicate rows.
 
-## Типизированные клиенты API (twenty-client-sdk)
+## Typed API clients (twenty-client-sdk)
 
-Пакет `twenty-client-sdk` предоставляет два типизированных клиента GraphQL для взаимодействия с API Twenty из ваших логических функций и фронт-компонентов.
+The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.
 
-| Клиент              | Импорт                       | Конечная точка                                                    | Генерируется?                    |
-| ------------------- | ---------------------------- | ----------------------------------------------------------------- | -------------------------------- |
-| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — данные рабочего пространства (записи, объекты)       | Да, на этапе dev/build           |
-| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — конфигурация рабочего пространства, загрузка файлов | Нет, поставляется в готовом виде |
+| Client              | Import                       | Endpoint                                       | Generated?             |
+| ------------------- | ---------------------------- | ---------------------------------------------- | ---------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads   | No, ships pre-built    |
 
 <AccordionGroup>
-<Accordion title="CoreApiClient" description="Запрос и изменение данных рабочего пространства (записи, объекты)">
+<Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
 
-`CoreApiClient` — основной клиент для запросов и изменений данных рабочего пространства. Он **генерируется из схемы вашего рабочего пространства** во время `yarn twenty dev` или `yarn twenty dev:build`, поэтому полностью типизирован в соответствии с вашими объектами и полями.
+`CoreApiClient` is the main client for querying and mutating workspace data. It is **generated from your workspace schema** with `twenty app generate-client`, or after a sync with `twenty app apply` or `twenty app dev`, so it is fully typed to match your objects and fields.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -799,17 +1042,40 @@ const { createCompany } = await client.mutation({
     name: true,
   },
 });
+
+// Only on an object whose readability is PRIVATE: choose who can read the created record
+const { createContract } = await client.mutation({
+  createContract: {
+    __args: {
+      data: {
+        name: 'Acme Corp renewal',
+      },
+      shareWith: [
+        {
+          roleId: '7f0c1b6e-2d4a-4c8e-9b3f-5a6d7e8f9a0b',
+          accessLevel: 'READ_WRITE',
+        },
+      ],
+    },
+    id: true,
+  },
+});
 ```
 
-Клиент использует синтаксис selection-set: передайте `true`, чтобы включить поле, используйте `__args` для аргументов и вкладывайте объекты для отношений. Вы получаете полное автодополнение и проверку типов на основе схемы вашего рабочего пространства.
+`shareWith` only matters on an object whose readability is `PRIVATE`; every object is `OPEN` by default, and on an `OPEN` object the argument is ignored. On a `PRIVATE` object it lists who gets access to the created record: each entry targets exactly one of `workspaceMemberId`, `roleId` or `everyone: true` with an `accessLevel` of `READ`, `READ_WRITE` or `FULL`. A workspace member creating a record always receives a `FULL` owner grant, so the argument is optional for them; a logic function acting as its application or an API key also receives a `FULL` grant for its role, and such callers, like a system caller, must pass `shareWith` or the create is rejected. Every entry must name a member or a role of the workspace. A logic function or API key shares through its role, so every holder of that role gets the same access to the records it creates; give a key whose records must stay private to it a role of its own.
+
+The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
 
 <Note>
-**CoreApiClient генерируется на этапе dev/build.** Если вы используете его, не запустив сначала `yarn twenty dev` или `yarn twenty dev:build`, он выбросит ошибку. Генерация происходит автоматически — CLI анализирует GraphQL-схему вашего рабочего пространства и создает типизированный клиент с помощью `@genql/cli`.
+  Run `twenty app generate-client` to refresh the client from your workspace's
+  GraphQL schema. `twenty app apply` and `twenty app dev` also regenerate it
+  after syncing. `twenty app build` only builds locally and does not generate
+  the client.
 </Note>
 
-#### Использование CoreSchema для аннотаций типов
+#### Using CoreSchema for type annotations
 
-`CoreSchema` предоставляет типы TypeScript, соответствующие объектам вашего рабочего пространства — это полезно для типизации состояния компонентов или параметров функций:
+`CoreSchema` provides TypeScript types matching your workspace objects — useful for typing component state or function parameters:
 
 ```ts
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
@@ -831,9 +1097,13 @@ setCompany(result.company);
 ```
 
 </Accordion>
-<Accordion title="MetadataApiClient" description="Конфигурация рабочего пространства, приложения и загрузка файлов">
+<Accordion title="MetadataApiClient" description="Workspace config, applications, and file uploads">
 
-`MetadataApiClient` поставляется в готовом виде вместе с SDK (генерация не требуется). Он выполняет запросы к эндпоинту `/metadata` для получения конфигурации рабочего пространства, приложений и загрузки файлов. Он принимает тот же параметр `runAs`, что и `CoreApiClient` — см. [Чьи права доступа использует вызов](#whose-access-a-call-uses).
+`MetadataApiClient` ships pre-built with the SDK (no generation required). It queries the `/metadata` endpoint for workspace configuration, applications, and file uploads. It takes the same `runAs` option as `CoreApiClient` — see [Whose access a call uses](#whose-access-a-call-uses).
+
+It is also how an app reads and updates its own [application variables](/ru/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime), in a logic function as in a front component. An application token only ever reaches its own application, in its own workspace.
+
+A [user variable](/ru/developers/extend/apps/config/application#workspace-and-user-variables) is in `process.env` with the value of the member who triggered the run, or its default until they set their own. A run nobody triggered gets no user variables. To read every member's value of your app's user variables, for example in a cron job, query `myUserApplicationVariables` with `runAs: 'application'`.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -860,9 +1130,9 @@ const { objects } = await metadataClient.query({
 });
 ```
 
-#### Загрузка файлов
+#### Uploading files
 
-`MetadataApiClient` включает метод `uploadFile` для прикрепления файлов к полям типа файла:
+`MetadataApiClient` includes an `uploadFile` method for attaching files to file-type fields. The file goes straight to Twenty's file storage: the API issues an upload target, the client sends the bytes there, then the API confirms the upload.
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -870,39 +1140,38 @@ import * as fs from 'fs';
 
 const metadataClient = new MetadataApiClient();
 
-const fileBuffer = fs.readFileSync('./invoice.pdf');
-
-const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
-);
+const uploadedFile = await metadataClient.uploadFile({
+  fileBuffer: fs.readFileSync('./invoice.pdf'),
+  filename: 'invoice.pdf',
+  fieldMetadataUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+});
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-| Параметр                           | Тип      | Описание                                                           |
-| ---------------------------------- | -------- | ------------------------------------------------------------------ |
-| `fileBuffer`                       | `Buffer` | Необработанное содержимое файла                                    |
-| `filename`                         | `string` | Имя файла (используется для хранения и отображения)                |
-| `contentType`                      | `string` | Тип MIME (по умолчанию `application/octet-stream`, если не указан) |
-| `fieldMetadataUniversalIdentifier` | `string` | Значение `universalIdentifier` для поля типа файла в вашем объекте |
+| Parameter                          | Type     | Description                                                     |
+| ---------------------------------- | -------- | --------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | The raw file contents                                           |
+| `filename`                         | `string` | The name of the file (used for storage and display)             |
+| `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object |
 
-Основные моменты:
-* Он использует `universalIdentifier` поля (а не его идентификатор, специфичный для рабочего пространства), поэтому ваш код загрузки будет работать в любом рабочем пространстве, где установлено ваше приложение.
-* Возвращаемый `url` — это подписанный URL, который можно использовать для доступа к загруженному файлу.
+Key points:
+
+- Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
+- The MIME type is detected from the file contents once uploaded, so there is nothing to declare.
+- The returned `url` is a signed URL you can use to access the uploaded file.
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-  Когда ваш код выполняется на Twenty (логические функции или фронт-компоненты), платформа предоставляет учётные данные в виде переменных окружения:
+  When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
 
-  * `TWENTY_API_URL` — базовый URL API Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — краткоживущий ключ для прав доступа по умолчанию: роль человека пересекается с ролью вашего приложения, когда за запуском кто-то стоит; если никто не стоит — используется собственная роль вашего приложения. В логической функции человек — это тот, кто вызвал запуск, а во фронтенд-компоненте — тот, кто просматривает страницу.
-  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — краткоживущий ключ, ограниченный исключительно собственной ролью вашего приложения. Только для логических функций, всегда внедряется в них и используется `runAs: 'application'`.
+- `TWENTY_API_URL` — Base URL of the Twenty API
+- `TWENTY_APP_ACCESS_TOKEN` — Short-lived key for the default access: a person's role intersected with your application's when someone is behind the run, your application's own role when nobody is. The person is whoever triggered the run in a logic function, whoever is looking at the page in a front component.
+- `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Short-lived key scoped to your application's own role alone. Logic functions only, always injected there, and what `runAs: 'application'` uses.
 
-  Вам **не** нужно передавать их клиентам — они автоматически считываются из `process.env`, а в разделе [Чьи права доступа использует вызов](#whose-access-a-call-uses) описан выбор между ними. Собственные разрешения вашего приложения определяются ролью, объявленной с помощью `defineApplicationRole()` (или указанной через `defaultRoleUniversalIdentifier` в `application-config.ts`); запуск, действующий от имени человека, никогда не может превысить ни эту роль, ни его собственную.
+You do **not** need to pass these to the clients — they read from `process.env` automatically, and [Whose access a call uses](#whose-access-a-call-uses) covers picking between them. Your application's own permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`); a run acting as a person can never exceed that role, nor theirs.
+
 </Note>

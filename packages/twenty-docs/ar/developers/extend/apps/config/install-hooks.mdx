@@ -1,12 +1,17 @@
 ---
 title: خطافات التثبيت
-description: تشغيل المنطق أثناء دورة حياة التثبيت أو الترقية أو إلغاء التثبيت — مثل تعبئة البيانات الأوّلية، ونسخ السجلات احتياطيًا، والتحقق من الترقية، وتنظيف الموارد الخارجية.
-icon: wrench
+description: Run logic during the install, upgrade, or uninstall lifecycle — seed data, back up records, validate the upgrade, clean up external resources.
+icon: 'wrench'
 ---
 
-خطافات التثبيت هي دوال منطقية خاصة تعمل أثناء دورة حياة التثبيت أو الترقية أو إلغاء التثبيت. تستخدم نفس وقت تشغيل المعالج مثل [دوال المنطق](/ar/developers/extend/apps/logic/logic-functions) العادية، ولكن يتم التصريح عنها بدوال تعريف خاصة بها وتعمل خارج نموذج المشغّل المعتاد (HTTP، وcron، وأحداث قاعدة البيانات). تتلقى خطافات التثبيت `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — تكون قيمة `previousVersion` هي `undefined` في حالة التثبيت الجديد)، بينما يتلقى خطاف إلغاء التثبيت `UninstallPayload` (`{ version?: string }` — الإصدار الذي تتم إزالته).
+<Note>
+  لم تُحدَّث ترجمة هذا الدليل بعد لتشمل واجهة سطر أوامر Twenty المستقلة. يُعرض
+  المحتوى الإنجليزي الحالي أدناه مؤقتًا لتجنّب استخدام أوامر أُزيلت.
+</Note>
 
-يمكن لكل تطبيق تعريف **خطاف واحد كحد أقصى** من كل نوع (قبل التثبيت، بعد التثبيت، إلغاء التثبيت). سيُنتِج إنشاء ملف البيان خطأً إذا تم اكتشاف أكثر من خطاف واحد من أي نوع.
+Install hooks are special logic functions that run during the install, upgrade, or uninstall lifecycle. They share the same handler runtime as regular [logic functions](/ar/developers/extend/apps/logic/logic-functions), but they're declared with their own define functions and live outside the normal trigger model (HTTP, cron, database events). Install hooks receive an `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` is `undefined` on a fresh install); the uninstall hook receives an `UninstallPayload` (`{ version?: string }` — the version being removed).
+
+Each app may define **at most one** of each hook (pre-install, post-install, uninstall). The manifest build errors if more than one of any kind is detected.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -19,48 +24,51 @@ icon: wrench
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## لمحة سريعة
+## At a glance
 
-|                    | `definePreInstallLogicFunction`                                                            | `definePostInstallLogicFunction`                                                                                              |
-| ------------------ | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| عمليات التشغيل     | قبل ترحيل البيانات الوصفية — لا يزال المخطط والبيانات **السابقة** سليمين                   | بعد الترحيل وإنشاء الـ SDK — أصبح المخطط **الجديد** في مكانه                                                                  |
-| التنفيذ            | دائمًا متزامن؛ يحجب عملية التثبيت                                                          | غير متزامن بشكل افتراضي (يُوضَع في قائمة الانتظار، 3 محاولات إعادة)؛ تفعيل التزامن اختياري عبر `shouldRunSynchronously: true` |
-| عند الفشل          | يتم **إحباط** التثبيت قبل أي تغيير في المخطط                                               | غير متزامن: تُعاد المحاولة حتى 3 مرات. متزامن: يتلقى المستدعي `POST_INSTALL_ERROR` (لن يتم التراجع عن تغييرات المخطط).        |
-| الاستخدام النموذجي | انسخ البيانات احتياطيًا أو أصلح بيانات قد يفقدها الترحيل؛ ارفض ترقية خطِرة بإلقاء استثناء. | بذر بيانات افتراضية، تهيئة مساحة العمل، تسجيل موارد خارجية                                                                    |
+|             | `definePreInstallLogicFunction`                                                   | `definePostInstallLogicFunction`                                                                                  |
+| ----------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Runs        | Before the metadata migration — the **previous** schema and data are still intact | After the migration and SDK generation — the **new** schema is in place                                           |
+| Execution   | Always synchronous; blocks the install                                            | Async by default (queued, 3 retries); sync opt-in via `shouldRunSynchronously: true`                              |
+| On failure  | Install is **aborted** before any schema change                                   | Async: retried up to 3 times. Sync: caller receives `POST_INSTALL_ERROR` (schema changes are **not** rolled back) |
+| Typical use | Back up or fix data a migration would lose; refuse a risky upgrade by throwing    | Seed default data, configure the workspace, register external resources                                           |
 
-**قاعدة عامة:** اجعل الافتراضي هو post-install. الجأ إلى ما قبل التثبيت فقط عندما يكون الترحيل نفسه هدّامًا وتحتاج إلى التقاط الحالة السابقة قبل أن تزول.
+**Rule of thumb:** default to post-install. Only reach for pre-install when the migration itself is destructive and you need to intercept the previous state before it is gone.
 
-| ترغب في...                                                       | استخدام                                                                   |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| بذر البيانات، تهيئة مساحة العمل، تسجيل موارد خارجية              | `post-install`                                                            |
-| عمل طويل الأمد لا ينبغي أن يحجب استجابة التثبيت                  | `post-install` (الوضع غير المتزامن الافتراضي، مع محاولات إعادة من العامل) |
-| إعداد سريع يعتمد عليه المستدعي مباشرةً بعد عودة التثبيت          | `post-install` مع `shouldRunSynchronously: true`                          |
-| قراءة البيانات أو نسخها احتياطيًا والتي قد يفقدها الترحيل القادم | `pre-install`                                                             |
-| رفض ترقية قد تُفسد البيانات الحالية                              | `pre-install` (ارمِ من المعالج)                                           |
-| تنفيذ مواءمة في كل ترقية                                         | أي من الخطافين مع `shouldRunOnVersionUpgrade: true`                       |
+| You want to...                                                        | Use                                                      |
+| --------------------------------------------------------------------- | -------------------------------------------------------- |
+| Seed data, configure the workspace, register external resources       | `post-install`                                           |
+| Long-running work that shouldn't block the install response           | `post-install` (default async mode, with worker retries) |
+| Fast setup the caller relies on immediately after the install returns | `post-install` with `shouldRunSynchronously: true`       |
+| Read or back up data that the upcoming migration would lose           | `pre-install`                                            |
+| Reject an upgrade that would corrupt existing data                    | `pre-install` (throw from the handler)                   |
+| Reconciliation on every upgrade                                       | Either hook with `shouldRunOnVersionUpgrade: true`       |
 
-## السلوك المشترك بين كلا الخطافين
+## Behavior shared by both hooks
 
-* إعداد التهيئة هو إعداد `defineLogicFunction` نفسه مطروحًا منه إعدادات المشغّل، مضافًا إليه `shouldRunOnVersionUpgrade`.
-* **موعد تشغيله**: في عمليات التثبيت الجديدة فقط، افتراضيًا. عيِّن `shouldRunOnVersionUpgrade: true` لتشغيله أيضًا عند الترقيات. استخدم `previousVersion` / `newVersion` للتفرع حسب مسار الترقية.
-* **أهمية اللاّتغيّر (Idempotency)**: قد يُعاد تشغيل post-install غير المتزامن، وأيٌّ من الخطافين يُعاد تشغيله عند الترقيات عندما يكون `shouldRunOnVersionUpgrade` مفعّلًا.
-* يتم حقن بيئة دوال المنطق المعتادة (`APPLICATION_ID`، و`APP_ACCESS_TOKEN`، و`API_URL`)، لذا يمكنك استدعاء Twenty API باستخدام رمز التطبيق الخاص بك.
-* يُربَط الخطّاف تلقائيًا بملف بيان التطبيق وقت الإنشاء (`preInstallLogicFunction` / `postInstallLogicFunction`) — لا حاجة للإشارة إليه في [`defineApplication()`](/ar/developers/extend/apps/config/application).
-* القيمة الافتراضية لـ `timeoutSeconds` هي 300 للسماح بمهام إعداد أطول مثل بذر البيانات.
-* **غير منفَّذ في نمط التطوير**: يتخطى `yarn twenty dev` تدفق التثبيت ويزامن الملفات مباشرةً، لذا لا تعمل الخطافات هناك مطلقًا. بدلًا من ذلك، شغّلها يدويًا:
+- The config is a `defineLogicFunction` config minus the trigger settings, plus `shouldRunOnVersionUpgrade`.
+- **When it runs**: fresh installs only, by default. Set `shouldRunOnVersionUpgrade: true` to also run on upgrades. Use `previousVersion` / `newVersion` to branch on the upgrade path.
+- **Idempotency matters**: async post-install may be retried, and either hook re-runs on upgrades when `shouldRunOnVersionUpgrade` is on.
+- The usual logic-function environment (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) is injected, so you can call the Twenty API with your app's token.
+- The hook is attached to the application manifest automatically at build time (`preInstallLogicFunction` / `postInstallLogicFunction`) — nothing to reference in [`defineApplication()`](/ar/developers/extend/apps/config/application).
+- The default `timeoutSeconds` is 300 to allow longer setup tasks like data seeding.
+- **Not executed in dev mode**: `twenty app dev` skips the install flow and syncs files directly, so hooks never run there. Trigger them manually instead:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
+twenty app exec --post-install
+twenty app exec --pre-install
 ```
 
 <AccordionGroup>
-<Accordion title="definePostInstallLogicFunction" description="تعمل بعد تطبيق ترحيل البيانات الوصفية لمساحة العمل">
+<Accordion title="definePostInstallLogicFunction" description="Runs after the workspace metadata migration is applied">
 
-يعمل بعد انتهاء تثبيت تطبيقك: تمت مزامنة البيانات الوصفية، وتم إنشاء عميل SDK، وأصبح من الممكن الاستعلام عن المخطط الجديد. مثال — بذر سجل افتراضي في عمليات التثبيت الجديدة:
+Runs once your app has finished installing: metadata synchronized, SDK client generated, new schema queryable. Example — seed a default record on fresh installs:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -69,7 +77,9 @@ const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   const client = new CoreApiClient();
   await client.mutation({
     createPostCard: {
-      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
+      __args: {
+        data: { name: 'Welcome to Postcard', content: 'Your first card!' },
+      },
       id: true,
     },
   });
@@ -86,25 +96,31 @@ export default definePostInstallLogicFunction({
 });
 ```
 
-تتحكم الشارة `shouldRunSynchronously` في نموذج التنفيذ:
+The `shouldRunSynchronously` flag controls the execution model:
 
-* `false` *(الإعداد الافتراضي)* — يُوضَع في قائمة انتظار الرسائل (`retryLimit: 3`) ويُشغِّله عامل. تعود استجابة التثبيت بمجرد وضع المهمة في قائمة الانتظار. **يُستخدم للأعمال طويلة الأمد** — بذر مجموعات بيانات كبيرة، وواجهات برمجة تطبيقات بطيئة لأطراف ثالثة.
-* `true` — يُنفَّذ مضمَّنًا أثناء تدفق التثبيت. يحجب طلب التثبيت حتى ينتهي المعالج؛ يظهر الخطأ الذي يتم رميه كـ `POST_INSTALL_ERROR` للمستدعي (بدون محاولات إعادة). **يُستخدم للأعمال السريعة التي يجب إتمامها قبل الاستجابة.** تم تطبيق الترحيل بالفعل في هذه المرحلة، لذا لا يؤدي الفشل إلى التراجع عن تغييرات المخطط — بل يُظهِر الخطأ فقط.
+- `false` _(default)_ — enqueued on the message queue (`retryLimit: 3`) and run by a worker. The install response returns as soon as the job is enqueued. **Use for long-running work** — seeding large datasets, slow third-party APIs.
+- `true` — executed inline during the install flow. The install request blocks until the handler finishes; a thrown error surfaces as `POST_INSTALL_ERROR` to the caller (no retries). **Use for fast, must-complete-before-response work.** The migration has already been applied at this point, so a failure does not roll back schema changes — it only surfaces the error.
 
 </Accordion>
-<Accordion title="definePreInstallLogicFunction" description="تعمل قبل تطبيق ترحيل البيانات الوصفية لمساحة العمل">
+<Accordion title="definePreInstallLogicFunction" description="Runs before the workspace metadata migration is applied">
 
-يعمل قبل ترحيل البيانات الوصفية، مقابل المخطط **السابق** — المكان المناسب لنسخ البيانات احتياطيًا التي قد يفقدها الترحيل، أو لرفض ترقية خطِرة. قبل التنفيذ، يُشغِّل الخادم مزامنة ذات طابع إضافي فقط "pared-down sync" تُسجِّل دالة ما قبل التثبيت للإصدار الجديد فقط؛ أما كل ما عدا ذلك — كائنات الإصدار السابق وحقوله وبياناته — فيبقى دون مساس عندما يعمل المعالج.
+Runs before the metadata migration, against the **previous** schema — the right place to back up data a migration would lose, or to refuse a risky upgrade. Before executing, the server runs a purely additive "pared-down sync" that registers only the new version's pre-install function; everything else — the previous version's objects, fields, and data — is untouched when your handler runs.
 
-ما قبل التثبيت دائمًا **متزامن** ويحجب عملية التثبيت. إذا رمى المعالج استثناءً، تُلغى عملية التثبيت قبل أي تغيير في المخطط — وتبقى مساحة العمل على الإصدار السابق بحالة متّسقة. هذا مقصود: ما قبل التثبيت هو فرصتك الأخيرة لرفض ترقية تنطوي على مخاطر.
+Pre-install is always **synchronous** and blocks the install. If the handler throws, the install is aborted before any schema change — the workspace stays on the previous version in a consistent state. This is intentional: pre-install is your last chance to refuse a risky upgrade.
 
-مثال — نسخ قيم حقل قديم قبل أن يُسقِطه الترحيل:
+Example — copy a legacy field's values before the migration drops it:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePreInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+const handler = async ({
+  previousVersion,
+  newVersion,
+}: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -133,7 +149,8 @@ const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description: 'Backs up legacy notes into description before the v2 migration.',
+  description:
+    'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -143,24 +160,27 @@ export default definePreInstallLogicFunction({
 </Accordion>
 </AccordionGroup>
 
-## خطاف إلغاء التثبيت
+## Uninstall hook
 
-تُصرّح `defineUninstallLogicFunction` عن خطاف يتم تشغيله عندما يلغي المستخدم تثبيت تطبيقك. يتم تنفيذه **قبل** إزالة بيانات التعريف للتطبيق وبياناته وكوده — بمجرد تشغيل ترحيل الحذف، لن يتبقى أي شيء للتنفيذ — لذلك لا يزال بإمكان معالجك الاستعلام عن كائنات التطبيق وسجلاته. استخدمه لتنظيف الموارد الخارجية: إلغاء توفير موارد واجهة برمجة التطبيقات (API)، وحذف الروبوتات المتبقية، وإبطال خطافات الويب.
+`defineUninstallLogicFunction` declares a hook that runs when a user uninstalls your app. It executes **before** the app's metadata, data, and code are removed — once the deletion migration runs there is nothing left to execute — so your handler can still query the app's objects and records. Use it for cleanup of external resources: deprovision API resources, delete remaining bots, revoke webhooks.
 
-الملاحظات:
+Notes:
 
-* الخطاف يعتمد على مبدأ "أقصى جهد ممكن": يتم تشغيله بشكل متزامن، ولكن في حالة الفشل يتم تسجيل الخطأ و**لا يعرقل عملية إلغاء التثبيت مطلقًا** — يجب ألا يجعل التنظيف إزالة التطبيق مستحيلة.
-* يتلقى `UninstallPayload` (`{ version?: string }` — الإصدار الذي تتم إزالته).
-* لا يتم تشغيله عند التراجع عن عملية تثبيت جديدة فاشلة — حيث لم يكتمل تثبيت التطبيق مطلقًا.
-* لا يمكن للخطاف أن يعمل بعد إزالة التطبيق، لذلك يجب أن يتم هنا أي تنظيف خارجي يعتمد على بيانات التطبيق (مثلًا: معرّفات الروبوتات المخزنة في السجلات)، وليس في مهمة مجدولة خارجية.
-* ومثل خطافات التثبيت، **لا يتم تنفيذه في وضع التطوير (dev mode)** — بدلًا من ذلك، قم بتشغيله يدويًا:
+- The hook is best-effort: it runs synchronously, but a failure is logged and **never blocks the uninstall** — cleanup must not make an app impossible to remove.
+- It receives `UninstallPayload` (`{ version?: string }` — the version being removed).
+- It does **not** run when a failed fresh install is rolled back — the app never finished installing.
+- The hook cannot run after the app is gone, so external cleanup that depends on app data (e.g. bot IDs stored in records) belongs here, not in an external scheduled job.
+- Like the install hooks, it is **not executed in dev mode** — trigger it manually instead:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --uninstall
+twenty app exec --uninstall-hook
 ```
 
 ```ts src/logic-functions/uninstall.ts
-import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import {
+  defineUninstallLogicFunction,
+  type UninstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {

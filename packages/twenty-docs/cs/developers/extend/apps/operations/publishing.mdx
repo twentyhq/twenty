@@ -1,81 +1,107 @@
 ---
 title: Publikování
-icon: upload
-description: Distribuujte svou aplikaci Twenty do Marketplace nebo ji nasaďte interně.
+icon: 'upload'
+description: Distribute your Twenty app to the marketplace or deploy it internally.
 ---
 
-## Přehled
+<Note>
+  Překlad tohoto průvodce zatím nezohledňuje samostatné CLI Twenty. Níže dočasně
+  uvádíme aktuální anglický obsah, abyste nepoužívali odstraněné příkazy.
+</Note>
 
-Jakmile je vaše aplikace [sestavena a otestována lokálně](/cs/developers/extend/apps/getting-started/concepts), máte dvě cesty, jak ji distribuovat:
+## Overview
 
-* **Nasaďte tarball** — nahrajte svou aplikaci přímo na konkrétní server Twenty pro interní nebo soukromé použití.
-* **Publish to npm** — uveďte svou aplikaci v Marketplace Twenty, aby ji mohl kterýkoli pracovní prostor objevit a nainstalovat.
+Once your app is [built and tested locally](/cs/developers/extend/apps/getting-started/concepts), you have two paths for distributing it:
 
-Obě cesty začínají stejným krokem **build**.
+- **Deploy a tarball** — upload your app directly to a specific Twenty server for internal or private use.
+- **Publish to npm** — publish your package, [claim it in Twenty](#claiming-your-app), and complete its setup so other workspaces can discover and install it.
 
-## Sestavení vaší aplikace
+Both paths start from the same **build** step.
 
-Spusťte příkaz build ke zkompilování své aplikace a k vygenerování souboru `manifest.json` připraveného k distribuci:
+## Registration ownership
+
+Publishing an app creates an **application registration**: the app's identity on the instance, shared by every workspace that installs it. It holds the app's marketplace entry, its OAuth client, and its server-side state — the `serverVariables` an operator configures and the `server`-scoped entries of the [key-value store](/cs/developers/extend/apps/logic/key-value-store).
+
+A `universalIdentifier` is unique across the whole instance and a registration belongs to at most one workspace (its owner) — or none until it is claimed — so installing an app and developing one are two different rights:
+
+| Action                                                | Requirement                                                                                                         |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Installing an app                                     | The app is listed on the marketplace, pre-installed by the operator, or its registration belongs to your workspace. |
+| Developing an app (`twenty app dev`, `apply`, `plan`) | The registration belongs to your workspace.                                                                         |
+
+Syncing code and a manifest under an identifier is a claim of authorship, so being able to install an app never grants the right to publish code under its identity. A workspace that is not the owner is refused, whether the app is listed, pre-installed, or private.
+
+Two situations lead to that refusal:
+
+- **The identifier belongs to another workspace.** Change the `universalIdentifier` in your app config, which is the usual answer when you forked someone else's app. If you need to keep the identifier, the owning workspace has to transfer the registration to yours.
+- **The identifier belongs to no workspace.** Apps imported by the marketplace catalog sync start unowned. [Claim yours with GitHub](#claiming-your-app) before developing on it. Publishing with npm provenance provides proof of authorship; it does not automatically assign an owner workspace in Twenty.
+
+## Building your app
+
+Run the build command to typecheck and bundle your app:
 
 ```bash filename="Terminal"
-yarn twenty dev:build
+twenty app build
 ```
 
-Tím se zkompilují zdrojové soubory TypeScriptu, transpilují logické funkce a frontendové komponenty a vše se zapíše do `.twenty/output/`. Přidejte `--tarball`, abyste také vytvořili balíček `.tgz` pro ruční distribuci nebo příkaz publish.
+This typechecks and bundles the app into a temporary CLI snapshot. Use `--json` to inspect the manifest and artifact metadata. `twenty app publish` creates the package itself; no separate tarball build is required.
 
-## Nasazení na server (tarball)
+## Deploying to a server (tarball)
 
-U aplikací, které nechcete zpřístupnit veřejně — proprietární nástroje, integrace pouze pro enterprise nebo experimentální buildy — můžete nasadit tarball přímo na server Twenty.
+For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.
 
-### Předpoklady
+### Prerequisites
 
-Před nasazením potřebujete nakonfigurovaný vzdálený cíl směřující na cílový server. Vzdálené cíle ukládají adresu URL serveru a přihlašovací údaje lokálně v `~/.twenty/config.json`.
+Before deploying, you need a configured remote pointing to the target server. Remotes store the server URL and authentication credentials locally in `~/.twenty/config.json`.
 
-Přidat vzdálený cíl:
+Add a remote:
 
 ```bash filename="Terminal"
-yarn twenty remote:add --url https://your-twenty-server.com --as production
+twenty auth login --url https://your-twenty-server.com --name production
 ```
 
-### Nasazení
+### Deploying
 
-Sestavte a nahrajte svou aplikaci na server v jednom kroku:
+Build and upload your app to the server in one step:
 
 ```bash filename="Terminal"
-yarn twenty app:publish --private
+twenty app publish --private
 # To deploy to a specific remote:
-# yarn twenty app:publish --private --remote production
+# twenty app publish --private --remote production
 ```
 
-### Sdílení nasazené aplikace
+### Sharing a deployed app
 
-Aplikace ve formě tarball nejsou uvedeny ve veřejném tržišti, takže je ostatní pracovní prostory na tomtéž serveru procházením neobjeví. Chcete-li sdílet nasazenou aplikaci:
+Tarball apps are not listed in the public marketplace, so other workspaces on the same server won't discover them by browsing. To share a deployed app:
 
-1. Přejděte do **Nastavení > Aplikace > Registrace** a otevřete svou aplikaci
-2. Na kartě **Distribuce** klikněte na **Zkopírovat odkaz ke sdílení**
-3. Sdílejte tento odkaz s uživateli v jiných pracovních prostorech — zavede je přímo na instalační stránku aplikace
+1. Go to **Settings > Developers > Apps** and open your app under **My apps**
+2. In the **Distribution** tab, click **Copy share link**
+3. Share this link with users on other workspaces — it takes them directly to the app's install page
 
-Odkaz ke sdílení používá základní adresu URL serveru (bez jakékoli subdomény pracovního prostoru), takže funguje pro libovolný pracovní prostor na serveru.
+The share link uses the server's base URL (without any workspace subdomain) so it works for any workspace on the server.
 
-### Správa verzí
+### Version management
 
-Při aktualizaci již nasazené tarballové aplikace server vyžaduje, aby hodnota `version` v `package.json` byla **přísně vyšší** (podle řazení [semver](https://semver.org)) než aktuálně nasazená verze. Opětovné nasazení stejné verze nebo odeslání nižší verze je odmítnuto ještě před uložením tarballu — v CLI uvidíte chybu `VERSION_ALREADY_EXISTS`.
+When updating an already deployed tarball app, the server requires the `version` in `package.json` to be **strictly higher** (per [semver](https://semver.org) ordering) than the currently deployed version. Re-deploying the same version, or pushing a lower one, is rejected when the server registers the uploaded tarball, which is then dropped again. You'll see a `VERSION_ALREADY_EXISTS` error from the CLI.
 
-Chcete-li vydat aktualizaci:
+To release an update:
 
-1. Zvyšte hodnotu pole `version` v souboru `package.json` (např. `1.2.3` → `1.2.4`, `1.3.0` nebo `2.0.0`)
-2. Spusťte `yarn twenty app:publish --private` (nebo `yarn twenty app:publish --private --remote production`)
-3. Pracovní prostory, které mají aplikaci nainstalovanou a mají pro ni povolené automatické aktualizace (na kartě Nastavení aplikace), jsou na pozadí aktualizovány automaticky; ostatní uvidí dostupnou aktualizaci ve svém nastavení
+1. Bump the `version` field in your `package.json` (e.g. `1.2.3` → `1.2.4`, `1.3.0`, or `2.0.0`)
+2. Run `twenty app publish --private` (or `twenty app publish --private --remote production`)
+3. Workspaces that have the app installed and enabled auto-upgrade for it (in the app's General tab) are upgraded automatically in the background; the others will see the upgrade available in their settings
 
 <Note>
-Předběžné tagy fungují podle očekávání: zvýšení z `1.0.0-rc.1` → `1.0.0-rc.2` je povoleno a finální vydání jako `1.0.0` je správně rozpoznáno jako vyšší než `1.0.0-rc.5`. Verze v `package.json` musí být platným řetězcem semver.
+  Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is
+  allowed, and a final release like `1.0.0` is correctly recognized as higher
+  than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver
+  string.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
 
-### Kompatibilita verze serveru
+### Server version compatibility
 
-Pokud vaše aplikace používá funkci zavedenou v konkrétní verzi serveru Twenty (například poskytovatelé OAuth přidaní ve verzi 2.3.0), měli byste deklarovat minimální verzi serveru, kterou vaše aplikace vyžaduje, pomocí pole `engines.twenty` v `package.json`:
+If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
 
 ```json filename="package.json"
 {
@@ -88,107 +114,125 @@ Pokud vaše aplikace používá funkci zavedenou v konkrétní verzi serveru Twe
 }
 ```
 
-Hodnota je standardní [rozsah SemVer](https://github.com/npm/node-semver#ranges). Běžné vzory:
+The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
 
-| Rozsah                             | Význam                                         |
-| ---------------------------------- | ---------------------------------------------- |
-| `>=2.3.0`                          | Jakýkoli server od verze 2.3.0 výše            |
-| `>=2.3.0 \<3.0.0` | 2.3.0 nebo novější, ale pod další hlavní verzí |
-| `^2.3.0`                           | Stejné jako `>=2.3.0 \<3.0.0` |
+| Range            | Meaning                                  |
+| ---------------- | ---------------------------------------- |
+| `>=2.3.0`        | Any server from 2.3.0 onward             |
+| `>=2.3.0 <3.0.0` | 2.3.0 or later, but below the next major |
+| `^2.3.0`         | Same as `>=2.3.0 <3.0.0`                 |
 
-**Co se děje při nasazení a instalaci:**
+**What happens at deploy and install time:**
 
-* Pokud je `engines.twenty` nastaveno a verze cílového serveru nevyhovuje rozsahu, nasazení (nahrání tarballu) nebo instalace je odmítnuto chybou `SERVER_VERSION_INCOMPATIBLE` a zprávou, která uvádí jak požadovaný rozsah, tak skutečnou verzi serveru.
-* Pokud `engines.twenty` **není nastaveno**, aplikace je přijata na jakékoli verzi serveru (zpětně kompatibilní se stávajícími aplikacemi).
-* Pokud server nemá nakonfigurované `APP_VERSION`, kontrola se přeskočí.
+- If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
+- If `engines.twenty` is **not set**, no version check runs and the app is accepted on any server version (backward-compatible with existing apps). A blank value is rejected as an invalid range.
+- The marketplace does not list an app whose latest version declares an `engines.twenty` range the server does not satisfy, or an invalid one. The app stays registered and visible in the admin panel.
+- If the server has no `APP_VERSION` configured, the check is skipped.
 
 <Note>
-Server je rozhodující autoritou — ověřuje `engines.twenty` jak při nahrání tarballu, tak při instalaci do pracovního prostoru. Pokud nasazujete tarball mimo standardní proces nebo instalujete z marketplace, server přesto vynucuje kompatibilitu.
+  The server is the authoritative check — it validates `engines.twenty` on both
+  tarball upload and workspace install. If you deploy a tarball out-of-band or
+  install from the marketplace, the server still enforces compatibility.
 </Note>
 
-## Automatizované CI/CD (předpřipravené workflowy)
+## Automated CI/CD (scaffolded workflows)
 
-Aplikace vygenerované pomocí `create-twenty-app` jsou hned připravené se třemi workflowy GitHub Actions ve složce `.github/workflows/`. CI běží bez jakéhokoli nastavování, CD vyžaduje jediný secret a publikování na npm vyžaduje jednorázové nastavení npm trusted-publisher.
+Apps generated with `twenty app init` ship with three GitHub Actions workflows out of the box, under `.github/workflows/`. CI runs with no setup, CD requires a single secret, and publishing to npm requires a one-time npm trusted-publisher setup.
 
 ### CI — `ci.yml`
 
-Automaticky spouští integrační testy při každém pushi do `main` a u pull requestů.
+Runs integration tests on every push to `main` and every pull request.
 
-**K čemu slouží:**
+**What it does:**
 
-1. Provede checkout zdrojového kódu vaší aplikace.
-2. Spustí izolovanou testovací instanci Twenty pomocí složené akce `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (ekvivalent v CI k `yarn twenty docker:start --test`).
-3. Povolí Corepack, nastaví Node.js podle vašeho `.nvmrc` a nainstaluje závislosti pomocí `yarn install --immutable`.
-4. Spustí `yarn test` a předá `TWENTY_API_URL` a `TWENTY_API_KEY` ze spuštěné instance, aby vaše testy mohly komunikovat se skutečným serverem.
+1. Checks out your app's source.
+2. Spawns an isolated Twenty test instance using the `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` composite action.
+3. Enables Corepack and sets up Node.js from your `.nvmrc`.
+4. Installs the pinned standalone CLI in the **Install Twenty CLI** step.
+5. Installs dependencies with `yarn install --immutable`, then runs lint, typecheck, and unit tests.
+6. Runs `yarn test`, passing `TWENTY_API_URL` and `TWENTY_API_KEY` from the spawned instance so your tests can talk to a real server.
 
-**Konfigurační volby:**
+**Config knobs:**
 
-* `TWENTY_VERSION` (env, výchozí hodnota `latest`) — uzamkněte v CI používanou verzi serveru Twenty úpravou této hodnoty v `ci.yml`.
-* Souběžné běhy jsou seskupeny podle `github.ref` a při nových pushích ruší právě probíhající běhy.
+- `TWENTY_VERSION` (env, defaults to `latest`) — pin the Twenty server version used in CI by editing this in `ci.yml`.
+- Concurrency is grouped by `github.ref` and cancels in-progress runs on new pushes.
 
-Nejsou potřeba žádné secrety — testovací instance je efemérní a existuje pouze po dobu běhu úlohy.
+No secrets are required — the test instance is ephemeral and lives only for the duration of the job.
 
 ### CD — `cd.yml`
 
-Nasazuje vaši aplikaci na nakonfigurovaný server Twenty při každém pushi do `main` a volitelně také z pull requestu, pokud je přidán štítek `deploy`.
+Deploys your app to a configured Twenty server on every push to `main`, and optionally from a pull request when the `deploy` label is applied.
 
-**K čemu slouží:**
+**What it does:**
 
-1. Provede checkout headu PR (u označených PR) nebo pushnutého commitu.
-2. Spustí `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — ekvivalent v CI k `yarn twenty app:publish --private`.
-3. Spustí `twentyhq/twenty/.github/actions/install-twenty-app@main`, aby se nově nasazená verze nainstalovala do cílového pracovního prostoru.
+1. Checks out the PR head (for labeled PRs) or the pushed commit.
+2. Runs `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — the CI equivalent of `twenty app publish --private`.
+3. Runs `twentyhq/twenty/.github/actions/install-twenty-app@main` so the newly deployed version is installed into the target workspace.
 
-**Požadovaná konfigurace:**
+**Required configuration:**
 
-| Nastavení               | Kde                                                             | Účel                                                                                                 |
-| ----------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `TWENTY_DEPLOY_URL`     | `env` v `cd.yml` (výchozí `http://localhost:3000`)              | Server Twenty, na který se nasazuje. Před prvním použitím to změňte na skutečnou URL vašeho serveru. |
-| `TWENTY_DEPLOY_API_KEY` | GitHub repozitář **Settings → Secrets and variables → Actions** | API klíč s oprávněním k nasazení na cílovém serveru.                                                 |
+| Setting                 | Where                                                      | Purpose                                                                               |
+| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:2020`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server.                                  |
 
 <Note>
-Výchozí `TWENTY_DEPLOY_URL` `http://localhost:3000` je pouze zástupná hodnota — z runneru hostovaného GitHubem tato adresa nebude dosažitelná. Před povolením CD ji aktualizujte na veřejnou URL vašeho serveru (nebo použijte self-hosted runner s přístupem do sítě).
+  The default `TWENTY_DEPLOY_URL` of `http://localhost:2020` is a placeholder —
+  it will not reach anything from a GitHub-hosted runner. Update it to your
+  server's public URL (or use a self-hosted runner with network access) before
+  enabling CD.
 </Note>
 
-**Spuštění náhledového nasazení z PR:**
+**Triggering a preview deploy from a PR:**
 
-Přidejte k pull requestu štítek `deploy`. Podmínka `if:` v `cd.yml` spustí úlohu pro dané PR s použitím head commitu PR, což vám umožní ověřit změnu na cílovém serveru před sloučením.
+Add the `deploy` label to a pull request. The `if:` guard in `cd.yml` will run the job for that PR using the PR's head commit, letting you validate a change on the target server before merging.
 
 ### Publish — `publish.yml`
 
-Publikuje vaši aplikaci na npm s doloženým původem, když odešlete tag verze (např. `v1.0.0`), nebo když workflow spustíte ručně na kartě Actions.
+Publishes your app to npm with provenance when you push a version tag (e.g. `v1.0.0`), or when you run the workflow manually from the Actions tab.
 
-**K čemu slouží:**
+**What it does:**
 
-1. Načte repozitář vaší aplikace, nastaví Node.js a aktualizuje npm (důvěryhodné publikování vyžaduje npm 11.5.1 nebo novější).
-2. Spustí `yarn twenty app:publish`, který sestaví aplikaci a publikuje `.twenty/output` na npm. V CI automaticky přidá `--provenance` a `--access public`, takže ve workflowu nejsou potřeba žádné přepínače.
+1. Checks out your app, sets up Node.js, and updates npm (trusted publishing requires npm 11.5.1 or later).
+2. Installs the pinned standalone CLI in the **Install Twenty CLI** step, then installs app dependencies with `yarn install --immutable`.
+3. Runs `twenty app publish`, which builds and packs an isolated app snapshot, then publishes it to npm. In CI it automatically adds `--provenance` and `--access public`, so no flags are needed in the workflow.
 
-**Jednorázové nastavení:**
+**One-time setup:**
 
-Na npmjs.com otevřete svůj balíček > **Settings → Trusted Publisher** a zaregistrujte tento repozitář s workflowem `publish.yml` (viz [dokumentaci k důvěryhodnému publikování na npm](https://docs.npmjs.com/trusted-publishers)). Publikování s provenance potvrzuje, který repozitář na GitHubu balíček sestavil, a zároveň tak uplatňujete vlastnictví své aplikace na tržišti Twenty.
+On npmjs.com open your package > **Settings → Trusted Publisher** and register this repository with the `publish.yml` workflow (see the [npm trusted publishing docs](https://docs.npmjs.com/trusted-publishers)). Publishing with provenance certifies which GitHub repository built the package. After publishing, [claim ownership in Twenty](#claiming-your-app).
 
 <Note>
-npm přijímá údaje o původu pouze z **veřejných** zdrojových repozitářů. Pokud publikujete ze soukromého repozitáře, npm odmítne balíček údajů o původu OIDC s chybou `E422 ... Unsupported GitHub Actions source repository visibility: "private"` error. Chcete-li publikovat ze soukromého repozitáře, vypněte prokazování původu nastavením `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` v `env` publikačního kroku (ve vygenerovaném `publish.yml` je uveden zakomentovaný tip):
+npm only accepts provenance from **public** source repositories. If you publish from a private repo, npm rejects the OIDC provenance bundle with an `E422 ... Unsupported GitHub Actions source repository visibility: "private"` error. To publish from a private repo, opt out of provenance by setting `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` in the publish step's `env` (a commented-out hint is included in the scaffolded `publish.yml`):
 
 ```yaml filename=".github/workflows/publish.yml"
-      - name: Publish to npm
-        env:
-          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
-        run: yarn twenty app:publish
+- name: Publish to npm
+  env:
+    TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+  run: twenty app publish
 ```
+
+Without GitHub provenance, the package cannot be claimed through **Claim with GitHub**. Use a public repository with provenance if you need this ownership flow.
+
 </Note>
 
-### Připnutí verzí znovupoužitelných akcí
+### Pinning the CLI version
 
-Workflowy `ci.yml` a `cd.yml` odkazují na znovupoužitelné akce na `@main`, takže aktualizace akcí v repozitáři `twentyhq/twenty` se přeberou automaticky. Pokud chcete deterministická sestavení, nahraďte `@main` v každém řádku `uses:` za commit SHA nebo tag vydání.
+All three generated workflows pin the standalone CLI to the version of `twenty` that ran `twenty app init`. The **Install Twenty CLI** steps in `ci.yml` and `publish.yml` use `npm install -g twenty@<version>`. In `cd.yml`, both the deploy and install actions receive the same version through their `cli-version` input.
 
-## Publikování na npm
+To upgrade, update the two installation commands and both `cli-version` inputs together. These pins are separate from the `TWENTY_VERSION` server version used in CI and the reusable action references below.
 
-Publikování na npm zajistí, že bude vaše aplikace dohledatelná v Marketplace Twenty. Jakýkoli pracovní prostor Twenty může procházet, instalovat a aktualizovat aplikace z Marketplace přímo z UI.
+### Pinning the reusable actions
 
-### Požadavky
+The `ci.yml` and `cd.yml` workflows reference reusable actions at `@main`, so action updates in the `twentyhq/twenty` repo are picked up automatically. If you want deterministic builds, replace `@main` with a commit SHA or release tag on each `uses:` line.
 
-* Účet na [npm](https://www.npmjs.com)
-* Klíčové slovo `twenty-app` ve vašem poli `keywords` v souboru `package.json` (přidejte ho ručně — ve výchozím nastavení není zahrnuto v šabloně `create-twenty-app`)
+## Publishing to npm
+
+Publishing to npm makes your app eligible for the Twenty marketplace. After catalog sync and any required [server-route setup](#setting-up-server-routes), workspaces can browse, install, and upgrade it from the UI. Community apps appear when users turn off the **Vetted only** filter.
+
+### Requirements
+
+- An [npm](https://www.npmjs.com) account
+- The `twenty-app` keyword in your `package.json` `keywords` array (add it manually — it is not included by default in the `twenty app init` template)
 
 ```json filename="package.json"
 {
@@ -198,9 +242,9 @@ Publikování na npm zajistí, že bude vaše aplikace dohledatelná v Marketpla
 }
 ```
 
-### Metadata tržiště
+### Marketplace metadata
 
-Konfigurace `defineApplication()` podporuje volitelná pole, která určují, jak se vaše aplikace zobrazuje v tržišti. Použijte `logo` a `galleryImages` k odkazování na obrázky ze složky `public/`:
+The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logo` and `galleryImages` to reference images from the `public/` folder:
 
 ```ts src/application-config.ts
 export default defineApplication({
@@ -208,86 +252,159 @@ export default defineApplication({
   displayName: 'My App',
   description: 'A great app',
   logo: 'public/logo.png',
-  galleryImages: [
-    'public/screenshot-1.png',
-    'public/screenshot-2.png',
-  ],
+  galleryImages: ['public/screenshot-1.png', 'public/screenshot-2.png'],
 });
 ```
 
-Podívejte se na [sekci defineApplication](/cs/developers/extend/apps/config/application#marketplace-metadata) na stránce Building Apps pro úplný seznam polí tržiště (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` atd.).
+See the [defineApplication accordion](/cs/developers/extend/apps/config/application#marketplace-metadata) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
-#### Doporučené rozměry obrázků v galerii
+#### Recommended gallery image dimensions
 
-Tržiště zobrazuje `galleryImages` v pevném kontejneru s poměrem stran `8:5` (například `1600×1000 px`).
-
-<Note>
-Obrázky v galerii libovolného poměru stran se zobrazují celé a nikdy se neořezávají, ale cokoli výrazně vyššího nebo užšího než `8:5` bude mít po stranách prázdné pruhy.
-</Note>
-
-#### Limit velikosti obrázku
-
-Soubor `logo` a každý soubor v `galleryImages` nesmí překročit **10 MB**. Větší soubory jsou při přesunu vašich publikovaných souborů na servery marketplace vynechány, takže se nezobrazí.
-
-### Publikování
-
-```bash filename="Terminal"
-yarn twenty app:publish
-```
-
-Chcete-li publikovat pod konkrétním dist-tagem (např. `beta` nebo `next`):
-
-```bash filename="Terminal"
-yarn twenty app:publish --tag beta
-```
-
-### Jak funguje objevování v tržišti
-
-Server Twenty synchronizuje svůj katalog tržiště z registru npm **každou hodinu**.
-
-Synchronizaci můžete spustit okamžitě místo čekání:
-
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync
-# To target a specific remote:
-# yarn twenty dev:catalog-sync --remote production
-```
-
-Metadata zobrazená na tržišti pocházejí z vaší konfigurace `defineApplication()` — viz výše [Metadata tržiště](#marketplace-metadata).
+The marketplace renders `galleryImages` in a fixed `8:5` container (for example, `1600×1000 px`).
 
 <Note>
-Pokud vaše aplikace nedefinuje `aboutDescription` v `defineApplication()`, tržiště automaticky použije soubor `README.md` vašeho balíčku z npm jako obsah stránky O aplikaci. To znamená, že můžete spravovat jediný soubor README jak pro npm, tak pro tržiště Twenty. Pokud chcete v tržišti jiný popis, explicitně nastavte `aboutDescription`.
+  Gallery images of any aspect ratio are displayed in full and are never
+  cropped, but anything significantly taller or narrower than `8:5` will show
+  empty bands on the sides.
 </Note>
 
-### Publikování pomocí CI
+#### Image size limit
 
-Vygenerované workflow `publish.yml` popsané výše publikuje na npm automaticky při verzovacích tagách, s provenance. Protože `yarn twenty app:publish` při běhu v CI přidá `--provenance` a `--access public` za vás, workflow nepotřebuje žádné přepínače npm — pouze jednorázové nastavení důvěryhodného vydavatele.
+The `logo` and each `galleryImages` file must not exceed **10 MB**. Larger files are skipped when the marketplace rehosts your published assets, so they will not be displayed.
 
-Pro jiné CI systémy (GitLab CI, CircleCI atd.) spusťte `yarn install` a poté `yarn twenty app:publish`. Provenance se vydává, pokud prostředí umí vytvořit token OIDC, a v opačném případě se automaticky vynechá.
+### Publish
+
+```bash filename="Terminal"
+twenty app publish
+```
+
+To publish under a specific dist-tag (e.g., `beta` or `next`):
+
+```bash filename="Terminal"
+twenty app publish --tag beta
+```
+
+### How marketplace discovery works
+
+The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
+
+The standalone CLI has no catalog-sync command. Wait for the server catalog sync or use the server administration tools.
+
+The metadata shown in the marketplace comes from your `defineApplication()` config — see [Marketplace metadata](#marketplace-metadata) above.
 
 <Note>
-**npm provenance** přidává k vašemu záznamu na npm odznak důvěryhodnosti a umožňuje uživatelům ověřit, že balíček byl sestaven z konkrétního commitu ve veřejné CI pipeline. Také vám umožňuje uplatnit vlastnictví vaší aplikace na tržišti Twenty. Podrobnosti najdete v [dokumentaci k npm provenance](https://docs.npmjs.com/generating-provenance-statements).
+If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+
+The About tab renders markdown text only. Images do not render, whether they use markdown syntax or `<img>` tags, and raw HTML such as badges or `<div align="center">` blocks shows as plain text.
+
 </Note>
 
-## Instalace aplikací
+### CI publishing
 
-Jakmile je aplikace publikována (npm) nebo nasazena (tarball), mohou ji pracovní prostory nainstalovat prostřednictvím uživatelského rozhraní.
+The scaffolded `publish.yml` workflow described above publishes to npm automatically on version tags, with provenance. Because `twenty app publish` adds `--provenance` and `--access public` for you when it runs in CI, the workflow needs no npm flags — only the one-time trusted-publisher setup.
 
-Přejděte na stránku **Nastavení > Aplikace** v Twenty, kde lze procházet a instalovat jak aplikace z tržiště, tak aplikace nasazené jako tarball.
+For other CI systems (GitLab CI, CircleCI, etc.), run `yarn install` then `twenty app publish`. Provenance is emitted when the environment can mint an OIDC token and skipped automatically otherwise.
+
+<Note>
+  **npm provenance** adds a trust badge to your npm listing, letting users
+  verify the package was built from a specific commit in a public CI pipeline.
+  It is also what lets you claim ownership of your app in a Twenty marketplace.
+  See the [npm provenance
+  docs](https://docs.npmjs.com/generating-provenance-statements) for details.
+</Note>
+
+After the package has synced into the catalog, continue with [Claiming your app](#claiming-your-app). The claim flow requires provenance pointing to a **GitHub** repository.
+
+## Claiming your app
+
+Claiming assigns your app's registration to the Twenty workspace that will manage it. App claiming is available to all workspaces. Your role needs the **Workspace Apps** and **Developers** permissions to claim through the **Apps** tab of **Settings > Developers**.
+
+Ownership is per Twenty instance: claiming on Twenty Cloud does not claim the app on a separate self-hosted server. Other workspaces on the same instance install your app without claiming it themselves.
+
+### Before you claim
+
+- Publish your package from a **public GitHub repository** using GitHub Actions and [npm trusted publishing with provenance](#ci-publishing). The version imported into Twenty's catalog must carry the provenance attestation.
+- Include the `twenty-app` keyword in `package.json` and wait for [catalog sync](#how-marketplace-discovery-works).
+- Choose the workspace that will own the app. For apps with server routes, this workspace also runs and pays for the shared resolver.
+- Sign in to GitHub as the **personal account that owns the source repository**, or as an **owner of the organization** that owns it. Repository collaborator access or npm package maintainer access alone is not sufficient.
+
+### Claim with GitHub
+
+1. In your intended owner workspace, go to **Settings > Developers > Apps** (`/settings/developers#apps`).
+2. In **Claim an application**, enter the exact npm package name, including its scope (for example, `@your-org/twenty-app`), or the app's `universalIdentifier`.
+3. Click **Look up** and check that the result is your app. If it is not found, click **Sync catalog** if available, wait for the sync to finish, then look it up again.
+4. Click **Claim with GitHub** and authorize Twenty. For an organization-owned repository, grant access to that organization in GitHub's **Organization access** section. Personal repositories do not need an organization grant.
+5. When you return to Twenty, confirm that the app appears under **My apps** with type **NPM**. Open it and check **Distribution > Ownership** for **Claimed by this workspace**.
+
+Claiming does not install the app. If it exposes server routes, complete the setup below before other workspaces depend on its webhooks.
+
+### Setting up server routes
+
+A [server route](/cs/developers/extend/apps/logic/logic-functions#server-route-trigger) receives events for multiple workspaces at one URL. Its resolver runs in the registration's **owner workspace**, then dispatches work to the appropriate installed workspace.
+
+1. Open your app under **My apps** and fill in any required **Server Variables** in the **Config** tab.
+2. In **Distribution**, click **See on marketplace** to open the app page and install it in the **owner workspace**. You can open this page even before the app appears in marketplace search.
+3. Register the server webhook URL with your provider and test an event from a second workspace where the app is installed. Check both the resolver and the target function's logs.
+
+<Warning>
+  An unclaimed app, or an app not installed in its owner workspace, has no
+  server-route resolver to run. Requests return `404`
+  (`LOGIC_FUNCTION_NOT_FOUND`), even if the app is installed in other
+  workspaces. These apps stay out of marketplace search until claimed, installed
+  on the owner workspace, and configured with all required server variables.
+</Warning>
+
+### Owner workspace costs and availability
+
+See [how logic function runs are metered](/cs/user-guide/billing/capabilities/credits#how-logic-function-runs-are-metered) for credit consumption, pricing, and which workspace is billed.
+
+Uninstalling the app from the owner workspace or deleting that workspace removes the shared resolver and interrupts server webhooks for every install on that instance.
+
+### Ownership after a repository move
+
+Moving the GitHub repository to another personal account or organization does not transfer or remove an existing Twenty claim. The registration remains attached to its owner workspace. Keep the same npm package and app `universalIdentifier`; changing the Twenty owner workspace requires a separate ownership transfer.
+
+### Troubleshooting a claim
+
+If you have trouble claiming your app, contact us on [Discord](https://discord.gg/cx5n4Jzs57) or [open a GitHub issue](https://github.com/twentyhq/twenty/issues/new/choose).
+
+<Accordion title="Self-hosted GitHub claim configuration">
+  The server administrator configures `APP_CLAIM_GITHUB_CLIENT_ID` and
+  `APP_CLAIM_GITHUB_CLIENT_SECRET` with a GitHub OAuth app. Set its
+  authorization callback URL to your `SERVER_URL` followed by
+  `/application-registration-claim/github/callback`, for example
+  `https://twenty.example.com/application-registration-claim/github/callback`.
+  This configuration is already managed for you on Twenty Cloud.
+</Accordion>
+
+## Marketplace visibility and vetting
+
+Claiming establishes ownership; it does not grant a **Vetted** badge. The marketplace defaults to **Vetted only**. To find community apps, go to **Settings > Applications > Marketplace**, open the filter, and uncheck **Vetted only**. You can also share your app's direct install page using **My apps > your app > Distribution > Copy sharing link**.
+
+The Vetted label currently applies to apps maintained by Twenty, for which the team can vouch for security and quality. Third-party apps can be published and installed without this label.
+
+If your app is still missing with **Vetted only** turned off, confirm catalog sync has completed, all required server variables are filled in, and any server-route setup is complete.
+
+## Installing apps
+
+Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
+
+Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
 
 {/* TODO: add screenshot of the UI when the app is registered */}
 
-Aplikace můžete nainstalovat také z příkazového řádku:
+You can also install apps from the command line:
 
 ```bash filename="Terminal"
-yarn twenty app:install
+twenty app install
 ```
 
 <Note>
-Server při instalaci vynucuje verzování semver a zrcadlí pravidla pro nasazení:
+The server enforces semver versioning on install, mirroring the rules on deploy:
 
-* Instalace stejné verze, která je již nainstalována ve vašem pracovním prostoru, je odmítnuta s chybou `APP_ALREADY_INSTALLED`.
-* Instalace nižší verze, než je aktuálně nainstalovaná, je odmítnuta s chybou `CANNOT_DOWNGRADE_APPLICATION`.
+- Installing the same version that is already installed in your workspace is rejected with an `APP_ALREADY_INSTALLED` error.
+- Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
 
-K instalaci novější verze ji nejprve nasaďte nebo publikujte, poté znovu spusťte `yarn twenty app:install`.
+To install a newer version, deploy or publish it first, then re-run `twenty app install`.
+
 </Note>

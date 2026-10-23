@@ -1,14 +1,21 @@
 ---
 title: Sorun Giderme
-description: Yaygın ilk çalıştırma sorunları — Docker, Node sürümü, Yarn, bağımlılıklar.
-icon: wrench
+description: Common first-run issues — Docker, Node version, Yarn, dependencies.
+icon: 'wrench'
 ---
 
-* **Docker hataları** — `yarn twenty docker:start` öncesinde Docker Desktop'ın (veya daemon'un) çalıştığından emin olun. Hata iletisi, işletim sisteminiz için doğru başlatma komutunu gösterecektir.
-* **Yanlış Node sürümü** — 24.5+ gerekiyor (`engines.node: ^24.5.0`). `node -v` ile kontrol edin.
-* **Yarn 4 eksik** — `corepack enable` çalıştırın.
-* **Bağımlılıklar bozuk** — `rm -rf node_modules && yarn install`.
-* **`twenty-sdk` v2.8.0 sürümüne yükselttikten sonra oluşan hatalar** — v2.8.0 sürümünde `dependencies` içinden `devDependencies` içine taşındı. [Proje Yapısı → Bağımlılıklar](/tr/developers/extend/apps/getting-started/project-structure#dependencies) bölümüne bakın.
-* **`twenty dev:build`, `dependencies` altındaki `twenty-client-sdk` konusunda uyarır** — Bu paket, çalışma zamanında Twenty tarafından sağlanır, bu nedenle `twenty-sdk` ile birlikte `devDependencies` altına taşınmalıdır. [Proje Yapısı → Bağımlılıklar](/tr/developers/extend/apps/getting-started/project-structure#dependencies) bölümüne bakın.
+<Note>
+  Bu kılavuzun çevirisi henüz bağımsız Twenty CLI için güncellenmedi. Kaldırılan
+  komutların kullanılmasını önlemek için aşağıda geçici olarak güncel İngilizce
+  içerik gösterilmektedir.
+</Note>
 
-Takıldınız mı? [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) üzerinde yardım isteyin.
+- **Local server errors**, check your Docker or repository development environment. The standalone CLI does not manage containers.
+- **Wrong Node version** — Need 24.5+ (`engines.node: ^24.5.0`). Check with `node -v`.
+- **Yarn 4 missing** — Run `corepack enable`.
+- **Dependencies broken** — `rm -rf node_modules && yarn install`.
+- **Empty `yarn.lock`** — The build fails with "yarn.lock is empty" when the lockfile exists but has no content; run `yarn install` to regenerate it.
+- **`twenty-sdk` errors after upgrading to v2.8.0** — It moved from `dependencies` to `devDependencies` in v2.8.0. See [Project Structure → Dependencies](/tr/developers/extend/apps/getting-started/project-structure#dependencies).
+- **`twenty app build` warns about `twenty-client-sdk` under `dependencies`** — It is provided at runtime by Twenty, so it should be moved to `devDependencies` alongside `twenty-sdk`. See [Project Structure → Dependencies](/tr/developers/extend/apps/getting-started/project-structure#dependencies).
+
+Stuck? Ask on the [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322).

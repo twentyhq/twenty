@@ -1,32 +1,41 @@
 ---
 title: 프런트 컴포넌트
-description: Twenty의 UI 내부에서 샌드박스 환경으로 격리된 채 렌더링되는 React 컴포넌트를 빌드하세요.
-icon: window-maximize
+description: Build React components that render inside Twenty's UI with sandboxed isolation.
+icon: 'window-maximize'
 ---
 
-프런트 컴포넌트는 Twenty의 UI 내부에서 직접 렌더링되는 React 컴포넌트입니다. 이들은 Remote DOM을 사용하는 **격리된 Web Worker**에서 실행됩니다 — 코드는 샌드박스 처리된 opaque-origin iframe 내부에서 실행되지만, UI는 해당 iframe 안에 갇히지 않고 페이지 내에서 네이티브로 렌더링됩니다.
+<Note>
+  이 가이드의 번역은 아직 독립형 Twenty CLI에 맞게 업데이트되지 않았습니다.
+  삭제된 명령을 사용하지 않도록 아래에 최신 영어 내용을 임시로 표시합니다.
+</Note>
+
+Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code executes inside a sandboxed, opaque-origin iframe, yet its UI still renders natively in the page rather than being confined to that iframe.
 
 <Warning>
-Front 컴포넌트는 여전히 활발히 개발 중입니다. 실제 브라우저 페이지가 아닌 부분적인 DOM을 대상으로 코드를 실행하므로 고급 사용 시에는 종종 아무런 표시 없이 실패할 수 있습니다. [현재 제한 사항](#current-limitations)을 참고하세요.
+  Front components are still under active development. Your code runs against a
+  partial DOM, not a real browser page, so advanced usages can fail, often
+  silently. See [Current limitations](#current-limitations).
 </Warning>
 
-## 프런트 컴포넌트를 사용할 수 있는 위치
+## Where front components can be used
 
-프런트 컴포넌트는 Twenty 내에서 세 위치에 렌더링될 수 있습니다:
+Front components can render in four locations within Twenty:
 
-* **사이드 패널** — 비헤드리스 프런트 컴포넌트는 오른쪽 사이드 패널에서 열립니다. 이는 명령 메뉴에서 프런트 컴포넌트를 트리거할 때의 기본 동작입니다.
-* **위젯(대시보드 및 레코드 페이지)** — 프런트 컴포넌트를 [페이지 레이아웃](/ko/developers/extend/apps/layout/page-layouts) 내 위젯으로 삽입할 수 있습니다. 대시보드 또는 레코드 페이지 레이아웃을 구성할 때 사용자는 프런트 컴포넌트 위젯을 추가할 수 있습니다.
-* **App settings** — [`defineSettingsFrontComponent()`](#custom-settings-component)으로 정의되며, 이 프런트 컴포넌트는 기본 변수 구성 UI 대신 앱의 **Settings** 탭 내부 섹션으로 렌더링됩니다.
+- **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
+- **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/ko/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
+- **App settings** — Pointed at by a [`defineSettingsMenuItem()`](#settings-menu-items) declaration, the front component renders the page behind one of the app's settings menu items. An app can declare several.
+- **AI chat** — A [logic function exposed as an AI tool](/ko/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) can name a front component, which then renders that tool's calls inline in the chat in place of the default step row.
 
-프런트 컴포넌트만으로는 UI에서 직접 접근할 수 없으므로 *표시*해야 합니다. 이를 수행하는 세 가지 방법은 다음과 같습니다.
+A front component on its own isn't reachable from the UI — you need to _surface_ it. The four ways to do that are:
 
-* **[명령 메뉴 항목](/ko/developers/extend/apps/layout/command-menu-items)과 연결** — 명령 메뉴(Cmd+K)에 등록하고, 선택적으로 고정된 빠른 작업으로 등록합니다.
-* **[페이지 레이아웃](/ko/developers/extend/apps/layout/page-layouts)에 위젯으로 포함** — 레코드 상세 페이지 또는 대시보드에 배치합니다.
-* **[`defineSettingsFrontComponent()`](#custom-settings-component)로 정의** — 기본 변수 구성 UI 대신 앱의 **Settings** 탭 내부 섹션으로 렌더링합니다.
+- **Pair it with a [command menu item](/ko/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
+- **Embed it as a widget in a [page layout](/ko/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
+- **Point a [`defineSettingsMenuItem()`](#settings-menu-items) at it** — renders it behind one of the app's settings menu items.
+- **Name it from a [logic function's `toolTriggerSettings`](/ko/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action)** — renders the tool's calls in the AI chat.
 
-## 기본 예제
+## Basic example
 
-프런트 컴포넌트가 실제로 동작하는 모습을 가장 빨리 확인하는 방법은 [`defineCommandMenuItem`](/ko/developers/extend/apps/layout/command-menu-items)과 연결하여 페이지 오른쪽 상단에 빠른 작업 버튼으로 표시되게 하는 것입니다.
+The quickest way to see a front component in action is to pair it with a [`defineCommandMenuItem`](/ko/developers/extend/apps/layout/command-menu-items), so it appears as a quick-action button in the top-right corner of the page:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -61,74 +70,146 @@ export default defineCommandMenuItem({
 });
 ```
 
-`yarn twenty dev`로 동기화한 후(또는 일회성으로 `yarn twenty apply`를 실행한 경우), 페이지 우측 상단에 빠른 작업이 표시됩니다:
+After syncing with `twenty app dev` (or running a one-shot `twenty app apply`), the quick action appears in the top-right corner of the page:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="우측 상단의 빠른 작업 버튼" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Quick action button in the top-right corner"
+  />
 </div>
 
-클릭하면 컴포넌트를 인라인으로 렌더링합니다.
+Click it to render the component inline.
 
-## 구성 필드
+## Configuration fields
 
-| 필드                    | 필수  | 설명                                     |
-| --------------------- | --- | -------------------------------------- |
-| `universalIdentifier` | 예   | 이 컴포넌트의 안정적인 고유 ID                     |
-| `component`           | 예   | React 컴포넌트 함수                          |
-| `name`                | 아니요 | 표시 이름                                  |
-| `description`         | 아니요 | 컴포넌트가 수행하는 작업에 대한 설명                   |
-| `isHeadless`          | 아니요 | 컴포넌트에 보이는 UI가 없다면 `true`로 설정하세요(아래 참조) |
+| Field                 | Required | Description                                                                                                      |
+| --------------------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Yes      | Stable unique ID for this component                                                                              |
+| `component`           | Yes      | A React component function                                                                                       |
+| `name`                | No       | Display name                                                                                                     |
+| `description`         | No       | Description of what the component does                                                                           |
+| `isHeadless`          | No       | Set to `true` if the component has no visible UI (see below)                                                     |
+| `widgetAvailability`  | No       | Widget picker that offers the component: record pages, optionally narrowed to objects, or dashboards (see below) |
 
-## 프런트 컴포넌트를 페이지에 배치하기
+## Placing a front component on a page
 
-명령 외에도, 페이지 레이아웃에 위젯으로 추가하여 레코드 페이지에 프런트 컴포넌트를 직접 임베드할 수 있습니다. 자세한 내용은 [페이지 레이아웃](/ko/developers/extend/apps/layout/page-layouts)을 참조하세요.
+Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See [Page Layouts](/ko/developers/extend/apps/layout/page-layouts) for details.
 
-## 사용자 정의 설정 컴포넌트
+`widgetAvailability` decides which widget picker offers the component while a page layout is being edited. A front component is built either for record pages, where it works on the shown record, or for dashboards, so it declares one `pageLayoutType`:
 
-앱의 **Settings** 탭에서 자동 생성되는 변수 구성 UI를 사용자 정의 컴포넌트로 대체하려면, `defineFrontComponent` 대신 `defineSettingsFrontComponent`로 정의하세요. 이 설정 컴포넌트는 항상 눈에 보이는 UI를 렌더링하므로 허용되지 않는 `isHeadless`를 제외하고, 동일한 [구성 필드](#configuration-fields)를 사용하며, 추가로 이 컴포넌트를 앱의 설정 UI로 표시합니다.
+| `widgetAvailability`                                                                | Offered in                        |
+| ----------------------------------------------------------------------------------- | --------------------------------- |
+| omitted                                                                             | no widget picker                  |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE }`                                    | every record page                 |
+| `{ pageLayoutType: PageLayoutType.RECORD_PAGE, objectUniversalIdentifiers: [...] }` | the record pages of those objects |
+| `{ pageLayoutType: PageLayoutType.DASHBOARD }`                                      | dashboards                        |
 
-이 컴포넌트는 전체 탭을 대체하는 것이 아니라, Settings 탭 내부의 섹션으로 렌더링됩니다. Twenty의 시스템 관리 섹션(자동 업그레이드, App URL, 연결)은 항상 이 컴포넌트 위에 렌더링되며, 앱에서 이를 재정의할 수 없습니다.
+```tsx
+import {
+  defineFrontComponent,
+  PageLayoutType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
-```tsx src/front-components/app-settings.tsx
-import { defineSettingsFrontComponent } from 'twenty-sdk/define';
-
-const AppSettings = () => {
-  return (
-    <div style={{ padding: '20px' }}>
-      <h2>My app settings</h2>
-      {/* render your own configuration UI here */}
-    </div>
-  );
-};
-
-export default defineSettingsFrontComponent({
-  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-  name: 'app-settings',
-  description: "Custom UI for the app's Settings tab",
-  component: AppSettings,
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'company-notes',
+  component: CompanyNotes,
+  widgetAvailability: {
+    pageLayoutType: PageLayoutType.RECORD_PAGE,
+    objectUniversalIdentifiers: [
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+    ],
+  },
 });
 ```
 
-앱당 하나의 설정 프런트 컴포넌트만 허용되며, 둘 이상 선언하면 빌드가 실패합니다. 설정 프런트 컴포넌트가 존재하는 경우, 앱의 **Settings** 탭은 기본 변수 구성 UI 대신 이 컴포넌트를 렌더링합니다.
+Leave `widgetAvailability` out for a component that is only opened from a command, a [settings menu item](#settings-menu-items) or a timeline row. It never limits where a component is displayed: commands, settings menu items and the page layouts your app declares render it whatever its value. The build warns about a visible component that declares none and is opened from nowhere else.
 
-## 헤드리스 vs 비헤드리스
+## Settings menu items
 
-프런트 컴포넌트는 `isHeadless` 옵션으로 제어되는 두 가지 렌더링 모드를 제공합니다:
+An app can add its own entries to the settings menu, each rendering a front component. Declare one with `defineSettingsMenuItem()` in its own file, pointing at the component that renders it:
 
-**비헤드리스(기본값)** — 컴포넌트가 가시적인 UI를 렌더링합니다. 명령 메뉴에서 트리거되면 사이드 패널에서 열립니다. `isHeadless`가 `false`이거나 생략된 경우의 기본 동작입니다.
+```tsx src/settings-menu-items/sync-settings.ts
+import { defineSettingsMenuItem } from 'twenty-sdk/define';
 
-**헤드리스 (`isHeadless: true`)** — 컴포넌트가 백그라운드에서 보이지 않게 마운트됩니다. 사이드 패널을 열지 않습니다. 헤드리스 컴포넌트는 로직을 실행한 뒤 스스로 언마운트하는 작업에 맞게 설계되었습니다 — 예: 비동기 작업 실행, 페이지로 이동, 확인 모달 표시. 아래에 설명된 SDK Command 컴포넌트와 자연스럽게 짝을 이룹니다.
+export default defineSettingsMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  frontComponentUniversalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
+  title: 'Sync',
+  icon: 'IconRefresh',
+  position: 1,
+});
+```
+
+The menu item points at the front component rather than the component declaring itself a settings entry. One component can therefore back several menu items, and an item can be repointed at a different component without touching either.
+
+Each item renders as a tab on the app's page under **Settings > Apps**, after **General**, in `position` order.
+
+Declare as many as you need. Twenty's own **General** item — auto-upgrade, App URL and connections — always comes first and cannot be overridden by an app; App URL only shows when the app has HTTP-triggered functions.
+
+### Fields
+
+| Field                               | Description                                                              |
+| ----------------------------------- | ------------------------------------------------------------------------ |
+| `universalIdentifier`               | A UUID you generate once and own, stable across syncs                    |
+| `frontComponentUniversalIdentifier` | The `universalIdentifier` of the front component this item renders       |
+| `title`                             | The item's label. `General` is reserved and fails the build              |
+| `icon` _(optional)_                 | Icon name, resolved client-side; an unknown name falls back to a default |
+| `position` _(optional)_             | Sort order, ascending. Defaults to `0`                                   |
+| `scope` _(optional)_                | `WORKSPACE` (default) or `USER`                                          |
+
+`position` is a decimal, so an item can be slotted between two existing ones without renumbering. Items sort by ascending `position`, ties broken on `universalIdentifier` so the order is the same in every workspace. Two items of one app cannot share a position in the same scope — the sync refuses it rather than letting install order decide which renders first.
+
+### Workspace and user scope
+
+`scope` says who an item is configured by:
+
+- **`WORKSPACE`** (default) — configured once for the whole workspace, alongside the other workspace settings. These are the items that render as tabs on the app's page.
+- **`USER`** — configured by each member for themselves, under their own user settings.
+
+<Note>
+  A `USER` item renders as a tab on the app's page under **Settings > App
+  preferences**, where only the signed-in member sees it, and only when their
+  role grants the `CONNECTED_ACCOUNTS` permission. That page is not enabled in
+  every workspace yet: where it is not, a `USER` item is persisted and synced
+  but nothing renders it.
+</Note>
+
+A `USER` item runs as the member viewing it. To store something per person, declare the variable with `scope: 'USER'`: `getApplicationVariable` returns the viewing member's value, and your component saves it with `updateMyUserApplicationVariable`, which writes that member's value only and needs `SystemPermissionFlag.CONNECTED_ACCOUNTS` in your app's role, if it declares one (see [Reading and updating variables at runtime](#reading-and-updating-variables-at-runtime)). Like a `WORKSPACE` item, a `USER` item replaces the generated **Variables** form, so it should let the member set every user variable your app needs. A workspace variable holds one value shared by everyone, so one member's save would overwrite another's.
+
+<Note>
+  `defineSettingsFrontComponent()` is deprecated in favor of
+  `defineSettingsMenuItem()`. An app still using it keeps working — its
+  component is treated as a single **Settings** menu item — but it can only ever
+  declare one, which is what `defineSettingsMenuItem()` exists to lift.
+</Note>
+
+## Headless vs non-headless
+
+Front components come in two rendering modes controlled by the `isHeadless` option:
+
+**Non-headless (default)** — The component renders a visible UI. When triggered from the command menu it opens in the side panel. This is the default behavior when `isHeadless` is `false` or omitted.
+
+**Headless (`isHeadless: true`)** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  enqueueSnackbar,
+} from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
   const [recordId] = useSelectedRecordIds();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -143,20 +224,20 @@ export default defineFrontComponent({
 });
 ```
 
-컴포넌트가 `null`을 반환하기 때문에, Twenty는 해당 컴포넌트에 대한 컨테이너 렌더링을 생략합니다 — 레이아웃에 빈 공간이 생기지 않습니다. 컴포넌트는 여전히 모든 훅과 호스트 통신 API에 접근할 수 있습니다.
+Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
 
-## SDK Command 컴포넌트
+## SDK Command components
 
-`twenty-sdk` 패키지는 헤드리스 프런트 컴포넌트를 위해 설계된 네 가지 Command 헬퍼 컴포넌트를 제공합니다. 각 컴포넌트는 마운트 시 동작을 실행하고, 스낵바 알림을 표시하여 오류를 처리하며, 완료되면 프런트 컴포넌트를 자동으로 언마운트합니다.
+The `twenty-sdk` package provides four Command helper components designed for headless front components. Each component executes an action on mount, handles errors by showing a snackbar notification, and automatically unmounts the front component when done.
 
-`twenty-sdk/front-component`에서 임포트하세요:
+Import them from `twenty-sdk/front-component`:
 
-* **`Command`** — `execute` prop을 통해 비동기 콜백을 실행합니다.
-* **`CommandLink`** — 앱 경로로 이동합니다. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — 확인 모달을 엽니다. 사용자가 확인하면 `execute` 콜백을 실행합니다. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — 사이드 패널 페이지를 엽니다. Props는 `page`에 따라 달라집니다. 예를 들어 `ViewRecord`는 `recordId`와 `objectNameSingular`를 받고, 선택적으로 특정 탭에서 레코드를 열기 위한 `tab` id도 받을 수 있습니다. 다른 페이지는 `pageTitle`과 `pageIcon`을 받습니다.
+- **`Command`** — Runs an async callback via the `execute` prop.
+- **`CommandLink`** — Navigates to an app path. Props: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — Opens a confirmation modal. If the user confirms, executes the `execute` callback. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — Opens content in the side panel. Routed pages use the same typed `to`, `params`, and `queryParams` props as `CommandLink`, plus optional `hash`, `pageTitle`, and `resetNavigationStack` props. The workspace route registry decides whether the requested `AppPath` supports the side panel. `pageTitle` overrides the panel header title, while `resetNavigationStack` clears earlier panel pages before opening the route. Purpose-built panel tools use their own page-specific props.
 
-`Command`를 사용해 명령 메뉴에서 동작을 실행하는 헤드리스 프런트 컴포넌트의 전체 예시는 다음과 같습니다:
+Here is a full example of a headless front component using `Command` to run an action from the command menu:
 
 ```tsx src/front-components/run-action.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -197,7 +278,7 @@ export default defineCommandMenuItem({
 });
 ```
 
-그리고 실행 전에 확인을 요청하기 위해 `CommandModal`을 사용하는 예시는 다음과 같습니다:
+And an example using `CommandModal` to ask for confirmation before executing:
 
 ```tsx src/front-components/delete-draft.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -228,13 +309,13 @@ export default defineFrontComponent({
 });
 ```
 
-그리고 `CommandOpenSidePanelPage`를 사용하여 현재 레코드를 사이드 패널의 특정 탭에서 여는 예시는 다음과 같습니다. `tab`은 페이지 레이아웃 탭 id입니다(기본 레이아웃은 `company-tab-emails` 또는 `company-tab-timeline`과 같은 id를 사용하고, 사용자 지정 레이아웃은 탭 고유의 id를 사용합니다). 해당 id가 레코드의 레이아웃에 존재하지 않으면, 대신 기본 탭이 열립니다:
+And an example using `CommandOpenSidePanelPage` to open the current record in the side panel on a specific tab. `hash` is a page layout tab id without the leading `#` (default layouts use ids like `company-tab-emails` or `company-tab-timeline`; custom layouts use the tab's own id). If the id doesn't exist in the record's layout, the default tab opens instead:
 
 ```tsx src/front-components/open-company-emails.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  AppPath,
   CommandOpenSidePanelPage,
-  SidePanelPages,
   useSelectedRecordIds,
 } from 'twenty-sdk/front-component';
 
@@ -248,10 +329,12 @@ const OpenCompanyEmails = () => {
 
   return (
     <CommandOpenSidePanelPage
-      page={SidePanelPages.ViewRecord}
-      recordId={recordId}
-      objectNameSingular="company"
-      tab="company-tab-emails"
+      to={AppPath.RecordShowPage}
+      params={{
+        objectNameSingular: 'company',
+        objectRecordId: recordId,
+      }}
+      hash="company-tab-emails"
       resetNavigationStack={false}
     />
   );
@@ -266,15 +349,15 @@ export default defineFrontComponent({
 });
 ```
 
-## 로직 함수 호출하기
+## Calling a logic function
 
-Front 컴포넌트는 opaque-origin iframe 내부에 샌드박스된 Web Worker 안에서 브라우저 측에서 실행되고, [logic functions](/ko/developers/extend/apps/logic/logic-functions)는 서버 측에서 실행됩니다. 두 요소 사이에는 프로세스 내에서의 직접 호출이 없습니다. 대신, Front 컴포넌트는 HTTP를 통해 로직 함수에 접근합니다.
+Front components run browser-side in a Web Worker sandboxed inside an opaque-origin iframe, while [logic functions](/ko/developers/extend/apps/logic/logic-functions) run server-side. There is no direct in-process call between the two — instead, a front component reaches a logic function over HTTP.
 
-`httpRouteTriggerSettings`로 선언된 로직 함수는 HTTP를 통해 해당 라우트 경로에서 액세스할 수 있습니다. `RestApiClient`는 `/s/`로 시작하는 경로를 앱 라우트로 처리하고, 해당 경로를 함수가 제공되는 URL로 해석한 뒤 `TWENTY_APP_ACCESS_TOKEN`으로 인증합니다.
+A logic function declared with `httpRouteTriggerSettings` is reachable over HTTP at its route path. `RestApiClient` treats paths starting with `/s/` as app routes, resolves them to the URL your functions are served from, and authenticates them with `TWENTY_APP_ACCESS_TOKEN`.
 
-> **Twenty Cloud에서 HTTP로 트리거되는 로직 함수는 작업공간별 전용 도메인에서 제공됩니다**: `https://\<your-workspace-subdomain>.withtwenty.com\<path>`. 외부 호출자의 경우, 함수의 **HTTP trigger** 설정 또는 애플리케이션의 **Settings** 탭에서 정확한 URL을 복사하세요.
+> **On Twenty Cloud, HTTP-triggered logic functions are served on a dedicated per-workspace domain** at `https://<your-workspace-subdomain>.withtwenty.com<path>`. For external callers, copy the exact URL from the function's **HTTP trigger** settings or the application's **Settings** tab.
 
-헤드리스 Front 컴포넌트는 `Command` 컴포넌트를 통해 마운트 시점에 호출을 실행한 뒤, 자동으로 언마운트될 수 있습니다:
+A headless front component can run the call on mount via the `Command` component, then unmount automatically:
 
 ```tsx src/front-components/sync-prs.tsx
 import { RestApiClient } from 'twenty-client-sdk/rest';
@@ -301,7 +384,7 @@ export default defineFrontComponent({
 });
 ```
 
-`RestApiClient`에 전달되는 경로는 로직 함수의 `httpRouteTriggerSettings.path` 앞에 `/s`가 접두사로 붙은 값입니다. `isAuthRequired: true`로 유지하세요. 컴포넌트를 위해 Twenty가 발급하는 `TWENTY_APP_ACCESS_TOKEN`이 요청을 인증합니다:
+The path passed to `RestApiClient` is the logic function's `httpRouteTriggerSettings.path`, prefixed with `/s`. Keep `isAuthRequired: true`; the `TWENTY_APP_ACCESS_TOKEN` Twenty mints for your component authenticates the request:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -326,28 +409,31 @@ export default defineLogicFunction({
 ```
 
 <Note>
-`TWENTY_APP_ACCESS_TOKEN`은 자동으로 주입됩니다. 자세한 내용은 [Application variables](#application-variables)을 참고하세요. 비밀 애플리케이션 변수는 Front 컴포넌트에 절대 노출되지 않으므로, API 키 및 기타 민감한 로직은 Front 컴포넌트가 아니라 로직 함수 안에 유지해야 합니다.
+  `TWENTY_APP_ACCESS_TOKEN` is injected automatically — see [Application
+  variables](#application-variables). Because secret application variables are
+  never exposed to front components, keep API keys and other sensitive logic in
+  the logic function, not in the front component.
 </Note>
 
-### Twenty REST API 호출하기
+### Calling the Twenty REST API
 
-앱 HTTP 라우트를 호출하거나 프론트 컴포넌트에서 Twenty 레코드를 읽고 쓰려면 `twenty-client-sdk/rest`의 `RestApiClient`를 사용하세요. 이 클라이언트는 `/s/...` 경로를 작업공간의 함수 base URL로 전송하고, `/rest/...`를 포함한 그 외 모든 경로는 `TWENTY_API_URL`로 전송합니다.
+To call app HTTP routes or read and write Twenty records from a front component, use `RestApiClient` from `twenty-client-sdk/rest`. It sends `/s/...` paths to your workspace's functions base URL and every other path, including `/rest/...`, to `TWENTY_API_URL`.
 
-항상 페이지를 보는 사람으로 작동합니다. `runAs: 'application'`은 로직 함수 전용 옵션입니다. 구성 요소는 애플리케이션 자체 토큰을 절대 받지 않으므로, 여기에서 이를 요청하면 오류가 발생합니다. 앱 자체 액세스가 필요한 작업은 로직 함수 뒤에 두고 대신 이를 호출하세요.
+It always acts as the person looking at the page. `runAs: 'application'` is a logic-function option only: a component never receives your application's own token, so asking for it here throws. Put work that needs the app's own access behind a logic function and call that instead.
 
-| 방법                                | 설명                                    |
-| --------------------------------- | ------------------------------------- |
-| `get(path, options?)`             | `GET` 요청을 전송합니다.                      |
-| `post(path, body?, options?)`     | `POST` 요청을 전송합니다.                     |
-| `put(path, body?, options?)`      | `PUT` 요청을 전송합니다.                      |
-| `patch(path, body?, options?)`    | `PATCH` 요청을 전송합니다.                    |
-| `delete(path, options?)`          | `DELETE` 요청을 전송합니다.                   |
-| `request(method, path, options?)` | 임의의 HTTP 메서드를 사용하는 일반적인 요청입니다.        |
-| `resolveUrl(path, options?)`      | 요청을 보내지 않고(예: 링크용) 경로를 전체 URL로 해석합니다. |
+| Method                            | Description                                                           |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `get(path, options?)`             | Sends a `GET` request                                                 |
+| `post(path, body?, options?)`     | Sends a `POST` request                                                |
+| `put(path, body?, options?)`      | Sends a `PUT` request                                                 |
+| `patch(path, body?, options?)`    | Sends a `PATCH` request                                               |
+| `delete(path, options?)`          | Sends a `DELETE` request                                              |
+| `request(method, path, options?)` | Generic request with any HTTP method                                  |
+| `resolveUrl(path, options?)`      | Resolves a path to its full URL without sending a request (for links) |
 
-`options`는 `headers`, `query`(쿼리 문자열 파라미터의 레코드이며, nullish 값은 건너뜁니다), 그리고 `signal`을 통한 `AbortSignal`을 받습니다. `FormData`가 아닌 객체 `body`는 자동으로 JSON 직렬화됩니다. `401`이 발생하면 클라이언트는 호스트를 통해 한 번 액세스 토큰을 갱신한 뒤 요청을 재시도합니다.
+`options` accepts `headers`, `query` (a record of query-string params; nullish values are skipped), and an `AbortSignal` via `signal`. A non-`FormData` object `body` is JSON-serialized automatically. On a `401`, the client refreshes the access token once through the host and retries the request.
 
-기본 URL과 토큰은 기본적으로 환경에서 자동으로 결정됩니다. 테스트 등에서 필요할 때는 생성자에 override를 전달하세요. 예를 들면 다음과 같습니다:
+The base URL and token are resolved from the environment by default. Pass overrides to the constructor when needed — for example in tests:
 
 ```ts
 const client = new RestApiClient({
@@ -356,7 +442,7 @@ const client = new RestApiClient({
 });
 ```
 
-실패한 요청은 `status`, `statusText`, `url`, 파싱된 `body`를 노출하는 `RestApiClientError`를 throw합니다:
+Failed requests throw a `RestApiClientError` exposing `status`, `statusText`, `url`, and the parsed `body`:
 
 ```tsx
 import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
@@ -374,9 +460,9 @@ try {
 }
 ```
 
-## 런타임 컨텍스트에 접근하기
+## Accessing runtime context
 
-컴포넌트 내부에서, 현재 사용자, 레코드, 컴포넌트 인스턴스에 접근하려면 SDK 훅을 사용하세요:
+Inside your component, use SDK hooks to access the current user, record, and component instance:
 
 ```tsx src/front-components/record-info.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -407,28 +493,83 @@ export default defineFrontComponent({
 });
 ```
 
-사용 가능한 훅:
+Available hooks:
 
-| 훅                                             | 반환값                   | 설명                                             |
-| --------------------------------------------- | --------------------- | ---------------------------------------------- |
-| `useUserId()`                                 | `string` 또는 `null`    | 현재 사용자의 ID                                     |
-| `useSelectedRecordIds()`                      | `string[]`            | 선택된 모든 기록 ID(선택된 기록이 없으면 빈 배열)                 |
-| `useRecordId()`                               | `string` 또는 `null`    | **사용 중단됨.** 대신 `useSelectedRecordIds()`를 사용하세요 |
-| `useFrontComponentId()`                       | `string`              | 이 컴포넌트 인스턴스의 ID                                |
-| `useTimelineActivityId()`                     | `string` 또는 `null`    | 사용자 지정 타임라인 행을 렌더링할 때의 현재 타임라인 활동 ID           |
-| `useColorScheme()`                            | `'light'` 또는 `'dark'` | 호스트 UI의 활성 색 구성표 (`System`은 이미 결정됨)            |
-| `useFrontComponentExecutionContext(selector)` | 항목에 따라 다름             | 셀렉터 함수를 사용해 전체 실행 컨텍스트에 접근                     |
+| Hook                                          | Returns                                          | Description                                                                                                      |
+| --------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` or `null`                               | The current user's ID                                                                                            |
+| `useSelectedRecordIds()`                      | `string[]`                                       | All selected record IDs (empty array if none selected)                                                           |
+| `useSelectedRecordsFilter()`                  | `RecordGqlOperationFilter` or `null`             | Filter matching exactly the selected records, including under Select all                                         |
+| `useSelectedObjectMetadata()`                 | `FrontComponentSelectedObjectMetadata` or `null` | The object metadata associated with this front component's record context                                        |
+| `useRecordId()`                               | `string` or `null`                               | **Deprecated.** Use `useSelectedRecordIds()` instead                                                             |
+| `useFrontComponentId()`                       | `string`                                         | This component instance's ID                                                                                     |
+| `useTimelineActivityId()`                     | `string` or `null`                               | The current timeline activity ID when rendering a custom timeline row                                            |
+| `useColorScheme()`                            | `'light'` or `'dark'`                            | The host UI's active color scheme (`System` is already resolved)                                                 |
+| `useLocation()`                               | `FrontComponentLocation` or `null`               | The host route's pathname, query string, and hash, plus the host app's origin                                    |
+| `useToolCall()`                               | `FrontComponentToolCall` or `null`               | The AI tool call this component is rendering, when it was surfaced from a logic function's `toolTriggerSettings` |
+| `useFrontComponentExecutionContext(selector)` | varies                                           | Access the full execution context with a selector function                                                       |
 
-## 애플리케이션 변수
+### Object metadata
 
-[`defineApplication()`](/ko/developers/extend/apps/config/application)에서 `isSecret: false`로 정의된 애플리케이션 변수는 `getApplicationVariable` 유틸리티를 통해 프론트 컴포넌트 안에서 사용할 수 있습니다:
+Use `useSelectedObjectMetadata()` to identify the object associated with a record-page widget, a custom timeline row, an object-scoped command, or a front component opened in the side panel with an object (from a command, or through `openSidePanelPage` with an `objectNameSingular`). This lets an integration select templates or other configuration for the current object without searching across objects for a record ID.
+
+```tsx
+import {
+  useSelectedObjectMetadata,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const TemplatePicker = () => {
+  const objectMetadata = useSelectedObjectMetadata();
+  const selectedRecordIds = useSelectedRecordIds();
+
+  if (!objectMetadata) {
+    return <p>Open a record to select a template.</p>;
+  }
+
+  return (
+    <p>
+      Select a template for {objectMetadata.nameSingular}. Selected records:{' '}
+      {selectedRecordIds.length}
+    </p>
+  );
+};
+```
+
+The result contains `id` (the workspace's object-metadata UUID), `nameSingular`, and `namePlural`. The names are metadata names, such as `person` and `people`, rather than display labels.
+
+Object metadata can be available even when no records are selected. It belongs to this front component's context, so a side panel can expose a different object from the main page. The hook updates when that context changes and returns `null` when the object cannot be resolved, when no object context is supplied, or when running on an older host that does not provide object metadata.
+
+### Host location
+
+Use `useLocation()` to read the route hosting your front component. It returns a `FrontComponentLocation` object with four required string fields: `pathname`, `search`, `hash`, and `origin`. For example, a page at `https://myworkspace.twenty.com/page/page-layout-id?project=abc#details` provides `/page/page-layout-id`, `?project=abc`, `#details`, and `https://myworkspace.twenty.com` respectively. `hash` includes its leading `#` and is `''` when there is no fragment.
+
+`pathname`, `search`, and `hash` follow the component's React Router context, including a routed side panel's own route. `origin` comes from the host app. The hook updates when the route changes. Older hosts may omit `executionContext.location`, so `useLocation()` returns `null` when location is unavailable.
+
+For query parameters, read `useLocation()?.search ?? ''` and parse the result with `URLSearchParams`. `search` includes its leading `?` and is `''` when the route has no query string. The fallback also provides `''` when the host does not provide location.
+
+```tsx
+import { useLocation } from 'twenty-sdk/front-component';
+
+const ProjectDetails = () => {
+  const search = useLocation()?.search ?? '';
+  const projectId = new URLSearchParams(search).get('project');
+
+  return <p>Project: {projectId ?? 'No project selected'}</p>;
+};
+```
+
+## Application variables
+
+Application variables defined in [`defineApplication()`](/ko/developers/extend/apps/config/application) with `isSecret: false` are available inside front components via the `getApplicationVariable` utility:
 
 ```tsx src/front-components/greeting.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { getApplicationVariable } from 'twenty-sdk/front-component';
 
 const Greeting = () => {
-  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+  const recipientName =
+    getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
 
   return <p>Hello, {recipientName}!</p>;
 };
@@ -441,50 +582,111 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-비밀 변수(`isSecret: true`)는 프론트 컴포넌트에 **노출되지 않습니다**. 이 변수들은 서버 측에서 실행되는 [로직 함수](/ko/developers/extend/apps/logic/logic-functions)에서만 사용할 수 있습니다. 이는 API 키와 같은 민감한 값이 브라우저로 전송되는 것을 방지합니다.
+  Secret variables (`isSecret: true`) are **not** exposed to front components.
+  They are only available in [logic
+  functions](/ko/developers/extend/apps/logic/logic-functions), which run
+  server-side. This prevents sensitive values like API keys from being sent to
+  the browser.
 </Warning>
 
-`getApplicationVariable`은(는) 변수에 선언된 `type`과 관계없이 항상 **문자열**(또는 `undefined`)을 반환합니다. 문자열은 타입에 따라 일관되게 직렬화됩니다(불리언은 `"true"` / `"false"`, 숫자는 10진수 문자열, 배열/객체는 JSON). 이는 로직 함수 `process.env`에 사용되는 것과 동일한 형식이므로, 직접 파싱해야 합니다(`Number(...)`, `JSON.parse(...)`, `=== 'true'`). [변수 타입](/ko/developers/extend/apps/config/application#variable-types)을(를) 참조하세요.
+`getApplicationVariable` always returns a **string** (or `undefined`), regardless of the variable's declared `type`. The string is serialized consistently by type (booleans as `"true"` / `"false"`, numbers as decimal strings, arrays / objects as JSON), the same format used for logic-function `process.env` — parse it yourself (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). See [Variable types](/ko/developers/extend/apps/config/application#variable-types).
 
-다음 시스템 변수는 항상 `process.env`를 통해 사용할 수 있습니다:
+### Reading and updating variables at runtime
 
-| 변수                        | 설명                                                                              |
-| ------------------------- | ------------------------------------------------------------------------------- |
-| `TWENTY_API_URL`          | Twenty 코어 API의 기본 URL                                                           |
-| `TWENTY_APP_ACCESS_TOKEN` | 로그인한 사람의 역할과 앱의 역할이 교차하는 범위로 지정된 단기 토큰이므로, 구성 요소는 이를 보는 사람보다 더 많은 작업을 할 수 없습니다. |
+`getApplicationVariable` returns the values injected when the component loaded, so a value written afterwards only shows up on the next load. To read the stored values, or to write one (what a [settings menu item](#settings-menu-items) does when it saves what the user typed), go through `MetadataApiClient`:
+
+```tsx src/front-components/app-settings.tsx
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER = '39783023-bcac-41e3-b0d2-ff1944d8465d';
+
+const readApplicationVariables = async () => {
+  const { findOneApplication } = await new MetadataApiClient().query({
+    findOneApplication: {
+      __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+      applicationVariables: { key: true, value: true, isSecret: true },
+    },
+  });
+
+  return findOneApplication?.applicationVariables ?? [];
+};
+
+const saveRecipientName = async (recipientName: string) => {
+  await new MetadataApiClient().mutation({
+    updateOneApplicationVariable: {
+      __args: { key: 'DEFAULT_RECIPIENT_NAME', value: recipientName },
+    },
+  });
+};
+
+const saveMyLanguage = async (language: string) => {
+  await new MetadataApiClient().mutation({
+    updateMyUserApplicationVariable: {
+      __args: {
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        key: 'LANGUAGE',
+        value: language,
+      },
+    },
+  });
+};
+```
+
+Notes:
+
+- Your component's token is bound to your own application. `updateOneApplicationVariable` targets it, so `applicationId` is optional and naming another application is refused. Reading the `applicationVariables` of another application is refused the same way, and an application belonging to another workspace reads as not found.
+- The key must be one your app declares in [`defineApplication()`](/ko/developers/extend/apps/config/application). Writing a key that is not declared is a not found.
+- Secret variables read back masked, never as the stored value. Writing them works normally.
+- Reading a variable's `value`, and writing it, need the `APPLICATIONS` settings permission on both your app's role and the signed-in person's role, since the component's token is the intersection of the two. Add `SystemPermissionFlag.APPLICATIONS` to `permissionFlagUniversalIdentifiers` in your [application role](/ko/developers/extend/apps/config/roles).
+- A user variable (`scope: 'USER'`) is injected with the viewing member's value, unless it is secret. `updateOneApplicationVariable` refuses it: save it with `updateMyUserApplicationVariable`, as `saveMyLanguage` does above. It writes the viewing member's value only and refuses naming another application. It needs no `APPLICATIONS` permission, but it needs the `CONNECTED_ACCOUNTS` permission on the viewing member's role and on your app's role, if it declares one: add `SystemPermissionFlag.CONNECTED_ACCOUNTS` to `permissionFlagUniversalIdentifiers` in your [application role](/ko/developers/extend/apps/config/roles). See [Workspace and user variables](/ko/developers/extend/apps/config/application#workspace-and-user-variables).
+
+### System variables
+
+The following system variables are always available via `process.env`:
+
+| Variable                  | Description                                                                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Base URL of the Twenty core API                                                                                                                     |
+| `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to the signed-in person's role intersected with your app's, so a component can never do more than the person looking at it |
 
 ### `TWENTY_FUNCTIONS_URL`
 
-Twenty는 또한 프론트 컴포넌트와 로직 함수에 `TWENTY_FUNCTIONS_URL`을 주입합니다. 이는 앱의 HTTP로 트리거되는 로직 함수가 제공되는 base URL입니다.
+Twenty also injects `TWENTY_FUNCTIONS_URL` into front components and logic functions: the base URL your app's HTTP-triggered logic functions are served from.
 
-이 URL이 항상 Twenty 서버 자체를 가리키는 것은 아니기 때문에 이 변수가 존재합니다. Twenty Cloud에서는 앱 라우트가 작업공간별 전용 도메인(`https://\<your-workspace-subdomain>.withtwenty.com`, 또는 구성된 경우 애플리케이션의 기본 public 도메인)에서 제공되므로, 앱이 작성한 응답이 Twenty 앱 origin이 아니라 분리된 origin에서 실행됩니다. 셀프 호스팅 및 로컬 인스턴스에서는 앱 라우트가 서버 자체의 `/s` 접두사 아래에서 제공되며, 이 변수가 전혀 설정되지 않을 수 있습니다. base URL은 작업공간과 인스턴스마다 다르므로 코드에서 이를 하드코딩할 수 없으며, 서버가 런타임에 올바른 값을 주입합니다.
+It exists because that URL is not always the Twenty server itself. On Twenty Cloud, app routes are served on a dedicated per-workspace domain (`https://<your-workspace-subdomain>.withtwenty.com`, or the application's primary public domain when one is configured) so that app-authored responses run on their own origin rather than on the Twenty app origin. Self-hosted and local instances serve app routes under the `/s` prefix on the server itself and may not set the variable at all. Since the base URL varies per workspace and per instance, your code cannot hard-code it — the server injects the right value at runtime.
 
-이 변수를 직접 읽어야 하는 경우는 드뭅니다. `RestApiClient`를 통해 `/s/` 접두사가 붙은 경로로 라우트를 호출하면, 클라이언트가 URL을 대신 해석합니다. `/s` 접두사를 제거하고 `TWENTY_FUNCTIONS_URL`을 대상으로 하며, 변수가 설정되어 있지 않은 경우 `\<TWENTY_API_URL>/s`를 사용합니다. 요청을 보내지 않고 절대 URL이 필요할 때(예: 링크용) `resolveUrl('/s/\<path>')`를 사용하세요. 직접 URL을 구성해야 할 때만 이 변수를 직접 읽으세요:
+You rarely need to read it directly. Call your routes through `RestApiClient` with a `/s/`-prefixed path and the client resolves the URL for you: it strips the `/s` prefix and targets `TWENTY_FUNCTIONS_URL`, falling back to `<TWENTY_API_URL>/s` when the variable is not set. Use `resolveUrl('/s/<path>')` to get the absolute URL without sending a request, e.g. for a link. Read the variable directly only when building a URL by hand:
 
 ```ts
 const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
 ```
 
-## 호스트 통신 API
+## Host communication API
 
-프런트 컴포넌트는 `twenty-sdk`의 함수를 사용해 내비게이션, 모달, 알림을 트리거할 수 있습니다:
+Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk/front-component`:
 
-| 함수                                                 | 설명                                                                                                                                                                                        |
-| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `navigate(to, params?, queryParams?, options?)`    | 앱 내 페이지로 이동                                                                                                                                                                               |
-| `openSidePanelPage(params)`                        | 사이드 패널 열기                                                                                                                                                                                 |
-| `closeSidePanel()`                                 | 사이드 패널을 닫습니다                                                                                                                                                                              |
-| `openCommandConfirmationModal(params)`             | 확인 대화상자 표시                                                                                                                                                                                |
-| `enqueueSnackbar(params)`                          | 토스트 알림 표시                                                                                                                                                                                 |
-| `unmountFrontComponent()`                          | 컴포넌트를 언마운트합니다                                                                                                                                                                             |
-| `updateProgress(progress)`                         | 진행률 표시기 업데이트                                                                                                                                                                              |
-| `uploadFile(file, { fieldMetadataId, fileName? })` | `Blob`을 FILES 필드에 업로드합니다. 이 함수는 `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` 또는 `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }`로 resolve됩니다. |
+| Function                                           | Description                                                                                                                                                                                  |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Navigate to a page in the app                                                                                                                                                                |
+| `openSidePanelPage(params)`                        | Open a side panel                                                                                                                                                                            |
+| `closeSidePanel()`                                 | Close the side panel                                                                                                                                                                         |
+| `openCommandConfirmationModal(params)`             | Show a confirmation dialog                                                                                                                                                                   |
+| `enqueueSnackbar(params)`                          | Show a toast notification                                                                                                                                                                    |
+| `unmountFrontComponent()`                          | Unmount the component                                                                                                                                                                        |
+| `updateProgress(progress)`                         | Update a progress indicator                                                                                                                                                                  |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
-호스트 API를 사용하여 동작이 완료된 후 스낵바를 표시하고 사이드 패널을 닫는 예시는 다음과 같습니다:
+Use `openCommandConfirmationModal` from `twenty-sdk/front-component` for dialogs. It accepts structured title, subtitle and button options, and resolves to `'confirm'` or `'cancel'`. Twenty owns the modal, focus management, dismissal and page scrolling. Front components must not render `Dialog`, `AlertDialog`, native `dialog` elements or native browser popovers directly. Supplying a local portal container does not make direct app-owned modality supported.
+
+Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
 ```tsx src/front-components/archive-record.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import {
+  enqueueSnackbar,
+  closeSidePanel,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const ArchiveRecord = () => {
@@ -524,9 +726,9 @@ export default defineFrontComponent({
 });
 ```
 
-### 저장소
+### Storage
 
-`localStorage`와 `sessionStorage`는 일반 페이지에서와 동일하게, 표준 동기식 API로 동작합니다. 키는 앱 설치와 로그인한 사용자 범위로만 한정됩니다. 다른 어떤 앱도 이 키를 읽을 수 없으며, 같은 브라우저에 다른 사용자가 로그인하면 비어 있는 저장소에서 시작합니다. `localStorage`에 기록된 값은 새로고침 후에도 기기에 그대로 남아 있고, `sessionStorage`는 브라우저 세션 동안만 유지됩니다.
+`localStorage` and `sessionStorage` work as they do in a normal page, with the standard synchronous API. Your keys are scoped to your app install and the signed-in user: no other app can read them, and another user signing into the same browser starts from an empty store. Values written to `localStorage` stay on the device across reloads; `sessionStorage` lasts for the browser session.
 
 ```tsx src/front-components/note-draft.tsx
 import { useState } from 'react';
@@ -541,7 +743,10 @@ const NoteDraft = () => {
   };
 
   return (
-    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+    <textarea
+      value={draft}
+      onChange={(event) => handleChange(event.target.value)}
+    />
   );
 };
 
@@ -553,13 +758,13 @@ export default defineFrontComponent({
 });
 ```
 
-Twenty가 앱을 대신해 값을 저장하므로, 쓰기 작업은 로컬에 즉시 반영되고 백그라운드에서 저장됩니다. 읽기 작업은 호스트를 기다리지 않습니다. 아무것도 동기화되지 않습니다. 값이 사용자를 다른 브라우저나 머신으로 따라가지 않으므로, 디바이스 변경 이후에도 유지되어야 하는 값에는 로직 함수의 [key-value store](/ko/developers/extend/apps/logic/key-value-store)를 사용하세요.
+Twenty stores the values on your app's behalf, so a write is applied locally right away and saved in the background. Reads never wait on the host. Nothing is synced: the values do not follow the user to another browser or machine, so use a logic function's [key-value store](/ko/developers/extend/apps/logic/key-value-store) for anything that must survive a device change.
 
-쓰기에는 한도가 있으며, 모든 한도는 바이트가 아니라 문자 수를 기준으로 합니다. 키는 최대 512자, 단일 값은 최대 262,144자, 각 스토리지는 앱과 사용자당 최대 1,048,576자까지 저장할 수 있습니다. 한도를 초과하는 쓰기는 브라우저 API와 마찬가지로 `QuotaExceededError`를 발생시킵니다.
+Writes are capped, and every limit counts characters rather than bytes: keys are at most 512 characters, a single value at most 262,144 characters, and each storage at most 1,048,576 characters per app and user. A write that breaks a limit throws a `QuotaExceededError`, like the browser API.
 
-### 여러 기록과의 작업
+### Working with multiple records
 
-여러 개의 선택된 기록을 처리하려면 `useSelectedRecordIds()`를 사용하세요. 이는 일괄 작업에 유용합니다:
+Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -606,7 +811,7 @@ export default defineFrontComponent({
 });
 ```
 
-레코드 선택으로 제한된 [명령 메뉴 항목](/ko/developers/extend/apps/layout/command-menu-items)으로 노출하세요:
+Surface it with a [command menu item](/ko/developers/extend/apps/layout/command-menu-items) restricted to record selections:
 
 ```ts src/command-menu-items/bulk-export.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -619,9 +824,39 @@ export default defineCommandMenuItem({
 });
 ```
 
-## 퍼블릭 에셋
+#### Select all
 
-프런트 컴포넌트는 `getPublicAssetUrl`을 사용해 앱의 `public/` 디렉터리의 파일에 접근할 수 있습니다:
+When the user selects all records of a view, `useSelectedRecordIds()` returns an empty array: the selection is defined by the view's filters, search and unticked rows, and can hold far more records than fit in memory. `useSelectedRecordsFilter()` returns a filter matching exactly the selected records in every case, so query with it instead of listing IDs:
+
+```tsx
+import { Command, useSelectedRecordsFilter } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const MarkExported = () => {
+  const selectedRecordsFilter = useSelectedRecordsFilter();
+
+  const execute = async () => {
+    if (selectedRecordsFilter === null) {
+      return;
+    }
+
+    await new CoreApiClient().mutation({
+      updateTasks: {
+        __args: { filter: selectedRecordsFilter, data: { exported: true } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+```
+
+For large selections, pass the filter to a [logic function](/ko/developers/extend/apps/logic/logic-functions) and process the records there, page by page.
+
+## Public assets
+
+Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -636,19 +871,23 @@ export default defineFrontComponent({
 });
 ```
 
-자세한 내용은 [퍼블릭 에셋 섹션](/ko/developers/extend/apps/config/public-assets)을 참조하세요.
+See the [public assets section](/ko/developers/extend/apps/config/public-assets) for details.
 
-## 프론트 컴포넌트 간의 의존성 공유하기
+## Sharing dependencies across front components
 
-기본적으로 각 프론트 컴포넌트는 가져온 라이브러리의 사본을 자체적으로 번들링하므로, 컴포넌트가 다섯 개인 앱은 React를 다섯 번 제공하게 됩니다. 앱의 `package.json`에서 공유 의존성을 선언해 해당 라이브러리들을 한 번만 빌드하고, 앱의 모든 컴포넌트가 단일 캐시 파일에서 이를 불러오도록 할 수 있습니다:
+By default, every front component bundles its own copy of the libraries it imports, so an app with five components ships React five times. Declare shared dependencies in your app's `package.json` to build those libraries once and have every component of the app load them from a single cached file:
 
 ```json package.json
 {
-  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+  "frontComponentSharedDependencies": [
+    "react",
+    "react-dom/client",
+    "twenty-ui/primitives/input"
+  ]
 }
 ```
 
-그다음 각 컴포넌트는 이전과 완전히 동일한 방식으로 의존성을 import하며, 컴포넌트 코드에는 아무런 변경이 필요하지 않습니다:
+Each component then imports its dependencies exactly as before — nothing changes in your component code:
 
 ```tsx src/front-components/counter.tsx
 import { useState } from 'react';
@@ -667,63 +906,99 @@ export default defineFrontComponent({
 });
 ```
 
-알아두면 좋은 몇 가지 사항:
+A few things to know:
 
-* **앱당 하나의 공유 의존성 번들.** 번들은 앱 자체의 의존성으로부터 빌드되므로, 배포하는 버전에 대한 완전한 통제권을 유지할 수 있습니다.
-* **가져오는 정확한 specifier를 나열하세요.** `twenty-ui/input`과 `twenty-ui/display`는 두 개의 항목이며, 패키지 이름만으로는 그 하위 경로가 포함되지 않습니다. `react`를 나열하면 `react/jsx-runtime`이 자동으로 포함됩니다.
-* **`react`와 함께 `react-dom/client`도 공유하세요.** 모든 컴포넌트는 `createRoot`를 통해 렌더링되므로, 이를 제외하면 각 컴포넌트가 여전히 React DOM을 번들링하게 됩니다.
-* **번들은 캐시됩니다.** 이 번들은 장기 불변 캐시가 적용된 content-hash URL로 제공되므로, 한 번만 다운로드된 뒤 의존성 중 하나가 변경될 때까지 앱의 모든 컴포넌트에서 재사용됩니다.
-* **공유 패키지를 전혀 import하지 않는 컴포넌트는 이 번들을 다운로드하지 않습니다.**
+- **One shared dependencies bundle per app.** The bundle is built from your app's own dependencies, so you keep full control of the versions you ship.
+- **List the exact specifiers you import.** `twenty-ui/primitives/input` and `twenty-ui/primitives/data-display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
+- **Share `react-dom/client` alongside `react`.** Every component renders through `createRoot`, so leaving it out means each component still bundles React DOM.
+- **The bundle is cached.** It is served under a content-hash URL with a long-lived immutable cache, so it is downloaded once and reused across all components of the app until one of its dependencies changes.
+- **Components that import none of the shared packages never download it.**
 
-## 스타일링
+## Styling
 
-프런트 컴포넌트는 여러 스타일링 방식을 지원합니다. 다음과 같은 방식을 사용할 수 있습니다:
+Front components support multiple styling approaches. You can use:
 
-* **인라인 스타일** — `style={{ color: 'red' }}`
-* **Twenty UI 컴포넌트** — Twenty의 자체 컴포넌트 라이브러리입니다. 아래의 [Twenty UI 컴포넌트 사용하기](#using-twenty-ui-components)를 참조하세요.
-* **Emotion** — `@emotion/react`를 사용하는 CSS-in-JS
-* **Styled-components** — `styled.div` 패턴
-* **Tailwind CSS** — 유틸리티 클래스
-* React와 호환되는 **모든 CSS-in-JS 라이브러리**
+- **Inline styles** — `style={{ color: 'red' }}`
+- **Twenty UI components** — Twenty's own component library; see [Using Twenty UI components](#using-twenty-ui-components) below
+- **Emotion** — CSS-in-JS with `@emotion/react`
+- **Styled-components** — `styled.div` patterns
+- **Tailwind CSS** — utility classes
+- **Any CSS-in-JS library** compatible with React
 
-## Twenty UI 컴포넌트 사용하기
+## Using Twenty UI components
 
-Twenty는 컴포넌트 라이브러리를 [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) 패키지로 제공합니다. 프론트 컴포넌트에서는 버튼, 태그, 상태 배지, 칩, 아바타, 아이콘, 타이포그래피, 그리고 워크스페이스의 라이트 및 다크 테마에 자동으로 맞춰지는 테마 토큰 등에 사용할 수 있습니다.
+Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui) package. Prefer its controls and theme tokens to give front components the same appearance and interactions as the rest of Twenty. Browse the [shared components](/ui/components/overview) and [primitives](/ui/primitives/overview) for examples, props, and composition APIs.
 
-### 설치
+### Installation
 
-앱에 패키지를 추가하되, Twenty 인스턴스에서 제공되는 버전에 고정(pinned)하여 사용하세요:
+New apps scaffolded with `twenty app init` already include `twenty-ui`. For an existing app, add it as a development dependency, pinned to the same version as `twenty-sdk` and `twenty-client-sdk`. For example, if your SDK packages use `2.51.0`:
 
 ```bash
-yarn add twenty-ui@1.0.0-alpha.1
+yarn add -D twenty-ui@2.51.0
 ```
 
-`twenty-ui` 는 빌드 시점에 프론트 컴포넌트에 번들되므로, 앱의 의존성으로만 추가하면 됩니다. 런타임에 따로 설정할 내용은 없습니다.
+`twenty-ui` is bundled at build time, either into each front component or into your app's [shared dependencies bundle](#sharing-dependencies-across-front-components). Twenty loads the component and theme stylesheets and applies the workspace's active color scheme. You do not need to import `twenty-ui/style.css`, the theme stylesheets, or add a root `ThemeProvider` as you would in a standalone React application.
 
-### 컴포넌트 가져오기
+### Importing components
 
-패키지 루트가 아니라 일치하는 서브패스에서 import 해서, 사용하는 컴포넌트만 번들에 포함되도록 하세요:
+Import from the matching public family subpath to keep dependencies focused:
 
-| 서브패스                        | 내보내는 항목                                    |
-| --------------------------- | ------------------------------------------ |
-| `twenty-ui/input`           | `Button` 및 폼 입력 컴포넌트                       |
-| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` 등        |
-| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` 등              |
-| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` 등 |
-| `twenty-ui/icon`            | `Icon*` 컴포넌트(예: `IconCheck`)               |
-| `twenty-ui/theme` | `ThemeProvider`, `themeCssVariables`       |
+Foundational controls are grouped under `twenty-ui/primitives/<family>`. Shared design presets and app building blocks are grouped under `twenty-ui/components/<family>`. The aggregate `twenty-ui/components` entry point remains available, but family imports make it easier to [share only the dependencies you use](#sharing-dependencies-across-front-components).
+
+| Subpath                              | What it exports                                                               |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| `twenty-ui/components/input`         | Main and light buttons, search and image inputs, and country/currency pickers |
+| `twenty-ui/components/data-display`  | Avatar groups, JSON trees, metrics, command blocks, and icon tiles            |
+| `twenty-ui/components/feedback`      | Callouts, inline banners, and notifications                                   |
+| `twenty-ui/components/layout`        | Sections, overflowing lists, and icon transitions                             |
+| `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                                 |
+| `twenty-ui/components/settings`      | Settings rows                                                                 |
+| `twenty-ui/primitives/accessibility` | Hidden elements                                                               |
+| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators                    |
+| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                                           |
+| `twenty-ui/primitives/input`         | Buttons and form controls                                                     |
+| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                                |
+| `twenty-ui/primitives/navigation`    | Breadcrumbs, list items, and tabs                                             |
+| `twenty-ui/primitives/surfaces`      | Cards, nonmodal popovers, and tooltips                                        |
+| `twenty-ui/primitives/typography`    | Text and headings                                                             |
+| `twenty-ui/icon`                     | `Icon*` components (e.g. `IconCheck`)                                         |
+| `twenty-ui/theme`                    | `useTheme`, `themeCssVariables`, and `ThemeProvider`                          |
+
+Use [`MainButton`](/ui/components/input/main-button) for prominent actions and [`LightButton`](/ui/components/input/light-button) for lightweight actions. Use `Button`, `Field`, `Input`, `Select`, and other primitives from `twenty-ui/primitives/input` for foundational controls and forms. Follow each compound control's documented parts, such as `Field.Root`, `Field.Label`, and `Field.Description`.
+
+Use [`Dropdown`](/ui/components/navigation/dropdown) from `twenty-ui/components/navigation` for action menus, option pickers, and nonmodal form panels. Use `enqueueSnackbar` from `twenty-sdk/front-component` for host notifications.
+
+The standalone `Dialog` and `AlertDialog` APIs are also exported by Twenty UI, but direct use in front components is prohibited. Use the [host communication API](#host-communication-api) for dialogs.
+
+These entry points do not require Monaco. The separate `twenty-ui/components/code-editor` entry point depends on Monaco, whose script loader is unsupported in the front component sandbox, so `CodeEditor` cannot become interactive there.
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Status, Tag } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
+import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { MainButton } from 'twenty-ui/components/input';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
+import { useTheme } from 'twenty-ui/theme';
 
 const StyledWidget = () => {
+  const theme = useTheme();
+
+  const handleClick = async () => {
+    await enqueueSnackbar({ message: 'Clicked!', variant: 'success' });
+  };
+
   return (
-    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
-      <Button title="Click me" onClick={() => alert('Clicked!')} />
-      <Tag text="Active" color="green" />
-      <Status color="green" text="Online" />
+    <div
+      style={{
+        padding: theme.spacing[4],
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: theme.spacing[2],
+      }}
+    >
+      <MainButton onClick={handleClick}>Click me</MainButton>
+      <Tag color="green">Active</Tag>
+      <Status color="green">Online</Status>
     </div>
   );
 };
@@ -735,21 +1010,21 @@ export default defineFrontComponent({
 });
 ```
 
-### 아이콘
+### Icons
 
-`twenty-ui/icon` 에서 개별 아이콘을 import 하세요:
+Import individual icons from `twenty-ui/icon`:
 
 ```tsx
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-각 이름이 지정된 아이콘은 트리 셰이킹되므로, 소수만 import 해도 번들 크기에 거의 영향을 주지 않습니다. `IconsProvider`, `useIcons`, `iconsState` 는 사용을 피하세요. 전체 Tabler 아이콘 세트(수 MB)를 모두 가져오기 때문입니다.
+Each named icon is tree-shaken, so importing a handful adds little to your bundle. Avoid `IconsProvider` and `useIcons` in front components. Front components are bundled without code splitting, so the provider's dynamic icon catalog (the full Tabler set, roughly 2 MB minified) ends up in your bundle. See the [icon reference](/ui/icons) for available exports and supported props.
 
-### 테마 및 테마 토큰
+### Theming and theme tokens
 
-Twenty UI 컴포넌트는 워크스페이스의 라이트 및 다크 테마와 자동으로 일치합니다. 렌더러가 호스트에서 활성 색 구성표를 적용하고, 컴포넌트는 그에 맞춰 자신의 색상을 결정합니다.
+Twenty UI components automatically match the workspace's light and dark theme. The renderer applies the active color scheme on the host, and the components resolve their CSS variables against it.
 
-자신의 인라인 스타일에서 동일한 디자인 토큰을 사용하려면 `useTheme()` 훅을 호출하세요. 이 훅은 활성 테마에 연결된 Twenty의 테마 토큰(여백, 색상, 모서리 반경, 폰트)을 반환하며, 컴포넌트에서 별도의 `ThemeProvider` 설정이 필요하지 않습니다:
+To use the same design tokens in your own inline styles, call `useTheme()` inside the component body. In front components it returns CSS variable references by default, so styles follow the host's active theme without a local `ThemeProvider`:
 
 ```tsx
 import { useTheme } from 'twenty-ui/theme';
@@ -771,79 +1046,134 @@ const Card = () => {
 };
 ```
 
-`useTheme()` 는 훅이므로, 컴포넌트 본문 안에서 토큰을 읽게 되어 값이 항상 실제 활성 테마를 반영합니다. 동일한 토큰 맵은 `themeCssVariables` 상수로도 export 되지만, 프론트 컴포넌트에서는 `useTheme()` 를 우선적으로 사용하세요. `themeCssVariables` 를 역참조하는 모듈 레벨 상수는 앱 매니페스트가 추출되는 동안에는 정의되지 않았을 수 있습니다.
+The same CSS references are exported as `themeCssVariables` from `twenty-ui/theme`. Read them inside the component body: the CLI mocks `twenty-ui` during manifest extraction, so dereferencing imported theme constants at module scope can fail the build.
 
-활성 스킴에 따라 분기해야 할 경우, `twenty-sdk/front-component` 의 `useColorScheme()` 으로 값을 읽으세요. 이 훅은 `'light'` 또는 `'dark'` 를 반환합니다.
+CSS reference strings are not resolved JavaScript numbers, even for tokens such as `theme.icon.size.md`. Do not perform arithmetic on them or pass them to APIs that require numbers. See [Theming](/ui/theming) and [Tokens](/ui/tokens) for semantic paths and CSS variable names.
 
-## 현재 제한 사항
+To branch on the active scheme explicitly, read it with `useColorScheme()` from `twenty-sdk/front-component`, which returns `'light'` or `'dark'`.
 
-Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링, 이벤트 처리, 요소 측정 및 브라우저 스토리지는 잘 동작합니다. 그 범위를 *넘어서는* 모든 작업(ref에 대해 DOM 메서드를 호출하거나, 요소 크기 변경을 관찰하거나, 트리 바깥으로 포털링하는 등)은 현재 누락되었거나 불완전하며, 대부분 조용히 실패합니다. 예외도 발생하지 않고, 스캐폴드가 전체 브라우저 DOM을 기준으로 타입이 지정되어 있기 때문에 TypeScript 오류도 발생하지 않습니다.
+## Current limitations
 
-이 중 하나가 개발을 가로막는다면, 우선순위를 높일 수 있도록 [issue를 열어](https://github.com/twentyhq/twenty/issues/new/choose) 주세요.
+Front components are under active development. Rendering, styling, handling events, measuring elements, body portals and browser storage work well. Anything that reaches _past_ those (calling a DOM method on a ref, for example) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
 
-### 레이아웃과 측정
+If one of these blocks you, [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) so it gets prioritized.
 
-요소는 스스로를 측정할 수 있습니다. 호스트는 기하 정보를 샌드박스로 미러링하므로, 읽기는 로컬에서 처리되지만 최대 한 프레임까지 오래된 값일 수 있으며, 한 번도 측정되지 않은 요소를 처음 읽으면 0을 반환합니다. 값을 쓴 다음에는 `requestAnimationFrame` 콜백이나 effect에서 다시 읽으세요.
+### Layout and measurement
 
-| API                                                                                      | 무슨 일이 일어나는지                                                                           |
-| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 미러에서 동작합니다. `scrollTop` / `scrollLeft`를 할당해도 아무 일도 일어나지 않습니다(no-op).                  |
-| `getClientRects()`, `window.matchMedia()`                                                | 예외 발생                                                                                 |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | **브라우저 뷰포트**를 기준으로 동작합니다. 위젯 자체의 크기는 `document.body.clientWidth` / `clientHeight`입니다. |
-| `window.getComputedStyle()`                                                              | 요소의 인라인 스타일만 반환하며, 호스트에서 계산된 전체 스타일(cascade)은 반환하지 않습니다.                              |
-| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` 발생(단, `typeof` 가드는 동작함)                                              |
-| `MutationObserver`                                                                       | `subtree`, `attributeFilter`, 이전 값(old values) 및 `takeRecords()`를 포함해 정상적으로 동작합니다.    |
+Elements can measure themselves: the host mirrors geometry into the sandbox, so reads are answered locally but can be up to one frame stale, and the first read of a never-measured element returns zeros. After writing, re-read in a `requestAnimationFrame` callback or an effect.
 
-`getBoundingClientRect`를 통한 포지셔닝은 이제 동작하지만, `ResizeObserver`를 통해 크기 변화를 감시하는(recharts의 `ResponsiveContainer`, Floating UI의 `autoUpdate` 등) 기능은 여전히 동작하지 않습니다. 레이아웃은 가능하면 CSS로 작성하는 편이 좋습니다. 스타일시트가 실제 페이지에 적용되므로 flexbox, grid, `aspect-ratio`, `clamp()` 및 `@container`는 지연 없이 정상적으로 동작합니다.
+| API                                                                                      | What happens                                                                                                     |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Work, from the mirror; assigning `scrollTop` / `scrollLeft` scrolls the element on the page (see Scrolling)      |
+| `getClientRects()`                                                                       | Throws                                                                                                           |
+| `window.matchMedia()`                                                                    | Works for a fixed set of features, with `change` events (see below)                                              |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Work, reporting the **browser viewport**; your widget's own size is `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Host layout values for measured elements and their parents; the rest, theme variables too, from inline styles    |
+| `ResizeObserver`                                                                         | Works, from the mirror; `document.body` reports your widget's box                                                |
+| `IntersectionObserver`                                                                   | `ReferenceError` (`typeof` guards do work)                                                                       |
+| `MutationObserver`                                                                       | Works, including `subtree`, `attributeFilter`, old values and `takeRecords()`                                    |
+
+Positioning from `getBoundingClientRect` and size observation through `ResizeObserver` both work from the same mirror, so resize callbacks trail the host by about a frame. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
+
+`matchMedia()` evaluates `width`, `height`, `orientation`, `-webkit-device-pixel-ratio`, `resolution`, `hover`, `pointer` and `prefers-color-scheme`, in the `min-`/`max-` form, the Level 4 range form (`(width >= 600px)`, `(400px <= width <= 800px)`) and the valueless form (`(width)`). Widths, heights and `orientation` describe **your widget's box**, not the browser viewport, so they follow `document.body.clientWidth` rather than `window.innerWidth`, and `em` and `rem` count as 16px. `hover` and `pointer` describe the primary input of the user's device. Any other condition counts as unknown, the way browsers treat unknown features: the comma-separated member it appears in evaluates to `false`, even under `not`, unless the rest of that member already decides the result, as in `not print and (prefers-reduced-motion: reduce)`. That covers unknown features and the syntax this parser does not implement inside a condition, such as nested groups like `((min-width: 600px))`, `not` inside a group and `calc()` values. An `or` between conditions makes its member `false`. The `MediaQueryList` and `MediaQueryListEvent` constructors are not exposed either, so `instanceof` checks against them throw a `ReferenceError`.
+
+Because that stylesheet reaches the real page, a `@media (min-width: ...)` rule is evaluated by the host against the browser viewport, while `matchMedia('(min-width: ...)')` answers for your widget's box. To make CSS follow the same box your JavaScript sees, declare your own `container-type` on a wrapper and query that: an `@container` rule without one resolves against the nearest host container, not your widget. The same split applies to color scheme, where a stylesheet `@media (prefers-color-scheme: dark)` follows the browser and OS preference while `matchMedia('(prefers-color-scheme: dark)')` follows the theme selected in Twenty, so style from `useTheme()` tokens when the two must agree.
+
+The height you are handed is your own box as well, and depending on where the host mounts you that box can be sized by your own content. Branching layout on `min-height`, `max-height` or `orientation` can then feed back into itself and oscillate. Prefer width-based queries, or `@container` with `container-type: inline-size`, for layout decisions.
 
 <Note>
-`requestAnimationFrame`, `fetch`, `setTimeout` 및 `queueMicrotask`는 `window.` 접두사 없이 동작합니다. `window.requestAnimationFrame(...)` 등만 예외를 발생시킵니다.
+  `requestAnimationFrame` works, with or without the `window.` prefix. Only
+  Chrome runs a real animation frame inside a worker; Firefox and Safari get a
+  16 ms timer, so use it to defer a re-read past a write, not to drive an
+  animation.
 </Note>
 
-### DOM 액세스
+### Scrolling
 
-`ref`는 `HTMLElement`가 아니라 샌드박스 요소를 반환합니다.
+Assigning `scrollTop` or `scrollLeft`, calling `scrollTo()` or its alias `scroll()`, and calling `scrollIntoView()` scroll the matching element on the page:
 
-| 작성한 코드                                                                                                      | 무슨 일이 일어나는지                               | 대신 사용할 것                                                                                                                                            |
-| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 예외 발생                                     | 제어 컴포넌트를 사용하고 값을 `event.target`에서 읽습니다                                                                                                              |
-| `element.classList.add(...)`                                                                                | 예외 발생(`classList`는 `undefined`임)          | `className` 문자열을 직접 구성하세요.                                                                                                                          |
-| `document.createTreeWalker()`                                                                               | 예외 발생                                     | `querySelector()` / `querySelectorAll()` 및 `getElementById()`는 동작합니다. `getElementsByClassName()`도 동작하지만, live `HTMLCollection`이 아니라 정적인 컬렉션을 반환합니다. |
-| `document.activeElement`                                                                                    | 항상 `undefined`                            | `onFocus` / `onBlur`로 포커스를 추적하세요.                                                                                                                   |
-| `canvas`                                                                                                    | 아무것도 렌더링되지 않으며, 오류도 없습니다.                 | SVG 또는 오프스크린에서 그린 뒤 결과를 `img` 요소에 표시                                                                                                                |
-| `createPortal(node, document.body)`                                                                         | `isConnected`는 성공으로 보고하지만 아무것도 렌더링되지 않습니다 | `position: absolute`로 인라인 오버레이를 사용하거나 라이브러리에 직접 렌더링한 컨테이너 요소를 전달하세요                                                                                 |
+- Scroll changes apply after the next render, in the order your code made them. Within one render, input selection changes apply first, so `setSelectionRange()` followed by a `scrollLeft` write keeps the caret visible.
+- Reads return the value you wrote until the page reports the real position, which the browser clamps to the scrollable range. In right-to-left containers, `scrollLeft` is zero or negative, as in browsers.
+- `scrollIntoView()` accepts `block` and `inline` with `start`, `center`, `end` and `nearest`, aligning `block` vertically and `inline` horizontally, so vertical writing modes are not mapped. It only scrolls your component's own scroll containers, never the widget frame, the page or another component. `focus()` still reveals the focused element the way the browser does.
+- Scrolling is instant: `behavior` and the `container` option are ignored, and `scrollBy()` is not available.
+- Writing back a position you just read, such as `element.scrollTop = element.scrollTop`, does nothing, so it cannot undo a scroll the user made in the meantime. This only holds once the page has measured the element; until then the write is applied.
+- Scrolling `document.documentElement`, `document.body` or `window` stays inside the sandbox and never scrolls the page; `window.scrollTo()`, `scroll()` and `scrollBy()` do nothing.
+- The first read of a container that was never measured returns zeros (see Layout and measurement), so a scrollability check made right after the container appears can report it as not scrollable.
 
-이 포털 간극 때문에 Radix, Headless UI, MUI, react-select의 팝오버는 기본적으로 아무것도 렌더링하지 않습니다. 대부분 컨테이너 prop을 받으므로, 직접 렌더링한 요소를 가리키도록 설정하세요.
+### Global scope
 
-### 이벤트
+The worker's own natives are also aliased onto `window`, so they work with or without the `window.` prefix: `fetch`, `setTimeout`/`clearTimeout`, `setInterval`/`clearInterval`, `queueMicrotask`, `console`, `crypto`, `performance`, `structuredClone`, `btoa`/`atob`, `URL`/`URLSearchParams`, `AbortController`/`AbortSignal`, `Headers`/`Request`/`Response`, `Blob`, `File`, `FormData` and `TextEncoder`/`TextDecoder`.
 
-마우스, 포인터, 터치, 드래그, 키보드, 포커스, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` 그리고 `animationend`/`transitionend` 이벤트는 호스트로 전달되며, 여기에 요소별로 몇 가지가 더해집니다: `img`의 `load`/`error`, `input`/`textarea`의 클립보드 및 조합(composition), `video`/`audio`의 미디어, `details`/`dialog`의 `toggle` 등입니다. 그 밖의 것들(`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, 포인터 캡처, `img`의 `onLoad` 등)은 경고 없이 모두 무시됩니다.
+### DOM access
 
-`document.addEventListener()`와 `window.addEventListener()`는 오류 없이 등록되지만 절대 실행되지 않으며, 이 때문에 드래그는 시작한 요소를 벗어나는 순간 중지됩니다. `event.preventDefault()` 역시 전달되지 않습니다. 폼 제출, `dragover`/`drop` 및 링크 클릭은 이미 보호되어 있습니다.
+A `ref` gives you a sandbox element, not an `HTMLElement`.
 
-### 속성과 스타일링
+| What you write                                 | What happens                                                                                                                             | Use instead                                                                                                                                                                                                                                                                                               |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.blur()`               | Forward to the corresponding element on the page and update the sandbox's active element                                                 | `onFocus` / `onBlur` to observe focus changes                                                                                                                                                                                                                                                             |
+| `ref.current.click()`                          | Dispatches a `click` inside the sandbox: a checkbox or radio toggles and its `onChange` runs, but the element on the page is not clicked | Controlled components for anything the page must do                                                                                                                                                                                                                                                       |
+| `ref.current.select()`, `.setSelectionRange()` | Work on `input` and `textarea`, applied to the element on the page after the next render                                                 | Controlled components for the value itself                                                                                                                                                                                                                                                                |
+| `ref.current.scrollTo()`, `.scrollIntoView()`  | Scroll the component's own scroll containers on the page (see Scrolling)                                                                 | `focus()` when you also want to move focus                                                                                                                                                                                                                                                                |
+| `video.play()`                                 | Throws                                                                                                                                   | Controlled components; read values from `event.target`                                                                                                                                                                                                                                                    |
+| `document.createTreeWalker()`                  | Throws                                                                                                                                   | `querySelector()` / `querySelectorAll()`, `matches()`, `closest()` (including pseudo-classes such as `:disabled` and `:not()`), `getElementById()`, `contains()` and `compareDocumentPosition()` work; `getElementsByClassName()` works too, but returns a static collection, not a live `HTMLCollection` |
+| `document.activeElement`                       | Follows the page's focus inside the component and updates when sandbox code calls `focus()` or `blur()`                                  | `onFocus` / `onBlur` to react to the page's focus                                                                                                                                                                                                                                                         |
+| `canvas`                                       | Renders nothing, no error                                                                                                                | SVG, or draw offscreen and show the result in an `img` element                                                                                                                                                                                                                                            |
+| `createPortal(node, document.body)`            | Renders in a host overlay layer bounded to 200px around the component                                                                    | Keep overlays within this area, or add scrolling for larger content                                                                                                                                                                                                                                       |
 
-각 요소는 자신의 속성을 호스트 DOM으로 전달합니다(`a`의 `href`, `img`의 `src`/`alt`, `input`의 `value`/`placeholder`/`disabled` 등). 또한 모든 요소에 공통으로 `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable`, 그리고 하이픈이 포함된 모든 `aria-*` / `data-*` 속성(따라서 `ariaLabel`은 무시됨)을 전달합니다. 그 외의 속성은 조용히 폐기되므로, 사용자 정의 상태는 `data-*`로 표현하세요.
+`element.classList` works, backed by the `class` attribute: `add`, `remove`, `toggle`, `replace`, `contains`, `item`, `length`, `value` and iteration all behave as they do in a browser, and `className` stays in sync. `element.dataset` works the same way, backed by the `data-*` attributes; write `data-*` names in lowercase, since the sandbox keeps attribute names as written instead of lowercasing them like a browser.
 
-컴포넌트 CSS는 `import './styles.css'`, CSS-in-JS 또는 `style` 요소에서 오든, 호스트 페이지의 `head`에 **범위 없이(unscoped)** 주입됩니다. 따라서 클래스 이름이 Twenty 자체 것과 충돌합니다(접두사를 붙이고, `div { ... }` 선택자를 직접 작성하지 마세요). 그리고 `@media`는 위젯이 아니라 브라우저 창을 기준으로 매칭됩니다(직접 지정한 `container-type`과 함께 `@container`를 사용하세요). 인라인 `style` prop은 영향을 받지 않습니다.
+Body portals can extend up to 200px beyond each edge of your component, including outside a widget's scroll frame. Larger overlays are clipped to this area, so give long menus their own scrolling container. Keyboard navigation in Twenty UI lists such as Autocomplete and Select reveals the highlighted option inside that container. Native top-layer APIs such as `showModal()`, `showPopover()` and `requestFullscreen()` are blocked.
 
-### 스토리지와 네트워크
+### Events
 
-`localStorage`와 `sessionStorage`는 브라우저가 아니라 Twenty에서 제공합니다. 컴포넌트는 불투명 출처의 워커에서 실행되므로, 호스트가 앱을 대신해 값을 저장합니다. 범위와 한도에 대해서는 [storage](#storage)를 참조하세요. IndexedDB, 쿠키, Cache API 및 `BroadcastChannel`은 여전히 사용할 수 없습니다. 디바이스 간에 상태를 영속화하려면 [logic function](/ko/developers/extend/apps/logic/logic-functions)을 호출하고 해당 [key-value store](/ko/developers/extend/apps/logic/key-value-store)를 사용하세요.
+Mouse, pointer, touch, drag, keyboard, focus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` and `animationend`/`transitionend` cross to the host, plus a few per element: `load`/`error` on `img`, clipboard and composition on `input`/`textarea`, media on `video`/`audio`, `toggle` on `details`/`dialog`. Anything else (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, pointer capture, `onLoad` off `img`) is dropped without warning.
 
-`fetch`는 동작하지만, 몇 가지 주의사항이 있습니다:
+Handlers receive typed events built from the page event, `PointerEvent`, `MouseEvent`, `KeyboardEvent`, `InputEvent`, `WheelEvent` or `FocusEvent`, and those constructors exist in the sandbox for `dispatchEvent()`. Each forwarded event also carries React's synthetic event surface (`nativeEvent`, `isDefaultPrevented()`, `isPropagationStopped()`, `persist()`), so code written against React events keeps working even though the sandbox hands the event object to your handler directly.
 
-* Twenty API와 앱의 라우트로 가는 호출은 호스트에서 프록시되므로, [`RestApiClient`](#calling-the-twenty-rest-api)를 사용하는 것이 좋습니다. 프록시되는 호출에서는 `AbortSignal` 및 기타 `RequestInit` 옵션이 제거되며, `string`과 `URLSearchParams` 타입의 body만 지원됩니다.
-* 다른 오리진으로 나가는 요청은 `Origin: null`을 가진 채 샌드박스를 벗어나므로, 서드파티 API는 `Access-Control-Allow-Origin: *`를 보내는 경우에만 응답합니다. 대신 logic function에서 호출하세요.
-* 샌드박스에는 상대 경로를 해석할 페이지 URL이 없으므로, `fetch('/rest/people')`은 Twenty API와 절대 매칭되지 않습니다.
+A page event crosses when the element the user interacted with, or one of its ancestors in your component, has a handler for that event type. It crosses once and then propagates inside the sandbox as it does on the page: `event.target` is the element the user interacted with, `currentTarget` is the element whose handler is running, `stopPropagation()` keeps ancestors' handlers from running, and `relatedTarget` points to the sandbox element focus or the pointer moved from or to, or is `null` when that element is outside your component. Like in React, `onFocus` and `onBlur` also run for focus changes inside the element, and `onClickCapture` and the other capture handlers run during the capture phase.
 
-### 미디어 캡처
+Handlers a library adds with `React.cloneElement`, such as the ones behind Base UI's `render` prop, run after the element's own handlers instead of replacing them, so passing `onClick: undefined` to `cloneElement` does not remove the element's handler. A handler on a Base UI `render` element can still call `event.preventBaseUIHandler()` to skip Base UI's own handler.
 
-`navigator.mediaDevices.getUserMedia()`와 `MediaRecorder`는 샌드박스 폴리필을 통해 front 컴포넌트 내부에서 동작하므로, 표준 녹화 코드는 변경 없이 실행되며 `MediaRecorder.isTypeSupported`는 일반적인 컨테이너/코덱 조합에 대해 응답합니다. 상세한 `getUserMedia` 제약 조건 객체는 허용되지만 전달되지는 않습니다. 호스트가 요청된 종류에 대해 기본값으로 캡처하며, 애플리케이션 전체에서 한 번에 하나의 캡처만 활성 상태일 수 있습니다. 기록된 `Blob`을 `uploadFile` 호스트 함수로 저장합니다.
+`event.target.value` and `checked` reflect the control once the browser has applied the user's change: in `input`, `change`, `click`, `blur` and `focusout` handlers, and in `keyup` handlers for `value`. In `keydown`, `beforeinput` and pointer handlers they hold the control's value and checked state as of its last edit, whatever your component listens to: an `Enter` handler reads the text typed so far, but a handler for a printable key does not see that key yet, so read live values from a controlled input or an `onChange` handler.
 
-### 기타 제약 사항
+`document` listeners receive the events that cross from your component, but nothing that happens elsewhere on the page, so to catch shortcuts with `document.addEventListener('keydown', ...)`, put an `onKeyDown` on an element that wraps your component. `window` listeners only receive `error` and `unhandledrejection`. Pointer moves only cross over elements that have a move handler, and pointer capture stays on the page, which is why a drag stops as soon as the pointer leaves those elements. `event.preventDefault()` does not cross either; form submission, `dragover`/`drop` and link clicks are already guarded for you.
 
-* **파일 내용.** `file` 타입의 `input`은 핸들러에 바이트가 아닌 파일 메타데이터만 제공하므로 `FileReader`는 사용할 수 없습니다. `MediaRecorder`가 생성한 것처럼 코드에서 이미 가지고 있는 `Blob`을 업로드하려면 `uploadFile` 호스트 함수를 사용하세요.
-* **드래그 앤 드롭 페이로드.** 드래그 이벤트는 발생하지만, `event.dataTransfer`는 `undefined`입니다.
-* **Node 내장 모듈.** `fs`, `path` 및 `node:crypto`는 빌드에 실패하므로, 해당 작업은 [logic function](/ko/developers/extend/apps/logic/logic-functions)으로 옮기세요. Web Crypto, `fetch`, `TextEncoder` 및 `URL`은 사용할 수 있습니다.
-* \*\*`iframe`\*\*은 항상 `allow-same-origin` 없이 다시 샌드박싱되므로, 자체 세션에 의존하는 임베드는 로그아웃된 상태로 렌더링됩니다. 또한 `onLoad`도 지원되지 않습니다.
+### Attributes and styling
+
+Each element forwards its own properties to the host DOM (`href` on `a`, `src`/`alt` on `img`, `value`/`placeholder`/`disabled` on `input`, and so on), plus a common set on every element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` and any `aria-*` / `data-*` attribute (hyphenated, so `ariaLabel` is dropped). Anything outside that is silently discarded, so express custom state as `data-*`.
+
+Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` element, is injected into the host page's `head` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
+
+### Storage and network
+
+`localStorage` and `sessionStorage` are provided by Twenty rather than the browser: the component runs in a worker at an opaque origin, so the host stores the values on your app's behalf. See [storage](#storage) for their scoping and limits. IndexedDB, cookies, the Cache API and `BroadcastChannel` remain unavailable. To persist state across devices, call a [logic function](/ko/developers/extend/apps/logic/logic-functions) and use its [key-value store](/ko/developers/extend/apps/logic/key-value-store).
+
+`fetch` works, with caveats:
+
+- Calls to the Twenty API and your app's routes are proxied by the host, so prefer [`RestApiClient`](#calling-the-twenty-rest-api). On proxied calls, `AbortSignal` and the other `RequestInit` options are dropped, and only `string` and `URLSearchParams` bodies are supported.
+- Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
+- `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
+
+### File selection
+
+File inputs deliver native `File` objects with metadata and readable contents. Use `text()` or `arrayBuffer()` to read a selected file, or pass it to the `uploadFile` host function. Opening the native chooser requires calling `input.click()` within one second of a trusted click inside your component. The SDK-built React and Preact flows are verified in Chromium.
+
+Worker-created object URLs assigned to `img.src` support previews. Revoke your URLs when replacing the image or unmounting your component. Your application owns file validation, upload progress and cancellation.
+
+### Media capture
+
+Declare `microphone`, `camera`, or both in the `requestedCapabilities` array passed to `defineApplication()` so these capabilities appear during installation. Approval is workspace-wide and requires a member who can manage apps.
+
+If an installed app calls `navigator.mediaDevices.getUserMedia()` without the required access, Twenty pauses capture and shows an approval dialog. This also supports older apps without capability declarations. Members who cannot manage apps must ask a workspace administrator to approve access. Cancelling the dialog rejects the request before browser or operating system permissions are requested.
+
+Package updates preserve existing workspace grants and do not automatically grant additional media access. Locally synced development apps receive the capabilities declared in their manifest. Once access is approved, Twenty does not ask again for each capture, but browser and operating system permissions still apply.
+
+An orange dot in the workspace header indicates active capture. Hover over or select the dot to see the apps using the microphone or camera and stop their capture. Pending requests appear as an outlined dot with a cancellation control.
+
+`getUserMedia()` and `MediaRecorder` run through sandbox polyfills, so standard recording code and `MediaRecorder.isTypeSupported()` work unchanged after approval. Detailed constraint objects are accepted but not forwarded. The host captures with its defaults for the requested kinds. Different applications can capture concurrently, and stopping an app affects only its own sessions. Each front component supports one pending or active capture at a time. Store a recorded `Blob` with the `uploadFile` host function.
+
+### Other gaps
+
+- **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
+- **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/ko/developers/extend/apps/logic/logic-functions). Web Crypto replaces `node:crypto`, and `fetch`, `TextEncoder` and `URL` are available too, see [global scope](#global-scope) — but nothing replaces `fs`: the sandbox has no filesystem.
+- **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

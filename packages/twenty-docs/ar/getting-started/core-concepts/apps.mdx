@@ -1,41 +1,50 @@
 ---
 title: التطبيقات
-icon: cube
-description: وسّع Twenty باستخدام التعليمات البرمجية — كائنات مخصصة، ومنطق على جانب الخادم، ومكونات واجهة المستخدم، ووكلاء الذكاء الاصطناعي، جميعها كحزم TypeScript.
+icon: 'cube'
+description: Extend Twenty with code — custom objects, server-side logic, UI components, and AI agents, all as TypeScript packages.
 ---
 
-توفر معظم أدوات إدارة علاقات العملاء (CRM) لك لوحة إعدادات. تمنحك Twenty منصة. التطبيقات هي الطريقة التي يمكّن بها المطوّرون Twenty من تجاوز ما توفره واجهة المستخدم — من خلال تعريف نماذج البيانات، ومنطق جانب الخادم، ومكونات واجهة المستخدم، وإمكانات الذكاء الاصطناعي كتعليمات برمجية، ثم نشرها في مساحة عمل واحدة أو أكثر.
+<Note>
+  لم تُحدَّث ترجمة هذا الدليل بعد لتشمل واجهة سطر أوامر Twenty المستقلة. يُعرض
+  المحتوى الإنجليزي الحالي أدناه مؤقتًا لتجنّب استخدام أوامر أُزيلت.
+</Note>
 
-## لماذا توجد التطبيقات
+Most CRMs give you a config panel. Twenty gives you a platform. Apps are how developers extend Twenty beyond what the UI offers — defining data models, server-side logic, UI components, and AI capabilities as code, then deploying them to one or more workspaces.
 
-تغطي عمليات سير العمل الأتمتة بدون كود. ولكن بعض الأمور تحتاج إلى كود: محرّك تسعير مخصص، وخط تجميع إثراء مملوك، واختبار امتثال يُشغَّل عند كل تحديث للسجل، ولوحة واجهة مستخدم مخصصة تسحب البيانات من أداة داخلية.
+## Why apps exist
 
-تمكّنك التطبيقات من إنشاء هذه كامتدادات من الدرجة الأولى — ليست نصوصًا هشة تتحدّث إلى واجهة برمجة تطبيقات من الخارج، بل تعليمات برمجية تعمل على المنصة مع وصول كامل إلى نظام الأنواع، ونموذج الأذونات، وواجهة المستخدم.
+Workflows cover no-code automation. But some things need code: a custom pricing engine, a proprietary enrichment pipeline, a compliance check that runs on every record update, a custom UI panel that pulls data from an internal tool.
 
-## ما الذي يمكن للتطبيق أن يعرِّفه
+Apps let you build these as first-class extensions — not brittle scripts talking to an API from outside, but code that runs on the platform with full access to the type system, permission model, and UI.
 
-التطبيق هو حزمة TypeScript تُصرِّح عن **كيانات** باستخدام `twenty-sdk`:
+## What an app can define
 
-| كيان                   | ماذا يفعل                                                                                       |
-| ---------------------- | ----------------------------------------------------------------------------------------------- |
-| **الكائنات والحقول**   | جداول بيانات جديدة وحقول للكائنات الموجودة — تُعامَل بالطريقة نفسها مثل المضمنة افتراضيًا       |
-| **الوظائف المنطقية**   | TypeScript على جانب الخادم يتم تشغيله عبر مسارات HTTP، أو جداول cron، أو أحداث قاعدة البيانات   |
-| **المكوّنات الأمامية** | مكوّنات React معزولة تُعرَض داخل واجهة مستخدم Twenty (اللوحة الجانبية، الودجات، قائمة الأوامر). |
-| **المهارات والوكلاء**  | قدرات الذكاء الاصطناعي — تعليمات قابلة لإعادة الاستخدام ومساعدون مستقلون ذاتيًا                 |
-| **طرق العرض والتنقّل** | طرق عرض قوائم مُعدّة مسبقًا وعناصر قائمة الشريط الجانبي                                         |
+An app is a TypeScript package that declares **entities** using the `twenty-sdk`:
 
-يتم اكتشاف كل شيء عبر تحليل AST وقت البناء — بدون ملفات إعداد وبدون روتين تسجيل متكرِّر. ضع `export default defineObject(...)` في أي ملف `.ts` وسيلتقطه الـ SDK.
+| Entity                 | What it does                                                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| **Objects & Fields**   | New data tables and fields on existing objects — same treatment as built-in ones              |
+| **Logic Functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events           |
+| **Front Components**   | Sandboxed React components that render inside Twenty's UI (side panel, widgets, command menu) |
+| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                             |
+| **Views & Navigation** | Pre-configured list views and sidebar menu items                                              |
 
-## كيفية عملها
+Everything is detected via AST analysis at build time — no config files, no registration boilerplate. Put a `export default defineObject(...)` in any `.ts` file and the SDK picks it up.
 
-* **الدوال المنطقية** تُنفَّذ في عمليات Node.js معزولة، ومحمية عن المضيف. تصل إلى البيانات من خلال عميل API مضبوط الأنواع، ومقيَّد بأذونات دور التطبيق.
-* **المكوّنات الأمامية** تعمل ضمن Web Workers باستخدام Remote DOM — معزولة عن الصفحة الرئيسية لكنها تعرض عناصر DOM الأصلية (وليس iframes).
-* **الأذونات** تُطبَّق على مستوى واجهة API. لا يرى التطبيق إلا ما يسمح به دوره.
+## How they run
 
-## تجربة المطوّر
+- **Logic functions** execute in isolated Node.js processes, sandboxed from the host. They access data through a typed API client scoped to the app's role permissions.
+- **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes).
+- **Permissions** are enforced at the API level. An app only sees what its role allows.
 
-تكتب تطبيقك كمشروع TypeScript على جهازك. تراقب أداة CLI ملفات المصدر لديك وتزامنها مباشرة مع خادم Twenty شغّال — عدِّل ملفًا لترى التغيير في واجهة المستخدم خلال ثانية واحدة. يُعاد توليد عميل API مضبوط الأنواع تلقائيًا عند تغيّر المخطط. عندما تكون مستعدًا، يقوم `yarn twenty app:publish --private` بالدفع إلى خادم إنتاج، أو يقوم `yarn twenty app:publish` بإدراج تطبيقك على npm وسوق Twenty.
+## The developer experience
 
-<Card title="أنشئ تطبيقك الأول" icon="arrow-right" href="/ar/developers/extend/apps/getting-started/quick-start">
-  دليل إرشادي من ثلاث مراحل — الإنشاء الأوّلي، تشغيل خادم محلّي، ومزامنة تغييراتك.
+You write your app as a TypeScript project on your machine. The CLI watches your source files and live-syncs them to a running Twenty server — edit a file, see the change in the UI within a second. The typed API client regenerates automatically when the schema changes. When you're ready, `twenty app publish --private` pushes to a production server, or `twenty app publish` lists your app on npm and the Twenty marketplace.
+
+<Card
+  title="Build your first app"
+  icon="arrow-right"
+  href="/ar/developers/extend/apps/getting-started/quick-start"
+>
+  Three-phase walkthrough — scaffold, run a local server, sync your changes.
 </Card>

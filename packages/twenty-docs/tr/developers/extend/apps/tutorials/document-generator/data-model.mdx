@@ -1,30 +1,38 @@
 ---
 title: 1. Veri modeli
-icon: database
-description: Belgeleri ve şablonları nesneler, alanlar ve bir ilişki ile modelleyin.
+icon: 'database'
+description: Model documents and templates with objects, fields, and a relation.
 ---
 
-Uygulamamızın iki özel nesneye ihtiyacı var: **belge şablonları** (ne yazılacağını belirten) ve
-**belgeler** (oluşturulan sonuç). Bunları tanımlayalım.
-
-CLI ile her varlık dosyasını iskelet olarak oluşturun — sizin için geçerli bir UUID ve doğru klasörü oluşturur:
-
-```bash filename="Terminal"
-yarn twenty dev:add object
-```
-
-Aşağıda tamamlanmış dosyaları gösteriyoruz.
-
 <Note>
-Her `*_UNIVERSAL_IDENTIFIER` sabiti
-`src/constants/universal-identifiers.ts` içinde bulunur ve kullanıldığı yerde içe aktarılır. Aşağıdaki kod parçacıkları
-kısalık için bu içe aktarmaları atlar — kendi dosyalarınızda bunları eklemeyi unutmayın.
+  Bu kılavuzun çevirisi henüz bağımsız Twenty CLI için güncellenmedi. Kaldırılan
+  komutların kullanılmasını önlemek için aşağıda geçici olarak güncel İngilizce
+  içerik gösterilmektedir.
 </Note>
 
-## Şablon nesnesi
+Our app needs two custom objects: **document templates** (what to write) and
+**documents** (the generated result). Let's define them.
 
-Bir şablonun bir `name` alanı, `{{placeholders}}` içeren bir `body` alanı ve bunun bir Person mı yoksa bir Company için mi yazıldığını belirten bir `target` alanı vardır. `body` bir
-`RICH_TEXT` alanıdır, bu nedenle Twenty ona tam özellikli bir zengin metin düzenleyicisi verir.
+Scaffold each entity file with the CLI — it generates a valid UUID and the right
+folder for you:
+
+```bash filename="Terminal"
+twenty app add object
+```
+
+Below we show the finished files.
+
+<Note>
+  Every `*_UNIVERSAL_IDENTIFIER` constant lives in
+  `src/constants/universal-identifiers.ts` and is imported where used. The
+  snippets below omit those imports for brevity — keep them in your own files.
+</Note>
+
+## The template object
+
+A template has a `name`, a `body` with `{{placeholders}}`, and a `target` that
+says whether it's written for a Person or a Company. The `body` is a
+`RICH_TEXT` field, so Twenty gives it a full rich-text editor.
 
 ```ts filename="src/objects/document-template.object.ts"
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -39,43 +47,74 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
-    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
-      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
-    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+    {
+      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT,
+      name: 'body',
+      label: 'Body',
+      icon: 'IconFileText',
+      description:
+        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
+    },
+    {
+      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'target',
+      label: 'Target',
+      icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
-        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
-      ] },
+        {
+          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON',
+          label: 'Person',
+          color: 'blue',
+          position: 0,
+        },
+        {
+          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY',
+          label: 'Company',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
   ],
 });
 ```
 
 <Warning>
-`SELECT` seçenek **değerleri** `UPPER_CASE` (`PERSON`, `person` değil) olmalıdır ve
-`defaultValue` fazladan tırnak içine alınır: `` `'PERSON'` ``. `label`,
-kullanıcıların gördüğü şeydir.
+  `SELECT` option **values** must be `UPPER_CASE` (`PERSON`, not `person`), and
+  the `defaultValue` is wrapped in extra quotes: `` `'PERSON'` ``. The `label`
+  is what users see.
 </Warning>
 
-## Belge nesnesi
+## The document object
 
-Oluşturulan belge, işlenmiş `content` ve bir `status` saklar. Bunu
-yine aynı şekilde tanımlayın; `status` için `DRAFT` / `GENERATED` seçenekli bir select alanı kullanın. Tam dosya:
+The generated document stores the rendered `content` and a `status`. Define it
+the same way, with a `status` select of `DRAFT` / `GENERATED`. Full file:
 [`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
 
-## Bir ilişkiyle bunları birbirine bağlama
+## Linking them with a relation
 
-Her belge, geldiği şablonu işaret etmelidir. İlişkiler
-**çift yönlüdür** — her iki tarafı da tanımlarsınız ve her birini kendi alan dosyasında belirtirsiniz.
+Each document should point back to the template it came from. Relations are
+**bidirectional** — you define both sides, each in its own field file.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -96,21 +135,24 @@ export default defineField({
 });
 ```
 
-Diğer taraf (`template-documents-relation.field.ts`),
-ters yönde işaret eden ve adı `documents` olan bir `RelationType.ONE_TO_MANY` alanıdır.
-Tam desen için [Relations](/tr/developers/extend/apps/data/relations) bölümüne bakın.
+The other side (`template-documents-relation.field.ts`) is a
+`RelationType.ONE_TO_MANY` field named `documents` that points the opposite way.
+See [Relations](/tr/developers/extend/apps/data/relations) for the full pattern.
 
-## Bunu Twenty'de görün
+## See it in Twenty
 
-`yarn twenty dev` çalışırken **Settings → Data model** bölümünü açın. Her iki nesne de
-uygulamanızla etiketlenmiş olarak görünür.
+With `twenty app dev` running, open **Settings → Data model**. Both objects
+appear, tagged with your app.
 
-<Frame caption="Her iki özel nesne, Document Generator uygulamasına aittir.">
-  <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="Veri modeli ayarları, Documents ve Document templates nesnelerini gösteriyor" />
+<Frame caption="Both custom objects, owned by the Document Generator app.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/01-data-model.png"
+    alt="Data model settings showing Documents and Document templates"
+  />
 </Frame>
 
-Test etmek için bir şablon oluşturun — adını *Sales proposal* koyun, **Target** alanını
-*Person* olarak ayarlayın ve birkaç yer tutucu içeren bir gövde yapıştırın:
+Create one template to test with — name it _Sales proposal_, set **Target** to
+_Person_, and paste a body with a few placeholders:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -121,12 +163,20 @@ Best,
 The Team
 ```
 
-<Frame caption="Bir şablon kaydı. Gövde, bir belge oluşturulana kadar yer tutucularını korur.">
-  <img src="/images/docs/developers/extends/apps/document-generator/03-template-record.png" alt="Yer tutucu gövdesine sahip bir Sales proposal şablon kaydı" />
+<Frame caption="A template record. The body keeps its placeholders until a document is generated.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/03-template-record.png"
+    alt="A Sales proposal template record with placeholder body"
+  />
 </Frame>
 
-**Bu adımdan sonra:** bir ilişkiyle birbirine bağlı `documentTemplate` ve `document` nesnelerine ve bunlardan belge oluşturmak için bir şablona sahipsiniz. Sırada, onu dolduran mantık var.
+**After this step:** you have `documentTemplate` and `document` objects, linked by
+a relation, and one template to generate from. Next, the logic that fills it in.
 
-<Card title="Sıradaki: belgeleri oluşturma →" icon="bolt" href="/tr/developers/extend/apps/tutorials/document-generator/generating-documents">
-  Şablonu dolduran mantık fonksiyonunu yazın.
+<Card
+  title="Next: generating documents →"
+  icon="bolt"
+  href="/tr/developers/extend/apps/tutorials/document-generator/generating-documents"
+>
+  Write the logic function that fills the template.
 </Card>

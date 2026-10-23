@@ -1,61 +1,88 @@
 ---
-title: "Eğitim: Belge Oluşturucu"
-icon: wand-magic-sparkles
-description: CRM verilerinizden kişiselleştirilmiş belgeler oluşturan gerçek bir Twenty uygulaması geliştirin.
+title: 'Eğitim: Belge Oluşturucu'
+icon: 'wand-magic-sparkles'
+description: Build a real Twenty app that generates personalized documents from your CRM data.
 ---
 
-Bu eğitimde, yeniden kullanılabilir şablonları CRM’inizde zaten bulunan verileri kullanarak kişiselleştirilmiş belgelere dönüştüren bir uygulama olan **Belge Oluşturucu**’yu geliştireceksiniz.
+<Note>
+  Bu kılavuzun çevirisi henüz bağımsız Twenty CLI için güncellenmedi. Kaldırılan
+  komutların kullanılmasını önlemek için aşağıda geçici olarak güncel İngilizce
+  içerik gösterilmektedir.
+</Note>
 
-`{{placeholders}}` ile bir kez şablon yazın, sonra komut menüsünden, bir yapay zekâ ajanından veya bir iş akışından tek tıklamayla herhangi bir Kişi veya Şirket için doldurulmuş bir belge oluşturun.
+In this tutorial you'll build **Document Generator** — an app that turns reusable
+templates into personalized documents using the data already in your CRM.
 
-<Frame caption="Belirli bir kişi için oluşturulmuş, yazdırılabilir bir sayfa olarak açılan bir şablon.">
-  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Oluşturulmuş bir Satış teklifi belgesi" />
+Write a template once with `{{placeholders}}`, then generate a filled-in
+document for any Person or Company in one click — from the command menu, from an
+AI agent, or from a workflow.
+
+<Frame caption="One template, generated for a specific person, opened as a printable page.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png"
+    alt="A generated Sales proposal document"
+  />
 </Frame>
 
-## Neler öğreneceksiniz
+## What you'll learn
 
-Her bölüm bir yetenek ekler. Sonunda SDK'nin büyük kısmını kullanmış olacaksınız.
+Each chapter adds one capability. By the end you'll have touched most of the SDK.
 
-| Bölüm                                                                                                    | Yetenek                                                                                                      | Başvuru                                                                     |
-| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
-| [1. Veri Modeli](/tr/developers/extend/apps/tutorials/document-generator/data-model)                        | Nesneler, alanlar ve bir ilişki                                                                              | [Veri](/tr/developers/extend/apps/data/overview)                               |
-| [2. Belgeler oluşturma](/tr/developers/extend/apps/tutorials/document-generator/generating-documents)       | Bir Markdown şablonunu dolduran ve cilalı bir PDF ekleyen mantık işlevi (Yapay zekâ aracı + iş akışı eylemi) | [Mantık işlevleri](/tr/developers/extend/apps/logic/logic-functions)           |
-| [3. HTTP rotaları](/tr/developers/extend/apps/tutorials/document-generator/http-routes)                     | Rotalardan JSON ve paylaşılabilir bir HTML sayfası sunma                                                     | [Mantık işlevleri](/tr/developers/extend/apps/logic/logic-functions)           |
-| [4. Kullanıcı arayüzünü oluşturma](/tr/developers/extend/apps/tutorials/document-generator/building-the-ui) | Görünümler, gezinme, komut menüsü ve bir belgeyi önizleyen ve bir şablonu düzenleyen ön uç bileşenleri       | [Düzen](/tr/developers/extend/apps/layout/overview)                            |
-| [5. Bir yapay zekâ ajanı](/tr/developers/extend/apps/tutorials/document-generator/ai-agent)                 | Ajan + beceri                                                                                                | [Beceriler ve Temsilciler](/tr/developers/extend/apps/logic/skills-and-agents) |
-| [6. Yayınlama](/tr/developers/extend/apps/tutorials/document-generator/publishing)                          | Onu pazaryerine gönderin                                                                                     | [Yayınlama](/tr/developers/extend/apps/operations/publishing)                  |
+| Chapter                                                                                                 | Capability                                                                                              | Reference                                                             |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [1. Data model](/tr/developers/extend/apps/tutorials/document-generator/data-model)                     | Objects, fields, and a relation                                                                         | [Data](/tr/developers/extend/apps/data/overview)                      |
+| [2. Generating documents](/tr/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function (AI tool + workflow action) that fills a Markdown template and attaches a polished PDF | [Logic functions](/tr/developers/extend/apps/logic/logic-functions)   |
+| [3. HTTP routes](/tr/developers/extend/apps/tutorials/document-generator/http-routes)                   | Serving JSON and a shareable HTML page from routes                                                      | [Logic functions](/tr/developers/extend/apps/logic/logic-functions)   |
+| [4. Building the UI](/tr/developers/extend/apps/tutorials/document-generator/building-the-ui)           | Views, navigation, command menu, and front components that preview a document and edit a template       | [Layout](/tr/developers/extend/apps/layout/overview)                  |
+| [5. An AI agent](/tr/developers/extend/apps/tutorials/document-generator/ai-agent)                      | Agent + skill                                                                                           | [Skills & agents](/tr/developers/extend/apps/logic/skills-and-agents) |
+| [6. Publishing](/tr/developers/extend/apps/tutorials/document-generator/publishing)                     | Ship it to the marketplace                                                                              | [Publishing](/tr/developers/extend/apps/operations/publishing)        |
 
-## Ön Gereksinimler
+## Prerequisites
 
-[Hızlı Başlangıç](/tr/developers/extend/apps/getting-started/quick-start) bölümünü tamamlamış olmalısınız:
-`2020` portunda çalışan yerel bir Twenty sunucusu ve ona kimliği doğrulanmış CLI.
+You should have finished the [Quick Start](/tr/developers/extend/apps/getting-started/quick-start):
+a Twenty workspace (cloud or local) and the CLI authenticated to it.
 
-Değilse, şimdi bir tane iskeletini oluşturup başlatın:
+If the server or authentication is not ready, complete the [Quick Start](/tr/developers/extend/apps/getting-started/quick-start) first. Then create and install the tutorial app:
 
 ```bash filename="Terminal"
-npx create-twenty-app@latest document-generator
+twenty app init document-generator
 cd document-generator
-yarn twenty dev
+yarn install
+twenty app apply --create
+twenty app dev
 ```
 
 <Note>
-Bitmiş kodu okumayı mı tercih edersiniz? Tam uygulama şurada bulunur:
-[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-Aşağıdaki her kod parçası oradan kopyalanmıştır.
+  Prefer to read the finished code? The complete app lives in
+  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+  Every snippet below is copied from it.
 </Note>
 
-## Uygulamanın nasıl bir araya geldiği
+## How the app fits together
 
 <Frame>
-  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="Yer tutucular içeren bir şablon, komut menüsünden, bir yapay zekâ ajanından, bir iş akışından veya paylaşılabilir bir bağlantıdan tetiklenerek PDF’li cilalı bir belgeye dönüştürülür" />
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg"
+    alt="A template with placeholders is generated into a polished document with a PDF, triggered from the command menu, an AI agent, a workflow, or a shareable link"
+  />
 </Frame>
 
-`{{placeholders}}` ile zengin metin düzenleyicide bir **şablonu** bir kez yazarsınız. Bir şablon ve bir CRM kaydı seçmek, yer tutucuları doldurur ve cilalı bir **belgeyi** (PDF dosyasıyla birlikte) depolar. Geri kalan her şey — komut menüsü, yapay zekâ ajanı, iş akışı adımı, paylaşılabilir bağlantı — o tek oluşturucuyu tetiklemenin sadece farklı bir yoludur.
+You write a **template** once in a rich-text editor, with `{{placeholders}}`. Picking a
+template and a CRM record fills the placeholders and stores a polished
+**document** (with a PDF file). Everything else — the command menu, the AI agent,
+the workflow step, the shareable link — is just a different way to trigger that
+one generator.
 
-## Bu döngüyü çalışır durumda tutun
+## Keep this loop running
 
-Tüm eğitim boyunca bir terminalde `yarn twenty dev` komutunu çalışır durumda bırakın. `src/` altında her dosya eklediğinizde veya düzenlediğinizde, birkaç saniye içinde sunucunuzla yeniden eşitlenir; böylece siz oluştururken her yeteneğin kullanıcı arayüzünde nasıl ortaya çıktığını izleyebilirsiniz.
+Leave `twenty app dev` running in a terminal for the whole tutorial. Every time
+you add or edit a file under `src/`, it re-syncs to your server within a few
+seconds, so you can watch each capability appear in the UI as you build it.
 
-<Card title="Oluşturmaya başlayın →" icon="database" href="/tr/developers/extend/apps/tutorials/document-generator/data-model">
-  1. Bölüm: belgeleri ve şablonları modelleyin.
+<Card
+  title="Start building →"
+  icon="database"
+  href="/tr/developers/extend/apps/tutorials/document-generator/data-model"
+>
+  Chapter 1: model documents and templates.
 </Card>

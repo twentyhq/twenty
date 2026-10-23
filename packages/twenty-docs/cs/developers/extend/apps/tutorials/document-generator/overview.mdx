@@ -1,66 +1,87 @@
 ---
-title: "Tutoriál: Generátor dokumentů"
-icon: wand-magic-sparkles
-description: Vytvořte skutečnou aplikaci Twenty, která generuje personalizované dokumenty z vašich CRM dat.
+title: 'Tutoriál: Generátor dokumentů'
+icon: 'wand-magic-sparkles'
+description: Build a real Twenty app that generates personalized documents from your CRM data.
 ---
 
-V tomto tutoriálu vytvoříte **Generátor dokumentů** — aplikaci, která převádí znovupoužitelné šablony na personalizované dokumenty pomocí dat, která už máte ve svém CRM.
+<Note>
+  Překlad tohoto průvodce zatím nezohledňuje samostatné CLI Twenty. Níže dočasně
+  uvádíme aktuální anglický obsah, abyste nepoužívali odstraněné příkazy.
+</Note>
 
-Napište šablonu jednou pomocí `{{placeholders}}` a poté vygenerujte vyplněný dokument pro libovolnou osobu nebo společnost jedním kliknutím — z příkazové nabídky, od AI agenta nebo z workflow.
+In this tutorial you'll build **Document Generator** — an app that turns reusable
+templates into personalized documents using the data already in your CRM.
 
-<Frame caption="Jeden šablonový dokument, vygenerovaný pro konkrétní osobu, otevřený jako stránka připravená k tisku.">
-  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Vygenerovaný dokument obchodní nabídky" />
+Write a template once with `{{placeholders}}`, then generate a filled-in
+document for any Person or Company in one click — from the command menu, from an
+AI agent, or from a workflow.
+
+<Frame caption="One template, generated for a specific person, opened as a printable page.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png"
+    alt="A generated Sales proposal document"
+  />
 </Frame>
 
-## Co se naučíte
+## What you'll learn
 
-Každá kapitola přidá jednu schopnost. Na konci se seznámíte s většinou SDK.
+Each chapter adds one capability. By the end you'll have touched most of the SDK.
 
-| Kapitola                                                                                                    | Schopnost                                                                                                            | Referenční dokumentace                                                 |
-| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [1. Datový model](/cs/developers/extend/apps/tutorials/document-generator/data-model)                          | Objekty, pole a relace                                                                                               | [Data](/cs/developers/extend/apps/data/overview)                          |
-| [2. Generování dokumentů](/cs/developers/extend/apps/tutorials/document-generator/generating-documents)        | Logická funkce (nástroj AI + akce workflow), která vyplní šablonu v Markdownu a připojí vyladěné PDF                 | [Logické funkce](/cs/developers/extend/apps/logic/logic-functions)        |
-| [3. HTTP trasy](/cs/developers/extend/apps/tutorials/document-generator/http-routes)                           | Poskytování JSONu a sdílitelné HTML stránky z tras                                                                   | [Logické funkce](/cs/developers/extend/apps/logic/logic-functions)        |
-| [4. Vytváření uživatelského rozhraní](/cs/developers/extend/apps/tutorials/document-generator/building-the-ui) | Zobrazení, navigace, příkazová nabídka a frontendové komponenty, které zobrazují náhled dokumentu a upravují šablonu | [Rozvržení](/cs/developers/extend/apps/layout/overview)                   |
-| [5. Agent AI](/cs/developers/extend/apps/tutorials/document-generator/ai-agent)                                | Agent + dovednost                                                                                                    | [Dovednosti a agenti](/cs/developers/extend/apps/logic/skills-and-agents) |
-| [6. Publikování](/cs/developers/extend/apps/tutorials/document-generator/publishing)                           | Publikujte ji na marketplace                                                                                         | [Publikování](/cs/developers/extend/apps/operations/publishing)           |
+| Chapter                                                                                                 | Capability                                                                                              | Reference                                                             |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [1. Data model](/cs/developers/extend/apps/tutorials/document-generator/data-model)                     | Objects, fields, and a relation                                                                         | [Data](/cs/developers/extend/apps/data/overview)                      |
+| [2. Generating documents](/cs/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function (AI tool + workflow action) that fills a Markdown template and attaches a polished PDF | [Logic functions](/cs/developers/extend/apps/logic/logic-functions)   |
+| [3. HTTP routes](/cs/developers/extend/apps/tutorials/document-generator/http-routes)                   | Serving JSON and a shareable HTML page from routes                                                      | [Logic functions](/cs/developers/extend/apps/logic/logic-functions)   |
+| [4. Building the UI](/cs/developers/extend/apps/tutorials/document-generator/building-the-ui)           | Views, navigation, command menu, and front components that preview a document and edit a template       | [Layout](/cs/developers/extend/apps/layout/overview)                  |
+| [5. An AI agent](/cs/developers/extend/apps/tutorials/document-generator/ai-agent)                      | Agent + skill                                                                                           | [Skills & agents](/cs/developers/extend/apps/logic/skills-and-agents) |
+| [6. Publishing](/cs/developers/extend/apps/tutorials/document-generator/publishing)                     | Ship it to the marketplace                                                                              | [Publishing](/cs/developers/extend/apps/operations/publishing)        |
 
-## Předpoklady
+## Prerequisites
 
-Měli byste mít hotový [rychlý start](/cs/developers/extend/apps/getting-started/quick-start):
-lokální server Twenty běžící na portu `2020` a CLI k němu přihlášené.
+You should have finished the [Quick Start](/cs/developers/extend/apps/getting-started/quick-start):
+a Twenty workspace (cloud or local) and the CLI authenticated to it.
 
-Pokud ne, nyní si jeden vytvořte a spusťte:
+If the server or authentication is not ready, complete the [Quick Start](/cs/developers/extend/apps/getting-started/quick-start) first. Then create and install the tutorial app:
 
 ```bash filename="Terminal"
-npx create-twenty-app@latest document-generator
+twenty app init document-generator
 cd document-generator
-yarn twenty dev
+yarn install
+twenty app apply --create
+twenty app dev
 ```
 
 <Note>
-Raději byste si přečetli hotový kód? Celá aplikace je v
-[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-Každý úryvek níže je z ní zkopírovaný.
+  Prefer to read the finished code? The complete app lives in
+  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+  Every snippet below is copied from it.
 </Note>
 
-## Jak do sebe aplikace zapadá
+## How the app fits together
 
 <Frame>
-  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="Šablona se zástupnými symboly se převede na vyladěný dokument s PDF souborem; generování lze spustit z příkazové nabídky, agenta AI, workflow nebo pomocí sdílitelného odkazu" />
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg"
+    alt="A template with placeholders is generated into a polished document with a PDF, triggered from the command menu, an AI agent, a workflow, or a shareable link"
+  />
 </Frame>
 
-**Šablonu** napíšete jednou v rich-text editoru pomocí `{{placeholders}}`. Výběr
-šablony a CRM záznamu vyplní zástupné symboly a uloží vyladěný
-**dokument** (s PDF souborem). Všechno ostatní — příkazová nabídka, agent AI,
-krok workflow, sdílený odkaz — je jen jiný způsob, jak spustit ten
-jeden generátor.
+You write a **template** once in a rich-text editor, with `{{placeholders}}`. Picking a
+template and a CRM record fills the placeholders and stores a polished
+**document** (with a PDF file). Everything else — the command menu, the AI agent,
+the workflow step, the shareable link — is just a different way to trigger that
+one generator.
 
-## Udržujte tento cyklus v chodu
+## Keep this loop running
 
-Nechte `yarn twenty dev` běžet v terminálu po celý tutoriál. Pokaždé, když
-přidáte nebo upravíte soubor pod `src/`, během několika sekund se znovu synchronizuje s vaším serverem, takže můžete sledovat, jak se každá schopnost objevuje v uživatelském rozhraní, jak ji vytváříte.
+Leave `twenty app dev` running in a terminal for the whole tutorial. Every time
+you add or edit a file under `src/`, it re-syncs to your server within a few
+seconds, so you can watch each capability appear in the UI as you build it.
 
-<Card title="Začněte vytvářet →" icon="database" href="/cs/developers/extend/apps/tutorials/document-generator/data-model">
-  Kapitola 1: modelujte dokumenty a šablony.
+<Card
+  title="Start building →"
+  icon="database"
+  href="/cs/developers/extend/apps/tutorials/document-generator/data-model"
+>
+  Chapter 1: model documents and templates.
 </Card>

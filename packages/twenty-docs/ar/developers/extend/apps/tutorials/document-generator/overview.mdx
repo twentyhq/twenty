@@ -1,63 +1,87 @@
 ---
-title: "دليل تعليمي: مولِّد المستندات"
-icon: wand-magic-sparkles
-description: أنشئ تطبيق Twenty حقيقيًا يُولِّد مستندات مخصَّصة من بيانات نظام إدارة علاقات العملاء (CRM) الخاصة بك.
+title: 'دليل تعليمي: مولِّد المستندات'
+icon: 'wand-magic-sparkles'
+description: Build a real Twenty app that generates personalized documents from your CRM data.
 ---
 
-في هذا الدليل التعليمي ستقوم بإنشاء **مولِّد المستندات** — تطبيق يحوِّل القوالب القابلة لإعادة الاستخدام إلى مستندات مخصَّصة باستخدام البيانات الموجودة مسبقًا في نظام إدارة علاقات العملاء (CRM) لديك.
+<Note>
+  لم تُحدَّث ترجمة هذا الدليل بعد لتشمل واجهة سطر أوامر Twenty المستقلة. يُعرض
+  المحتوى الإنجليزي الحالي أدناه مؤقتًا لتجنّب استخدام أوامر أُزيلت.
+</Note>
 
-اكتب قالبًا مرة واحدة باستخدام `{{placeholders}}`، ثم أنشئ مستندًا مكتمل الحقول لأي شخص أو شركة بنقرة واحدة — من قائمة الأوامر، أو من وكيل ذكاء اصطناعي، أو من سير عمل.
+In this tutorial you'll build **Document Generator** — an app that turns reusable
+templates into personalized documents using the data already in your CRM.
 
-<Frame caption="قالب واحد، يتم إنشاؤه لشخص محدد، وفتحه كصفحة قابلة للطباعة.">
-  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="مستند عرض مبيعات تم إنشاؤه" />
+Write a template once with `{{placeholders}}`, then generate a filled-in
+document for any Person or Company in one click — from the command menu, from an
+AI agent, or from a workflow.
+
+<Frame caption="One template, generated for a specific person, opened as a printable page.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png"
+    alt="A generated Sales proposal document"
+  />
 </Frame>
 
-## ما ستتعلّمه
+## What you'll learn
 
-يُضيف كل فصل قدرة واحدة. بنهاية الدليل ستكون قد تعاملت مع معظم حزمة تطوير البرمجيات (SDK).
+Each chapter adds one capability. By the end you'll have touched most of the SDK.
 
-| الفصل                                                                                           | القدرة                                                                                     | مرجع                                                                 |
-| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
-| [١. نموذج البيانات](/ar/developers/extend/apps/tutorials/document-generator/data-model)            | الكائنات، الحقول، وعلاقة واحدة                                                             | [البيانات](/ar/developers/extend/apps/data/overview)                    |
-| [٢. إنشاء المستندات](/ar/developers/extend/apps/tutorials/document-generator/generating-documents) | دالة منطقية (أداة ذكاء اصطناعي + خطوة سير عمل) تملأ قالب Markdown وتُرفِق ملف PDF مصقولًا  | [الوظائف المنطقية](/ar/developers/extend/apps/logic/logic-functions)    |
-| [٣. مسارات HTTP](/ar/developers/extend/apps/tutorials/document-generator/http-routes)              | تقديم JSON وصفحة HTML قابلة للمشاركة من المسارات                                           | [الوظائف المنطقية](/ar/developers/extend/apps/logic/logic-functions)    |
-| [4. بناء واجهة المستخدم](/ar/developers/extend/apps/tutorials/document-generator/building-the-ui)  | العروض، التنقل، قائمة الأوامر، ومكوّنات الواجهة الأمامية التي تُعاين مستندًا وتحرّر قالبًا | [التخطيط](/ar/developers/extend/apps/layout/overview)                   |
-| [5. وكيل ذكاء اصطناعي](/ar/developers/extend/apps/tutorials/document-generator/ai-agent)           | وكيل + مهارة                                                                               | [المهارات والوكلاء](/ar/developers/extend/apps/logic/skills-and-agents) |
-| [6. النشر](/ar/developers/extend/apps/tutorials/document-generator/publishing)                     | إطلاقه في السوق                                                                            | [النشر](/ar/developers/extend/apps/operations/publishing)               |
+| Chapter                                                                                                 | Capability                                                                                              | Reference                                                             |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [1. Data model](/ar/developers/extend/apps/tutorials/document-generator/data-model)                     | Objects, fields, and a relation                                                                         | [Data](/ar/developers/extend/apps/data/overview)                      |
+| [2. Generating documents](/ar/developers/extend/apps/tutorials/document-generator/generating-documents) | A logic function (AI tool + workflow action) that fills a Markdown template and attaches a polished PDF | [Logic functions](/ar/developers/extend/apps/logic/logic-functions)   |
+| [3. HTTP routes](/ar/developers/extend/apps/tutorials/document-generator/http-routes)                   | Serving JSON and a shareable HTML page from routes                                                      | [Logic functions](/ar/developers/extend/apps/logic/logic-functions)   |
+| [4. Building the UI](/ar/developers/extend/apps/tutorials/document-generator/building-the-ui)           | Views, navigation, command menu, and front components that preview a document and edit a template       | [Layout](/ar/developers/extend/apps/layout/overview)                  |
+| [5. An AI agent](/ar/developers/extend/apps/tutorials/document-generator/ai-agent)                      | Agent + skill                                                                                           | [Skills & agents](/ar/developers/extend/apps/logic/skills-and-agents) |
+| [6. Publishing](/ar/developers/extend/apps/tutorials/document-generator/publishing)                     | Ship it to the marketplace                                                                              | [Publishing](/ar/developers/extend/apps/operations/publishing)        |
 
-## المتطلبات الأساسية
+## Prerequisites
 
-يجب أن تكون قد أنهيت قسم [البدء السريع](/ar/developers/extend/apps/getting-started/quick-start):
-خادم Twenty محلي يعمل على المنفذ `2020` وواجهة سطر أوامر (CLI) موثَّقة عليه.
+You should have finished the [Quick Start](/ar/developers/extend/apps/getting-started/quick-start):
+a Twenty workspace (cloud or local) and the CLI authenticated to it.
 
-إذا لم تكن قد فعلت ذلك، فقم بتهيئة واحد وتشغيله الآن:
+If the server or authentication is not ready, complete the [Quick Start](/ar/developers/extend/apps/getting-started/quick-start) first. Then create and install the tutorial app:
 
 ```bash filename="Terminal"
-npx create-twenty-app@latest document-generator
+twenty app init document-generator
 cd document-generator
-yarn twenty dev
+yarn install
+twenty app apply --create
+twenty app dev
 ```
 
 <Note>
-تفضّل قراءة الكود النهائي؟ يوجد التطبيق الكامل في
-[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-كل مقتطف أدناه منسوخ منه.
+  Prefer to read the finished code? The complete app lives in
+  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+  Every snippet below is copied from it.
 </Note>
 
-## كيف تتكامل مكوّنات التطبيق معًا
+## How the app fits together
 
 <Frame>
-  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="يُحوَّل قالب يحتوي على عناصر نائبة إلى مستند مصقول مع ملف PDF، ويتم تشغيل ذلك من قائمة الأوامر، أو وكيل ذكاء اصطناعي، أو سير عمل، أو رابط قابل للمشاركة" />
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg"
+    alt="A template with placeholders is generated into a polished document with a PDF, triggered from the command menu, an AI agent, a workflow, or a shareable link"
+  />
 </Frame>
 
-تكتب **قالبًا** مرة واحدة في محرّر نص منسّق، مع `{{placeholders}}`. يؤدي اختيار قالب وسجل في نظام إدارة علاقات العملاء إلى ملء العناصر النائبة وتخزين مستند مصقول (مع ملف PDF). كل ما عدا ذلك — قائمة الأوامر، وكيل الذكاء الاصطناعي،
-خطوة سير العمل، الرابط القابل للمشاركة — ما هو إلا طريقة مختلفة لتشغيل هذا
-المولّد الواحد.
+You write a **template** once in a rich-text editor, with `{{placeholders}}`. Picking a
+template and a CRM record fills the placeholders and stores a polished
+**document** (with a PDF file). Everything else — the command menu, the AI agent,
+the workflow step, the shareable link — is just a different way to trigger that
+one generator.
 
-## أبقِ هذه الحلقة قيد التشغيل
+## Keep this loop running
 
-اترك الأمر `yarn twenty dev` يعمل في أحد الطرفيات طوال الدرس التطبيقي. في كل مرة تُضيف أو تعدّل ملفًا ضمن `src/`، تُعاد مزامنته مع خادمك خلال بضع ثوانٍ، لكي تتمكّن من مشاهدة كل قدرة تظهر في واجهة المستخدم أثناء بنائها.
+Leave `twenty app dev` running in a terminal for the whole tutorial. Every time
+you add or edit a file under `src/`, it re-syncs to your server within a few
+seconds, so you can watch each capability appear in the UI as you build it.
 
-<Card title="ابدأ البناء →" icon="قاعدة البيانات" href="/ar/developers/extend/apps/tutorials/document-generator/data-model">
-  الفصل 1: نمذجة المستندات والقوالب.
+<Card
+  title="Start building →"
+  icon="database"
+  href="/ar/developers/extend/apps/tutorials/document-generator/data-model"
+>
+  Chapter 1: model documents and templates.
 </Card>

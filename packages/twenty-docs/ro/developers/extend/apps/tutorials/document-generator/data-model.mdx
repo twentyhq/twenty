@@ -1,32 +1,38 @@
 ---
 title: 1. Model de date
-icon: database
-description: Modelul de documente și șabloane cu obiecte, câmpuri și o relație.
+icon: 'database'
+description: Model documents and templates with objects, fields, and a relation.
 ---
 
-Aplicația noastră are nevoie de două obiecte personalizate: **șabloane de documente** (ce să scrie) și
-**documente** (rezultatul generat). Să le definim.
-
-Scaffold fiecare fișier de entitate cu CLI - generează un UUID valid și dosarul corect
-pentru tine:
-
-```bash filename="Terminal"
-yarn twenty dev:add object
-```
-
-Mai jos arătăm fișierele terminate.
-
 <Note>
-Fiecare "\*_UNIVERSAL_IDENTIFIER" trăieşte în
-`src/constants/universal-identificfiers.ts` şi este importat unde este folosit. Fragmentele
-de mai jos omit acele importuri pentru încurcare - le păstrează-le în propriile fișiere.
+  Traducerea acestui ghid nu a fost încă actualizată pentru CLI-ul independent
+  Twenty. Mai jos este afișat temporar conținutul actual în engleză, pentru a
+  evita utilizarea comenzilor eliminate.
 </Note>
 
-## Obiectul şablonului
+Our app needs two custom objects: **document templates** (what to write) and
+**documents** (the generated result). Let's define them.
 
-Un şablon are un `name`, un `body` cu `{{placeholders}}`, şi un `target` care spune
-dacă este scris pentru o Persoană sau o companie. `body` este un câmp
-`RICH_TEXT`, deci douăzeci îi dă un editor complet bogat.
+Scaffold each entity file with the CLI — it generates a valid UUID and the right
+folder for you:
+
+```bash filename="Terminal"
+twenty app add object
+```
+
+Below we show the finished files.
+
+<Note>
+  Every `*_UNIVERSAL_IDENTIFIER` constant lives in
+  `src/constants/universal-identifiers.ts` and is imported where used. The
+  snippets below omit those imports for brevity — keep them in your own files.
+</Note>
+
+## The template object
+
+A template has a `name`, a `body` with `{{placeholders}}`, and a `target` that
+says whether it's written for a Person or a Company. The `body` is a
+`RICH_TEXT` field, so Twenty gives it a full rich-text editor.
 
 ```ts filename="src/objects/document-template.object.ts"
 import { defineObject, FieldType } from 'twenty-sdk/define';
@@ -41,43 +47,74 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
-    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
-      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
-    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+    {
+      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT,
+      name: 'body',
+      label: 'Body',
+      icon: 'IconFileText',
+      description:
+        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
+    },
+    {
+      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'target',
+      label: 'Target',
+      icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
-        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
-      ] },
+        {
+          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON',
+          label: 'Person',
+          color: 'blue',
+          position: 0,
+        },
+        {
+          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY',
+          label: 'Company',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
   ],
 });
 ```
 
 <Warning>
-Opţiunea `SELECT` **valori** trebuie să fie `UPPER_CASE` (`PERSON", nu `persoană`), şi
-`valoarea implicită`este împachetată în ghilimele suplimentare: `` 'PERSON''.`label\` este ceea ce văd utilizatorii
-.
+  `SELECT` option **values** must be `UPPER_CASE` (`PERSON`, not `person`), and
+  the `defaultValue` is wrapped in extra quotes: `` `'PERSON'` ``. The `label`
+  is what users see.
 </Warning>
 
-## Obiectul documentului
+## The document object
 
-Documentul generat stochează `conținutul` și `status`. Definiţi-l
-în acelaşi mod, cu `status` selectează din `DRAFT` / `GENERATED`. Fişier complet:
+The generated document stores the rendered `content` and a `status`. Define it
+the same way, with a `status` select of `DRAFT` / `GENERATED`. Full file:
 [`document.object.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/objects/document.object.ts).
 
-## Conectarea lor cu o relație
+## Linking them with a relation
 
-Fiecare document ar trebui să indice modelul de la care a venit. Relațiile sunt
-**bidirecționale** — definiți ambele părți, fiecare în propriul fișier de câmp.
+Each document should point back to the template it came from. Relations are
+**bidirectional** — you define both sides, each in its own field file.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -98,21 +135,24 @@ export default defineField({
 });
 ```
 
-Cealaltă parte (`template-documents-relation.field.ts`) este un câmp
-`RelationType.ONE_TO_MANY` numit `documents` care arată invers.
-Vezi [Relations](/ro/developers/extend/apps/data/relations) pentru întregul model.
+The other side (`template-documents-relation.field.ts`) is a
+`RelationType.ONE_TO_MANY` field named `documents` that points the opposite way.
+See [Relations](/ro/developers/extend/apps/data/relations) for the full pattern.
 
-## Vezi în Douăzeci
+## See it in Twenty
 
-Cu `yarn douăzeci de` rulează, deschide **Setări → Modelul de date**. Ambele obiecte
-apar, etichetate cu aplicația ta.
+With `twenty app dev` running, open **Settings → Data model**. Both objects
+appear, tagged with your app.
 
-<Frame caption="Ambele obiecte personalizate, deținute de aplicația Document Generator.">
-  <img src="/imagini/documente/dezvoltatori/extinderi/aplicații/generator/01-data-model.png" alt="Setările modelului de date care afișează documente și șabloane de documente" />
+<Frame caption="Both custom objects, owned by the Document Generator app.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/01-data-model.png"
+    alt="Data model settings showing Documents and Document templates"
+  />
 </Frame>
 
-Creați un șablon pentru a testa cu - denumiți *Propunere de vânzări*, setați **Ținta**
-*Person*, și lipiți un corp cu câțiva substituenți:
+Create one template to test with — name it _Sales proposal_, set **Target** to
+_Person_, and paste a body with a few placeholders:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -123,13 +163,20 @@ Best,
 The Team
 ```
 
-<Frame caption="O înregistrare șablon. Organismul îşi păstrează substituenţii până când se generează un document.">
-  <img src="/imagini/documente/dezvoltatori/extensii/aplicații/generator document/03-template-record.png" alt="Un model de înregistrare a propunerii de vânzare cu organismul substituent" />
+<Frame caption="A template record. The body keeps its placeholders until a document is generated.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/03-template-record.png"
+    alt="A Sales proposal template record with placeholder body"
+  />
 </Frame>
 
-**După acest pas:** aveţi obiecte `documentTemplate` şi `document`, legate de
-o relaţie, şi un şablon din care să se genereze. Apoi, logica care o umple.
+**After this step:** you have `documentTemplate` and `document` objects, linked by
+a relation, and one template to generate from. Next, the logic that fills it in.
 
-<Card title="Următorul: generarea de documente →" icon="bolt" href="/dezvoltator/extindere/aplicații/tutoriale/generator documentare/generare-documente">
-  Scrieți funcția logică care completează șablonul.
+<Card
+  title="Next: generating documents →"
+  icon="bolt"
+  href="/ro/developers/extend/apps/tutorials/document-generator/generating-documents"
+>
+  Write the logic function that fills the template.
 </Card>

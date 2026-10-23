@@ -1,20 +1,28 @@
 ---
 title: 3. HTTP 路由
-icon: globe
-description: 通过 HTTP 触发函数并将文档渲染为 web 页面。
+icon: 'globe'
+description: Trigger the function over HTTP and render documents as web pages.
 ---
 
-相同的处理程序也可以回答 HTTP 请求。 我们将添加两个路由：
+<Note>
+  本指南的翻译尚未更新为 Twenty 独立 CLI
+  的用法。为避免使用已移除的命令，下面暂时显示最新的英文内容。
+</Note>
 
-* a **POST** 让UI 调用来生成文档的端点，和
-* 一个公开的 **GET** 端点，将文档作为可打印的网页。
+The same handler can also answer HTTP requests. We'll add two routes:
 
-两者都使用 `httpRouteTriggerSettings` 。 应用路由使用 `/s/` 路径；在本地和自托管实例上，该路径由你的 Twenty 服务器提供服务（例如：`http://localhost:2020/s/documents/generate`）。 在 Twenty Cloud 上，`RestApiClient` 通过工作区的 functions 域名来解析该路径。
+- a **POST** endpoint the UI calls to generate a document, and
+- a public **GET** endpoint that renders a document as a printable web page.
 
-## POST 路由 — 按需生成
+Both use `httpRouteTriggerSettings`. App routes are addressed with an `/s/` path; on local
+and self-hosted instances, that path is served by your Twenty server
+(e.g. `http://localhost:2020/s/documents/generate`). On Twenty Cloud, `RestApiClient`
+resolves the path through the workspace's functions domain.
 
-这会重用\`generateDocuments Handler'，所以没有重复的逻辑——只是一个能读取请求正文的薄
-适配器。
+## POST route — generate on demand
+
+This reuses `generateDocumentHandler`, so there's no logic to repeat — just a thin
+adapter that reads the request body.
 
 ```ts filename="src/logic-functions/generate-document-route.ts"
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
@@ -50,15 +58,16 @@ export default defineLogicFunction({
 });
 ```
 
-共享处理程序在失败时会返回建议的 `status`，因此路由可以使用适当的 `4xx`/`5xx` 状态码进行响应。 `isauth：true`是指调用者
-必须提供一个有效的令牌——下一章的前面组件自动通过
-用户的访问令牌。
+The shared handler returns a suggested `status` on failure, so the route can
+answer with a proper `4xx`/`5xx` code. `isAuthRequired: true` means the caller
+must present a valid token — the front component in the next chapter passes the
+user's access token automatically.
 
-## GET 路由 — 渲染为网页
+## GET route — render as a web page
 
-若要返回HTML而不是JSON，将物体用
-`Content-Type`标头包装`Response`。 此路由是公开的(`isauth：必填：false`)，所以
-生成的文档可以作为链接共享。
+To return HTML instead of JSON, wrap the body in a `Response` with a
+`Content-Type` header. This route is public (`isAuthRequired: false`) so a
+generated document can be shared as a link.
 
 ```ts filename="src/logic-functions/view-document.ts"
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
@@ -67,13 +76,19 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { documentHtmlPage } from 'src/utils/render-document';
 
 const htmlResponse = (html: string, status = 200): Response =>
-  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  new Response(html, {
+    status,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
 
   if (!documentId) {
-    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+    return htmlResponse(
+      documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'),
+      400,
+    );
   }
 
   // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
@@ -86,10 +101,18 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   const document = documents?.edges?.[0]?.node;
   if (!document?.id) {
-    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+    return htmlResponse(
+      documentHtmlPage(
+        'Document not found',
+        `No document with id ${documentId}.`,
+      ),
+      404,
+    );
   }
 
-  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+  return htmlResponse(
+    documentHtmlPage(document.name ?? 'Document', document.content ?? ''),
+  );
 };
 
 export default defineLogicFunction({
@@ -105,15 +128,15 @@ export default defineLogicFunction({
 });
 ```
 
-`documentHtmlPage`将Markdown体变成HTML(带 [marked](https://marked.js.org/),
-净化) 只显示模板
-内容的可打印页面——与 PDF 和应用程序内预览相同。
-[参见辅助函数](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts)。
+`documentHtmlPage` renders the Markdown body to HTML (with [marked](https://marked.js.org/),
+sanitized) and drops it into a clean, printable page that shows just the template
+content — the same look as the PDF and the in-app preview.
+[See the helper](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
 
-## 试试
+## Try it
 
-在您的工作区内有一个模板和一个人, 调用路由(从
-**设置 -> API 和 Webhooks**获取一个令牌):
+With a template and a Person in your workspace, call the route (grab a token from
+**Settings → Developers → API**):
 
 ```bash filename="Terminal"
 curl -X POST http://localhost:2020/s/documents/generate \
@@ -122,25 +145,31 @@ curl -X POST http://localhost:2020/s/documents/generate \
 # → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
 ```
 
-在您的浏览器中打开返回的文档：
+Open the returned document in your browser:
 
 ```
 http://localhost:2020/s/documents/view?id=<documentId>
 ```
 
-<Frame caption="公开的 GET 路由使文档成为一个可打印的页面。">
-  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="呈现的文档页面" />
+<Frame caption="The public GET route renders the document as a printable page.">
+  <img
+    src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png"
+    alt="A rendered document web page"
+  />
 </Frame>
 
 <Tip>
-您也可以在测试
-`yarn 20dev:functions:logs`时串流函数日志，或直接通过
-`yarn 20dev:function:exec` 直接调用。
+  You can also stream a function's logs while testing with `twenty app logs`, or
+  invoke it directly with `twenty app exec`.
 </Tip>
 
-**在这一步之后：** 应用程序可以通过 HTTP 生成文档并以
-网页服务。 现在让我们让它在没有“curl”的情况下可以使用。
+**After this step:** the app can generate documents over HTTP and serve them as
+web pages. Now let's make it usable without `curl`.
 
-<Card title="下一步：构建界面→" icon="table-columns" href="/zh/developers/extend/apps/tutorials/document-generator/building-the-ui">
-  查看、导航、命令和前端组件。
+<Card
+  title="Next: building the UI →"
+  icon="table-columns"
+  href="/zh/developers/extend/apps/tutorials/document-generator/building-the-ui"
+>
+  Views, navigation, a command, and a front component.
 </Card>

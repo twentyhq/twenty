@@ -1,22 +1,32 @@
 ---
 title: الترجمات
-description: قدّم تطبيقك بعدة لغات — ترجم تسميات ملف البيان وسلاسل واجهة المستخدم عبر كتالوج إعدادات محلية واحد.
-icon: language
+description: Ship your app in multiple languages — translate manifest labels and UI strings through one locales catalog.
+icon: 'language'
 ---
 
-تُكتب تطبيقات Twenty باللغة **الإنجليزية**: السلاسل في شفرتك وملف البيان هي نص المصدر بالإنجليزية، و`en` هي الإعداد المحلي الذي تترجم منه، وأي إعداد محلي يُترك دون ترجمة يعود إليه افتراضيًا.
+<Note>
+  لم تُحدَّث ترجمة هذا الدليل بعد لتشمل واجهة سطر أوامر Twenty المستقلة. يُعرض
+  المحتوى الإنجليزي الحالي أدناه مؤقتًا لتجنّب استخدام أوامر أُزيلت.
+</Note>
 
-يحتوي تطبيقك على نوعين من النصوص القابلة للترجمة، وكلاهما يمر عبر نفس
-كتالوج `locales/`:
+Twenty apps are authored in **English**: the strings in your source and manifest
+are the English source text, `en` is the source locale you translate _from_, and
+any locale left untranslated falls back to it.
 
-* **تسميات ملف البيان** — أسماء الكائنات والحقول، وعناوين العروض، وعناصر القوائم، وسلاسل أخرى مُعلَنة في بيانات التعريف لتطبيقك.
-* **سلاسل الواجهة الأمامية (front-component)** — نص واجهة المستخدم الذي تقوم مكوّنات React الأمامية لديك بعرضه.
+Your app has two kinds of translatable text, and both flow through the same
+`locales/` catalog:
 
-تضع علامات على السلاسل القابلة للترجمة، وتستخرجها إلى كتالوجات لكل إعداد محلي، ثم تترجم هذه الكتالوجات، وتتولّى عملية البناء تقديم اللغة الصحيحة للمستخدم الحالي — دون أي إعداد إضافي.
+- **Manifest labels** — object and field names, view titles, menu items, and
+  other strings declared in your app's metadata.
+- **Front-component strings** — the UI text your React front components render.
 
-## وضع علامات على سلاسل الواجهة الأمامية (front-component)
+You mark the translatable strings, extract them into per-locale catalogs,
+translate those catalogs, and the build serves the right language for the
+current user — no extra wiring.
 
-قم باستيراد أدوات الترجمة من `twenty-sdk/front-component`:
+## Marking front-component strings
+
+Import the translation helpers from `twenty-sdk/front-component`:
 
 ```tsx
 import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
@@ -42,44 +52,57 @@ const Card = ({ count, name }: { count: number; name: string }) => {
       <p>{t('Saved {count} cards', { count })}</p>
 
       {/* Resolve a lazily-declared descriptor */}
-      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+      <ul>
+        {STATUSES.map((s) => (
+          <li key={s.id}>{t(s.label)}</li>
+        ))}
+      </ul>
     </section>
   );
 };
 ```
 
-### متى تستخدم أيًّا منها
+### When to use which
 
-* **`Trans`** — نص ثابت في JSX. استخدم الخاصيتين `message` و`values` من أجل الاستبدال (interpolation)، كما في `Trans message="Hi {name}" values={{ name }}`؛ لا يمكن استخراج الاستبدال مباشرة في العناصر الفرعية (children) بشكل ثابت.
-* **`useTranslate().t`** — سلاسل ديناميكية داخل المكوّن. يُعيد التصيير عندما يغيّر المستخدم اللغة. يفضّل استخدامه داخل التصيير (render).
-* **`t(...)`** (مستوردة مباشرة) — ترجمة فورية (eager) يمكن استخدامها **في أي مكان**،
-  بما في ذلك معالجات الأحداث (event handlers)، والبرامج المساعدة (helpers)، ونطاق الوحدة (module scope) — وليس فقط داخل التصيير.
-* **`msg(...)`** — واصف مؤجَّل للسلاسل المُعلَنة كبيانات (ثوابت، التهيئة (config)). قم بحلّه لاحقًا باستخدام `t(descriptor)`.
+- **`Trans`** — static text in JSX. Use the `message` and `values` props for
+  interpolation, as in `Trans message="Hi {name}" values={{ name }}`;
+  interpolating directly in the children is not statically extractable.
+- **`useTranslate().t`** — dynamic strings inside a component. Re-renders when the
+  user switches language. Prefer this inside render.
+- **`t(...)`** (imported directly) — eager translation usable **anywhere**,
+  including event handlers, helpers, and module scope — not only inside render.
+- **`msg(...)`** — a lazy descriptor for strings declared as data (constants,
+  config). Resolve it later with `t(descriptor)`.
 
-### السياق
+### Context
 
-مرِّر `context` لتمييز سلاسل المصدر المتطابقة التي تُترجَم بشكل مختلف:
+Pass `context` to disambiguate identical source strings that translate
+differently:
 
 ```tsx
 t({ message: 'Open', context: 'door' });
 t({ message: 'Open', context: 'window' });
-<Trans context="card-title">Untitled</Trans>
+<Trans context="card-title">Untitled</Trans>;
 ```
 
-تظهر السلاسل السياقية في كتالوجات اللغة المحلية كمجموعة مفهرسة حسب سياقها:
-`"\<context>": { "\<message>": "\<translation>" }`. تكون تسميات الـ Manifest سياقية بطبيعتها — إذ تحمل كل تسمية دورها في البيانات الوصفية (`objectMetadata.labelSingular`، `fieldMetadata.label`، `view.name`، …)، لذلك يمكن أن تُترجَم الكلمة نفسها بشكل مختلف عندما تكون اسم كائن وعندما تكون اسم عرض.
+Contextual strings appear in locale catalogs as a group keyed by their
+context: `"<context>": { "<message>": "<translation>" }`. Manifest labels are
+contextual by construction — each one carries the metadata role it plays
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), so
+the same word can translate differently as an object name and as a view name.
 
-## الاستخراج والترجمة
+## Extracting and translating
 
-شغِّل أمر الاستخراج من دليل تطبيقك:
+Run the extract command from your app directory:
 
 ```bash
-twenty dev:translations-extract                  # collect strings into locales/en.json
-twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+twenty app translations extract                  # collect strings into locales/en.json
+twenty app translations extract --locale fr-FR   # also scaffold a target locale
 ```
 
-يقوم الاستخراج بجمع كل من تسميات ملف البيان (manifest labels) وسلاسل `t()`/`msg()`/`Trans`
-من شفرة الواجهة الأمامية (front-component) في `locales/\<locale>.json`، مفهرسة حسب سلسلة المصدر. املأ الترجمات:
+Extraction collects both your manifest labels and the `t()`/`msg()`/`Trans`
+strings from your front-component source into `locales/<locale>.json`, keyed by
+source string. Fill in the translations:
 
 ```json
 // locales/fr-FR.json
@@ -96,27 +119,49 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 }
 ```
 
-السلاسل غير المرتبطة بسياق هي مدخلات مسطَّحة؛ أما السلاسل المرتبطة بسياق — بما في ذلك كل تسمية في ملف manifest — فهي متداخلة تحت مفتاح السياق الخاص بها.
+Context-free strings are flat entries; contextual strings — including every
+manifest label — are nested under their context key.
 
-العناصر النائبة مثل `{name}` تُستبدَل وقت التشغيل — احتفظ بها في
-الترجمة. أي سلسلة تُترَك فارغة تعود إلى نص المصدر.
+Placeholders like `{name}` are substituted at runtime — keep them in the
+translation. Any string left empty falls back to the source text.
 
-## كيفية التشغيل
+## How it runs
 
-يقوم `twenty dev:build` بتجميع الكتالوجات وتقديم اللغة الصحيحة للمستخدم
-الحالي: يتم حل تسميات ملف البيان (manifest labels) على جانب الخادم، ويتم تضمين كتالوجات الواجهة الأمامية (front-component)
-داخل كل حزمة مكوّن. وقت التشغيل يقرأ المكوّن
-اللغة (locale) من سياق التنفيذ الخاص به (لغة المضيف الحالية) ويحل كل سلسلة مقابل كتالوجه، مع الرجوع إلى المصدر عندما تكون الترجمة مفقودة. تغيير اللغة في المضيف يعيد تصيير سلاسل `Trans` و
-`useTranslate().t` مباشرة.
+`twenty app build` compiles the catalogs and serves the right language for the
+current user: manifest labels are resolved server-side, and front-component
+catalogs are baked into each component bundle. At runtime a component reads the
+locale from its execution context (the host's current language) and resolves
+each string against its catalog, falling back to the source when a translation
+is missing. Switching language in the host re-renders `Trans` and
+`useTranslate().t` strings live.
 
-تُصرَّف تسميات Manifest عند كل مزامنة — `twenty dev:build` و`twenty apply`
-وكذلك المراقبة المستمرة `twenty dev` — لذا يكفي تعديل ملف لغة
-والمزامنة لرؤية النص الجديد. تُضمَّن كتالوجات مكوّنات Front في
-كل حزمة مكوّنات وقت البناء، لذا فإن تغيير أحدها لا يزال يعني
-إعادة تشغيل `twenty dev:build` (وإعادة النشر).
+Manifest labels are compiled on every sync — `twenty app build`, `twenty app apply`
+and the continuous `twenty app dev` watch alike — so editing a locale file and
+syncing is enough to see the new text. Front component catalogs are baked into
+each component bundle at build time, so changing one of those still means
+re-running `twenty app build` (and redeploying).
 
-قد تمتد عناصر النص التابعة لـ `Trans` على عدة أسطر — يتم ضغط المسافات
-بنفس الطريقة التي يقوم JSX بضغطها، لذلك كلاهما يتم استخلاصه إلى المفتاح `Welcome back`:
+## Pulling translations
+
+`twenty app pull` writes an application's published translations back into
+`locales/`. A published catalog is keyed by message id, so pull recovers the
+readable form only for strings whose source it can see: the labels of the
+metadata it pulled and the `t()`/`msg()`/`Trans` strings of front components
+present in the project. Everything else is kept as is in
+`locales/compiled/<locale>.json`, keyed by message id. The build merges those
+files into the catalog (an entry in `locales/<locale>.json` wins over a
+compiled one with the same id), `twenty app translations extract` leaves them alone,
+and every pull rewrites them, so they shrink as more of the app's source lands
+in the tree. Do not edit them by hand; translate in `locales/<locale>.json`.
+
+A project without a `locales/` folder says nothing about translations, so a
+sync from it leaves whatever the app already published untouched. To remove
+published translations on purpose, keep the folder and delete the locale files
+inside it: a `locales/` folder that compiles to no locale is an explicit
+declaration, and the sync prunes accordingly.
+
+`Trans` text children may span multiple lines — whitespace is collapsed the
+same way JSX collapses it, so both of these extract to the key `Welcome back`:
 
 ```tsx
 <Trans>Welcome back</Trans>
