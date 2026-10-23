@@ -1,7 +1,7 @@
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
-import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+import { createWaitForFrontComponentInteraction } from '@/__stories__/shared/test-utils/createWaitForFrontComponentInteraction';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
@@ -9,10 +9,6 @@ import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-galler
 type Canvas = ReturnType<typeof within>;
 
 const BILLING_COUNTRY_TRIGGER_NAME = 'Billing country';
-
-const createWaitForCountrySelectInteraction =
-  (container: HTMLElement) => (assertion: () => void) =>
-    waitFor(assertion, { container, timeout: INTERACTION_TIMEOUT });
 
 const expectTriggersShowSavedCountriesWithDecorativeFlags = (
   canvas: Canvas,
@@ -72,7 +68,7 @@ const selectCountry = async ({
   optionName: string;
 }) => {
   const trigger = canvas.getByRole('button', { name: triggerName });
-  const waitForInteraction = createWaitForCountrySelectInteraction(
+  const waitForInteraction = createWaitForFrontComponentInteraction(
     trigger.ownerDocument.body,
   );
 
@@ -94,7 +90,7 @@ export const countrySelectTest: TwentyUiGalleryPlayFunction = async (
 ) => {
   const canvas = within(context.canvasElement);
   const page = within(context.canvasElement.ownerDocument.body);
-  const waitForInteraction = createWaitForCountrySelectInteraction(
+  const waitForInteraction = createWaitForFrontComponentInteraction(
     context.canvasElement.ownerDocument.body,
   );
   await expectFrontComponentMounted(canvas);
