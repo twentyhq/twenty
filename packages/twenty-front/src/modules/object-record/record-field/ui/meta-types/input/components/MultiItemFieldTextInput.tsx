@@ -47,6 +47,7 @@ export const MultiItemFieldTextInput = ({
   <StyledInputContent>
     <Input
       variant="plain"
+      hasFocusRing={false}
       aria-invalid={hasError || undefined}
       autoFocus={autoFocus}
       value={value}
