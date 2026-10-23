@@ -464,7 +464,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
-      featureLabel: msg`Security review & DPA`,
+      featureLabel: msg`Security review & tailored DPA`,
       tiers: {
         enterprise: { kind: 'yes', label: msg`Yes` },
         organization: { kind: 'dash' },
