@@ -126,7 +126,7 @@ describe('Share record side panel', () => {
       ).toBeVisible(),
     );
     expect(
-      screen.getByRole('button', { name: 'Everyone at Acme' }),
+      screen.getByRole('button', { name: 'Everyone with access to Companies' }),
     ).toBeVisible();
   });
 

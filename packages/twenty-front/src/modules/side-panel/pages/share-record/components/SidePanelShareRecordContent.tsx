@@ -83,6 +83,7 @@ export const SidePanelShareRecordContent = ({
     saving,
     setShare,
     setGeneralAccess,
+    objectLabelPlural,
   });
   const searchInputRef = useRef<HTMLInputElement>(null);
   const {

@@ -440,9 +440,7 @@ export const InvitePeople: Story = {
     await expect(page.getByText('Roles')).toBeVisible();
     await expect(page.getByText('Users')).toBeVisible();
     await expect(page.queryByText('Selected')).not.toBeInTheDocument();
-    await expect(
-      page.queryByText('Doesn’t have access'),
-    ).not.toBeInTheDocument();
+    await expect(page.queryByText('Doesn’t have access')).not.toBeInTheDocument();
     await expect(page.queryByRole('checkbox')).not.toBeInTheDocument();
     await expect(setGeneralAccess).not.toHaveBeenCalled();
   },
@@ -456,7 +454,7 @@ export const InviteEveryone: Story = {
       'Everyone',
     );
     await userEvent.click(
-      page.getByRole('checkbox', { name: /Everyone at Acme/ }),
+      page.getByRole('checkbox', { name: /Everyone with access to Chats/ }),
     );
     await userEvent.click(
       page.getByRole('button', { name: 'Invite as Viewer' }),
@@ -540,7 +538,7 @@ export const DefaultGeneralAccess: Story = {
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
     const generalAccess = await page.findByRole('button', {
-      name: 'Everyone at Acme Editor',
+      name: 'Everyone with access to Chats Editor',
     });
     await userEvent.click(generalAccess);
     await expect(

@@ -42,7 +42,7 @@ const getSearchResults = (
     selectedRecipients: [],
     generalAccess: {
       hasGeneralAccess: true,
-      label: 'Everyone at Apple',
+      label: 'Everyone with access to Companies',
       workspaceName: 'Apple',
     },
     ...overrides,

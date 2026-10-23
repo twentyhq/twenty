@@ -54,6 +54,7 @@ const renderInvitation = () => {
         saving: false,
         setShare,
         setGeneralAccess,
+        objectLabelPlural: 'Companies',
       }),
     { initialProps: { sharing: RESTRICTED_SHARING }, wrapper: Wrapper },
   );

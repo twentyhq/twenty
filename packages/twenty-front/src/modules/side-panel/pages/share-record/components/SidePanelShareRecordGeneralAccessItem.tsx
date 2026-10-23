@@ -8,6 +8,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharing/constants/RecordShareAccessLevelOptions';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
+import { getRecordSharingGeneralAccess } from '@/object-record/record-sharing/utils/getRecordSharingGeneralAccess';
 import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordDropdownItem';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
@@ -40,7 +41,11 @@ export const SidePanelShareRecordGeneralAccessItem = ({
   const isRestricted =
     !isDefined(generalAccessLevel) ||
     generalAccessLevel === RecordShareAccessLevel.NONE;
-  const hasWorkspaceAccess = !isRestricted || hasManagedGeneralAccess;
+  const { hasGeneralAccess, label: generalAccessLabel } =
+    getRecordSharingGeneralAccess({
+      sharing: { generalAccessLevel, hasManagedGeneralAccess },
+      objectLabelPlural,
+    });
   const withDefaultMarker = ({
     label,
     accessLevel,
@@ -52,12 +57,10 @@ export const SidePanelShareRecordGeneralAccessItem = ({
 
   return (
     <SidePanelShareRecordDropdownItem
-      label={
-        hasWorkspaceAccess ? t`Everyone at ${workspaceName}` : t`Restricted`
-      }
+      label={hasGeneralAccess ? t(generalAccessLabel) : t`Restricted`}
       Icon={IconLock}
       LeftComponent={
-        hasWorkspaceAccess ? (
+        hasGeneralAccess ? (
           <ListItemIconContainer>
             <Avatar
               name={workspaceName}
@@ -81,7 +84,7 @@ export const SidePanelShareRecordGeneralAccessItem = ({
       <Dropdown.Section>
         <Dropdown.OptionItem
           startIcon={<IconLock />}
-          selected={!hasWorkspaceAccess}
+          selected={!hasGeneralAccess}
           disabled={isRestricted || isSaving}
           onSelect={() => {
             void setGeneralAccess(RecordShareAccessLevel.NONE);
@@ -94,7 +97,7 @@ export const SidePanelShareRecordGeneralAccessItem = ({
         </Dropdown.OptionItem>
       </Dropdown.Section>
       <Dropdown.Separator />
-      <Dropdown.Section label={t`Everyone with access to ${objectLabelPlural}`}>
+      <Dropdown.Section label={t(generalAccessLabel)}>
         {RECORD_SHARE_ACCESS_LEVEL_OPTIONS.filter(
           // Full access lets its holder manage sharing, so it is only granted by name
           (option) => option.value !== RecordShareAccessLevel.FULL,

@@ -10,11 +10,13 @@ describe('getRecordSharingGeneralAccess', () => {
         generalAccessLevel: RecordShareAccessLevel.NONE,
         hasManagedGeneralAccess: true,
       },
-      workspaceName: 'Apple',
+      objectLabelPlural: 'Companies',
     });
 
     expect(generalAccess.hasGeneralAccess).toBe(true);
-    expect(i18n._(generalAccess.label)).toBe('Everyone at Apple');
+    expect(i18n._(generalAccess.label)).toBe(
+      'Everyone with access to Companies',
+    );
   });
 
   it('includes an explicit workspace grant without application-managed access', () => {
@@ -24,7 +26,7 @@ describe('getRecordSharingGeneralAccess', () => {
           generalAccessLevel: RecordShareAccessLevel.READ,
           hasManagedGeneralAccess: false,
         },
-        workspaceName: 'Apple',
+        objectLabelPlural: 'Companies',
       }).hasGeneralAccess,
     ).toBe(true);
   });
@@ -40,7 +42,7 @@ describe('getRecordSharingGeneralAccess', () => {
       expect(
         getRecordSharingGeneralAccess({
           sharing,
-          workspaceName: 'Apple',
+          objectLabelPlural: 'Companies',
         }).hasGeneralAccess,
       ).toBe(false);
     }

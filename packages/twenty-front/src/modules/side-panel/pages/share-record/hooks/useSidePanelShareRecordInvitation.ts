@@ -17,13 +17,16 @@ const DEFAULT_INVITATION_ACCESS_LEVEL = RecordShareAccessLevel.READ;
 type UseSidePanelShareRecordInvitationProps = Pick<
   ReturnType<typeof useRecordSharing>,
   'sharing' | 'saving' | 'setShare' | 'setGeneralAccess'
->;
+> & {
+  objectLabelPlural: string;
+};
 
 export const useSidePanelShareRecordInvitation = ({
   sharing,
   saving,
   setShare,
   setGeneralAccess,
+  objectLabelPlural,
 }: UseSidePanelShareRecordInvitationProps) => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -41,7 +44,7 @@ export const useSidePanelShareRecordInvitation = ({
   const isBusy = isSubmitting || saving;
   const workspaceName = currentWorkspace?.displayName ?? '';
   const { hasGeneralAccess, label: generalAccessLabel } =
-    getRecordSharingGeneralAccess({ sharing, workspaceName });
+    getRecordSharingGeneralAccess({ sharing, objectLabelPlural });
   const generalAccess = {
     hasGeneralAccess,
     label: t(generalAccessLabel),

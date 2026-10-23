@@ -10,7 +10,7 @@ const RECIPIENTS: RecordSharingInvitationRecipient[] = [
   { kind: 'workspaceMember', id: 'sarah', label: 'Sarah Lin' },
   { kind: 'workspaceMember', id: 'marco', label: 'Marco Rossi' },
   { kind: 'role', id: 'sales', label: 'Sales' },
-  { kind: 'everyone', id: 'workspace', label: 'Everyone at Acme' },
+  { kind: 'everyone', id: 'workspace', label: 'Everyone with access to Chats' },
 ];
 
 const InvitationStory = ({

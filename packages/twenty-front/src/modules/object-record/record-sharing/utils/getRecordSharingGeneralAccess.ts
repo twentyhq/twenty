@@ -8,7 +8,7 @@ import {
 
 export const getRecordSharingGeneralAccess = ({
   sharing,
-  workspaceName,
+  objectLabelPlural,
 }: {
   sharing:
     | Pick<
@@ -16,11 +16,11 @@ export const getRecordSharingGeneralAccess = ({
         'generalAccessLevel' | 'hasManagedGeneralAccess'
       >
     | undefined;
-  workspaceName: string;
+  objectLabelPlural: string;
 }) => ({
   hasGeneralAccess:
     (sharing?.hasManagedGeneralAccess ?? false) ||
     (isDefined(sharing?.generalAccessLevel) &&
       sharing.generalAccessLevel !== RecordShareAccessLevel.NONE),
-  label: msg`Everyone at ${workspaceName}`,
+  label: msg`Everyone with access to ${objectLabelPlural}`,
 });
