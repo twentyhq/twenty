@@ -176,7 +176,7 @@ export const CampaignDetailsFields = ({
           />
         </ComposerFieldRow>
       )}
-      <ComposerFieldRow label={t`Subject`}>
+      <ComposerFieldRow label={t`Subject`} hasDivider={false}>
         <FormTextFieldInput
           key={`subject-${detailsState.draftResyncKey}`}
           ariaLabel={t`Subject`}

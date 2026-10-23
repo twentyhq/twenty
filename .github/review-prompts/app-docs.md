@@ -13,18 +13,21 @@ Read `context.json` and `pr.diff` first. The PR source is available under
 run commands, install dependencies, edit files or access GitHub. Only these kinds of changes are documentation-relevant:
 
 - CLI commands, subcommands, flags, defaults, or help text
-  (`packages/twenty-sdk/src/cli/commands/**`)
+  (`packages/twenty-cli/src/commands/**`, `packages/twenty-sdk/src/cli/commands/**`)
 - `define*` function signatures, config properties, validation rules,
   or their warnings (`packages/twenty-sdk/src/sdk/define/**`)
 - Enum / string-union values and manifest types
   (`packages/twenty-shared/src/application/**`, `packages/twenty-shared/src/types/**`)
-- Exports added/removed/renamed in the `exports` maps of `twenty-sdk` or
+- Exports added/removed/renamed in the `exports` maps of `twenty`, `twenty-sdk`, or
   `twenty-client-sdk` package.json, or in their public entry points
 - Front-component runtime hooks and host API
   (`packages/twenty-sdk/src/sdk/front-component/**`)
-- The scaffold template (`packages/create-twenty-app/src/constants/template/**`)
-  and scaffolder flags/prompts (`packages/create-twenty-app/src/cli.ts`,
-  `create-app.command.ts`)
+- Scaffold templates (`packages/twenty-cli/app-template/**`,
+  `packages/create-twenty-app/src/constants/template/**`)
+  and scaffolder flags/prompts (`packages/twenty-cli/src/commands/app/init/**`,
+  `packages/twenty-cli/src/app/create-app-project.ts`,
+  `packages/create-twenty-app/src/cli.ts`,
+  `packages/create-twenty-app/src/create-app.command.ts`)
 - Environment variables injected into logic functions or front components
 - Error codes surfaced to app developers
 
@@ -37,7 +40,7 @@ Use this mapping to know which pages to check (read the actual pages):
 
 | Source area | Docs pages |
 |---|---|
-| CLI commands (`src/cli/commands`) | `operations/cli.mdx`, `getting-started/quick-start.mdx`, `operations/sync-and-recovery.mdx`, `getting-started/local-server.mdx`, `getting-started/scaffolding.mdx` |
+| CLI commands (`twenty-cli/src/commands`, `twenty-sdk/src/cli/commands`) | `operations/cli.mdx`, `getting-started/quick-start.mdx`, `operations/sync-and-recovery.mdx`, `getting-started/local-server.mdx`, `getting-started/scaffolding.mdx` |
 | `defineObject`/`defineField`/relations/indexes | `data/*.mdx` |
 | `defineApplication`/roles/install hooks/variables | `config/*.mdx` |
 | Logic functions, triggers, connections, agents/skills | `logic/*.mdx` |

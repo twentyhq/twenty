@@ -8,6 +8,7 @@ import tempfile
 import urllib.request
 
 SOURCE_PREFIXES = (
+    "packages/twenty-cli/",
     "packages/twenty-sdk/",
     "packages/create-twenty-app/",
     "packages/twenty-client-sdk/",

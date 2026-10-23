@@ -23,18 +23,21 @@ Read `context.json` and `pr.diff` first. The PR source is available under
 run commands, install dependencies, edit files or access GitHub. Only these kinds of changes are skill-relevant:
 
 - CLI commands, subcommands, flags, defaults, or help text
-  (`packages/twenty-sdk/src/cli/commands/**`)
+  (`packages/twenty-cli/src/commands/**`, `packages/twenty-sdk/src/cli/commands/**`)
 - `define*` function signatures, config properties, validation rules,
   or their warnings (`packages/twenty-sdk/src/sdk/define/**`)
 - Enum / string-union values and manifest types
   (`packages/twenty-shared/src/application/**`, `packages/twenty-shared/src/types/**`)
-- Exports added/removed/renamed in the `exports` maps of `twenty-sdk` or
+- Exports added/removed/renamed in the `exports` maps of `twenty`, `twenty-sdk`, or
   `twenty-client-sdk` package.json, or in their public entry points
 - Front-component runtime hooks and host API
   (`packages/twenty-sdk/src/sdk/front-component/**`)
-- The scaffold template (`packages/create-twenty-app/src/constants/template/**`)
-  and scaffolder flags/prompts (`packages/create-twenty-app/src/cli.ts`,
-  `create-app.command.ts`)
+- Scaffold templates (`packages/twenty-cli/app-template/**`,
+  `packages/create-twenty-app/src/constants/template/**`)
+  and scaffolder flags/prompts (`packages/twenty-cli/src/commands/app/init/**`,
+  `packages/twenty-cli/src/app/create-app-project.ts`,
+  `packages/create-twenty-app/src/cli.ts`,
+  `packages/create-twenty-app/src/create-app.command.ts`)
 - Environment variables injected into logic functions or front components
 - Error codes surfaced to app developers
 - Default ports and instance URLs used during development
@@ -49,7 +52,7 @@ paths relative to `packages/twenty-agent-skills/`):
 
 | Source area | Skill content |
 |---|---|
-| CLI commands (`src/cli/commands`) | `references/manage-app/cli-and-sync.md`, `skills/manage-app/SKILL.md`, `references/concepts/operating-rules.md` |
+| CLI commands (`twenty-cli/src/commands`, `twenty-sdk/src/cli/commands`) | `references/manage-app/cli-and-sync.md`, `skills/manage-app/SKILL.md`, `references/concepts/operating-rules.md` |
 | Scaffolder flags, prompts, template | `skills/create-app/SKILL.md`, `references/develop-app/app-structure.md` |
 | `defineObject`/`defineField`/relations/indexes | `references/develop-app/data-model.md` |
 | `defineApplication`/roles/install hooks/variables | `references/concepts/how-apps-work.md`, `references/publish-app/prepare-for-app-store.md` |

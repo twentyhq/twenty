@@ -1,6 +1,6 @@
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
-import { type AgentToolContext } from 'src/engine/metadata-modules/ai/ai-agent/tools/types/agent-tool-context.type';
-import { type AgentToolDependencies } from 'src/engine/metadata-modules/ai/ai-agent/tools/types/agent-tool-dependencies.type';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import {
   AiException,
   AiExceptionCode,
@@ -9,21 +9,21 @@ import { type FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent
 
 export const findManageableAgentOrThrow = async ({
   agentId,
-  deps,
+  agentService,
   context,
 }: {
   agentId: string;
-  deps: Pick<AgentToolDependencies, 'agentService'>;
-  context: AgentToolContext;
+  agentService: AgentService;
+  context: ToolProviderContext;
 }): Promise<FlatAgentWithRoleId> => {
-  const agent = await deps.agentService.findOneAgentById({
+  const agent = await agentService.findOneAgentById({
     id: agentId,
     workspaceId: context.workspaceId,
   });
 
   if (
     !canCallerReachApplication({
-      callingApplication: context.callingApplication,
+      callingApplication: context.application,
       applicationId: agent.applicationId,
     })
   ) {
