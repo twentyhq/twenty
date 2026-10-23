@@ -13,10 +13,10 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -82,16 +82,19 @@ export const MultiItemFieldInput = <T,>({
   maxItemCount,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const store = useStore();
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
-  const currentFocusedItem = useAtomStateValue(currentFocusedItemSelector);
-
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
+      // Read from the store so a nested item-menu close on the same click
+      // does not leave this gate stuck on the stale DROPDOWN focus item.
+      const currentFocusedItem = store.get(currentFocusedItemSelector.atom);
+
       if (
         currentFocusedItem?.componentInstance.componentType !==
         FocusComponentType.OPENED_FIELD_INPUT
