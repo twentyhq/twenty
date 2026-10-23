@@ -95,7 +95,10 @@ const EMPTY_PHONE: PhoneRecord = {
   countryCode: '',
 };
 
-const getPhoneText = (phone: PhoneRecord) => phone.callingCode + phone.number;
+const getPhoneText = ({
+  callingCode,
+  number,
+}: Pick<PhoneRecord, 'callingCode' | 'number'>) => callingCode + number;
 
 const validatePhone = (input: string) => ({
   isValid: phoneSchema.safeParse(input).success,
