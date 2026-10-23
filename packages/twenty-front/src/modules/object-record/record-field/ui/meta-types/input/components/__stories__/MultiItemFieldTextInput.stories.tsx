@@ -1,18 +1,18 @@
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-const meta: Meta<typeof MultiItemBaseInput> = {
-  title: 'UI/Data/Field/Input/BaseFieldInput',
-  component: MultiItemBaseInput,
+const meta: Meta<typeof MultiItemFieldTextInput> = {
+  title: 'UI/Data/Field/Input/MultiItemFieldTextInput',
+  component: MultiItemFieldTextInput,
   decorators: [ComponentDecorator],
-  args: { value: 'Lorem ipsum', instanceId: 'multi-item-base-input' },
+  args: { value: 'Lorem ipsum', onChange: fn() },
 };
 
 export default meta;
-type Story = StoryObj<typeof MultiItemBaseInput>;
+type Story = StoryObj<typeof MultiItemFieldTextInput>;
 
 export const Default: Story = {};
 
@@ -20,11 +20,9 @@ export const Focused: Story = {
   args: { autoFocus: true },
 };
 
-export const InvalidPlainInput: Story = {
+export const Invalid: Story = {
   args: {
     hasError: true,
-    error: 'Enter a valid value',
-    onChange: fn(),
     onEnter: fn(),
   },
   play: async ({ canvasElement, args }) => {
@@ -32,7 +30,6 @@ export const InvalidPlainInput: Story = {
     const input = canvas.getByRole('textbox');
 
     await expect(input).toHaveAttribute('aria-invalid', 'true');
-    await expect(canvas.getByText('Enter a valid value')).toBeVisible();
     await expect(getComputedStyle(input).borderWidth).toBe('0px');
     await expect(getComputedStyle(input).outlineWidth).toBe('2px');
     await userEvent.click(input);
