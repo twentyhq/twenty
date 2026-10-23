@@ -17,16 +17,12 @@ function validateEnvironmentOrThrow(): { apiUrl: string; apiKey: string } {
 }
 
 async function checkServerOrThrow(apiUrl: string) {
-  let response: Response;
-
-  try {
-    response = await fetch(`${apiUrl}/healthz`);
-  } catch {
+  const response = await fetch(`${apiUrl}/healthz`).catch(() => {
     throw new Error(
       `Twenty server is not reachable at ${apiUrl}. ` +
         'Make sure the server is running before executing integration tests.',
     );
-  }
+  });
 
   if (!response.ok) {
     throw new Error(`Server at ${apiUrl} returned ${response.status}`);
