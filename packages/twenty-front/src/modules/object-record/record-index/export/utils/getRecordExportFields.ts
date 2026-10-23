@@ -1,6 +1,7 @@
 import {
   type buildRecordExportColumns,
   computeMorphRelationGqlFieldName,
+  CustomError,
   expandRecordExportMorphFields,
   isDefined,
   isNonEmptyArray,
@@ -59,7 +60,10 @@ export const getRecordExportFields = ({
         );
 
         if (!isDefined(targetObjectMetadataItem)) {
-          throw new Error(t`An export field is no longer available.`);
+          throw new CustomError(
+            t`An export field is no longer available.`,
+            'MORPH_TARGET_NOT_FOUND',
+          );
         }
 
         return {

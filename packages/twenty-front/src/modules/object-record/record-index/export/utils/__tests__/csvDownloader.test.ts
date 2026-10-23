@@ -7,6 +7,7 @@ import { i18n } from '@lingui/core';
 import { saveAs } from 'file-saver';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
@@ -188,13 +189,10 @@ describe('csvDownloader', () => {
     const objectMetadataItem = getMockObjectMetadataItemOrThrow('person');
     const singleRecordColumns = ['name', 'city', 'company'].map(
       (fieldName, position) => {
-        const field = objectMetadataItem.fields.find(
-          (field) => field.name === fieldName,
-        );
-
-        if (!field) {
-          throw new Error(`Field ${fieldName} not found`);
-        }
+        const field = getMockFieldMetadataItemOrThrow({
+          objectMetadataItem,
+          fieldName,
+        });
 
         return formatFieldMetadataItemAsColumnDefinition({
           field,
@@ -228,13 +226,10 @@ describe('csvDownloader', () => {
   it('rejects missing morph target metadata before downloading', () => {
     const objectMetadataItem =
       getMockObjectMetadataItemOrThrow('petCareAgreement');
-    const field = objectMetadataItem.fields.find(
-      (field) => field.name === 'caretaker',
-    );
-
-    if (!field) {
-      throw new Error('Caretaker field not found');
-    }
+    const field = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem,
+      fieldName: 'caretaker',
+    });
 
     expect(() =>
       csvDownloader({

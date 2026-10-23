@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { useStore } from 'jotai';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { csvDownloader } from '@/object-record/record-index/export/utils/csvDownloader';
@@ -17,7 +18,7 @@ export const useExportSingleRecord = ({
   objectMetadataItem,
   recordId,
 }: UseSingleExportTableDataOptions) => {
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const store = useStore();
 
   const columns: Pick<
     ColumnDefinition<FieldMetadata>,
@@ -40,6 +41,9 @@ export const useExportSingleRecord = ({
     if (isDefined(error) || !isDefined(record)) {
       return;
     }
+    const objectMetadataItems = store.get(
+      objectMetadataItemsWithFieldsSelector.atom,
+    );
     csvDownloader({ filename, rows: [record], columns, objectMetadataItems });
   };
   return { download };

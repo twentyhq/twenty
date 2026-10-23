@@ -13,6 +13,7 @@ import {
   buildRecordExportColumns,
   formatRecordExportHeader,
   formatRecordExportRow,
+  isDefined,
 } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -177,7 +178,7 @@ describe('useRecordData', () => {
         (field) => field.name === 'caretaker',
       );
 
-      if (!morphField) {
+      if (!isDefined(morphField)) {
         throw new Error('Caretaker field not found');
       }
 

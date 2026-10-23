@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { useStore } from 'jotai';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import {
   useRecordIndexLazyFetchRecords,
@@ -55,13 +56,16 @@ export const useRecordIndexExportRecords = ({
   onMoreRecords,
   abortSignal,
 }: UseExportTableDataOptions) => {
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const store = useStore();
 
   const downloadCsv = useCallback<UseRecordDataOptions['callback']>(
     ({ rows, columns }) => {
+      const objectMetadataItems = store.get(
+        objectMetadataItemsWithFieldsSelector.atom,
+      );
       csvDownloader({ filename, rows, columns, objectMetadataItems });
     },
-    [filename, objectMetadataItems],
+    [filename, store],
   );
 
   const { getTableData: download, progress } = useRecordIndexLazyFetchRecords({

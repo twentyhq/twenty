@@ -1,6 +1,5 @@
-import { BadRequestException } from '@nestjs/common';
-
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   type buildRecordExportColumns,
@@ -9,6 +8,7 @@ import {
   isMorphRelationHead,
 } from 'twenty-shared/utils';
 
+import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -77,8 +77,12 @@ export const expandMorphRelationExportFields = ({
           : undefined;
 
         if (!isDefined(targetObject)) {
-          throw new BadRequestException(
-            t`An export field is no longer available.`,
+          throw new RecordExportException(
+            doNotTranslate('An export field is no longer available.'),
+            'MORPH_TARGET_NOT_FOUND',
+            {
+              userFriendlyMessage: msg`An export field is no longer available.`,
+            },
           );
         }
 

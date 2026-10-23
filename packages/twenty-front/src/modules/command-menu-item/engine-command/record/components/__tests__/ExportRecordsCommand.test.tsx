@@ -65,26 +65,31 @@ jest.mock('@/object-record/record-show/hooks/useExportSingleRecord', () => ({
   useExportSingleRecord: () => ({ download: mockSingleRecordDownload }),
 }));
 
-const renderExport = (enabled?: boolean, strictMode = false) => {
+const renderExport = ({
+  isAsyncCsvExportEnabled,
+  isStrictMode = false,
+}: {
+  isAsyncCsvExportEnabled?: boolean;
+  isStrictMode?: boolean;
+}) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [],
     onInitializeJotaiStore: (store) => {
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
-        featureFlags:
-          enabled === undefined
-            ? []
-            : [
-                {
-                  key: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-                  value: enabled,
-                },
-              ],
+        featureFlags: !isDefined(isAsyncCsvExportEnabled)
+          ? []
+          : [
+              {
+                key: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
+                value: isAsyncCsvExportEnabled,
+              },
+            ],
       });
     },
   });
   return render(<ExportRecordsCommand />, {
-    reactStrictMode: strictMode,
+    reactStrictMode: isStrictMode,
     wrapper: ({ children }: { children: ReactNode }) => (
       <Wrapper>
         <CommandComponentInstanceContext.Provider
@@ -106,8 +111,8 @@ beforeEach(() => {
 
 it.each([undefined, false, true])(
   'exports a single batch locally when the workspace flag is %s',
-  async (enabled) => {
-    renderExport(enabled);
+  async (isAsyncCsvExportEnabled) => {
+    renderExport({ isAsyncCsvExportEnabled });
     await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
     expect(mockAsyncDownload).not.toHaveBeenCalled();
     expect(mockSingleRecordDownload).not.toHaveBeenCalled();
@@ -116,11 +121,11 @@ it.each([undefined, false, true])(
 
 it.each([undefined, false, true])(
   'uses the async fallback for additional pages only when the workspace flag is enabled (%s)',
-  async (enabled) => {
+  async (isAsyncCsvExportEnabled) => {
     mockHasMoreRecords = true;
-    renderExport(enabled);
+    renderExport({ isAsyncCsvExportEnabled });
     await waitFor(() => expect(mockIndexDownload).toHaveBeenCalledTimes(1));
-    if (enabled) {
+    if (isAsyncCsvExportEnabled) {
       await waitFor(() => expect(mockAsyncDownload).toHaveBeenCalledTimes(1));
     } else {
       expect(mockAsyncDownload).not.toHaveBeenCalled();
@@ -133,7 +138,10 @@ it.each([false, true])(
   'keeps index export active through StrictMode remounts, hasMoreRecords=%s',
   async (hasMoreRecords) => {
     mockHasMoreRecords = hasMoreRecords;
-    const { unmount } = renderExport(true, true);
+    const { unmount } = renderExport({
+      isAsyncCsvExportEnabled: true,
+      isStrictMode: true,
+    });
 
     await waitFor(() =>
       expect(mockCompletedIndexDownload).toHaveBeenCalledTimes(1),
@@ -151,9 +159,9 @@ it.each([false, true])(
 
 it.each([false, true])(
   'keeps single-record export when the workspace flag is %s',
-  async (enabled) => {
+  async (isAsyncCsvExportEnabled) => {
     mockRecordIndexId = undefined;
-    renderExport(enabled);
+    renderExport({ isAsyncCsvExportEnabled });
     await waitFor(() =>
       expect(mockSingleRecordDownload).toHaveBeenCalledTimes(1),
     );
