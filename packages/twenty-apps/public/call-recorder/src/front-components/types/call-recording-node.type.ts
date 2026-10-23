@@ -10,5 +10,6 @@ export type CallRecordingNode = {
     id: string;
     title?: string | null;
     startsAt?: string | null;
+    isShared?: boolean;
   } | null;
 };

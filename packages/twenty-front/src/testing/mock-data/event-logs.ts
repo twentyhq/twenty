@@ -53,6 +53,20 @@ export const mockedEventLogApplications: Pick<
 export const mockedEventLogInstalledApplications: CurrentWorkspace['installedApplications'] =
   [
     {
+      id: SYNC_STRIPE_INVOICES.applicationId,
+      name: 'Stripe Sync',
+      universalIdentifier: '91815f31-dfc4-467e-8c3f-b1ff8e474375',
+      logoUrl: null,
+      createdAt: '2026-09-01T00:00:00.000Z',
+    },
+    {
+      id: SCORE_INBOUND_LEAD.applicationId,
+      name: 'Lead Scoring',
+      universalIdentifier: '86eae777-f251-4ca7-94cd-f7c3319329c1',
+      logoUrl: null,
+      createdAt: '2026-09-01T00:00:00.000Z',
+    },
+    {
       id: ENRICH_COMPANY_FROM_DOMAIN.applicationId,
       name: 'Company Enrichment',
       universalIdentifier: '5b0e7c2a-8f4d-4a91-b3e6-1d2c9f7a4e80',

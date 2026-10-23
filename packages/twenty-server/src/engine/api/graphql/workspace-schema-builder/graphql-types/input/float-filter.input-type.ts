@@ -5,6 +5,7 @@ import {
   GraphQLNonNull,
 } from 'graphql';
 
+import { FIELD_REFERENCE_FILTER_INPUT_FIELDS } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/field-reference-filter.input-fields';
 import { FilterIs } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/filter-is.input-type';
 
 export const FloatFilterType = new GraphQLInputObjectType({
@@ -18,5 +19,6 @@ export const FloatFilterType = new GraphQLInputObjectType({
     lte: { type: GraphQLFloat },
     neq: { type: GraphQLFloat },
     is: { type: FilterIs },
+    ...FIELD_REFERENCE_FILTER_INPUT_FIELDS,
   },
 });

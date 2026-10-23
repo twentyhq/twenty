@@ -8,7 +8,6 @@ import { teamsTranscriptHistoryStatusHandler } from 'src/features/transcripts/lo
 const { releaseFlags, kvStore, listConnectionsMock, enqueueJobsMock } =
   vi.hoisted(() => ({
     releaseFlags: {
-      IS_TRANSCRIPT_IMPORT_RELEASED: true,
       IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED: true,
     },
     kvStore: new Map<string, unknown>(),

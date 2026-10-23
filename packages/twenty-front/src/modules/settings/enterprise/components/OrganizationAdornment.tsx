@@ -92,7 +92,6 @@ export const OrganizationAdornment = ({
       content={resolvedTooltipContent}
       delay={TooltipDelay.shortDelay}
       side="top"
-      maxWidth="260px"
     >
       {adornment}
     </Tooltip>

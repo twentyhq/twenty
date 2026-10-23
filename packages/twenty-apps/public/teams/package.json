@@ -1,7 +1,8 @@
 {
   "name": "@twentyhq/teams",
   "version": "0.1.0",
-  "description": "Microsoft Teams assistant and workflow steps for Twenty",
+  "description": "Sync Microsoft Teams meeting transcripts into Twenty Call Recordings, with optional AI summaries.",
+  "author": "Twenty",
   "license": "MIT",
   "engines": {
     "twenty": ">=2.46.0",
@@ -18,7 +19,7 @@
     "directory": "packages/twenty-apps/public/teams"
   },
   "homepage": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/teams",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.1",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",

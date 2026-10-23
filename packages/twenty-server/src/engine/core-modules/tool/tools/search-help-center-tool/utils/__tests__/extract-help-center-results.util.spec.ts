@@ -1,56 +1,71 @@
 import { extractHelpCenterResults } from 'src/engine/core-modules/tool/tools/search-help-center-tool/utils/extract-help-center-results.util';
 
+const buildSseFrame = (message: object) =>
+  `event: message\ndata: ${JSON.stringify(message)}\n\n`;
+
+const buildSearchResultText = (index: number) =>
+  `Title: Article ${index}\nLink: https://docs.twenty.com/article-${index}\nPage: article-${index}\nContent: Content ${index}`;
+
 describe('extractHelpCenterResults', () => {
-  it('passes a bare array straight through', () => {
-    const results = [{ title: 'Importing data' }];
+  it('reads the text of each search result and keeps the first five', () => {
+    const body = buildSseFrame({
+      result: {
+        content: [1, 2, 3, 4, 5, 6].map((index) => ({
+          type: 'text',
+          text: buildSearchResultText(index),
+        })),
+      },
+      jsonrpc: '2.0',
+      id: 1,
+    });
 
-    expect(extractHelpCenterResults(results)).toEqual({
+    expect(extractHelpCenterResults(body)).toEqual({
       isReadable: true,
-      results,
+      results: [1, 2, 3, 4, 5].map(buildSearchResultText),
     });
   });
 
-  it('unwraps a results envelope', () => {
-    const results = [{ title: 'Inviting a team member' }];
+  it('reports a JSON-RPC error with its message', () => {
+    const body = buildSseFrame({
+      jsonrpc: '2.0',
+      id: 1,
+      error: { code: -32602, message: 'Tool nope not found' },
+    });
 
-    expect(extractHelpCenterResults({ results })).toEqual({
-      isReadable: true,
-      results,
+    expect(extractHelpCenterResults(body)).toEqual({
+      isReadable: false,
+      error: 'Tool nope not found',
     });
   });
 
-  it('reads an empty answer as a real, readable result', () => {
-    expect(extractHelpCenterResults([])).toEqual({
-      isReadable: true,
-      results: [],
+  it('reports a tool error with its text', () => {
+    const body = buildSseFrame({
+      result: {
+        content: [{ type: 'text', text: 'No results found' }],
+        isError: true,
+      },
+      jsonrpc: '2.0',
+      id: 1,
     });
-    expect(extractHelpCenterResults({ results: [] })).toEqual({
-      isReadable: true,
-      results: [],
+
+    expect(extractHelpCenterResults(body)).toEqual({
+      isReadable: false,
+      error: 'No results found',
     });
   });
 
-  it('reports an unrecognized payload as unreadable rather than empty', () => {
-    for (const payload of [
-      { error: 'Rate limit exceeded' },
-      { results: 'not-an-array' },
-      'unexpected',
-      null,
+  it('reports a body without an SSE data line as unreadable', () => {
+    for (const body of [
+      '<html>Bad Gateway</html>',
+      'event: message\ndata: {not json\n\n',
+      { results: [] },
       undefined,
-      0,
     ]) {
-      expect(extractHelpCenterResults(payload)).toEqual({ isReadable: false });
-    }
-  });
-
-  it('never yields a results value whose length is undefined', () => {
-    for (const payload of [[], { results: [] }, {}, null, 'x']) {
-      const extraction = extractHelpCenterResults(payload);
-
-      if (extraction.isReadable) {
-        expect(Array.isArray(extraction.results)).toBe(true);
-        expect(extraction.results.length).toEqual(expect.any(Number));
-      }
+      expect(extractHelpCenterResults(body)).toEqual({
+        isReadable: false,
+        error:
+          'Help center search returned a response in an unrecognized shape',
+      });
     }
   });
 });

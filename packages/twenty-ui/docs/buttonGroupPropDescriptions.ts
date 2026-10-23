@@ -7,6 +7,7 @@ export const BUTTON_GROUP_PROP_DESCRIPTIONS = {
     'Add a translucent frame with padding and concentric corners. Button sizes and appearance remain independent unless set on the group.',
   variant:
     'Default surface treatment for children without an explicit variant.',
-  color: 'Default semantic color for children without an explicit color.',
+  color:
+    'Default semantic color for children without an explicit color. Inherited color requires each child to resolve to a non-solid variant; explicit child overrides take precedence.',
   size: 'Default button height for children without an explicit size.',
 } satisfies Partial<Record<keyof ButtonGroupProps, string>>;

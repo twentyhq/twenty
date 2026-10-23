@@ -6,7 +6,7 @@ import { type PendingWakeUpOwnerState } from 'src/engine/core-modules/pending-wa
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
-  buildResumeJobOptions(ownerId: string): QueueJobOptions;
+  buildResumeJobOptions?(ownerId: string): QueueJobOptions;
 
   getOwnerState(
     wakeUp: PendingWakeUpEntity,
@@ -24,7 +24,6 @@ export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
   resolve(input: {
     wakeUp: PendingWakeUpEntity;
     outcome: PendingWakeUpOutcome;
-    owner: TOwner | null;
     isOwnerGone: boolean;
   }): Promise<void>;
 };

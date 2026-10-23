@@ -101,6 +101,7 @@ describe('AuthResolver', () => {
             checkAccessForSignIn: jest.fn(),
             findWorkspaceForSignInUp: jest.fn(),
             formatUserDataPayload: jest.fn(),
+            joinWorkspaceIfInvited: jest.fn(),
             signInUp: jest.fn(),
           },
         },

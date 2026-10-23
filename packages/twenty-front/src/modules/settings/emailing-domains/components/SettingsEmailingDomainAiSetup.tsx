@@ -135,7 +135,6 @@ export const SettingsEmailingDomainAiSetup = ({
     <StyledContainer>
       <Tooltip
         content={t`Copies a Cloudflare setup prompt for your AI coding tool`}
-        maxWidth="440px"
       >
         <StyledPromptButton type="button" onClick={handleCopy}>
           <StyledButtonLabel>{t`Set up DNS with AI`}</StyledButtonLabel>

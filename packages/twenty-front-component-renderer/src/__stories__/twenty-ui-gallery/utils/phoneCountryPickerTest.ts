@@ -2,6 +2,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
@@ -31,8 +32,12 @@ export const phoneCountryPickerTest: TwentyUiGalleryPlayFunction = async ({
   expect(disabled).toHaveAttribute('aria-expanded', 'false');
 
   await userEvent.click(primary);
-  const japan = await page.findByRole('option', { name: 'Japan (+81)' });
-  await waitFor(() => expect(japan).toBeVisible());
+  await waitFor(
+    () =>
+      expect(page.getByRole('option', { name: 'Japan (+81)' })).toBeVisible(),
+    { timeout: INTERACTION_TIMEOUT },
+  );
+  const japan = page.getByRole('option', { name: 'Japan (+81)' });
   expect(japan).toBeDisabled();
   await userEvent.click(japan);
   await waitForSandboxRoundTrip();
@@ -47,16 +52,21 @@ export const phoneCountryPickerTest: TwentyUiGalleryPlayFunction = async ({
   });
   await userEvent.type(primarySearch, '+966');
   await waitFor(() => expect(primarySearch).toHaveValue('+966'));
-  const saudiArabia = await page.findByRole('option', {
-    name: 'المملكة العربية السعودية (+966)',
-  });
-  expect(within(saudiArabia).getByText('+966')).toHaveAttribute('dir', 'ltr');
-  expect(saudiArabia.closest('[data-phone-options="primary"]')?.tagName).toBe(
-    'SECTION',
-  );
-  expect(saudiArabia.closest('[data-phone-options="primary"]')).toHaveAttribute(
-    'dir',
-    'rtl',
+  await waitFor(
+    () => {
+      const saudiArabia = page.getByRole('option', {
+        name: 'المملكة العربية السعودية (+966)',
+      });
+      expect(saudiArabia).toBeVisible();
+      expect(within(saudiArabia).getByText('+966')).toHaveAttribute(
+        'dir',
+        'ltr',
+      );
+      const options = saudiArabia.closest('[data-phone-options="primary"]');
+      expect(options?.tagName).toBe('SECTION');
+      expect(options).toHaveAttribute('dir', 'rtl');
+    },
+    { timeout: INTERACTION_TIMEOUT },
   );
 
   await userEvent.clear(primarySearch);

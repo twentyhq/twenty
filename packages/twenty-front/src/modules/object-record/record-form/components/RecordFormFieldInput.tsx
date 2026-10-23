@@ -4,15 +4,21 @@ import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
+import { isFieldBooleanValue } from '@/object-record/record-field/ui/types/guards/isFieldBooleanValue';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/ui/types/guards/isFieldCurrencyValue';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
 import { isFieldEmailsValue } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
+import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
+import { isFieldNumberValue } from '@/object-record/record-field/ui/types/guards/isFieldNumberValue';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
+import { RecordFormBooleanFieldInput } from '@/object-record/record-form/components/RecordFormBooleanFieldInput';
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
+import { RecordFormPercentageFieldInput } from '@/object-record/record-form/components/RecordFormPercentageFieldInput';
 import { RecordFormPhoneFieldInput } from '@/object-record/record-form/components/RecordFormPhoneFieldInput';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -87,6 +93,32 @@ export const RecordFormFieldInput = ({
         onError={onError}
         readonly={readonly}
         placeholder={subFieldPlaceholders?.amountMicros}
+      />
+    );
+  }
+
+  if (isFieldNumber(field) && field.metadata.settings?.type === 'percentage') {
+    return (
+      <RecordFormPercentageFieldInput
+        field={field}
+        defaultValue={
+          isFieldNumberValue(defaultValue) ? defaultValue : undefined
+        }
+        onChange={onChange}
+        readonly={readonly}
+      />
+    );
+  }
+
+  if (isFieldBoolean(field)) {
+    return (
+      <RecordFormBooleanFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldBooleanValue(defaultValue) ? defaultValue : undefined
+        }
+        onChange={onChange}
+        readonly={readonly}
       />
     );
   }

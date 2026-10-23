@@ -89,6 +89,8 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'workflowVersion':
     case 'connectionProvider':
     case 'timelineActivityType':
+    case 'agentChatChannel':
+    case 'agentChatChannelRole':
     case 'settingsMenuItem':
     case 'validationRule': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({

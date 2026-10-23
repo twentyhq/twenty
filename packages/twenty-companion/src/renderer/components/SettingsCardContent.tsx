@@ -1,4 +1,6 @@
 import { type ReactNode } from 'react';
+import { Card, type CardContentProps } from 'twenty-ui/primitives/surfaces';
+import { isDefined } from 'twenty-ui/utilities';
 import styles from './SettingsCardContent.module.scss';
 
 type SettingsCardContentProps = {
@@ -6,6 +8,8 @@ type SettingsCardContentProps = {
   title: ReactNode;
   description?: ReactNode;
   children?: ReactNode;
+  hasDivider?: boolean;
+  render?: CardContentProps['render'];
 };
 
 export const SettingsCardContent = ({
@@ -13,15 +17,17 @@ export const SettingsCardContent = ({
   title,
   description,
   children,
+  hasDivider,
+  render,
 }: SettingsCardContentProps) => (
-  <div className={styles.content}>
-    {icon != null && <div className={styles.icon}>{icon}</div>}
+  <Card.Content className={styles.content} divider={hasDivider} render={render}>
+    {isDefined(icon) && <div className={styles.icon}>{icon}</div>}
     <div className={styles.text}>
       <div className={styles.title}>{title}</div>
-      {description != null && (
+      {isDefined(description) && (
         <div className={styles.description}>{description}</div>
       )}
     </div>
-    {children != null && <div className={styles.actions}>{children}</div>}
-  </div>
+    {isDefined(children) && <div className={styles.actions}>{children}</div>}
+  </Card.Content>
 );

@@ -6,6 +6,7 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 import {
+  afterAll,
   afterEach,
   beforeAll,
   beforeEach,
@@ -869,12 +870,14 @@ const waitForQueuedTriggerRunsToDrain = async () => {
     scopes: ['transcript'],
   });
 
-  await expect
-    .poll(() => getJobs([jobId]), {
-      timeout: TRIGGER_RUN_DRAIN_TIMEOUT_MS,
-      interval: 1_000,
-    })
-    .toMatchObject([{ jobId, state: 'COMPLETED' }]);
+  await vi.waitFor(
+    async () => {
+      expect(await getJobs([jobId])).toMatchObject([
+        { jobId, state: 'COMPLETED' },
+      ]);
+    },
+    { timeout: TRIGGER_RUN_DRAIN_TIMEOUT_MS, interval: 1_000 },
+  );
 };
 
 describe('call recorder app lifecycle (integration)', () => {
@@ -908,6 +911,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
   beforeEach(() => {
     recall = new FakeRecallApi();
+    nextCalendarEventFixtureIndex = 0;
     nextArtifactImportRequestIndex = 0;
     nextFollowUpIndex = 0;
 
@@ -945,6 +949,42 @@ describe('call recorder app lifecycle (integration)', () => {
     await destroyCreatedRows();
   });
 
+  afterAll(async () => {
+    if (nextCalendarEventFixtureIndex === 0) {
+      return;
+    }
+
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+
+    try {
+      await waitForQueuedTriggerRunsToDrain();
+    } finally {
+      vi.unstubAllEnvs();
+
+      const leftoverCallRecordings = await findCallRecordings({
+        calendarEventId: {
+          in: availableCalendarEventFixtures
+            .slice(0, nextCalendarEventFixtureIndex)
+            .map(({ id }) => id),
+        },
+      });
+
+      await destroyCallRecordings(leftoverCallRecordings.map(({ id }) => id));
+    }
+  }, REAL_QUEUE_TIMEOUT_MS);
+
+  const destroyCallRecordings = async (
+    callRecordingIds: string[],
+  ): Promise<void> => {
+    for (const callRecordingId of callRecordingIds) {
+      await client
+        .mutation({
+          destroyCallRecording: { __args: { id: callRecordingId }, id: true },
+        })
+        .catch(() => {});
+    }
+  };
+
   const destroyCreatedRows = async (): Promise<void> => {
     const calendarEventRestoreErrors: Error[] = [];
     const borrowedCalendarEventIds = borrowedCalendarEventFixtures.map(
@@ -963,13 +1003,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ]),
     ];
 
-    for (const callRecordingId of callRecordingIds) {
-      await client
-        .mutation({
-          destroyCallRecording: { __args: { id: callRecordingId }, id: true },
-        })
-        .catch(() => {});
-    }
+    await destroyCallRecordings(callRecordingIds);
 
     for (const fixture of borrowedCalendarEventFixtures) {
       try {

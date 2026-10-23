@@ -1,10 +1,10 @@
 import { SettingsAccountGroupTableRow } from '@/settings/app-preferences/components/SettingsAccountGroupTableRow';
 import { SettingsAppPreferencesListEmptyStateCard } from '@/settings/app-preferences/components/SettingsAppPreferencesListEmptyStateCard';
 import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
-import { SETTINGS_NATIVE_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsNativeAccountAppAccountGroupTableGridTemplateColumns';
+import { SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsBuiltInAccountAppAccountGroupTableGridTemplateColumns';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
-import { getNativeAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getNativeAccountAppsUsingAccount';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
+import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
 import { SettingsTableRowsSkeletonLoader } from '@/settings/components/SettingsTableRowsSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -32,32 +32,32 @@ const StyledAddAccountContainer = styled.div`
 `;
 
 type SettingsAccountGroupsSectionProps = {
-  nativeAccountApp?: NativeAccountApp;
+  builtInAccountApp?: BuiltInAccountApp;
 };
 
 export const SettingsAccountGroupsSection = ({
-  nativeAccountApp,
+  builtInAccountApp,
 }: SettingsAccountGroupsSectionProps) => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
   const { groups: allGroups, loading } = useMyAccountGroups();
 
-  const groups = isDefined(nativeAccountApp)
+  const groups = isDefined(builtInAccountApp)
     ? allGroups.filter((group) =>
-        getNativeAccountAppsUsingAccount(group.nativeAccount).some(
-          (app) => app.id === nativeAccountApp.id,
+        getBuiltInAccountAppsUsingAccount(group.builtInAccount).some(
+          (app) => app.id === builtInAccountApp.id,
         ),
       )
     : allGroups;
 
-  const gridTemplateColumns = isDefined(nativeAccountApp)
-    ? SETTINGS_NATIVE_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
+  const gridTemplateColumns = isDefined(builtInAccountApp)
+    ? SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
     : SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS;
 
   const tableHeaderRow = (
     <TableRow gridTemplateColumns={gridTemplateColumns}>
       <TableHeader>{t`Account`}</TableHeader>
-      {isDefined(nativeAccountApp) ? (
+      {isDefined(builtInAccountApp) ? (
         <TableHeader>{t`Permissions`}</TableHeader>
       ) : (
         <TableHeader align="right">{t`Used by`}</TableHeader>
@@ -79,7 +79,7 @@ export const SettingsAccountGroupsSection = ({
             gridTemplateColumns={gridTemplateColumns}
             columns={[
               {},
-              isDefined(nativeAccountApp)
+              isDefined(builtInAccountApp)
                 ? { width: 140 }
                 : { align: 'right', width: 48 },
               {},
@@ -88,7 +88,7 @@ export const SettingsAccountGroupsSection = ({
         </Table>
       ) : groups.length === 0 ? (
         <SettingsAppPreferencesListEmptyStateCard
-          provider={nativeAccountApp?.provider}
+          provider={builtInAccountApp?.provider}
         />
       ) : (
         <>
@@ -100,7 +100,7 @@ export const SettingsAccountGroupsSection = ({
                   key={group.id}
                   group={group}
                   gridTemplateColumns={gridTemplateColumns}
-                  nativeAccountApp={nativeAccountApp}
+                  builtInAccountApp={builtInAccountApp}
                 />
               ))}
             </StyledTableRows>

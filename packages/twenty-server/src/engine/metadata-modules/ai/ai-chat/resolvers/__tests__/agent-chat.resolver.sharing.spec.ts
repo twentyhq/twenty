@@ -5,6 +5,7 @@ import {
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
@@ -72,13 +73,13 @@ const buildResolver = () => {
       }),
       emitParticipantCreated: jest.fn(),
     } as never,
+    {} as never,
+    {} as never,
   );
   const chatService = new AgentChatService(
     threadRepository as never,
-    {} as never,
+    { find: jest.fn().mockResolvedValue([]) } as never,
     messages as never,
-    {} as never,
-    {} as never,
     {} as never,
     sharing as never,
     recordEvents as never,
@@ -115,8 +116,17 @@ const buildResolver = () => {
   const messageReactions = {
     findReactionsByMessageId: jest.fn().mockResolvedValue(new Map()),
   };
+  const queueService = new AgentChatQueueService(
+    {} as never,
+    messages as never,
+    {} as never,
+    {} as never,
+    {} as never,
+    threadService,
+  );
   const resolver = new AgentChatResolver(
     chatService,
+    queueService,
     threadService,
     sharing as never,
     streaming as never,
@@ -172,7 +182,7 @@ describe('Shared conversation API boundaries', () => {
       new Error('restore failed'),
     );
     await expect(
-      context.chatService.restoreThread({
+      context.threadService.restoreThread({
         threadId: THREAD_ID,
         workspaceMemberId: 'owner',
         workspaceId: WORKSPACE_ID,
@@ -204,6 +214,7 @@ describe('Shared conversation API boundaries', () => {
       undefined,
       null,
       null,
+      null,
       VIEWER_ID,
       'member',
       workspace,
@@ -231,6 +242,7 @@ describe('Shared conversation API boundaries', () => {
       'message',
       null,
       undefined,
+      null,
       null,
       null,
       'member-workspace',
@@ -261,6 +273,7 @@ describe('Shared conversation API boundaries', () => {
         'message',
         null,
         undefined,
+        null,
         null,
         null,
         'viewer-workspace',
@@ -296,12 +309,13 @@ describe('Shared conversation API boundaries', () => {
             undefined,
             null,
             null,
+            null,
             VIEWER_ID,
             'member',
             workspace,
           ),
         restore: () =>
-          context.chatService.restoreThread({
+          context.threadService.restoreThread({
             threadId: THREAD_ID,
             workspaceMemberId: VIEWER_ID,
             workspaceId: WORKSPACE_ID,
@@ -345,6 +359,7 @@ describe('Shared conversation API boundaries', () => {
       undefined,
       null,
       null,
+      null,
       VIEWER_ID,
       'member',
       workspace,
@@ -368,6 +383,7 @@ describe('Shared conversation API boundaries', () => {
       undefined,
       null,
       ['tim'],
+      null,
       'owner-user',
       'owner',
       workspace,
@@ -412,6 +428,7 @@ describe('Shared conversation API boundaries', () => {
       undefined,
       null,
       ['jony', 'tim'],
+      null,
       'owner-user',
       'owner',
       workspace,
@@ -442,6 +459,7 @@ describe('Shared conversation API boundaries', () => {
       undefined,
       null,
       ['jony'],
+      null,
       'owner-user',
       'owner',
       workspace,

@@ -27,6 +27,7 @@ type Query {
 
 type Mutation {
   createPerson(name: String!): Person
+  echoJson(value: JSON): JSON
   createCallRecording(data: CallRecordingCreateInput!): String
 }
 
@@ -162,6 +163,24 @@ const inputs = [
     const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
     expect(body.query).toMatch(/mutation/);
     expect(body.query).toMatch(/createPerson/);
+  });
+
+  it('preserves JSON array payloads', async () => {
+    const transcript = [
+      { participant: { name: 'Ada' }, words: [{ text: 'Hello' }] },
+    ];
+    const fetchMock = vi.fn<typeof globalThis.fetch>(async () =>
+      jsonResponse({ data: { echoJson: transcript } }),
+    );
+    const client = createClient({
+      url: 'https://example.test/graphql',
+      fetch: fetchMock,
+    });
+    expect(
+      await client.mutation({ echoJson: { __args: { value: transcript } } }),
+    ).toEqual({ echoJson: transcript });
+    const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
+    expect(Object.values(body.variables)).toContainEqual(transcript);
   });
 
   it('throws when the API responds with GraphQL errors', async () => {

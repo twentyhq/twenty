@@ -204,7 +204,7 @@ const MainPage = () => {
         padding: '40px',
       }}
     >
-      <Avatar name={APP_DISPLAY_NAME} colorSeed={APP_DISPLAY_NAME} size="xl" />
+      <Avatar name={APP_DISPLAY_NAME} colorSeed={APP_DISPLAY_NAME} size="xxl" />
       <span
         style={{
           fontSize: '24px',

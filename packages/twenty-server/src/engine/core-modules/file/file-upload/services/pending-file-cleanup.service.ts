@@ -44,6 +44,7 @@ export class PendingFileCleanupService {
           status: FILE_STATUS.PENDING,
           createdAt: LessThan(staleThreshold),
           workspaceId: Not(IsNull()),
+          path: Not(Like(`${FileFolder.WorkspaceDataExport}/%`)),
         },
         {
           path: Like(`${FileFolder.RecordExport}/%`),

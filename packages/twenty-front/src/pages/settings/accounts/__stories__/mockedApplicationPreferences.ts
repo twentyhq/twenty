@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { HttpResponse, graphql } from 'msw';
 import { getWorker } from 'msw-storybook-addon';
 import { fn } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
@@ -71,6 +72,22 @@ const buildSettingsMenuItem = ({
 
 const savedValueByKey = new Map<string, string>();
 
+const SAVED_PERSONAL_API_KEY = 'sk-1abcdefghijklmnopqrstuvwxyz0123456789';
+
+// Same masking as the server's SecretEncryptionService.maskDecryptedValue.
+const maskStoredSecret = (storedValue: string | undefined) => {
+  if (!isDefined(storedValue)) {
+    return '';
+  }
+
+  const visibleCharacterCount = Math.min(
+    5,
+    Math.floor(storedValue.length / 10),
+  );
+
+  return `${storedValue.slice(0, visibleCharacterCount)}********`;
+};
+
 export const updateMyUserApplicationVariable = fn();
 export const findOneFrontComponent = fn();
 export const findApplicationsGatedQuery = fn();
@@ -89,8 +106,7 @@ const buildApplicationPreferences = () => [
       buildUserApplicationVariable({
         key: 'PERSONAL_API_KEY',
         label: 'Personal API key',
-        value:
-          savedValueByKey.get('PERSONAL_API_KEY') === '' ? '' : 'sk-1********',
+        value: maskStoredSecret(savedValueByKey.get('PERSONAL_API_KEY')),
         isSecret: true,
       }),
       buildUserApplicationVariable({
@@ -197,6 +213,7 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
 
 export const seedApplicationPreferencesStory = async () => {
   savedValueByKey.clear();
+  savedValueByKey.set('PERSONAL_API_KEY', SAVED_PERSONAL_API_KEY);
   updateMyUserApplicationVariable.mockClear();
   findOneFrontComponent.mockClear();
   findApplicationsGatedQuery.mockClear();

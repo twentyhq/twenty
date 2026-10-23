@@ -221,6 +221,41 @@ does not prove native chooser activation.
 
 Direct app-owned `Dialog`/`AlertDialog` modality and native browser dialog/popover activation are prohibited in front components. Their standalone Twenty UI APIs have dedicated unit and browser stories. Front components use SDK `openCommandConfirmationModal`, whose structured title, subtitle and confirm-button options are rendered by the host. The Dialog fixture checks the confirmation request. Result handling and actual host modal focus, restoration, dismissal and teardown acceptance remain part of the renderer integration work. No direct Dialog or AlertDialog gallery fixture is retained as a compatibility target.
 
+## Scrolling inside controls
+
+Worker `scrollTop`/`scrollLeft` writes, `scrollTo()`/`scroll()` and
+`scrollIntoView()` travel to the host as ordered commands on the owning element.
+The host applies them after the commit that carries them, so input selection
+changes from the same render land first, and acknowledges the resulting
+positions. Reads return the requested value until that acknowledgement or a
+newer geometry snapshot arrives. `scrollIntoView()` is reimplemented on the
+host: it only moves scroll containers rendered by the same renderer and stops at
+the renderer root or its portal layer, so widget frames, the page and other
+renderers never move. `html`, `body` and `window` scrolling stays in the worker.
+
+`TwentyUiScrolling.stories.tsx` checks, in React and Preact, Autocomplete
+keyboard highlight reveal in a portaled popup and in an inline list nested in an
+owned scroller, the filtered-list scroll reset, long LTR and RTL input Home/End
+with synthetic and trusted keys, Select selected-option reveal and keyboard
+navigation, Select trigger alignment stability, and overflowing Tabs in both
+directions. `ScrollCommands.stories.tsx` drives the raw commands: nested and
+RTL reveal, read-after-write, echo elision, keyboard scroll without event echo,
+no replay after detaching and reattaching a node, portal scroll refresh after
+the geometry tracker idles, page scrolling staying local, and two independent
+renderers.
+
+Dropdown and the pickers built on it reveal their items through native host
+`focus()`, unchanged by these commands. The Autocomplete filter reset needs the
+list to have been measured once; it is enrolled when a keyboard reveal scrolls
+it, so a query typed within the same frame as that reveal can miss the reset.
+Base UI list items re-run navigation from forwarded focus events, so several
+arrow keys pressed before the host focus round trip completes can make focus
+cycle between options; the Select stories press one key at a time. Select's
+initial focus differs between runtimes, so its keyboard steps start from `End`.
+Elements created with `document.createElement` for a standard tag name do not
+forward property updates made after insertion, so scroll commands on them never
+reach the host; elements rendered through JSX do.
+
 ## Known sandbox limitations
 
 An invisible popup is not a compatibility pass.
@@ -355,7 +390,7 @@ npx playwright test --config playwright.layout.config.ts
 
 Set `STORYBOOK_URL` to use another Storybook URL. These Chromium tests operate the actual host controls and browser pointer capture; unit mocks do not replace them. Slider's upstream touch cancellation behavior remains a separate API acceptance issue: a native `pointercancel` currently leaves its dragging state active outside the renderer as well. The React Slider gestures are marked as expected failures until Base UI fixes the hidden edge-aligned thumbs described in the Slider limitation above.
 
-The AvatarGroup, Autocomplete, CountrySelect and reading-directions fixtures
+The AvatarGroup, Autocomplete, CountrySelect, reading-directions and scrolling fixtures
 live in their own story files, so run them separately:
 
 ```sh
@@ -363,6 +398,8 @@ npx vitest run --config vitest.storybook.config.ts TwentyUiAutocomplete.stories.
 npx vitest run --config vitest.storybook.config.ts TwentyUiCountrySelect.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiReadingDirections.stories.tsx
 npx vitest run --config vitest.storybook.config.ts TwentyUiAvatarGroup.stories.tsx
+npx vitest run --config vitest.storybook.config.ts TwentyUiScrolling.stories.tsx
+npx vitest run --config vitest.storybook.config.ts ScrollCommands.stories.tsx
 ```
 
 Section and CommandBlock composition is checked in the Typography and DataDisplay

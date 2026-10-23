@@ -5,7 +5,7 @@ description: Use when the user wants to add or modify Twenty app entities, inclu
 
 # When To Use
 
-Pick this skill when the user wants to change what an existing Twenty app *does* — its data model, UI, logic, or workflows. Representative triggers:
+Pick this skill when the user wants to change what an existing Twenty app _does_ — its data model, UI, logic, or workflows. Representative triggers:
 
 - "add a new object to my Twenty app"
 - "create a logic function that runs on record create"
@@ -75,19 +75,25 @@ Use a CLI to add new entities. It generates the correct file structure, UUIDs, S
 command -v twenty && twenty app add object --name invoice --name-plural invoices --create-view --create-navigation-menu-item --create-page-layout --no-input
 ```
 
-Otherwise run `yarn twenty dev:add` in an interactive terminal. The full order of options, including what to do when neither CLI can run, is rule 3 of the operating rules linked above.
+Install the standalone CLI if missing. Use `twenty app add` for supported types; for other entities, follow rule 3 of the operating rules linked above and the corresponding SDK definition.
+
+## Front Component Defaults
+
+For every visible front component, use `twenty-ui` components and individual icons by default. Reuse an equivalent Twenty UI component before writing a custom control or adding another UI library. Plain HTML is appropriate for layout containers and content without a Twenty UI equivalent.
+
+Before creating or editing front component UI, read `../../references/develop-app/front-components.md` for imports and renderer constraints and `../../references/design/front-component-ui.md` for component selection, theme tokens, accessibility and visible states. This applies to the first implementation as well as later visual polish. Use the linked official component pages for current props and composition instead of guessing APIs or copying the full documentation into the app.
 
 ## After Entity Changes
 
 Once all edits for the change are complete, run lint and typecheck once at the end (not after each individual edit), then sync the app to the active remote:
 
 ```bash
-yarn twenty dev:typecheck
+twenty app typecheck
 yarn lint
-yarn twenty apply
+twenty app apply
 ```
 
-`yarn twenty dev:typecheck` checks generated app types, `yarn lint` checks local lint rules, and `yarn twenty apply` syncs entity definitions to the active remote. Run all three a single time once every edit is done, not repeatedly after each step. When the user explicitly asks to run tests, follow `../../references/develop-app/tests.md`.
+`twenty app typecheck` checks generated app types, `yarn lint` checks local lint rules, and `twenty app apply` syncs entity definitions to the active remote. Run all three a single time once every edit is done, not repeatedly after each step. When the user explicitly asks to run tests, follow `../../references/develop-app/tests.md`.
 
 Use the official Twenty docs or local SDK source when exact entity fields, imports, or configuration shapes matter.
 
@@ -109,6 +115,6 @@ For front components, read `front-components.md` before implementation. Use `lay
 
 # Handoffs
 
-Use `../../references/design/front-component-ui.md` when the entity work turns into front component UI design.
+Use `../../references/design/front-component-ui.md` for every visible front component, including its first implementation.
 
 Use `publish-app` when the task turns into README, marketplace copy, screenshots, logos, or listing assets.

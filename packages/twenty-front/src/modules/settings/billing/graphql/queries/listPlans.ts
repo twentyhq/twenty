@@ -7,6 +7,7 @@ export const LIST_PLANS = gql`
     listPlans {
       planKey
       isSellable
+      isCheckoutDefault
       upgradePlanKeys
       downgradePlanKeys
       baseProducts {

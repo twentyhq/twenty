@@ -104,13 +104,11 @@ export class ApplicationInstallResolver {
         applicationUniversalIdentifier: universalIdentifier,
       });
 
-    return await this.applicationService.findOneApplicationWithRelationsOrThrow(
-      {
-        id: targetApplicationId,
-        universalIdentifier: targetApplicationUniversalIdentifier,
-        workspaceId,
-      },
-    );
+    return await this.applicationService.findOneApplicationOrThrow({
+      id: targetApplicationId,
+      universalIdentifier: targetApplicationUniversalIdentifier,
+      workspaceId,
+    });
   }
 
   @Mutation(() => Boolean, {
@@ -182,7 +180,7 @@ export class ApplicationInstallResolver {
       workspaceId: workspace.id,
     });
 
-    return this.applicationService.findOneApplicationWithRelationsOrThrow({
+    return this.applicationService.findOneApplicationOrThrow({
       universalIdentifier,
       workspaceId: workspace.id,
     });

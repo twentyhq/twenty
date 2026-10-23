@@ -8,6 +8,15 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
+import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { SettingsApplicationDetails } from '~/pages/settings/applications/SettingsApplicationDetails';
 
@@ -255,5 +264,83 @@ export const VariablesTabSavesWorkspaceVariable: Story = {
     );
     await waitFor(() => expect(saveButton).toBeDisabled());
     expect(canvas.getByDisplayValue('https://new.example.com')).toBeVisible();
+  },
+};
+
+const seedBuiltInAccountAppStory = ({
+  isAppPreferencesEnabled,
+}: {
+  isAppPreferencesEnabled: boolean;
+}) => {
+  jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
+  jotaiStore.set(isGoogleCalendarEnabledState.atom, true);
+  jotaiStore.set(isMicrosoftMessagingEnabledState.atom, false);
+  jotaiStore.set(isMicrosoftCalendarEnabledState.atom, false);
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    featureFlags: [
+      {
+        key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+        value: isAppPreferencesEnabled,
+      },
+    ],
+  });
+};
+
+export const BuiltInAccountAppShowsGeneralTab: Story = {
+  args: {
+    routeParams: { ':applicationId': 'google' },
+  },
+  beforeEach: () =>
+    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: true }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Sync emails and calendar events from your Google accounts.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(canvas.getByTestId('tab-general')).toBeVisible();
+  },
+};
+
+export const BuiltInAccountAppIsNotInstalledWhenFeatureFlagIsOff: Story = {
+  args: {
+    routeParams: { ':applicationId': 'google' },
+  },
+  beforeEach: () =>
+    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: false }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        /This application is not installed on this workspace/,
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const BuiltInAccountAppIsNotInstalledWhenDisabledOnServer: Story = {
+  args: {
+    routeParams: { ':applicationId': 'outlook' },
+  },
+  beforeEach: () =>
+    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: true }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        /This application is not installed on this workspace/,
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
   },
 };

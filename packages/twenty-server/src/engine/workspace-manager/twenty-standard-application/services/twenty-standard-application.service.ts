@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
@@ -8,6 +15,7 @@ import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata
 import { computeMissingInitialObjectViewOperations } from 'src/engine/metadata-modules/view/utils/compute-missing-initial-object-view-operations.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { keepWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/keep-workspace-owned-properties.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -36,11 +44,15 @@ export class TwentyStandardApplicationService {
           workspaceId,
         },
       );
-    const { featureFlagsMap, ...fromTwentyStandardAllFlatEntityMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
-        'featureFlagsMap',
-      ]);
+    const {
+      featureFlagsMap,
+      billingEntitlements,
+      ...fromTwentyStandardAllFlatEntityMaps
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
+      'featureFlagsMap',
+      'billingEntitlements',
+    ]);
 
     const {
       allFlatEntityMaps: toTwentyStandardAllFlatEntityMaps,
@@ -92,6 +104,7 @@ export class TwentyStandardApplicationService {
           workspaceId,
           additionalCacheDataMaps: {
             featureFlagsMap,
+            billingEntitlements,
           },
           idByUniversalIdentifierByMetadataName,
         },
@@ -104,12 +117,49 @@ export class TwentyStandardApplicationService {
       );
     }
 
+    if (!isDefined(twentyStandardFlatApplication.defaultRoleId)) {
+      await this.setStandardApplicationDefaultRoleOrThrow({
+        workspaceId,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      });
+    }
+
     await this.seedStandardObjectInitialViewsOrThrow({
       workspaceId,
       standardObjectMetadataUniversalIdentifiers: Object.keys(
         toTwentyStandardAllFlatEntityMaps.flatObjectMetadataMaps
           .byUniversalIdentifier,
       ),
+    });
+  }
+
+  private async setStandardApplicationDefaultRoleOrThrow({
+    workspaceId,
+    twentyStandardApplicationId,
+  }: {
+    workspaceId: string;
+    twentyStandardApplicationId: string;
+  }): Promise<void> {
+    const { flatRoleMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatRoleMaps'],
+    );
+
+    const adminFlatRole = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      flatEntityMaps: flatRoleMaps,
+    });
+
+    if (!isDefined(adminFlatRole)) {
+      throw new ApplicationException(
+        `Could not find the Admin role in workspace ${workspaceId}`,
+        ApplicationExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    await this.applicationService.update(twentyStandardApplicationId, {
+      workspaceId,
+      defaultRoleId: adminFlatRole.id,
     });
   }
 

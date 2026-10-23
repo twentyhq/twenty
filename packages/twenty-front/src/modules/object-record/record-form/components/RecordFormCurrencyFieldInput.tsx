@@ -2,7 +2,7 @@ import {
   type FieldCurrencyValue,
   type FormFieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RecordFormPickerFieldInput } from '@/object-record/record-form/components/RecordFormPickerFieldInput';
+import { RecordFormTextInput } from '@/object-record/record-form/components/RecordFormTextInput';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -91,7 +91,7 @@ export const RecordFormCurrencyFieldInput = ({
   };
 
   return (
-    <RecordFormPickerFieldInput
+    <RecordFormTextInput
       label={label}
       value={amountText}
       onChange={handleAmountTextChange}

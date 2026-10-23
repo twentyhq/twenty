@@ -1,6 +1,6 @@
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type AppPreferencesRow } from '@/settings/app-preferences/types/AppPreferencesRow';
-import { getNativeAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getNativeAccountAppsUsingAccount';
+import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
@@ -26,8 +26,8 @@ export const SettingsAppPreferencesAppStatusCell = ({
   }
 
   const hasAccount = groups.some((group) =>
-    getNativeAccountAppsUsingAccount(group.nativeAccount).some(
-      (app) => app.id === item.nativeAccountApp.id,
+    getBuiltInAccountAppsUsingAccount(group.builtInAccount).some(
+      (app) => app.id === item.builtInAccountApp.id,
     ),
   );
 

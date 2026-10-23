@@ -29,13 +29,13 @@ export const SettingsAppPreferencesAppNameCell = ({
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { to, icon, name } =
-    item.type === 'native'
+    item.type === 'builtIn'
       ? {
-          to: getSettingsPath(SettingsPath.NativeAccountApp, {
-            nativeAccountAppId: item.nativeAccountApp.id,
+          to: getSettingsPath(SettingsPath.BuiltInAccountApp, {
+            builtInAccountAppId: item.builtInAccountApp.id,
           }),
-          icon: <item.nativeAccountApp.Icon size={theme.icon.size.md} />,
-          name: t(item.nativeAccountApp.name),
+          icon: <item.builtInAccountApp.Icon size={theme.icon.size.md} />,
+          name: t(item.builtInAccountApp.name),
         }
       : {
           to: getSettingsPath(SettingsPath.ApplicationPreferences, {

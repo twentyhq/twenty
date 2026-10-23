@@ -23,17 +23,11 @@ import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
-import { type LegacyAppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
-import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
-import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const APPLICATION_IDENTIFIER = v4();
 const PROVIDER_IDENTIFIER = v4();
@@ -64,6 +58,13 @@ describe('app connection OAuth callback', () => {
         .parse(await tokenRequest.json());
 
       tokenExchanges.push(code);
+
+      if (code.startsWith('rejected:')) {
+        return HttpResponse.json(
+          { error: 'invalid_client', error_description: 'Bad client secret' },
+          { status: 401 },
+        );
+      }
 
       return HttpResponse.json({
         access_token: code,
@@ -97,11 +98,17 @@ describe('app connection OAuth callback', () => {
     });
   };
 
-  const authorize = async ({
-    reconnectingConnectedAccountId,
-  }: {
+  type AuthorizeArgs = {
     reconnectingConnectedAccountId?: string;
-  } = {}): Promise<string> => {
+    redirectLocation?: string;
+    providerName?: string;
+  };
+
+  const requestAuthorization = async ({
+    reconnectingConnectedAccountId,
+    redirectLocation,
+    providerName = provider.name,
+  }: AuthorizeArgs = {}): Promise<URL> => {
     const transient = await generateTransientTokenResponse({
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
@@ -112,15 +119,20 @@ describe('app connection OAuth callback', () => {
       .get('/auth/apps/authorize')
       .query({
         applicationId: provider.applicationId,
-        providerName: provider.name,
+        providerName,
         transientToken:
           transient.data.generateTransientToken.transientToken.token,
-        scope: 'WORKSPACE',
         reconnectingConnectedAccountId,
+        redirectLocation,
       });
 
     expect(response.status).toBe(302);
-    const authorizationUrl = new URL(response.headers.location);
+
+    return new URL(response.headers.location);
+  };
+
+  const authorize = async (args: AuthorizeArgs = {}): Promise<string> => {
+    const authorizationUrl = await requestAuthorization(args);
 
     expect(authorizationUrl.origin).toBe(
       'https://connection-provider.example.com',
@@ -305,6 +317,30 @@ export const handler = ({ connectedAccountId }) => {
     ]);
   });
 
+  it('restores an archived connection when the reconnect resolves to the same account', async () => {
+    await callback(await authorize(), 'team-a:first');
+    const [original] = await readAccounts();
+
+    await globalThis.testDataSource.query(
+      'UPDATE core."connectedAccount" SET "archivedAt" = NOW(), "authFailedAt" = NOW(), "accessToken" = NULL, "refreshToken" = NULL WHERE id = $1',
+      [original.id],
+    );
+
+    const redirect = await callback(
+      await authorize({ reconnectingConnectedAccountId: original.id }),
+      'team-a:second',
+    );
+    const [reconnected] = await readAccounts();
+
+    expect(redirect.searchParams.has('errorMessage')).toBe(false);
+    expect(reconnected).toMatchObject({
+      id: original.id,
+      archivedAt: null,
+      authFailedAt: null,
+    });
+    expect(decryptAccessToken(reconnected)).toBe('team-a:second');
+  });
+
   it('refuses a reconnect that resolves to a different account and leaves the connection untouched', async () => {
     await callback(await authorize(), 'team-a:first');
     const [original] = await readAccounts();
@@ -404,31 +440,92 @@ export const handler = ({ connectedAccountId }) => {
     expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
   });
 
-  it('completes the callback for a state signed before visibility was renamed to scope', async () => {
-    const legacyStatePayload: LegacyAppOAuthStateJwtPayload = {
-      sub: provider.id,
-      type: JwtTokenTypeEnum.APP_OAUTH_STATE,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      connectionProviderId: provider.id,
-      userId: USER_DATA_SEED_IDS.JANE,
-      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-      visibility: 'workspace',
-      reconnectingConnectedAccountId: null,
-      redirectLocation: null,
-      codeVerifier: null,
-    };
-    const legacyState = await getAppProviderByClassName<JwtWrapperService>(
-      'JwtWrapperService',
-    ).signAsyncOrThrow(legacyStatePayload as unknown as JwtPayload, {
-      expiresIn: 60,
+  it('returns to where the flow started with a short message when the token exchange fails', async () => {
+    const redirectLocation = `/settings/accounts/applications/${provider.applicationId}#connections`;
+
+    const redirect = await callback(
+      await authorize({ redirectLocation }),
+      'rejected:first',
+    );
+
+    expect(redirect.pathname).toBe(
+      `/settings/accounts/applications/${provider.applicationId}`,
+    );
+    expect(redirect.hash).toBe('#connections');
+    expect(redirect.searchParams.get('errorMessage')).toBe(
+      'Failed to exchange the authorization code for an access token.',
+    );
+    expect(tokenExchanges).toEqual(['rejected:first']);
+    expect(await readAccounts()).toEqual([]);
+  });
+
+  describe('error redirect target on authorize', () => {
+    const UNKNOWN_PROVIDER_NAME = 'unknown-provider';
+
+    it.each(['https://evil.com/x', '//evil.com/x', '/\\evil.com'])(
+      'stays on the workspace URL when redirectLocation is %s',
+      async (redirectLocation) => {
+        const fallbackRedirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+        });
+        const redirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+          redirectLocation,
+        });
+
+        expect(redirect.origin).toBe(fallbackRedirect.origin);
+        expect(redirect.hostname).not.toContain('evil.com');
+        expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
+      },
+    );
+
+    it.each(['http://', '//'])(
+      'falls back to the accounts page when redirectLocation is the malformed %s',
+      async (redirectLocation) => {
+        const fallbackRedirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+        });
+        const redirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+          redirectLocation,
+        });
+
+        expect(redirect.origin).toBe(fallbackRedirect.origin);
+        expect(redirect.pathname).toBe('/settings/accounts');
+        expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
+      },
+    );
+
+    it('lands on the custom domain when the workspace has one enabled', async () => {
+      const customDomain = `oauth-${v4().slice(0, 8)}.example.com`;
+      const [original] = await globalThis.testDataSource.query(
+        'SELECT "customDomain", "isCustomDomainEnabled" FROM core.workspace WHERE id = $1',
+        [SEED_APPLE_WORKSPACE_ID],
+      );
+
+      await globalThis.testDataSource.query(
+        'UPDATE core.workspace SET "customDomain" = $1, "isCustomDomainEnabled" = true WHERE id = $2',
+        [customDomain, SEED_APPLE_WORKSPACE_ID],
+      );
+
+      try {
+        const redirect = await requestAuthorization({
+          providerName: UNKNOWN_PROVIDER_NAME,
+        });
+
+        expect(redirect.hostname).toBe(customDomain);
+        expect(redirect.searchParams.get('errorMessage')).not.toBeNull();
+      } finally {
+        await globalThis.testDataSource.query(
+          'UPDATE core.workspace SET "customDomain" = $1, "isCustomDomainEnabled" = $2 WHERE id = $3',
+          [
+            original.customDomain,
+            original.isCustomDomainEnabled,
+            SEED_APPLE_WORKSPACE_ID,
+          ],
+        );
+      }
     });
-
-    const redirect = await callback(legacyState, 'team-a:first');
-
-    expect(redirect.searchParams.get('errorMessage')).toBeNull();
-    expect(await readAccounts()).toMatchObject([
-      { scope: 'WORKSPACE', externalAccountId: 'team-a' },
-    ]);
   });
 
   it('rejects tampered state before exchanging a code or executing the app', async () => {
@@ -438,6 +535,7 @@ export const handler = ({ connectedAccountId }) => {
     expect(redirect.searchParams.get('errorMessage')).toContain(
       'invalid or expired',
     );
+    expect(redirect.pathname).toBe('/settings/accounts');
     expect(tokenExchanges).toEqual([]);
     expect(readExecutions(onConnectExecutionsPath)).toEqual([]);
     expect(await readAccounts()).toEqual([]);

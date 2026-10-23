@@ -66,7 +66,7 @@ jest.mock('@/workflow/workflow-steps/hooks/useCreateStep', () => ({
   useCreateStep: () => ({ createStep: mockCreateStep }),
 }));
 jest.mock('@/workflow/workflow-steps/hooks/useUpdateStep', () => ({
-  useUpdateStep: () => ({ updateStep: mockUpdateStep }),
+  useUpdateStep: () => ({ updateStepNow: mockUpdateStep }),
 }));
 jest.mock('@/workflow/workflow-diagram/hooks/useCloseRightClickMenu', () => ({
   useCloseRightClickMenu: () => ({ closeRightClickMenu: jest.fn() }),

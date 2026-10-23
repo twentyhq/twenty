@@ -386,6 +386,28 @@ import {
   type UniversalDeleteSearchFieldMetadataAction,
   type UniversalUpdateSearchFieldMetadataAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/search-field-metadata/types/workspace-migration-search-field-metadata-action.type';
+import { type FlatAgentChatChannelMaps } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel-maps.type';
+import { type FlatAgentChatChannel } from 'src/engine/metadata-modules/flat-agent-chat-channel/types/flat-agent-chat-channel.type';
+import { type UniversalFlatAgentChatChannel } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent-chat-channel.type';
+import {
+  type FlatCreateAgentChatChannelAction,
+  type FlatDeleteAgentChatChannelAction,
+  type FlatUpdateAgentChatChannelAction,
+  type UniversalCreateAgentChatChannelAction,
+  type UniversalDeleteAgentChatChannelAction,
+  type UniversalUpdateAgentChatChannelAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel/types/workspace-migration-agent-chat-channel-action.type';
+import { type FlatAgentChatChannelRoleMaps } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role-maps.type';
+import { type FlatAgentChatChannelRole } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/types/flat-agent-chat-channel-role.type';
+import { type UniversalFlatAgentChatChannelRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent-chat-channel-role.type';
+import {
+  type FlatCreateAgentChatChannelRoleAction,
+  type FlatDeleteAgentChatChannelRoleAction,
+  type FlatUpdateAgentChatChannelRoleAction,
+  type UniversalCreateAgentChatChannelRoleAction,
+  type UniversalDeleteAgentChatChannelRoleAction,
+  type UniversalUpdateAgentChatChannelRoleAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel-role/types/workspace-migration-agent-chat-channel-role-action.type';
 import { type FlatSettingsMenuItemMaps } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item-maps.type';
 import { type FlatSettingsMenuItem } from 'src/engine/metadata-modules/flat-settings-menu-item/types/flat-settings-menu-item.type';
 import { type UniversalFlatSettingsMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-settings-menu-item.type';
@@ -913,6 +935,38 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatTimelineActivityType;
     universalFlatEntity: UniversalFlatTimelineActivityType;
     entity: MetadataEntity<'timelineActivityType'>;
+  };
+  agentChatChannel: {
+    flatEntityMaps: FlatAgentChatChannelMaps;
+    universalActions: {
+      create: UniversalCreateAgentChatChannelAction;
+      update: UniversalUpdateAgentChatChannelAction;
+      delete: UniversalDeleteAgentChatChannelAction;
+    };
+    flatActions: {
+      create: FlatCreateAgentChatChannelAction;
+      update: FlatUpdateAgentChatChannelAction;
+      delete: FlatDeleteAgentChatChannelAction;
+    };
+    flatEntity: FlatAgentChatChannel;
+    universalFlatEntity: UniversalFlatAgentChatChannel;
+    entity: MetadataEntity<'agentChatChannel'>;
+  };
+  agentChatChannelRole: {
+    flatEntityMaps: FlatAgentChatChannelRoleMaps;
+    universalActions: {
+      create: UniversalCreateAgentChatChannelRoleAction;
+      update: UniversalUpdateAgentChatChannelRoleAction;
+      delete: UniversalDeleteAgentChatChannelRoleAction;
+    };
+    flatActions: {
+      create: FlatCreateAgentChatChannelRoleAction;
+      update: FlatUpdateAgentChatChannelRoleAction;
+      delete: FlatDeleteAgentChatChannelRoleAction;
+    };
+    flatEntity: FlatAgentChatChannelRole;
+    universalFlatEntity: UniversalFlatAgentChatChannelRole;
+    entity: MetadataEntity<'agentChatChannelRole'>;
   };
   settingsMenuItem: {
     flatEntityMaps: FlatSettingsMenuItemMaps;

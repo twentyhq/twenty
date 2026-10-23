@@ -16,6 +16,7 @@ import { InstallApplicationCommand } from 'src/engine/core-modules/application/a
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
 import { ApplicationUninstallRunnerService } from 'src/engine/core-modules/application/application-install/services/application-uninstall-runner.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -39,6 +40,7 @@ import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/ap
     ApplicationPackageModule,
     MarketplaceModule,
     CacheLockModule,
+    EventLogEmitterModule,
     MetricsModule,
     PermissionsModule,
     WorkspaceCacheModule,

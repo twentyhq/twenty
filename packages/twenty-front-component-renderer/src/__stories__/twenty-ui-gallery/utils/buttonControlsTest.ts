@@ -34,6 +34,17 @@ export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
   await waitFor(() =>
     expect(canvas.getByLabelText('Activations')).toHaveTextContent('3'),
   );
+  const inheritedButton = canvas.getByRole('button', {
+    name: 'Inherited action',
+  });
+  const inheritedColor = getComputedStyle(
+    canvas.getByTestId('inherited-button-surface'),
+  ).color;
+
+  await expect(getComputedStyle(inheritedButton).color).toBe(inheritedColor);
+  await expect(inheritedButton.querySelector('svg')).toHaveStyle({
+    color: inheritedColor,
+  });
   const disabled = canvas.getByRole('button', { name: 'Disabled button' });
   await expect(disabled).toBeDisabled();
   await userEvent.click(disabled);
@@ -80,23 +91,26 @@ export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
   await expect(getComputedStyle(send).borderTopLeftRadius).toBe('50%');
 
   await userEvent.click(canvas.getByRole('button', { name: 'Add to record' }));
-  await userEvent.click(
-    canvas.getByRole('button', { name: 'Add to draggable record' }),
-  );
+  const draggableRecordAction = canvas.getByRole('button', {
+    name: 'Add to draggable record',
+  });
+  await userEvent.click(draggableRecordAction);
+  draggableRecordAction.focus();
+  await userEvent.keyboard('{Enter} ');
   const unavailableRecordButton = canvas.getByRole('button', {
     name: 'Unavailable record button',
   });
   await expect(unavailableRecordButton).toBeDisabled();
   await userEvent.click(unavailableRecordButton);
   await waitFor(() =>
-    expect(canvas.getByLabelText('Activations')).toHaveTextContent('7'),
+    expect(canvas.getByLabelText('Activations')).toHaveTextContent('9'),
   );
   const logOut = canvas.getByRole('button', { name: 'Log out' });
   await userEvent.click(logOut);
   logOut.focus();
   await userEvent.keyboard('{Enter} ');
   await waitFor(() =>
-    expect(canvas.getByLabelText('Activations')).toHaveTextContent('10'),
+    expect(canvas.getByLabelText('Activations')).toHaveTextContent('12'),
   );
   await expect(getComputedStyle(logOut).borderTopWidth).toBe('0px');
   await expect(getComputedStyle(logOut).paddingInlineStart).toBe('4px');

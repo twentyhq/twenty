@@ -2,23 +2,23 @@ import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
 import { SettingsAppPreferencesAppsSection } from '@/settings/app-preferences/components/SettingsAppPreferencesAppsSection';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
-import { useEnabledNativeAccountApps } from '@/settings/app-preferences/hooks/useEnabledNativeAccountApps';
+import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 export const SettingsAppPreferencesSections = () => {
-  const { enabledNativeAccountApps } = useEnabledNativeAccountApps();
+  const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
   const { applicationsWithPreferences, hasApplicationsLoadError } =
     useApplicationsWithPreferences();
 
-  const hasNativeAccountApps = isNonEmptyArray(enabledNativeAccountApps);
+  const hasBuiltInAccountApps = isNonEmptyArray(enabledBuiltInAccountApps);
 
   return (
     <>
       <SettingsAccountGroupsSection />
-      {(hasNativeAccountApps ||
+      {(hasBuiltInAccountApps ||
         isNonEmptyArray(applicationsWithPreferences) ||
         hasApplicationsLoadError) && <SettingsAppPreferencesAppsSection />}
-      {!hasNativeAccountApps && <SettingsAccountsBlocklistSection />}
+      {!hasBuiltInAccountApps && <SettingsAccountsBlocklistSection />}
     </>
   );
 };

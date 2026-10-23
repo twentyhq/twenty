@@ -1116,6 +1116,7 @@ exports[`Application export - data model exports the whole application as a stab
   "publicAssets": [],
   "roles": [
     {
+      "canAccessAllAgentChatChannels": false,
       "canAccessAllTools": false,
       "canBeAssignedToAgents": true,
       "canBeAssignedToApiKeys": false,

@@ -1,6 +1,7 @@
 import { type AppLocale } from 'twenty-shared/translations';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
+import { type FrontComponentLocation } from './FrontComponentLocation';
 import { type FrontComponentSelectedObjectMetadata } from './FrontComponentSelectedObjectMetadata';
 import { type FrontComponentToolCall } from './FrontComponentToolCall';
 
@@ -23,6 +24,7 @@ export type FrontComponentExecutionContext = {
   /** Resolved color scheme of the host UI ('System' is already resolved) */
   colorScheme: 'light' | 'dark';
   locale?: AppLocale;
+  location?: FrontComponentLocation;
   /** Set when the component renders an AI chat tool call */
   toolCall?: FrontComponentToolCall;
 };

@@ -1,8 +1,8 @@
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
-import { type NativeAccountApp } from '@/settings/app-preferences/types/NativeAccountApp';
+import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 
 export type AppPreferencesRow =
-  | { type: 'native'; id: string; nativeAccountApp: NativeAccountApp }
+  | { type: 'builtIn'; id: string; builtInAccountApp: BuiltInAccountApp }
   | {
       type: 'installed';
       id: string;

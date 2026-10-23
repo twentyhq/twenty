@@ -184,7 +184,7 @@ export class ApplicationService {
     );
   }
 
-  async findOneApplicationWithRelations({
+  async findOneApplication({
     id,
     universalIdentifier,
     workspaceId,
@@ -200,9 +200,50 @@ export class ApplicationService {
       );
     }
 
-    const application = await this.applicationRepository.findOne(workspaceId, {
+    return this.applicationRepository.findOne(workspaceId, {
       where: isDefined(id) ? { id } : { universalIdentifier },
-      relations: ['packageJsonFile', 'yarnLockFile', 'applicationRegistration'],
+      relations: ['applicationRegistration'],
+    });
+  }
+
+  async findOneApplicationOrThrow({
+    id,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity> {
+    const application = await this.findOneApplication({
+      id,
+      universalIdentifier,
+      workspaceId,
+    });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application with id ${id} or universalIdentifier ${universalIdentifier} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return application;
+  }
+
+  async findOneApplicationWithRelations({
+    id,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
+    const application = await this.findOneApplication({
+      id,
+      universalIdentifier,
+      workspaceId,
     });
 
     if (!isDefined(application)) {
@@ -605,21 +646,42 @@ export class ApplicationService {
     >,
     queryRunner?: QueryRunner,
   ): Promise<void> {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    const { packageJsonContent, yarnLockContent } =
+      await getDefaultApplicationPackageFields();
 
+    await this.uploadPackageFilesAndSetFileIds({
+      application,
+      packageJsonContent,
+      yarnLockContent,
+      queryRunner,
+    });
+  }
+
+  async uploadPackageFilesAndSetFileIds({
+    application,
+    packageJsonContent,
+    yarnLockContent,
+    queryRunner,
+  }: {
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'workspaceId'
+    >;
+    packageJsonContent: string;
+    yarnLockContent: string;
+    queryRunner?: QueryRunner;
+  }): Promise<void> {
     const packageJsonChecksum = logicFunctionCreateHash(
-      JSON.stringify(JSON.parse(defaultPackageFields.packageJsonContent)),
+      JSON.stringify(JSON.parse(packageJsonContent)),
     );
-    const yarnLockChecksum = logicFunctionCreateHash(
-      defaultPackageFields.yarnLockContent,
-    );
+    const yarnLockChecksum = logicFunctionCreateHash(yarnLockContent);
     const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
-      defaultPackageFields.packageJsonContent,
-      defaultPackageFields.yarnLockContent,
+      packageJsonContent,
+      yarnLockContent,
     );
 
     const packageJsonFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.packageJsonContent,
+      sourceFile: packageJsonContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,
@@ -630,7 +692,7 @@ export class ApplicationService {
     });
 
     const yarnLockFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.yarnLockContent,
+      sourceFile: yarnLockContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,

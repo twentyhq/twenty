@@ -18,7 +18,6 @@ import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limi
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -46,7 +45,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       BillingCustomerEntity,
       BillingProductEntity,
       BillingPriceEntity,
-      BillingMeterEntity,
       BillingEntitlementEntity,
       WorkspaceEntity,
     ]),

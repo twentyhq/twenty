@@ -12,8 +12,8 @@ export type StreamAgentChatJobData = {
   modelId?: string;
   lastUserMessageText: string;
   hasTitle: boolean;
-  existingTurnId?: string;
-  // Absent only on jobs queued before sender attribution was deployed.
+  existingTurnId: string;
+  // absent on a turn that has no message of its own, such as a resume after an answer
   messageId?: string;
   conversationSizeTokens: number;
 };

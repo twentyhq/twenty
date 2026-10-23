@@ -104,4 +104,25 @@ describe('buildRecordShareCondition', () => {
       ],
     });
   });
+
+  it('should keep the record share alias distinct from a 63-byte table alias', () => {
+    const tableAlias =
+      'customLeafRecord_parentCollectionId_containerId_securityGroupId';
+
+    const { sql } = buildRecordShareCondition({
+      tableAlias,
+      recordShareTableExpression: '"workspace_abc"."recordShare"',
+      objectMetadataId: OBJECT_METADATA_ID,
+      principalIds: PRINCIPAL_IDS,
+      accessLevels: ACCESS_LEVELS,
+    });
+
+    const [, recordShareAlias] = sql.match(/AS "([^"]+)" WHERE/) ?? [];
+
+    expect(Buffer.byteLength(recordShareAlias)).toBeLessThanOrEqual(63);
+    expect(recordShareAlias).not.toBe(tableAlias);
+    expect(sql).toContain(
+      `"${recordShareAlias}"."recordId" = "${tableAlias}"."id"`,
+    );
+  });
 });
