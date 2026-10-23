@@ -212,28 +212,19 @@ export class ConnectionProviderOAuthController {
   // the account may arrive here or through the POST notification, in either order
   @Get('custom/callback')
   async customCallback(@Req() req: Request, @Res() res: Response) {
-    const { state, ...queryStringParameters } = normalizeQueryStringParameters(
-      req.query,
-    );
-
-    if (!isNonEmptyString(state)) {
-      return this.redirectToErrorFromState({
-        res,
-        state,
-        error: new ConnectionProviderException(
-          'Custom connection callback is missing the `state` query parameter',
-          ConnectionProviderExceptionCode.INVALID_REQUEST,
-        ),
-      });
-    }
+    let state: string | undefined;
 
     try {
+      const customCallbackRequest = this.readCustomCallbackRequest(req);
+
+      state = customCallbackRequest.state;
+
       const { workspaceId, applicationId, redirectLocation } =
         await this.oauthProviderFlowService.completeCustomAuthorizationFlow({
           state,
           request: {
             httpMethod: 'GET',
-            queryStringParameters,
+            queryStringParameters: customCallbackRequest.queryStringParameters,
             body: null,
           },
         });
@@ -259,16 +250,8 @@ export class ConnectionProviderOAuthController {
   async customCallbackNotification(
     @Req() req: Request,
   ): Promise<{ success: true }> {
-    const { state, ...queryStringParameters } = normalizeQueryStringParameters(
-      req.query,
-    );
-
-    if (!isNonEmptyString(state)) {
-      throw new ConnectionProviderException(
-        'Custom connection callback is missing the `state` query parameter',
-        ConnectionProviderExceptionCode.INVALID_REQUEST,
-      );
-    }
+    const { state, queryStringParameters } =
+      this.readCustomCallbackRequest(req);
 
     await this.oauthProviderFlowService.completeCustomAuthorizationFlow({
       state,
@@ -280,6 +263,24 @@ export class ConnectionProviderOAuthController {
     });
 
     return { success: true };
+  }
+
+  private readCustomCallbackRequest(req: Request): {
+    state: string;
+    queryStringParameters: Record<string, string | undefined>;
+  } {
+    const { state, ...queryStringParameters } = normalizeQueryStringParameters(
+      req.query,
+    );
+
+    if (!isNonEmptyString(state)) {
+      throw new ConnectionProviderException(
+        'Custom connection callback is missing the `state` query parameter',
+        ConnectionProviderExceptionCode.INVALID_REQUEST,
+      );
+    }
+
+    return { state, queryStringParameters };
   }
 
   private async redirectToConnectedApplication({
@@ -297,7 +298,7 @@ export class ConnectionProviderOAuthController {
       id: workspaceId,
     });
 
-    if (!workspace) {
+    if (!isDefined(workspace)) {
       throw new ConnectionProviderException(
         `Workspace ${workspaceId} not found after OAuth callback`,
         ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,

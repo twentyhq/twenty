@@ -26,6 +26,17 @@ const CUSTOM_LOGIC_FUNCTION_KEYS = [
   'callbackLogicFunction',
 ] as const;
 
+const getInvalidLogicFunctionReferenceError = ({
+  path,
+  universalIdentifier,
+}: {
+  path: string;
+  universalIdentifier: string;
+}): string | null =>
+  isValidPostgresUuid(universalIdentifier)
+    ? null
+    : `Connection provider ${path}.universalIdentifier "${universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`;
+
 export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
 > = (config) => {
@@ -53,14 +64,15 @@ export const defineConnectionProvider: DefineEntity<
 
   for (const logicFunctionKey of LOGIC_FUNCTION_KEYS) {
     const logicFunction = config[logicFunctionKey];
+    const referenceError = isDefined(logicFunction)
+      ? getInvalidLogicFunctionReferenceError({
+          path: logicFunctionKey,
+          universalIdentifier: logicFunction.universalIdentifier,
+        })
+      : null;
 
-    if (
-      isDefined(logicFunction) &&
-      !isValidPostgresUuid(logicFunction.universalIdentifier)
-    ) {
-      errors.push(
-        `Connection provider ${logicFunctionKey}.universalIdentifier "${logicFunction.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
-      );
+    if (isDefined(referenceError)) {
+      errors.push(referenceError);
     }
   }
 
@@ -128,10 +140,16 @@ export const defineConnectionProvider: DefineEntity<
           errors.push(
             `Custom connection provider must declare custom.${logicFunctionKey}`,
           );
-        } else if (!isValidPostgresUuid(logicFunction.universalIdentifier)) {
-          errors.push(
-            `Connection provider custom.${logicFunctionKey}.universalIdentifier "${logicFunction.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
-          );
+          continue;
+        }
+
+        const referenceError = getInvalidLogicFunctionReferenceError({
+          path: `custom.${logicFunctionKey}`,
+          universalIdentifier: logicFunction.universalIdentifier,
+        });
+
+        if (isDefined(referenceError)) {
+          errors.push(referenceError);
         }
       }
     }

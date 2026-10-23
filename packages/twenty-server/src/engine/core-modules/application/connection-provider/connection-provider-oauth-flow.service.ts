@@ -588,7 +588,6 @@ export class ConnectionProviderOAuthFlowService {
     return user.email;
   }
 
-  // undefined credentials or handle keep what an updated connection already stores
   private async persistConnectedAccount({
     provider,
     credentials,
