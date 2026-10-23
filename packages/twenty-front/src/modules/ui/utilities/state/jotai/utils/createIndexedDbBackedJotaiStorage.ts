@@ -105,7 +105,7 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
 
   // Writes made in one synchronous run reach other tabs together, so they never see half of a commit
   const broadcast = (message: CrossTabMessage<ValueType>): void => {
-    if (broadcastChannel === null) {
+    if (!isDefined(broadcastChannel)) {
       return;
     }
 
