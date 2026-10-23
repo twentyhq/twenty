@@ -9,6 +9,7 @@ import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescription
 import { COUNTRY_SELECT_PART_PROP_DESCRIPTIONS } from './countrySelectPartPropDescriptions';
 import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { CURRENCY_PICKER_PROP_DESCRIPTIONS } from './currencyPickerPropDescriptions';
+import { COUNT_PAGER_PROP_DESCRIPTIONS } from './countPagerPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { DETAILS_ROW_PROP_DESCRIPTIONS } from './detailsRowPropDescriptions';
@@ -68,6 +69,7 @@ import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { REACTION_BUTTON_PROP_DESCRIPTIONS } from './reactionButtonPropDescriptions';
+import { EMOJI_PICKER_PROP_DESCRIPTIONS } from './emojiPickerPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
 import { SKELETON_PROP_DESCRIPTIONS } from './skeletonPropDescriptions';
@@ -342,6 +344,18 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'components/input/light-button',
     propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
     propDefaults: { variant: 'ghost', size: 'sm' },
+  },
+  {
+    name: 'EmojiPicker',
+    source: 'components/input/EmojiPicker/EmojiPicker.tsx',
+    entryPoint: 'twenty-ui/components/input',
+    slug: 'components/input/emoji-picker',
+    propDescriptions: EMOJI_PICKER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      locale: 'en',
+      searchPlaceholder: 'searchLabel',
+      autoFocus: 'false',
+    },
   },
   {
     name: 'ReactionButton',
@@ -870,6 +884,25 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
   },
   {
+    name: 'LabeledSeparator',
+    source: 'components/layout/LabeledSeparator/LabeledSeparator.tsx',
+    entryPoint: 'twenty-ui/components/layout',
+    slug: 'components/layout/labeled-separator',
+    propDescriptions: {
+      children:
+        'Text naming the separator. Supplied and localized by the caller.',
+      labelPosition:
+        'Place the label between two lines or at the end of one line.',
+      tone: 'Neutral divider or red marker with a thicker rule.',
+      hasStartMarker: 'Show a decorative cap at the beginning of the rule.',
+    },
+    propDefaults: {
+      labelPosition: 'center',
+      tone: 'neutral',
+      hasStartMarker: 'false',
+    },
+  },
+  {
     name: 'Section',
     source: 'components/layout/Section/Section.tsx',
     entryPoint: 'twenty-ui/components/layout',
@@ -920,6 +953,18 @@ export const DOCUMENTED_COMPONENTS = [
       hasSubmenu: 'Displays a decorative submenu indicator.',
     },
     propDefaults: { type: 'button', disabled: 'false' },
+  },
+  {
+    name: 'CountPager',
+    source: 'components/navigation/CountPager/CountPager.tsx',
+    entryPoint: 'twenty-ui/components/navigation',
+    slug: 'components/navigation/count-pager',
+    propDescriptions: COUNT_PAGER_PROP_DESCRIPTIONS,
+    propDefaults: {
+      disabled: 'false',
+      positionPlacement: 'between',
+      role: 'group',
+    },
   },
   {
     name: 'TabButton',
