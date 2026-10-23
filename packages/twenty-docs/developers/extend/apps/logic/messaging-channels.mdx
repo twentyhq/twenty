@@ -148,7 +148,7 @@ await createMessageChannel({
 
 Any active person field of type emails, phones, links or text works, including one your app added with [`defineField`](/developers/extend/apps/data/extending-objects) (an Instagram username, say). Twenty then:
 
-- **stores handles in the field's canonical form**: phones as `+` and digits (send E.164 numbers), links without scheme, `www`, query string or trailing slash (`linkedin.com/in/ada`), emails and text lowercased. The channel's own handle is stored the same way, and a handle with no usable value is rejected.
+- **stores handles in the field's canonical form**: phones as `+` and digits (send E.164 numbers), links lowercased without scheme, `www`, fragment or trailing slash, with the query string kept as sent since it can identify the profile (`linkedin.com/in/ada`, `facebook.com/profile.php?id=111`), emails and text lowercased. The channel's own handle is stored the same way, and a handle with no usable value is rejected.
 - **links each participant you leave unlinked** to the person whose field holds that value, primary values first, then the oldest person.
 - **re-matches when people change**: adding the value to a person links their past conversations, and removing it releases them.
 

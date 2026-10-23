@@ -7,6 +7,7 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Any, IsNull } from 'typeorm';
 
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -224,7 +225,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     } else {
       await this.matchAppChannelParticipants({
         personHandleField,
-        participants: savedMessagesResult.savedMessageParticipants,
         messageIds,
         workspaceId,
       });
@@ -241,23 +241,42 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
   // matching non-email handles as emails would null out app-supplied identities, so only the declared field is used
   private async matchAppChannelParticipants({
     personHandleField,
-    participants,
     messageIds,
     workspaceId,
   }: {
     personHandleField: PersonHandleField | undefined;
-    participants: MessageParticipantWorkspaceEntity[];
     messageIds: string[];
     workspaceId: string;
   }): Promise<void> {
     await this.messageParticipantService.matchMessageParticipants({
       participants: isDefined(personHandleField)
-        ? participants.filter((participant) => !isDefined(participant.personId))
+        ? await this.findUnlinkedParticipants({ messageIds, workspaceId })
         : [],
       messageIds,
       workspaceId,
       matchWith: isDefined(personHandleField) ? 'personOnly' : 'targetsOnly',
       personHandleField,
     });
+  }
+
+  // read back rather than taken from the save, so a retry after a failed match still links rows an earlier attempt stored
+  private async findUnlinkedParticipants({
+    messageIds,
+    workspaceId,
+  }: {
+    messageIds: string[];
+    workspaceId: string;
+  }): Promise<MessageParticipantWorkspaceEntity[]> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      async () =>
+        this.workspaceOrmManager
+          .getRepository<MessageParticipantWorkspaceEntity>(
+            'messageParticipant',
+            { shouldBypassPermissionChecks: true },
+          )
+          .find({ where: { messageId: Any(messageIds), personId: IsNull() } }),
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
   }
 }

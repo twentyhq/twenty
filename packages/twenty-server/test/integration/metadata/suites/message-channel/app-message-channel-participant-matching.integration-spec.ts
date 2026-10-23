@@ -467,6 +467,83 @@ describe('app message channel participant matching (e2e)', () => {
     expect((await findSender(messageId)).personId).toBe(katherineId);
   });
 
+  it('links a sender stored before a matching person existed when the message is ingested again', async () => {
+    const { messageId } = await ingestFromOrThrow({
+      externalId: 'from-before-match',
+      senderHandle: '+33655555555',
+    });
+
+    expect((await findSender(messageId)).personId).toBeNull();
+
+    const maryId = await createPerson({ firstName: 'Mary', phone: null });
+
+    // written straight to the table so no person event rematches it
+    await globalThis.testDataSource.query(
+      `UPDATE "${WORKSPACE_SCHEMA}"."person"
+          SET "phonesPrimaryPhoneNumber" = '655555555',
+              "phonesPrimaryPhoneCallingCode" = '+33'
+        WHERE id = $1`,
+      [maryId],
+    );
+
+    await ingestFromOrThrow({
+      externalId: 'from-before-match',
+      senderHandle: '+33655555555',
+    });
+
+    expect((await findSender(messageId)).personId).toBe(maryId);
+  });
+
+  it('keeps links that differ only by their query apart', async () => {
+    const channelResponse = await asApplication({
+      query: CREATE_CHANNEL_MUTATION,
+      variables: {
+        input: {
+          connectedAccountId,
+          handle: 'https://www.facebook.com/profile.php?id=999',
+          visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+          participantHandleFieldUniversalIdentifier:
+            STANDARD_OBJECTS.person.fields.linkedinLink.universalIdentifier,
+        },
+      },
+    });
+
+    expect(channelResponse.body.errors).toBeUndefined();
+
+    const createPersonWithLink = async (primaryLinkUrl: string) => {
+      const id = v4();
+      const response = await createOneOperation({
+        objectMetadataSingularName: 'person',
+        input: {
+          id,
+          name: { firstName: 'Linked' },
+          linkedinLink: { primaryLinkUrl },
+        },
+      });
+
+      expect(response.errors).toBeUndefined();
+      personIds.push(id);
+
+      return id;
+    };
+
+    await createPersonWithLink('https://www.facebook.com/profile.php?id=111');
+    const secondId = await createPersonWithLink(
+      'https://www.facebook.com/profile.php?id=222',
+    );
+
+    const { messageId } = await ingestFromOrThrow({
+      externalId: 'from-profile-222',
+      senderHandle: 'https://facebook.com/profile.php?id=222',
+      channelId: channelResponse.body.data.createAppMessageChannel.id,
+    });
+
+    expect(await findSender(messageId)).toEqual({
+      handle: 'facebook.com/profile.php?id=222',
+      personId: secondId,
+    });
+  });
+
   it('rejects a handle that has no phone digits', async () => {
     const response = await ingestFrom({
       externalId: 'from-nobody',

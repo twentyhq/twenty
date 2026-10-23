@@ -27,12 +27,22 @@ export const canonicalizePersonHandle = ({
       return isNonEmptyString(digits) ? `+${digits}` : null;
     }
     case FieldMetadataType.LINKS: {
-      const link = lowercased
-        .replace(/[?#].*$/, '')
+      // the query can carry the identity (profile.php?id=...), so it is kept as typed
+      const [location, ...queryParts] = value
+        .trim()
+        .replace(/#.*$/, '')
+        .split('?');
+      const query = queryParts.join('?');
+      const link = location
+        .toLowerCase()
         .replace(/^([a-z][a-z0-9+.-]*:\/\/)?(www\.)?/, '')
         .replace(/\/+$/, '');
 
-      return isNonEmptyString(link) ? link : null;
+      if (!isNonEmptyString(link)) {
+        return null;
+      }
+
+      return isNonEmptyString(query) ? `${link}?${query}` : link;
     }
   }
 };

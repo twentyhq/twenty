@@ -10,8 +10,18 @@ describe('canonicalizePersonHandle', () => {
     [FieldMetadataType.PHONES, '33612345678', '+33612345678'],
     [
       FieldMetadataType.LINKS,
-      'HTTPS://www.LinkedIn.com/in/ada-lovelace/?utm_source=share',
+      'HTTPS://www.LinkedIn.com/in/ada-lovelace/#about',
       'linkedin.com/in/ada-lovelace',
+    ],
+    [
+      FieldMetadataType.LINKS,
+      'https://www.facebook.com/profile.php?id=111',
+      'facebook.com/profile.php?id=111',
+    ],
+    [
+      FieldMetadataType.LINKS,
+      'https://Example.com/watch/?v=AbC#t=10',
+      'example.com/watch?v=AbC',
     ],
     [
       FieldMetadataType.LINKS,

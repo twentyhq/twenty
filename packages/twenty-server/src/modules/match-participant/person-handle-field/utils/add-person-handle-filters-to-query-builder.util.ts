@@ -4,8 +4,11 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-bu
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 
 // TRIM only strips spaces; the canonical form strips any leading and trailing whitespace
+const trimmedSql = (expression: string) =>
+  `regexp_replace(${expression}, '^\\s+|\\s+$', '', 'g')`;
+
 const canonicalTextSql = (expression: string) =>
-  `LOWER(regexp_replace(${expression}, '^\\s+|\\s+$', '', 'g'))`;
+  `LOWER(${trimmedSql(expression)})`;
 
 const canonicalPhoneSql = ({
   callingCode,
@@ -16,8 +19,13 @@ const canonicalPhoneSql = ({
 }) =>
   `('+' || regexp_replace(COALESCE(${callingCode}, '') || COALESCE(${number}, ''), '[^0-9]', '', 'g'))`;
 
-const canonicalLinkSql = (expression: string) =>
-  `regexp_replace(regexp_replace(regexp_replace(${canonicalTextSql(expression)}, '[?#].*$', ''), '^([a-z][a-z0-9+.-]*://)?(www\\.)?', ''), '/+$', '')`;
+const canonicalLinkSql = (expression: string) => {
+  const withoutFragment = `regexp_replace(${trimmedSql(expression)}, '#.*$', '')`;
+  const location = `regexp_replace(regexp_replace(LOWER(split_part(${withoutFragment}, '?', 1)), '^([a-z][a-z0-9+.-]*://)?(www\\.)?', ''), '/+$', '')`;
+  const query = `COALESCE(substring(${withoutFragment} from '\\?(.*)$'), '')`;
+
+  return `(${location} || CASE WHEN ${query} <> '' THEN '?' || ${query} ELSE '' END)`;
+};
 
 const jsonbArrayElementsSql = (column: string) =>
   `jsonb_array_elements(CASE WHEN jsonb_typeof(${column}) = 'array' THEN ${column} ELSE '[]'::jsonb END)`;
