@@ -7,7 +7,9 @@ export const StyledMarkdownContainer = styled.div<{
 }>`
   border-radius: ${themeCssVariables.border.radius.sm};
   line-height: ${({ displayMode }) =>
-    displayMode === 'default' ? '150%' : themeCssVariables.spacing[6]};
+    displayMode === 'default'
+      ? `calc(${themeCssVariables.text.lineHeight.lg} * 100%)`
+      : themeCssVariables.spacing[6]};
   margin: ${({ displayMode }) =>
     displayMode === 'bubble' ? '0' : `${themeCssVariables.spacing['1.5']} 0`};
   overflow-x: auto;
