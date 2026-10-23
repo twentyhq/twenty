@@ -6,10 +6,9 @@ import {
   type MetadataStoreItem,
 } from '@/metadata-store/states/metadataStoreState';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
-import {
-  isMetadataStoreSnapshotConsistent,
-  type MetadataStoreSnapshot,
-} from '@/metadata-store/utils/isMetadataStoreSnapshotConsistent';
+import { CONSISTENCY_VALIDATED_METADATA_ENTITY_KEYS } from '@/metadata-store/constants/ConsistencyValidatedMetadataEntityKeys';
+import { getPendingOrCurrentMetadataItems } from '@/metadata-store/utils/getPendingOrCurrentMetadataItems';
+import { isPendingMetadataStoreStateConsistent } from '@/metadata-store/utils/isPendingMetadataStoreStateConsistent';
 import { useStore, type createStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,29 +20,6 @@ const EMPTY_ENTRY: MetadataStoreItem = {
   current: [],
   draft: [],
   status: 'empty',
-};
-
-const getPendingOrCurrentItems = (entry: MetadataStoreItem) =>
-  entry.status === 'draft-pending' ? entry.draft : entry.current;
-
-const isPendingStoreStateConsistent = (store: JotaiStore) => {
-  const getItems = (metadataEntityKey: MetadataEntityKey) =>
-    getPendingOrCurrentItems(
-      store.get(metadataStoreState.atomFamily(metadataEntityKey)),
-    );
-
-  return isMetadataStoreSnapshotConsistent({
-    objectMetadataItems: getItems(
-      'objectMetadataItems',
-    ) as MetadataStoreSnapshot['objectMetadataItems'],
-    fieldMetadataItems: getItems(
-      'fieldMetadataItems',
-    ) as MetadataStoreSnapshot['fieldMetadataItems'],
-    indexMetadataItems: getItems(
-      'indexMetadataItems',
-    ) as MetadataStoreSnapshot['indexMetadataItems'],
-    views: getItems('views') as MetadataStoreSnapshot['views'],
-  });
 };
 
 export const resetMetadataStore = (store: JotaiStore) => {
@@ -104,16 +80,19 @@ export const useUpdateMetadataStoreDraft = () => {
     hasPersistedAnyMetadataEntity: boolean;
     isPendingStateConsistent: boolean;
   } => {
-    if (!isPendingStoreStateConsistent(store)) {
-      return {
-        hasPersistedAnyMetadataEntity: false,
-        isPendingStateConsistent: false,
-      };
-    }
+    const isPendingStateConsistent =
+      isPendingMetadataStoreStateConsistent(store);
 
     let hasPersistedAnyMetadataEntity = false;
 
     for (const metadataEntityKey of ALL_METADATA_ENTITY_KEYS) {
+      if (
+        !isPendingStateConsistent &&
+        CONSISTENCY_VALIDATED_METADATA_ENTITY_KEYS.includes(metadataEntityKey)
+      ) {
+        continue;
+      }
+
       const metadataStoreEntityEntry = store.get(
         metadataStoreState.atomFamily(metadataEntityKey),
       );
@@ -124,7 +103,7 @@ export const useUpdateMetadataStoreDraft = () => {
       }
     }
 
-    return { hasPersistedAnyMetadataEntity, isPendingStateConsistent: true };
+    return { hasPersistedAnyMetadataEntity, isPendingStateConsistent };
   }, [store]);
 
   const addToDraft = useCallback(
@@ -142,9 +121,9 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems = (
-        entry.status === 'draft-pending' ? entry.draft : entry.current
-      ) as Array<{ id: string }>;
+      const baseItems: Array<{ id: string }> = getPendingOrCurrentMetadataItems(
+        { store, metadataEntityKey: key },
+      );
 
       let newItems = [...baseItems];
 
@@ -186,9 +165,9 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems = (
-        entry.status === 'draft-pending' ? entry.draft : entry.current
-      ) as Array<{ id: string }>;
+      const baseItems: Array<{ id: string }> = getPendingOrCurrentMetadataItems(
+        { store, metadataEntityKey: key },
+      );
 
       let hasChanged = false;
       const newItems = baseItems.map((existing) => {
@@ -242,9 +221,9 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems = (
-        entry.status === 'draft-pending' ? entry.draft : entry.current
-      ) as Array<{ id: string }>;
+      const baseItems: Array<{ id: string }> = getPendingOrCurrentMetadataItems(
+        { store, metadataEntityKey: key },
+      );
 
       const idsToDelete = new Set(itemIds);
       const newItems = baseItems.filter(

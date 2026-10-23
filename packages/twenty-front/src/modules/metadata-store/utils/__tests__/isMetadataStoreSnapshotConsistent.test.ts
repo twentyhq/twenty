@@ -3,12 +3,9 @@ import {
   type MetadataStoreSnapshot,
 } from '@/metadata-store/utils/isMetadataStoreSnapshotConsistent';
 
-type SnapshotField = MetadataStoreSnapshot['fieldMetadataItems'][number];
-
-const buildTarget = (targetObjectMetadataId: string) =>
-  ({
-    targetObjectMetadata: { id: targetObjectMetadataId },
-  }) as unknown as NonNullable<SnapshotField['relation']>;
+const buildTarget = (targetObjectMetadataId: string) => ({
+  targetObjectMetadata: { id: targetObjectMetadataId },
+});
 
 const buildSnapshot = (
   overrides: Partial<MetadataStoreSnapshot>,

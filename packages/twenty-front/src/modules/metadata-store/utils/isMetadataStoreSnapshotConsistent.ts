@@ -1,17 +1,16 @@
-import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
-import { type FlatIndexMetadataItem } from '@/metadata-store/types/FlatIndexMetadataItem';
-import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
-import { type FlatView } from '@/metadata-store/types/FlatView';
 import { isDefined } from 'twenty-shared/utils';
 
+type ObjectMetadataReference = { targetObjectMetadata: { id: string } };
+
 export type MetadataStoreSnapshot = {
-  objectMetadataItems: Pick<FlatObjectMetadataItem, 'id'>[];
-  fieldMetadataItems: Pick<
-    FlatFieldMetadataItem,
-    'objectMetadataId' | 'relation' | 'morphRelations'
-  >[];
-  indexMetadataItems: Pick<FlatIndexMetadataItem, 'objectMetadataId'>[];
-  views: Pick<FlatView, 'objectMetadataId'>[];
+  objectMetadataItems: { id: string }[];
+  fieldMetadataItems: {
+    objectMetadataId: string;
+    relation?: ObjectMetadataReference | null;
+    morphRelations?: ObjectMetadataReference[] | null;
+  }[];
+  indexMetadataItems: { objectMetadataId: string }[];
+  views: { objectMetadataId: string }[];
 };
 
 export const isMetadataStoreSnapshotConsistent = ({
