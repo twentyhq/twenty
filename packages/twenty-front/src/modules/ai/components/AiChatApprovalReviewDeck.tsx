@@ -175,15 +175,17 @@ export const AiChatApprovalReviewDeck = ({
           </StyledHeader>
         </Card.Header>
         <Card.Content>{activeCard.content}</Card.Content>
-        {!isActiveCardPending && (
-          <StyledOutcome>
-            <AiChatApprovalOutcome
-              status={activeCard.status}
-              message={activeCard.outcomeMessage}
-              progress={activeCard.progress}
-            />
-          </StyledOutcome>
-        )}
+        <div role="status" aria-atomic="true">
+          {!isActiveCardPending && (
+            <StyledOutcome>
+              <AiChatApprovalOutcome
+                status={activeCard.status}
+                message={activeCard.outcomeMessage}
+                progress={activeCard.progress}
+              />
+            </StyledOutcome>
+          )}
+        </div>
         <Card.Footer divider={false}>
           <StyledFooter>
             <StyledHint>{hint}</StyledHint>

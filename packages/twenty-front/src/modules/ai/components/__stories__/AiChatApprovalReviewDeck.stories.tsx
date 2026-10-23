@@ -285,6 +285,9 @@ export const ApproveCurrentCard: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
+    const outcomeStatus = canvas.getByRole('status');
+
+    await expect(outcomeStatus).toBeEmptyDOMElement();
 
     await userEvent.click(canvas.getByRole('button', { name: 'Create 3' }));
 
@@ -308,6 +311,8 @@ export const ApproveCurrentCard: Story = {
       ],
     });
     await expect(canvas.getAllByText('Succeeded')).toHaveLength(4);
+    await expect(canvas.getByRole('status')).toBe(outcomeStatus);
+    await expect(outcomeStatus).toHaveTextContent('Succeeded');
     await expect(
       canvas.getByRole('button', { name: 'Create 3' }),
     ).toBeDisabled();
@@ -317,6 +322,8 @@ export const ApproveCurrentCard: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Update 2' }),
     ).toBeEnabled();
+    await expect(canvas.getByRole('status')).toBe(outcomeStatus);
+    await expect(outcomeStatus).toBeEmptyDOMElement();
     await expect(
       canvas.getByRole('button', { name: 'Approve all 2' }),
     ).toBeEnabled();
@@ -511,8 +518,6 @@ export const OutcomeStates: Story = {
     ]) {
       await expect(canvas.getByText(label)).toBeVisible();
     }
-
-    await expect(canvas.getAllByRole('status')).toHaveLength(7);
   },
 };
 

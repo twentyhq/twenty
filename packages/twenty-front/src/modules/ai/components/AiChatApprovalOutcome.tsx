@@ -58,7 +58,7 @@ export const AiChatApprovalOutcome = ({
   const { t } = useLingui();
 
   return (
-    <StyledOutcome role="status">
+    <StyledOutcome>
       <StyledDescription>
         <Tag color={STATUS_COLORS[status]} variant="soft">
           {t(STATUS_LABELS[status])}
