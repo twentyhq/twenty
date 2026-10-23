@@ -96,9 +96,15 @@ export class MessagingMessageParticipantService {
         // Without this a re-ingested participant would keep its original unlinked row forever
         const identityUpdates = participantsWithExisting.flatMap(
           ({ participant, existingParticipant }) => {
+            // app channel rows match without their name, so one stored without it takes a later delivery's
+            const fillsMissingDisplayName =
+              !shouldMatchOnDisplayName &&
+              !isNonEmptyString(existingParticipant?.displayName) &&
+              isNonEmptyString(participant.displayName);
+
             if (
               !isDefined(existingParticipant) ||
-              !suppliesIdentity(participant)
+              (!suppliesIdentity(participant) && !fillsMissingDisplayName)
             ) {
               return [];
             }
