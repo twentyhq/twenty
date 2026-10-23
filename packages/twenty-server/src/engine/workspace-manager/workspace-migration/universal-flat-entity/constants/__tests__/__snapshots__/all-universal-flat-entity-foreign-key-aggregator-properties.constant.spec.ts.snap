@@ -3,6 +3,11 @@
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should match snapshot 1`] = `
 {
   "agent": [],
+  "agentChatChannel": [
+    "channelRoleUniversalIdentifiers",
+    "navigationMenuItemUniversalIdentifiers",
+  ],
+  "agentChatChannelRole": [],
   "applicationVariable": [],
   "commandMenuItem": [],
   "connectionProvider": [],
@@ -52,6 +57,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "fieldPermissionUniversalIdentifiers",
     "rowLevelPermissionPredicateUniversalIdentifiers",
     "rowLevelPermissionPredicateGroupUniversalIdentifiers",
+    "agentChatChannelRoleUniversalIdentifiers",
   ],
   "rolePermissionFlag": [],
   "roleTarget": [],
