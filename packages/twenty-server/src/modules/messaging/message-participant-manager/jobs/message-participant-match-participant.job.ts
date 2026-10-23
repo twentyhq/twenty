@@ -46,16 +46,19 @@ export class MessageParticipantMatchParticipantJob {
       });
     }
 
+    const personHandleFields =
+      (personHandleMatching ?? []).length > 0
+        ? await this.personHandleFieldService.findAll(workspaceId)
+        : [];
+
     for (const {
       fieldUniversalIdentifier,
       messageChannelIds,
       handles,
     } of personHandleMatching ?? []) {
-      const personHandleField =
-        await this.personHandleFieldService.findByUniversalIdentifier({
-          workspaceId,
-          fieldUniversalIdentifier,
-        });
+      const personHandleField = personHandleFields.find(
+        (field) => field.universalIdentifier === fieldUniversalIdentifier,
+      );
 
       if (isDefined(personHandleField)) {
         await this.matchParticipantService.matchParticipantsForPersonHandles({

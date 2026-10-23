@@ -118,7 +118,6 @@ export class MessageParticipantPersonListener {
     );
   }
 
-  // values before and after the change, so a value the person lost releases its participants too
   private async buildPersonHandleMatching({
     workspaceId,
     personChanges,

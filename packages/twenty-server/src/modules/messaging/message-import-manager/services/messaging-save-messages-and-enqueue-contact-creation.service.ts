@@ -232,15 +232,17 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     };
   }
 
-  // Matching non-email handles as emails would null out caller-supplied identities: app channels only match on
-  // the person field they declared, and only participants the app left unlinked
+  // matching non-email handles as emails would null out app-supplied identities, so only the declared field is used
   private async matchAppChannelParticipants({
     messageChannel,
     participants,
     messageIds,
     workspaceId,
   }: {
-    messageChannel: MessageChannelEntity;
+    messageChannel: Pick<
+      MessageChannelEntity,
+      'participantHandleFieldUniversalIdentifier'
+    >;
     participants: MessageParticipantWorkspaceEntity[];
     messageIds: string[];
     workspaceId: string;

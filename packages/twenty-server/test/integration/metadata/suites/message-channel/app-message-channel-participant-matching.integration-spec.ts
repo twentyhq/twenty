@@ -1,5 +1,3 @@
-import { randomUUID } from 'crypto';
-
 import { gql } from 'graphql-tag';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
@@ -76,7 +74,7 @@ describe('app message channel participant matching (e2e)', () => {
   });
 
   const createPerson = async (firstName: string, phone: FrenchPhone) => {
-    const id = randomUUID();
+    const id = v4();
     const response = await createOneOperation({
       objectMetadataSingularName: 'person',
       input: { id, name: { firstName }, phones: toPhones(phone) },
@@ -161,10 +159,10 @@ describe('app message channel participant matching (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.ingestAppMessages.messages[0] as {
-      messageId: string;
-      messageThreadId: string;
-    };
+    const [ingestedMessage]: { messageId: string; messageThreadId: string }[] =
+      response.body.data.ingestAppMessages.messages;
+
+    return ingestedMessage;
   };
 
   beforeAll(async () => {
