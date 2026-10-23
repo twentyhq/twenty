@@ -13,8 +13,7 @@ export type PersonHandleMatching = {
   fieldUniversalIdentifier: string;
   messageChannelIds: string[];
   handles: string[];
-  // people whose value changed; participants linked to anyone else keep their link
-  personIds: string[];
+  changedPersonIds: string[];
 };
 
 export type MessageParticipantMatchParticipantJobData = {
@@ -57,7 +56,7 @@ export class MessageParticipantMatchParticipantJob {
       fieldUniversalIdentifier,
       messageChannelIds,
       handles,
-      personIds,
+      changedPersonIds,
     } of personHandleMatching ?? []) {
       const personHandleField = personHandleFields.find(
         (field) => field.universalIdentifier === fieldUniversalIdentifier,
@@ -68,7 +67,7 @@ export class MessageParticipantMatchParticipantJob {
           personHandleField,
           messageChannelIds,
           handles,
-          personIds,
+          changedPersonIds,
           workspaceId,
         });
       }

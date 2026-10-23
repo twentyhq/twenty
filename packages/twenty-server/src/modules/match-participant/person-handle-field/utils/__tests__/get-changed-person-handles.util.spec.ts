@@ -29,7 +29,7 @@ describe('getChangedPersonHandles', () => {
           },
         ],
       }),
-    ).toEqual({ handles: ['+33611111111'], personIds: ['person-a'] });
+    ).toEqual({ handles: ['+33611111111'], changedPersonIds: ['person-a'] });
   });
 
   it('returns the values before and after a change', () => {
@@ -46,7 +46,7 @@ describe('getChangedPersonHandles', () => {
       }),
     ).toEqual({
       handles: ['+33611111111', '+33622222222'],
-      personIds: ['person-a'],
+      changedPersonIds: ['person-a'],
     });
   });
 
@@ -62,7 +62,7 @@ describe('getChangedPersonHandles', () => {
           },
         ],
       }),
-    ).toEqual({ handles: ['+33611111111'], personIds: ['person-a'] });
+    ).toEqual({ handles: ['+33611111111'], changedPersonIds: ['person-a'] });
   });
 
   it('ignores people whose values did not change', () => {
@@ -77,6 +77,6 @@ describe('getChangedPersonHandles', () => {
           },
         ],
       }),
-    ).toEqual({ handles: [], personIds: [] });
+    ).toEqual({ handles: [], changedPersonIds: [] });
   });
 });

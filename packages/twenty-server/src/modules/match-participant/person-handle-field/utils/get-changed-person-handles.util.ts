@@ -35,9 +35,9 @@ export const getChangedPersonHandles = ({
 }: {
   personHandleField: PersonHandleField;
   personChanges: PersonChange[];
-}): { handles: string[]; personIds: string[] } => {
+}): { handles: string[]; changedPersonIds: string[] } => {
   const handles = new Set<string>();
-  const personIds = new Set<string>();
+  const changedPersonIds = new Set<string>();
 
   for (const { personId, before, after } of personChanges) {
     const handlesBefore = getHandles({ personHandleField, person: before });
@@ -50,12 +50,12 @@ export const getChangedPersonHandles = ({
       continue;
     }
 
-    personIds.add(personId);
+    changedPersonIds.add(personId);
 
     for (const handle of [...handlesBefore, ...handlesAfter]) {
       handles.add(handle);
     }
   }
 
-  return { handles: [...handles], personIds: [...personIds] };
+  return { handles: [...handles], changedPersonIds: [...changedPersonIds] };
 };

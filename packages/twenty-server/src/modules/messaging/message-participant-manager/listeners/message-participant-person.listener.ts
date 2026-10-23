@@ -133,7 +133,7 @@ export class MessageParticipantPersonListener {
   }): Promise<PersonHandleMatching[]> {
     const changedHandlesByFieldUniversalIdentifier = new Map<
       string,
-      { handles: string[]; personIds: string[] }
+      { handles: string[]; changedPersonIds: string[] }
     >();
 
     for (const personHandleField of await this.personHandleFieldService.findAll(
@@ -169,7 +169,7 @@ export class MessageParticipantPersonListener {
     });
 
     return [...changedHandlesByFieldUniversalIdentifier].flatMap(
-      ([fieldUniversalIdentifier, { handles, personIds }]) => {
+      ([fieldUniversalIdentifier, { handles, changedPersonIds }]) => {
         const messageChannelIds = messageChannels
           .filter(
             (messageChannel) =>
@@ -184,7 +184,7 @@ export class MessageParticipantPersonListener {
                 fieldUniversalIdentifier,
                 messageChannelIds,
                 handles,
-                personIds,
+                changedPersonIds,
               },
             ]
           : [];

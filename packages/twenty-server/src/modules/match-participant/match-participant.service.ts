@@ -43,7 +43,7 @@ type MatchParticipantsForPersonHandlesArgs = {
   personHandleField: PersonHandleField;
   messageChannelIds: string[];
   handles: string[];
-  personIds: string[];
+  changedPersonIds: string[];
   workspaceId: string;
 };
 
@@ -311,7 +311,7 @@ export class MatchParticipantService<
     personHandleField,
     messageChannelIds,
     handles,
-    personIds,
+    changedPersonIds,
     workspaceId,
   }: MatchParticipantsForPersonHandlesArgs) {
     if (!isNonEmptyArray(messageChannelIds) || !isNonEmptyArray(handles)) {
@@ -367,7 +367,7 @@ export class MatchParticipantService<
                 this.getSourceRecordId(participant),
               ) &&
               (!isDefined(participant.personId) ||
-                personIds.includes(participant.personId)),
+                changedPersonIds.includes(participant.personId)),
           );
 
           await this.matchParticipants({
