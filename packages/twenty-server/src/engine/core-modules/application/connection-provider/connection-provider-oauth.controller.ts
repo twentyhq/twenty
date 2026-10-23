@@ -1,8 +1,19 @@
-import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Logger,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import {
@@ -16,6 +27,7 @@ import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/appl
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { ConnectionProviderRestApiExceptionFilter } from 'src/engine/core-modules/application/connection-provider/filters/connection-provider-rest-api-exception.filter';
 import {
   AuthException,
   AuthExceptionCode,
@@ -25,6 +37,10 @@ import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-c
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import {
+  extractBody,
+  normalizeQueryStringParameters,
+} from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -181,42 +197,132 @@ export class ConnectionProviderOAuthController {
           state,
         });
 
-      const workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
-
-      if (!workspace) {
-        throw new ConnectionProviderException(
-          `Workspace ${workspaceId} not found after OAuth callback`,
-          ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,
-        );
-      }
-
-      const hasRedirectLocation = isNonEmptyString(redirectLocation);
-
-      const { pathname, searchParams, hash } = this.parseRedirectLocation({
+      return await this.redirectToConnectedApplication({
+        res,
+        workspaceId,
+        applicationId,
         redirectLocation,
-        fallbackPathname: getSettingsPath(SettingsPath.ApplicationDetail, {
-          applicationId,
-        }),
       });
-
-      const url = this.workspaceDomainsService.buildWorkspaceURL({
-        workspace,
-        pathname,
-        searchParams,
-        hash,
-      });
-
-      // Frontend tab list reads the URL hash to pick the active tab.
-      if (!hasRedirectLocation) {
-        url.hash = 'settings';
-      }
-
-      return res.redirect(url.toString());
     } catch (error) {
       return this.redirectToErrorFromState({ res, state, error });
     }
+  }
+
+  // Browser return from a custom provider flow: the account may be saved now
+  // or by a server notification to the POST route, before or after.
+  @Get('custom/callback')
+  async customCallback(@Req() req: Request, @Res() res: Response) {
+    const { state, ...queryStringParameters } = normalizeQueryStringParameters(
+      req.query,
+    );
+
+    if (!isNonEmptyString(state)) {
+      return this.redirectToErrorFromState({
+        res,
+        state,
+        error: new Error(
+          'Custom connection callback is missing the `state` query parameter',
+        ),
+      });
+    }
+
+    try {
+      const { workspaceId, applicationId, redirectLocation } =
+        await this.oauthProviderFlowService.completeCustomAuthorizationFlow({
+          state,
+          request: {
+            httpMethod: 'GET',
+            queryStringParameters,
+            body: null,
+          },
+        });
+
+      return await this.redirectToConnectedApplication({
+        res,
+        workspaceId,
+        applicationId,
+        redirectLocation,
+      });
+    } catch (error) {
+      return this.redirectToErrorFromState({ res, state, error });
+    }
+  }
+
+  // Server-to-server notification from a custom provider flow, authenticated
+  // by the signed state the app put in the notification URL.
+  @Post('custom/callback')
+  @HttpCode(200)
+  @UseFilters(ConnectionProviderRestApiExceptionFilter)
+  async customCallbackNotification(
+    @Req() req: Request,
+  ): Promise<{ success: true }> {
+    const { state, ...queryStringParameters } = normalizeQueryStringParameters(
+      req.query,
+    );
+
+    if (!isNonEmptyString(state)) {
+      throw new ConnectionProviderException(
+        'Custom connection callback is missing the `state` query parameter',
+        ConnectionProviderExceptionCode.INVALID_REQUEST,
+      );
+    }
+
+    await this.oauthProviderFlowService.completeCustomAuthorizationFlow({
+      state,
+      request: {
+        httpMethod: 'POST',
+        queryStringParameters,
+        body: extractBody(req),
+      },
+    });
+
+    return { success: true };
+  }
+
+  private async redirectToConnectedApplication({
+    res,
+    workspaceId,
+    applicationId,
+    redirectLocation,
+  }: {
+    res: Response;
+    workspaceId: string;
+    applicationId: string;
+    redirectLocation: string | null;
+  }) {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new ConnectionProviderException(
+        `Workspace ${workspaceId} not found after OAuth callback`,
+        ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,
+      );
+    }
+
+    const hasRedirectLocation = isNonEmptyString(redirectLocation);
+
+    const { pathname, searchParams, hash } = this.parseRedirectLocation({
+      redirectLocation,
+      fallbackPathname: getSettingsPath(SettingsPath.ApplicationDetail, {
+        applicationId,
+      }),
+    });
+
+    const url = this.workspaceDomainsService.buildWorkspaceURL({
+      workspace,
+      pathname,
+      searchParams,
+      hash,
+    });
+
+    // Frontend tab list reads the URL hash to pick the active tab.
+    if (!hasRedirectLocation) {
+      url.hash = 'settings';
+    }
+
+    return res.redirect(url.toString());
   }
 
   private async redirectToErrorFromState({

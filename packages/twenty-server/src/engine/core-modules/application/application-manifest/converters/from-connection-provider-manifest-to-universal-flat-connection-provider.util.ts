@@ -1,6 +1,7 @@
 import {
   type ConnectionProviderManifest,
   DEFAULT_CONNECTION_PROVIDER_SCOPE,
+  type StoredCustomConnectionProviderConfig,
   type StoredOAuthConnectionProviderConfig,
 } from 'twenty-shared/application';
 
@@ -37,6 +38,18 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
           }
         : null;
 
+    const customConfig: StoredCustomConnectionProviderConfig | null =
+      connectionProviderManifest.type === 'custom'
+        ? {
+            authorizeLogicFunctionUniversalIdentifier:
+              connectionProviderManifest.custom.authorizeLogicFunction
+                .universalIdentifier,
+            callbackLogicFunctionUniversalIdentifier:
+              connectionProviderManifest.custom.callbackLogicFunction
+                .universalIdentifier,
+          }
+        : null;
+
     return {
       universalIdentifier: connectionProviderManifest.universalIdentifier,
       applicationUniversalIdentifier,
@@ -47,6 +60,7 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       scope:
         connectionProviderManifest.scope ?? DEFAULT_CONNECTION_PROVIDER_SCOPE,
       oauthConfig,
+      customConfig,
       identifyAccountLogicFunctionUniversalIdentifier:
         connectionProviderManifest.identifyAccountLogicFunction
           ?.universalIdentifier ?? null,

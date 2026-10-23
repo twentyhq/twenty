@@ -25,6 +25,14 @@ export const assertConnectionProviderLogicFunctionsAreOwn = ({
       identifyAccount: connectionProvider.identifyAccountLogicFunction,
       onConnect: connectionProvider.onConnectLogicFunction,
       onDisconnect: connectionProvider.onDisconnectLogicFunction,
+      authorize:
+        connectionProvider.type === 'custom'
+          ? connectionProvider.custom.authorizeLogicFunction
+          : undefined,
+      callback:
+        connectionProvider.type === 'custom'
+          ? connectionProvider.custom.callbackLogicFunction
+          : undefined,
     })) {
       if (!isDefined(logicFunctionReference)) {
         continue;

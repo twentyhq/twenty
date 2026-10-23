@@ -56,6 +56,7 @@ export const SettingsApplicationConnectionsSection = ({
         const isOAuth = provider.type === 'oauth';
         const isClientCredentialsConfigured =
           provider.oauth?.isClientCredentialsConfigured ?? false;
+        const canStartAuthorization = !isOAuth || isClientCredentialsConfigured;
         const canAddConnection = provider.scope === 'WORKSPACE';
 
         const providerConnections = connectedAccounts.filter(
@@ -159,7 +160,7 @@ export const SettingsApplicationConnectionsSection = ({
                 </StyledTableRowsContainer>
               </Table>
             )}
-            {canAddConnection && isClientCredentialsConfigured && (
+            {canAddConnection && canStartAuthorization && (
               <StyledFooter>
                 <Button
                   startIcon={<IconPlus />}

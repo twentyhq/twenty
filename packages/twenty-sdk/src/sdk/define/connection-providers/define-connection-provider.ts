@@ -8,7 +8,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
-const SUPPORTED_TYPES = ['oauth'] as const;
+const SUPPORTED_TYPES = ['oauth', 'custom'] as const;
 
 type ConnectionProviderLogicFunctionKey = Extract<
   keyof ConnectionProviderManifest,
@@ -20,6 +20,11 @@ const LOGIC_FUNCTION_KEYS = [
   'onConnectLogicFunction',
   'onDisconnectLogicFunction',
 ] as const satisfies readonly ConnectionProviderLogicFunctionKey[];
+
+const CUSTOM_LOGIC_FUNCTION_KEYS = [
+  'authorizeLogicFunction',
+  'callbackLogicFunction',
+] as const;
 
 export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
@@ -104,6 +109,30 @@ export const defineConnectionProvider: DefineEntity<
       }
       if (!Array.isArray(oauth.scopes)) {
         errors.push('OAuth connection provider must declare a scopes array');
+      }
+    }
+  }
+
+  if (config.type === 'custom') {
+    const custom = config.custom;
+
+    if (!custom) {
+      errors.push(
+        "Connection provider with type 'custom' must declare a `custom` config block",
+      );
+    } else {
+      for (const logicFunctionKey of CUSTOM_LOGIC_FUNCTION_KEYS) {
+        const logicFunction = custom[logicFunctionKey];
+
+        if (!isDefined(logicFunction)) {
+          errors.push(
+            `Custom connection provider must declare custom.${logicFunctionKey}`,
+          );
+        } else if (!isValidPostgresUuid(logicFunction.universalIdentifier)) {
+          errors.push(
+            `Connection provider custom.${logicFunctionKey}.universalIdentifier "${logicFunction.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
+          );
+        }
       }
     }
   }

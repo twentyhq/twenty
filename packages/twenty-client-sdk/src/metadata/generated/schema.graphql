@@ -339,7 +339,7 @@ type ApiKeyToken {
 }
 
 type AppConnection {
-  accessToken: String!
+  accessToken: String
   authFailedAt: String
   authFailedReason: String
   externalAccountId: String

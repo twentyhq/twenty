@@ -384,7 +384,7 @@ export type ApiKeyToken = {
 
 export type AppConnection = {
   __typename?: 'AppConnection';
-  accessToken: Scalars['String']['output'];
+  accessToken?: Maybe<Scalars['String']['output']>;
   authFailedAt?: Maybe<Scalars['String']['output']>;
   authFailedReason?: Maybe<Scalars['String']['output']>;
   externalAccountId?: Maybe<Scalars['String']['output']>;

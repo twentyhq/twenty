@@ -34,8 +34,8 @@ export class AppConnectionObjectDto implements AppConnection {
   @Field(() => String, { nullable: true })
   workspaceMemberId: string | null;
 
-  @Field()
-  accessToken: string;
+  @Field(() => String, { nullable: true })
+  accessToken: string | null;
 
   @Field(() => [String])
   scopes: string[];

@@ -158,6 +158,48 @@ describe('SettingsApplicationConnectionsSection', () => {
     });
   });
 
+  it('adds a connection to a custom provider without OAuth credentials', async () => {
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      connectionProviders: [
+        {
+          id: 'provider-1',
+          applicationId: 'app-1',
+          type: 'custom',
+          name: 'linkedin',
+          displayName: 'LinkedIn',
+          scope: 'WORKSPACE',
+          logoUrl: null,
+          oauth: null,
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
+      accounts: [],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter>
+          <SettingsApplicationConnectionsSection applicationId="app-1" />
+        </MemoryRouter>
+      </I18nProvider>,
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /Add connection/i }),
+    );
+
+    expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
+      applicationId: 'app-1',
+      providerName: 'linkedin',
+    });
+  });
+
   it('hides a provider scoped to each member when the caller sees none of its connections', () => {
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
       connectionProviders: [

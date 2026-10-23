@@ -249,10 +249,11 @@ export class ApplicationConnectionsListService {
     }
 
     try {
-      const encryptedTokens = await this.refreshTokensService.resolveTokens(
+      const accessToken = await this.resolveAccessToken({
         account,
+        provider,
         workspaceId,
-      );
+      });
 
       return {
         id: account.id,
@@ -264,10 +265,7 @@ export class ApplicationConnectionsListService {
         visibility: LEGACY_CONNECTION_VISIBILITY_BY_SCOPE[account.scope],
         userWorkspaceId: account.userWorkspaceId,
         workspaceMemberId,
-        accessToken: this.connectedAccountTokenEncryptionService.decrypt({
-          ciphertext: encryptedTokens.accessToken,
-          workspaceId,
-        }),
+        accessToken,
         scopes: account.scopes ?? provider.oauthConfig?.scopes ?? [],
         authFailedAt: account.authFailedAt?.toISOString() ?? null,
         authFailedReason: account.authFailedReason,
@@ -279,5 +277,30 @@ export class ApplicationConnectionsListService {
 
       return null;
     }
+  }
+
+  private async resolveAccessToken({
+    account,
+    provider,
+    workspaceId,
+  }: {
+    account: ConnectedAccountEntity;
+    provider: ConnectionProviderEntity;
+    workspaceId: string;
+  }): Promise<string | null> {
+    // A custom flow's callback may save an account without any token.
+    if (provider.type === 'custom' && !isDefined(account.accessToken)) {
+      return null;
+    }
+
+    const encryptedTokens = await this.refreshTokensService.resolveTokens(
+      account,
+      workspaceId,
+    );
+
+    return this.connectedAccountTokenEncryptionService.decrypt({
+      ciphertext: encryptedTokens.accessToken,
+      workspaceId,
+    });
   }
 }

@@ -50,6 +50,10 @@ export { reportConnectionAuthFailure } from '@/sdk/logic-function/connections/re
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
 export type {
+  AuthorizeConnectionPayload,
+  AuthorizeConnectionResult,
+  ConnectionCallbackPayload,
+  ConnectionCallbackResult,
   IdentifyAccountPayload,
   IdentifyAccountResult,
 } from 'twenty-shared/application';

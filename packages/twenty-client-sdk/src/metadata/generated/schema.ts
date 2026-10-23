@@ -276,7 +276,7 @@ export interface ApiKeyToken {
 }
 
 export interface AppConnection {
-    accessToken: Scalars['String']
+    accessToken?: Scalars['String']
     authFailedAt?: Scalars['String']
     authFailedReason?: Scalars['String']
     externalAccountId?: Scalars['String']

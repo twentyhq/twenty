@@ -212,13 +212,20 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    const identifyAccountLogicFunctionUniversalIdentifiers = new Set(
+    const connectionFlowLogicFunctionUniversalIdentifiers = new Set(
       (manifest.connectionProviders ?? [])
-        .map(
-          (connectionProviderManifest) =>
-            connectionProviderManifest.identifyAccountLogicFunction
-              ?.universalIdentifier,
-        )
+        .flatMap((connectionProviderManifest) => [
+          connectionProviderManifest.identifyAccountLogicFunction
+            ?.universalIdentifier,
+          ...(connectionProviderManifest.type === 'custom'
+            ? [
+                connectionProviderManifest.custom.authorizeLogicFunction
+                  .universalIdentifier,
+                connectionProviderManifest.custom.callbackLogicFunction
+                  .universalIdentifier,
+              ]
+            : []),
+        ])
         .filter(isDefined),
     );
 
@@ -231,7 +238,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             applicationSourceType,
             existingFlatLogicFunctionMaps:
               fromAllFlatEntityMaps.flatLogicFunctionMaps,
-            identifyAccountLogicFunctionUniversalIdentifiers,
+            connectionFlowLogicFunctionUniversalIdentifiers,
             now,
           }),
         universalFlatEntityMapsToMutate:
