@@ -1,4 +1,3 @@
-import { SeedWorkspaceFrontendDependenciesCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792758655147-seed-workspace-frontend-dependencies.command';
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
@@ -22,7 +21,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
   ],
   providers: [
-    SeedWorkspaceFrontendDependenciesCommand,
     FileSettledAgentChatThreadsCommand,
     DeleteConnectedAccountsOutsideProviderScopeCommand,
     AddAgentChatChannelsCommand,
