@@ -104,6 +104,11 @@ const StyledDescription = styled.div`
   min-width: 0;
 `;
 
+const StyledPreview = styled.div`
+  min-width: 0;
+  overflow: hidden;
+`;
+
 type AiChatThreadRowProps = {
   id: string;
   label: string;
@@ -208,7 +213,7 @@ export const AiChatThreadRow = ({
       }
       description={
         <StyledDescription>
-          {subtitle}
+          <StyledPreview>{subtitle}</StyledPreview>
           {isDefined(children) && (
             <div
               data-select-disable

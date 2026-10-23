@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Input } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -236,6 +237,33 @@ export const NarrowDraft: Story = {
     await expect(row.getBoundingClientRect().height).toBe(65);
     await expect(doneButton.getBoundingClientRect().top).toBeLessThan(
       subtitle.getBoundingClientRect().bottom,
+    );
+    const preview = subtitle.parentElement;
+
+    if (!isDefined(preview)) {
+      throw new Error('Chat preview container is missing');
+    }
+
+    const draftBadge = canvas.getByText('Draft');
+    let visibleDraftRight = draftBadge.getBoundingClientRect().right;
+
+    for (
+      let ancestor = draftBadge.parentElement;
+      isDefined(ancestor);
+      ancestor = ancestor.parentElement
+    ) {
+      if (getComputedStyle(ancestor).overflowX === 'visible') {
+        continue;
+      }
+
+      visibleDraftRight = Math.min(
+        visibleDraftRight,
+        ancestor.getBoundingClientRect().right,
+      );
+    }
+
+    await expect(visibleDraftRight).toBeLessThanOrEqual(
+      preview.getBoundingClientRect().right,
     );
     await expect(row.scrollWidth).toBeLessThanOrEqual(row.clientWidth);
     await userEvent.tab();
