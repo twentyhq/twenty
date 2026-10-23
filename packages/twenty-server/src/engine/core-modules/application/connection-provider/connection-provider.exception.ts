@@ -43,8 +43,6 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`We could not identify the account you authorized. Please try again.`;
     case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
       return msg`You authorized a different account than the one this connection belongs to.`;
-    case ConnectionProviderExceptionCode.CONNECTION_SCOPE_NOT_ALLOWED:
-      return msg`This connection provider does not support this kind of connection.`;
     default:
       assertUnreachable(code);
   }

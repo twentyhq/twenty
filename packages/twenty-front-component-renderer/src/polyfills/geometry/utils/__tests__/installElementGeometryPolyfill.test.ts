@@ -25,8 +25,6 @@ type GeometryPolyfilledElement = FakeElement & {
   clientLeft: number;
   scrollWidth: number;
   scrollHeight: number;
-  scrollTop: number;
-  scrollLeft: number;
   offsetParent: FakeElement | null;
 };
 
@@ -131,7 +129,7 @@ describe('installElementGeometryPolyfill', () => {
     expect(element.clientHeight).toBe(10);
     expect(element.scrollWidth).toBe(13);
     expect(element.scrollHeight).toBe(14);
-    expect(element.scrollTop).toBe(15);
+    expect(element.clientWidth).toBe(9);
   });
 
   it('should measure content when a textarea resets its block size', () => {
@@ -212,22 +210,7 @@ describe('installElementGeometryPolyfill', () => {
     expect(element.offsetWidth).toBe(0);
     expect(element.clientHeight).toBe(0);
     expect(element.scrollHeight).toBe(0);
-    expect(element.scrollLeft).toBe(0);
-  });
-
-  it('should not throw when scrollTop is assigned and should keep reading the mirrored value', () => {
-    installOn(
-      createWorkerGeometryStoreStub({
-        resolveElementSnapshot: () => createElementGeometrySnapshotFixture(),
-      }),
-    );
-
-    const element = asPolyfilled(new FakeElement());
-
-    expect(() => {
-      element.scrollTop = 999;
-    }).not.toThrow();
-    expect(element.scrollTop).toBe(15);
+    expect(element.clientLeft).toBe(0);
   });
 
   it('should return the document body from offsetParent', () => {

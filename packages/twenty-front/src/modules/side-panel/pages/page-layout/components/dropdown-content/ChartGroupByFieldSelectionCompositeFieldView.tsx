@@ -1,56 +1,51 @@
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
-import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
+import { useChartGroupByFieldSelectionContextOrThrow } from '@/side-panel/pages/page-layout/hooks/useChartGroupByFieldSelectionContextOrThrow';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
-import { isCompositePropertySupportedInGroupBy } from 'twenty-shared/utils';
+import {
+  isCompositePropertySupportedInGroupBy,
+  isDefined,
+} from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { useIcons } from 'twenty-ui/icon';
 
 type ChartGroupByFieldSelectionCompositeFieldViewProps = {
+  pageId: string;
   compositeField: FieldMetadataItem;
-  currentSubFieldName: string | undefined;
-  onBack: () => void;
-  onSelectSubField: (subFieldName: string) => void;
+  fieldMetadataId: string;
+  subFieldNamePrefix?: string;
 };
 
 export const ChartGroupByFieldSelectionCompositeFieldView = ({
+  pageId,
   compositeField,
-  currentSubFieldName,
-  onBack,
-  onSelectSubField,
+  fieldMetadataId,
+  subFieldNamePrefix,
 }: ChartGroupByFieldSelectionCompositeFieldViewProps) => {
   const { getIcon } = useIcons();
+  const { currentGroupByFieldMetadataId, currentSubFieldName, selectField } =
+    useChartGroupByFieldSelectionContextOrThrow();
+  const compositeFieldType = compositeField.type;
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
+  if (!isCompositeFieldType(compositeFieldType)) {
+    return null;
+  }
 
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const compositeFieldType = compositeField.type as CompositeFieldType;
-
+  const getSubFieldName = (subFieldName: string) =>
+    isDefined(subFieldNamePrefix)
+      ? `${subFieldNamePrefix}.${subFieldName}`
+      : subFieldName;
   const groupableSubFieldNames = new Set(
     compositeTypeDefinitions
       .get(compositeField.type)
       ?.properties.filter(isCompositePropertySupportedInGroupBy)
       .map((property) => property.name),
   );
-
   const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
     compositeFieldType
   ].subFields
@@ -58,55 +53,34 @@ export const ChartGroupByFieldSelectionCompositeFieldView = ({
     .filter((subFieldName) => groupableSubFieldNames.has(subFieldName));
 
   return (
-    <>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={onBack}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {compositeField.label}
-      </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={subFieldNames}
-        >
-          {subFieldNames.map((subFieldName) => (
-            <SelectableListItem
-              key={subFieldName}
-              itemId={subFieldName}
-              onEnter={() => {
-                onSelectSubField(subFieldName);
-              }}
-            >
-              <ListItemButton
-                focused={selectedItemId === subFieldName}
-                onClick={() => {
-                  onSelectSubField(subFieldName);
-                }}
-                role="option"
-                aria-selected={currentSubFieldName === subFieldName}
-                selected={currentSubFieldName === subFieldName}
-                indicator="check"
-                startIcon={
-                  <SelectOptionIcon
-                    Icon={getIcon(
-                      ICON_NAME_BY_SUB_FIELD[subFieldName] ??
-                        compositeField.icon,
-                    )}
-                  />
-                }
-              >
-                {getCompositeSubFieldLabel(compositeFieldType, subFieldName)}
-              </ListItemButton>
-            </SelectableListItem>
-          ))}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
-    </>
+    <Dropdown.Page id={pageId}>
+      <Dropdown.Back>{compositeField.label}</Dropdown.Back>
+      <ChartSettingsDropdownSection>
+        {subFieldNames.map((subFieldName) => (
+          <Dropdown.OptionItem
+            key={subFieldName}
+            onSelect={() =>
+              selectField({
+                fieldId: fieldMetadataId,
+                subFieldName: getSubFieldName(subFieldName),
+              })
+            }
+            selected={
+              currentGroupByFieldMetadataId === fieldMetadataId &&
+              currentSubFieldName === getSubFieldName(subFieldName)
+            }
+            startIcon={
+              <SelectOptionIcon
+                Icon={getIcon(
+                  ICON_NAME_BY_SUB_FIELD[subFieldName] ?? compositeField.icon,
+                )}
+              />
+            }
+          >
+            {getCompositeSubFieldLabel(compositeFieldType, subFieldName)}
+          </Dropdown.OptionItem>
+        ))}
+      </ChartSettingsDropdownSection>
+    </Dropdown.Page>
   );
 };

@@ -7,10 +7,9 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsUnsubscribePreviewSender } from '@/settings/unsubscribers/components/SettingsUnsubscribePreviewSender';
 import { SettingsUnsubscribePreviewTracking } from '@/settings/unsubscribers/components/SettingsUnsubscribePreviewTracking';
 import { getUnsubscribePageHeaderDescription } from '@/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription';
-import { LabeledDivider } from '@/ui/layout/line/components/LabeledDivider';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { MainButton } from 'twenty-ui/components/input';
-import { Section } from 'twenty-ui/components/layout';
+import { LabeledSeparator, Section } from 'twenty-ui/components/layout';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -133,7 +132,7 @@ export const SettingsUnsubscribePreview = () => {
                 {hasPreferences ? (
                   <StyledActions>
                     <MainButton fullWidth>{t`Update`}</MainButton>
-                    <LabeledDivider noMargin>{t`Or`}</LabeledDivider>
+                    <LabeledSeparator>{t`Or`}</LabeledSeparator>
                     <MainButton fullWidth variant="outline" elevated={false}>
                       {t`Unsubscribe all`}
                     </MainButton>
