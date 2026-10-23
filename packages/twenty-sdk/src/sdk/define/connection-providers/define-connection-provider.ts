@@ -4,6 +4,7 @@ import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres
 import {
   CONNECTION_PROVIDER_SCOPES,
   type ConnectionProviderManifest,
+  type CustomConnectionProviderConfig,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -36,6 +37,33 @@ const getInvalidLogicFunctionReferenceError = ({
   isValidPostgresUuid(universalIdentifier)
     ? null
     : `Connection provider ${path}.universalIdentifier "${universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`;
+
+const getCustomConfigErrors = (
+  custom: CustomConnectionProviderConfig | undefined,
+): string[] => {
+  if (!isDefined(custom)) {
+    return [
+      "Connection provider with type 'custom' must declare a `custom` config block",
+    ];
+  }
+
+  return CUSTOM_LOGIC_FUNCTION_KEYS.flatMap((logicFunctionKey) => {
+    const logicFunction = custom[logicFunctionKey];
+
+    if (!isDefined(logicFunction)) {
+      return [
+        `Custom connection provider must declare custom.${logicFunctionKey}`,
+      ];
+    }
+
+    const referenceError = getInvalidLogicFunctionReferenceError({
+      path: `custom.${logicFunctionKey}`,
+      universalIdentifier: logicFunction.universalIdentifier,
+    });
+
+    return isDefined(referenceError) ? [referenceError] : [];
+  });
+};
 
 export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
@@ -126,33 +154,7 @@ export const defineConnectionProvider: DefineEntity<
   }
 
   if (config.type === 'custom') {
-    const custom = config.custom;
-
-    if (!isDefined(custom)) {
-      errors.push(
-        "Connection provider with type 'custom' must declare a `custom` config block",
-      );
-    } else {
-      for (const logicFunctionKey of CUSTOM_LOGIC_FUNCTION_KEYS) {
-        const logicFunction = custom[logicFunctionKey];
-
-        if (!isDefined(logicFunction)) {
-          errors.push(
-            `Custom connection provider must declare custom.${logicFunctionKey}`,
-          );
-          continue;
-        }
-
-        const referenceError = getInvalidLogicFunctionReferenceError({
-          path: `custom.${logicFunctionKey}`,
-          universalIdentifier: logicFunction.universalIdentifier,
-        });
-
-        if (isDefined(referenceError)) {
-          errors.push(referenceError);
-        }
-      }
-    }
+    errors.push(...getCustomConfigErrors(config.custom));
   }
 
   return createValidationResult({ config, errors });

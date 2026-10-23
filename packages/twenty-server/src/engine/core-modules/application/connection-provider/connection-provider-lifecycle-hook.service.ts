@@ -341,25 +341,24 @@ export class ConnectionProviderLifecycleHookService {
     const failureCode =
       FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK[hook];
 
-    let executionResult: LogicFunctionExecuteResult;
+    const executionResult: LogicFunctionExecuteResult =
+      await this.logicFunctionExecutorService
+        .execute({
+          logicFunctionId,
+          workspaceId,
+          payload,
+          shouldEnforceUsageLimits: true,
+        })
+        .catch((error: unknown) => {
+          if (error instanceof CustomException) {
+            throw error;
+          }
 
-    try {
-      executionResult = await this.logicFunctionExecutorService.execute({
-        logicFunctionId,
-        workspaceId,
-        payload,
-        shouldEnforceUsageLimits: true,
-      });
-    } catch (error) {
-      if (error instanceof CustomException) {
-        throw error;
-      }
-
-      throw new ConnectionProviderException(
-        `${hook} logic function of connection provider ${provider.id} could not be executed: ${error instanceof Error ? error.message : String(error)}`,
-        failureCode,
-      );
-    }
+          throw new ConnectionProviderException(
+            `${hook} logic function of connection provider ${provider.id} could not be executed: ${error instanceof Error ? error.message : String(error)}`,
+            failureCode,
+          );
+        });
 
     if (isDefined(executionResult.error)) {
       throw new ConnectionProviderException(
