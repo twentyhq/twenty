@@ -28,13 +28,13 @@ export const MetadataStoreSSEEffect = () => {
   const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const resyncIfStillInconsistent = useDebouncedCallback(() => {
-    if (!applyChanges().isPendingStateConsistent) {
+    if (!applyChanges().isDraftConsistent) {
       invalidateMetadataStore();
     }
   }, INCONSISTENT_METADATA_STORE_RESYNC_DELAY_MS);
 
-  const applyBufferedChanges = () => {
-    if (applyChanges().isPendingStateConsistent) {
+  const applyChangesOrScheduleResync = () => {
+    if (applyChanges().isDraftConsistent) {
       resyncIfStillInconsistent.cancel();
       return;
     }
@@ -89,7 +89,7 @@ export const MetadataStoreSSEEffect = () => {
         }
       }
 
-      queueMicrotask(applyBufferedChanges);
+      applyChangesOrScheduleResync();
     },
   });
 

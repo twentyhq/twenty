@@ -7,8 +7,8 @@ import {
 } from '@/metadata-store/states/metadataStoreState';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { CONSISTENCY_VALIDATED_METADATA_ENTITY_KEYS } from '@/metadata-store/constants/ConsistencyValidatedMetadataEntityKeys';
-import { getPendingOrCurrentMetadataItems } from '@/metadata-store/utils/getPendingOrCurrentMetadataItems';
-import { isPendingMetadataStoreStateConsistent } from '@/metadata-store/utils/isPendingMetadataStoreStateConsistent';
+import { getDraftOrCurrentMetadataItems } from '@/metadata-store/utils/getDraftOrCurrentMetadataItems';
+import { isMetadataStoreDraftConsistent } from '@/metadata-store/utils/isMetadataStoreDraftConsistent';
 import { useStore, type createStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -78,16 +78,15 @@ export const useUpdateMetadataStoreDraft = () => {
 
   const applyChanges = useCallback((): {
     hasPersistedAnyMetadataEntity: boolean;
-    isPendingStateConsistent: boolean;
+    isDraftConsistent: boolean;
   } => {
-    const isPendingStateConsistent =
-      isPendingMetadataStoreStateConsistent(store);
+    const isDraftConsistent = isMetadataStoreDraftConsistent(store);
 
     let hasPersistedAnyMetadataEntity = false;
 
     for (const metadataEntityKey of ALL_METADATA_ENTITY_KEYS) {
       if (
-        !isPendingStateConsistent &&
+        !isDraftConsistent &&
         CONSISTENCY_VALIDATED_METADATA_ENTITY_KEYS.includes(metadataEntityKey)
       ) {
         continue;
@@ -103,7 +102,7 @@ export const useUpdateMetadataStoreDraft = () => {
       }
     }
 
-    return { hasPersistedAnyMetadataEntity, isPendingStateConsistent };
+    return { hasPersistedAnyMetadataEntity, isDraftConsistent };
   }, [store]);
 
   const addToDraft = useCallback(
@@ -121,9 +120,10 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems: Array<{ id: string }> = getPendingOrCurrentMetadataItems(
-        { store, metadataEntityKey: key },
-      );
+      const baseItems: Array<{ id: string }> = getDraftOrCurrentMetadataItems({
+        store,
+        metadataEntityKey: key,
+      });
 
       let newItems = [...baseItems];
 
@@ -165,9 +165,10 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems: Array<{ id: string }> = getPendingOrCurrentMetadataItems(
-        { store, metadataEntityKey: key },
-      );
+      const baseItems: Array<{ id: string }> = getDraftOrCurrentMetadataItems({
+        store,
+        metadataEntityKey: key,
+      });
 
       let hasChanged = false;
       const newItems = baseItems.map((existing) => {
@@ -221,9 +222,10 @@ export const useUpdateMetadataStoreDraft = () => {
       }
 
       const entry = store.get(metadataStoreState.atomFamily(key));
-      const baseItems: Array<{ id: string }> = getPendingOrCurrentMetadataItems(
-        { store, metadataEntityKey: key },
-      );
+      const baseItems: Array<{ id: string }> = getDraftOrCurrentMetadataItems({
+        store,
+        metadataEntityKey: key,
+      });
 
       const idsToDelete = new Set(itemIds);
       const newItems = baseItems.filter(

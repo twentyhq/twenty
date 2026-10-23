@@ -5,7 +5,7 @@ import {
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
 import { type createStore } from 'jotai';
 
-export const getPendingOrCurrentMetadataItems = <
+export const getDraftOrCurrentMetadataItems = <
   TMetadataEntityKey extends MetadataEntityKey,
 >({
   store,

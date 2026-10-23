@@ -1,24 +1,24 @@
-import { getPendingOrCurrentMetadataItems } from '@/metadata-store/utils/getPendingOrCurrentMetadataItems';
+import { getDraftOrCurrentMetadataItems } from '@/metadata-store/utils/getDraftOrCurrentMetadataItems';
 import { isMetadataStoreSnapshotConsistent } from '@/metadata-store/utils/isMetadataStoreSnapshotConsistent';
 import { type createStore } from 'jotai';
 
-export const isPendingMetadataStoreStateConsistent = (
+export const isMetadataStoreDraftConsistent = (
   store: ReturnType<typeof createStore>,
 ) =>
   isMetadataStoreSnapshotConsistent({
-    objectMetadataItems: getPendingOrCurrentMetadataItems({
+    objectMetadataItems: getDraftOrCurrentMetadataItems({
       store,
       metadataEntityKey: 'objectMetadataItems',
     }),
-    fieldMetadataItems: getPendingOrCurrentMetadataItems({
+    fieldMetadataItems: getDraftOrCurrentMetadataItems({
       store,
       metadataEntityKey: 'fieldMetadataItems',
     }),
-    indexMetadataItems: getPendingOrCurrentMetadataItems({
+    indexMetadataItems: getDraftOrCurrentMetadataItems({
       store,
       metadataEntityKey: 'indexMetadataItems',
     }),
-    views: getPendingOrCurrentMetadataItems({
+    views: getDraftOrCurrentMetadataItems({
       store,
       metadataEntityKey: 'views',
     }),
