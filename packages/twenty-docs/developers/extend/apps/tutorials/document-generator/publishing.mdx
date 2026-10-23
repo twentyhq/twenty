@@ -32,8 +32,8 @@ export default defineApplication({
 ```
 
 <Tip>
-The default role is declared with `defineApplicationRole()` in its own file — you
-don't pass `defaultRoleUniversalIdentifier` here anymore.
+  The default role is declared with `defineApplicationRole()` in its own file —
+  you don't pass `defaultRoleUniversalIdentifier` here anymore.
 </Tip>
 
 Also add the `twenty-app` keyword to `package.json` so the app is discoverable:
@@ -61,9 +61,9 @@ export default defineApplication({
 ```
 
 <Tip>
-Lead with the payoff: make the first screenshot the finished result (a generated
-document), then show how it's triggered and authored. Use crisp, high-resolution
-captures — they're the first thing a user sees.
+  Lead with the payoff: make the first screenshot the finished result (a
+  generated document), then show how it's triggered and authored. Use crisp,
+  high-resolution captures — they're the first thing a user sees.
 </Tip>
 
 Give `README.md` the same treatment — it's the front page on npm and GitHub.
@@ -78,7 +78,7 @@ Run the same gates CI does:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
 The plan prints exactly what would change on the server without applying it —
@@ -90,19 +90,15 @@ a good final sanity check. See
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-`app:publish` builds and publishes to npm by default; `--private` uploads a
+`twenty app publish` builds and publishes to npm by default; `--private` uploads a
 tarball to a Twenty server's private registry instead. To surface a published app
-in an instance's marketplace, trigger a catalog sync:
-
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
+in an instance's marketplace, wait for the server's marketplace catalog sync.
 
 Full details and the release checklist:
 [Publishing](/developers/extend/apps/operations/publishing).

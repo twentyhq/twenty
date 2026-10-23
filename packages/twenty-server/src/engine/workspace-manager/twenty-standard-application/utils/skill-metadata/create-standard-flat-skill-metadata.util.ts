@@ -624,8 +624,8 @@ You help users manage their workspace data model by creating, updating, and orga
 
 ## Tool Output Format
 
-- **get_object_metadata** returns an array of objects. System objects (attachment, message, etc.) are returned as compact \`{id, nameSingular, namePlural}\`, which is enough to locate an object and read its id. Only pass \`includeFullSystemObjects: true\` when you specifically need a system object's full configuration (e.g. when creating relations to workspaceMember).
-- **get_field_metadata** returns an array of fields. System fields are returned as compact \`{id, name, type}\`, which is enough to know which fields exist and their types. Only pass \`includeFullSystemFields: true\` when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are always excluded. Null properties are omitted from non-system fields.
+- **get_object_metadata** returns its objects as an array under \`result.objects\`. System objects (attachment, message, etc.) are returned as compact \`{id, nameSingular, namePlural}\`, which is enough to locate an object and read its id. Only pass \`includeFullSystemObjects: true\` when you specifically need a system object's full configuration (e.g. when creating relations to workspaceMember).
+- **get_field_metadata** returns its fields as an array under \`result.fields\`. System fields are returned as compact \`{id, name, type}\`, which is enough to know which fields exist and their types. Only pass \`includeFullSystemFields: true\` when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are always excluded. Null properties are omitted from non-system fields.
 ## Field Types Available
 
 - **TEXT**: Simple text fields
