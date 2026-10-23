@@ -319,6 +319,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
       ratingField: '4',
       'BlockNote (richTextField)': 'Rich content in blocknote format',
       'Markdown (richTextField)': 'Content in markdown format',
+      'TipTap (richTextField)': 'Rich content in tiptap format',
       'First Name (fullNameField)': 'John',
       'Last Name (fullNameField)': 'Doe',
       'Amount (currencyField)': '75',
@@ -427,6 +428,7 @@ describe('buildRecordFromImportedStructuredRow', () => {
       richTextField: {
         blocknote: 'Rich content in blocknote format',
         markdown: 'Content in markdown format',
+        tiptap: 'Rich content in tiptap format',
       },
       dateField: '2023-12-25',
       dateTimeField: '2023-12-25T10:30:00.000Z',

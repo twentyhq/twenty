@@ -27,7 +27,6 @@ import { HideDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/
 import { ImportRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/ImportRecordsNoSelectionRecordCommand';
 import { SeeDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/SeeDeletedRecordsNoSelectionRecordCommand';
 import { AddToFavoritesCommand } from '@/command-menu-item/engine-command/record/components/AddToFavoritesCommand';
-import { ExportNoteSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/ExportNoteSingleRecordCommand';
 import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToNextRecordSingleRecordCommand';
 import { NavigateToPreviousRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToPreviousRecordSingleRecordCommand';
 import { RemoveFromFavoritesCommand } from '@/command-menu-item/engine-command/record/components/RemoveFromFavoritesCommand';
@@ -123,7 +122,6 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.NAVIGATE_TO_PREVIOUS_RECORD]: (
     <NavigateToPreviousRecordSingleRecordCommand />
   ),
-  [EngineComponentKey.EXPORT_NOTE_TO_PDF]: <ExportNoteSingleRecordCommand />,
   [EngineComponentKey.EXPORT_RECORDS]: <ExportRecordsCommand />,
   [EngineComponentKey.UPDATE_MULTIPLE_RECORDS]: (
     <UpdateMultipleRecordsCommand />

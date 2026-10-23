@@ -53,7 +53,7 @@ describe('buildAdvancedTextEditorExtensions', () => {
         'listKit',
         'link',
         'image',
-        'uploadImage',
+        'upload',
         'variableTag',
         'slash-command',
       ]),
@@ -102,11 +102,11 @@ describe('buildAdvancedTextEditorExtensions', () => {
       readonly: false,
     });
 
-    const uploadImageExtension = extensions.find(
-      (extension) => extension.name === 'uploadImage',
+    const uploadExtension = extensions.find(
+      (extension) => extension.name === 'upload',
     );
 
-    expect(uploadImageExtension?.options.onImageUpload).toBe(onImageUpload);
+    expect(uploadExtension?.options.onImageUpload).toBe(onImageUpload);
   });
 });
 

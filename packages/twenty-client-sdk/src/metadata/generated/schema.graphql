@@ -2058,7 +2058,6 @@ enum EngineComponentKey {
   EXPORT_FROM_RECORD_INDEX
   EXPORT_FROM_RECORD_SHOW
   EXPORT_MULTIPLE_RECORDS
-  EXPORT_NOTE_TO_PDF
   EXPORT_RECORDS
   EXPORT_VIEW
   FRONT_COMPONENT_RENDERER
@@ -4247,8 +4246,9 @@ input RevokeApiKeyInput {
 }
 
 type RichTextBody {
-  blocknote: String
+  blocknote: String @deprecated(reason: "Use markdown or tiptap instead. This value is cleared whenever the field is written in another format.")
   markdown: String
+  tiptap: String
 }
 
 type Role {

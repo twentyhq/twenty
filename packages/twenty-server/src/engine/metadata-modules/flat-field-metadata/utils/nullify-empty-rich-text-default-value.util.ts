@@ -3,6 +3,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isNullEquivalentTextDefaultValue } from './is-null-equivalent-text-default-value.util';
 
+const nullifyEmptyTextDefaultValue = (
+  textDefaultValue: string | null | undefined,
+): string | null =>
+  isNullEquivalentTextDefaultValue(textDefaultValue)
+    ? null
+    : (textDefaultValue ?? null);
+
 export const nullifyEmptyRichTextDefaultValue = (
   defaultValue: FieldMetadataDefaultValueForAnyType,
 ): FieldMetadataDefaultValueForAnyType => {
@@ -10,21 +17,21 @@ export const nullifyEmptyRichTextDefaultValue = (
     return null;
   }
 
-  const v = defaultValue as {
+  const richTextDefaultValue = defaultValue as {
     blocknote?: string | null;
     markdown?: string | null;
+    tiptap?: string | null;
   };
 
-  const blocknote = isNullEquivalentTextDefaultValue(v.blocknote)
-    ? null
-    : (v.blocknote ?? null);
-  const markdown = isNullEquivalentTextDefaultValue(v.markdown)
-    ? null
-    : (v.markdown ?? null);
+  const blocknote = nullifyEmptyTextDefaultValue(
+    richTextDefaultValue.blocknote,
+  );
+  const markdown = nullifyEmptyTextDefaultValue(richTextDefaultValue.markdown);
+  const tiptap = nullifyEmptyTextDefaultValue(richTextDefaultValue.tiptap);
 
-  if (blocknote === null && markdown === null) {
+  if (blocknote === null && markdown === null && tiptap === null) {
     return null;
   }
 
-  return { blocknote, markdown };
+  return { blocknote, markdown, tiptap };
 };
