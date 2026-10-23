@@ -7,6 +7,7 @@ import {
 } from '@tiptap/pm/model';
 import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';
 import { isNonEmptyString } from '@sniptt/guards';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   isDefined,
   RICH_TEXT_INDENTABLE_NODE_TYPES,
@@ -233,7 +234,7 @@ const handleBackspace = (editor: Editor) => {
 export const ToggleNode = Node.create({
   name: TIPTAP_NODE_TYPES.TOGGLE,
   group: 'block',
-  content: '(paragraph | heading) block*',
+  content: doNotTranslate('(paragraph | heading) block*'),
   defining: true,
 
   addAttributes: () => ({

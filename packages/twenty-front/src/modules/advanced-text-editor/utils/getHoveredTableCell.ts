@@ -1,5 +1,6 @@
 import { TableMap } from '@tiptap/pm/tables';
 import { type EditorView } from '@tiptap/pm/view';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 
 import { type HoveredTableCell } from '@/advanced-text-editor/types/HoveredTableCell';
@@ -15,7 +16,7 @@ export const getHoveredTableCell = ({
   target,
   container,
 }: GetHoveredTableCellArgs): HoveredTableCell | null => {
-  const cellElement = target.closest('td, th');
+  const cellElement = target.closest(doNotTranslate('td, th'));
   const rowElement = cellElement?.closest('tr');
   const tableElement = cellElement?.closest('table');
 

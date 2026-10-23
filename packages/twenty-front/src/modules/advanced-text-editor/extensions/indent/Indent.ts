@@ -1,5 +1,6 @@
 import { type Editor, Extension } from '@tiptap/core';
 import { type ResolvedPos } from '@tiptap/pm/model';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   isDefined,
   RICH_TEXT_INDENTABLE_NODE_TYPES,
@@ -84,7 +85,9 @@ export const Indent = Extension.create({
             return indent > 0
               ? {
                   'data-indent': indent,
-                  style: `margin-left: calc(${indent} * var(--editor-list-indent))`,
+                  style: doNotTranslate(
+                    `margin-left: calc(${indent} * var(--editor-list-indent))`,
+                  ),
                 }
               : {};
           },
