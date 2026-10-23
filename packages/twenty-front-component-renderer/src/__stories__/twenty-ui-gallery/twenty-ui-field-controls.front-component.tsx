@@ -8,7 +8,7 @@ import {
   Radio,
   RadioGroup,
   Textarea,
-  type TextareaProps,
+  type InputVariant,
 } from 'twenty-ui/primitives/input';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
@@ -21,8 +21,7 @@ const FieldControls = () => {
   const [email, setEmail] = useState('');
   const [notes, setNotes] = useState('');
   const [inlineSubject, setInlineSubject] = useState('');
-  const [notesVariant, setNotesVariant] =
-    useState<NonNullable<TextareaProps['variant']>>('default');
+  const [notesVariant, setNotesVariant] = useState<InputVariant>('default');
   const [notesWidth, setNotesWidth] = useState('100%');
   const [reportedValues, setReportedValues] = useState('');
 

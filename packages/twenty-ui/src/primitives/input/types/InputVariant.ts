@@ -1,1 +1,1 @@
-export type InputVariant = 'default' | 'plain' | 'inline';
+export type InputVariant = 'default' | 'plain';

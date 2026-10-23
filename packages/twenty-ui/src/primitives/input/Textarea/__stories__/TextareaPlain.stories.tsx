@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
+import { type InputVariant } from '@ui/primitives/input/types/InputVariant';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Textarea } from '../Textarea';
@@ -13,8 +14,7 @@ const PlainTextareaResizeExample = ({
   maxRows: initialMaxRows,
   ...props
 }: TextareaProps) => {
-  const [variant, setVariant] =
-    useState<NonNullable<TextareaProps['variant']>>(initialVariant);
+  const [variant, setVariant] = useState<InputVariant>(initialVariant);
   const [maxRows, setMaxRows] = useState(initialMaxRows);
 
   return (
