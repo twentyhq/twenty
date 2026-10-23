@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { buildRecordExportColumns, isDefined } from 'twenty-shared/utils';
 
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
@@ -11,7 +11,6 @@ import { RECORD_EXPORT_PAGE_SIZE } from 'src/engine/core-modules/record-export/c
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { type RecordExportQueryContext } from 'src/engine/core-modules/record-export/types/record-export-query-context.type';
-import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
 import { expandMorphRelationExportFields } from 'src/engine/core-modules/record-export/utils/expand-morph-relation-export-fields.util';
 import { getRecordExportLocale } from 'src/engine/core-modules/record-export/utils/get-record-export-locale.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';

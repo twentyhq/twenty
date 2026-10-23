@@ -1,4 +1,4 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from '@/types/FieldMetadataType';
 
 export type RecordExportColumn = {
   fieldName: string;
