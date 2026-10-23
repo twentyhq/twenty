@@ -3918,6 +3918,13 @@
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
       },
       {
+        "name": "textAlign",
+        "type": "\"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Aligns text to the logical start or end of the input. Follows the text direction."
+      },
+      {
         "name": "value",
         "type": "string | number | readonly string[]",
         "required": false,
@@ -8414,6 +8421,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Native styles applied to the rendered part."
+          },
+          {
+            "name": "variant",
+            "type": "\"compact\" | \"default\"",
+            "required": false,
+            "defaultValue": "default",
+            "description": "default keeps the standard section appearance. compact uses secondary section backgrounds, 8px header and footer padding, 8px horizontal content padding without vertical padding, and no header divider."
           }
         ]
       },
@@ -12852,6 +12866,13 @@
             "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
           },
           {
+            "name": "textAlign",
+            "type": "\"end\" | \"start\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Aligns text to the logical start or end of the input. Follows the text direction."
+          },
+          {
             "name": "value",
             "type": "string | number | readonly string[]",
             "required": false,
@@ -15284,6 +15305,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "textAlign",
+        "type": "\"end\" | \"start\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Aligns text to the logical start or end of the input. Follows the text direction."
       },
       {
         "name": "value",
