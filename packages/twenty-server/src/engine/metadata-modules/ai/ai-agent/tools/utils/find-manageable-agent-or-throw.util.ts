@@ -25,6 +25,7 @@ export const findManageableAgentOrThrow = async ({
     !canCallerReachApplication({
       callingApplication: context.application,
       applicationId: agent.applicationId,
+      access: 'manage',
     })
   ) {
     throw new AiException('Agent not found', AiExceptionCode.AGENT_NOT_FOUND);

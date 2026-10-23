@@ -1,11 +1,23 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { resolveApplicationReach } from 'src/engine/core-modules/application/utils/resolve-application-reach.util';
+
+// OAuth clients own no workflows, so they start none
 export const canApplicationStartCoreWorkflow = ({
-  callerApplicationId,
+  callerApplication,
+  workspaceCustomApplicationId,
   workflowApplicationId,
 }: {
-  callerApplicationId: string | undefined;
+  callerApplication:
+    | Pick<FlatApplication, 'id' | 'universalIdentifier' | 'sourceType'>
+    | undefined;
+  workspaceCustomApplicationId: string;
   workflowApplicationId: string;
 }): boolean =>
-  !isDefined(callerApplicationId) ||
-  workflowApplicationId === callerApplicationId;
+  !isDefined(callerApplication) ||
+  workflowApplicationId === callerApplication.id ||
+  resolveApplicationReach({
+    callingApplication: callerApplication,
+    workspaceCustomApplicationId,
+  }) === 'composer';

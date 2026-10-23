@@ -31,6 +31,7 @@ import { shouldCaptureException } from 'src/engine/utils/global-exception-handle
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import {
   type WorkflowBranchExecutorInput,
@@ -70,6 +71,7 @@ export class WorkflowExecutorWorkspaceService {
   constructor(
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowActionFactory: WorkflowActionFactory,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
@@ -601,9 +603,15 @@ export class WorkflowExecutorWorkspaceService {
     try {
       await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
+      const runApplicationReach =
+        await this.workflowExecutionContextService.resolveRunApplicationReach({
+          runApplicationId,
+          workspaceId,
+        });
+
       assertStepTypeAvailableToApplicationRun({
         stepType: step.type,
-        runApplicationId,
+        runApplicationReach,
       });
 
       const nodeRunRefusal = await this.getNodeRunRefusal({

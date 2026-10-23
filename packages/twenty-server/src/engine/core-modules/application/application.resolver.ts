@@ -148,6 +148,8 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        access: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       })
     ) {
       return [];
@@ -171,6 +173,8 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        access: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       })
     ) {
       return [];
@@ -194,6 +198,8 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        access: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       })
     ) {
       return [];
@@ -217,6 +223,8 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        access: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       })
     ) {
       return [];
@@ -240,6 +248,8 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        access: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       })
     ) {
       return [];
@@ -263,6 +273,8 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        access: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       })
     ) {
       return [];
@@ -286,6 +298,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        access: 'manage',
       })
     ) {
       throw new ForbiddenError(

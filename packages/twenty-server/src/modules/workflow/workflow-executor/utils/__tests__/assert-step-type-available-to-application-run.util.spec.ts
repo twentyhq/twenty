@@ -7,20 +7,32 @@ describe('assertStepTypeAvailableToApplicationRun', () => {
     WorkflowActionType.SEND_EMAIL,
     WorkflowActionType.DRAFT_EMAIL,
     WorkflowActionType.CREATE_CALENDAR_EVENT,
-  ])('refuses %s steps in a run started by an application', (stepType) => {
-    expect(() =>
-      assertStepTypeAvailableToApplicationRun({
-        stepType,
-        runApplicationId: 'installed-app-id',
-      }),
-    ).toThrow(`Applications cannot use ${stepType} steps`);
-  });
+  ])(
+    'refuses %s steps in a run started by an installed application',
+    (stepType) => {
+      expect(() =>
+        assertStepTypeAvailableToApplicationRun({
+          stepType,
+          runApplicationReach: 'confined',
+        }),
+      ).toThrow(`Applications cannot use ${stepType} steps`);
+    },
+  );
 
-  it('lets a run started by an application use other steps', () => {
+  it('lets a run started by an installed application use other steps', () => {
     expect(() =>
       assertStepTypeAvailableToApplicationRun({
         stepType: WorkflowActionType.CREATE_RECORD,
-        runApplicationId: 'installed-app-id',
+        runApplicationReach: 'confined',
+      }),
+    ).not.toThrow();
+  });
+
+  it('lets a run of the workspace composer send emails', () => {
+    expect(() =>
+      assertStepTypeAvailableToApplicationRun({
+        stepType: WorkflowActionType.SEND_EMAIL,
+        runApplicationReach: 'composer',
       }),
     ).not.toThrow();
   });
@@ -29,7 +41,7 @@ describe('assertStepTypeAvailableToApplicationRun', () => {
     expect(() =>
       assertStepTypeAvailableToApplicationRun({
         stepType: WorkflowActionType.SEND_EMAIL,
-        runApplicationId: undefined,
+        runApplicationReach: 'workspace',
       }),
     ).not.toThrow();
   });

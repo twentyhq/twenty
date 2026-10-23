@@ -6,7 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationReach } from 'src/engine/core-modules/application/types/application-reach.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { resolveApplicationReach } from 'src/engine/core-modules/application/utils/resolve-application-reach.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
@@ -25,7 +27,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
-import { assertStepTargetBelongsToRunApplication } from 'src/modules/workflow/workflow-executor/utils/assert-step-target-belongs-to-run-application.util';
+import { assertRunApplicationCanTriggerStepTarget } from 'src/modules/workflow/workflow-executor/utils/assert-run-application-can-trigger-step-target.util';
 import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application-or-throw.util';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -67,12 +69,15 @@ export class WorkflowExecutionContextService {
     return this.buildExecutionContext(workflowRun, workspaceId);
   }
 
-  assertStepTargetBelongsToRunApplicationOrThrow({
-    application,
+  assertRunApplicationCanTriggerStepTargetOrThrow({
+    executionContext: { application, authContext },
     targetApplicationId,
     targetLabel,
   }: {
-    application: FlatApplication | null;
+    executionContext: Pick<
+      WorkflowExecutionContext,
+      'application' | 'authContext'
+    >;
     targetApplicationId: string;
     targetLabel: string;
   }): void {
@@ -80,10 +85,46 @@ export class WorkflowExecutionContextService {
       return;
     }
 
-    assertStepTargetBelongsToRunApplication({
+    assertRunApplicationCanTriggerStepTarget({
       application,
+      workspaceCustomApplicationId:
+        authContext.workspace.workspaceCustomApplicationId,
       targetApplicationId,
       targetLabel,
+    });
+  }
+
+  async resolveRunApplicationReach({
+    runApplicationId,
+    workspaceId,
+  }: {
+    runApplicationId: string | undefined;
+    workspaceId: string;
+  }): Promise<ApplicationReach> {
+    if (!isDefined(runApplicationId)) {
+      return 'workspace';
+    }
+
+    const [{ flatApplicationMaps }, workspace] = await Promise.all([
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]),
+      this.workspaceRepository.findOneOrFail({
+        where: { id: workspaceId },
+        select: ['id', 'workspaceCustomApplicationId'],
+      }),
+    ]);
+
+    const runApplication = flatApplicationMaps.byId[runApplicationId];
+
+    // a run keeps the limits of an application that has since left the workspace
+    if (!isDefined(runApplication)) {
+      return 'confined';
+    }
+
+    return resolveApplicationReach({
+      callingApplication: runApplication,
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
     });
   }
 

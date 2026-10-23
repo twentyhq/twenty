@@ -6,6 +6,7 @@ import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { canApplicationStartCoreWorkflow } from 'src/engine/core-modules/workflow/utils/can-application-start-core-workflow.util';
@@ -66,17 +67,16 @@ export class CoreWorkflowAccessService {
 
   async assertCoreWorkflowVersionsAreStartableByApplicationOrThrow({
     workspaceId,
-    callerApplicationId,
+    workspaceCustomApplicationId,
+    callerApplication,
     coreWorkflowVersionIds,
   }: {
     workspaceId: string;
-    callerApplicationId: string | undefined;
+    workspaceCustomApplicationId: string;
+    callerApplication: FlatApplication | undefined;
     coreWorkflowVersionIds: string[];
   }): Promise<void> {
-    if (
-      !isDefined(callerApplicationId) ||
-      coreWorkflowVersionIds.length === 0
-    ) {
+    if (!isDefined(callerApplication) || coreWorkflowVersionIds.length === 0) {
       return;
     }
 
@@ -107,14 +107,15 @@ export class CoreWorkflowAccessService {
 
     const isStartable = workflows.every((workflow) =>
       canApplicationStartCoreWorkflow({
-        callerApplicationId,
+        callerApplication,
+        workspaceCustomApplicationId,
         workflowApplicationId: workflow.applicationId,
       }),
     );
 
     if (!isStartable) {
       throw new WorkflowQueryValidationException(
-        `Application '${callerApplicationId}' cannot start a workflow owned by another application`,
+        `Application '${callerApplication.id}' cannot start a workflow owned by another application`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
           userFriendlyMessage: msg`An application can only start its own workflows.`,

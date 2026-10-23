@@ -1,7 +1,7 @@
 import { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowActionType } from 'twenty-shared/workflow';
 
+import { type ApplicationReach } from 'src/engine/core-modules/application/types/application-reach.type';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -9,13 +9,13 @@ import {
 
 export const assertStepTypeAvailableToApplicationRun = ({
   stepType,
-  runApplicationId,
+  runApplicationReach,
 }: {
   stepType: WorkflowActionType;
-  runApplicationId?: string;
+  runApplicationReach: ApplicationReach;
 }): void => {
   if (
-    !isDefined(runApplicationId) ||
+    runApplicationReach !== 'confined' ||
     !APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES.includes(stepType)
   ) {
     return;

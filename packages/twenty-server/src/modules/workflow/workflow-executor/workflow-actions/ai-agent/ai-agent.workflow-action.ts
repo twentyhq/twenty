@@ -5,6 +5,7 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { resolveApplicationReach } from 'src/engine/core-modules/application/utils/resolve-application-reach.util';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { buildStartedAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-started-agent-run-summary.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -102,11 +103,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { application } = executionContext;
-
-    this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+    this.workflowExecutionContextService.assertRunApplicationCanTriggerStepTargetOrThrow(
       {
-        application,
+        executionContext,
         targetApplicationId: agent.applicationId,
         targetLabel: `Agent "${agent.name}"`,
       },
@@ -152,7 +151,13 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       }),
       spec: buildWorkflowAgentRunSpec({
         step,
-        isApplicationBound: isDefined(application),
+        isApplicationBound:
+          resolveApplicationReach({
+            callingApplication: executionContext.application,
+            workspaceCustomApplicationId:
+              executionContext.authContext.workspace
+                .workspaceCustomApplicationId,
+          }) === 'confined',
       }),
       prompt: isDefined(resolvedPrompt)
         ? {
