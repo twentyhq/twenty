@@ -25,7 +25,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { Key } from 'ts-key-enum';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { getMultipleRecordPickerLayoutDirection } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerLayoutDirection';
-import { MultipleRecordPickerSessionEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSessionEffect';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
@@ -195,7 +194,6 @@ export const MultipleRecordPicker = ({
     <MultipleRecordPickerComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
     >
-      <MultipleRecordPickerSessionEffect />
       <Dropdown.Page id="create-target">
         <div onKeyDownCapture={handleCreateTargetKeyDown}>
           <MultipleRecordPickerCreateTargetSelect

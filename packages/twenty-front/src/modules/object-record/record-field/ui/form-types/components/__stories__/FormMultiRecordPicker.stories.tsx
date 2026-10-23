@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -138,6 +139,13 @@ export const Readonly: Story = {
 };
 
 export const MultipleSelectionAndSessionReset: Story = {
+  decorators: [
+    (Story) => (
+      <StrictMode>
+        <Story />
+      </StrictMode>
+    ),
+  ],
   args: {
     label: 'Companies',
     defaultValue: [],
