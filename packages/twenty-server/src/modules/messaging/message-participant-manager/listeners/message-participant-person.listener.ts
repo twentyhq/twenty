@@ -7,8 +7,7 @@ import {
   type ObjectRecordUpdateEvent,
 } from 'twenty-shared/database-events';
 import { MessageChannelType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -19,8 +18,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
-import { getCanonicalPersonHandles } from 'src/modules/match-participant/person-handle-field/utils/get-canonical-person-handles.util';
-import { getPersonFieldValue } from 'src/modules/match-participant/person-handle-field/utils/get-person-field-value.util';
+import { getChangedPersonHandles } from 'src/modules/match-participant/person-handle-field/utils/get-changed-person-handles.util';
 import { getPersonEmails } from 'src/modules/match-participant/utils/get-person-emails.util';
 import {
   MessageParticipantMatchParticipantJob,
@@ -131,95 +129,58 @@ export class MessageParticipantPersonListener {
       after: PersonWorkspaceEntity;
     }[];
   }): Promise<PersonHandleMatching[]> {
-    const messageChannels = await this.messageChannelRepository.find({
-      where: {
-        workspaceId,
-        type: MessageChannelType.APP,
-        participantHandleFieldUniversalIdentifier: Not(IsNull()),
-      },
-      select: { id: true, participantHandleFieldUniversalIdentifier: true },
-    });
-
-    const messageChannelIdsByFieldUniversalIdentifier = new Map<
+    const changedHandlesByFieldUniversalIdentifier = new Map<
       string,
       string[]
     >();
 
-    for (const messageChannel of messageChannels) {
-      const fieldUniversalIdentifier =
-        messageChannel.participantHandleFieldUniversalIdentifier;
-
-      if (!isDefined(fieldUniversalIdentifier)) {
-        continue;
-      }
-
-      messageChannelIdsByFieldUniversalIdentifier.set(
-        fieldUniversalIdentifier,
-        [
-          ...(messageChannelIdsByFieldUniversalIdentifier.get(
-            fieldUniversalIdentifier,
-          ) ?? []),
-          messageChannel.id,
-        ],
-      );
-    }
-
-    const personHandleMatching: PersonHandleMatching[] = [];
-
-    for (const [
-      fieldUniversalIdentifier,
-      messageChannelIds,
-    ] of messageChannelIdsByFieldUniversalIdentifier) {
-      const personHandleField =
-        await this.personHandleFieldService.findByUniversalIdentifier({
-          workspaceId,
-          fieldUniversalIdentifier,
-        });
-
-      if (!isDefined(personHandleField)) {
-        continue;
-      }
-
-      const getHandles = (person: PersonWorkspaceEntity | null) => {
-        if (!isDefined(person)) {
-          return [];
-        }
-
-        const { primary, additional } = getCanonicalPersonHandles({
-          type: personHandleField.type,
-          value: getPersonFieldValue({
-            person,
-            fieldName: personHandleField.name,
-          }),
-        });
-
-        return [...primary, ...additional];
-      };
-
-      const handles = [
-        ...new Set(
-          personChanges.flatMap(({ before, after }) => {
-            const handlesBefore = getHandles(before);
-            const handlesAfter = getHandles(after);
-            const isUnchanged =
-              handlesBefore.length === handlesAfter.length &&
-              handlesBefore.every((handle) => handlesAfter.includes(handle));
-
-            return isUnchanged ? [] : [...handlesBefore, ...handlesAfter];
-          }),
-        ),
-      ];
+    for (const personHandleField of await this.personHandleFieldService.findAll(
+      workspaceId,
+    )) {
+      const handles = getChangedPersonHandles({
+        personHandleField,
+        personChanges,
+      });
 
       if (handles.length > 0) {
-        personHandleMatching.push({
-          fieldUniversalIdentifier,
-          messageChannelIds,
+        changedHandlesByFieldUniversalIdentifier.set(
+          personHandleField.universalIdentifier,
           handles,
-        });
+        );
       }
     }
 
-    return personHandleMatching;
+    // most person writes stop here, before any channel lookup
+    if (changedHandlesByFieldUniversalIdentifier.size === 0) {
+      return [];
+    }
+
+    const messageChannels = await this.messageChannelRepository.find({
+      where: {
+        workspaceId,
+        type: MessageChannelType.APP,
+        participantHandleFieldUniversalIdentifier: In([
+          ...changedHandlesByFieldUniversalIdentifier.keys(),
+        ]),
+      },
+      select: { id: true, participantHandleFieldUniversalIdentifier: true },
+    });
+
+    return [...changedHandlesByFieldUniversalIdentifier].flatMap(
+      ([fieldUniversalIdentifier, handles]) => {
+        const messageChannelIds = messageChannels
+          .filter(
+            (messageChannel) =>
+              messageChannel.participantHandleFieldUniversalIdentifier ===
+              fieldUniversalIdentifier,
+          )
+          .map((messageChannel) => messageChannel.id);
+
+        return messageChannelIds.length > 0
+          ? [{ fieldUniversalIdentifier, messageChannelIds, handles }]
+          : [];
+      },
+    );
   }
 
   @OnDatabaseBatchEvent('person', DatabaseEventAction.DESTROYED)

@@ -132,7 +132,7 @@ export class ApplicationMessageChannelsService {
       connectedAccountId,
     });
 
-    const handle = await this.resolveChannelHandle({
+    const handle = await this.resolveChannelHandleOrThrow({
       workspaceId,
       handle: requestedHandle,
       participantHandleFieldUniversalIdentifier,
@@ -173,7 +173,7 @@ export class ApplicationMessageChannelsService {
   }
 
   // the channel's own handle shares its participants' namespace, so direction still compares like with like
-  private async resolveChannelHandle({
+  private async resolveChannelHandleOrThrow({
     workspaceId,
     handle,
     participantHandleFieldUniversalIdentifier,

@@ -194,7 +194,7 @@ export class ApplicationMessageIngestionService {
     personHandleField,
   }: {
     message: AppMessageInput;
-    personHandleField: PersonHandleField;
+    personHandleField: Pick<PersonHandleField, 'type'>;
   }): AppMessageInput {
     return {
       ...message,

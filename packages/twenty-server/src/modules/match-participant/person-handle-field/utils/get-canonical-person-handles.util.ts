@@ -1,10 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  FieldMetadataType,
-  type EmailsMetadata,
-  type LinksMetadata,
-  type PhonesMetadata,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
@@ -15,58 +10,67 @@ type CanonicalPersonHandles = {
   additional: string[];
 };
 
-const toPhoneValue = (phone: {
-  number?: string | null;
-  callingCode?: string | null;
-}): string => `${phone.callingCode ?? ''}${phone.number ?? ''}`;
+type RawPersonHandles = {
+  primary: (string | null)[];
+  additional: (string | null)[];
+};
 
+const toRecord = (value: unknown): Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+    ? Object.fromEntries(Object.entries(value))
+    : {};
+
+const toList = (value: unknown): unknown[] =>
+  Array.isArray(value) ? value : [];
+
+const toStringOrNull = (value: unknown): string | null =>
+  typeof value === 'string' ? value : null;
+
+const toPhoneValue = (phone: Record<string, unknown>): string | null => {
+  const number = toStringOrNull(phone.number);
+
+  return isNonEmptyString(number)
+    ? `${toStringOrNull(phone.callingCode) ?? ''}${number}`
+    : null;
+};
+
+// person records come from events and raw queries, so composite values are read defensively
 const getRawPersonHandles = ({
   type,
   value,
 }: {
   type: PersonHandleField['type'];
   value: unknown;
-}): { primary: (string | null | undefined)[]; additional: unknown[] } => {
+}): RawPersonHandles => {
+  const record = toRecord(value);
+
   switch (type) {
-    case FieldMetadataType.EMAILS: {
-      const emails = value as EmailsMetadata | null | undefined;
-
+    case FieldMetadataType.EMAILS:
       return {
-        primary: [emails?.primaryEmail],
-        additional: Array.isArray(emails?.additionalEmails)
-          ? emails.additionalEmails
-          : [],
+        primary: [toStringOrNull(record.primaryEmail)],
+        additional: toList(record.additionalEmails).map(toStringOrNull),
       };
-    }
-    case FieldMetadataType.PHONES: {
-      const phones = value as PhonesMetadata | null | undefined;
-
+    case FieldMetadataType.PHONES:
       return {
-        primary: isNonEmptyString(phones?.primaryPhoneNumber)
-          ? [
-              toPhoneValue({
-                number: phones.primaryPhoneNumber,
-                callingCode: phones.primaryPhoneCallingCode,
-              }),
-            ]
-          : [],
-        additional: Array.isArray(phones?.additionalPhones)
-          ? phones.additionalPhones.map(toPhoneValue)
-          : [],
+        primary: [
+          toPhoneValue({
+            number: record.primaryPhoneNumber,
+            callingCode: record.primaryPhoneCallingCode,
+          }),
+        ],
+        additional: toList(record.additionalPhones).map((phone) =>
+          toPhoneValue(toRecord(phone)),
+        ),
       };
-    }
-    case FieldMetadataType.LINKS: {
-      const links = value as LinksMetadata | null | undefined;
-
+    case FieldMetadataType.LINKS:
       return {
-        primary: [links?.primaryLinkUrl],
-        additional: Array.isArray(links?.secondaryLinks)
-          ? links.secondaryLinks.map((link) => link?.url)
-          : [],
+        primary: [toStringOrNull(record.primaryLinkUrl)],
+        additional: toList(record.secondaryLinks).map((link) =>
+          toStringOrNull(toRecord(link).url),
+        ),
       };
-    }
     case FieldMetadataType.TEXT:
-      return { primary: [value as string | null | undefined], additional: [] };
+      return { primary: [toStringOrNull(value)], additional: [] };
   }
 };
 
@@ -79,14 +83,9 @@ export const getCanonicalPersonHandles = ({
 }): CanonicalPersonHandles => {
   const { primary, additional } = getRawPersonHandles({ type, value });
 
-  const canonicalize = (values: unknown[]) =>
+  const canonicalize = (values: (string | null)[]) =>
     values
-      .map((rawValue) =>
-        canonicalizePersonHandle({
-          type,
-          value: typeof rawValue === 'string' ? rawValue : null,
-        }),
-      )
+      .map((rawValue) => canonicalizePersonHandle({ type, value: rawValue }))
       .filter(isDefined);
 
   return {

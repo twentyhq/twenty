@@ -3,7 +3,7 @@ import { type PersonHandleField } from 'src/modules/match-participant/person-han
 import { getCanonicalPersonHandles } from 'src/modules/match-participant/person-handle-field/utils/get-canonical-person-handles.util';
 import { getPersonFieldValue } from 'src/modules/match-participant/person-handle-field/utils/get-person-field-value.util';
 
-// a primary value wins over an additional one, then the oldest person, as for emails
+// people must come oldest first: a primary value wins over an additional one, then the oldest person, as for emails
 export const findPersonByCanonicalHandle = ({
   people,
   personHandleField,

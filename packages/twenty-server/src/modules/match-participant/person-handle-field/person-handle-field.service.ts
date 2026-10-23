@@ -3,27 +3,27 @@ import { Injectable } from '@nestjs/common';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { PERSON_HANDLE_FIELD_TYPES } from 'src/modules/match-participant/person-handle-field/constants/person-handle-field-types.constant';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 
-const isPersonHandleFieldType = (
+type PersonHandleFieldWithUniversalIdentifier = PersonHandleField & {
+  universalIdentifier: string;
+};
+
+const toPersonHandleFieldType = (
   type: string,
-): type is PersonHandleField['type'] =>
-  (PERSON_HANDLE_FIELD_TYPES as readonly string[]).includes(type);
+): PersonHandleField['type'] | undefined =>
+  PERSON_HANDLE_FIELD_TYPES.find((handleFieldType) => handleFieldType === type);
 
 @Injectable()
 export class PersonHandleFieldService {
   constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
-  // null when the field is missing, deleted, not on person or of a type handles cannot be matched against
-  async findByUniversalIdentifier({
-    workspaceId,
-    fieldUniversalIdentifier,
-  }: {
-    workspaceId: string;
-    fieldUniversalIdentifier: string;
-  }): Promise<PersonHandleField | null> {
+  async findAll(
+    workspaceId: string,
+  ): Promise<PersonHandleFieldWithUniversalIdentifier[]> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -34,19 +34,42 @@ export class PersonHandleFieldService {
       flatObjectMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person
       ];
-    const fieldMetadata =
-      flatFieldMetadataMaps.byUniversalIdentifier[fieldUniversalIdentifier];
 
-    if (
-      !isDefined(personObjectMetadata) ||
-      !isDefined(fieldMetadata) ||
-      fieldMetadata.objectMetadataId !== personObjectMetadata.id ||
-      !fieldMetadata.isActive ||
-      !isPersonHandleFieldType(fieldMetadata.type)
-    ) {
-      return null;
+    if (!isDefined(personObjectMetadata)) {
+      return [];
     }
 
-    return { name: fieldMetadata.name, type: fieldMetadata.type };
+    return getFlatFieldsFromFlatObjectMetadata(
+      personObjectMetadata,
+      flatFieldMetadataMaps,
+    ).flatMap((fieldMetadata) => {
+      const type = toPersonHandleFieldType(fieldMetadata.type);
+
+      return fieldMetadata.isActive && isDefined(type)
+        ? [
+            {
+              name: fieldMetadata.name,
+              type,
+              universalIdentifier: fieldMetadata.universalIdentifier,
+            },
+          ]
+        : [];
+    });
+  }
+
+  async findByUniversalIdentifier({
+    workspaceId,
+    fieldUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    fieldUniversalIdentifier: string;
+  }): Promise<PersonHandleField | null> {
+    const personHandleField = (await this.findAll(workspaceId)).find(
+      (field) => field.universalIdentifier === fieldUniversalIdentifier,
+    );
+
+    return isDefined(personHandleField)
+      ? { name: personHandleField.name, type: personHandleField.type }
+      : null;
   }
 }

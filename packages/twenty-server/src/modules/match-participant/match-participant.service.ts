@@ -72,7 +72,7 @@ export type MatchParticipantsArgs<
     | 'personOnly'
     | 'workspaceMemberAndPerson'
     | 'targetsOnly';
-  // handles are canonical values of this person field; without it they are emails
+  // handles are canonical values of this person field
   personHandleField?: PersonHandleField;
   transactionScope?: WorkspaceTransactionScope;
 };
@@ -332,9 +332,10 @@ export class MatchParticipantService<
             transactionScope,
           });
 
-          const participantsWithHandle = (await participantRepository.find({
-            where: { handle: In(handles) },
-          })) as ParticipantWorkspaceEntity[];
+          const participantsWithHandle = await participantRepository
+            .createQueryBuilder('participant')
+            .where('"participant"."handle" IN (:...handles)', { handles })
+            .getMany<ParticipantWorkspaceEntity>();
 
           if (participantsWithHandle.length === 0) {
             return;

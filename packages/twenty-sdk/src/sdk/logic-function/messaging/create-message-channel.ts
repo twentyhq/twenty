@@ -20,9 +20,7 @@ export type CreateMessageChannelInput = {
   // Required: decides whether one member's conversations are readable by the whole workspace, and only the app
   // knows how private its messages are ('METADATA' for personal inboxes, 'SHARE_EVERYTHING' for shared ones)
   visibility: MessageChannelVisibility;
-  // A person field (emails, phones, a link or text, standard or added by the app) to match participant handles
-  // against, e.g. STANDARD_OBJECTS.person.fields.phones.universalIdentifier. Handles are then stored in that
-  // field's canonical form. Set once; without it the app links participants itself through personId.
+  // Person field to match participant handles against (handles are then stored in its canonical form); set once
   participantHandleFieldUniversalIdentifier?: string;
 };
 
