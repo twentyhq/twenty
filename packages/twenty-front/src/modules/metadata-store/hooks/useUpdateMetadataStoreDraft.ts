@@ -6,7 +6,6 @@ import {
   type MetadataStoreItem,
 } from '@/metadata-store/states/metadataStoreState';
 import { type MetadataEntityTypeMap } from '@/metadata-store/types/MetadataEntityTypeMap';
-import { CONSISTENCY_VALIDATED_METADATA_ENTITY_KEYS } from '@/metadata-store/constants/ConsistencyValidatedMetadataEntityKeys';
 import { getDraftOrCurrentMetadataItems } from '@/metadata-store/utils/getDraftOrCurrentMetadataItems';
 import { isMetadataStoreDraftConsistent } from '@/metadata-store/utils/isMetadataStoreDraftConsistent';
 import { useStore, type createStore } from 'jotai';
@@ -79,18 +78,13 @@ export const useUpdateMetadataStoreDraft = () => {
   const applyChanges = useCallback((): {
     hasPersistedAnyMetadataEntity: boolean;
   } => {
-    const isDraftConsistent = isMetadataStoreDraftConsistent(store);
+    if (!isMetadataStoreDraftConsistent(store)) {
+      return { hasPersistedAnyMetadataEntity: false };
+    }
 
     let hasPersistedAnyMetadataEntity = false;
 
     for (const metadataEntityKey of ALL_METADATA_ENTITY_KEYS) {
-      if (
-        !isDraftConsistent &&
-        CONSISTENCY_VALIDATED_METADATA_ENTITY_KEYS.includes(metadataEntityKey)
-      ) {
-        continue;
-      }
-
       const metadataStoreEntityEntry = store.get(
         metadataStoreState.atomFamily(metadataEntityKey),
       );
