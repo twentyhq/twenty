@@ -13,6 +13,7 @@ import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatChannelThreadsFetchMoreTrigger } from '@/ai/components/AgentChatChannelThreadsFetchMoreTrigger';
 import { AgentChatChannelThreadsLoadEffect } from '@/ai/components/AgentChatChannelThreadsLoadEffect';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
+import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
 import { AiChatInboxChannelToolbar } from '@/ai/components/AiChatInboxChannelToolbar';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
@@ -40,7 +41,6 @@ import { RecordSelectionComponentInstanceContext } from '@/object-record/record-
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
-import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -167,17 +167,9 @@ const AiChatInboxPageContent = () => {
   const isSelectionPaneShown = isSplitView && isSelectionShown;
   const isThreadShown = isDefined(selectedThreadId) && !isSelectionPaneShown;
   const isNewThreadShown = isNewThreadRoute && !isSelectionPaneShown;
-  // Split view always has a chat beside the list
-  const firstThreadToOpen =
-    isSplitView && !isDefined(selectedThreadId) && !isNewThreadRoute
-      ? threads.at(0)
-      : undefined;
-  const isEmptyPaneShown =
-    isSplitView &&
-    !isDefined(selectedThreadId) &&
-    !isNewThreadRoute &&
-    !isSelectionShown &&
-    !isDefined(firstThreadToOpen);
+  const isSecondaryPaneShown =
+    isSelectionPaneShown || isThreadShown || isNewThreadShown;
+  const isListFullWidth = !isSplitView || !isSecondaryPaneShown;
 
   const openThreadIds =
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
@@ -201,17 +193,10 @@ const AiChatInboxPageContent = () => {
       <AgentChatChannelThreadsLoadEffect />
       <RecordSelectionRecordIdsEffect records={threads} />
       <AiChatInboxSelectionEffect
+        key={selectedThreadId}
         selectedThreadId={selectedThreadId}
         threads={threads}
       />
-      {isDefined(firstThreadToOpen) && (
-        <Navigate
-          to={getAppPath(AppPath.AiChatInbox, {
-            threadId: firstThreadToOpen.id,
-          })}
-          replace
-        />
-      )}
       {/* The selection takes the place of the chat on screen, so the command
       menu acts on it */}
       {isSelectionShown && !isThreadShown && (
@@ -221,12 +206,17 @@ const AiChatInboxPageContent = () => {
       )}
       <AiChatInboxCommandMenuScope>
         {isListShown && (
-          <StyledListPane $isFullWidth={!isSplitView}>
+          <StyledListPane
+            $isFullWidth={isListFullWidth}
+            role="region"
+            aria-label={t`Conversation list`}
+          >
             <PageCardLayout
-              showInformationBanner={!isSplitView}
+              showInformationBanner={isListFullWidth}
               header={
                 <AiChatInboxListHeader
                   selectedThreadCount={selectedRecordIds.length}
+                  isSecondaryPaneShown={isSecondaryPaneShown}
                 />
               }
             >
@@ -325,24 +315,24 @@ const AiChatInboxPageContent = () => {
                   <IconChevronLeft />
                 </IconButton>
               ) : (
-                <AiChatInboxThreadPagination
-                  threads={threads}
-                  threadId={selectedThreadId}
-                  onThreadSelect={selectThread}
-                />
+                <>
+                  <AiChatInboxThreadPagination
+                    threads={threads}
+                    threadId={selectedThreadId}
+                    onThreadSelect={selectThread}
+                  />
+                  {isSplitView && (
+                    <AiChatCloseButton
+                      destinationPath={getAppPath(AppPath.AiChatInbox, {
+                        threadId: null,
+                      })}
+                    />
+                  )}
+                </>
               )
             }
           />
         </>
-      )}
-      {isEmptyPaneShown && (
-        <PageCardLayout header={<PageCardHeader />}>
-          <EmptyState.Root>
-            <EmptyState.Content>
-              <EmptyState.Title>{t`No conversation selected`}</EmptyState.Title>
-            </EmptyState.Content>
-          </EmptyState.Root>
-        </PageCardLayout>
       )}
     </StyledInbox>
   );

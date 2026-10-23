@@ -1,4 +1,5 @@
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
+import { styled } from '@linaria/react';
 import {
   type Decorator,
   type Meta,
@@ -6,7 +7,7 @@ import {
 } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
@@ -15,6 +16,7 @@ import {
 } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
@@ -44,6 +46,7 @@ const SECOND_THREAD_ID = '20202020-0000-4000-8000-0000000000bb';
 const FIRST_THREAD_TITLE = 'Qualify the lead';
 const SECOND_THREAD_TITLE = 'Prepare the customer call';
 const THREAD_ACTIVITY_AT = '2026-10-21T09:00:00.000Z';
+const THREAD_ARCHIVED_AT = '2026-10-21T11:00:00.000Z';
 const CHAT_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000cc';
 const CHAT_TARGET_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000dd';
 const CHAT_FIELD_NAMES = ['id', 'title', 'createdAt', 'updatedAt', 'deletedAt'];
@@ -71,11 +74,25 @@ const THREADS: AgentChatThreadRecord[] = [
   },
 ];
 
+const StyledInboxStory = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+`;
+
+const StyledNavigationControls = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const InboxRouteNavigation = () => {
   const navigate = useNavigate();
 
   return (
-    <>
+    <StyledNavigationControls>
       <Button onClick={() => navigate(NEW_CHAT_PATH)}>
         Open new chat route
       </Button>
@@ -101,7 +118,7 @@ const InboxRouteNavigation = () => {
       </Button>
       <Button onClick={() => navigate(-1)}>Back through history</Button>
       <Button onClick={() => navigate(1)}>Forward through history</Button>
-    </>
+    </StyledNavigationControls>
   );
 };
 
@@ -114,10 +131,12 @@ const InboxRouteDecorator: Decorator = (Story) => (
         value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
       >
         <MemoryRouterAppNavigatorProvider>
-          <InboxRouteNavigation />
-          <Routes>
-            <Route path={AppPath.AiChatInbox} element={<Story />} />
-          </Routes>
+          <StyledInboxStory>
+            <InboxRouteNavigation />
+            <Routes>
+              <Route path={AppPath.AiChatInbox} element={<Story />} />
+            </Routes>
+          </StyledInboxStory>
         </MemoryRouterAppNavigatorProvider>
       </ContextStoreComponentInstanceContext.Provider>
     </MemoryRouter>
@@ -207,6 +226,22 @@ const getThreadRow = ({
   assertIsDefinedOrThrow(row);
 
   return row;
+};
+
+const archiveThread = (threadId: string) => {
+  const participants = jotaiStore.get(agentChatThreadParticipantsState.atom);
+  const participant = participants?.[threadId];
+
+  assertIsDefinedOrThrow(participant);
+
+  jotaiStore.set(agentChatThreadParticipantsState.atom, {
+    ...participants,
+    [threadId]: {
+      ...participant,
+      archivedAt: THREAD_ARCHIVED_AT,
+      updatedAt: THREAD_ARCHIVED_AT,
+    },
+  });
 };
 
 const meta = {
@@ -387,6 +422,11 @@ export const SavedChatNavigationClearsSelection: Story = {
       aiChatInboxLayoutState.atom,
       AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
     );
+    await user.click(
+      within(
+        getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
+      ).getByText(FIRST_THREAD_TITLE),
+    );
     await canvas.findByRole('button', { name: 'Chat details' });
 
     const firstThreadRow = getThreadRow({
@@ -436,5 +476,158 @@ export const SavedChatNavigationClearsSelection: Story = {
     await expect(
       getThreadRow({ canvasElement, title: SECOND_THREAD_TITLE }),
     ).toBe(secondThreadRow);
+  },
+};
+
+export const CloseConversationPane: Story = {
+  beforeEach: () => {
+    jotaiStore.set(
+      aiChatInboxLayoutState.atom,
+      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    await canvas.findByText(FIRST_THREAD_TITLE);
+    loadChatRecordMetadata();
+
+    const list = canvas.getByRole('region', { name: 'Conversation list' });
+    const fullListWidth = list.getBoundingClientRect().width;
+    const firstThreadRow = getThreadRow({
+      canvasElement,
+      title: FIRST_THREAD_TITLE,
+    });
+
+    await expect(
+      canvas.queryByRole('button', { name: 'Chat details' }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.getByRole('button', { name: 'Command Menu' }),
+    ).toBeVisible();
+
+    await user.click(within(firstThreadRow).getByText(FIRST_THREAD_TITLE));
+    await canvas.findByRole('button', { name: 'Chat details' });
+    await expect(list.getBoundingClientRect().width).toBeLessThan(
+      fullListWidth,
+    );
+
+    await user.click(canvas.getByRole('button', { name: 'Close' }));
+    await expect(
+      canvas.queryByRole('button', { name: 'Chat details' }),
+    ).not.toBeInTheDocument();
+    await expect(list.getBoundingClientRect().width).toBeCloseTo(
+      fullListWidth,
+      0,
+    );
+    await expect(
+      getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
+    ).toBe(firstThreadRow);
+    await expect(jotaiStore.get(aiChatInboxLayoutState.atom)).toBe(
+      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
+    );
+    await expect(
+      canvas.getByRole('button', { name: 'Command Menu' }),
+    ).toBeVisible();
+
+    await user.click(
+      within(
+        getThreadRow({ canvasElement, title: SECOND_THREAD_TITLE }),
+      ).getByText(SECOND_THREAD_TITLE),
+    );
+    await canvas.findByRole('button', { name: 'Chat details' });
+    await expect(canvas.getAllByText(SECOND_THREAD_TITLE)).toHaveLength(2);
+    await expect(list.getBoundingClientRect().width).toBeLessThan(
+      fullListWidth,
+    );
+    await user.click(canvas.getByRole('button', { name: 'Close' }));
+  },
+};
+
+export const ClosedConversationHistory: Story = {
+  beforeEach: () => {
+    jotaiStore.set(
+      aiChatInboxLayoutState.atom,
+      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    await canvas.findByText(FIRST_THREAD_TITLE);
+    loadChatRecordMetadata();
+    await user.click(
+      within(
+        getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
+      ).getByText(FIRST_THREAD_TITLE),
+    );
+    await canvas.findByRole('button', { name: 'Chat details' });
+    await user.click(canvas.getByRole('button', { name: 'Close' }));
+    archiveThread(FIRST_THREAD_ID);
+
+    await waitFor(() =>
+      expect(canvas.queryByText(FIRST_THREAD_TITLE)).not.toBeInTheDocument(),
+    );
+    await expect(
+      canvas.queryByRole('button', { name: 'Chat details' }),
+    ).not.toBeInTheDocument();
+
+    await user.click(
+      canvas.getByRole('button', { name: 'Back through history' }),
+    );
+    await canvas.findByRole('button', { name: 'Chat details' });
+    await expect(canvas.getByText(FIRST_THREAD_TITLE)).toBeVisible();
+    await expect(canvas.getAllByText(SECOND_THREAD_TITLE)).toHaveLength(1);
+
+    await user.click(
+      canvas.getByRole('button', { name: 'Forward through history' }),
+    );
+    await expect(
+      canvas.queryByRole('button', { name: 'Chat details' }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByText(FIRST_THREAD_TITLE),
+    ).not.toBeInTheDocument();
+    await expect(canvas.getByText(SECOND_THREAD_TITLE)).toBeVisible();
+  },
+};
+
+export const TriageAfterReopeningConversation: Story = {
+  beforeEach: () => {
+    jotaiStore.set(
+      aiChatInboxLayoutState.atom,
+      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    await canvas.findByText(FIRST_THREAD_TITLE);
+    loadChatRecordMetadata();
+    await user.click(
+      within(
+        getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
+      ).getByText(FIRST_THREAD_TITLE),
+    );
+    await canvas.findByRole('button', { name: 'Chat details' });
+    await user.click(canvas.getByRole('button', { name: 'Close' }));
+    await user.click(
+      within(
+        getThreadRow({ canvasElement, title: SECOND_THREAD_TITLE }),
+      ).getByText(SECOND_THREAD_TITLE),
+    );
+    await canvas.findByRole('button', { name: 'Chat details' });
+    archiveThread(SECOND_THREAD_ID);
+
+    await waitFor(() => {
+      expect(canvas.queryAllByText(SECOND_THREAD_TITLE)).toHaveLength(0);
+      expect(canvas.getAllByText(FIRST_THREAD_TITLE)).toHaveLength(2);
+    });
+    await expect(
+      canvas.getByRole('button', { name: 'Chat details' }),
+    ).toBeVisible();
   },
 };

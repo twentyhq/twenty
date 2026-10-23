@@ -302,10 +302,13 @@ describe('AiChatInboxPage', () => {
     expect(screen.getByText('Chat page without the inbox')).toBeInTheDocument();
   });
 
-  it('opens the first chat beside the list', () => {
+  it('shows the list without selecting a chat on the base inbox route', () => {
     renderInbox('/inbox');
 
-    expect(screen.getByText(`Chat page ${firstThread.id}`)).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', { name: 'Conversation list' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/^Chat page /)).not.toBeInTheDocument();
     expect(
       screen.queryByText('No conversation selected'),
     ).not.toBeInTheDocument();
