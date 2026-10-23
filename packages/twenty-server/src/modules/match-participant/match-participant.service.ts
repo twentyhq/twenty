@@ -305,7 +305,7 @@ export class MatchParticipantService<
           // emails before and after the change pick candidates, so links made any other way are left alone
           const participantsWithEmailHandle = await participantRepository
             .createQueryBuilder('participant')
-            .where('LOWER("participant"."handle") IN (:...emails)', {
+            .where('LOWER("participant"."handle") = ANY(:emails)', {
               emails: [
                 ...new Set(
                   participantMatching.personEmails.map((email) =>
@@ -374,8 +374,8 @@ export class MatchParticipantService<
         },
       ).find({
         where: {
-          messageId: In([...new Set(this.getSourceRecordIds(participants))]),
-          messageChannelId: In(
+          messageId: Any([...new Set(this.getSourceRecordIds(participants))]),
+          messageChannelId: Any(
             appMessageChannels.map((messageChannel) => messageChannel.id),
           ),
         },
