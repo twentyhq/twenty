@@ -71,4 +71,25 @@ describe('createOutboundRequestSignal', () => {
 
     expect(retrySignal.aborted).toBe(false);
   });
+
+  it('applies cancellation from a non-native caller signal', () => {
+    const listeners: (() => void)[] = [];
+    const callerSignal = {
+      aborted: false,
+      addEventListener: (_type: string, listener: () => void) => {
+        listeners.push(listener);
+      },
+    };
+
+    const signal = createOutboundRequestSignal({
+      currentSignal: callerSignal,
+      timeoutMs: 60_000,
+    });
+
+    expect(signal.aborted).toBe(false);
+
+    listeners.forEach((listener) => listener());
+
+    expect(signal.aborted).toBe(true);
+  });
 });
