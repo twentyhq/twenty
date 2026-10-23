@@ -101,6 +101,9 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
             ? { accessKeyId, secretAccessKey }
             : fromNodeProviderChain({ clientConfig: { region } }),
           region,
+          endpoint: this.twentyConfigService.get(
+            'LOGIC_FUNCTION_LAMBDA_ENDPOINT',
+          ),
           lambdaRole,
           subhostingRole,
           layerBucket,

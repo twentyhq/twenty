@@ -238,7 +238,7 @@ export class ApplicationInstallService {
         { targetVersion: params.version },
       );
     } catch (error) {
-      await this.eventLogEmitterService.recordApplicationLogs([
+      await this.eventLogEmitterService.recordApplicationPlatformEvents([
         buildApplicationLifecycleLogEntry({
           source: isVersionUpgrade ? 'UPGRADE' : 'INSTALL',
           workspaceId: params.workspaceId,
@@ -308,7 +308,7 @@ export class ApplicationInstallService {
         attributes,
       });
 
-      await this.eventLogEmitterService.recordApplicationLogs([
+      await this.eventLogEmitterService.recordApplicationPlatformEvents([
         buildApplicationLifecycleLogEntry({
           ...lifecycleLogContext,
           applicationId: application.id,
@@ -317,7 +317,7 @@ export class ApplicationInstallService {
 
       return true;
     } catch (error) {
-      await this.eventLogEmitterService.recordApplicationLogs([
+      await this.eventLogEmitterService.recordApplicationPlatformEvents([
         buildApplicationLifecycleLogEntry({
           ...lifecycleLogContext,
           applicationId: existingApplication?.id ?? '',

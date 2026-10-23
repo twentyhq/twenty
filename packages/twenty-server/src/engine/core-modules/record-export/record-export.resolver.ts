@@ -13,6 +13,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CreateRecordExportInput } from 'src/engine/core-modules/record-export/dtos/create-record-export.input';
 import { RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
+import { RecordExportExceptionFilter } from 'src/engine/core-modules/record-export/record-export-exception-filter';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -33,7 +34,10 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
   SettingsPermissionGuard(PermissionFlagType.EXPORT_CSV),
 )
 @UsePipes(ResolverValidationPipe)
-@UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  PreventNestToAutoLogGraphqlErrorsFilter,
+  RecordExportExceptionFilter,
+)
 export class RecordExportResolver {
   constructor(
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
