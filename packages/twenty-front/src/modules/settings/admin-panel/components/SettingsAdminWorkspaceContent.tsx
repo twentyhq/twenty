@@ -3,6 +3,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/getWorkspaceSchemaName';
+import { SettingsAdminWorkspaceDataExportSection } from '@/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
@@ -226,6 +227,10 @@ export const SettingsAdminWorkspaceContent = ({
           />
         </Section.Root>
       )}
+      <SettingsAdminWorkspaceDataExportSection
+        workspaceId={activeWorkspace.id}
+        workspaceName={activeWorkspace.name}
+      />
     </StyledContainer>
   );
 };

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent, useCallback, useRef } from 'react';
+import { type MouseEvent, useRef } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
@@ -11,10 +11,14 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatInboxFilterStatusThreadsEffect } from '@/ai/components/AgentChatInboxFilterStatusThreadsEffect';
+import { AgentChatChannelThreadsFetchMoreTrigger } from '@/ai/components/AgentChatChannelThreadsFetchMoreTrigger';
+import { AgentChatChannelThreadsLoadEffect } from '@/ai/components/AgentChatChannelThreadsLoadEffect';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
+import { AiChatInboxChannelToolbar } from '@/ai/components/AiChatInboxChannelToolbar';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
 import { AiChatInboxListHeader } from '@/ai/components/AiChatInboxListHeader';
+import { AiChatInboxNewThreadChannelEffect } from '@/ai/components/AiChatInboxNewThreadChannelEffect';
 import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
 import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
 import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
@@ -22,14 +26,14 @@ import { AiChatInboxTabSelectionEffect } from '@/ai/components/AiChatInboxTabSel
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { useAgentChatInboxShownThreads } from '@/ai/hooks/useAgentChatInboxShownThreads';
 import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
 import { useAiChatInboxSelectedThreadCount } from '@/ai/hooks/useAiChatInboxSelectedThreadCount';
 import { useAiChatInboxTabSelection } from '@/ai/hooks/useAiChatInboxTabSelection';
-import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { useFetchMoreAgentChatThreadsInFilterStatus } from '@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus';
+import { useFetchMoreAgentChatInboxShownThreads } from '@/ai/hooks/useFetchMoreAgentChatInboxShownThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
@@ -71,6 +75,13 @@ const StyledListPane = styled.div<{ $isFullWidth: boolean }>`
   min-width: 0;
 `;
 
+const StyledListContent = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+`;
+
 const StyledThreadListContainer = styled.div`
   display: flex;
   flex: 1;
@@ -95,7 +106,12 @@ const AiChatInboxPageContent = () => {
   const isNewThreadRoute = threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT;
   const selectedThreadId =
     isDefined(threadId) && isValidUuid(threadId) ? threadId : undefined;
-  const { threads, loading } = useChatThreads(agentChatVisibleThreadsSelector);
+  const agentChatShownChannelView = useAtomStateValue(
+    agentChatShownChannelViewSelector,
+  );
+  const { threads, isLoading } = useAgentChatInboxShownThreads();
+  const { fetchMoreAgentChatInboxShownThreads } =
+    useFetchMoreAgentChatInboxShownThreads();
 
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
@@ -112,8 +128,6 @@ const AiChatInboxPageContent = () => {
   const agentChatThreadFilterStatus = useAtomStateValue(
     agentChatThreadFilterStatusState,
   );
-  const { fetchMoreAgentChatThreadsInFilterStatus } =
-    useFetchMoreAgentChatThreadsInFilterStatus();
 
   // Rows hold a menu and a rename input, which a link cannot contain
   const selectThread = (nextThreadId: string | null) =>
@@ -150,15 +164,11 @@ const AiChatInboxPageContent = () => {
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
   };
 
-  const fetchMoreThreadsInFilterStatus = useCallback(() => {
-    void fetchMoreAgentChatThreadsInFilterStatus(agentChatThreadFilterStatus);
-  }, [agentChatThreadFilterStatus, fetchMoreAgentChatThreadsInFilterStatus]);
-
   const { navigateWithArrowKey } = useRecordSelectionArrowKeyNavigation({
     selectableItemsContainerRef: threadListContainerRef,
     activeRecordId: selectedThreadId,
     onActiveRecordChange: selectThread,
-    onEndReached: fetchMoreThreadsInFilterStatus,
+    onEndReached: fetchMoreAgentChatInboxShownThreads,
   });
 
   const handleThreadCheckboxClick = (
@@ -227,6 +237,7 @@ const AiChatInboxPageContent = () => {
   return (
     <StyledInbox>
       <AgentChatInboxFilterStatusThreadsEffect />
+      <AgentChatChannelThreadsLoadEffect />
       <RecordSelectionRecordIdsEffect records={threads} />
       <AiChatInboxTabSelectionEffect tabSelection={tabSelection} />
       <AiChatInboxSelectionEffect
@@ -259,39 +270,52 @@ const AiChatInboxPageContent = () => {
                 />
               }
             >
-              <StyledThreadListContainer ref={threadListContainerRef}>
-                <StyledThreadList>
-                  {loading && threads.length === 0 ? (
-                    <SkeletonLoader />
-                  ) : threads.length === 0 ? (
-                    <EmptyState.Root>
-                      <AnimatedPlaceholder type="emptyInbox" />
-                      <EmptyState.Content>
-                        <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
-                        <EmptyState.Description>
-                          {t`Conversations you can open will appear here.`}
-                        </EmptyState.Description>
-                      </EmptyState.Content>
-                    </EmptyState.Root>
-                  ) : (
-                    <AiChatInboxThreadList
-                      threads={threads}
-                      selectedThreadIds={openThreadIds}
-                      checkedThreadIds={selectedRecordIds}
-                      onThreadClick={handleThreadClick}
-                      onThreadCheckboxClick={handleThreadCheckboxClick}
-                    />
-                  )}
-                  <AgentChatThreadsFetchMoreTrigger
-                    filterStatus={agentChatThreadFilterStatus}
-                  />
-                </StyledThreadList>
-                {!isMobile && (
-                  <RecordSelectionDragSelect
-                    selectableItemsContainerRef={threadListContainerRef}
+              <StyledListContent>
+                {isDefined(agentChatShownChannelView) && (
+                  <AiChatInboxChannelToolbar
+                    channelView={agentChatShownChannelView}
                   />
                 )}
-              </StyledThreadListContainer>
+                <StyledThreadListContainer ref={threadListContainerRef}>
+                  <StyledThreadList>
+                    {isLoading && threads.length === 0 ? (
+                      <SkeletonLoader />
+                    ) : threads.length === 0 ? (
+                      <EmptyState.Root>
+                        <AnimatedPlaceholder type="emptyInbox" />
+                        <EmptyState.Content>
+                          <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
+                          <EmptyState.Description>
+                            {isDefined(agentChatShownChannelView)
+                              ? t`Conversations in this channel will appear here.`
+                              : t`Conversations you can open will appear here.`}
+                          </EmptyState.Description>
+                        </EmptyState.Content>
+                      </EmptyState.Root>
+                    ) : (
+                      <AiChatInboxThreadList
+                        threads={threads}
+                        selectedThreadIds={openThreadIds}
+                        checkedThreadIds={selectedRecordIds}
+                        onThreadClick={handleThreadClick}
+                        onThreadCheckboxClick={handleThreadCheckboxClick}
+                      />
+                    )}
+                    {isDefined(agentChatShownChannelView) ? (
+                      <AgentChatChannelThreadsFetchMoreTrigger />
+                    ) : (
+                      <AgentChatThreadsFetchMoreTrigger
+                        filterStatus={agentChatThreadFilterStatus}
+                      />
+                    )}
+                  </StyledThreadList>
+                  {!isMobile && (
+                    <RecordSelectionDragSelect
+                      selectableItemsContainerRef={threadListContainerRef}
+                    />
+                  )}
+                </StyledThreadListContainer>
+              </StyledListContent>
             </PageCardLayout>
           </StyledListPane>
         )}
@@ -307,6 +331,7 @@ const AiChatInboxPageContent = () => {
       {isNewThreadShown && (
         <>
           <AiChatPageEffects />
+          <AiChatInboxNewThreadChannelEffect />
           <AiChatNewThreadPageContent
             showInformationBanner={!isSplitView}
             headerActions={

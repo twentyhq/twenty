@@ -1,6 +1,6 @@
 import { FileFolder } from 'twenty-shared/types';
 
-import { checkFilename } from 'src/engine/core-modules/file/utils/check-file-name.utils';
+import { checkFilename } from 'src/engine/core-modules/file/utils/check-file-name.util';
 
 describe('checkFilename', () => {
   it('should return sanitized filename', () => {

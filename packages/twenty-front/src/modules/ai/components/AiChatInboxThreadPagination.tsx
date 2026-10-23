@@ -4,8 +4,11 @@ import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 import { useFetchMoreAgentChatThreadsInFilterStatus } from '@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus';
+import { useLoadAgentChatChannelThreads } from '@/ai/hooks/useLoadAgentChatChannelThreads';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -27,6 +30,13 @@ export const AiChatInboxThreadPagination = ({
   );
   const { fetchMoreAgentChatThreadsInFilterStatus } =
     useFetchMoreAgentChatThreadsInFilterStatus();
+  const agentChatShownChannelView = useAtomStateValue(
+    agentChatShownChannelViewSelector,
+  );
+  const agentChatShownChannelThreadList = useAtomStateValue(
+    agentChatShownChannelThreadListSelector,
+  );
+  const { loadAgentChatChannelThreads } = useLoadAgentChatChannelThreads();
   const index = threads.findIndex(({ id }) => id === threadId);
 
   // A chat opened from a link without being listed has no neighbours
@@ -34,9 +44,14 @@ export const AiChatInboxThreadPagination = ({
     return null;
   }
 
-  const hasMoreThreads =
-    agentChatThreadList?.filterStatusPages?.[agentChatThreadFilterStatus]
-      ?.hasNextPage ?? false;
+  const hasMoreThreads = isDefined(agentChatShownChannelView)
+    ? (agentChatShownChannelThreadList?.hasNextPage ?? false)
+    : (agentChatThreadList?.filterStatusPages?.[agentChatThreadFilterStatus]
+        ?.hasNextPage ?? false);
+  const fetchMoreThreads = () =>
+    isDefined(agentChatShownChannelView)
+      ? loadAgentChatChannelThreads('fetch-more')
+      : fetchMoreAgentChatThreadsInFilterStatus(agentChatThreadFilterStatus);
   const previousThreadId = index > 0 ? threads[index - 1].id : undefined;
   const nextThreadId =
     index < threads.length - 1 ? threads[index + 1].id : undefined;
@@ -45,14 +60,14 @@ export const AiChatInboxThreadPagination = ({
   // a chat page, so the next button loads them instead
   const handleNextClick = () => {
     if (!isDefined(nextThreadId)) {
-      void fetchMoreAgentChatThreadsInFilterStatus(agentChatThreadFilterStatus);
+      void fetchMoreThreads();
       return;
     }
 
     onThreadSelect(nextThreadId);
 
     if (index + 1 === threads.length - 1 && hasMoreThreads) {
-      void fetchMoreAgentChatThreadsInFilterStatus(agentChatThreadFilterStatus);
+      void fetchMoreThreads();
     }
   };
 

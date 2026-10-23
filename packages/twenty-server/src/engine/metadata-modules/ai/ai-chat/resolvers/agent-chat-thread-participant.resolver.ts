@@ -21,6 +21,7 @@ import { AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import {
   AiException,
@@ -71,6 +72,7 @@ export class AgentChatThreadParticipantResolver {
   constructor(
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly threadService: AgentChatThreadService,
+    private readonly triageService: AgentChatThreadTriageService,
   ) {}
 
   @Query(() => AgentChatOpenThreadsSummaryDTO)
@@ -96,7 +98,7 @@ export class AgentChatThreadParticipantResolver {
   ): Promise<AgentChatThreadParticipantDTO[]> {
     validateSnoozeTimeOrThrow({ action, snoozedUntil });
 
-    return this.participantService.updateInboxState({
+    return this.triageService.updateInboxState({
       threadIds,
       action,
       snoozedUntil: snoozedUntil ?? null,

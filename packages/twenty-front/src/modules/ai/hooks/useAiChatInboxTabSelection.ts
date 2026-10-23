@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatInboxTabSelection } from '@/ai/types/AgentChatInboxTabSelection';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
@@ -18,6 +19,9 @@ export const useAiChatInboxTabSelection = (
     agentChatThreadFilterStatusState,
   );
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
+  const agentChatShownChannelView = useAtomStateValue(
+    agentChatShownChannelViewSelector,
+  );
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
   );
@@ -26,7 +30,9 @@ export const useAiChatInboxTabSelection = (
   );
   const filterStatusPage =
     agentChatThreadList?.filterStatusPages?.[agentChatThreadFilterStatus];
+  // The whole-tab mutation knows tabs, not channels
   const isTabSelection =
+    !isDefined(agentChatShownChannelView) &&
     hasUserSelectedAllRecords &&
     isNonEmptyArray(selectedRecordIds) &&
     (filterStatusPage?.hasNextPage ?? false);

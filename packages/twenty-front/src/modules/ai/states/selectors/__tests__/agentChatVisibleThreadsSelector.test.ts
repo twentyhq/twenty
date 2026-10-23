@@ -125,17 +125,16 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
   setAgentChatThreadList(
     store,
     THREADS.map(
-      ({ id, deletedAt, lastActivityAt, pendingQuestionMessageId }) =>
-        ({
-          __typename: 'AgentChatThread',
-          id,
-          title: id,
-          deletedAt,
-          pendingQuestionMessageId: pendingQuestionMessageId ?? null,
-          createdAt: LAST_ACTIVITY_AT,
-          updatedAt: LAST_ACTIVITY_AT,
-          lastActivityAt: lastActivityAt ?? LAST_ACTIVITY_AT,
-        }) as never,
+      ({ id, deletedAt, lastActivityAt, pendingQuestionMessageId }) => ({
+        __typename: 'AgentChatThread',
+        id,
+        title: id,
+        deletedAt,
+        pendingQuestionMessageId: pendingQuestionMessageId ?? null,
+        createdAt: LAST_ACTIVITY_AT,
+        updatedAt: LAST_ACTIVITY_AT,
+        lastActivityAt: lastActivityAt ?? LAST_ACTIVITY_AT,
+      }),
     ),
   );
   store.set(
