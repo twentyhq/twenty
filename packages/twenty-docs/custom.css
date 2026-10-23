@@ -1,4 +1,3 @@
-/* Mintlify's font configuration only declares a single weight. */
 @font-face {
   font-family: 'Host Grotesk';
   src: url('/fonts/host-grotesk-latin-variable.woff2') format('woff2');
@@ -638,7 +637,6 @@ div:has(> #search-bar-entry) {
   padding-right: var(--twenty-space-6);
 }
 
-/* The website's ButtonShape caps stay fixed while the middle stretches. */
 :is(
   #topbar-cta-button a,
   #navbar .navbar-link > a[href='https://app.twenty.com/welcome'],
@@ -995,7 +993,6 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   margin-top: 0 !important;
 }
 
-/* Mintlify renders the page header outside the MDX content. */
 #content-area:has([data-page-banner]) #header > div:first-child::after {
   content: '';
   display: block;
