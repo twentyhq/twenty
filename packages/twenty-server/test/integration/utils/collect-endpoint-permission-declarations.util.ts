@@ -40,7 +40,7 @@ type AcceptedAuthPrincipals = {
 };
 
 type EndpointPermissionDeclarations = {
-  authPrincipalGuards: AcceptedAuthPrincipals[];
+  acceptedAuthPrincipals: AcceptedAuthPrincipals | null;
   requiredPermissionFlags: PermissionFlagType[];
   requiredFeatureFlags: FeatureFlagKey[];
   applicationTarget: ApplicationTarget | null;
@@ -119,13 +119,19 @@ const readGuardConfigs = <TGuardConfig>({
 // The guard's own decisions, so a shorthand such as `application: true`
 // shows what it leaves out
 const toAcceptedAuthPrincipals = (
-  authPrincipalGuardConfig: AuthPrincipalGuardConfig,
-): AcceptedAuthPrincipals => {
+  authPrincipalGuardConfigs: AuthPrincipalGuardConfig[],
+): AcceptedAuthPrincipals | null => {
+  if (authPrincipalGuardConfigs.length === 0) {
+    return null;
+  }
+
   const isAccepted = (authPrincipalVariant: AuthPrincipalVariant): boolean =>
-    isAuthPrincipalVariantAccepted({
-      authPrincipalGuardConfig,
-      authPrincipalVariant,
-    });
+    authPrincipalGuardConfigs.every((authPrincipalGuardConfig) =>
+      isAuthPrincipalVariantAccepted({
+        authPrincipalGuardConfig,
+        authPrincipalVariant,
+      }),
+    );
 
   return {
     userSession: {
@@ -223,14 +229,16 @@ export const collectEndpointPermissionDeclarations = (): string[] => {
 
       const guardsOwners = [endpointClass, handler];
 
-      // Every class and method guard must pass, so the union of their flags
-      // is what the endpoint requires
+      // Every class and method guard must pass, so an endpoint accepts what
+      // all its principal guards accept and requires the union of their flags
       declarationsByEndpoint.set(endpoint, {
-        authPrincipalGuards: readGuardConfigs<AuthPrincipalGuardConfig>({
-          reflector,
-          guardsOwners,
-          guardConfigKey: AUTH_PRINCIPAL_GUARD_CONFIG_KEY,
-        }).map(toAcceptedAuthPrincipals),
+        acceptedAuthPrincipals: toAcceptedAuthPrincipals(
+          readGuardConfigs<AuthPrincipalGuardConfig>({
+            reflector,
+            guardsOwners,
+            guardConfigKey: AUTH_PRINCIPAL_GUARD_CONFIG_KEY,
+          }),
+        ),
         requiredPermissionFlags: toSortedUniqueValues(
           readGuardConfigs<PermissionFlagType[]>({
             reflector,
