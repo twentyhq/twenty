@@ -149,22 +149,14 @@ export class ApplicationManifestExportService {
         )
       : undefined;
 
-    const defaultRoleUniversalIdentifier = findUniversalIdentifierById({
-      flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
-      id: flatApplication.defaultRoleId,
-    });
-    const isDefaultRoleExported =
-      isDefined(defaultRoleUniversalIdentifier) &&
-      allFlatEntityMaps.flatRoleMaps.byUniversalIdentifier[
-        defaultRoleUniversalIdentifier
-      ]?.isEditable === true;
-
     const manifest: Manifest = {
       application: fromFlatApplicationToApplicationManifest({
         flatApplication,
-        defaultRoleUniversalIdentifier: isDefaultRoleExported
-          ? defaultRoleUniversalIdentifier
-          : PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+        defaultRoleUniversalIdentifier:
+          findUniversalIdentifierById({
+            flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
+            id: flatApplication.defaultRoleId,
+          }) ?? PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
       }),
       objects,
       fields,
