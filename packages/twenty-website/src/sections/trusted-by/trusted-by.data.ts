@@ -37,11 +37,11 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
     src: '/images/logo-bar/corgi.webp',
   },
   {
-    aspectRatio: 1,
-    grayOpacity: 0.7,
-    heightPx: 34,
-    name: 'Windmill',
-    src: '/images/logo-bar/windmill-logo.webp',
+    aspectRatio: 1.677,
+    grayOpacity: 0.42,
+    heightPx: 22,
+    name: 'Murphy',
+    src: '/images/logo-bar/murphy.webp',
   },
   {
     aspectRatio: 7.188,
