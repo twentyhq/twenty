@@ -78,7 +78,7 @@ const buildResolver = () => {
   );
   const chatService = new AgentChatService(
     threadRepository as never,
-    {} as never,
+    { find: jest.fn().mockResolvedValue([]) } as never,
     messages as never,
     {} as never,
     sharing as never,
@@ -182,7 +182,7 @@ describe('Shared conversation API boundaries', () => {
       new Error('restore failed'),
     );
     await expect(
-      context.chatService.restoreThread({
+      context.threadService.restoreThread({
         threadId: THREAD_ID,
         workspaceMemberId: 'owner',
         workspaceId: WORKSPACE_ID,
@@ -315,7 +315,7 @@ describe('Shared conversation API boundaries', () => {
             workspace,
           ),
         restore: () =>
-          context.chatService.restoreThread({
+          context.threadService.restoreThread({
             threadId: THREAD_ID,
             workspaceMemberId: VIEWER_ID,
             workspaceId: WORKSPACE_ID,
