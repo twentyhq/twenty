@@ -7,6 +7,9 @@ const sendAppMessageResultSchema = z.object({
   sentAt: z.union([z.string(), z.number()]).nullish(),
 });
 
+// below this a number cannot be epoch milliseconds after 1973, so providers sending seconds are read as such
+const EPOCH_MILLISECONDS_THRESHOLD = 1e11;
+
 type ParseSendAppMessageResultOutcome =
   | { isValid: true; sentMessage: SendAppMessageResult }
   | { isValid: false; reason: string };
@@ -19,7 +22,11 @@ const toIsoDateOrUndefined = (
     return undefined;
   }
 
-  const date = new Date(value);
+  const date = new Date(
+    typeof value === 'number' && value < EPOCH_MILLISECONDS_THRESHOLD
+      ? value * 1000
+      : value,
+  );
 
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 };
