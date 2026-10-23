@@ -81,13 +81,16 @@ describe('sendAppChannelMessage (e2e)', () => {
   let sendingConnectionId: string;
   let silentConnectionId: string;
 
-  const readSendExecutions = (): SendAppMessagePayload[] =>
-    existsSync(sendExecutionsPath)
-      ? readFileSync(sendExecutionsPath, 'utf8')
-          .trim()
-          .split('\n')
-          .map((line) => JSON.parse(line))
-      : [];
+  const readSendExecutions = (): SendAppMessagePayload[] => {
+    if (!existsSync(sendExecutionsPath)) {
+      return [];
+    }
+
+    return readFileSync(sendExecutionsPath, 'utf8')
+      .trim()
+      .split('\n')
+      .map((line) => JSON.parse(line));
+  };
 
   const asApplication = (
     operation: Parameters<typeof makeMetadataApiRequest>[0],
