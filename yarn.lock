@@ -51398,6 +51398,7 @@ __metadata:
     postcss: "npm:^8.5.15"
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"
+    react-datepicker: "npm:^9.1.0"
     react-docgen-typescript: "npm:^2.2.2"
     react-dom: "npm:^19.2.0"
     sass: "npm:^1.83.0"
