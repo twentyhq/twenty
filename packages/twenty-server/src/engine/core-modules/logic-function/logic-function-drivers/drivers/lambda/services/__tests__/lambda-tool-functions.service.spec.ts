@@ -1,4 +1,6 @@
-import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { caching } from 'cache-manager';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import {
   Lambda,
   CreateFunctionCommand,
@@ -34,18 +36,17 @@ describe('Lambda builder deployment', () => {
   let service: LambdaToolFunctionsService;
   let waitForActive: jest.SpyInstance;
   let cleanup: jest.SpyInstance;
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
     send.mockReset();
     const client = new Lambda({ region: options.region });
     Object.assign(client, { send });
     const awsClient = new LambdaAwsClientService({
       ...options,
-      cacheStorageService: {
-        get: jest.fn(),
-        set: jest.fn(),
-        del: jest.fn(),
-      } as unknown as CacheStorageService,
+      cacheStorageService: new CacheStorageService(
+        await caching('memory'),
+        CacheStorageNamespace.ModuleApplications,
+      ),
     });
     jest.spyOn(awsClient, 'getLambdaClient').mockResolvedValue(client);
     waitForActive = jest

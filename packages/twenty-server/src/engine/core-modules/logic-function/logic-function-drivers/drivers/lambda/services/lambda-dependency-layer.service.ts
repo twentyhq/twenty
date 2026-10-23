@@ -23,7 +23,7 @@ type DependencyLayerInput = {
   readDependencies: () => Promise<
     Pick<
       YarnInstallLambdaPayload,
-      'packageJson' | 'yarnLock' | 'installAllDependencies'
+      'packageJson' | 'yarnLock' | 'shouldInstallAllDependencies'
     >
   >;
 };
@@ -59,8 +59,9 @@ export class LambdaDependencyLayerService {
         const newArn = await this.awsClient.getExistingLayerArn(layerName);
 
         if (!isDefined(newArn)) {
-          throw new Error(
+          throw new LogicFunctionException(
             `Layer '${layerName}' was not created by the yarn install Lambda`,
+            LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
           );
         }
 
@@ -129,8 +130,9 @@ export class LambdaDependencyLayerService {
     }
 
     if (!isDefined(publishResult.LayerVersionArn)) {
-      throw new Error(
+      throw new LogicFunctionException(
         `PublishLayerVersion did not return a LayerVersionArn for layer '${layerName}'`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
       );
     }
   }

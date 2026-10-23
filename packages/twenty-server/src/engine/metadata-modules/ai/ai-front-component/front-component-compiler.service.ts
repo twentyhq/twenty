@@ -120,7 +120,7 @@ export class FrontComponentCompilerService extends DriverFactoryBase<{
       readDependencies: async () => ({
         packageJson: dependencies.packageJson,
         yarnLock: dependencies.yarnLock,
-        installAllDependencies: true,
+        shouldInstallAllDependencies: true,
       }),
     });
     const functionName = computeHashedLambdaResourceName({
