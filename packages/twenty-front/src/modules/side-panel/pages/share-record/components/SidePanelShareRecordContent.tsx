@@ -12,6 +12,7 @@ import { RecordSharingInvitationAccessPicker } from '@/object-record/record-shar
 import { RecordSharingInvitationRecipientPicker } from '@/object-record/record-sharing/components/RecordSharingInvitationRecipientPicker';
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
+import { getRecordSharingRecipientGroups } from '@/object-record/record-sharing/utils/getRecordSharingRecipientGroups';
 import { SidePanelShareRecordGeneralAccessItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem';
 import { SidePanelShareRecordGroup } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGroup';
 import { SidePanelShareRecordList } from '@/side-panel/pages/share-record/components/SidePanelShareRecordList';
@@ -19,9 +20,9 @@ import { SidePanelShareRecordRecipient } from '@/side-panel/pages/share-record/c
 import { SidePanelShareRecordRetryItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordRetryItem';
 import { useSidePanelShareRecordInvitation } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordInvitation';
 import { useSidePanelShareRecordSearch } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordSearch';
+import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import {
   type ObjectSharingReach,
-  RecordSharePrincipalType,
   RecordSharingMode,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -110,23 +111,10 @@ export const SidePanelShareRecordContent = ({
   });
   const { copyToClipboard } = useCopyToClipboard();
   const canManageSharing = sharing?.canManageSharing ?? false;
-  const recipientGroups = isInviting
-    ? [{ heading: t`Have access`, shares: matchingShares }]
-    : [
-        {
-          heading: t`Roles`,
-          shares: matchingShares.filter(
-            (share) => share.principalType === RecordSharePrincipalType.ROLE,
-          ),
-        },
-        {
-          heading: t`Users`,
-          shares: matchingShares.filter(
-            (share) =>
-              share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER,
-          ),
-        },
-      ];
+  const recipientGroups = getRecordSharingRecipientGroups({
+    isInviting,
+    shares: matchingShares,
+  });
   const handleRecipientsChange = (
     recipients: RecordSharingInvitationRecipient[],
   ) => {
@@ -200,8 +188,8 @@ export const SidePanelShareRecordContent = ({
                 {recipientGroups.map(({ heading, shares }) =>
                   isNonEmptyArray(shares) ? (
                     <SidePanelShareRecordGroup
-                      key={heading}
-                      heading={heading}
+                      key={heading.id}
+                      heading={t(heading)}
                       shouldHideHeading={isInviting && matchesGeneralAccess}
                     >
                       {shares.map((share) => (
