@@ -53,19 +53,6 @@ const StyledSeparator = styled.div`
   padding: ${themeCssVariables.spacing[0.5]} 0;
 `;
 
-const StyledFooter = styled.div`
-  align-items: center;
-  backdrop-filter: blur(20px);
-  background: ${themeCssVariables.background.transparent.primary};
-  border-top: 1px solid ${themeCssVariables.border.color.medium};
-  box-sizing: border-box;
-  display: flex;
-  flex-shrink: 0;
-  height: ${themeCssVariables.spacing[10]};
-  justify-content: flex-end;
-  padding: ${themeCssVariables.spacing[2]};
-`;
-
 type SidePanelShareRecordContentProps = {
   recordUrl: string;
   objectLabelPlural: string;
@@ -247,16 +234,20 @@ export const SidePanelShareRecordContent = ({
           )}
         </SidePanelShareRecordList>
       </StyledListContainer>
-      <StyledFooter>
-        <Button
-          size="sm"
-          variant="outline"
-          startIcon={<IconLink />}
-          onClick={() => void copyToClipboard(recordUrl)}
-        >
-          {t`Copy link`}
-        </Button>
-      </StyledFooter>
+      <SidePanelFooter
+        variant="compact"
+        actions={[
+          <Button
+            key="copy-link"
+            size="sm"
+            variant="outline"
+            startIcon={<IconLink />}
+            onClick={() => void copyToClipboard(recordUrl)}
+          >
+            {t`Copy link`}
+          </Button>,
+        ]}
+      />
     </StyledContainer>
   );
 };

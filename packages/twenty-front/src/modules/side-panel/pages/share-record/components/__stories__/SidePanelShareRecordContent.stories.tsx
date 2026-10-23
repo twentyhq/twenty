@@ -173,6 +173,10 @@ export const Default: Story = {
     const generalAccess = await page.findByRole('button', {
       name: 'Restricted',
     });
+    const footer = page
+      .getByRole('button', { name: 'Copy link' })
+      .closest('[data-variant="compact"]');
+    await expect(footer?.getBoundingClientRect().height).toBe(40);
     const addPeople = page.getByPlaceholderText('Add people or everyone');
     const role = page.getByRole('button', { name: 'Sales Viewer' });
     const recipient = page.getByRole('button', { name: 'Phil Schiler Editor' });
