@@ -16,6 +16,7 @@ import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-c
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { WorkspaceDataExportModule } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
@@ -101,6 +102,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     ApplicationInstallModule,
     ApplicationUpgradeModule,
     StaleRegistrationCleanupModule,
+    WorkspaceDataExportModule,
     PreInstalledAppsModule,
     WorkspaceIteratorModule,
     ApplicationModule,

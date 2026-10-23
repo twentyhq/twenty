@@ -15,11 +15,13 @@ import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-pr
 import { OrderByWithGroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-with-group-by-arg-processor/order-by-with-group-by-arg-processor.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-entry.util';
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
@@ -44,6 +46,7 @@ import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-q
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -99,6 +102,8 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
   @Inject()
+  protected readonly commonRecordVisibilityService: CommonRecordVisibilityService;
+  @Inject()
   protected readonly usageLimitSpeedService: UsageLimitSpeedService;
   @Inject()
   protected readonly usageRecorderService: UsageRecorderService;
@@ -106,6 +111,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly twentyConfigService: TwentyConfigService;
   @Inject()
   protected readonly metricsService: MetricsService;
+  @Inject()
+  protected readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -200,6 +207,12 @@ export abstract class CommonBaseQueryRunnerService<
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<Output>;
+
+  protected getResultRecords(results: Output): ObjectRecord[] {
+    return (
+      (Array.isArray(results) ? results : [results]) as ObjectRecord[]
+    ).filter(isDefined);
+  }
 
   protected computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
@@ -303,6 +316,14 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
       authContext,
     );
+
+    await this.commonRecordVisibilityService.applyVisibilityRestrictions({
+      records: this.getResultRecords(resultWithGetters),
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      authContext,
+    });
 
     const executePostQueryHooks = () =>
       this.workspaceQueryHookService.executePostQueryHooks(
@@ -592,6 +613,13 @@ export abstract class CommonBaseQueryRunnerService<
       this.logger.warn(
         buildApplicationApiRateLimitedLogLine({ authContext, exhaustedScope }),
       );
+
+      this.applicationRepeatedEventRecorderService.record({
+        entry: buildApplicationApiRateLimitedLogEntry({
+          authContext,
+          exhaustedScope,
+        }),
+      });
     }
   }
 

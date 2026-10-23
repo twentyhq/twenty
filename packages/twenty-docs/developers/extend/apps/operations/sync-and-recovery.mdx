@@ -154,7 +154,7 @@ When local metadata looks wrong, escalate in this order and stop as soon as you'
 1. **Re-sync.** Run `twenty app apply` again. Syncs are idempotent — re-running a clean manifest is safe and often resolves a transient hiccup.
 2. **Preview the plan.** Run `twenty app plan` to see exactly what the next sync intends to change, without applying it.
 3. **Read the named error.** If a sync fails, note the metadata type and `universalIdentifier` in the message (see above) and locate that entity in your manifest. A conflict usually points to a duplicated or re-used identifier.
-4. **Uninstall and reinstall.** `twenty app uninstall`, then register and sync again (`twenty app dev --create`). This rebuilds the app's metadata from a clean slate while keeping the rest of your workspace intact.
+4. **Uninstall and reinstall.** `twenty app uninstall`, then sync again (`twenty app dev`). This rebuilds the app's metadata from a clean slate while keeping the rest of your workspace intact.
 5. **Full reset (last resort).** resetting your Docker or repository development database, then re-seed and re-sync.
 
 <Warning>

@@ -21,11 +21,11 @@ import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class AgentChatService {
@@ -247,44 +247,43 @@ export class AgentChatService {
     });
 
     // contexts are given to the model, never shown
-    return this.messageRepository.find(workspaceId, {
-      where: {
-        threadId,
-        role: Not(AgentMessageRole.SYSTEM),
-      },
-      order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
-      relations: ['parts', 'parts.file'],
-    });
-  }
+    const [messages, turns] = await Promise.all([
+      this.messageRepository.find(workspaceId, {
+        where: {
+          threadId,
+          role: Not(AgentMessageRole.SYSTEM),
+        },
+        order: { processedAt: { order: 'ASC', nulls: 'NULLS LAST' } },
+        relations: ['parts', 'parts.file'],
+      }),
+      this.turnRepository.find(workspaceId, { where: { threadId } }),
+    ]);
+    // the opener is stamped on the turn, so a run resumed in a new turn after a pause is still theirs
+    const turnIdsOpenedByOtherMembers = new Set(
+      turns
+        .filter(
+          ({ createdBy }) =>
+            isDefined(createdBy.workspaceMemberId) &&
+            createdBy.workspaceMemberId !== workspaceMemberId,
+        )
+        .map(({ id }) => id),
+    );
 
-  async restoreThread({
-    threadId,
-    workspaceMemberId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }): Promise<AgentChatThreadWorkspaceEntity> {
-    // Access-checked writes return raw rows; record events carry ORM records
-    const threadBefore = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-    const thread = await this.sharingService.restoreThreadWithAccess({
-      threadId,
-      workspaceMemberId,
-      workspaceId,
-    });
+    // their message and attachments are theirs to show; only the reply ran under their permissions
+    return messages.map((message) => {
+      if (
+        !isDefined(message.turnId) ||
+        !turnIdsOpenedByOtherMembers.has(message.turnId) ||
+        message.role === AgentMessageRole.USER
+      ) {
+        return message;
+      }
 
-    if (isDefined(threadBefore)) {
-      await this.threadRecordEventService.emitThreadUpdated({
-        workspaceId,
-        threadBefore,
-        action: DatabaseEventAction.RESTORED,
-      });
-    }
-
-    return thread;
+      return {
+        ...message,
+        parts: filterPartsOfTurnActedByOthers(message.parts ?? []),
+      };
+    });
   }
 
   async notifyThreadUsageUpdated({

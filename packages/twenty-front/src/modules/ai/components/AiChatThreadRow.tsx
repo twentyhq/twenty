@@ -58,6 +58,7 @@ const StyledHeading = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+  line-height: ${themeCssVariables.spacing[4]};
   min-width: 0;
 `;
 
@@ -71,10 +72,11 @@ const StyledTime = styled.div<{
   $isActionMenuOpen: boolean;
   $hasActions: boolean;
 }>`
+  display: block;
   flex-shrink: 0;
   white-space: nowrap;
 
-  @media (hover: hover) {
+  @media (hover: hover) and (not (any-pointer: coarse)) {
     display: ${({ $isActionMenuOpen, $hasActions }) =>
       $isActionMenuOpen && $hasActions ? 'none' : 'block'};
 
@@ -83,36 +85,25 @@ const StyledTime = styled.div<{
       display: ${({ $hasActions }) => ($hasActions ? 'none' : 'block')};
     }
   }
-
-  @container (max-width: 480px) {
-    &,
-    ${StyledRow}:hover &,
-    ${StyledRow}:focus-within & {
-      display: block;
-    }
-  }
 `;
 
 const StyledActions = styled.div`
   align-items: center;
   display: flex;
-  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
-  margin-top: ${themeCssVariables.spacing[1]};
-
-  @container (max-width: 480px) {
-    margin-top: 0;
-    padding-left: calc(
-      ${themeCssVariables.spacing[6]} + ${themeCssVariables.spacing[4]}
-    );
-  }
+  height: ${themeCssVariables.spacing[8]};
 `;
 
 const StyledDescription = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  line-height: calc(
+    ${themeCssVariables.spacing[4]} - ${themeCssVariables.spacing[0.5]}
+  );
   min-width: 0;
+  overflow: hidden;
+`;
+
+const StyledRequestActions = styled.div`
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 type AiChatThreadRowProps = {
@@ -161,6 +152,7 @@ export const AiChatThreadRow = ({
       selected={isChecked}
       selectionAppearance="accent"
       descriptionPlacement="below"
+      actionsPlacement="end"
       actionsVisibility={isActionMenuOpen ? 'always' : 'hover'}
       render={
         <StyledRow
@@ -217,18 +209,18 @@ export const AiChatThreadRow = ({
         </StyledLeading>
       }
       description={
-        <StyledDescription>
-          {subtitle}
+        <>
+          <StyledDescription>{subtitle}</StyledDescription>
           {isDefined(children) && (
-            <div
+            <StyledRequestActions
               data-select-disable
               onClick={stopPropagation}
               onContextMenu={stopPropagation}
             >
               {children}
-            </div>
+            </StyledRequestActions>
           )}
-        </StyledDescription>
+        </>
       }
       actions={
         isDefined(actions) && (

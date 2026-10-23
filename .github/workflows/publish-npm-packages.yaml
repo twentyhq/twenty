@@ -96,6 +96,9 @@ jobs:
       - name: Stage validation packages without publishing
         if: env.STAGE_ONLY == 'true'
         run: |
+          # This test stages the SDK before it is publicly available to the CLI's release-readiness check.
+          jq 'del(.scripts.prepublish)' packages/twenty-cli/package.json > "$RUNNER_TEMP/twenty-cli-staging.json"
+          mv "$RUNNER_TEMP/twenty-cli-staging.json" packages/twenty-cli/package.json
           for package in $PACKAGES; do
             yarn workspace "$package" npm publish --staged --provenance --tag "$DIST_TAG" --access public
             echo "Staged $package@$VERSION for OIDC validation only. Do not approve; reject after verification." >> "$GITHUB_STEP_SUMMARY"

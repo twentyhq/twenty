@@ -38,6 +38,16 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.workspaceDataExportQueue]: {
+    priority: 7,
+    workerOptions: {
+      concurrency: 1,
+      globalConcurrency: 1,
+      lockDuration: 60_000,
+      maxStalledCount: 2,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.taskAssignedQueue]: {
     priority: 4,
     workerOptions: {
