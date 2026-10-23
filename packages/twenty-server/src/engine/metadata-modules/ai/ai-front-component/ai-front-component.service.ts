@@ -277,6 +277,7 @@ export class AiFrontComponentService {
           ...input,
           compiledSource: built.compiledSource,
           checksum: built.checksum,
+          dependencyRevision: built.dependencyRevision,
           entrySource: built.source,
           componentName: built.componentName,
           id,

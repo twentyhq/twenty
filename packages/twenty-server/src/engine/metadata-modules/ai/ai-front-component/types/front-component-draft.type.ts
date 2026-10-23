@@ -11,6 +11,7 @@ export type FrontComponentDraft = FrontComponentDraftInput & {
   componentName: string;
   compiledSource: string;
   checksum: string;
+  dependencyRevision?: string;
   diagnostic?: FrontComponentDiagnostic;
   publicationStarted?: boolean;
   publishedComponentId?: string;

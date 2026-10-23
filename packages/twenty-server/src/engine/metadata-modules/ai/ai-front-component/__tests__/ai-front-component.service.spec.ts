@@ -137,6 +137,7 @@ describe('AI front component lifecycle', () => {
         return {
           source: buildFrontComponentEntrySource(input),
           componentName: 'TwentyGeneratedComponent',
+          dependencyRevision: 'dependency-revision',
           compiledSource,
           checksum: createHash('sha256').update(compiledSource).digest('hex'),
           sharedDependencies: {
@@ -203,6 +204,9 @@ describe('AI front component lifecycle', () => {
 
   it('previews fixtures with the pinned shared bundle, without app files or live reads', async () => {
     const draft = await service.createDraft(INPUT, CONTEXT);
+    expect(
+      cache.get(`ai-front-component:${WORKSPACE_ID}:${draft.draftId}`),
+    ).toMatchObject({ dependencyRevision: 'dependency-revision' });
     const preview = await service.getPreview(
       'author',
       draft.draftId,

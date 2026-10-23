@@ -1,3 +1,4 @@
+import { WorkspaceFrontComponentDependenciesService } from 'src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service';
 import { FrontComponentCompilerService } from 'src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service';
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -36,6 +37,7 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
     provideWorkspaceScopedRepository(FrontComponentEntity),
     AiFrontComponentService,
     FrontComponentCompilerService,
+    WorkspaceFrontComponentDependenciesService,
     {
       provide: AI_FRONT_COMPONENT_SERVICE_TOKEN,
       useExisting: AiFrontComponentService,
