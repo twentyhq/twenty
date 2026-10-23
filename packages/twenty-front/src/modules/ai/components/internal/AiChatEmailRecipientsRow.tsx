@@ -37,7 +37,7 @@ type AiChatEmailRecipientsRowProps = {
   disabled: boolean;
   onChange: (recipients: EmailRecipient[]) => void;
   trailing?: ReactNode;
-  showLabel?: boolean;
+  isLabelVisible?: boolean;
 };
 
 export const AiChatEmailRecipientsRow = ({
@@ -46,7 +46,7 @@ export const AiChatEmailRecipientsRow = ({
   disabled,
   onChange,
   trailing,
-  showLabel = true,
+  isLabelVisible = true,
 }: AiChatEmailRecipientsRowProps) => {
   const { t } = useLingui();
   const [draftRecipient, setDraftRecipient] = useState('');
@@ -86,7 +86,11 @@ export const AiChatEmailRecipientsRow = ({
   };
 
   return (
-    <ComposerFieldRow label={label} showLabel={showLabel} trailing={trailing}>
+    <ComposerFieldRow
+      label={label}
+      isLabelVisible={isLabelVisible}
+      trailing={trailing}
+    >
       <StyledRow>
         {recipients.map(({ address, displayName }) => (
           <Chip
