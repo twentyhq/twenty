@@ -237,8 +237,10 @@ yarn install --immutable
 yarn lint
 yarn typecheck
 yarn test:unit
-yarn twenty dev:build
+twenty app build
 ```
+
+Install the standalone CLI with `npm install -g twenty`.
 
 Installation tests use a disposable Twenty workspace. Configure
 `TWENTY_API_URL` and `TWENTY_API_KEY` for that workspace, then run `yarn test`.
