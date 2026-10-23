@@ -299,7 +299,7 @@ export class AgentChatResolver {
     }
 
     if (isDefined(thread.deletedAt)) {
-      await this.agentChatService.restoreThread({
+      await this.threadService.restoreThread({
         threadId,
         workspaceMemberId,
         workspaceId: workspace.id,

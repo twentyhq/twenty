@@ -17,6 +17,7 @@ import {
   BUILD_LOCK_RETRY_MS,
   BUILD_LOCK_TTL_MS,
   BUILD_LOCK_MAX_RETRIES,
+  LAMBDA_SDK_CLIENT_CHECKSUM_TAG,
   SDK_LAYER_PREFIX_IN_ZIP,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
@@ -233,9 +234,15 @@ export class LambdaLayerManagerService {
       applicationUniversalIdentifier,
     });
 
+    const isOnCurrentSdkClient =
+      !isDefined(flatApplication.sdkClientCoreChecksum) ||
+      lambdaExecutor.Tags?.[LAMBDA_SDK_CLIENT_CHECKSUM_TAG] ===
+        flatApplication.sdkClientCoreChecksum;
+
     return (
       layers.some((layer) => layer.Arn?.includes(depsLayerName)) &&
-      layers.some((layer) => layer.Arn?.includes(sdkLayerName))
+      layers.some((layer) => layer.Arn?.includes(sdkLayerName)) &&
+      isOnCurrentSdkClient
     );
   }
 

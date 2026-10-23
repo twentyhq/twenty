@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { findStandardApplicationDefaultRole } from 'test/integration/metadata/suites/application-default-role/utils/find-standard-application-default-role.util';
+import { findApplicationDefaultRole } from 'test/integration/metadata/suites/application-default-role/utils/find-application-default-role.util';
 import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
@@ -9,6 +9,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 describe('A new workspace gives the standard application Admin as default role', () => {
@@ -61,8 +62,12 @@ describe('A new workspace gives the standard application Admin as default role',
   });
 
   it('gives the standard application the Admin role', async () => {
-    const standardApplicationDefaultRole =
-      await findStandardApplicationDefaultRole(accessToken);
+    const standardApplicationDefaultRole = await findApplicationDefaultRole({
+      input: {
+        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      },
+      token: accessToken,
+    });
 
     expect(standardApplicationDefaultRole).toMatchObject({
       label: 'Admin',
