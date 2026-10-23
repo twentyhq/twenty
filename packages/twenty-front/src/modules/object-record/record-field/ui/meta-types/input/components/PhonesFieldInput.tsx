@@ -102,7 +102,7 @@ const validatePhone = (input: string) => ({
   errorMessage: '',
 });
 
-const formatPhoneInput = (input: string): PhoneRecord => {
+const formatPhoneInput = ({ input }: { input: string }): PhoneRecord => {
   if (input === '') {
     return EMPTY_PHONE;
   }
@@ -116,7 +116,7 @@ const formatPhoneInput = (input: string): PhoneRecord => {
   return {
     number: phone.nationalNumber,
     callingCode: `+${phone.countryCallingCode}`,
-    countryCode: phone.country as string,
+    countryCode: phone.country ?? '',
   };
 };
 
@@ -175,6 +175,7 @@ export const PhonesFieldInput = () => {
 
   const draft = useMultiItemDraft({
     items: phones,
+    onItemsChange: handleChange,
     getItemText: getPhoneText,
     validateInput: validatePhone,
     formatInput: formatPhoneInput,
@@ -191,13 +192,11 @@ export const PhonesFieldInput = () => {
   } = useMultiItemSearch({ items: phones, getItemText: getPhoneText });
 
   const handleInputEnter = () => {
-    const { isValid, updatedItems } = draft.computeItemsFromInput();
+    const updatedItems = draft.commitInput();
 
-    if (!isValid) {
+    if (!isDefined(updatedItems)) {
       return;
     }
-
-    handleChange(updatedItems);
 
     if (draft.isSingleItemMode) {
       onEnter?.({ newValue: parseArrayToPhonesValue(updatedItems) });
@@ -216,18 +215,14 @@ export const PhonesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      if (!draft.isInputDisplayed) {
-        onClickOutside?.({ newValue: parseArrayToPhonesValue(phones), event });
+      const updatedItems = draft.isInputDisplayed
+        ? draft.commitInput()
+        : phones;
+
+      if (!isDefined(updatedItems)) {
         return;
       }
 
-      const { isValid, updatedItems } = draft.computeItemsFromInput();
-
-      if (!isValid) {
-        return;
-      }
-
-      handleChange(updatedItems);
       onClickOutside?.({
         newValue: parseArrayToPhonesValue(updatedItems),
         event,
@@ -301,7 +296,7 @@ export const PhonesFieldInput = () => {
                     onKeyDown={getMultiItemInputKeyDownHandler({
                       onEnter: handleInputEnter,
                       onEscape: handleEscape,
-                      preventTabNavigation: true,
+                      shouldPreventTabNavigation: true,
                     })}
                     international={true}
                     withCountryCallingCode={true}

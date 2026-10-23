@@ -65,6 +65,7 @@ export const ArrayFieldInput = () => {
 
   const draft = useMultiItemDraft({
     items: arrayItems,
+    onItemsChange: handleChange,
     getItemText: getArrayItemText,
     maxItemCount: maxNumberOfValues,
   });
@@ -77,13 +78,11 @@ export const ArrayFieldInput = () => {
   } = useMultiItemSearch({ items: arrayItems, getItemText: getArrayItemText });
 
   const handleInputEnter = () => {
-    const { isValid, updatedItems } = draft.computeItemsFromInput();
+    const updatedItems = draft.commitInput();
 
-    if (!isValid) {
+    if (!isDefined(updatedItems)) {
       return;
     }
-
-    handleChange(updatedItems);
 
     if (draft.isSingleItemMode) {
       onEnter?.({ newValue: parseStringArrayToArrayValue(updatedItems) });
@@ -102,21 +101,14 @@ export const ArrayFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      if (!draft.isInputDisplayed) {
-        onClickOutside?.({
-          newValue: parseStringArrayToArrayValue(arrayItems),
-          event,
-        });
+      const updatedItems = draft.isInputDisplayed
+        ? draft.commitInput()
+        : arrayItems;
+
+      if (!isDefined(updatedItems)) {
         return;
       }
 
-      const { isValid, updatedItems } = draft.computeItemsFromInput();
-
-      if (!isValid) {
-        return;
-      }
-
-      handleChange(updatedItems);
       onClickOutside?.({
         newValue: parseStringArrayToArrayValue(updatedItems),
         event,
@@ -173,7 +165,7 @@ export const ArrayFieldInput = () => {
                 onChange={draft.handleInputChange}
                 onEnter={handleInputEnter}
                 onEscape={handleEscape}
-                preventTabNavigation
+                shouldPreventTabNavigation
               />
             </MultiItemFieldInputRow>
           )}

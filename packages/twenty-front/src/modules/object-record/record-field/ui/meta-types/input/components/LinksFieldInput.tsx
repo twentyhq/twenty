@@ -39,7 +39,7 @@ type LinkRecord = {
 
 const getLinkText = (link: LinkRecord) => link.url;
 
-const formatLinkInput = (input: string): LinkRecord => ({
+const formatLinkInput = ({ input }: { input: string }): LinkRecord => ({
   url: input,
   label: null,
 });
@@ -111,6 +111,7 @@ export const LinksFieldInput = () => {
 
   const draft = useMultiItemDraft({
     items: links,
+    onItemsChange: handleChange,
     getItemText: getLinkText,
     validateInput: validateLink,
     formatInput: formatLinkInput,
@@ -127,13 +128,11 @@ export const LinksFieldInput = () => {
   } = useMultiItemSearch({ items: links, getItemText: getLinkText });
 
   const handleInputEnter = () => {
-    const { isValid, updatedItems } = draft.computeItemsFromInput();
+    const updatedItems = draft.commitInput();
 
-    if (!isValid) {
+    if (!isDefined(updatedItems)) {
       return;
     }
-
-    handleChange(updatedItems);
 
     if (draft.isSingleItemMode) {
       onEnter?.({ newValue: parseArrayToLinksValue(updatedItems) });
@@ -152,18 +151,12 @@ export const LinksFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      if (!draft.isInputDisplayed) {
-        onClickOutside?.({ newValue: parseArrayToLinksValue(links), event });
+      const updatedItems = draft.isInputDisplayed ? draft.commitInput() : links;
+
+      if (!isDefined(updatedItems)) {
         return;
       }
 
-      const { isValid, updatedItems } = draft.computeItemsFromInput();
-
-      if (!isValid) {
-        return;
-      }
-
-      handleChange(updatedItems);
       onClickOutside?.({
         newValue: parseArrayToLinksValue(updatedItems),
         event,
@@ -229,7 +222,7 @@ export const LinksFieldInput = () => {
                 onChange={draft.handleInputChange}
                 onEnter={handleInputEnter}
                 onEscape={handleEscape}
-                preventTabNavigation
+                shouldPreventTabNavigation
               />
             </MultiItemFieldInputRow>
           )}

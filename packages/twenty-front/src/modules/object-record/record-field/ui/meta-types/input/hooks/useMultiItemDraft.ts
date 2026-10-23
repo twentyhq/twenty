@@ -8,8 +8,9 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 type UseMultiItemDraftParams<TItem> = {
   items: TItem[];
   getItemText: (item: TItem) => string;
+  onItemsChange: (items: TItem[]) => void;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
-  formatInput?: (input: string, itemIndex?: number) => TItem;
+  formatInput?: (params: { input: string; itemIndex?: number }) => TItem;
   maxItemCount?: number;
   shouldOpenInputWhenEmpty?: boolean;
   onError?: (hasError: boolean) => void;
@@ -18,6 +19,7 @@ type UseMultiItemDraftParams<TItem> = {
 export const useMultiItemDraft = <TItem>({
   items,
   getItemText,
+  onItemsChange,
   validateInput,
   formatInput,
   maxItemCount,
@@ -89,10 +91,8 @@ export const useMultiItemDraft = <TItem>({
     }
   };
 
-  const computeItemsFromInput = (): {
-    isValid: boolean;
-    updatedItems: TItem[];
-  } => {
+  // Validates the draft and applies it to the items; null means the draft was rejected.
+  const commitInput = (): TItem[] | null => {
     const { sanitizedInput, isValid } = sanitizeAndValidateInput(
       inputValue,
       validateInput,
@@ -102,7 +102,7 @@ export const useMultiItemDraft = <TItem>({
       setHasError(true);
       onError?.(true);
 
-      return { isValid: false, updatedItems: items };
+      return null;
     }
 
     const editingIndex = isAddingNewItem ? null : editedItemIndex;
@@ -124,7 +124,9 @@ export const useMultiItemDraft = <TItem>({
       resetInputForItems(updatedItems);
     }
 
-    return { isValid: true, updatedItems };
+    onItemsChange(updatedItems);
+
+    return updatedItems;
   };
 
   return {
@@ -140,6 +142,6 @@ export const useMultiItemDraft = <TItem>({
     startEditing,
     closeInput,
     resetInputForItems,
-    computeItemsFromInput,
+    commitInput,
   };
 };

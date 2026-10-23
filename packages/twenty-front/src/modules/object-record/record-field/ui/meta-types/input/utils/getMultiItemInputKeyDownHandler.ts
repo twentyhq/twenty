@@ -8,7 +8,7 @@ type MultiItemInputKeyHandlers = {
   onEscape?: () => void;
   onTab?: () => void;
   onShiftTab?: () => void;
-  preventTabNavigation?: boolean;
+  shouldPreventTabNavigation?: boolean;
 };
 
 export const getMultiItemInputKeyDownHandler =
@@ -17,7 +17,7 @@ export const getMultiItemInputKeyDownHandler =
     onEscape,
     onTab,
     onShiftTab,
-    preventTabNavigation,
+    shouldPreventTabNavigation,
   }: MultiItemInputKeyHandlers) =>
   (event: KeyboardEvent<HTMLInputElement>) => {
     const hasUnsupportedModifier =
@@ -30,7 +30,7 @@ export const getMultiItemInputKeyDownHandler =
       return;
     }
 
-    if (event.key === Key.Tab && preventTabNavigation) {
+    if (event.key === Key.Tab && shouldPreventTabNavigation) {
       event.preventDefault();
     }
 

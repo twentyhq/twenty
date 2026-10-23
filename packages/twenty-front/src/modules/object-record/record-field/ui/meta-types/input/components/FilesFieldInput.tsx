@@ -28,7 +28,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useMemo, useRef, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { CustomError, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -135,22 +135,29 @@ export const FilesFieldInput = () => {
     recordFieldInputIsFieldInErrorComponentState,
   );
 
-  const formatFileLabelInput = (
-    input: string,
-    index?: number,
-  ): FieldFilesValue => {
-    if (isDefined(index) && index >= 0 && index < files.length) {
-      return { ...files[index], label: input.trim() };
+  const formatFileLabelInputOrThrow = ({
+    input,
+    itemIndex,
+  }: {
+    input: string;
+    itemIndex?: number;
+  }): FieldFilesValue => {
+    if (isDefined(itemIndex) && itemIndex >= 0 && itemIndex < files.length) {
+      return { ...files[itemIndex], label: input.trim() };
     }
 
-    throw new Error(doNotTranslate('Cannot create file from text input'));
+    throw new CustomError(
+      doNotTranslate('Cannot create file from text input'),
+      'FILES_FIELD_INPUT_CANNOT_CREATE_FILE',
+    );
   };
 
   const draft = useMultiItemDraft({
     items: files,
+    onItemsChange: handleChange,
     getItemText: getFileText,
     validateInput: validateFileLabel,
-    formatInput: formatFileLabelInput,
+    formatInput: formatFileLabelInputOrThrow,
     maxItemCount: maxNumberOfValues,
     shouldOpenInputWhenEmpty: false,
     onError: (hasError) =>
@@ -165,13 +172,11 @@ export const FilesFieldInput = () => {
   } = useMultiItemSearch({ items: files, getItemText: getFileText });
 
   const handleInputEnter = () => {
-    const { isValid, updatedItems } = draft.computeItemsFromInput();
+    const updatedItems = draft.commitInput();
 
-    if (!isValid) {
+    if (!isDefined(updatedItems)) {
       return;
     }
-
-    handleChange(updatedItems);
 
     if (draft.isSingleItemMode) {
       onEnter?.({ newValue: parseFilesArrayToFilesValue(updatedItems) });
@@ -190,21 +195,12 @@ export const FilesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      if (!draft.isInputDisplayed) {
-        onClickOutside?.({
-          newValue: parseFilesArrayToFilesValue(files),
-          event,
-        });
+      const updatedItems = draft.isInputDisplayed ? draft.commitInput() : files;
+
+      if (!isDefined(updatedItems)) {
         return;
       }
 
-      const { isValid, updatedItems } = draft.computeItemsFromInput();
-
-      if (!isValid) {
-        return;
-      }
-
-      handleChange(updatedItems);
       onClickOutside?.({
         newValue: parseFilesArrayToFilesValue(updatedItems),
         event,
@@ -269,7 +265,7 @@ export const FilesFieldInput = () => {
                 onChange={draft.handleInputChange}
                 onEnter={handleInputEnter}
                 onEscape={handleEscape}
-                preventTabNavigation
+                shouldPreventTabNavigation
               />
             </MultiItemFieldInputRow>
           )}

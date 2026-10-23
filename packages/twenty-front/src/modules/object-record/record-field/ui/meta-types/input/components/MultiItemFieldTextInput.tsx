@@ -23,7 +23,7 @@ type MultiItemFieldTextInputProps = {
   onEscape?: () => void;
   onTab?: () => void;
   onShiftTab?: () => void;
-  preventTabNavigation?: boolean;
+  shouldPreventTabNavigation?: boolean;
   onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
   ref?: Ref<HTMLInputElement>;
@@ -39,7 +39,7 @@ export const MultiItemFieldTextInput = ({
   onEscape,
   onTab,
   onShiftTab,
-  preventTabNavigation,
+  shouldPreventTabNavigation,
   onFocus,
   onBlur,
   ref,
@@ -60,7 +60,7 @@ export const MultiItemFieldTextInput = ({
         onEscape,
         onTab,
         onShiftTab,
-        preventTabNavigation,
+        shouldPreventTabNavigation,
       })}
     />
   </StyledInputContent>

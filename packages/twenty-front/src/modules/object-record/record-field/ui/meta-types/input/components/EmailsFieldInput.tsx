@@ -92,6 +92,7 @@ export const EmailsFieldInput = () => {
 
   const draft = useMultiItemDraft({
     items: emails,
+    onItemsChange: handleChange,
     getItemText: getEmailText,
     validateInput: validateEmail,
     maxItemCount: maxNumberOfValues,
@@ -107,13 +108,11 @@ export const EmailsFieldInput = () => {
   } = useMultiItemSearch({ items: emails, getItemText: getEmailText });
 
   const handleInputEnter = () => {
-    const { isValid, updatedItems } = draft.computeItemsFromInput();
+    const updatedItems = draft.commitInput();
 
-    if (!isValid) {
+    if (!isDefined(updatedItems)) {
       return;
     }
-
-    handleChange(updatedItems);
 
     if (draft.isSingleItemMode) {
       onEnter?.({ newValue: parseStringArrayToEmailsValue(updatedItems) });
@@ -132,21 +131,14 @@ export const EmailsFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      if (!draft.isInputDisplayed) {
-        onClickOutside?.({
-          newValue: parseStringArrayToEmailsValue(emails),
-          event,
-        });
+      const updatedItems = draft.isInputDisplayed
+        ? draft.commitInput()
+        : emails;
+
+      if (!isDefined(updatedItems)) {
         return;
       }
 
-      const { isValid, updatedItems } = draft.computeItemsFromInput();
-
-      if (!isValid) {
-        return;
-      }
-
-      handleChange(updatedItems);
       onClickOutside?.({
         newValue: parseStringArrayToEmailsValue(updatedItems),
         event,
@@ -217,7 +209,7 @@ export const EmailsFieldInput = () => {
                 onChange={draft.handleInputChange}
                 onEnter={handleInputEnter}
                 onEscape={handleEscape}
-                preventTabNavigation
+                shouldPreventTabNavigation
               />
             </MultiItemFieldInputRow>
           )}

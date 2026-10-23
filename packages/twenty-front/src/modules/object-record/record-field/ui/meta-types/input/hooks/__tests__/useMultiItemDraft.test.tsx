@@ -11,7 +11,7 @@ const validateInput = (input: string) => ({
 describe('useMultiItemDraft', () => {
   it('opens the input on mount when there is no item', () => {
     const { result } = renderHook(() =>
-      useMultiItemDraft({ items: [], getItemText }),
+      useMultiItemDraft({ items: [], getItemText, onItemsChange: jest.fn() }),
     );
 
     expect(result.current.isInputDisplayed).toBe(true);
@@ -20,7 +20,12 @@ describe('useMultiItemDraft', () => {
 
   it('opens on the first item in single item mode', () => {
     const { result } = renderHook(() =>
-      useMultiItemDraft({ items: ['a@b.c'], getItemText, maxItemCount: 1 }),
+      useMultiItemDraft({
+        items: ['a@b.c'],
+        getItemText,
+        onItemsChange: jest.fn(),
+        maxItemCount: 1,
+      }),
     );
 
     expect(result.current.isInputDisplayed).toBe(true);
@@ -28,27 +33,33 @@ describe('useMultiItemDraft', () => {
     expect(result.current.isSingleItemMode).toBe(true);
   });
 
-  it('appends the typed value when adding', async () => {
+  it('appends the typed value when adding and applies it', async () => {
+    const onItemsChange = jest.fn();
     const { result } = renderHook(() =>
-      useMultiItemDraft({ items: ['a@b.c'], getItemText, validateInput }),
+      useMultiItemDraft({
+        items: ['a@b.c'],
+        getItemText,
+        onItemsChange,
+        validateInput,
+      }),
     );
 
     act(() => result.current.startAdding());
     act(() => result.current.handleInputChange(' new@b.c '));
 
-    const outcome = await act(async () =>
-      result.current.computeItemsFromInput(),
-    );
+    const updatedItems = await act(async () => result.current.commitInput());
 
-    expect(outcome).toEqual({
-      isValid: true,
-      updatedItems: ['a@b.c', 'new@b.c'],
-    });
+    expect(updatedItems).toEqual(['a@b.c', 'new@b.c']);
+    expect(onItemsChange).toHaveBeenCalledWith(['a@b.c', 'new@b.c']);
   });
 
-  it('replaces the edited item and clears it when emptied', async () => {
+  it('removes the edited item when emptied and closes the input', async () => {
     const { result } = renderHook(() =>
-      useMultiItemDraft({ items: ['a@b.c', 'x@y.z'], getItemText }),
+      useMultiItemDraft({
+        items: ['a@b.c', 'x@y.z'],
+        getItemText,
+        onItemsChange: jest.fn(),
+      }),
     );
 
     act(() => result.current.startEditing(1));
@@ -56,20 +67,20 @@ describe('useMultiItemDraft', () => {
 
     act(() => result.current.handleInputChange('   '));
 
-    const outcome = await act(async () =>
-      result.current.computeItemsFromInput(),
-    );
+    const updatedItems = await act(async () => result.current.commitInput());
 
-    expect(outcome).toEqual({ isValid: true, updatedItems: ['a@b.c'] });
+    expect(updatedItems).toEqual(['a@b.c']);
     expect(result.current.isInputDisplayed).toBe(false);
   });
 
-  it('flags an invalid value and keeps the items', async () => {
+  it('rejects an invalid value and keeps the items', async () => {
     const onError = jest.fn();
+    const onItemsChange = jest.fn();
     const { result } = renderHook(() =>
       useMultiItemDraft({
         items: ['a@b.c'],
         getItemText,
+        onItemsChange,
         validateInput,
         onError,
       }),
@@ -78,11 +89,10 @@ describe('useMultiItemDraft', () => {
     act(() => result.current.startAdding());
     act(() => result.current.handleInputChange('not-an-email'));
 
-    const outcome = await act(async () =>
-      result.current.computeItemsFromInput(),
-    );
+    const updatedItems = await act(async () => result.current.commitInput());
 
-    expect(outcome).toEqual({ isValid: false, updatedItems: ['a@b.c'] });
+    expect(updatedItems).toBeNull();
+    expect(onItemsChange).not.toHaveBeenCalled();
     expect(result.current.hasError).toBe(true);
     expect(onError).toHaveBeenLastCalledWith(true);
 
@@ -94,7 +104,12 @@ describe('useMultiItemDraft', () => {
 
   it('does not open the add input once the limit is reached', () => {
     const { result } = renderHook(() =>
-      useMultiItemDraft({ items: ['a@b.c'], getItemText, maxItemCount: 1 }),
+      useMultiItemDraft({
+        items: ['a@b.c'],
+        getItemText,
+        onItemsChange: jest.fn(),
+        maxItemCount: 1,
+      }),
     );
 
     act(() => result.current.closeInput());
