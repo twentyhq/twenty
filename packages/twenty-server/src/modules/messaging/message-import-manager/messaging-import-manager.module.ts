@@ -48,8 +48,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
-import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
-
 @Module({
   imports: [
     MessagingGmailDriverModule,
@@ -66,7 +64,6 @@ import { MatchParticipantModule } from 'src/modules/match-participant/match-part
     ]),
     EmailAliasManagerModule,
     MessageParticipantManagerModule,
-    MatchParticipantModule,
     MessagingFolderSyncManagerModule,
     MessagingMonitoringModule,
     MessagingMessageCleanerModule,

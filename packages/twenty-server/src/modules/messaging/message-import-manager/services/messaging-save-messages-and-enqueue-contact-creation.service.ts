@@ -30,7 +30,7 @@ import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/co
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
-import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
+import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
@@ -42,7 +42,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly personHandleFieldService: PersonHandleFieldService,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation(
@@ -50,6 +49,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     messageChannel: MessageChannelEntity,
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
+    personHandleField?: PersonHandleField,
   ): Promise<
     | {
         messageExternalIdsAndIdsMap: Map<string, string>;
@@ -217,7 +217,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       });
     } else {
       await this.matchAppChannelParticipants({
-        messageChannel,
+        personHandleField,
         participants: savedMessagesResult.savedMessageParticipants,
         messageIds,
         workspaceId,
@@ -234,29 +234,16 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
   // matching non-email handles as emails would null out app-supplied identities, so only the declared field is used
   private async matchAppChannelParticipants({
-    messageChannel,
+    personHandleField,
     participants,
     messageIds,
     workspaceId,
   }: {
-    messageChannel: Pick<
-      MessageChannelEntity,
-      'participantHandleFieldUniversalIdentifier'
-    >;
+    personHandleField: PersonHandleField | undefined;
     participants: MessageParticipantWorkspaceEntity[];
     messageIds: string[];
     workspaceId: string;
   }): Promise<void> {
-    const personHandleField = isDefined(
-      messageChannel.participantHandleFieldUniversalIdentifier,
-    )
-      ? await this.personHandleFieldService.findByUniversalIdentifier({
-          workspaceId,
-          fieldUniversalIdentifier:
-            messageChannel.participantHandleFieldUniversalIdentifier,
-        })
-      : null;
-
     await this.messageParticipantService.matchMessageParticipants({
       participants: isDefined(personHandleField)
         ? participants.filter((participant) => !isDefined(participant.personId))
@@ -264,7 +251,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       messageIds,
       workspaceId,
       matchWith: isDefined(personHandleField) ? 'personOnly' : 'targetsOnly',
-      personHandleField: personHandleField ?? undefined,
+      personHandleField,
     });
   }
 }

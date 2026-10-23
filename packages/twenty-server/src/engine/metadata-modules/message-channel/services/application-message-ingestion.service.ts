@@ -110,6 +110,7 @@ export class ApplicationMessageIngestionService {
           messageChannel,
           connectedAccount,
           workspaceId,
+          personHandleField ?? undefined,
         ),
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
       INGESTION_LOCK_OPTIONS,
