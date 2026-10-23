@@ -1,10 +1,17 @@
+import { type MarkdownDisplayMode } from '@/ai/types/MarkdownDisplayMode';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export const StyledMarkdownContainer = styled.div`
+export const StyledMarkdownContainer = styled.div<{
+  displayMode: MarkdownDisplayMode;
+}>`
   border-radius: ${themeCssVariables.border.radius.sm};
-  line-height: 150%;
-  margin: ${themeCssVariables.spacing['1.5']} 0;
+  line-height: ${({ displayMode }) =>
+    displayMode === 'default'
+      ? `calc(${themeCssVariables.text.lineHeight.lg} * 100%)`
+      : themeCssVariables.spacing[6]};
+  margin: ${({ displayMode }) =>
+    displayMode === 'bubble' ? '0' : `${themeCssVariables.spacing['1.5']} 0`};
   overflow-x: auto;
   position: relative;
   scroll-margin-bottom: ${themeCssVariables.spacing[10]};
