@@ -47,9 +47,11 @@ export const useBatchCreateManyRecords = <
   const batchCreateManyRecords = async ({
     recordsToCreate,
     upsert,
+    onBatchCompleted,
   }: {
     recordsToCreate: Partial<CreatedObjectRecord>[];
     upsert?: boolean;
+    onBatchCompleted?: (completedRecordsCount: number) => void;
   }) => {
     const numberOfBatches = Math.ceil(
       recordsToCreate.length / mutationBatchSize,
@@ -66,18 +68,15 @@ export const useBatchCreateManyRecords = <
           (batchIndex + 1) * mutationBatchSize,
         );
 
-        createdRecordsCount =
-          batchIndex + 1 === numberOfBatches
-            ? recordsToCreate.length
-            : (batchIndex + 1) * mutationBatchSize;
-
         const createdRecords = await createManyRecords({
           recordsToCreate: batchedRecordsToCreate,
           upsert,
           abortController,
         });
 
+        createdRecordsCount += batchedRecordsToCreate.length;
         setBatchedRecordsCount?.(createdRecordsCount);
+        onBatchCompleted?.(createdRecordsCount);
         allCreatedRecords.push(...createdRecords);
       }
     } catch (error) {
