@@ -44,11 +44,11 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
     src: '/images/logo-bar/windmill-logo.webp',
   },
   {
-    aspectRatio: 3.262,
-    grayOpacity: 0.48,
-    heightPx: 24,
-    name: 'Fora',
-    src: '/images/logo-bar/fora.svg',
+    aspectRatio: 7.188,
+    grayOpacity: 0.5,
+    heightPx: 17,
+    name: 'Frankfurter Allgemeine Zeitung',
+    src: '/images/logo-bar/faz.svg',
   },
   {
     aspectRatio: 4.268,
@@ -58,11 +58,11 @@ export const TRUSTED_BY_LOGOS: readonly TrustedByLogo[] = [
     src: '/images/logo-bar/wazoku.svg',
   },
   {
-    aspectRatio: 6.255,
-    grayOpacity: 0.68,
-    heightPx: 18,
-    name: 'CivicActions',
-    src: '/images/logo-bar/civicactions.svg',
+    aspectRatio: 2.588,
+    grayOpacity: 0.6,
+    heightPx: 26,
+    name: 'Żabka',
+    src: '/images/logo-bar/zabka.svg',
   },
   {
     aspectRatio: 5.304,
