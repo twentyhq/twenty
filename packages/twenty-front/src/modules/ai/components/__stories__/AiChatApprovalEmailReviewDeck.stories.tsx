@@ -346,6 +346,9 @@ export const Single: Story = {
       canvas.queryByRole('button', { name: 'Previous approval' }),
     ).not.toBeInTheDocument();
     await expect(canvas.queryByText(/Send all/)).not.toBeInTheDocument();
+    await expect(
+      canvas.getByText('No more drafts after this one'),
+    ).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Send' })).toBeEnabled();
   },
 };
