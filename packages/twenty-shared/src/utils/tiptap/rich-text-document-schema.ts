@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { isSafeUrl } from '@/utils/url/isSafeUrl';
 
 import { RICH_TEXT_COLORS } from './rich-text-colors.constant';
+import { RICH_TEXT_MAX_HEADING_LEVEL } from './rich-text-max-heading-level.constant';
+import { RICH_TEXT_MAX_INDENT_LEVEL } from './rich-text-max-indent-level.constant';
 import { RICH_TEXT_TEXT_ALIGNMENTS } from './rich-text-text-alignments.constant';
 import { RICH_TEXT_URL_MAX_LENGTH } from './rich-text-url-max-length.constant';
 import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from './tiptap-document-schema-version';
@@ -17,6 +19,17 @@ const textAlignAttributeSchema = z
   .optional();
 
 const colorAttributeSchema = z.enum(RICH_TEXT_COLORS).nullable().optional();
+
+const indentAttributeSchema = z
+  .int()
+  .min(0)
+  .max(RICH_TEXT_MAX_INDENT_LEVEL)
+  .nullable()
+  .optional();
+
+const indentAttributesSchema = z
+  .looseObject({ indent: indentAttributeSchema })
+  .optional();
 
 const urlSchema = z
   .string()
@@ -76,22 +89,21 @@ const blockContentSchema = z.array(
 
 const paragraphNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.PARAGRAPH),
-  attrs: z.looseObject({ textAlign: textAlignAttributeSchema }).optional(),
+  attrs: z
+    .looseObject({
+      textAlign: textAlignAttributeSchema,
+      indent: indentAttributeSchema,
+    })
+    .optional(),
   content: z.array(inlineNodeSchema).optional(),
 });
 
 const headingNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.HEADING),
   attrs: z.looseObject({
-    level: z.union([
-      z.literal(1),
-      z.literal(2),
-      z.literal(3),
-      z.literal(4),
-      z.literal(5),
-      z.literal(6),
-    ]),
+    level: z.int().min(1).max(RICH_TEXT_MAX_HEADING_LEVEL),
     textAlign: textAlignAttributeSchema,
+    indent: indentAttributeSchema,
   }),
   content: z.array(inlineNodeSchema).optional(),
 });
@@ -103,12 +115,15 @@ const listItemNodeSchema = z.looseObject({
 
 const bulletListNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.BULLET_LIST),
+  attrs: indentAttributesSchema,
   content: z.array(listItemNodeSchema).min(1),
 });
 
 const orderedListNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.ORDERED_LIST),
-  attrs: z.looseObject({ start: z.int().optional() }).optional(),
+  attrs: z
+    .looseObject({ start: z.int().optional(), indent: indentAttributeSchema })
+    .optional(),
   content: z.array(listItemNodeSchema).min(1),
 });
 
@@ -120,17 +135,38 @@ const taskItemNodeSchema = z.looseObject({
 
 const taskListNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.TASK_LIST),
+  attrs: indentAttributesSchema,
   content: z.array(taskItemNodeSchema).min(1),
 });
 
 const blockquoteNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.BLOCKQUOTE),
+  attrs: indentAttributesSchema,
   content: blockContentSchema.min(1),
+});
+
+const toggleNodeSchema = z.looseObject({
+  type: z.literal(TIPTAP_NODE_TYPES.TOGGLE),
+  attrs: z
+    .looseObject({
+      id: z.string().nullable().optional(),
+      indent: indentAttributeSchema,
+    })
+    .optional(),
+  content: z.tuple(
+    [z.discriminatedUnion('type', [paragraphNodeSchema, headingNodeSchema])],
+    z.lazy((): z.ZodType<TipTapNode> => blockNodeSchema),
+  ),
 });
 
 const codeBlockNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.CODE_BLOCK),
-  attrs: z.looseObject({ language: z.string().nullable() }).optional(),
+  attrs: z
+    .looseObject({
+      language: z.string().nullable(),
+      indent: indentAttributeSchema,
+    })
+    .optional(),
   content: z
     .array(
       z.looseObject({
@@ -216,6 +252,7 @@ const blockNodeSchema = z.discriminatedUnion('type', [
   orderedListNodeSchema,
   taskListNodeSchema,
   blockquoteNodeSchema,
+  toggleNodeSchema,
   codeBlockNodeSchema,
   dividerNodeSchema,
   imageNodeSchema,

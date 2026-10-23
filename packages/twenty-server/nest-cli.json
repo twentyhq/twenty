@@ -49,6 +49,10 @@
         "outDir": "dist/assets"
       },
       {
+        "include": "database/commands/upgrade-version-command/2-52/workspace-frontend-dependencies/**",
+        "outDir": "dist/assets"
+      },
+      {
         "include": "database/clickhouse/migrations/*.sql",
         "outDir": "dist"
       },

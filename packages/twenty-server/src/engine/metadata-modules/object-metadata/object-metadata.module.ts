@@ -16,7 +16,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectRecordCountService } from 'src/engine/metadata-modules/object-metadata/object-record-count.service';
-import { ObjectMetadataToolsFactory } from 'src/engine/metadata-modules/object-metadata/tools/object-metadata-tools.factory';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -46,10 +45,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ObjectMetadataResolver,
     ObjectRecordCountService,
     MostlyEmptyFieldsService,
-    ObjectMetadataToolsFactory,
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
     provideWorkspaceScopedRepository(FieldMetadataEntity),
   ],
-  exports: [ObjectMetadataService, ObjectMetadataToolsFactory],
+  exports: [ObjectMetadataService],
 })
 export class ObjectMetadataModule {}
