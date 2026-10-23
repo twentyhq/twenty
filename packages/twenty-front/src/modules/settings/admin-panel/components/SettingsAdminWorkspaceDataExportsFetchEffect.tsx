@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -15,8 +14,13 @@ import {
 
 const PENDING_EXPORT_POLL_INTERVAL_MS = 3000;
 
-export const SettingsAdminWorkspaceDataExportsFetchEffect = () => {
-  const { workspaceId = '' } = useParams<{ workspaceId: string }>();
+type SettingsAdminWorkspaceDataExportsFetchEffectProps = {
+  workspaceId: string;
+};
+
+export const SettingsAdminWorkspaceDataExportsFetchEffect = ({
+  workspaceId,
+}: SettingsAdminWorkspaceDataExportsFetchEffectProps) => {
   const apolloAdminClient = useApolloAdminClient();
   const setAdminPanelWorkspaceDataExports = useSetAtomFamilyState(
     adminPanelWorkspaceDataExportsFamilyState,
