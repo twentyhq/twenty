@@ -42,6 +42,14 @@
     cursor: not-allowed;
   }
 
+  &[data-text-align='start'] {
+    text-align: start;
+  }
+
+  &[data-text-align='end'] {
+    text-align: end;
+  }
+
   &[data-variant='plain'],
   &[data-grouped] {
     background-color: transparent;

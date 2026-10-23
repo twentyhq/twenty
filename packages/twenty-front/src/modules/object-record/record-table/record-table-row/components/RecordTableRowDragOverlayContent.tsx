@@ -45,19 +45,19 @@ const StyledRowDragOverlayCSSBridge = styled.div`
   position: relative;
 
   div.table-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
-    left: 0px;
+    inset-inline-start: 0px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
-    left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell-0-0 {
-    left: calc(
+    inset-inline-start: calc(
       var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
         var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
     );
@@ -67,7 +67,7 @@ const StyledRowDragOverlayCSSBridge = styled.div`
   }
 
   div.table-cell.${getRecordTableColumnFieldWidthClassName(0)} {
-    left: calc(
+    inset-inline-start: calc(
       var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
         var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
     );

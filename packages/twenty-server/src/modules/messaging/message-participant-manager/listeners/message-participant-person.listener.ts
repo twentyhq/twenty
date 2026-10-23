@@ -42,9 +42,6 @@ export class MessageParticipantPersonListener {
       return;
     }
 
-    const personIds = personWithEmails.map(
-      (eventPayload) => eventPayload.recordId,
-    );
     const personEmails = personWithEmails.flatMap((eventPayload) =>
       getPersonEmails(eventPayload.properties.after.emails),
     );
@@ -54,7 +51,6 @@ export class MessageParticipantPersonListener {
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds,
           personEmails,
           workspaceMemberIds: [],
         },
@@ -79,19 +75,16 @@ export class MessageParticipantPersonListener {
       return;
     }
 
-    const personIds = personWithUpdatedEmails.map(
-      (eventPayload) => eventPayload.recordId,
-    );
-    const personEmails = personWithUpdatedEmails.flatMap((eventPayload) =>
-      getPersonEmails(eventPayload.properties.after.emails),
-    );
+    const personEmails = personWithUpdatedEmails.flatMap((eventPayload) => [
+      ...getPersonEmails(eventPayload.properties.before.emails),
+      ...getPersonEmails(eventPayload.properties.after.emails),
+    ]);
 
     await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
       MessageParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds,
           personEmails,
           workspaceMemberIds: [],
         },
@@ -118,7 +111,6 @@ export class MessageParticipantPersonListener {
       {
         workspaceId: payload.workspaceId,
         participantMatching: {
-          personIds: [],
           personEmails,
           workspaceMemberIds: [],
         },

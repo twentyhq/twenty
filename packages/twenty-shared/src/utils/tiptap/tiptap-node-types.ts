@@ -27,6 +27,7 @@ export const TIPTAP_NODE_TYPES = {
   TABLE_HEADER: 'tableHeader',
   TABLE_CELL: 'tableCell',
   FILE: 'file',
+  TOGGLE: 'toggle',
 } as const;
 
 export type TipTapNodeType =

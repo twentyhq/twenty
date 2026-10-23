@@ -634,7 +634,8 @@ describe('workspace permissions', () => {
               `,
           variables: {
             input: {
-              publicFeatureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
+              publicFeatureFlag:
+                FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED,
               value: true,
             },
           },

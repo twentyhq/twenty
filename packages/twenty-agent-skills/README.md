@@ -38,7 +38,7 @@ For a checkout or an unpublished change, use the local marketplace instructions 
 
 | Skill                                                | Use it for                                                                            |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| [`create-app`](./skills/create-app/SKILL.md)         | Scaffold a new Twenty app with `create-twenty-app`.                                   |
+| [`create-app`](./skills/create-app/SKILL.md)         | Scaffold a new Twenty app with `twenty app init`.                                     |
 | [`develop-app`](./skills/develop-app/SKILL.md)       | Add or modify objects, fields, logic functions, layouts, front components, workflows. |
 | [`manage-app`](./skills/manage-app/SKILL.md)         | Manage remotes, sync, build, deploy, logs, troubleshooting, CI/CD.                    |
 | [`publish-app`](./skills/publish-app/SKILL.md)       | Prepare README, marketplace metadata, logos, screenshots, public assets.              |
