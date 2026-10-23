@@ -20,6 +20,7 @@ import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-module
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
+import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { findTurnIdsActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/find-turn-ids-acted-by-others.util';
 
 @Injectable()
@@ -118,7 +119,7 @@ export class AgentConversationReaderService {
           id: message.id,
           role: message.role as ExtendedUIMessage['role'],
           parts: isActedByOthers
-            ? parts.filter((part) => part.type === 'text')
+            ? filterPartsOfTurnActedByOthers(parts)
             : await this.signFileParts({ workspaceId, parts }),
         };
       }),

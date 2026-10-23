@@ -851,6 +851,18 @@ export class ConfigVariables {
   LOGIC_FUNCTION_LAMBDA_LAYER_BUCKET_REGION?: AwsRegion;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description:
+      'Custom Lambda endpoint URL. Optional, only needed for Lambda-compatible emulators (e.g. http://floci:4566). Omit for AWS Lambda, where the SDK resolves the endpoint from the region.',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
+  )
+  @IsOptional()
+  LOGIC_FUNCTION_LAMBDA_ENDPOINT?: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description:
       'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',
