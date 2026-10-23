@@ -15,7 +15,7 @@ import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
 import { type ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -332,8 +332,10 @@ describe('Application uninstall retry', () => {
         workspaceDeletedAt: new Date('2026-08-19T10:00:00.000Z'),
       });
 
-    await expect(attempt).rejects.toBeInstanceOf(ApplicationException);
-    await expect(attempt).rejects.toThrow('executor unavailable');
+    await expect(attempt).rejects.toMatchObject({
+      code: ApplicationExceptionCode.UNINSTALL_ERROR,
+      message: expect.stringContaining('executor unavailable'),
+    });
     await expect(attempt).rejects.not.toThrow('cleanup failed');
   }, 120000);
 });
