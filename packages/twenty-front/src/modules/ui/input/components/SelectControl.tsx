@@ -80,6 +80,13 @@ export const StyledControlContainer = styled.div<{
   padding: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : `0 ${themeCssVariables.spacing[2]}`};
   text-align: left;
+
+  *:focus-visible > & {
+    border-color: ${({ hasRightElement, $variant }) =>
+      !hasRightElement && $variant !== 'transparent'
+        ? themeCssVariables.color.blue
+        : themeCssVariables.border.color.medium};
+  }
 `;
 
 const StyledLeadingContent = styled.div`

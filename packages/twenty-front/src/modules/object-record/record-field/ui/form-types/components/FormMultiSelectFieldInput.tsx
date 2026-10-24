@@ -57,12 +57,16 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div`
+const StyledDisplayModeContainer = styled.div<{ hasFocusBorder: boolean }>`
   align-items: center;
   cursor: pointer;
   display: flex;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
+
+  &:focus-visible {
+    outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
+  }
 `;
 
 const StyledPlaceholderContainer = styled.div`
@@ -202,7 +206,11 @@ export const FormMultiSelectFieldInput = ({
                 onInteractOutside={preventDropdownDismissOnInputElement}
               >
                 <Dropdown.Trigger
-                  render={<StyledDisplayModeContainer />}
+                  render={
+                    <StyledDisplayModeContainer
+                      hasFocusBorder={!isDefined(VariablePicker)}
+                    />
+                  }
                   nativeButton={false}
                   aria-label={accessibleLabel}
                 >

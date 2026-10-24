@@ -18,6 +18,17 @@ type FormFieldInputInnerContainerProps = {
   variant?: FormFieldInputVariant;
 };
 
+const getFocusBorderColor = ({
+  hasRightElement,
+  $variant,
+}: {
+  hasRightElement: boolean;
+  $variant: FormFieldInputVariant;
+}) =>
+  !hasRightElement && $variant !== 'transparent'
+    ? themeCssVariables.color.blue
+    : themeCssVariables.border.color.medium;
+
 const StyledFormFieldInputInnerContainer = styled.div<
   Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'> & {
     $variant: FormFieldInputVariant;
@@ -64,6 +75,11 @@ const StyledFormFieldInputInnerContainer = styled.div<
 
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  &:has(:focus-visible:not(button)),
+  *:focus-visible > & {
+    border-color: ${getFocusBorderColor};
   }
 
   &:hover,

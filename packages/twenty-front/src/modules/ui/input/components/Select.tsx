@@ -23,6 +23,12 @@ const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
+const StyledSelectTrigger = styled.div<{ hasFocusBorder: boolean }>`
+  &:focus-visible {
+    outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
+  }
+`;
+
 const StyledLabel = styled.span`
   color: ${themeCssVariables.font.color.light};
   display: block;
@@ -180,7 +186,14 @@ export const Select = <TValue extends SelectValue>({
             }
           }}
         >
-          <Dropdown.Trigger render={<div />} nativeButton={false}>
+          <Dropdown.Trigger
+            render={
+              <StyledSelectTrigger
+                hasFocusBorder={!hasRightElement && variant !== 'transparent'}
+              />
+            }
+            nativeButton={false}
+          >
             <SelectControl
               renderAsTag={renderAsTag}
               selectedOption={controlSelectedOption}

@@ -31,6 +31,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormSelectContainerWrapper = styled.div<{
   readonly?: boolean;
+  hasFocusBorder?: boolean;
   $variant?: FormFieldInputVariant;
 }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -39,6 +40,10 @@ const StyledFormSelectContainerWrapper = styled.div<{
     $variant === 'transparent' ? themeCssVariables.spacing[6] : '32px'};
   min-width: 0;
   width: 100%;
+
+  &:focus-visible {
+    outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
+  }
 `;
 
 const StyledIconButton = styled.div<{ $variant?: FormFieldInputVariant }>`
@@ -269,6 +274,9 @@ export const FormSingleRecordPicker = ({
                 <StyledFormSelectContainerWrapper
                   id={triggerId}
                   $variant={variant}
+                  hasFocusBorder={
+                    !isDefined(VariablePicker) && variant !== 'transparent'
+                  }
                   tabIndex={0}
                   onKeyDown={handleTriggerKeyDown}
                 >
