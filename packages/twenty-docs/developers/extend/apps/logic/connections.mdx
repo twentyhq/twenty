@@ -5,6 +5,8 @@ description: Let your app act on a user's behalf in third-party services via OAu
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
+## Overview
+
 Connections are credentials a user holds for an external service (Linear, GitHub, Slack, ...). Your app declares **how** those credentials are obtained — a **connection provider** — and consumes them at runtime to make authenticated calls to the third-party API.
 
 Today only OAuth 2.0 is supported. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.

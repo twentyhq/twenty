@@ -5,6 +5,8 @@ description: Bring conversations from any provider into Twenty's Message and Mes
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
+## Overview
+
 A **messaging channel** lets your app put conversations from an external provider — LinkedIn, WhatsApp, SMS, an in-app inbox — into the same `Message` and `Message Thread` records Twenty uses for email. Threads you ingest appear on the Person, Company and Opportunity records of the people in them, in the timeline and in search, with no bespoke UI.
 
 Twenty's message model is deliberately channel-neutral: a message has participants, text, a timestamp and a thread; a participant has a `handle` and an optional link to a Person. Nothing in it is email-specific. A channel is what binds a stream of those messages to one account on one provider.

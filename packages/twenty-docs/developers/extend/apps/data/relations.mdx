@@ -5,14 +5,14 @@ description: Connect objects together with bidirectional MANY_TO_ONE / ONE_TO_MA
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
+## How relations work
+
 Relations connect two objects together. In Twenty, relations are always **bidirectional** — every relation has two sides, and each side is declared as a field that references the other.
 
 | Relation type | Description | Has foreign key? |
 |---------------|-------------|------------------|
 | `MANY_TO_ONE` | Many records of this object point to one record of the target | Yes (`joinColumnName`) |
 | `ONE_TO_MANY` | One record of this object has many records of the target | No (the inverse side) |
-
-## How relations work
 
 Every relation requires **two fields** that reference each other:
 

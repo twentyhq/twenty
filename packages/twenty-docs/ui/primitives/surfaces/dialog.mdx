@@ -8,6 +8,8 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import DialogReference from '/snippets/ui/generated/surfaces/dialog.mdx';
 
+## Overview
+
 Use `Dialog` for forms, details, and other tasks that open above the page. It manages focus, keyboard dismissal, outside clicks, and scrolling. Use [AlertDialog](/ui/primitives/surfaces/alert-dialog) when the user must explicitly respond to a decision.
 
 This API is for standalone Twenty UI and the Twenty host application. Front components must use the SDK's [`openCommandConfirmationModal`](/developers/extend/apps/layout/front-components#host-communication-api) instead of rendering `Dialog` or `AlertDialog` directly. Native browser dialogs and popovers are also prohibited in the front component renderer.

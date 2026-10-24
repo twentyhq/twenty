@@ -5,6 +5,8 @@ description: Persist intermediate results, cache data, and share state across lo
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
+## Overview
+
 Logic functions run sandboxed in short-lived Node.js processes — once a run finishes, nothing it kept in memory survives. When you need to **remember something between runs** (cache an expensive API response, store a cursor for incremental syncs, debounce work, or hand state from one function to another), persist it in the built-in key-value store.
 
 Every application gets its own isolated namespace: entries are keyed by the authenticated app, so your keys can never collide with — or be read by — another application.

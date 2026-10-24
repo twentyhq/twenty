@@ -5,6 +5,8 @@ description: Ship pre-configured saved views — column order, filters, groups �
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
+## Overview
+
 A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app.
 
 Every object automatically gets its main list view (the "All ..." table an `OBJECT` navigation item opens) provisioned by the server — including the objects your app creates, with one column per field your app declares. Views you define with `defineView()` are always **additional** views on top of that default one.

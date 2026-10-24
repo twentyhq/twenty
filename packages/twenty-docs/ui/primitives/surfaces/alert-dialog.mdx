@@ -8,6 +8,8 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
 
+## Overview
+
 Use `AlertDialog` for a decision that interrupts the current workflow, such as confirming deletion. It provides `alertdialog` semantics, focus management, and explicit confirmation or cancellation.
 
 This primitive is for standalone Twenty UI and host-owned interfaces. Front components must request a confirmation through the [SDK host dialog API](/developers/extend/apps/layout/front-components#host-communication-api). Direct `Dialog`, `AlertDialog`, and native browser dialogs are prohibited inside the front component renderer.
