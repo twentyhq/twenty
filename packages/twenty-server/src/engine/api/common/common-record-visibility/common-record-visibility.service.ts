@@ -156,4 +156,18 @@ export class CommonRecordVisibilityService {
       flatFieldMetadataMaps,
     });
   }
+
+  public assertQueryIsAllowed({
+    queryArgs,
+    flatObjectMetadata,
+    objectsPermissions,
+  }: {
+    queryArgs: object;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
+    objectsPermissions: ObjectsPermissions;
+  }): void {
+    this.handlersByObjectNameSingular
+      .get(flatObjectMetadata.nameSingular)
+      ?.assertQueryIsAllowed?.({ queryArgs, objectsPermissions });
+  }
 }

@@ -26,4 +26,8 @@ export type RecordVisibilityRestrictionHandler = {
     objectsPermissions: ObjectsPermissions;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }) => string[];
+  assertQueryIsAllowed?: (args: {
+    queryArgs: object;
+    objectsPermissions: ObjectsPermissions;
+  }) => void;
 };

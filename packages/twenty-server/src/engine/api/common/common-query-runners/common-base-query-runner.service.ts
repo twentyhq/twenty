@@ -280,6 +280,13 @@ export abstract class CommonBaseQueryRunnerService<
         queryRunnerContext,
       );
 
+    this.commonRecordVisibilityService.assertQueryIsAllowed({
+      queryArgs: processedArgs,
+      flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+      objectsPermissions:
+        extendedQueryRunnerContext.repository.objectRecordsPermissions,
+    });
+
     const results = await this.run(
       this.withVisibilityRequiredFields({
         args: processedArgs,

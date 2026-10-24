@@ -15,7 +15,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
-import { assertRecordDiffFieldIsQueryableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-record-diff-field-is-queryable-or-throw.util';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -251,13 +250,6 @@ export const resolveOrderByLeaves = ({
         objectMetadataId: flatObjectMetadata.id,
         fieldMetadataId: fieldMetadata.id,
       });
-
-      if (isDefined(objectsPermissions)) {
-        assertRecordDiffFieldIsQueryableOrThrow({
-          objectsPermissions,
-          fieldMetadata,
-        });
-      }
 
       if (
         isReferencedByFieldName &&
