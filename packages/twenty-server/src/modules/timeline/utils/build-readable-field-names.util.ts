@@ -9,16 +9,18 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export const buildReadableFieldNames = ({
   flatObjectMetadata,
+  isLinkedActivity,
   objectsPermissions,
   flatFieldMetadataMaps,
 }: {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
+  isLinkedActivity: boolean;
   objectsPermissions: ObjectsPermissions;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): Set<string> => {
   const objectPermissions = objectsPermissions[flatObjectMetadata.id];
 
-  if (objectPermissions?.canReadObjectRecords === false) {
+  if (isLinkedActivity && objectPermissions?.canReadObjectRecords === false) {
     return new Set();
   }
 

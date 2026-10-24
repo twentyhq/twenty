@@ -1,5 +1,6 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type ObjectRecord,
@@ -87,7 +88,12 @@ export class ApplyTimelineActivitiesFieldPermissionsService
     this.keepReadableFields({
       timelineActivities,
       resolveSubjectRecord: (timelineActivity) =>
-        storedTimelineActivityById.get(timelineActivity.id) ?? timelineActivity,
+        hasTimelineActivitySubjectColumns({
+          timelineActivity,
+          targetJoinColumns,
+        })
+          ? timelineActivity
+          : storedTimelineActivityById.get(timelineActivity.id),
       targetJoinColumns,
       ...metadataContext,
     });
@@ -123,13 +129,25 @@ export class ApplyTimelineActivitiesFieldPermissionsService
     timelineActivities: TRecord[];
     resolveSubjectRecord: (
       timelineActivity: TRecord,
-    ) => Record<string, unknown>;
+    ) => Record<string, unknown> | undefined;
     targetJoinColumns: TimelineActivityTargetJoinColumn[];
   }): void {
     for (const timelineActivity of timelineActivities) {
+      const subjectRecord = resolveSubjectRecord(timelineActivity);
+
+      if (!isDefined(subjectRecord)) {
+        Object.assign(timelineActivity, {
+          properties: keepReadableFieldsInTimelineActivityProperties({
+            properties: timelineActivity.properties,
+            readableFieldNames: new Set(),
+          }),
+        });
+        continue;
+      }
+
       const subjectObjectMetadataId =
         resolveTimelineActivitySubjectObjectMetadataId({
-          timelineActivity: resolveSubjectRecord(timelineActivity),
+          timelineActivity: subjectRecord,
           targetJoinColumns,
         });
 
@@ -149,6 +167,9 @@ export class ApplyTimelineActivitiesFieldPermissionsService
           properties: timelineActivity.properties,
           readableFieldNames: buildReadableFieldNames({
             flatObjectMetadata: subjectFlatObjectMetadata,
+            isLinkedActivity: isNonEmptyString(
+              subjectRecord.linkedObjectMetadataId,
+            ),
             objectsPermissions,
             flatFieldMetadataMaps,
           }),

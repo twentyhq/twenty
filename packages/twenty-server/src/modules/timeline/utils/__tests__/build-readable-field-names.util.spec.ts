@@ -48,6 +48,7 @@ describe('buildReadableFieldNames', () => {
   it('should leave out the fields the role cannot read', () => {
     const readableFieldNames = buildReadableFieldNames({
       flatObjectMetadata: PERSON_OBJECT,
+      isLinkedActivity: false,
       objectsPermissions: {
         [PERSON_OBJECT.id]: buildObjectPermissions({
           restrictedFields: {
@@ -62,10 +63,11 @@ describe('buildReadableFieldNames', () => {
     expect(readableFieldNames.has('jobTitle')).toBe(false);
   });
 
-  it('should treat no field as readable when the role cannot read the object', () => {
+  it('should treat no field as readable when the role cannot read the linked object', () => {
     expect(
       buildReadableFieldNames({
         flatObjectMetadata: PERSON_OBJECT,
+        isLinkedActivity: true,
         objectsPermissions: {
           [PERSON_OBJECT.id]: buildObjectPermissions({
             canReadObjectRecords: false,
@@ -74,5 +76,20 @@ describe('buildReadableFieldNames', () => {
         flatFieldMetadataMaps,
       }).size,
     ).toBe(0);
+  });
+
+  it('should keep readable fields of a target object the role reads through sharing', () => {
+    expect(
+      buildReadableFieldNames({
+        flatObjectMetadata: PERSON_OBJECT,
+        isLinkedActivity: false,
+        objectsPermissions: {
+          [PERSON_OBJECT.id]: buildObjectPermissions({
+            canReadObjectRecords: false,
+          }),
+        },
+        flatFieldMetadataMaps,
+      }).has('city'),
+    ).toBe(true);
   });
 });
