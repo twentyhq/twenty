@@ -3,6 +3,7 @@ import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useFilesField } from '@/object-record/record-field/ui/meta-types/hooks/useFilesField';
 import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile';
+import { FilesFieldDropZone } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldDropZone';
 import { FilesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldMenuItem';
 import { FilesFieldLabelInput } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldLabelInput';
 import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
@@ -95,52 +96,77 @@ export const FilesFieldInput = () => {
     });
   };
 
-  const handleUploadClick = () => {
-    if (isUploading) {
+  const uploadFiles = async ({
+    selectedFiles,
+    currentFiles,
+  }: {
+    selectedFiles: File[];
+    currentFiles: FieldFilesValue[];
+  }) => {
+    if (
+      selectedFiles.length > maxNumberOfValues - currentFiles.length &&
+      currentFiles.length > 0
+    ) {
+      enqueueToast({
+        status: 'error',
+        children: t`Cannot upload more than ${maxNumberOfValues} files`,
+      });
       return;
     }
 
+    setIsUploading(true);
+
+    try {
+      const uploadedFiles = await uploadMultipleFiles(
+        selectedFiles,
+        fieldDefinition.fieldMetadataId,
+        uploadFile,
+      );
+
+      if (uploadedFiles.length > 0) {
+        const newFiles = [...currentFiles, ...uploadedFiles];
+        handleChange(newFiles);
+        onEnter?.({ newValue: parseFilesArrayToFilesValue(newFiles) });
+      }
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const getFilesBeforeUpload = () => {
+    if (isUploading) {
+      return null;
+    }
+
     const currentFiles = saveEditedItemInPlace();
+
+    if (isDefined(currentFiles)) {
+      closeInput();
+    }
+
+    return currentFiles;
+  };
+
+  const handleUploadClick = () => {
+    const currentFiles = getFilesBeforeUpload();
 
     if (!isDefined(currentFiles)) {
       return;
     }
 
-    closeInput();
-
     openFileUpload({
       multiple: true,
-      onUpload: async (selectedFiles: File[]) => {
-        if (
-          selectedFiles.length > maxNumberOfValues - currentFiles.length &&
-          currentFiles.length > 0
-        ) {
-          enqueueToast({
-            status: 'error',
-            children: t`Cannot upload more than ${maxNumberOfValues} files`,
-          });
-          return;
-        }
-
-        setIsUploading(true);
-
-        try {
-          const uploadedFiles = await uploadMultipleFiles(
-            selectedFiles,
-            fieldDefinition.fieldMetadataId,
-            uploadFile,
-          );
-
-          if (uploadedFiles.length > 0) {
-            const newFiles = [...currentFiles, ...uploadedFiles];
-            handleChange(newFiles);
-            onEnter?.({ newValue: parseFilesArrayToFilesValue(newFiles) });
-          }
-        } finally {
-          setIsUploading(false);
-        }
-      },
+      onUpload: (selectedFiles: File[]) =>
+        uploadFiles({ selectedFiles, currentFiles }),
     });
+  };
+
+  const handleDrop = (selectedFiles: File[]) => {
+    const currentFiles = getFilesBeforeUpload();
+
+    if (isDefined(currentFiles)) {
+      uploadFiles({ selectedFiles, currentFiles });
+    }
   };
 
   const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
@@ -313,42 +339,44 @@ export const FilesFieldInput = () => {
   );
 
   return (
-    <MultiItemFieldList
-      ref={containerRef}
-      hasItems={shouldShowItems}
-      shouldShowSearch={shouldShowSearch && !isInputOpen}
-      searchFilter={searchFilter}
-      onSearchFilterChange={setSearchFilter}
-      footerInput={shouldShowInputInFooter ? fileLabelInput : undefined}
-      addButton={
-        !shouldShowInputInFooter && !isLimitReached ? (
-          <MultiItemFieldAddButton
-            label={isUploading ? t`Uploading...` : t`Upload file`}
-            onClick={handleUploadClick}
-          />
-        ) : undefined
-      }
-    >
-      {visibleItemEntries?.map(({ item: file, index }, position, entries) =>
-        index === editedItemIndex && isEditingItemInPlace ? (
-          <MultiItemFieldEditedItem
-            key={file.fileId}
-            hasSeparatorBefore={position > 0}
-            hasSeparatorAfter={position < entries.length - 1}
-          >
-            {fileLabelInput}
-          </MultiItemFieldEditedItem>
-        ) : (
-          <FilesFieldMenuItem
-            key={file.fileId}
-            dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-            file={file}
-            onEdit={() => startEditingItem({ itemIndex: index })}
-            onDelete={() => handleDelete(index)}
-            onClick={() => handlePreview(file)}
-          />
-        ),
-      )}
-    </MultiItemFieldList>
+    <FilesFieldDropZone isDisabled={isUploading} onDrop={handleDrop}>
+      <MultiItemFieldList
+        ref={containerRef}
+        hasItems={shouldShowItems}
+        shouldShowSearch={shouldShowSearch && !isInputOpen}
+        searchFilter={searchFilter}
+        onSearchFilterChange={setSearchFilter}
+        footerInput={shouldShowInputInFooter ? fileLabelInput : undefined}
+        addButton={
+          !shouldShowInputInFooter && !isLimitReached ? (
+            <MultiItemFieldAddButton
+              label={isUploading ? t`Uploading...` : t`Upload file`}
+              onClick={handleUploadClick}
+            />
+          ) : undefined
+        }
+      >
+        {visibleItemEntries?.map(({ item: file, index }, position, entries) =>
+          index === editedItemIndex && isEditingItemInPlace ? (
+            <MultiItemFieldEditedItem
+              key={file.fileId}
+              hasSeparatorBefore={position > 0}
+              hasSeparatorAfter={position < entries.length - 1}
+            >
+              {fileLabelInput}
+            </MultiItemFieldEditedItem>
+          ) : (
+            <FilesFieldMenuItem
+              key={file.fileId}
+              dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+              file={file}
+              onEdit={() => startEditingItem({ itemIndex: index })}
+              onDelete={() => handleDelete(index)}
+              onClick={() => handlePreview(file)}
+            />
+          ),
+        )}
+      </MultiItemFieldList>
+    </FilesFieldDropZone>
   );
 };

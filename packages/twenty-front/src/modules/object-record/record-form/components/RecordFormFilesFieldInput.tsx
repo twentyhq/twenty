@@ -1,5 +1,6 @@
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile';
+import { FilesFieldDropZone } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldDropZone';
 import { FilesFieldLabelInput } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldLabelInput';
 import { FilesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldMenuItem';
 import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
@@ -109,6 +110,38 @@ export const RecordFormFilesFieldInput = ({
     saveFiles(toSpliced(updatedFiles, index, 1));
   };
 
+  const uploadFiles = async ({
+    selectedFiles,
+    currentFiles,
+  }: {
+    selectedFiles: File[];
+    currentFiles: FieldFilesValue[];
+  }) => {
+    if (selectedFiles.length > maxItemCount - currentFiles.length) {
+      enqueueToast({
+        status: 'error',
+        children: t`Cannot upload more than ${maxItemCount} files`,
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const uploadedFiles = await uploadMultipleFiles(
+        selectedFiles,
+        fieldMetadataId,
+        uploadFile,
+      );
+
+      if (isNonEmptyArray(uploadedFiles)) {
+        saveFiles([...currentFiles, ...uploadedFiles]);
+      }
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleUploadClick = () => {
     const currentFiles = saveInputValue();
 
@@ -118,85 +151,67 @@ export const RecordFormFilesFieldInput = ({
 
     openFileUpload({
       multiple: true,
-      onUpload: async (selectedFiles: File[]) => {
-        if (selectedFiles.length > maxItemCount - currentFiles.length) {
-          enqueueToast({
-            status: 'error',
-            children: t`Cannot upload more than ${maxItemCount} files`,
-          });
-          return;
-        }
-
-        setIsUploading(true);
-
-        try {
-          const uploadedFiles = await uploadMultipleFiles(
-            selectedFiles,
-            fieldMetadataId,
-            uploadFile,
-          );
-
-          if (isNonEmptyArray(uploadedFiles)) {
-            saveFiles([...currentFiles, ...uploadedFiles]);
-          }
-        } finally {
-          setIsUploading(false);
-        }
-      },
+      onUpload: (selectedFiles: File[]) =>
+        uploadFiles({ selectedFiles, currentFiles }),
     });
   };
+
+  const handleDrop = (selectedFiles: File[]) =>
+    uploadFiles({ selectedFiles, currentFiles: saveInputValue() });
 
   const visibleFiles = isNonEmptyArray(savedFiles) ? savedFiles : undefined;
 
   return (
     <FormFieldInputContainer>
       {isNonEmptyString(label) ? <Field.Label>{label}</Field.Label> : null}
-      <RecordFormMultiItemList
-        footer={
-          savedFiles.length < maxItemCount ? (
-            <MultiItemFieldAddButton
-              label={isUploading ? t`Uploading...` : t`Upload file`}
-              onClick={handleUploadClick}
-            />
-          ) : undefined
-        }
-      >
-        {visibleFiles?.map((file, index) =>
-          index === editedItemIndex ? (
-            <MultiItemFieldEditedItem
-              key={file.fileId}
-              hasSeparatorBefore={index > 0}
-              hasSeparatorAfter={index < savedFiles.length - 1}
-            >
-              <MultiItemFieldInputRow
-                spacing="compact"
-                rightComponent={
-                  <MultiItemFieldSaveButton
-                    isAddingNewItem={false}
-                    onClick={saveInputValue}
-                  />
-                }
+      <FilesFieldDropZone isDisabled={isUploading} onDrop={handleDrop}>
+        <RecordFormMultiItemList
+          footer={
+            savedFiles.length < maxItemCount ? (
+              <MultiItemFieldAddButton
+                label={isUploading ? t`Uploading...` : t`Upload file`}
+                onClick={handleUploadClick}
+              />
+            ) : undefined
+          }
+        >
+          {visibleFiles?.map((file, index) =>
+            index === editedItemIndex ? (
+              <MultiItemFieldEditedItem
+                key={file.fileId}
+                hasSeparatorBefore={index > 0}
+                hasSeparatorAfter={index < savedFiles.length - 1}
               >
-                <FilesFieldLabelInput
-                  file={file}
-                  value={inputValue}
-                  onChange={handleTyping}
-                  onEnter={saveInputValue}
-                  onEscape={handleEscape}
-                />
-              </MultiItemFieldInputRow>
-            </MultiItemFieldEditedItem>
-          ) : (
-            <FilesFieldMenuItem
-              key={file.fileId}
-              dropdownId={`${instanceId}-file-${index}`}
-              file={file}
-              onEdit={isUploading ? undefined : () => handleEdit(index)}
-              onDelete={isUploading ? undefined : () => handleDelete(index)}
-            />
-          ),
-        )}
-      </RecordFormMultiItemList>
+                <MultiItemFieldInputRow
+                  spacing="compact"
+                  rightComponent={
+                    <MultiItemFieldSaveButton
+                      isAddingNewItem={false}
+                      onClick={saveInputValue}
+                    />
+                  }
+                >
+                  <FilesFieldLabelInput
+                    file={file}
+                    value={inputValue}
+                    onChange={handleTyping}
+                    onEnter={saveInputValue}
+                    onEscape={handleEscape}
+                  />
+                </MultiItemFieldInputRow>
+              </MultiItemFieldEditedItem>
+            ) : (
+              <FilesFieldMenuItem
+                key={file.fileId}
+                dropdownId={`${instanceId}-file-${index}`}
+                file={file}
+                onEdit={isUploading ? undefined : () => handleEdit(index)}
+                onDelete={isUploading ? undefined : () => handleDelete(index)}
+              />
+            ),
+          )}
+        </RecordFormMultiItemList>
+      </FilesFieldDropZone>
     </FormFieldInputContainer>
   );
 };
