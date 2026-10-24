@@ -11,12 +11,12 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/useRecordCreationFormSettle';
 import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
-import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
+import { getRecordFormFieldInputIsInErrorAtom } from '@/object-record/record-form/utils/getRecordFormFieldInputIsInErrorAtom';
+import { scrollToFirstRecordFormAlert } from '@/object-record/record-form/utils/scrollToFirstRecordFormAlert';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordCreationFormSettingsInSidePanel } from '@/side-panel/hooks/useOpenRecordCreationFormSettingsInSidePanel';
@@ -227,12 +227,7 @@ const SidePanelRecordCreationForm = ({
   };
 
   const getFieldInputIsInErrorAtom = (fieldMetadataId: string) =>
-    recordFieldInputIsFieldInErrorComponentState.atomFamily({
-      instanceId: getRecordFormFieldInputInstanceId({
-        formInstanceId,
-        fieldMetadataId,
-      }),
-    });
+    getRecordFormFieldInputIsInErrorAtom({ formInstanceId, fieldMetadataId });
 
   const handleHiddenFieldsToggleClick = () => {
     // Collapsed inputs unmount and come back without their error text, so drop their error state too.
@@ -261,10 +256,7 @@ const SidePanelRecordCreationForm = ({
   };
 
   const scrollToFirstFieldViolation = () =>
-    document
-      .getElementById(contentId)
-      ?.querySelector('[role="alert"]')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    scrollToFirstRecordFormAlert({ containerId: contentId });
 
   const submitDraftRecord = async ({
     shouldKeepOpen,
