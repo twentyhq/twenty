@@ -470,6 +470,14 @@ kbd {
   border-top: 1px solid var(--twenty-line);
 }
 
+@media (min-width: 48rem) {
+  #footer div:has(> div > a > .nav-logo) {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+}
+
 @media (min-width: 64rem) {
   #footer {
     padding-left: 3rem;
