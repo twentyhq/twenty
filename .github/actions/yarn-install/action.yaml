@@ -34,7 +34,7 @@ runs:
       run: |
         yarn config set enableHardenedMode true
         yarn config set enableScripts false
-        yarn --immutable --check-cache
+        yarn --immutable --check-cache || (sleep 15 && yarn --immutable --check-cache)
     # Fork PRs on pull_request already can't write to the base repo's cache (GitHub built-in).
     # The fork guard is defense-in-depth for pull_request_target, which does have write access.
     - name: Save cache
