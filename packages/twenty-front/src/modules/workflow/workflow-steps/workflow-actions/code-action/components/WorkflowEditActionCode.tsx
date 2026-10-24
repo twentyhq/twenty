@@ -24,6 +24,7 @@ import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components
 import { WorkflowCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
+import { useSaveCodeStepSourceToDraft } from '@/workflow/workflow-steps/workflow-actions/code-action/hooks/useSaveCodeStepSourceToDraft';
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
@@ -101,6 +102,7 @@ export const WorkflowEditActionCode = ({
   );
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
+  const { saveCodeStepSourceToDraft } = useSaveCodeStepSourceToDraft();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -280,6 +282,15 @@ export const WorkflowEditActionCode = ({
       !isDefined(workflow) ||
       !isDefined(newCode)
     ) {
+      return;
+    }
+
+    if (workflow.currentVersion.status !== 'DRAFT') {
+      await saveCodeStepSourceToDraft({
+        stepId: action.id,
+        sourceHandlerCode: newCode,
+      });
+
       return;
     }
 
