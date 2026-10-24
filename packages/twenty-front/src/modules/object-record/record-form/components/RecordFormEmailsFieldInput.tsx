@@ -73,6 +73,7 @@ export const RecordFormEmailsFieldInput = ({
     getEmailsFromValue(defaultValue),
   );
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
+  const [isInvalidInputLeft, setIsInvalidInputLeft] = useState(false);
 
   const getNextInputTarget = (emails: string[]): MultiItemInputTarget =>
     getRecordFormMultiItemInputTarget({
@@ -108,17 +109,25 @@ export const RecordFormEmailsFieldInput = ({
 
   const saveEmails = (emails: string[]) => {
     setSavedEmails(emails);
+    setIsInvalidInputLeft(false);
     setRecordFieldInputIsFieldInError(false);
     onChange(getEmailsValue(emails));
   };
 
+  const isInputValueValid = (value: string) => {
+    const sanitizedInput = value.trim();
+
+    return (
+      !isNonEmptyString(sanitizedInput) || validateEmail(sanitizedInput).isValid
+    );
+  };
+
   const handleTyping = (value: string) => {
     handleInputChange(value);
+    setIsInvalidInputLeft(false);
 
     const sanitizedInput = value.trim();
-    const isValid =
-      !isNonEmptyString(sanitizedInput) ||
-      validateEmail(sanitizedInput).isValid;
+    const isValid = isInputValueValid(value);
 
     setRecordFieldInputIsFieldInError(!isValid);
     onChange(
@@ -245,7 +254,8 @@ export const RecordFormEmailsFieldInput = ({
         spacing={inputSpacing}
         placeholder={placeholder ?? t`Email`}
         value={inputValue}
-        hasError={hasError}
+        hasError={hasError || isInvalidInputLeft}
+        onBlur={() => setIsInvalidInputLeft(!isInputValueValid(inputValue))}
         onChange={handleTyping}
         onEnter={handleEnter}
         onEscape={handleEscape}
@@ -301,6 +311,11 @@ export const RecordFormEmailsFieldInput = ({
           ),
         )}
       </RecordFormMultiItemList>
+      {hasError || isInvalidInputLeft ? (
+        <Field.Error match role="alert">
+          {t`Enter a valid email`}
+        </Field.Error>
+      ) : null}
     </FormFieldInputContainer>
   );
 };

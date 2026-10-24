@@ -317,22 +317,53 @@ export const InvalidEmail: Story = {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('textbox');
 
-    await userEvent.type(input, 'lea@{Enter}');
+    await userEvent.type(input, 'lea@');
+
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+
+    await userEvent.keyboard('{Enter}');
 
     await expect(args.onFieldValueChange).toHaveBeenLastCalledWith('emails', {
       primaryEmail: '',
       additionalEmails: [],
     });
     await expect(input).toHaveAttribute('aria-invalid', 'true');
-    await expect(input).toHaveValue('lea@');
+    await expect(canvas.getByRole('alert')).toHaveTextContent(
+      'Enter a valid email',
+    );
 
     await userEvent.type(input, 'northwind.io');
 
     await expect(input).not.toHaveAttribute('aria-invalid');
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
     await expect(args.onFieldValueChange).toHaveBeenLastCalledWith('emails', {
       primaryEmail: 'lea@northwind.io',
       additionalEmails: [],
     });
+  },
+};
+
+export const InvalidEmailLeftUnsubmitted: Story = {
+  args: {
+    fieldMetadataItems: [emailsFieldMetadataItem],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('textbox');
+
+    await userEvent.type(input, 'lea@');
+    await userEvent.tab();
+
+    await expect(input).toHaveAttribute('aria-invalid', 'true');
+    await expect(canvas.getByRole('alert')).toHaveTextContent(
+      'Enter a valid email',
+    );
+
+    await userEvent.click(input);
+    await userEvent.keyboard('{Escape}');
+
+    await expect(input).toHaveValue('');
+    await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
   },
 };
 
