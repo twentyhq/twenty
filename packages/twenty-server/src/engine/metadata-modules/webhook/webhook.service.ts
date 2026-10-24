@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { isDefined, normalizeUrl } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -22,6 +22,16 @@ export class WebhookService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
   ) {}
+
+  private normalizeTargetUrl(targetUrl: string): string {
+    try {
+      const url = new URL(targetUrl);
+
+      return url.toString();
+    } catch {
+      return targetUrl;
+    }
+  }
 
   async findAll(workspaceId: string): Promise<WebhookDTO[]> {
     const { flatWebhookMaps } =
@@ -59,7 +69,7 @@ export class WebhookService {
     input: CreateWebhookInput,
     workspaceId: string,
   ): Promise<WebhookDTO> {
-    const normalizedTargetUrl = normalizeUrl(input.targetUrl);
+    const normalizedTargetUrl = this.normalizeTargetUrl(input.targetUrl);
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -128,7 +138,7 @@ export class WebhookService {
       update: {
         ...input.update,
         ...(isDefined(input.update.targetUrl) && {
-          targetUrl: normalizeUrl(input.update.targetUrl),
+          targetUrl: this.normalizeTargetUrl(input.update.targetUrl),
         }),
       },
     };

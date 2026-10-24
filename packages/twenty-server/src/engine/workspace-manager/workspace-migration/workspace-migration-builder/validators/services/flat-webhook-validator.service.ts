@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined, isValidUrl } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WebhookExceptionCode } from 'src/engine/metadata-modules/webhook/webhook.exception';
@@ -14,6 +14,16 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 
 @Injectable()
 export class FlatWebhookValidatorService {
+  private validateTargetUrl(targetUrl: string): boolean {
+    try {
+      const url = new URL(targetUrl);
+
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
+
   public validateFlatWebhookCreation({
     flatEntityToValidate: flatWebhook,
   }: UniversalFlatEntityValidationArgs<
@@ -36,7 +46,7 @@ export class FlatWebhookValidatorService {
       });
     }
 
-    if (!isValidUrl(flatWebhook.targetUrl)) {
+    if (!this.validateTargetUrl(flatWebhook.targetUrl)) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
         message: t`Invalid target URL provided`,
@@ -114,7 +124,10 @@ export class FlatWebhookValidatorService {
 
     const targetUrlUpdate = flatEntityUpdate.targetUrl;
 
-    if (isDefined(targetUrlUpdate) && !isValidUrl(targetUrlUpdate)) {
+    if (
+      isDefined(targetUrlUpdate) &&
+      !this.validateTargetUrl(targetUrlUpdate)
+    ) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
         message: t`Invalid target URL provided`,

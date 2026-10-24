@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import {
+  getUrlSafely,
   isDefined,
-  normalizeUrl,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -71,7 +71,7 @@ export class McpServerService {
 
     const flatMcpServerToCreate =
       fromCreateMcpServerInputToFlatMcpServerToCreate({
-        createMcpServerInput: { ...input, url: normalizeUrl(input.url) },
+        createMcpServerInput: { ...input, url: this.normalizeUrl(input.url) },
         encryptedAuthorizationHeaderValue: this.encryptAuthorizationHeaderValue(
           { value: input.authorizationHeaderValue, workspaceId },
         ),
@@ -119,7 +119,7 @@ export class McpServerService {
         update: {
           ...(isDefined(name) && { name }),
           ...(isDefined(label) && { label }),
-          ...(isDefined(url) && { url: normalizeUrl(url) }),
+          ...(isDefined(url) && { url: this.normalizeUrl(url) }),
           ...(isDefined(isActive) && { isActive }),
           ...(!isUndefined(authorizationHeaderValue) && {
             authorizationHeaderValue: this.encryptAuthorizationHeaderValue({
@@ -169,6 +169,10 @@ export class McpServerService {
     });
 
     return fromFlatMcpServerToMcpServerDto(flatMcpServerToDelete);
+  }
+
+  private normalizeUrl(url: string): string {
+    return getUrlSafely(url)?.toString() ?? url;
   }
 
   private encryptAuthorizationHeaderValue({
