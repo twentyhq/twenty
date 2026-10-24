@@ -19,6 +19,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type TimelineActivityTargetJoinColumn } from 'src/modules/timeline/types/timeline-activity-target-join-column.type';
+import { hasTimelineActivitySubjectColumns } from 'src/modules/timeline/utils/has-timeline-activity-subject-columns.util';
 import { buildReadableFieldNames } from 'src/modules/timeline/utils/build-readable-field-names.util';
 import { keepReadableFieldsInTimelineActivityProperties } from 'src/modules/timeline/utils/keep-readable-fields-in-timeline-activity-properties.util';
 import { resolveTimelineActivitySubjectObjectMetadataId } from 'src/modules/timeline/utils/resolve-timeline-activity-subject-object-metadata-id.util';
@@ -29,18 +30,6 @@ type MetadataContext = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 };
-
-const hasSubjectColumns = ({
-  timelineActivity,
-  targetJoinColumns,
-}: {
-  timelineActivity: Record<string, unknown>;
-  targetJoinColumns: TimelineActivityTargetJoinColumn[];
-}): boolean =>
-  'linkedObjectMetadataId' in timelineActivity &&
-  targetJoinColumns.every(
-    ({ joinColumnName }) => joinColumnName in timelineActivity,
-  );
 
 @Injectable()
 export class ApplyTimelineActivitiesFieldPermissionsService
@@ -180,7 +169,10 @@ export class ApplyTimelineActivitiesFieldPermissionsService
     const timelineActivityIdsMissingSubjectColumns = timelineActivities
       .filter(
         (timelineActivity) =>
-          !hasSubjectColumns({ timelineActivity, targetJoinColumns }),
+          !hasTimelineActivitySubjectColumns({
+            timelineActivity,
+            targetJoinColumns,
+          }),
       )
       .map((timelineActivity) => timelineActivity.id);
 
