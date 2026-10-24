@@ -132,6 +132,8 @@ export const FormArrayFieldInput = ({
 
   const dropdownId = `dropdown-${instanceId}`;
 
+  const hasRightElement = isDefined(VariablePicker) && !readonly;
+
   const accessibleLabel = isNonEmptyString(label) ? label : t`Items`;
 
   const preventContainerFocusStackUpdate =
@@ -357,7 +359,7 @@ export const FormArrayFieldInput = ({
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
+          hasRightElement={hasRightElement}
           shouldHighlightOnTriggerFocus
         >
           {draftValue.type === 'static' ? (
@@ -390,7 +392,7 @@ export const FormArrayFieldInput = ({
                     <StyledDisplayModeContainer
                       hasOutline={
                         !hasFullFormFieldBorder({
-                          hasRightElement: isDefined(VariablePicker),
+                          hasRightElement,
                         })
                       }
                     />

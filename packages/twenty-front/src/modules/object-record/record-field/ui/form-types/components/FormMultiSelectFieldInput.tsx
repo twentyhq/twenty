@@ -164,6 +164,8 @@ export const FormMultiSelectFieldInput = ({
       : undefined;
 
   const placeholderText = placeholder ?? label;
+  const hasRightElement = isDefined(VariablePicker) && !readonly;
+
   const accessibleLabel =
     [label, placeholder].find(isNonEmptyString) ?? t`Select options`;
 
@@ -174,7 +176,7 @@ export const FormMultiSelectFieldInput = ({
       <StyledFormFieldInputRowContainer>
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
+          hasRightElement={hasRightElement}
           shouldHighlightOnTriggerFocus
           hoverable={!readonly}
           preventFocusStackUpdate={draftValue.type === 'static' && !readonly}
@@ -209,7 +211,7 @@ export const FormMultiSelectFieldInput = ({
                     <StyledDisplayModeContainer
                       hasOutline={
                         !hasFullFormFieldBorder({
-                          hasRightElement: isDefined(VariablePicker),
+                          hasRightElement,
                         })
                       }
                     />
@@ -259,7 +261,7 @@ export const FormMultiSelectFieldInput = ({
           )}
         </FormFieldInputInnerContainer>
 
-        {isDefined(VariablePicker) && !readonly && (
+        {hasRightElement && isDefined(VariablePicker) && (
           <VariablePicker
             instanceId={instanceId}
             onVariableSelect={handleVariableTagInsert}
