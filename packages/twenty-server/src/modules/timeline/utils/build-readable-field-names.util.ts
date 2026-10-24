@@ -16,8 +16,13 @@ export const buildReadableFieldNames = ({
   objectsPermissions: ObjectsPermissions;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): Set<string> => {
-  const restrictedFields =
-    objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
+  const objectPermissions = objectsPermissions[flatObjectMetadata.id];
+
+  if (objectPermissions?.canReadObjectRecords === false) {
+    return new Set();
+  }
+
+  const restrictedFields = objectPermissions?.restrictedFields ?? {};
 
   return new Set(
     flatObjectMetadata.fieldIds.flatMap((fieldId) => {
