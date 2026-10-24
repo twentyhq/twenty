@@ -280,18 +280,23 @@ export abstract class CommonBaseQueryRunnerService<
         queryRunnerContext,
       );
 
+    const selectWithVisibilityRequiredFields =
+      this.commonRecordVisibilityService.getSelectWithRequiredFields({
+        select: processedArgs.selectedFieldsResult.select,
+        flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+        objectsPermissions:
+          extendedQueryRunnerContext.repository.objectRecordsPermissions,
+        flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+      });
+
     const results = await this.run(
       {
         ...processedArgs,
-        selectedFieldsResult:
-          this.commonRecordVisibilityService.extendSelectedFields({
-            selectedFieldsResult: processedArgs.selectedFieldsResult,
-            flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-            objectsPermissions:
-              extendedQueryRunnerContext.repository.objectRecordsPermissions,
-            flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-          }),
+        selectedFieldsResult: {
+          ...processedArgs.selectedFieldsResult,
+          select: selectWithVisibilityRequiredFields,
+        },
       },
       {
         ...extendedQueryRunnerContext,
