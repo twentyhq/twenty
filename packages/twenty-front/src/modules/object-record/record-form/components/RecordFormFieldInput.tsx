@@ -18,6 +18,8 @@ import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFie
 import { isFieldFilesValue } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
+import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
+import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/ui/types/guards/isFieldLinksValue';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
@@ -34,6 +36,7 @@ import { RecordFormFilesFieldInput } from '@/object-record/record-form/component
 import { RecordFormFullNameFieldInput } from '@/object-record/record-form/components/RecordFormFullNameFieldInput';
 import { RecordFormLinksFieldInput } from '@/object-record/record-form/components/RecordFormLinksFieldInput';
 import { RecordFormPhonesFieldInput } from '@/object-record/record-form/components/RecordFormPhonesFieldInput';
+import { RecordFormTextAreaFieldInput } from '@/object-record/record-form/components/RecordFormTextAreaFieldInput';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
 import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -155,6 +158,21 @@ export const RecordFormFieldInput = ({
         }
         firstNamePlaceholder={subFieldPlaceholders?.firstName}
         lastNamePlaceholder={subFieldPlaceholders?.lastName}
+        onChange={onChange}
+      />
+    );
+  }
+
+  if (
+    isFieldText(field) &&
+    !readonly &&
+    (field.metadata.settings?.displayedMaxRows ?? 0) > 1
+  ) {
+    return (
+      <RecordFormTextAreaFieldInput
+        label={field.label}
+        defaultValue={isFieldTextValue(defaultValue) ? defaultValue : undefined}
+        placeholder={placeholder}
         onChange={onChange}
       />
     );
