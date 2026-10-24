@@ -24,16 +24,20 @@ export const rebuildEventDiffFromRecords = <TEvent extends ObjectRecordEvent>(
     properties: {
       ...properties,
       diff: Object.fromEntries(
-        Object.entries(properties.diff).map(([fieldName, fieldDiff]) => [
-          fieldName,
-          isPlainObject(fieldDiff)
-            ? {
-                ...fieldDiff,
-                ...(fieldName in before && { before: before[fieldName] }),
-                ...(fieldName in after && { after: after[fieldName] }),
-              }
-            : fieldDiff,
-        ]),
+        Object.entries(properties.diff).map(([fieldName, fieldDiff]) => {
+          if (!isPlainObject(fieldDiff)) {
+            return [fieldName, fieldDiff];
+          }
+
+          return [
+            fieldName,
+            {
+              ...fieldDiff,
+              ...(fieldName in before && { before: before[fieldName] }),
+              ...(fieldName in after && { after: after[fieldName] }),
+            },
+          ];
+        }),
       ),
     },
   };
