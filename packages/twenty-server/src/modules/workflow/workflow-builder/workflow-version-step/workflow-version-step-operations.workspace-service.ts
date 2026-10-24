@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
@@ -78,6 +78,10 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 
 @Injectable()
 export class WorkflowVersionStepOperationsWorkspaceService {
+  private readonly logger = new Logger(
+    WorkflowVersionStepOperationsWorkspaceService.name,
+  );
+
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -1141,11 +1145,15 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           labelSuffix: v4().substring(0, 4),
           workspaceId,
         }).catch((error: unknown) => {
-          // A step whose agent was deleted is copied as is, like before drafts copied agents
+          // A deleted agent must not block drafting the rest of the workflow
           if (
             error instanceof AiException &&
             error.code === AiExceptionCode.AGENT_NOT_FOUND
           ) {
+            this.logger.warn(
+              `AI agent step ${step.id} references deleted agent ${agentId}, copying it unchanged`,
+            );
+
             return undefined;
           }
 
