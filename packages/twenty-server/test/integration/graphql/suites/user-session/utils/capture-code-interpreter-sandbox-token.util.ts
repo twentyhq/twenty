@@ -5,6 +5,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { type ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
+import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 export const captureCodeInterpreterSandboxToken = async ({
@@ -41,6 +42,7 @@ export const captureCodeInterpreterSandboxToken = async ({
         workspaceId: authContext.workspace.id,
         rolePermissionConfig,
         authContext,
+        authPrincipalVariant: classifyWorkspaceAuthContext(authContext),
         agentId,
         ...(isUserAuthContext(authContext)
           ? {

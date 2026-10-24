@@ -27,6 +27,7 @@ import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 @Injectable()
@@ -199,6 +200,7 @@ export class ToolRegistryService {
       userWorkspaceId?: string;
       locale?: keyof typeof APP_LOCALES;
       rolePermissionConfig: RolePermissionConfig;
+      authPrincipalVariant: AuthPrincipalVariant | undefined;
       categories?: ToolCategory[];
       excludeTools?: Set<string>;
       application?: FlatApplication;
@@ -207,6 +209,7 @@ export class ToolRegistryService {
     const context = this.buildContextFromToolContext({
       workspaceId,
       rolePermissionConfig: options.rolePermissionConfig,
+      authPrincipalVariant: options.authPrincipalVariant,
       userId: options.userId,
       userWorkspaceId: options.userWorkspaceId,
       locale: options.locale,
@@ -537,6 +540,7 @@ export class ToolRegistryService {
       workspaceId: context.workspaceId,
       rolePermissionConfig: context.rolePermissionConfig,
       authContext: context.authContext,
+      authPrincipalVariant: context.authPrincipalVariant,
       application: context.application,
       actorContext: context.actorContext,
       userId: context.userId,

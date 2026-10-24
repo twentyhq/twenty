@@ -15,6 +15,17 @@ ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `
+        @UseGuards(JwtAuthGuard)
+        class TestController {
+          @Post()
+          @UseGuards(AccessPolicyGuard(WEBHOOK_WRITE_ACCESS_POLICY))
+          create() {}
+        }
+      `,
+      filename: 'test.ts',
+    },
+    {
+      code: `
         class TestController {
           @Get()
           @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
