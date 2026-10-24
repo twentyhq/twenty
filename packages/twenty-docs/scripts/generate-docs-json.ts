@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   type BaseGroup,
   type BaseStructure,
@@ -132,12 +134,14 @@ const buildGroup = (
     return null;
   }
 
-  const root = group.root ? formatPageSlug(group.root, language) : null;
+  const root = isNonEmptyString(group.root)
+    ? formatPageSlug(group.root, language)
+    : null;
 
   return {
     group: translations.groupLabels.get(group.key) ?? group.label,
     ...(group.icon ? { icon: group.icon } : {}),
-    ...(root ? { root } : {}),
+    ...(isNonEmptyString(root) ? { root } : {}),
     pages,
   };
 };
