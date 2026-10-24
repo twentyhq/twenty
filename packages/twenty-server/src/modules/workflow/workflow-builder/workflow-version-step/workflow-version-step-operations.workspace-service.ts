@@ -1150,7 +1150,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             error.code === AiExceptionCode.AGENT_NOT_FOUND
           ) {
             this.logger.warn(
-              `AI agent step ${step.id} references deleted agent ${agentId}, copying it unchanged`,
+              `AI agent step ${step.id} in workspace ${workspaceId} references deleted agent ${agentId}, copying it unchanged`,
             );
 
             return undefined;
