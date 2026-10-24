@@ -1084,7 +1084,7 @@ div:has(> #content-container) {
   margin-top: var(--twenty-space-12);
 }
 
-#content-area #content > :is(:first-child, [data-page-banner]:first-child + *, h2 + h3) {
+#content-area #content > :is(:first-child, h2 + h3) {
   margin-top: 0;
 }
 
@@ -1234,7 +1234,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   border: 1px solid var(--twenty-line);
   border-radius: var(--twenty-radius-2);
   background-color: var(--twenty-panel);
-  background-image: var(--page-banner-illustration), var(--page-banner-pattern);
+  background-image: var(--page-banner-illustration), var(--page-banner-pattern, url('/images/documentation/card-backgrounds-v2/developers-api.svg'));
   background-position: center;
   background-repeat: no-repeat;
   background-size: 128px 128px, cover;
@@ -1249,17 +1249,16 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   margin-top: var(--twenty-space-6);
 }
 
-#content-area:has([data-page-banner='dev-apps']) {
+#content-area:has([data-page-banner='dev-apps'], [data-page-banner='getting-started-apps']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-apps.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
 }
 
 #content-area:has([data-page-banner='dev-api']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-api.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
-#content-area:has([data-page-banner='dev-self-host']) {
+#content-area:has([data-page-banner='dev-self-host'], [data-page-banner='card-page-self-host-guide']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-self-host.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
 }
@@ -1269,7 +1268,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-contribute.svg');
 }
 
-#content-area:has([data-page-banner='data-model']) {
+#content-area:has([data-page-banner='data-model'], [data-page-banner='getting-started-data-model']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
 }
@@ -1279,32 +1278,32 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-migration.svg');
 }
 
-#content-area:has([data-page-banner='calendar-emails']) {
+#content-area:has([data-page-banner='calendar-emails'], [data-page-banner='getting-started-calendar-email']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/calendar-emails.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
 }
 
-#content-area:has([data-page-banner='workflows']) {
+#content-area:has([data-page-banner='workflows'], [data-page-banner='getting-started-workflows']) {
   --page-banner-illustration: url('/images/user-guide/halftone/workflows-belt-v1.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
 }
 
-#content-area:has([data-page-banner='ai']) {
+#content-area:has([data-page-banner='ai'], [data-page-banner='getting-started-ai']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/ai.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
 }
 
-#content-area:has([data-page-banner='layout']) {
+#content-area:has([data-page-banner='layout'], [data-page-banner='getting-started-layout'], [data-page-banner='section-apps-layout'], [data-page-banner='card-page-ui-library']) {
   --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
 }
 
-#content-area:has([data-page-banner='dashboards']) {
+#content-area:has([data-page-banner='dashboards'], [data-page-banner='getting-started-dashboards']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/dashboards.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-dashboards.svg');
 }
 
-#content-area:has([data-page-banner='permissions']) {
+#content-area:has([data-page-banner='permissions'], [data-page-banner='card-page-permissions']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/permissions.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
 }
@@ -1355,41 +1354,6 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/getting-started-extensibility.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-data-model']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
-}
-
-#content-area:has([data-page-banner='getting-started-layout']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
-}
-
-#content-area:has([data-page-banner='getting-started-workflows']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/workflows-belt-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
-}
-
-#content-area:has([data-page-banner='getting-started-calendar-email']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/calendar-emails.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
-}
-
-#content-area:has([data-page-banner='getting-started-ai']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/ai.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
-}
-
-#content-area:has([data-page-banner='getting-started-apps']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-apps.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
-}
-
-#content-area:has([data-page-banner='getting-started-dashboards']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dashboards.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-dashboards.svg');
-}
-
 #content-area:has([data-page-banner='getting-started-glossary']) {
   --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/glossary.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/getting-started-no-lock-in.svg');
@@ -1418,11 +1382,6 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 #content-area:has([data-page-banner='section-apps-data']) {
   --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/apps-data.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
-}
-
-#content-area:has([data-page-banner='section-apps-layout']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
 }
 
 #content-area:has([data-page-banner='section-apps-logic']) {
@@ -1485,11 +1444,6 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
 }
 
-#content-area:has([data-page-banner='card-page-permissions']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/permissions.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
-}
-
 #content-area:has([data-page-banner='card-page-sso']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-sso.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
@@ -1502,192 +1456,139 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 
 #content-area:has([data-page-banner='card-page-bug-requests']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-bug-requests.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-frontend-architecture']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-frontend-architecture.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-application-config']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-application-config.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-roles']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-roles.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-install-hooks']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-install-hooks.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-objects']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-objects.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-extending-objects']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-extending-objects.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-relations']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-relations.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-timeline']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-timeline.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-views']) {
   --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/views-pipelines.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-navigation']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-navigation.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-page-layouts']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-page-layouts.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-front-components']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-front-components.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-command-menu']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-command-menu.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-logic-functions']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-logic-functions.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
-#content-area:has([data-page-banner='card-page-skills-agents']) {
+#content-area:has([data-page-banner='card-page-skills-agents'], [data-page-banner='card-page-tutorial-agent']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-skills-agents.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-workflows']) {
   --page-banner-illustration: url('/images/user-guide/halftone/workflows-belt-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-connections']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-connections.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-messaging-channels']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-messaging-channels.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-key-value-store']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-key-value-store.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-background-jobs']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-background-jobs.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-charging-credits']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-charging-credits.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-cli']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-cli.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-sync-recovery']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-sync-recovery.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-testing']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-testing.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-translations']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-translations.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
-#content-area:has([data-page-banner='card-page-publishing']) {
+#content-area:has([data-page-banner='card-page-publishing'], [data-page-banner='card-page-tutorial-publishing']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-publishing.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-monitoring']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-monitoring.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
-}
-
-#content-area:has([data-page-banner='card-page-tutorial-publishing']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-publishing.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
-}
-
-#content-area:has([data-page-banner='card-page-tutorial-agent']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-skills-agents.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-tutorial-documents']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-documents.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-tutorial-http']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-http.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-tutorial-ui']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-ui.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-tutorial-data']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-webhooks']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-webhooks.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='card-page-export-data']) {
   --page-banner-illustration: url('/images/user-guide/halftone/no-lock-in.png');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/getting-started-no-lock-in.svg');
-}
-
-#content-area:has([data-page-banner='card-page-self-host-guide']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-self-host.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
-}
-
-#content-area:has([data-page-banner='card-page-ui-library']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
 }
 
 #content-area:has([data-page-banner='community-certified-partners']) {
@@ -1702,7 +1603,6 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 
 #content-area:has([data-page-banner='page-cover-features']) {
   --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/features.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-email']) {
@@ -1712,17 +1612,14 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 
 #content-area:has([data-page-banner='page-cover-branches']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/branches.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-hierarchy']) {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-data.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-switch']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/switch.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-palette']) {
@@ -1742,40 +1639,32 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 
 #content-area:has([data-page-banner='page-cover-filter']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/filter.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-image']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/image.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-accessibility']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/accessibility.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-input']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/input.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-emoji']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/emoji.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-pointer']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/pointer.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-search']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/search.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
 
 #content-area:has([data-page-banner='page-cover-checkbox']) {
   --page-banner-illustration: url('/images/documentation/page-cover-icons-v1/checkbox.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
 }
