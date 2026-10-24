@@ -7,8 +7,6 @@ description: REST and GraphQL APIs generated from your workspace schema.
 import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<PageBanner illustration="dev-api" />
-
 ## Schema-per-tenant APIs
 
 There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
@@ -71,3 +69,5 @@ When `fields` is omitted on an object with more than 200 readable fields, each r
 |-------|-------|
 | Requests | 100 per minute |
 | Batch size | 60 records per call |
+
+<PageBanner illustration="dev-api" />
