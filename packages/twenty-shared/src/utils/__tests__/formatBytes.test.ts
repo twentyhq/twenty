@@ -11,6 +11,9 @@ describe('formatBytes', () => {
     [1024 ** 3, '1 GB'],
     [107_374_182_400, '100 GB'],
     [1024 ** 4, '1 TB'],
+    [1048575, '1 MB'],
+    [1073741823, '1 GB'],
+    [1099511627775, '1 TB'],
   ])('formats %i as %s', (bytes, expected) => {
     expect(formatBytes(bytes)).toBe(expected);
   });
