@@ -9,11 +9,11 @@ import { SettingsEmailingDomainAiSetup } from '@/settings/emailing-domains/compo
 import { getVerificationRecordGroupContent } from '@/settings/emailing-domains/utils/getVerificationRecordGroupContent';
 import { getVerificationRecordGroupKey } from '@/settings/emailing-domains/utils/getVerificationRecordGroupKey';
 import { getVerificationRecordGroupStatusDisplay } from '@/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay';
+import { isUnsubscribeVerificationPending } from '@/settings/emailing-domains/utils/isUnsubscribeVerificationPending';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   type EmailingDomain,
   EmailingDomainStatus,
-  UnsubscribeHostnameStatus,
 } from '~/generated-metadata/graphql';
 
 type SettingsEmailingDomainDnsRecordsProps = {
@@ -63,14 +63,12 @@ export const SettingsEmailingDomainDnsRecords = ({
         : record.value,
     })),
   );
-  const isUnsubscribeVerificationRequired = groups.some(
-    ({ id }) => id === 'UNSUBSCRIBE',
-  );
   const areVerifiableRecordsVerified =
     emailingDomain.status === EmailingDomainStatus.VERIFIED &&
-    (!isUnsubscribeVerificationRequired ||
-      emailingDomain.unsubscribeHostnameStatus ===
-        UnsubscribeHostnameStatus.ACTIVE);
+    !isUnsubscribeVerificationPending({
+      emailingDomain,
+      isMessageCampaignEnabled,
+    });
 
   return (
     <>
