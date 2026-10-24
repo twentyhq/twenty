@@ -5,12 +5,11 @@ import { styled } from '@linaria/react';
 import { atom, useAtomValue, useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
 import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
+import { AddressAutocompleteRoot } from '@/ui/field/input/components/AddressAutocompleteRoot';
 import { type AddressInputProps } from '@/ui/field/input/types/AddressInputProps';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
@@ -19,13 +18,11 @@ import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledField
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Autocomplete } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 import { t } from '@lingui/core/macro';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
 import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
 import { useAddressInputClickOutside } from '@/ui/field/input/hooks/useAddressInputClickOutside';
-import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 import { useFocusManagement } from '@/ui/field/input/hooks/useFocusManagement';
 
 const StyledAddressContainer = styled.div`
@@ -86,17 +83,13 @@ export const AddressInput = ({
     [],
   );
 
-  const { findCountryCodeByCountryName } = useCountryUtils();
-
   const {
     placeAutocompleteData,
-    tokenForPlaceApi,
     typeOfAddressForAutocomplete,
-    setTypeOfAddressForAutocomplete,
-    getAutocompletePlaceData,
-    autoFillInputsFromPlaceDetails,
+    searchPlaces,
+    selectPlace,
     closeDropdownOfAutocomplete,
-  } = useAddressAutocomplete(onChange);
+  } = useAddressAutocomplete({ onChange });
 
   const isFieldInputInSubFieldsAddress = useCallback(
     (field: AllowedAddressSubField): boolean => {
@@ -146,49 +139,20 @@ export const AddressInput = ({
       onChange?.(updatedAddress);
 
       if (field === 'addressStreet1' || field === 'addressCity') {
-        const countryCode = findCountryCodeByCountryName(
-          updatedAddress.addressCountry ?? '',
-        );
-        if (field !== typeOfAddressForAutocomplete) {
-          setTypeOfAddressForAutocomplete(field);
-        }
-        const isFieldCity = field === 'addressCity';
-        getAutocompletePlaceData({
-          address: updatedAddressPart,
-          country: countryCode,
-          isFieldCity,
+        searchPlaces({
+          subField: field,
+          text: updatedAddressPart,
+          countryName: updatedAddress.addressCountry ?? '',
         });
       }
     },
-    [
-      internalValue,
-      setInternalValue,
-      onChange,
-      findCountryCodeByCountryName,
-      typeOfAddressForAutocomplete,
-      setTypeOfAddressForAutocomplete,
-      getAutocompletePlaceData,
-      subFields,
-    ],
+    [internalValue, setInternalValue, onChange, searchPlaces, subFields],
   );
 
   const handlePlaceSelection = useCallback(
     async (placeId: string) => {
-      const placeAutocomplete = placeAutocompleteData?.find(
-        (place) => place.placeId === placeId,
-      );
-      const token = tokenForPlaceApi ?? '';
-      if (!isDefined(placeAutocomplete)) return;
-
-      const text: string | undefined =
-        typeOfAddressForAutocomplete !== 'addressCity'
-          ? placeAutocomplete.text
-          : undefined;
-
-      const updatedAddress = await autoFillInputsFromPlaceDetails({
+      const updatedAddress = await selectPlace({
         placeId,
-        token,
-        addressStreet1: text,
         getInternalValue: () => store.get(internalValueAtom),
       });
 
@@ -202,16 +166,7 @@ export const AddressInput = ({
         setIsExpanded(true);
       }
     },
-    [
-      placeAutocompleteData,
-      tokenForPlaceApi,
-      typeOfAddressForAutocomplete,
-      autoFillInputsFromPlaceDetails,
-      internalValueAtom,
-      setInternalValue,
-      store,
-      subFields,
-    ],
+    [selectPlace, internalValueAtom, setInternalValue, store, subFields],
   );
 
   const handleEnter = useCallback(() => {
@@ -263,20 +218,14 @@ export const AddressInput = ({
     isInline?: boolean;
   }) => (
     <StyledInputWithDropdownContainer>
-      <AutocompleteRoot
+      <AddressAutocompleteRoot
         dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
-        enabled={typeOfAddressForAutocomplete === fieldType}
-        items={placeAutocompleteData}
-        itemToStringValue={(place) => place.text}
+        isEnabled={typeOfAddressForAutocomplete === fieldType}
+        places={placeAutocompleteData}
         value={internalValue[fieldType] ?? ''}
-        openOnValueChange={false}
-        closeOnItemPress={false}
-        onValueChange={(updatedValue) =>
-          getChangeHandler(fieldType)(
-            turnIntoEmptyStringIfWhitespacesOnly(updatedValue),
-          )
-        }
+        onValueChange={getChangeHandler(fieldType)}
         onClose={closeDropdownOfAutocomplete}
+        onPlaceSelect={handlePlaceSelection}
       >
         {isInline ? (
           <Autocomplete.Input
@@ -305,11 +254,7 @@ export const AddressInput = ({
             )}
           />
         )}
-        <PlaceAutocompleteSelect
-          list={placeAutocompleteData}
-          onChange={handlePlaceSelection}
-        />
-      </AutocompleteRoot>
+      </AddressAutocompleteRoot>
     </StyledInputWithDropdownContainer>
   );
 

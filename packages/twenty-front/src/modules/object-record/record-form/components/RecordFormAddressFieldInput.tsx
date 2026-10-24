@@ -11,17 +11,22 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { ADDRESS_DETAIL_SUB_FIELDS } from '@/ui/field/input/constants/AddressDetailSubFields';
 import { hasAddressDetailValue } from '@/ui/field/input/utils/hasAddressDetailValue';
 import { StyledFieldInputFullWidthDetail } from '@/ui/field/input/components/StyledFieldInputFullWidthDetail';
+import { AddressAutocompleteRoot } from '@/ui/field/input/components/AddressAutocompleteRoot';
+import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { atom, useAtomValue, useStore } from 'jotai';
 import { useId, useState } from 'react';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Field } from 'twenty-ui/primitives/input';
+import { Autocomplete, Field } from 'twenty-ui/primitives/input';
 
 type AddressTextSubField = Exclude<
   AllowedAddressSubField,
   'addressLat' | 'addressLng'
 >;
+
+type AddressSuggestedSubField = 'addressStreet1' | 'addressCity';
 
 const EMPTY_ADDRESS: FieldAddressValue = {
   addressStreet1: '',
@@ -51,10 +56,24 @@ export const RecordFormAddressFieldInput = ({
 }: RecordFormAddressFieldInputProps) => {
   const { t } = useLingui();
   const instanceId = useId();
+  const addressSuggestionsDropdownId = `${instanceId}-address-suggestions`;
 
-  const [address, setAddress] = useState<FieldAddressValue>({
-    ...EMPTY_ADDRESS,
-    ...defaultValue,
+  const store = useStore();
+  const [addressAtom] = useState(() =>
+    atom<FieldAddressValue>({ ...EMPTY_ADDRESS, ...defaultValue }),
+  );
+  const address = useAtomValue(addressAtom);
+
+  const {
+    placeAutocompleteData,
+    typeOfAddressForAutocomplete,
+    searchPlaces,
+    selectPlace,
+    closeDropdownOfAutocomplete,
+  } = useAddressAutocomplete({
+    onChange: (updatedAddress) =>
+      onChange(normalizeAddressFieldValueForPersist(updatedAddress)),
+    dropdownId: addressSuggestionsDropdownId,
   });
 
   const hasSubField = (subField: AllowedAddressSubField) =>
@@ -73,9 +92,36 @@ export const RecordFormAddressFieldInput = ({
     (subField: AddressTextSubField) => (subFieldValue: string) => {
       const updatedAddress = { ...address, [subField]: subFieldValue };
 
-      setAddress(updatedAddress);
+      store.set(addressAtom, updatedAddress);
       onChange(normalizeAddressFieldValueForPersist(updatedAddress));
     };
+
+  const handleSuggestedSubFieldChange =
+    (subField: AddressSuggestedSubField) => (subFieldValue: string) => {
+      handleSubFieldChange(subField)(subFieldValue);
+      searchPlaces({
+        subField,
+        text: subFieldValue,
+        countryName: address.addressCountry ?? '',
+      });
+    };
+
+  const handlePlaceSelection = async (placeId: string) => {
+    const updatedAddress = await selectPlace({
+      placeId,
+      getInternalValue: () => store.get(addressAtom),
+    });
+
+    if (!isDefined(updatedAddress)) {
+      return;
+    }
+
+    store.set(addressAtom, { ...EMPTY_ADDRESS, ...updatedAddress });
+
+    if (hasAddressDetailValue({ address: updatedAddress, subFields })) {
+      setIsExpanded(true);
+    }
+  };
 
   return (
     <FormFieldInputContainer>
@@ -92,17 +138,26 @@ export const RecordFormAddressFieldInput = ({
             hasToggle={hasDetails}
             onToggle={() => setIsExpanded(!isExpanded)}
           >
-            <StyledTextInput
-              id={instanceId}
-              autoComplete="off"
-              placeholder={
-                subFieldPlaceholders?.addressStreet1 ?? t`Street address`
-              }
+            <AddressAutocompleteRoot
+              dropdownId={addressSuggestionsDropdownId}
+              isEnabled={typeOfAddressForAutocomplete === 'addressStreet1'}
+              places={placeAutocompleteData}
               value={address.addressStreet1 ?? ''}
-              onChange={(event) =>
-                handleSubFieldChange('addressStreet1')(event.target.value)
-              }
-            />
+              onValueChange={handleSuggestedSubFieldChange('addressStreet1')}
+              onClose={closeDropdownOfAutocomplete}
+              onPlaceSelect={handlePlaceSelection}
+            >
+              <Autocomplete.Input
+                id={instanceId}
+                placeholder={
+                  subFieldPlaceholders?.addressStreet1 ?? t`Street address`
+                }
+                render={(inputProps) => (
+                  // oxlint-disable-next-line react/jsx-props-no-spreading
+                  <StyledTextInput {...inputProps} />
+                )}
+              />
+            </AddressAutocompleteRoot>
           </FieldInputDetailsToggleRow>
         )}
         {shouldShowDetails && (
@@ -121,13 +176,32 @@ export const RecordFormAddressFieldInput = ({
               </StyledFieldInputFullWidthDetail>
             )}
             {hasSubField('addressCity') && (
-              <TextInput
-                label={t`City`}
-                placeholder={subFieldPlaceholders?.addressCity ?? t`City`}
-                value={address.addressCity ?? ''}
-                fullWidth
-                onChange={handleSubFieldChange('addressCity')}
-              />
+              // Own field so the outer field label does not name the city input
+              <Field.Root>
+                <AddressAutocompleteRoot
+                  dropdownId={addressSuggestionsDropdownId}
+                  isEnabled={typeOfAddressForAutocomplete === 'addressCity'}
+                  places={placeAutocompleteData}
+                  value={address.addressCity ?? ''}
+                  onValueChange={handleSuggestedSubFieldChange('addressCity')}
+                  onClose={closeDropdownOfAutocomplete}
+                  onPlaceSelect={handlePlaceSelection}
+                >
+                  <Autocomplete.Input
+                    aria-label={t`City`}
+                    render={(inputProps) => (
+                      <TextInput
+                        inputProps={inputProps}
+                        label={t`City`}
+                        placeholder={
+                          subFieldPlaceholders?.addressCity ?? t`City`
+                        }
+                        fullWidth
+                      />
+                    )}
+                  />
+                </AddressAutocompleteRoot>
+              </Field.Root>
             )}
             {hasSubField('addressState') && (
               <TextInput
