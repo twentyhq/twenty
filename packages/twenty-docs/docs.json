@@ -34,14 +34,6 @@
   "navbar": {
     "links": [
       {
-        "type": "github",
-        "href": "https://github.com/twentyhq/twenty"
-      },
-      {
-        "type": "discord",
-        "href": "https://discord.gg/cx5n4Jzs57"
-      },
-      {
         "label": "Log in",
         "href": "https://app.twenty.com/welcome"
       }
@@ -6599,8 +6591,9 @@
   "footer": {
     "socials": {
       "github": "https://github.com/twentyhq/twenty",
-      "twitter": "https://twitter.com/twentycrm",
-      "discord": "https://discord.gg/cx5n4Jzs57"
+      "discord": "https://discord.gg/cx5n4Jzs57",
+      "linkedin": "https://www.linkedin.com/company/twenty",
+      "x": "https://x.com/twentycrm"
     },
     "links": [
       {

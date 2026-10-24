@@ -3,6 +3,8 @@ title: Connections
 description: Let your app act on a user's behalf in third-party services via OAuth.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Connections are credentials a user holds for an external service (Linear, GitHub, Slack, ...). Your app declares **how** those credentials are obtained — a **connection provider** — and consumes them at runtime to make authenticated calls to the third-party API.
 
 Today only OAuth 2.0 is supported. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
@@ -409,3 +411,5 @@ For each connection provider, the server admin needs to register an OAuth app at
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-connections" />

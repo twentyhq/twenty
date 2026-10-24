@@ -3,6 +3,8 @@ title: 3. HTTP routes
 description: Trigger the function over HTTP and render documents as web pages.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { CardTitle } from "/snippets/card-title.mdx"
 
 The same handler can also answer HTTP requests. We'll add two routes:
@@ -163,8 +165,10 @@ http://localhost:2020/s/documents/view?id=<documentId>
 web pages. Now let's make it usable without `curl`.
 
 <CardGroup cols={2} className="documentation-card-group">
-<Card href="/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/user-guide/halftone/arrow.png">
+<Card href="/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/user-guide/halftone/card-page-tutorial-ui.svg">
   <CardTitle>Next: building the UI →</CardTitle>
   Views, navigation, a command, and a front component.
 </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-tutorial-http" />

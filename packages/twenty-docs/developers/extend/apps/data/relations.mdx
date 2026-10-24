@@ -3,6 +3,8 @@ title: Relations
 description: Connect objects together with bidirectional MANY_TO_ONE / ONE_TO_MANY relations.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Relations connect two objects together. In Twenty, relations are always **bidirectional** — every relation has two sides, and each side is declared as a field that references the other.
 
 | Relation type | Description | Has foreign key? |
@@ -212,3 +214,5 @@ export default defineObject({
   ],
 });
 ```
+
+<PageBanner illustration="card-page-relations" />

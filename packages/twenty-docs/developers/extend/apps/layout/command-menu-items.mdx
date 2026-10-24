@@ -3,6 +3,8 @@ title: Command Menu Items
 description: Surface front components as quick actions and command menu (Cmd+K) entries with defineCommandMenuItem.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 A **command menu item** is the bridge between the user and a [front component](/developers/extend/apps/layout/front-components). It registers the component in Twenty's command menu (Cmd+K) and, optionally, as a pinned quick-action button in the top-right corner of the page.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
@@ -116,3 +118,5 @@ Combine variables into boolean expressions:
 | `none(array, prop)` | `true` if the property is falsy on every item |
 | `noneDefined(array, prop)` | `true` if the property is undefined on every item |
 | `noneEquals(array, prop, value)` | `true` if the property does not equal the value on any item |
+
+<PageBanner illustration="card-page-command-menu" />

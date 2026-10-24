@@ -3,6 +3,8 @@ title: 4. Building the UI
 description: Views, sidebar navigation, a command, and front components.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { CardTitle } from "/snippets/card-title.mdx"
 
 Right now the objects are only reachable through Settings. Let's give the app a
@@ -314,8 +316,10 @@ Now editors write templates in a proper rich-text editor:
 in-app. Next, let an AI agent generate them from a chat.
 
 <CardGroup cols={2} className="documentation-card-group">
-<Card href="/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/user-guide/halftone/arrow.png">
+<Card href="/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/user-guide/halftone/card-page-skills-agents.svg">
   <CardTitle>Next: an AI agent →</CardTitle>
   Add an agent and a skill that call your tool.
 </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-tutorial-ui" />

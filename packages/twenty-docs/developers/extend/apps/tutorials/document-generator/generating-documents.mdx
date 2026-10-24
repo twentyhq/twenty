@@ -3,6 +3,8 @@ title: 2. Generating documents
 description: One logic function, exposed as an AI tool and a workflow action.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { CardTitle } from "/snippets/card-title.mdx"
 
 Now the core: a [logic function](/developers/extend/apps/logic/logic-functions)
@@ -236,8 +238,10 @@ uses for recordings.
 nothing can *call* the generator from the UI yet — for that we need an HTTP route.
 
 <CardGroup cols={2} className="documentation-card-group">
-<Card href="/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/user-guide/halftone/arrow.png">
+<Card href="/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/user-guide/halftone/card-page-tutorial-http.svg">
   <CardTitle>Next: HTTP routes →</CardTitle>
   Serve the function over HTTP and render documents as web pages.
 </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-tutorial-documents" />

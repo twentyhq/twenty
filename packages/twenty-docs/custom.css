@@ -16,12 +16,14 @@
 
 :root {
   --twenty-ink: #1c1c1c;
+  --twenty-ink-prose: rgb(28 28 28 / 80%);
   --twenty-ink-muted: rgb(28 28 28 / 70%);
   --twenty-ink-subtle: rgb(28 28 28 / 40%);
   --twenty-line: rgb(28 28 28 / 10%);
   --twenty-line-strong: rgb(28 28 28 / 20%);
   --twenty-divider: rgb(28 28 28 / 40%);
   --twenty-wash: rgb(28 28 28 / 5%);
+  --twenty-panel: color-mix(in srgb, var(--twenty-ink) 5%, var(--twenty-surface));
   --twenty-surface: #ffffff;
   --twenty-blue: #4a38f5;
   --twenty-font-sans: 'Host Grotesk', sans-serif;
@@ -51,12 +53,14 @@
 
 :is(.dark, [data-theme='dark']) {
   --twenty-ink: #ffffff;
+  --twenty-ink-prose: rgb(255 255 255 / 80%);
   --twenty-ink-muted: rgb(255 255 255 / 70%);
   --twenty-ink-subtle: rgb(255 255 255 / 40%);
   --twenty-line: rgb(255 255 255 / 10%);
   --twenty-line-strong: rgb(255 255 255 / 20%);
   --twenty-divider: rgb(255 255 255 / 40%);
   --twenty-wash: rgb(255 255 255 / 5%);
+  --twenty-panel: color-mix(in srgb, var(--twenty-ink) 5%, var(--twenty-surface));
   --twenty-surface: rgb(var(--background-dark));
   --twenty-blue: #8a7dff;
   --twenty-shadow-popup: 0 12px 32px rgb(0 0 0 / 40%);
@@ -69,6 +73,7 @@ kbd {
 }
 
 #page-title {
+  color: var(--twenty-ink);
   font-size: var(--twenty-heading-md-size);
   font-weight: 300;
   line-height: var(--twenty-heading-md-line-height);
@@ -78,42 +83,111 @@ kbd {
 
 #content :is(h1, h2, h3, h4, h5, h6),
 #table-of-contents h2 {
+  color: var(--twenty-ink);
   font-family: var(--twenty-font-sans);
   font-weight: 500;
   letter-spacing: normal;
 }
 
+#content-area .prose {
+  color: var(--twenty-ink-prose);
+}
+
+#content-area .prose :is(strong, b) {
+  color: var(--twenty-ink);
+  font-weight: 500;
+}
+
+#content-area .prose th {
+  font-weight: 500;
+}
+
+:is(#content, #header) a.link {
+  border-bottom: 0;
+  color: var(--twenty-blue);
+  font-weight: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+#header nav[aria-label='Breadcrumb'] ol {
+  gap: var(--twenty-space-2);
+}
+
+#header nav[aria-label='Breadcrumb'] ol::before {
+  content: '';
+  flex: none;
+  width: 14px;
+  height: 7px;
+  border-radius: 1px;
+  background-color: var(--twenty-blue);
+}
+
+#header .breadcrumb-item {
+  color: var(--twenty-ink-muted);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.04em;
+}
+
+#header .breadcrumb-item svg {
+  color: var(--twenty-ink-subtle);
+}
+
+#content :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: var(--twenty-radius-1);
+  background-color: var(--twenty-line);
+  color: var(--twenty-ink);
+  font-size: 0.9em;
+  font-weight: 400;
+}
+
+.code-block {
+  border-color: var(--twenty-line);
+}
+
+.code-block:has([data-component-part='code-block-header']) {
+  background-color: var(--twenty-panel);
+}
+
+.code-block,
+.code-block [data-component-part='code-block-root'] {
+  border-radius: var(--twenty-radius-2);
+}
+
+.frame {
+  border: 1px solid var(--twenty-line);
+  border-radius: var(--twenty-radius-2);
+  background-color: var(--twenty-panel);
+}
+
+.frame > :is([class*='bg-grid'], .pointer-events-none) {
+  display: none;
+}
+
+.frame > .relative,
+.frame img {
+  border-radius: 0;
+}
+
 .callout[data-callout-type] {
   border-color: var(--twenty-line);
-  border-radius: var(--twenty-radius-1);
-  background-color: var(--twenty-wash);
+  border-radius: var(--twenty-radius-2);
+  background-color: var(--twenty-panel);
 }
 
-.callout [data-component-part='callout-content'] {
-  color: var(--twenty-ink);
-}
-
-.callout [data-component-part='callout-icon'] svg,
-.accordion [data-component-part='accordion-caret-right'] svg {
+.callout [data-component-part='callout-icon'] svg {
   color: var(--twenty-blue);
 }
 
 .card,
-#pagination a,
-.accordion-group,
-.accordion {
+#pagination a {
   border-color: var(--twenty-line);
-  border-radius: var(--twenty-radius-1);
+  border-radius: var(--twenty-radius-2);
   background-color: var(--twenty-surface);
-}
-
-.accordion-group > .accordion {
-  border-radius: 0;
-}
-
-.accordion,
-.accordion [data-component-part='accordion-button']:hover {
-  background-color: var(--twenty-wash);
 }
 
 #pagination a:hover {
@@ -122,15 +196,198 @@ kbd {
 
 .card [data-component-part='card-title'],
 #pagination [data-component-part='pagination-title'],
-.accordion [data-component-part='accordion-title'] {
+.documentation-card-title {
   color: var(--twenty-ink);
 }
 
-.card [data-component-part='card-content'] {
+.card [data-component-part='card-title'] {
+  font-weight: 500;
+}
+
+.documentation-card-title {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+}
+
+#content-area .card [data-component-part='card-content'],
+#pagination [data-component-part='pagination-title'] + div,
+#table-of-contents a,
+#footer a {
   color: var(--twenty-ink-muted);
 }
 
-.card [data-component-part='card-icon'] svg {
+:is(#table-of-contents, #footer) a:hover {
+  color: var(--twenty-ink);
+}
+
+.card [data-component-part='card-icon'] {
+  display: none;
+}
+
+.card:not(:has([data-component-part='card-image'])) [data-component-part='card-title'] ~ [data-component-part='card-content'] {
+  margin-top: var(--twenty-space-2);
+  padding-top: var(--twenty-space-2);
+  border-top: 1px dotted var(--twenty-divider);
+}
+
+.accordion-group {
+  overflow: visible;
+  border: 0 solid var(--twenty-line);
+  border-top-width: 1px;
+  border-radius: 0;
+  background: none;
+}
+
+.accordion {
+  border: 0 solid var(--twenty-line);
+  border-bottom-width: 1px;
+  border-radius: 0;
+  background: none;
+}
+
+.accordion:not(.accordion-group > .accordion, .accordion + .accordion) {
+  border-top-width: 1px;
+}
+
+.accordion:has(+ .accordion) {
+  margin-bottom: 0;
+}
+
+.accordion [data-component-part='accordion-button'] {
+  gap: var(--twenty-space-3);
+  padding: var(--twenty-space-4) 0;
+  background: none;
+}
+
+.accordion [data-component-part='accordion-button']:focus-visible {
+  outline: 1px solid var(--twenty-blue);
+  outline-offset: 1px;
+}
+
+.accordion [data-component-part='accordion-button']::before {
+  content: '';
+  flex: none;
+  width: 14px;
+  height: 7px;
+  border: 1px solid var(--twenty-ink);
+  border-radius: 1px;
+}
+
+.accordion[open] > [data-component-part='accordion-button']::before,
+.accordion [data-component-part='accordion-button']:hover::before {
+  background-color: var(--twenty-ink);
+}
+
+.accordion [data-component-part='accordion-caret-right'] {
+  order: 1;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--twenty-line-strong);
+  border-radius: var(--twenty-radius-2);
+  color: var(--twenty-ink-muted);
+}
+
+.accordion [data-component-part='accordion-caret-right'] svg {
+  display: none;
+}
+
+.accordion [data-component-part='accordion-caret-right']::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.accordion[open] > [data-component-part='accordion-button'] [data-component-part='accordion-caret-right']::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
+}
+
+.accordion [data-component-part='accordion-button']:hover [data-component-part='accordion-caret-right'] {
+  border-color: var(--twenty-ink);
+  color: var(--twenty-ink);
+}
+
+.accordion [data-component-part='accordion-title'] {
+  color: var(--twenty-ink-muted);
+  font-weight: 500;
+}
+
+.accordion[open] > [data-component-part='accordion-button'] [data-component-part='accordion-title'],
+.accordion [data-component-part='accordion-button']:hover [data-component-part='accordion-title'] {
+  color: var(--twenty-ink);
+}
+
+.accordion [data-component-part='accordion-content'] {
+  padding: 0 calc(24px + var(--twenty-space-3)) var(--twenty-space-4) calc(14px + var(--twenty-space-3));
+}
+
+.steps {
+  counter-reset: twenty-step;
+}
+
+.steps > .step {
+  counter-increment: twenty-step;
+}
+
+.steps [data-component-part='step-indicator'] {
+  border-radius: 0;
+  background: var(--twenty-surface);
+  color: var(--twenty-blue);
+  font-family: var(--twenty-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.steps [data-component-part='step-indicator'] > div {
+  display: none;
+}
+
+.steps [data-component-part='step-indicator']::before {
+  content: counter(twenty-step, decimal-leading-zero);
+}
+
+.steps [data-component-part='step-line'] {
+  background: var(--twenty-line-strong);
+}
+
+.steps .step:last-child [data-component-part='step-line'] {
+  background: linear-gradient(var(--twenty-line-strong), transparent);
+}
+
+.steps [data-component-part='step-title'] {
+  color: var(--twenty-ink);
+  font-weight: 500;
+}
+
+[data-component-part='tabs-list'] {
+  border-color: var(--twenty-line);
+}
+
+[data-component-part='tab-button'] {
+  position: relative;
+  border-bottom: 0;
+  color: var(--twenty-ink);
+  font-family: var(--twenty-font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+[data-component-part='tab-button']:is(:hover, [data-active='true']) {
+  color: var(--twenty-blue);
+}
+
+[data-component-part='tab-button'][data-active='true']::after {
+  content: '';
+  position: absolute;
+  top: calc(50% + 11px);
+  left: 40%;
+  width: 20%;
+  height: 2px;
   background-color: var(--twenty-blue);
 }
 
@@ -244,17 +501,6 @@ kbd {
   gap: 0;
 }
 
-#navbar nav ul {
-  --divided-gap: var(--twenty-space-8);
-  column-gap: 0;
-}
-
-@media (min-width: 64rem) and (max-width: 79.99rem) {
-  #navbar :is(.nav-tabs, nav ul) {
-    --divided-gap: var(--twenty-space-4);
-  }
-}
-
 #navbar .nav-tabs-item {
   color: var(--twenty-ink);
 }
@@ -273,12 +519,12 @@ kbd {
   background-color: var(--twenty-blue);
 }
 
-#navbar :is(.nav-tabs-item + .nav-tabs-item, .navbar-link:has(> a[href^='https://github.com']), .navbar-link:has(> a[href^='https://discord.gg'])) {
+#navbar .nav-tabs-item + .nav-tabs-item {
   position: relative;
   margin-left: calc(var(--divided-gap) * 2 + 1px);
 }
 
-#navbar :is(.nav-tabs-item + .nav-tabs-item, .navbar-link:has(> a[href^='https://github.com']), .navbar-link:has(> a[href^='https://discord.gg']))::before {
+#navbar .nav-tabs-item + .nav-tabs-item::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -287,48 +533,6 @@ kbd {
   height: 10px;
   transform: translateY(-50%);
   background-color: var(--twenty-divider);
-}
-
-#navbar .navbar-link > :is(a[href^='https://github.com'], a[href^='https://discord.gg']) {
-  gap: var(--twenty-space-2);
-  color: var(--twenty-ink);
-  font-family: var(--twenty-font-sans);
-  font-size: 12px;
-  font-weight: 500;
-}
-
-#navbar .navbar-link > :is(a[href^='https://github.com'], a[href^='https://discord.gg']):hover {
-  color: var(--twenty-blue);
-}
-
-#navbar .navbar-link > :is(a[href^='https://github.com'], a[href^='https://discord.gg']) svg {
-  width: 14px;
-  height: 14px;
-}
-
-#navbar .navbar-link > :is(a[href^='https://github.com'], a[href^='https://discord.gg']) > .truncate,
-#navbar .navbar-link > a[href^='https://github.com'] > span:last-child > svg,
-#navbar .navbar-link > a[href^='https://discord.gg'] > span:last-child > div,
-#navbar .navbar-link > a[data-community-count] > span:last-child {
-  display: none;
-}
-
-#navbar .navbar-link > :is(a[href^='https://github.com'], a[href^='https://discord.gg']) > span:last-child {
-  margin-left: 0;
-}
-
-#navbar .navbar-link > a[data-community-count]::before {
-  content: attr(data-community-count);
-  order: 1;
-}
-
-#navbar .navbar-link > :is(a[href^='https://github.com'], a[href^='https://discord.gg'])::after {
-  content: '';
-  order: 2;
-  width: 8px;
-  height: 8px;
-  background-color: var(--twenty-blue);
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' fill='none' viewBox='0 0 6.569 6.568'%3E%3Cpath d='M6.069.5.5 6.068M6.069.5H1.738m4.33 0v4.331' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-miterlimit='10'/%3E%3C/svg%3E") no-repeat center / contain;
 }
 
 #navbar .navbar-link:has(> a[href='https://app.twenty.com/welcome']) {
@@ -386,7 +590,7 @@ kbd {
   height: auto;
   padding: var(--twenty-space-2) var(--twenty-space-3);
   border: 1px solid var(--twenty-line-strong);
-  border-radius: var(--twenty-radius-1);
+  border-radius: var(--twenty-radius-2);
   background: none;
   color: var(--twenty-ink);
   font-family: var(--twenty-font-sans);
@@ -413,6 +617,27 @@ kbd {
   width: 12px;
   height: 12px;
   color: currentColor;
+}
+
+@supports (position-area: left center) {
+  #mobile-nav div:has(+ #navigation-items) > [role='group'] {
+    anchor-name: --mobile-nav-theme;
+  }
+
+  #mobile-nav [data-component-part='localization-select-trigger'] {
+    position: absolute;
+    position-anchor: --mobile-nav-theme;
+    position-area: left center;
+    height: var(--twenty-control-height);
+    margin-right: var(--twenty-space-2);
+    border: 0;
+  }
+}
+
+#mobile-nav #navigation-items > div:first-child > div > button[aria-haspopup='menu'] {
+  height: var(--twenty-control-height);
+  border-color: var(--twenty-line);
+  border-radius: var(--twenty-radius-1);
 }
 
 #localization-select-content {
@@ -453,13 +678,13 @@ kbd {
   height: auto;
   padding: 2px;
   border: 1px solid var(--twenty-line-strong);
-  border-radius: var(--twenty-radius-1);
+  border-radius: var(--twenty-radius-2);
 }
 
 :is(#sidebar-content, #mobile-nav) [data-switch='pill'] .switch-option {
   width: 26px;
   height: 26px;
-  border-radius: 0;
+  border-radius: var(--twenty-radius-1);
   color: var(--twenty-ink-subtle);
 }
 
@@ -482,7 +707,7 @@ div:has(> #search-bar-entry) {
 :is(#search-bar-entry, #assistant-entry) {
   height: var(--twenty-control-height);
   border: 1px solid var(--twenty-line-strong);
-  border-radius: var(--twenty-radius-1);
+  border-radius: var(--twenty-radius-2);
   background: none;
   box-shadow: none;
   filter: none;
@@ -532,7 +757,7 @@ div:has(> #search-bar-entry) {
 
 [data-search-item='header'] {
   border-color: var(--twenty-line-strong);
-  border-radius: var(--twenty-radius-1);
+  border-radius: var(--twenty-radius-2);
   background: none;
 }
 
@@ -556,7 +781,7 @@ div:has(> #search-bar-entry) {
 }
 
 [data-search-item='header-button'] {
-  border-radius: var(--twenty-radius-1);
+  border-radius: var(--twenty-radius-2);
   background: var(--twenty-wash);
   color: var(--twenty-ink-muted);
   font-family: var(--twenty-font-mono);
@@ -614,6 +839,35 @@ div:has(> #search-bar-entry) {
   color: var(--twenty-ink-subtle);
 }
 
+[data-assistant-bar] div:has(> div > #chat-assistant-textarea) {
+  border-color: var(--twenty-line-strong);
+  border-radius: var(--twenty-radius-2);
+  background-color: var(--twenty-surface);
+}
+
+#chat-assistant-textarea {
+  color: var(--twenty-ink);
+  font-family: var(--twenty-font-sans);
+}
+
+#chat-assistant-textarea::placeholder {
+  color: var(--twenty-ink-subtle);
+}
+
+#chat-assistant-textarea + span {
+  color: var(--twenty-ink-subtle);
+  font-family: var(--twenty-font-mono);
+  font-weight: 400;
+}
+
+[data-assistant-bar] .chat-assistant-send-button {
+  border-radius: var(--twenty-radius-1);
+}
+
+#table-of-contents button {
+  color: var(--twenty-ink);
+}
+
 #content ul:not([class]) > li::before {
   top: calc(0.5lh - var(--twenty-bullet-height) / 2);
   width: var(--twenty-bullet-width);
@@ -661,7 +915,7 @@ div:has(> #search-bar-entry) {
   padding: 0 var(--twenty-space-5);
   overflow: hidden;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--twenty-radius-2);
   background: none;
   color: var(--button-label);
   text-decoration: none;
@@ -743,7 +997,8 @@ div:has(> #search-bar-entry) {
   }
 }
 
-html:not(.dark) {
+html:not(.dark),
+html.dark {
   background-color: var(--twenty-surface) !important;
 }
 
@@ -804,9 +1059,9 @@ html:not(.dark) {
   height: 160px;
   padding: 24px;
   object-fit: contain;
-  border: 1px solid rgb(var(--gray-950) / 0.1);
+  border: 1px solid var(--twenty-line);
   border-radius: inherit;
-  background-color: rgb(var(--gray-50) / 0.5);
+  background-color: var(--twenty-panel);
   background-image: var(--card-background);
   background-position: center;
   background-size: cover;
@@ -815,7 +1070,7 @@ html:not(.dark) {
 }
 
 .documentation-card-group .card:is([href], [role='link']):is(:hover, :focus-within) img {
-  background-color: rgb(var(--background-light));
+  background-color: var(--twenty-surface);
 }
 
 .documentation-card-group--developers .card:nth-child(1) {
@@ -948,22 +1203,8 @@ html:not(.dark) {
   padding-block-start: 0.5rem;
 }
 
-.documentation-card-group .card [data-component-part='card-content'] {
-  color: rgb(var(--gray-500));
-}
-
 :is(.dark, [data-theme='dark']) .documentation-card-group .card img {
-  border-color: rgb(var(--gray-800));
-  background-color: rgb(var(--gray-900));
-  background-blend-mode: soft-light;
-}
-
-:is(.dark, [data-theme='dark']) .documentation-card-group .card:is([href], [role='link']):is(:hover, :focus-within) img {
-  background-color: rgb(var(--gray-800));
-}
-
-:is(.dark, [data-theme='dark']) .documentation-card-group .card [data-component-part='card-content'] {
-  color: rgb(var(--gray-400));
+  background-blend-mode: color-burn;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1002,9 +1243,9 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   height: 176px;
   padding: 16px 24px;
   margin-top: var(--twenty-space-6);
-  border: 1px solid rgb(var(--gray-950) / 0.1);
-  border-radius: var(--twenty-radius-1);
-  background-color: rgb(var(--gray-50) / 0.5);
+  border: 1px solid var(--twenty-line);
+  border-radius: var(--twenty-radius-2);
+  background-color: var(--twenty-panel);
   background-image: var(--page-banner-illustration), var(--page-banner-pattern);
   background-position: center;
   background-repeat: no-repeat;
@@ -1013,9 +1254,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 }
 
 :is(.dark, [data-theme='dark']) #content-area:has([data-page-banner]) #header > div:first-child::after {
-  border-color: rgb(var(--gray-800));
-  background-color: rgb(var(--gray-900));
-  background-blend-mode: normal, soft-light;
+  background-blend-mode: normal, color-burn;
 }
 
 #content-area:has([data-page-banner]) #header > div:first-child + div {
@@ -1094,6 +1333,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 
 #content-area:has([data-page-banner='meet-twenty']) {
   --page-banner-illustration: url('/images/documentation/banners/meet-twenty.png');
+  --page-banner-aspect-ratio: 1282 / 365;
 }
 
 #content-area:has([data-page-banner='user-guide']) {
@@ -1111,7 +1351,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 #content-area:has([data-page-banner='meet-twenty'], [data-page-banner='user-guide'], [data-page-banner='developers']) #header > div:first-child::after {
   box-sizing: content-box;
   height: auto;
-  aspect-ratio: 1282 / 334;
+  aspect-ratio: var(--page-banner-aspect-ratio, 1282 / 334);
   padding: var(--twenty-space-8) 0;
   background-size: cover;
   background-origin: content-box;
@@ -1128,7 +1368,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 }
 
 #content-area:has([data-page-banner='getting-started-data-model']) {
-  --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/data-model.svg');
+  --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
 }
 
@@ -1143,22 +1383,22 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 }
 
 #content-area:has([data-page-banner='getting-started-calendar-email']) {
-  --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/calendar-email.svg');
+  --page-banner-illustration: url('/images/documentation/banner-icons-v2/calendar-emails.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
 }
 
 #content-area:has([data-page-banner='getting-started-ai']) {
-  --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/ai.svg');
+  --page-banner-illustration: url('/images/documentation/banner-icons-v2/ai.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
 }
 
 #content-area:has([data-page-banner='getting-started-apps']) {
-  --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/apps.svg');
+  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-apps.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
 }
 
 #content-area:has([data-page-banner='getting-started-dashboards']) {
-  --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/dashboards.svg');
+  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dashboards.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-dashboards.svg');
 }
 
@@ -1219,5 +1459,255 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 
 #content-area:has([data-page-banner='section-ui-primitives']) {
   --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/ui-primitives.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
+}
+
+#content-area:has([data-page-banner='card-page-pricing-plans']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-pricing-plans.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
+}
+
+#content-area:has([data-page-banner='card-page-usage-limits']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-usage-limits.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
+}
+
+#content-area:has([data-page-banner='card-page-billing-faq']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-billing-faq.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
+}
+
+#content-area:has([data-page-banner='card-page-sending-domain']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-sending-domain.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+}
+
+#content-area:has([data-page-banner='card-page-first-campaign']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-first-campaign.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+}
+
+#content-area:has([data-page-banner='card-page-ai-campaign']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-ai-campaign.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+}
+
+#content-area:has([data-page-banner='card-page-campaign-practices']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-campaign-practices.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+}
+
+#content-area:has([data-page-banner='card-page-permissions']) {
+  --page-banner-illustration: url('/images/documentation/banner-icons-v2/permissions.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+}
+
+#content-area:has([data-page-banner='card-page-sso']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-sso.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+}
+
+#content-area:has([data-page-banner='card-page-permissions-faq']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-permissions-faq.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+}
+
+#content-area:has([data-page-banner='card-page-bug-requests']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-bug-requests.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-frontend-architecture']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-frontend-architecture.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-application-config']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-application-config.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-roles']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-roles.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-install-hooks']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-install-hooks.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-objects']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-objects.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-extending-objects']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-extending-objects.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-relations']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-relations.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-timeline']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-timeline.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-views']) {
+  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/views-pipelines.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-navigation']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-navigation.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-page-layouts']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-page-layouts.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-front-components']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-front-components.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-command-menu']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-command-menu.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-logic-functions']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-logic-functions.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-skills-agents']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-skills-agents.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-workflows']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/workflows-belt-v1.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-connections']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-connections.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-messaging-channels']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-messaging-channels.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-key-value-store']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-key-value-store.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-background-jobs']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-background-jobs.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-charging-credits']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-charging-credits.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-cli']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-cli.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-sync-recovery']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-sync-recovery.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-testing']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-testing.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-translations']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-translations.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-publishing']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-publishing.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-monitoring']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-monitoring.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-tutorial-publishing']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-publishing.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-tutorial-agent']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-skills-agents.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-tutorial-documents']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-documents.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-tutorial-http']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-http.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-tutorial-ui']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-ui.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-tutorial-data']) {
+  --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-webhooks']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/card-page-webhooks.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+}
+
+#content-area:has([data-page-banner='card-page-export-data']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/no-lock-in.png');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/getting-started-no-lock-in.svg');
+}
+
+#content-area:has([data-page-banner='card-page-self-host-guide']) {
+  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-self-host.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
+}
+
+#content-area:has([data-page-banner='card-page-ui-library']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+}
+
+#content-area:has([data-page-banner='community-certified-partners']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/community-certified-partners.svg');
+  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+}
+
+#content-area:has([data-page-banner='community-reverse-proxy']) {
+  --page-banner-illustration: url('/images/user-guide/halftone/community-reverse-proxy.svg');
   --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
 }

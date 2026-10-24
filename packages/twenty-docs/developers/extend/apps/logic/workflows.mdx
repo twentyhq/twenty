@@ -3,6 +3,8 @@ title: Workflows
 description: Ship ready-made workflows with your app.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Apps can ship workflows. Each `defineWorkflow()` call describes one workflow: a trigger and the steps it runs. On install, Twenty creates it as an active workflow in the workspace, ready to run.
 
 ## Define a workflow
@@ -106,3 +108,5 @@ Their inputs match the steps of the [workflow builder](/user-guide/workflows/cap
 - The workflow is active as soon as the app is installed, and its runs appear with the workspace's other workflow runs.
 - Installing a new version of the app updates the workflow in place.
 - Users can't edit an installed workflow. To customize one, they duplicate it: the copy is theirs to edit.
+
+<PageBanner illustration="card-page-workflows" />
