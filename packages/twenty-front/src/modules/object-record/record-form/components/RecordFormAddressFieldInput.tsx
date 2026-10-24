@@ -166,6 +166,7 @@ export const RecordFormAddressFieldInput = ({
                 label={t`Country`}
                 selectedCountryName={address.addressCountry ?? ''}
                 onChange={handleSubFieldChange('addressCountry')}
+                dropdownId={`${instanceId}-country`}
               />
             )}
           </StyledRecordFormFieldDetails>
