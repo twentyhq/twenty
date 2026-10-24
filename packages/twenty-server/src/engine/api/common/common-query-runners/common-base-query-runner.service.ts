@@ -316,9 +316,12 @@ export abstract class CommonBaseQueryRunnerService<
     queryRunnerContext,
   }: {
     args: CommonExtendedInput<Args>;
-    queryRunnerContext: Omit<
+    queryRunnerContext: Pick<
       CommonExtendedQueryRunnerContext,
-      'commonQueryParser'
+      | 'flatObjectMetadata'
+      | 'flatObjectMetadataMaps'
+      | 'flatFieldMetadataMaps'
+      | 'repository'
     >;
   }): CommonExtendedInput<Args> {
     return {
