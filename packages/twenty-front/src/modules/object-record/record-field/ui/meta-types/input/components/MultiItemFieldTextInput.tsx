@@ -1,18 +1,23 @@
 import { getMultiItemInputKeyDownHandler } from '@/object-record/record-field/ui/meta-types/input/utils/getMultiItemInputKeyDownHandler';
+import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { styled } from '@linaria/react';
 import { type FocusEvent, type Ref } from 'react';
 import { Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledInputContent = styled.div<{ isInRow: boolean }>`
+const StyledInputContent = styled.div<{
+  spacing: MultiItemFieldInputSpacing;
+}>`
   align-items: center;
   align-self: stretch;
   box-sizing: border-box;
   display: flex;
   flex: 1;
   min-width: 0;
-  padding-inline-start: ${({ isInRow }) =>
-    isInRow ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
+  padding-inline-start: ${({ spacing }) =>
+    spacing === 'compact'
+      ? themeCssVariables.spacing[1]
+      : themeCssVariables.spacing[2]};
 `;
 
 type MultiItemFieldTextInputProps = {
@@ -21,7 +26,7 @@ type MultiItemFieldTextInputProps = {
   placeholder?: string;
   autoFocus?: boolean;
   hasError?: boolean;
-  isInRow?: boolean;
+  spacing?: MultiItemFieldInputSpacing;
   onEnter?: () => void;
   onEscape?: () => void;
   onTab?: () => void;
@@ -38,7 +43,7 @@ export const MultiItemFieldTextInput = ({
   placeholder,
   autoFocus,
   hasError = false,
-  isInRow = false,
+  spacing = 'default',
   onEnter,
   onEscape,
   onTab,
@@ -48,7 +53,7 @@ export const MultiItemFieldTextInput = ({
   onBlur,
   ref,
 }: MultiItemFieldTextInputProps) => (
-  <StyledInputContent isInRow={isInRow}>
+  <StyledInputContent spacing={spacing}>
     <Input
       variant="plain"
       hasFocusRing={false}

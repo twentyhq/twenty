@@ -8,19 +8,19 @@ import { FilesFieldLabelInput } from '@/object-record/record-field/ui/meta-types
 import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
 import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
+import { MultiItemFieldList } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldList';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
-import { MultiItemFieldSearchHeader } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSearchHeader';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
-import { useMultiItemDraft } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemDraft';
 import { useMultiItemFieldDismiss } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemFieldDismiss';
+import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemSearch';
+import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
+import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
 import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { filesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/filesFieldValueSchema';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
-import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
-import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -86,6 +86,10 @@ export const FilesFieldInput = () => {
   };
 
   const handleSubmit = (updatedFiles: FieldFilesValue[]) => {
+    if (isDeeplyEqual(files, updatedFiles)) {
+      return;
+    }
+
     onSubmit?.({
       newValue: parseFilesArrayToFilesValue(updatedFiles),
       skipClose: true,
@@ -97,7 +101,7 @@ export const FilesFieldInput = () => {
       return;
     }
 
-    const currentFiles = commitEditedItem();
+    const currentFiles = commitEditedItemInPlace();
 
     if (!isDefined(currentFiles)) {
       return;
@@ -161,30 +165,26 @@ export const FilesFieldInput = () => {
     );
   };
 
+  const isSingleItemMode = maxNumberOfValues === 1;
+  const isLimitReached = files.length >= maxNumberOfValues;
+
   const {
-    isInputDisplayed,
+    inputTarget,
     inputValue,
-    editedItemIndex,
-    isEditingItemInPlace,
     hasError,
-    isSingleItemMode,
-    isLimitReached,
+    openInput,
     handleInputChange,
-    startEditing,
-    closeInput,
-    resetInputForItems,
-    commitInput,
-    commitEditedItem,
-  } = useMultiItemDraft({
+    validateInputValue,
+  } = useMultiItemInput({
     items: files,
-    onItemsChange: handleChange,
-    onItemsSubmit: handleSubmit,
     getItemText: getFileText,
+    initialInputTarget: getInitialMultiItemInputTarget({
+      itemCount: files.length,
+      isSingleItemMode,
+      shouldOpenWhenEmpty: false,
+    }),
     validateInput: validateFileLabel,
-    formatInput: formatFileLabelInputOrThrow,
-    maxItemCount: maxNumberOfValues,
-    shouldOpenInputWhenEmpty: false,
-    onError: (hasError) =>
+    onHasErrorChange: (hasError) =>
       setRecordFieldInputIsFieldInError(hasError && files.length === 0),
   });
 
@@ -195,17 +195,58 @@ export const FilesFieldInput = () => {
     filteredItemEntries,
   } = useMultiItemSearch({ items: files, getItemText: getFileText });
 
-  const handleInputEnter = () => {
-    const updatedItems = commitInput();
+  const isInputDisplayed = inputTarget.type !== 'closed';
+  const editedItemIndex =
+    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
+  const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-    if (!isDefined(updatedItems)) {
+  const closeInput = () => openInput({ type: 'closed' });
+
+  const commitInput = () => {
+    const sanitizedInput = validateInputValue();
+
+    if (!isDefined(sanitizedInput)) {
+      return null;
+    }
+
+    const updatedFiles = computeUpdatedMultiItemFieldItems({
+      sanitizedInput,
+      items: files,
+      editingIndex: editedItemIndex,
+      singleItemMode: isSingleItemMode,
+      formatInput: formatFileLabelInputOrThrow,
+    });
+
+    handleChange(updatedFiles);
+
+    return updatedFiles;
+  };
+
+  const commitEditedItemInPlace = () => {
+    if (!isEditingItemInPlace) {
+      return files;
+    }
+
+    const updatedFiles = commitInput();
+
+    if (isDefined(updatedFiles)) {
+      handleSubmit(updatedFiles);
+    }
+
+    return updatedFiles;
+  };
+
+  const handleInputEnter = () => {
+    const updatedFiles = commitInput();
+
+    if (!isDefined(updatedFiles)) {
       return;
     }
 
     if (isSingleItemMode) {
-      onEnter?.({ newValue: parseFilesArrayToFilesValue(updatedItems) });
-    } else if (!isDeeplyEqual(files, updatedItems)) {
-      handleSubmit(updatedItems);
+      onEnter?.({ newValue: parseFilesArrayToFilesValue(updatedFiles) });
+    } else {
+      handleSubmit(updatedFiles);
     }
 
     closeInput();
@@ -219,14 +260,14 @@ export const FilesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = isInputDisplayed ? commitInput() : files;
+      const updatedFiles = isInputDisplayed ? commitInput() : files;
 
-      if (!isDefined(updatedItems)) {
+      if (!isDefined(updatedFiles)) {
         return;
       }
 
       onClickOutside?.({
-        newValue: parseFilesArrayToFilesValue(updatedItems),
+        newValue: parseFilesArrayToFilesValue(updatedFiles),
         event,
       });
     },
@@ -237,7 +278,7 @@ export const FilesFieldInput = () => {
 
     handleChange(updatedFiles);
     handleSubmit(updatedFiles);
-    resetInputForItems(updatedFiles);
+    closeInput();
   };
 
   const handlePreview = (file: FieldFilesValue) => {
@@ -253,15 +294,15 @@ export const FilesFieldInput = () => {
     isNonEmptyArray(filteredItemEntries) &&
     (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const visibleItemCount = visibleItemEntries?.length ?? 0;
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
-  const shouldShowUploadButton = !shouldShowInputInFooter && !isLimitReached;
-  const editedFile = files[editedItemIndex];
+  const editedFile = isDefined(editedItemIndex)
+    ? files[editedItemIndex]
+    : undefined;
 
   const fileLabelInput = isDefined(editedFile) && (
     <MultiItemFieldInputRow
-      isInRow={isEditingItemInPlace}
-      isInFooter={shouldShowInputInFooter}
+      spacing={isEditingItemInPlace ? 'compact' : 'default'}
+      hasPadding={shouldShowInputInFooter && shouldShowItems}
       rightComponent={
         <MultiItemFieldSaveButton
           isAddingNewItem={false}
@@ -281,38 +322,28 @@ export const FilesFieldInput = () => {
   );
 
   return (
-    <OverlayMenuList
+    <MultiItemFieldList
       ref={containerRef}
-      header={
-        shouldShowSearch && !isInputDisplayed ? (
-          <MultiItemFieldSearchHeader
-            value={searchFilter}
-            onChange={setSearchFilter}
+      hasItems={shouldShowItems}
+      shouldShowSearch={shouldShowSearch && !isInputDisplayed}
+      searchFilter={searchFilter}
+      onSearchFilterChange={setSearchFilter}
+      footerInput={shouldShowInputInFooter ? fileLabelInput : undefined}
+      addButton={
+        !shouldShowInputInFooter && !isLimitReached ? (
+          <MultiItemFieldAddButton
+            label={isUploading ? t`Uploading...` : t`Upload file`}
+            onClick={handleUploadClick}
           />
         ) : undefined
       }
-      footer={
-        <>
-          {shouldShowItems &&
-            (shouldShowInputInFooter || shouldShowUploadButton) && (
-              <OverlayMenuListSeparator />
-            )}
-          {shouldShowInputInFooter && fileLabelInput}
-          {shouldShowUploadButton && (
-            <MultiItemFieldAddButton
-              label={isUploading ? t`Uploading...` : t`Upload file`}
-              onClick={handleUploadClick}
-            />
-          )}
-        </>
-      }
     >
-      {visibleItemEntries?.map(({ item: file, index }, position) =>
-        isEditingItemInPlace && index === editedItemIndex ? (
+      {visibleItemEntries?.map(({ item: file, index }, position, entries) =>
+        index === editedItemIndex && isEditingItemInPlace ? (
           <MultiItemFieldEditedItem
             key={file.fileId}
             hasSeparatorBefore={position > 0}
-            hasSeparatorAfter={position < visibleItemCount - 1}
+            hasSeparatorAfter={position < entries.length - 1}
           >
             {fileLabelInput}
           </MultiItemFieldEditedItem>
@@ -321,12 +352,14 @@ export const FilesFieldInput = () => {
             key={file.fileId}
             dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
             file={file}
-            onEdit={() => startEditing(index)}
+            onEdit={() =>
+              openInput({ type: 'existing-item', itemIndex: index })
+            }
             onDelete={() => handleDelete(index)}
             onClick={() => handlePreview(file)}
           />
         ),
       )}
-    </OverlayMenuList>
+    </MultiItemFieldList>
   );
 };

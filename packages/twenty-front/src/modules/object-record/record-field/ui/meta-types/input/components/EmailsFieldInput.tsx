@@ -4,26 +4,27 @@ import { EmailsFieldMenuItem } from '@/object-record/record-field/ui/meta-types/
 import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
 import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
+import { MultiItemFieldList } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldList';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
-import { MultiItemFieldSearchHeader } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSearchHeader';
 import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
-import { useMultiItemDraft } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemDraft';
 import { useMultiItemFieldDismiss } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemFieldDismiss';
+import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemSearch';
+import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
+import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
+import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { emailsFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/emailsFieldValueSchema';
-import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
-import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useRef } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { emailSchema, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
-import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const getEmailText = (email: string) => email;
@@ -77,6 +78,10 @@ export const EmailsFieldInput = () => {
   };
 
   const handleSubmit = (updatedEmails: string[]) => {
+    if (isDeeplyEqual(emails, updatedEmails)) {
+      return;
+    }
+
     onSubmit?.({
       newValue: parseStringArrayToEmailsValue(updatedEmails),
       skipClose: true,
@@ -90,30 +95,25 @@ export const EmailsFieldInput = () => {
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
+  const isSingleItemMode = maxNumberOfValues === 1;
+  const isLimitReached = emails.length >= maxNumberOfValues;
 
   const {
-    isInputDisplayed,
+    inputTarget,
     inputValue,
-    isAddingNewItem,
-    editedItemIndex,
-    isEditingItemInPlace,
     hasError,
-    isSingleItemMode,
-    isLimitReached,
+    openInput,
     handleInputChange,
-    startAdding,
-    startEditing,
-    closeInput,
-    resetInputForItems,
-    commitInput,
-  } = useMultiItemDraft({
+    validateInputValue,
+  } = useMultiItemInput({
     items: emails,
-    onItemsChange: handleChange,
-    onItemsSubmit: handleSubmit,
     getItemText: getEmailText,
+    initialInputTarget: getInitialMultiItemInputTarget({
+      itemCount: emails.length,
+      isSingleItemMode,
+    }),
     validateInput: validateEmail,
-    maxItemCount: maxNumberOfValues,
-    onError: (hasError) =>
+    onHasErrorChange: (hasError) =>
       setRecordFieldInputIsFieldInError(hasError && emails.length === 0),
   });
 
@@ -124,20 +124,61 @@ export const EmailsFieldInput = () => {
     filteredItemEntries,
   } = useMultiItemSearch({ items: emails, getItemText: getEmailText });
 
-  const handleInputEnter = () => {
-    const updatedItems = commitInput();
+  const isInputDisplayed = inputTarget.type !== 'closed';
+  const editedItemIndex =
+    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
+  const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-    if (!isDefined(updatedItems)) {
+  const closeInput = () => openInput({ type: 'closed' });
+
+  const commitInput = () => {
+    const sanitizedInput = validateInputValue();
+
+    if (!isDefined(sanitizedInput)) {
+      return null;
+    }
+
+    const updatedEmails = computeUpdatedMultiItemFieldItems({
+      sanitizedInput,
+      items: emails,
+      editingIndex: editedItemIndex,
+      singleItemMode: isSingleItemMode,
+    });
+
+    handleChange(updatedEmails);
+
+    return updatedEmails;
+  };
+
+  const handleInputEnter = () => {
+    const updatedEmails = commitInput();
+
+    if (!isDefined(updatedEmails)) {
       return;
     }
 
     if (isSingleItemMode) {
-      onEnter?.({ newValue: parseStringArrayToEmailsValue(updatedItems) });
-    } else if (!isDeeplyEqual(emails, updatedItems)) {
-      handleSubmit(updatedItems);
+      onEnter?.({ newValue: parseStringArrayToEmailsValue(updatedEmails) });
+    } else {
+      handleSubmit(updatedEmails);
     }
 
     closeInput();
+  };
+
+  const handleAddClick = () => {
+    if (isEditingItemInPlace) {
+      const updatedEmails = commitInput();
+
+      if (!isDefined(updatedEmails)) {
+        return;
+      }
+
+      handleSubmit(updatedEmails);
+    }
+
+    setSearchFilter('');
+    openInput({ type: 'new-item' });
   };
 
   const handleEscape = () => {
@@ -148,14 +189,14 @@ export const EmailsFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = isInputDisplayed ? commitInput() : emails;
+      const updatedEmails = isInputDisplayed ? commitInput() : emails;
 
-      if (!isDefined(updatedItems)) {
+      if (!isDefined(updatedEmails)) {
         return;
       }
 
       onClickOutside?.({
-        newValue: parseStringArrayToEmailsValue(updatedItems),
+        newValue: parseStringArrayToEmailsValue(updatedEmails),
         event,
       });
     },
@@ -180,7 +221,11 @@ export const EmailsFieldInput = () => {
 
     handleChange(updatedEmails);
     handleSubmit(updatedEmails);
-    resetInputForItems(updatedEmails);
+    openInput(
+      isNonEmptyArray(updatedEmails)
+        ? { type: 'closed' }
+        : { type: 'new-item' },
+    );
   };
 
   const handleCopy = (email: string) => {
@@ -191,19 +236,18 @@ export const EmailsFieldInput = () => {
     isNonEmptyArray(filteredItemEntries) &&
     (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const visibleItemCount = visibleItemEntries?.length ?? 0;
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
-  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
-  const isInputInRow = isNonEmptyArray(emails) && !isSingleItemMode;
+  const inputSpacing: MultiItemFieldInputSpacing =
+    isNonEmptyArray(emails) && !isSingleItemMode ? 'compact' : 'default';
 
   const itemInput = (
     <MultiItemFieldInputRow
-      isInRow={isInputInRow}
-      isInFooter={shouldShowInputInFooter}
+      spacing={inputSpacing}
+      hasPadding={shouldShowInputInFooter && shouldShowItems}
       rightComponent={
         isNonEmptyArray(emails) ? (
           <MultiItemFieldSaveButton
-            isAddingNewItem={isAddingNewItem}
+            isAddingNewItem={inputTarget.type === 'new-item'}
             onClick={handleInputEnter}
           />
         ) : undefined
@@ -211,7 +255,7 @@ export const EmailsFieldInput = () => {
     >
       <MultiItemFieldTextInput
         autoFocus
-        isInRow={isInputInRow}
+        spacing={inputSpacing}
         placeholder={t`Email`}
         value={inputValue}
         hasError={hasError}
@@ -224,38 +268,28 @@ export const EmailsFieldInput = () => {
   );
 
   return (
-    <OverlayMenuList
+    <MultiItemFieldList
       ref={containerRef}
-      header={
-        shouldShowSearch && !isInputDisplayed ? (
-          <MultiItemFieldSearchHeader
-            value={searchFilter}
-            onChange={setSearchFilter}
+      hasItems={shouldShowItems}
+      shouldShowSearch={shouldShowSearch && !isInputDisplayed}
+      searchFilter={searchFilter}
+      onSearchFilterChange={setSearchFilter}
+      footerInput={shouldShowInputInFooter ? itemInput : undefined}
+      addButton={
+        !shouldShowInputInFooter && !isLimitReached ? (
+          <MultiItemFieldAddButton
+            label={t`Add Email`}
+            onClick={handleAddClick}
           />
         ) : undefined
       }
-      footer={
-        <>
-          {shouldShowItems &&
-            (shouldShowInputInFooter || shouldShowAddButton) && (
-              <OverlayMenuListSeparator />
-            )}
-          {shouldShowInputInFooter && itemInput}
-          {shouldShowAddButton && (
-            <MultiItemFieldAddButton
-              label={t`Add Email`}
-              onClick={startAdding}
-            />
-          )}
-        </>
-      }
     >
-      {visibleItemEntries?.map(({ item: email, index }, position) =>
-        isEditingItemInPlace && index === editedItemIndex ? (
+      {visibleItemEntries?.map(({ item: email, index }, position, entries) =>
+        index === editedItemIndex && isEditingItemInPlace ? (
           <MultiItemFieldEditedItem
             key={index}
             hasSeparatorBefore={position > 0}
-            hasSeparatorAfter={position < visibleItemCount - 1}
+            hasSeparatorAfter={position < entries.length - 1}
           >
             {itemInput}
           </MultiItemFieldEditedItem>
@@ -267,13 +301,15 @@ export const EmailsFieldInput = () => {
             showSetAsPrimaryButton={index > 0}
             showCopyButton={true}
             email={email}
-            onEdit={() => startEditing(index)}
+            onEdit={() =>
+              openInput({ type: 'existing-item', itemIndex: index })
+            }
             onSetAsPrimary={() => handleSetAsPrimary(index)}
             onDelete={() => handleDelete(index)}
             onCopy={handleCopy}
           />
         ),
       )}
-    </OverlayMenuList>
+    </MultiItemFieldList>
   );
 };

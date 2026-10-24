@@ -39,7 +39,7 @@ export const FilesFieldLabelInput = ({
     />
     <MultiItemFieldTextInput
       autoFocus
-      isInRow
+      spacing="compact"
       value={value}
       hasError={hasError}
       onChange={onChange}

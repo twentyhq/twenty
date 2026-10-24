@@ -4,16 +4,17 @@ import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/i
 import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
 import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
+import { MultiItemFieldList } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldList';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
-import { MultiItemFieldSearchHeader } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSearchHeader';
 import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
-import { useMultiItemDraft } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemDraft';
 import { useMultiItemFieldDismiss } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemFieldDismiss';
+import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemSearch';
+import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
+import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
+import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { arrayFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/arrayFieldValueSchema';
-import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
-import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo, useRef } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
@@ -54,6 +55,10 @@ export const ArrayFieldInput = () => {
   };
 
   const handleSubmit = (updatedItems: string[]) => {
+    if (isDeeplyEqual(arrayItems, updatedItems)) {
+      return;
+    }
+
     onSubmit?.({
       newValue: parseStringArrayToArrayValue(updatedItems),
       skipClose: true,
@@ -63,28 +68,23 @@ export const ArrayFieldInput = () => {
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
+  const isSingleItemMode = maxNumberOfValues === 1;
+  const isLimitReached = arrayItems.length >= maxNumberOfValues;
 
   const {
-    isInputDisplayed,
+    inputTarget,
     inputValue,
-    isAddingNewItem,
-    editedItemIndex,
-    isEditingItemInPlace,
     hasError,
-    isSingleItemMode,
-    isLimitReached,
+    openInput,
     handleInputChange,
-    startAdding,
-    startEditing,
-    closeInput,
-    resetInputForItems,
-    commitInput,
-  } = useMultiItemDraft({
+    validateInputValue,
+  } = useMultiItemInput({
     items: arrayItems,
-    onItemsChange: handleChange,
-    onItemsSubmit: handleSubmit,
     getItemText: getArrayItemText,
-    maxItemCount: maxNumberOfValues,
+    initialInputTarget: getInitialMultiItemInputTarget({
+      itemCount: arrayItems.length,
+      isSingleItemMode,
+    }),
   });
 
   const {
@@ -93,6 +93,32 @@ export const ArrayFieldInput = () => {
     shouldShowSearch,
     filteredItemEntries,
   } = useMultiItemSearch({ items: arrayItems, getItemText: getArrayItemText });
+
+  const isInputDisplayed = inputTarget.type !== 'closed';
+  const editedItemIndex =
+    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
+  const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
+
+  const closeInput = () => openInput({ type: 'closed' });
+
+  const commitInput = () => {
+    const sanitizedInput = validateInputValue();
+
+    if (!isDefined(sanitizedInput)) {
+      return null;
+    }
+
+    const updatedItems = computeUpdatedMultiItemFieldItems({
+      sanitizedInput,
+      items: arrayItems,
+      editingIndex: editedItemIndex,
+      singleItemMode: isSingleItemMode,
+    });
+
+    handleChange(updatedItems);
+
+    return updatedItems;
+  };
 
   const handleInputEnter = () => {
     const updatedItems = commitInput();
@@ -103,11 +129,26 @@ export const ArrayFieldInput = () => {
 
     if (isSingleItemMode) {
       onEnter?.({ newValue: parseStringArrayToArrayValue(updatedItems) });
-    } else if (!isDeeplyEqual(arrayItems, updatedItems)) {
+    } else {
       handleSubmit(updatedItems);
     }
 
     closeInput();
+  };
+
+  const handleAddClick = () => {
+    if (isEditingItemInPlace) {
+      const updatedItems = commitInput();
+
+      if (!isDefined(updatedItems)) {
+        return;
+      }
+
+      handleSubmit(updatedItems);
+    }
+
+    setSearchFilter('');
+    openInput({ type: 'new-item' });
   };
 
   const handleEscape = () => {
@@ -136,26 +177,27 @@ export const ArrayFieldInput = () => {
 
     handleChange(updatedItems);
     handleSubmit(updatedItems);
-    resetInputForItems(updatedItems);
+    openInput(
+      isNonEmptyArray(updatedItems) ? { type: 'closed' } : { type: 'new-item' },
+    );
   };
 
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
     (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const visibleItemCount = visibleItemEntries?.length ?? 0;
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
-  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
-  const isInputInRow = isNonEmptyArray(arrayItems) && !isSingleItemMode;
+  const inputSpacing: MultiItemFieldInputSpacing =
+    isNonEmptyArray(arrayItems) && !isSingleItemMode ? 'compact' : 'default';
 
   const itemInput = (
     <MultiItemFieldInputRow
-      isInRow={isInputInRow}
-      isInFooter={shouldShowInputInFooter}
+      spacing={inputSpacing}
+      hasPadding={shouldShowInputInFooter && shouldShowItems}
       rightComponent={
         isNonEmptyArray(arrayItems) ? (
           <MultiItemFieldSaveButton
-            isAddingNewItem={isAddingNewItem}
+            isAddingNewItem={inputTarget.type === 'new-item'}
             onClick={handleInputEnter}
           />
         ) : undefined
@@ -163,7 +205,7 @@ export const ArrayFieldInput = () => {
     >
       <MultiItemFieldTextInput
         autoFocus
-        isInRow={isInputInRow}
+        spacing={inputSpacing}
         placeholder={t`Enter value`}
         value={inputValue}
         hasError={hasError}
@@ -176,38 +218,28 @@ export const ArrayFieldInput = () => {
   );
 
   return (
-    <OverlayMenuList
+    <MultiItemFieldList
       ref={containerRef}
-      header={
-        shouldShowSearch && !isInputDisplayed ? (
-          <MultiItemFieldSearchHeader
-            value={searchFilter}
-            onChange={setSearchFilter}
+      hasItems={shouldShowItems}
+      shouldShowSearch={shouldShowSearch && !isInputDisplayed}
+      searchFilter={searchFilter}
+      onSearchFilterChange={setSearchFilter}
+      footerInput={shouldShowInputInFooter ? itemInput : undefined}
+      addButton={
+        !shouldShowInputInFooter && !isLimitReached ? (
+          <MultiItemFieldAddButton
+            label={t`Add Item`}
+            onClick={handleAddClick}
           />
         ) : undefined
       }
-      footer={
-        <>
-          {shouldShowItems &&
-            (shouldShowInputInFooter || shouldShowAddButton) && (
-              <OverlayMenuListSeparator />
-            )}
-          {shouldShowInputInFooter && itemInput}
-          {shouldShowAddButton && (
-            <MultiItemFieldAddButton
-              label={t`Add Item`}
-              onClick={startAdding}
-            />
-          )}
-        </>
-      }
     >
-      {visibleItemEntries?.map(({ item, index }, position) =>
-        isEditingItemInPlace && index === editedItemIndex ? (
+      {visibleItemEntries?.map(({ item, index }, position, entries) =>
+        index === editedItemIndex && isEditingItemInPlace ? (
           <MultiItemFieldEditedItem
             key={index}
             hasSeparatorBefore={position > 0}
-            hasSeparatorAfter={position < visibleItemCount - 1}
+            hasSeparatorAfter={position < entries.length - 1}
           >
             {itemInput}
           </MultiItemFieldEditedItem>
@@ -216,11 +248,13 @@ export const ArrayFieldInput = () => {
             key={index}
             dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
             value={item}
-            onEdit={() => startEditing(index)}
+            onEdit={() =>
+              openInput({ type: 'existing-item', itemIndex: index })
+            }
             onDelete={() => handleDelete(index)}
           />
         ),
       )}
-    </OverlayMenuList>
+    </MultiItemFieldList>
   );
 };
