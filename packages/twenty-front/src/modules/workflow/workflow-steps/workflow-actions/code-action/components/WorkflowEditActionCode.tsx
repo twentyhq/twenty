@@ -3,7 +3,7 @@ import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionFo
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
-import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { useGetUpdatableWorkflowVersionStepOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionStepOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
@@ -24,7 +24,6 @@ import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components
 import { WorkflowCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
-import { useSaveCodeStepSourceToDraft } from '@/workflow/workflow-steps/workflow-actions/code-action/hooks/useSaveCodeStepSourceToDraft';
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
@@ -100,9 +99,8 @@ export const WorkflowEditActionCode = ({
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { getUpdatableWorkflowVersion } =
-    useGetUpdatableWorkflowVersionOrThrow();
-  const { saveCodeStepSourceToDraft } = useSaveCodeStepSourceToDraft();
+  const { getUpdatableWorkflowVersionStep } =
+    useGetUpdatableWorkflowVersionStepOrThrow();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -146,10 +144,10 @@ export const WorkflowEditActionCode = ({
   const handleUpdateFunctionInputSchema = useDebouncedCallback(
     async ({
       inferredJsonSchema,
-      step = action,
+      logicFunctionId: updatableLogicFunctionId,
     }: {
       inferredJsonSchema: InputJsonSchema;
-      step?: WorkflowCodeAction;
+      logicFunctionId: string;
     }) => {
       if (actionOptions.readonly === true) {
         return;
@@ -161,7 +159,7 @@ export const WorkflowEditActionCode = ({
 
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
-        oldInput: step.settings.input.logicFunctionInput,
+        oldInput: action.settings.input.logicFunctionInput,
       });
 
       const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
@@ -174,9 +172,9 @@ export const WorkflowEditActionCode = ({
       updateLogicFunctionInput(newMergedTestInput);
 
       updateAction({
-        ...step,
+        ...action,
         settings: {
-          ...step.settings,
+          ...action.settings,
           outputSchema: {
             link: {
               isLeaf: true,
@@ -187,7 +185,8 @@ export const WorkflowEditActionCode = ({
             _outputSchemaType: 'LINK',
           },
           input: {
-            ...step.settings.input,
+            ...action.settings.input,
+            logicFunctionId: updatableLogicFunctionId,
             logicFunctionInput: newMergedInput,
           },
         },
@@ -287,31 +286,20 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    if (workflow.currentVersion.status !== 'DRAFT') {
-      const { draftStep, inferredJsonSchema } = await saveCodeStepSourceToDraft(
-        {
-          stepId: action.id,
-          sourceHandlerCode: newCode,
-          toolTriggerSettings: formValues.toolTriggerSettings,
-          workflowActionTriggerSettings:
-            formValues.workflowActionTriggerSettings,
-        },
-      );
+    const updatableLogicFunctionId = getUpdatableWorkflowVersionStep({
+      stepId: action.id,
+      stepType: 'CODE',
+    }).then((step) => step.settings.input.logicFunctionId);
 
-      await handleUpdateFunctionInputSchema({
-        inferredJsonSchema,
-        step: draftStep,
-      });
-
-      return;
-    }
-
-    const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode);
-
-    await getUpdatableWorkflowVersion();
+    const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode, {
+      getTargetLogicFunctionId: () => updatableLogicFunctionId,
+    });
 
     if (isDefined(inferredJsonSchema)) {
-      await handleUpdateFunctionInputSchema({ inferredJsonSchema });
+      await handleUpdateFunctionInputSchema({
+        inferredJsonSchema,
+        logicFunctionId: await updatableLogicFunctionId,
+      });
     }
   };
 

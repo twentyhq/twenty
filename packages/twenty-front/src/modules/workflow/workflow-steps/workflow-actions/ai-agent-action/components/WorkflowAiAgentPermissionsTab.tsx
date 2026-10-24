@@ -68,6 +68,7 @@ type WorkflowAiAgentPermissionsTabProps = {
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
+  action,
   readonly,
   isAgentLoading,
   refetchAgent,
@@ -162,6 +163,7 @@ export const WorkflowAiAgentPermissionsTab = ({
     handleAddPermissionFlag,
     handleDeletePermissionFlag,
   } = useWorkflowAiAgentPermissionActions({
+    stepId: action.id,
     readonly,
     objectPermissions,
     permissionFlagKeys,

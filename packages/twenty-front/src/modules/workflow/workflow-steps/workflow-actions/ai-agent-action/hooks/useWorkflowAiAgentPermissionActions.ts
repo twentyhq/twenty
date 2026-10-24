@@ -3,6 +3,7 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
 import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useGetUpdatableWorkflowVersionStepOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionStepOrThrow';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
@@ -24,6 +25,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 type UseWorkflowAiAgentPermissionActionsParams = {
+  stepId: string;
   readonly: boolean;
   objectPermissions: ObjectPermission[];
   permissionFlagKeys: string[];
@@ -31,12 +33,15 @@ type UseWorkflowAiAgentPermissionActionsParams = {
 };
 
 export const useWorkflowAiAgentPermissionActions = ({
+  stepId,
   readonly,
   objectPermissions,
   permissionFlagKeys,
   refetchAgentAndRoles,
 }: UseWorkflowAiAgentPermissionActionsParams) => {
   const { enqueueToast } = useToast();
+  const { getUpdatableWorkflowVersionStep } =
+    useGetUpdatableWorkflowVersionStepOrThrow();
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
   const { activeObjectMetadataItems: objectMetadataItems } =
@@ -78,12 +83,27 @@ export const useWorkflowAiAgentPermissionActions = ({
     [settingsPermissionsConfig, actionPermissionsConfig],
   );
 
+  const getUpdatableAgentId = async () => {
+    const updatableStep = await getUpdatableWorkflowVersionStep({
+      stepId,
+      stepType: 'AI_AGENT',
+    });
+
+    return updatableStep.settings.input.agentId;
+  };
+
   const ensureRoleId = async (): Promise<string | undefined> => {
+    if (!isDefined(workflowAiAgentActionAgent) || readonly) {
+      return undefined;
+    }
+
+    const updatableAgentId = await getUpdatableAgentId();
+
     if (isDefined(roleId)) {
       return roleId;
     }
 
-    if (!isDefined(workflowAiAgentActionAgent) || readonly) {
+    if (!isDefined(updatableAgentId)) {
       return undefined;
     }
 
@@ -117,7 +137,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     await assignRoleToAgent({
       variables: {
-        agentId: workflowAiAgentActionAgent.id,
+        agentId: updatableAgentId,
         roleId: generatedRoleId,
       },
     });
@@ -215,6 +235,8 @@ export const useWorkflowAiAgentPermissionActions = ({
     if (!isDefined(roleId) || readonly) {
       return;
     }
+
+    await getUpdatableAgentId();
 
     const objectPermission = objectPermissions.find(
       (permission) => permission.objectMetadataId === objectMetadataId,
@@ -335,6 +357,8 @@ export const useWorkflowAiAgentPermissionActions = ({
     if (!permissionFlagKeys.includes(permissionFlagKey)) {
       return;
     }
+
+    await getUpdatableAgentId();
 
     const permissionFlagKeysAfterRemoval = permissionFlagKeys.filter(
       (flag) => flag !== permissionFlagKey,
