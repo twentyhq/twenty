@@ -26,8 +26,6 @@ const StyledFullNameContainer = styled.div`
   width: 100%;
 `;
 
-const EMPTY_FULL_NAME: FieldFullNameValue = { firstName: '', lastName: '' };
-
 export const FullNameFieldInput = () => {
   const { t } = useLingui();
   const { draftValue, setDraftValue } = useFullNameField();
@@ -40,9 +38,10 @@ export const FullNameFieldInput = () => {
     RecordFieldComponentInstanceContext,
   );
 
-  const [fullName, setFullName] = useState<FieldFullNameValue>(
-    draftValue ?? EMPTY_FULL_NAME,
-  );
+  const [fullName, setFullName] = useState<FieldFullNameValue>({
+    firstName: draftValue?.firstName ?? '',
+    lastName: draftValue?.lastName ?? '',
+  });
   const [fullNameText, setFullNameText] = useState(() =>
     joinFullName(fullName),
   );
@@ -122,7 +121,12 @@ export const FullNameFieldInput = () => {
         <FieldInputDetailsToggleRow
           isExpanded={isExpanded}
           toggleLabel={t`Name details`}
-          onToggle={() => setIsExpanded(!isExpanded)}
+          onToggle={() => {
+            if (isExpanded) {
+              fullNameInputRef.current?.focus();
+            }
+            setIsExpanded(!isExpanded);
+          }}
         >
           <StyledTextInput
             ref={fullNameInputRef}

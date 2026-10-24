@@ -197,6 +197,10 @@ export const AddressInput = ({
       }
 
       setInternalValue(updatedAddress);
+
+      if (hasAddressDetailValue(updatedAddress)) {
+        setIsExpanded(true);
+      }
     },
     [
       placeAutocompleteData,
@@ -315,7 +319,12 @@ export const AddressInput = ({
           isExpanded={isExpanded}
           toggleLabel={t`Address details`}
           hasToggle={hasDetails}
-          onToggle={() => setIsExpanded(!isExpanded)}
+          onToggle={() => {
+            if (isExpanded) {
+              getFocusHandler('addressStreet1')();
+            }
+            setIsExpanded(!isExpanded);
+          }}
         >
           {renderInputWithAutocomplete({
             fieldType: 'addressStreet1',

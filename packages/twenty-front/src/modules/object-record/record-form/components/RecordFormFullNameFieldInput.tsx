@@ -33,9 +33,10 @@ export const RecordFormFullNameFieldInput = ({
   const { t } = useLingui();
   const instanceId = useId();
 
-  const [fullName, setFullName] = useState<FieldFullNameValue>(
-    defaultValue ?? { firstName: '', lastName: '' },
-  );
+  const [fullName, setFullName] = useState<FieldFullNameValue>({
+    firstName: defaultValue?.firstName ?? '',
+    lastName: defaultValue?.lastName ?? '',
+  });
   const [fullNameText, setFullNameText] = useState(() =>
     joinFullName(fullName),
   );
