@@ -2,7 +2,6 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type UnsavedRecordFilters } from '@/views/types/UnsavedRecordFilters';
 import { isDefined } from 'twenty-shared/utils';
 
-// Fields can be deleted between a refresh, in which case we fall back to the saved view
 export const getRestorableUnsavedRecordFilters = ({
   unsavedRecordFilters,
   fieldMetadataItems,

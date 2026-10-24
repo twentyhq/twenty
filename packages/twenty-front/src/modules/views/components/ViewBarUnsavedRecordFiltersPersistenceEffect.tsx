@@ -44,7 +44,6 @@ export const ViewBarUnsavedRecordFiltersPersistenceEffect = () => {
     viewFilterGroupsAreDifferentFromRecordFilterGroups;
 
   useEffect(() => {
-    // Filters in state still belong to the previous view until the new one is loaded
     if (
       !isDefined(contextStoreCurrentViewId) ||
       loadedRecordFiltersViewId !== contextStoreCurrentViewId
