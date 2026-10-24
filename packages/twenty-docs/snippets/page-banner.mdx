@@ -1,3 +1,9 @@
-export const PageBanner = ({ illustration }) => {
-  return <span hidden data-page-banner={illustration} />;
+export const PageBanner = ({ illustration, pattern }) => {
+  return (
+    <span
+      hidden
+      data-page-banner={illustration}
+      data-page-banner-pattern={pattern}
+    />
+  );
 };

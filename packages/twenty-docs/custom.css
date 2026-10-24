@@ -7,15 +7,51 @@
 }
 
 @font-face {
+  font-family: 'Aleo';
+  src: url('/fonts/aleo-latin-300.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Azeret Mono';
   src: url('/fonts/azeret-mono-latin-variable.woff2') format('woff2');
   font-style: normal;
   font-weight: 100 900;
-  font-display: block;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Host Grotesk';
+  src: url('/fonts/host-grotesk-latin-ext-variable.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Aleo';
+  src: url('/fonts/aleo-latin-ext-300.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Azeret Mono';
+  src: url('/fonts/azeret-mono-latin-ext-variable.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 :root {
   --twenty-ink: #1c1c1c;
+  --twenty-ink-hover: #333333;
   --twenty-ink-prose: rgb(28 28 28 / 80%);
   --twenty-ink-muted: rgb(28 28 28 / 70%);
   --twenty-ink-subtle: rgb(28 28 28 / 40%);
@@ -28,8 +64,16 @@
   --twenty-blue: #4a38f5;
   --twenty-font-sans: 'Host Grotesk', sans-serif;
   --twenty-font-mono: 'Azeret Mono', ui-monospace, Menlo, monospace;
+  --font-family-body-custom: 'Host Grotesk';
+  --font-family-headings-custom: 'Aleo';
+  --font-weight-headings-custom: 300;
   --twenty-heading-md-size: clamp(2.5rem, 2.1328rem + 1.5066vw, 3rem);
   --twenty-heading-md-line-height: clamp(2.875rem, 2.416rem + 1.8832vw, 3.5rem);
+  --twenty-eyebrow-size: 1.125rem;
+  --twenty-eyebrow-line-height: 1.5rem;
+  --twenty-eyebrow-marker-width: 14px;
+  --twenty-eyebrow-marker-height: 7px;
+  --twenty-body-xs-size: 0.75rem;
   --twenty-space-2: 8px;
   --twenty-space-3: 12px;
   --twenty-space-4: 16px;
@@ -39,9 +83,10 @@
   --twenty-space-12: 48px;
   --twenty-menu-height: 64px;
   --twenty-logo-size: 40px;
+  --twenty-button-height: 40px;
   --twenty-control-height: 32px;
-  --twenty-login-width: 80px;
-  --twenty-cta-width: 120px;
+  --twenty-icon-size: 14px;
+  --twenty-icon-size-sm: 12px;
   --twenty-content-width: 804px;
   --twenty-bullet-width: 0.5em;
   --twenty-bullet-height: 0.25em;
@@ -53,6 +98,7 @@
 
 :is(.dark, [data-theme='dark']) {
   --twenty-ink: #ffffff;
+  --twenty-ink-hover: #e8e8e8;
   --twenty-ink-prose: rgb(255 255 255 / 80%);
   --twenty-ink-muted: rgb(255 255 255 / 70%);
   --twenty-ink-subtle: rgb(255 255 255 / 40%);
@@ -62,7 +108,6 @@
   --twenty-wash: rgb(255 255 255 / 5%);
   --twenty-panel: color-mix(in srgb, var(--twenty-ink) 5%, var(--twenty-surface));
   --twenty-surface: rgb(var(--background-dark));
-  --twenty-blue: #8a7dff;
   --twenty-shadow-popup: 0 12px 32px rgb(0 0 0 / 40%);
 }
 
@@ -90,6 +135,21 @@ kbd {
 }
 
 #content-area .prose {
+  --tw-prose-captions: var(--twenty-ink-muted);
+  --tw-prose-kbd: var(--twenty-ink);
+  color: var(--twenty-ink-prose);
+}
+
+#content-area .prose :is(hr, tbody tr) {
+  border-color: var(--twenty-line);
+}
+
+#content-area .prose thead {
+  border-bottom-color: var(--twenty-line-strong);
+}
+
+#content-area .prose blockquote {
+  border-color: var(--twenty-line-strong);
   color: var(--twenty-ink-prose);
 }
 
@@ -111,24 +171,24 @@ kbd {
   text-underline-offset: 2px;
 }
 
-#header nav[aria-label='Breadcrumb'] ol {
+#header .breadcrumb-list {
   gap: var(--twenty-space-2);
 }
 
-#header nav[aria-label='Breadcrumb'] ol::before {
+#header .breadcrumb-list::before {
   content: '';
   flex: none;
-  width: 14px;
-  height: 7px;
+  width: var(--twenty-eyebrow-marker-width);
+  height: var(--twenty-eyebrow-marker-height);
   border-radius: 1px;
   background-color: var(--twenty-blue);
 }
 
 #header .breadcrumb-item {
   color: var(--twenty-ink-muted);
-  font-size: 18px;
+  font-size: var(--twenty-eyebrow-size);
   font-weight: 500;
-  line-height: 24px;
+  line-height: var(--twenty-eyebrow-line-height);
   letter-spacing: -0.04em;
 }
 
@@ -268,8 +328,8 @@ kbd {
 .accordion [data-component-part='accordion-button']::before {
   content: '';
   flex: none;
-  width: 14px;
-  height: 7px;
+  width: var(--twenty-eyebrow-marker-width);
+  height: var(--twenty-eyebrow-marker-height);
   border: 1px solid var(--twenty-ink);
   border-radius: 1px;
 }
@@ -294,8 +354,8 @@ kbd {
 
 .accordion [data-component-part='accordion-caret-right']::before {
   content: '';
-  width: 12px;
-  height: 12px;
+  width: var(--twenty-icon-size-sm);
+  height: var(--twenty-icon-size-sm);
   background-color: currentColor;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E") no-repeat center / contain;
 }
@@ -320,7 +380,7 @@ kbd {
 }
 
 .accordion [data-component-part='accordion-content'] {
-  padding: 0 calc(24px + var(--twenty-space-3)) var(--twenty-space-4) calc(14px + var(--twenty-space-3));
+  padding: 0 calc(24px + var(--twenty-space-3)) var(--twenty-space-4) calc(var(--twenty-eyebrow-marker-width) + var(--twenty-space-3));
 }
 
 .steps {
@@ -336,7 +396,7 @@ kbd {
   background: var(--twenty-surface);
   color: var(--twenty-blue);
   font-family: var(--twenty-font-mono);
-  font-size: 12px;
+  font-size: var(--twenty-body-xs-size);
   font-weight: 500;
 }
 
@@ -370,7 +430,7 @@ kbd {
   border-bottom: 0;
   color: var(--twenty-ink);
   font-family: var(--twenty-font-mono);
-  font-size: 12px;
+  font-size: var(--twenty-body-xs-size);
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1;
@@ -427,11 +487,11 @@ kbd {
 :is(
   #navbar .nav-tabs-item,
   #topbar-cta-button a,
-  #navbar .navbar-link > a[href='https://app.twenty.com/welcome'],
+  #navbar .navbar-link > a,
   .landing-actions > a
 ) {
   font-family: var(--twenty-font-mono);
-  font-size: 12px;
+  font-size: var(--twenty-body-xs-size);
   font-weight: 500;
   letter-spacing: 0;
   line-height: 1;
@@ -460,11 +520,8 @@ kbd {
     --mintlify-slot-header-height: var(--twenty-menu-height);
   }
 
-  #navbar .h-14 {
+  #navbar div:has(> div > div > a > .nav-logo) {
     height: var(--twenty-menu-height);
-  }
-
-  #navbar .h-14:has(.nav-logo) {
     padding-inline: var(--twenty-space-6);
   }
 
@@ -476,9 +533,7 @@ kbd {
     div:has(> div > div > .nav-tabs),
     div:has(> div > .nav-tabs),
     div:has(> .nav-tabs),
-    .nav-tabs,
-    nav:has(> ul > .navbar-link),
-    nav:has(> ul > .navbar-link) > ul
+    .nav-tabs
   ) {
     display: contents;
   }
@@ -487,12 +542,14 @@ kbd {
     column-gap: 0;
   }
 
-  #navbar div:has(> a > .nav-logo) {
-    flex: 0 0 calc(var(--twenty-login-width) + var(--twenty-space-2) + var(--twenty-cta-width));
+  #navbar :is(div:has(> a > .nav-logo), nav:has(> ul > .navbar-link)) {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
   }
 
-  #navbar .nav-tabs-item:first-child {
-    margin-left: auto;
+  #navbar nav:has(> ul > .navbar-link) {
+    justify-content: flex-end;
   }
 }
 
@@ -535,23 +592,10 @@ kbd {
   background-color: var(--twenty-divider);
 }
 
-#navbar .navbar-link:has(> a[href='https://app.twenty.com/welcome']) {
-  margin-left: auto;
+#navbar .navbar-link {
   padding: 0;
   border: 0;
   background: none;
-}
-
-#topbar-cta-button {
-  margin-left: var(--twenty-space-2);
-}
-
-#navbar .navbar-link > a[href='https://app.twenty.com/welcome'] {
-  width: var(--twenty-login-width);
-}
-
-#topbar-cta-button a {
-  width: var(--twenty-cta-width);
 }
 
 :is(#sidebar-content, #mobile-nav) h3 {
@@ -577,7 +621,7 @@ kbd {
   color: var(--twenty-ink-subtle);
 }
 
-:is(#sidebar-content, #mobile-nav) .almond-nav-bottom-section-divider {
+:is(#sidebar-content, #mobile-nav) div:empty:has(+ div #localization-select-trigger) {
   display: none;
 }
 
@@ -594,7 +638,7 @@ kbd {
   background: none;
   color: var(--twenty-ink);
   font-family: var(--twenty-font-sans);
-  font-size: 12px;
+  font-size: var(--twenty-body-xs-size);
   font-weight: 500;
   line-height: 1;
 }
@@ -607,15 +651,15 @@ kbd {
 :is(#sidebar-content, #mobile-nav) [data-component-part='localization-select-trigger']::before {
   content: '';
   flex: none;
-  width: 14px;
-  height: 14px;
+  width: var(--twenty-icon-size);
+  height: var(--twenty-icon-size);
   background-color: currentColor;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0'/%3E%3Cpath d='M3.6 9h16.8'/%3E%3Cpath d='M3.6 15h16.8'/%3E%3Cpath d='M11.5 3a17 17 0 0 0 0 18'/%3E%3Cpath d='M12.5 3a17 17 0 0 1 0 18'/%3E%3C/svg%3E") no-repeat center / contain;
 }
 
 :is(#sidebar-content, #mobile-nav) [data-component-part='localization-select-trigger'] svg {
-  width: 12px;
-  height: 12px;
+  width: var(--twenty-icon-size-sm);
+  height: var(--twenty-icon-size-sm);
   color: currentColor;
 }
 
@@ -660,7 +704,7 @@ kbd {
 
 #localization-select-content [data-component-part='localization-select-item'] p {
   color: var(--twenty-ink);
-  font-size: 12px;
+  font-size: var(--twenty-body-xs-size);
   font-weight: 400;
 }
 
@@ -669,8 +713,8 @@ kbd {
 }
 
 #localization-select-content [data-component-part='localization-select-item'] svg {
-  width: 14px;
-  height: 14px;
+  width: var(--twenty-icon-size);
+  height: var(--twenty-icon-size);
 }
 
 :is(#sidebar-content, #mobile-nav) [data-switch='pill'] {
@@ -722,7 +766,7 @@ div:has(> #search-bar-entry) {
 #search-bar-entry {
   padding-inline: var(--twenty-space-3);
   font-family: var(--twenty-font-sans);
-  font-size: 12px;
+  font-size: var(--twenty-body-xs-size);
   font-weight: 500;
   line-height: 1;
 }
@@ -732,9 +776,9 @@ div:has(> #search-bar-entry) {
 }
 
 :is(#search-bar-entry, #assistant-entry) svg {
-  width: 14px;
-  min-width: 14px;
-  height: 14px;
+  width: var(--twenty-icon-size);
+  min-width: var(--twenty-icon-size);
+  height: var(--twenty-icon-size);
   color: currentColor;
 }
 
@@ -785,7 +829,7 @@ div:has(> #search-bar-entry) {
   background: var(--twenty-wash);
   color: var(--twenty-ink-muted);
   font-family: var(--twenty-font-mono);
-  font-size: 12px;
+  font-size: var(--twenty-body-xs-size);
   font-weight: 500;
   letter-spacing: 0;
   text-transform: uppercase;
@@ -895,11 +939,11 @@ div:has(> #search-bar-entry) {
 
 :is(
   #topbar-cta-button a,
-  #navbar .navbar-link > a[href='https://app.twenty.com/welcome'],
+  #navbar .navbar-link > a,
   .landing-actions > a
 ) {
   --button-fill: var(--twenty-ink);
-  --button-hover-fill: color-mix(in srgb, var(--twenty-ink), var(--twenty-surface) 15%);
+  --button-hover-fill: var(--twenty-ink-hover);
   --button-hover-opacity: 1;
   --button-label: var(--twenty-surface);
   --button-filled-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='40' viewBox='0 0 4 40'%3E%3Cpath d='M4 0 A4 4 0 0 0 0 4 V36 A4 4 0 0 0 4 40 Z' fill='black'/%3E%3C/svg%3E");
@@ -911,7 +955,7 @@ div:has(> #search-bar-entry) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
+  height: var(--twenty-button-height);
   padding: 0 var(--twenty-space-5);
   overflow: hidden;
   border: 0;
@@ -922,7 +966,7 @@ div:has(> #search-bar-entry) {
   white-space: nowrap;
 }
 
-:is(#topbar-cta-button a, #navbar .navbar-link > a[href='https://app.twenty.com/welcome']) {
+:is(#topbar-cta-button a, #navbar .navbar-link > a) {
   --button-filled-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='32' viewBox='0 0 4 32'%3E%3Cpath d='M4 0 A4 4 0 0 0 0 4 V28 A4 4 0 0 0 4 32 Z' fill='black'/%3E%3C/svg%3E");
   --button-filled-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='32' viewBox='0 0 15 32'%3E%3Cpath d='M0 0 h11 a4 4 0 0 1 4 4 v12.523 a6 6 0 0 1 -1.544 4.019 l-8.548 9.477 A6 6 0 0 1 0.453 32 H0 Z' fill='black'/%3E%3C/svg%3E");
   --button-stroke-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='32' viewBox='0 0 4 32'%3E%3Cpath d='M4 0.5 A3.5 3.5 0 0 0 0.5 4 V28 A3.5 3.5 0 0 0 4 31.5' fill='none' stroke='black' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -932,8 +976,8 @@ div:has(> #search-bar-entry) {
 }
 
 :is(
-  #navbar .navbar-link > a[href='https://app.twenty.com/welcome'],
-  .landing-actions > a + a
+  #navbar .navbar-link > a,
+  .landing-actions > a[data-variant='outlined']
 ) {
   --button-left: var(--button-stroke-left);
   --button-right: var(--button-stroke-right);
@@ -946,12 +990,12 @@ div:has(> #search-bar-entry) {
   --button-label: var(--twenty-ink);
 }
 
-:is(#topbar-cta-button a, #navbar .navbar-link > a[href='https://app.twenty.com/welcome']) span {
+:is(#topbar-cta-button a, #navbar .navbar-link > a) span {
   color: inherit;
 }
 
-:where(#topbar-cta-button a, #navbar .navbar-link > a[href='https://app.twenty.com/welcome'], .landing-actions > a)::before,
-:where(#topbar-cta-button a, #navbar .navbar-link > a[href='https://app.twenty.com/welcome'], .landing-actions > a)::after {
+:where(#topbar-cta-button a, #navbar .navbar-link > a, .landing-actions > a)::before,
+:where(#topbar-cta-button a, #navbar .navbar-link > a, .landing-actions > a)::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -967,47 +1011,46 @@ div:has(> #search-bar-entry) {
   pointer-events: none;
 }
 
-:where(#topbar-cta-button a, #navbar .navbar-link > a[href='https://app.twenty.com/welcome'], .landing-actions > a)::after {
+:where(#topbar-cta-button a, #navbar .navbar-link > a, .landing-actions > a)::after {
   z-index: -1;
   background-color: var(--button-hover-fill);
   mask-image:
     var(--button-filled-left), linear-gradient(#000000, #000000),
     var(--button-filled-right);
   opacity: var(--button-hover-opacity);
-  transform: translateX(calc(-100% - 16px));
+  transform: translateX(calc(-100% - var(--twenty-space-4)));
   transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-:where(#topbar-cta-button a, #navbar .navbar-link > a[href='https://app.twenty.com/welcome'], .landing-actions > a):is(:hover, :focus-visible)::after {
+:where(#topbar-cta-button a, #navbar .navbar-link > a, .landing-actions > a):is(:hover, :focus-visible)::after {
   transform: translateX(0);
 }
 
-:where(#topbar-cta-button a, #navbar .navbar-link > a[href='https://app.twenty.com/welcome'], .landing-actions > a):focus-visible {
+:where(#topbar-cta-button a, #navbar .navbar-link > a, .landing-actions > a):focus-visible {
   outline: 1px solid var(--twenty-blue);
   outline-offset: 1px;
 }
 
-:is(#navbar .navbar-link > a[href='https://app.twenty.com/welcome'], .landing-actions > a + a)::before {
+:is(#navbar .navbar-link > a, .landing-actions > a[data-variant='outlined'])::before {
   z-index: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :where(#topbar-cta-button a, #navbar .navbar-link > a[href='https://app.twenty.com/welcome'], .landing-actions > a)::after {
+  :where(#topbar-cta-button a, #navbar .navbar-link > a, .landing-actions > a)::after {
     transition: none;
   }
 }
 
-html:not(.dark),
-html.dark {
-  background-color: var(--twenty-surface) !important;
+html {
+  background-color: var(--twenty-surface);
 }
 
-.almond-layout {
-  padding-inline: 0 !important;
-  padding-bottom: 0 !important;
+div:has(> #sidebar-content) {
+  padding-inline: 0;
+  padding-bottom: 0;
 }
 
-.almond-layout > div:has(> #content-container) {
+div:has(> #content-container) {
   height: calc(
     100dvh - var(--mintlify-slot-header-height, 7rem) - var(--banner-height, 0px)
   );
@@ -1020,12 +1063,6 @@ html.dark {
 }
 
 @media (min-width: 64rem) {
-  .almond-layout > div:has(> #content-container) {
-    height: calc(
-      100dvh - var(--mintlify-slot-header-height) - var(--banner-height, 0px)
-    );
-  }
-
   #sidebar-content {
     padding-top: var(--twenty-space-2);
   }
@@ -1057,12 +1094,12 @@ html.dark {
 
 .documentation-card-group .card img {
   height: 160px;
-  padding: 24px;
+  padding: var(--twenty-space-6);
   object-fit: contain;
   border: 1px solid var(--twenty-line);
   border-radius: inherit;
   background-color: var(--twenty-panel);
-  background-image: var(--card-background);
+  background-image: var(--card-pattern);
   background-position: center;
   background-size: cover;
   transform: none;
@@ -1073,124 +1110,76 @@ html.dark {
   background-color: var(--twenty-surface);
 }
 
-.documentation-card-group--developers .card:nth-child(1) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
+.documentation-card-group--patterned .card:has(a[href$='/developers/extend/apps/getting-started/quick-start']) {
+  --card-pattern: url('/images/documentation/patterns/developers-apps.svg');
 }
 
-.documentation-card-group--developers .card:nth-child(2) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+.documentation-card-group--patterned .card:has(a[href$='/developers/extend/api']) {
+  --card-pattern: url('/images/documentation/patterns/developers-api.svg');
 }
 
-.documentation-card-group--developers .card:nth-child(3) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
+.documentation-card-group--patterned .card:has(a:is([href$='/developers/self-host/capabilities/docker-compose'], [href$='/developers/self-host/self-host'])) {
+  --card-pattern: url('/images/documentation/patterns/developers-self-host.svg');
 }
 
-.documentation-card-group--developers .card:nth-child(4) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/developers-contribute.svg');
+.documentation-card-group--patterned .card:has(a[href$='/developers/contribute/capabilities/local-setup']) {
+  --card-pattern: url('/images/documentation/patterns/developers-contribute.svg');
 }
 
-.documentation-card-group--developers .card:nth-child(5) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+.documentation-card-group--patterned .card:has(a[href$='/getting-started/core-concepts/ai']) {
+  --card-pattern: url('/images/documentation/patterns/getting-started-agents.svg');
 }
 
-.documentation-card-group--getting-started .card:nth-child(1) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/getting-started-agents.svg');
+.documentation-card-group--patterned .card:has(a[href$='/getting-started/core-concepts/apps']) {
+  --card-pattern: url('/images/documentation/patterns/getting-started-extensibility.svg');
 }
 
-.documentation-card-group--getting-started .card:nth-child(2) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/getting-started-extensibility.svg');
+.documentation-card-group--patterned .card:has(a[href$='/developers/introduction']) {
+  --card-pattern: url('/images/documentation/patterns/getting-started-modern-stack.svg');
 }
 
-.documentation-card-group--getting-started .card:nth-child(3) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/getting-started-modern-stack.svg');
+.documentation-card-group--patterned .card:has(a[href$='/user-guide/data-migration/how-tos/export-your-data']) {
+  --card-pattern: url('/images/documentation/patterns/getting-started-no-lock-in.svg');
 }
 
-.documentation-card-group--getting-started .card:nth-child(4) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/getting-started-no-lock-in.svg');
+.documentation-card-group--patterned .card:has(a[href$='/user-guide/ai/overview']) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-ai.svg');
 }
 
-.documentation-card-group--key-features .card:nth-child(1) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
+.documentation-card-group--patterned .card:has(a[href$='/user-guide/billing/overview']) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-billing.svg');
 }
 
-.documentation-card-group--key-features .card:nth-child(2) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+.documentation-card-group--patterned .card:has(a:is([href$='/user-guide/calendar-emails/overview'], [href$='/user-guide/email-campaigns/overview'])) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-calendar-emails.svg');
 }
 
-.documentation-card-group--key-features .card:nth-child(3) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
+.documentation-card-group--patterned .card:has(a[href$='/user-guide/dashboards/overview']) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-dashboards.svg');
 }
 
-.documentation-card-group--key-features .card:nth-child(4) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+.documentation-card-group--patterned .card:has(a[href$='/user-guide/data-migration/overview']) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-data-migration.svg');
 }
 
-.documentation-card-group--key-features .card:nth-child(5) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
+.documentation-card-group--patterned .card:has(a[href$='/user-guide/data-model/overview']) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-data-model.svg');
 }
 
-.documentation-card-group--key-features .card:nth-child(6) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-dashboards.svg');
+.documentation-card-group--patterned .card:has(a:is([href$='/ui/getting-started'], [href$='/user-guide/views-pipelines/overview'], [href$='/user-guide/layout/overview'])) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-layout.svg');
 }
 
-.documentation-card-group--key-features .card:nth-child(7) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+.documentation-card-group--patterned .card:has(a[href$='/user-guide/permissions-access/overview']) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-permissions.svg');
 }
 
-.documentation-card-group--key-features .card:nth-child(8) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+.documentation-card-group--patterned .card:has(a[href$='/user-guide/settings/overview']) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-settings.svg');
 }
 
-.documentation-card-group--key-features .card:nth-child(9) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-data-migration.svg');
-}
-
-.documentation-card-group--key-features .card:nth-child(10) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(1) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(2) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-data-migration.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(3) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(4) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(5) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(6) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(7) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(8) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-dashboards.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(9) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(10) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
-}
-
-.documentation-card-group--user-guide .card:nth-child(11) {
-  --card-background: url('/images/documentation/card-backgrounds-v2/user-guide-settings.svg');
+.documentation-card-group--patterned .card:has(a[href$='/user-guide/workflows/overview']) {
+  --card-pattern: url('/images/documentation/patterns/user-guide-workflows.svg');
 }
 
 .documentation-card-group .card {
@@ -1213,27 +1202,14 @@ html.dark {
   }
 }
 
-/*
- * HACK: Hide the "Overview" sidebar group header in the Developers tab.
- *
- * Mintlify requires every page to be inside a named group, and the tab's
- * landing page is always the first page of the first group. We want the
- * Developer Overview page to be the tab landing without showing a lonely
- * "Overview" group header above a single item.
- *
- * We use :has() to scope the rule to only the sidebar group that contains
- * the developers/introduction link, so other tabs are unaffected.
- */
 div:has(> .sidebar-group a[href$='/developers/introduction']),
 div:has(> .sidebar-group a[href$='/user-guide/introduction']) {
   display: none;
 }
 
-/* Remove the top margin on the group that follows the hidden overview group,
-   so it sits flush at the top of the sidebar without a gap. */
 div:has(> .sidebar-group a[href$='/developers/introduction']) + div,
 div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
-  margin-top: 0 !important;
+  margin-top: 0;
 }
 
 #content-area:has([data-page-banner]) #header > div:first-child::after {
@@ -1241,12 +1217,12 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   display: block;
   box-sizing: border-box;
   height: 176px;
-  padding: 16px 24px;
+  padding: var(--twenty-space-4) var(--twenty-space-6);
   margin-top: var(--twenty-space-6);
   border: 1px solid var(--twenty-line);
   border-radius: var(--twenty-radius-2);
   background-color: var(--twenty-panel);
-  background-image: var(--page-banner-illustration), var(--page-banner-pattern);
+  background-image: var(--page-banner-illustration), var(--page-banner-pattern, none);
   background-position: center;
   background-repeat: no-repeat;
   background-size: 128px 128px, cover;
@@ -1259,76 +1235,6 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
 
 #content-area:has([data-page-banner]) #header > div:first-child + div {
   margin-top: var(--twenty-space-6);
-}
-
-#content-area:has([data-page-banner='dev-apps']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-apps.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
-}
-
-#content-area:has([data-page-banner='dev-api']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-api.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
-}
-
-#content-area:has([data-page-banner='dev-self-host']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-self-host.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
-}
-
-#content-area:has([data-page-banner='dev-contribute']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-contribute.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-contribute.svg');
-}
-
-#content-area:has([data-page-banner='data-model']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
-}
-
-#content-area:has([data-page-banner='data-migration']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-migration.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-migration.svg');
-}
-
-#content-area:has([data-page-banner='calendar-emails']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/calendar-emails.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
-}
-
-#content-area:has([data-page-banner='workflows']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/workflows-belt-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
-}
-
-#content-area:has([data-page-banner='ai']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/ai.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
-}
-
-#content-area:has([data-page-banner='layout']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
-}
-
-#content-area:has([data-page-banner='dashboards']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dashboards.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-dashboards.svg');
-}
-
-#content-area:has([data-page-banner='permissions']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/permissions.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
-}
-
-#content-area:has([data-page-banner='billing']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v3/billing.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
-}
-
-#content-area:has([data-page-banner='settings']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/settings.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-settings.svg');
 }
 
 #content-area:has([data-page-banner='meet-twenty']) {
@@ -1344,11 +1250,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-illustration: url('/images/documentation/banners/developers.png');
 }
 
-#content-area:has([data-page-banner='meet-twenty'], [data-page-banner='user-guide'], [data-page-banner='developers']) {
-  --page-banner-pattern: none;
-}
-
-#content-area:has([data-page-banner='meet-twenty'], [data-page-banner='user-guide'], [data-page-banner='developers']) #header > div:first-child::after {
+#content-area:has([data-page-banner]:not([data-page-banner-pattern])) #header > div:first-child::after {
   box-sizing: content-box;
   height: auto;
   aspect-ratio: var(--page-banner-aspect-ratio, 1282 / 334);
@@ -1357,357 +1259,338 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   background-origin: content-box;
 }
 
-#content-area:has([data-page-banner='getting-started-welcome']) {
-  --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/welcome.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/getting-started-agents.svg');
+#content-area:has([data-page-banner='ai']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/ai.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-quickstart']) {
-  --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/quickstart.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/getting-started-extensibility.svg');
+#content-area:has([data-page-banner='ai-campaign']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/ai-campaign.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-data-model']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
+#content-area:has([data-page-banner='application-config']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/application-config.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-layout']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+#content-area:has([data-page-banner='apps-config']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/apps-config.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-workflows']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/workflows-belt-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
+#content-area:has([data-page-banner='apps-data']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/apps-data.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-calendar-email']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/calendar-emails.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+#content-area:has([data-page-banner='apps-logic']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/apps-logic.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-ai']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/ai.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-ai.svg');
+#content-area:has([data-page-banner='apps-operations']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/apps-operations.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-apps']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-apps.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
+#content-area:has([data-page-banner='background-jobs']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/background-jobs.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-dashboards']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dashboards.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-dashboards.svg');
+#content-area:has([data-page-banner='billing']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/billing.svg');
 }
 
-#content-area:has([data-page-banner='getting-started-glossary']) {
-  --page-banner-illustration: url('/images/documentation/getting-started-icons-v1/glossary.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/getting-started-no-lock-in.svg');
+#content-area:has([data-page-banner='billing-faq']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/billing-faq.svg');
 }
 
-#content-area:has([data-page-banner='section-email-campaigns']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/email-campaigns.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+#content-area:has([data-page-banner='bug-requests']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/bug-requests.svg');
 }
 
-#content-area:has([data-page-banner='section-legal']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/legal.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+#content-area:has([data-page-banner='calendar-emails']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/calendar-emails.svg');
 }
 
-#content-area:has([data-page-banner='section-views-pipelines']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/views-pipelines.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+#content-area:has([data-page-banner='campaign-practices']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/campaign-practices.svg');
 }
 
-#content-area:has([data-page-banner='section-apps-config']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/apps-config.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-settings.svg');
+#content-area:has([data-page-banner='certified-partners']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/certified-partners.svg');
 }
 
-#content-area:has([data-page-banner='section-apps-data']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/apps-data.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-data-model.svg');
+#content-area:has([data-page-banner='charging-credits']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/charging-credits.svg');
 }
 
-#content-area:has([data-page-banner='section-apps-layout']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+#content-area:has([data-page-banner='cli']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/cli.svg');
 }
 
-#content-area:has([data-page-banner='section-apps-logic']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/apps-logic.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-workflows.svg');
+#content-area:has([data-page-banner='command-menu']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/command-menu.svg');
 }
 
-#content-area:has([data-page-banner='section-apps-operations']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/apps-operations.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-contribute.svg');
+#content-area:has([data-page-banner='connections']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/connections.svg');
 }
 
-#content-area:has([data-page-banner='section-document-generator']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/document-generator.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
+#content-area:has([data-page-banner='dashboards']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/dashboards.svg');
 }
 
-#content-area:has([data-page-banner='section-ui-components']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/ui-components.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-apps.svg');
+#content-area:has([data-page-banner='data-migration']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/data-migration.svg');
 }
 
-#content-area:has([data-page-banner='section-ui-primitives']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/ui-primitives.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
+#content-area:has([data-page-banner='data-model']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/data-model.svg');
 }
 
-#content-area:has([data-page-banner='card-page-pricing-plans']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-pricing-plans.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
+#content-area:has([data-page-banner='dev-api']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/dev-api.svg');
 }
 
-#content-area:has([data-page-banner='card-page-usage-limits']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-usage-limits.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
+#content-area:has([data-page-banner='dev-apps']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/dev-apps.svg');
 }
 
-#content-area:has([data-page-banner='card-page-billing-faq']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-billing-faq.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-billing.svg');
+#content-area:has([data-page-banner='dev-contribute']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/dev-contribute.svg');
 }
 
-#content-area:has([data-page-banner='card-page-sending-domain']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-sending-domain.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+#content-area:has([data-page-banner='dev-self-host']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/dev-self-host.svg');
 }
 
-#content-area:has([data-page-banner='card-page-first-campaign']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-first-campaign.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+#content-area:has([data-page-banner='document-generator']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/document-generator.svg');
 }
 
-#content-area:has([data-page-banner='card-page-ai-campaign']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-ai-campaign.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+#content-area:has([data-page-banner='email-campaigns']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/email-campaigns.svg');
 }
 
-#content-area:has([data-page-banner='card-page-campaign-practices']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-campaign-practices.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-calendar-emails.svg');
+#content-area:has([data-page-banner='extending-objects']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/extending-objects.svg');
 }
 
-#content-area:has([data-page-banner='card-page-permissions']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/permissions.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+#content-area:has([data-page-banner='first-campaign']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/first-campaign.svg');
 }
 
-#content-area:has([data-page-banner='card-page-sso']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-sso.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+#content-area:has([data-page-banner='front-components']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/front-components.svg');
 }
 
-#content-area:has([data-page-banner='card-page-permissions-faq']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-permissions-faq.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+#content-area:has([data-page-banner='frontend-architecture']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/frontend-architecture.svg');
 }
 
-#content-area:has([data-page-banner='card-page-bug-requests']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-bug-requests.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='glossary']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/glossary.svg');
 }
 
-#content-area:has([data-page-banner='card-page-frontend-architecture']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-frontend-architecture.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='install-hooks']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/install-hooks.svg');
 }
 
-#content-area:has([data-page-banner='card-page-application-config']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-application-config.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='key-value-store']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/key-value-store.svg');
 }
 
-#content-area:has([data-page-banner='card-page-roles']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-roles.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='layout']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/layout.svg');
 }
 
-#content-area:has([data-page-banner='card-page-install-hooks']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-install-hooks.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='legal']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/legal.svg');
 }
 
-#content-area:has([data-page-banner='card-page-objects']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-objects.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='logic-functions']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/logic-functions.svg');
 }
 
-#content-area:has([data-page-banner='card-page-extending-objects']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-extending-objects.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='messaging-channels']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/messaging-channels.svg');
 }
 
-#content-area:has([data-page-banner='card-page-relations']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-relations.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='monitoring']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/monitoring.svg');
 }
 
-#content-area:has([data-page-banner='card-page-timeline']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-timeline.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='navigation']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/navigation.svg');
 }
 
-#content-area:has([data-page-banner='card-page-views']) {
-  --page-banner-illustration: url('/images/documentation/section-overview-icons-v1/views-pipelines.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='no-lock-in']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/no-lock-in.png');
 }
 
-#content-area:has([data-page-banner='card-page-navigation']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-navigation.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='objects']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/objects.svg');
 }
 
-#content-area:has([data-page-banner='card-page-page-layouts']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-page-layouts.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='page-layouts']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/page-layouts.svg');
 }
 
-#content-area:has([data-page-banner='card-page-front-components']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-front-components.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='permissions']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/permissions.svg');
 }
 
-#content-area:has([data-page-banner='card-page-command-menu']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-command-menu.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='permissions-faq']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/permissions-faq.svg');
 }
 
-#content-area:has([data-page-banner='card-page-logic-functions']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-logic-functions.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='pricing-plans']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/pricing-plans.svg');
 }
 
-#content-area:has([data-page-banner='card-page-skills-agents']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-skills-agents.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='publishing']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/publishing.svg');
 }
 
-#content-area:has([data-page-banner='card-page-workflows']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/workflows-belt-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='quickstart']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/quickstart.svg');
 }
 
-#content-area:has([data-page-banner='card-page-connections']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-connections.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='relations']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/relations.svg');
 }
 
-#content-area:has([data-page-banner='card-page-messaging-channels']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-messaging-channels.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='reverse-proxy']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/reverse-proxy.svg');
 }
 
-#content-area:has([data-page-banner='card-page-key-value-store']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-key-value-store.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='roles']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/roles.svg');
 }
 
-#content-area:has([data-page-banner='card-page-background-jobs']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-background-jobs.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='sending-domain']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/sending-domain.svg');
 }
 
-#content-area:has([data-page-banner='card-page-charging-credits']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-charging-credits.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='settings']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/settings.svg');
 }
 
-#content-area:has([data-page-banner='card-page-cli']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-cli.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='skills-agents']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/skills-agents.svg');
 }
 
-#content-area:has([data-page-banner='card-page-sync-recovery']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-sync-recovery.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='sso']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/sso.svg');
 }
 
-#content-area:has([data-page-banner='card-page-testing']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-testing.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='sync-recovery']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/sync-recovery.svg');
 }
 
-#content-area:has([data-page-banner='card-page-translations']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-translations.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='testing']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/testing.svg');
 }
 
-#content-area:has([data-page-banner='card-page-publishing']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-publishing.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='timeline']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/timeline.svg');
 }
 
-#content-area:has([data-page-banner='card-page-monitoring']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-monitoring.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='translations']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/translations.svg');
 }
 
-#content-area:has([data-page-banner='card-page-tutorial-publishing']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-publishing.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='tutorial-documents']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/tutorial-documents.svg');
 }
 
-#content-area:has([data-page-banner='card-page-tutorial-agent']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-skills-agents.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='tutorial-http']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/tutorial-http.svg');
 }
 
-#content-area:has([data-page-banner='card-page-tutorial-documents']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-documents.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='tutorial-ui']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/tutorial-ui.svg');
 }
 
-#content-area:has([data-page-banner='card-page-tutorial-http']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-http.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='ui-components']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/ui-components.svg');
 }
 
-#content-area:has([data-page-banner='card-page-tutorial-ui']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-tutorial-ui.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='ui-primitives']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/ui-primitives.svg');
 }
 
-#content-area:has([data-page-banner='card-page-tutorial-data']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/data-model.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='usage-limits']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/usage-limits.svg');
 }
 
-#content-area:has([data-page-banner='card-page-webhooks']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/card-page-webhooks.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-api.svg');
+#content-area:has([data-page-banner='views-pipelines']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/views-pipelines.svg');
 }
 
-#content-area:has([data-page-banner='card-page-export-data']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/no-lock-in.png');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/getting-started-no-lock-in.svg');
+#content-area:has([data-page-banner='webhooks']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/webhooks.svg');
 }
 
-#content-area:has([data-page-banner='card-page-self-host-guide']) {
-  --page-banner-illustration: url('/images/documentation/banner-icons-v2/dev-self-host.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
+#content-area:has([data-page-banner='workflows']) {
+  --page-banner-illustration: url('/images/documentation/illustrations/workflows.svg');
 }
 
-#content-area:has([data-page-banner='card-page-ui-library']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/layout-window-v1.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-layout.svg');
+#content-area:has([data-page-banner-pattern='developers-api']) {
+  --page-banner-pattern: url('/images/documentation/patterns/developers-api.svg');
 }
 
-#content-area:has([data-page-banner='community-certified-partners']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/community-certified-partners.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/user-guide-permissions.svg');
+#content-area:has([data-page-banner-pattern='developers-apps']) {
+  --page-banner-pattern: url('/images/documentation/patterns/developers-apps.svg');
 }
 
-#content-area:has([data-page-banner='community-reverse-proxy']) {
-  --page-banner-illustration: url('/images/user-guide/halftone/community-reverse-proxy.svg');
-  --page-banner-pattern: url('/images/documentation/card-backgrounds-v2/developers-self-host.svg');
+#content-area:has([data-page-banner-pattern='developers-contribute']) {
+  --page-banner-pattern: url('/images/documentation/patterns/developers-contribute.svg');
+}
+
+#content-area:has([data-page-banner-pattern='developers-self-host']) {
+  --page-banner-pattern: url('/images/documentation/patterns/developers-self-host.svg');
+}
+
+#content-area:has([data-page-banner-pattern='getting-started-extensibility']) {
+  --page-banner-pattern: url('/images/documentation/patterns/getting-started-extensibility.svg');
+}
+
+#content-area:has([data-page-banner-pattern='getting-started-no-lock-in']) {
+  --page-banner-pattern: url('/images/documentation/patterns/getting-started-no-lock-in.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-ai']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-ai.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-billing']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-billing.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-calendar-emails']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-calendar-emails.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-dashboards']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-dashboards.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-data-migration']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-data-migration.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-data-model']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-data-model.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-layout']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-layout.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-permissions']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-permissions.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-settings']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-settings.svg');
+}
+
+#content-area:has([data-page-banner-pattern='user-guide-workflows']) {
+  --page-banner-pattern: url('/images/documentation/patterns/user-guide-workflows.svg');
 }

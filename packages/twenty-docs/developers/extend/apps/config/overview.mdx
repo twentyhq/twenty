@@ -36,15 +36,15 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
 ## In this section
 
 <CardGroup cols={2} className="documentation-card-group">
-  <Card href="/developers/extend/apps/config/application" img="/images/user-guide/halftone/card-page-application-config.svg">
+  <Card href="/developers/extend/apps/config/application" img="/images/documentation/illustrations/application-config.svg">
     <CardTitle>Application Config</CardTitle>
     `defineApplication` — identity, default role, variables, marketplace metadata.
   </Card>
-  <Card href="/developers/extend/apps/config/roles" img="/images/user-guide/halftone/card-page-roles.svg">
+  <Card href="/developers/extend/apps/config/roles" img="/images/documentation/illustrations/roles.svg">
     <CardTitle>Roles & Permissions</CardTitle>
     `defineRole` — declare what your app's logic functions can read and write.
   </Card>
-  <Card href="/developers/extend/apps/config/install-hooks" img="/images/user-guide/halftone/card-page-install-hooks.svg">
+  <Card href="/developers/extend/apps/config/install-hooks" img="/images/documentation/illustrations/install-hooks.svg">
     <CardTitle>Install Hooks</CardTitle>
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and `defineUninstallLogicFunction` — back up data, seed defaults, validate upgrades, clean up on removal.
   </Card>
@@ -60,4 +60,4 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
 Install hooks share the [logic function](/developers/extend/apps/logic/logic-functions) runtime — same handler signature, same environment variables, same typed API client — but they're declared with their own define functions and live outside the regular trigger model (HTTP, cron, database events).
 </Note>
 
-<PageBanner illustration="section-apps-config" />
+<PageBanner illustration="apps-config" pattern="user-guide-settings" />

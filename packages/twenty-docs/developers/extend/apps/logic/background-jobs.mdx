@@ -247,4 +247,4 @@ What makes this hold up:
 - **Keep each chunk idempotent.** Reprocessing one chunk after a retry must not double-write — key writes on the record or external id you are processing.
 - **Prefer a chunked chain over one giant fan-out** when the work hits a rate-limited third party: a chain with `delayMs` paces itself, whereas thousands of jobs enqueued at once all become eligible immediately.
 
-<PageBanner illustration="card-page-background-jobs" />
+<PageBanner illustration="background-jobs" pattern="developers-api" />
