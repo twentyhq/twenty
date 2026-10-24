@@ -47,9 +47,13 @@ const resolveReadDeniedFieldNames = ({
 
 const omitFromRecordSnapshots = ({
   record,
+  subjectRecord,
   snapshotFields,
   ...context
-}: SnapshotRedactionContext & { record: EventRecord }): EventRecord => ({
+}: SnapshotRedactionContext & {
+  record: EventRecord;
+  subjectRecord: EventRecord | undefined;
+}): EventRecord => ({
   ...record,
   ...Object.fromEntries(
     snapshotFields
@@ -59,7 +63,7 @@ const omitFromRecordSnapshots = ({
         omitReadDeniedFieldsFromFieldValueSnapshot({
           snapshot: record[snapshotField.snapshotFieldName],
           readDeniedFieldNames: resolveReadDeniedFieldNames({
-            subjectRecord: record,
+            subjectRecord,
             snapshotField,
             ...context,
           }),
@@ -141,6 +145,13 @@ export const omitReadDeniedFieldsFromEvent = <
   }
 
   const context = { snapshotFields, objectsPermissions, flatFieldMetadataMaps };
+  const originalProperties: EventRecord = { ...event.properties };
+  const originalBeforeRecord = isPlainObject(originalProperties.before)
+    ? originalProperties.before
+    : undefined;
+  const originalAfterRecord = isPlainObject(originalProperties.after)
+    ? originalProperties.after
+    : undefined;
   const properties: EventRecord = {
     ...eventWithoutRestrictedFields.properties,
   };
@@ -156,15 +167,23 @@ export const omitReadDeniedFieldsFromEvent = <
     properties: {
       ...properties,
       ...(isDefined(beforeRecord) && {
-        before: omitFromRecordSnapshots({ record: beforeRecord, ...context }),
+        before: omitFromRecordSnapshots({
+          record: beforeRecord,
+          subjectRecord: originalBeforeRecord,
+          ...context,
+        }),
       }),
       ...(isDefined(afterRecord) && {
-        after: omitFromRecordSnapshots({ record: afterRecord, ...context }),
+        after: omitFromRecordSnapshots({
+          record: afterRecord,
+          subjectRecord: originalAfterRecord,
+          ...context,
+        }),
       }),
       ...(isPlainObject(properties.diff) && {
         diff: omitFromDiffSnapshots({
           diff: properties.diff,
-          subjectRecord: afterRecord ?? beforeRecord,
+          subjectRecord: originalAfterRecord ?? originalBeforeRecord,
           ...context,
         }),
       }),

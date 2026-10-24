@@ -3,7 +3,11 @@ import {
   type ObjectRecordUpdateEvent,
 } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectPermissions,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -56,6 +60,7 @@ const flatFieldMetadataMaps = [
     name: 'targetPerson',
     morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
     relationTargetObjectMetadataId: PERSON_OBJECT_ID,
+    settings: { relationType: RelationType.MANY_TO_ONE },
   }),
 ].reduce(
   (maps, flatEntity) =>
@@ -199,5 +204,26 @@ describe('omitReadDeniedFieldsFromEvent', () => {
         flatFieldMetadataMaps,
       }).properties,
     ).toEqual({ after: { city: 'Lyon' } });
+  });
+
+  it('should resolve the target object even when the role cannot read the target column', () => {
+    expect(
+      omitReadDeniedFieldsFromEvent({
+        event: {
+          recordId: 'timeline-activity-id',
+          properties: { after: PERSON_ACTIVITY },
+        },
+        flatObjectMetadata: TIMELINE_ACTIVITY_OBJECT,
+        objectsPermissions: {
+          ...OBJECTS_PERMISSIONS_WITH_PERSON_JOB_TITLE_DENIED,
+          [TIMELINE_ACTIVITY_OBJECT_ID]: buildObjectPermissions({
+            'target-person-field-id': { canRead: false, canUpdate: false },
+          }),
+        },
+        flatFieldMetadataMaps,
+      }).properties,
+    ).toEqual({
+      after: { linkedObjectMetadataId: null, properties: CITY_DIFF },
+    });
   });
 });
