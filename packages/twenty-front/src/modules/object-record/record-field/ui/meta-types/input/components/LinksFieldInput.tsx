@@ -20,6 +20,7 @@ import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-t
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
 import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
 import { getLinkLabelFromDraft } from '@/object-record/record-field/ui/meta-types/input/utils/getLinkLabelFromDraft';
+import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { linksFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/linksFieldValueSchema';
@@ -260,7 +261,8 @@ export const LinksFieldInput = () => {
     (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
-  const isInputInRow = isNonEmptyArray(links) && !isSingleItemMode;
+  const inputSpacing: MultiItemFieldInputSpacing =
+    isNonEmptyArray(links) && !isSingleItemMode ? 'compact' : 'default';
 
   const saveButton = isNonEmptyArray(links) ? (
     <MultiItemFieldSaveButton
@@ -271,13 +273,13 @@ export const LinksFieldInput = () => {
 
   const itemInput = (
     <MultiItemFieldInputRow
-      isInRow={isInputInRow}
-      hasInset={shouldShowInputInFooter && shouldShowItems}
+      spacing={inputSpacing}
+      hasPadding={shouldShowInputInFooter && shouldShowItems}
       rightComponent={saveButton}
     >
       <MultiItemFieldTextInput
         autoFocus
-        isInRow={isInputInRow}
+        spacing={inputSpacing}
         placeholder={placeholder}
         value={inputValue}
         hasError={hasError}

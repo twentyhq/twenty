@@ -14,6 +14,7 @@ import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/
 import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
 import { getMultiItemInputKeyDownHandler } from '@/object-record/record-field/ui/meta-types/input/utils/getMultiItemInputKeyDownHandler';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
+import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import {
   type FieldPhonesValue,
@@ -40,9 +41,9 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 const StyledCustomPhoneInputContainer = styled.div<{
   hasItem: boolean;
   hasError?: boolean;
-  isInRow: boolean;
+  spacing: MultiItemFieldInputSpacing;
 }>`
-  align-self: ${({ isInRow }) => (isInRow ? 'stretch' : 'auto')};
+  align-self: ${({ spacing }) => (spacing === 'compact' ? 'stretch' : 'auto')};
   background-color: ${({ hasItem }) =>
     hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
   border: ${({ hasItem, hasError }) =>
@@ -57,7 +58,9 @@ const StyledCustomPhoneInputContainer = styled.div<{
   min-width: 0;
 `;
 
-const StyledCustomPhoneInputWrapper = styled.div<{ isInRow: boolean }>`
+const StyledCustomPhoneInputWrapper = styled.div<{
+  spacing: MultiItemFieldInputSpacing;
+}>`
   background-color: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
@@ -77,8 +80,10 @@ const StyledCustomPhoneInputWrapper = styled.div<{ isInRow: boolean }>`
     box-sizing: border-box;
     color: ${themeCssVariables.font.color.primary};
     height: 100%;
-    padding-left: ${({ isInRow }) =>
-      isInRow ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
+    padding-left: ${({ spacing }) =>
+      spacing === 'compact'
+        ? themeCssVariables.spacing[1]
+        : themeCssVariables.spacing[2]};
 
     &::placeholder,
     &::-webkit-input-placeholder {
@@ -322,12 +327,13 @@ export const PhonesFieldInput = () => {
     (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
-  const isInputInRow = isNonEmptyArray(phones) && !isSingleItemMode;
+  const inputSpacing: MultiItemFieldInputSpacing =
+    isNonEmptyArray(phones) && !isSingleItemMode ? 'compact' : 'default';
 
   const itemInput = (
     <MultiItemFieldInputRow
-      isInRow={isInputInRow}
-      hasInset={shouldShowInputInFooter && shouldShowItems}
+      spacing={inputSpacing}
+      hasPadding={shouldShowInputInFooter && shouldShowItems}
       rightComponent={
         isNonEmptyArray(phones) ? (
           <MultiItemFieldSaveButton
@@ -338,11 +344,11 @@ export const PhonesFieldInput = () => {
       }
     >
       <StyledCustomPhoneInputContainer
-        hasItem={isNonEmptyArray(phones) && !isInputInRow}
+        hasItem={isNonEmptyArray(phones) && inputSpacing === 'default'}
         hasError={hasError}
-        isInRow={isInputInRow}
+        spacing={inputSpacing}
       >
-        <StyledCustomPhoneInputWrapper isInRow={isInputInRow}>
+        <StyledCustomPhoneInputWrapper spacing={inputSpacing}>
           <ReactPhoneNumberInput
             autoFocus
             placeholder={t`Phone`}

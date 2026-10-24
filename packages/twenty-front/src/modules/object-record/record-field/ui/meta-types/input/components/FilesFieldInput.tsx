@@ -301,8 +301,8 @@ export const FilesFieldInput = () => {
 
   const fileLabelInput = isDefined(editedFile) && (
     <MultiItemFieldInputRow
-      isInRow={isEditingItemInPlace}
-      hasInset={shouldShowInputInFooter && shouldShowItems}
+      spacing={isEditingItemInPlace ? 'compact' : 'default'}
+      hasPadding={shouldShowInputInFooter && shouldShowItems}
       rightComponent={
         <MultiItemFieldSaveButton
           isAddingNewItem={false}

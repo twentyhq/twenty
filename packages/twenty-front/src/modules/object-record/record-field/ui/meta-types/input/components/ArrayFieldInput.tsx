@@ -13,6 +13,7 @@ import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/in
 import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemSearch';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
 import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
+import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { arrayFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/arrayFieldValueSchema';
 import { t } from '@lingui/core/macro';
 import { useContext, useMemo, useRef } from 'react';
@@ -185,12 +186,13 @@ export const ArrayFieldInput = () => {
     (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
-  const isInputInRow = isNonEmptyArray(arrayItems) && !isSingleItemMode;
+  const inputSpacing: MultiItemFieldInputSpacing =
+    isNonEmptyArray(arrayItems) && !isSingleItemMode ? 'compact' : 'default';
 
   const itemInput = (
     <MultiItemFieldInputRow
-      isInRow={isInputInRow}
-      hasInset={shouldShowInputInFooter && shouldShowItems}
+      spacing={inputSpacing}
+      hasPadding={shouldShowInputInFooter && shouldShowItems}
       rightComponent={
         isNonEmptyArray(arrayItems) ? (
           <MultiItemFieldSaveButton
@@ -202,7 +204,7 @@ export const ArrayFieldInput = () => {
     >
       <MultiItemFieldTextInput
         autoFocus
-        isInRow={isInputInRow}
+        spacing={inputSpacing}
         placeholder={t`Enter value`}
         value={inputValue}
         hasError={hasError}
