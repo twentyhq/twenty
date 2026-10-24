@@ -4,12 +4,13 @@ description: Step-by-step guides to model your data, automate your work, and run
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-<div className="landing-actions">
-  <a href="/user-guide/data-model/overview">Model your data</a>
-  <a href="/user-guide/data-migration/overview">Import data</a>
-</div>
+<LandingActions>
+  <LandingButton href="/user-guide/data-model/overview">Model your data</LandingButton>
+  <LandingButton href="/user-guide/data-migration/overview" outlined>Import data</LandingButton>
+</LandingActions>
 
 ## Make Twenty fit your team
 
@@ -25,7 +26,7 @@ Twenty is built to change with your business. This guide shows you how to set up
 
 Each section covers one part of Twenty, from your data model to billing and settings.
 
-<CardGroup cols={2} className="documentation-card-group documentation-card-group--user-guide">
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
     <CardTitle>Data Model</CardTitle>
     Customize your data model to fit your business processes.

@@ -6,12 +6,13 @@ hideFooterPagination: true
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-<div className="landing-actions">
-  <a href="/developers/extend/apps/getting-started/quick-start">Build your first app</a>
-  <a href="https://github.com/twentyhq/twenty" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-</div>
+<LandingActions>
+  <LandingButton href="/developers/extend/apps/getting-started/quick-start">Build your first app</LandingButton>
+  <LandingButton href="https://github.com/twentyhq/twenty" outlined>View on GitHub</LandingButton>
+</LandingActions>
 
 ## Why build on Twenty
 
@@ -27,7 +28,7 @@ Most CRMs give developers an API and a few places to plug in. Twenty gives you t
 
 Besides apps, the developer docs cover the API, self-hosting, contributing to Twenty and the UI library.
 
-<CardGroup cols={2} className="documentation-card-group documentation-card-group--developers">
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>Apps</CardTitle>
     Build objects, logic, interfaces and AI agents as TypeScript apps, from quick start to publishing.

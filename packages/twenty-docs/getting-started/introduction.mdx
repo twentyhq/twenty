@@ -4,12 +4,13 @@ description: See what makes Twenty different, set up your workspace, and learn t
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-<div className="landing-actions">
-  <a href="/getting-started/quickstart">Quickstart</a>
-  <a href="/getting-started/key-features">Key features</a>
-</div>
+<LandingActions>
+  <LandingButton href="/getting-started/quickstart">Quickstart</LandingButton>
+  <LandingButton href="/getting-started/key-features" outlined>Key features</LandingButton>
+</LandingActions>
 
 ## Why Twenty
 
@@ -20,7 +21,7 @@ You've been choosing between software that's easy to start but impossible to cha
 
 Twenty is a platform you can build on, not a product you configure.
 
-<CardGroup cols={2} className="documentation-card-group documentation-card-group--getting-started">
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/getting-started/core-concepts/ai" img="/images/documentation/banner-icons-v2/ai.svg">
     <CardTitle>Built for Agents</CardTitle>
     Agents operate inside your data model with real permissions. Skills, Tools, MCP.

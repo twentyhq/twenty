@@ -2,28 +2,15 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Twenty Documentation",
   "theme": "almond",
-  "fonts": {
-    "heading": {
-      "family": "Aleo",
-      "weight": 300,
-      "source": "/fonts/aleo-latin-300.woff2",
-      "format": "woff2"
-    },
-    "body": {
-      "family": "Host Grotesk",
-      "source": "/fonts/host-grotesk-latin-variable.woff2",
-      "format": "woff2"
-    }
-  },
   "logo": {
     "light": "/logo.svg",
     "dark": "/logo.svg"
   },
   "favicon": "/favicon.png",
   "colors": {
-    "primary": "#141414",
-    "light": "#fafafa",
-    "dark": "#141414"
+    "primary": "#1c1c1c",
+    "light": "#ffffff",
+    "dark": "#1c1c1c"
   },
   "icons": {
     "library": "tabler"

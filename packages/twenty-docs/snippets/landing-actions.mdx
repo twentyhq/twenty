@@ -1,0 +1,18 @@
+export const LandingActions = ({ children }) => {
+  return <div className="landing-actions">{children}</div>;
+};
+
+export const LandingButton = ({ href, outlined = false, children }) => {
+  const isExternal = href.startsWith('http');
+
+  return (
+    <a
+      href={href}
+      data-variant={outlined ? 'outlined' : 'filled'}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
+    >
+      {children}
+    </a>
+  );
+};
