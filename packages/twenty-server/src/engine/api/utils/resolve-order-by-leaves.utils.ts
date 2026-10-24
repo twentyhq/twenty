@@ -15,7 +15,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
-import { assertTimelineActivityPropertiesAreQueryableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-timeline-activity-properties-are-queryable-or-throw.util';
+import { assertFieldValueSnapshotIsQueryableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-value-snapshot-is-queryable-or-throw.util';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -252,10 +252,12 @@ export const resolveOrderByLeaves = ({
         fieldMetadataId: fieldMetadata.id,
       });
 
-      assertTimelineActivityPropertiesAreQueryableOrThrow({
-        objectsPermissions,
-        fieldMetadata,
-      });
+      if (isDefined(objectsPermissions)) {
+        assertFieldValueSnapshotIsQueryableOrThrow({
+          objectsPermissions,
+          fieldMetadata,
+        });
+      }
 
       if (
         isReferencedByFieldName &&

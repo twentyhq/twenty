@@ -1,12 +1,12 @@
-import { omitReadDeniedFieldsFromTimelineActivityProperties } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-timeline-activity-properties.util';
+import { omitReadDeniedFieldsFromFieldValueSnapshot } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-field-value-snapshot.util';
 
 const READ_DENIED_FIELD_NAMES = new Set(['jobTitle']);
 
-describe('omitReadDeniedFieldsFromTimelineActivityProperties', () => {
+describe('omitReadDeniedFieldsFromFieldValueSnapshot', () => {
   it('should omit read-denied fields from the diff', () => {
     expect(
-      omitReadDeniedFieldsFromTimelineActivityProperties({
-        properties: {
+      omitReadDeniedFieldsFromFieldValueSnapshot({
+        snapshot: {
           diff: {
             jobTitle: { before: 'Engineer', after: 'Manager' },
             city: { before: 'Paris', after: 'Lyon' },
@@ -19,8 +19,8 @@ describe('omitReadDeniedFieldsFromTimelineActivityProperties', () => {
 
   it('should omit read-denied fields from before, after and updatedFields', () => {
     expect(
-      omitReadDeniedFieldsFromTimelineActivityProperties({
-        properties: {
+      omitReadDeniedFieldsFromFieldValueSnapshot({
+        snapshot: {
           before: { jobTitle: 'Engineer', city: 'Paris' },
           after: { jobTitle: 'Manager', city: 'Lyon' },
           updatedFields: ['jobTitle', 'city'],
@@ -34,21 +34,21 @@ describe('omitReadDeniedFieldsFromTimelineActivityProperties', () => {
     });
   });
 
-  it('should keep properties unchanged without read-denied fields', () => {
-    const properties = { diff: { jobTitle: { before: 'a', after: 'b' } } };
+  it('should keep the snapshot unchanged without read-denied fields', () => {
+    const snapshot = { diff: { jobTitle: { before: 'a', after: 'b' } } };
 
     expect(
-      omitReadDeniedFieldsFromTimelineActivityProperties({
-        properties,
+      omitReadDeniedFieldsFromFieldValueSnapshot({
+        snapshot,
         readDeniedFieldNames: new Set(),
       }),
-    ).toBe(properties);
+    ).toBe(snapshot);
   });
 
-  it('should keep non-object properties unchanged', () => {
+  it('should keep a non-object snapshot unchanged', () => {
     expect(
-      omitReadDeniedFieldsFromTimelineActivityProperties({
-        properties: null,
+      omitReadDeniedFieldsFromFieldValueSnapshot({
+        snapshot: null,
         readDeniedFieldNames: READ_DENIED_FIELD_NAMES,
       }),
     ).toBeNull();

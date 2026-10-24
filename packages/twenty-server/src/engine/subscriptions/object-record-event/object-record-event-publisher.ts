@@ -34,10 +34,7 @@ import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-mo
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
-import { buildReadDeniedFieldNamesAcrossObjects } from 'src/engine/metadata-modules/permissions/utils/build-read-denied-field-names-across-objects.util';
-import { isTimelineActivityObject } from 'src/engine/metadata-modules/permissions/utils/is-timeline-activity-object.util';
-import { omitReadDeniedFieldsFromTimelineActivityEvent } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-timeline-activity-event.util';
+import { omitReadDeniedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-event.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -230,19 +227,6 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    const restrictedFields =
-      objectsPermissions[workspaceEventBatch.objectMetadata.id]
-        ?.restrictedFields ?? {};
-
-    const timelineActivityReadDeniedFieldNames = isTimelineActivityObject(
-      workspaceEventBatch.objectMetadata,
-    )
-      ? buildReadDeniedFieldNamesAcrossObjects({
-          objectsPermissions,
-          flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
-        })
-      : new Set<string>();
-
     for (const event of workspaceEventBatch.events) {
       const { action } = parseEventNameOrThrow(workspaceEventBatch.name);
 
@@ -252,13 +236,11 @@ export class ObjectRecordEventPublisher {
         ...omitInheritedReadabilityChildRecords(event),
       };
 
-      const filteredEvent = omitReadDeniedFieldsFromTimelineActivityEvent({
-        event: omitRestrictedFieldsFromEvent({
-          event: eventWithObjectName,
-          restrictedFields,
-          flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
-        }),
-        readDeniedFieldNames: timelineActivityReadDeniedFieldNames,
+      const filteredEvent = omitReadDeniedFieldsFromEvent({
+        event: eventWithObjectName,
+        objectMetadataId: workspaceEventBatch.objectMetadata.id,
+        objectsPermissions,
+        flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       });
 
       const filteredProperties = filteredEvent.properties as {

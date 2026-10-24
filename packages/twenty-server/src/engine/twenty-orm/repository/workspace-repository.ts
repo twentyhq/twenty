@@ -58,9 +58,6 @@ import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { buildReadDeniedFieldNamesAcrossObjects } from 'src/engine/metadata-modules/permissions/utils/build-read-denied-field-names-across-objects.util';
-import { isTimelineActivityObject } from 'src/engine/metadata-modules/permissions/utils/is-timeline-activity-object.util';
-import { omitReadDeniedFieldsFromTimelineActivityRecord } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-timeline-activity-record.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import {
   getUpdateEventRecords,
@@ -205,43 +202,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         featureFlagsMap: this.options.internalContext.featureFlagsMap,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
-        formatResult: (records) => this.formatReadResult(records),
+        formatResult: (records) => this.formatResult(records),
       },
     );
-  }
-
-  private formatReadResult<T>(records: unknown): T {
-    const formattedRecords = this.formatResult<T>(records);
-
-    if (
-      this.options.shouldBypassPermissionChecks ||
-      !isTimelineActivityObject(this.options.flatObjectMetadata)
-    ) {
-      return formattedRecords;
-    }
-
-    const readDeniedFieldNames = buildReadDeniedFieldNamesAcrossObjects({
-      objectsPermissions: this.options.objectRecordsPermissions,
-      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
-    });
-
-    if (readDeniedFieldNames.size === 0) {
-      return formattedRecords;
-    }
-
-    if (Array.isArray(formattedRecords)) {
-      return formattedRecords.map((record) =>
-        omitReadDeniedFieldsFromTimelineActivityRecord({
-          record,
-          readDeniedFieldNames,
-        }),
-      ) as T;
-    }
-
-    return omitReadDeniedFieldsFromTimelineActivityRecord({
-      record: formattedRecords,
-      readDeniedFieldNames,
-    });
   }
 
   formatResult<T>(records: unknown): T {

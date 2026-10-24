@@ -45,9 +45,7 @@ export const buildRestrictedFieldNames = ({
       continue;
     }
 
-    // The owning side of a relation also travels as its join column: the record
-    // snapshots carry the ORM spelling, which settings can rename, while
-    // computeUpdatedFieldsFromDiff always appends <name>Id.
+    // Snapshots use the settings join column name, updatedFields always use <name>Id
     restrictedFieldNames.add(
       getJoinColumnNameForRelationField(flatFieldMetadata),
     );

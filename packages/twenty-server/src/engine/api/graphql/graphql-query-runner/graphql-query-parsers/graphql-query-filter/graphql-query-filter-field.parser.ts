@@ -22,7 +22,7 @@ import {
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { resolveObjectSharing } from 'src/engine/core-modules/record-share/utils/resolve-object-sharing.util';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
-import { assertTimelineActivityPropertiesAreQueryableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-timeline-activity-properties-are-queryable-or-throw.util';
+import { assertFieldValueSnapshotIsQueryableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-value-snapshot-is-queryable-or-throw.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
@@ -137,7 +137,7 @@ export class GraphqlQueryFilterFieldParser {
       fieldMetadataId: fieldMetadata.id,
     });
 
-    assertTimelineActivityPropertiesAreQueryableOrThrow({
+    assertFieldValueSnapshotIsQueryableOrThrow({
       objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
       fieldMetadata,
     });
@@ -392,7 +392,7 @@ export class GraphqlQueryFilterFieldParser {
       fieldMetadataId: referencedFieldMetadata.id,
     });
 
-    assertTimelineActivityPropertiesAreQueryableOrThrow({
+    assertFieldValueSnapshotIsQueryableOrThrow({
       objectsPermissions: outerQueryBuilder.objectRecordsPermissions,
       fieldMetadata: referencedFieldMetadata,
     });

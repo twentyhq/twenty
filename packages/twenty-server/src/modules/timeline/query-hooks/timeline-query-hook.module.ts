@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { CommonRecordVisibilityModule } from 'src/engine/api/common/common-record-visibility/common-record-visibility.module';
+import { ApplyTimelineActivitiesFieldPermissionsService } from 'src/modules/timeline/query-hooks/apply-timeline-activities-field-permissions.service';
 import { TimelineActivityCreateManyPreQueryHook } from 'src/modules/timeline/query-hooks/timeline-activity-create-many.pre-query-hook';
 import { TimelineActivityCreateOnePreQueryHook } from 'src/modules/timeline/query-hooks/timeline-activity-create-one.pre-query-hook';
 import { TimelineActivityMutationQueryHookService } from 'src/modules/timeline/query-hooks/timeline-activity-mutation-query-hook.service';
@@ -8,8 +10,9 @@ import { TimelineActivityUpdateOnePreQueryHook } from 'src/modules/timeline/quer
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 
 @Module({
-  imports: [TimelineActivityModule],
+  imports: [CommonRecordVisibilityModule, TimelineActivityModule],
   providers: [
+    ApplyTimelineActivitiesFieldPermissionsService,
     TimelineActivityMutationQueryHookService,
     TimelineActivityCreateOnePreQueryHook,
     TimelineActivityCreateManyPreQueryHook,
