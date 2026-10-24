@@ -3,6 +3,7 @@ title: 为什么选择 Twenty
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 你一直在两类软件之间做选择：一类是容易上手却无法调整，另一类是高度灵活却需要几个月才能完成配置。 Twenty 是第三种选择：**一款可随时按你需求重塑的、可立即投入生产使用的 CRM。**
 
@@ -10,20 +11,20 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 Twenty 是一个可以在其之上进行构建的平台，而不是一个只能进行配置的产品。
 
-<CardGroup cols={2}>
-  <Card img="/images/documentation/illustrations/ai.svg">
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
+  <Card img="/images/documentation/illustrations/ai.svg" href="/zh/getting-started/core-concepts/ai">
     <CardTitle>为智能体打造</CardTitle>
     智能体在你的数据模型内部运行，并具备真实的权限控制。 技能、工具、MCP。
   </Card>
-  <Card img="/images/documentation/illustrations/dev-apps.svg">
+  <Card img="/images/documentation/illustrations/dev-apps.svg" href="/zh/getting-started/core-concepts/apps">
     <CardTitle>安全可扩展性</CardTitle>
     在安全基础之上的 vibe-coded 工具灵活性。
   </Card>
-  <Card img="/images/documentation/illustrations/dev-api.svg">
+  <Card img="/images/documentation/illustrations/dev-api.svg" href="/zh/developers/introduction">
     <CardTitle>现代技术栈</CardTitle>
     React，TypeScript。 你的团队已经知道如何扩展 Twenty。 没有专有语言，没有人为设限。
   </Card>
-  <Card img="/images/documentation/illustrations/no-lock-in.png">
+  <Card img="/images/documentation/illustrations/no-lock-in.png" href="/zh/user-guide/data-migration/how-tos/export-your-data">
     <CardTitle>无锁定</CardTitle>
     开源内核，可自托管，随时导出你的数据。
   </Card>
@@ -47,6 +48,10 @@ Twenty 是一个可以在其之上进行构建的平台，而不是一个只能�
 * **今天就需要数百个预构建集成的公司。** 我们的生态正在快速成长，但目前还没有 Salesforce 或 HubSpot 那么广泛。 如果你愿意动手构建那些目前还缺少的部分，你会非常喜欢它。 如果不愿意，那就再给我们一年时间。
 * **由会议室而不是一线使用者来决定工具的组织。** 我们不搞牛排晚宴和高层简报会。 我们之所以能赢，是因为我们服务的团队拥有选择自己工具的决策权。
 
-<Card title="准备好开始了吗？" icon="rocket" href="/zh/getting-started/quickstart">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="准备好开始了吗？" icon="rocket" href="/zh/getting-started/quickstart" img="/images/documentation/illustrations/quickstart.svg">
   在不到 5 分钟内完成 Twenty 的设置——无论是在云端还是自托管。
 </Card>
+</CardGroup>
+
+<PageBanner illustration="meet-twenty" />

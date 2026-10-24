@@ -3,6 +3,8 @@ title: Configurația aplicației
 description: Declarați identitatea aplicației, rolul implicit, variabilele și metadatele din marketplace cu `defineApplication`.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Fiecare aplicație trebuie să aibă exact un apel `defineApplication`. Acesta declară:
 
 * **Identitate** — identificator universal, nume de afișare, descriere.
@@ -121,3 +123,5 @@ Dacă intenționați să [publicați aplicația](/ro/developers/extend/apps/oper
 <Note>
 `logoUrl` și `screenshots` sunt aliasuri învechite pentru `logo` și `galleryImages`. URL-urile absolute externe (`http://` sau `https://`) nu sunt acceptate pentru aceste câmpuri: ele sunt eliminate cu un avertisment în timpul build-ului. În schimb, include imaginile în folderul `public/` al aplicației tale.
 </Note>
+
+<PageBanner illustration="application-config" pattern="developers-api" />

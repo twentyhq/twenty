@@ -3,6 +3,8 @@ title: Lokaler Server
 description: Den lokalen Twenty Docker-Server verwalten – starten, stoppen, aktualisieren, parallele Testinstanz und manuelle SDK-Einrichtung.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Lokalen Server verwalten
 
 Verwenden Sie `yarn twenty docker:*`, um den lokalen Twenty-Container zu steuern:
@@ -84,3 +86,5 @@ Sie können jetzt `yarn twenty dev`, `yarn twenty docker:start` und den Rest aus
 <Note>
 Installieren Sie `twenty-sdk` nicht global — fixieren Sie es pro Projekt, damit jede App ihre eigene Version verwendet.
 </Note>
+
+<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

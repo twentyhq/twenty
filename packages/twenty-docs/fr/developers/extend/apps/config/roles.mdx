@@ -3,6 +3,8 @@ title: Rôles et autorisations
 description: Déclarez quels objets et champs les fonctions de logique et les composants frontaux de votre application peuvent lire et écrire.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Un **rôle** est un ensemble d’autorisations : quels objets une application peut lire ou écrire, quels champs elle peut voir et quelles fonctionnalités de plateforme elle peut utiliser. Les fonctions de logique et les composants frontaux de chaque application héritent des autorisations du rôle marqué avec `defineApplicationRole()` (voir [Le rôle de fonction par défaut](#the-default-function-role) ci-dessous).
 
 ```ts src/roles/restricted-company-role.ts
@@ -198,3 +200,5 @@ Notes :
 * Remplacez `objectPermissions` et `fieldPermissions` par les objets et champs dont vos fonctions ont réellement besoin.
 * `permissionFlagUniversalIdentifiers` contrôlent l’accès aux capacités au niveau de la plateforme. Maintenez-les au strict minimum.
 * Voir un exemple fonctionnel : [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
+
+<PageBanner illustration="roles" pattern="developers-api" />

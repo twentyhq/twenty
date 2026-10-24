@@ -3,6 +3,8 @@ title: Panoramica
 description: "Inserisci la tua app all'interno dell'interfaccia utente di Twenty: voci della barra laterale, viste salvate, schede nella pagina di dettaglio dei record e componenti React isolati."
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Il **livello di layout** di un'app Twenty è tutto ciò che l'utente vede: dove l'app viene visualizzata nella barra laterale, quali viste elenco fornisce, come sono organizzate le sue pagine di dettaglio dei record e quali componenti React personalizzati vengono renderizzati all'interno di quelle pagine.
 
 ```text
@@ -24,20 +26,20 @@ Il **livello di layout** di un'app Twenty è tutto ciò che l'utente vede: dove 
 
 ## In questa sezione
 
-<CardGroup cols={2}>
-  <Card title="Viste" icon="list" href="/it/developers/extend/apps/layout/views">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Viste" icon="list" href="/it/developers/extend/apps/layout/views" img="/images/documentation/illustrations/views-pipelines.svg">
     `defineView` — configurazioni di elenco salvate: colonne visibili, filtri, gruppi.
   </Card>
-  <Card title="Voci del menu di navigazione" icon="menu-2" href="/it/developers/extend/apps/layout/navigation-menu-items">
+  <Card title="Voci del menu di navigazione" icon="menu-2" href="/it/developers/extend/apps/layout/navigation-menu-items" img="/images/documentation/illustrations/navigation.svg">
     `defineNavigationMenuItem` — voci della barra laterale che puntano a viste o URL esterni.
   </Card>
-  <Card title="Layout Pagina" icon="layout-columns" href="/it/developers/extend/apps/layout/page-layouts">
+  <Card title="Layout Pagina" icon="layout-columns" href="/it/developers/extend/apps/layout/page-layouts" img="/images/documentation/illustrations/page-layouts.svg">
     `definePageLayout` e `definePageLayoutTab` — schede e widget nella pagina di dettaglio di un record.
   </Card>
-  <Card title="Componenti front-end" icon="window-maximize" href="/it/developers/extend/apps/layout/front-components">
+  <Card title="Componenti front-end" icon="window-maximize" href="/it/developers/extend/apps/layout/front-components" img="/images/documentation/illustrations/front-components.svg">
     `defineFrontComponent` — componenti React isolati che vengono renderizzati all'interno di Twenty.
   </Card>
-  <Card title="Voci del menu comandi" icon="terminal" href="/it/developers/extend/apps/layout/command-menu-items">
+  <Card title="Voci del menu comandi" icon="terminal" href="/it/developers/extend/apps/layout/command-menu-items" img="/images/documentation/illustrations/command-menu.svg">
     `defineCommandMenuItem` — registra componenti front-end come voci Cmd+K e azioni rapide.
   </Card>
 </CardGroup>
@@ -56,3 +58,5 @@ Il **livello di layout** di un'app Twenty è tutto ciò che l'utente vede: dove 
 I componenti front-end vengono eseguiti all'interno di un Web Worker isolato usando Remote DOM: vengono renderizzati in modo nativo nella pagina (non all'interno di un iframe), ma non possono accedere direttamente alla pagina host o al DOM. La comunicazione con Twenty avviene tramite un'API host basata sul passaggio di messaggi.
 
 Sono ancora in fase di sviluppo attivo: la sandbox implementa un DOM parziale, quindi gli usi avanzati possono non funzionare. Vedi [Limitazioni attuali](/it/developers/extend/apps/layout/front-components#current-limitations).
+
+<PageBanner illustration="layout" pattern="user-guide-layout" />

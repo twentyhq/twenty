@@ -3,6 +3,8 @@ title: 3. HTTP trasy
 description: Spuštění funkce přes HTTP a vykreslení dokumentů jako webových stránek.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Stejný handler může také odpovědět na HTTP požadavky. Přidáme dva trasy:
 
 * **POST** koncový bod uživatelského rozhraní volá, aby vytvořilo dokument, a
@@ -144,6 +146,10 @@ Během testování s
 **Po tomto kroku:** aplikace může generovat dokumenty přes HTTP a sloužit jako
 webové stránky. Nyní ho použijeme bez `curl`.
 
-<Card title="Další: budování UI →" icon="layout-columns" href="/cs/developers/extend/apps/tutorials/document-generator/building-the-ui">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Další: budování UI →" icon="layout-columns" href="/cs/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/documentation/illustrations/tutorial-ui.svg">
   Zobrazení, navigace, příkaz a přední součást.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-http" pattern="developers-api" />

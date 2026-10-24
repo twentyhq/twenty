@@ -3,6 +3,8 @@ title: Календарь и электронная почта
 description: Синхронизируйте свою электронную почту и календарь с Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty подключается к вашим существующим инструментам, поэтому ваша CRM-система остается актуальной без ручного ввода данных.
 
 ## Синхронизация электронной почты
@@ -35,11 +37,13 @@ Twenty подключается к вашим существующим инст�
 
 Разработчики могут создавать полнофункциональные приложения поверх Twenty — добавляя пользовательский интерфейс, серверную логику и глубокие интеграции. Приложения можно публиковать для сообщества или оставлять приватными.
 
-<CardGroup cols={2}>
-  <Card title="Руководство по календарю и электронной почте" icon="mail" href="/ru/user-guide/calendar-emails/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Руководство по календарю и электронной почте" icon="mail" href="/ru/user-guide/calendar-emails/overview" img="/images/documentation/illustrations/calendar-emails.svg">
     Настройте синхронизацию электронной почты и календаря и устраните неполадки.
   </Card>
-  <Card title="API и расширения" icon="plug" href="/ru/developers/extend/api">
+  <Card title="API и расширения" icon="plug" href="/ru/developers/extend/api" img="/images/documentation/illustrations/dev-api.svg">
     Создавайте собственные интеграции с помощью API Twenty.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="calendar-emails" pattern="user-guide-calendar-emails" />

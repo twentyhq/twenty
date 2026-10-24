@@ -3,6 +3,8 @@ title: 本地服务器
 description: 管理本地 Twenty Docker 服务器 — 启动、停止、升级、并行测试实例，以及手动设置 SDK。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## 管理本地服务器
 
 使用 `yarn twenty docker:*` 控制本地的 Twenty 容器：
@@ -84,3 +86,5 @@ yarn add twenty-sdk twenty-client-sdk
 <Note>
 不要全局安装 `twenty-sdk` —— 在每个项目中固定其版本，使每个应用都使用各自的版本。
 </Note>
+
+<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

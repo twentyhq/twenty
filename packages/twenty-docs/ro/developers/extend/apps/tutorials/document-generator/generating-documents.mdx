@@ -3,6 +3,8 @@ title: 2. Generarea documentelor
 description: O funcţie logică, expusă ca instrument AI şi acţiune a fluxului de lucru.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Acum, nucleul: o [funcţie logică](/ro/developers/extend/apps/logic/logic-functions)
 care încarcă un şablon şi o înregistrare, completează substituenţii şi salvează un nou document
 .
@@ -232,6 +234,10 @@ folosit pentru înregistrări.
 **După acest pas:** fiecare document generat are un PDF real, descărcabil. Dar
 nimic nu poate *apela* generatorul din interfață — pentru asta avem nevoie de un traseu HTTP.
 
-<Card title="Următorul: Rute HTTP →" icon="world" href="/dezvoltatori/extindere/aplicații/tutoriale/document-generator/http-routes">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Următorul: Rute HTTP →" icon="world" href="/dezvoltatori/extindere/aplicații/tutoriale/document-generator/http-routes" img="/images/documentation/illustrations/tutorial-http.svg">
   Serviți funcția de HTTP și redați documentele ca pagini web.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-documents" pattern="developers-api" />

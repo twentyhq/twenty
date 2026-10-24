@@ -3,6 +3,8 @@ title: 4. Budování uživatelského rozhraní
 description: Zobrazení, postranní navigace, příkaz a přední komponenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Právě teď jsou objekty dosažitelné pouze v nastavení. Dejme aplikaci
 skutečnou přítomnost v UI: seznam zobrazení, položek postranního panelu, jedním kliknutím
 **Generovat příkaz** dokumentu, přední část rekordové stránky do **náhledu** dokumentu
@@ -302,6 +304,10 @@ Nyní editoři píší šablony v řádném editoru s bohatým textem:
 **Po tomto kroku:** náhled dokumentů krásně a šablony jsou editovatelné
 v aplikaci. Dále nechte AI agenta generovat je z chatu.
 
-<Card title="Další: agent AI →" icon="robot" href="/cs/developers/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Další: agent AI →" icon="robot" href="/cs/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/documentation/illustrations/skills-agents.svg">
   Přidejte agenta a dovednosti, které volají po nástroji.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-ui" pattern="developers-api" />

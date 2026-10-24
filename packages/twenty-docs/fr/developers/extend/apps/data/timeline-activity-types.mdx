@@ -3,6 +3,8 @@ title: Types d'activités de chronologie
 description: Définissez les événements d'audit automatique et les événements explicites de l'application qui s'affichent dans les calendriers d'enregistrement.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Un type d'activité de la timeline définit le vocabulaire stable pour un événement affiché dans la timeline d'un enregistrement. Les objets standards et les objets d'application utilisent le même contrat : un type a une étiquette et une icône, peut éventuellement déclarer lorsqu'il est émis, et peut éventuellement être rendu à travers l'un des [composants frontaux] de votre application (/developers/extend/apps/layout/front-components).
 
 <Note>
@@ -181,3 +183,5 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | `replacesTimelineActivityTypeUniversalIdentifier` | Non           | Type d'émission existant remplacé; nécessite `emit`                                  |
 
 Vingt instantanés instantanés d'identité sémantique et présentation durable se replient quand un événement est créé. Les lignes historiques conservent leur action originale et leur signification d'objet. Pendant que le type est installé, son étiquette traduite en cours, son icône et son composant frontal sont rendus en direct. Après désinstallation, la clé de secours de l'instantané conserve la ligne lisible. La résolution utilise l'identifiant universel, donc la présentation survit également à la réinstallation de l'application.
+
+<PageBanner illustration="timeline" pattern="developers-api" />

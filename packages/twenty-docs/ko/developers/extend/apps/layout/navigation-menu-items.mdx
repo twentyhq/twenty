@@ -3,6 +3,8 @@ title: 내비게이션 메뉴 항목
 description: 워크스페이스 사이드바에 사용자 지정 항목을 추가하여 저장된 보기나 외부 URL에 연결하세요.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 **내비게이션 메뉴 항목**은 왼쪽 사이드바의 항목입니다. `defineNavigationMenuItem()`을 사용해 사용자 지정 사이드바 링크를 추가하세요 — 일반적으로 배포하는 각 [보기](/ko/developers/extend/apps/layout/views)마다 하나씩 추가하거나 외부 URL을 가리키도록 설정합니다.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
@@ -43,3 +45,5 @@ export default defineNavigationMenuItem({
 <Note>
 **흔한 오류:** 연결된 내비게이션 메뉴 항목 없이 오브젝트를 생성하면 해당 오브젝트는 사이드바에서 접근할 수 없습니다. 기술적/내부용 오브젝트가 아닌 한, 모든 사용자 지정 오브젝트에는 이를 가리키는 사이드바 항목이 있어야 합니다.
 </Note>
+
+<PageBanner illustration="navigation" pattern="developers-api" />

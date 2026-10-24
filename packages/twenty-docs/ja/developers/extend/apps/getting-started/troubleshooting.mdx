@@ -3,6 +3,8 @@ title: トラブルシューティング
 description: 初回実行時によく発生する問題 — Docker、Node のバージョン、Yarn、依存関係。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 * **Docker のエラー** — `yarn twenty docker:start` の前に Docker Desktop（またはデーモン）が起動していることを確認してください。 エラーメッセージに、OS に適した起動コマンドが表示されます。
 * **誤った Node のバージョン** — 24.5 以上が必要です（`engines.node: ^24.5.0`）。 `node -v` で確認してください。
 * **Yarn 4 が見つからない** — `corepack enable` を実行してください。
@@ -11,3 +13,5 @@ description: 初回実行時によく発生する問題 — Docker、Node のバ
 * **`twenty dev:build` は `dependencies` 配下の `twenty-client-sdk` について警告します** — これは Twenty によって実行時に提供されるため、`twenty-sdk` と同様に `devDependencies` へ移動する必要があります。 [Project Structure → Dependencies](/ja/developers/extend/apps/getting-started/project-structure#dependencies) を参照してください。
 
 行き詰まりましたか？ [Twenty の Discord](https://discord.com/channels/1130383047699738754/1130386664812982322)でヘルプを依頼してください。
+
+<PageBanner illustration="bug-requests" pattern="developers-api" />

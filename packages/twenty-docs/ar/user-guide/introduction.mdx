@@ -4,8 +4,9 @@ description: مرحباً بك في دليل مستخدم Twenty، مصادرك 
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3}>
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/ar/user-guide/data-model/overview" img="/images/documentation/illustrations/data-model.svg">
     <CardTitle>نموذج البيانات</CardTitle>
     خصّص نموذج بياناتك ليتوافق مع عمليات عملك.
@@ -57,3 +58,5 @@ import { CardTitle } from "/snippets/card-title.mdx"
   </Card>
 
 </CardGroup>
+
+<PageBanner illustration="user-guide" />

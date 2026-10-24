@@ -2,6 +2,8 @@
 title: Stylová příručka
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Tento dokument obsahuje pravidla pro psaní kódu.
 
 Cílem zde je mít konzistentní kódovou základnu, která je snadno čitelná a snadno udržovatelná.
@@ -288,3 +290,5 @@ Pravidlo Oxlint, `typescript/consistent-type-imports`, prosazuje standard zákaz
 Upozorňujeme, že toto pravidlo konkrétně řeší vzácné okrajové případy, kdy dochází k neúmyslným typovým importům. TypeScript sám odrazuje tuto praxi, jak je uvedeno v [poznámkách k verzi TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Ve většině případů byste neměli potřebovat používat pouze typové importy.
 
 Aby váš kód splňoval toto pravidlo, spusťte Oxlint jako součást svého vývojového pracovního postupu.
+
+<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

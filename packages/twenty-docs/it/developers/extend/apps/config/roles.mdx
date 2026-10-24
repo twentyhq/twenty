@@ -3,6 +3,8 @@ title: Ruoli e permessi
 description: Dichiara quali oggetti e campi le funzioni di logica e i componenti front-end della tua app possono leggere e scrivere.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Un **ruolo** è un insieme di permessi: quali oggetti un’app può leggere o scrivere, quali campi può vedere e quali funzionalità a livello di piattaforma può usare. Tutte le funzioni di logica e i componenti front-end di ogni app ereditano i permessi del ruolo contrassegnato con `defineApplicationRole()` (vedi [The default function role](#the-default-function-role) di seguito).
 
 ```ts src/roles/restricted-company-role.ts
@@ -204,3 +206,5 @@ Note:
 * Sostituisci `objectPermissions` e `fieldPermissions` con gli oggetti e i campi di cui le tue funzioni hanno realmente bisogno.
 * `permissionFlagUniversalIdentifiers` controllano l'accesso alle funzionalità a livello di piattaforma. Mantienili al minimo.
 * Vedi un esempio di lavoro: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
+
+<PageBanner illustration="roles" pattern="developers-api" />

@@ -3,6 +3,8 @@ title: Connexions
 description: Autorisez votre application à agir au nom d'un utilisateur auprès de services tiers via OAuth.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Les connexions sont des identifiants qu'un utilisateur détient pour un service externe (Linear, GitHub, Slack, ...). Votre application déclare **comment** ces identifiants sont obtenus — un **fournisseur de connexion** — et les consomme à l'exécution pour effectuer des appels authentifiés vers l'API tierce.
 
 À ce jour, seul OAuth 2.0 est pris en charge. De futurs types d'identifiants (jetons d'accès personnels, clés d'API, authentification de base) s'intégreront à la même interface — les applications utilisant déjà `defineConnectionProvider({ type: 'oauth', ... `})\` n'auront pas besoin de migrer.
@@ -266,3 +268,5 @@ Pour chaque fournisseur de connexion, l'administrateur du serveur doit d'abord e
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="connections" pattern="developers-api" />

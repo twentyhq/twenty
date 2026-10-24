@@ -3,6 +3,8 @@ title: 4. Costruire l'interfaccia utente
 description: Viste, navigazione della barra laterale, un comando e componenti anteriori.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 In questo momento gli oggetti sono raggiungibili solo attraverso le Impostazioni. Diamo all'app una presenza
 reale nell'UI: viste elenco, voci sidebar, un comando con un solo clic
 **Genera documento** un componente frontale della record-page per **anteprima** un documento
@@ -300,6 +302,10 @@ Ora gli editori scrivono i modelli in un corretto editor di testo ricco:
 **Dopo questo passaggio:** i documenti in anteprima magnificamente e i modelli sono modificabili
 in-app. Poi, lasciare che un agente AI li generi da una chat.
 
-<Card title="Il prossimo: un agente AI →" icon="robot" href="/it/developers/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Il prossimo: un agente AI →" icon="robot" href="/it/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/documentation/illustrations/skills-agents.svg">
   Aggiungi un agente e un'abilità che chiama il tuo strumento.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-ui" pattern="developers-api" />

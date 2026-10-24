@@ -3,6 +3,8 @@ title: 애플리케이션 구성
 description: "`defineApplication`을 사용하여 앱의 식별 정보, 기본 역할, 변수 및 마켓플레이스 메타데이터를 선언합니다."
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 모든 앱에는 `defineApplication` 호출이 정확히 하나 있어야 합니다. 다음 항목을 선언합니다:
 
 * **식별 정보** — 범용 식별자, 표시 이름, 설명.
@@ -121,3 +123,5 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 <Note>
 `logoUrl` 및 `screenshots`는 `logo` 및 `galleryImages`의 더 이상 사용되지 않는 별칭입니다. 다음 필드에는 외부 절대 URL(`http://` 또는 `https://`)이 지원되지 않습니다. 빌드 시 경고와 함께 제거됩니다. 대신 앱의 `public/` 폴더에 이미지를 번들하세요.
 </Note>
+
+<PageBanner illustration="application-config" pattern="developers-api" />

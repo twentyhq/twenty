@@ -3,6 +3,8 @@ title: Конфигурация приложения
 description: Определите идентификацию вашего приложения, роль по умолчанию, переменные и метаданные маркетплейса с помощью defineApplication.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 В каждом приложении должен быть ровно один вызов `defineApplication`. Он объявляет:
 
 * **Идентификация** — универсальный идентификатор, отображаемое имя, описание.
@@ -121,3 +123,5 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 <Note>
 «logoUrl» и «screenshots» являются устаревшими псевдонимами «logo» и «galleryImages». Внешние абсолютные URL-адреса (`http://` или `https://`) не поддерживаются для этих полей: они удаляются с предупреждением на время сборки. Вместо этого объедините изображения в папку `public/` вашего приложения.
 </Note>
+
+<PageBanner illustration="application-config" pattern="developers-api" />

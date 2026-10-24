@@ -2,6 +2,8 @@
 title: Configuração
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 # Gestão de Configuração
 
 <Warning>
@@ -412,3 +414,5 @@ Com o multi-workspace ativado, não liste aqui todos os subdomínios dos workspa
 Em vez disso, roteie os caminhos da API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
 `/client-config`, `/file`) para o back-end em cada hostname de workspace, para que cada
 workspace permaneça na mesma origem — é assim que o Twenty Cloud funciona.
+
+<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

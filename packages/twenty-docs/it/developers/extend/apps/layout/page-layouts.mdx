@@ -3,6 +3,8 @@ title: Layout Pagina
 description: Personalizza le pagine di dettaglio dei record — schede, widget e dove vengono renderizzati i front components — usando `definePageLayout` e `definePageLayoutTab`.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Un **layout di pagina** controlla come è organizzata la pagina di dettaglio di un record: quali schede compaiono e quali widget contengono. Usa `definePageLayout()` per dichiarare un layout per un oggetto di tua proprietà, oppure `definePageLayoutTab()` per aggiungere una singola scheda a un layout già esistente (tuo o standard di Twenty).
 
 | Caso d'uso                                                                         | Entità                |
@@ -155,3 +157,5 @@ export default definePageLayoutTab({
 * `position` controlla l'ordinamento rispetto alle schede esistenti nel layout di destinazione. Scegli un valore che collochi la tua scheda dove desideri rispetto alle schede integrate.
 
 * Usa questo invece di `definePageLayout` quando vuoi solo aggiungere a un layout esistente. Usa `definePageLayout` quando possiedi l’intero layout.
+
+<PageBanner illustration="page-layouts" pattern="developers-api" />

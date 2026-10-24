@@ -3,6 +3,7 @@ title: Layout
 description: Come navigare, esplorare e visualizzare i record in Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Il layout principale
@@ -66,8 +67,12 @@ Ogni vista salva i propri filtri, l'ordinamento e la visibilità dei campi. Cond
 
 Quando apri un record, la pagina dei dettagli è composta da **schede** e **widget** configurabili. Aggiungi, rimuovi, riordina e ridimensiona i widget in una griglia — campi, record correlati, email, timeline, attività, note, file, grafici, iframe e altro ancora. Ogni tipo di oggetto ha il proprio layout.
 
-<Card title="Guida completa al layout" icon="arrow-right" href="/it/user-guide/layout/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Guida completa al layout" icon="arrow-right" href="/it/user-guide/layout/overview" img="/images/documentation/illustrations/layout.svg">
   Navigazione, viste, pagine dei record — guida di riferimento dettagliata e istruzioni pratiche.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511790" title="Layout" />
+
+<PageBanner illustration="layout" pattern="user-guide-layout" />

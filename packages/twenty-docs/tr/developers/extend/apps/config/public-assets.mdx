@@ -3,6 +3,8 @@ title: Genel varlıklar
 description: Uygulamanızla birlikte public/ klasörü aracılığıyla statik dosyalar — görseller, simgeler, yazı tipleri — dağıtın.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Uygulamanızın kökündeki `public/` klasörü, statik dosyaları barındırır — görseller, simgeler, yazı tipleri veya uygulamanızın çalışma zamanında ihtiyaç duyduğu diğer varlıklar. Bu dosyalar derlemelere otomatik olarak dahil edilir, geliştirme modunda senkronize edilir ve sunucuya yüklenir.
 
 `public/` içine yerleştirilen dosyalar şunlardır:
@@ -64,3 +66,5 @@ export default defineFrontComponent({
 ```
 
 `path` bağımsız değişkeni, uygulamanızın `public/` klasörüne göre görelidir. Hem `getPublicAssetUrl('logo.png')` hem de `getPublicAssetUrl('public/logo.png')` aynı URL'ye çözümlenir — `public/` öneki varsa otomatik olarak kaldırılır.
+
+<PageBanner illustration="image" pattern="developers-api" />

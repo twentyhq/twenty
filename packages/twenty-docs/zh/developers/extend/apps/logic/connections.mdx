@@ -3,6 +3,8 @@ title: 连接
 description: 通过 OAuth 让你的应用代表用户在第三方服务中执行操作。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 连接是用户为外部服务（Linear、GitHub、Slack 等）持有的凭据。 你的应用声明**如何**获取这些凭据——即**连接提供程序**——并在运行时使用它们向第三方 API 发起认证调用。
 
 目前仅支持 OAuth 2.0。 将来的凭据类型（个人访问令牌、API 密钥、基本身份验证）将接入相同的接口——已经使用 `defineConnectionProvider({ type: 'oauth', ... })` 的应用将无需迁移。
@@ -266,3 +268,5 @@ const conn = connections.find((c) => c.visibility === 'workspace');
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="connections" pattern="developers-api" />

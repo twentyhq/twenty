@@ -3,6 +3,8 @@ title: Synchronisierung & Wiederherstellung
 description: Welchen Befehl Sie wann verwenden, wie Sie die Sync-Ausgabe lesen und eine Wiederherstellungsleiter, wenn lokale Metadaten abweichen – bevor es zu einem vollständigen Reset kommt.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Die lokale App-Entwicklung dreht sich um **Syncing**: Die CLI baut Ihr Manifest neu auf und der Server wendet nur die Differenz zwischen diesem und den Metadaten an, die sich bereits in Ihrem Workspace befinden. Diese Seite behandelt, zu welchem Befehl Sie greifen sollten, wie Sie lesen, was ein Sync geändert hat, und was Sie – der Reihe nach – tun sollten, wenn der lokale Zustand inkonsistent aussieht.
 
 ## Welcher Befehl, wann
@@ -123,3 +125,5 @@ Wenn etwas schiefläuft, ermöglichen Ihnen das Metadaten-Diff und benannte Fehl
 * **Abhängigkeitsgrößenfehler** — die Synchronisierung oder Installation schlägt fehl, weil die Produktions-`dependencies` der App zu groß sind, um sie als Runtime-Layer zu installieren (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); verschieben Sie Pakete, die Ihre Logikfunktionen zur Laufzeit nicht importieren (UI-Bibliotheken, Dev-Tools), in die `devDependencies`.
 * **App-Code-Laufzeitfehler** — die Synchronisierung ist erfolgreich, aber Ihre Logikfunktionen oder Komponenten verhalten sich zur Laufzeit unerwartet; überprüfen Sie die [Funktionsprotokolle](/de/developers/extend/apps/operations/cli).
 * **Lokaler Instanzzustand** — nichts davon trifft zu und der Workspace sieht immer noch falsch aus; arbeiten Sie die Wiederherstellungsleiter nach unten ab.
+
+<PageBanner illustration="sync-recovery" pattern="developers-api" />

@@ -3,6 +3,8 @@ title: 5. An AI agent
 description: 让代理人使用您的工具从聊天室生成文档。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 因为`生成文档` 暴露于一个 **工具**\*，故AI 代理人可以调用它。
 让我们添加一个代理人和技能，用户可以说\*"生成一个
 Jeffery Griffin"\*。
@@ -75,6 +77,10 @@ export default defineAgent({
 **在这一步之后：** 应用程序是功能完整和真正有用的。
 送货时间。
 
-<Card title="下一步：发布 →" icon="rocket" href="/zh/developers/extend/apps/tutorials/document-generator/发布">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="下一步：发布 →" icon="rocket" href="/zh/developers/extend/apps/tutorials/document-generator/发布" img="/images/documentation/illustrations/publishing.svg">
   添加市场元数据和发布。
 </Card>
+</CardGroup>
+
+<PageBanner illustration="skills-agents" pattern="developers-api" />

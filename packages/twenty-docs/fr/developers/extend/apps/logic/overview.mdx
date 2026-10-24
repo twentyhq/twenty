@@ -3,6 +3,8 @@ title: Vue d'ensemble
 description: TypeScript côté serveur qui s’exécute dans Twenty — déclenché par des routes HTTP, des planifications CRON, des événements de base de données, des outils d’IA ou des actions de flux de travail.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 La **couche logique** d’une application Twenty est le code qui *s’exécute* — des gestionnaires TypeScript côté serveur qui réagissent aux requêtes HTTP, aux planifications CRON et aux modifications d’enregistrements ; des compétences et des agents d’IA qui résident dans l’espace de travail ; et des connexions OAuth qui permettent à vos fonctions d’agir au nom d’un utilisateur dans des services tiers.
 
 ```text
@@ -23,20 +25,20 @@ La **couche logique** d’une application Twenty est le code qui *s’exécute* 
 
 ## Dans cette section
 
-<CardGroup cols={2}>
-  <Card title="Fonctions logiques" icon="bolt" href="/fr/developers/extend/apps/logic/logic-functions">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Fonctions logiques" icon="bolt" href="/fr/developers/extend/apps/logic/logic-functions" img="/images/documentation/illustrations/logic-functions.svg">
     Le bloc de construction principal — types de déclencheurs, charges utiles et client API typé.
   </Card>
-  <Card title="Compétences et agents" icon="robot" href="/fr/developers/extend/apps/logic/skills-and-agents">
+  <Card title="Compétences et agents" icon="robot" href="/fr/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/illustrations/skills-agents.svg">
     Instructions d’agent IA réutilisables et assistants avec invites système personnalisées.
   </Card>
-  <Card title="Connexions" icon="plug" href="/fr/developers/extend/apps/logic/connections">
+  <Card title="Connexions" icon="plug" href="/fr/developers/extend/apps/logic/connections" img="/images/documentation/illustrations/connections.svg">
     Identifiants OAuth détenus par votre application pour des services tiers — Linear, GitHub, Slack, et plus encore.
   </Card>
-  <Card title="Stockage clé-valeur" icon="database" href="/fr/developers/extend/apps/logic/key-value-store">
+  <Card title="Stockage clé-valeur" icon="database" href="/fr/developers/extend/apps/logic/key-value-store" img="/images/documentation/illustrations/key-value-store.svg">
     Conservez l’état entre les exécutions de fonctions logiques — caches, curseurs et revendications inter-espaces de travail.
   </Card>
-  <Card title="Tâches en arrière-plan" icon="stack-2" href="/fr/developers/extend/apps/logic/background-jobs">
+  <Card title="Tâches en arrière-plan" icon="stack-2" href="/fr/developers/extend/apps/logic/background-jobs" img="/images/documentation/illustrations/background-jobs.svg">
     Mettez en file d’attente l’exécution d’une fonction logique sur les workers afin de contourner la limite de temps par exécution.
   </Card>
 </CardGroup>
@@ -58,3 +60,5 @@ Les fonctions s’exécutent dans un environnement isolé dans des processus Nod
 <Note>
 Les **hooks au moment de l’installation** — du code qui s’exécute avant ou après l’installation — partagent ce runtime mais utilisent leurs propres fonctions define et se trouvent sous [Config → Install Hooks](/fr/developers/extend/apps/config/install-hooks).
 </Note>
+
+<PageBanner illustration="apps-logic" pattern="user-guide-workflows" />

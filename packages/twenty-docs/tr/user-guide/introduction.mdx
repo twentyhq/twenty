@@ -4,8 +4,9 @@ description: Twenty Kullanıcı Kılavuzu'na hoş geldiniz; gelişmiş yapıland
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3}>
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/tr/user-guide/data-model/overview" img="/images/documentation/illustrations/data-model.svg">
     <CardTitle>Veri Modeli</CardTitle>
     Veri modelinizi iş süreçlerinize uyacak şekilde özelleştirin.
@@ -57,3 +58,5 @@ import { CardTitle } from "/snippets/card-title.mdx"
   </Card>
 
 </CardGroup>
+
+<PageBanner illustration="user-guide" />

@@ -3,6 +3,8 @@ title: Testování
 description: Nastavení Vitestu, integrační testy proti reálnému serveru Twenty, kontrola typů a CI s GitHub Actions.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 SDK poskytuje programová rozhraní, která vám umožní z testovacího kódu aplikaci sestavit, nasadit, nainstalovat a odinstalovat. V kombinaci s [Vitest](https://vitest.dev/) a typovanými klienty API můžete psát integrační testy, které ověří, že vaše aplikace funguje end-to-end proti reálnému serveru Twenty.
 
 ## Používání balíčků npm
@@ -261,3 +263,5 @@ Spustí se `tsc --noEmit` proti souboru `tsconfig.json` vaší aplikace a nahlá
 Generátor kostry vytvoří připravený k použití workflow v `.github/workflows/ci.yml`. Při každém pushi do `main` a při každém pull requestu spustí efemérní server Twenty v runneru (pomocí akce `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`), poté spustí `yarn lint`, `yarn typecheck`, `yarn test:unit` a `yarn test` s `TWENTY_API_URL` / `TWENTY_API_KEY` směřujícími na tento server. Nejsou vyžadovány žádné tajné údaje a verzi serveru můžete připnout pomocí proměnné prostředí `TWENTY_VERSION` na začátku workflow.
 
 Úplný postup pro tři workflow generované kostrou (`ci.yml`, nasazovací pipeline `cd.yml` a `publish.yml` pro publikování na npm) najdete v části [Publishing → Automated CI/CD](/cs/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows).
+
+<PageBanner illustration="testing" pattern="developers-api" />

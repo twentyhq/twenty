@@ -3,6 +3,8 @@ title: Ön uç bileşenleri
 description: Twenty'nin UI'si içinde, korumalı alan (sandbox) izolasyonu ile görüntülenen React bileşenleri oluşturun.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Ön uç bileşenler, Twenty'nin UI'si içinde doğrudan görüntülenen React bileşenleridir. Remote DOM kullanan **izole bir Web Worker** içinde çalışırlar — kodunuz, korumalı (sandbox) ve opak kökenli bir iframe içinde yürütülür; ancak UI, o iframe ile sınırlanmak yerine sayfada yerel olarak işlenir.
 
 <Warning>
@@ -846,3 +848,5 @@ Bileşen CSS’i, ister `import './styles.css'` ile, ister CSS-in-JS ile ya da b
 * **Sürükle-bırak yükleri.** Sürükleme olayları tetiklenir, ancak `event.dataTransfer` `undefined` durumundadır.
 * **Node yerleşikleri.** `fs`, `path` ve `node:crypto` build aşamasında başarısız olur; bu nedenle bu işi bir [mantık fonksiyonuna](/tr/developers/extend/apps/logic/logic-functions) taşıyın. Web Crypto, `fetch`, `TextEncoder` ve `URL` kullanılabilir durumdadır.
 * **`iframe`** her zaman `allow-same-origin` olmadan yeniden sandbox’a alınır, bu nedenle kendi oturumuna güvenen bir yerleştirme, oturum kapalı olarak işlenir. `onLoad`’u da yoktur.
+
+<PageBanner illustration="front-components" pattern="developers-api" />

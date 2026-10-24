@@ -2,6 +2,8 @@
 title: Rotazione delle chiavi
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty ha due famiglie di chiavi indipendenti:
 
 * **Chiavi di firma JWT** — coppie di chiavi asimmetriche ES256 (con tag `kid`) archiviate in `core."signingKey"`, utilizzate per firmare e verificare i token di accesso / aggiornamento.
@@ -57,3 +59,5 @@ Ogni valore crittografato è incapsulato come `enc:v2:\<keyId>:\<payload>`, dove
 ## Supporto legacy per `APP_SECRET`
 
 Le istanze meno recenti che non hanno mai impostato `ENCRYPTION_KEY` usano `APP_SECRET` come chiave di crittografia a riposo (e come segreto del cookie di sessione, derivato da essa). Questo percorso è mantenuto per compatibilità con le versioni precedenti ma è **deprecato** — imposta una `ENCRYPTION_KEY` dedicata e segui la procedura di rotazione sopra per migrare. `APP_SECRET` continua a essere utilizzata per verificare i token di accesso HS256 legacy.
+
+<PageBanner illustration="sso" pattern="user-guide-permissions" />

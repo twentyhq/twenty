@@ -3,6 +3,8 @@ title: Связи
 description: Связывайте объекты между собой двунаправленными связями MANY_TO_ONE / ONE_TO_MANY.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Отношения связывают два объекта между собой. В Twenty отношения всегда **двунаправленные** — у каждого отношения есть две стороны, и каждая сторона объявляется как поле, ссылающееся на другую.
 
 | Тип отношения | Описание                                                              | Есть внешний ключ?     |
@@ -181,3 +183,5 @@ export default defineObject({
   ],
 });
 ```
+
+<PageBanner illustration="relations" pattern="developers-api" />

@@ -3,6 +3,7 @@ title: Por que Twenty
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 Você vinha escolhendo entre softwares que são fáceis de começar, mas impossíveis de mudar, e softwares que são flexíveis, mas levam meses para serem configurados. Twenty é a terceira opção: **um CRM pronto para produção que você pode remodelar conforme avança.**
 
@@ -10,20 +11,20 @@ Você vinha escolhendo entre softwares que são fáceis de começar, mas imposs�
 
 Twenty é uma plataforma na qual você pode construir, não um produto que você configura.
 
-<CardGroup cols={2}>
-  <Card img="/images/documentation/illustrations/ai.svg">
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
+  <Card img="/images/documentation/illustrations/ai.svg" href="/pt/getting-started/core-concepts/ai">
     <CardTitle>Feito para Agentes</CardTitle>
     Os agentes operam dentro do seu modelo de dados com permissões reais. Competências, Ferramentas, MCP.
   </Card>
-  <Card img="/images/documentation/illustrations/dev-apps.svg">
+  <Card img="/images/documentation/illustrations/dev-apps.svg" href="/pt/getting-started/core-concepts/apps">
     <CardTitle>Extensibilidade Segura</CardTitle>
     A flexibilidade de ferramentas "vibe-coded" sobre bases seguras.
   </Card>
-  <Card img="/images/documentation/illustrations/dev-api.svg">
+  <Card img="/images/documentation/illustrations/dev-api.svg" href="/pt/developers/introduction">
     <CardTitle>Stack Moderno</CardTitle>
     React, TypeScript. A sua equipe já sabe como estender o Twenty. Sem linguagens proprietárias, sem restrições de acesso.
   </Card>
-  <Card img="/images/documentation/illustrations/no-lock-in.png">
+  <Card img="/images/documentation/illustrations/no-lock-in.png" href="/pt/user-guide/data-migration/how-tos/export-your-data">
     <CardTitle>Sem Lock-in</CardTitle>
     Núcleo open source, possibilidade de auto-hospedagem, exporte seus dados a qualquer momento.
   </Card>
@@ -66,6 +67,10 @@ Twenty é uma plataforma na qual você pode construir, não um produto que você
   e apresentações executivas. Ganhamos com equipes que têm a
   autoridade para escolher suas próprias ferramentas.
 
-<Card title="Pronto para começar?" icon="rocket" href="/pt/getting-started/quickstart">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Pronto para começar?" icon="rocket" href="/pt/getting-started/quickstart" img="/images/documentation/illustrations/quickstart.svg">
   Configure o Twenty em menos de 5 minutos — na nuvem ou em hospedagem própria.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="meet-twenty" />

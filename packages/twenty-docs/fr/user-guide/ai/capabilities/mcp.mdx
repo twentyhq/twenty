@@ -3,6 +3,8 @@ title: Serveur MCP
 description: Connectez des assistants IA à votre espace de travail Twenty à l'aide du Model Context Protocol.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty expose un serveur [MCP](https://modelcontextprotocol.io/) afin que les assistants IA — Claude Desktop, Claude Code, Cursor, ChatGPT et autres — puissent lire et écrire vos données CRM en langage naturel.
 
 Utilisez l'**URL de votre espace de travail** (l'URL que vous utilisez pour accéder à Twenty) comme point de terminaison MCP. Sur Twenty Cloud, l'URL de votre espace de travail peut être `https://{mycompany}.twenty.com` ou un domaine personnalisé. Le serveur est disponible à l'adresse :
@@ -135,3 +137,5 @@ Le point de terminaison MCP, les points de terminaison OAuth et les métadonnée
 **Délai d'attente de connexion**
 
 * Confirmez que l'URL du point de terminaison MCP est accessible depuis votre machine. Pour les instances auto-hébergées, vérifiez que le serveur est en cours d'exécution et que `SERVER_URL` est correctement défini.
+
+<PageBanner illustration="connections" pattern="developers-api" />

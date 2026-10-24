@@ -2,6 +2,8 @@
 title: 메시지 큐
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 큐는 비동기 작업을 수행할 수 있게 합니다. 이들은 회원 가입 시 환영 이메일 보내기와 같은 백그라운드 작업을 수행하는 데 사용될 수 있습니다.
 각 사용 사례는 `MessageQueueServiceBase`로부터 확장된 자체 큐 클래스를 가집니다.
 
@@ -39,3 +41,5 @@ class CustomWorker {
   }
 }
 ```
+
+<PageBanner illustration="background-jobs" pattern="developers-api" />

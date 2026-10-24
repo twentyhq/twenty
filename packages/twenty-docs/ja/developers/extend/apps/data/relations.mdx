@@ -3,6 +3,8 @@ title: 関連
 description: 双方向の MANY_TO_ONE / ONE_TO_MANY リレーションでオブジェクト同士を接続します。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 リレーションは 2 つのオブジェクト同士を関連付けます。 Twenty におけるリレーションは常に **双方向** です — すべてのリレーションには 2 つの側面があり、それぞれが相手を参照するフィールドとして宣言されます。
 
 | リレーションタイプ     | 説明                                | 外部キーあり？              |
@@ -181,3 +183,5 @@ export default defineObject({
   ],
 });
 ```
+
+<PageBanner illustration="relations" pattern="developers-api" />

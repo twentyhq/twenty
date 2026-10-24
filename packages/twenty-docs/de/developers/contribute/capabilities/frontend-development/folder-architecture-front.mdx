@@ -3,6 +3,8 @@ title: Ordnerarchitektur
 info: Ein detaillierter Einblick in unsere Ordnerarchitektur
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 In diesem Leitfaden erkunden Sie die Details der Projektverzeichnisstruktur und wie sie zur Organisation und Wartbarkeit von Twenty beiträgt.
 
 Indem Sie diesem Ordnerarchitekturkonzept folgen, können Sie Dateien, die sich auf spezifische Funktionen beziehen, leichter finden und sicherstellen, dass die Anwendung skalierbar und wartbar ist.
@@ -107,3 +109,5 @@ Sie können Code anderer Module aus jedem Modul importieren, mit Ausnahme des `u
 ### Intern
 
 Jeder Teil (Hooks, Zustände, ...) eines Moduls kann einen `internal`-Ordner haben, der Teile enthält, die nur innerhalb des Moduls verwendet werden.
+
+<PageBanner illustration="frontend-architecture" pattern="developers-api" />

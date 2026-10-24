@@ -2,6 +2,8 @@
 title: 样式指南
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 本文档包含编写代码时需要遵循的规则。
 
 这里的目标是拥有一个一致的代码库，易于阅读和维护。
@@ -288,3 +290,5 @@ Oxlint 规则，`typescript/consistent-type-imports`，强制执行不允许类�
 请注意，此规则专门针对在罕见的边缘情况中发生的非预期类型导入。 TypeScript 本身也不鼓励这种做法，如[TypeScript 3.8 发行说明](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)所述。 在大多数情况下，您不需要使用仅类型导入。
 
 为确保您的代码符合此规则，请确保在开发工作流程中运行 Oxlint。
+
+<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

@@ -3,6 +3,8 @@ title: 4. UI 구성하기
 description: 뷰, 사이드바 내비게이션, 커맨드, 그리고 프런트 컴포넌트.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 현재는 설정(Settings)에서만 해당 객체에 접근할 수 있습니다. 이제 앱이 UI에서 진짜 존재감을 갖도록 해 봅시다. 목록 뷰, 사이드바 항목, 원클릭 **Generate document** 명령, 문서를 **미리 보기** 위한 레코드 페이지용 프런트 컴포넌트, 템플릿용 기본 제공 리치 텍스트 **editor** 탭을 추가합니다.
 
 ## 뷰와 내비게이션
@@ -270,6 +272,10 @@ export default definePageLayout({
 
 **이 단계를 마치면:** 문서는 보기 좋게 미리 볼 수 있고, 템플릿은 앱 내에서 편집할 수 있습니다. 다음으로, AI 에이전트가 채팅에서 문서를 생성하도록 만들어 봅시다.
 
-<Card title="다음: AI 에이전트 →" icon="robot" href="/ko/developers/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="다음: AI 에이전트 →" icon="robot" href="/ko/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/documentation/illustrations/skills-agents.svg">
   도구를 호출하는 에이전트와 스킬을 추가하세요.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-ui" pattern="developers-api" />

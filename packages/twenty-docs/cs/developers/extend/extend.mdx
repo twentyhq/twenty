@@ -3,6 +3,8 @@ title: Rozšiřte
 description: Rozšiřte funkčnost Twenty pomocí rozhraní API, webhooků a vlastních aplikací.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Přehled
 
 Twenty je navrženo tak, aby bylo rozšiřitelné. Použijte naše rozhraní API, webhooky a aplikační framework k integraci se svými stávajícími nástroji a k vytváření vlastní funkčnosti.
@@ -15,14 +17,16 @@ Twenty je navrženo tak, aby bylo rozšiřitelné. Použijte naše rozhraní API
 
 ## Začínáme
 
-<CardGroup cols={2}>
-  <Card title="API" icon="code" href="/cs/developers/extend/api">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="API" icon="code" href="/cs/developers/extend/api" img="/images/documentation/illustrations/dev-api.svg">
     Programově se připojte k Twenty
   </Card>
-  <Card title="Webhooky" icon="bell" href="/cs/developers/extend/webhooks">
+  <Card title="Webhooky" icon="bell" href="/cs/developers/extend/webhooks" img="/images/documentation/illustrations/webhooks.svg">
     Dostávejte oznámení o událostech v reálném čase
   </Card>
-  <Card title="Aplikace" icon="puzzle" href="/cs/developers/extend/apps/getting-started/quick-start">
+  <Card title="Aplikace" icon="puzzle" href="/cs/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
     Vytvářejte přizpůsobení jako kód
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" pattern="developers-apps" />

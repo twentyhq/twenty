@@ -3,6 +3,8 @@ title: 后台作业
 description: 通过将另一次逻辑函数运行入队，而不是在当前执行中完成所有工作，把耗时较长或受速率限制的工作交给 Twenty 工作进程处理。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 一次逻辑函数运行会受到其 `timeoutSeconds`（最大 900 秒）的限制。 任何无法在该时间窗口内完成的工作——例如完整的重新同步、逐记录的扇出、对你进行速率限制的第三方 API——都必须拆分为更小的运行。
 
 `enqueueJob` 正是用于此：它会请求 Twenty 工作进程稍后在其自己的进程中运行你应用中的某个逻辑函数，并使用其独立的超时预算。 调用方会立即返回。
@@ -192,3 +194,5 @@ export default defineLogicFunction({
 * **在入队下一次运行之前持久化进度，** 这样失败的链路会从上一个完成的数据块而不是从头开始重新启动。
 * **保持每个数据块幂等。** 在重试后重新处理一个数据块时，不能产生重复写入——应基于你处理的记录或外部 id 进行关键写入。
 * **在工作会访问受限频率的第三方服务时，优先使用分块链而不是一次巨大的 fan-out。** 使用 `delayMs` 的链会自我节奏控制，而一次性入队的数千个作业会立即全部变为可运行状态。
+
+<PageBanner illustration="background-jobs" pattern="developers-api" />

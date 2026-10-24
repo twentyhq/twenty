@@ -3,6 +3,8 @@ title: Funzioni logiche
 description: Definisci funzioni TypeScript lato server con trigger HTTP, cron e trigger di eventi del database.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Le funzioni logiche sono funzioni TypeScript lato server che vengono eseguite sulla piattaforma Twenty. Possono essere attivate da richieste HTTP, pianificazioni cron o eventi del database — e possono anche essere esposte come strumenti per agenti di IA.
 
 <AccordionGroup>
@@ -905,3 +907,5 @@ Punti chiave:
 
   **Non** devi passare questi elementi ai client — vengono letti automaticamente da `process.env` e [Quale accesso utilizza una chiamata](#whose-access-a-call-uses) spiega come scegliere tra di essi. Le autorizzazioni della tua applicazione sono determinate dal ruolo dichiarato con `defineApplicationRole()` (o referenziato tramite `defaultRoleUniversalIdentifier` in `application-config.ts`); un'esecuzione che agisce come una persona non può mai superare né tale ruolo né il proprio.
 </Note>
+
+<PageBanner illustration="logic-functions" pattern="developers-api" />

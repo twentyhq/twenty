@@ -3,6 +3,8 @@ title: OAuth
 description: Fluxo de código de autorização com PKCE e credenciais de cliente para acesso servidor a servidor.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 A Twenty implementa OAuth 2.0 com código de autorização + PKCE para aplicações voltadas ao utilizador e credenciais de cliente para acesso servidor a servidor. Os clientes são registados dinamicamente via [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — sem configuração manual num painel.
 
 ## Quando usar OAuth
@@ -186,3 +188,5 @@ Isto retorna todos os endpoints, tipos de concessão suportados, escopos e capac
 | **Melhor para**               | Scripts, ferramentas internas        | Aplicações externas, integrações multiutilizador |
 | **Rotação de tokens**         | Manual                               | Automática via tokens de atualização             |
 | **Acesso baseado em escopos** | Acesso total à API                   | Granular por escopos                             |
+
+<PageBanner illustration="sso" pattern="user-guide-permissions" />

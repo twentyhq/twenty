@@ -3,6 +3,7 @@ title: Webhooks
 description: Lassen Sie sich benachrichtigen, wenn sich Datensätze ändern — HTTP POST an Ihren Endpunkt bei jeder Erstellung, Aktualisierung oder Löschung.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 Twenty sendet einen HTTP POST an Ihre URL, wenn ein Datensatz erstellt, aktualisiert oder gelöscht wird. Alle Objekttypen sind abgedeckt, einschließlich benutzerdefinierter Objekte.
@@ -114,3 +115,5 @@ const isValid = crypto.timingSafeEqual(
 | **Workflow-Webhook-Trigger** | IN       | Daten aus externen Systemen in Twenty empfangen                                  |
 
 Für den Empfang externer Daten siehe [Webhook-Trigger einrichten](/de/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="webhooks" pattern="developers-api" />

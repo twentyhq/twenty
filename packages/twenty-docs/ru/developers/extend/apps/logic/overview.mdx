@@ -3,6 +3,8 @@ title: Обзор
 description: Серверный TypeScript, который выполняется внутри Twenty — запускается HTTP-маршрутами, расписаниями cron, событиями базы данных, инструментами ИИ или действиями рабочих процессов.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 **Логический слой** приложения Twenty — это код, который *выполняется*: серверные обработчики TypeScript, реагирующие на HTTP-запросы, расписания cron и изменения записей; навыки ИИ и агенты, работающие внутри рабочего пространства; а также OAuth-подключения, позволяющие вашим функциям действовать от имени пользователя в сторонних сервисах.
 
 ```text
@@ -23,20 +25,20 @@ description: Серверный TypeScript, который выполняетс�
 
 ## В этом разделе
 
-<CardGroup cols={2}>
-  <Card title="Логические функции" icon="bolt" href="/ru/developers/extend/apps/logic/logic-functions">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Логические функции" icon="bolt" href="/ru/developers/extend/apps/logic/logic-functions" img="/images/documentation/illustrations/logic-functions.svg">
     Основной строительный блок — типы триггеров, полезные данные (payloads) и типизированный клиент API.
   </Card>
-  <Card title="Навыки и агенты" icon="robot" href="/ru/developers/extend/apps/logic/skills-and-agents">
+  <Card title="Навыки и агенты" icon="robot" href="/ru/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/illustrations/skills-agents.svg">
     Повторно используемые инструкции агента ИИ и ассистенты с пользовательскими системными подсказками.
   </Card>
-  <Card title="Подключения" icon="plug" href="/ru/developers/extend/apps/logic/connections">
+  <Card title="Подключения" icon="plug" href="/ru/developers/extend/apps/logic/connections" img="/images/documentation/illustrations/connections.svg">
     OAuth-учетные данные, которые ваше приложение хранит для сторонних сервисов — Linear, GitHub, Slack и других.
   </Card>
-  <Card title="Хранилище ключ-значение" icon="database" href="/ru/developers/extend/apps/logic/key-value-store">
+  <Card title="Хранилище ключ-значение" icon="database" href="/ru/developers/extend/apps/logic/key-value-store" img="/images/documentation/illustrations/key-value-store.svg">
     Сохраняйте состояние между запусками логических функций — кэши, курсоры и утверждения между рабочими пространствами.
   </Card>
-  <Card title="Фоновые задания" icon="stack-2" href="/ru/developers/extend/apps/logic/background-jobs">
+  <Card title="Фоновые задания" icon="stack-2" href="/ru/developers/extend/apps/logic/background-jobs" img="/images/documentation/illustrations/background-jobs.svg">
     Поставьте функцию Logic в очередь на исполнение воркерами, чтобы обойти таймаут на один запуск.
   </Card>
 </CardGroup>
@@ -58,3 +60,5 @@ description: Серверный TypeScript, который выполняетс�
 <Note>
 **Хуки времени установки** — код, который выполняется до или после установки, — используют то же окружение выполнения, но свои собственные функции `define*` и находятся в разделе [Config → Install Hooks](/ru/developers/extend/apps/config/install-hooks).
 </Note>
+
+<PageBanner illustration="apps-logic" pattern="user-guide-workflows" />

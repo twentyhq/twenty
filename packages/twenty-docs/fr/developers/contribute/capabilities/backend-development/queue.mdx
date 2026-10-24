@@ -2,6 +2,8 @@
 title: File d'attente de messages
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Les files d'attente facilitent les opérations asynchrones. Elles peuvent être utilisées pour effectuer des tâches de fond telles que l'envoi d'un e-mail de bienvenue lors de l'enregistrement.
 Chaque cas d'utilisation aura sa propre classe de file d'attente étendue à partir de `MessageQueueServiceBase`.
 
@@ -39,3 +41,5 @@ class CustomWorker {
   }
 }
 ```
+
+<PageBanner illustration="background-jobs" pattern="developers-api" />

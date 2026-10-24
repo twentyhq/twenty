@@ -2,6 +2,8 @@
 title: Styleguide
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Dieses Dokument enthält die Regeln, die beim Schreiben von Code beachtet werden müssen.
 
 Das Ziel ist es, eine konsistente Codebasis zu haben, die leicht lesbar und einfach zu warten ist.
@@ -288,3 +290,5 @@ Eine Oxlint-Regel, `typescript/consistent-type-imports`, setzt den No-Type-Impor
 Bitte beachten Sie, dass diese Regel speziell seltene Randfälle behandelt, in denen unbeabsichtigte Typ-Importe auftreten. TypeScript selbst lehnt diese Praxis ab, wie in den [TypeScript 3.8 Release Notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html) erwähnt. In den meisten Situationen sollten Typ-Only-Imports nicht benötigt werden.
 
 Um sicherzustellen, dass Ihr Code mit dieser Regel übereinstimmt, achten Sie darauf, Oxlint als Teil Ihres Entwicklungsworkflows auszuführen.
+
+<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

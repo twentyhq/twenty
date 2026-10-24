@@ -3,6 +3,8 @@ title: 1. 数据模型
 description: 带有对象、字段和关系的模型文档和模板。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 我们的应用需要两个自定义对象：**文档模板**（写什么）和
 **文档**（生成的结果）。 让我们来定义它们。
 
@@ -126,6 +128,10 @@ The Team
 **在这个步骤之后：** 你有 `documentTemplate` 和 `document` 对象，用
 的关系链接和一个模板生成它们。 接下来，填充它的逻辑。
 
-<Card title="下一步：生成文档 →" icon="bolt" href="/zh/developers/extend/apps/tutorials/document-generator/generating-document">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="下一步：生成文档 →" icon="bolt" href="/zh/developers/extend/apps/tutorials/document-generator/generating-document" img="/images/documentation/illustrations/tutorial-documents.svg">
   写下填充模板的逻辑函数。
 </Card>
+</CardGroup>
+
+<PageBanner illustration="data-model" pattern="developers-api" />

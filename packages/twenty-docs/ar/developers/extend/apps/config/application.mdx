@@ -3,6 +3,8 @@ title: تكوين التطبيق
 description: عرّف هوية تطبيقك، والدور الافتراضي، والمتغيرات، وبيانات التعريف لسوق التطبيقات باستخدام defineApplication.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 يجب أن يحتوي كل تطبيق على استدعاء واحد فقط لـ `defineApplication`. يحدّد ما يلي:
 
 * **الهوية** — المعرّف الشامل، واسم العرض، والوصف.
@@ -121,3 +123,5 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 <Note>
 القيمتان `logoUrl` و`screenshots` هما اسمَان مهملان بديلان لـ`logo` و`galleryImages`. عناوين URLs المطلقة الخارجية (`http://` أو `https://`) غير مدعومة لهذه الحقول: سيتم تجاهلها مع إظهار تحذير وقت البناء. بدلًا من ذلك، ضمِّن الصور في مجلد `public/` الخاص بتطبيقك.
 </Note>
+
+<PageBanner illustration="application-config" pattern="developers-api" />

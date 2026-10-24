@@ -2,6 +2,8 @@
 title: 密钥轮换
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty 具有两个相互独立的密钥族：
 
 * **JWT 签名密钥** — 存储在 `core."signingKey"` 中、带有 `kid` 标签的非对称 ES256 密钥对，用于对访问令牌 / 刷新令牌进行签名和验证。
@@ -57,3 +59,5 @@ Twenty 具有两个相互独立的密钥族：
 ## 旧版 `APP_SECRET` 支持
 
 从未设置 `ENCRYPTION_KEY` 的旧实例会使用 `APP_SECRET` 作为静态加密密钥（以及会话 Cookie 密钥，从中派生）。 此路径为向后兼容而保留，但已被**弃用** — 请设置专用的 `ENCRYPTION_KEY`，并按照上述轮换流程迁移离开它。 `APP_SECRET` 本身仍用于验证旧版 HS256 访问令牌。
+
+<PageBanner illustration="sso" pattern="user-guide-permissions" />

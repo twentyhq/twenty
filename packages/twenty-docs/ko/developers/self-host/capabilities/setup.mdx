@@ -2,6 +2,8 @@
 title: 설정
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 # 구성 관리
 
 <Warning>
@@ -408,3 +410,5 @@ AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 멀티 워크스페이스가 활성화된 경우, 여기에는 모든 워크스페이스 서브도메인을 나열하지 마세요.
 대신, 각 워크스페이스 호스트 이름에서 API 경로(`/graphql`, `/metadata`, `/rest`, `/auth/`,
 `/client-config`, `/file`)를 백엔드로 라우팅하여 모든 워크스페이스가 동일 오리진을 유지하도록 하세요. Twenty Cloud는 이렇게 동작합니다.
+
+<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

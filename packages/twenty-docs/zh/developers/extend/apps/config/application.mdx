@@ -3,6 +3,8 @@ title: 应用程序配置
 description: 使用 defineApplication 声明应用的身份、默认角色、变量和应用市场元数据。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 每个应用必须且只能有一个 `defineApplication` 调用。 它声明：
 
 * **应用的身份** — 通用标识符、显示名称、描述。
@@ -121,3 +123,5 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 <Note>
 `logoUrl`和`screshots`被废弃的 `logo` 和 `GalleryImages` 的别名。 这些字段不支持外部绝对链接 (`http://` 或 `https://`) 。它们会在构建时被丢弃，并附有警告。 将图像捆绑在你的应用的 "public/" 文件夹中。
 </Note>
+
+<PageBanner illustration="application-config" pattern="developers-api" />

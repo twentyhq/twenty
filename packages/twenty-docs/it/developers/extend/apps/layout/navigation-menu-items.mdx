@@ -3,6 +3,8 @@ title: Voci del menu di navigazione
 description: Aggiungi voci personalizzate alla barra laterale dell’area di lavoro — collegamenti a viste salvate o URL esterni.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Una **voce del menu di navigazione** è un elemento nella barra laterale sinistra. Usa `defineNavigationMenuItem()` per distribuire collegamenti personalizzati nella barra laterale — in genere uno per ogni [vista](/it/developers/extend/apps/layout/views) che distribuisci — o per puntare a URL esterni.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
@@ -43,3 +45,5 @@ export default defineNavigationMenuItem({
 <Note>
 **Problema comune:** creare un oggetto senza una voce del menu di navigazione associata rende quell’oggetto irraggiungibile dalla barra laterale. A meno che non si tratti di un oggetto tecnico/interno, ogni oggetto personalizzato dovrebbe avere una voce nella barra laterale che punti ad esso.
 </Note>
+
+<PageBanner illustration="navigation" pattern="developers-api" />

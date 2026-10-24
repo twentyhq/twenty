@@ -3,6 +3,8 @@ title: 接続
 description: OAuth を介して、アプリがユーザーに代わってサードパーティのサービスで操作を行えるようにします。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 接続（Connection）は、ユーザーが外部サービス（Linear、GitHub、Slack など）のために保持する認証情報です。 あなたのアプリは、それらの認証情報を**どのように**取得するか — **接続プロバイダー** — を宣言し、実行時にそれらを利用してサードパーティの API へ認証付きの呼び出しを行います。
 
 現在は OAuth 2.0 のみサポートされています。 将来的な認証情報タイプ（パーソナルアクセストークン、API キー、Basic 認証）も同じインターフェースに差し込まれます — すでに `defineConnectionProvider({ type: 'oauth', ... })` を使用しているアプリは移行の必要がありません。
@@ -266,3 +268,5 @@ const conn = connections.find((c) => c.visibility === 'workspace');
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="connections" pattern="developers-api" />

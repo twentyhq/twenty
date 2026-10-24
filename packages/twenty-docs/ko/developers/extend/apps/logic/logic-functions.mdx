@@ -3,6 +3,8 @@ title: 로직 함수
 description: HTTP, cron 및 데이터베이스 이벤트 트리거를 사용하여 서버 측 TypeScript 함수를 정의합니다.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 로직 함수는 Twenty 플랫폼에서 실행되는 서버 측 TypeScript 함수입니다. 이 함수들은 HTTP 요청, cron 스케줄 또는 데이터베이스 이벤트에 의해 트리거될 수 있으며 — AI 에이전트를 위한 도구로도 제공할 수 있습니다.
 
 <AccordionGroup>
@@ -905,3 +907,5 @@ console.log(uploadedFile);
 
   이 키들을 클라이언트에 전달할 필요는 **없습니다**. 클라이언트가 `process.env`에서 자동으로 읽으며, [호출에서 사용하는 액세스 주체](#whose-access-a-call-uses)에서 둘 중 무엇을 선택하는지 다룹니다. 애플리케이션 자체의 권한은 `defineApplicationRole()`로 선언된 역할(또는 `application-config.ts`의 `defaultRoleUniversalIdentifier`를 통해 참조된 역할)로 결정됩니다. 사람으로 동작하는 실행은 해당 역할이나 그 사람의 역할을 절대 초과할 수 없습니다.
 </Note>
+
+<PageBanner illustration="logic-functions" pattern="developers-api" />

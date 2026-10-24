@@ -3,6 +3,8 @@ title: 6. Publicación
 description: Añade metadatos de mercado y publica tu aplicación.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Tu app funciona. El último paso es describirlo para el mercado y publicarlo.
 
 ## Añadir metadatos de mercado
@@ -118,17 +120,19 @@ La aplicación terminada está en
 
 ## A dónde ir siguiente
 
-<CardGroup cols={2}>
-  <Card title="Referencia de datos" icon="database" href="/es/developers/extend/apps/data/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Referencia de datos" icon="database" href="/es/developers/extend/apps/data/overview" img="/images/documentation/illustrations/apps-data.svg">
     Cada tipo de campo, relación y opción de índice.
   </Card>
-  <Card title="Referencia lógica" icon="bolt" href="/es/developers/extend/apps/logic/overview">
+  <Card title="Referencia lógica" icon="bolt" href="/es/developers/extend/apps/logic/overview" img="/images/documentation/illustrations/apps-logic.svg">
     Activadores de eventos Cron y base de datos, el almacén clave-valor, conexiones OAuth.
   </Card>
-  <Card title="Referencia del diseño" icon="layout-columns" href="/es/developers/extend/apps/layout/overview">
+  <Card title="Referencia del diseño" icon="layout-columns" href="/es/developers/extend/apps/layout/overview" img="/images/documentation/illustrations/layout.svg">
     Diseños de páginas, widgets de tablero y más superficies de interfaz.
   </Card>
-  <Card title="Operaciones" icon="rocket" href="/es/developers/extend/apps/operations/overview">
+  <Card title="Operaciones" icon="rocket" href="/es/developers/extend/apps/operations/overview" img="/images/documentation/illustrations/apps-operations.svg">
     CLI, prueba, control remoto, y CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="publishing" pattern="developers-api" />

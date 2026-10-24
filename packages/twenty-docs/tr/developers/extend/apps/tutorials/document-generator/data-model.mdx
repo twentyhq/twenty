@@ -3,6 +3,8 @@ title: 1. Veri modeli
 description: Belgeleri ve şablonları nesneler, alanlar ve bir ilişki ile modelleyin.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Uygulamamızın iki özel nesneye ihtiyacı var: **belge şablonları** (ne yazılacağını belirten) ve
 **belgeler** (oluşturulan sonuç). Bunları tanımlayalım.
 
@@ -126,6 +128,10 @@ The Team
 
 **Bu adımdan sonra:** bir ilişkiyle birbirine bağlı `documentTemplate` ve `document` nesnelerine ve bunlardan belge oluşturmak için bir şablona sahipsiniz. Sırada, onu dolduran mantık var.
 
-<Card title="Sıradaki: belgeleri oluşturma →" icon="bolt" href="/tr/developers/extend/apps/tutorials/document-generator/generating-documents">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Sıradaki: belgeleri oluşturma →" icon="bolt" href="/tr/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/documentation/illustrations/tutorial-documents.svg">
   Şablonu dolduran mantık fonksiyonunu yazın.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="data-model" pattern="developers-api" />

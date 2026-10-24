@@ -2,6 +2,8 @@
 title: Rotace klíčů
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty má dvě nezávislé rodiny klíčů:
 
 * **Klíče pro podepisování JWT** — asymetrické páry klíčů ES256 (označené `kid`), uložené v `core."signingKey"`, používané k podepisování a ověřování přístupových/obnovovacích tokenů.
@@ -57,3 +59,5 @@ Každá zašifrovaná hodnota je zabalena jako `enc:v2:\<keyId>:\<payload>`, kde
 ## Podpora staršího `APP_SECRET`
 
 Starší instance, které nikdy nenastavily `ENCRYPTION_KEY`, používají `APP_SECRET` jako šifrovací klíč pro data v klidu (a jako tajemství pro soubor cookie relace, odvozené z něj). Tato cesta je zachována kvůli zpětné kompatibilitě, ale je **zastaralá (deprecated)** — nastavte vyhrazený `ENCRYPTION_KEY` a podle výše uvedeného postupu rotace proveďte migraci pryč od něj. Samotný `APP_SECRET` zůstává v používání pro ověřování starších HS256 přístupových tokenů.
+
+<PageBanner illustration="sso" pattern="user-guide-permissions" />

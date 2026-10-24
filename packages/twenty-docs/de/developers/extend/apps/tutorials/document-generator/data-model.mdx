@@ -3,6 +3,8 @@ title: 1. Datenmodell
 description: Musterdokumente und Vorlagen mit Objekten, Feldern und einer Relation.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Unsere App benötigt zwei benutzerdefinierte Objekte: **Dokumentvorlagen** (was geschrieben werden soll) und
 **Dokumente** (das generierte Ergebnis). Legen wir sie fest.
 
@@ -129,6 +131,10 @@ The Team
 **Nach diesem Schritt:** hast du `documentTemplate` und `document` Objekte, verlinkt von
 eine Relation, aus der eine Vorlage generiert werden kann. Als nächstes folgt die Logik, die sie ausfüllt.
 
-<Card title="Weiter: Dokumente generieren →" icon="bolt" href="/de/developers/extend/apps/tutorials/document-generator/generating-documents">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Weiter: Dokumente generieren →" icon="bolt" href="/de/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/documentation/illustrations/tutorial-documents.svg">
   Schreibe die logische Funktion, die das Template füllt.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="data-model" pattern="developers-api" />

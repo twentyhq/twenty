@@ -3,6 +3,8 @@ title: Создание связей многие-ко-многим
 description: Связывайте записи, где множество элементов по обе стороны могут быть связаны между собой с помощью объектов-связок.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Связи многие-ко-многим позволяют связывать несколько записей с обеих сторон. Например: много людей могут работать над многими проектами, и у каждого проекта может быть много людей.
 
 <Warning>
@@ -173,3 +175,5 @@ People ←→ Project Assignments ←→ Projects
 * [Поля связей](/ru/user-guide/data-model/capabilities/relation-fields) — объяснение типов связей
 * [Создание пользовательских объектов](/ru/user-guide/data-model/how-tos/create-custom-objects) — как создавать объекты
 * [Создание полей связи](/ru/user-guide/data-model/how-tos/create-relation-fields) — базовая настройка связей
+
+<PageBanner illustration="relations" pattern="developers-api" />

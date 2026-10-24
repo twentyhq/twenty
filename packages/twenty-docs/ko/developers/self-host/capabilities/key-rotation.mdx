@@ -2,6 +2,8 @@
 title: 키 로테이션
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty에는 서로 독립적인 키 계열이 두 가지 있습니다:
 
 * **JWT 서명 키** — 비대칭 ES256 키 페어(`kid` 태그 사용)로, `core."signingKey"`에 저장되며 액세스/리프레시 토큰을 서명하고 검증하는 데 사용됩니다.
@@ -57,3 +59,5 @@ Twenty에는 서로 독립적인 키 계열이 두 가지 있습니다:
 ## 레거시 `APP_SECRET` 지원
 
 `ENCRYPTION_KEY`를 설정하지 않은 오래된 인스턴스는 정지 상태 암호화 키(및 이로부터 파생된 세션 쿠키 시크릿)로 `APP_SECRET`을 사용합니다. 이 경로는 하위 호환성을 위해 유지되지만 **사용 중단 예정**입니다. 전용 `ENCRYPTION_KEY`를 설정하고 위의 회전 절차를 따라 이를 사용하지 않는 방식으로 마이그레이션하세요. `APP_SECRET` 자체는 기존 HS256 액세스 토큰을 검증하는 데 계속 사용됩니다.
+
+<PageBanner illustration="sso" pattern="user-guide-permissions" />

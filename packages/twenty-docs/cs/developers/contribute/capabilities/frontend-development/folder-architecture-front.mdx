@@ -3,6 +3,8 @@ title: Architektura složek
 info: Podrobný pohled na naši architekturu složek
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 V tomto průvodci prozkoumáte detaily struktury projektového adresáře a jak přispívá k organizaci a udržovatelnosti Twenty.
 
 Následováním této konvence architektury složek je snazší najít soubory související s konkrétními funkcemi a zajistit rozšiřitelnost a udržovatelnost aplikace.
@@ -107,3 +109,5 @@ Můžete importovat kód jiných modulů z jakéhokoliv modulu kromě složky `u
 ### Interní
 
 Každá část (hooky, stavy, ...) modulu může mít složku `internal`, která obsahuje části používané pouze v rámci modulu.
+
+<PageBanner illustration="frontend-architecture" pattern="developers-api" />

@@ -3,6 +3,7 @@ title: なぜ Twenty なのか
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 あなたはこれまで、導入は簡単だが変更がほぼ不可能なソフトウェアか、高い柔軟性はあるもののセットアップに数カ月かかるソフトウェアか、そのどちらかを選ばざるをえませんでした。 Twenty は第3の選択肢です。**本番環境ですぐ使える、使いながら自在に作り替えられる CRM。**
 
@@ -10,20 +11,20 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 Twenty は「設定して使うプロダクト」ではなく、「その上に構築できるプラットフォーム」です。
 
-<CardGroup cols={2}>
-  <Card img="/images/documentation/illustrations/ai.svg">
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
+  <Card img="/images/documentation/illustrations/ai.svg" href="/ja/getting-started/core-concepts/ai">
     <CardTitle>エージェントのために構築</CardTitle>
     エージェントは、適切な権限であなたのデータモデル内で動作します。 スキル、ツール、MCP。
   </Card>
-  <Card img="/images/documentation/illustrations/dev-apps.svg">
+  <Card img="/images/documentation/illustrations/dev-apps.svg" href="/ja/getting-started/core-concepts/apps">
     <CardTitle>セキュアな拡張性</CardTitle>
     セキュアな基盤の上で、vibe-coded なツールと同等の柔軟性を実現します。
   </Card>
-  <Card img="/images/documentation/illustrations/dev-api.svg">
+  <Card img="/images/documentation/illustrations/dev-api.svg" href="/ja/developers/introduction">
     <CardTitle>モダンなスタック</CardTitle>
     React、TypeScript。 あなたのチームは、すでに Twenty を拡張する方法を知っています。 独自仕様の言語も、ゲートキーピングもありません。
   </Card>
-  <Card img="/images/documentation/illustrations/no-lock-in.png">
+  <Card img="/images/documentation/illustrations/no-lock-in.png" href="/ja/user-guide/data-migration/how-tos/export-your-data">
     <CardTitle>ロックインなし</CardTitle>
     オープンソースのコア、セルフホスト可能、いつでもデータをエクスポートできます。
   </Card>
@@ -47,6 +48,10 @@ Twenty は「設定して使うプロダクト」ではなく、「その上に�
 * **今すぐ何百もの事前構築済み連携が必要な企業。** Twenty のエコシステムは急速に成長していますが、Salesforce や HubSpot ほどの広がりには、まだ達していません。 足りない部分を自分で構築することに抵抗がなければ、きっと気に入っていただけます。 そうでなければ、もう 1 年お待ちください。
 * **ツールを実際に使う現場ではなく、役員会でツールが選定される組織。** 私たちは高級ディナーやエグゼクティブ向けブリーフィングは行いません。 自分たちのツールを自分たちで選ぶ権限を持つチームとともに勝ちたいと考えています。
 
-<Card title="準備はできましたか？" icon="rocket" href="/ja/getting-started/quickstart">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="準備はできましたか？" icon="rocket" href="/ja/getting-started/quickstart" img="/images/documentation/illustrations/quickstart.svg">
   クラウド環境でもセルフホスト環境でも、5 分以内に Twenty をセットアップしましょう。
 </Card>
+</CardGroup>
+
+<PageBanner illustration="meet-twenty" />

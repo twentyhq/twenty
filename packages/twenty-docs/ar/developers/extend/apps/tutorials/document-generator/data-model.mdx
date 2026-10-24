@@ -3,6 +3,8 @@ title: ١. نموذج البيانات
 description: وثائق نموذجية ونماذج ذات كائنات وحقول وعلاقة.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 يحتاج تطبيقنا إلى عنصرين مخصصين: **قوالب وثيقة** (ما يجب كتابته) و
 **وثائق** (النتيجة المنشأة). دعونا نعرفهم.
 
@@ -127,6 +129,10 @@ The Team
 **بعد هذه الخطوة:** لديك كائنات 'documentTemplate' و 'document'، مرتبطة بـ
 علاقة، و قالب واحد لتوليد منها. وبعد ذلك، المنطق الذي يعبئه
 
-<Card title="التالي: توليد الوثائق →" icon="bolt" href="/ar/developers/extend/apps/tutorials/document-Generator/التوليد-المستندات">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="التالي: توليد الوثائق →" icon="bolt" href="/ar/developers/extend/apps/tutorials/document-Generator/التوليد-المستندات" img="/images/documentation/illustrations/tutorial-documents.svg">
   اكتب الدالة المنطقية التي تملأ القالب.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="data-model" pattern="developers-api" />

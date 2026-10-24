@@ -3,6 +3,8 @@ title: Frontend-Komponenten
 description: Erstellen Sie React-Komponenten, die innerhalb der Twenty-UI gerendert werden und durch eine Sandbox isoliert sind.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Front-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI gerendert werden. Sie laufen in einem **isolierten Web Worker** unter Verwendung von Remote DOM — Ihr Code wird in einem sandboxed iframe mit opaker Origin ausgeführt, wobei die UI dennoch nativ auf der Seite gerendert wird und nicht auf dieses iframe beschränkt ist.
 
 <Warning>
@@ -846,3 +848,5 @@ Component-CSS, egal ob aus `import './styles.css'`, CSS-in-JS oder einem `style`
 * **Drag-and-drop-Nutzlasten.** Drag-Events werden ausgelöst, aber `event.dataTransfer` ist `undefined`.
 * **Node-Built-ins.** `fs`, `path` und `node:crypto` führen zu einem Build-Fehler, daher solltest du diese Arbeit in eine [Logic Function](/de/developers/extend/apps/logic/logic-functions) auslagern. Web Crypto, `fetch`, `TextEncoder` und `URL` sind verfügbar.
 * **`iframe`** wird immer erneut ohne `allow-same-origin` in einer Sandbox ausgeführt, sodass eine Einbettung, die auf ihre eigene Sitzung angewiesen ist, als abgemeldet gerendert wird. Es hat auch kein `onLoad`.
+
+<PageBanner illustration="front-components" pattern="developers-api" />

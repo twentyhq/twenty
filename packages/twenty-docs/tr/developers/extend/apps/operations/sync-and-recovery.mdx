@@ -3,6 +3,8 @@ title: Senkronizasyon ve kurtarma
 description: Hangi komutu ne zaman kullanmanız gerektiği, senkronizasyon çıktısının nasıl okunacağı ve yerel üst veriler sapmaya başladığında — tam sıfırlamaya ulaşmadan önce — uygulanacak bir kurtarma merdiveni.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Yerel uygulama geliştirme **senkronizasyon** etrafında döner: CLI manifestinizi yeniden oluşturur ve sunucu, onu çalışma alanınızda hâlihazırda bulunan üst verilerle karşılaştırarak yalnızca aradaki farkı uygular. Bu sayfa, hangi komuta başvurmanız gerektiğini, bir senkronizasyonun neleri değiştirdiğini nasıl okuyacağınızı ve yerel durum tutarsız göründüğünde — sırayla — ne yapmanız gerektiğini açıklar.
 
 ## Hangi komut, ne zaman
@@ -123,3 +125,5 @@ Bir şeyler ters gittiğinde, üst veri farkı ve adlandırılmış hatalar, hat
 * **Bağımlılık boyutu hatası** — senkronizasyon veya kurulum, uygulamanın üretim `dependencies` bağımlılıklarının çalışma zamanı katmanı olarak kurulamayacak kadar büyük olması nedeniyle başarısız olur (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); mantık fonksiyonlarınızın çalışma zamanında içe aktarmadığı paketleri (UI kitaplıkları, geliştirme araçları) `devDependencies` içine taşıyın.
 * **Uygulama kodu çalışma zamanı hatası** — senkronizasyon başarılı olur ancak mantık fonksiyonlarınız veya bileşenleriniz çalışma zamanında beklenmedik şekilde davranır; [function logs](/tr/developers/extend/apps/operations/cli) bölümünü kontrol edin.
 * **Yerel örnek durumu** — yukarıdakilerin hiçbiri geçerli değil ve çalışma alanı hâlâ hatalı görünüyorsa; kurtarma merdiveninde aşağı doğru ilerleyin.
+
+<PageBanner illustration="sync-recovery" pattern="developers-api" />

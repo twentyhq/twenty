@@ -3,6 +3,8 @@ title: Obiecte
 description: Declarați noi tipuri de înregistrări — tabele personalizate cu propriile câmpuri — folosind defineObject.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 **Obiectele** personalizate sunt tipuri noi de înregistrări pe care aplicația dvs. le adaugă într-un spațiu de lucru — carte poștală, factură, abonament, orice este specific domeniului dvs. Fiecare obiect își declară propria schemă (câmpuri, relații, valori implicite) și un identificator universal stabil, care este păstrat între sincronizări și implementări.
 
 ```ts src/objects/post-card.object.ts
@@ -140,3 +142,5 @@ Modificările aduse proprietății `isNullable` sunt aplicate la fiecare sincron
 * **Conectați acest obiect la altele** — consultați [Relații](/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.
 * **Adăugați câmpuri la obiecte din alte aplicații** — consultați [Extinderea obiectelor](/ro/developers/extend/apps/data/extending-objects) pentru `defineField()`.
 * **Afișează acest obiect în interfața de utilizator** — consultă [Elemente de meniu de navigare](/ro/developers/extend/apps/layout/navigation-menu-items) pentru a adăuga un element în bara laterală; consultă [Vizualizări](/ro/developers/extend/apps/layout/views) pentru a adăuga configurații personalizate de listă.
+
+<PageBanner illustration="objects" pattern="developers-api" />

@@ -3,6 +3,8 @@ title: 3. HTTP 경로
 description: HTTP를 통해 함수를 트리거하고 문서를 웹 페이지로 렌더링합니다.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 같은 핸들러가 HTTP 요청에도 응답할 수 있습니다. 두 개의 경로를 추가하겠습니다:
 
 * UI가 문서를 생성하기 위해 호출하는 **POST** 엔드포인트, 그리고
@@ -129,6 +131,10 @@ http://localhost:2020/s/documents/view?id=<documentId>
 
 **이 단계를 마치면:** 앱은 HTTP를 통해 문서를 생성하고 이를 웹 페이지로 제공할 수 있습니다. 이제 `curl` 없이도 사용할 수 있도록 만들어 봅시다.
 
-<Card title="다음: UI 구성하기 →" icon="layout-columns" href="/ko/developers/extend/apps/tutorials/document-generator/building-the-ui">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="다음: UI 구성하기 →" icon="layout-columns" href="/ko/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/documentation/illustrations/tutorial-ui.svg">
   뷰, 내비게이션, 커맨드, 그리고 프런트 컴포넌트.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-http" pattern="developers-api" />

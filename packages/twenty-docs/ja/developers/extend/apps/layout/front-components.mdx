@@ -3,6 +3,8 @@ title: フロントコンポーネント
 description: Twenty の UI 内でレンダリングされる、サンドボックスで分離された React コンポーネントを構築します。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 フロントコンポーネントは、Twenty の UI 内で直接レンダリングされる React コンポーネントです。 フロントコンポーネントは Remote DOM を使用する**分離された Web Worker**内で実行されます。コードはサンドボックス化され、不透明なオリジンの iframe 内で動作しますが、その UI はその iframe 内に制限されるのではなく、ページ内でネイティブにレンダリングされます。
 
 <Warning>
@@ -846,3 +848,5 @@ Front components は現在も積極的に開発が進められています。 �
 * **ドラッグ＆ドロップのペイロード。** ドラッグイベントは発火しますが、`event.dataTransfer` は `undefined` です。
 * **Node 組み込みモジュール。** `fs`、`path`、`node:crypto` はビルドに失敗するため、その処理は [ロジック関数](/ja/developers/extend/apps/logic/logic-functions) に移動してください。 Web Crypto、`fetch`、`TextEncoder`、および `URL` は利用可能です。
 * **`iframe`** は常に `allow-same-origin` なしで再サンドボックス化されるため、独自のセッションに依存する埋め込みは、ログアウト状態としてレンダリングされます。 また、`onLoad` もありません。
+
+<PageBanner illustration="front-components" pattern="developers-api" />

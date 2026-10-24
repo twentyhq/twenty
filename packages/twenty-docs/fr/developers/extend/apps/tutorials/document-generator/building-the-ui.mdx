@@ -3,6 +3,8 @@ title: 4. Construire l'interface utilisateur
 description: Vues, navigation dans la barre latérale, une commande et des composants frontaux.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Pour le moment, les objets ne sont accessibles que dans les paramètres. Donnons à l'application une présence
 réelle dans l'interface utilisateur : vues de la liste, entrées de la barre latérale,
 **Générer un document** en un clic, un composant frontal de la page d'enregistrement pour **prévisualiser** un document
@@ -297,6 +299,10 @@ Maintenant, les éditeurs écrivent des modèles dans un éditeur de texte riche
 **Après cette étape:** les documents d'aperçu et les modèles sont modifiables
 dans l'application. Ensuite, laissez un agent IA les générer depuis un chat.
 
-<Card title="Suivant : un agent IA →" icon="robot" href="/fr/developers/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Suivant : un agent IA →" icon="robot" href="/fr/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/documentation/illustrations/skills-agents.svg">
   Ajoutez un agent et une compétence qui appellent votre outil.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-ui" pattern="developers-api" />

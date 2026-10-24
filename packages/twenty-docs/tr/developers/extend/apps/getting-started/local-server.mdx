@@ -3,6 +3,8 @@ title: Yerel Sunucu
 description: Yerel Twenty Docker sunucusunu yönetin — başlatın, durdurun, yükseltin, paralel test örneği çalıştırın ve manuel SDK kurulumu yapın.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Yerel sunucuyu yönetme
 
 Yerel Twenty konteynerini kontrol etmek için `yarn twenty docker:*` kullanın:
@@ -84,3 +86,5 @@ Artık `yarn twenty dev`, `yarn twenty docker:start` ve diğerlerini çalıştı
 <Note>
 `twenty-sdk`'yi global olarak kurmayın — her uygulama kendi sürümünü kullansın diye proje bazında sabitleyin.
 </Note>
+
+<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

@@ -3,6 +3,8 @@ title: "チュートリアル: Document Generator"
 description: 実際の Twenty アプリを構築し、CRM データからパーソナライズされたドキュメントを生成しましょう。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 このチュートリアルでは、再利用可能なテンプレートを、既に CRM にあるデータを使ってパーソナライズされたドキュメントに変換するアプリ **Document Generator** を作成します。
 
 一度テンプレートを作成し、`{{placeholders}}` を記述しておけば、コマンドメニュー、AI エージェント、またはワークフローからワンクリックで、任意の Person または Company 用の入力済みドキュメントを生成できます。
@@ -57,6 +59,10 @@ yarn twenty dev
 
 チュートリアル全体を通して、ターミナルで `yarn twenty dev` を実行したままにしておいてください。 `src/` 配下のファイルを追加または編集するたびに、数秒以内にサーバーへ再同期されるため、ビルドしながら各機能が UI に現れていく様子を確認できます。
 
-<Card title="構築を開始する →" icon="database" href="/ja/developers/extend/apps/tutorials/document-generator/data-model">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="構築を開始する →" icon="database" href="/ja/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/illustrations/data-model.svg">
   第 1 章: ドキュメントとテンプレートをモデリングする。
 </Card>
+</CardGroup>
+
+<PageBanner illustration="document-generator" pattern="user-guide-billing" />

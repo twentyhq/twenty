@@ -3,6 +3,8 @@ title: フォルダ構成
 info: 当社のフォルダ構造の詳細な解説
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 このガイドでは、プロジェクトのディレクトリ構成の詳細と、それが Twenty の整理と保守性にどのように寄与するかを解説します。
 
 このフォルダ構成の規約に従うことで、特定の機能に関連するファイルを見つけやすくなり、アプリケーションのスケーラビリティと保守性を確保できます。
@@ -107,3 +109,5 @@ UIコンポーネントを`modules`フォルダ内の他のコンポーネント
 ### 内部
 
 各部分（フック、ステート、...） は、モジュール内でのみ使用される部分を含む `internal` フォルダを持つことができます。
+
+<PageBanner illustration="frontend-architecture" pattern="developers-api" />

@@ -3,6 +3,8 @@ title: Обзор
 description: Разместите своё приложение внутри интерфейса Twenty — элементы боковой панели, сохранённые представления, вкладки страницы записи и изолированные React‑компоненты.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 **Слой компоновки** приложения Twenty — это всё, что видит пользователь: где приложение отображается в боковой панели, какие списки представлений оно поставляет, как устроены его страницы деталей записей и какие пользовательские React‑компоненты отображаются внутри этих страниц.
 
 ```text
@@ -24,20 +26,20 @@ description: Разместите своё приложение внутри и�
 
 ## В этом разделе
 
-<CardGroup cols={2}>
-  <Card title="Представления" icon="list" href="/ru/developers/extend/apps/layout/views">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Представления" icon="list" href="/ru/developers/extend/apps/layout/views" img="/images/documentation/illustrations/views-pipelines.svg">
     `defineView` — сохранённые конфигурации списков: видимые столбцы, фильтры, группы.
   </Card>
-  <Card title="Элементы меню навигации" icon="menu-2" href="/ru/developers/extend/apps/layout/navigation-menu-items">
+  <Card title="Элементы меню навигации" icon="menu-2" href="/ru/developers/extend/apps/layout/navigation-menu-items" img="/images/documentation/illustrations/navigation.svg">
     `defineNavigationMenuItem` — элементы боковой панели, ссылающиеся на представления или внешние URL.
   </Card>
-  <Card title="Макеты страниц" icon="layout-columns" href="/ru/developers/extend/apps/layout/page-layouts">
+  <Card title="Макеты страниц" icon="layout-columns" href="/ru/developers/extend/apps/layout/page-layouts" img="/images/documentation/illustrations/page-layouts.svg">
     `definePageLayout` и `definePageLayoutTab` — вкладки и виджеты на странице деталей записи.
   </Card>
-  <Card title="Компоненты фронтенда" icon="window-maximize" href="/ru/developers/extend/apps/layout/front-components">
+  <Card title="Компоненты фронтенда" icon="window-maximize" href="/ru/developers/extend/apps/layout/front-components" img="/images/documentation/illustrations/front-components.svg">
     `defineFrontComponent` — изолированные React‑компоненты, которые отображаются внутри Twenty.
   </Card>
-  <Card title="Элементы меню команд" icon="terminal" href="/ru/developers/extend/apps/layout/command-menu-items">
+  <Card title="Элементы меню команд" icon="terminal" href="/ru/developers/extend/apps/layout/command-menu-items" img="/images/documentation/illustrations/command-menu.svg">
     `defineCommandMenuItem` — регистрирует фронтенд‑компоненты как элементы Cmd+K и быстрые действия.
   </Card>
 </CardGroup>
@@ -56,3 +58,5 @@ description: Разместите своё приложение внутри и�
 Фронтенд‑компоненты выполняются внутри изолированного Web Worker с использованием Remote DOM — они отображаются *нативно* на странице (не внутри iframe), но не могут напрямую обращаться к хостовой странице или DOM. Взаимодействие с Twenty происходит через хостовый API обмена сообщениями.
 
 Они все еще находятся в активной разработке: песочница реализует частичный DOM, поэтому сложные варианты использования могут завершаться сбоем. См. раздел [Текущие ограничения](/ru/developers/extend/apps/layout/front-components#current-limitations).
+
+<PageBanner illustration="layout" pattern="user-guide-layout" />

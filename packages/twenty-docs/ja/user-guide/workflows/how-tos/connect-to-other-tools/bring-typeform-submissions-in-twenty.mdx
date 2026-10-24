@@ -3,6 +3,8 @@ title: Typeform の回答を Twenty に取り込む
 description: Typeform の webhook ペイロードを処理して、フォームの回答からリードを作成します。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 標準的な webhook 設定については、[Webhook トリガーを設定](/ja/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)を参照してください。 本記事では、Typeform のカスタムペイロード構造に必要となる特有の処理について説明します。
 
 ### ステップ 1: Webhook ワークフローを作成
@@ -128,3 +130,5 @@ export const main = async (params: {
 
 * [Webhook トリガーを設定](/ja/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
 * [Code アクションで配列を扱う](/ja/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+
+<PageBanner illustration="webhooks" pattern="developers-api" />

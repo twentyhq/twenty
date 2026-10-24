@@ -3,6 +3,8 @@ title: Sincronización y recuperación
 description: Qué comando usar y cuándo, cómo leer la salida de sincronización y una escalera de recuperación para cuando los metadatos locales se desvían, antes de llegar a un restablecimiento completo.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 El desarrollo de aplicaciones locales gira en torno a la **sincronización**: la CLI recompila tu manifiesto y el servidor aplica solo la diferencia entre este y los metadatos que ya se encuentran en tu espacio de trabajo. Esta página explica qué comando usar, cómo leer qué cambió una sincronización y qué hacer, en orden, cuando el estado local parece inconsistente.
 
 ## Qué comando usar y cuándo
@@ -123,3 +125,5 @@ Cuando algo sale mal, el diff de metadatos y los errores con nombre te permiten 
 * **Error de tamaño de dependencias** — la sincronización o la instalación fallan porque las `dependencies` de producción de la aplicación son demasiado grandes para instalarse como una capa de tiempo de ejecución (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); mueve a `devDependencies` los paquetes que tus funciones de lógica no importan en tiempo de ejecución (bibliotecas de UI, herramientas de desarrollo).
 * **Error de tiempo de ejecución del código de la aplicación**: la sincronización se completa correctamente, pero tus funciones lógicas o componentes se comportan de forma incorrecta en tiempo de ejecución; revisa los [registros de funciones](/es/developers/extend/apps/operations/cli).
 * **Estado de instancia local**: nada de lo anterior aplica y el espacio de trabajo sigue viéndose mal; desciende por la escalera de recuperación.
+
+<PageBanner illustration="sync-recovery" pattern="developers-api" />

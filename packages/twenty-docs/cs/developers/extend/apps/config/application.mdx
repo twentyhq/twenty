@@ -3,6 +3,8 @@ title: Konfigurace aplikace
 description: Deklarujte identitu své aplikace, výchozí roli, proměnné a metadata tržiště pomocí defineApplication.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Každá aplikace musí mít právě jedno volání `defineApplication`. Deklaruje:
 
 * **Identita** — univerzální identifikátor, zobrazovaný název, popis.
@@ -121,3 +123,5 @@ Pokud plánujete [zveřejnit svou aplikaci](/cs/developers/extend/apps/operation
 <Note>
 `logoUrl` a `screenshots` jsou zastaralé aliasy `logo` a `galleryImages`. Externí absolutní adresy URL (`http://` nebo `https://`) nejsou pro tato pole podporovány: při sestavení jsou vynechány s varováním. Místo toho přiložte obrázky do složky `public/` vaší aplikace.
 </Note>
+
+<PageBanner illustration="application-config" pattern="developers-api" />

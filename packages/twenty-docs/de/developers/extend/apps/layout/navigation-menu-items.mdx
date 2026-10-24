@@ -3,6 +3,8 @@ title: Navigationsmenüeinträge
 description: Fügen Sie der Arbeitsbereichsseitenleiste benutzerdefinierte Einträge hinzu – Links zu gespeicherten Ansichten oder externen URLs.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Ein **Navigationsmenüeintrag** ist ein Eintrag in der linken Seitenleiste. Verwenden Sie `defineNavigationMenuItem()`, um benutzerdefinierte Seitenleistenlinks bereitzustellen – typischerweise einen pro [Ansicht](/de/developers/extend/apps/layout/views), die Sie bereitstellen – oder um auf externe URLs zu verweisen.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
@@ -43,3 +45,5 @@ export default defineNavigationMenuItem({
 <Note>
 **Häufige Falle:** Wenn Sie ein Objekt ohne zugehörigen Navigationsmenüeintrag erstellen, ist dieses Objekt von der Seitenleiste aus nicht erreichbar. Sofern es sich nicht um ein technisches/internes Objekt handelt, sollte jedes benutzerdefinierte Objekt einen entsprechenden Eintrag in der Seitenleiste haben, der darauf verweist.
 </Note>
+
+<PageBanner illustration="navigation" pattern="developers-api" />

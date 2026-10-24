@@ -3,6 +3,7 @@ title: Webhooklar
 description: CRM'inizde olaylar gerçekleştiğinde gerçek zamanlı bildirimler alın.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 Webhook'lar, Twenty'de olaylar gerçekleştiğinde verileri sistemlerinize gerçek zamanlı olarak iletir — sürekli sorgulamaya gerek yok. Harici sistemleri senkron tutmak, otomasyonları tetiklemek veya uyarılar göndermek için bunları kullanın.
@@ -110,3 +111,5 @@ const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 | **İş Akışı Webhook Tetikleyicisi** | IN  | Harici sistemlerden Twenty'ye veri alın                                     |
 
 Harici verileri almak için bkz. [Bir Webhook Tetikleyicisi Kurun](/tr/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="webhooks" pattern="developers-api" />

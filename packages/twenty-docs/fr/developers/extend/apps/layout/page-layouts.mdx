@@ -3,6 +3,8 @@ title: Mises en page de la page
 description: Personnalisez les pages de détail des enregistrements — onglets, widgets et emplacement de rendu des composants front-end — à l'aide de `definePageLayout` et `definePageLayoutTab`.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Une mise en page contrôle la façon dont la page de détail d'un enregistrement est organisée : quels onglets apparaissent et quels widgets ils contiennent. Utilisez `definePageLayout()` pour déclarer une mise en page pour un objet que vous possédez, ou `definePageLayoutTab()` pour ajouter un seul onglet à une mise en page qui existe déjà (la vôtre ou une mise en page standard de Twenty).
 
 | Cas d'utilisation                                                                                              | Entité                |
@@ -155,3 +157,5 @@ export default definePageLayoutTab({
 * `position` contrôle l'ordre par rapport aux onglets existants sur la mise en page ciblée. Choisissez une valeur qui place votre onglet à l'endroit souhaité par rapport aux onglets intégrés.
 
 * Utilisez ceci plutôt que `definePageLayout` lorsque vous voulez seulement ajouter à une mise en page existante. Utilisez `definePageLayout` lorsque vous possédez l'intégralité de la mise en page.
+
+<PageBanner illustration="page-layouts" pattern="developers-api" />

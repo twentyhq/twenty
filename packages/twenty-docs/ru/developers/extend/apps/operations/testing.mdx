@@ -3,6 +3,8 @@ title: Тестирование
 description: Настройка Vitest, интеграционные тесты с использованием реального сервера Twenty, проверка типов и CI с GitHub Actions.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 SDK предоставляет программные API, которые позволяют собирать, разворачивать, устанавливать и удалять ваше приложение из тестового кода. В сочетании с [Vitest](https://vitest.dev/) и типизированными клиентами API вы можете писать интеграционные тесты, которые проверяют, что ваше приложение работает сквозным образом на реальном сервере Twenty.
 
 ## Использование пакетов npm
@@ -261,3 +263,5 @@ yarn twenty dev:typecheck
 Скэффолдер генерирует готовый к использованию рабочий процесс в `.github/workflows/ci.yml`. При каждом пуше в `main` и каждом pull request он запускает эфемерный сервер Twenty в раннере (через экшен `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`), затем выполняет `yarn lint`, `yarn typecheck`, `yarn test:unit` и `yarn test` с `TWENTY_API_URL` / `TWENTY_API_KEY`, указывающими на этот сервер. Секреты не требуются, и вы можете зафиксировать версию сервера через переменную окружения `TWENTY_VERSION` в начале рабочего процесса.
 
 См. раздел [Публикация → Автоматизированный CI/CD](/ru/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) для полного пошагового руководства по трем сгенерированным рабочим процессам (`ci.yml`, конвейер деплоя `cd.yml` и `publish.yml` для публикации в npm).
+
+<PageBanner illustration="testing" pattern="developers-api" />

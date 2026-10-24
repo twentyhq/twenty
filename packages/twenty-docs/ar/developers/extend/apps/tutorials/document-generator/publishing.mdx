@@ -3,6 +3,8 @@ title: 6. النشر
 description: إضافة بيانات التعريف للسوق ونشر التطبيق الخاص بك.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 تطبيقك يعمل. والخطوة الأخيرة هي وصف ذلك للسوق والنشر.
 
 ## إضافة بيانات التعريف للسوق
@@ -120,17 +122,19 @@ yarn twenty dev:catalog-sync -r <remote>
 
 ## من أين تذهب بعد
 
-<CardGroup cols={2}>
-  <Card title="مرجع البيانات" icon="database" href="/ar/developers/extend/apps/data/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="مرجع البيانات" icon="database" href="/ar/developers/extend/apps/data/overview" img="/images/documentation/illustrations/apps-data.svg">
     كل نوع من أنواع الحقول والعلاقة وخيارات الفهرس.
   </Card>
-  <Card title="مرجع منطقي" icon="bolt" href="/ar/developers/extend/apps/logic/overview">
+  <Card title="مرجع منطقي" icon="bolt" href="/ar/developers/extend/apps/logic/overview" img="/images/documentation/illustrations/apps-logic.svg">
     مشغلات أحداث Cron وقاعدة البيانات، ومتجر القيمة المفتاح، واتصالات OAuth.
   </Card>
-  <Card title="مرجع التخطيط" icon="layout-columns" href="/ar/developers/extend/apps/layout/overview">
+  <Card title="مرجع التخطيط" icon="layout-columns" href="/ar/developers/extend/apps/layout/overview" img="/images/documentation/illustrations/layout.svg">
     مخططات الصفحة، ودويدات لوحة المعلومات، ومزيد من أسطح واجهة المستخدم.
   </Card>
-  <Card title="العمليات" icon="rocket" href="/ar/developers/extend/apps/operations/overview">
+  <Card title="العمليات" icon="rocket" href="/ar/developers/extend/apps/operations/overview" img="/images/documentation/illustrations/apps-operations.svg">
     () CLI، والاختبار، وعمليات الإزالة، وCI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="publishing" pattern="developers-api" />

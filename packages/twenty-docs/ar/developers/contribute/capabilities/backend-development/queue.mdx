@@ -2,6 +2,8 @@
 title: قائمة انتظار الرسائل
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 تسهل القوائم العمليات غير المتزامنة. يمكن استخدامها لأداء مهام الخلفية مثل إرسال بريد ترحيبي عند التسجيل.
 سيكون لكل حالة استخدام فئة قائمة خاصة بها ممتدة من `MessageQueueServiceBase`.
 
@@ -39,3 +41,5 @@ class CustomWorker {
   }
 }
 ```
+
+<PageBanner illustration="background-jobs" pattern="developers-api" />

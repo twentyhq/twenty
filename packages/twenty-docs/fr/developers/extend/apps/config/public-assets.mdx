@@ -3,6 +3,8 @@ title: Ressources publiques
 description: Distribuez des fichiers statiques — images, icônes, polices — avec votre application via le dossier public/.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Le dossier `public/` à la racine de votre application contient des fichiers statiques — images, icônes, polices ou toute autre ressource dont votre application a besoin à l'exécution. Ces fichiers sont automatiquement inclus dans les builds, synchronisés pendant le mode de développement et téléversés vers le serveur.
 
 Les fichiers placés dans `public/` sont :
@@ -64,3 +66,5 @@ export default defineFrontComponent({
 ```
 
 L'argument `path` est relatif au dossier `public/` de votre application. Les deux `getPublicAssetUrl('logo.png')` et `getPublicAssetUrl('public/logo.png')` aboutissent à la même URL — le préfixe `public/` est supprimé automatiquement s'il est présent.
+
+<PageBanner illustration="image" pattern="developers-api" />

@@ -3,6 +3,8 @@ title: Armazenamento de chave-valor
 description: Persista resultados intermediários, armazene em cache dados e compartilhe estado entre execuções de funções lógicas com o armazenamento interno de chave-valor do aplicativo.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Funções de lógica são executadas de forma isolada em processos Node.js de curta duração — assim que uma execução termina, nada que foi mantido na memória sobrevive. Quando você precisa **lembrar de algo entre execuções** (armazenar em cache uma resposta cara de uma API, guardar um cursor para sincronizações incrementais, aplicar debounce ao trabalho ou passar estado de uma função para outra), persista isso no armazenamento interno de chave-valor.
 
 Cada aplicativo recebe seu próprio namespace isolado: os registros são indexados pelo app autenticado, então suas chaves nunca podem colidir com — nem ser lidas por — outro aplicativo.
@@ -107,3 +109,5 @@ O armazenamento interno é deliberadamente opaco: as entradas não são registro
 <Note>
 Ao contrário do armazenamento interno, um objeto personalizado está sempre com escopo para um único workspace — ele não consegue compartilhar registros entre instalações como as chaves `SERVER` fazem.
 </Note>
+
+<PageBanner illustration="key-value-store" pattern="developers-api" />

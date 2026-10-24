@@ -3,6 +3,8 @@ title: 확장
 description: API, 웹훅 및 맞춤형 앱으로 Twenty의 기능을 확장하세요.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## 개요
 
 Twenty는 확장 가능하도록 설계되었습니다. 당사의 API, 웹훅 및 앱 프레임워크를 사용하여 기존 도구와 통합하고 맞춤형 기능을 구축하세요.
@@ -15,14 +17,16 @@ Twenty는 확장 가능하도록 설계되었습니다. 당사의 API, 웹훅 �
 
 ## 시작하기
 
-<CardGroup cols={2}>
-  <Card title="API" icon="code" href="/ko/developers/extend/api">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="API" icon="code" href="/ko/developers/extend/api" img="/images/documentation/illustrations/dev-api.svg">
     프로그래밍 방식으로 Twenty에 연결하세요
   </Card>
-  <Card title="웹훅" icon="bell" href="/ko/developers/extend/webhooks">
+  <Card title="웹훅" icon="bell" href="/ko/developers/extend/webhooks" img="/images/documentation/illustrations/webhooks.svg">
     이벤트에 대한 실시간 알림을 받으세요
   </Card>
-  <Card title="앱" icon="puzzle" href="/ko/developers/extend/apps/getting-started/quick-start">
+  <Card title="앱" icon="puzzle" href="/ko/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
     코드로 사용자 지정을 구축하세요
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" pattern="developers-apps" />

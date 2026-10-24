@@ -3,6 +3,8 @@ title: 6. 게시
 description: 마켓플레이스 메타데이터를 추가하고 앱을 게시하세요.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 앱이 작동합니다. 마지막 단계는 마켓플레이스를 위한 설명을 추가하고 게시하는 것입니다.
 
 ## 마켓플레이스 메타데이터 추가
@@ -110,17 +112,19 @@ yarn twenty dev:catalog-sync -r <remote>
 
 ## 다음 단계
 
-<CardGroup cols={2}>
-  <Card title="데이터 참고" icon="database" href="/ko/developers/extend/apps/data/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="데이터 참고" icon="database" href="/ko/developers/extend/apps/data/overview" img="/images/documentation/illustrations/apps-data.svg">
     모든 필드 타입, 관계, 인덱스 옵션.
   </Card>
-  <Card title="로직 참고" icon="bolt" href="/ko/developers/extend/apps/logic/overview">
+  <Card title="로직 참고" icon="bolt" href="/ko/developers/extend/apps/logic/overview" img="/images/documentation/illustrations/apps-logic.svg">
     Cron 및 데이터베이스 이벤트 트리거, 키-값 저장소, OAuth 연결.
   </Card>
-  <Card title="레이아웃 참고" icon="layout-columns" href="/ko/developers/extend/apps/layout/overview">
+  <Card title="레이아웃 참고" icon="layout-columns" href="/ko/developers/extend/apps/layout/overview" img="/images/documentation/illustrations/layout.svg">
     페이지 레이아웃, 대시보드 위젯, 그 외 다양한 UI 영역.
   </Card>
-  <Card title="작업" icon="rocket" href="/ko/developers/extend/apps/operations/overview">
+  <Card title="작업" icon="rocket" href="/ko/developers/extend/apps/operations/overview" img="/images/documentation/illustrations/apps-operations.svg">
     CLI, 테스트, 리모트, CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="publishing" pattern="developers-api" />

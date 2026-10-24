@@ -3,6 +3,8 @@ title: نظرة عامة
 description: شكّل البيانات التي يضيفها تطبيقك إلى مساحة العمل — الكائنات والحقول والعلاقات.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 طبقة **البيانات** في تطبيق Twenty هي البيانات التي *يضيفها* تطبيقك إلى مساحة العمل — أنواع السجلات الجديدة التي يصرّح عنها، والأعمدة التي يضيفها إلى الكائنات الموجودة، وكيف ترتبط هذه السجلات ببعضها البعض.
 
 ```text
@@ -24,17 +26,17 @@ description: شكّل البيانات التي يضيفها تطبيقك إلى
 
 ## في هذا القسم
 
-<CardGroup cols={2}>
-  <Card title="كائنات" icon="table" href="/ar/developers/extend/apps/data/objects">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="كائنات" icon="table" href="/ar/developers/extend/apps/data/objects" img="/images/documentation/illustrations/objects.svg">
     `defineObject` — صرّح عن أنواع سجلات جديدة مع حقولها الخاصة.
   </Card>
-  <Card title="توسيع الكائنات" icon="wand" href="/ar/developers/extend/apps/data/extending-objects">
+  <Card title="توسيع الكائنات" icon="wand" href="/ar/developers/extend/apps/data/extending-objects" img="/images/documentation/illustrations/extending-objects.svg">
     `defineField` — أضِف حقولًا إلى كائنات قياسية أو كائنات تطبيقات أخرى.
   </Card>
-  <Card title="العلاقات" icon="sitemap" href="/ar/developers/extend/apps/data/relations">
+  <Card title="العلاقات" icon="sitemap" href="/ar/developers/extend/apps/data/relations" img="/images/documentation/illustrations/relations.svg">
     اتصالات ثنائية الاتجاه من نوع `MANY_TO_ONE` / `ONE_TO_MANY` بين الكائنات.
   </Card>
-  <Card title="أنواع أنشطة الجدول الزمني" icon="history" href="/ar/developers/extend/apps/data/timeline-activity-types">
+  <Card title="أنواع أنشطة الجدول الزمني" icon="history" href="/ar/developers/extend/apps/data/timeline-activity-types" img="/images/documentation/illustrations/timeline.svg">
     حدّد أحداث التدقيق التلقائية وأحداث التطبيق المحددة صراحةً للجداول الزمنية للسجلات.
   </Card>
 </CardGroup>
@@ -98,3 +100,5 @@ defineIndex({
 <Note>
 هل تبحث عن **Application Config** أو **Roles & Permissions**؟ هذه تصف التطبيق نفسه بدلًا من البيانات التي يضيفها — وتوجد ضمن [Config](/ar/developers/extend/apps/config/overview). هل تبحث عن **Connections** (Linear, GitHub, Slack OAuth)؟ هذه وُجِدت ليتم استدعاؤها *من* دوال المنطق وتوجد ضمن [Logic](/ar/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

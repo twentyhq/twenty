@@ -3,6 +3,8 @@ title: 多対多リレーションを作成する
 description: ジャンクションオブジェクトを使うことで、両側の多数のレコード同士をリンクできます。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 多対多リレーションでは、両側で複数のレコードを相互に接続できます。 例えば、多数の連絡先が多数のプロジェクトで作業でき、各プロジェクトには多数の連絡先が紐づきます。
 
 <Warning>
@@ -173,3 +175,5 @@ People ←→ Project Assignments ←→ Projects
 * [リレーションフィールド](/ja/user-guide/data-model/capabilities/relation-fields) — リレーションタイプの解説
 * [カスタムオブジェクトの作成](/ja/user-guide/data-model/how-tos/create-custom-objects) — オブジェクトの作成方法
 * [リレーションフィールドを作成](/ja/user-guide/data-model/how-tos/create-relation-fields) — 基本的なリレーションの設定
+
+<PageBanner illustration="relations" pattern="developers-api" />

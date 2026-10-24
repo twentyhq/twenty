@@ -3,6 +3,8 @@ title: OAuth
 description: Tok s autorizačním kódem s PKCE a přihlašovacími údaji klienta pro přístup server-to-server.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty implementuje OAuth 2.0 s autorizačním kódem + PKCE pro aplikace pro uživatele a přihlašovací údaje klienta pro přístup server-to-server. Klienti se registrují dynamicky přes [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — žádné ruční nastavení v dashboardu.
 
 ## Kdy použít OAuth
@@ -186,3 +188,5 @@ Vrací všechny koncové body, podporované typy grantů, oprávnění a možnos
 | **Vhodné pro**              | Skripty, interní nástroje             | Externí aplikace, víceuživatelské integrace |
 | **Rotace tokenů**           | Ruční                                 | Automaticky prostřednictvím refresh tokenů  |
 | **Přístup podle oprávnění** | Plný přístup k API                    | Jemně odstupňovaný pomocí oprávnění         |
+
+<PageBanner illustration="sso" pattern="user-guide-permissions" />

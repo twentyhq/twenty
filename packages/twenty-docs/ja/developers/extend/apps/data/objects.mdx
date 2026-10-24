@@ -3,6 +3,8 @@ title: オブジェクト
 description: defineObject を使用して、新しいレコードタイプ（独自のフィールドを持つカスタムテーブル）を宣言します。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 カスタム**オブジェクト**は、アプリがワークスペースに追加する新しいレコードタイプです。ポストカード、請求書、サブスクリプションなど、あなたのドメインに特化したあらゆるものを定義できます。 各オブジェクトは、そのスキーマ（フィールド、リレーション、デフォルト値）と、同期やデプロイをまたいで維持される安定したユニバーサル識別子を宣言します。
 
 ```ts src/objects/post-card.object.ts
@@ -140,3 +142,5 @@ export default defineObject({
 * **このオブジェクトを他のオブジェクトに接続する** — 双方向リレーションパターンについては [Relations](/ja/developers/extend/apps/data/relations) を参照してください。
 * **他のアプリのオブジェクトにフィールドを追加する** — `defineField()` については [Extending Objects](/ja/developers/extend/apps/data/extending-objects) を参照してください。
 * **このオブジェクトを UI に表示します** — サイドバー項目を追加するには [Navigation Menu Items](/ja/developers/extend/apps/layout/navigation-menu-items) を参照し、カスタムリスト構成を追加するには [Views](/ja/developers/extend/apps/layout/views) を参照してください。
+
+<PageBanner illustration="objects" pattern="developers-api" />

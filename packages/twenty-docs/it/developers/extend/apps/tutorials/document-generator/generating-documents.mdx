@@ -3,6 +3,8 @@ title: 2. Generazione documenti
 description: Una funzione logica, esposta come strumento AI e un'azione di flusso di lavoro.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Ora il core: una [funzione logica](/it/developers/extend/apps/logic/logic-functions)
 che carica un modello e un record, riempie i segnaposti, e salva un nuovo documento
 .
@@ -233,6 +235,10 @@ per le registrazioni.
 **Dopo questo passaggio:** ogni documento generato ha un PDF reale e scaricabile. Ma
 niente può *chiamare* il generatore dall'interfaccia utente ancora — per questo abbiamo bisogno di un percorso HTTP.
 
-<Card title="Il prossimo: percorsi HTTP →" icon="world" href="/it/developers/extend/apps/tutorials/document-generator/http-route">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Il prossimo: percorsi HTTP →" icon="world" href="/it/developers/extend/apps/tutorials/document-generator/http-route" img="/images/documentation/illustrations/tutorial-http.svg">
   Servire la funzione su HTTP e rendere i documenti come pagine web.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-documents" pattern="developers-api" />

@@ -3,6 +3,8 @@ title: الوظائف المنطقية
 description: عرّف دوال TypeScript على جانب الخادم مع HTTP وcron ومشغّلات أحداث قاعدة البيانات.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 دوال المنطق هي دوال TypeScript على جانب الخادم تعمل على منصة Twenty. يمكن تشغيلها بواسطة طلبات HTTP أو جداول cron أو أحداث قاعدة البيانات — كما يمكن إتاحتها كأدوات لوكلاء الذكاء الاصطناعي.
 
 <AccordionGroup>
@@ -905,3 +907,5 @@ console.log(uploadedFile);
 
   **لا** تحتاج إلى تمرير هذه إلى العملاء — فهم يقرؤون من `process.env` تلقائيًا، ويغطي [أذونات الوصول التي تستخدمها المكالمة](#whose-access-a-call-uses) الاختيار بينها. تُحدَّد أذونات تطبيقك الخاصة بواسطة الدور المُعلن باستخدام `defineApplicationRole()` (أو المشار إليه عبر `defaultRoleUniversalIdentifier` في `application-config.ts`)؛ ولا يمكن لعملية تشغيل تتصرف بصفة شخص أن تتجاوز ذلك الدور أو دوره.
 </Note>
+
+<PageBanner illustration="logic-functions" pattern="developers-api" />

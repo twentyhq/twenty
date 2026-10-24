@@ -3,6 +3,8 @@ title: Mantıksal işlevler
 description: Sunucu tarafı TypeScript işlevlerini HTTP, cron ve veritabanı olay tetikleyicileriyle tanımlayın.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Mantık işlevleri, Twenty platformunda çalışan sunucu tarafı TypeScript işlevleridir. HTTP istekleri, cron zamanlamaları veya veritabanı olayları tarafından tetiklenebilirler — ve ayrıca yapay zekâ ajanları için araçlar olarak sunulabilirler.
 
 <AccordionGroup>
@@ -906,3 +908,5 @@ console.log(uploadedFile);
 
   Bunları istemcilere geçirmeniz **gerekmez** — bunları `process.env` üzerinden otomatik olarak okurlar ve [Bir çağrının hangi erişimi kullandığı](#whose-access-a-call-uses) bölümü aralarından seçim yapmayı açıklar. Uygulamanızın kendi izinleri, `defineApplicationRole()` ile bildirilen role (veya `application-config.ts` içindeki `defaultRoleUniversalIdentifier` üzerinden referans verilen role) göre belirlenir; kişi olarak davranan bir çalıştırma ne bu rolü ne de kişinin rolünü aşabilir.
 </Note>
+
+<PageBanner illustration="logic-functions" pattern="developers-api" />

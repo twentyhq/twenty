@@ -3,6 +3,8 @@ title: Bağlantılar
 description: Uygulamanızın, OAuth aracılığıyla üçüncü taraf hizmetlerde kullanıcı adına işlem yapmasına izin verin.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Bağlantılar, bir kullanıcının harici bir hizmet için (Linear, GitHub, Slack, ...) sahip olduğu kimlik bilgileridir. Uygulamanız bu kimlik bilgilerinin **nasıl** elde edildiğini — bir **bağlantı sağlayıcısı** — bildirir ve çalışma zamanında üçüncü taraf API'sine kimlik doğrulamalı çağrılar yapmak için bunları kullanır.
 
 Bugün yalnızca OAuth 2.0 destekleniyor. Gelecekteki kimlik bilgisi türleri (kişisel erişim belirteçleri, API anahtarları, basic auth) aynı yüzeye bağlanacak — halihazırda `defineConnectionProvider({ type: 'oauth', ... })` kullanan uygulamaların geçiş yapması gerekmeyecek.
@@ -266,3 +268,5 @@ Her bağlantı sağlayıcısı için, sunucu yöneticisinin önce üçüncü tar
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="connections" pattern="developers-api" />

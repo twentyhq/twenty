@@ -3,6 +3,7 @@ title: Webhooks
 description: 当您的 CRM 中发生事件时接收实时通知。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 当 Twenty 中发生事件时，Webhook 会实时将数据推送到您的系统 — 无需轮询。 使用它们来保持外部系统同步、触发自动化或发送警报。
@@ -110,3 +111,5 @@ const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 | **工作流 Webhook 触发器** | IN  | 从外部系统接收数据到 Twenty    |
 
 如需接收外部数据，请参见 [设置 Webhook 触发器](/zh/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)。
+
+<PageBanner illustration="webhooks" pattern="developers-api" />

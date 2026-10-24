@@ -2,6 +2,8 @@
 title: Osvědčené postupy
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Tento dokument popisuje osvědčené postupy, které byste měli dodržovat při práci na backendu.
 
 ## Dodržujte modulární přístup
@@ -20,3 +22,5 @@ Měli byste také zpřístupnit služby, které chcete používat v jiných modu
 Když deklarujete proměnnou jako `any`, kontrolor typů TypeScriptu neprovádí kontrolu typů, což umožňuje přiřadit proměnné jakýkoliv typ hodnot. TypeScript používá odvozování typů ke stanovení typu proměnné na základě hodnoty. Prohlášením jako `any` TypeScript již nemůže odvodit typ. To ztěžuje chycení chyb souvisejících s typy během vývoje, což vede k chybám za běhu a činí kód obtížně udržovatelným, méně spolehlivým a těžším na pochopení pro ostatní.
 
 Proto by všechno mělo mít typ. Pokud tedy vytvoříte nový objekt se jménem a příjmením, měli byste vytvořit rozhraní nebo typ, který obsahuje jméno a příjmení a definuje tvar objektu, se kterým pracujete.
+
+<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

@@ -3,6 +3,8 @@ title: ٢. إصدار الوثائق
 description: وظيفة منطقية واحدة معرّفة كأداة الذكاء الاصطناعي وعملية سير العمل.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 الآن النواة الأساسية: [دالة المنطقية](/ar/developers/extend/apps/logic/logic-functions)
 التي تحمّل قالب وسجل، تملأ العناصر النائبة، وتحفظ وثيقة
 جديدة.
@@ -232,6 +234,10 @@ await client.mutation({
 **بعد هذه الخطوة:** كل مستند تم إنشاؤه لديه PDF حقيقي، قابل للتنزيل. ولكن
 لا يوجد ما يمكنه *استدعاء* المولّد من واجهة المستخدم بعد — ولأجل ذلك نحتاج إلى مسار HTTP.
 
-<Card title="التالي: طرق HTTP →" icon="world" href="/ar/developers/extend/apps/tutorials/document-Generator/http-routes">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="التالي: طرق HTTP →" icon="world" href="/ar/developers/extend/apps/tutorials/document-Generator/http-routes" img="/images/documentation/illustrations/tutorial-http.svg">
   خدمة الوظيفة عبر HTTP وتقديم الوثائق كصفحات على الويب.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-documents" pattern="developers-api" />

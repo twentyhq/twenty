@@ -3,6 +3,8 @@ title: Sorun Giderme
 description: Yaygın ilk çalıştırma sorunları — Docker, Node sürümü, Yarn, bağımlılıklar.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 * **Docker hataları** — `yarn twenty docker:start` öncesinde Docker Desktop'ın (veya daemon'un) çalıştığından emin olun. Hata iletisi, işletim sisteminiz için doğru başlatma komutunu gösterecektir.
 * **Yanlış Node sürümü** — 24.5+ gerekiyor (`engines.node: ^24.5.0`). `node -v` ile kontrol edin.
 * **Yarn 4 eksik** — `corepack enable` çalıştırın.
@@ -11,3 +13,5 @@ description: Yaygın ilk çalıştırma sorunları — Docker, Node sürümü, Y
 * **`twenty dev:build`, `dependencies` altındaki `twenty-client-sdk` konusunda uyarır** — Bu paket, çalışma zamanında Twenty tarafından sağlanır, bu nedenle `twenty-sdk` ile birlikte `devDependencies` altına taşınmalıdır. [Proje Yapısı → Bağımlılıklar](/tr/developers/extend/apps/getting-started/project-structure#dependencies) bölümüne bakın.
 
 Takıldınız mı? [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) üzerinde yardım isteyin.
+
+<PageBanner illustration="bug-requests" pattern="developers-api" />

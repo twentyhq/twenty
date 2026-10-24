@@ -3,6 +3,8 @@ title: Vue d'ensemble
 description: Placez votre application à l’intérieur de l’interface de Twenty — entrées de barre latérale, vues enregistrées, onglets de page d’enregistrement et composants React isolés.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 La **couche de mise en page** d’une application Twenty est tout ce que l’utilisateur voit : où l’application apparaît dans la barre latérale, quelles vues de liste elle fournit, comment ses pages de détails d’enregistrement sont organisées et quels composants React personnalisés sont rendus à l’intérieur de ces pages.
 
 ```text
@@ -24,20 +26,20 @@ La **couche de mise en page** d’une application Twenty est tout ce que l’uti
 
 ## Dans cette section
 
-<CardGroup cols={2}>
-  <Card title="Vues" icon="list" href="/fr/developers/extend/apps/layout/views">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Vues" icon="list" href="/fr/developers/extend/apps/layout/views" img="/images/documentation/illustrations/views-pipelines.svg">
     `defineView` — configurations de listes enregistrées : colonnes visibles, filtres, groupes.
   </Card>
-  <Card title="Éléments de menu de navigation" icon="menu-2" href="/fr/developers/extend/apps/layout/navigation-menu-items">
+  <Card title="Éléments de menu de navigation" icon="menu-2" href="/fr/developers/extend/apps/layout/navigation-menu-items" img="/images/documentation/illustrations/navigation.svg">
     `defineNavigationMenuItem` — entrées de barre latérale pointant vers des vues ou des URL externes.
   </Card>
-  <Card title="Mises en page" icon="layout-columns" href="/fr/developers/extend/apps/layout/page-layouts">
+  <Card title="Mises en page" icon="layout-columns" href="/fr/developers/extend/apps/layout/page-layouts" img="/images/documentation/illustrations/page-layouts.svg">
     `definePageLayout` et `definePageLayoutTab` — onglets et widgets sur la page de détails d’un enregistrement.
   </Card>
-  <Card title="Composants frontaux" icon="window-maximize" href="/fr/developers/extend/apps/layout/front-components">
+  <Card title="Composants frontaux" icon="window-maximize" href="/fr/developers/extend/apps/layout/front-components" img="/images/documentation/illustrations/front-components.svg">
     `defineFrontComponent` — composants React isolés rendus à l’intérieur de Twenty.
   </Card>
-  <Card title="Éléments du menu de commande" icon="terminal" href="/fr/developers/extend/apps/layout/command-menu-items">
+  <Card title="Éléments du menu de commande" icon="terminal" href="/fr/developers/extend/apps/layout/command-menu-items" img="/images/documentation/illustrations/command-menu.svg">
     `defineCommandMenuItem` — enregistre des composants frontaux comme entrées Cmd+K et actions rapides.
   </Card>
 </CardGroup>
@@ -56,3 +58,5 @@ La **couche de mise en page** d’une application Twenty est tout ce que l’uti
 Les composants frontaux s’exécutent à l’intérieur d’un Web Worker isolé en utilisant Remote DOM — ils sont rendus *nativement* dans la page (et non dans une iframe), mais ne peuvent pas accéder directement à la page hôte ou au DOM. La communication avec Twenty se fait via une API hôte de passage de messages.
 
 Elles sont encore en cours de développement actif : le bac à sable implémente un DOM partiel, donc les usages avancés peuvent échouer. Voir [Limitations actuelles](/fr/developers/extend/apps/layout/front-components#current-limitations).
+
+<PageBanner illustration="layout" pattern="user-guide-layout" />

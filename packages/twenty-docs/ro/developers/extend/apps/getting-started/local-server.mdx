@@ -3,6 +3,8 @@ title: Server local
 description: Gestionează serverul Twenty Docker local — pornește, oprește, actualizează, rulează o instanță de testare în paralel și configurează manual SDK-ul.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Gestionarea serverului local
 
 Folosiți `yarn twenty docker:*` pentru a controla containerul Twenty local:
@@ -84,3 +86,5 @@ Acum puteți rula `yarn twenty dev`, `yarn twenty docker:start` și restul.
 <Note>
 Nu instalați `twenty-sdk` global — fixați-l per proiect astfel încât fiecare aplicație să folosească propria versiune.
 </Note>
+
+<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

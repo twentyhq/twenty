@@ -3,6 +3,8 @@ title: Сервер MCP
 description: Подключайте ИИ-ассистентов к вашему рабочему пространству Twenty с помощью протокола Model Context Protocol.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty предоставляет сервер [MCP](https://modelcontextprotocol.io/), чтобы ИИ-ассистенты — Claude Desktop, Claude Code, Cursor, ChatGPT и другие — могли читать и записывать ваши данные CRM на естественном языке.
 
 Используйте **URL рабочей области** (URL, который вы используете для доступа к Twenty) в качестве конечной точки MCP. В Twenty Cloud URL вашей рабочей области может быть `https://{mycompany}.twenty.com` или собственный домен. Сервер доступен по адресу:
@@ -135,3 +137,5 @@ SERVER_URL=https://twenty.yourcompany.com
 **Тайм-аут подключения**
 
 * Убедитесь, что URL конечной точки MCP доступен с вашего компьютера. Для экземпляров с самостоятельным хостингом проверьте, что сервер запущен и значение `SERVER_URL` установлено корректно.
+
+<PageBanner illustration="connections" pattern="developers-api" />

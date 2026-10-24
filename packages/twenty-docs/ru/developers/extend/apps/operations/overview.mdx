@@ -3,6 +3,8 @@ title: Обзор
 description: Собирайте, тестируйте и поставляйте свое приложение — команды CLI, интеграционные тесты, CI и публикация на сервер или в npm.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 **Операционный уровень** — это все, что вы делаете *над* своим приложением, а не *с ним*: выполнение команд CLI, запуск интеграционных тестов на реальном сервере Twenty, настройка CI и поставка релизов — либо в виде tar-архива, разворачиваемого на одном сервере, либо как пакет npm, размещенный в маркетплейсе.
 
 ```text
@@ -15,17 +17,19 @@ description: Собирайте, тестируйте и поставляйте 
 
 ## В этом разделе
 
-<CardGroup cols={2}>
-  <Card title="CLI" icon="terminal" href="/ru/developers/extend/apps/operations/cli">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="CLI" icon="terminal" href="/ru/developers/extend/apps/operations/cli" img="/images/documentation/illustrations/cli.svg">
     Справочник по `yarn twenty` — exec, logs, uninstall, remotes.
   </Card>
-  <Card title="Синхронизация и восстановление" icon="compass" href="/ru/developers/extend/apps/operations/sync-and-recovery">
+  <Card title="Синхронизация и восстановление" icon="compass" href="/ru/developers/extend/apps/operations/sync-and-recovery" img="/images/documentation/illustrations/sync-recovery.svg">
     Какие команды когда использовать, как читать diff синхронизации и пошаговое восстановление.
   </Card>
-  <Card title="Тестирование" icon="flask" href="/ru/developers/extend/apps/operations/testing">
+  <Card title="Тестирование" icon="flask" href="/ru/developers/extend/apps/operations/testing" img="/images/documentation/illustrations/testing.svg">
     Настройка Vitest, интеграционные тесты, проверка типов, рабочий процесс CI.
   </Card>
-  <Card title="Публикация" icon="upload" href="/ru/developers/extend/apps/operations/publishing">
+  <Card title="Публикация" icon="upload" href="/ru/developers/extend/apps/operations/publishing" img="/images/documentation/illustrations/publishing.svg">
     Сборка, развертывание tarball, публикация в npm, установка.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="apps-operations" pattern="developers-contribute" />

@@ -3,6 +3,8 @@ title: 概览
 description: 配置应用本身——它的身份、默认权限，以及在安装时运行的内容。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty 应用的 **配置层（config layer）** 用来向 *平台* 描述应用——它的身份、所持有的权限，以及在安装或升级期间运行的代码。 这些声明不会添加新的数据结构或运行时行为；它们告诉 Twenty *这个应用是谁*，以及 *如何完成设置*。
 
 ```text
@@ -32,14 +34,14 @@ Twenty 应用的 **配置层（config layer）** 用来向 *平台* 描述应用
 
 ## 本节内容
 
-<CardGroup cols={2}>
-  <Card title="应用程序配置" icon="rocket" href="/zh/developers/extend/apps/config/application">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="应用程序配置" icon="rocket" href="/zh/developers/extend/apps/config/application" img="/images/documentation/illustrations/application-config.svg">
     `defineApplication` —— 身份、默认角色、变量、应用市场元数据。
   </Card>
-  <Card title="角色和权限" icon="shield-half" href="/zh/developers/extend/apps/config/roles">
+  <Card title="角色和权限" icon="shield-half" href="/zh/developers/extend/apps/config/roles" img="/images/documentation/illustrations/roles.svg">
     `defineRole` —— 声明应用的逻辑函数可以读取和写入什么。
   </Card>
-  <Card title="安装钩子" icon="tool" href="/zh/developers/extend/apps/config/install-hooks">
+  <Card title="安装钩子" icon="tool" href="/zh/developers/extend/apps/config/install-hooks" img="/images/documentation/illustrations/install-hooks.svg">
     `definePreInstallLogicFunction`、`definePostInstallLogicFunction` 和 `defineUninstallLogicFunction` —— 备份数据、写入默认值、验证升级、在卸载时清理。
   </Card>
 </CardGroup>
@@ -53,3 +55,5 @@ Twenty 应用的 **配置层（config layer）** 用来向 *平台* 描述应用
 <Note>
 安装钩子与 [logic function](/zh/developers/extend/apps/logic/logic-functions) 共用运行时——相同的处理器签名、相同的环境变量、相同的类型化 API 客户端——但它们使用各自的 define 函数声明，并且位于常规触发模型（HTTP、cron、数据库事件）之外。
 </Note>
+
+<PageBanner illustration="apps-config" pattern="user-guide-settings" />

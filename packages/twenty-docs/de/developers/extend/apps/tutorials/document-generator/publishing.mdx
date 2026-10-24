@@ -3,6 +3,8 @@ title: 6. Veröffentlichen
 description: Fügen Sie Marktplatz-Metadaten hinzu und veröffentlichen Sie Ihre App.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Ihre App funktioniert. Der letzte Schritt ist, es für den Marktplatz zu beschreiben und zu veröffentlichen.
 
 ## Marktplatz-Metadaten hinzufügen
@@ -120,17 +122,19 @@ Die fertige App ist bei
 
 ## Wohin Sie weiter gehen
 
-<CardGroup cols={2}>
-  <Card title="Datenreferenz" icon="database" href="/de/developers/extend/apps/data/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Datenreferenz" icon="database" href="/de/developers/extend/apps/data/overview" img="/images/documentation/illustrations/apps-data.svg">
     Jeder Feldtyp, Relation und Index-Option.
   </Card>
-  <Card title="Logische Referenz" icon="bolt" href="/de/developers/extend/apps/logic/overview">
+  <Card title="Logische Referenz" icon="bolt" href="/de/developers/extend/apps/logic/overview" img="/images/documentation/illustrations/apps-logic.svg">
     Cron- und Datenbankereignis-Trigger, der Schlüsselwert-Store, OAuth Verbindungen.
   </Card>
-  <Card title="Layout-Referenz" icon="layout-columns" href="/de/developers/extend/apps/layout/overview">
+  <Card title="Layout-Referenz" icon="layout-columns" href="/de/developers/extend/apps/layout/overview" img="/images/documentation/illustrations/layout.svg">
     Seitenlayouts, Dashboard-Widgets und mehr UI-Oberflächen.
   </Card>
-  <Card title="Operationen" icon="rocket" href="/de/developers/extend/apps/operations/overview">
+  <Card title="Operationen" icon="rocket" href="/de/developers/extend/apps/operations/overview" img="/images/documentation/illustrations/apps-operations.svg">
     CLI, Tests, Fernbedienungen und CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="publishing" pattern="developers-api" />

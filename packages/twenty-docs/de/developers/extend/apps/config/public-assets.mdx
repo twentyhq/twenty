@@ -3,6 +3,8 @@ title: Öffentliche Assets
 description: Liefern Sie statische Dateien — Bilder, Icons, Schriftarten — zusammen mit Ihrer App über den Ordner public/ aus.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Der Ordner `public/` im Stammverzeichnis Ihrer App enthält statische Dateien — Bilder, Icons, Schriftarten oder sonstige Assets, die Ihre App zur Laufzeit benötigt. Diese Dateien werden automatisch in Builds aufgenommen, während des Dev-Modus synchronisiert und auf den Server hochgeladen.
 
 Für Dateien im Verzeichnis `public/` gilt:
@@ -64,3 +66,5 @@ export default defineFrontComponent({
 ```
 
 Das Argument `path` ist relativ zum `public/`-Ordner Ihrer App. Sowohl `getPublicAssetUrl('logo.png')` als auch `getPublicAssetUrl('public/logo.png')` ergeben dieselbe URL — das Präfix `public/` wird, falls vorhanden, automatisch entfernt.
+
+<PageBanner illustration="image" pattern="developers-api" />

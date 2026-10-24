@@ -3,6 +3,8 @@ title: Resurse publice
 description: Livrați fișiere statice — imagini, pictograme, fonturi — împreună cu aplicația dvs. prin folderul public/.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Folderul `public/` din rădăcina aplicației conține fișiere statice — imagini, pictograme, fonturi sau orice alte resurse de care are nevoie aplicația la rulare. Aceste fișiere sunt incluse automat în build-uri, sincronizate în timpul modului de dezvoltare și încărcate pe server.
 
 Fișierele plasate în `public/` sunt:
@@ -64,3 +66,5 @@ export default defineFrontComponent({
 ```
 
 Argumentul `path` este relativ la folderul `public/` al aplicației. Atât `getPublicAssetUrl('logo.png')`, cât și `getPublicAssetUrl('public/logo.png')` se rezolvă la același URL — prefixul `public/` este eliminat automat dacă este prezent.
+
+<PageBanner illustration="image" pattern="developers-api" />

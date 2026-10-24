@@ -3,6 +3,8 @@ title: Přehled
 description: Formujte data, která vaše aplikace přidává do pracovního prostoru — objekty, pole a vztahy.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 **Datová vrstva** aplikace Twenty představuje data, která vaše aplikace *přidává* do pracovního prostoru — nové typy záznamů, které deklaruje, sloupce, které přidává k existujícím objektům a způsob, jakým se tyto záznamy vzájemně propojují.
 
 ```text
@@ -24,17 +26,17 @@ description: Formujte data, která vaše aplikace přidává do pracovního pros
 
 ## V této části
 
-<CardGroup cols={2}>
-  <Card title="Objekty" icon="table" href="/cs/developers/extend/apps/data/objects">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Objekty" icon="table" href="/cs/developers/extend/apps/data/objects" img="/images/documentation/illustrations/objects.svg">
     `defineObject` — deklarujte nové typy záznamů s jejich vlastními poli.
   </Card>
-  <Card title="Rozšiřování objektů" icon="wand" href="/cs/developers/extend/apps/data/extending-objects">
+  <Card title="Rozšiřování objektů" icon="wand" href="/cs/developers/extend/apps/data/extending-objects" img="/images/documentation/illustrations/extending-objects.svg">
     `defineField` — přidejte pole ke standardním objektům nebo objektům jiných aplikací.
   </Card>
-  <Card title="Vztahy" icon="sitemap" href="/cs/developers/extend/apps/data/relations">
+  <Card title="Vztahy" icon="sitemap" href="/cs/developers/extend/apps/data/relations" img="/images/documentation/illustrations/relations.svg">
     Obousměrná `MANY_TO_ONE` / `ONE_TO_MANY` propojení mezi objekty.
   </Card>
-  <Card title="Typy aktivit na časové ose" icon="history" href="/cs/developers/extend/apps/data/timeline-activity-types">
+  <Card title="Typy aktivit na časové ose" icon="history" href="/cs/developers/extend/apps/data/timeline-activity-types" img="/images/documentation/illustrations/timeline.svg">
     Definujte automatické události auditu a explicitní události aplikace pro časové osy záznamů.
   </Card>
 </CardGroup>
@@ -98,3 +100,5 @@ Seřaďte pole `fields` tak, jak je má Postgres používat — nejlevější sl
 <Note>
 Hledáte **Application Config** nebo **Roles & Permissions**? Ty popisují samotnou aplikaci, nikoli data, která přidává — najdete je pod [Config](/cs/developers/extend/apps/config/overview). Hledáte **Connections** (Linear, GitHub, Slack OAuth)? Ty existují proto, aby byly volány *z* logických funkcí, a najdete je pod [Logic](/cs/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

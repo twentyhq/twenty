@@ -2,6 +2,8 @@
 title: Teclas de atalho
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Introdução
 
 Quando você precisa ouvir uma tecla de atalho, normalmente usaria o listener de evento `onKeyDown`.
@@ -176,3 +178,5 @@ Mas esse átomo nunca deve ser manipulado manualmente! Veremos como usá-lo na p
 Criamos um wrapper leve em cima de [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) que o torna mais eficiente e evita renderizações desnecessárias.
 
 Também criamos um átomo Jotai para gerenciar o estado do escopo da tecla de atalho e torná-lo disponível em toda a aplicação.
+
+<PageBanner illustration="command-menu" pattern="developers-api" />

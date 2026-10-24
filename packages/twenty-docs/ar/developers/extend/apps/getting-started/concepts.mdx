@@ -3,6 +3,8 @@ title: المفاهيم
 description: كيفية عمل تطبيقات Twenty — نموذج الكيان، العزل (sandboxing)، ودورة حياة التثبيت.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 تطبيقات Twenty هي حزم TypeScript توسّع مساحة عملك بكائنات مخصّصة، ومنطق، ومكوّنات واجهة مستخدم (UI)، وقدرات ذكاء اصطناعي. تعمل على منصة Twenty مع عزل كامل وضوابط الأذونات.
 
 ## كيف تعمل التطبيقات
@@ -82,20 +84,22 @@ your-app/
 
 ## الخطوات التالية
 
-<CardGroup cols={2}>
-  <Card title="التهيئة" icon="tools" href="/ar/developers/extend/apps/config/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="التهيئة" icon="tools" href="/ar/developers/extend/apps/config/overview" img="/images/documentation/illustrations/apps-config.svg">
     هوية التطبيق، الدور الافتراضي، وخطّافات التثبيت وإلغاء التثبيت.
   </Card>
-  <Card title="بيانات" icon="database" href="/ar/developers/extend/apps/data/overview">
+  <Card title="بيانات" icon="database" href="/ar/developers/extend/apps/data/overview" img="/images/documentation/illustrations/apps-data.svg">
     الكائنات، الحقول، والعلاقات ثنائية الاتجاه.
   </Card>
-  <Card title="المنطق" icon="bolt" href="/ar/developers/extend/apps/logic/overview">
+  <Card title="المنطق" icon="bolt" href="/ar/developers/extend/apps/logic/overview" img="/images/documentation/illustrations/apps-logic.svg">
     دوال منطقية، مهارات، وكلاء، واتصالات OAuth.
   </Card>
-  <Card title="التخطيط" icon="layout-columns" href="/ar/developers/extend/apps/layout/overview">
+  <Card title="التخطيط" icon="layout-columns" href="/ar/developers/extend/apps/layout/overview" img="/images/documentation/illustrations/layout.svg">
     العروض، التنقّل، تخطيطات الصفحات، ومكوّنات الواجهة الأمامية.
   </Card>
-  <Card title="العمليات" icon="rocket" href="/ar/developers/extend/apps/operations/overview">
+  <Card title="العمليات" icon="rocket" href="/ar/developers/extend/apps/operations/overview" img="/images/documentation/illustrations/apps-operations.svg">
     سطر الأوامر (CLI)، الاختبار، المستودعات البعيدة (remotes)، التكامل المستمر (CI)، ونشر تطبيقك.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" pattern="developers-apps" />

@@ -4,8 +4,9 @@ description: Создавайте приложения, используйте A
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3}>
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/ru/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
     <CardTitle>Приложения</CardTitle>
     Расширяйте Twenty с помощью пользовательских объектов, серверной логики, UI-компонентов и ИИ-агентов — всё в виде пакетов TypeScript.
@@ -26,3 +27,5 @@ import { CardTitle } from "/snippets/card-title.mdx"
     Настройте монорепозиторий локально и отправляйте PR.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="developers" />

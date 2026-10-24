@@ -3,6 +3,8 @@ title: Tipos de Atividade Linha do Tempo
 description: Define eventos de auditoria automáticos e eventos explícitos do aplicativo que renderizam em linhas de tempo registradas.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Um tipo de atividade de linha do tempo define o vocabulário estável para um evento mostrado na linha do tempo de um registro. Objetos padrão e objetos de aplicativos usam o mesmo contrato: um tipo tem um rótulo e ícone, podem opcionalmente declarar quando é emitido, e pode opcionalmente renderizar através de um dos [componentes frontais da sua aplicação](/pt/developers/extend/apps/layout/front-components).
 
 <Note>
@@ -181,3 +183,5 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | `replacesTimelineActivityTypeUniversalIdentifier` | Não         | Tipo de emissão existente substituído; requer `emit`                                 |
 
 Vinte instantâneos semânticos identidade e apresentação durável fallbacks quando um evento é criado. Linhas históricas mantêm suas ações originais e significados por objetos. Enquanto o tipo está instalado, seu rótulo traduzido, ícone e frontal componente renderizam ao vivo; depois de desinstalado, o snapshot mantém a linha legível. Resolução usa o identificador universal, e a apresentação também sobrevive à reinstalação do aplicativo.
+
+<PageBanner illustration="timeline" pattern="developers-api" />

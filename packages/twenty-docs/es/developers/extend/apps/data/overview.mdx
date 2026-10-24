@@ -3,6 +3,8 @@ title: Resumen
 description: "Da forma a los datos que tu aplicación agrega a un espacio de trabajo: objetos, campos y relaciones."
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu aplicación *agrega* a un espacio de trabajo — los nuevos tipos de registros que declara, las columnas que agrega a los objetos existentes y cómo esos registros se conectan entre sí.
 
 ```text
@@ -24,17 +26,17 @@ La **capa de datos** de una aplicación de Twenty es el conjunto de datos que tu
 
 ## En esta sección
 
-<CardGroup cols={2}>
-  <Card title="Objetos" icon="table" href="/es/developers/extend/apps/data/objects">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Objetos" icon="table" href="/es/developers/extend/apps/data/objects" img="/images/documentation/illustrations/objects.svg">
     `defineObject` — declara nuevos tipos de registros con sus propios campos.
   </Card>
-  <Card title="Extender objetos" icon="wand" href="/es/developers/extend/apps/data/extending-objects">
+  <Card title="Extender objetos" icon="wand" href="/es/developers/extend/apps/data/extending-objects" img="/images/documentation/illustrations/extending-objects.svg">
     `defineField` — agrega campos a objetos estándar o de otras aplicaciones.
   </Card>
-  <Card title="Relaciones" icon="sitemap" href="/es/developers/extend/apps/data/relations">
+  <Card title="Relaciones" icon="sitemap" href="/es/developers/extend/apps/data/relations" img="/images/documentation/illustrations/relations.svg">
     Conexiones bidireccionales `MANY_TO_ONE` / `ONE_TO_MANY` entre objetos.
   </Card>
-  <Card title="Tipos de actividad de la cronología" icon="history" href="/es/developers/extend/apps/data/timeline-activity-types">
+  <Card title="Tipos de actividad de la cronología" icon="history" href="/es/developers/extend/apps/data/timeline-activity-types" img="/images/documentation/illustrations/timeline.svg">
     Defina eventos de auditoría automáticos y eventos explícitos de la aplicación para cronologías de registros.
   </Card>
 </CardGroup>
@@ -98,3 +100,5 @@ Ordena el arreglo `fields` de la forma en que Postgres debería usarlo: la colum
 <Note>
 ¿Buscas **Application Config** o **Roles & Permissions**? Esos describen la propia aplicación en lugar de los datos que agrega; se encuentran en [Config](/es/developers/extend/apps/config/overview). ¿Buscas **Connections** (Linear, GitHub, Slack OAuth)? Estas existen para ser llamadas *desde* las funciones lógicas y se encuentran en [Logic](/es/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

@@ -3,6 +3,8 @@ title: 1. データモデル
 description: オブジェクト、フィールド、および関連を持つモデルドキュメントとテンプレート。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 アプリには2つのカスタムオブジェクトが必要です: **ドキュメントテンプレート** (書き込み内容) と
 **ドキュメント** (生成された結果). 定義してみましょう
 
@@ -128,6 +130,10 @@ The Team
 **このステップの後:** `documentTemplate` と `document` オブジェクト、
 リレーションによってリンクされているオブジェクト、 そして生成するテンプレートが 1 つあります。 次に、それを埋めるロジック。
 
-<Card title="次へ: ドキュメントの生成 →" icon="bolt" href="/ja/developers/extend/apps/tutorials/document-generator/generating-documents">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="次へ: ドキュメントの生成 →" icon="bolt" href="/ja/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/documentation/illustrations/tutorial-documents.svg">
   テンプレートを満たすロジック機能を記述します。
 </Card>
+</CardGroup>
+
+<PageBanner illustration="data-model" pattern="developers-api" />

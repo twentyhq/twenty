@@ -3,6 +3,8 @@ title: Objekte
 description: Deklarieren Sie neue Datensatztypen — benutzerdefinierte Tabellen mit eigenen Feldern — mit defineObject.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Benutzerdefinierte **Objekte** sind neue Datensatztypen, die Ihre App zu einem Arbeitsbereich hinzufügt – Postkarte, Rechnung, Abonnement, alles, was spezifisch für Ihre Domäne ist. Jedes Objekt deklariert sein Schema (Felder, Relationen, Standardwerte) und einen stabilen universellen Bezeichner, der über Synchronisierungen und Deployments hinweg bestehen bleibt.
 
 ```ts src/objects/post-card.object.ts
@@ -140,3 +142,5 @@ Dieselbe Konvention gilt für Zeichenketten-Unterfelder zusammengesetzter Standa
 * **Verbinden Sie dieses Objekt mit anderen** – siehe [Relationen](/de/developers/extend/apps/data/relations) für das bidirektionale Relationsmuster.
 * **Fügen Sie Objekten aus anderen Apps Felder hinzu** – siehe [Objekte erweitern](/de/developers/extend/apps/data/extending-objects) für `defineField()`.
 * **Dieses Objekt in der UI anzeigen** — siehe [Navigationsmenüeinträge](/de/developers/extend/apps/layout/navigation-menu-items), um einen Eintrag in der Seitenleiste hinzuzufügen; siehe [Ansichten](/de/developers/extend/apps/layout/views), um benutzerdefinierte Listenkonfigurationen hinzuzufügen.
+
+<PageBanner illustration="objects" pattern="developers-api" />

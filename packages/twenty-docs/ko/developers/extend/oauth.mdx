@@ -3,6 +3,8 @@ title: OAuth
 description: 서버 간 액세스를 위한 PKCE가 포함된 권한 부여 코드 플로우와 클라이언트 자격 증명.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty는 사용자 대상 앱에는 권한 부여 코드 + PKCE를, 서버 간 액세스에는 클라이언트 자격 증명을 사용하여 OAuth 2.0을 구현합니다. 클라이언트는 [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591)에 따라 동적으로 등록되며 — 대시보드에서 수동 설정은 필요하지 않습니다.
 
 ## OAuth 사용 시기
@@ -186,3 +188,5 @@ GET /.well-known/oauth-authorization-server
 | **적합한 용도**    | 스크립트, 내부 도구   | 외부 앱, 다중 사용자 통합  |
 | **토큰 로테이션**   | 수동            | 리프레시 토큰으로 자동     |
 | **범위 지정 액세스** | 전체 API 액세스    | 범위를 통해 세분화된 액세스  |
+
+<PageBanner illustration="sso" pattern="user-guide-permissions" />

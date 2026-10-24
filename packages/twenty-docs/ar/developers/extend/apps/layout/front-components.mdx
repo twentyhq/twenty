@@ -3,6 +3,8 @@ title: المكوّنات الأمامية
 description: أنشئ مكونات React تُعرَض داخل واجهة مستخدم Twenty ضمن بيئة معزولة (sandbox).
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 المكوّنات الأمامية هي مكوّنات React تُعرَض مباشرة داخل واجهة مستخدم Twenty. تعمل ضمن **Web Worker معزول** باستخدام Remote DOM — تُنفَّذ شيفرتك داخل iframe معزول ذو منشأ غير شفاف، ومع ذلك لا تزال واجهتها تُعرَض محليًا داخل الصفحة بدلًا من أن تظل محصورة داخل ذلك الـ iframe.
 
 <Warning>
@@ -846,3 +848,5 @@ const Card = () => {
 * **حمولات السحب والإفلات.** أحداث السحب تُطلق، لكن `event.dataTransfer` هي `undefined`.
 * **الوحدات المدمجة في Node.** `fs` و`path` و`node:crypto` تفشل في عملية البناء، لذا انقل ذلك العمل إلى [دالة منطقية](/ar/developers/extend/apps/logic/logic-functions). Web Crypto و `fetch` و `TextEncoder` و `URL` متوفرة.
 * يتم دائمًا إعادة عزل **`iframe`** دون `allow-same-origin`، لذلك يعمل التضمين الذي يعتمد على جلسته الخاصة في وضع "تسجيل الخروج". ليس لديه `onLoad` أيضًا.
+
+<PageBanner illustration="front-components" pattern="developers-api" />

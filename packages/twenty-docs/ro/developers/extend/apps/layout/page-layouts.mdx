@@ -3,6 +3,8 @@ title: Layouturi de pagină
 description: Personalizează paginile de detaliu ale înregistrărilor — filele, widgeturile și locul în care se redau componentele front-end — folosind definePageLayout și definePageLayoutTab.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Un **layout de pagină** controlează modul în care este aranjată pagina de detalii a unei înregistrări: ce file apar și ce widgeturi conțin acestea. Folosește `definePageLayout()` pentru a declara un layout pentru un obiect pe care îl deții sau `definePageLayoutTab()` pentru a adăuga o singură filă la un layout care există deja (al tău sau un layout standard Twenty).
 
 | Caz de utilizare                                                                        | Entitate              |
@@ -155,3 +157,5 @@ export default definePageLayoutTab({
 * `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
 
 * Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să adaugi la un layout existent. Folosește `definePageLayout` atunci când deții întregul layout.
+
+<PageBanner illustration="page-layouts" pattern="developers-api" />

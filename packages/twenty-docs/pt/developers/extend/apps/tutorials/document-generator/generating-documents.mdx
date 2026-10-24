@@ -3,6 +3,8 @@ title: 2. Gerando documentos
 description: Uma função lógica, exposta como uma ferramenta de IA e uma ação de fluxo de trabalho.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Agora o núcleo: uma [função lógica](/pt/developers/extend/apps/logic/logic-functions)
 que carrega um modelo e um registro, preenche os espaços reservados e salva um novo documento
 .
@@ -233,6 +235,10 @@ usa para gravações.
 **Após este passo:** cada documento gerado possui um PDF real e para download. Mas
 nada pode *chamar* o gerador a partir da interface de usuário — por isso precisamos de uma rota HTTP.
 
-<Card title="Próximo: Rotas HTTP →" icon="world" href="/desenvolvedores/extend/apps/tutorials/document-gerator/http-routes">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Próximo: Rotas HTTP →" icon="world" href="/desenvolvedores/extend/apps/tutorials/document-gerator/http-routes" img="/images/documentation/illustrations/tutorial-http.svg">
   Servir a função sobre HTTP e renderizar documentos como páginas da web.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-documents" pattern="developers-api" />

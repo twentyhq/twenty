@@ -3,6 +3,8 @@ title: "Tutoriál: Generátor dokumentů"
 description: Vytvořte skutečnou aplikaci Twenty, která generuje personalizované dokumenty z vašich CRM dat.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 V tomto tutoriálu vytvoříte **Generátor dokumentů** — aplikaci, která převádí znovupoužitelné šablony na personalizované dokumenty pomocí dat, která už máte ve svém CRM.
 
 Napište šablonu jednou pomocí `{{placeholders}}` a poté vygenerujte vyplněný dokument pro libovolnou osobu nebo společnost jedním kliknutím — z příkazové nabídky, od AI agenta nebo z workflow.
@@ -60,6 +62,10 @@ jeden generátor.
 Nechte `yarn twenty dev` běžet v terminálu po celý tutoriál. Pokaždé, když
 přidáte nebo upravíte soubor pod `src/`, během několika sekund se znovu synchronizuje s vaším serverem, takže můžete sledovat, jak se každá schopnost objevuje v uživatelském rozhraní, jak ji vytváříte.
 
-<Card title="Začněte vytvářet →" icon="database" href="/cs/developers/extend/apps/tutorials/document-generator/data-model">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Začněte vytvářet →" icon="database" href="/cs/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/illustrations/data-model.svg">
   Kapitola 1: modelujte dokumenty a šablony.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="document-generator" pattern="user-guide-billing" />

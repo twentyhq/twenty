@@ -3,6 +3,8 @@ title: 3. HTTP-маршруты
 description: Включает функцию по HTTP и отображает документы как веб-страницы.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Этот же обработчик также может отвечать на HTTP-запросы. Мы добавим два маршрута:
 
 * **POST** конечная точка интерфейса для генерации документа, и
@@ -144,6 +146,10 @@ http://localhost:2020/s/documents/view?id=<documentId>
 **После этого шага:** приложение может генерировать документы по HTTP и отдавать их как
 веб-страницы. Теперь давайте сделаем его пригодным для использования без `curl`.
 
-<Card title="Далее: построение пользовательского интерфейса →" icon="layout-columns" href="/ru/developers/extend/apps/tutorals/document-generator/building-the-ui">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Далее: построение пользовательского интерфейса →" icon="layout-columns" href="/ru/developers/extend/apps/tutorals/document-generator/building-the-ui" img="/images/documentation/illustrations/tutorial-ui.svg">
   Виды, навигация, команда и передний компонент.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-http" pattern="developers-api" />

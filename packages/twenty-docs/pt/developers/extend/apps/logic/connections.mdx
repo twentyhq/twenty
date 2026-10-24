@@ -3,6 +3,8 @@ title: Conexões
 description: Permita que seu aplicativo aja em nome de um usuário em serviços de terceiros via OAuth.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Conexões são credenciais que um usuário mantém para um serviço externo (Linear, GitHub, Slack, ...). Seu app declara **como** essas credenciais são obtidas — um **provedor de conexão** — e as consome em tempo de execução para fazer chamadas autenticadas à API de terceiros.
 
 Atualmente, apenas o OAuth 2.0 tem suporte. Tipos de credenciais futuros (tokens de acesso pessoal, chaves de API, autenticação básica) serão conectados à mesma interface — apps que já usam `defineConnectionProvider({ type: 'oauth', ... })` não precisarão migrar.
@@ -266,3 +268,5 @@ Para cada provedor de conexão, o administrador do servidor precisa primeiro reg
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="connections" pattern="developers-api" />

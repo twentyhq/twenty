@@ -3,6 +3,8 @@ title: OAuth
 description: 采用 PKCE 的授权码流程和用于服务器到服务器访问的客户端凭证。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty 对面向用户的应用采用授权码 + PKCE 实现 OAuth 2.0，对服务器到服务器访问采用客户端凭证。 客户端通过 [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) 动态注册——无需在仪表板中手动设置。
 
 ## 何时使用 OAuth
@@ -186,3 +188,5 @@ GET /.well-known/oauth-authorization-server
 | **最适合**     | 脚本、内部工具    | 外部应用、多用户集成  |
 | **令牌轮换**    | 手动         | 通过刷新令牌自动完成  |
 | **范围限定的访问** | 完整的 API 访问 | 通过范围实现细粒度控制 |
+
+<PageBanner illustration="sso" pattern="user-guide-permissions" />

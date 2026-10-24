@@ -3,6 +3,8 @@ title: 概要
 description: HTTP ルート、cron スケジュール、データベースイベント、AI ツール、またはワークフローアクションによってトリガーされ、Twenty 内部で実行されるサーバーサイドの TypeScript。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty アプリの **ロジックレイヤー** は、*実行される* コードです。HTTP リクエスト、cron スケジュール、レコードの変更に反応するサーバーサイドの TypeScript ハンドラー、ワークスペース内で動作する AI スキルとエージェント、そして関数がサードパーティサービス上でユーザーに代わって動作できるようにする OAuth 接続が含まれます。
 
 ```text
@@ -23,20 +25,20 @@ Twenty アプリの **ロジックレイヤー** は、*実行される* コー�
 
 ## このセクションについて
 
-<CardGroup cols={2}>
-  <Card title="ロジック関数" icon="bolt" href="/ja/developers/extend/apps/logic/logic-functions">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="ロジック関数" icon="bolt" href="/ja/developers/extend/apps/logic/logic-functions" img="/images/documentation/illustrations/logic-functions.svg">
     コアとなる構成要素 — トリガーの種類、ペイロード、および型付き API クライアント。
   </Card>
-  <Card title="スキルとエージェント" icon="robot" href="/ja/developers/extend/apps/logic/skills-and-agents">
+  <Card title="スキルとエージェント" icon="robot" href="/ja/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/illustrations/skills-agents.svg">
     再利用可能な AI エージェント向けの指示や、カスタムのシステムプロンプトを備えたアシスタント。
   </Card>
-  <Card title="接続" icon="plug" href="/ja/developers/extend/apps/logic/connections">
+  <Card title="接続" icon="plug" href="/ja/developers/extend/apps/logic/connections" img="/images/documentation/illustrations/connections.svg">
     Linear、GitHub、Slack など、サードパーティサービス向けにアプリが保持する OAuth 資格情報。
   </Card>
-  <Card title="キーバリューストア" icon="database" href="/ja/developers/extend/apps/logic/key-value-store">
+  <Card title="キーバリューストア" icon="database" href="/ja/developers/extend/apps/logic/key-value-store" img="/images/documentation/illustrations/key-value-store.svg">
     ロジック関数の実行間で状態を永続化します ― キャッシュ、カーソル、ワークスペース間のクレーム。
   </Card>
-  <Card title="バックグラウンドジョブ" icon="stack-2" href="/ja/developers/extend/apps/logic/background-jobs">
+  <Card title="バックグラウンドジョブ" icon="stack-2" href="/ja/developers/extend/apps/logic/background-jobs" img="/images/documentation/illustrations/background-jobs.svg">
     ワーカー上でロジック関数の実行をキューに入れて、実行ごとのタイムアウト制限を回避します。
   </Card>
 </CardGroup>
@@ -58,3 +60,5 @@ Twenty アプリの **ロジックレイヤー** は、*実行される* コー�
 <Note>
 **インストール時フック** — インストールの前後に実行されるコード — はこのランタイムを共有しますが、独自の define 関数を使用し、[Config → Install Hooks](/ja/developers/extend/apps/config/install-hooks) の下に配置されます。
 </Note>
+
+<PageBanner illustration="apps-logic" pattern="user-guide-workflows" />

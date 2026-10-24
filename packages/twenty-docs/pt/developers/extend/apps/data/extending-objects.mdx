@@ -3,6 +3,8 @@ title: Estendendo objetos
 description: Adicione campos a objetos padrão do Twenty (Person, Company, …) ou a objetos de outros apps usando defineField.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Use `defineField()` para adicionar um campo a um objeto que você não possui — um objeto padrão do Twenty como Person ou Company, ou um objeto disponibilizado por outro app instalado. Ao contrário dos campos inline declarados dentro de [`defineObject`](/pt/developers/extend/apps/data/objects), os campos independentes exigem um `objectUniversalIdentifier` para especificar qual objeto eles estendem.
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -49,3 +51,5 @@ export default defineField({
 ## Adicionando uma relação a um objeto existente
 
 Para adicionar um campo de relação (por exemplo, vinculando seu objeto personalizado a um `Person` padrão), use `defineField()` com `FieldType.RELATION`. O padrão é o mesmo que para relações inline, mas com `objectUniversalIdentifier` definido explicitamente. Veja [Relações](/pt/developers/extend/apps/data/relations) para o padrão bidirecional.
+
+<PageBanner illustration="extending-objects" pattern="developers-api" />

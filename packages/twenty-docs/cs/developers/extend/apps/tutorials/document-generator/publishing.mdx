@@ -3,6 +3,8 @@ title: 6. Publikování
 description: Přidejte metadata tržiště a publikujte svou aplikaci.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Vaše aplikace funguje. Posledním krokem je popsat jej pro tržiště a publikovat.
 
 ## Přidat metadata tržiště
@@ -120,17 +122,19 @@ Dokončená aplikace je na
 
 ## Kde jít dál
 
-<CardGroup cols={2}>
-  <Card title="Odkaz na údaje" icon="database" href="/cs/developers/extend/apps/data/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Odkaz na údaje" icon="database" href="/cs/developers/extend/apps/data/overview" img="/images/documentation/illustrations/apps-data.svg">
     Každý typ pole, vztah a index.
   </Card>
-  <Card title="Logický odkaz" icon="bolt" href="/cs/developers/extend/apps/logic/overview">
+  <Card title="Logický odkaz" icon="bolt" href="/cs/developers/extend/apps/logic/overview" img="/images/documentation/illustrations/apps-logic.svg">
     Cron a databázová událost, klíčový obchod, připojení OAuth.
   </Card>
-  <Card title="Odkaz na rozložení" icon="layout-columns" href="/cs/developers/extend/apps/layout/overview">
+  <Card title="Odkaz na rozložení" icon="layout-columns" href="/cs/developers/extend/apps/layout/overview" img="/images/documentation/illustrations/layout.svg">
     Rozvržení stránky, widgety hlavního panelu a další povrchy uživatelského rozhraní.
   </Card>
-  <Card title="Operace" icon="rocket" href="/cs/developers/extend/apps/operations/overview">
+  <Card title="Operace" icon="rocket" href="/cs/developers/extend/apps/operations/overview" img="/images/documentation/illustrations/apps-operations.svg">
     CLI, testování, dálkové ovládání a CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="publishing" pattern="developers-api" />

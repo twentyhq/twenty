@@ -3,6 +3,8 @@ title: Trabajos en segundo plano
 description: Puede delegar el trabajo prolongado o sujeto a limitaciones de tasa a los workers de Twenty encolando otra ejecución de una función lógica en lugar de hacerlo todo en el mismo flujo.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 La ejecución de una función lógica está limitada por su `timeoutSeconds` (900 segundos como máximo). Cualquier cosa que no pueda terminar en esa ventana — una resincronización completa, una distribución por registro, una API de terceros que impone límites de tasa — debe dividirse en ejecuciones más pequeñas.
 
 `enqueueJobs` hace exactamente eso: solicita a los workers de Twenty que ejecuten más tarde una de las funciones lógicas de tu aplicación, una vez por carga útil, cada ejecución en su propio proceso con su propio presupuesto de tiempo de espera. La llamada devuelve de inmediato.
@@ -194,3 +196,5 @@ Por qué esto se mantiene bien:
 * **Guarda el progreso antes de poner en cola la siguiente ejecución**, de modo que un eslabón fallido se reinicie desde el último bloque completado en lugar de desde el principio.
 * **Mantén cada bloque idempotente.** Volver a procesar un bloque después de un reintento no debe escribir dos veces — indexa las escrituras por el registro o el id externo que estés procesando.
 * **Prefiere una cadena por bloques en lugar de una expansión masiva** cuando el trabajo interactúa con un tercero con limitación de tasa: una cadena con `delayMs` se autorregula, mientras que miles de trabajos encolados a la vez se vuelven elegibles de inmediato.
+
+<PageBanner illustration="background-jobs" pattern="developers-api" />

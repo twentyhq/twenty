@@ -3,6 +3,8 @@ title: 6. Публикация
 description: Добавьте метаданные торговой площадки и публикуйте свое приложение.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Ваше приложение работает. Последним шагом является его описание для рынка и публикации.
 
 ## Добавить метаданные торговой площадки
@@ -120,17 +122,19 @@ yarn twenty dev:catalog-sync -r <remote>
 
 ## Где перейти далее
 
-<CardGroup cols={2}>
-  <Card title="Ссылка на данные" icon="database" href="/ru/developers/extend/apps/data/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Ссылка на данные" icon="database" href="/ru/developers/extend/apps/data/overview" img="/images/documentation/illustrations/apps-data.svg">
     Каждый параметр типа поля, отношения и индекса.
   </Card>
-  <Card title="Ссылка на логику" icon="bolt" href="/ru/developers/extend/apps/logic/overview">
+  <Card title="Ссылка на логику" icon="bolt" href="/ru/developers/extend/apps/logic/overview" img="/images/documentation/illustrations/apps-logic.svg">
     Вызовы cron и события базы данных, хранилище ключевого значения, OAuth соединения.
   </Card>
-  <Card title="Ссылка на макет" icon="layout-columns" href="/ru/developers/extend/apps/layout/overview">
+  <Card title="Ссылка на макет" icon="layout-columns" href="/ru/developers/extend/apps/layout/overview" img="/images/documentation/illustrations/layout.svg">
     Панели страниц, виджеты панели управления и другие поверхности интерфейса.
   </Card>
-  <Card title="Операции" icon="rocket" href="/ru/developers/extend/apps/operations/overview">
+  <Card title="Операции" icon="rocket" href="/ru/developers/extend/apps/operations/overview" img="/images/documentation/illustrations/apps-operations.svg">
     CLI, testing, remotes and CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="publishing" pattern="developers-api" />

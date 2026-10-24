@@ -3,6 +3,8 @@ title: Relazioni
 description: Collega gli oggetti tra loro con relazioni bidirezionali MANY_TO_ONE / ONE_TO_MANY.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Le relazioni collegano due oggetti tra loro. In Twenty, le relazioni sono sempre **bidirezionali** — ogni relazione ha due lati e ciascun lato è dichiarato come un campo che fa riferimento all'altro.
 
 | Tipo di relazione | Descrizione                                                           | Ha una chiave esterna? |
@@ -181,3 +183,5 @@ export default defineObject({
   ],
 });
 ```
+
+<PageBanner illustration="relations" pattern="developers-api" />

@@ -3,6 +3,8 @@ title: "Учебник: Генератор документов"
 description: Создайте реальное приложение Twenty, которое генерирует персонализированные документы из ваших данных CRM.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 В этом учебнике вы создадите **Document Generator** — приложение, которое преобразует многоразовые шаблоны в персонализированные документы, используя данные, уже находящиеся в вашей CRM.
 
 Один раз напишите шаблон с `{{placeholders}}`, затем генерируйте заполненный документ для любого Контакта или Компании в один клик — из командного меню, от агента ИИ или из рабочего процесса.
@@ -61,6 +63,10 @@ yarn twenty dev
 вы добавляете или изменяете файл в `src/`, он заново синхронизируется с вашим сервером в течение нескольких
 секунд, так что вы можете наблюдать, как каждая новая возможность появляется в интерфейсе по мере ее создания.
 
-<Card title="Начните разработку →" icon="database" href="/ru/developers/extend/apps/tutorials/document-generator/data-model">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Начните разработку →" icon="database" href="/ru/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/illustrations/data-model.svg">
   Глава 1: моделируем документы и шаблоны.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="document-generator" pattern="user-guide-billing" />

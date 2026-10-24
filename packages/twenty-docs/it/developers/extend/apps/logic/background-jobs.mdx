@@ -3,6 +3,8 @@ title: Job in background
 description: Affida il lavoro lungo o soggetto a limitazioni di frequenza ai worker di Twenty accodando un'altra esecuzione di una logic function invece di fare tutto in linea.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 L'esecuzione di una logic function è limitata dal suo `timeoutSeconds` (massimo 900 secondi). Qualsiasi attività che non può essere completata in tale intervallo — una risincronizzazione completa, un fan-out per record, un'API di terze parti che applica limitazioni di frequenza — deve essere suddivisa in esecuzioni più piccole.
 
 `enqueueJobs` fa esattamente questo: chiede ai worker di Twenty di eseguire in un secondo momento una delle logic function della tua app, una volta per payload, ogni esecuzione nel proprio processo con il proprio budget di timeout. Il chiamante restituisce immediatamente.
@@ -194,3 +196,5 @@ Cosa rende tutto questo solido:
 * **Conserva i progressi prima di mettere in coda l'esecuzione successiva,** così un anello fallito riparte dall'ultimo blocco completato invece che dall'inizio.
 * **Mantieni ogni blocco idempotente.** Rielaborare un blocco dopo un ritentativo non deve causare scritture duplicate: usa chiavi di scrittura sul record o sull'id esterno che stai elaborando.
 * **Preferisci una catena a blocchi a un'unica enorme suddivisione parallela** quando il lavoro colpisce una terza parte con limitazione di velocità: una catena con `delayMs` si autoregola, mentre migliaia di job messi in coda in una volta sola diventano tutti idonei immediatamente.
+
+<PageBanner illustration="background-jobs" pattern="developers-api" />

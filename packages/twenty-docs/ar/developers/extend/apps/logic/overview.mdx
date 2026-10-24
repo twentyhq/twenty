@@ -3,6 +3,8 @@ title: نظرة عامة
 description: TypeScript على جانب الخادم الذي يعمل داخل Twenty — يتم تشغيله بواسطة مسارات HTTP، وجداول كرون، وأحداث قاعدة البيانات، وأدوات الذكاء الاصطناعي، أو إجراءات سير العمل.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 **طبقة المنطق** في تطبيق Twenty هي الشيفرة التي *تعمل* — معالِجات TypeScript على جانب الخادم تستجيب لطلبات HTTP، وجداول كرون، وتغييرات السجلات؛ ومهارات ووكلاء الذكاء الاصطناعي التي تعمل داخل مساحة العمل؛ واتصالات OAuth التي تتيح لدوالّك العمل نيابةً عن المستخدم في الخدمات الخارجية.
 
 ```text
@@ -23,20 +25,20 @@ description: TypeScript على جانب الخادم الذي يعمل داخل 
 
 ## في هذا القسم
 
-<CardGroup cols={2}>
-  <Card title="الوظائف المنطقية" icon="bolt" href="/ar/developers/extend/apps/logic/logic-functions">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="الوظائف المنطقية" icon="bolt" href="/ar/developers/extend/apps/logic/logic-functions" img="/images/documentation/illustrations/logic-functions.svg">
     لبنة البناء الأساسية — أنواع المشغلات، والحمولات، وعميل واجهة برمجة التطبيقات ذو الأنواع.
   </Card>
-  <Card title="المهارات والوكلاء" icon="robot" href="/ar/developers/extend/apps/logic/skills-and-agents">
+  <Card title="المهارات والوكلاء" icon="robot" href="/ar/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/illustrations/skills-agents.svg">
     تعليمات قابلة لإعادة الاستخدام لوكلاء الذكاء الاصطناعي ومساعدين مع مطالبات نظام مخصّصة.
   </Card>
-  <Card title="الاتصالات" icon="plug" href="/ar/developers/extend/apps/logic/connections">
+  <Card title="الاتصالات" icon="plug" href="/ar/developers/extend/apps/logic/connections" img="/images/documentation/illustrations/connections.svg">
     بيانات اعتماد OAuth التي يحتفظ بها تطبيقك للخدمات الخارجية — مثل Linear وGitHub وSlack وغيرها.
   </Card>
-  <Card title="مخزن المفاتيح-القيم" icon="database" href="/ar/developers/extend/apps/logic/key-value-store">
+  <Card title="مخزن المفاتيح-القيم" icon="database" href="/ar/developers/extend/apps/logic/key-value-store" img="/images/documentation/illustrations/key-value-store.svg">
     الاحتفاظ بالحالة بين تشغيلات دالة المنطق — ذاكرات التخزين المؤقت، والمؤشرات، والمطالبات عبر مساحات العمل.
   </Card>
-  <Card title="المهام الخلفية" icon="stack-2" href="/ar/developers/extend/apps/logic/background-jobs">
+  <Card title="المهام الخلفية" icon="stack-2" href="/ar/developers/extend/apps/logic/background-jobs" img="/images/documentation/illustrations/background-jobs.svg">
     ضع في قائمة الانتظار تشغيل دالة منطقية على العمال لتجاوز مهلة كل تشغيل.
   </Card>
 </CardGroup>
@@ -58,3 +60,5 @@ description: TypeScript على جانب الخادم الذي يعمل داخل 
 <Note>
 **خطافات وقت التثبيت** — الشيفرة التي تعمل قبل التثبيت أو بعده — تشارك بيئة التشغيل هذه ولكنها تستخدم دوال تعريف خاصة بها وتوجد ضمن [Config → Install Hooks](/ar/developers/extend/apps/config/install-hooks).
 </Note>
+
+<PageBanner illustration="apps-logic" pattern="user-guide-workflows" />

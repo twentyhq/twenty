@@ -3,6 +3,8 @@ title: 将产品数据导入 Twenty
 description: 按计划将数据仓库中的产品目录数据同步到您的 CRM。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 使用此模式，使 Twenty 与您的数据仓库（例如 Snowflake、BigQuery、PostgreSQL）中的产品数据保持同步。
 
 ## 工作流结构
@@ -180,3 +182,5 @@ export const main = async (params: { deals: any }) => {
 * [工作流触发器](/zh/user-guide/workflows/capabilities/workflow-triggers)
 * [工作流操作](/zh/user-guide/workflows/capabilities/workflow-actions)
 * [在 Code 操作中处理数组](/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+
+<PageBanner illustration="connections" pattern="developers-api" />

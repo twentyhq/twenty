@@ -3,6 +3,8 @@ title: Kendi Kendine Barındırma
 description: Twenty'yi kendi altyapınızda dağıtın ve yönetin.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 <Frame>
   <img src="/images/user-guide/what-is-twenty/20.png" alt="AI" />
 </Frame>
@@ -19,8 +21,10 @@ Twenty, kendi altyapınızda kendi kendinize barındırılabilir; bu da verileri
 
 ## Başlarken
 
-<CardGroup cols={2}>
-  <Card title="Docker Compose" icon="brand-docker" href="/tr/developers/self-host/capabilities/docker-compose">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Docker Compose" icon="brand-docker" href="/tr/developers/self-host/capabilities/docker-compose" img="/images/documentation/illustrations/dev-self-host.svg">
     Docker ile hızlı kurulum
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

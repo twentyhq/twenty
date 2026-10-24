@@ -3,6 +3,8 @@ title: Seitenlayouts
 description: Passen Sie Detailseiten von Datensätzen an – Tabs, Widgets und die Stellen, an denen Frontend-Komponenten gerendert werden – mithilfe von `definePageLayout` und `definePageLayoutTab`.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Ein **Seitenlayout** steuert, wie die Detailseite eines Datensatzes angeordnet ist: welche Tabs angezeigt werden und welche Widgets sie enthalten. Verwenden Sie `definePageLayout()`, um ein Layout für ein Objekt zu deklarieren, das Sie besitzen, oder `definePageLayoutTab()`, um einen einzelnen Tab zu einem Layout hinzuzufügen, das bereits existiert (Ihr eigenes oder ein standardmäßiges Twenty-Layout).
 
 | Anwendungsfall                                                                                  | Entität               |
@@ -155,3 +157,5 @@ export default definePageLayoutTab({
 * `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
 
 * Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas hinzufügen möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen.
+
+<PageBanner illustration="page-layouts" pattern="developers-api" />

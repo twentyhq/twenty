@@ -3,6 +3,8 @@ title: Stockage clé-valeur
 description: Conservez des résultats intermédiaires, mettez les données en cache et partagez l’état entre les exécutions de fonctions logiques avec le magasin clé-valeur intégré à l’application.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Les fonctions logiques s'exécutent dans des processus Node.js isolés et de courte durée — une fois une exécution terminée, rien de ce qui était conservé en mémoire ne survit. Lorsque vous avez besoin de **vous souvenir de quelque chose entre les exécutions** (mettre en cache une réponse d’API coûteuse, stocker un curseur pour des synchronisations incrémentales, appliquer un anti-rebond, ou transférer l’état d’une fonction à une autre), conservez-le dans le magasin clé-valeur intégré.
 
 Chaque application dispose de son propre espace de noms isolé : les entrées sont associées à l’application authentifiée, de sorte que vos clés ne peuvent jamais entrer en collision avec celles d’une autre application, ni être lues par celle-ci.
@@ -107,3 +109,5 @@ Le magasin intégré est délibérément opaque : les entrées ne sont pas des e
 <Note>
 Contrairement au magasin intégré, un objet personnalisé est toujours limité à un seul espace de travail — il ne peut pas partager des entrées entre installations comme le font les clés `SERVER`.
 </Note>
+
+<PageBanner illustration="key-value-store" pattern="developers-api" />

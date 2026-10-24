@@ -3,6 +3,8 @@ title: Key-Value-Store
 description: Bewahren Sie Zwischenergebnisse auf, zwischenspeichern Sie Daten und teilen Sie den Zustand zwischen Ausführungen von Logikfunktionen mit dem integrierten Key-Value-Speicher der Anwendung.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Logikfunktionen laufen isoliert in kurzlebigen Node.js-Prozessen – sobald ein Durchlauf abgeschlossen ist, überlebt nichts, was im Speicher gehalten wurde. Wenn Sie sich **zwischen Durchläufen etwas merken müssen** (eine teure API-Antwort zwischenspeichern, einen Cursor für inkrementelle Synchronisierungen speichern, Arbeit entprellen oder Zustand von einer Funktion an eine andere übergeben), speichern Sie es im integrierten Key-Value-Speicher.
 
 Jede Anwendung erhält ihren eigenen isolierten Namespace: Einträge werden durch die authentifizierte App indiziert, sodass Ihre Schlüssel niemals mit denen einer anderen Anwendung kollidieren können – oder von ihr gelesen werden können.
@@ -107,3 +109,5 @@ Der integrierte Store ist bewusst intransparent: Einträge sind keine Datensätz
 <Note>
 Im Gegensatz zum integrierten Store ist ein benutzerdefiniertes Objekt immer auf einen Workspace begrenzt – es kann keine Einträge über Installationen hinweg teilen, so wie es `SERVER`-Schlüssel tun.
 </Note>
+
+<PageBanner illustration="key-value-store" pattern="developers-api" />

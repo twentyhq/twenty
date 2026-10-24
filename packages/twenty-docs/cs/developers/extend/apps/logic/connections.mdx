@@ -3,6 +3,8 @@ title: Připojení
 description: Umožněte své aplikaci jednat jménem uživatele ve službách třetích stran prostřednictvím OAuth.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Připojení jsou pověření, která uživatel uchovává pro externí službu (Linear, GitHub, Slack, ...). Vaše aplikace deklaruje, **jak** se tato pověření získávají — **poskytovatel připojení** — a za běhu je používá k provádění ověřených volání na rozhraní API třetí strany.
 
 V současnosti je podporován pouze OAuth 2.0. Budoucí typy pověření (osobní přístupové tokeny, klíče API, základní autentizace) se připojí ke stejnému rozhraní — aplikace, které již používají `defineConnectionProvider({ type: 'oauth', ... })` nebudou muset migrovat.
@@ -266,3 +268,5 @@ Pro každého poskytovatele připojení musí správce serveru nejprve zaregistr
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="connections" pattern="developers-api" />

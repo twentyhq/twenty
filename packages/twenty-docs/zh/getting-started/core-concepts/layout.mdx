@@ -3,6 +3,7 @@ title: 布局
 description: 如何在 Twenty 中导航、浏览和查看记录。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## 主布局
@@ -66,8 +67,12 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 打开记录时，详情页面由可配置的**选项卡**和**小组件**构成。 在网格上添加、删除、重新排序和调整小组件大小——字段、相关记录、电子邮件、时间线、任务、备注、文件、图表、iframe 等。 每种对象类型都有其自己的布局。
 
-<Card title="完整布局指南" icon="arrow-right" href="/zh/user-guide/layout/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="完整布局指南" icon="arrow-right" href="/zh/user-guide/layout/overview" img="/images/documentation/illustrations/layout.svg">
   导航、视图、记录页面——详细参考和操作指南。
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511790" title="布局" />
+
+<PageBanner illustration="layout" pattern="user-guide-layout" />

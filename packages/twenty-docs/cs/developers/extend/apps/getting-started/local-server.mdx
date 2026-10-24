@@ -3,6 +3,8 @@ title: Lokální server
 description: Spravujte lokální Docker server Twenty – spouštění, zastavení, upgrade, paralelní testovací instance a ruční nastavení SDK.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Správa lokálního serveru
 
 K ovládání lokálního kontejneru Twenty použijte `yarn twenty docker:*`:
@@ -84,3 +86,5 @@ Nyní můžete spouštět `yarn twenty dev`, `yarn twenty docker:start` a dalš�
 <Note>
 Neinstalujte `twenty-sdk` globálně — nainstalujte jej v každém projektu zvlášť, aby každá aplikace používala svou vlastní verzi.
 </Note>
+
+<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

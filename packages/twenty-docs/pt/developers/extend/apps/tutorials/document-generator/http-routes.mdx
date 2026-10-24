@@ -3,6 +3,8 @@ title: 3. Rotas HTTP
 description: Acionar a função sobre HTTP e renderizar documentos como páginas da web.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 O mesmo manipulador também pode responder solicitações HTTP. Vamos adicionar duas rotas:
 
 * um terminal **POST** aponta as chamadas da UI para gerar um documento e
@@ -143,6 +145,10 @@ Você também pode transmitir logs de uma função enquanto está testando com
 **Após esse passo:** o aplicativo pode gerar documentos via HTTP e servi-los como páginas
 web. Agora vamos torná-lo utilizável sem `curl`.
 
-<Card title="Próximo: Construindo a interface do usuário →" icon="layout-columns" href="/desenvolvedores/extend/apps/tutorials/document-generator/building-the-ui">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Próximo: Construindo a interface do usuário →" icon="layout-columns" href="/desenvolvedores/extend/apps/tutorials/document-generator/building-the-ui" img="/images/documentation/illustrations/tutorial-ui.svg">
   Exibir, navegação, um comando e um componente inicial.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-http" pattern="developers-api" />

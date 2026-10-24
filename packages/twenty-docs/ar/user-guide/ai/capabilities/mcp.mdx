@@ -3,6 +3,8 @@ title: خادم MCP
 description: اربط مساعدي الذكاء الاصطناعي بمساحة عمل Twenty الخاصة بك باستخدام بروتوكول سياق النموذج.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 تعرض Twenty خادم [MCP](https://modelcontextprotocol.io/) بحيث تتمكّن مساعدات الذكاء الاصطناعي — Claude Desktop وClaude Code وCursor وChatGPT وغيرها — من قراءة وكتابة بيانات نظام إدارة علاقات العملاء (CRM) لديك باستخدام اللغة الطبيعية.
 
 استخدم **عنوان URL لمساحة العمل** (عنوان URL الذي تستخدمه للوصول إلى Twenty) كنقطة نهاية MCP. على Twenty Cloud، قد يكون عنوان URL لمساحة العمل هو `https://{mycompany}.twenty.com` أو نطاق مخصص. الخادم متاح على:
@@ -135,3 +137,5 @@ SERVER_URL=https://twenty.yourcompany.com
 **انتهاء مهلة الاتصال**
 
 * تحقّق من إمكانية الوصول إلى عنوان URL لنقطة نهاية MCP من جهازك. بالنسبة لحالات الاستضافة الذاتية، تحقّق من أن الخادم يعمل وأن `SERVER_URL` مُعيَّن بشكل صحيح.
+
+<PageBanner illustration="connections" pattern="developers-api" />

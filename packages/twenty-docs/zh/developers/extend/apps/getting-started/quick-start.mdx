@@ -3,6 +3,10 @@ title: 快速开始
 description: 几分钟内创建你的第一个 Twenty 应用。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+<PageBanner illustration="dev-apps" pattern="developers-apps" />
+
 ## 先决条件
 
 * **Node.js 24.5+** — [在此下载](https://nodejs.org/)
@@ -146,20 +150,20 @@ yarn twenty apply  # show the plan, then apply it
 
 ## 后续步骤
 
-<CardGroup cols={2}>
-  <Card title="配置" icon="tools" href="/zh/developers/extend/apps/config/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="配置" icon="tools" href="/zh/developers/extend/apps/config/overview" img="/images/documentation/illustrations/apps-config.svg">
     应用标识、默认角色、安装和卸载钩子、公共资源。
   </Card>
-  <Card title="数据" icon="database" href="/zh/developers/extend/apps/data/overview">
+  <Card title="数据" icon="database" href="/zh/developers/extend/apps/data/overview" img="/images/documentation/illustrations/apps-data.svg">
     对象、字段和双向关系。
   </Card>
-  <Card title="逻辑" icon="bolt" href="/zh/developers/extend/apps/logic/overview">
+  <Card title="逻辑" icon="bolt" href="/zh/developers/extend/apps/logic/overview" img="/images/documentation/illustrations/apps-logic.svg">
     逻辑函数、技能、智能体和 OAuth 连接。
   </Card>
-  <Card title="布局" icon="layout-columns" href="/zh/developers/extend/apps/layout/overview">
+  <Card title="布局" icon="layout-columns" href="/zh/developers/extend/apps/layout/overview" img="/images/documentation/illustrations/layout.svg">
     视图、导航、页面布局、前端组件。
   </Card>
-  <Card title="操作" icon="rocket" href="/zh/developers/extend/apps/operations/overview">
+  <Card title="操作" icon="rocket" href="/zh/developers/extend/apps/operations/overview" img="/images/documentation/illustrations/apps-operations.svg">
     CLI、测试、远程、CI，以及发布你的应用。
   </Card>
 </CardGroup>

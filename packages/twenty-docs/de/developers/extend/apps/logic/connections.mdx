@@ -3,6 +3,8 @@ title: Verbindungen
 description: Ermöglichen Sie Ihrer App, im Namen eines Benutzers über OAuth in Diensten von Drittanbietern zu handeln.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Verbindungen sind Anmeldedaten, die ein Benutzer für einen externen Dienst besitzt (Linear, GitHub, Slack, ...). Ihre App legt fest, **wie** diese Anmeldedaten bezogen werden — ein **Verbindungsanbieter** — und verwendet sie zur Laufzeit, um authentifizierte Aufrufe an die Drittanbieter-API zu tätigen.
 
 Derzeit wird nur OAuth 2.0 unterstützt. Zukünftige Anmeldedatentypen (Personal Access Tokens, API-Schlüssel, Basic Auth) werden in dieselbe Oberfläche integriert — Apps, die bereits `defineConnectionProvider({ type: 'oauth', ... })` müssen nicht migriert werden.
@@ -266,3 +268,5 @@ Für jeden Verbindungsanbieter muss der Serveradministrator zunächst eine OAuth
 </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="connections" pattern="developers-api" />

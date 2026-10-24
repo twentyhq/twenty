@@ -2,6 +2,8 @@
 title: スタイルガイド
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 このドキュメントには、コードを書く際に従うべきルールが含まれています。
 
 ここでの目標は、一貫性があり、読みやすく、メンテナンスしやすいコードベースにすることです。
@@ -288,3 +290,5 @@ Oxlint のルール `typescript/consistent-type-imports` は、型インポー�
 このルールは、意図せず型をインポートしてしまう稀なエッジケースに特化して対処することに留意してください。 TypeScript自体、[TypeScript 3.8 リリースノート](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)でこのプラクティスを避けています。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。
 
 コードがこのルールに準拠していることを確実にするため、開発ワークフローの一環として Oxlint を実行してください。
+
+<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

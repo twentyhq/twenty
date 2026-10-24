@@ -3,6 +3,8 @@ title: عناصر قائمة الأوامر
 description: اعرض مكوّنات الواجهة الأمامية كإجراءات سريعة ومدخلات في قائمة الأوامر (Cmd+K) باستخدام ‎defineCommandMenuItem‎.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 يُعَدّ **عنصر قائمة الأوامر** الجسر بين المستخدم و[مكوّن الواجهة الأمامية](/ar/developers/extend/apps/layout/front-components). يسجّل هذا العنصر المكوّن في قائمة الأوامر في Twenty‏ (Cmd+K)، وبشكل اختياري، كزر إجراء سريع مُثبَّت في الزاوية العلوية اليمنى من الصفحة.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
@@ -115,3 +117,5 @@ export default defineCommandMenuItem({
 | `none(array, prop)`                 | `true` إذا كانت الخاصية تُقيَّم كقيمة زائفة في كل عنصر             |
 | `noneDefined(array, prop)`          | `true` إذا كانت الخاصية غير معرّفة في كل عنصر                      |
 | `noneEquals(array, prop, value)`    | `true` إذا لم تكن الخاصية تساوي القيمة في أي عنصر                  |
+
+<PageBanner illustration="command-menu" pattern="developers-api" />

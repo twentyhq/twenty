@@ -2,6 +2,8 @@
 title: 升级指南
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## 通用指南
 
 **在开始升级流程之前务必备份数据库**，运行：
@@ -103,3 +105,5 @@ docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status -
 ## v1.23 之前
 
 如果您的实例早于 v1.23，您必须按顺序逐步升级经过每个主要标记版本（从 v1.6 到 v1.7，再从 v1.7 到 v1.8，依此类推），直到达到 v1.23。 届时，您可以直接跳到最新版本。
+
+<PageBanner illustration="sync-recovery" pattern="developers-api" />

@@ -3,6 +3,7 @@ title: Webhooks
 description: 当记录更改时收到通知 — 在每次创建、更新或删除时向您的端点发送 HTTP POST。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 每当记录被创建、更新或删除时，Twenty 会向您的 URL 发送 HTTP POST。 涵盖所有对象类型，包括自定义对象。
@@ -114,3 +115,5 @@ const isValid = crypto.timingSafeEqual(
 | **工作流 Webhook 触发器** | IN  | 从外部系统接收数据到 Twenty    |
 
 如需接收外部数据，请参见 [设置 Webhook 触发器](/zh/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)。
+
+<PageBanner illustration="webhooks" pattern="developers-api" />

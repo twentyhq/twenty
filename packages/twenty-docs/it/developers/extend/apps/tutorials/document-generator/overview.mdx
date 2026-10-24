@@ -3,6 +3,8 @@ title: "Tutorial: Generatore di documenti"
 description: Crea una vera app Twenty che genera documenti personalizzati a partire dai dati del tuo CRM.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 In questo tutorial creerai **Document Generator**, un'app che trasforma modelli riutilizzabili in documenti personalizzati usando i dati già presenti nel tuo CRM.
 
 Scrivi un modello una sola volta con `{{placeholders}}`, quindi genera un documento compilato per qualsiasi Persona o Azienda con un solo clic — dal menu dei comandi, da un agente IA o da un workflow.
@@ -60,6 +62,10 @@ Lascia `yarn twenty dev` in esecuzione in un terminale per l’intero tutorial. 
 aggiungi o modifichi un file sotto `src/`, viene nuovamente sincronizzato con il tuo server entro pochi
 secondi, così puoi vedere ogni funzionalità comparire nell’interfaccia utente mentre la costruisci.
 
-<Card title="Inizia a sviluppare →" icon="database" href="/it/developers/extend/apps/tutorials/document-generator/data-model">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Inizia a sviluppare →" icon="database" href="/it/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/illustrations/data-model.svg">
   Capitolo 1: modella documenti e modelli.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="document-generator" pattern="user-guide-billing" />

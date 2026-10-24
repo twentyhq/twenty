@@ -3,6 +3,8 @@ title: Architecture des Dossiers
 info: Un aperçu détaillé de notre architecture de dossiers
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Dans ce guide, vous explorerez les détails de la structure du répertoire de projet et comment elle contribue à l'organisation et à la maintenabilité de Twenty.
 
 En suivant cette convention d'architecture de dossiers, il est plus facile de trouver les fichiers liés à des fonctionnalités spécifiques et de s'assurer que l'application est évolutive et maintenable.
@@ -107,3 +109,5 @@ Vous pouvez importer le code d'autres modules depuis n'importe quel module, sauf
 ### Interne
 
 Chaque partie (hooks, états, ...) d'un module peut avoir un dossier `internal`, qui contient des parties utilisées uniquement au sein du module.
+
+<PageBanner illustration="frontend-architecture" pattern="developers-api" />

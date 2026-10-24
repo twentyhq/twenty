@@ -3,6 +3,8 @@ title: Estrutura do projeto
 description: O que há dentro de um app Twenty criado com scaffold — arquivos, pastas e o que cada um faz.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Um novo app gerado por `npx create-twenty-app` se parece com isto:
 
 ```text filename="my-twenty-app/"
@@ -76,3 +78,5 @@ O scaffolder fixa `twenty-sdk` e `twenty-client-sdk` para a sua própria versão
 Manter qualquer um dos pacotes em `dependencies` o inclui no bundle de runtime do aplicativo instalado, onde ele é peso morto. `twenty dev:build` emite um aviso quando qualquer um deles ainda está listado em `dependencies`.
 
 Adicione as dependências de runtime do próprio aplicativo (bibliotecas que as suas funções de lógica realmente importam em tempo de execução) em `dependencies`, como de costume. Mantenha a árvore enxuta: `dependencies` são instaladas em uma camada de runtime limitada a 250MB descompactados, e um comando de sync ou install falha com um erro de tamanho de dependencies acima desse valor — bibliotecas de UI e ferramentas de desenvolvimento pertencem a `devDependencies`.
+
+<PageBanner illustration="frontend-architecture" pattern="developers-api" />

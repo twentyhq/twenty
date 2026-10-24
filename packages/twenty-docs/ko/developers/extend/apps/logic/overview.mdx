@@ -3,6 +3,8 @@ title: 개요
 description: HTTP 경로, 크론 스케줄, 데이터베이스 이벤트, AI 도구 또는 워크플로우 액션에 의해 트리거되어 Twenty 내부에서 실행되는 서버 사이드 TypeScript입니다.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty 앱의 **로직 계층**은 *실행되는* 코드로, HTTP 요청, 크론 스케줄, 레코드 변경에 반응하는 서버 사이드 TypeScript 핸들러, 워크스페이스 내부에 존재하는 AI 스킬과 에이전트, 그리고 서드파티 서비스에서 사용자를 대신해 함수가 동작할 수 있도록 하는 OAuth 연결로 구성됩니다.
 
 ```text
@@ -23,20 +25,20 @@ Twenty 앱의 **로직 계층**은 *실행되는* 코드로, HTTP 요청, 크론
 
 ## 이 섹션에서 다루는 내용
 
-<CardGroup cols={2}>
-  <Card title="로직 함수" icon="bolt" href="/ko/developers/extend/apps/logic/logic-functions">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="로직 함수" icon="bolt" href="/ko/developers/extend/apps/logic/logic-functions" img="/images/documentation/illustrations/logic-functions.svg">
     핵심 빌딩 블록 — 트리거 유형, 페이로드, 그리고 타입이 지정된 API 클라이언트입니다.
   </Card>
-  <Card title="스킬 & 에이전트" icon="robot" href="/ko/developers/extend/apps/logic/skills-and-agents">
+  <Card title="스킬 & 에이전트" icon="robot" href="/ko/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/illustrations/skills-agents.svg">
     재사용 가능한 AI 에이전트 지시문과 맞춤형 시스템 프롬프트를 사용하는 어시스턴트입니다.
   </Card>
-  <Card title="연결" icon="plug" href="/ko/developers/extend/apps/logic/connections">
+  <Card title="연결" icon="plug" href="/ko/developers/extend/apps/logic/connections" img="/images/documentation/illustrations/connections.svg">
     Linear, GitHub, Slack 등 서드파티 서비스를 위해 앱이 보유한 OAuth 자격 증명입니다.
   </Card>
-  <Card title="키-값 저장소" icon="database" href="/ko/developers/extend/apps/logic/key-value-store">
+  <Card title="키-값 저장소" icon="database" href="/ko/developers/extend/apps/logic/key-value-store" img="/images/documentation/illustrations/key-value-store.svg">
     로직 함수 실행 사이에 상태를 유지합니다 — 캐시, 커서, 그리고 워크스페이스 간 클레임.
   </Card>
-  <Card title="백그라운드 작업" icon="stack-2" href="/ko/developers/extend/apps/logic/background-jobs">
+  <Card title="백그라운드 작업" icon="stack-2" href="/ko/developers/extend/apps/logic/background-jobs" img="/images/documentation/illustrations/background-jobs.svg">
     워커에서 로직 함수를 실행하도록 대기열에 추가하여 실행당 타임아웃을 우회하세요.
   </Card>
 </CardGroup>
@@ -58,3 +60,5 @@ Twenty 앱의 **로직 계층**은 *실행되는* 코드로, HTTP 요청, 크론
 <Note>
 **설치 시점 후크** — 설치 전후에 실행되는 코드 — 는 동일한 런타임을 공유하지만, 별도의 define 함수들을 사용하며 [Config → Install Hooks](/ko/developers/extend/apps/config/install-hooks) 아래에 위치합니다.
 </Note>
+
+<PageBanner illustration="apps-logic" pattern="user-guide-workflows" />

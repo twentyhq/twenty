@@ -3,6 +3,7 @@ title: レイアウト
 description: Twentyでのレコードのナビゲーション、閲覧、表示方法。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## メインレイアウト
@@ -66,8 +67,12 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 レコードを開くと、詳細ページは設定可能な**タブ**と**ウィジェット**で構成されます。 グリッド上でウィジェットを追加、削除、並べ替え、サイズ変更できます。フィールド、関連レコード、メール、タイムライン、タスク、ノート、ファイル、チャート、iframe などがあります。 各オブジェクトタイプには固有のレイアウトがあります。
 
-<Card title="レイアウトの完全ガイド" icon="arrow-right" href="/ja/user-guide/layout/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="レイアウトの完全ガイド" icon="arrow-right" href="/ja/user-guide/layout/overview" img="/images/documentation/illustrations/layout.svg">
   ナビゲーション、ビュー、レコードページについての詳細なリファレンスとハウツー。
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511790" title="レイアウト" />
+
+<PageBanner illustration="layout" pattern="user-guide-layout" />

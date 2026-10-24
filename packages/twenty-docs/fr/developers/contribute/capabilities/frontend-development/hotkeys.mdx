@@ -2,6 +2,8 @@
 title: Raccourcis clavier
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Introduction
 
 Lorsque vous devez écouter une touche de raccourci, vous utilisez normalement l'événement `onKeyDown`.
@@ -176,3 +178,5 @@ Mais cet atome ne doit jamais être manipulé manuellement ! Nous verrons commen
 Nous avons créé un léger emballage au-dessus de [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) qui le rend plus performant et évite les rendus inutiles.
 
 Nous créons également un atome Jotai pour gérer l'état du périmètre des raccourcis et le rendre disponible partout dans l'application.
+
+<PageBanner illustration="command-menu" pattern="developers-api" />

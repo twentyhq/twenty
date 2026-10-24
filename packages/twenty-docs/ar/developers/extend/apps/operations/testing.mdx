@@ -3,6 +3,8 @@ title: الاختبار
 description: إعداد Vitest، واختبارات تكامل مقابل خادم Twenty حقيقي، والتحقق من الأنواع، والتكامل المستمر (CI) باستخدام GitHub Actions.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 يوفّر SDK واجهات برمجة قابلة للتنفيذ برمجيًا تمكّنك من بناء تطبيقك ونشره وتثبيته وإلغاء تثبيته من شيفرة الاختبار. بالاقتران مع [Vitest](https://vitest.dev/) وعملاء واجهة البرمجة مضبوطي الأنواع، يمكنك كتابة اختبارات تكامل تتحقّق من أن تطبيقك يعمل من البداية إلى النهاية مقابل خادم Twenty حقيقي.
 
 ## استخدام حِزَم npm
@@ -261,3 +263,5 @@ yarn twenty dev:typecheck
 تولّد أداة إنشاء الهيكل سير عمل جاهزًا للاستخدام في `.github/workflows/ci.yml`. عند كل دفع إلى الفرع `main` وكل طلب سحب، تُنشئ الأداة خادم Twenty مؤقتًا في بيئة التشغيل (عبر الإجراء `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`)، ثم تشغِّل الأوامر `yarn lint` و`yarn typecheck` و`yarn test:unit` و`yarn test` مع ضبط المتغيرين `TWENTY_API_URL` و`TWENTY_API_KEY` للإشارة إلى ذلك الخادم. لا تُطلَب أي أسرار، ويمكنك تثبيت إصدار الخادم عبر متغير البيئة `TWENTY_VERSION` في أعلى سير العمل.
 
 راجع قسم [النشر → التكامل/التسليم المستمران الآليان](/ar/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) للاطلاع على شرح كامل لثلاثة مسارات العمل التي تم إنشاؤها تلقائياً (`ci.yml`، وخط أنابيب النشر `cd.yml`، و`publish.yml` للنشر على npm).
+
+<PageBanner illustration="testing" pattern="developers-api" />

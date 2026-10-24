@@ -2,6 +2,8 @@
 title: キーのローテーション
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty には、互いに独立した 2 つのキー群があります。
 
 * **JWT 署名キー** — `core."signingKey"` に保存された非対称 ES256 キーペア（`kid` タグ付き）で、アクセストークン / リフレッシュトークンの署名および検証に使用されます。
@@ -57,3 +59,5 @@ Twenty には、互いに独立した 2 つのキー群があります。
 ## レガシーな `APP_SECRET` サポート
 
 これまで一度も `ENCRYPTION_KEY` を設定していない古いインスタンスは、`APP_SECRET` を保存データ暗号化キー（および、そこから導出されるセッション Cookie シークレット）として使用します。 この経路は後方互換性のために保持されていますが、**非推奨** です。専用の `ENCRYPTION_KEY` を設定し、上記のローテーション手順に従って移行してください。 `APP_SECRET` 自体はレガシーな HS256 アクセストークンを検証するために引き続き使用されます。
+
+<PageBanner illustration="sso" pattern="user-guide-permissions" />

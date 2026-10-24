@@ -3,6 +3,8 @@ title: 教程：文档生成器
 description: 构建一个真实的 Twenty 应用，从你的 CRM 数据生成个性化文档。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 在本教程中，你将构建 **Document Generator** —— 一个应用，它将可复用的模板转换为使用你现有 CRM 数据生成的个性化文档。
 
 使用 `{{placeholders}}` 一次性编写模板，然后即可为任意 Person 或 Company 一键生成已填充的文档——可从命令菜单、AI 代理或工作流中发起。
@@ -57,6 +59,10 @@ yarn twenty dev
 
 在整个教程期间，在一个终端中保持运行 `yarn twenty dev`。 每当您在 `src/` 下添加或编辑文件时，它都会在几秒钟内重新同步到服务器，这样您就可以在构建的同时，在 UI 中看到每项功能逐步出现。
 
-<Card title="开始构建 →" icon="database" href="/zh/developers/extend/apps/tutorials/document-generator/data-model">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="开始构建 →" icon="database" href="/zh/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/illustrations/data-model.svg">
   第 1 章：为文档和模板建模。
 </Card>
+</CardGroup>
+
+<PageBanner illustration="document-generator" pattern="user-guide-billing" />

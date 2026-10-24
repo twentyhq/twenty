@@ -2,6 +2,8 @@
 title: Vlastní objekty
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Objekty jsou struktury, které vám umožňují ukládat data (záznamy, atributy a hodnoty) specifická pro organizaci. Twenty poskytuje jak standardní, tak vlastní objekty.
 
 Standardní objekty jsou vestavěné objekty se sadou atributů dostupných pro všechny uživatele. Příklady standardních objektů v Twenty zahrnují Firma a Osoba. Standardní objekty mají standardní pole, která jsou také dostupná pro všechny uživatele Twenty, jako například Firma.displayName.
@@ -37,3 +39,5 @@ Pro načtení dat proces zahrnuje provádění dotazů přes /graphql endpoint a
 <div style={{textAlign: 'center'}}>
     <img src="/images/docs/server/custom-object-schema.png" alt="Dotazujte se na /graphql endpoint pro načtení dat." />
 </div>
+
+<PageBanner illustration="objects" pattern="developers-api" />

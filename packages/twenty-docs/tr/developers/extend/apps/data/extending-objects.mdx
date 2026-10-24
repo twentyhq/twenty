@@ -3,6 +3,8 @@ title: Nesneleri Genişletme
 description: Standart Twenty nesnelerine (Person, Company, …) alanlar ekleyin veya `defineField` kullanarak diğer uygulamalardaki nesnelere alan ekleyin.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Sahibi olmadığınız bir nesneye alan eklemek için `defineField()` kullanın — Person veya Company gibi standart bir Twenty nesnesi ya da başka bir yüklü uygulama tarafından sağlanan bir nesne. [`defineObject`](/tr/developers/extend/apps/data/objects) içinde tanımlanan satır içi alanların aksine, bağımsız alanlar, hangi nesneyi genişlettiklerini belirtmek için bir `objectUniversalIdentifier` gerektirir.
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -49,3 +51,5 @@ export default defineField({
 ## Mevcut bir nesneye ilişki ekleme
 
 Bir ilişki alanı eklemek için (örneğin özel nesnenizi standart bir `Person` nesnesine bağlamak), `FieldType.RELATION` ile `defineField()` kullanın. Desen, satır içi ilişkilerle aynıdır ancak `objectUniversalIdentifier` açıkça ayarlanır. Çift yönlü desen için [Relations](/tr/developers/extend/apps/data/relations) bölümüne bakın.
+
+<PageBanner illustration="extending-objects" pattern="developers-api" />

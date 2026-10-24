@@ -4,8 +4,9 @@ description: アプリの構築、API の利用、セルフホスト、コード
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3}>
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/ja/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
     <CardTitle>アプリ</CardTitle>
     カスタムオブジェクト、サーバーサイドロジック、UI コンポーネント、AI エージェントによって Twenty を拡張できます — これらはすべて TypeScript パッケージです。
@@ -26,3 +27,5 @@ import { CardTitle } from "/snippets/card-title.mdx"
     モノレポをローカルにセットアップして、PR を提出しましょう。
   </Card>
 </CardGroup>
+
+<PageBanner illustration="developers" />

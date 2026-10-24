@@ -3,6 +3,8 @@ title: İlişkiler
 description: Nesneleri çift yönlü MANY_TO_ONE / ONE_TO_MANY ilişkilerle birbirine bağlayın.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 İlişkiler iki nesneyi birbirine bağlar. Twenty'de ilişkiler her zaman **çift yönlüdür** — her ilişkinin iki tarafı vardır ve her taraf diğeriyle ilişkili alan olarak tanımlanır.
 
 | İlişki türü   | Açıklama                                                  | Yabancı anahtar var mı? |
@@ -181,3 +183,5 @@ export default defineObject({
   ],
 });
 ```
+
+<PageBanner illustration="relations" pattern="developers-api" />

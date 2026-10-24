@@ -2,6 +2,8 @@
 title: Mesaj Kuyruğu
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Kuyruklar, asenkron işlemlerin gerçekleştirilmesine imkan tanır. Kayıt esnasında hoş geldin e-postası göndermek gibi arka plan görevleri gerçekleştirmek için kullanılabilirler.
 Her kullanım durumu, `MessageQueueServiceBase`'den genişletilmiş kendi kuyruk sınıfına sahip olacaktır.
 
@@ -39,3 +41,5 @@ class CustomWorker {
   }
 }
 ```
+
+<PageBanner illustration="background-jobs" pattern="developers-api" />

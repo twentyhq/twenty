@@ -3,6 +3,8 @@ title: Устранение неполадок
 description: Распространенные проблемы при первом запуске — Docker, версия Node, Yarn, зависимости.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 * **Ошибки Docker** — убедитесь, что Docker Desktop (или демон) запущен перед выполнением `yarn twenty docker:start`. Сообщение об ошибке укажет правильную команду запуска для вашей ОС.
 * **Неверная версия Node** — требуется 24.5+ (`engines.node: ^24.5.0`). Проверьте с помощью `node -v`.
 * **Отсутствует Yarn 4** — выполните `corepack enable`.
@@ -11,3 +13,5 @@ description: Распространенные проблемы при перво
 * **`twenty dev:build` предупреждает о `twenty-client-sdk` в разделе `dependencies`** — он предоставляется Twenty во время выполнения, поэтому его следует перенести в `devDependencies` рядом с `twenty-sdk`. См. [Структура проекта → Зависимости](/ru/developers/extend/apps/getting-started/project-structure#dependencies).
 
 Застряли? Попросите помощи на [Discord-сервере Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).
+
+<PageBanner illustration="bug-requests" pattern="developers-api" />

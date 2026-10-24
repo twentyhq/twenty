@@ -3,6 +3,8 @@ title: Cílení na systémová metadata
 description: Vyřešte deterministické univerzální identifikátory metadat, která Twenty automaticky zřizuje u každého objektu, aby se na ně vaše aplikace mohla odkazovat bez hardcodování.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Každý objekt v Twenty má **systémová metadata**, která sami nedefinujete, například sadu polí a hlavní zobrazení seznamu s jeho sloupci. Server všechno vytvoří při zřízení objektu a tato sada roste spolu s tím, jak roste Twenty.
 
 Protože je nedefinujete, neexistuje žádná konstanta `universalIdentifier`, kterou byste mohli importovat. Místo toho server každý identifikátor **odvozuje** deterministicky a `twenty-sdk` zpřístupňuje stejné odvozování, takže váš manifest může zjistit přesnou hodnotu, kterou server používá.
@@ -209,3 +211,5 @@ Použijte pomocné funkce uvedené výše v případě, kdy je objekt definován
   `getFieldUniversalIdentifier`. U objektů, které definujete, odkazujte na pole
   `name` pomocí identifikátoru, který jste mu dali v `defineObject()`.
 </Note>
+
+<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

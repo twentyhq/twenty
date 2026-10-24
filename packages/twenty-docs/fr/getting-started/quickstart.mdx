@@ -3,6 +3,7 @@ title: Démarrage rapide
 description: Mettez Twenty en route en moins de 5 minutes, sur le cloud ou en auto‑hébergement.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Inscription
@@ -56,17 +57,19 @@ Utilisez le menu Commande (`Cmd+K` / `Ctrl+K`) pour importer des Personnes, Entr
 
 ## Prochaines étapes
 
-<CardGroup cols={2}>
-  <Card title="Découvrez l’interface" icon="layout-columns" href="/fr/getting-started/core-concepts/layout">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Découvrez l’interface" icon="layout-columns" href="/fr/getting-started/core-concepts/layout" img="/images/documentation/illustrations/layout.svg">
     Navigation, vues, menu de commandes, panneau latéral.
   </Card>
-  <Card title="Créer des workflows" icon="bolt" href="/fr/user-guide/workflows/overview">
+  <Card title="Créer des workflows" icon="bolt" href="/fr/user-guide/workflows/overview" img="/images/documentation/illustrations/workflows.svg">
     Automatisez vos processus métier.
   </Card>
-  <Card title="Créer des vues" icon="table" href="/fr/user-guide/layout/overview">
+  <Card title="Créer des vues" icon="table" href="/fr/user-guide/layout/overview" img="/images/documentation/illustrations/layout.svg">
     Tableau, kanban, calendrier — filtrez et triez vos données.
   </Card>
-  <Card title="Explorer l'API" icon="plug" href="/fr/developers/extend/api">
+  <Card title="Explorer l'API" icon="plug" href="/fr/developers/extend/api" img="/images/documentation/illustrations/dev-api.svg">
     Schéma par locataire, REST et GraphQL.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="quickstart" pattern="getting-started-extensibility" />

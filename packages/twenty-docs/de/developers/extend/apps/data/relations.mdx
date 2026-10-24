@@ -3,6 +3,8 @@ title: Beziehungen
 description: Objekte mit bidirektionalen MANY_TO_ONE-/ONE_TO_MANY-Relationen verbinden.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Relationen verbinden zwei Objekte miteinander. In Twenty sind Relationen stets **bidirektional** — jede Relation hat zwei Seiten, und jede Seite wird als Feld deklariert, das auf die andere verweist.
 
 | Beziehungstyp | Beschreibung                                                            | Fremdschlüssel vorhanden? |
@@ -181,3 +183,5 @@ export default defineObject({
   ],
 });
 ```
+
+<PageBanner illustration="relations" pattern="developers-api" />

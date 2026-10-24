@@ -3,6 +3,8 @@ title: Komut menüsü öğeleri
 description: Ön bileşenleri hızlı işlemler ve komut menüsü (Cmd+K) girdileri olarak `defineCommandMenuItem` ile sunun.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Bir **komut menüsü öğesi**, kullanıcı ile bir [ön bileşen](/tr/developers/extend/apps/layout/front-components) arasında köprü görevi görür. Bu, bileşeni Twenty'nin komut menüsüne (Cmd+K) ve isteğe bağlı olarak sayfanın sağ üst köşesindeki sabitlenmiş bir hızlı işlem düğmesi olarak kaydeder.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
@@ -115,3 +117,5 @@ Değişkenleri boolean ifadelere dönüştürmek için birleştirin:
 | `none(array, prop)`                 | Özellik her öğede falsy ise `true`                        |
 | `noneDefined(array, prop)`          | Özellik her öğede tanımsızsa `true`                       |
 | `noneEquals(array, prop, value)`    | Özellik hiçbir öğede değere eşit değilse `true`           |
+
+<PageBanner illustration="command-menu" pattern="developers-api" />

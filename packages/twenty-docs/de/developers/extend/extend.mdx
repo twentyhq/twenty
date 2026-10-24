@@ -3,6 +3,8 @@ title: Erweitern
 description: Erweitern Sie die Funktionalität von Twenty mit APIs, Webhooks und benutzerdefinierten Apps.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Überblick
 
 Twenty ist darauf ausgelegt, erweiterbar zu sein. Verwenden Sie unsere APIs, Webhooks und das App-Framework, um sich in Ihre vorhandenen Tools zu integrieren und benutzerdefinierte Funktionalität zu entwickeln.
@@ -15,14 +17,16 @@ Twenty ist darauf ausgelegt, erweiterbar zu sein. Verwenden Sie unsere APIs, Web
 
 ## Erste Schritte
 
-<CardGroup cols={2}>
-  <Card title="APIs" icon="code" href="/de/developers/extend/api">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="APIs" icon="code" href="/de/developers/extend/api" img="/images/documentation/illustrations/dev-api.svg">
     Verbinden Sie sich programmgesteuert mit Twenty
   </Card>
-  <Card title="Webhooks" icon="bell" href="/de/developers/extend/webhooks">
+  <Card title="Webhooks" icon="bell" href="/de/developers/extend/webhooks" img="/images/documentation/illustrations/webhooks.svg">
     Erhalten Sie Benachrichtigungen über Ereignisse in Echtzeit
   </Card>
-  <Card title="Apps" icon="puzzle" href="/de/developers/extend/apps/getting-started/quick-start">
+  <Card title="Apps" icon="puzzle" href="/de/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
     Erstellen Sie Anpassungen als Code
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" pattern="developers-apps" />

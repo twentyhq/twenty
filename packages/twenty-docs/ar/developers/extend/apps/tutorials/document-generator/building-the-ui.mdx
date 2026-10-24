@@ -3,6 +3,8 @@ title: 4. بناء واجهة المستخدم
 description: المشاهدة، الملاحة الجانبية، الأوامر، والمكونات الأمامية.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 الآن يمكن الوصول إلى الكائنات فقط من خلال الإعدادات. لنمنح التطبيق حضورًا حقيقيًا في واجهة المستخدم: طرق عرض القوائم، وعناصر في الشريط الجانبي، وأمر **إنشاء مستند** بنقرة واحدة، ومكوّن واجهة أمامية في صفحة السجل من أجل **معاينة** مستند، وعلامة تبويب **محرر** نص منسق أصلية للقوالب.
 
 ## وجهات النظر والملاحة
@@ -291,6 +293,10 @@ export default definePageLayout({
 **بعد هذه الخطوة:** معاينة الوثائق بشكل جميل والقوالب قابلة للتحرير
 في التطبيق. ثم دعنا وكيل الذكاء الاصطناعي يولدها من محادثة.
 
-<Card title="التالي : وكيل AI →" icon="robot" href="/ar/developers/extend/apps/tutorials/document-Generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="التالي : وكيل AI →" icon="robot" href="/ar/developers/extend/apps/tutorials/document-Generator/ai-agent" img="/images/documentation/illustrations/skills-agents.svg">
   إضافة وكيل ومهارة يتصلان بأداتك.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-ui" pattern="developers-api" />

@@ -3,6 +3,8 @@ title: 1. Модель данных
 description: Типовые документы и шаблоны с объектами, полями и отношениями.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Нашему приложению нужны два пользовательских объекта: **шаблоны документов** (что записывать) и
 **документы** (сгенерированный результат). Давайте определим их.
 
@@ -129,6 +131,10 @@ The Team
 **После этого шага:** у вас есть объекты `documentTemplate` и `document`, связанные
 отношением и одним шаблоном для генерации данных. Далее заполняется логика.
 
-<Card title="Далее: генерация документов →" icon="bolt" href="/ru/developers/extend/apps/tutorials/document-generator/generating-documents">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Далее: генерация документов →" icon="bolt" href="/ru/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/documentation/illustrations/tutorial-documents.svg">
   Напишите логическую функцию, которая заполняет шаблон.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="data-model" pattern="developers-api" />

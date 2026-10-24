@@ -3,6 +3,8 @@ title: 6. Publicare
 description: Adăugați metadate de bazar și publicați aplicația dvs.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Aplicația dvs. funcționează. Ultimul pas este să îl descriem pentru piață și publicare.
 
 ## Adaugă metadate marketplace
@@ -119,17 +121,19 @@ Aplicația finalizată este la
 
 ## Unde să mergi mai departe
 
-<CardGroup cols={2}>
-  <Card title="Referință date" icon="database" href="/ro/developers/extend/apps/data/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Referință date" icon="database" href="/ro/developers/extend/apps/data/overview" img="/images/documentation/illustrations/apps-data.svg">
     Fiecare tip de câmp, relatie si optiune indice.
   </Card>
-  <Card title="Referință logică" icon="bolt" href="/ro/developers/extend/apps/logic/overview">
+  <Card title="Referință logică" icon="bolt" href="/ro/developers/extend/apps/logic/overview" img="/images/documentation/illustrations/apps-logic.svg">
     Cron and database-event triggers, the key-value store, OAuth connections.
   </Card>
-  <Card title="Referință schemă" icon="layout-columns" href="/ro/developers/extend/apps/layout/overview">
+  <Card title="Referință schemă" icon="layout-columns" href="/ro/developers/extend/apps/layout/overview" img="/images/documentation/illustrations/layout.svg">
     Aspectele paginii, widget-urile tabloului de bord și mai multe suprafețe ale interfeței.
   </Card>
-  <Card title="Operațiuni" icon="rocket" href="/ro/developers/extend/apps/operations/overview">
+  <Card title="Operațiuni" icon="rocket" href="/ro/developers/extend/apps/operations/overview" img="/images/documentation/illustrations/apps-operations.svg">
     CLI, testare, îndepărtări și CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="publishing" pattern="developers-api" />

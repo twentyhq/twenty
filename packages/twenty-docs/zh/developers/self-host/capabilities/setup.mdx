@@ -2,6 +2,8 @@
 title: 设置
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 # 配置管理
 
 <Warning>
@@ -405,3 +407,5 @@ AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 
 在启用多工作区功能时，不要在此列出每个工作区的子域名。
 相反，请在每个工作区主机名上将 API 路径（`/graphql`、`/metadata`、`/rest`、`/auth/`、`/client-config`、`/file`）路由到后端，这样每个工作区都保持同源 —— 这正是 Twenty Cloud 的运行方式。
+
+<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

@@ -3,6 +3,8 @@ title: 퍼블릭 에셋
 description: 정적 파일(이미지, 아이콘, 폰트 등)을 public/ 폴더를 통해 앱과 함께 제공합니다.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 앱 루트의 `public/` 폴더에는 정적 파일이 있습니다 — 이미지, 아이콘, 폰트 또는 런타임에 필요한 기타 에셋. 이 파일들은 빌드에 자동 포함되고, 개발 모드에서 동기화되며, 서버로 업로드됩니다.
 
 `public/`에 있는 파일은 다음과 같은 특성을 가집니다:
@@ -64,3 +66,5 @@ export default defineFrontComponent({
 ```
 
 `path` 인수는 앱의 `public/` 폴더를 기준으로 합니다. `getPublicAssetUrl('logo.png')`과 `getPublicAssetUrl('public/logo.png')`는 동일한 URL로 해석됩니다 — `public/` 접두사가 있으면 자동으로 제거됩니다.
+
+<PageBanner illustration="image" pattern="developers-api" />

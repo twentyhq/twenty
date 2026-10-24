@@ -3,6 +3,8 @@ title: Položky navigační nabídky
 description: Přidejte vlastní položky do postranního panelu pracovního prostoru — odkazy na uložená zobrazení nebo externí adresy URL.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 **Položka navigační nabídky** je položka v levém postranním panelu. Použijte `defineNavigationMenuItem()` k přidání vlastních odkazů do postranního panelu — obvykle jeden pro každé [zobrazení](/cs/developers/extend/apps/layout/views), které dodáváte — nebo pro odkaz na externí adresy URL.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
@@ -43,3 +45,5 @@ export default defineNavigationMenuItem({
 <Note>
 **Častý problém:** vytvoření objektu bez související položky navigační nabídky způsobí, že je tento objekt z postranního panelu nedostupný. Pokud nejde o technický/interní objekt, měl by mít každý vlastní objekt položku v postranním panelu, která na něj odkazuje.
 </Note>
+
+<PageBanner illustration="navigation" pattern="developers-api" />

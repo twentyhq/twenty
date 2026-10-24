@@ -3,6 +3,8 @@ title: Приложения
 description: Расширяйте Twenty с помощью кода — пользовательских объектов, серверной логики, UI-компонентов и ИИ-агентов, всё в виде пакетов TypeScript.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Большинство CRM-систем дают вам панель настроек. Twenty даёт вам платформу. Приложения — это способ, с помощью которого разработчики расширяют Twenty за рамки возможностей интерфейса: они определяют модели данных, серверную логику, UI-компоненты и возможности ИИ как код, а затем развёртывают их в одном или нескольких рабочих пространствах.
 
 ## Зачем нужны приложения
@@ -35,6 +37,10 @@ description: Расширяйте Twenty с помощью кода — поль
 
 Вы пишете своё приложение как TypeScript-проект на своём компьютере. CLI отслеживает ваши исходные файлы и в реальном времени синхронизирует их с запущенным сервером Twenty — редактируйте файл и увидите изменения в интерфейсе за секунду. Типизированный клиент API автоматически пересоздаётся при изменении схемы. Когда будете готовы, `yarn twenty app:publish --private` развернёт приложение на production-сервере, а `yarn twenty app:publish` опубликует его в npm и на маркетплейсе Twenty.
 
-<Card title="Создайте своё первое приложение" icon="arrow-right" href="/ru/developers/extend/apps/getting-started/quick-start">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Создайте своё первое приложение" icon="arrow-right" href="/ru/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
   Пошаговое руководство из трёх этапов — создание каркаса, запуск локального сервера, синхронизация изменений.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="dev-apps" pattern="developers-apps" />

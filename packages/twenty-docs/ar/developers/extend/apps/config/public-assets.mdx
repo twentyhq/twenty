@@ -3,6 +3,8 @@ title: الأصول العامة
 description: وزّع الملفات الثابتة — الصور والأيقونات والخطوط — مع تطبيقك عبر مجلد public/.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 يحتوي مجلد `public/` في جذر تطبيقك على ملفات ثابتة — صور وأيقونات وخطوط وأي أصول أخرى يحتاجها تطبيقك وقت التشغيل. تُدرج هذه الملفات تلقائيًا في عمليات البناء، وتُزامَن أثناء وضع التطوير، وتُرفَع إلى الخادم.
 
 الملفات الموضوعة في `public/` هي:
@@ -64,3 +66,5 @@ export default defineFrontComponent({
 ```
 
 وسيطة `path` نسبية إلى مجلد `public/` الخاص بتطبيقك. كلٌّ من `getPublicAssetUrl('logo.png')` و`getPublicAssetUrl('public/logo.png')` يُحلاّن إلى العنوان نفسه — تتم إزالة بادئة `public/` تلقائيًا إن وُجدت.
+
+<PageBanner illustration="image" pattern="developers-api" />

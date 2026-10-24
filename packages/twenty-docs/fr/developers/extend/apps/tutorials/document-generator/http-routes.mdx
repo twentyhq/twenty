@@ -3,6 +3,8 @@ title: 3. Routes HTTP
 description: Déclencher la fonction sur HTTP et afficher les documents en tant que pages Web.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Le même gestionnaire peut également répondre aux requêtes HTTP. Nous allons ajouter deux itinéraires :
 
 * un point de terminaison **POST** que l'interface utilisateur appelle pour générer un document, et
@@ -144,6 +146,10 @@ Vous pouvez également diffuser les logs d'une fonction en testant avec
 **Après cette étape :** l'application peut générer des documents via HTTP et les servir comme
 pages web. Maintenant, rendons-le utilisable sans `curl`.
 
-<Card title="Prochaine étape : construire l'interface utilisateur →" icon="layout-columns" href="/fr/developers/extend/apps/tutorials/document-generator/building-the-ui">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Prochaine étape : construire l'interface utilisateur →" icon="layout-columns" href="/fr/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/documentation/illustrations/tutorial-ui.svg">
   Vues, navigation, commande et composant frontal.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-http" pattern="developers-api" />

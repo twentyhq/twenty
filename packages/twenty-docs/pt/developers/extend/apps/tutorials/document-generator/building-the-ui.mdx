@@ -3,6 +3,8 @@ title: 4. Construindo a interface
 description: Views, navegação da barra lateral, um comando e componentes iniciais.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 No momento, os objetos só podem ser acessados através de Configurações. Vamos dar ao aplicativo uma presença
 real na UI: listar exibições, entradas da barra lateral, um clique
 **Gerar documento** comando, um componente frontal de record-page para **visualizar** um documento
@@ -302,6 +304,10 @@ Agora editores escrevem modelos em um editor de texto rico:
 **Após este passo:** os documentos pré-visualizar lindo e os templates são editáveis
 dentro do aplicativo. Em seguida, deixe um atendente da IA gerá-los a partir de um chat.
 
-<Card title="Próximo: um atendente de IA →" icon="robot" href="/desenvolvedores/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Próximo: um atendente de IA →" icon="robot" href="/desenvolvedores/extend/apps/tutorials/document-generator/ai-agent" img="/images/documentation/illustrations/skills-agents.svg">
   Adicione um agente e uma habilidade que chama sua ferramenta.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-ui" pattern="developers-api" />

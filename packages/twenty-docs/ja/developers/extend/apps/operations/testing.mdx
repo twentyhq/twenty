@@ -3,6 +3,8 @@ title: テスト
 description: Vitest のセットアップ、実際の Twenty サーバーに対する統合テスト、型チェック、および GitHub Actions を使った CI。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 SDK は、テストコードからアプリのビルド、デプロイ、インストール、アンインストールを可能にするプログラム用 API を提供します。 [Vitest](https://vitest.dev/) と型付き API クライアントを組み合わせることで、実際の Twenty サーバーに対してエンドツーエンドで動作を検証する統合テストを作成できます。
 
 ## npm パッケージの使用
@@ -261,3 +263,5 @@ yarn twenty dev:typecheck
 スキャフォルダーは、すぐに使えるワークフローを `.github/workflows/ci.yml` に生成します。 `main` へのすべてのプッシュおよびすべてのプルリクエスト時に、ランナー内で一時的な Twenty サーバーを起動（`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test` アクション経由）し、そのサーバーを指すように `TWENTY_API_URL` / `TWENTY_API_KEY` を設定した上で、`yarn lint`、`yarn typecheck`、`yarn test:unit`、`yarn test` を実行します。 シークレットは一切不要で、ワークフローの先頭にある `TWENTY_VERSION` 環境変数を通じてサーバーバージョンを固定できます。
 
 スキャフォルドされた 3 つのワークフロー（`ci.yml`、`cd.yml` デプロイパイプライン、npm パブリッシング用の `publish.yml`）の詳細な手順については、[Publishing → Automated CI/CD](/ja/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) を参照してください。
+
+<PageBanner illustration="testing" pattern="developers-api" />

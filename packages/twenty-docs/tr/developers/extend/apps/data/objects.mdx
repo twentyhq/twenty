@@ -3,6 +3,8 @@ title: Nesneler
 description: defineObject kullanarak, kendi alanlarına sahip özel tablolar olan yeni kayıt türlerini bildirin.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Özel **nesneler**, uygulamanızın bir çalışma alanına eklediği yeni kayıt türleridir — Kartpostal, Fatura, Abonelik, alanınıza özgü herhangi bir şey. Her nesne kendi şemasını (alanlar, ilişkiler, varsayılan değerler) ve eşitlemeler ve dağıtımlar boyunca korunan, kararlı bir evrensel tanımlayıcıyı bildirir.
 
 ```ts src/objects/post-card.object.ts
@@ -140,3 +142,5 @@ Aynı kural, bileşik varsayılanların string alt alanları için (örneğin bi
 * **Bu nesneyi diğerlerine bağlayın** — çift yönlü ilişki modeli için [İlişkiler](/tr/developers/extend/apps/data/relations) bölümüne bakın.
 * **Diğer uygulamalardaki nesnelere alanlar ekleyin** — `defineField()` için [Nesneleri Genişletme](/tr/developers/extend/apps/data/extending-objects) bölümüne bakın.
 * **Bu nesneyi arayüzde görüntüle** — kenar çubuğuna bir menü öğesi eklemek için [Gezinme Menüsü Öğeleri](/tr/developers/extend/apps/layout/navigation-menu-items) bölümüne bakın; özel liste yapılandırmaları eklemek için [Görünümler](/tr/developers/extend/apps/layout/views) bölümüne bakın.
+
+<PageBanner illustration="objects" pattern="developers-api" />

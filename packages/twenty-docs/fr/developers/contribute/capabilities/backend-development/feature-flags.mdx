@@ -2,6 +2,8 @@
 title: Drapeaux de fonctionnalité
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Les drapeaux de fonctionnalité sont utilisés pour masquer les fonctionnalités expérimentales. Pour Twenty, ils sont définis au niveau de l'espace de travail et non au niveau de l'utilisateur.
 
 ## Ajout d'un nouveau drapeau de fonctionnalité
@@ -44,3 +46,5 @@ Modifiez l'enregistrement correspondant dans la Table `core.featureFlag` :
 | iD        | clé                      | workspaceId | valeur |
 | --------- | ------------------------ | ----------- | ------ |
 | Aléatoire | `IS_FEATURENAME_ENABLED` | WorkspaceID | `vrai` |
+
+<PageBanner illustration="switch" pattern="developers-api" />

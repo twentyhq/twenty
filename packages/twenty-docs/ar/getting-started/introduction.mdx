@@ -3,6 +3,7 @@ title: لماذا Twenty
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 كنتَ دائمًا تختار بين برمجيات يسهل البدء بها لكن يستحيل تغييرها، وبين برمجيات مرنة لكنها تتطلب أشهرًا لإعدادها. Twenty هو الخيار الثالث: **نظام إدارة علاقات العملاء جاهز للإنتاج يمكنك إعادة تشكيله أثناء الاستخدام.**
 
@@ -10,20 +11,20 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 Twenty هو منصة يمكنك البناء عليها، وليس منتجًا تقوم فقط بتهيئته.
 
-<CardGroup cols={2}>
-  <Card img="/images/documentation/illustrations/ai.svg">
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
+  <Card img="/images/documentation/illustrations/ai.svg" href="/ar/getting-started/core-concepts/ai">
     <CardTitle>مصمَّم للوكلاء</CardTitle>
     يعمل الوكلاء داخل نموذج بياناتك مع صلاحيات حقيقية. مهارات، أدوات، MCP.
   </Card>
-  <Card img="/images/documentation/illustrations/dev-apps.svg">
+  <Card img="/images/documentation/illustrations/dev-apps.svg" href="/ar/getting-started/core-concepts/apps">
     <CardTitle>قابلية توسعة مؤمّنة</CardTitle>
     مرونة أدوات مبرمجة على أسس مؤمّنة.
   </Card>
-  <Card img="/images/documentation/illustrations/dev-api.svg">
+  <Card img="/images/documentation/illustrations/dev-api.svg" href="/ar/developers/introduction">
     <CardTitle>حزمة تقنية حديثة</CardTitle>
     React، TypeScript. فريقك يعرف بالفعل كيفية توسيع Twenty. لا لغات احتكارية، ولا حجب للوصول.
   </Card>
-  <Card img="/images/documentation/illustrations/no-lock-in.png">
+  <Card img="/images/documentation/illustrations/no-lock-in.png" href="/ar/user-guide/data-migration/how-tos/export-your-data">
     <CardTitle>بدون قيود</CardTitle>
     نواة مفتوحة المصدر، وقابلية للاستضافة الذاتية، وإمكانية تصدير بياناتك في أي وقت.
   </Card>
@@ -60,6 +61,10 @@ Twenty هو منصة يمكنك البناء عليها، وليس منتجًا 
   ولا جلسات إحاطة تنفيذية. نحن ننجح مع الفرق التي لديها
   صلاحية اختيار أدواتها الخاصة.
 
-<Card title="هل أنتم مستعدون للبدء؟" icon="rocket" href="/ar/getting-started/quickstart">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="هل أنتم مستعدون للبدء؟" icon="rocket" href="/ar/getting-started/quickstart" img="/images/documentation/illustrations/quickstart.svg">
   اضبط إعدادات Twenty في أقل من 5 دقائق — على السحابة أو بالاستضافة الذاتية.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="meet-twenty" />

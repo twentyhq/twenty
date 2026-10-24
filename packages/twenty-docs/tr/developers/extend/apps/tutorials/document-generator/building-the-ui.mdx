@@ -3,6 +3,8 @@ title: 4. UI'yi oluşturma
 description: Görünümler, kenar çubuğu gezinmesi, bir komut ve ön uç bileşenleri.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Şu anda nesnelere yalnızca Settings üzerinden erişilebiliyor. Uygulamaya UI'de gerçek bir varlık kazandıralım: liste görünümleri, kenar çubuğu girişleri, tek tıkla **Generate document** komutu, bir belgeyi **önizlemek** için kayıt sayfası ön uç bileşeni ve şablonlar için yerel zengin metin **editör** sekmesi.
 
 ## Görünümler ve gezinme
@@ -275,6 +277,10 @@ Artık editörler, şablonları düzgün bir zengin metin editöründe yazıyor:
 
 **Bu adımdan sonra:** belgeler harika bir şekilde önizlenir ve şablonlar uygulama içinde düzenlenebilir. Sırada, bir AI temsilcisinin bunları bir sohbetten oluşturmasını sağlamak var.
 
-<Card title="Sırada: bir AI temsilcisi →" icon="robot" href="/tr/developers/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Sırada: bir AI temsilcisi →" icon="robot" href="/tr/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/documentation/illustrations/skills-agents.svg">
   Aracınızı çağıran bir temsilci ve bir yetenek ekleyin.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-ui" pattern="developers-api" />

@@ -3,6 +3,8 @@ title: 4. 构建界面
 description: 查看、侧边栏导航、命令和前部件。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 现在，对象只能通过设置访问。 让应用在 UI 中真正“现身”：列表视图、侧边栏条目、一键式**生成文档**命令、用于**预览**文档的记录页面前端组件，以及用于模板的原生富文本**编辑器**选项卡。
 
 ## 视图和导航
@@ -290,6 +292,10 @@ export default definePageLayout({
 **在这一步之后：** 文档预览，模板是可编辑的
 在应用中。 接下来，让AI 代理人从聊天室中生成它们。
 
-<Card title="下一步：一个 AI 代理 →" icon="robot" href="/zh/developers/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="下一步：一个 AI 代理 →" icon="robot" href="/zh/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/documentation/illustrations/skills-agents.svg">
   添加代理和技能来呼叫您的工具。
 </Card>
+</CardGroup>
+
+<PageBanner illustration="tutorial-ui" pattern="developers-api" />

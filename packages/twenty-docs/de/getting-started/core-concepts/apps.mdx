@@ -3,6 +3,8 @@ title: Apps
 description: Erweitern Sie Twenty mit Code – benutzerdefinierte Objekte, serverseitige Logik, UI-Komponenten und KI-Agenten, alles als TypeScript-Pakete.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Die meisten CRMs bieten Ihnen ein Konfigurationspanel. Twenty bietet Ihnen eine Plattform. Apps sind die Art und Weise, wie Entwickler Twenty über das hinaus erweitern, was die UI bietet – sie definieren Datenmodelle, serverseitige Logik, UI-Komponenten und KI-Funktionen als Code und stellen diese dann in einem oder mehreren Workspaces bereit.
 
 ## Warum Apps existieren
@@ -35,6 +37,10 @@ Alles wird zur Build-Zeit über eine AST-Analyse erkannt – keine Konfiguration
 
 Sie schreiben Ihre App als TypeScript-Projekt auf Ihrem Rechner. Die CLI beobachtet Ihre Quelldateien und synchronisiert sie in Echtzeit mit einem laufenden Twenty-Server – bearbeiten Sie eine Datei und sehen Sie die Änderung innerhalb einer Sekunde in der UI. Der typisierte API-Client wird automatisch neu generiert, wenn sich das Schema ändert. Wenn Sie fertig sind, pusht `yarn twenty app:publish --private` auf einen Produktionsserver, oder `yarn twenty app:publish` listet Ihre App auf npm und im Twenty-Marktplatz.
 
-<Card title="Erstellen Sie Ihre erste App" icon="arrow-right" href="/de/developers/extend/apps/getting-started/quick-start">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Erstellen Sie Ihre erste App" icon="arrow-right" href="/de/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
   Dreiphasige Schritt-für-Schritt-Anleitung – Gerüst erzeugen, lokalen Server ausführen, Ihre Änderungen synchronisieren.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="dev-apps" pattern="developers-apps" />

@@ -3,6 +3,8 @@ title: Extinderea obiectelor
 description: Adăugați câmpuri la obiectele standard Twenty (Person, Company, …) sau la obiecte din alte aplicații folosind defineField.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Folosiți `defineField()` pentru a adăuga un câmp la un obiect pe care nu îl dețineți — un obiect standard Twenty precum Person sau Company, sau un obiect livrat de o altă aplicație instalată. Spre deosebire de câmpurile inline declarate în interiorul [`defineObject`](/ro/developers/extend/apps/data/objects), câmpurile independente necesită un `objectUniversalIdentifier` pentru a specifica obiectul pe care îl extind.
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -49,3 +51,5 @@ export default defineField({
 ## Adăugarea unei relații la un obiect existent
 
 Pentru a adăuga un câmp de tip relație (de ex. pentru a lega obiectul personalizat de un `Person` standard), folosiți `defineField()` cu `FieldType.RELATION`. Modelul este același ca pentru relațiile inline, dar cu `objectUniversalIdentifier` setat explicit. Consultați [Relații](/ro/developers/extend/apps/data/relations) pentru modelul bidirecțional.
+
+<PageBanner illustration="extending-objects" pattern="developers-api" />

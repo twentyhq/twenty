@@ -3,6 +3,8 @@ title: 扩展对象
 description: 向标准 Twenty 对象添加字段（Person、Company 等） 或使用 defineField 向其他应用的对象添加字段。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 使用 `defineField()` 为你不拥有的对象添加字段——例如像 Person 或 Company 这样的标准 Twenty 对象，或由其他已安装应用提供的对象。 与在 [`defineObject`](/zh/developers/extend/apps/data/objects) 中声明的内联字段不同，独立字段需要一个 `objectUniversalIdentifier` 来指定它们要扩展的对象。
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -49,3 +51,5 @@ export default defineField({
 ## 向现有对象添加关系
 
 要添加关系字段（例如将你的自定义对象链接到标准 `Person`），请将 `defineField()` 与 `FieldType.RELATION` 一起使用。 模式与内联关系相同，但需要显式设置 `objectUniversalIdentifier`。 有关双向模式，请参见[关系](/zh/developers/extend/apps/data/relations)。
+
+<PageBanner illustration="extending-objects" pattern="developers-api" />

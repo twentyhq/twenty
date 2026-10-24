@@ -3,6 +3,8 @@ title: 1. Modèle de données
 description: Modèles de documents et de modèles avec des objets, des champs et une relation.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Notre application a besoin de deux objets personnalisés : **modèles de documents** (quoi écrire) et
 **documents** (le résultat généré). Définissons-les.
 
@@ -129,6 +131,10 @@ The Team
 **Après cette étape :** vous avez des objets `documentTemplate` et `document`, liés par
 par une relation, et un modèle à générer. Ensuite, la logique qui le remplit.
 
-<Card title="Suivant : génération de documents →" icon="bolt" href="/fr/developers/extend/apps/tutorials/document-generator/generating-documents">
+<CardGroup cols={2} className="documentation-card-group">
+<Card title="Suivant : génération de documents →" icon="bolt" href="/fr/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/documentation/illustrations/tutorial-documents.svg">
   Écrit la fonction logique qui remplit le modèle.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="data-model" pattern="developers-api" />

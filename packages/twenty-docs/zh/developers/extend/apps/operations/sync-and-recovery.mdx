@@ -3,6 +3,8 @@ title: 同步与恢复
 description: 何时使用哪个命令、如何解读同步输出，以及在本地元数据发生漂移时的恢复阶梯——在不得不执行完全重置之前。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 本地应用开发围绕着**同步**展开：CLI 会重建你的 manifest，而服务器只会应用它与工作区中已存在元数据之间的差异。 本页介绍在不同情况下应使用哪个命令、如何阅读同步修改内容，以及当本地状态看起来不一致时——按顺序——应该怎么做。
 
 ## 在什么情况下用哪个命令
@@ -123,3 +125,5 @@ Plan: 1 to add, 1 to change, 0 to destroy.
 * **依赖项大小错误** — 同步或安装失败，是因为应用的生产环境 `dependencies` 过大，无法作为运行时层进行安装（`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`）；请将逻辑函数在运行时不导入的包（UI 库、开发工具等）移动到 `devDependencies`。
 * **应用代码运行时错误** — 同步成功，但你的逻辑函数或组件在运行时行为异常；请检查[函数日志](/zh/developers/extend/apps/operations/cli)。
 * **本地实例状态** — 不属于以上任何一种情况，但工作区仍然显示异常；请按照恢复步骤逐级排查。
+
+<PageBanner illustration="sync-recovery" pattern="developers-api" />

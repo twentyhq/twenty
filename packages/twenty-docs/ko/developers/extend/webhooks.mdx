@@ -3,6 +3,7 @@ title: 웹훅
 description: 레코드가 변경될 때 알림을 받으세요 — 생성, 업데이트, 삭제마다 귀하의 엔드포인트로 HTTP POST를 전송합니다.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 레코드가 생성, 업데이트 또는 삭제될 때마다 Twenty가 귀하의 URL로 HTTP POST를 전송합니다. 사용자 지정 오브젝트를 포함한 모든 오브젝트 유형이 지원됩니다.
@@ -114,3 +115,5 @@ const isValid = crypto.timingSafeEqual(
 | **워크플로 웹훅 트리거**    | IN  | 외부 시스템에서 Twenty로 데이터를 수신합니다        |
 
 외부 데이터를 수신하려면 [웹훅 트리거 설정](/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)을 참조하세요.
+
+<PageBanner illustration="webhooks" pattern="developers-api" />

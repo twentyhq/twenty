@@ -3,6 +3,8 @@ title: 拡張
 description: API、Webhook、カスタムアプリで Twenty の機能を拡張できます。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## 概要
 
 Twenty は拡張性を念頭に設計されています。 当社の API、Webhook、アプリフレームワークを使用して既存のツールと統合し、カスタム機能を構築できます。
@@ -15,14 +17,16 @@ Twenty は拡張性を念頭に設計されています。 当社の API、Webho
 
 ## 始めに
 
-<CardGroup cols={2}>
-  <Card title="API" icon="code" href="/ja/developers/extend/api">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="API" icon="code" href="/ja/developers/extend/api" img="/images/documentation/illustrations/dev-api.svg">
     プログラムから Twenty に接続
   </Card>
-  <Card title="ウェブフック" icon="bell" href="/ja/developers/extend/webhooks">
+  <Card title="ウェブフック" icon="bell" href="/ja/developers/extend/webhooks" img="/images/documentation/illustrations/webhooks.svg">
     イベントの通知をリアルタイムで受け取る
   </Card>
-  <Card title="アプリ" icon="puzzle" href="/ja/developers/extend/apps/getting-started/quick-start">
+  <Card title="アプリ" icon="puzzle" href="/ja/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
     カスタマイズをコードとして構築する
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" pattern="developers-apps" />

@@ -3,6 +3,8 @@ title: Görünümler
 description: Uygulamanızdaki nesneler için önceden yapılandırılmış kaydedilmiş görünümleri — sütun sırası, filtreler, gruplar — sunun.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Bir **görünüm**, bir nesnenin kayıtlarının nasıl görüntüleneceğine ilişkin kaydedilmiş bir yapılandırmadır: hangi alanların görüneceği, sıraları, görünür olup olmadıkları ve uygulanan tüm filtreler veya gruplar. Uygulamanızla önceden yapılandırılmış görünümler sunmak için `defineView()` kullanın.
 
 Her nesne, sunucu tarafından otomatik olarak sağlanan kendi ana liste görünümünü (bir `OBJECT` gezinme öğesinin açtığı "All ..." tablosu) alır — buna, uygulamanızın oluşturduğu nesneler de dahildir; uygulamanızın bildirdiği her alan için bir sütunla birlikte. `defineView()` ile tanımladığınız görünümler, bu varsayılan görünümün üzerine eklenen her zaman **ek** görünümlerdir.
@@ -110,3 +112,5 @@ filters: [
 ## Görünümlerin kullanıcı arayüzünde görüntülenme şekli
 
 Tek başına bir görünüm, kenar çubuğundan erişilebilir değildir. Orada görünmesini sağlamak için, türü `VIEW` olan ve görünümün `universalIdentifier` değerini işaret eden bir [navigasyon menüsü öğesi](/tr/developers/extend/apps/layout/navigation-menu-items) ile eşleştirin. Bu, kanonik desendir: Her özel nesne, oluşturma sırasında otomatik olarak oluşturulan varsayılan bir indeks görünümü alır; dolayısıyla yalnızca onu açan kenar çubuğu öğesini eklemeniz yeterlidir.
+
+<PageBanner illustration="views-pipelines" pattern="developers-api" />

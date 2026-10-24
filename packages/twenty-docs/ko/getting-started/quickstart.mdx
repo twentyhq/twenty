@@ -3,6 +3,7 @@ title: 빠른 시작
 description: Twenty를 클라우드 또는 셀프 호스팅 환경에서 5분 이내에 실행해 보세요.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## 가입하기
@@ -56,17 +57,19 @@ Command 메뉴 (`Cmd+K` / `Ctrl+K`)를 사용하여 CSV를 통해 People, Compan
 
 ## 다음 단계
 
-<CardGroup cols={2}>
-  <Card title="레이아웃 살펴보기" icon="layout-columns" href="/ko/getting-started/core-concepts/layout">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="레이아웃 살펴보기" icon="layout-columns" href="/ko/getting-started/core-concepts/layout" img="/images/documentation/illustrations/layout.svg">
     탐색, 보기, 명령 메뉴, 사이드 패널.
   </Card>
-  <Card title="워크플로우 만들기" icon="bolt" href="/ko/user-guide/workflows/overview">
+  <Card title="워크플로우 만들기" icon="bolt" href="/ko/user-guide/workflows/overview" img="/images/documentation/illustrations/workflows.svg">
     비즈니스 프로세스를 자동화하세요.
   </Card>
-  <Card title="보기 생성" icon="table" href="/ko/user-guide/layout/overview">
+  <Card title="보기 생성" icon="table" href="/ko/user-guide/layout/overview" img="/images/documentation/illustrations/layout.svg">
     테이블, 칸반, 캘린더 — 데이터를 필터링하고 정렬하세요.
   </Card>
-  <Card title="API 살펴보기" icon="plug" href="/ko/developers/extend/api">
+  <Card title="API 살펴보기" icon="plug" href="/ko/developers/extend/api" img="/images/documentation/illustrations/dev-api.svg">
     테넌트별 스키마 기반 REST 및 GraphQL.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="quickstart" pattern="getting-started-extensibility" />

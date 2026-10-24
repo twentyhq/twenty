@@ -3,6 +3,8 @@ title: Typeform 응답을 Twenty로 가져오기
 description: Typeform의 Webhook 페이로드를 처리하여 폼 제출에서 리드를 생성합니다.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 표준 Webhook 설정은 [Webhook 트리거 설정](/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)을 참조하세요. 이 문서는 Typeform의 맞춤형 페이로드 구조에 필요한 특정 처리 방법을 다룹니다.
 
 ### 1단계: Webhook 워크플로우 생성
@@ -128,3 +130,5 @@ export const main = async (params: {
 
 * [Webhook 트리거 설정](/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
 * [Code 액션에서 배열 처리하기](/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+
+<PageBanner illustration="webhooks" pattern="developers-api" />

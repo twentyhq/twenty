@@ -3,6 +3,8 @@ title: Server MCP
 description: Conectați asistenți AI la spațiul dvs. de lucru Twenty folosind Model Context Protocol.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Twenty expune un server [MCP](https://modelcontextprotocol.io/) astfel încât asistenții AI — Claude Desktop, Claude Code, Cursor, ChatGPT și alții — să poată citi și scrie datele tale din CRM prin limbaj natural.
 
 Folosește **URL-ul spațiului de lucru** (URL-ul pe care îl folosești pentru a accesa Twenty) drept punct final MCP. Pe Twenty Cloud, URL-ul spațiului tău de lucru poate fi `https://{mycompany}.twenty.com` sau un domeniu personalizat. Serverul este disponibil la:
@@ -135,3 +137,5 @@ Punctul final MCP, punctele finale OAuth și metadatele de descoperire derivă t
 **Timeout de conexiune**
 
 * Confirmă că URL-ul punctului final MCP este accesibil de pe calculatorul tău. Pentru instanțele auto-găzduite, verifică faptul că serverul rulează și că `SERVER_URL` este setat corect.
+
+<PageBanner illustration="connections" pattern="developers-api" />

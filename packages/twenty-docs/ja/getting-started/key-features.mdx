@@ -3,11 +3,12 @@ title: 主な機能
 description: Twenty が実現できるすべてのことを紹介します — カスタムデータモデルから AI を活用した自動化まで。
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { CardTitle } from "/snippets/card-title.mdx"
 
 Twenty は、フル機能を備えた CRM プラットフォームです。 それを使って、次のようなものを構築できます。
 
-<CardGroup cols={2}>
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/ja/user-guide/data-model/overview" img="/images/documentation/illustrations/data-model.svg">
     <CardTitle>カスタムデータモデル</CardTitle>
     ビジネスに必要なデータ構造を、正確に定義できます。
@@ -67,3 +68,5 @@ Twenty は、フル機能を備えた CRM プラットフォームです。 そ�
     <br />データを完全に制御でき、アップデートも自社のスケジュールで行えます。
   </Card>
 </CardGroup>
+
+<PageBanner illustration="features" pattern="developers-api" />

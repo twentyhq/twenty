@@ -3,6 +3,8 @@ title: Sincronizzazione e ripristino
 description: Quale comando usare e quando, come leggere l'output della sincronizzazione e una scala di ripristino per quando i metadati locali divergono — prima di arrivare a un ripristino completo.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Lo sviluppo di app in locale ruota attorno alla **sincronizzazione**: la CLI ricostruisce il tuo manifest e il server applica solo la differenza tra questo e i metadati già presenti nel tuo spazio di lavoro. Questa pagina spiega quale comando usare, come leggere ciò che una sincronizzazione ha modificato e cosa fare — in ordine — quando lo stato locale sembra incoerente.
 
 ## Quale comando, quando
@@ -123,3 +125,5 @@ Quando qualcosa va storto, il diff dei metadati e gli errori nominali ti permett
 * **Errore dimensione delle dipendenze** — la sincronizzazione o l'installazione non riesce perché le `dependencies` di produzione dell'app sono troppo grandi per essere installate come layer di runtime (`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`); sposta nei `devDependencies` i pacchetti che le tue funzioni logiche non importano a runtime (librerie UI, strumenti di sviluppo).
 * **Errore di runtime del codice dell'app** — la sincronizzazione va a buon fine ma le tue funzioni di logica o i componenti si comportano in modo anomalo in fase di esecuzione; controlla i [log delle funzioni](/it/developers/extend/apps/operations/cli).
 * **Stato locale dell'istanza** — nessuno dei casi precedenti e lo spazio di lavoro continua a sembrare errato; procedi lungo la scala di ripristino.
+
+<PageBanner illustration="sync-recovery" pattern="developers-api" />

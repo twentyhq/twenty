@@ -3,6 +3,8 @@ title: تخطيطات الصفحات
 description: خصص صفحات تفاصيل السجل — الألسنة، وعناصر الواجهة (widgets)، وأماكن عرض مكوّنات الواجهة الأمامية (front components) — باستخدام `definePageLayout` و `definePageLayoutTab`.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 يتحكم **تخطيط الصفحة** في كيفية ترتيب صفحة تفاصيل السجل: ما هي الألسنة التي تظهر وما عناصر الواجهة (widgets) التي تحتوي عليها. استخدم `definePageLayout()` للتصريح عن تخطيط لكائن تملكه، أو `definePageLayoutTab()` لإضافة لسان واحد إلى تخطيط موجود مسبقًا (سواء كان مِلكك أو تخطيط Twenty قياسيًا).
 
 | حالة استخدام                                                   | كيان                  |
@@ -155,3 +157,5 @@ export default definePageLayoutTab({
 * `position` يتحكّم في الترتيب مقارنةً بعلامات التبويب الموجودة على التخطيط المستهدف. اختر قيمة تضع علامة التبويب الخاصة بك في الموضع الذي تريده بالنسبة إلى علامات التبويب المضمنة.
 
 * استخدم هذا بدلًا من `definePageLayout` عندما تريد فقط الإضافة إلى تخطيط موجود. استخدم `definePageLayout` عندما تملك التخطيط بالكامل.
+
+<PageBanner illustration="page-layouts" pattern="developers-api" />

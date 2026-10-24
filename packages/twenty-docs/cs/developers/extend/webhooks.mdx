@@ -3,6 +3,7 @@ title: Webhooky
 description: Dostávejte upozornění při změnách záznamů — HTTP POST na váš koncový bod při každém vytvoření, aktualizaci nebo smazání.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 Twenty odešle HTTP POST na vaši adresu URL pokaždé, když je záznam vytvořen, aktualizován nebo smazán. Všechny typy objektů jsou podporovány, včetně vlastních objektů.
@@ -114,3 +115,5 @@ const isValid = crypto.timingSafeEqual(
 | **Spouštěč webhooku v pracovním postupu** | IN   | Přijímejte data do Twenty z externích systémů                   |
 
 Pro příjem externích dat viz [Nastavení spouštěče webhooku](/cs/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="webhooks" pattern="developers-api" />

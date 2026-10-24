@@ -3,6 +3,8 @@ title: Úlohy na pozadí
 description: Předejte dlouhotrvající nebo rychlostně omezenou práci Twenty workerům tak, že místo provádění všeho přímo vkládáte do fronty další spuštění logické funkce.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 Běh logické funkce je omezen svým `timeoutSeconds` (maximálně 900 sekund). Cokoli, co se nedokáže dokončit v tomto časovém okně — úplná resynchronizace, fan-out pro jednotlivé záznamy, služba třetí strany, která vás omezuje rychlostí — musí být rozděleno do menších běhů.
 
 `enqueueJobs` dělá přesně to: požádá Twenty workery, aby později spustili jednu z logických funkcí vaší aplikace, jednou pro každý payload, přičemž každé spuštění proběhne ve vlastním procesu s vlastním časovým limitem. Volající se vrátí okamžitě.
@@ -194,3 +196,5 @@ Co to drží pohromadě:
 * **Uložte průběh před zařazením dalšího spuštění,** takže se neúspěšný článek řetězu znovu spustí od posledního dokončeného bloku místo od začátku.
 * **Udržujte každý blok idempotentní.** Znovuzpracování jednoho bloku po opakování nesmí vést k dvojím zápisům – své zápisy važte na záznam nebo externí ID, které zpracováváte.
 * **Preferujte řetězec po blocích před jedním obřím rozvětvením**, když práce zasahuje třetí stranu s omezením rychlosti: řetězec s `delayMs` sám sebe dávkuje, zatímco tisíce úloh zařazených najednou se stanou způsobilými okamžitě.
+
+<PageBanner illustration="background-jobs" pattern="developers-api" />

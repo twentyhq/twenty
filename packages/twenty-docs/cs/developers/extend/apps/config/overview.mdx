@@ -3,6 +3,8 @@ title: Přehled
 description: Nakonfigurujte samotnou aplikaci – její identitu, výchozí oprávnění a to, co se spouští při instalaci.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 **Konfigurační vrstva** aplikace Twenty popisuje aplikaci *platformě* – její identitu, oprávnění, která má, a kód, který se spouští během instalace nebo aktualizace. Tato deklarativní nastavení nepřidávají nové datové struktury ani chování za běhu; říkají Twenty, *co je aplikace zač* a *jak ji nastavit*.
 
 ```text
@@ -32,14 +34,14 @@ description: Nakonfigurujte samotnou aplikaci – její identitu, výchozí opr�
 
 ## V této části
 
-<CardGroup cols={2}>
-  <Card title="Konfigurace aplikace" icon="rocket" href="/cs/developers/extend/apps/config/application">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card title="Konfigurace aplikace" icon="rocket" href="/cs/developers/extend/apps/config/application" img="/images/documentation/illustrations/application-config.svg">
     `defineApplication` – identita, výchozí role, proměnné, metadata pro marketplace.
   </Card>
-  <Card title="Role a oprávnění" icon="shield-half" href="/cs/developers/extend/apps/config/roles">
+  <Card title="Role a oprávnění" icon="shield-half" href="/cs/developers/extend/apps/config/roles" img="/images/documentation/illustrations/roles.svg">
     `defineRole` – deklaruje, co mohou logické funkce vaší aplikace číst a zapisovat.
   </Card>
-  <Card title="Instalační hooky" icon="tool" href="/cs/developers/extend/apps/config/install-hooks">
+  <Card title="Instalační hooky" icon="tool" href="/cs/developers/extend/apps/config/install-hooks" img="/images/documentation/illustrations/install-hooks.svg">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction` a `defineUninstallLogicFunction` — zálohují data, nastavují výchozí hodnoty, validují aktualizace, uklízejí při odebrání.
   </Card>
 </CardGroup>
@@ -53,3 +55,5 @@ description: Nakonfigurujte samotnou aplikaci – její identitu, výchozí opr�
 <Note>
 Instalační hooky sdílejí běhové prostředí [logických funkcí](/cs/developers/extend/apps/logic/logic-functions) – stejný podpis handleru, stejné proměnné prostředí, stejný typovaný klient API – ale deklarují se pomocí vlastních funkcí define a fungují mimo běžný model spouštěčů (HTTP, cron, databázové události).
 </Note>
+
+<PageBanner illustration="apps-config" pattern="user-guide-settings" />
