@@ -6,9 +6,7 @@ import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-t
 import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
 import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
-import { type MultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemInputTarget';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getRecordFormMultiItemInputTarget } from '@/object-record/record-form/utils/getRecordFormMultiItemInputTarget';
 import { getRecordFormItemIndexAfterCommit } from '@/object-record/record-form/utils/getRecordFormItemIndexAfterCommit';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -76,28 +74,39 @@ export const RecordFormEmailsFieldInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [isInvalidInputLeft, setIsInvalidInputLeft] = useState(false);
 
-  const getNextInputTarget = (emails: string[]): MultiItemInputTarget =>
-    getRecordFormMultiItemInputTarget({
-      itemCount: emails.length,
-      maxItemCount,
-    });
-
   const {
-    inputTarget,
+    isInputOpen,
+    editedItemIndex,
     inputValue,
     hasError,
-    openInput,
+    startAddingItem,
+    startEditingItem,
+    closeInput,
     handleInputChange,
     validateInputValue,
   } = useMultiItemInput({
     items: savedEmails,
     getItemText: getEmailText,
-    initialInputTarget: getNextInputTarget(savedEmails),
+    isInputInitiallyOpen: isSingleItemMode || savedEmails.length < maxItemCount,
+    initialEditedItemIndex:
+      isSingleItemMode && savedEmails.length > 0 ? 0 : null,
     validateInput: validateEmail,
   });
 
-  const editedItemIndex =
-    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
+  const openNextInput = (emails: string[]) => {
+    if (isSingleItemMode && isNonEmptyArray(emails)) {
+      startEditingItem({ itemIndex: 0, currentItems: emails });
+      return;
+    }
+
+    if (emails.length < maxItemCount) {
+      startAddingItem();
+      return;
+    }
+
+    closeInput();
+  };
+
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
   const getEmailsWithInput = (sanitizedInput: string) =>
@@ -160,13 +169,13 @@ export const RecordFormEmailsFieldInput = ({
     }
 
     setShouldFocusInput(true);
-    openInput({ inputTarget: getNextInputTarget(updatedEmails) });
+    openNextInput(updatedEmails);
     inputRef.current?.focus();
   };
 
   const handleEscape = () => {
     saveEmails(savedEmails);
-    openInput({ inputTarget: getNextInputTarget(savedEmails) });
+    openNextInput(savedEmails);
   };
 
   const commitInputBeforeRowAction = (itemIndex: number) => {
@@ -195,12 +204,15 @@ export const RecordFormEmailsFieldInput = ({
     }
 
     setShouldFocusInput(true);
-    openInput({
-      inputTarget: isDefined(committed.committedItemIndex)
-        ? { type: 'existing-item', itemIndex: committed.committedItemIndex }
-        : getNextInputTarget(committed.committedEmails),
-      currentItems: committed.committedEmails,
-    });
+    if (isDefined(committed.committedItemIndex)) {
+      startEditingItem({
+        itemIndex: committed.committedItemIndex,
+        currentItems: committed.committedEmails,
+      });
+      return;
+    }
+
+    openNextInput(committed.committedEmails);
   };
 
   const updateEmails = ({
@@ -227,13 +239,12 @@ export const RecordFormEmailsFieldInput = ({
       : committed.committedEmails;
 
     saveEmails(updatedEmails);
-    openInput({ inputTarget: getNextInputTarget(updatedEmails) });
+    openNextInput(updatedEmails);
   };
 
   const shouldShowItems = !isSingleItemMode && isNonEmptyArray(savedEmails);
   const visibleEmails = shouldShowItems ? savedEmails : undefined;
-  const isInputDisplayed = inputTarget.type !== 'closed';
-  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowInputInFooter = isInputOpen && !isEditingItemInPlace;
   const inputSpacing: MultiItemFieldInputSpacing = shouldShowItems
     ? 'compact'
     : 'default';
@@ -245,7 +256,7 @@ export const RecordFormEmailsFieldInput = ({
       rightComponent={
         isSingleItemMode ? undefined : (
           <MultiItemFieldSaveButton
-            isAddingNewItem={inputTarget.type === 'new-item'}
+            isAddingNewItem={!isDefined(editedItemIndex)}
             onClick={handleEnter}
           />
         )

@@ -6,9 +6,7 @@ import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-t
 import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
 import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
-import { type MultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemInputTarget';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getRecordFormMultiItemInputTarget } from '@/object-record/record-form/utils/getRecordFormMultiItemInputTarget';
 import { getRecordFormItemIndexAfterCommit } from '@/object-record/record-form/utils/getRecordFormItemIndexAfterCommit';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -47,26 +45,37 @@ export const RecordFormArrayFieldInput = ({
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const getNextInputTarget = (items: string[]): MultiItemInputTarget =>
-    getRecordFormMultiItemInputTarget({
-      itemCount: items.length,
-      maxItemCount,
-    });
-
   const {
-    inputTarget,
+    isInputOpen,
+    editedItemIndex,
     inputValue,
-    openInput,
+    startAddingItem,
+    startEditingItem,
+    closeInput,
     handleInputChange,
     validateInputValue,
   } = useMultiItemInput({
     items: savedItems,
     getItemText: getArrayItemText,
-    initialInputTarget: getNextInputTarget(savedItems),
+    isInputInitiallyOpen: isSingleItemMode || savedItems.length < maxItemCount,
+    initialEditedItemIndex:
+      isSingleItemMode && savedItems.length > 0 ? 0 : null,
   });
 
-  const editedItemIndex =
-    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
+  const openNextInput = (items: string[]) => {
+    if (isSingleItemMode && isNonEmptyArray(items)) {
+      startEditingItem({ itemIndex: 0, currentItems: items });
+      return;
+    }
+
+    if (items.length < maxItemCount) {
+      startAddingItem();
+      return;
+    }
+
+    closeInput();
+  };
+
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
   const getItemsWithInput = (sanitizedInput: string) =>
@@ -109,13 +118,13 @@ export const RecordFormArrayFieldInput = ({
     }
 
     setShouldFocusInput(true);
-    openInput({ inputTarget: getNextInputTarget(updatedItems) });
+    openNextInput(updatedItems);
     inputRef.current?.focus();
   };
 
   const handleEscape = () => {
     saveItems(savedItems);
-    openInput({ inputTarget: getNextInputTarget(savedItems) });
+    openNextInput(savedItems);
   };
 
   const commitInputBeforeRowAction = (itemIndex: number) => {
@@ -144,12 +153,15 @@ export const RecordFormArrayFieldInput = ({
     }
 
     setShouldFocusInput(true);
-    openInput({
-      inputTarget: isDefined(committed.committedItemIndex)
-        ? { type: 'existing-item', itemIndex: committed.committedItemIndex }
-        : getNextInputTarget(committed.committedItems),
-      currentItems: committed.committedItems,
-    });
+    if (isDefined(committed.committedItemIndex)) {
+      startEditingItem({
+        itemIndex: committed.committedItemIndex,
+        currentItems: committed.committedItems,
+      });
+      return;
+    }
+
+    openNextInput(committed.committedItems);
   };
 
   const handleDelete = (index: number) => {
@@ -164,13 +176,12 @@ export const RecordFormArrayFieldInput = ({
       : committed.committedItems;
 
     saveItems(updatedItems);
-    openInput({ inputTarget: getNextInputTarget(updatedItems) });
+    openNextInput(updatedItems);
   };
 
   const shouldShowItems = !isSingleItemMode && isNonEmptyArray(savedItems);
   const visibleItems = shouldShowItems ? savedItems : undefined;
-  const isInputDisplayed = inputTarget.type !== 'closed';
-  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowInputInFooter = isInputOpen && !isEditingItemInPlace;
   const inputSpacing: MultiItemFieldInputSpacing = shouldShowItems
     ? 'compact'
     : 'default';
@@ -182,7 +193,7 @@ export const RecordFormArrayFieldInput = ({
       rightComponent={
         isSingleItemMode ? undefined : (
           <MultiItemFieldSaveButton
-            isAddingNewItem={inputTarget.type === 'new-item'}
+            isAddingNewItem={!isDefined(editedItemIndex)}
             onClick={handleEnter}
           />
         )

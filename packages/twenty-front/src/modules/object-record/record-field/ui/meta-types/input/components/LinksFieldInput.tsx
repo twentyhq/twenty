@@ -18,7 +18,6 @@ import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/i
 import { type LinkRecord } from '@/object-record/record-field/ui/meta-types/input/types/LinkRecord';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
 import { getLinkLabelFromDraft } from '@/object-record/record-field/ui/meta-types/input/utils/getLinkLabelFromDraft';
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
@@ -119,19 +118,20 @@ export const LinksFieldInput = () => {
   const isLimitReached = links.length >= maxNumberOfValues;
 
   const {
-    inputTarget,
+    isInputOpen,
+    editedItemIndex,
     inputValue,
     hasError,
-    openInput,
+    startAddingItem,
+    startEditingItem,
+    closeInput,
     handleInputChange,
     validateInputValue,
   } = useMultiItemInput({
     items: links,
     getItemText: getLinkText,
-    initialInputTarget: getInitialMultiItemInputTarget({
-      itemCount: links.length,
-      isSingleItemMode,
-    }),
+    isInputInitiallyOpen: links.length === 0 || isSingleItemMode,
+    initialEditedItemIndex: isSingleItemMode && links.length > 0 ? 0 : null,
     validateInput: validateLink,
     onHasErrorChange: (hasError) =>
       setRecordFieldInputIsFieldInError(hasError && links.length === 0),
@@ -144,13 +144,8 @@ export const LinksFieldInput = () => {
     filteredItemEntries,
   } = useMultiItemSearch({ items: links, getItemText: getLinkText });
 
-  const isInputDisplayed = inputTarget.type !== 'closed';
-  const editedItemIndex =
-    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
   const shouldEditLabel = isEditingItemInPlace && !isDomainField;
-
-  const closeInput = () => openInput({ inputTarget: { type: 'closed' } });
 
   const commitInput = () => {
     const sanitizedInput = validateInputValue();
@@ -205,7 +200,7 @@ export const LinksFieldInput = () => {
     }
 
     setSearchFilter('');
-    openInput({ inputTarget: { type: 'new-item' } });
+    startAddingItem();
   };
 
   const handleEscape = () => {
@@ -216,7 +211,7 @@ export const LinksFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedLinks = isInputDisplayed ? commitInput() : links;
+      const updatedLinks = isInputOpen ? commitInput() : links;
 
       if (!isDefined(updatedLinks)) {
         return;
@@ -231,7 +226,7 @@ export const LinksFieldInput = () => {
 
   const handleEdit = (index: number) => {
     setLabelDraft(links[index]?.label ?? '');
-    openInput({ inputTarget: { type: 'existing-item', itemIndex: index } });
+    startEditingItem({ itemIndex: index });
   };
 
   const handleSetAsPrimary = (index: number) => {
@@ -250,26 +245,25 @@ export const LinksFieldInput = () => {
 
     handleChange(updatedLinks);
     handleSubmit(updatedLinks);
-    openInput({
-      inputTarget: isNonEmptyArray(updatedLinks)
-        ? { type: 'closed' }
-        : { type: 'new-item' },
-    });
+    if (isNonEmptyArray(updatedLinks)) {
+      closeInput();
+    } else {
+      startAddingItem();
+    }
   };
 
   const placeholder = isDomainField ? t`Domain` : t`URL`;
 
   const shouldShowItems =
-    isNonEmptyArray(filteredItemEntries) &&
-    (!isSingleItemMode || !isInputDisplayed);
+    isNonEmptyArray(filteredItemEntries) && (!isSingleItemMode || !isInputOpen);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowInputInFooter = isInputOpen && !isEditingItemInPlace;
   const inputSpacing: MultiItemFieldInputSpacing =
     isNonEmptyArray(links) && !isSingleItemMode ? 'compact' : 'default';
 
   const saveButton = isNonEmptyArray(links) ? (
     <MultiItemFieldSaveButton
-      isAddingNewItem={inputTarget.type === 'new-item'}
+      isAddingNewItem={!isDefined(editedItemIndex)}
       onClick={handleInputEnter}
     />
   ) : undefined;
@@ -319,7 +313,7 @@ export const LinksFieldInput = () => {
     <MultiItemFieldList
       ref={containerRef}
       hasItems={shouldShowItems}
-      shouldShowSearch={shouldShowSearch && !isInputDisplayed}
+      shouldShowSearch={shouldShowSearch && !isInputOpen}
       searchFilter={searchFilter}
       onSearchFilterChange={setSearchFilter}
       footerInput={shouldShowInputInFooter ? itemInput : undefined}

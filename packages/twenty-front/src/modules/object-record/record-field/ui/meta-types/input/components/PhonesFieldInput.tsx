@@ -11,7 +11,6 @@ import { useMultiItemFieldDismiss } from '@/object-record/record-field/ui/meta-t
 import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemSearch';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
 import { getMultiItemInputKeyDownHandler } from '@/object-record/record-field/ui/meta-types/input/utils/getMultiItemInputKeyDownHandler';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
@@ -193,19 +192,20 @@ export const PhonesFieldInput = () => {
   const isLimitReached = phones.length >= maxNumberOfValues;
 
   const {
-    inputTarget,
+    isInputOpen,
+    editedItemIndex,
     inputValue,
     hasError,
-    openInput,
+    startAddingItem,
+    startEditingItem,
+    closeInput,
     handleInputChange,
     validateInputValue,
   } = useMultiItemInput({
     items: phones,
     getItemText: getPhoneText,
-    initialInputTarget: getInitialMultiItemInputTarget({
-      itemCount: phones.length,
-      isSingleItemMode,
-    }),
+    isInputInitiallyOpen: phones.length === 0 || isSingleItemMode,
+    initialEditedItemIndex: isSingleItemMode && phones.length > 0 ? 0 : null,
     validateInput: validatePhone,
     onHasErrorChange: (hasError) =>
       setRecordFieldInputIsFieldInError(hasError && phones.length === 0),
@@ -218,12 +218,7 @@ export const PhonesFieldInput = () => {
     filteredItemEntries,
   } = useMultiItemSearch({ items: phones, getItemText: getPhoneText });
 
-  const isInputDisplayed = inputTarget.type !== 'closed';
-  const editedItemIndex =
-    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
-
-  const closeInput = () => openInput({ inputTarget: { type: 'closed' } });
 
   const commitInput = () => {
     const sanitizedInput = validateInputValue();
@@ -273,7 +268,7 @@ export const PhonesFieldInput = () => {
     }
 
     setSearchFilter('');
-    openInput({ inputTarget: { type: 'new-item' } });
+    startAddingItem();
   };
 
   const handleEscape = () => {
@@ -284,7 +279,7 @@ export const PhonesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedPhones = isInputDisplayed ? commitInput() : phones;
+      const updatedPhones = isInputOpen ? commitInput() : phones;
 
       if (!isDefined(updatedPhones)) {
         return;
@@ -316,18 +311,17 @@ export const PhonesFieldInput = () => {
 
     handleChange(updatedPhones);
     handleSubmit(updatedPhones);
-    openInput({
-      inputTarget: isNonEmptyArray(updatedPhones)
-        ? { type: 'closed' }
-        : { type: 'new-item' },
-    });
+    if (isNonEmptyArray(updatedPhones)) {
+      closeInput();
+    } else {
+      startAddingItem();
+    }
   };
 
   const shouldShowItems =
-    isNonEmptyArray(filteredItemEntries) &&
-    (!isSingleItemMode || !isInputDisplayed);
+    isNonEmptyArray(filteredItemEntries) && (!isSingleItemMode || !isInputOpen);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowInputInFooter = isInputOpen && !isEditingItemInPlace;
   const inputSpacing: MultiItemFieldInputSpacing =
     isNonEmptyArray(phones) && !isSingleItemMode ? 'compact' : 'default';
 
@@ -338,7 +332,7 @@ export const PhonesFieldInput = () => {
       rightComponent={
         isNonEmptyArray(phones) ? (
           <MultiItemFieldSaveButton
-            isAddingNewItem={inputTarget.type === 'new-item'}
+            isAddingNewItem={!isDefined(editedItemIndex)}
             onClick={handleInputEnter}
           />
         ) : undefined
@@ -374,7 +368,7 @@ export const PhonesFieldInput = () => {
     <MultiItemFieldList
       ref={containerRef}
       hasItems={shouldShowItems}
-      shouldShowSearch={shouldShowSearch && !isInputDisplayed}
+      shouldShowSearch={shouldShowSearch && !isInputOpen}
       searchFilter={searchFilter}
       onSearchFilterChange={setSearchFilter}
       footerInput={shouldShowInputInFooter ? itemInput : undefined}
@@ -403,11 +397,7 @@ export const PhonesFieldInput = () => {
             showPrimaryIcon={index === 0 && phones.length > 1}
             showSetAsPrimaryButton={index > 0}
             phone={phone}
-            onEdit={() =>
-              openInput({
-                inputTarget: { type: 'existing-item', itemIndex: index },
-              })
-            }
+            onEdit={() => startEditingItem({ itemIndex: index })}
             onSetAsPrimary={() => handleSetAsPrimary(index)}
             onDelete={() => handleDelete(index)}
           />

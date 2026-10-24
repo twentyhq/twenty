@@ -12,7 +12,6 @@ import { useMultiItemFieldDismiss } from '@/object-record/record-field/ui/meta-t
 import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemSearch';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { arrayFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/arrayFieldValueSchema';
 import { t } from '@lingui/core/macro';
@@ -72,19 +71,21 @@ export const ArrayFieldInput = () => {
   const isLimitReached = arrayItems.length >= maxNumberOfValues;
 
   const {
-    inputTarget,
+    isInputOpen,
+    editedItemIndex,
     inputValue,
     hasError,
-    openInput,
+    startAddingItem,
+    startEditingItem,
+    closeInput,
     handleInputChange,
     validateInputValue,
   } = useMultiItemInput({
     items: arrayItems,
     getItemText: getArrayItemText,
-    initialInputTarget: getInitialMultiItemInputTarget({
-      itemCount: arrayItems.length,
-      isSingleItemMode,
-    }),
+    isInputInitiallyOpen: arrayItems.length === 0 || isSingleItemMode,
+    initialEditedItemIndex:
+      isSingleItemMode && arrayItems.length > 0 ? 0 : null,
   });
 
   const {
@@ -94,12 +95,7 @@ export const ArrayFieldInput = () => {
     filteredItemEntries,
   } = useMultiItemSearch({ items: arrayItems, getItemText: getArrayItemText });
 
-  const isInputDisplayed = inputTarget.type !== 'closed';
-  const editedItemIndex =
-    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
-
-  const closeInput = () => openInput({ inputTarget: { type: 'closed' } });
 
   const commitInput = () => {
     const sanitizedInput = validateInputValue();
@@ -148,7 +144,7 @@ export const ArrayFieldInput = () => {
     }
 
     setSearchFilter('');
-    openInput({ inputTarget: { type: 'new-item' } });
+    startAddingItem();
   };
 
   const handleEscape = () => {
@@ -159,7 +155,7 @@ export const ArrayFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = isInputDisplayed ? commitInput() : arrayItems;
+      const updatedItems = isInputOpen ? commitInput() : arrayItems;
 
       if (!isDefined(updatedItems)) {
         return;
@@ -177,18 +173,17 @@ export const ArrayFieldInput = () => {
 
     handleChange(updatedItems);
     handleSubmit(updatedItems);
-    openInput({
-      inputTarget: isNonEmptyArray(updatedItems)
-        ? { type: 'closed' }
-        : { type: 'new-item' },
-    });
+    if (isNonEmptyArray(updatedItems)) {
+      closeInput();
+    } else {
+      startAddingItem();
+    }
   };
 
   const shouldShowItems =
-    isNonEmptyArray(filteredItemEntries) &&
-    (!isSingleItemMode || !isInputDisplayed);
+    isNonEmptyArray(filteredItemEntries) && (!isSingleItemMode || !isInputOpen);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowInputInFooter = isInputOpen && !isEditingItemInPlace;
   const inputSpacing: MultiItemFieldInputSpacing =
     isNonEmptyArray(arrayItems) && !isSingleItemMode ? 'compact' : 'default';
 
@@ -199,7 +194,7 @@ export const ArrayFieldInput = () => {
       rightComponent={
         isNonEmptyArray(arrayItems) ? (
           <MultiItemFieldSaveButton
-            isAddingNewItem={inputTarget.type === 'new-item'}
+            isAddingNewItem={!isDefined(editedItemIndex)}
             onClick={handleInputEnter}
           />
         ) : undefined
@@ -223,7 +218,7 @@ export const ArrayFieldInput = () => {
     <MultiItemFieldList
       ref={containerRef}
       hasItems={shouldShowItems}
-      shouldShowSearch={shouldShowSearch && !isInputDisplayed}
+      shouldShowSearch={shouldShowSearch && !isInputOpen}
       searchFilter={searchFilter}
       onSearchFilterChange={setSearchFilter}
       footerInput={shouldShowInputInFooter ? itemInput : undefined}
@@ -250,11 +245,7 @@ export const ArrayFieldInput = () => {
             key={index}
             dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
             value={item}
-            onEdit={() =>
-              openInput({
-                inputTarget: { type: 'existing-item', itemIndex: index },
-              })
-            }
+            onEdit={() => startEditingItem({ itemIndex: index })}
             onDelete={() => handleDelete(index)}
           />
         ),
