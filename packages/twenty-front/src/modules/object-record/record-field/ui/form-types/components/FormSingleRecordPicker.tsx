@@ -285,7 +285,7 @@ export const FormSingleRecordPicker = ({
                   <FormFieldInputInnerContainer
                     formFieldInputInstanceId={componentId}
                     hasRightElement={isDefined(VariablePicker) && !disabled}
-                    highlightsOnParentFocus
+                    shouldHighlightOnParentFocus
                     hoverable
                     preventFocusStackUpdate={true}
                     variant={variant}

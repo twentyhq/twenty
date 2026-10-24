@@ -361,7 +361,7 @@ export const FormArrayFieldInput = ({
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
           hasRightElement={isDefined(VariablePicker) && !readonly}
-          highlightsOnChildFocus
+          shouldHighlightOnChildFocus
         >
           {draftValue.type === 'static' ? (
             readonly ? (

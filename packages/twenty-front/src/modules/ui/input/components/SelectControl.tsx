@@ -19,7 +19,7 @@ export const StyledControlContainer = styled.div<{
   selectSizeVariant?: SelectSizeVariant;
   textAccent: SelectControlTextAccent;
   hasRightElement?: boolean;
-  highlightsOnParentFocus?: boolean;
+  shouldHighlightOnParentFocus?: boolean;
   $variant?: FormFieldInputVariant;
 }>`
   align-items: center;
@@ -83,8 +83,8 @@ export const StyledControlContainer = styled.div<{
   text-align: left;
 
   *:focus-visible > & {
-    border-color: ${({ highlightsOnParentFocus }) =>
-      highlightsOnParentFocus
+    border-color: ${({ shouldHighlightOnParentFocus }) =>
+      shouldHighlightOnParentFocus
         ? themeCssVariables.color.blue
         : themeCssVariables.border.color.medium};
   }
@@ -120,7 +120,7 @@ export type SelectControlProps = {
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
   hasRightElement?: boolean;
-  highlightsOnParentFocus?: boolean;
+  shouldHighlightOnParentFocus?: boolean;
   variant?: FormFieldInputVariant;
 };
 
@@ -132,7 +132,7 @@ export const SelectControl = ({
   selectSizeVariant,
   textAccent = 'default',
   hasRightElement,
-  highlightsOnParentFocus = false,
+  shouldHighlightOnParentFocus = false,
   variant = 'default',
 }: SelectControlProps) => {
   const theme = useTheme();
@@ -147,7 +147,7 @@ export const SelectControl = ({
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
-      highlightsOnParentFocus={highlightsOnParentFocus}
+      shouldHighlightOnParentFocus={shouldHighlightOnParentFocus}
       $variant={variant}
       title={selectedOption.fullLabel}
     >

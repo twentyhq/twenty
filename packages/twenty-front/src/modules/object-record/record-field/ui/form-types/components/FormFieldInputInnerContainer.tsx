@@ -17,8 +17,8 @@ type FormFieldInputInnerContainerProps = {
   enableGlobalEscapeHotkeysConflictingWithKeyboard?: boolean;
   formFieldInputInstanceId: string;
   variant?: FormFieldInputVariant;
-  highlightsOnParentFocus?: boolean;
-  highlightsOnChildFocus?: boolean;
+  shouldHighlightOnParentFocus?: boolean;
+  shouldHighlightOnChildFocus?: boolean;
 };
 
 const getFocusBorderColor = ({
@@ -81,8 +81,12 @@ const StyledFormFieldInputInnerContainer = styled.div<
   }
 
   &:has(:focus-visible:not(button)) {
-    border-color: ${({ highlightsOnChildFocus, hasRightElement, $variant }) =>
-      highlightsOnChildFocus === true
+    border-color: ${({
+      shouldHighlightOnChildFocus,
+      hasRightElement,
+      $variant,
+    }) =>
+      shouldHighlightOnChildFocus
         ? getFocusBorderColor({ hasRightElement, $variant })
         : themeCssVariables.border.color.medium};
   }
@@ -96,8 +100,12 @@ const StyledFormFieldInputInnerContainer = styled.div<
   }
 
   *:focus-visible > & {
-    border-color: ${({ highlightsOnParentFocus, hasRightElement, $variant }) =>
-      highlightsOnParentFocus === true
+    border-color: ${({
+      shouldHighlightOnParentFocus,
+      hasRightElement,
+      $variant,
+    }) =>
+      shouldHighlightOnParentFocus
         ? getFocusBorderColor({ hasRightElement, $variant })
         : themeCssVariables.border.color.medium};
   }
@@ -129,8 +137,8 @@ export const FormFieldInputInnerContainer = forwardRef(
       onClick,
       formFieldInputInstanceId,
       variant = 'default',
-      highlightsOnParentFocus = false,
-      highlightsOnChildFocus = false,
+      shouldHighlightOnParentFocus = false,
+      shouldHighlightOnChildFocus = false,
     }: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps,
     ref: Ref<HTMLDivElement>,
   ) => {
@@ -180,8 +188,8 @@ export const FormFieldInputInnerContainer = forwardRef(
         multiline={multiline}
         readonly={readonly}
         $variant={variant}
-        highlightsOnParentFocus={highlightsOnParentFocus}
-        highlightsOnChildFocus={highlightsOnChildFocus}
+        shouldHighlightOnParentFocus={shouldHighlightOnParentFocus}
+        shouldHighlightOnChildFocus={shouldHighlightOnChildFocus}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onClick={onClick}

@@ -205,7 +205,7 @@ export const Select = <TValue extends SelectValue>({
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
-              highlightsOnParentFocus={hasFormFieldFocusBorder({
+              shouldHighlightOnParentFocus={hasFormFieldFocusBorder({
                 hasRightElement,
                 variant,
               })}
