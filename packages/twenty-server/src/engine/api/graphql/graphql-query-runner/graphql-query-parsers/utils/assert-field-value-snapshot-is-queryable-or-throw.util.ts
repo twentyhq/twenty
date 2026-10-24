@@ -1,7 +1,7 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { FIELD_VALUE_SNAPSHOT_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/engine/metadata-modules/permissions/constants/field-value-snapshot-field-universal-identifiers.constant';
+import { FIELD_VALUE_SNAPSHOT_FIELDS } from 'src/engine/metadata-modules/permissions/constants/field-value-snapshot-fields.constant';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -16,8 +16,9 @@ export const assertFieldValueSnapshotIsQueryableOrThrow = ({
   fieldMetadata: Pick<OrmFlatFieldMetadata, 'universalIdentifier'>;
 }): void => {
   if (
-    !FIELD_VALUE_SNAPSHOT_FIELD_UNIVERSAL_IDENTIFIERS.has(
-      fieldMetadata.universalIdentifier,
+    !FIELD_VALUE_SNAPSHOT_FIELDS.some(
+      ({ snapshotFieldUniversalIdentifier }) =>
+        snapshotFieldUniversalIdentifier === fieldMetadata.universalIdentifier,
     )
   ) {
     return;

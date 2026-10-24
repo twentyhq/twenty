@@ -12,11 +12,10 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { findFieldMetadataIds } from 'test/integration/graphql/suites/timeline/utils/find-field-metadata-ids.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -30,28 +29,6 @@ const READABLE_FIRST_NAME = `READABLE-${randomUUID()}`;
 type TimelineActivityNode = {
   id: string;
   properties: { diff?: Record<string, unknown> } | null;
-};
-
-const findMetadataIds = async () => {
-  const { objects } = await findManyObjectMetadata({
-    input: { filter: {}, paging: { first: 100 } },
-    gqlFields: 'id nameSingular fieldsList { id name }',
-    expectToFail: false,
-  });
-
-  const personObject = objects.find(
-    (objectMetadata) => objectMetadata.nameSingular === 'person',
-  );
-
-  const jobTitleField = personObject?.fieldsList?.find(
-    (fieldMetadata) => fieldMetadata.name === 'jobTitle',
-  );
-
-  if (!isDefined(personObject) || !isDefined(jobTitleField)) {
-    throw new Error('Person jobTitle field not found');
-  }
-
-  return { personObjectId: personObject.id, jobTitleFieldId: jobTitleField.id };
 };
 
 const findPersonTimelineActivities = async ({
@@ -100,7 +77,10 @@ describe('Timeline activity field permissions', () => {
       (role: { label: string }) => role.label === 'Member',
     ).id;
 
-    const { personObjectId, jobTitleFieldId } = await findMetadataIds();
+    const restrictedFields = await findFieldMetadataIds([
+      { objectNameSingular: 'person', fieldName: 'jobTitle' },
+      { objectNameSingular: 'company', fieldName: 'name' },
+    ]);
 
     const { roleId } = await createCustomRoleWithObjectPermissions({
       label: 'TimelineRestrictedJobTitleRole',
@@ -111,14 +91,14 @@ describe('Timeline activity field permissions', () => {
 
     const { errors } = await upsertFieldPermissions({
       roleId: customRoleId,
-      fieldPermissions: [
-        {
-          objectMetadataId: personObjectId,
-          fieldMetadataId: jobTitleFieldId,
+      fieldPermissions: restrictedFields.map(
+        ({ objectMetadataId, fieldMetadataId }) => ({
+          objectMetadataId,
+          fieldMetadataId,
           canReadFieldValue: false,
           canUpdateFieldValue: false,
-        },
-      ],
+        }),
+      ),
     });
 
     expect(errors).toBeUndefined();

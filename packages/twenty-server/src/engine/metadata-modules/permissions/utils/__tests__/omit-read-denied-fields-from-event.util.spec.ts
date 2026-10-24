@@ -11,25 +11,51 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { omitReadDeniedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-event.util';
 
 const PERSON_OBJECT_ID = 'person-object-id';
+const NOTE_OBJECT_ID = 'note-object-id';
 const TIMELINE_ACTIVITY_OBJECT_ID = 'timeline-activity-object-id';
-const JOB_TITLE_FIELD_ID = 'job-title-field-id';
-const PROPERTIES_FIELD_ID = 'properties-field-id';
+const PERSON_JOB_TITLE_FIELD_ID = 'person-job-title-field-id';
+const NOTE_JOB_TITLE_FIELD_ID = 'note-job-title-field-id';
 
 const flatFieldMetadataMaps = [
   getFlatFieldMetadataMock({
-    id: JOB_TITLE_FIELD_ID,
-    universalIdentifier: JOB_TITLE_FIELD_ID,
+    id: PERSON_JOB_TITLE_FIELD_ID,
+    universalIdentifier: PERSON_JOB_TITLE_FIELD_ID,
     objectMetadataId: PERSON_OBJECT_ID,
     type: FieldMetadataType.TEXT,
     name: 'jobTitle',
   }),
   getFlatFieldMetadataMock({
-    id: PROPERTIES_FIELD_ID,
+    id: NOTE_JOB_TITLE_FIELD_ID,
+    universalIdentifier: NOTE_JOB_TITLE_FIELD_ID,
+    objectMetadataId: NOTE_OBJECT_ID,
+    type: FieldMetadataType.TEXT,
+    name: 'jobTitle',
+  }),
+  getFlatFieldMetadataMock({
+    id: 'properties-field-id',
     universalIdentifier:
       STANDARD_OBJECTS.timelineActivity.fields.properties.universalIdentifier,
     objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
     type: FieldMetadataType.RAW_JSON,
     name: 'properties',
+  }),
+  getFlatFieldMetadataMock({
+    id: 'linked-object-metadata-id-field-id',
+    universalIdentifier:
+      STANDARD_OBJECTS.timelineActivity.fields.linkedObjectMetadataId
+        .universalIdentifier,
+    objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
+    type: FieldMetadataType.UUID,
+    name: 'linkedObjectMetadataId',
+  }),
+  getFlatFieldMetadataMock({
+    id: 'target-person-field-id',
+    universalIdentifier: 'target-person-field-id',
+    objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
+    type: FieldMetadataType.MORPH_RELATION,
+    name: 'targetPerson',
+    morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
+    relationTargetObjectMetadataId: PERSON_OBJECT_ID,
   }),
 ].reduce(
   (maps, flatEntity) =>
@@ -49,11 +75,11 @@ const buildObjectPermissions = (
   rowLevelPermissionPredicateGroups: [],
 });
 
-const OBJECTS_PERMISSIONS_WITH_JOB_TITLE_DENIED = {
+const OBJECTS_PERMISSIONS_WITH_PERSON_JOB_TITLE_DENIED = {
   [PERSON_OBJECT_ID]: buildObjectPermissions({
-    [JOB_TITLE_FIELD_ID]: { canRead: false, canUpdate: false },
+    [PERSON_JOB_TITLE_FIELD_ID]: { canRead: false, canUpdate: false },
   }),
-  [TIMELINE_ACTIVITY_OBJECT_ID]: buildObjectPermissions({}),
+  [NOTE_OBJECT_ID]: buildObjectPermissions({}),
 };
 
 const JOB_TITLE_AND_CITY_DIFF = {
@@ -65,30 +91,64 @@ const JOB_TITLE_AND_CITY_DIFF = {
 
 const CITY_DIFF = { diff: { city: { before: 'Paris', after: 'Lyon' } } };
 
+const PERSON_ACTIVITY = {
+  targetPersonId: 'person-id',
+  linkedObjectMetadataId: null,
+  properties: JOB_TITLE_AND_CITY_DIFF,
+};
+
+const omitForTimelineActivity = <TEvent extends ObjectRecordCreateEvent>(
+  event: TEvent,
+) =>
+  omitReadDeniedFieldsFromEvent({
+    event,
+    objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
+    objectsPermissions: OBJECTS_PERMISSIONS_WITH_PERSON_JOB_TITLE_DENIED,
+    flatFieldMetadataMaps,
+  }).properties;
+
 describe('omitReadDeniedFieldsFromEvent', () => {
-  it('should omit read-denied fields from a created timeline activity', () => {
-    const createdEvent: ObjectRecordCreateEvent = {
-      recordId: 'timeline-activity-id',
-      properties: { after: { properties: JOB_TITLE_AND_CITY_DIFF } },
+  it('should omit fields of the target object the role cannot read', () => {
+    expect(
+      omitForTimelineActivity({
+        recordId: 'timeline-activity-id',
+        properties: { after: PERSON_ACTIVITY },
+      }),
+    ).toEqual({ after: { ...PERSON_ACTIVITY, properties: CITY_DIFF } });
+  });
+
+  it('should keep a same-named field of a linked object the role can read', () => {
+    const noteActivity = {
+      ...PERSON_ACTIVITY,
+      linkedObjectMetadataId: NOTE_OBJECT_ID,
     };
 
     expect(
-      omitReadDeniedFieldsFromEvent({
-        event: createdEvent,
-        objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
-        objectsPermissions: OBJECTS_PERMISSIONS_WITH_JOB_TITLE_DENIED,
-        flatFieldMetadataMaps,
-      }).properties,
-    ).toEqual({ after: { properties: CITY_DIFF } });
+      omitForTimelineActivity({
+        recordId: 'timeline-activity-id',
+        properties: { after: noteActivity },
+      }),
+    ).toEqual({ after: noteActivity });
   });
 
-  it('should omit read-denied fields from an updated timeline activity', () => {
+  it('should keep the diff when the activity object is unknown', () => {
+    const orphanActivity = { ...PERSON_ACTIVITY, targetPersonId: null };
+
+    expect(
+      omitForTimelineActivity({
+        recordId: 'timeline-activity-id',
+        properties: { after: orphanActivity },
+      }),
+    ).toEqual({ after: orphanActivity });
+  });
+
+  it('should omit fields from the properties diff of an updated activity', () => {
     const updatedEvent: ObjectRecordUpdateEvent = {
       recordId: 'timeline-activity-id',
       properties: {
         updatedFields: ['properties'],
-        before: { properties: JOB_TITLE_AND_CITY_DIFF },
-        after: { properties: JOB_TITLE_AND_CITY_DIFF },
+        before: PERSON_ACTIVITY,
+        after: PERSON_ACTIVITY,
         diff: {
           properties: {
             before: JOB_TITLE_AND_CITY_DIFF,
@@ -102,48 +162,28 @@ describe('omitReadDeniedFieldsFromEvent', () => {
       omitReadDeniedFieldsFromEvent({
         event: updatedEvent,
         objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
-        objectsPermissions: OBJECTS_PERMISSIONS_WITH_JOB_TITLE_DENIED,
+        objectsPermissions: OBJECTS_PERMISSIONS_WITH_PERSON_JOB_TITLE_DENIED,
         flatFieldMetadataMaps,
       }).properties,
     ).toEqual({
       updatedFields: ['properties'],
-      before: { properties: CITY_DIFF },
-      after: { properties: CITY_DIFF },
+      before: { ...PERSON_ACTIVITY, properties: CITY_DIFF },
+      after: { ...PERSON_ACTIVITY, properties: CITY_DIFF },
       diff: { properties: { before: CITY_DIFF, after: CITY_DIFF } },
     });
   });
 
   it('should still omit the restricted fields of the event object', () => {
-    const createdEvent: ObjectRecordCreateEvent = {
-      recordId: 'person-id',
-      properties: { after: { jobTitle: 'Manager', city: 'Lyon' } },
-    };
-
     expect(
       omitReadDeniedFieldsFromEvent({
-        event: createdEvent,
+        event: {
+          recordId: 'person-id',
+          properties: { after: { jobTitle: 'Manager', city: 'Lyon' } },
+        },
         objectMetadataId: PERSON_OBJECT_ID,
-        objectsPermissions: OBJECTS_PERMISSIONS_WITH_JOB_TITLE_DENIED,
+        objectsPermissions: OBJECTS_PERMISSIONS_WITH_PERSON_JOB_TITLE_DENIED,
         flatFieldMetadataMaps,
       }).properties,
     ).toEqual({ after: { city: 'Lyon' } });
-  });
-
-  it('should keep a timeline activity unchanged without read-denied fields', () => {
-    const createdEvent: ObjectRecordCreateEvent = {
-      recordId: 'timeline-activity-id',
-      properties: { after: { properties: JOB_TITLE_AND_CITY_DIFF } },
-    };
-
-    expect(
-      omitReadDeniedFieldsFromEvent({
-        event: createdEvent,
-        objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
-        objectsPermissions: {
-          [PERSON_OBJECT_ID]: buildObjectPermissions({}),
-        },
-        flatFieldMetadataMaps,
-      }),
-    ).toBe(createdEvent);
   });
 });
