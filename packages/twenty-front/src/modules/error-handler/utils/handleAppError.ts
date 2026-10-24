@@ -16,15 +16,19 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
-const captureAppError = (
-  sentryImportPromise: Promise<typeof SentryReact>,
-  error: Error | CustomError,
-  info?: ErrorInfo,
-) =>
+const captureAppError = ({
+  sentryImportPromise,
+  error,
+  errorInfo,
+}: {
+  sentryImportPromise: Promise<typeof SentryReact>;
+  error: Error | CustomError;
+  errorInfo?: ErrorInfo;
+}) =>
   sentryImportPromise
     .then(({ captureException, flush }) => {
       captureException(error, (scope) => {
-        scope.setExtras({ info });
+        scope.setExtras({ info: errorInfo });
 
         const fingerprint = hasErrorCode(error) ? error.code : error.message;
         scope.setFingerprint([fingerprint]);
@@ -47,11 +51,11 @@ export const handleAppError = ({
   errorInfo?: ErrorInfo;
 }) => {
   const sentryImportPromise = import('@sentry/react');
-  const captureAppErrorPromise = captureAppError(
+  const captureAppErrorPromise = captureAppError({
     sentryImportPromise,
     error,
     errorInfo,
-  );
+  });
 
   const isViteStaleChunkLazyLoadingError =
     checkIfItsAViteStaleChunkLazyLoadingError(error);

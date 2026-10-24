@@ -1,8 +1,8 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRouteError } from 'react-router-dom';
 
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
-import { handleAppError } from '@/error-handler/utils/handleAppError';
+import { AppRouteErrorReportEffect } from '@/error-handler/components/internal/AppRouteErrorReportEffect';
 import { reloadWindow } from '~/utils/reloadWindow';
 
 export const AppRouteErrorFallback = () => {
@@ -14,11 +14,10 @@ export const AppRouteErrorFallback = () => {
     [routeError],
   );
 
-  useEffect(() => {
-    handleAppError({ error });
-  }, [error]);
-
   return (
-    <AppRootErrorFallback error={error} resetErrorBoundary={reloadWindow} />
+    <>
+      <AppRouteErrorReportEffect error={error} />
+      <AppRootErrorFallback error={error} resetErrorBoundary={reloadWindow} />
+    </>
   );
 };
