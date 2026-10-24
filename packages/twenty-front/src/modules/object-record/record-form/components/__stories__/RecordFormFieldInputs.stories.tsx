@@ -398,3 +398,25 @@ export const ArrayValues: Story = {
     ]);
   },
 };
+
+export const StoredListValues: Story = {
+  args: {
+    fieldMetadataItems: [emailsFieldMetadataItem, tagsFieldMetadataItem],
+    initialDraftRecord: {
+      emails: {
+        primaryEmail: 'lea@northwind.io',
+        additionalEmails: ['lea.martin@gmail.com'],
+      },
+      tags: ['Shopify', 'Stripe'],
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByText('lea@northwind.io')).toBeVisible();
+    await expect(canvas.getByText('lea.martin@gmail.com')).toBeVisible();
+    await expect(canvas.getByText('Shopify')).toBeVisible();
+    await expect(canvas.getByText('Stripe')).toBeVisible();
+    await expect(args.onFieldValueChange).not.toHaveBeenCalled();
+  },
+};
