@@ -10,6 +10,7 @@ import { computeRecordFormWidgetForExistingObject } from 'src/engine/metadata-mo
 import { getRecordFormPageLayoutTabUniversalIdentifier } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/get-record-form-page-layout-tab-universal-identifier.util';
 import { isFlatFieldMetadataEligibleForRecordForm } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/is-flat-field-metadata-eligible-for-record-form.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
@@ -173,12 +174,9 @@ export class BackfillFilesRecordFormWidgetsCommand extends ProvisionedWorkspaceC
         );
 
       if (result.status === 'fail') {
-        this.logger.error(
-          `Failed to backfill files record form widgets for application ${applicationUniversalIdentifier} in workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
-        );
-
-        throw new Error(
-          `Failed to backfill files record form widgets for workspace ${workspaceId}`,
+        throw new WorkspaceMigrationBuilderException(
+          result,
+          `Failed to backfill files record form widgets for application ${applicationUniversalIdentifier} in workspace ${workspaceId}`,
         );
       }
     }
