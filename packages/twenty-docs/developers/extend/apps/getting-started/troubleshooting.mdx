@@ -3,6 +3,8 @@ title: Troubleshooting
 description: Common first-run issues — Docker, Node version, Yarn, dependencies.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 - **Local server errors**, check your Docker or repository development environment. The standalone CLI does not manage containers.
 - **Wrong Node version** — Need 24.5+ (`engines.node: ^24.5.0`). Check with `node -v`.
 - **Yarn 4 missing** — Run `corepack enable`.
@@ -12,3 +14,5 @@ description: Common first-run issues — Docker, Node version, Yarn, dependencie
 - **`twenty app build` warns about `twenty-client-sdk` under `dependencies`** — It is provided at runtime by Twenty, so it should be moved to `devDependencies` alongside `twenty-sdk`. See [Project Structure → Dependencies](/developers/extend/apps/getting-started/project-structure#dependencies).
 
 Stuck? Ask on the [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322).
+
+<PageBanner illustration="bug-requests" pattern="developers-api" />

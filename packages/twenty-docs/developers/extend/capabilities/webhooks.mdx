@@ -3,6 +3,8 @@ title: Webhooks
 description: Receive real-time notifications when events occur in your CRM.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 
@@ -111,3 +113,5 @@ const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 | **Workflow Webhook Trigger** | IN | Receive data into Twenty from external systems |
 
 For receiving external data, see [Set Up a Webhook Trigger](/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="webhooks" pattern="developers-api" />

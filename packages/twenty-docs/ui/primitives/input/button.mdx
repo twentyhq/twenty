@@ -3,6 +3,8 @@ title: Button
 description: Trigger actions or navigate with styled buttons.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ButtonReference from '/snippets/ui/generated/input/button.mdx';
 
@@ -277,3 +279,5 @@ export const LogOut = ({ onLogOut }: LogOutProps) => (
 <ButtonReference />
 
 Pass `shortcut={['Mod', 'Enter']}` for simultaneous keys or `shortcut={[['G'], ['P']]}` for successive presses. See [Shortcut](/ui/primitives/typography/shortcut) for nested combinations and the shared string formatter.
+
+<PageBanner illustration="pointer" pattern="developers-api" />
