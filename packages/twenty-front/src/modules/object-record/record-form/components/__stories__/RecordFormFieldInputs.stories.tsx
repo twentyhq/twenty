@@ -101,6 +101,15 @@ const nameFieldMetadataItem: FieldMetadataItem = {
   label: 'Name',
 };
 
+const addressFieldMetadataItem: FieldMetadataItem = {
+  ...getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: companyObjectMetadataItem,
+    fieldName: 'address',
+  }),
+  label: 'Address',
+  settings: null,
+};
+
 type RecordFormFieldInputsWithDraftProps = {
   fieldMetadataItems: FieldMetadataItem[];
   initialDraftRecord?: Partial<ObjectRecord>;
@@ -725,5 +734,70 @@ export const FullName: Story = {
     await expect(canvas.getByRole('textbox', { name: 'Name' })).toHaveValue(
       'Jean Baptiste de la Fontaine',
     );
+  },
+};
+
+export const Address: Story = {
+  args: {
+    fieldMetadataItems: [addressFieldMetadataItem],
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.queryByRole('textbox', { name: 'City' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.type(
+      canvas.getByRole('textbox', { name: 'Address' }),
+      '12 rue de Rivoli',
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Address details' }),
+    );
+    await userEvent.type(
+      canvas.getByRole('textbox', { name: 'City' }),
+      'Paris',
+    );
+
+    await expect(args.onFieldValueChange).toHaveBeenLastCalledWith(
+      'address',
+      expect.objectContaining({
+        addressStreet1: '12 rue de Rivoli',
+        addressCity: 'Paris',
+      }),
+    );
+  },
+};
+
+export const StoredAddressShowsDetails: Story = {
+  args: {
+    fieldMetadataItems: [addressFieldMetadataItem],
+    initialDraftRecord: {
+      address: {
+        addressStreet1: '12 rue de Rivoli',
+        addressStreet2: '',
+        addressCity: 'Paris',
+        addressState: '',
+        addressPostcode: '75001',
+        addressCountry: 'France',
+        addressLat: null,
+        addressLng: null,
+      },
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getByRole('textbox', { name: 'Address' })).toHaveValue(
+      '12 rue de Rivoli',
+    );
+    await expect(canvas.getByRole('textbox', { name: 'City' })).toHaveValue(
+      'Paris',
+    );
+    await expect(
+      canvas.getByRole('textbox', { name: 'Post Code' }),
+    ).toHaveValue('75001');
+    await expect(args.onFieldValueChange).not.toHaveBeenCalled();
   },
 };
