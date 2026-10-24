@@ -47,6 +47,7 @@ import {
   jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { IconCode, IconPlayerPlay } from 'twenty-ui/icon';
@@ -99,7 +100,7 @@ export const WorkflowEditActionCode = ({
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { getUpdatableWorkflowVersion } =
+  const { getUpdatableWorkflowVersionStepOrThrow } =
     useGetUpdatableWorkflowVersionOrThrow();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
@@ -118,8 +119,18 @@ export const WorkflowEditActionCode = ({
     });
   };
 
+  const getUpdatableLogicFunctionIdOrThrow = async () => {
+    const updatableStep = await getUpdatableWorkflowVersionStepOrThrow({
+      stepId: action.id,
+      stepType: 'CODE',
+    });
+
+    return updatableStep.settings.input.logicFunctionId;
+  };
+
   const { formValues, loading, onChange } = useLogicFunctionForm({
     logicFunctionId,
+    getTargetLogicFunctionId: getUpdatableLogicFunctionIdOrThrow,
   });
 
   const {
@@ -142,12 +153,14 @@ export const WorkflowEditActionCode = ({
     );
 
   const handleUpdateFunctionInputSchema = useDebouncedCallback(
-    async (sourceCode: string, inferredJsonSchema: InputJsonSchema) => {
+    async ({
+      inferredJsonSchema,
+      logicFunctionId: updatableLogicFunctionId,
+    }: {
+      inferredJsonSchema: InputJsonSchema;
+      logicFunctionId: string;
+    }) => {
       if (actionOptions.readonly === true) {
-        return;
-      }
-
-      if (!isDefined(sourceCode)) {
         return;
       }
 
@@ -184,6 +197,7 @@ export const WorkflowEditActionCode = ({
           },
           input: {
             ...action.settings.input,
+            logicFunctionId: updatableLogicFunctionId,
             logicFunctionInput: newMergedInput,
           },
         },
@@ -285,10 +299,11 @@ export const WorkflowEditActionCode = ({
 
     const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode);
 
-    await getUpdatableWorkflowVersion();
-
     if (isDefined(inferredJsonSchema)) {
-      await handleUpdateFunctionInputSchema(newCode, inferredJsonSchema);
+      await handleUpdateFunctionInputSchema({
+        inferredJsonSchema,
+        logicFunctionId: await getUpdatableLogicFunctionIdOrThrow(),
+      });
     }
   };
 
@@ -391,8 +406,11 @@ export const WorkflowEditActionCode = ({
     isFullScreen,
   );
 
+  const isInitialLoading =
+    loading && !isNonEmptyString(formValues.sourceHandlerCode);
+
   return (
-    !loading && (
+    !isInitialLoading && (
       <TabListRoot
         componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
       >
