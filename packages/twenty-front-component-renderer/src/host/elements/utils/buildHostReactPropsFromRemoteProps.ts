@@ -41,8 +41,7 @@ export const buildHostReactPropsFromRemoteProps = ({
       continue;
     }
 
-    // The host overrides `sandbox` by exact key, but the DOM lowercases
-    // attribute names, so a differently cased duplicate would win over it.
+    // A case variant would override the host sandbox once the DOM lowercases it.
     if (
       remotePropName !== IFRAME_SANDBOX_ATTRIBUTE &&
       remotePropName.toLowerCase() === IFRAME_SANDBOX_ATTRIBUTE
