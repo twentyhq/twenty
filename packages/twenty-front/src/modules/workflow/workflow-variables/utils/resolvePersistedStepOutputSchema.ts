@@ -1,5 +1,4 @@
 import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
-import { isLinkOutputSchema } from '@/workflow/workflow-variables/types/guards/isLinkOutputSchema';
 import { translatePersistedOutputSchemaLabels } from '@/workflow/workflow-variables/utils/translatePersistedOutputSchemaLabels';
 import { getOutputSchemaFromValue } from 'twenty-shared/logic-function';
 import { isEmptyObject, isPlainObject } from 'twenty-shared/utils';
@@ -41,10 +40,6 @@ export const resolvePersistedStepOutputSchema = ({
     !isEmptyObject(expectedOutputSchema)
   ) {
     return getOutputSchemaFromValue(expectedOutputSchema);
-  }
-
-  if (isLinkOutputSchema(outputSchema)) {
-    return outputSchema;
   }
 
   if (stepType === 'AI_AGENT') {

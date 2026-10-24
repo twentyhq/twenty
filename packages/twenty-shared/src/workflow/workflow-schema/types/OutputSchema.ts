@@ -77,13 +77,6 @@ export type FormFieldNode = {
 
 export type FormOutputSchema = Record<string, FormFieldLeaf | FormFieldNode>;
 
-export type LinkOutputSchema = {
-  link: { isLeaf: true; tab?: string; label?: string };
-  _outputSchemaType: 'LINK';
-};
-
-export type CodeOutputSchema = LinkOutputSchema | BaseOutputSchemaV2;
-
 export type ManualTriggerOutputSchema = {
   payload?: RecordNode | Node;
   metadata: Node;
@@ -91,7 +84,6 @@ export type ManualTriggerOutputSchema = {
 
 export type OutputSchemaV2 =
   | BaseOutputSchemaV2
-  | CodeOutputSchema
   | FindRecordsOutputSchema
   | FormOutputSchema
   | RecordOutputSchemaV2

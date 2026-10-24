@@ -220,8 +220,6 @@ export type {
   FormFieldLeaf,
   FormFieldNode,
   FormOutputSchema,
-  LinkOutputSchema,
-  CodeOutputSchema,
   ManualTriggerOutputSchema,
   OutputSchemaV2,
   VariableSearchResult,
