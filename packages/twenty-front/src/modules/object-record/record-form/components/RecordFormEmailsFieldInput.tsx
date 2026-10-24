@@ -16,7 +16,7 @@ import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputCon
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { emailSchema, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Field } from 'twenty-ui/primitives/input';
@@ -73,6 +73,7 @@ export const RecordFormEmailsFieldInput = ({
     getEmailsFromValue(defaultValue),
   );
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [isInvalidInputLeft, setIsInvalidInputLeft] = useState(false);
 
   const getNextInputTarget = (emails: string[]): MultiItemInputTarget =>
@@ -160,6 +161,7 @@ export const RecordFormEmailsFieldInput = ({
 
     setShouldFocusInput(true);
     openInput({ inputTarget: getNextInputTarget(updatedEmails) });
+    inputRef.current?.focus();
   };
 
   const handleEscape = () => {
@@ -250,6 +252,7 @@ export const RecordFormEmailsFieldInput = ({
       }
     >
       <MultiItemFieldTextInput
+        ref={inputRef}
         autoFocus={shouldFocusInput}
         spacing={inputSpacing}
         placeholder={placeholder ?? t`Email`}

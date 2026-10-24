@@ -14,7 +14,7 @@ import { type FieldArrayValue } from '@/object-record/record-field/ui/types/Fiel
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Field } from 'twenty-ui/primitives/input';
@@ -45,6 +45,7 @@ export const RecordFormArrayFieldInput = ({
     () => defaultValue ?? [],
   );
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const getNextInputTarget = (items: string[]): MultiItemInputTarget =>
     getRecordFormMultiItemInputTarget({
@@ -109,6 +110,7 @@ export const RecordFormArrayFieldInput = ({
 
     setShouldFocusInput(true);
     openInput({ inputTarget: getNextInputTarget(updatedItems) });
+    inputRef.current?.focus();
   };
 
   const handleEscape = () => {
@@ -187,6 +189,7 @@ export const RecordFormArrayFieldInput = ({
       }
     >
       <MultiItemFieldTextInput
+        ref={inputRef}
         autoFocus={shouldFocusInput}
         spacing={inputSpacing}
         placeholder={t`Enter value`}

@@ -280,6 +280,7 @@ export const Emails: Story = {
       additionalEmails: ['lea.martin@gmail.com'],
     });
     await expect(canvas.getByText('lea.martin@gmail.com')).toBeVisible();
+    await expect(canvas.getByRole('textbox')).toHaveFocus();
     await expect(canvas.queryByText('Add Email')).not.toBeInTheDocument();
   },
 };
