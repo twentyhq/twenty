@@ -6,7 +6,7 @@ const keepFieldNames = ({
 }: {
   value: unknown;
   fieldNames: Set<string>;
-}): unknown =>
+}): Record<string, unknown> | undefined =>
   isPlainObject(value)
     ? Object.fromEntries(
         Object.entries(value).filter(([fieldName]) =>
@@ -21,7 +21,7 @@ export const keepReadableFieldsInTimelineActivityProperties = ({
 }: {
   properties: unknown;
   readableFieldNames: Set<string>;
-}): unknown => {
+}): Record<string, unknown> | null => {
   if (!isPlainObject(properties)) {
     return null;
   }

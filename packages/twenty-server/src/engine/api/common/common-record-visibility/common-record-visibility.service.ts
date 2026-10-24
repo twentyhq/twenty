@@ -89,7 +89,7 @@ export class CommonRecordVisibilityService {
     flatFieldMetadataMaps,
   }: {
     events: TEvent[];
-    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
     objectsPermissions: ObjectsPermissions;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
