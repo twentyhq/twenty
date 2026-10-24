@@ -1,9 +1,16 @@
 import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { type LogicFunctionFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
+import { getTriggerSettingsWithInputSchema } from '@/logic-functions/utils/getTriggerSettingsWithInputSchema';
 import { buildWorkflowVersionFromCore } from '@/object-core/workflows/utils/buildWorkflowVersionFromCore';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { useApolloClient } from '@apollo/client/react';
+import {
+  getInputSchemaFromSourceCode,
+  type InputJsonSchema,
+} from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
@@ -11,6 +18,11 @@ import {
   type GetLogicFunctionSourceCodeQuery,
   type GetLogicFunctionSourceCodeQueryVariables,
 } from '~/generated-metadata/graphql';
+
+type CodeStepSourceUpdate = Pick<
+  LogicFunctionFormValues,
+  'sourceHandlerCode' | 'toolTriggerSettings' | 'workflowActionTriggerSettings'
+>;
 
 // A draft copies each code step onto a new logic function, so the source must go to that copy
 export const useSaveCodeStepSourceToDraft = () => {
@@ -20,11 +32,15 @@ export const useSaveCodeStepSourceToDraft = () => {
     useGetUpdatableWorkflowVersionOrThrow();
   const { updateLogicFunction } = usePersistLogicFunction();
 
-  const persistDraftSourceCode = useDebouncedCallback(
-    async (logicFunctionId: string, sourceHandlerCode: string) => {
-      await updateLogicFunction({
-        input: { id: logicFunctionId, update: { sourceHandlerCode } },
-      });
+  const persistDraftLogicFunction = useDebouncedCallback(
+    async ({
+      logicFunctionId,
+      update,
+    }: {
+      logicFunctionId: string;
+      update: CodeStepSourceUpdate;
+    }) => {
+      await updateLogicFunction({ input: { id: logicFunctionId, update } });
     },
     500,
   );
@@ -32,10 +48,12 @@ export const useSaveCodeStepSourceToDraft = () => {
   const saveCodeStepSourceToDraft = async ({
     stepId,
     sourceHandlerCode,
-  }: {
-    stepId: string;
-    sourceHandlerCode: string;
-  }) => {
+    toolTriggerSettings,
+    workflowActionTriggerSettings,
+  }: CodeStepSourceUpdate & { stepId: string }): Promise<
+    | { draftStep: WorkflowCodeAction; inferredJsonSchema: InputJsonSchema }
+    | undefined
+  > => {
     const draftVersionId = await getUpdatableWorkflowVersion();
 
     const { data } = await apolloCoreClient.query({
@@ -48,7 +66,7 @@ export const useSaveCodeStepSourceToDraft = () => {
     )?.steps?.find((step) => step.id === stepId);
 
     if (!isDefined(draftStep) || draftStep.type !== 'CODE') {
-      return;
+      return undefined;
     }
 
     const draftLogicFunctionId = draftStep.settings.input.logicFunctionId;
@@ -63,7 +81,22 @@ export const useSaveCodeStepSourceToDraft = () => {
       data: { getLogicFunctionSourceCode: sourceHandlerCode },
     });
 
-    await persistDraftSourceCode(draftLogicFunctionId, sourceHandlerCode);
+    const inferredJsonSchema =
+      await getInputSchemaFromSourceCode(sourceHandlerCode);
+
+    await persistDraftLogicFunction({
+      logicFunctionId: draftLogicFunctionId,
+      update: {
+        sourceHandlerCode,
+        ...getTriggerSettingsWithInputSchema({
+          toolTriggerSettings,
+          workflowActionTriggerSettings,
+          inputJsonSchema: inferredJsonSchema,
+        }),
+      },
+    });
+
+    return { draftStep, inferredJsonSchema };
   };
 
   return { saveCodeStepSourceToDraft };

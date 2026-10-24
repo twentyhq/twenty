@@ -3,9 +3,9 @@ import {
   useLogicFunctionUpdateFormState,
 } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { getTriggerSettingsWithInputSchema } from '@/logic-functions/utils/getTriggerSettingsWithInputSchema';
 import {
   getInputSchemaFromSourceCode,
-  jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
 import { useDebouncedCallback } from 'use-debounce';
@@ -47,18 +47,12 @@ export const useLogicFunctionForm = ({
 
         setFormValues((prevState: LogicFunctionFormValues) => ({
           ...prevState,
-          toolTriggerSettings: prevState.toolTriggerSettings
-            ? {
-                ...prevState.toolTriggerSettings,
-                inputSchema: inferredJsonSchema,
-              }
-            : null,
-          workflowActionTriggerSettings: prevState.workflowActionTriggerSettings
-            ? {
-                ...prevState.workflowActionTriggerSettings,
-                inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
-              }
-            : null,
+          ...getTriggerSettingsWithInputSchema({
+            toolTriggerSettings: prevState.toolTriggerSettings,
+            workflowActionTriggerSettings:
+              prevState.workflowActionTriggerSettings,
+            inputJsonSchema: inferredJsonSchema,
+          }),
         }));
 
         await handleSave();

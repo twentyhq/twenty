@@ -144,12 +144,14 @@ export const WorkflowEditActionCode = ({
     );
 
   const handleUpdateFunctionInputSchema = useDebouncedCallback(
-    async (sourceCode: string, inferredJsonSchema: InputJsonSchema) => {
+    async ({
+      inferredJsonSchema,
+      step = action,
+    }: {
+      inferredJsonSchema: InputJsonSchema;
+      step?: WorkflowCodeAction;
+    }) => {
       if (actionOptions.readonly === true) {
-        return;
-      }
-
-      if (!isDefined(sourceCode)) {
         return;
       }
 
@@ -159,7 +161,7 @@ export const WorkflowEditActionCode = ({
 
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
-        oldInput: action.settings.input.logicFunctionInput,
+        oldInput: step.settings.input.logicFunctionInput,
       });
 
       const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
@@ -172,9 +174,9 @@ export const WorkflowEditActionCode = ({
       updateLogicFunctionInput(newMergedTestInput);
 
       updateAction({
-        ...action,
+        ...step,
         settings: {
-          ...action.settings,
+          ...step.settings,
           outputSchema: {
             link: {
               isLeaf: true,
@@ -185,7 +187,7 @@ export const WorkflowEditActionCode = ({
             _outputSchemaType: 'LINK',
           },
           input: {
-            ...action.settings.input,
+            ...step.settings.input,
             logicFunctionInput: newMergedInput,
           },
         },
@@ -286,10 +288,19 @@ export const WorkflowEditActionCode = ({
     }
 
     if (workflow.currentVersion.status !== 'DRAFT') {
-      await saveCodeStepSourceToDraft({
+      const savedToDraft = await saveCodeStepSourceToDraft({
         stepId: action.id,
         sourceHandlerCode: newCode,
+        toolTriggerSettings: formValues.toolTriggerSettings,
+        workflowActionTriggerSettings: formValues.workflowActionTriggerSettings,
       });
+
+      if (isDefined(savedToDraft)) {
+        await handleUpdateFunctionInputSchema({
+          inferredJsonSchema: savedToDraft.inferredJsonSchema,
+          step: savedToDraft.draftStep,
+        });
+      }
 
       return;
     }
@@ -299,7 +310,7 @@ export const WorkflowEditActionCode = ({
     await getUpdatableWorkflowVersion();
 
     if (isDefined(inferredJsonSchema)) {
-      await handleUpdateFunctionInputSchema(newCode, inferredJsonSchema);
+      await handleUpdateFunctionInputSchema({ inferredJsonSchema });
     }
   };
 
