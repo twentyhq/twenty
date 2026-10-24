@@ -533,10 +533,10 @@ export class McpProtocolService {
     return Sentry.startSpan(
       { name: 'mcp list registry tools', op: 'mcp.tools', onlyIfParent: true },
       async () => {
-        const descriptors = await this.toolRegistry.getDescriptorsByCategories(
-          toolContext,
-          { excludeTools: [...MCP_EXCLUDED_TOOL_NAMES] },
-        );
+        const descriptors = await this.toolRegistry.getCatalog(toolContext, {
+          excludeTools: MCP_EXCLUDED_TOOL_NAMES,
+          includeSchemas: true,
+        });
 
         const registryTools = this.toolRegistry.hydrateToolSet(
           descriptors,

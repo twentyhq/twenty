@@ -231,3 +231,40 @@ describe('ListItem content', () => {
     expect(screen.getByTestId('custom-label')).toBeInTheDocument();
   });
 });
+
+describe('ListItem multiline contract', () => {
+  it('keeps active, selection, and focus state independent of semantics', () => {
+    const ref = createRef<HTMLDivElement>();
+
+    const { rerender } = render(
+      <ListItem
+        ref={ref}
+        active
+        descriptionPlacement="below"
+        description="Supporting content"
+      >
+        Document
+      </ListItem>,
+    );
+
+    expect(ref.current).toHaveAttribute('data-active');
+    expect(ref.current).not.toHaveAttribute('data-selected');
+    expect(ref.current).not.toHaveAttribute('data-highlighted');
+    expect(ref.current).not.toHaveAttribute('aria-current');
+    expect(ref.current).not.toHaveAttribute('active');
+    expect(ref.current).toHaveAttribute('data-description-placement', 'below');
+    expect(screen.getByText('Supporting content')).toBeInTheDocument();
+
+    rerender(
+      <ListItem ref={ref} selected focused indicator="checkbox">
+        Document
+      </ListItem>,
+    );
+
+    expect(ref.current).not.toHaveAttribute('data-active');
+    expect(ref.current).toHaveAttribute('data-selected');
+    expect(ref.current).toHaveAttribute('data-highlighted');
+    expect(ref.current).toHaveAttribute('data-description-placement', 'inline');
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+  });
+});

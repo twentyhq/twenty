@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "2.50.0",
+  "version": "2.52.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -51,6 +51,7 @@
     "@vitejs/plugin-react-swc": "^4.3.1",
     "@vitest/browser-playwright": "^4.1.0",
     "esbuild": "^0.28.1",
+    "frimousse": "^0.4.0",
     "glob": "^11.1.0",
     "jsdom": "^30.0.1",
     "lightningcss": "^1.32.0",
@@ -80,6 +81,7 @@
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
+    "react-datepicker": "^9.1.0",
     "type-fest": "^4.10.1",
     "zod": "^4.1.11"
   },

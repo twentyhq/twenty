@@ -7,7 +7,10 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
+import {
+  GraphqlQueryFilterFieldParser,
+  type ParentFilterScope,
+} from './graphql-query-filter-field.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 export class GraphqlQueryFilterConditionParser {
@@ -18,12 +21,14 @@ export class GraphqlQueryFilterConditionParser {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
     depth = 0,
+    parentFilterScope?: ParentFilterScope,
   ) {
     this.queryFilterFieldParser = new GraphqlQueryFilterFieldParser(
       flatObjectMetadata,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       depth,
+      parentFilterScope,
     );
   }
 

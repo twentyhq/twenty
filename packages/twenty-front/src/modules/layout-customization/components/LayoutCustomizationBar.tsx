@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomValue } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPaint } from 'twenty-ui/icon';
-import { GRAY_SCALE_LIGHT, useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { LayoutCustomizationBarMenuDropdown } from '@/layout-customization/components/LayoutCustomizationBarMenuDropdown';
 import { LayoutCustomizationBarResetConfirmationModal } from '@/layout-customization/components/LayoutCustomizationBarResetConfirmationModal';
@@ -28,24 +28,11 @@ const StyledContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.color.blue};
   box-sizing: border-box;
-  color: ${GRAY_SCALE_LIGHT.gray1};
+  color: ${themeCssVariables.font.color.onAccent};
   display: flex;
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;
-
-  button,
-  button * {
-    color: ${GRAY_SCALE_LIGHT.gray1};
-  }
-
-  button {
-    --tw-button-color: ${GRAY_SCALE_LIGHT.gray1} !important;
-  }
-
-  button[type='submit']:not(:disabled):not(:focus) {
-    border-color: color(display-p3 1 1 1 / 0.5);
-  }
 `;
 
 const StyledLeftSection = styled.div`
@@ -126,7 +113,7 @@ const LayoutCustomizationBarContent = () => {
             isSaveDisabled={!isDirty || isSaving}
             isCancelDisabled={isSaving}
             isLoading={isSaving}
-            inverted
+            color="inherit"
             saveIcon={IconCheck}
           />
         </StyledRightSection>

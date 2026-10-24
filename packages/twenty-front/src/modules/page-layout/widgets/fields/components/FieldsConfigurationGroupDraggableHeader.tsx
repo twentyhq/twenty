@@ -40,13 +40,9 @@ export const FieldsConfigurationGroupDraggableHeader = ({
           color={themeCssVariables.font.color.tertiary}
         />
       </StyledIconContainer>
-      <StyledDisplayLabel>{text}</StyledDisplayLabel>
+      <Text size="xs" weight="semibold" color="light">
+        {text}
+      </Text>
     </StyledContainer>
   );
 };
-
-const StyledDisplayLabel = styled(Text)`
-  color: var(--t-font-color-light);
-  font-size: 11px;
-  font-weight: var(--t-font-weight-semi-bold);
-`;

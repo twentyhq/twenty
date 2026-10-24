@@ -32,7 +32,10 @@ const assertReferences = (fail) => {
 };
 
 const assertHowAppsWork = (fail) => {
-  const howAppsWorkPath = path.join(PLUGIN_ROOT, 'references/concepts/how-apps-work.md');
+  const howAppsWorkPath = path.join(
+    PLUGIN_ROOT,
+    'references/concepts/how-apps-work.md',
+  );
 
   if (!fs.existsSync(howAppsWorkPath)) {
     fail('required reference is missing: references/concepts/how-apps-work.md');
@@ -51,7 +54,7 @@ const assertHowAppsWork = (fail) => {
     '## Twenty Instances And Remotes',
     '## Local Development Environment',
     '## App Lifecycle',
-    'create-twenty-app',
+    'twenty app init',
     '## Front Component Rendering',
     'Remote DOM',
     '## App File Structure',
@@ -97,8 +100,4 @@ const assertHowAppsWork = (fail) => {
   }
 };
 
-export {
-  REQUIRED_REFERENCES,
-  assertReferences,
-  assertHowAppsWork,
-};
+export { REQUIRED_REFERENCES, assertReferences, assertHowAppsWork };

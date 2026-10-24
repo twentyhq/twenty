@@ -16,6 +16,7 @@ import {
   type RecordOutputSchemaV2,
   type VariableSearchResult,
 } from '../types/OutputSchema';
+import { isBaseOutputSchemaV2 } from '../guards/isBaseOutputSchemaV2';
 import { isFlattenedArrayOutputSchema } from './flattened-array-output-schema';
 
 const EMPTY_RESULT: VariableSearchResult = {
@@ -474,24 +475,13 @@ const searchThroughCodeOutputSchema = ({
   codeOutputSchema: unknown;
   rawVariableName: string;
 }): VariableSearchResult => {
-  if (!isDefined(codeOutputSchema)) {
-    return EMPTY_RESULT;
-  }
-
-  if (
-    isObject(codeOutputSchema) &&
-    '_outputSchemaType' in codeOutputSchema &&
-    codeOutputSchema._outputSchemaType === 'LINK'
-  ) {
+  if (!isBaseOutputSchemaV2(codeOutputSchema)) {
     return EMPTY_RESULT;
   }
 
   const parts = parseVariablePath(stripBrackets(rawVariableName));
 
-  if (
-    parts.length === 1 &&
-    isFlattenedArrayOutputSchema(codeOutputSchema as BaseOutputSchemaV2)
-  ) {
+  if (parts.length === 1 && isFlattenedArrayOutputSchema(codeOutputSchema)) {
     return {
       variableLabel: stepName,
       variablePathLabel: stepName,
@@ -501,7 +491,7 @@ const searchThroughCodeOutputSchema = ({
 
   return searchThroughBaseOutputSchema({
     stepName,
-    baseOutputSchema: codeOutputSchema as BaseOutputSchemaV2,
+    baseOutputSchema: codeOutputSchema,
     rawVariableName,
   });
 };

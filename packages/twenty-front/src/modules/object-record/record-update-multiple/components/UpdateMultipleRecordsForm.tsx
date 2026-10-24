@@ -1,11 +1,14 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordFormFieldInput } from '@/object-record/record-form/components/RecordFormFieldInput';
+import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type UpdateMultipleRecordsState } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
 import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
 import { css } from '@linaria/core';
+import { useId } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -34,6 +37,7 @@ export const UpdateMultipleRecordsForm = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+  const formInstanceId = useId();
 
   const editableFields = objectMetadataItem.fields
     .filter(shouldDisplayFormMultiEditField)
@@ -77,14 +81,23 @@ export const UpdateMultipleRecordsForm = ({
         };
 
         return (
-          <RecordFormFieldInput
+          <RecordFieldComponentInstanceContext.Provider
             key={fieldDefinition.metadata.fieldName}
-            readonly={disabled}
-            field={fieldDefinition}
-            defaultValue={value}
-            onChange={handleValueChange}
-            onClear={() => onChange(fieldNameOrRelationIdName, undefined)}
-          />
+            value={{
+              instanceId: getRecordFormFieldInputInstanceId({
+                formInstanceId,
+                fieldMetadataId: fieldMetadataItem.id,
+              }),
+            }}
+          >
+            <RecordFormFieldInput
+              readonly={disabled}
+              field={fieldDefinition}
+              defaultValue={value}
+              onChange={handleValueChange}
+              onClear={() => onChange(fieldNameOrRelationIdName, undefined)}
+            />
+          </RecordFieldComponentInstanceContext.Provider>
         );
       })}
     </Section.Root>

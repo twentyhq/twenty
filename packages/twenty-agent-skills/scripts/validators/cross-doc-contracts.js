@@ -5,7 +5,10 @@ import { PLUGIN_ROOT, listFiles, readText } from './lib.js';
 
 const assertTwentyMcpFormattingContract = (fail) => {
   const skillPath = path.join(PLUGIN_ROOT, 'skills/use-twenty-mcp/SKILL.md');
-  const resultFormattingPath = path.join(PLUGIN_ROOT, 'references/use-twenty-mcp/result-formatting.md');
+  const resultFormattingPath = path.join(
+    PLUGIN_ROOT,
+    'references/use-twenty-mcp/result-formatting.md',
+  );
   const skill = readText(skillPath);
   const formatting = readText(resultFormattingPath);
 
@@ -19,7 +22,9 @@ const assertTwentyMcpFormattingContract = (fail) => {
 
   for (const fragment of requiredSkillFragments) {
     if (!skill.includes(fragment)) {
-      fail(`use-twenty-mcp/SKILL.md is missing formatting contract fragment: ${fragment}`);
+      fail(
+        `use-twenty-mcp/SKILL.md is missing formatting contract fragment: ${fragment}`,
+      );
     }
   }
 
@@ -33,18 +38,35 @@ const assertTwentyMcpFormattingContract = (fail) => {
 
   for (const fragment of requiredFormattingFragments) {
     if (!formatting.includes(fragment)) {
-      fail(`result-formatting.md is missing record-link guidance fragment: ${fragment}`);
+      fail(
+        `result-formatting.md is missing record-link guidance fragment: ${fragment}`,
+      );
     }
   }
 };
 
 const assertFrontComponentGuidance = (fail) => {
-  const developSkillPath = path.join(PLUGIN_ROOT, 'skills/develop-app/SKILL.md');
+  const developSkillPath = path.join(
+    PLUGIN_ROOT,
+    'skills/develop-app/SKILL.md',
+  );
   const layoutPath = path.join(PLUGIN_ROOT, 'references/develop-app/layout.md');
-  const frontComponentsPath = path.join(PLUGIN_ROOT, 'references/develop-app/front-components.md');
-  const standalonePagesPath = path.join(PLUGIN_ROOT, 'references/develop-app/standalone-pages.md');
-  const appStructurePath = path.join(PLUGIN_ROOT, 'references/develop-app/app-structure.md');
-  const frontComponentUiPath = path.join(PLUGIN_ROOT, 'references/design/front-component-ui.md');
+  const frontComponentsPath = path.join(
+    PLUGIN_ROOT,
+    'references/develop-app/front-components.md',
+  );
+  const standalonePagesPath = path.join(
+    PLUGIN_ROOT,
+    'references/develop-app/standalone-pages.md',
+  );
+  const appStructurePath = path.join(
+    PLUGIN_ROOT,
+    'references/develop-app/app-structure.md',
+  );
+  const frontComponentUiPath = path.join(
+    PLUGIN_ROOT,
+    'references/design/front-component-ui.md',
+  );
   const developSkill = readText(developSkillPath);
   const layout = readText(layoutPath);
   const frontComponents = readText(frontComponentsPath);
@@ -61,7 +83,9 @@ const assertFrontComponentGuidance = (fail) => {
 
   for (const fragment of requiredDevelopSkillFragments) {
     if (!developSkill.includes(fragment)) {
-      fail(`develop-app/SKILL.md is missing front component guidance: ${fragment}`);
+      fail(
+        `develop-app/SKILL.md is missing front component guidance: ${fragment}`,
+      );
     }
   }
 
@@ -111,24 +135,28 @@ const assertFrontComponentGuidance = (fail) => {
     'owns internal scrolling',
     'Full-Page Layout Guidance',
     'black screen',
-    'yarn twenty apply',
+    'twenty app apply',
   ];
 
   for (const fragment of requiredStandalonePageFragments) {
     if (!standalonePages.includes(fragment)) {
-      fail(`standalone-pages.md is missing standalone page guidance: ${fragment}`);
+      fail(
+        `standalone-pages.md is missing standalone page guidance: ${fragment}`,
+      );
     }
   }
 
   const requiredAppStructureFragments = [
-    'yarn twenty dev:typecheck',
+    'twenty app typecheck',
     'yarn lint',
-    'yarn twenty apply',
+    'twenty app apply',
   ];
 
   for (const fragment of requiredAppStructureFragments) {
     if (!appStructure.includes(fragment)) {
-      fail(`app-structure.md is missing validation checklist command: ${fragment}`);
+      fail(
+        `app-structure.md is missing validation checklist command: ${fragment}`,
+      );
     }
   }
 
@@ -146,7 +174,9 @@ const assertFrontComponentGuidance = (fail) => {
 
   for (const fragment of requiredUiDesignFragments) {
     if (!frontComponentUi.includes(fragment)) {
-      fail(`front-component-ui.md is missing design-only guidance: ${fragment}`);
+      fail(
+        `front-component-ui.md is missing design-only guidance: ${fragment}`,
+      );
     }
   }
 
@@ -159,16 +189,27 @@ const assertFrontComponentGuidance = (fail) => {
 
   for (const fragment of forbiddenUiFragments) {
     if (frontComponentUi.includes(fragment)) {
-      fail(`front-component-ui.md should stay design-only and not include: ${fragment}`);
+      fail(
+        `front-component-ui.md should stay design-only and not include: ${fragment}`,
+      );
     }
   }
 };
 
 const assertCliGuidanceSplit = (fail) => {
-  const developSkillPath = path.join(PLUGIN_ROOT, 'skills/develop-app/SKILL.md');
+  const developSkillPath = path.join(
+    PLUGIN_ROOT,
+    'skills/develop-app/SKILL.md',
+  );
   const manageSkillPath = path.join(PLUGIN_ROOT, 'skills/manage-app/SKILL.md');
-  const appStructurePath = path.join(PLUGIN_ROOT, 'references/develop-app/app-structure.md');
-  const cliAndSyncPath = path.join(PLUGIN_ROOT, 'references/manage-app/cli-and-sync.md');
+  const appStructurePath = path.join(
+    PLUGIN_ROOT,
+    'references/develop-app/app-structure.md',
+  );
+  const cliAndSyncPath = path.join(
+    PLUGIN_ROOT,
+    'references/manage-app/cli-and-sync.md',
+  );
   const developSkill = readText(developSkillPath);
   const manageSkill = readText(manageSkillPath);
   const appStructure = readText(appStructurePath);
@@ -176,8 +217,8 @@ const assertCliGuidanceSplit = (fail) => {
 
   const requiredDevelopFragments = [
     'references/develop-app/app-structure.md',
-    'yarn twenty dev:add',
-    'yarn twenty apply',
+    'twenty app add',
+    'twenty app apply',
     'switch to `manage-app`',
   ];
 
@@ -195,7 +236,9 @@ const assertCliGuidanceSplit = (fail) => {
 
   for (const fragment of requiredManageFragments) {
     if (!manageSkill.includes(fragment)) {
-      fail(`manage-app/SKILL.md is missing CLI reference guidance: ${fragment}`);
+      fail(
+        `manage-app/SKILL.md is missing CLI reference guidance: ${fragment}`,
+      );
     }
   }
 
@@ -205,14 +248,16 @@ const assertCliGuidanceSplit = (fail) => {
     '## Entity Creation',
     '## Validation Checklist',
     'run lint and typecheck once at the end (not after each individual edit)',
-    'yarn twenty dev:typecheck',
+    'twenty app typecheck',
     'yarn lint',
-    'yarn twenty apply',
+    'twenty app apply',
   ];
 
   for (const fragment of requiredAppStructureFragments) {
     if (!appStructure.includes(fragment)) {
-      fail(`app-structure.md is missing develop-app structure guidance: ${fragment}`);
+      fail(
+        `app-structure.md is missing develop-app structure guidance: ${fragment}`,
+      );
     }
   }
 
@@ -223,57 +268,63 @@ const assertCliGuidanceSplit = (fail) => {
     'Use one-shot mode for agents',
     'yarn twenty dev --once',
     'yarn twenty dev --once --verbose',
-    'yarn twenty remote:list',
-    'Do not run `yarn twenty dev:typecheck`',
+    'twenty remote list',
+    'Do not run `twenty app typecheck`',
     'run outside the sandbox',
     'incompatible Node and Yarn',
   ];
 
   for (const fragment of forbiddenAppStructureFragments) {
     if (appStructure.includes(fragment)) {
-      fail(`app-structure.md should not own CLI semantics or forbid post-edit validation: ${fragment}`);
+      fail(
+        `app-structure.md should not own CLI semantics or forbid post-edit validation: ${fragment}`,
+      );
     }
   }
 
   const requiredDevelopValidationFragments = [
     'run lint and typecheck once at the end (not after each individual edit)',
-    'yarn twenty dev:typecheck',
+    'twenty app typecheck',
     'yarn lint',
   ];
 
   for (const fragment of requiredDevelopValidationFragments) {
     if (!developSkill.includes(fragment)) {
-      fail(`develop-app/SKILL.md is missing post-edit validation guidance: ${fragment}`);
+      fail(
+        `develop-app/SKILL.md is missing post-edit validation guidance: ${fragment}`,
+      );
     }
   }
 
   const forbiddenDevelopFragments = [
-    'Do not run `yarn twenty dev:typecheck`',
+    'Do not run `twenty app typecheck`',
     'debug the toolchain',
     'run outside the sandbox',
   ];
 
   for (const fragment of forbiddenDevelopFragments) {
     if (developSkill.includes(fragment)) {
-      fail(`develop-app/SKILL.md should not forbid post-edit validation or warn about the sandbox: ${fragment}`);
+      fail(
+        `develop-app/SKILL.md should not forbid post-edit validation or warn about the sandbox: ${fragment}`,
+      );
     }
   }
 
   const requiredCliFragments = [
     '# CLI And Sync',
-    'yarn twenty dev:typecheck',
+    'twenty app typecheck',
     'yarn lint',
-    'yarn twenty plan',
-    'yarn twenty apply',
-    '`yarn twenty plan` is read-only and requires the app to already be installed',
-    'For a first sync, run `yarn twenty apply`',
+    'twenty app plan',
+    'twenty app apply',
+    '`twenty app plan` is read-only and requires the app to already be installed',
+    'For a first sync, run `twenty app apply --create`',
     'Use the bounded apply command to synchronize app changes with the active remote',
-    'Do not use bare `yarn twenty dev` (watch mode)',
-    'yarn twenty apply --verbose',
-    'yarn twenty remote:list',
-    'yarn twenty dev:build',
-    'yarn twenty app:publish',
-    'yarn twenty dev:function:logs',
+    'Do not use bare `twenty app dev` (watch mode)',
+    'twenty app apply --json',
+    'twenty remote list',
+    'twenty app build',
+    'twenty app publish',
+    'twenty app logs',
   ];
 
   for (const fragment of requiredCliFragments) {
@@ -291,7 +342,9 @@ const assertCliGuidanceSplit = (fail) => {
 
   for (const fragment of forbiddenCliFragments) {
     if (cliAndSync.includes(fragment)) {
-      fail(`cli-and-sync.md should not warn about the sandbox or reference the removed command-execution.md: ${fragment}`);
+      fail(
+        `cli-and-sync.md should not warn about the sandbox or reference the removed command-execution.md: ${fragment}`,
+      );
     }
   }
 
@@ -324,8 +377,14 @@ const assertCliGuidanceSplit = (fail) => {
 const assertTestingGuidance = (fail) => {
   const manageSkillPath = path.join(PLUGIN_ROOT, 'skills/manage-app/SKILL.md');
   const testsPath = path.join(PLUGIN_ROOT, 'references/develop-app/tests.md');
-  const cliAndSyncPath = path.join(PLUGIN_ROOT, 'references/manage-app/cli-and-sync.md');
-  const operatingRulesPath = path.join(PLUGIN_ROOT, 'references/concepts/operating-rules.md');
+  const cliAndSyncPath = path.join(
+    PLUGIN_ROOT,
+    'references/manage-app/cli-and-sync.md',
+  );
+  const operatingRulesPath = path.join(
+    PLUGIN_ROOT,
+    'references/concepts/operating-rules.md',
+  );
   const manageSkill = readText(manageSkillPath);
   const tests = readText(testsPath);
   const cliAndSync = readText(cliAndSyncPath);
@@ -334,14 +393,16 @@ const assertTestingGuidance = (fail) => {
   const requiredManageFragments = [
     'run tests for my Twenty app',
     'references/develop-app/tests.md',
-    'yarn twenty docker:start --test',
+    'docker start twenty-app-dev-test',
     'TWENTY_API_URL=http://localhost:2021 yarn test',
     'Do not run integration tests against the dev instance on `http://localhost:2020`',
   ];
 
   for (const fragment of requiredManageFragments) {
     if (!manageSkill.includes(fragment)) {
-      fail(`manage-app/SKILL.md is missing test execution guidance: ${fragment}`);
+      fail(
+        `manage-app/SKILL.md is missing test execution guidance: ${fragment}`,
+      );
     }
   }
 
@@ -354,20 +415,24 @@ const assertTestingGuidance = (fail) => {
 
   for (const fragment of requiredSharedFragments) {
     if (!tests.includes(fragment)) {
-      fail(`tests.md is missing isolated integration-test guidance: ${fragment}`);
+      fail(
+        `tests.md is missing isolated integration-test guidance: ${fragment}`,
+      );
     }
   }
 
   const requiredCliFragments = [
     'Integration tests install and uninstall the app on their target server',
-    'yarn twenty docker:start --test',
+    'docker start twenty-app-dev-test',
     'port `2021`',
     '../develop-app/tests.md',
   ];
 
   for (const fragment of requiredCliFragments) {
     if (!cliAndSync.includes(fragment)) {
-      fail(`cli-and-sync.md is missing integration-test target guidance: ${fragment}`);
+      fail(
+        `cli-and-sync.md is missing integration-test target guidance: ${fragment}`,
+      );
     }
   }
 
@@ -378,7 +443,9 @@ const assertTestingGuidance = (fail) => {
 
   for (const fragment of requiredOperatingRulesFragments) {
     if (!operatingRules.includes(fragment)) {
-      fail(`operating-rules.md is missing durable test target guidance: ${fragment}`);
+      fail(
+        `operating-rules.md is missing durable test target guidance: ${fragment}`,
+      );
     }
   }
 };
@@ -395,10 +462,15 @@ const OPERATING_RULE_HEADLINES = [
 // Every entry point links to the operating rules to keep authored guidance
 // from drifting between skills and the Codex wrapper.
 const assertOperatingRulesSingleSource = (fail) => {
-  const operatingRulesPath = path.join(PLUGIN_ROOT, 'references/concepts/operating-rules.md');
+  const operatingRulesPath = path.join(
+    PLUGIN_ROOT,
+    'references/concepts/operating-rules.md',
+  );
 
   if (!fs.existsSync(operatingRulesPath)) {
-    fail('required reference is missing: references/concepts/operating-rules.md');
+    fail(
+      'required reference is missing: references/concepts/operating-rules.md',
+    );
     return;
   }
 
@@ -412,7 +484,9 @@ const assertOperatingRulesSingleSource = (fail) => {
 
   const restatingDocumentPaths = [
     path.join(PLUGIN_ROOT, 'AGENTS.md'),
-    ...listFiles(path.join(PLUGIN_ROOT, 'skills')).filter((filePath) => filePath.endsWith('.md')),
+    ...listFiles(path.join(PLUGIN_ROOT, 'skills')).filter((filePath) =>
+      filePath.endsWith('.md'),
+    ),
   ];
 
   for (const documentPath of restatingDocumentPaths) {
@@ -421,7 +495,9 @@ const assertOperatingRulesSingleSource = (fail) => {
 
     for (const headline of OPERATING_RULE_HEADLINES) {
       if (contents.includes(headline)) {
-        fail(`${relativePath} restates an operating rule instead of linking to operating-rules.md: ${headline}`);
+        fail(
+          `${relativePath} restates an operating rule instead of linking to operating-rules.md: ${headline}`,
+        );
       }
     }
   }
@@ -429,7 +505,9 @@ const assertOperatingRulesSingleSource = (fail) => {
   const agents = readText(path.join(PLUGIN_ROOT, 'AGENTS.md'));
 
   if (!agents.includes('references/concepts/operating-rules.md')) {
-    fail('AGENTS.md must point at references/concepts/operating-rules.md for the durable operating rules');
+    fail(
+      'AGENTS.md must point at references/concepts/operating-rules.md for the durable operating rules',
+    );
   }
 
   // Headlines catch a copied rule list. Copied prose is the other way a second
@@ -439,7 +517,9 @@ const assertOperatingRulesSingleSource = (fail) => {
   const ruleBodySentences = operatingRules
     .split('\n')
     .filter((line) => /^\d+\.\s+\*\*/.test(line))
-    .flatMap((line) => line.replace(/^\d+\.\s+\*\*[^*]+\*\*\s*/, '').split('. '))
+    .flatMap((line) =>
+      line.replace(/^\d+\.\s+\*\*[^*]+\*\*\s*/, '').split('. '),
+    )
     .map((sentence) => sentence.trim())
     .filter((sentence) => sentence.length >= 60);
 
@@ -449,7 +529,9 @@ const assertOperatingRulesSingleSource = (fail) => {
 
     for (const sentence of ruleBodySentences) {
       if (contents.includes(sentence)) {
-        fail(`${relativePath} copies a sentence from operating-rules.md instead of linking to it: "${sentence.slice(0, 60)}..."`);
+        fail(
+          `${relativePath} copies a sentence from operating-rules.md instead of linking to it: "${sentence.slice(0, 60)}..."`,
+        );
       }
     }
   }

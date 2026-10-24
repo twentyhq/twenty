@@ -37,6 +37,7 @@
     "values": {
       "AvatarGroup": "components/data-display/AvatarGroup/AvatarGroup",
       "CommandBlock": "components/data-display/CommandBlock/CommandBlock",
+      "DetailsRow": "components/data-display/DetailsRow/DetailsRow",
       "getIconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonTree": "components/data-display/JsonTree/JsonTree",
       "MetricRow": "components/data-display/MetricRow/MetricRow",
@@ -46,6 +47,7 @@
     "types": {
       "AvatarGroupProps": "components/data-display/AvatarGroup/types/AvatarGroupProps",
       "CommandBlockProps": "components/data-display/CommandBlock/types/CommandBlockProps",
+      "DetailsRowProps": "components/data-display/DetailsRow/types/DetailsRowProps",
       "GetJsonNodeHighlighting": "components/data-display/JsonTree/types/GetJsonNodeHighlighting",
       "IconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "JsonNodeHighlighting": "components/data-display/JsonTree/types/JsonNodeHighlighting",
@@ -90,6 +92,9 @@
     "values": {
       "CountrySelect": "components/input/CountrySelect/CountrySelect",
       "CurrencyPicker": "components/input/CurrencyPicker/CurrencyPicker",
+      "DatePicker": "components/input/DatePicker/DatePicker",
+      "EmojiPicker": "components/input/EmojiPicker/EmojiPicker",
+      "FormFieldRow": "components/input/FormFieldRow/FormFieldRow",
       "IconButton": "components/input/IconButton/IconButton",
       "ImageInput": "components/input/ImageInput/ImageInput",
       "LightButton": "components/input/LightButton/LightButton",
@@ -97,6 +102,7 @@
       "MainButton": "components/input/MainButton/MainButton",
       "NumberStepper": "components/input/NumberStepper/NumberStepper",
       "PhoneCountryPicker": "components/input/PhoneCountryPicker/PhoneCountryPicker",
+      "ReactionButton": "components/input/ReactionButton/ReactionButton",
       "SearchInput": "components/input/SearchInput/SearchInput",
       "SegmentedControl": "components/input/SegmentedControl/SegmentedControl"
     },
@@ -114,6 +120,10 @@
       "CurrencyPickerRootProps": "components/input/CurrencyPicker/types/CurrencyPickerRootProps",
       "CurrencyPickerState": "components/input/CurrencyPicker/types/CurrencyPickerState",
       "CurrencyPickerTriggerProps": "components/input/CurrencyPicker/types/CurrencyPickerTriggerProps",
+      "DatePickerHeaderProps": "components/input/DatePicker/types/DatePickerHeaderProps",
+      "DatePickerProps": "components/input/DatePicker/types/DatePickerProps",
+      "EmojiPickerProps": "components/input/EmojiPicker/types/EmojiPickerProps",
+      "FormFieldRowProps": "components/input/FormFieldRow/types/FormFieldRowProps",
       "IconButtonProps": "components/input/IconButton/types/IconButtonProps",
       "IconButtonSize": "components/input/IconButton/types/IconButtonSize",
       "ImageInputProps": "components/input/ImageInput/types/ImageInputProps",
@@ -125,21 +135,25 @@
       "PhoneCountryPickerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerProps",
       "PhoneCountryPickerRootProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerRootProps",
       "PhoneCountryPickerTriggerProps": "components/input/PhoneCountryPicker/types/PhoneCountryPickerTriggerProps",
+      "ReactionButtonProps": "components/input/ReactionButton/types/ReactionButtonProps",
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SegmentedControlOption": "components/input/SegmentedControl/types/SegmentedControlOption",
       "SegmentedControlProps": "components/input/SegmentedControl/types/SegmentedControlProps",
-      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize"
+      "SegmentedControlSize": "components/input/SegmentedControl/types/SegmentedControlSize",
+      "SegmentedControlVariant": "components/input/SegmentedControl/types/SegmentedControlVariant"
     }
   },
   "components/layout": {
     "reExports": [],
     "values": {
       "AnimatedIconCrossfade": "components/layout/AnimatedIconCrossfade/AnimatedIconCrossfade",
+      "LabeledSeparator": "components/layout/LabeledSeparator/LabeledSeparator",
       "OverflowingList": "components/layout/OverflowingList/OverflowingList",
       "Section": "components/layout/Section/Section"
     },
     "types": {
       "AnimatedIconCrossfadeProps": "components/layout/AnimatedIconCrossfade/types/AnimatedIconCrossfadeProps",
+      "LabeledSeparatorProps": "components/layout/LabeledSeparator/types/LabeledSeparatorProps",
       "OverflowingListProps": "components/layout/OverflowingList/types/OverflowingListProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
       "SectionRootProps": "components/layout/Section/types/SectionRootProps"
@@ -148,17 +162,16 @@
   "components/navigation": {
     "reExports": [],
     "values": {
+      "CountPager": "components/navigation/CountPager/CountPager",
       "DEFAULT_COLOR_LABELS": "components/navigation/MenuItem/constants/DefaultColorLabels",
       "Dropdown": "components/navigation/Dropdown/Dropdown",
       "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
-      "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
-      "MenuItemSuggestion": "components/navigation/MenuItemSuggestion/MenuItemSuggestion",
-      "MenuPicker": "components/navigation/MenuPicker/MenuPicker",
       "TabButton": "components/navigation/TabButton/TabButton",
       "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage"
     },
     "types": {
       "ColorLabels": "components/navigation/MenuItem/types/ColorLabels",
+      "CountPagerProps": "components/navigation/CountPager/types/CountPagerProps",
       "DropdownActionItemProps": "components/navigation/Dropdown/types/DropdownActionItemProps",
       "DropdownCloseProps": "components/navigation/Dropdown/types/DropdownCloseProps",
       "DropdownContentProps": "components/navigation/Dropdown/types/DropdownContentProps",
@@ -181,10 +194,6 @@
       "DropdownType": "components/navigation/Dropdown/types/DropdownType",
       "ListItemButtonProps": "components/navigation/ListItemButton/types/ListItemButtonProps",
       "MenuItemAccent": "components/navigation/MenuItem/types/MenuItemAccent",
-      "MenuItemDraggableGripMode": "components/navigation/MenuItem/types/MenuItemDraggableGripMode",
-      "MenuItemDraggableProps": "components/navigation/MenuItemDraggable/types/MenuItemDraggableProps",
-      "MenuItemSuggestionProps": "components/navigation/MenuItemSuggestion/types/MenuItemSuggestionProps",
-      "MenuPickerProps": "components/navigation/MenuPicker/types/MenuPickerProps",
       "TabButtonProps": "components/navigation/TabButton/types/TabButtonProps"
     }
   },
@@ -310,6 +319,7 @@
       "IconCodeCircle": "icon/components/TablerIcons",
       "IconCoins": "icon/components/TablerIcons",
       "IconColorSwatch": "icon/components/TablerIcons",
+      "IconColumnInsertLeft": "icon/components/TablerIcons",
       "IconColumnInsertRight": "icon/components/TablerIcons",
       "IconColumns": "icon/components/TablerIcons",
       "IconCommand": "icon/components/TablerIcons",
@@ -317,6 +327,7 @@
       "IconCompass": "icon/components/TablerIcons",
       "IconCopy": "icon/components/TablerIcons",
       "IconCopyPlus": "icon/components/TablerIcons",
+      "IconCornerDownRight": "icon/components/TablerIcons",
       "IconCpu": "icon/components/TablerIcons",
       "IconCreativeCommonsSa": "icon/components/TablerIcons",
       "IconCreditCard": "icon/components/TablerIcons",
@@ -414,6 +425,7 @@
       "IconFolderRoot": "icon/components/TablerIcons",
       "IconFolderSymlink": "icon/components/TablerIcons",
       "IconForbid": "icon/components/TablerIcons",
+      "IconForms": "icon/components/TablerIcons",
       "IconFrame": "icon/components/TablerIcons",
       "IconFunction": "icon/components/TablerIcons",
       "IconGauge": "icon/components/TablerIcons",
@@ -425,6 +437,7 @@
       "IconGoogle": "icon/components/IconGoogle",
       "IconGoogleCalendar": "icon/components/IconGoogleCalendar",
       "IconGraph": "icon/components/TablerIcons",
+      "IconGripHorizontal": "icon/components/TablerIcons",
       "IconGripVertical": "icon/components/TablerIcons",
       "IconH1": "icon/components/TablerIcons",
       "IconH2": "icon/components/TablerIcons",
@@ -434,6 +447,7 @@
       "IconH6": "icon/components/TablerIcons",
       "IconHandClick": "icon/components/TablerIcons",
       "IconHandMove": "icon/components/TablerIcons",
+      "IconHash": "icon/components/TablerIcons",
       "IconHeadphones": "icon/components/TablerIcons",
       "IconHeart": "icon/components/TablerIcons",
       "IconHeartOff": "icon/components/TablerIcons",
@@ -512,6 +526,7 @@
       "IconMinus": "icon/components/TablerIcons",
       "IconModelClaude": "icon/components/IconModelClaude",
       "IconMoneybag": "icon/components/TablerIcons",
+      "IconMoodPlus": "icon/components/TablerIcons",
       "IconMoodSmile": "icon/components/TablerIcons",
       "IconMoon": "icon/components/TablerIcons",
       "IconMouse2": "icon/components/TablerIcons",
@@ -634,6 +649,7 @@
       "IconTarget": "icon/components/TablerIcons",
       "IconTargetArrow": "icon/components/TablerIcons",
       "IconTerminal": "icon/components/TablerIcons",
+      "IconTerminal2": "icon/components/TablerIcons",
       "IconTestPipe": "icon/components/TablerIcons",
       "IconTextCaption": "icon/components/TablerIcons",
       "IconTextSize": "icon/components/TablerIcons",
@@ -902,6 +918,7 @@
       "InputGroupProps": "primitives/input/InputGroup/types/InputGroupProps",
       "InputProps": "primitives/input/Input/types/InputProps",
       "InputSize": "primitives/input/types/InputSize",
+      "InputVariant": "primitives/input/types/InputVariant",
       "NumberFieldDecrementProps": "primitives/input/NumberField/types/NumberFieldDecrementProps",
       "NumberFieldDecrementState": "primitives/input/NumberField/types/NumberFieldDecrementState",
       "NumberFieldGroupProps": "primitives/input/NumberField/types/NumberFieldGroupProps",
@@ -1081,7 +1098,9 @@
       "AlertDialogTriggerState": "primitives/surfaces/AlertDialog/types/AlertDialogTriggerState",
       "AlertDialogViewportProps": "primitives/surfaces/AlertDialog/types/AlertDialogViewportProps",
       "AlertDialogViewportState": "primitives/surfaces/AlertDialog/types/AlertDialogViewportState",
+      "CardActionProps": "primitives/surfaces/Card/types/CardActionProps",
       "CardContentProps": "primitives/surfaces/Card/types/CardContentProps",
+      "CardControlProps": "primitives/surfaces/Card/types/CardControlProps",
       "CardFooterProps": "primitives/surfaces/Card/types/CardFooterProps",
       "CardHeaderProps": "primitives/surfaces/Card/types/CardHeaderProps",
       "CardRootProps": "primitives/surfaces/Card/types/CardRootProps",

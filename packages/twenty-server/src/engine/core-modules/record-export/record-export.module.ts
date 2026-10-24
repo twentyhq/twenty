@@ -3,11 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { GenerateRecordExportJob } from 'src/engine/core-modules/record-export/jobs/generate-record-export.job';
 import { RecordExportResolver } from 'src/engine/core-modules/record-export/record-export.resolver';
+import { RecordExportQueryService } from 'src/engine/core-modules/record-export/services/record-export-query.service';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -22,18 +22,18 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UserSessionModule,
     CoreCommonApiModule,
     CoreEntityCacheModule,
-    FeatureFlagModule,
     JwtModule,
     UserWorkspaceModule,
     PermissionsModule,
     ApplicationTranslationCatalogModule,
     WorkspaceCacheModule,
   ],
-  exports: [RecordExportWorkspaceService],
+  exports: [RecordExportWorkspaceService, RecordExportQueryService],
   providers: [
     RecordExportResolver,
     provideWorkspaceScopedRepository(FileEntity),
     RecordExportWorkspaceService,
+    RecordExportQueryService,
     GenerateRecordExportJob,
   ],
 })

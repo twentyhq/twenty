@@ -45,7 +45,7 @@ Keep imports narrow:
 
 Keep the SDK packages and `twenty-ui` in `devDependencies`. Import shared components from their family entry point, such as `twenty-ui/components/input` for `MainButton` and `LightButton`, `twenty-ui/components/feedback` for `Callout`, `twenty-ui/components/layout` for `Section`, and `twenty-ui/components/navigation` for `Dropdown`. Use `twenty-ui/primitives/input` for foundational controls such as `Button`, `Field` and `Input`.
 
-The front component renderer provides the styles and a Twenty `ThemeProvider` around the remote root. In the app, inherit the workspace color scheme without adding another root provider, forcing light or dark mode, or importing the standalone stylesheets. For isolated examples or local story-style verification, wrapping the component in `ThemeProvider` from `twenty-ui/theme` is also acceptable.
+Twenty loads the UI stylesheets and applies the workspace color scheme on the host. In the app, inherit the workspace color scheme without adding another root provider, forcing light or dark mode, or importing the standalone stylesheets. For isolated examples or local story-style verification, wrapping the component in `ThemeProvider` from `twenty-ui/theme` is also acceptable.
 
 The canonical Twenty UI front component example is `packages/twenty-front-component-renderer/src/__stories__/showcase/twenty-ui-example.front-component.tsx`. It imports `Button` from `twenty-ui/primitives/input`; `Chip`, `Status`, and `Tag` from `twenty-ui/primitives/data-display`; `Section` from `twenty-ui/components/layout`; and `ThemeProvider` from `twenty-ui/theme`. Its explicit provider is for the isolated showcase.
 
@@ -53,7 +53,7 @@ Read theme tokens with the `useTheme()` hook from `twenty-ui/theme` inside the c
 
 Prefer Twenty UI icons from `twenty-ui/icon` when one exists. Use inline SVG only for app-specific marks or icons that are not available from `twenty-ui/icon`.
 
-Import individual icons, not `IconsProvider` or `useIcons`, which bundle the dynamic icon catalog. Use `themeCssVariables` only for CSS values inside render-time code; its values are CSS reference strings, so do not perform arithmetic on them. Use `useTheme()` when a prop needs a resolved value.
+Import individual icons, not `IconsProvider` or `useIcons`, which bundle the dynamic icon catalog. Use `themeCssVariables` only for CSS values inside render-time code. In front components, `useTheme()` also returns CSS reference strings by default, including for tokens typed as numbers. Do not perform arithmetic on those references or pass them to APIs requiring resolved numbers.
 
 ## Host UI And Runtime Constraints
 

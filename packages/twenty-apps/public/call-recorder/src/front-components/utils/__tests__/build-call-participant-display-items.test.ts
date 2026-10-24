@@ -57,7 +57,6 @@ describe('buildCallParticipantDisplayItems', () => {
     const { items } = buildCallParticipantDisplayItems({
       participants: [matchedPerson],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: false,
     });
 
     expect(items).toEqual([
@@ -83,7 +82,6 @@ describe('buildCallParticipantDisplayItems', () => {
         }),
       ],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: false,
     });
 
     expect(items).toMatchObject([
@@ -104,7 +102,6 @@ describe('buildCallParticipantDisplayItems', () => {
         },
       ],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: false,
     });
 
     expect(items).toMatchObject([
@@ -112,11 +109,10 @@ describe('buildCallParticipantDisplayItems', () => {
     ]);
   });
 
-  it('shows workspace members by name even when unmatched attendees are hidden', () => {
+  it('shows workspace members by name', () => {
     const { items } = buildCallParticipantDisplayItems({
       participants: [workspaceMember],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: false,
     });
 
     expect(items).toEqual([
@@ -131,21 +127,10 @@ describe('buildCallParticipantDisplayItems', () => {
     ]);
   });
 
-  it('hides unmatched attendees by default and counts them', () => {
-    const { items } = buildCallParticipantDisplayItems({
-      participants: [matchedPerson, unmatchedWithName, unmatchedWithHandleOnly],
-      areRelationsLoaded: true,
-      showUnmatchedAttendees: false,
-    });
-
-    expect(items.map((item) => item.kind)).toEqual(['person']);
-  });
-
-  it('shows unmatched attendees by display name, then handle, when enabled', () => {
+  it('shows unmatched attendees by display name, then handle', () => {
     const { items } = buildCallParticipantDisplayItems({
       participants: [unmatchedWithName, unmatchedWithHandleOnly],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: true,
     });
 
     expect(items).toEqual([
@@ -168,7 +153,6 @@ describe('buildCallParticipantDisplayItems', () => {
     const { items } = buildCallParticipantDisplayItems({
       participants: [buildParticipant({ id: 'empty', displayName: '  ' })],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: true,
     });
 
     expect(items).toEqual([]);
@@ -187,7 +171,6 @@ describe('buildCallParticipantDisplayItems', () => {
         },
       ],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: true,
     });
 
     expect(items.map((item) => item.key)).toEqual([
@@ -210,7 +193,6 @@ describe('buildCallParticipantDisplayItems', () => {
         { ...unmatchedWithHandleOnly, isOrganizer: true },
       ],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: true,
     });
 
     expect(items.map((item) => item.label)).toEqual([
@@ -231,21 +213,12 @@ describe('buildCallParticipantDisplayItems', () => {
       person: null,
     });
 
-    const hidden = buildCallParticipantDisplayItems({
+    const { items } = buildCallParticipantDisplayItems({
       participants: [participantWithMissingPerson],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: false,
     });
 
-    expect(hidden).toEqual({ items: [] });
-
-    const shown = buildCallParticipantDisplayItems({
-      participants: [participantWithMissingPerson],
-      areRelationsLoaded: true,
-      showUnmatchedAttendees: true,
-    });
-
-    expect(shown.items).toEqual([
+    expect(items).toEqual([
       {
         kind: 'unmatched',
         key: 'handle:gone@example.com',
@@ -261,7 +234,6 @@ describe('buildCallParticipantDisplayItems', () => {
         { ...workspaceMember, personId: 'person-deleted', person: null },
       ],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: false,
     });
 
     expect(items).toMatchObject([
@@ -285,7 +257,6 @@ describe('buildCallParticipantDisplayItems', () => {
         }),
       ],
       areRelationsLoaded: false,
-      showUnmatchedAttendees: false,
     });
 
     expect(items).toEqual([
@@ -308,16 +279,6 @@ describe('buildCallParticipantDisplayItems', () => {
     ]);
   });
 
-  it('still lists workspace members when every other attendee is hidden', () => {
-    const { items } = buildCallParticipantDisplayItems({
-      participants: [workspaceMember, unmatchedWithName],
-      areRelationsLoaded: true,
-      showUnmatchedAttendees: false,
-    });
-
-    expect(items.map((item) => item.kind)).toEqual(['workspaceMember']);
-  });
-
   it('ignores a restricted placeholder in the attendee name or email', () => {
     const { items } = buildCallParticipantDisplayItems({
       participants: [
@@ -333,7 +294,6 @@ describe('buildCallParticipantDisplayItems', () => {
         }),
       ],
       areRelationsLoaded: true,
-      showUnmatchedAttendees: true,
     });
 
     expect(items).toEqual([

@@ -16,6 +16,7 @@ export const SegmentedControl = <TValue extends string>({
   itemWidth = 'equal',
   options,
   size = 'md',
+  variant = 'round',
   ...props
 }: SegmentedControlProps<TValue>) => {
   const optionNameIdPrefix = useId();
@@ -28,6 +29,7 @@ export const SegmentedControl = <TValue extends string>({
         className,
       )}
       data-item-width={itemWidth}
+      data-variant={variant}
     >
       {options.map(
         (

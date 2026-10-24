@@ -8,8 +8,31 @@ import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/Em
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMenuItemClick';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import {
+  type ContextStoreTargetedRecordsRule,
+  contextStoreTargetedRecordsRuleComponentState,
+} from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
+
+const companyObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
+  (item) => item.nameSingular === 'company',
+)!;
+
+// jest.mock factories run before this file's own constants exist.
+jest.mock('@/object-metadata/states/objectMetadataItemsSelector', () => ({
+  objectMetadataItemsSelector: {
+    atom: jest.requireActual('jotai').atom(
+      jest
+        .requireActual('~/testing/utils/getTestEnrichedObjectMetadataItemsMock')
+        .getTestEnrichedObjectMetadataItemsMock()
+        .filter(
+          (item: { nameSingular: string }) => item.nameSingular === 'company',
+        ),
+    ),
+  },
+}));
 
 const mockOpenFrontComponentInSidePanel = jest.fn();
 const mockMountCommand = jest.fn();
@@ -20,10 +43,6 @@ jest.mock(
     useAvailableComponentInstanceIdOrThrow: () => 'context-store-instance-id',
   }),
 );
-
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => false,
-}));
 
 jest.mock('@/command-menu-item/engine-command/hooks/useMountCommand', () => ({
   useMountCommand: () => mockMountCommand,
@@ -59,16 +78,25 @@ const FRONT_COMPONENT_COMMAND_MENU_ITEM = {
   },
 } as CommandMenuItemDefinition;
 
-const getWrapper = (
-  commandMenuContextApi: CommandMenuContextApi,
-  selectedRecordIds: string[],
-) => {
+const getWrapper = ({
+  commandMenuContextApi,
+  targetedRecordsRule,
+}: {
+  commandMenuContextApi: CommandMenuContextApi;
+  targetedRecordsRule: ContextStoreTargetedRecordsRule;
+}) => {
   const store = createStore();
+  store.set(
+    contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
+      instanceId: 'context-store-instance-id',
+    }),
+    companyObjectMetadataItem.id,
+  );
   store.set(
     contextStoreTargetedRecordsRuleComponentState.atomFamily({
       instanceId: 'context-store-instance-id',
     }),
-    { mode: 'selection', selectedRecordIds },
+    targetedRecordsRule,
   );
 
   return ({ children }: { children: ReactNode }) => (
@@ -102,6 +130,7 @@ describe('useCommandMenuItemClick', () => {
       expectedRecordContext: {
         objectNameSingular: 'company',
         selectedRecordIds: ['record-1'],
+        selectedRecordsFilter: { id: { in: ['record-1'] } },
       },
     },
     {
@@ -112,6 +141,7 @@ describe('useCommandMenuItemClick', () => {
       expectedRecordContext: {
         objectNameSingular: 'company',
         selectedRecordIds: ['record-1', 'record-2'],
+        selectedRecordsFilter: { id: { in: ['record-1', 'record-2'] } },
       },
     },
     {
@@ -122,6 +152,7 @@ describe('useCommandMenuItemClick', () => {
       expectedRecordContext: {
         objectNameSingular: 'company',
         selectedRecordIds: ['record-1', 'record-2'],
+        selectedRecordsFilter: { id: { in: ['record-1', 'record-2'] } },
       },
     },
     {
@@ -132,6 +163,7 @@ describe('useCommandMenuItemClick', () => {
       expectedRecordContext: {
         objectNameSingular: 'company',
         selectedRecordIds: [],
+        selectedRecordsFilter: { id: { in: [] } },
       },
     },
     {
@@ -157,8 +189,8 @@ describe('useCommandMenuItemClick', () => {
             label: 'Open front component',
           }),
         {
-          wrapper: getWrapper(
-            {
+          wrapper: getWrapper({
+            commandMenuContextApi: {
               ...EMPTY_COMMAND_MENU_CONTEXT_API,
               objectMetadataItem,
               selectedRecords: storedRecordIds.map((id) => ({
@@ -166,8 +198,8 @@ describe('useCommandMenuItemClick', () => {
                 __typename: 'Company',
               })),
             },
-            selectedRecordIds,
-          ),
+            targetedRecordsRule: { mode: 'selection', selectedRecordIds },
+          }),
         },
       );
 
@@ -184,4 +216,46 @@ describe('useCommandMenuItemClick', () => {
       });
     },
   );
+
+  it('opens a side panel front component with the filter of a Select all', async () => {
+    const { result } = renderHook(
+      () =>
+        useCommandMenuItemClick({
+          item: FRONT_COMPONENT_COMMAND_MENU_ITEM,
+          Icon: IconApps,
+          label: 'Open front component',
+        }),
+      {
+        wrapper: getWrapper({
+          commandMenuContextApi: {
+            ...EMPTY_COMMAND_MENU_CONTEXT_API,
+            objectMetadataItem: { nameSingular: 'company' },
+            selectedRecords: [],
+          },
+          targetedRecordsRule: {
+            mode: 'exclusion',
+            excludedRecordIds: ['record-3'],
+          },
+        }),
+      },
+    );
+
+    await act(async () => {
+      await result.current.handleClick();
+    });
+
+    expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recordContext: {
+          objectNameSingular: 'company',
+          selectedRecordIds: [],
+          selectedRecordsFilter: {
+            and: expect.arrayContaining([
+              { not: { id: { in: ['record-3'] } } },
+            ]),
+          },
+        },
+      }),
+    );
+  });
 });

@@ -5,6 +5,10 @@
     box-sizing: border-box;
   }
 
+  :where(.tabler-icon, [data-twenty-icon]) {
+    flex-shrink: 0;
+  }
+
   button {
     margin: 0;
     padding: 0;

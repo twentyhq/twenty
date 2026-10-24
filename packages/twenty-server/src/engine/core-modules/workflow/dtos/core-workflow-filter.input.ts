@@ -18,6 +18,7 @@ export enum CoreWorkflowFilterFieldKey {
   NAME = 'NAME',
   STATUSES = 'STATUSES',
   UPDATED_AT = 'UPDATED_AT',
+  IS_SYSTEM = 'IS_SYSTEM',
 }
 
 export enum CoreWorkflowFilterOperand {

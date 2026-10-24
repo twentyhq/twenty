@@ -31,7 +31,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
   );
   const flow = useFlowOrThrow();
 
-  const { updateStep } = useUpdateStep();
+  const { updateStepNow } = useUpdateStep();
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
   const { closeRightClickMenu } = useCloseRightClickMenu();
@@ -62,7 +62,7 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
       settings: selection.defaultSettings ?? existingStep.settings,
     };
 
-    const { updatedStep } = await updateStep(stepUpdate as WorkflowAction);
+    const { updatedStep } = await updateStepNow(stepUpdate as WorkflowAction);
 
     if (!isDefined(updatedStep)) {
       return;
