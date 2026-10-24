@@ -20,10 +20,10 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type KeyboardEvent, useCallback, useId } from 'react';
+import { type KeyboardEvent, useCallback, useId, useState } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Key } from 'ts-key-enum';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -32,7 +32,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFormSelectContainerWrapper = styled.div<{
   readonly?: boolean;
-  hasFocusBorder?: boolean;
+  hasOutline?: boolean;
   $variant?: FormFieldInputVariant;
 }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -40,11 +40,8 @@ const StyledFormSelectContainerWrapper = styled.div<{
   height: ${({ $variant }) =>
     $variant === 'transparent' ? themeCssVariables.spacing[6] : '32px'};
   min-width: 0;
+  outline: ${({ hasOutline = true }) => (hasOutline ? 'revert' : 'none')};
   width: 100%;
-
-  &:focus-visible {
-    outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
-  }
 `;
 
 const StyledIconButton = styled.div<{ $variant?: FormFieldInputVariant }>`
@@ -152,6 +149,8 @@ export const FormSingleRecordPicker = ({
   const dropdownId = dropdownIdFromProps ?? `form-record-picker-${componentId}`;
   const variablesDropdownId = `form-record-picker-${componentId}-variables`;
   const triggerId = `form-record-picker-${componentId}-trigger`;
+  const hasRightElement = isDefined(VariablePicker) && !disabled;
+  const [isTriggerFocused, setIsTriggerFocused] = useState(false);
 
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
@@ -275,17 +274,26 @@ export const FormSingleRecordPicker = ({
                 <StyledFormSelectContainerWrapper
                   id={triggerId}
                   $variant={variant}
-                  hasFocusBorder={hasFormFieldFocusBorder({
-                    hasRightElement: isDefined(VariablePicker) && !disabled,
-                    variant,
-                  })}
+                  hasOutline={
+                    !hasFullFormFieldBorder({
+                      hasRightElement,
+                      variant,
+                    })
+                  }
                   tabIndex={0}
                   onKeyDown={handleTriggerKeyDown}
+                  onFocus={(event) =>
+                    setIsTriggerFocused(
+                      event.target === event.currentTarget &&
+                        event.currentTarget.matches(':focus-visible'),
+                    )
+                  }
+                  onBlur={() => setIsTriggerFocused(false)}
                 >
                   <FormFieldInputInnerContainer
                     formFieldInputInstanceId={componentId}
-                    hasRightElement={isDefined(VariablePicker) && !disabled}
-                    shouldHighlightOnParentFocus
+                    hasRightElement={hasRightElement}
+                    isFocused={isTriggerFocused}
                     hoverable
                     preventFocusStackUpdate={true}
                     variant={variant}

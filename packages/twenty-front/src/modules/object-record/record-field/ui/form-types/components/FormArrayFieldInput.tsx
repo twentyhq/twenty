@@ -1,5 +1,5 @@
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
@@ -53,7 +53,7 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div<{ hasFocusBorder: boolean }>`
+const StyledDisplayModeContainer = styled.div<{ hasOutline: boolean }>`
   align-items: center;
   background: transparent;
   border: none;
@@ -62,16 +62,13 @@ const StyledDisplayModeContainer = styled.div<{ hasFocusBorder: boolean }>`
   display: flex;
   font-family: inherit;
   height: 30px;
+  outline: ${({ hasOutline }) => (hasOutline ? 'revert' : 'none')};
   padding-inline: ${themeCssVariables.spacing[2]};
   width: 100%;
 
   &:hover,
   &[data-popup-open] {
     background-color: ${themeCssVariables.background.transparent.lighter};
-  }
-
-  &:focus-visible {
-    outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
   }
 `;
 
@@ -361,7 +358,7 @@ export const FormArrayFieldInput = ({
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
           hasRightElement={isDefined(VariablePicker) && !readonly}
-          shouldHighlightOnChildFocus
+          shouldHighlightOnTriggerFocus
         >
           {draftValue.type === 'static' ? (
             readonly ? (
@@ -391,9 +388,11 @@ export const FormArrayFieldInput = ({
                 <Dropdown.Trigger
                   render={
                     <StyledDisplayModeContainer
-                      hasFocusBorder={hasFormFieldFocusBorder({
-                        hasRightElement: isDefined(VariablePicker) && !readonly,
-                      })}
+                      hasOutline={
+                        !hasFullFormFieldBorder({
+                          hasRightElement: isDefined(VariablePicker),
+                        })
+                      }
                     />
                   }
                   nativeButton={false}

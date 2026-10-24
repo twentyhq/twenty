@@ -1,5 +1,6 @@
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,13 +14,26 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
+const getBorderColor = ({
+  isFocused,
+  hasRightElement,
+  $variant,
+}: {
+  isFocused?: boolean;
+  hasRightElement?: boolean;
+  $variant?: FormFieldInputVariant;
+}) =>
+  isFocused && hasFullFormFieldBorder({ hasRightElement, variant: $variant })
+    ? themeCssVariables.color.blue
+    : themeCssVariables.border.color.medium;
+
 export const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;
   selectSizeVariant?: SelectSizeVariant;
   textAccent: SelectControlTextAccent;
   hasRightElement?: boolean;
-  shouldHighlightOnParentFocus?: boolean;
+  isFocused?: boolean;
   $variant?: FormFieldInputVariant;
 }>`
   align-items: center;
@@ -39,12 +53,13 @@ export const StyledControlContainer = styled.div<{
       : hasRightElement
         ? '0'
         : themeCssVariables.border.radius.md};
-  border-right: ${({ hasRightElement, $variant }) =>
+  border-color: ${getBorderColor};
+  border-right: ${({ isFocused, hasRightElement, $variant }) =>
     $variant === 'transparent'
       ? 'none'
       : hasRightElement
         ? 'none'
-        : `1px solid ${themeCssVariables.border.color.medium}`};
+        : `1px solid ${getBorderColor({ isFocused, hasRightElement, $variant })}`};
   border-top-left-radius: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
   border-top-right-radius: ${({ hasRightElement, $variant }) =>
@@ -81,13 +96,6 @@ export const StyledControlContainer = styled.div<{
   padding: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : `0 ${themeCssVariables.spacing[2]}`};
   text-align: left;
-
-  *:focus-visible > & {
-    border-color: ${({ shouldHighlightOnParentFocus }) =>
-      shouldHighlightOnParentFocus
-        ? themeCssVariables.color.blue
-        : themeCssVariables.border.color.medium};
-  }
 `;
 
 const StyledLeadingContent = styled.div`
@@ -120,7 +128,7 @@ export type SelectControlProps = {
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
   hasRightElement?: boolean;
-  shouldHighlightOnParentFocus?: boolean;
+  isFocused?: boolean;
   variant?: FormFieldInputVariant;
 };
 
@@ -132,7 +140,7 @@ export const SelectControl = ({
   selectSizeVariant,
   textAccent = 'default',
   hasRightElement,
-  shouldHighlightOnParentFocus = false,
+  isFocused = false,
   variant = 'default',
 }: SelectControlProps) => {
   const theme = useTheme();
@@ -147,7 +155,7 @@ export const SelectControl = ({
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
-      shouldHighlightOnParentFocus={shouldHighlightOnParentFocus}
+      isFocused={isFocused}
       $variant={variant}
       title={selectedOption.fullLabel}
     >

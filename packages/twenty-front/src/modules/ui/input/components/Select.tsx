@@ -3,7 +3,7 @@ import { type SelectProps } from '@/ui/input/types/SelectProps';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useRef, useState } from 'react';
@@ -24,10 +24,8 @@ const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
-const StyledSelectTrigger = styled.div<{ hasFocusBorder: boolean }>`
-  &:focus-visible {
-    outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
-  }
+const StyledSelectTrigger = styled.div<{ hasOutline: boolean }>`
+  outline: ${({ hasOutline }) => (hasOutline ? 'revert' : 'none')};
 `;
 
 const StyledLabel = styled.span`
@@ -72,6 +70,7 @@ export const Select = <TValue extends SelectValue>({
   const dropdownContentRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
+  const [isTriggerFocused, setIsTriggerFocused] = useState(false);
 
   const selectedOption = useMemo(() => {
     if (isDefined(pinnedOption) && pinnedOption.value === value) {
@@ -190,13 +189,19 @@ export const Select = <TValue extends SelectValue>({
           <Dropdown.Trigger
             render={
               <StyledSelectTrigger
-                hasFocusBorder={hasFormFieldFocusBorder({
-                  hasRightElement,
-                  variant,
-                })}
+                hasOutline={
+                  !hasFullFormFieldBorder({ hasRightElement, variant })
+                }
               />
             }
             nativeButton={false}
+            onFocus={(event) =>
+              setIsTriggerFocused(
+                event.target === event.currentTarget &&
+                  event.currentTarget.matches(':focus-visible'),
+              )
+            }
+            onBlur={() => setIsTriggerFocused(false)}
           >
             <SelectControl
               renderAsTag={renderAsTag}
@@ -205,10 +210,7 @@ export const Select = <TValue extends SelectValue>({
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
-              shouldHighlightOnParentFocus={hasFormFieldFocusBorder({
-                hasRightElement,
-                variant,
-              })}
+              isFocused={isTriggerFocused}
               variant={variant}
             />
           </Dropdown.Trigger>

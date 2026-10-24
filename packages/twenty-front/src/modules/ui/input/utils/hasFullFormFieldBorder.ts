@@ -1,6 +1,8 @@
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 
-export const hasFormFieldFocusBorder = ({
+// A right element (the workflow variable picker) draws the field's right side,
+// so the input box alone only has three sides of the field border.
+export const hasFullFormFieldBorder = ({
   hasRightElement = false,
   variant = 'default',
 }: {

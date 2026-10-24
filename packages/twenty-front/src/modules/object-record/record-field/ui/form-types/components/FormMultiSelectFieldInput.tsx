@@ -1,4 +1,4 @@
-import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
@@ -58,16 +58,13 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div<{ hasFocusBorder: boolean }>`
+const StyledDisplayModeContainer = styled.div<{ hasOutline: boolean }>`
   align-items: center;
   cursor: pointer;
   display: flex;
+  outline: ${({ hasOutline }) => (hasOutline ? 'revert' : 'none')};
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
-
-  &:focus-visible {
-    outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
-  }
 `;
 
 const StyledPlaceholderContainer = styled.div`
@@ -178,7 +175,7 @@ export const FormMultiSelectFieldInput = ({
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
-          shouldHighlightOnChildFocus
+          shouldHighlightOnTriggerFocus
           hoverable={!readonly}
           preventFocusStackUpdate={draftValue.type === 'static' && !readonly}
         >
@@ -210,9 +207,11 @@ export const FormMultiSelectFieldInput = ({
                 <Dropdown.Trigger
                   render={
                     <StyledDisplayModeContainer
-                      hasFocusBorder={hasFormFieldFocusBorder({
-                        hasRightElement: isDefined(VariablePicker) && !readonly,
-                      })}
+                      hasOutline={
+                        !hasFullFormFieldBorder({
+                          hasRightElement: isDefined(VariablePicker),
+                        })
+                      }
                     />
                   }
                   nativeButton={false}
