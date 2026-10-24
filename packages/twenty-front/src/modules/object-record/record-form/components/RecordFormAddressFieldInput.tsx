@@ -1,3 +1,4 @@
+import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { normalizeAddressFieldValueForPersist } from '@/object-record/record-field/ui/utils/normalizeAddressFieldValueForPersist';
 import { RecordFormFieldDetailsToggleRow } from '@/object-record/record-form/components/RecordFormFieldDetailsToggleRow';
@@ -47,7 +48,7 @@ type RecordFormAddressFieldInputProps = {
   label?: string;
   defaultValue?: FieldAddressValue;
   subFields?: AllowedAddressSubField[] | null;
-  placeholder?: string;
+  subFieldPlaceholders?: FormFieldInputSubFieldPlaceholders;
   onChange: (value: FieldAddressValue) => void;
 };
 
@@ -55,7 +56,7 @@ export const RecordFormAddressFieldInput = ({
   label,
   defaultValue,
   subFields,
-  placeholder,
+  subFieldPlaceholders,
   onChange,
 }: RecordFormAddressFieldInputProps) => {
   const { t } = useLingui();
@@ -106,7 +107,9 @@ export const RecordFormAddressFieldInput = ({
             <StyledTextInput
               id={instanceId}
               autoComplete="off"
-              placeholder={placeholder ?? t`Street address`}
+              placeholder={
+                subFieldPlaceholders?.addressStreet1 ?? t`Street address`
+              }
               value={address.addressStreet1 ?? ''}
               onChange={(event) =>
                 handleSubFieldChange('addressStreet1')(event.target.value)
@@ -120,6 +123,9 @@ export const RecordFormAddressFieldInput = ({
               <StyledFullWidthDetail>
                 <TextInput
                   label={t`Address 2`}
+                  placeholder={
+                    subFieldPlaceholders?.addressStreet2 ?? t`Street address 2`
+                  }
                   value={address.addressStreet2 ?? ''}
                   fullWidth
                   onChange={handleSubFieldChange('addressStreet2')}
@@ -129,6 +135,7 @@ export const RecordFormAddressFieldInput = ({
             {hasSubField('addressCity') && (
               <TextInput
                 label={t`City`}
+                placeholder={subFieldPlaceholders?.addressCity ?? t`City`}
                 value={address.addressCity ?? ''}
                 fullWidth
                 onChange={handleSubFieldChange('addressCity')}
@@ -137,6 +144,7 @@ export const RecordFormAddressFieldInput = ({
             {hasSubField('addressState') && (
               <TextInput
                 label={t`State`}
+                placeholder={subFieldPlaceholders?.addressState ?? t`State`}
                 value={address.addressState ?? ''}
                 fullWidth
                 onChange={handleSubFieldChange('addressState')}
@@ -145,6 +153,9 @@ export const RecordFormAddressFieldInput = ({
             {hasSubField('addressPostcode') && (
               <TextInput
                 label={t`Post Code`}
+                placeholder={
+                  subFieldPlaceholders?.addressPostcode ?? t`Post Code`
+                }
                 value={address.addressPostcode ?? ''}
                 fullWidth
                 onChange={handleSubFieldChange('addressPostcode')}

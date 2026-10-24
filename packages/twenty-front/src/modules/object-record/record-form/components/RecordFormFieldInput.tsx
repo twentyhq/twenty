@@ -140,7 +140,7 @@ export const RecordFormFieldInput = ({
             ? settings.subFields
             : undefined
         }
-        placeholder={subFieldPlaceholders?.addressStreet1}
+        subFieldPlaceholders={subFieldPlaceholders}
         onChange={onChange}
       />
     );
