@@ -528,12 +528,7 @@ kbd {
     height: var(--twenty-control-height);
   }
 
-  #navbar :is(
-    div:has(> div > div > .nav-tabs),
-    div:has(> div > .nav-tabs),
-    div:has(> .nav-tabs),
-    .nav-tabs
-  ) {
+  #navbar :is(div:has(.nav-tabs):not(:has(.nav-logo)), .nav-tabs) {
     display: contents;
   }
 
@@ -1229,7 +1224,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   margin-top: 0;
 }
 
-#content-area:has([data-page-banner]) #header > div:first-child::after {
+#content-area:has([data-page-banner]) #header > div:has(#page-title)::after {
   content: '';
   display: block;
   box-sizing: border-box;
@@ -1246,11 +1241,11 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   background-origin: content-box, border-box;
 }
 
-:is(.dark, [data-theme='dark']) #content-area:has([data-page-banner]) #header > div:first-child::after {
+:is(.dark, [data-theme='dark']) #content-area:has([data-page-banner]) #header > div:has(#page-title)::after {
   background-blend-mode: normal, color-burn;
 }
 
-#content-area:has([data-page-banner]) #header > div:first-child + div {
+#content-area:has([data-page-banner]) #header > div:has(#page-title) + div {
   margin-top: var(--twenty-space-6);
 }
 
@@ -1341,7 +1336,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-pattern: none;
 }
 
-#content-area:has([data-page-banner='meet-twenty'], [data-page-banner='user-guide'], [data-page-banner='developers']) #header > div:first-child::after {
+#content-area:has([data-page-banner='meet-twenty'], [data-page-banner='user-guide'], [data-page-banner='developers']) #header > div:has(#page-title)::after {
   box-sizing: content-box;
   height: auto;
   aspect-ratio: var(--page-banner-aspect-ratio, 1282 / 334);
