@@ -77,6 +77,8 @@ export type FormFieldNode = {
 
 export type FormOutputSchema = Record<string, FormFieldLeaf | FormFieldNode>;
 
+export type CodeOutputSchema = BaseOutputSchemaV2;
+
 export type ManualTriggerOutputSchema = {
   payload?: RecordNode | Node;
   metadata: Node;
@@ -84,6 +86,7 @@ export type ManualTriggerOutputSchema = {
 
 export type OutputSchemaV2 =
   | BaseOutputSchemaV2
+  | CodeOutputSchema
   | FindRecordsOutputSchema
   | FormOutputSchema
   | RecordOutputSchemaV2

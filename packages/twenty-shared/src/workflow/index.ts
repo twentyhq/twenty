@@ -220,6 +220,7 @@ export type {
   FormFieldLeaf,
   FormFieldNode,
   FormOutputSchema,
+  CodeOutputSchema,
   ManualTriggerOutputSchema,
   OutputSchemaV2,
   VariableSearchResult,

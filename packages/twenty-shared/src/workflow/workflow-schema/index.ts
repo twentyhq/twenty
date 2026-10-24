@@ -22,6 +22,7 @@ export {
   type ResolvedVariable,
 } from './utils/resolve-variable-path-in-output-schema';
 export type {
+  CodeOutputSchema,
   FieldOutputSchemaV2,
   FindRecordsOutputSchema,
   FormFieldLeaf,
