@@ -1,6 +1,6 @@
 import { type MultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemInputTarget';
 
-export const getInitialMultiItemInlineInputTarget = ({
+export const getRecordFormMultiItemInputTarget = ({
   itemCount,
   maxItemCount,
 }: {

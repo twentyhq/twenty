@@ -399,6 +399,36 @@ export const ArrayValues: Story = {
   },
 };
 
+export const ArrayRowActionAfterClearedEdit: Story = {
+  args: {
+    fieldMetadataItems: [tagsFieldMetadataItem],
+    initialDraftRecord: { tags: ['Shopify', 'Klaviyo', 'Stripe'] },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      canvas.getAllByRole('button', { name: 'More options' })[1],
+    );
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Edit' }));
+    await userEvent.clear(await canvas.findByDisplayValue('Klaviyo'));
+
+    await userEvent.click(
+      canvas.getAllByRole('button', { name: 'More options' })[1],
+    );
+    await userEvent.click(
+      await body.findByRole('menuitem', { name: 'Delete' }),
+    );
+
+    await expect(args.onFieldValueChange).toHaveBeenLastCalledWith('tags', [
+      'Shopify',
+    ]);
+    await expect(canvas.getByText('Shopify')).toBeVisible();
+    await expect(canvas.queryByText('Stripe')).not.toBeInTheDocument();
+  },
+};
+
 export const StoredListValues: Story = {
   args: {
     fieldMetadataItems: [emailsFieldMetadataItem, tagsFieldMetadataItem],

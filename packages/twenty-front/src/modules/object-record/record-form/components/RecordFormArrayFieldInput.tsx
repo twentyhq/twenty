@@ -1,6 +1,6 @@
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
 import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
-import { MultiItemFieldInlineList } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInlineList';
+import { RecordFormMultiItemList } from '@/object-record/record-form/components/RecordFormMultiItemList';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
 import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
@@ -8,7 +8,8 @@ import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/in
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { type MultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemInputTarget';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getInitialMultiItemInlineInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInlineInputTarget';
+import { getRecordFormMultiItemInputTarget } from '@/object-record/record-form/utils/getRecordFormMultiItemInputTarget';
+import { getRecordFormItemIndexAfterCommit } from '@/object-record/record-form/utils/getRecordFormItemIndexAfterCommit';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { useLingui } from '@lingui/react/macro';
@@ -46,7 +47,7 @@ export const RecordFormArrayFieldInput = ({
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
 
   const getNextInputTarget = (items: string[]): MultiItemInputTarget =>
-    getInitialMultiItemInlineInputTarget({
+    getRecordFormMultiItemInputTarget({
       itemCount: items.length,
       maxItemCount,
     });
@@ -115,23 +116,50 @@ export const RecordFormArrayFieldInput = ({
     openInput(getNextInputTarget(savedItems));
   };
 
+  const commitInputBeforeRowAction = (itemIndex: number) => {
+    const committedItems = commitInput();
+
+    if (!isDefined(committedItems)) {
+      return null;
+    }
+
+    const hasRemovedEditedItem = committedItems.length < savedItems.length;
+
+    return {
+      committedItems,
+      committedItemIndex: getRecordFormItemIndexAfterCommit({
+        itemIndex,
+        removedItemIndex: hasRemovedEditedItem ? editedItemIndex : null,
+      }),
+    };
+  };
+
   const handleEdit = (index: number) => {
-    if (!isDefined(commitInput())) {
+    const committed = commitInputBeforeRowAction(index);
+
+    if (!isDefined(committed)) {
       return;
     }
 
     setShouldFocusInput(true);
-    openInput({ type: 'existing-item', itemIndex: index });
+    openInput(
+      isDefined(committed.committedItemIndex)
+        ? { type: 'existing-item', itemIndex: committed.committedItemIndex }
+        : getNextInputTarget(committed.committedItems),
+      { currentItems: committed.committedItems },
+    );
   };
 
   const handleDelete = (index: number) => {
-    const currentItems = commitInput();
+    const committed = commitInputBeforeRowAction(index);
 
-    if (!isDefined(currentItems)) {
+    if (!isDefined(committed)) {
       return;
     }
 
-    const updatedItems = toSpliced(currentItems, index, 1);
+    const updatedItems = isDefined(committed.committedItemIndex)
+      ? toSpliced(committed.committedItems, committed.committedItemIndex, 1)
+      : committed.committedItems;
 
     saveItems(updatedItems);
     openInput(getNextInputTarget(updatedItems));
@@ -172,7 +200,7 @@ export const RecordFormArrayFieldInput = ({
   return (
     <FormFieldInputContainer>
       {isNonEmptyString(label) ? <Field.Label>{label}</Field.Label> : null}
-      <MultiItemFieldInlineList
+      <RecordFormMultiItemList
         footer={shouldShowInputInFooter ? itemInput : undefined}
       >
         {shouldShowItems
@@ -196,7 +224,7 @@ export const RecordFormArrayFieldInput = ({
               ),
             )
           : undefined}
-      </MultiItemFieldInlineList>
+      </RecordFormMultiItemList>
     </FormFieldInputContainer>
   );
 };

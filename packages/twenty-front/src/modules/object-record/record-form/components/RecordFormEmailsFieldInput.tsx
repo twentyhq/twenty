@@ -1,6 +1,6 @@
 import { EmailsFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldMenuItem';
 import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
-import { MultiItemFieldInlineList } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInlineList';
+import { RecordFormMultiItemList } from '@/object-record/record-form/components/RecordFormMultiItemList';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
 import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
@@ -8,7 +8,8 @@ import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/in
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { type MultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemInputTarget';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getInitialMultiItemInlineInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInlineInputTarget';
+import { getRecordFormMultiItemInputTarget } from '@/object-record/record-form/utils/getRecordFormMultiItemInputTarget';
+import { getRecordFormItemIndexAfterCommit } from '@/object-record/record-form/utils/getRecordFormItemIndexAfterCommit';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -74,7 +75,7 @@ export const RecordFormEmailsFieldInput = ({
   const [shouldFocusInput, setShouldFocusInput] = useState(false);
 
   const getNextInputTarget = (emails: string[]): MultiItemInputTarget =>
-    getInitialMultiItemInlineInputTarget({
+    getRecordFormMultiItemInputTarget({
       itemCount: emails.length,
       maxItemCount,
     });
@@ -156,25 +157,62 @@ export const RecordFormEmailsFieldInput = ({
     openInput(getNextInputTarget(savedEmails));
   };
 
+  const commitInputBeforeRowAction = (itemIndex: number) => {
+    const committedEmails = commitInput();
+
+    if (!isDefined(committedEmails)) {
+      return null;
+    }
+
+    const hasRemovedEditedItem = committedEmails.length < savedEmails.length;
+
+    return {
+      committedEmails,
+      committedItemIndex: getRecordFormItemIndexAfterCommit({
+        itemIndex,
+        removedItemIndex: hasRemovedEditedItem ? editedItemIndex : null,
+      }),
+    };
+  };
+
   const handleEdit = (index: number) => {
-    if (!isDefined(commitInput())) {
+    const committed = commitInputBeforeRowAction(index);
+
+    if (!isDefined(committed)) {
       return;
     }
 
     setShouldFocusInput(true);
-    openInput({ type: 'existing-item', itemIndex: index });
+    openInput(
+      isDefined(committed.committedItemIndex)
+        ? { type: 'existing-item', itemIndex: committed.committedItemIndex }
+        : getNextInputTarget(committed.committedEmails),
+      { currentItems: committed.committedEmails },
+    );
   };
 
-  const updateEmails = (
-    getUpdatedEmails: (currentEmails: string[]) => string[],
-  ) => {
-    const currentEmails = commitInput();
+  const updateEmails = ({
+    itemIndex,
+    getUpdatedEmails,
+  }: {
+    itemIndex: number;
+    getUpdatedEmails: (params: {
+      emails: string[];
+      itemIndex: number;
+    }) => string[];
+  }) => {
+    const committed = commitInputBeforeRowAction(itemIndex);
 
-    if (!isDefined(currentEmails)) {
+    if (!isDefined(committed)) {
       return;
     }
 
-    const updatedEmails = getUpdatedEmails(currentEmails);
+    const updatedEmails = isDefined(committed.committedItemIndex)
+      ? getUpdatedEmails({
+          emails: committed.committedEmails,
+          itemIndex: committed.committedItemIndex,
+        })
+      : committed.committedEmails;
 
     saveEmails(updatedEmails);
     openInput(getNextInputTarget(updatedEmails));
@@ -216,7 +254,7 @@ export const RecordFormEmailsFieldInput = ({
   return (
     <FormFieldInputContainer>
       {isNonEmptyString(label) ? <Field.Label>{label}</Field.Label> : null}
-      <MultiItemFieldInlineList
+      <RecordFormMultiItemList
         footer={shouldShowInputInFooter ? itemInput : undefined}
       >
         {shouldShowItems
@@ -239,17 +277,21 @@ export const RecordFormEmailsFieldInput = ({
                   email={email}
                   onEdit={() => handleEdit(index)}
                   onSetAsPrimary={() =>
-                    updateEmails((currentEmails) =>
-                      moveArrayItem(currentEmails, {
-                        fromIndex: index,
-                        toIndex: 0,
-                      }),
-                    )
+                    updateEmails({
+                      itemIndex: index,
+                      getUpdatedEmails: ({ emails, itemIndex }) =>
+                        moveArrayItem(emails, {
+                          fromIndex: itemIndex,
+                          toIndex: 0,
+                        }),
+                    })
                   }
                   onDelete={() =>
-                    updateEmails((currentEmails) =>
-                      toSpliced(currentEmails, index, 1),
-                    )
+                    updateEmails({
+                      itemIndex: index,
+                      getUpdatedEmails: ({ emails, itemIndex }) =>
+                        toSpliced(emails, itemIndex, 1),
+                    })
                   }
                   onCopy={(emailToCopy) =>
                     copyToClipboard(emailToCopy, t`Email copied to clipboard`)
@@ -258,7 +300,7 @@ export const RecordFormEmailsFieldInput = ({
               ),
             )
           : undefined}
-      </MultiItemFieldInlineList>
+      </RecordFormMultiItemList>
     </FormFieldInputContainer>
   );
 };

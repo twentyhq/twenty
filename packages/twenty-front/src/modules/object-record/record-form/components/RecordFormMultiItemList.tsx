@@ -25,15 +25,15 @@ const StyledItems = styled.div`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
-type MultiItemFieldInlineListProps = {
+type RecordFormMultiItemListProps = {
   children?: ReactNode;
   footer?: ReactNode;
 };
 
-export const MultiItemFieldInlineList = ({
+export const RecordFormMultiItemList = ({
   children,
   footer,
-}: MultiItemFieldInlineListProps) => (
+}: RecordFormMultiItemListProps) => (
   <StyledContainer>
     {isDefined(children) && <StyledItems>{children}</StyledItems>}
     {isDefined(children) && isDefined(footer) && <OverlayMenuListSeparator />}

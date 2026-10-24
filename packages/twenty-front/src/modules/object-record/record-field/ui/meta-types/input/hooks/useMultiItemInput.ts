@@ -17,14 +17,17 @@ export const useMultiItemInput = <TItem>({
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
   onHasErrorChange?: (hasError: boolean) => void;
 }) => {
-  const getInputTextForTarget = (inputTarget: MultiItemInputTarget) =>
+  const getInputTextForTarget = (
+    inputTarget: MultiItemInputTarget,
+    targetItems: TItem[],
+  ) =>
     inputTarget.type === 'existing-item'
-      ? getItemText(items[inputTarget.itemIndex])
+      ? getItemText(targetItems[inputTarget.itemIndex])
       : '';
 
   const [inputTarget, setInputTarget] = useState(initialInputTarget);
   const [inputValue, setInputValue] = useState(() =>
-    getInputTextForTarget(initialInputTarget),
+    getInputTextForTarget(initialInputTarget, items),
   );
   const [hasError, setHasError] = useState(false);
 
@@ -33,9 +36,12 @@ export const useMultiItemInput = <TItem>({
     onHasErrorChange?.(nextHasError);
   };
 
-  const openInput = (nextInputTarget: MultiItemInputTarget) => {
+  const openInput = (
+    nextInputTarget: MultiItemInputTarget,
+    { currentItems = items }: { currentItems?: TItem[] } = {},
+  ) => {
     setInputTarget(nextInputTarget);
-    setInputValue(getInputTextForTarget(nextInputTarget));
+    setInputValue(getInputTextForTarget(nextInputTarget, currentItems));
 
     if (hasError) {
       updateHasError(false);

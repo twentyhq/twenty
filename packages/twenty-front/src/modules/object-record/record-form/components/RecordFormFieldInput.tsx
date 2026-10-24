@@ -72,7 +72,7 @@ export const RecordFormFieldInput = ({
     );
   }
 
-  if (isFieldEmails(field) && readonly !== true) {
+  if (isFieldEmails(field) && !readonly) {
     return (
       <RecordFormEmailsFieldInput
         label={field.label}
@@ -86,7 +86,7 @@ export const RecordFormFieldInput = ({
     );
   }
 
-  if (isFieldArray(field) && readonly !== true) {
+  if (isFieldArray(field) && !readonly) {
     return (
       <RecordFormArrayFieldInput
         label={field.label}
