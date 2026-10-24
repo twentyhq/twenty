@@ -9,8 +9,15 @@ import { type ClaimPointerEventForwarding } from '@/host/events/types/ClaimPoint
 import { isEventHandlerKey } from '@/host/events/utils/isEventHandlerKey';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
 
-const INTERNAL_PROPS = new Set(['element', 'receiver', 'components', 'ref']);
+const INTERNAL_PROPS = new Set([
+  'element',
+  'receiver',
+  'components',
+  'ref',
+  'dangerouslySetInnerHTML',
+]);
 const FORM_OWNER_ATTRIBUTE = 'form';
+const IFRAME_SANDBOX_ATTRIBUTE = 'sandbox';
 
 export const buildHostReactPropsFromRemoteProps = ({
   remoteProps,
@@ -31,6 +38,15 @@ export const buildHostReactPropsFromRemoteProps = ({
     }
 
     if (remotePropName.toLowerCase() === FORM_OWNER_ATTRIBUTE) {
+      continue;
+    }
+
+    // The host overrides `sandbox` by exact key, but the DOM lowercases
+    // attribute names, so a differently cased duplicate would win over it.
+    if (
+      remotePropName !== IFRAME_SANDBOX_ATTRIBUTE &&
+      remotePropName.toLowerCase() === IFRAME_SANDBOX_ATTRIBUTE
+    ) {
       continue;
     }
 

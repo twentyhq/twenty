@@ -265,4 +265,29 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect('onClick' in result).toBe(false);
     expect(result['data-state']).toBe('open');
   });
+
+  it('should drop differently cased duplicates of the iframe sandbox attribute', () => {
+    const result = buildHostReactPropsFromRemoteProps({
+      remoteProps: {
+        sandbox: 'allow-forms',
+        SANDBOX: 'allow-same-origin',
+        Sandbox: 'allow-same-origin',
+      },
+      htmlTag: 'iframe',
+    });
+
+    expect(result).toEqual({ sandbox: 'allow-forms' });
+  });
+
+  it('should drop dangerouslySetInnerHTML', () => {
+    const result = buildHostReactPropsFromRemoteProps({
+      remoteProps: {
+        dangerouslySetInnerHTML: { __html: '<b>x</b>' },
+        id: 'keep',
+      },
+      htmlTag: 'div',
+    });
+
+    expect(result).toEqual({ id: 'keep' });
+  });
 });
