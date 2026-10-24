@@ -20,7 +20,6 @@ const withStepInput = <
   },
 });
 
-// A draft gives code and AI agent steps their own logic function and agent, which local edits must not replace
 export const keepServerStepResourceIds = ({
   localStep,
   serverStep,

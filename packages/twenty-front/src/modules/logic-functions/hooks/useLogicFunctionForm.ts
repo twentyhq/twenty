@@ -21,7 +21,6 @@ import {
 
 type UnsavedSourceHandlerCode = {
   sourceHandlerCode: string;
-  // Undefined while the target is being resolved
   targetLogicFunctionId?: string;
 };
 

@@ -6,7 +6,6 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
 
-// A draft copies the records some steps point to (logic function, agent), so edits must target the draft's step
 export const useGetUpdatableWorkflowVersionStepOrThrow = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { getUpdatableWorkflowVersion } =

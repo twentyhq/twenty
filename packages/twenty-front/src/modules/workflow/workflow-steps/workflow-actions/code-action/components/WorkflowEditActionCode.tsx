@@ -406,7 +406,6 @@ export const WorkflowEditActionCode = ({
     isFullScreen,
   );
 
-  // Unmounting while the draft's copy loads would drop focus and keystrokes, so only the first load hides the editor
   const isInitialLoading =
     loading && !isNonEmptyString(formValues.sourceHandlerCode);
 

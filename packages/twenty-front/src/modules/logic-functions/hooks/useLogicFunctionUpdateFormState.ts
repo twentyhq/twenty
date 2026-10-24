@@ -84,7 +84,6 @@ export const useLogicFunctionUpdateFormState = ({
     string | undefined
   >(undefined);
 
-  // A source loaded while code is typed but not saved yet is outdated, so it is skipped rather than applied later
   useEffect(() => {
     if (
       !isDefined(sourceHandlerCode) ||

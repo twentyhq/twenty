@@ -1145,7 +1145,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           labelSuffix: v4().substring(0, 4),
           workspaceId,
         }).catch((error: unknown) => {
-          // A deleted agent must not block drafting the rest of the workflow
           if (
             error instanceof AiException &&
             error.code === AiExceptionCode.AGENT_NOT_FOUND
