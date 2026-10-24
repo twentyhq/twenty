@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export const StyledRecordFormFieldDetails = styled.div<{
+export const StyledFieldInputDetails = styled.div<{
   hasSeparator?: boolean;
 }>`
   border-top: ${({ hasSeparator = true }) =>

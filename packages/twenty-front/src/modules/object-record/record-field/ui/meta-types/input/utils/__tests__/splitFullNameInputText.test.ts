@@ -1,4 +1,4 @@
-import { splitFullNameInputText } from '@/object-record/record-form/utils/splitFullNameInputText';
+import { splitFullNameInputText } from '@/object-record/record-field/ui/meta-types/input/utils/splitFullNameInputText';
 
 const EMPTY_FULL_NAME = { firstName: '', lastName: '' };
 

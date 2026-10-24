@@ -1,14 +1,16 @@
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { normalizeAddressFieldValueForPersist } from '@/object-record/record-field/ui/utils/normalizeAddressFieldValueForPersist';
-import { RecordFormFieldDetailsToggleRow } from '@/object-record/record-form/components/RecordFormFieldDetailsToggleRow';
+import { FieldInputDetailsToggleRow } from '@/ui/field/input/components/FieldInputDetailsToggleRow';
 import { StyledRecordFormFieldBox } from '@/object-record/record-form/components/StyledRecordFormFieldBox';
-import { StyledRecordFormFieldDetails } from '@/object-record/record-form/components/StyledRecordFormFieldDetails';
+import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledFieldInputDetails';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { styled } from '@linaria/react';
+import { ADDRESS_DETAIL_SUB_FIELDS } from '@/ui/field/input/constants/AddressDetailSubFields';
+import { hasAddressDetailValue } from '@/ui/field/input/utils/hasAddressDetailValue';
+import { StyledFieldInputFullWidthDetail } from '@/ui/field/input/components/StyledFieldInputFullWidthDetail';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
@@ -21,14 +23,6 @@ type AddressTextSubField = Exclude<
   'addressLat' | 'addressLng'
 >;
 
-const ADDRESS_DETAIL_SUB_FIELDS: AddressTextSubField[] = [
-  'addressStreet2',
-  'addressCity',
-  'addressState',
-  'addressPostcode',
-  'addressCountry',
-];
-
 const EMPTY_ADDRESS: FieldAddressValue = {
   addressStreet1: '',
   addressStreet2: '',
@@ -39,10 +33,6 @@ const EMPTY_ADDRESS: FieldAddressValue = {
   addressLat: null,
   addressLng: null,
 };
-
-const StyledFullWidthDetail = styled.div`
-  grid-column: 1 / -1;
-`;
 
 type RecordFormAddressFieldInputProps = {
   label?: string;
@@ -74,9 +64,7 @@ export const RecordFormAddressFieldInput = ({
   const hasDetails = ADDRESS_DETAIL_SUB_FIELDS.some(hasSubField);
 
   const [isExpanded, setIsExpanded] = useState(() =>
-    ADDRESS_DETAIL_SUB_FIELDS.some((subField) =>
-      isNonEmptyString(address[subField]),
-    ),
+    hasAddressDetailValue({ address, subFields }),
   );
 
   const shouldShowDetails = hasDetails && (!hasStreet1 || isExpanded);
@@ -98,7 +86,7 @@ export const RecordFormAddressFieldInput = ({
       ) : null}
       <StyledRecordFormFieldBox>
         {hasStreet1 && (
-          <RecordFormFieldDetailsToggleRow
+          <FieldInputDetailsToggleRow
             isExpanded={isExpanded}
             toggleLabel={t`Address details`}
             hasToggle={hasDetails}
@@ -115,12 +103,12 @@ export const RecordFormAddressFieldInput = ({
                 handleSubFieldChange('addressStreet1')(event.target.value)
               }
             />
-          </RecordFormFieldDetailsToggleRow>
+          </FieldInputDetailsToggleRow>
         )}
         {shouldShowDetails && (
-          <StyledRecordFormFieldDetails hasSeparator={hasStreet1}>
+          <StyledFieldInputDetails hasSeparator={hasStreet1}>
             {hasSubField('addressStreet2') && (
-              <StyledFullWidthDetail>
+              <StyledFieldInputFullWidthDetail>
                 <TextInput
                   label={t`Address 2`}
                   placeholder={
@@ -130,7 +118,7 @@ export const RecordFormAddressFieldInput = ({
                   fullWidth
                   onChange={handleSubFieldChange('addressStreet2')}
                 />
-              </StyledFullWidthDetail>
+              </StyledFieldInputFullWidthDetail>
             )}
             {hasSubField('addressCity') && (
               <TextInput
@@ -169,7 +157,7 @@ export const RecordFormAddressFieldInput = ({
                 dropdownId={`${instanceId}-country`}
               />
             )}
-          </StyledRecordFormFieldDetails>
+          </StyledFieldInputDetails>
         )}
       </StyledRecordFormFieldBox>
     </FormFieldInputContainer>
