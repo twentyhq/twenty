@@ -12,9 +12,11 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -31,59 +33,33 @@ type TimelineActivityNode = {
 };
 
 const findMetadataIds = async () => {
-  const objectsResponse = await makeMetadataApiRequest({
-    query: gql`
-      query {
-        objects(paging: { first: 1000 }) {
-          edges {
-            node {
-              id
-              nameSingular
-            }
-          }
-        }
-      }
-    `,
+  const { objects } = await findManyObjectMetadata({
+    input: { filter: {}, paging: { first: 100 } },
+    gqlFields: 'id nameSingular fieldsList { id name }',
+    expectToFail: false,
   });
 
-  const fieldsResponse = await makeMetadataApiRequest({
-    query: gql`
-      query {
-        fields(paging: { first: 1000 }) {
-          edges {
-            node {
-              id
-              name
-              object {
-                nameSingular
-              }
-            }
-          }
-        }
-      }
-    `,
-  });
+  const personObject = objects.find(
+    (objectMetadata) => objectMetadata.nameSingular === 'person',
+  );
 
-  const personObjectId = objectsResponse.body.data.objects.edges.find(
-    (edge: { node: { nameSingular: string } }) =>
-      edge.node.nameSingular === 'person',
-  ).node.id;
+  const jobTitleField = personObject?.fieldsList?.find(
+    (fieldMetadata) => fieldMetadata.name === 'jobTitle',
+  );
 
-  const jobTitleFieldId = fieldsResponse.body.data.fields.edges.find(
-    (edge: { node: { name: string; object: { nameSingular: string } } }) =>
-      edge.node.name === 'jobTitle' &&
-      edge.node.object.nameSingular === 'person',
-  ).node.id;
+  if (!isDefined(personObject) || !isDefined(jobTitleField)) {
+    throw new Error('Person jobTitle field not found');
+  }
 
-  return { personObjectId, jobTitleFieldId };
+  return { personObjectId: personObject.id, jobTitleFieldId: jobTitleField.id };
 };
 
 const findPersonTimelineActivities = async ({
   personId,
-  asMember,
+  isMemberRole,
 }: {
   personId: string;
-  asMember: boolean;
+  isMemberRole: boolean;
 }): Promise<TimelineActivityNode[]> => {
   const operation = findManyOperationFactory({
     objectMetadataSingularName: 'timelineActivity',
@@ -92,7 +68,7 @@ const findPersonTimelineActivities = async ({
     filter: { targetPersonId: { eq: personId } },
   });
 
-  const response = asMember
+  const response = isMemberRole
     ? await makeGraphqlApiRequestWithMemberRole(operation)
     : await makeGraphqlApiRequest(operation);
 
@@ -101,13 +77,6 @@ const findPersonTimelineActivities = async ({
   return response.body.data.timelineActivities.edges.map(
     (edge: { node: TimelineActivityNode }) => edge.node,
   );
-};
-
-const expectPermissionDenied = (response: request.Response) => {
-  expect(response.body.errors?.[0]?.message).toContain(
-    PermissionsExceptionMessage.PERMISSION_DENIED,
-  );
-  expect(response.body.errors?.[0]?.extensions.code).toBe(ErrorCode.FORBIDDEN);
 };
 
 describe('Timeline activity field permissions', () => {
@@ -208,7 +177,7 @@ describe('Timeline activity field permissions', () => {
   it('should keep the full diff for a role that can read every field', async () => {
     const timelineActivities = await findPersonTimelineActivities({
       personId,
-      asMember: false,
+      isMemberRole: false,
     });
 
     const serializedActivities = JSON.stringify(timelineActivities);
@@ -220,7 +189,7 @@ describe('Timeline activity field permissions', () => {
   it('should omit fields the role cannot read from the diff', async () => {
     const timelineActivities = await findPersonTimelineActivities({
       personId,
-      asMember: true,
+      isMemberRole: true,
     });
 
     const updateActivity = timelineActivities.find((timelineActivity) =>
@@ -283,12 +252,10 @@ describe('Timeline activity field permissions', () => {
     expect(serializedGroups).not.toContain(RESTRICTED_JOB_TITLE);
   });
 
-  it('should refuse a filter on properties for a role with a field it cannot read', async () => {
-    const response = await makeGraphqlApiRequestWithMemberRole(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'timelineActivity',
-        objectMetadataPluralName: 'timelineActivities',
-        gqlFields: 'id',
+  it.each([
+    {
+      operation: 'filter',
+      buildArgs: (personId: string) => ({
         filter: {
           and: [
             { targetPersonId: { eq: personId } },
@@ -296,22 +263,32 @@ describe('Timeline activity field permissions', () => {
           ],
         },
       }),
-    );
-
-    expectPermissionDenied(response);
-  });
-
-  it('should refuse an order on properties for a role with a field it cannot read', async () => {
-    const response = await makeGraphqlApiRequestWithMemberRole(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'timelineActivity',
-        objectMetadataPluralName: 'timelineActivities',
-        gqlFields: 'id',
+    },
+    {
+      operation: 'sort',
+      buildArgs: (personId: string) => ({
         filter: { targetPersonId: { eq: personId } },
         orderBy: [{ properties: 'AscNullsFirst' }],
       }),
-    );
+    },
+  ])(
+    'should refuse a $operation on properties for a role with a field it cannot read',
+    async ({ buildArgs }) => {
+      const response = await makeGraphqlApiRequestWithMemberRole(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'timelineActivity',
+          objectMetadataPluralName: 'timelineActivities',
+          gqlFields: 'id',
+          ...buildArgs(personId),
+        }),
+      );
 
-    expectPermissionDenied(response);
-  });
+      expect(response.body.errors?.[0]?.message).toContain(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+      );
+      expect(response.body.errors?.[0]?.extensions.code).toBe(
+        ErrorCode.FORBIDDEN,
+      );
+    },
+  );
 });
