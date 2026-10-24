@@ -318,14 +318,15 @@ export abstract class CommonBaseQueryRunnerService<
       ...args,
       selectedFieldsResult: {
         ...args.selectedFieldsResult,
-        select: this.commonRecordVisibilityService.getSelectWithRequiredFields({
-          select: args.selectedFieldsResult.select,
-          flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-          objectsPermissions:
-            queryRunnerContext.repository.objectRecordsPermissions,
-          flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-          flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-        }),
+        select:
+          this.commonRecordVisibilityService.extendSelectWithRequiredFields({
+            select: args.selectedFieldsResult.select,
+            flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+            objectsPermissions:
+              queryRunnerContext.repository.objectRecordsPermissions,
+            flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+          }),
       },
     };
   }

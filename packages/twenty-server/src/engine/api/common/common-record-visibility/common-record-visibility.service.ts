@@ -124,7 +124,7 @@ export class CommonRecordVisibilityService {
     return clonedEvents.map(rebuildEventDiffFromRecords);
   }
 
-  public getSelectWithRequiredFields({
+  public extendSelectWithRequiredFields({
     select,
     flatObjectMetadata,
     objectsPermissions,
