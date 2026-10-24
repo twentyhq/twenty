@@ -29,7 +29,6 @@ export type {
   FormFieldNode,
   FormOutputSchema,
   IteratorOutputSchema,
-  LinkOutputSchema,
   ManualTriggerOutputSchema,
   OutputSchemaV2,
   RecordFieldLeaf,

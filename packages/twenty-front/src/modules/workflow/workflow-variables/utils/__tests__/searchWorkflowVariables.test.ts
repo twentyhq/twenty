@@ -230,32 +230,6 @@ describe('searchWorkflowVariables', () => {
     ).toEqual(['find']);
   });
 
-  it('does not generate variable values for links to configure missing outputs', () => {
-    expect(
-      searchWorkflowVariables({
-        steps: [
-          {
-            id: 'code',
-            name: 'Run code',
-            type: 'CODE',
-            outputSchema: {
-              _outputSchemaType: 'LINK',
-              link: { isLeaf: true, label: 'Test code', tab: 'test' },
-            },
-          },
-        ],
-        searchInputValue: 'test',
-      }),
-    ).toEqual([
-      expect.objectContaining({
-        stepId: 'code',
-        path: [],
-        label: 'Test code',
-        isLeaf: false,
-      }),
-    ]);
-  });
-
   it('finds whole lists and retains numeric array paths', () => {
     const step: StepOutputSchemaV2 = {
       id: 'code',
