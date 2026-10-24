@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getRecordFormFieldInputIsInErrorAtom } from '@/object-record/record-form/utils/getRecordFormFieldInputIsInErrorAtom';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
+import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
 import { revealFirstRecordFormAlert } from '@/object-record/record-form/utils/revealFirstRecordFormAlert';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter';
@@ -79,9 +80,11 @@ export const UpdateMultipleRecordsContainer = ({
     const isAnyFieldInputInError = objectMetadataItem.fields.some(
       (fieldMetadataItem) =>
         store.get(
-          getRecordFormFieldInputIsInErrorAtom({
-            formInstanceId,
-            fieldMetadataId: fieldMetadataItem.id,
+          recordFieldInputIsFieldInErrorComponentState.atomFamily({
+            instanceId: getRecordFormFieldInputInstanceId({
+              formInstanceId,
+              fieldMetadataId: fieldMetadataItem.id,
+            }),
           }),
         ),
     );

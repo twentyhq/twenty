@@ -11,11 +11,12 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/useRecordCreationFormSettle';
 import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
-import { getRecordFormFieldInputIsInErrorAtom } from '@/object-record/record-form/utils/getRecordFormFieldInputIsInErrorAtom';
+import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
 import { revealFirstRecordFormAlert } from '@/object-record/record-form/utils/revealFirstRecordFormAlert';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -227,7 +228,12 @@ const SidePanelRecordCreationForm = ({
   };
 
   const getFieldInputIsInErrorAtom = (fieldMetadataId: string) =>
-    getRecordFormFieldInputIsInErrorAtom({ formInstanceId, fieldMetadataId });
+    recordFieldInputIsFieldInErrorComponentState.atomFamily({
+      instanceId: getRecordFormFieldInputInstanceId({
+        formInstanceId,
+        fieldMetadataId,
+      }),
+    });
 
   const handleHiddenFieldsToggleClick = () => {
     // Collapsed inputs unmount and come back without their error text, so drop their error state too.
