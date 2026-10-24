@@ -5,12 +5,11 @@ import { styled } from '@linaria/react';
 import { atom, useAtomValue, useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
 import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
+import { AddressAutocompleteRoot } from '@/ui/field/input/components/AddressAutocompleteRoot';
 import { type AddressInputProps } from '@/ui/field/input/types/AddressInputProps';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
@@ -19,7 +18,6 @@ import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledField
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Autocomplete } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 import { t } from '@lingui/core/macro';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
@@ -96,7 +94,7 @@ export const AddressInput = ({
     getAutocompletePlaceData,
     autoFillInputsFromPlaceDetails,
     closeDropdownOfAutocomplete,
-  } = useAddressAutocomplete(onChange);
+  } = useAddressAutocomplete({ onChange });
 
   const isFieldInputInSubFieldsAddress = useCallback(
     (field: AllowedAddressSubField): boolean => {
@@ -263,20 +261,14 @@ export const AddressInput = ({
     isInline?: boolean;
   }) => (
     <StyledInputWithDropdownContainer>
-      <AutocompleteRoot
+      <AddressAutocompleteRoot
         dropdownId={SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID}
-        enabled={typeOfAddressForAutocomplete === fieldType}
-        items={placeAutocompleteData}
-        itemToStringValue={(place) => place.text}
+        isEnabled={typeOfAddressForAutocomplete === fieldType}
+        places={placeAutocompleteData}
         value={internalValue[fieldType] ?? ''}
-        openOnValueChange={false}
-        closeOnItemPress={false}
-        onValueChange={(updatedValue) =>
-          getChangeHandler(fieldType)(
-            turnIntoEmptyStringIfWhitespacesOnly(updatedValue),
-          )
-        }
+        onValueChange={getChangeHandler(fieldType)}
         onClose={closeDropdownOfAutocomplete}
+        onPlaceSelect={handlePlaceSelection}
       >
         {isInline ? (
           <Autocomplete.Input
@@ -305,11 +297,7 @@ export const AddressInput = ({
             )}
           />
         )}
-        <PlaceAutocompleteSelect
-          list={placeAutocompleteData}
-          onChange={handlePlaceSelection}
-        />
-      </AutocompleteRoot>
+      </AddressAutocompleteRoot>
     </StyledInputWithDropdownContainer>
   );
 

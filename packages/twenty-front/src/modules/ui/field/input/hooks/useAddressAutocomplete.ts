@@ -9,9 +9,13 @@ import { keepAddressFieldsEditedDuringAutofill } from '@/ui/field/input/utils/ke
 
 import { useCountryUtils } from './useCountryUtils';
 
-export const useAddressAutocomplete = (
-  onChange?: (updatedValue: FieldAddressDraftValue) => void,
-) => {
+export const useAddressAutocomplete = ({
+  onChange,
+  dropdownId = SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID,
+}: {
+  onChange?: (updatedValue: FieldAddressDraftValue) => void;
+  dropdownId?: string;
+} = {}) => {
   const [typeOfAddressForAutocomplete, setTypeOfAddressForAutocomplete] =
     useState<string | null>(null);
   const [latestPlaceSelectionIdAtom] = useState(() => atom(0));
@@ -26,7 +30,7 @@ export const useAddressAutocomplete = (
     getAutocompletePlaceData,
     closePlaceAutocomplete,
     resetPlaceAutocomplete,
-  } = usePlaceAutocomplete(SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID);
+  } = usePlaceAutocomplete(dropdownId);
 
   const closeDropdownOfAutocomplete = useCallback(() => {
     closePlaceAutocomplete();
