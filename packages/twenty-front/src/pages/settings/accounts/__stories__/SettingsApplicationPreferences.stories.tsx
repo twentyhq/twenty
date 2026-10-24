@@ -7,15 +7,18 @@ import {
 } from '~/testing/decorators/PageDecorator';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
+import { useLocation } from 'react-router-dom';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
+import { Toaster } from 'twenty-ui/components/feedback';
 import { SettingsApplicationPreferences } from '~/pages/settings/accounts/SettingsApplicationPreferences';
 import {
   FATHOM_APPLICATION_ID,
   GRANOLA_APPLICATION_ID,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 import {
-  APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+  APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS,
   GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
   failNextApplicationPreferencesRequest,
   findApplicationsGatedQuery,
@@ -36,7 +39,7 @@ const meta: Meta<PageDecoratorArgs> = {
   beforeEach: seedApplicationPreferencesStory,
   parameters: {
     layout: 'fullscreen',
-    msw: { handlers: APPLICATION_PREFERENCES_GRAPHQL_HANDLERS },
+    msw: { handlers: APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS },
   },
 };
 
@@ -279,6 +282,55 @@ export const SettingsTabReplacesVariablesTab: Story = {
       ),
     );
     expect(findApplicationsGatedQuery).not.toHaveBeenCalled();
+  },
+};
+
+const FAILED_OAUTH_ERROR_MESSAGE =
+  'Failed to exchange the authorization code for an access token.';
+
+const LocationProbe = () => {
+  const { search, hash } = useLocation();
+
+  return <div data-testid="location-probe">{`${search}${hash}`}</div>;
+};
+
+export const FailedOAuthReturnShowsItsMessage: Story = {
+  args: {
+    routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
+    searchParams: { errorMessage: FAILED_OAUTH_ERROR_MESSAGE },
+    routeHash: '#connections',
+  },
+  decorators: [
+    (Story) => (
+      <>
+        <ErrorMessageEffect />
+        <LocationProbe />
+        <Story />
+        <Toaster getToastProps={() => ({ progress: 100 })} />
+      </>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(
+      await body.findByText(FAILED_OAUTH_ERROR_MESSAGE, undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByTestId('location-probe')).toHaveTextContent(
+        /^#connections$/,
+      ),
+    );
+    expect(
+      await canvas.findByText(
+        'Connect your own Fathom account for this app to use on your behalf.',
+      ),
+    ).toBeVisible();
+    expect(canvas.queryByText('Record my meetings')).not.toBeInTheDocument();
+    expect(canvas.getByRole('link', { name: 'Variables' })).toBeVisible();
   },
 };
 

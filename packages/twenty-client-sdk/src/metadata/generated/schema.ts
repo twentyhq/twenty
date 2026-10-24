@@ -543,6 +543,7 @@ export interface ApplicationMonitoringVersion {
 
 export interface ApplicationPreferences {
     applicationId: Scalars['UUID']
+    connectionProviders: ApplicationConnectionProvider[]
     settingsMenuItems: SettingsMenuItem[]
     variables: UserApplicationVariableValue[]
     __typename: 'ApplicationPreferences'
@@ -4712,6 +4713,7 @@ export interface ApplicationMonitoringVersionGenqlSelection{
 
 export interface ApplicationPreferencesGenqlSelection{
     applicationId?: boolean | number
+    connectionProviders?: ApplicationConnectionProviderGenqlSelection
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     variables?: UserApplicationVariableValueGenqlSelection
     __typename?: boolean | number

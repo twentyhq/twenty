@@ -4,12 +4,22 @@ import { getWorker } from 'msw-storybook-addon';
 import { fn } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
   FATHOM_APPLICATION_ID,
   GRANOLA_APPLICATION_ID,
+  myApplicationPreferencesRequested,
   seedAccountGroupsStory,
 } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
+import {
+  GENERATE_TRANSIENT_TOKEN_GRAPHQL_HANDLER,
+  LINEAR_CONNECTED_ACCOUNTS_GRAPHQL_HANDLER,
+  LINEAR_INSTALLED_APPLICATION,
+  buildLinearApplicationPreferences,
+  resetLinearApplicationPreferencesMocks,
+} from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
 
 export const GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID =
   '20202020-1a2b-4c3d-8e4f-000000000051';
@@ -72,6 +82,22 @@ const buildSettingsMenuItem = ({
 
 const savedValueByKey = new Map<string, string>();
 
+const FATHOM_CONNECTION_PROVIDER = {
+  __typename: 'ApplicationConnectionProvider',
+  id: '20202020-1a2b-4c3d-8e4f-000000000072',
+  applicationId: FATHOM_APPLICATION_ID,
+  type: 'oauth',
+  name: 'fathom',
+  displayName: 'Fathom',
+  scope: 'USER',
+  logoUrl: null,
+  oauth: {
+    __typename: 'ApplicationConnectionProviderOAuthConfig',
+    scopes: ['read'],
+    isClientCredentialsConfigured: true,
+  },
+};
+
 const SAVED_PERSONAL_API_KEY = 'sk-1abcdefghijklmnopqrstuvwxyz0123456789';
 
 // Same masking as the server's SecretEncryptionService.maskDecryptedValue.
@@ -96,6 +122,7 @@ const buildApplicationPreferences = () => [
   {
     __typename: 'ApplicationPreferences',
     applicationId: FATHOM_APPLICATION_ID,
+    connectionProviders: [FATHOM_CONNECTION_PROVIDER],
     settingsMenuItems: [],
     variables: [
       buildUserApplicationVariable({
@@ -125,6 +152,7 @@ const buildApplicationPreferences = () => [
   {
     __typename: 'ApplicationPreferences',
     applicationId: GRANOLA_APPLICATION_ID,
+    connectionProviders: [],
     settingsMenuItems: [
       buildSettingsMenuItem({
         universalIdentifier: GRANOLA_USER_SETTINGS_MENU_ITEM_ID,
@@ -146,6 +174,7 @@ const buildApplicationPreferences = () => [
   {
     __typename: 'ApplicationPreferences',
     applicationId: NOT_INSTALLED_APPLICATION_ID,
+    connectionProviders: [],
     settingsMenuItems: [],
     variables: [
       buildUserApplicationVariable({
@@ -155,6 +184,7 @@ const buildApplicationPreferences = () => [
       }),
     ],
   },
+  buildLinearApplicationPreferences(),
 ];
 
 export const failNextApplicationPreferencesRequest = () => {
@@ -177,6 +207,8 @@ export const failNextApplicationPreferencesRequest = () => {
 
 export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   graphql.query('MyApplicationPreferences', () => {
+    myApplicationPreferencesRequested();
+
     return HttpResponse.json({
       data: { myApplicationPreferences: buildApplicationPreferences() },
     });
@@ -194,6 +226,7 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
       data: { updateMyUserApplicationVariable: true },
     });
   }),
+  GENERATE_TRANSIENT_TOKEN_GRAPHQL_HANDLER,
   graphql.query('FindOneFrontComponent', ({ variables }) => {
     findOneFrontComponent(variables.id);
 
@@ -211,12 +244,30 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
   ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
 ];
 
+export const APPLICATION_PREFERENCES_DETAIL_GRAPHQL_HANDLERS = [
+  LINEAR_CONNECTED_ACCOUNTS_GRAPHQL_HANDLER,
+  ...APPLICATION_PREFERENCES_GRAPHQL_HANDLERS,
+];
+
 export const seedApplicationPreferencesStory = async () => {
   savedValueByKey.clear();
   savedValueByKey.set('PERSONAL_API_KEY', SAVED_PERSONAL_API_KEY);
+  resetLinearApplicationPreferencesMocks();
   updateMyUserApplicationVariable.mockClear();
   findOneFrontComponent.mockClear();
   findApplicationsGatedQuery.mockClear();
 
   await seedAccountGroupsStory();
+
+  const currentWorkspace = jotaiStore.get(currentWorkspaceState.atom);
+
+  if (isDefined(currentWorkspace)) {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...currentWorkspace,
+      installedApplications: [
+        ...currentWorkspace.installedApplications,
+        LINEAR_INSTALLED_APPLICATION,
+      ],
+    });
+  }
 };

@@ -355,6 +355,7 @@ export const AppPreferencesListInstalledApps: Story = {
       `/settings/accounts/applications/${FATHOM_APPLICATION_ID}`,
     );
     expect(canvas.getByText('Granola')).toBeVisible();
+    expect(canvas.getByText('Linear')).toBeVisible();
     expect(canvas.queryByText('Blocklist')).not.toBeInTheDocument();
 
     const outlookRow = canvas
@@ -413,6 +414,9 @@ export const AppPreferencesListFlagsMissingConfiguration: Story = {
       getTableRow(canvasElement, 'Granola').queryByText(
         'Missing configuration',
       ),
+    ).not.toBeInTheDocument();
+    expect(
+      getTableRow(canvasElement, 'Linear').queryByText(/Missing/),
     ).not.toBeInTheDocument();
   },
 };

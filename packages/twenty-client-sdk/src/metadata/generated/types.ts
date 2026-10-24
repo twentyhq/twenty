@@ -1406,6 +1406,9 @@ export default {
             "applicationId": [
                 516
             ],
+            "connectionProviders": [
+                41
+            ],
             "settingsMenuItems": [
                 476
             ],
