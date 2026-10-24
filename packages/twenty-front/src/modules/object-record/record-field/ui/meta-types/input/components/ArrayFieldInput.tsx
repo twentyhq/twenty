@@ -99,7 +99,7 @@ export const ArrayFieldInput = () => {
     inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-  const closeInput = () => openInput({ type: 'closed' });
+  const closeInput = () => openInput({ inputTarget: { type: 'closed' } });
 
   const commitInput = () => {
     const sanitizedInput = validateInputValue();
@@ -148,7 +148,7 @@ export const ArrayFieldInput = () => {
     }
 
     setSearchFilter('');
-    openInput({ type: 'new-item' });
+    openInput({ inputTarget: { type: 'new-item' } });
   };
 
   const handleEscape = () => {
@@ -177,9 +177,11 @@ export const ArrayFieldInput = () => {
 
     handleChange(updatedItems);
     handleSubmit(updatedItems);
-    openInput(
-      isNonEmptyArray(updatedItems) ? { type: 'closed' } : { type: 'new-item' },
-    );
+    openInput({
+      inputTarget: isNonEmptyArray(updatedItems)
+        ? { type: 'closed' }
+        : { type: 'new-item' },
+    });
   };
 
   const shouldShowItems =
@@ -249,7 +251,9 @@ export const ArrayFieldInput = () => {
             dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
             value={item}
             onEdit={() =>
-              openInput({ type: 'existing-item', itemIndex: index })
+              openInput({
+                inputTarget: { type: 'existing-item', itemIndex: index },
+              })
             }
             onDelete={() => handleDelete(index)}
           />

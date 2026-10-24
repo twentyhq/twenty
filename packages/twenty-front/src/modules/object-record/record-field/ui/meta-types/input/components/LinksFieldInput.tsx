@@ -150,7 +150,7 @@ export const LinksFieldInput = () => {
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
   const shouldEditLabel = isEditingItemInPlace && !isDomainField;
 
-  const closeInput = () => openInput({ type: 'closed' });
+  const closeInput = () => openInput({ inputTarget: { type: 'closed' } });
 
   const commitInput = () => {
     const sanitizedInput = validateInputValue();
@@ -205,7 +205,7 @@ export const LinksFieldInput = () => {
     }
 
     setSearchFilter('');
-    openInput({ type: 'new-item' });
+    openInput({ inputTarget: { type: 'new-item' } });
   };
 
   const handleEscape = () => {
@@ -231,7 +231,7 @@ export const LinksFieldInput = () => {
 
   const handleEdit = (index: number) => {
     setLabelDraft(links[index]?.label ?? '');
-    openInput({ type: 'existing-item', itemIndex: index });
+    openInput({ inputTarget: { type: 'existing-item', itemIndex: index } });
   };
 
   const handleSetAsPrimary = (index: number) => {
@@ -250,9 +250,11 @@ export const LinksFieldInput = () => {
 
     handleChange(updatedLinks);
     handleSubmit(updatedLinks);
-    openInput(
-      isNonEmptyArray(updatedLinks) ? { type: 'closed' } : { type: 'new-item' },
-    );
+    openInput({
+      inputTarget: isNonEmptyArray(updatedLinks)
+        ? { type: 'closed' }
+        : { type: 'new-item' },
+    });
   };
 
   const placeholder = isDomainField ? t`Domain` : t`URL`;

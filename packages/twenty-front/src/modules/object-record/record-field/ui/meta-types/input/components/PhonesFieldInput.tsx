@@ -223,7 +223,7 @@ export const PhonesFieldInput = () => {
     inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-  const closeInput = () => openInput({ type: 'closed' });
+  const closeInput = () => openInput({ inputTarget: { type: 'closed' } });
 
   const commitInput = () => {
     const sanitizedInput = validateInputValue();
@@ -273,7 +273,7 @@ export const PhonesFieldInput = () => {
     }
 
     setSearchFilter('');
-    openInput({ type: 'new-item' });
+    openInput({ inputTarget: { type: 'new-item' } });
   };
 
   const handleEscape = () => {
@@ -316,11 +316,11 @@ export const PhonesFieldInput = () => {
 
     handleChange(updatedPhones);
     handleSubmit(updatedPhones);
-    openInput(
-      isNonEmptyArray(updatedPhones)
+    openInput({
+      inputTarget: isNonEmptyArray(updatedPhones)
         ? { type: 'closed' }
         : { type: 'new-item' },
-    );
+    });
   };
 
   const shouldShowItems =
@@ -404,7 +404,9 @@ export const PhonesFieldInput = () => {
             showSetAsPrimaryButton={index > 0}
             phone={phone}
             onEdit={() =>
-              openInput({ type: 'existing-item', itemIndex: index })
+              openInput({
+                inputTarget: { type: 'existing-item', itemIndex: index },
+              })
             }
             onSetAsPrimary={() => handleSetAsPrimary(index)}
             onDelete={() => handleDelete(index)}

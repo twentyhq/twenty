@@ -319,7 +319,10 @@ export const InvalidEmail: Story = {
 
     await userEvent.type(input, 'lea@{Enter}');
 
-    await expect(args.onFieldValueChange).not.toHaveBeenCalled();
+    await expect(args.onFieldValueChange).toHaveBeenLastCalledWith('emails', {
+      primaryEmail: '',
+      additionalEmails: [],
+    });
     await expect(input).toHaveAttribute('aria-invalid', 'true');
     await expect(input).toHaveValue('lea@');
 

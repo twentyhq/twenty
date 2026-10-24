@@ -200,7 +200,7 @@ export const FilesFieldInput = () => {
     inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-  const closeInput = () => openInput({ type: 'closed' });
+  const closeInput = () => openInput({ inputTarget: { type: 'closed' } });
 
   const commitInput = () => {
     const sanitizedInput = validateInputValue();
@@ -353,7 +353,9 @@ export const FilesFieldInput = () => {
             dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
             file={file}
             onEdit={() =>
-              openInput({ type: 'existing-item', itemIndex: index })
+              openInput({
+                inputTarget: { type: 'existing-item', itemIndex: index },
+              })
             }
             onDelete={() => handleDelete(index)}
             onClick={() => handlePreview(file)}

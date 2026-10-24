@@ -129,7 +129,7 @@ export const EmailsFieldInput = () => {
     inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-  const closeInput = () => openInput({ type: 'closed' });
+  const closeInput = () => openInput({ inputTarget: { type: 'closed' } });
 
   const commitInput = () => {
     const sanitizedInput = validateInputValue();
@@ -178,7 +178,7 @@ export const EmailsFieldInput = () => {
     }
 
     setSearchFilter('');
-    openInput({ type: 'new-item' });
+    openInput({ inputTarget: { type: 'new-item' } });
   };
 
   const handleEscape = () => {
@@ -221,11 +221,11 @@ export const EmailsFieldInput = () => {
 
     handleChange(updatedEmails);
     handleSubmit(updatedEmails);
-    openInput(
-      isNonEmptyArray(updatedEmails)
+    openInput({
+      inputTarget: isNonEmptyArray(updatedEmails)
         ? { type: 'closed' }
         : { type: 'new-item' },
-    );
+    });
   };
 
   const handleCopy = (email: string) => {
@@ -302,7 +302,9 @@ export const EmailsFieldInput = () => {
             showCopyButton={true}
             email={email}
             onEdit={() =>
-              openInput({ type: 'existing-item', itemIndex: index })
+              openInput({
+                inputTarget: { type: 'existing-item', itemIndex: index },
+              })
             }
             onSetAsPrimary={() => handleSetAsPrimary(index)}
             onDelete={() => handleDelete(index)}

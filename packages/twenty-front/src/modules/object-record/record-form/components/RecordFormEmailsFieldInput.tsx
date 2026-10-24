@@ -121,10 +121,11 @@ export const RecordFormEmailsFieldInput = ({
       validateEmail(sanitizedInput).isValid;
 
     setRecordFieldInputIsFieldInError(!isValid);
-
-    if (isValid) {
-      onChange(getEmailsValue(getEmailsWithInput(sanitizedInput)));
-    }
+    onChange(
+      getEmailsValue(
+        isValid ? getEmailsWithInput(sanitizedInput) : savedEmails,
+      ),
+    );
   };
 
   const commitInput = () => {
@@ -149,12 +150,12 @@ export const RecordFormEmailsFieldInput = ({
     }
 
     setShouldFocusInput(true);
-    openInput(getNextInputTarget(updatedEmails));
+    openInput({ inputTarget: getNextInputTarget(updatedEmails) });
   };
 
   const handleEscape = () => {
     saveEmails(savedEmails);
-    openInput(getNextInputTarget(savedEmails));
+    openInput({ inputTarget: getNextInputTarget(savedEmails) });
   };
 
   const commitInputBeforeRowAction = (itemIndex: number) => {
@@ -183,12 +184,12 @@ export const RecordFormEmailsFieldInput = ({
     }
 
     setShouldFocusInput(true);
-    openInput(
-      isDefined(committed.committedItemIndex)
+    openInput({
+      inputTarget: isDefined(committed.committedItemIndex)
         ? { type: 'existing-item', itemIndex: committed.committedItemIndex }
         : getNextInputTarget(committed.committedEmails),
-      { currentItems: committed.committedEmails },
-    );
+      currentItems: committed.committedEmails,
+    });
   };
 
   const updateEmails = ({
@@ -215,10 +216,11 @@ export const RecordFormEmailsFieldInput = ({
       : committed.committedEmails;
 
     saveEmails(updatedEmails);
-    openInput(getNextInputTarget(updatedEmails));
+    openInput({ inputTarget: getNextInputTarget(updatedEmails) });
   };
 
   const shouldShowItems = !isSingleItemMode && isNonEmptyArray(savedEmails);
+  const visibleEmails = shouldShowItems ? savedEmails : undefined;
   const isInputDisplayed = inputTarget.type !== 'closed';
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
   const inputSpacing: MultiItemFieldInputSpacing = shouldShowItems
@@ -257,49 +259,47 @@ export const RecordFormEmailsFieldInput = ({
       <RecordFormMultiItemList
         footer={shouldShowInputInFooter ? itemInput : undefined}
       >
-        {shouldShowItems
-          ? savedEmails.map((email, index) =>
-              index === editedItemIndex && isEditingItemInPlace ? (
-                <MultiItemFieldEditedItem
-                  key={index}
-                  hasSeparatorBefore={index > 0}
-                  hasSeparatorAfter={index < savedEmails.length - 1}
-                >
-                  {itemInput}
-                </MultiItemFieldEditedItem>
-              ) : (
-                <EmailsFieldMenuItem
-                  key={index}
-                  dropdownId={`${instanceId}-email-${index}`}
-                  showPrimaryIcon={index === 0 && savedEmails.length > 1}
-                  showSetAsPrimaryButton={index > 0}
-                  showCopyButton={true}
-                  email={email}
-                  onEdit={() => handleEdit(index)}
-                  onSetAsPrimary={() =>
-                    updateEmails({
-                      itemIndex: index,
-                      getUpdatedEmails: ({ emails, itemIndex }) =>
-                        moveArrayItem(emails, {
-                          fromIndex: itemIndex,
-                          toIndex: 0,
-                        }),
-                    })
-                  }
-                  onDelete={() =>
-                    updateEmails({
-                      itemIndex: index,
-                      getUpdatedEmails: ({ emails, itemIndex }) =>
-                        toSpliced(emails, itemIndex, 1),
-                    })
-                  }
-                  onCopy={(emailToCopy) =>
-                    copyToClipboard(emailToCopy, t`Email copied to clipboard`)
-                  }
-                />
-              ),
-            )
-          : undefined}
+        {visibleEmails?.map((email, index) =>
+          index === editedItemIndex && isEditingItemInPlace ? (
+            <MultiItemFieldEditedItem
+              key={index}
+              hasSeparatorBefore={index > 0}
+              hasSeparatorAfter={index < savedEmails.length - 1}
+            >
+              {itemInput}
+            </MultiItemFieldEditedItem>
+          ) : (
+            <EmailsFieldMenuItem
+              key={index}
+              dropdownId={`${instanceId}-email-${index}`}
+              showPrimaryIcon={index === 0 && savedEmails.length > 1}
+              showSetAsPrimaryButton={index > 0}
+              showCopyButton={true}
+              email={email}
+              onEdit={() => handleEdit(index)}
+              onSetAsPrimary={() =>
+                updateEmails({
+                  itemIndex: index,
+                  getUpdatedEmails: ({ emails, itemIndex }) =>
+                    moveArrayItem(emails, {
+                      fromIndex: itemIndex,
+                      toIndex: 0,
+                    }),
+                })
+              }
+              onDelete={() =>
+                updateEmails({
+                  itemIndex: index,
+                  getUpdatedEmails: ({ emails, itemIndex }) =>
+                    toSpliced(emails, itemIndex, 1),
+                })
+              }
+              onCopy={(emailToCopy) =>
+                copyToClipboard(emailToCopy, t`Email copied to clipboard`)
+              }
+            />
+          ),
+        )}
       </RecordFormMultiItemList>
     </FormFieldInputContainer>
   );

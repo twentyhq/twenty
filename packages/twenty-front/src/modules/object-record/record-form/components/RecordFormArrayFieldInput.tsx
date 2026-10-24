@@ -108,12 +108,12 @@ export const RecordFormArrayFieldInput = ({
     }
 
     setShouldFocusInput(true);
-    openInput(getNextInputTarget(updatedItems));
+    openInput({ inputTarget: getNextInputTarget(updatedItems) });
   };
 
   const handleEscape = () => {
     saveItems(savedItems);
-    openInput(getNextInputTarget(savedItems));
+    openInput({ inputTarget: getNextInputTarget(savedItems) });
   };
 
   const commitInputBeforeRowAction = (itemIndex: number) => {
@@ -142,12 +142,12 @@ export const RecordFormArrayFieldInput = ({
     }
 
     setShouldFocusInput(true);
-    openInput(
-      isDefined(committed.committedItemIndex)
+    openInput({
+      inputTarget: isDefined(committed.committedItemIndex)
         ? { type: 'existing-item', itemIndex: committed.committedItemIndex }
         : getNextInputTarget(committed.committedItems),
-      { currentItems: committed.committedItems },
-    );
+      currentItems: committed.committedItems,
+    });
   };
 
   const handleDelete = (index: number) => {
@@ -162,10 +162,11 @@ export const RecordFormArrayFieldInput = ({
       : committed.committedItems;
 
     saveItems(updatedItems);
-    openInput(getNextInputTarget(updatedItems));
+    openInput({ inputTarget: getNextInputTarget(updatedItems) });
   };
 
   const shouldShowItems = !isSingleItemMode && isNonEmptyArray(savedItems);
+  const visibleItems = shouldShowItems ? savedItems : undefined;
   const isInputDisplayed = inputTarget.type !== 'closed';
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
   const inputSpacing: MultiItemFieldInputSpacing = shouldShowItems
@@ -203,27 +204,25 @@ export const RecordFormArrayFieldInput = ({
       <RecordFormMultiItemList
         footer={shouldShowInputInFooter ? itemInput : undefined}
       >
-        {shouldShowItems
-          ? savedItems.map((item, index) =>
-              index === editedItemIndex && isEditingItemInPlace ? (
-                <MultiItemFieldEditedItem
-                  key={index}
-                  hasSeparatorBefore={index > 0}
-                  hasSeparatorAfter={index < savedItems.length - 1}
-                >
-                  {itemInput}
-                </MultiItemFieldEditedItem>
-              ) : (
-                <ArrayFieldMenuItem
-                  key={index}
-                  dropdownId={`${instanceId}-item-${index}`}
-                  value={item}
-                  onEdit={() => handleEdit(index)}
-                  onDelete={() => handleDelete(index)}
-                />
-              ),
-            )
-          : undefined}
+        {visibleItems?.map((item, index) =>
+          index === editedItemIndex && isEditingItemInPlace ? (
+            <MultiItemFieldEditedItem
+              key={index}
+              hasSeparatorBefore={index > 0}
+              hasSeparatorAfter={index < savedItems.length - 1}
+            >
+              {itemInput}
+            </MultiItemFieldEditedItem>
+          ) : (
+            <ArrayFieldMenuItem
+              key={index}
+              dropdownId={`${instanceId}-item-${index}`}
+              value={item}
+              onEdit={() => handleEdit(index)}
+              onDelete={() => handleDelete(index)}
+            />
+          ),
+        )}
       </RecordFormMultiItemList>
     </FormFieldInputContainer>
   );
