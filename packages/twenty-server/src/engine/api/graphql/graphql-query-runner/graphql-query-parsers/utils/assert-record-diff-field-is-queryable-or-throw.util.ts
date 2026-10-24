@@ -1,14 +1,14 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { FIELD_VALUE_SNAPSHOT_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/engine/metadata-modules/permissions/constants/field-value-snapshot-field-universal-identifiers.constant';
+import { RECORD_DIFF_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/engine/metadata-modules/permissions/constants/record-diff-field-universal-identifiers.constant';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
-export const assertFieldValueSnapshotIsQueryableOrThrow = ({
+export const assertRecordDiffFieldIsQueryableOrThrow = ({
   objectsPermissions,
   fieldMetadata,
 }: {
@@ -16,7 +16,7 @@ export const assertFieldValueSnapshotIsQueryableOrThrow = ({
   fieldMetadata: Pick<OrmFlatFieldMetadata, 'universalIdentifier'>;
 }): void => {
   if (
-    !FIELD_VALUE_SNAPSHOT_FIELD_UNIVERSAL_IDENTIFIERS.has(
+    !RECORD_DIFF_FIELD_UNIVERSAL_IDENTIFIERS.has(
       fieldMetadata.universalIdentifier,
     )
   ) {
