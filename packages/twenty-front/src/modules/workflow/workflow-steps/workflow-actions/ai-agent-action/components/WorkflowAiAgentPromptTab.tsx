@@ -21,6 +21,7 @@ import {
   type AgentResponseSchema,
   type ModelConfiguration,
 } from 'twenty-shared/ai';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
@@ -60,7 +61,7 @@ export const WorkflowAiAgentPromptTab = ({
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
-  const { getUpdatableWorkflowVersionStep } =
+  const { getUpdatableWorkflowVersionStepOrThrow } =
     useGetUpdatableWorkflowVersionStepOrThrow();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -95,7 +96,7 @@ export const WorkflowAiAgentPromptTab = ({
       return;
     }
 
-    const updatableStep = await getUpdatableWorkflowVersionStep({
+    const updatableStep = await getUpdatableWorkflowVersionStepOrThrow({
       stepId: action.id,
       stepType: 'AI_AGENT',
     });
@@ -103,7 +104,7 @@ export const WorkflowAiAgentPromptTab = ({
     const updatableAgentId = updatableStep.settings.input.agentId;
 
     if (!isDefined(updatableAgentId)) {
-      return;
+      throw new Error(doNotTranslate('The AI agent step has no agent'));
     }
 
     const response = await updateAgent({

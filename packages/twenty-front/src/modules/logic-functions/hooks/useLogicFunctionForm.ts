@@ -10,6 +10,7 @@ import {
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
 import { useApolloClient } from '@apollo/client/react';
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -56,14 +57,13 @@ export const useLogicFunctionForm = ({
         ? await getTargetLogicFunctionId()
         : logicFunctionId;
 
-      if (key !== 'sourceHandlerCode') {
+      if (key !== 'sourceHandlerCode' || !isString(value)) {
         await handleSave(targetLogicFunctionId);
 
         return undefined;
       }
 
-      const sourceHandlerCode =
-        value as LogicFunctionFormValues['sourceHandlerCode'];
+      const sourceHandlerCode = value;
 
       // The form reloads the target's source once it switches to it, so it must already hold the new code
       if (targetLogicFunctionId !== logicFunctionId) {

@@ -99,7 +99,7 @@ export const WorkflowEditActionCode = ({
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { getUpdatableWorkflowVersionStep } =
+  const { getUpdatableWorkflowVersionStepOrThrow } =
     useGetUpdatableWorkflowVersionStepOrThrow();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
@@ -286,7 +286,7 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    const updatableLogicFunctionId = getUpdatableWorkflowVersionStep({
+    const updatableLogicFunctionId = getUpdatableWorkflowVersionStepOrThrow({
       stepId: action.id,
       stepType: 'CODE',
     }).then((step) => step.settings.input.logicFunctionId);

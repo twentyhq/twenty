@@ -1,14 +1,13 @@
-import gql from 'graphql-tag';
 import {
   activateCoreWorkflowVersion,
-  coreWorkflowGraphqlRequest,
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
+  createDraftFromCoreWorkflowVersion,
   deleteCoreWorkflows,
   findCoreWorkflowVersion,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { findOneAgent } from 'test/integration/metadata/suites/agent/utils/find-one-agent.util';
 
 type AiAgentStep = {
   id: string;
@@ -17,22 +16,13 @@ type AiAgentStep = {
 };
 
 const findAgent = async (agentId: string) => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      query FindOneAgent($id: UUID!) {
-        findOneAgent(input: { id: $id }) {
-          id
-          prompt
-          modelId
-        }
-      }
-    `,
-    variables: { id: agentId },
+  const { data } = await findOneAgent({
+    input: { id: agentId },
+    gqlFields: 'id prompt modelId',
+    expectToFail: false,
   });
 
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.findOneAgent;
+  return data.findOneAgent;
 };
 
 describe('Draft creation copies step resources (e2e)', () => {
@@ -74,26 +64,10 @@ describe('Draft creation copies step resources (e2e)', () => {
   });
 
   it('gives the draft AI agent step its own copy of the agent', async () => {
-    const { createDraftFromCoreWorkflowVersion: draft } =
-      await coreWorkflowGraphqlRequest<{
-        createDraftFromCoreWorkflowVersion: { id: string };
-      }>({
-        query: `
-          mutation CreateDraftFromCoreWorkflowVersion(
-            $input: CreateDraftFromCoreWorkflowVersionInput!
-          ) {
-            createDraftFromCoreWorkflowVersion(input: $input) {
-              id
-            }
-          }
-        `,
-        variables: {
-          input: {
-            coreWorkflowId,
-            coreWorkflowVersionIdToCopy: activeVersionId,
-          },
-        },
-      });
+    const draft = await createDraftFromCoreWorkflowVersion({
+      coreWorkflowId,
+      coreWorkflowVersionIdToCopy: activeVersionId,
+    });
 
     const { steps: draftSteps } = await findCoreWorkflowVersion<AiAgentStep>({
       coreWorkflowVersionId: draft.id,

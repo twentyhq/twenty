@@ -12,6 +12,7 @@ import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/work
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
@@ -40,7 +41,7 @@ export const useWorkflowAiAgentPermissionActions = ({
   refetchAgentAndRoles,
 }: UseWorkflowAiAgentPermissionActionsParams) => {
   const { enqueueToast } = useToast();
-  const { getUpdatableWorkflowVersionStep } =
+  const { getUpdatableWorkflowVersionStepOrThrow } =
     useGetUpdatableWorkflowVersionStepOrThrow();
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
@@ -84,12 +85,18 @@ export const useWorkflowAiAgentPermissionActions = ({
   );
 
   const getUpdatableAgentId = async () => {
-    const updatableStep = await getUpdatableWorkflowVersionStep({
+    const updatableStep = await getUpdatableWorkflowVersionStepOrThrow({
       stepId,
       stepType: 'AI_AGENT',
     });
 
-    return updatableStep.settings.input.agentId;
+    const updatableAgentId = updatableStep.settings.input.agentId;
+
+    if (!isDefined(updatableAgentId)) {
+      throw new Error(doNotTranslate('The AI agent step has no agent'));
+    }
+
+    return updatableAgentId;
   };
 
   const ensureRoleId = async (): Promise<string | undefined> => {
@@ -101,10 +108,6 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     if (isDefined(roleId)) {
       return roleId;
-    }
-
-    if (!isDefined(updatableAgentId)) {
-      return undefined;
     }
 
     const agentDisplayName =

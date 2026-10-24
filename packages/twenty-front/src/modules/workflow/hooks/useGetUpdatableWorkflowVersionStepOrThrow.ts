@@ -12,7 +12,7 @@ export const useGetUpdatableWorkflowVersionStepOrThrow = () => {
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
-  const getUpdatableWorkflowVersionStep = async <
+  const getUpdatableWorkflowVersionStepOrThrow = async <
     TStepType extends WorkflowAction['type'],
   >({
     stepId,
@@ -28,11 +28,16 @@ export const useGetUpdatableWorkflowVersionStepOrThrow = () => {
       variables: { coreWorkflowVersionId: workflowVersionId },
     });
 
+    const isRequestedStep = (
+      candidateStep: WorkflowAction,
+    ): candidateStep is Extract<WorkflowAction, { type: TStepType }> =>
+      candidateStep.id === stepId && candidateStep.type === stepType;
+
     const step = buildWorkflowVersionFromCore(
       data?.coreWorkflowVersion,
-    )?.steps?.find((candidateStep) => candidateStep.id === stepId);
+    )?.steps?.find(isRequestedStep);
 
-    if (!isDefined(step) || step.type !== stepType) {
+    if (!isDefined(step)) {
       throw new Error(
         doNotTranslate(
           'Failed to find the step in the updatable workflow version',
@@ -40,8 +45,8 @@ export const useGetUpdatableWorkflowVersionStepOrThrow = () => {
       );
     }
 
-    return step as Extract<WorkflowAction, { type: TStepType }>;
+    return step;
   };
 
-  return { getUpdatableWorkflowVersionStep };
+  return { getUpdatableWorkflowVersionStepOrThrow };
 };
