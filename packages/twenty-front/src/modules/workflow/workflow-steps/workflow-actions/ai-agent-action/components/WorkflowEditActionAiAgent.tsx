@@ -235,7 +235,7 @@ export const WorkflowEditActionAiAgent = ({
         {currentTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS ? (
           <WorkflowStepBody paddingBlock="0" paddingInline="0">
             <WorkflowAiAgentPermissionsTab
-              action={action}
+              stepId={action.id}
               readonly={actionOptions.readonly === true}
               isAgentLoading={agentLoading}
               refetchAgent={refetchAgent}
