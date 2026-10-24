@@ -84,7 +84,7 @@ export const useWorkflowAiAgentPermissionActions = ({
     [settingsPermissionsConfig, actionPermissionsConfig],
   );
 
-  const getUpdatableAgentId = async () => {
+  const getUpdatableAgentIdOrThrow = async () => {
     const updatableStep = await getUpdatableWorkflowVersionStepOrThrow({
       stepId,
       stepType: 'AI_AGENT',
@@ -104,7 +104,7 @@ export const useWorkflowAiAgentPermissionActions = ({
       return undefined;
     }
 
-    const updatableAgentId = await getUpdatableAgentId();
+    const updatableAgentId = await getUpdatableAgentIdOrThrow();
 
     if (isDefined(roleId)) {
       return roleId;
@@ -239,7 +239,7 @@ export const useWorkflowAiAgentPermissionActions = ({
       return;
     }
 
-    await getUpdatableAgentId();
+    await getUpdatableAgentIdOrThrow();
 
     const objectPermission = objectPermissions.find(
       (permission) => permission.objectMetadataId === objectMetadataId,
@@ -361,7 +361,7 @@ export const useWorkflowAiAgentPermissionActions = ({
       return;
     }
 
-    await getUpdatableAgentId();
+    await getUpdatableAgentIdOrThrow();
 
     const permissionFlagKeysAfterRemoval = permissionFlagKeys.filter(
       (flag) => flag !== permissionFlagKey,

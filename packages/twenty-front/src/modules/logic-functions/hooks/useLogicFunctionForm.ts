@@ -20,8 +20,10 @@ import {
 
 export const useLogicFunctionForm = ({
   logicFunctionId,
+  getTargetLogicFunctionId,
 }: {
   logicFunctionId: string;
+  getTargetLogicFunctionId?: () => Promise<string>;
 }) => {
   const apolloClient = useApolloClient();
   const { updateLogicFunction } = usePersistLogicFunction();
@@ -44,9 +46,6 @@ export const useLogicFunctionForm = ({
   const onChange = <TKey extends keyof LogicFunctionFormValues>(key: TKey) => {
     return async (
       value: LogicFunctionFormValues[TKey],
-      {
-        getTargetLogicFunctionId,
-      }: { getTargetLogicFunctionId?: () => Promise<string> } = {},
     ): Promise<InputJsonSchema | undefined> => {
       setFormValues((prevState: LogicFunctionFormValues) => ({
         ...prevState,

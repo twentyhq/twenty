@@ -118,8 +118,18 @@ export const WorkflowEditActionCode = ({
     });
   };
 
+  const getUpdatableLogicFunctionIdOrThrow = async () => {
+    const updatableStep = await getUpdatableWorkflowVersionStepOrThrow({
+      stepId: action.id,
+      stepType: 'CODE',
+    });
+
+    return updatableStep.settings.input.logicFunctionId;
+  };
+
   const { formValues, loading, onChange } = useLogicFunctionForm({
     logicFunctionId,
+    getTargetLogicFunctionId: getUpdatableLogicFunctionIdOrThrow,
   });
 
   const {
@@ -286,19 +296,12 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    const updatableLogicFunctionId = getUpdatableWorkflowVersionStepOrThrow({
-      stepId: action.id,
-      stepType: 'CODE',
-    }).then((step) => step.settings.input.logicFunctionId);
-
-    const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode, {
-      getTargetLogicFunctionId: () => updatableLogicFunctionId,
-    });
+    const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode);
 
     if (isDefined(inferredJsonSchema)) {
       await handleUpdateFunctionInputSchema({
         inferredJsonSchema,
-        logicFunctionId: await updatableLogicFunctionId,
+        logicFunctionId: await getUpdatableLogicFunctionIdOrThrow(),
       });
     }
   };

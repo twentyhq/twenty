@@ -46,6 +46,7 @@ import {
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-next-step-ids-for-step-type-change.util';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
+import { keepExistingStepResourceIds } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/keep-existing-step-resource-ids';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -228,7 +229,10 @@ export class CoreWorkflowVersionMutationWorkspaceService {
           newStep: step,
           workspaceId,
         })
-      : { updatedStep: step, additionalCreatedSteps: undefined };
+      : {
+          updatedStep: keepExistingStepResourceIds({ existingStep, step }),
+          additionalCreatedSteps: undefined,
+        };
 
     const updatedSteps = steps.map((candidateStep) =>
       candidateStep.id === step.id ? updatedStep : candidateStep,
