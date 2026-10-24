@@ -17,7 +17,6 @@ const INTERNAL_PROPS = new Set([
   'dangerouslySetInnerHTML',
 ]);
 const FORM_OWNER_ATTRIBUTE = 'form';
-// The DOM lowercases attribute names, so any casing must reach the host's handling.
 const HOST_SANITIZED_PROP_NAMES = new Set(['sandbox', 'style']);
 
 const toHostPropName = (remotePropName: string): string => {
