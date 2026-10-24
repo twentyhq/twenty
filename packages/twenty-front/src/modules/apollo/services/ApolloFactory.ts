@@ -343,7 +343,7 @@ export class ApolloFactory implements ApolloManager {
     const currentSessionGeneration = getSessionGeneration();
 
     // A resend carries the new cookie. See PendingServerSignOutEffect.
-    if (skipRetry === true) {
+    if (skipRetry) {
       return false;
     }
 
