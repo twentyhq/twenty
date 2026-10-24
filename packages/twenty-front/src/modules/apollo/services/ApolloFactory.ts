@@ -194,6 +194,29 @@ export class ApolloFactory implements ApolloManager {
           });
       };
 
+      // Sent with the cookie of a session a sign-in has since replaced, so resend it with the new one
+      const replacedSessionRetryLink = new ErrorLink(
+        ({ error, operation, forward }) => {
+          const requestSessionGeneration =
+            operation.getContext().sessionGeneration;
+          const currentSessionGeneration = getSessionGeneration();
+
+          const isRejectedForReplacedSession =
+            isDefined(requestSessionGeneration) &&
+            isDefined(currentSessionGeneration) &&
+            requestSessionGeneration !== currentSessionGeneration &&
+            ((CombinedGraphQLErrors.is(error) &&
+              error.errors.some(isUnauthenticatedGraphQLError)) ||
+              (ServerError.is(error) &&
+                this.isRestOperation(operation) &&
+                this.isAuthenticationError(error)));
+
+          if (isRejectedForReplacedSession) {
+            return forward(operation);
+          }
+        },
+      );
+
       const errorLink = new ErrorLink(({ error, operation }) => {
         const requestSessionGeneration =
           operation.getContext().sessionGeneration;
@@ -275,6 +298,7 @@ export class ApolloFactory implements ApolloManager {
 
       // Cast because third-party links (apollo-link-rest, apollo-upload-client) reference their own ApolloLink type.
       const links = [
+        replacedSessionRetryLink,
         errorLink,
         authLink,
         ...(extraLinks || []),

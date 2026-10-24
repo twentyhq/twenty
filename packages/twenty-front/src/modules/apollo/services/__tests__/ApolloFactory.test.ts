@@ -315,7 +315,13 @@ describe('ApolloFactory', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it('should ignore an unauthenticated response from an older session', async () => {
+  const makeRequestRejectedAfterSessionChange = async ({
+    changeSession,
+    retriedResponse,
+  }: {
+    changeSession: () => void;
+    retriedResponse: string;
+  }) => {
     let markRequestStarted!: () => void;
     const requestStarted = new Promise<void>((resolve) => {
       markRequestStarted = resolve;
@@ -325,11 +331,12 @@ describe('ApolloFactory', () => {
       releaseResponse = resolve;
     });
 
-    fetchMock.mockResponse(() => {
+    fetchMock.mockResponseOnce(() => {
       markRequestStarted();
 
       return pendingResponse;
     });
+    fetchMock.mockResponseOnce(retriedResponse);
 
     rotateSessionGeneration();
     const requestSessionGeneration = getSessionGeneration();
@@ -338,13 +345,48 @@ describe('ApolloFactory', () => {
     expect(requestSessionGeneration).not.toBeNull();
 
     await requestStarted;
-    rotateSessionGeneration();
+    changeSession();
 
     expect(getSessionGeneration()).not.toBe(requestSessionGeneration);
 
     releaseResponse({ body: UNAUTHENTICATED_RESPONSE });
 
-    await expect(request).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+    return request;
+  };
+
+  it('should resend a request rejected because a sign-in replaced its session', async () => {
+    await makeRequestRejectedAfterSessionChange({
+      changeSession: rotateSessionGeneration,
+      retriedResponse: JSON.stringify({
+        data: { trackAnalytics: { success: true } },
+      }),
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
+
+  it('should sign out when the resent request is rejected too', async () => {
+    await expect(
+      makeRequestRejectedAfterSessionChange({
+        changeSession: rotateSessionGeneration,
+        retriedResponse: UNAUTHENTICATED_RESPONSE,
+      }),
+    ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not resend a request rejected after sign out', async () => {
+    await expect(
+      makeRequestRejectedAfterSessionChange({
+        changeSession: clearSessionGeneration,
+        retriedResponse: UNAUTHENTICATED_RESPONSE,
+      }),
+    ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
   });
 
