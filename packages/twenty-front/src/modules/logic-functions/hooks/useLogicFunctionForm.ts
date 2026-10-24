@@ -3,9 +3,9 @@ import {
   useLogicFunctionUpdateFormState,
 } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { buildTriggerSettingsWithInputSchema } from '@/logic-functions/utils/buildTriggerSettingsWithInputSchema';
 import {
   getInputSchemaFromSourceCode,
-  jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
 import { isString } from '@sniptt/guards';
@@ -62,28 +62,15 @@ export const useLogicFunctionForm = ({
         return;
       }
 
-      // Inferred here rather than per keystroke: the dynamic import resolves
-      // concurrent calls out of order, so an older code could be saved last
+      // Not per keystroke: concurrent dynamic imports resolve out of order
       const inferredJsonSchema = await getInputSchemaFromSourceCode(
         update.sourceHandlerCode,
       );
 
-      const triggerSettings = {
-        toolTriggerSettings: isDefined(update.toolTriggerSettings)
-          ? {
-              ...update.toolTriggerSettings,
-              inputSchema: inferredJsonSchema,
-            }
-          : null,
-        workflowActionTriggerSettings: isDefined(
-          update.workflowActionTriggerSettings,
-        )
-          ? {
-              ...update.workflowActionTriggerSettings,
-              inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
-            }
-          : null,
-      };
+      const triggerSettings = buildTriggerSettingsWithInputSchema({
+        formValues: update,
+        inferredJsonSchema,
+      });
 
       setFormValues((prevState: LogicFunctionFormValues) => ({
         ...prevState,
