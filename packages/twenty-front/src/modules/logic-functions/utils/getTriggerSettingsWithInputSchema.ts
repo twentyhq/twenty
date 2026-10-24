@@ -3,6 +3,7 @@ import {
   jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
 
 export const getTriggerSettingsWithInputSchema = ({
   toolTriggerSettings,
@@ -17,10 +18,10 @@ export const getTriggerSettingsWithInputSchema = ({
   LogicFunctionFormValues,
   'toolTriggerSettings' | 'workflowActionTriggerSettings'
 > => ({
-  toolTriggerSettings: toolTriggerSettings
+  toolTriggerSettings: isDefined(toolTriggerSettings)
     ? { ...toolTriggerSettings, inputSchema: inputJsonSchema }
     : null,
-  workflowActionTriggerSettings: workflowActionTriggerSettings
+  workflowActionTriggerSettings: isDefined(workflowActionTriggerSettings)
     ? {
         ...workflowActionTriggerSettings,
         inputSchema: jsonSchemaToInputSchema(inputJsonSchema),

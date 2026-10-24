@@ -224,7 +224,7 @@ export class LogicFunctionFromSourceService {
       flatLogicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT
     ) {
       throw new LogicFunctionException(
-        'Cannot edit the source of a prebuilt logic function',
+        'Cannot edit the source of a prebuilt logic function: create a draft of its workflow version and edit the draft step logic function instead',
         LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
         {
           userFriendlyMessage: msg`This code belongs to a published workflow version. Edit it from a draft.`,
