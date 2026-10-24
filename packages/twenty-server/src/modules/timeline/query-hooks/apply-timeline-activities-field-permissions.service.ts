@@ -1,6 +1,7 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
+import { type RecordVisibilityRestrictionContext } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-context.type';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { keepReadableFieldsInTimelineActivities } from 'src/modules/timeline/utils/keep-readable-fields-in-timeline-activities.util';
 import { resolveTimelineActivityObjectColumnNames } from 'src/modules/timeline/utils/resolve-timeline-activity-object-column-names.util';
@@ -22,36 +23,22 @@ export class ApplyTimelineActivitiesFieldPermissionsService
 
   public async applyVisibilityRestrictions({
     records,
-    objectsPermissions,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-  }: Parameters<
-    RecordVisibilityRestrictionHandler['applyVisibilityRestrictions']
-  >[0]): Promise<void> {
+    ...context
+  }: RecordVisibilityRestrictionContext & {
+    records: Record<string, unknown>[];
+  }): Promise<void> {
     keepReadableFieldsInTimelineActivities({
       timelineActivities: records,
-      objectsPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+      ...context,
     });
   }
 
-  public async applyEventVisibilityRestrictions({
-    records,
-    objectsPermissions,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-  }: Parameters<
-    NonNullable<
-      RecordVisibilityRestrictionHandler['applyEventVisibilityRestrictions']
-    >
-  >[0]): Promise<void> {
-    keepReadableFieldsInTimelineActivities({
-      timelineActivities: records,
-      objectsPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
+  public async applyEventVisibilityRestrictions(
+    args: RecordVisibilityRestrictionContext & {
+      records: Record<string, unknown>[];
+    },
+  ): Promise<void> {
+    await this.applyVisibilityRestrictions(args);
   }
 
   public getRequiredFieldNames(
