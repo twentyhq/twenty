@@ -25,6 +25,10 @@ import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   LogicFunctionException,
@@ -1136,7 +1140,21 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           agentId,
           labelSuffix: v4().substring(0, 4),
           workspaceId,
+        }).catch((error: unknown) => {
+          // A step whose agent was deleted is copied as is, like before drafts copied agents
+          if (
+            error instanceof AiException &&
+            error.code === AiExceptionCode.AGENT_NOT_FOUND
+          ) {
+            return undefined;
+          }
+
+          throw error;
         });
+
+        if (!isDefined(newAgent)) {
+          return step;
+        }
 
         const roleId = await this.aiAgentRoleService.findAgentRoleId({
           agentId,
