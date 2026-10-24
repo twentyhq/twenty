@@ -1,0 +1,2 @@
+export const ADD_PRODUCT_IMPROVEMENT_DATA_SHARING_TO_WORKSPACE_UPGRADE_COMMAND_NAME =
+  '2.52.0_AddProductImprovementDataSharingToWorkspaceFastInstanceCommand_1792762777805';

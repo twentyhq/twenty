@@ -38,6 +38,11 @@ export const initializeNewAiChatStory = ({
     { modelId: MODEL_ID, label: 'Story model' },
   ]);
   jotaiStore.set(aiModelTiersState.atom, [
-    { tier: AiModelTier.fast, modelId: MODEL_ID },
+    {
+      tier: AiModelTier.fast,
+      modelId: MODEL_ID,
+      aiDataResidency: null,
+      isAiZeroDataRetentionRequired: false,
+    },
   ]);
 };

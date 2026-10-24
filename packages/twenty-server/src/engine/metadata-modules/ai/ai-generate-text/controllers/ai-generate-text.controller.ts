@@ -86,7 +86,10 @@ export class AiGenerateTextController {
 
     const resolvedModelId = body.modelId ?? AUTO_SELECT_MODEL_ID_BY_TIER.fast;
 
-    this.aiModelRegistryService.validateModelAvailability(resolvedModelId);
+    this.aiModelRegistryService.validateModelAvailability(
+      resolvedModelId,
+      workspace,
+    );
 
     const registeredModel =
       await this.aiModelRegistryService.resolveModelForAgent(
@@ -105,6 +108,7 @@ export class AiGenerateTextController {
           prompt: body.userPrompt,
           ...buildAiTelemetry({
             functionId: 'ai-generate-text',
+            privacySettings: workspace,
             workspaceId: workspace.id,
             userWorkspaceId,
           }),

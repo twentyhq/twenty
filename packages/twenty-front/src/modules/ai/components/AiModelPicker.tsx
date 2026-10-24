@@ -14,6 +14,7 @@ import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierForAgentModelId } from '@/ai/utils/getAiModelTierForAgentModelId';
 import { getNearestAiModelTier } from '@/ai/utils/getNearestAiModelTier';
+import { workspaceAiModelsSelector } from '@/ai/states/workspaceAiModelsSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -58,6 +59,7 @@ export const AiModelPicker = ({
   const { t } = useLingui();
   const tiers = useAiModelTiers();
   const aiModels = useAtomStateValue(aiModelsState);
+  const workspaceAiModels = useAtomStateValue(workspaceAiModelsSelector);
   const { agentTier } = useWorkspaceAiModelTiers();
 
   const isWorkspaceDefault = modelId === AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
@@ -110,7 +112,7 @@ export const AiModelPicker = ({
               pinnedModelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
             )
           }
-          aiModels={aiModels}
+          aiModels={workspaceAiModels}
           emptyOptionLabel={t`Automatic`}
           disabled={disabled}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}

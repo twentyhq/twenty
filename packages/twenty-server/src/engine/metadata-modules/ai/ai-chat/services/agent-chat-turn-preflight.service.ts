@@ -75,6 +75,7 @@ export class AgentChatTurnPreflightService {
 
     this.aiModelRegistryService.validateModelAvailability(
       getChatModelId({ requestedModelId: modelId, workspace }),
+      workspace,
     );
   }
 

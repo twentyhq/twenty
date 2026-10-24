@@ -92,10 +92,8 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
           uptime: false,
         },
       }),
-      Sentry.vercelAIIntegration({
-        recordInputs: true,
-        recordOutputs: true,
-      }),
+      // per-call telemetry decides, so a workspace's AI data policy can keep prompts out of traces
+      Sentry.vercelAIIntegration(),
       nodeProfilingIntegration(),
     ],
     tracesSampleRate,
@@ -108,7 +106,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       fallback: 0.01,
     }),
     maxValueLength: 8192,
-    sendDefaultPii: true,
+    sendDefaultPii: false,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
       const twentyContext = Sentry.getIsolationScope().getScopeData().contexts

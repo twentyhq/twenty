@@ -34,7 +34,11 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       if (options?.workspace) {
-        scope.setExtra('workspace', options.workspace);
+        scope.setExtra('workspace', {
+          id: options.workspace.id,
+          activationStatus: options.workspace.activationStatus,
+          createdAt: options.workspace.createdAt,
+        });
       }
 
       if (options?.additionalData) {
@@ -42,12 +46,7 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       if (options?.user) {
-        scope.setUser({
-          id: options.user.id,
-          email: options.user.email,
-          firstName: options.user.firstName,
-          lastName: options.user.lastName,
-        });
+        scope.setUser({ id: options.user.id });
       }
 
       for (const exception of exceptions) {

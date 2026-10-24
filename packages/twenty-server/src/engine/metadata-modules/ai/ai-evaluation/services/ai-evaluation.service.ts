@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { JEV_MODEL_ID } from 'twenty-shared/ai';
 
@@ -10,6 +11,7 @@ import { type AiEvaluationRequest } from 'src/engine/metadata-modules/ai/ai-eval
 import { type AiEvaluationResult } from 'src/engine/metadata-modules/ai/ai-evaluation/types/ai-evaluation-result.type';
 import { assertEvaluationQuestionsAreWellFormed } from 'src/engine/metadata-modules/ai/ai-evaluation/utils/assert-evaluation-questions-are-well-formed.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 import {
   AiException,
   AiExceptionCode,
@@ -21,6 +23,7 @@ export class AiEvaluationService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly nativeEvaluationRunner: NativeEvaluationRunner,
     private readonly aiBillingService: AiBillingService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {}
 
   async evaluate({
@@ -44,6 +47,26 @@ export class AiEvaluationService {
     }
 
     const modelId = JEV_MODEL_ID;
+
+    const aiDataPolicy =
+      await this.workspaceAiDataPolicyService.getAiPrivacySettingsOrThrow(
+        workspaceId,
+      );
+
+    if (
+      !this.aiModelRegistryService.isEvaluationModelCompliantWithDataPolicy(
+        modelId,
+        aiDataPolicy,
+      )
+    ) {
+      throw new AiException(
+        `Evaluation model ${modelId} does not meet the workspace data policy`,
+        AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY,
+        {
+          userFriendlyMessage: msg`Classify is not available with this workspace's privacy settings.`,
+        },
+      );
+    }
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,

@@ -35,6 +35,9 @@ As per our [Privacy Policy](https://twenty.com/privacy-policy), Twenty acts as t
 <Accordion title="Is CRM content ever used to train Twenty or third-party AI models?">
 No. Twenty does not have its own AI model and does not train any model on your data. The AI providers used by default on Twenty Cloud (Azure OpenAI, OpenAI, Anthropic and Mistral) do not train on it under their terms. Some optional models, such as Google Gemini, and TypeSafe (used by the workflow Classify action) are only used if an admin enables them; their terms are listed in [our Trust Center](https://trust.twenty.com/?tab=subprocessors).
 </Accordion>
+<Accordion title="Can AI processing be kept in the EU, or limited to providers that keep no data?">
+Yes. In Settings → General → Privacy, set the processing region to EU only and turn on Zero data retention. Twenty then only uses models whose provider meets both, and refuses any request it cannot route that way. Fewer models are available with these settings, and some cost more.
+</Accordion>
 <Accordion title="If optional AI processing exists, can it be fully disabled for our workspace?">
 No data is sent to an AI provider unless someone in your workspace runs AI: the AI chat, an AI agent, or an AI step in a workflow. To block AI entirely, set a workspace AI usage limit of 0 in Settings → Billing, which applies to every member, admins included. You can also remove the Ask AI permission from your editable roles in Settings → Roles; the built-in Admin role always keeps it.
 </Accordion>
@@ -47,7 +50,7 @@ No data is sent to an AI provider unless someone in your workspace runs AI: the 
 All data is encrypted in transit and at rest. Tenant data is isolated through a schema-per-tenant setup, and encryption keys are periodically rotated.
 </Accordion>
 <Accordion title="Which Twenty personnel or sub-processors may access customer workspaces, for what purposes, and how is access approved and logged?">
-Twenty's engineering and support teams may access customer workspaces to investigate and resolve issues. Workspace owners control this: support access can be disabled at any time in Settings → General → Security, and it stays off until you turn it back on. Support access requires two-factor authentication on Twenty's side, and on the Organization plan and above each session is recorded in your audit logs. While someone from Twenty is impersonating you, the session also appears with an Impersonation label in Settings → Profile → Devices.
+Twenty's engineering and support teams may access customer workspaces to investigate and resolve issues. Workspace owners control this: support access can be disabled at any time in Settings → General → Privacy, and it stays off until you turn it back on. Support access requires two-factor authentication on Twenty's side, and on the Organization plan and above each session is recorded in your audit logs. While someone from Twenty is impersonating you, the session also appears with an Impersonation label in Settings → Profile → Devices.
 </Accordion>
 <Accordion title="Can members of our workspace impersonate each other?">
 Members whose role has the Impersonate permission can view the workspace as any other member, including workspace admins, so only grant it to roles you trust. You control who has this permission in Settings → Roles.
