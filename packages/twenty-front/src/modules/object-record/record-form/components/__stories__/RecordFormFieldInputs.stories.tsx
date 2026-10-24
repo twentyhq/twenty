@@ -110,6 +110,15 @@ const addressFieldMetadataItem: FieldMetadataItem = {
   settings: null,
 };
 
+const taglineFieldMetadataItem: FieldMetadataItem = {
+  ...getMockFieldMetadataItemOrThrow({
+    objectMetadataItem: companyObjectMetadataItem,
+    fieldName: 'tagline',
+  }),
+  label: 'Tagline',
+  settings: { displayedMaxRows: 3 },
+};
+
 type RecordFormFieldInputsWithDraftProps = {
   fieldMetadataItems: FieldMetadataItem[];
   initialDraftRecord?: Partial<ObjectRecord>;
@@ -799,5 +808,24 @@ export const StoredAddressShowsDetails: Story = {
       canvas.getByRole('textbox', { name: 'Post Code' }),
     ).toHaveValue('75001');
     await expect(args.onFieldValueChange).not.toHaveBeenCalled();
+  },
+};
+
+export const WrappingText: Story = {
+  args: {
+    fieldMetadataItems: [taglineFieldMetadataItem],
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const textArea = canvas.getByRole('textbox', { name: 'Tagline' });
+
+    await expect(textArea.tagName).toBe('TEXTAREA');
+
+    await userEvent.type(textArea, 'Build{Enter}the CRM');
+
+    await expect(args.onFieldValueChange).toHaveBeenLastCalledWith(
+      'tagline',
+      'Build\nthe CRM',
+    );
   },
 };

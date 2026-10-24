@@ -1,3 +1,4 @@
+import { LinksFieldDomainFavicon } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldDomainFavicon';
 import { LinksFieldEditInputs } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditInputs';
 import { LinksFieldEditPreview } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditPreview';
 import { LinksFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldMenuItem';
@@ -317,6 +318,7 @@ export const RecordFormLinksFieldInput = ({
       hasPadding={shouldShowItems && shouldShowInputInFooter}
       rightComponent={saveButton}
     >
+      {isDomainField && <LinksFieldDomainFavicon domain={inputValue} />}
       <MultiItemFieldTextInput
         ref={inputRef}
         autoFocus={shouldFocusInput}
