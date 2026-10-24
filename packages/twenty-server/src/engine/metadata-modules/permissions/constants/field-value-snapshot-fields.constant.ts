@@ -9,6 +9,7 @@ export const FIELD_VALUE_SNAPSHOT_FIELDS: FieldValueSnapshotField[] = [
     subjectObjectMetadataIdFieldUniversalIdentifier:
       STANDARD_OBJECTS.timelineActivity.fields.linkedObjectMetadataId
         .universalIdentifier,
-    subjectMorphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
+    subjectMorphId:
+      STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
   },
 ];

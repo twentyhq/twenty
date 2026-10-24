@@ -1,7 +1,10 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { type ObjectRecord, type ObjectsPermissions } from 'twenty-shared/types';
+import {
+  type ObjectRecord,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -132,16 +135,17 @@ export class ApplyTimelineActivitiesFieldPermissionsService
       return new Map();
     }
 
-    const storedRecords = await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () =>
-        this.workspaceOrmManager
-          .getRepository<ObjectRecord>('timelineActivity', {
-            shouldBypassPermissionChecks: true,
-          })
-          .find({ where: { id: In(recordIdsMissingSubjectColumns) } }),
-      buildSystemAuthContext(workspaceId),
-      { lite: true },
-    );
+    const storedRecords =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.workspaceOrmManager
+            .getRepository<ObjectRecord>('timelineActivity', {
+              shouldBypassPermissionChecks: true,
+            })
+            .find({ where: { id: In(recordIdsMissingSubjectColumns) } }),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
 
     return new Map(storedRecords.map((record) => [record.id, record]));
   }

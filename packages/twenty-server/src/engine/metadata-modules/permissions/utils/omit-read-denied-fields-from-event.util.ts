@@ -163,7 +163,10 @@ export const omitReadDeniedFieldsFromEvent = <
         }),
       }),
       ...('after' in properties && {
-        after: omitFromRecordSnapshots({ record: properties.after, ...context }),
+        after: omitFromRecordSnapshots({
+          record: properties.after,
+          ...context,
+        }),
       }),
       ...('diff' in properties && {
         diff: omitFromDiffSnapshots({
