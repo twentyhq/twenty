@@ -57,6 +57,7 @@ const nextConfig: LinariaConfig = {
             i18n: ['@lingui/core', 'i18n'],
             trans: ['@lingui/react', 'Trans'],
           },
+          useLinguiV5IdGeneration: true,
         },
       ],
     ],
