@@ -19,6 +19,20 @@ describe('parseDataFromContentType', () => {
 
       expect(result).toBe('{"key":"value"}');
     });
+
+    it('should serialize boolean and numeric primitives', () => {
+      expect(parseDataFromContentType(false, 'application/json')).toBe('false');
+      expect(parseDataFromContentType(0, 'application/json')).toBe('0');
+    });
+
+    it('should handle case-insensitive and parameter-bearing content types', () => {
+      expect(
+        parseDataFromContentType(
+          { key: 'value' },
+          'APPLICATION/JSON; charset=utf-8',
+        ),
+      ).toBe('{"key":"value"}');
+    });
   });
 
   describe('text/plain', () => {
@@ -66,6 +80,15 @@ describe('parseDataFromContentType', () => {
       );
 
       expect(typeof result).toBe('string');
+    });
+
+    it('should handle case-insensitive urlencoded content type', () => {
+      const result = parseDataFromContentType(
+        { name: 'Alice & Bob', count: 0 },
+        'Application/X-Www-Form-Urlencoded',
+      );
+
+      expect(result).toBe('name=Alice+%26+Bob&count=0');
     });
   });
 

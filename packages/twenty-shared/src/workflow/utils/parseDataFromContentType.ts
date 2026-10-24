@@ -1,4 +1,4 @@
-type InputData = Record<string, any> | string;
+type InputData = Record<string, any> | string | number | boolean;
 
 const parseUrlEncoded = (data: InputData): string => {
   let parsedData = data;
@@ -9,7 +9,7 @@ const parseUrlEncoded = (data: InputData): string => {
       parsedData = data;
     }
   }
-  return new URLSearchParams(parsedData).toString();
+  return new URLSearchParams(parsedData as any).toString();
 };
 
 const parseFormData = (data: InputData): FormData => {
@@ -24,7 +24,7 @@ const parseFormData = (data: InputData): FormData => {
     } catch {
       throw new Error('String data for FormData must be valid JSON');
     }
-  } else {
+  } else if (typeof data === 'object' && data !== null) {
     Object.entries(data).forEach(([key, val]) => form.append(key, val));
   }
   return form;
@@ -42,9 +42,13 @@ const parseText = (data: InputData): string => {
     return data;
   }
 
-  return Object.entries(data)
-    .map(([key, val]) => `${key}=${val}`)
-    .join('\n');
+  if (typeof data === 'object' && data !== null) {
+    return Object.entries(data)
+      .map(([key, val]) => `${key}=${val}`)
+      .join('\n');
+  }
+
+  return String(data);
 };
 
 export const parseDataFromContentType = (
@@ -54,7 +58,9 @@ export const parseDataFromContentType = (
   if (contentType === undefined) {
     return parseJson(data);
   }
-  switch (contentType) {
+  const normalizedContentType =
+    contentType.toLowerCase().split(';')[0]?.trim() ?? '';
+  switch (normalizedContentType) {
     case 'application/x-www-form-urlencoded':
       return parseUrlEncoded(data);
     case 'multipart/form-data':
