@@ -17,7 +17,6 @@ import { useRecordCreationFormSettle } from '@/object-record/record-form/hooks/u
 import { useRecordFormFields } from '@/object-record/record-form/hooks/useRecordFormFields';
 import { computeRecordFormCreateRecordInput } from '@/object-record/record-form/utils/computeRecordFormCreateRecordInput';
 import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
-import { revealFirstRecordFormAlert } from '@/object-record/record-form/utils/revealFirstRecordFormAlert';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordCreationFormSettingsInSidePanel } from '@/side-panel/hooks/useOpenRecordCreationFormSettingsInSidePanel';
@@ -262,7 +261,10 @@ const SidePanelRecordCreationForm = ({
   };
 
   const scrollToFirstFieldViolation = () =>
-    revealFirstRecordFormAlert({ containerId: contentId });
+    document
+      .getElementById(contentId)
+      ?.querySelector('[role="alert"]')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   const submitDraftRecord = async ({
     shouldKeepOpen,
