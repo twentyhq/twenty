@@ -1,9 +1,9 @@
 import { addCharactersToAvoidPasswordManagers } from '@/object-record/record-field/ui/meta-types/input/utils/addCharactersToAvoidPasswordManagers';
 import { type FieldFullNameValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RecordFormFieldDetailsToggleRow } from '@/object-record/record-form/components/RecordFormFieldDetailsToggleRow';
+import { FieldInputDetailsToggleRow } from '@/ui/field/input/components/FieldInputDetailsToggleRow';
 import { StyledRecordFormFieldBox } from '@/object-record/record-form/components/StyledRecordFormFieldBox';
-import { StyledRecordFormFieldDetails } from '@/object-record/record-form/components/StyledRecordFormFieldDetails';
-import { splitFullNameInputText } from '@/object-record/record-form/utils/splitFullNameInputText';
+import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledFieldInputDetails';
+import { splitFullNameInputText } from '@/object-record/record-field/ui/meta-types/input/utils/splitFullNameInputText';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -74,7 +74,7 @@ export const RecordFormFullNameFieldInput = ({
         <Field.Label htmlFor={instanceId}>{label}</Field.Label>
       ) : null}
       <StyledRecordFormFieldBox>
-        <RecordFormFieldDetailsToggleRow
+        <FieldInputDetailsToggleRow
           isExpanded={isExpanded}
           toggleLabel={t`Name details`}
           onToggle={() => setIsExpanded(!isExpanded)}
@@ -90,9 +90,9 @@ export const RecordFormFullNameFieldInput = ({
             value={fullNameText}
             onChange={(event) => handleFullNameTextChange(event.target.value)}
           />
-        </RecordFormFieldDetailsToggleRow>
+        </FieldInputDetailsToggleRow>
         {isExpanded && (
-          <StyledRecordFormFieldDetails>
+          <StyledFieldInputDetails>
             <TextInput
               label={t`First name`}
               value={fullName.firstName}
@@ -113,7 +113,7 @@ export const RecordFormFullNameFieldInput = ({
                 handleNamePartChange({ ...fullName, lastName })
               }
             />
-          </StyledRecordFormFieldDetails>
+          </StyledFieldInputDetails>
         )}
       </StyledRecordFormFieldBox>
     </FormFieldInputContainer>

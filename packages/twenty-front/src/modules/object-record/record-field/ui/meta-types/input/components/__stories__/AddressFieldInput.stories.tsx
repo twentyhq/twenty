@@ -254,6 +254,9 @@ export const AutofillsAndPersistsAddress: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Address details' }),
+    );
     const input = canvas.getByRole('combobox', { name: 'Address 1' });
 
     await userEvent.clear(input);
@@ -302,6 +305,9 @@ export const SelectsCityWithoutReplacingStreet: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Address details' }),
+    );
     const cityInput = canvas.getByRole('combobox', { name: 'City' });
 
     await userEvent.type(cityInput, 'Par');
@@ -347,6 +353,9 @@ export const KeepsSelectionWhileDetailsLoad: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Address details' }),
+    );
     const input = canvas.getByRole('combobox', { name: 'Address 1' });
     const outsideButton = canvas.getByRole('button', { name: 'Outside' });
 
@@ -456,6 +465,9 @@ export const CountryOnMainSurface: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Address details' }),
+    );
 
     await userEvent.click(canvas.getByText('No country'));
     await userEvent.type(screen.getByPlaceholderText('Search'), 'France');
@@ -484,6 +496,9 @@ export const CountryOpensWithEnter: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Address details' }),
+    );
     const trigger = canvas.getByRole('button', { name: 'Country' });
 
     trigger.focus();

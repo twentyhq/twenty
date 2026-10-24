@@ -1,9 +1,9 @@
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { normalizeAddressFieldValueForPersist } from '@/object-record/record-field/ui/utils/normalizeAddressFieldValueForPersist';
-import { RecordFormFieldDetailsToggleRow } from '@/object-record/record-form/components/RecordFormFieldDetailsToggleRow';
+import { FieldInputDetailsToggleRow } from '@/ui/field/input/components/FieldInputDetailsToggleRow';
 import { StyledRecordFormFieldBox } from '@/object-record/record-form/components/StyledRecordFormFieldBox';
-import { StyledRecordFormFieldDetails } from '@/object-record/record-form/components/StyledRecordFormFieldDetails';
+import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledFieldInputDetails';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
@@ -98,7 +98,7 @@ export const RecordFormAddressFieldInput = ({
       ) : null}
       <StyledRecordFormFieldBox>
         {hasStreet1 && (
-          <RecordFormFieldDetailsToggleRow
+          <FieldInputDetailsToggleRow
             isExpanded={isExpanded}
             toggleLabel={t`Address details`}
             hasToggle={hasDetails}
@@ -115,10 +115,10 @@ export const RecordFormAddressFieldInput = ({
                 handleSubFieldChange('addressStreet1')(event.target.value)
               }
             />
-          </RecordFormFieldDetailsToggleRow>
+          </FieldInputDetailsToggleRow>
         )}
         {shouldShowDetails && (
-          <StyledRecordFormFieldDetails hasSeparator={hasStreet1}>
+          <StyledFieldInputDetails hasSeparator={hasStreet1}>
             {hasSubField('addressStreet2') && (
               <StyledFullWidthDetail>
                 <TextInput
@@ -169,7 +169,7 @@ export const RecordFormAddressFieldInput = ({
                 dropdownId={`${instanceId}-country`}
               />
             )}
-          </StyledRecordFormFieldDetails>
+          </StyledFieldInputDetails>
         )}
       </StyledRecordFormFieldBox>
     </FormFieldInputContainer>

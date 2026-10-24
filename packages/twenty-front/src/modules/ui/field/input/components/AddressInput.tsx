@@ -10,7 +10,11 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
 import { type AddressInputProps } from '@/ui/field/input/types/AddressInputProps';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { FieldInputDetailsToggleRow } from '@/ui/field/input/components/FieldInputDetailsToggleRow';
+import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledFieldInputDetails';
+import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Autocomplete } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
@@ -22,31 +26,29 @@ import { useAddressInputClickOutside } from '@/ui/field/input/hooks/useAddressIn
 import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 import { useFocusManagement } from '@/ui/field/input/hooks/useFocusManagement';
 
+const ADDRESS_DETAIL_SUB_FIELDS: AllowedAddressSubField[] = [
+  'addressStreet2',
+  'addressCity',
+  'addressState',
+  'addressPostcode',
+  'addressCountry',
+];
+
 const StyledAddressContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 4px 8px;
-
   width: 344px;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    gap: 8px;
-    width: auto;
-    min-width: 100px;
     max-width: 200px;
+    min-width: 100px;
     overflow: hidden;
+    width: auto;
   }
 `;
 
-const StyledHalfRowContainer = styled.div`
-  display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
+const StyledFullWidthDetail = styled.div`
+  grid-column: 1 / -1;
 `;
 
 const StyledInputWithDropdownContainer = styled.div`
@@ -116,8 +118,31 @@ export const AddressInput = ({
     [subFields],
   );
 
+  const hasStreet1 = isFieldInputInSubFieldsAddress('addressStreet1');
+  const hasDetails = ADDRESS_DETAIL_SUB_FIELDS.some(
+    isFieldInputInSubFieldsAddress,
+  );
+  const [isExpanded, setIsExpanded] = useState(() =>
+    ADDRESS_DETAIL_SUB_FIELDS.some((subField) =>
+      isNonEmptyString(value[subField]),
+    ),
+  );
+  const shouldShowDetails = hasDetails && (!hasStreet1 || isExpanded);
+
+  const displayedInputRefs = useMemo(
+    () =>
+      Object.fromEntries(
+        typedObjectEntries(inputRefs).filter(([field]) =>
+          field === 'addressStreet1'
+            ? hasStreet1
+            : shouldShowDetails && isFieldInputInSubFieldsAddress(field),
+        ),
+      ),
+    [inputRefs, hasStreet1, shouldShowDetails, isFieldInputInSubFieldsAddress],
+  );
+
   const { getFocusHandler, handleTab, handleShiftTab } = useFocusManagement(
-    inputRefs,
+    displayedInputRefs,
     internalValue,
     onTab,
     onShiftTab,
@@ -237,10 +262,12 @@ export const AddressInput = ({
     fieldType,
     label,
     autoFocus = false,
+    isInline = false,
   }: {
     fieldType: 'addressStreet1' | 'addressCity';
     label: string;
     autoFocus?: boolean;
+    isInline?: boolean;
   }) => (
     <StyledInputWithDropdownContainer>
       <AutocompleteRoot
@@ -258,19 +285,33 @@ export const AddressInput = ({
         }
         onClose={closeDropdownOfAutocomplete}
       >
-        <Autocomplete.Input
-          aria-label={label}
-          render={(inputProps) => (
-            <TextInput
-              inputProps={inputProps}
-              autoFocus={autoFocus}
-              ref={inputRefs[fieldType]}
-              label={label}
-              fullWidth
-              onFocus={getFocusHandler(fieldType)}
-            />
-          )}
-        />
+        {isInline ? (
+          <Autocomplete.Input
+            ref={inputRefs[fieldType]}
+            aria-label={label}
+            placeholder={label}
+            autoFocus={autoFocus}
+            onFocus={getFocusHandler(fieldType)}
+            render={(inputProps) => (
+              // oxlint-disable-next-line react/jsx-props-no-spreading
+              <StyledTextInput {...inputProps} />
+            )}
+          />
+        ) : (
+          <Autocomplete.Input
+            aria-label={label}
+            render={(inputProps) => (
+              <TextInput
+                inputProps={inputProps}
+                autoFocus={autoFocus}
+                ref={inputRefs[fieldType]}
+                label={label}
+                fullWidth
+                onFocus={getFocusHandler(fieldType)}
+              />
+            )}
+          />
+        )}
         <PlaceAutocompleteSelect
           list={placeAutocompleteData}
           onChange={handlePlaceSelection}
@@ -281,58 +322,70 @@ export const AddressInput = ({
 
   return (
     <StyledAddressContainer ref={wrapperRef}>
-      {isFieldInputInSubFieldsAddress('addressStreet1') &&
-        renderInputWithAutocomplete({
-          fieldType: 'addressStreet1',
-          label: t`Address 1`,
-          autoFocus: true,
-        })}
-      {isFieldInputInSubFieldsAddress('addressStreet2') && (
-        <TextInput
-          value={internalValue.addressStreet2 ?? ''}
-          ref={inputRefs.addressStreet2}
-          label={t`Address 2`}
-          fullWidth
-          onChange={getChangeHandler('addressStreet2')}
-          onFocus={getFocusHandler('addressStreet2')}
-        />
-      )}
-      <StyledHalfRowContainer>
-        {isFieldInputInSubFieldsAddress('addressCity') &&
-          renderInputWithAutocomplete({
-            fieldType: 'addressCity',
-            label: t`City`,
+      {hasStreet1 && (
+        <FieldInputDetailsToggleRow
+          isExpanded={isExpanded}
+          toggleLabel={t`Address details`}
+          hasToggle={hasDetails}
+          onToggle={() => setIsExpanded(!isExpanded)}
+        >
+          {renderInputWithAutocomplete({
+            fieldType: 'addressStreet1',
+            label: t`Address 1`,
+            autoFocus: true,
+            isInline: true,
           })}
-        {isFieldInputInSubFieldsAddress('addressState') && (
-          <TextInput
-            value={internalValue.addressState ?? ''}
-            ref={inputRefs.addressState}
-            label={t`State`}
-            fullWidth
-            onChange={getChangeHandler('addressState')}
-            onFocus={getFocusHandler('addressState')}
-          />
-        )}
-      </StyledHalfRowContainer>
-      <StyledHalfRowContainer>
-        {isFieldInputInSubFieldsAddress('addressPostcode') && (
-          <TextInput
-            value={internalValue.addressPostcode ?? ''}
-            ref={inputRefs.addressPostcode}
-            label={t`Post Code`}
-            fullWidth
-            onChange={getChangeHandler('addressPostcode')}
-            onFocus={getFocusHandler('addressPostcode')}
-          />
-        )}
-        {isFieldInputInSubFieldsAddress('addressCountry') && (
-          <CountrySelect
-            label={t`Country`}
-            onChange={getChangeHandler('addressCountry')}
-            selectedCountryName={internalValue.addressCountry ?? ''}
-          />
-        )}
-      </StyledHalfRowContainer>
+        </FieldInputDetailsToggleRow>
+      )}
+      {shouldShowDetails && (
+        <StyledFieldInputDetails hasSeparator={hasStreet1}>
+          {isFieldInputInSubFieldsAddress('addressStreet2') && (
+            <StyledFullWidthDetail>
+              <TextInput
+                value={internalValue.addressStreet2 ?? ''}
+                ref={inputRefs.addressStreet2}
+                label={t`Address 2`}
+                fullWidth
+                onChange={getChangeHandler('addressStreet2')}
+                onFocus={getFocusHandler('addressStreet2')}
+              />
+            </StyledFullWidthDetail>
+          )}
+          {isFieldInputInSubFieldsAddress('addressCity') &&
+            renderInputWithAutocomplete({
+              fieldType: 'addressCity',
+              label: t`City`,
+              autoFocus: !hasStreet1,
+            })}
+          {isFieldInputInSubFieldsAddress('addressState') && (
+            <TextInput
+              value={internalValue.addressState ?? ''}
+              ref={inputRefs.addressState}
+              label={t`State`}
+              fullWidth
+              onChange={getChangeHandler('addressState')}
+              onFocus={getFocusHandler('addressState')}
+            />
+          )}
+          {isFieldInputInSubFieldsAddress('addressPostcode') && (
+            <TextInput
+              value={internalValue.addressPostcode ?? ''}
+              ref={inputRefs.addressPostcode}
+              label={t`Post Code`}
+              fullWidth
+              onChange={getChangeHandler('addressPostcode')}
+              onFocus={getFocusHandler('addressPostcode')}
+            />
+          )}
+          {isFieldInputInSubFieldsAddress('addressCountry') && (
+            <CountrySelect
+              label={t`Country`}
+              onChange={getChangeHandler('addressCountry')}
+              selectedCountryName={internalValue.addressCountry ?? ''}
+            />
+          )}
+        </StyledFieldInputDetails>
+      )}
     </StyledAddressContainer>
   );
 };
