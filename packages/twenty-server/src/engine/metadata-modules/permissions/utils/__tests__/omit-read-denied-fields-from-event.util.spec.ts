@@ -63,6 +63,20 @@ const flatFieldMetadataMaps = [
   createEmptyFlatEntityMaps(),
 );
 
+const TIMELINE_ACTIVITY_OBJECT = {
+  id: TIMELINE_ACTIVITY_OBJECT_ID,
+  fieldIds: [
+    'properties-field-id',
+    'linked-object-metadata-id-field-id',
+    'target-person-field-id',
+  ],
+};
+
+const PERSON_OBJECT = {
+  id: PERSON_OBJECT_ID,
+  fieldIds: [PERSON_JOB_TITLE_FIELD_ID],
+};
+
 const buildObjectPermissions = (
   restrictedFields: ObjectPermissions['restrictedFields'],
 ): ObjectPermissions => ({
@@ -102,7 +116,7 @@ const omitForTimelineActivity = <TEvent extends ObjectRecordCreateEvent>(
 ) =>
   omitReadDeniedFieldsFromEvent({
     event,
-    objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
+    flatObjectMetadata: TIMELINE_ACTIVITY_OBJECT,
     objectsPermissions: OBJECTS_PERMISSIONS_WITH_PERSON_JOB_TITLE_DENIED,
     flatFieldMetadataMaps,
   }).properties;
@@ -161,7 +175,7 @@ describe('omitReadDeniedFieldsFromEvent', () => {
     expect(
       omitReadDeniedFieldsFromEvent({
         event: updatedEvent,
-        objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
+        flatObjectMetadata: TIMELINE_ACTIVITY_OBJECT,
         objectsPermissions: OBJECTS_PERMISSIONS_WITH_PERSON_JOB_TITLE_DENIED,
         flatFieldMetadataMaps,
       }).properties,
@@ -180,7 +194,7 @@ describe('omitReadDeniedFieldsFromEvent', () => {
           recordId: 'person-id',
           properties: { after: { jobTitle: 'Manager', city: 'Lyon' } },
         },
-        objectMetadataId: PERSON_OBJECT_ID,
+        flatObjectMetadata: PERSON_OBJECT,
         objectsPermissions: OBJECTS_PERMISSIONS_WITH_PERSON_JOB_TITLE_DENIED,
         flatFieldMetadataMaps,
       }).properties,

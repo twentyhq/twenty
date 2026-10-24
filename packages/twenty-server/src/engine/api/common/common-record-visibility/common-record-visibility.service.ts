@@ -68,6 +68,7 @@ export class CommonRecordVisibilityService {
           records: collectedRecords,
           authContext,
           objectsPermissions,
+          flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         });
     }

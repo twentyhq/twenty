@@ -64,7 +64,7 @@ export const resolveEventsReadableByRole = async <
     .map((event) =>
       omitReadDeniedFieldsFromEvent({
         event,
-        objectMetadataId: workspaceEventBatch.objectMetadata.id,
+        flatObjectMetadata: workspaceEventBatch.objectMetadata,
         objectsPermissions,
         flatFieldMetadataMaps,
       }),

@@ -12,7 +12,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
-import { findFieldMetadataIds } from 'test/integration/graphql/suites/timeline/utils/find-field-metadata-ids.util';
+import { findFieldMetadataIdsOrThrow } from 'test/integration/graphql/suites/timeline/utils/find-field-metadata-ids-or-throw.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -77,7 +77,7 @@ describe('Timeline activity field permissions', () => {
       (role: { label: string }) => role.label === 'Member',
     ).id;
 
-    const restrictedFields = await findFieldMetadataIds([
+    const restrictedFields = await findFieldMetadataIdsOrThrow([
       { objectNameSingular: 'person', fieldName: 'jobTitle' },
       { objectNameSingular: 'company', fieldName: 'name' },
     ]);

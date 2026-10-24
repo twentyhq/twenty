@@ -1,7 +1,7 @@
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-export const findFieldMetadataIds = async (
+export const findFieldMetadataIdsOrThrow = async (
   fieldReferences: { objectNameSingular: string; fieldName: string }[],
 ): Promise<{ objectMetadataId: string; fieldMetadataId: string }[]> => {
   const { objects } = await findManyObjectMetadata({
@@ -18,9 +18,8 @@ export const findFieldMetadataIds = async (
       (field) => field.name === fieldName,
     );
 
-    if (!isDefined(objectMetadata) || !isDefined(fieldMetadata)) {
-      throw new Error(`${objectNameSingular}.${fieldName} not found`);
-    }
+    assertIsDefinedOrThrow(objectMetadata);
+    assertIsDefinedOrThrow(fieldMetadata);
 
     return {
       objectMetadataId: objectMetadata.id,

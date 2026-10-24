@@ -12,8 +12,10 @@ import { CommonRecordVisibilityService } from 'src/engine/api/common/common-reco
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ResolvedFieldValueSnapshotField } from 'src/engine/metadata-modules/permissions/types/resolved-field-value-snapshot-field.type';
 import { buildReadDeniedFieldNamesForObject } from 'src/engine/metadata-modules/permissions/utils/build-read-denied-field-names-for-object.util';
 import { omitReadDeniedFieldsFromFieldValueSnapshot } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-field-value-snapshot.util';
@@ -54,11 +56,13 @@ export class ApplyTimelineActivitiesFieldPermissionsService
     records,
     authContext,
     objectsPermissions,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
     objectsPermissions: ObjectsPermissions;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<void> {
     const propertiesField = findFlatEntityByUniversalIdentifier({
@@ -67,12 +71,19 @@ export class ApplyTimelineActivitiesFieldPermissionsService
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    if (!isDefined(propertiesField)) {
+    const timelineActivityObjectMetadata = isDefined(propertiesField)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: propertiesField.objectMetadataId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        })
+      : undefined;
+
+    if (!isDefined(timelineActivityObjectMetadata)) {
       return;
     }
 
     const [snapshotField] = resolveFieldValueSnapshotFields({
-      objectMetadataId: propertiesField.objectMetadataId,
+      flatObjectMetadata: timelineActivityObjectMetadata,
       flatFieldMetadataMaps,
     });
 
@@ -128,8 +139,7 @@ export class ApplyTimelineActivitiesFieldPermissionsService
   }): Promise<Map<string, ObjectRecord>> {
     const recordIdsMissingSubjectColumns = records
       .filter((record) => !hasSubjectColumns({ record, snapshotField }))
-      .map((record) => record.id)
-      .filter(isDefined);
+      .map((record) => record.id);
 
     if (recordIdsMissingSubjectColumns.length === 0) {
       return new Map();
@@ -142,7 +152,10 @@ export class ApplyTimelineActivitiesFieldPermissionsService
             .getRepository<ObjectRecord>('timelineActivity', {
               shouldBypassPermissionChecks: true,
             })
-            .find({ where: { id: In(recordIdsMissingSubjectColumns) } }),
+            .find({
+              where: { id: In(recordIdsMissingSubjectColumns) },
+              withDeleted: true,
+            }),
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );

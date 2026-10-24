@@ -7,7 +7,10 @@ export const resolveFieldValueSnapshotSubjectObjectMetadataId = ({
   snapshotField,
 }: {
   record: Record<string, unknown>;
-  snapshotField: ResolvedFieldValueSnapshotField;
+  snapshotField: Pick<
+    ResolvedFieldValueSnapshotField,
+    'subjectObjectMetadataIdFieldName' | 'subjectJoinColumns'
+  >;
 }): string | undefined => {
   const linkedObjectMetadataId =
     record[snapshotField.subjectObjectMetadataIdFieldName];

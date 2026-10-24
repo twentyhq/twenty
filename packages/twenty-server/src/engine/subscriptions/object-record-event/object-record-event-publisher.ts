@@ -238,7 +238,7 @@ export class ObjectRecordEventPublisher {
 
       const filteredEvent = omitReadDeniedFieldsFromEvent({
         event: eventWithObjectName,
-        objectMetadataId: workspaceEventBatch.objectMetadata.id,
+        flatObjectMetadata: workspaceEventBatch.objectMetadata,
         objectsPermissions,
         flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       });

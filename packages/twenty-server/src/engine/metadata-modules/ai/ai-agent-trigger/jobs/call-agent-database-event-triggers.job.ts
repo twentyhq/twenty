@@ -117,7 +117,7 @@ export class CallAgentDatabaseEventTriggersJob {
           omitInheritedReadabilityChildRecords(
             omitReadDeniedFieldsFromEvent({
               event,
-              objectMetadataId: objectMetadata.id,
+              flatObjectMetadata: objectMetadata,
               objectsPermissions: agentObjectsPermissions,
               flatFieldMetadataMaps,
             }),

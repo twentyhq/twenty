@@ -2,58 +2,62 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getJoinColumnNameForRelationField } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-field.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { FIELD_VALUE_SNAPSHOT_FIELDS } from 'src/engine/metadata-modules/permissions/constants/field-value-snapshot-fields.constant';
 import { type ResolvedFieldValueSnapshotField } from 'src/engine/metadata-modules/permissions/types/resolved-field-value-snapshot-field.type';
 
 export const resolveFieldValueSnapshotFields = ({
-  objectMetadataId,
+  flatObjectMetadata,
   flatFieldMetadataMaps,
 }: {
-  objectMetadataId: string;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'fieldIds'>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-}): ResolvedFieldValueSnapshotField[] =>
-  FIELD_VALUE_SNAPSHOT_FIELDS.flatMap(
+}): ResolvedFieldValueSnapshotField[] => {
+  const objectFields = flatObjectMetadata.fieldIds
+    .map((fieldId) =>
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
+    )
+    .filter(isDefined);
+
+  return FIELD_VALUE_SNAPSHOT_FIELDS.flatMap(
     ({
       snapshotFieldUniversalIdentifier,
       subjectObjectMetadataIdFieldUniversalIdentifier,
       subjectMorphId,
     }) => {
-      const snapshotField = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: snapshotFieldUniversalIdentifier,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-      const subjectObjectMetadataIdField = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: subjectObjectMetadataIdFieldUniversalIdentifier,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
+      const snapshotField = objectFields.find(
+        (field) =>
+          field.universalIdentifier === snapshotFieldUniversalIdentifier,
+      );
+      const subjectObjectMetadataIdField = objectFields.find(
+        (field) =>
+          field.universalIdentifier ===
+          subjectObjectMetadataIdFieldUniversalIdentifier,
+      );
 
       if (
-        snapshotField?.objectMetadataId !== objectMetadataId ||
+        !isDefined(snapshotField) ||
         !isDefined(subjectObjectMetadataIdField)
       ) {
         return [];
       }
 
-      const subjectJoinColumns = Object.values(
-        flatFieldMetadataMaps.byUniversalIdentifier,
-      )
-        .filter(isDefined)
-        .flatMap((flatFieldMetadata) =>
-          flatFieldMetadata.objectMetadataId === objectMetadataId &&
-          flatFieldMetadata.morphId === subjectMorphId &&
-          isDefined(flatFieldMetadata.relationTargetObjectMetadataId)
-            ? [
-                {
-                  joinColumnName:
-                    getJoinColumnNameForRelationField(flatFieldMetadata),
-                  objectMetadataId:
-                    flatFieldMetadata.relationTargetObjectMetadataId,
-                },
-              ]
-            : [],
-        );
+      const subjectJoinColumns = objectFields.flatMap((field) =>
+        field.morphId === subjectMorphId &&
+        isDefined(field.relationTargetObjectMetadataId)
+          ? [
+              {
+                joinColumnName: getJoinColumnNameForRelationField(field),
+                objectMetadataId: field.relationTargetObjectMetadataId,
+              },
+            ]
+          : [],
+      );
 
       return [
         {
@@ -64,3 +68,4 @@ export const resolveFieldValueSnapshotFields = ({
       ];
     },
   );
+};

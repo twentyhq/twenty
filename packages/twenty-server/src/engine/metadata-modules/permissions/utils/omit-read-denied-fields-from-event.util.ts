@@ -5,11 +5,14 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ResolvedFieldValueSnapshotField } from 'src/engine/metadata-modules/permissions/types/resolved-field-value-snapshot-field.type';
 import { buildReadDeniedFieldNamesForObject } from 'src/engine/metadata-modules/permissions/utils/build-read-denied-field-names-for-object.util';
 import { omitReadDeniedFieldsFromFieldValueSnapshot } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-field-value-snapshot.util';
 import { resolveFieldValueSnapshotFields } from 'src/engine/metadata-modules/permissions/utils/resolve-field-value-snapshot-fields.util';
 import { resolveFieldValueSnapshotSubjectObjectMetadataId } from 'src/engine/metadata-modules/permissions/utils/resolve-field-value-snapshot-subject-object-metadata-id.util';
+
+type EventRecord = Record<string, unknown>;
 
 type SnapshotRedactionContext = {
   snapshotFields: ResolvedFieldValueSnapshotField[];
@@ -23,10 +26,10 @@ const resolveReadDeniedFieldNames = ({
   objectsPermissions,
   flatFieldMetadataMaps,
 }: Omit<SnapshotRedactionContext, 'snapshotFields'> & {
-  subjectRecord: unknown;
+  subjectRecord: EventRecord | undefined;
   snapshotField: ResolvedFieldValueSnapshotField;
 }): Set<string> => {
-  const subjectObjectMetadataId = isPlainObject(subjectRecord)
+  const subjectObjectMetadataId = isDefined(subjectRecord)
     ? resolveFieldValueSnapshotSubjectObjectMetadataId({
         record: subjectRecord,
         snapshotField,
@@ -46,30 +49,24 @@ const omitFromRecordSnapshots = ({
   record,
   snapshotFields,
   ...context
-}: SnapshotRedactionContext & { record: unknown }): unknown => {
-  if (!isPlainObject(record)) {
-    return record;
-  }
-
-  return {
-    ...record,
-    ...Object.fromEntries(
-      snapshotFields
-        .filter(({ snapshotFieldName }) => snapshotFieldName in record)
-        .map((snapshotField) => [
-          snapshotField.snapshotFieldName,
-          omitReadDeniedFieldsFromFieldValueSnapshot({
-            snapshot: record[snapshotField.snapshotFieldName],
-            readDeniedFieldNames: resolveReadDeniedFieldNames({
-              subjectRecord: record,
-              snapshotField,
-              ...context,
-            }),
+}: SnapshotRedactionContext & { record: EventRecord }): EventRecord => ({
+  ...record,
+  ...Object.fromEntries(
+    snapshotFields
+      .filter(({ snapshotFieldName }) => snapshotFieldName in record)
+      .map((snapshotField) => [
+        snapshotField.snapshotFieldName,
+        omitReadDeniedFieldsFromFieldValueSnapshot({
+          snapshot: record[snapshotField.snapshotFieldName],
+          readDeniedFieldNames: resolveReadDeniedFieldNames({
+            subjectRecord: record,
+            snapshotField,
+            ...context,
           }),
-        ]),
-    ),
-  };
-};
+        }),
+      ]),
+  ),
+});
 
 const omitFromDiffSnapshots = ({
   diff,
@@ -77,13 +74,9 @@ const omitFromDiffSnapshots = ({
   snapshotFields,
   ...context
 }: SnapshotRedactionContext & {
-  diff: unknown;
-  subjectRecord: unknown;
-}): unknown => {
-  if (!isPlainObject(diff)) {
-    return diff;
-  }
-
+  diff: EventRecord;
+  subjectRecord: EventRecord | undefined;
+}): EventRecord => {
   const snapshotFieldDiffs = snapshotFields.flatMap((snapshotField) => {
     const fieldDiff = diff[snapshotField.snapshotFieldName];
 
@@ -122,23 +115,24 @@ export const omitReadDeniedFieldsFromEvent = <
   TEvent extends ObjectRecordEvent,
 >({
   event,
-  objectMetadataId,
+  flatObjectMetadata,
   objectsPermissions,
   flatFieldMetadataMaps,
 }: {
   event: TEvent;
-  objectMetadataId: string;
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
   objectsPermissions: ObjectsPermissions;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): TEvent => {
   const eventWithoutRestrictedFields = omitRestrictedFieldsFromEvent({
     event,
-    restrictedFields: objectsPermissions[objectMetadataId]?.restrictedFields,
+    restrictedFields:
+      objectsPermissions[flatObjectMetadata.id]?.restrictedFields,
     flatFieldMetadataMaps,
   });
 
   const snapshotFields = resolveFieldValueSnapshotFields({
-    objectMetadataId,
+    flatObjectMetadata,
     flatFieldMetadataMaps,
   });
 
@@ -147,31 +141,30 @@ export const omitReadDeniedFieldsFromEvent = <
   }
 
   const context = { snapshotFields, objectsPermissions, flatFieldMetadataMaps };
-
-  const properties: Record<string, unknown> = {
+  const properties: EventRecord = {
     ...eventWithoutRestrictedFields.properties,
   };
+  const beforeRecord = isPlainObject(properties.before)
+    ? properties.before
+    : undefined;
+  const afterRecord = isPlainObject(properties.after)
+    ? properties.after
+    : undefined;
 
   return {
     ...eventWithoutRestrictedFields,
     properties: {
       ...properties,
-      ...('before' in properties && {
-        before: omitFromRecordSnapshots({
-          record: properties.before,
-          ...context,
-        }),
+      ...(isDefined(beforeRecord) && {
+        before: omitFromRecordSnapshots({ record: beforeRecord, ...context }),
       }),
-      ...('after' in properties && {
-        after: omitFromRecordSnapshots({
-          record: properties.after,
-          ...context,
-        }),
+      ...(isDefined(afterRecord) && {
+        after: omitFromRecordSnapshots({ record: afterRecord, ...context }),
       }),
-      ...('diff' in properties && {
+      ...(isPlainObject(properties.diff) && {
         diff: omitFromDiffSnapshots({
           diff: properties.diff,
-          subjectRecord: properties.after ?? properties.before,
+          subjectRecord: afterRecord ?? beforeRecord,
           ...context,
         }),
       }),
