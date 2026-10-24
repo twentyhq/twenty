@@ -67,6 +67,7 @@ export type FormFieldLeaf = {
   type: FieldMetadataType;
   label: string;
   value: unknown;
+  fieldMetadataId?: string;
 };
 
 export type FormFieldNode = {
