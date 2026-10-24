@@ -38,7 +38,6 @@
   --twenty-space-8: 32px;
   --twenty-space-12: 48px;
   --twenty-menu-height: 64px;
-  --twenty-logo-size: 40px;
   --twenty-control-height: 32px;
   --twenty-login-width: 80px;
   --twenty-cta-width: 120px;
@@ -402,6 +401,14 @@ kbd {
   border-top: 1px solid var(--twenty-line);
 }
 
+@media (min-width: 48rem) {
+  #footer div:has(> div > a > .nav-logo) {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+}
+
 @media (min-width: 64rem) {
   #footer {
     padding-left: 3rem;
@@ -461,7 +468,7 @@ kbd {
   }
 
   #navbar .nav-logo {
-    height: var(--twenty-logo-size);
+    height: var(--twenty-control-height);
   }
 
   #navbar :is(
