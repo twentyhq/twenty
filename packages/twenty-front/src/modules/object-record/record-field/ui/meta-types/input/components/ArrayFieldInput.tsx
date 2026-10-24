@@ -147,6 +147,7 @@ export const ArrayFieldInput = () => {
       handleSubmit(updatedItems);
     }
 
+    setSearchFilter('');
     openInput({ type: 'new-item' });
   };
 

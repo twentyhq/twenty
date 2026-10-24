@@ -177,6 +177,7 @@ export const EmailsFieldInput = () => {
       handleSubmit(updatedEmails);
     }
 
+    setSearchFilter('');
     openInput({ type: 'new-item' });
   };
 

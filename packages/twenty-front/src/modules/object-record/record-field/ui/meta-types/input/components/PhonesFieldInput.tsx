@@ -272,6 +272,7 @@ export const PhonesFieldInput = () => {
       handleSubmit(updatedPhones);
     }
 
+    setSearchFilter('');
     openInput({ type: 'new-item' });
   };
 

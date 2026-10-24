@@ -204,6 +204,7 @@ export const LinksFieldInput = () => {
       handleSubmit(updatedLinks);
     }
 
+    setSearchFilter('');
     openInput({ type: 'new-item' });
   };
 
