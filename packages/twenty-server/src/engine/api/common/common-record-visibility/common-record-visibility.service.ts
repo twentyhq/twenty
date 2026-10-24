@@ -10,7 +10,6 @@ import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { addRequiredFieldsToSelect } from 'src/engine/api/common/common-record-visibility/utils/add-required-fields-to-select.util';
-import { cloneEventRecords } from 'src/engine/api/common/common-record-visibility/utils/clone-event-records.util';
 import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-visibility/utils/collect-records-by-object-name-singular.util';
 import { rebuildEventDiffFromRecords } from 'src/engine/api/common/common-record-visibility/utils/rebuild-event-diff-from-records.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -108,7 +107,7 @@ export class CommonRecordVisibilityService {
       return events;
     }
 
-    const clonedEvents = events.map(cloneEventRecords);
+    const clonedEvents = events.map((event) => structuredClone(event));
 
     await applyEventVisibilityRestrictions({
       records: clonedEvents.flatMap(({ properties }) =>
