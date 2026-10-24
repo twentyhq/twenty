@@ -4,4 +4,4 @@ export const getRecordFormFieldInputInstanceId = ({
 }: {
   formInstanceId: string;
   fieldMetadataId: string;
-}) => `${formInstanceId}-${fieldMetadataId}`;
+}) => `record-form-${formInstanceId}-${fieldMetadataId}`;
