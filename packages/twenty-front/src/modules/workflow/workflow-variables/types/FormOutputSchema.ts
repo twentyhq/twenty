@@ -6,6 +6,7 @@ type FormFieldLeaf = {
   type: FieldMetadataType;
   label: string;
   value: any;
+  fieldMetadataId?: string;
 };
 
 type FormFieldNode = {
