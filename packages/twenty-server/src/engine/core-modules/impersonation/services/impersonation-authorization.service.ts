@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
+import { userCanImpersonateTarget } from 'src/engine/core-modules/impersonation/utils/user-can-impersonate-target.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
@@ -72,7 +72,11 @@ export class ImpersonationAuthorizationService {
         }
       }
 
-      return { allowed: true, level };
+      return this.checkTargetPrivileges({
+        impersonatorUserWorkspace,
+        targetUserWorkspace,
+        level,
+      });
     }
 
     const hasWorkspaceLevelImpersonatePermission =
@@ -88,9 +92,27 @@ export class ImpersonationAuthorizationService {
       return { allowed: false, level, reason: 'WORKSPACE_LEVEL_NOT_ALLOWED' };
     }
 
+    return this.checkTargetPrivileges({
+      impersonatorUserWorkspace,
+      targetUserWorkspace,
+      level,
+    });
+  }
+
+  private checkTargetPrivileges({
+    impersonatorUserWorkspace,
+    targetUserWorkspace,
+    level,
+  }: {
+    impersonatorUserWorkspace: UserWorkspaceEntity;
+    targetUserWorkspace: UserWorkspaceEntity;
+    level: ImpersonationLevel;
+  }): ImpersonationAuthorizationResult {
     if (
-      userHasAdminPrivileges(targetUserWorkspace.user) &&
-      !userHasAdminPrivileges(impersonatorUserWorkspace.user)
+      !userCanImpersonateTarget({
+        impersonatorUser: impersonatorUserWorkspace.user,
+        targetUser: targetUserWorkspace.user,
+      })
     ) {
       return { allowed: false, level, reason: 'TARGET_HAS_ADMIN_PRIVILEGES' };
     }
