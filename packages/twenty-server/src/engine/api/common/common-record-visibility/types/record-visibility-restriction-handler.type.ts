@@ -24,6 +24,7 @@ export type RecordVisibilityRestrictionHandler = {
   }) => Promise<void>;
   getRequiredFieldNames?: (args: {
     flatObjectMetadata: FlatObjectMetadata;
+    objectsPermissions: ObjectsPermissions;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }) => string[];
 };

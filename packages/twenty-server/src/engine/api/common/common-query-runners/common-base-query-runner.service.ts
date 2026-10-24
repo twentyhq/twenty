@@ -148,14 +148,9 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
     );
 
-    const selectedFieldsResult =
-      this.commonRecordVisibilityService.extendSelectedFields({
-        selectedFieldsResult: commonQueryParser.parseSelectedFields(
-          args.selectedFields,
-        ),
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      });
+    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
+      args.selectedFields,
+    );
 
     const processedArgs = {
       ...(await this.processArgs(args, queryRunnerContext, this.operationName)),
@@ -285,10 +280,23 @@ export abstract class CommonBaseQueryRunnerService<
         queryRunnerContext,
       );
 
-    const results = await this.run(processedArgs, {
-      ...extendedQueryRunnerContext,
-      commonQueryParser,
-    });
+    const results = await this.run(
+      {
+        ...processedArgs,
+        selectedFieldsResult:
+          this.commonRecordVisibilityService.extendSelectedFields({
+            selectedFieldsResult: processedArgs.selectedFieldsResult,
+            flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+            objectsPermissions:
+              extendedQueryRunnerContext.repository.objectRecordsPermissions,
+            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+          }),
+      },
+      {
+        ...extendedQueryRunnerContext,
+        commonQueryParser,
+      },
+    );
 
     return this.enrichResultsWithGettersAndHooks({
       results,

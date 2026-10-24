@@ -127,15 +127,21 @@ export class CommonRecordVisibilityService {
   public extendSelectedFields({
     selectedFieldsResult,
     flatObjectMetadata,
+    objectsPermissions,
     flatFieldMetadataMaps,
   }: {
     selectedFieldsResult: CommonSelectedFieldsResult;
     flatObjectMetadata: FlatObjectMetadata;
+    objectsPermissions: ObjectsPermissions;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): CommonSelectedFieldsResult {
     const requiredFieldNames = this.handlersByObjectNameSingular
       .get(flatObjectMetadata.nameSingular)
-      ?.getRequiredFieldNames?.({ flatObjectMetadata, flatFieldMetadataMaps });
+      ?.getRequiredFieldNames?.({
+        flatObjectMetadata,
+        objectsPermissions,
+        flatFieldMetadataMaps,
+      });
 
     if (!isNonEmptyArray(requiredFieldNames)) {
       return selectedFieldsResult;

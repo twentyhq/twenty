@@ -1,4 +1,8 @@
-import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectPermissions,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -97,10 +101,13 @@ type TimelineActivityFixture = {
   properties: unknown;
 };
 
-const keepReadableFields = (
-  timelineActivity: TimelineActivityFixture,
+const keepReadableFields = ({
+  timelineActivity,
   objectsPermissions = PERSON_JOB_TITLE_DENIED,
-) => {
+}: {
+  timelineActivity: TimelineActivityFixture;
+  objectsPermissions?: ObjectsPermissions;
+}) => {
   keepReadableFieldsInTimelineActivities({
     timelineActivities: [timelineActivity],
     objectsPermissions,
@@ -115,9 +122,11 @@ describe('keepReadableFieldsInTimelineActivities', () => {
   it('should keep the readable fields of the target object', () => {
     expect(
       keepReadableFields({
-        linkedObjectMetadataId: null,
-        targetPersonId: 'person-id',
-        properties: DIFF,
+        timelineActivity: {
+          linkedObjectMetadataId: null,
+          targetPersonId: 'person-id',
+          properties: DIFF,
+        },
       }),
     ).toEqual({ diff: { city: { before: 'Paris', after: 'Lyon' } } });
   });
@@ -125,32 +134,36 @@ describe('keepReadableFieldsInTimelineActivities', () => {
   it('should keep the readable fields of the linked object', () => {
     expect(
       keepReadableFields({
-        linkedObjectMetadataId: NOTE_OBJECT.id,
-        targetPersonId: 'person-id',
-        properties: DIFF,
+        timelineActivity: {
+          linkedObjectMetadataId: NOTE_OBJECT.id,
+          targetPersonId: 'person-id',
+          properties: DIFF,
+        },
       }),
     ).toEqual({ diff: { title: { before: 'Old', after: 'New' } } });
   });
 
   it('should keep no field of a linked object the role cannot read', () => {
     expect(
-      keepReadableFields(
-        {
+      keepReadableFields({
+        timelineActivity: {
           linkedObjectMetadataId: NOTE_OBJECT.id,
           targetPersonId: 'person-id',
           properties: DIFF,
         },
-        {
+        objectsPermissions: {
           ...PERSON_JOB_TITLE_DENIED,
           [NOTE_OBJECT.id]: buildObjectPermissions({
             canReadObjectRecords: false,
           }),
         },
-      ),
+      }),
     ).toEqual({ diff: {} });
   });
 
   it('should keep no field when the activity object cannot be found', () => {
-    expect(keepReadableFields({ properties: DIFF })).toEqual({ diff: {} });
+    expect(
+      keepReadableFields({ timelineActivity: { properties: DIFF } }),
+    ).toEqual({ diff: {} });
   });
 });
