@@ -19,5 +19,6 @@ export const toPhaseUpdateParams = (
     ...(isDefined(phase.billing_thresholds)
       ? { billing_thresholds: phase.billing_thresholds }
       : {}),
+    ...(isDefined(phase.trial_end) ? { trial_end: phase.trial_end } : {}),
     proration_behavior: 'none',
   }) as Stripe.SubscriptionScheduleUpdateParams.Phase;

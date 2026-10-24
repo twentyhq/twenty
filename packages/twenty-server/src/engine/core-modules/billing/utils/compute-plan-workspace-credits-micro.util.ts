@@ -2,6 +2,7 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
@@ -22,7 +23,12 @@ export const computePlanWorkspaceCreditsMicro = ({
   billingSubscriptionItems,
   interval,
   seats,
-}: Pick<BillingSubscriptionEntity, 'billingSubscriptionItems' | 'interval'> & {
+}: {
+  billingSubscriptionItems: Pick<
+    BillingSubscriptionItemEntity,
+    'billingProduct' | 'stripePriceId'
+  >[];
+  interval: BillingSubscriptionEntity['interval'];
   seats: number;
 }): PlanWorkspaceCreditsMicro | null => {
   const baseProductItem = billingSubscriptionItems.find(

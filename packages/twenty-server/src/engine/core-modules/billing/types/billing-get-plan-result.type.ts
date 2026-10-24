@@ -9,6 +9,7 @@ export type BillingGetPlanResult = {
   isCheckoutDefault: boolean;
   upgradePlanKeys: BillingPlanKey[];
   downgradePlanKeys: BillingPlanKey[];
+  trialEndPlanKey: BillingPlanKey | null;
   meteredProducts: BillingProductEntity[];
   baseProducts: BillingProductEntity[];
   resourceCreditProducts: BillingProductEntity[];

@@ -10,6 +10,7 @@ export const LIST_PLANS = gql`
       isCheckoutDefault
       upgradePlanKeys
       downgradePlanKeys
+      trialEndPlanKey
       baseProducts {
         name
         description

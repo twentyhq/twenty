@@ -33,7 +33,6 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
-import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -276,57 +275,6 @@ export class BillingSubscriptionService {
       isBillingEnabled,
       stripeEntitlementValue,
     });
-  }
-
-  async endTrialPeriod(workspace: WorkspaceEntity) {
-    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
-      { workspaceId: workspace.id },
-    );
-
-    if (billingSubscription.status !== SubscriptionStatus.Trialing) {
-      throw new BillingException(
-        'Billing subscription is not in trial period',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_IN_TRIAL_PERIOD,
-      );
-    }
-
-    if (!isSendInvoiceSubscription(billingSubscription)) {
-      const hasPaymentMethod =
-        await this.stripeCustomerService.hasPaymentMethod(
-          billingSubscription.stripeCustomerId,
-        );
-
-      if (!hasPaymentMethod) {
-        return {
-          hasPaymentMethod: false,
-          status: undefined,
-          stripeCustomerId: billingSubscription.stripeCustomerId,
-        };
-      }
-
-      await this.stripeCustomerService.ensureDefaultPaymentMethod(
-        billingSubscription.stripeCustomerId,
-      );
-    }
-
-    const updatedSubscription =
-      await this.stripeSubscriptionService.updateSubscription(
-        billingSubscription.stripeSubscriptionId,
-        {
-          trial_end: 'now',
-          cancel_at_period_end: false,
-        },
-      );
-
-    await this.syncSubscriptionToDatabase(
-      billingSubscription.workspaceId,
-      updatedSubscription.id,
-    );
-
-    return {
-      status: getSubscriptionStatus(updatedSubscription.status),
-      hasPaymentMethod: true,
-    };
   }
 
   async syncSubscriptionToDatabase(

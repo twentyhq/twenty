@@ -14,6 +14,11 @@ describe('isBillingSubscriptionChangeImmediate', () => {
     upgradePlanKeys: [],
     downgradePlanKeys: [BillingPlanKey.PRO],
   };
+  const reverseTrialOrganizationPlan = {
+    upgradePlanKeys: [],
+    downgradePlanKeys: [BillingPlanKey.PRO_V2],
+    trialEndPlanKey: BillingPlanKey.PRO_V2,
+  };
 
   it('applies upgrades immediately and downgrades at period end', () => {
     expect(
@@ -95,6 +100,26 @@ describe('isBillingSubscriptionChangeImmediate', () => {
           targetInterval: SubscriptionInterval.Month,
         },
         currentPlan: enterprisePlan,
+        subscriptionStatus: SubscriptionStatus.Trialing,
+      }),
+    ).toBe(true);
+  });
+
+  it('schedules the reverse trial downgrade at trial end', () => {
+    expect(
+      isBillingSubscriptionChangeImmediate({
+        change: { type: 'SWITCH_PLAN', targetPlanKey: BillingPlanKey.PRO_V2 },
+        currentPlan: reverseTrialOrganizationPlan,
+        subscriptionStatus: SubscriptionStatus.Trialing,
+      }),
+    ).toBe(false);
+    expect(
+      isBillingSubscriptionChangeImmediate({
+        change: {
+          type: 'SWITCH_INTERVAL',
+          targetInterval: SubscriptionInterval.Month,
+        },
+        currentPlan: reverseTrialOrganizationPlan,
         subscriptionStatus: SubscriptionStatus.Trialing,
       }),
     ).toBe(true);

@@ -127,4 +127,19 @@ describe('buildSchedulePhasesUpdate', () => {
     expect(toUpdateCurrentPhase.end_date).toBe(PERIOD_END);
     expect(toUpdateCurrentPhase.items).toEqual(currentPhase.items);
   });
+
+  it('keeps the trial on the current phase and starts the next phase without one', () => {
+    const { toUpdateCurrentPhase, toUpdateNextPhase } =
+      buildSchedulePhasesUpdate({
+        currentPhase: { ...currentPhase, trial_end: PERIOD_END },
+        nextPhase: undefined,
+        productKeyByPriceId,
+        toUpdateCurrentPrices: undefined,
+        toUpdateNextPrices,
+        subscriptionCurrentPeriodEnd: PERIOD_END,
+      });
+
+    expect(toUpdateCurrentPhase.trial_end).toBe(PERIOD_END);
+    expect('trial_end' in toUpdateNextPhase).toBe(false);
+  });
 });

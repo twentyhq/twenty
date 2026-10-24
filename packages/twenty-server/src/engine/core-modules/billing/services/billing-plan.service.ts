@@ -19,6 +19,7 @@ import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/bill
 import { assertPlanIsSellableOrThrow } from 'src/engine/core-modules/billing/utils/assert-plan-is-sellable-or-throw.util';
 import { findDefaultPlanKey } from 'src/engine/core-modules/billing/utils/find-default-plan-key.util';
 import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
+import { getReverseTrialPlanKeys } from 'src/engine/core-modules/billing/utils/get-reverse-trial-plan-keys.util';
 import { getSellablePlanKeys } from 'src/engine/core-modules/billing/utils/get-sellable-plan-keys.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -35,6 +36,7 @@ export class BillingPlanService {
     const plansConfig = this.twentyConfigService.get('BILLING_PLANS');
     const sellablePlanKeys = getSellablePlanKeys(plansConfig);
     const defaultPlanKey = findDefaultPlanKey(plansConfig);
+    const reverseTrialPlanKeys = getReverseTrialPlanKeys(plansConfig);
     const planKeys = Object.values(BillingPlanKey);
 
     const products = await this.billingProductRepository.find({
@@ -75,6 +77,10 @@ export class BillingPlanService {
         isCheckoutDefault: planKey === defaultPlanKey,
         upgradePlanKeys,
         downgradePlanKeys,
+        trialEndPlanKey:
+          reverseTrialPlanKeys?.trialPlanKey === planKey
+            ? reverseTrialPlanKeys.downgradePlanKey
+            : null,
         meteredProducts,
         baseProducts,
         resourceCreditProducts,

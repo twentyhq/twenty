@@ -2,6 +2,7 @@ import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEf
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
+import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useQuery } from '@apollo/client/react';
@@ -25,6 +26,7 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
   currentBillingSubscription,
 }: SettingsBillingTrialNoPaymentMethodBannerProps) => {
   const { redirect } = useRedirect();
+  const { nextPlan } = useNextPlan();
 
   const hasPermissionToManageBilling = useHasPermissionFlag(
     PermissionFlagType.BILLING,
@@ -44,7 +46,8 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     }
   };
 
-  const planKey = getSubscriptionPlanKey(currentBillingSubscription);
+  const planKey =
+    nextPlan?.planKey ?? getSubscriptionPlanKey(currentBillingSubscription);
   const billingPlanLabel = isDefined(planKey)
     ? t(BILLING_PLAN_LABELS[planKey])
     : undefined;
@@ -56,13 +59,17 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     ? formatDate(currentBillingSubscription.currentPeriodEnd, 'MMM dd')
     : undefined;
 
-  const message = isDefined(trialEndDate)
-    ? hasPermissionToManageBilling
-      ? t`Trial ends ${trialEndDate}, please add card details to keep the ${planName}`
-      : t`Trial ends ${trialEndDate}. Please contact your admin to add card details to keep the ${planName}`
-    : hasPermissionToManageBilling
-      ? t`Trial ends soon, please add card details to keep the ${planName}`
-      : t`Trial ends soon. Please contact your admin to add card details to keep the ${planName}`;
+  const getMessage = () => {
+    if (isDefined(trialEndDate)) {
+      return hasPermissionToManageBilling
+        ? t`Trial ends ${trialEndDate}, please add card details to continue on the ${planName}`
+        : t`Trial ends ${trialEndDate}. Please contact your admin to add card details to continue on the ${planName}`;
+    }
+
+    return hasPermissionToManageBilling
+      ? t`Trial ends soon, please add card details to continue on the ${planName}`
+      : t`Trial ends soon. Please contact your admin to add card details to continue on the ${planName}`;
+  };
 
   return (
     <>
@@ -77,7 +84,7 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
           )
         }
       >
-        {message}
+        {getMessage()}
       </InlineBanner>
     </>
   );

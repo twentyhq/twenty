@@ -842,6 +842,7 @@ export interface BillingPlan {
     meteredProducts: BillingMeteredProduct[]
     planKey: BillingPlanKey
     resourceCreditProducts: BillingLicensedProduct[]
+    trialEndPlanKey?: BillingPlanKey
     upgradePlanKeys: BillingPlanKey[]
     __typename: 'BillingPlan'
 }
@@ -5023,6 +5024,7 @@ export interface BillingPlanGenqlSelection{
     meteredProducts?: BillingMeteredProductGenqlSelection
     planKey?: boolean | number
     resourceCreditProducts?: BillingLicensedProductGenqlSelection
+    trialEndPlanKey?: boolean | number
     upgradePlanKeys?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

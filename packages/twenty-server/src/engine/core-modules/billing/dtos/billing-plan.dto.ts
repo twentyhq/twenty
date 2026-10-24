@@ -25,6 +25,9 @@ export class BillingPlanDTO {
   @Field(() => [BillingPlanKey])
   downgradePlanKeys: BillingPlanKey[];
 
+  @Field(() => BillingPlanKey, { nullable: true })
+  trialEndPlanKey: BillingPlanKey | null;
+
   @Field(() => [BillingLicensedProduct])
   baseProducts: BillingLicensedProduct[];
 

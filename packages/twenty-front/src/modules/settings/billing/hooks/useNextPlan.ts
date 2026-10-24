@@ -1,13 +1,21 @@
-import { usePlanByPriceId } from '@/settings/billing/hooks/usePlanByPriceId';
-import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
+import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
+import { usePlans } from '@/settings/billing/hooks/usePlans';
+import { findPlanByPhaseItems } from '@/settings/billing/utils/findPlanByPhaseItems';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useNextPlan = () => {
-  const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
-  const { getPlanByPriceId } = usePlanByPriceId();
+  const { nextBillingPhase } = useNextBillingPhase();
+  const { isPlansLoaded, listPlans } = usePlans({
+    skip: !isDefined(nextBillingPhase),
+  });
 
-  const nextPlan = splitedPhaseItemsInPrices.nextBasePrice
-    ? getPlanByPriceId(splitedPhaseItemsInPrices.nextBasePrice.stripePriceId)
-    : undefined;
+  const nextPlan =
+    isPlansLoaded && isDefined(nextBillingPhase)
+      ? findPlanByPhaseItems({
+          plans: listPlans(),
+          phaseItems: nextBillingPhase.items,
+        })
+      : undefined;
 
   return {
     nextPlan,

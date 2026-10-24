@@ -4,6 +4,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SettingsBillingSubscriptionInfoCard } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard';
 import { SettingsBillingSubscriptionInfoCardHeaderActions } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions';
 import { SettingsBillingSubscriptionInfoModals } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals';
+import { SettingsBillingKeepTrialPlanSwitch } from '@/settings/billing/components/SettingsBillingKeepTrialPlanSwitch';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useApplyBillingSubscriptionChange } from '@/settings/billing/hooks/useApplyBillingSubscriptionChange';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
@@ -28,6 +29,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -35,6 +37,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
 import {
+  type BillingPlanKey,
   CancelSwitchResourceCreditPriceDocument,
   PermissionFlagType,
   SubscriptionInterval,
@@ -68,7 +71,11 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
-  const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
+  const {
+    refetchResourceCreditUsage,
+    isGetResourceCreditUsageQueryLoaded,
+    getResourceCreditUsage,
+  } = useGetResourceCreditUsage();
 
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
 
@@ -79,6 +86,8 @@ export const SettingsBillingSubscriptionInfo = ({
   const { nextBillingPhase } = useNextBillingPhase();
   const { nextPlan } = useNextPlan();
   const { nextInterval } = useNextInterval();
+  const upcomingPlanKey = nextPlan?.planKey ?? currentPlan.planKey;
+  const isPlanSwitchScheduled = upcomingPlanKey !== currentPlan.planKey;
   const nextResourceCreditPrice =
     splitedPhaseItemsInPrices.nextResourceCreditPrice;
   const subscriptionStatus = useSubscriptionStatus();
@@ -195,8 +204,14 @@ export const SettingsBillingSubscriptionInfo = ({
           : t`Next charge ${totalRenewDate}. Invoice amount may vary if you add members or credits between periods`
         : t`Invoice amount may vary if you add members or credits between periods`;
 
-  const billingPlanLabel = getBillingPlanLabel(currentPlan.planKey);
-  const planLabel = t`${billingPlanLabel} plan`;
+  const getPlanLabel = (planKey: BillingPlanKey) => {
+    const billingPlanLabel = getBillingPlanLabel(planKey);
+
+    return t`${billingPlanLabel} plan`;
+  };
+  const currentPlanLabel = getPlanLabel(currentPlan.planKey);
+
+  const planLabel = getPlanLabel(upcomingPlanKey);
   const intervalUnit =
     currentInterval === SubscriptionInterval.Month ? t`month` : t`year`;
   const startSubscriptionSubtitle = isSendInvoice
@@ -251,9 +266,42 @@ export const SettingsBillingSubscriptionInfo = ({
   const creditsSubtotalValue = isDefined(creditsSubtotalDisplay)
     ? `$${creditsSubtotalDisplay}`
     : '-';
-  const creditsSubtotalDetails = isDefined(currentCreditsByPeriod)
-    ? t`(${formatNumber(currentCreditsByPeriod, { decimals: 2 })} credits)`
+  const resourceCreditUsage = isGetResourceCreditUsageQueryLoaded
+    ? getResourceCreditUsage()
     : undefined;
+  const creditsPerSeat =
+    isDefined(resourceCreditUsage) &&
+    resourceCreditUsage.workspaceCreditsSeats > 0
+      ? resourceCreditUsage.workspaceCreditsGrantedForSeats /
+        resourceCreditUsage.workspaceCreditsSeats
+      : 0;
+
+  const getCreditsSubtotalDetails = () => {
+    if (!isDefined(currentCreditsByPeriod)) {
+      return undefined;
+    }
+
+    const packCreditsDisplay = formatNumber(currentCreditsByPeriod, {
+      decimals: 2,
+    });
+
+    if (creditsPerSeat <= 0) {
+      return t`(${packCreditsDisplay} credits)`;
+    }
+
+    const creditsPerSeatDisplay = formatNumber(creditsPerSeat, {
+      decimals: 2,
+    });
+
+    if (currentCreditsByPeriod === 0) {
+      return plural(creditsPerSeat, {
+        one: `(${creditsPerSeatDisplay} credit per user)`,
+        other: `(${creditsPerSeatDisplay} credits per user)`,
+      });
+    }
+
+    return t`(${packCreditsDisplay} credits + ${creditsPerSeatDisplay} per user)`;
+  };
   const totalValue = isDefined(totalDisplay) ? `$${totalDisplay}` : '-';
   const totalIntervalSubtitle = isDefined(totalDisplay)
     ? currentInterval === SubscriptionInterval.Month
@@ -282,16 +330,19 @@ export const SettingsBillingSubscriptionInfo = ({
   const canCancelIntervalSwitch =
     isDefined(nextInterval) && currentInterval !== nextInterval;
   const canStartSubscription = isTrialPeriod && hasPermissionToEndTrialPeriod;
+  const trialEndPlanKey = currentPlan.trialEndPlanKey;
+  const canDisplayKeepTrialPlanSwitch =
+    isTrialPeriod && !isCancellationScheduled && isDefined(trialEndPlanKey);
   const canCancelPlanSwitch =
-    isDefined(nextPlan) && currentPlan.planKey !== nextPlan.planKey;
+    isPlanSwitchScheduled && !canDisplayKeepTrialPlanSwitch;
 
   const scheduledChangeItems = [
-    ...(nextPlan && currentPlan.planKey !== nextPlan.planKey
+    ...(isPlanSwitchScheduled
       ? [
           {
             Icon: IconTag,
             label: t`Plan`,
-            value: getBillingPlanLabel(nextPlan.planKey),
+            value: getBillingPlanLabel(upcomingPlanKey),
           },
         ]
       : []),
@@ -398,7 +449,7 @@ export const SettingsBillingSubscriptionInfo = ({
       <SettingsBillingSubscriptionInfoCard
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
-        creditsSubtotalDetails={creditsSubtotalDetails}
+        creditsSubtotalDetails={getCreditsSubtotalDetails()}
         creditsSubtotalValue={creditsSubtotalValue}
         currentIntervalLabel={currentIntervalLabel}
         displayedSubscriptionDate={displayedSubscriptionDate}
@@ -437,7 +488,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onSwitchToYearly={() =>
           openDialog(BILLING_MODAL_IDS.switchBillingIntervalToYearly)
         }
-        planLabel={planLabel}
+        planLabel={currentPlanLabel}
         scheduledChangeItems={scheduledChangeItems}
         scheduledChangeStartDate={scheduledChangeStartDate}
         seatsSubtotalDetails={seatsSubtotalDetails}
@@ -450,6 +501,13 @@ export const SettingsBillingSubscriptionInfo = ({
         workspaceMemberDefaultName={t`Workspace member`}
         workspaceMembers={currentWorkspaceMembers}
       />
+      {canDisplayKeepTrialPlanSwitch && (
+        <SettingsBillingKeepTrialPlanSwitch
+          trialPlanKey={currentPlan.planKey}
+          downgradePlanKey={trialEndPlanKey}
+          disabled={isSubscriptionActionDisabled}
+        />
+      )}
       <SettingsBillingSubscriptionInfoModals
         billingHasPaymentMethod={billingHasPaymentMethod}
         cancelIntervalSwitchingWording={getBillingSubscriptionChangeWording({

@@ -70,4 +70,16 @@ describe('toPhaseUpdateParams', () => {
 
     expect(phase.end_date).toBeUndefined();
   });
+
+  it('keeps the trial end so a rewrite does not end the trial', () => {
+    const phase = toPhaseUpdateParams(buildPhase({ trial_end: 1_750_000_000 }));
+
+    expect(phase.trial_end).toBe(1_750_000_000);
+  });
+
+  it('omits the trial end when the phase is not a trial', () => {
+    const phase = toPhaseUpdateParams(buildPhase({ trial_end: null }));
+
+    expect('trial_end' in phase).toBe(false);
+  });
 });

@@ -16,7 +16,10 @@ export const isBillingSubscriptionChangeImmediate = ({
   subscriptionStatus: SubscriptionStatus | undefined;
 }) => {
   if (subscriptionStatus === SubscriptionStatus.Trialing) {
-    return true;
+    return (
+      change.type !== 'SWITCH_PLAN' ||
+      change.targetPlanKey !== currentPlan.trialEndPlanKey
+    );
   }
 
   switch (change.type) {

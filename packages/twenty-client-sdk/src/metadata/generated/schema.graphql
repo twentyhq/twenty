@@ -932,6 +932,7 @@ type BillingPlan {
   meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
   resourceCreditProducts: [BillingLicensedProduct!]!
+  trialEndPlanKey: BillingPlanKey
   upgradePlanKeys: [BillingPlanKey!]!
 }
 

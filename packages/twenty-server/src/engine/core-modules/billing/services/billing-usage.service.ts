@@ -1,9 +1,11 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { In, Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
@@ -14,6 +16,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { type BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
@@ -45,6 +48,8 @@ export class BillingUsageService {
     private readonly clickHouseService: ClickHouseService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
   ) {}
 
   async getSubscriptionInactiveReason(
@@ -142,7 +147,10 @@ export class BillingUsageService {
 
     const workspaceCreditsGrantedForSeats =
       computePlanWorkspaceCreditsMicro({
-        billingSubscriptionItems: subscription.billingSubscriptionItems,
+        billingSubscriptionItems:
+          subscription.status === SubscriptionStatus.Trialing
+            ? await this.findTrialEndSubscriptionItems(subscription)
+            : subscription.billingSubscriptionItems,
         interval: subscription.interval,
         seats: workspaceCreditsSeats,
       })?.workspaceCreditsForSeatsMicro ?? 0;
@@ -166,6 +174,27 @@ export class BillingUsageService {
         workspaceCreditsGranted + workspaceCreditsExtraGranted,
       unitPriceCents: item.unitPriceCents,
     };
+  }
+
+  private async findTrialEndSubscriptionItems(
+    subscription: BillingSubscriptionEntity,
+  ) {
+    const nextPhase = subscription.phases.find(
+      (phase) => phase.start_date * 1000 > Date.now(),
+    );
+
+    if (!isDefined(nextPhase)) {
+      return subscription.billingSubscriptionItems;
+    }
+
+    const nextPhasePrices = await this.billingPriceRepository.find({
+      where: { stripePriceId: In(nextPhase.items.map(({ price }) => price)) },
+      relations: ['billingProduct', 'billingProduct.billingPrices'],
+    });
+
+    return nextPhasePrices.flatMap(({ stripePriceId, billingProduct }) =>
+      isDefined(billingProduct) ? [{ stripePriceId, billingProduct }] : [],
+    );
   }
 
   getTrialResourceUsageCap(subscription: BillingSubscriptionEntity): number {

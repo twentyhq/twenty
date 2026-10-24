@@ -21,6 +21,7 @@ export const formatBillingDatabaseProductToGraphqlDTO = (
     isCheckoutDefault: plan.isCheckoutDefault,
     upgradePlanKeys: plan.upgradePlanKeys,
     downgradePlanKeys: plan.downgradePlanKeys,
+    trialEndPlanKey: plan.trialEndPlanKey,
     baseProducts: plan.baseProducts.map((product) => {
       return {
         ...product,
