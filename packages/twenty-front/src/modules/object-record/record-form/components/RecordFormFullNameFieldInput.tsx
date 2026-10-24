@@ -3,6 +3,8 @@ import { type FieldFullNameValue } from '@/object-record/record-field/ui/types/F
 import { FieldInputDetailsToggleRow } from '@/ui/field/input/components/FieldInputDetailsToggleRow';
 import { StyledRecordFormFieldBox } from '@/object-record/record-form/components/StyledRecordFormFieldBox';
 import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledFieldInputDetails';
+import { joinFullName } from '@/object-record/record-field/ui/meta-types/input/utils/joinFullName';
+import { trimFullName } from '@/object-record/record-field/ui/meta-types/input/utils/trimFullName';
 import { splitFullNameInputText } from '@/object-record/record-field/ui/meta-types/input/utils/splitFullNameInputText';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -12,17 +14,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import { Field } from 'twenty-ui/primitives/input';
-
-const joinFullName = ({ firstName, lastName }: FieldFullNameValue) =>
-  `${firstName} ${lastName}`.trim();
-
-const trimFullName = ({
-  firstName,
-  lastName,
-}: FieldFullNameValue): FieldFullNameValue => ({
-  firstName: firstName.trim(),
-  lastName: lastName.trim(),
-});
 
 type RecordFormFullNameFieldInputProps = {
   label?: string;

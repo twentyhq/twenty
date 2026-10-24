@@ -1,6 +1,8 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useFullNameField } from '@/object-record/record-field/ui/meta-types/hooks/useFullNameField';
 import { addCharactersToAvoidPasswordManagers } from '@/object-record/record-field/ui/meta-types/input/utils/addCharactersToAvoidPasswordManagers';
+import { joinFullName } from '@/object-record/record-field/ui/meta-types/input/utils/joinFullName';
+import { trimFullName } from '@/object-record/record-field/ui/meta-types/input/utils/trimFullName';
 import { splitFullNameInputText } from '@/object-record/record-field/ui/meta-types/input/utils/splitFullNameInputText';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldFullNameValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -25,17 +27,6 @@ const StyledFullNameContainer = styled.div`
 `;
 
 const EMPTY_FULL_NAME: FieldFullNameValue = { firstName: '', lastName: '' };
-
-const joinFullName = ({ firstName, lastName }: FieldFullNameValue) =>
-  `${firstName} ${lastName}`.trim();
-
-const trimFullName = ({
-  firstName,
-  lastName,
-}: FieldFullNameValue): FieldFullNameValue => ({
-  firstName: firstName.trim(),
-  lastName: lastName.trim(),
-});
 
 export const FullNameFieldInput = () => {
   const { t } = useLingui();

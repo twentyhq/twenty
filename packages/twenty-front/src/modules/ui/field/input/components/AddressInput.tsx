@@ -1,3 +1,6 @@
+import { ADDRESS_DETAIL_SUB_FIELDS } from '@/ui/field/input/constants/AddressDetailSubFields';
+import { hasAddressDetailValue } from '@/ui/field/input/utils/hasAddressDetailValue';
+import { StyledFieldInputFullWidthDetail } from '@/ui/field/input/components/StyledFieldInputFullWidthDetail';
 import { styled } from '@linaria/react';
 import { atom, useAtomValue, useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -11,7 +14,6 @@ import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
 import { type AddressInputProps } from '@/ui/field/input/types/AddressInputProps';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
 import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
-import { isNonEmptyString } from '@sniptt/guards';
 import { FieldInputDetailsToggleRow } from '@/ui/field/input/components/FieldInputDetailsToggleRow';
 import { StyledFieldInputDetails } from '@/ui/field/input/components/StyledFieldInputDetails';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
@@ -26,14 +28,6 @@ import { useAddressInputClickOutside } from '@/ui/field/input/hooks/useAddressIn
 import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 import { useFocusManagement } from '@/ui/field/input/hooks/useFocusManagement';
 
-const ADDRESS_DETAIL_SUB_FIELDS: AllowedAddressSubField[] = [
-  'addressStreet2',
-  'addressCity',
-  'addressState',
-  'addressPostcode',
-  'addressCountry',
-];
-
 const StyledAddressContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -45,10 +39,6 @@ const StyledAddressContainer = styled.div`
     overflow: hidden;
     width: auto;
   }
-`;
-
-const StyledFullWidthDetail = styled.div`
-  grid-column: 1 / -1;
 `;
 
 const StyledInputWithDropdownContainer = styled.div`
@@ -123,9 +113,7 @@ export const AddressInput = ({
     isFieldInputInSubFieldsAddress,
   );
   const [isExpanded, setIsExpanded] = useState(() =>
-    ADDRESS_DETAIL_SUB_FIELDS.some((subField) =>
-      isNonEmptyString(value[subField]),
-    ),
+    hasAddressDetailValue(value),
   );
   const shouldShowDetails = hasDetails && (!hasStreet1 || isExpanded);
 
@@ -340,7 +328,7 @@ export const AddressInput = ({
       {shouldShowDetails && (
         <StyledFieldInputDetails hasSeparator={hasStreet1}>
           {isFieldInputInSubFieldsAddress('addressStreet2') && (
-            <StyledFullWidthDetail>
+            <StyledFieldInputFullWidthDetail>
               <TextInput
                 value={internalValue.addressStreet2 ?? ''}
                 ref={inputRefs.addressStreet2}
@@ -349,7 +337,7 @@ export const AddressInput = ({
                 onChange={getChangeHandler('addressStreet2')}
                 onFocus={getFocusHandler('addressStreet2')}
               />
-            </StyledFullWidthDetail>
+            </StyledFieldInputFullWidthDetail>
           )}
           {isFieldInputInSubFieldsAddress('addressCity') &&
             renderInputWithAutocomplete({

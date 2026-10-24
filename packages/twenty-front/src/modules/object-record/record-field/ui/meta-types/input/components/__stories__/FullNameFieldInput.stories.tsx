@@ -47,6 +47,26 @@ const InitializedFullNameFieldInput = () => {
   return <FullNameFieldInput />;
 };
 
+const OpenedFieldInputFocusEffect = ({
+  instanceId,
+}: {
+  instanceId: string;
+}) => {
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+
+  useEffect(() => {
+    pushFocusItemToFocusStack({
+      focusId: instanceId,
+      component: {
+        type: FocusComponentType.OPENED_FIELD_INPUT,
+        instanceId,
+      },
+    });
+  }, [instanceId, pushFocusItemToFocusStack]);
+
+  return <></>;
+};
+
 type FullNameInputWithContextProps = FieldInputEventContextType & {
   value: FieldFullNameValue;
 };
@@ -59,26 +79,15 @@ const FullNameInputWithContext = ({
   onTab,
   onShiftTab,
 }: FullNameInputWithContextProps) => {
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-
   const instanceId = getRecordFieldInputInstanceId({
     recordId: '123',
     fieldName: 'name',
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
   });
 
-  useEffect(() => {
-    pushFocusItemToFocusStack({
-      focusId: instanceId,
-      component: {
-        type: FocusComponentType.OPENED_FIELD_INPUT,
-        instanceId,
-      },
-    });
-  }, [instanceId, pushFocusItemToFocusStack]);
-
   return (
     <RecordFieldComponentInstanceContext.Provider value={{ instanceId }}>
+      <OpenedFieldInputFocusEffect instanceId={instanceId} />
       <FieldContext.Provider
         value={{
           fieldDefinition: {
