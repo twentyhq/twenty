@@ -49,6 +49,16 @@ const buildInvalidSessionException = () =>
     AuthExceptionCode.UNAUTHENTICATED,
   );
 
+const buildRevokedSessionException = (
+  revokedReason: UserSessionRevokedReason | null | undefined,
+) =>
+  revokedReason === UserSessionRevokedReason.Superseded
+    ? new AuthException(
+        'Session was replaced by a newer sign-in.',
+        AuthExceptionCode.SESSION_SUPERSEDED,
+      )
+    : buildInvalidSessionException();
+
 @Injectable()
 export class UserSessionService {
   private readonly logger = new Logger(UserSessionService.name);
@@ -357,15 +367,8 @@ export class UserSessionService {
 
     const session = await this.userSessionRepository.findOneBy({ tokenHash });
 
-    if (session?.revokedReason === UserSessionRevokedReason.Superseded) {
-      throw new AuthException(
-        'Session was replaced by a newer sign-in.',
-        AuthExceptionCode.SESSION_SUPERSEDED,
-      );
-    }
-
     if (!isDefined(session) || !this.isSessionActive(session)) {
-      throw buildInvalidSessionException();
+      throw buildRevokedSessionException(session?.revokedReason);
     }
 
     const refreshedCachedSession = this.toCachedSession(session);
@@ -406,13 +409,13 @@ export class UserSessionService {
   ): Promise<void> {
     const session = await this.userSessionRepository.findOne({
       where: { id: sessionId },
-      select: { id: true, revokedAt: true },
+      select: { id: true, revokedAt: true, revokedReason: true },
     });
 
     if (!isDefined(session) || isDefined(session.revokedAt)) {
       await this.cacheStorageService.del(tokenHash);
 
-      throw buildInvalidSessionException();
+      throw buildRevokedSessionException(session?.revokedReason);
     }
   }
 
@@ -685,7 +688,12 @@ export class UserSessionService {
     if (affected === 0) {
       await this.cacheStorageService.del(tokenHash);
 
-      throw buildInvalidSessionException();
+      const revokedSession = await this.userSessionRepository.findOne({
+        where: { id: cachedSession.sessionId },
+        select: { id: true, revokedReason: true },
+      });
+
+      throw buildRevokedSessionException(revokedSession?.revokedReason);
     }
 
     cachedSession.lastActiveAt = now.toISOString();
