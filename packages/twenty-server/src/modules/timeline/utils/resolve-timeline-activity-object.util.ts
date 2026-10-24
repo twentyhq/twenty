@@ -13,6 +13,10 @@ export const resolveTimelineActivityObject = ({
   timelineActivity: Record<string, unknown>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): FlatObjectMetadata | undefined => {
+  if (!('linkedObjectMetadataId' in timelineActivity)) {
+    return undefined;
+  }
+
   const { linkedObjectMetadataId } = timelineActivity;
 
   if (isNonEmptyString(linkedObjectMetadataId)) {

@@ -166,4 +166,12 @@ describe('keepReadableFieldsInTimelineActivities', () => {
       keepReadableFields({ timelineActivity: { properties: DIFF } }),
     ).toEqual({ diff: {} });
   });
+
+  it('should keep no field when the linked object column was not selected', () => {
+    expect(
+      keepReadableFields({
+        timelineActivity: { targetPersonId: 'person-id', properties: DIFF },
+      }),
+    ).toEqual({ diff: {} });
+  });
 });

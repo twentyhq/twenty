@@ -23,14 +23,15 @@ export const assertFieldValueSnapshotIsQueryableOrThrow = ({
     return;
   }
 
-  const hasReadDeniedField = Object.values(objectsPermissions).some(
+  const hasReadDeniedObjectOrField = Object.values(objectsPermissions).some(
     (objectPermissions) =>
+      !objectPermissions.canReadObjectRecords ||
       Object.values(objectPermissions.restrictedFields).some(
         (fieldPermissions) => fieldPermissions.canRead === false,
       ),
   );
 
-  if (hasReadDeniedField) {
+  if (hasReadDeniedObjectOrField) {
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,
       PermissionsExceptionCode.PERMISSION_DENIED,
