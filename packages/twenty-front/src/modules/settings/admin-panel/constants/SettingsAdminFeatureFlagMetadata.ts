@@ -48,4 +48,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`App monitoring`,
     description: msg`Show app owners and instance admins the health of an app across every workspace that installed it.`,
   },
+  [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
+    label: msg`MCP servers`,
+    description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
+  },
 };

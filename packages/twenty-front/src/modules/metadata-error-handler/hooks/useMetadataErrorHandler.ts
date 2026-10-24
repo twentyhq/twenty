@@ -49,6 +49,7 @@ export const useMetadataErrorHandler = () => {
     frontComponent: t`front component`,
     navigationMenuItem: t`navigation menu item`,
     webhook: t`webhook`,
+    mcpServer: t`MCP server`,
     viewSort: t`view sort`,
     applicationVariable: t`application variable`,
     connectionProvider: t`connection provider`,

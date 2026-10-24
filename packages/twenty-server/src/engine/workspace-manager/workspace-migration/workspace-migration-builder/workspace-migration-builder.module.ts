@@ -32,6 +32,7 @@ import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/wor
 import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions.builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
 import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/application-variable/workspace-migration-application-variable-actions-builder.service';
+import { WorkspaceMigrationMcpServerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/mcp-server/workspace-migration-mcp-server-actions-builder.service';
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
 import { WorkspaceMigrationTimelineActivityTypeActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/workspace-migration-timeline-activity-type-actions-builder.service';
@@ -76,6 +77,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
     WorkspaceMigrationFrontComponentActionsBuilderService,
     WorkspaceMigrationWebhookActionsBuilderService,
+    WorkspaceMigrationMcpServerActionsBuilderService,
     WorkspaceMigrationApplicationVariableActionsBuilderService,
     WorkspaceMigrationConnectionProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
@@ -116,6 +118,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
     WorkspaceMigrationFrontComponentActionsBuilderService,
     WorkspaceMigrationWebhookActionsBuilderService,
+    WorkspaceMigrationMcpServerActionsBuilderService,
     WorkspaceMigrationApplicationVariableActionsBuilderService,
     WorkspaceMigrationConnectionProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
