@@ -17,6 +17,7 @@ import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { type ApolloManager } from '@/apollo/types/ApolloManager';
+import { isSessionSupersededGraphQLError } from '@/apollo/utils/isSessionSupersededGraphQLError';
 import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
@@ -195,16 +196,21 @@ export class ApolloFactory implements ApolloManager {
       };
 
       // Resent outside errorLink so a second rejection still goes through its sign-out
-      const replacedSessionRetryLink = new ErrorLink(
+      const supersededSessionRetryLink = new ErrorLink(
         ({ error, operation, forward }) => {
-          if (this.isRejectedForReplacedSession({ error, operation })) {
+          // The sign-in that superseded the session left this browser a newer cookie
+          if (
+            this.isSupersededSessionRejection(error) &&
+            !operation.getContext().skipRetry &&
+            isDefined(getSessionGeneration())
+          ) {
             return forward(operation);
           }
         },
       );
 
       const errorLink = new ErrorLink(({ error, operation }) => {
-        if (this.isRejectedForReplacedSession({ error, operation })) {
+        if (this.isSupersededSessionRejection(error)) {
           return;
         }
 
@@ -288,7 +294,7 @@ export class ApolloFactory implements ApolloManager {
 
       // Cast because third-party links (apollo-link-rest, apollo-upload-client) reference their own ApolloLink type.
       const links = [
-        replacedSessionRetryLink,
+        supersededSessionRetryLink,
         errorLink,
         authLink,
         ...(extraLinks || []),
@@ -330,33 +336,10 @@ export class ApolloFactory implements ApolloManager {
     return ServerError.is(error) && error.statusCode === 401;
   }
 
-  // Sent with the cookie of a session a sign-in has since replaced, so it can be resent with the new one
-  private isRejectedForReplacedSession({
-    error,
-    operation,
-  }: {
-    error: ErrorLike;
-    operation: ApolloLink.Operation;
-  }): boolean {
-    const { sessionGeneration: requestSessionGeneration, skipRetry } =
-      operation.getContext();
-    const currentSessionGeneration = getSessionGeneration();
-
-    // A resend carries the new cookie. See PendingServerSignOutEffect.
-    if (skipRetry) {
-      return false;
-    }
-
-    const isUnauthenticatedRejection =
-      (CombinedGraphQLErrors.is(error) &&
-        error.errors.some(isUnauthenticatedGraphQLError)) ||
-      (this.isRestOperation(operation) && this.isAuthenticationError(error));
-
+  private isSupersededSessionRejection(error: ErrorLike): boolean {
     return (
-      isDefined(requestSessionGeneration) &&
-      isDefined(currentSessionGeneration) &&
-      requestSessionGeneration !== currentSessionGeneration &&
-      isUnauthenticatedRejection
+      CombinedGraphQLErrors.is(error) &&
+      error.errors.some(isSessionSupersededGraphQLError)
     );
   }
 

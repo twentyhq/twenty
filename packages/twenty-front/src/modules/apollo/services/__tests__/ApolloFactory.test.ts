@@ -24,6 +24,13 @@ const UNAUTHENTICATED_RESPONSE = JSON.stringify({
   errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
 });
 
+const SESSION_SUPERSEDED_RESPONSE = JSON.stringify({
+  data: {},
+  errors: [
+    { extensions: { code: 'UNAUTHENTICATED', subCode: 'SESSION_SUPERSEDED' } },
+  ],
+});
+
 const PERMISSION_DENIED_RESPONSE = JSON.stringify({
   data: { trackAnalytics: null },
   errors: [
@@ -315,50 +322,23 @@ describe('ApolloFactory', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  const makeRequestRejectedAfterSessionChange = async ({
-    changeSession,
+  const makeSupersededRequest = ({
     retriedResponse,
     context,
   }: {
-    changeSession: () => void;
     retriedResponse: string;
     context?: Record<string, unknown>;
   }) => {
-    let markRequestStarted!: () => void;
-    const requestStarted = new Promise<void>((resolve) => {
-      markRequestStarted = resolve;
-    });
-    let releaseResponse!: (response: { body: string }) => void;
-    const pendingResponse = new Promise<{ body: string }>((resolve) => {
-      releaseResponse = resolve;
-    });
-
-    fetchMock.mockResponseOnce(() => {
-      markRequestStarted();
-
-      return pendingResponse;
-    });
+    fetchMock.mockResponseOnce(SESSION_SUPERSEDED_RESPONSE);
     fetchMock.mockResponseOnce(retriedResponse);
 
-    rotateSessionGeneration();
-    const requestSessionGeneration = getSessionGeneration();
-    const request = makeRequestWithContext(context);
-
-    expect(requestSessionGeneration).not.toBeNull();
-
-    await requestStarted;
-    changeSession();
-
-    expect(getSessionGeneration()).not.toBe(requestSessionGeneration);
-
-    releaseResponse({ body: UNAUTHENTICATED_RESPONSE });
-
-    return request;
+    return makeRequestWithContext(context);
   };
 
-  it('should resend a request rejected because a sign-in replaced its session', async () => {
-    await makeRequestRejectedAfterSessionChange({
-      changeSession: rotateSessionGeneration,
+  it('should resend a request rejected because a sign-in superseded its session', async () => {
+    rotateSessionGeneration();
+
+    await makeSupersededRequest({
       retriedResponse: JSON.stringify({
         data: { trackAnalytics: { success: true } },
       }),
@@ -368,22 +348,33 @@ describe('ApolloFactory', () => {
     expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
   });
 
-  it('should sign out when the resent request is rejected too', async () => {
+  it('should sign out when the resent request is rejected as unauthenticated', async () => {
+    rotateSessionGeneration();
+
     await expect(
-      makeRequestRejectedAfterSessionChange({
-        changeSession: rotateSessionGeneration,
-        retriedResponse: UNAUTHENTICATED_RESPONSE,
-      }),
+      makeSupersededRequest({ retriedResponse: UNAUTHENTICATED_RESPONSE }),
     ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
   });
 
-  it('should not resend a request that must not be retried', async () => {
+  it('should not sign out when the resent request is superseded again', async () => {
+    rotateSessionGeneration();
+
     await expect(
-      makeRequestRejectedAfterSessionChange({
-        changeSession: rotateSessionGeneration,
+      makeSupersededRequest({ retriedResponse: SESSION_SUPERSEDED_RESPONSE }),
+    ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
+
+  it('should neither resend nor sign out on a superseded request that must not be retried', async () => {
+    rotateSessionGeneration();
+
+    await expect(
+      makeSupersededRequest({
         retriedResponse: UNAUTHENTICATED_RESPONSE,
         context: { skipRetry: true },
       }),
@@ -393,16 +384,24 @@ describe('ApolloFactory', () => {
     expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
   });
 
-  it('should not resend a request rejected after sign out', async () => {
+  it('should not resend a superseded request after sign out', async () => {
+    clearSessionGeneration();
+
     await expect(
-      makeRequestRejectedAfterSessionChange({
-        changeSession: clearSessionGeneration,
-        retriedResponse: UNAUTHENTICATED_RESPONSE,
-      }),
+      makeSupersededRequest({ retriedResponse: UNAUTHENTICATED_RESPONSE }),
     ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
+
+  it('should not resend a request rejected for another reason', async () => {
+    rotateSessionGeneration();
+    fetchMock.mockResponseOnce(UNAUTHENTICATED_RESPONSE);
+
+    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('should leave a permission denial alone', async () => {

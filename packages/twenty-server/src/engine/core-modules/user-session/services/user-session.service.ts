@@ -124,7 +124,8 @@ export class UserSessionService {
         } catch (error) {
           if (
             !(error instanceof AuthException) ||
-            error.code !== AuthExceptionCode.UNAUTHENTICATED
+            (error.code !== AuthExceptionCode.UNAUTHENTICATED &&
+              error.code !== AuthExceptionCode.SESSION_SUPERSEDED)
           ) {
             throw error;
           }
@@ -355,6 +356,14 @@ export class UserSessionService {
     }
 
     const session = await this.userSessionRepository.findOneBy({ tokenHash });
+
+    // Revoking deletes the cache entry, so a superseded session always reaches this lookup
+    if (session?.revokedReason === UserSessionRevokedReason.Superseded) {
+      throw new AuthException(
+        'Session was replaced by a newer sign-in.',
+        AuthExceptionCode.SESSION_SUPERSEDED,
+      );
+    }
 
     if (!isDefined(session) || !this.isSessionActive(session)) {
       throw buildInvalidSessionException();
