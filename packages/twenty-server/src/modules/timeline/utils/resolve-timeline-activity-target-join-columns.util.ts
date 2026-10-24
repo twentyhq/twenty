@@ -21,15 +21,18 @@ export const resolveTimelineActivityTargetJoinColumns = ({
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    return flatFieldMetadata?.morphId ===
-      STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId &&
-      isDefined(flatFieldMetadata.relationTargetObjectMetadataId)
-      ? [
-          {
-            joinColumnName:
-              getJoinColumnNameForRelationField(flatFieldMetadata),
-            objectMetadataId: flatFieldMetadata.relationTargetObjectMetadataId,
-          },
-        ]
-      : [];
+    if (
+      flatFieldMetadata?.morphId !==
+        STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId ||
+      !isDefined(flatFieldMetadata.relationTargetObjectMetadataId)
+    ) {
+      return [];
+    }
+
+    return [
+      {
+        joinColumnName: getJoinColumnNameForRelationField(flatFieldMetadata),
+        objectMetadataId: flatFieldMetadata.relationTargetObjectMetadataId,
+      },
+    ];
   });
