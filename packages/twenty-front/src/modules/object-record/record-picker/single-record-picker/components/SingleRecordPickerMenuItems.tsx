@@ -92,7 +92,6 @@ export const SingleRecordPickerMenuItems = ({
 
   const searchHasNoResults = itemsMatchingSearchFilter.length === 0;
 
-  // Results already in the cache stay clickable while they are refreshed
   const shouldShowInitialLoading =
     singleRecordPickerShouldShowInitialLoading && searchHasNoResults;
 
