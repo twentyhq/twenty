@@ -195,10 +195,8 @@ export class ApolloFactory implements ApolloManager {
           });
       };
 
-      // Resent outside errorLink so a second rejection still goes through its sign-out
       const supersededSessionRetryLink = new ErrorLink(
         ({ error, operation, forward }) => {
-          // The sign-in that superseded the session left this browser a newer cookie
           if (
             this.isSupersededSessionRejection(error) &&
             !operation.getContext().skipRetry &&
