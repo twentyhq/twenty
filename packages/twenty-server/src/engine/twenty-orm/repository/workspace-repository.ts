@@ -1695,6 +1695,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
+    if (
+      (kind === 'delete' || kind === 'soft-delete') &&
+      recordsBefore.length > QUERY_MAX_RECORDS
+    ) {
+      throw new TwentyOrmException(
+        `Cannot delete more than ${QUERY_MAX_RECORDS} records at once`,
+        TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE,
+        {
+          userFriendlyMessage: msg`You can only delete up to ${QUERY_MAX_RECORDS} records at once.`,
+        },
+      );
+    }
+
     let filesFieldFileIds = null;
     let dataToWrite = data;
 

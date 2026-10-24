@@ -27,6 +27,7 @@ export enum TwentyOrmExceptionCode {
   TRANSIENT_DATABASE_ERROR = 'TRANSIENT_DATABASE_ERROR',
   DUPLICATE_ENTRY_DETECTED = 'DUPLICATE_ENTRY_DETECTED',
   TOO_MANY_RECORDS_TO_UPDATE = 'TOO_MANY_RECORDS_TO_UPDATE',
+  TOO_MANY_RECORDS_TO_DELETE = 'TOO_MANY_RECORDS_TO_DELETE',
   INVALID_INPUT = 'INVALID_INPUT',
   ORM_EVENT_DATA_CORRUPTED = 'ORM_EVENT_DATA_CORRUPTED',
   RLS_VALIDATION_FAILED = 'RLS_VALIDATION_FAILED',
@@ -79,6 +80,8 @@ const getTwentyOrmExceptionUserFriendlyMessage = (
       return msg`A duplicate entry was detected.`;
     case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
       return msg`Too many records to update at once.`;
+    case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE:
+      return msg`Too many records to delete at once.`;
     case TwentyOrmExceptionCode.INVALID_INPUT:
       return INVALID_INPUT_USER_FRIENDLY_MESSAGE;
     case TwentyOrmExceptionCode.RLS_VALIDATION_FAILED:
