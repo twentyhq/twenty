@@ -9,7 +9,7 @@ import {
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
 import { isString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -29,6 +29,9 @@ export const useLogicFunctionForm = ({
 
   const [unsavedSourceHandlerCode, setUnsavedSourceHandlerCode] =
     useState<UnsavedSourceHandlerCode>();
+
+  // oxlint-disable-next-line twenty/no-state-useref -- Read by in-flight saves, not render state.
+  const latestSourceHandlerCodeRef = useRef<string>();
 
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({
@@ -78,6 +81,7 @@ export const useLogicFunctionForm = ({
         key === 'sourceHandlerCode' && isString(value);
 
       if (isSourceHandlerCodeChange) {
+        latestSourceHandlerCodeRef.current = value;
         setUnsavedSourceHandlerCode({ sourceHandlerCode: value });
       }
 
@@ -101,6 +105,11 @@ export const useLogicFunctionForm = ({
       );
 
       const inferredJsonSchema = await getInputSchemaFromSourceCode(value);
+
+      // Keystrokes queued behind draft creation resume out of order
+      if (latestSourceHandlerCodeRef.current !== value) {
+        return undefined;
+      }
 
       const triggerSettings = {
         toolTriggerSettings: isDefined(formValues.toolTriggerSettings)
