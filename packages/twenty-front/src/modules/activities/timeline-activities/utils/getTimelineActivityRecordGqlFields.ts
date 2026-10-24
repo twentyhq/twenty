@@ -1,4 +1,9 @@
-import { type RecordGqlFields, FieldMetadataType } from 'twenty-shared/types';
+import {
+  type RecordGqlFields,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
+import { computeMorphRelationGqlFieldName } from 'twenty-shared/utils';
 import { type GenerateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/types/GenerateDepthRecordGqlFieldsFromFields';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 
@@ -12,8 +17,8 @@ type GetTimelineActivityRecordGqlFieldsParams = Pick<
 export const getTimelineActivityRecordGqlFields = ({
   objectMetadataItems,
   fields,
-}: GetTimelineActivityRecordGqlFieldsParams): RecordGqlFields =>
-  generateDepthRecordGqlFieldsFromFields({
+}: GetTimelineActivityRecordGqlFieldsParams): RecordGqlFields => ({
+  ...generateDepthRecordGqlFieldsFromFields({
     objectMetadataItems,
     fields: fields.filter(
       (field) =>
@@ -21,4 +26,26 @@ export const getTimelineActivityRecordGqlFields = ({
         field.name !== 'linkedRecordCachedName',
     ),
     depth: 1,
-  });
+  }),
+  ...Object.fromEntries(
+    fields
+      .filter((field) => field.type === FieldMetadataType.MORPH_RELATION)
+      .flatMap((field) =>
+        (field.morphRelations ?? [])
+          .filter(
+            (morphRelation) => morphRelation.type === RelationType.MANY_TO_ONE,
+          )
+          .map((morphRelation) => [
+            `${computeMorphRelationGqlFieldName({
+              fieldName: field.name,
+              relationType: morphRelation.type,
+              targetObjectMetadataNameSingular:
+                morphRelation.targetObjectMetadata.nameSingular,
+              targetObjectMetadataNamePlural:
+                morphRelation.targetObjectMetadata.namePlural,
+            })}Id`,
+            true,
+          ]),
+      ),
+  ),
+});

@@ -115,7 +115,6 @@ export class CommonRecordVisibilityService {
           'after' in properties ? properties.after : undefined,
         ].filter(isPlainObject),
       ),
-      flatObjectMetadata,
       objectsPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

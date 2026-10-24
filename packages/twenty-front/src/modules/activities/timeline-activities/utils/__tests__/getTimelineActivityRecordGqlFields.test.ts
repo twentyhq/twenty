@@ -12,18 +12,23 @@ describe('getTimelineActivityRecordGqlFields', () => {
     fields: timelineActivityObjectMetadataItem.fields,
   });
 
-  it('should not request any morph target relation', () => {
+  it('should request the morph target ids without their records', () => {
     const morphRelationFieldNames = timelineActivityObjectMetadataItem.fields
       .filter((field) => field.type === FieldMetadataType.MORPH_RELATION)
       .map((field) => field.name);
 
     expect(morphRelationFieldNames).not.toHaveLength(0);
 
-    expect(
-      Object.keys(recordGqlFields).filter((gqlFieldName) =>
-        gqlFieldName.startsWith('target'),
-      ),
-    ).toEqual([]);
+    const targetGqlFields = Object.entries(recordGqlFields).filter(
+      ([gqlFieldName]) => gqlFieldName.startsWith('target'),
+    );
+
+    expect(targetGqlFields).not.toHaveLength(0);
+    expect(recordGqlFields).toMatchObject({ targetPersonId: true });
+    targetGqlFields.forEach(([gqlFieldName, gqlFieldValue]) => {
+      expect(gqlFieldName.endsWith('Id')).toBe(true);
+      expect(gqlFieldValue).toBe(true);
+    });
   });
 
   it('should keep the scalars and the author relation the timeline renders', () => {

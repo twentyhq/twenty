@@ -1,0 +1,48 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { type ObjectsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildReadableFieldNames } from 'src/modules/timeline/utils/build-readable-field-names.util';
+import { keepReadableFieldsInTimelineActivityProperties } from 'src/modules/timeline/utils/keep-readable-fields-in-timeline-activity-properties.util';
+import { resolveTimelineActivityObject } from 'src/modules/timeline/utils/resolve-timeline-activity-object.util';
+
+export const keepReadableFieldsInTimelineActivities = ({
+  timelineActivities,
+  objectsPermissions,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+}: {
+  timelineActivities: Record<string, unknown>[];
+  objectsPermissions: ObjectsPermissions;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): void => {
+  for (const timelineActivity of timelineActivities) {
+    if (!('properties' in timelineActivity)) {
+      continue;
+    }
+
+    const flatObjectMetadata = resolveTimelineActivityObject({
+      timelineActivity,
+      flatObjectMetadataMaps,
+    });
+
+    timelineActivity.properties =
+      keepReadableFieldsInTimelineActivityProperties({
+        properties: timelineActivity.properties,
+        readableFieldNames: isDefined(flatObjectMetadata)
+          ? buildReadableFieldNames({
+              flatObjectMetadata,
+              isLinkedActivity: isNonEmptyString(
+                timelineActivity.linkedObjectMetadataId,
+              ),
+              objectsPermissions,
+              flatFieldMetadataMaps,
+            })
+          : new Set(),
+      });
+  }
+};

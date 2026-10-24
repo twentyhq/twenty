@@ -18,7 +18,6 @@ export type RecordVisibilityRestrictionHandler = {
   }) => Promise<void>;
   applyEventVisibilityRestrictions?: (args: {
     records: Record<string, unknown>[];
-    flatObjectMetadata: FlatObjectMetadata;
     objectsPermissions: ObjectsPermissions;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
