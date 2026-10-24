@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { buildFlatSearchFieldMetadataForField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/build-flat-search-field-metadata-for-field.util';
+import { findFlatSearchFieldMetadataIndexingField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-flat-search-field-metadata-indexing-field.util';
 import { findTsVectorFlatFieldMetadataForObject } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/find-ts-vector-flat-field-metadata-for-object.util';
 import { getPendingFlatSearchFieldMetadataCreatesForObject } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/get-pending-flat-search-field-metadata-creates-for-object.util';
 import {
@@ -113,6 +114,23 @@ export class FieldSearchFieldMetadataOnUpdateSideEffectHandlerService extends Me
       ];
 
     if (!isDefined(existingFlatObjectMetadata)) {
+      return { status: 'noop' };
+    }
+
+    // The row is what makes the field searchable, so a row that already indexes
+    // the field is the row this side effect would create. Queueing the create
+    // again would fail the whole plan with ENTITY_ALREADY_EXISTS whenever the
+    // derived isSearchable of the cached field metadata lags behind the rows.
+    const existingSearchFieldMetadataIndexingField =
+      findFlatSearchFieldMetadataIndexingField({
+        flatSearchFieldMetadataMaps:
+          relatedFlatEntityMaps.flatSearchFieldMetadataMaps,
+        fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+        objectMetadataUniversalIdentifier:
+          existingFlatObjectMetadata.universalIdentifier,
+      });
+
+    if (isDefined(existingSearchFieldMetadataIndexingField)) {
       return { status: 'noop' };
     }
 
