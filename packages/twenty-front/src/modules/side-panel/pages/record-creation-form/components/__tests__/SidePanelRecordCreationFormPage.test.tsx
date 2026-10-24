@@ -160,6 +160,13 @@ jest.mock(
       createElement: typeof createElement;
       Fragment: typeof Fragment;
     };
+    const jotaiStoreModuleForMock = require('@/ui/utilities/state/jotai/jotaiStore');
+    const {
+      recordFieldInputIsFieldInErrorComponentState: errorStateForMock,
+    } = require('@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState');
+    const {
+      getRecordFormFieldInputInstanceId: getInstanceIdForMock,
+    } = require('@/object-record/record-form/utils/getRecordFormFieldInputInstanceId');
 
     return {
       RecordFormFieldInputs: ({
@@ -167,7 +174,7 @@ jest.mock(
         draftRecord,
         validationRuleViolationsByFieldMetadataId = {},
         onFieldValueChange,
-        onFieldError,
+        formInstanceId,
       }: {
         fieldMetadataItems: { id: string; name: string; label: string }[];
         draftRecord: Record<string, unknown>;
@@ -176,10 +183,7 @@ jest.mock(
           { ruleId: string; message: string }[]
         >;
         onFieldValueChange: (gqlFieldName: string, value: string) => void;
-        onFieldError?: (
-          fieldMetadataId: string,
-          error: string | undefined,
-        ) => void;
+        formInstanceId: string;
       }) =>
         ReactForMock.createElement(
           ReactForMock.Fragment,
@@ -200,11 +204,15 @@ jest.mock(
                     fieldMetadataItem.name,
                     event.target.value,
                   );
-                  if (event.target.value === 'invalid') {
-                    onFieldError?.(fieldMetadataItem.id, 'Invalid value');
-                  } else {
-                    onFieldError?.(fieldMetadataItem.id, undefined);
-                  }
+                  jotaiStoreModuleForMock.jotaiStore.set(
+                    errorStateForMock.atomFamily({
+                      instanceId: getInstanceIdForMock({
+                        formInstanceId,
+                        fieldMetadataId: fieldMetadataItem.id,
+                      }),
+                    }),
+                    event.target.value === 'invalid',
+                  );
                 },
               }),
               (
@@ -600,7 +608,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     });
   });
 
-  it('stops blocking creation once a hidden field with an input error is collapsed', async () => {
+  it('stops blocking creation once a hidden field with an input error is collapsed and shown again', async () => {
     const user = userEvent.setup();
 
     renderPage();
@@ -608,6 +616,7 @@ describe('SidePanelRecordCreationFormPage', () => {
     await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
     await user.type(screen.getByLabelText('Nickname'), 'invalid');
     await user.click(screen.getByRole('button', { name: 'Hide fields' }));
+    await user.click(screen.getByRole('button', { name: 'All fields (3)' }));
     await user.click(screen.getByTestId('record-creation-form-create-button'));
 
     expect(settleRecordCreationDraft).toHaveBeenCalledTimes(1);

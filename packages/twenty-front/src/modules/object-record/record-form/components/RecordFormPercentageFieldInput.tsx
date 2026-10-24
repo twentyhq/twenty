@@ -1,8 +1,10 @@
 import { getNumberValueToPersist } from '@/object-record/record-field/ui/meta-types/input/utils/getNumberValueToPersist';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldNumberMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeDraftValueFromFieldValue } from '@/object-record/record-field/ui/utils/computeDraftValueFromFieldValue';
 import { RecordFormTextInput } from '@/object-record/record-form/components/RecordFormTextInput';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -14,7 +16,6 @@ type RecordFormPercentageFieldInputProps = {
   >;
   defaultValue?: number | null;
   onChange: (value: number | null) => void;
-  onError?: (error: string | undefined) => void;
   readonly?: boolean;
 };
 
@@ -22,9 +23,11 @@ export const RecordFormPercentageFieldInput = ({
   field,
   defaultValue,
   onChange,
-  onError,
   readonly,
 }: RecordFormPercentageFieldInputProps) => {
+  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
   const [inputText, setInputText] = useState(
     String(
       computeDraftValueFromFieldValue({
@@ -49,12 +52,12 @@ export const RecordFormPercentageFieldInput = ({
 
     if (!percentageValueResult.success) {
       setErrorMessage(t`Invalid number`);
-      onError?.(t`Invalid number`);
+      setRecordFieldInputIsFieldInError(true);
       return;
     }
 
     setErrorMessage(undefined);
-    onError?.(undefined);
+    setRecordFieldInputIsFieldInError(false);
     onChange(percentageValueResult.value);
   };
 
