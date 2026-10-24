@@ -6,9 +6,9 @@ import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannel
 import {
   EmailingDomainStatus,
   GetEmailingDomainsDocument,
+  UnsubscribeHostnameStatus,
 } from '~/generated-metadata/graphql';
 import { getEmailingDomainStatusDisplay } from '@/settings/emailing-domains/utils/getEmailingDomainStatusDisplay';
-import { isUnsubscribeVerificationPending } from '@/settings/emailing-domains/utils/isUnsubscribeVerificationPending';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,13 +37,13 @@ export const SettingsWorkspaceEmailChannelDomainStatusCell = ({
     return null;
   }
 
-  if (
+  const isUnsubscribeHostnamePending =
+    isMessageCampaignEnabled &&
     emailingDomain.status === EmailingDomainStatus.VERIFIED &&
-    isUnsubscribeVerificationPending({
-      emailingDomain,
-      isMessageCampaignEnabled,
-    })
-  ) {
+    emailingDomain.unsubscribeHostnameStatus !==
+      UnsubscribeHostnameStatus.ACTIVE;
+
+  if (isUnsubscribeHostnamePending) {
     return (
       <Tooltip
         content={t`Unsubscribe record not verified`}
