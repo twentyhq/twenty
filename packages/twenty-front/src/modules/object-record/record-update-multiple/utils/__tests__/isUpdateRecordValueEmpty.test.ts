@@ -26,6 +26,28 @@ describe('isUpdateRecordValueEmpty', () => {
     expect(isUpdateRecordValueEmpty({ a: 1 })).toBe(false);
   });
 
+  it('should return true for an emptied list field', () => {
+    expect(
+      isUpdateRecordValueEmpty({ primaryEmail: '', additionalEmails: [] }),
+    ).toBe(true);
+    expect(
+      isUpdateRecordValueEmpty({
+        primaryLinkUrl: '',
+        primaryLinkLabel: '',
+        secondaryLinks: [],
+      }),
+    ).toBe(true);
+  });
+
+  it('should return false for a list field with a value', () => {
+    expect(
+      isUpdateRecordValueEmpty({
+        primaryEmail: 'lea@northwind.io',
+        additionalEmails: [],
+      }),
+    ).toBe(false);
+  });
+
   it('should return false for Date object', () => {
     expect(isUpdateRecordValueEmpty(new Date())).toBe(false);
   });
