@@ -17,7 +17,16 @@ const INTERNAL_PROPS = new Set([
   'dangerouslySetInnerHTML',
 ]);
 const FORM_OWNER_ATTRIBUTE = 'form';
-const IFRAME_SANDBOX_ATTRIBUTE = 'sandbox';
+// The DOM lowercases attribute names, so any casing must reach the host's handling.
+const HOST_SANITIZED_PROP_NAMES = new Set(['sandbox', 'style']);
+
+const toHostPropName = (remotePropName: string): string => {
+  const lowercasedPropName = remotePropName.toLowerCase();
+
+  return HOST_SANITIZED_PROP_NAMES.has(lowercasedPropName)
+    ? lowercasedPropName
+    : remotePropName;
+};
 
 export const buildHostReactPropsFromRemoteProps = ({
   remoteProps,
@@ -32,20 +41,14 @@ export const buildHostReactPropsFromRemoteProps = ({
 }): Record<string, unknown> => {
   const hostReactProps: Record<string, unknown> = {};
 
-  for (const [remotePropName, remotePropValue] of Object.entries(remoteProps)) {
-    if (INTERNAL_PROPS.has(remotePropName) || isUndefined(remotePropValue)) {
+  for (const [wirePropName, remotePropValue] of Object.entries(remoteProps)) {
+    if (INTERNAL_PROPS.has(wirePropName) || isUndefined(remotePropValue)) {
       continue;
     }
+
+    const remotePropName = toHostPropName(wirePropName);
 
     if (remotePropName.toLowerCase() === FORM_OWNER_ATTRIBUTE) {
-      continue;
-    }
-
-    // A case variant would override the host sandbox once the DOM lowercases it.
-    if (
-      remotePropName !== IFRAME_SANDBOX_ATTRIBUTE &&
-      remotePropName.toLowerCase() === IFRAME_SANDBOX_ATTRIBUTE
-    ) {
       continue;
     }
 

@@ -266,17 +266,22 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect(result['data-state']).toBe('open');
   });
 
-  it('should drop differently cased duplicates of the iframe sandbox attribute', () => {
+  it('should route any casing of sandbox to the sandbox key', () => {
     const result = buildHostReactPropsFromRemoteProps({
-      remoteProps: {
-        sandbox: 'allow-forms',
-        SANDBOX: 'allow-same-origin',
-        Sandbox: 'allow-same-origin',
-      },
+      remoteProps: { sandbox: 'allow-forms', SANDBOX: 'allow-same-origin' },
       htmlTag: 'iframe',
     });
 
-    expect(result).toEqual({ sandbox: 'allow-forms' });
+    expect(result).toEqual({ sandbox: 'allow-same-origin' });
+  });
+
+  it('should parse a differently cased style string', () => {
+    const result = buildHostReactPropsFromRemoteProps({
+      remoteProps: { STYLE: 'color: red' },
+      htmlTag: 'div',
+    });
+
+    expect(result).toEqual({ style: { color: 'red' } });
   });
 
   it('should drop dangerouslySetInnerHTML', () => {
