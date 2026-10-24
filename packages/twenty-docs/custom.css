@@ -1041,8 +1041,9 @@ div:has(> #search-bar-entry) {
   }
 }
 
-html {
-  background-color: var(--twenty-surface);
+html,
+html.dark {
+  background-color: var(--twenty-surface) !important;
 }
 
 div:has(> #sidebar-content) {
