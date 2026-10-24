@@ -9,7 +9,7 @@ import {
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
 import { isString } from '@sniptt/guards';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -21,17 +21,19 @@ type UnsavedSourceHandlerCode = {
 export const useLogicFunctionForm = ({
   logicFunctionId,
   getTargetLogicFunctionId,
+  onSourceHandlerCodeSaved,
 }: {
   logicFunctionId: string;
   getTargetLogicFunctionId?: () => Promise<string>;
+  onSourceHandlerCodeSaved?: (savedSourceHandlerCode: {
+    targetLogicFunctionId: string;
+    inferredJsonSchema: InputJsonSchema;
+  }) => Promise<void> | void;
 }) => {
   const { updateLogicFunction } = usePersistLogicFunction();
 
   const [unsavedSourceHandlerCode, setUnsavedSourceHandlerCode] =
     useState<UnsavedSourceHandlerCode>();
-
-  // oxlint-disable-next-line twenty/no-state-useref -- Read by in-flight saves, not render state.
-  const latestSourceHandlerCodeRef = useRef<string | undefined>(undefined);
 
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({
@@ -46,12 +48,53 @@ export const useLogicFunctionForm = ({
     async ({
       targetLogicFunctionId,
       update,
+      isSourceHandlerCodeChange = false,
     }: {
       targetLogicFunctionId: string;
       update: LogicFunctionFormValues;
+      isSourceHandlerCodeChange?: boolean;
     }) => {
+      if (!isSourceHandlerCodeChange) {
+        await updateLogicFunction({
+          input: { id: targetLogicFunctionId, update },
+        });
+
+        return;
+      }
+
+      // Inferred here rather than per keystroke: the dynamic import resolves
+      // concurrent calls out of order, so an older code could be saved last
+      const inferredJsonSchema = await getInputSchemaFromSourceCode(
+        update.sourceHandlerCode,
+      );
+
+      const triggerSettings = {
+        toolTriggerSettings: isDefined(update.toolTriggerSettings)
+          ? {
+              ...update.toolTriggerSettings,
+              inputSchema: inferredJsonSchema,
+            }
+          : null,
+        workflowActionTriggerSettings: isDefined(
+          update.workflowActionTriggerSettings,
+        )
+          ? {
+              ...update.workflowActionTriggerSettings,
+              inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
+            }
+          : null,
+      };
+
+      setFormValues((prevState: LogicFunctionFormValues) => ({
+        ...prevState,
+        ...triggerSettings,
+      }));
+
       const result = await updateLogicFunction({
-        input: { id: targetLogicFunctionId, update },
+        input: {
+          id: targetLogicFunctionId,
+          update: { ...update, ...triggerSettings },
+        },
       });
 
       if (result.status !== 'successful') {
@@ -64,14 +107,17 @@ export const useLogicFunctionForm = ({
           ? undefined
           : currentUnsavedSourceHandlerCode,
       );
+
+      await onSourceHandlerCodeSaved?.({
+        targetLogicFunctionId,
+        inferredJsonSchema,
+      });
     },
     500,
   );
 
   const onChange = <TKey extends keyof LogicFunctionFormValues>(key: TKey) => {
-    return async (
-      value: LogicFunctionFormValues[TKey],
-    ): Promise<InputJsonSchema | undefined> => {
+    return async (value: LogicFunctionFormValues[TKey]) => {
       setFormValues((prevState: LogicFunctionFormValues) => ({
         ...prevState,
         [key]: value,
@@ -81,7 +127,6 @@ export const useLogicFunctionForm = ({
         key === 'sourceHandlerCode' && isString(value);
 
       if (isSourceHandlerCodeChange) {
-        latestSourceHandlerCodeRef.current = value;
         setUnsavedSourceHandlerCode({ sourceHandlerCode: value });
       }
 
@@ -95,7 +140,7 @@ export const useLogicFunctionForm = ({
           update: { ...formValues, [key]: value },
         });
 
-        return undefined;
+        return;
       }
 
       setUnsavedSourceHandlerCode((currentUnsavedSourceHandlerCode) =>
@@ -104,41 +149,11 @@ export const useLogicFunctionForm = ({
           : currentUnsavedSourceHandlerCode,
       );
 
-      const inferredJsonSchema = await getInputSchemaFromSourceCode(value);
-
-      // Keystrokes queued behind draft creation resume out of order
-      if (latestSourceHandlerCodeRef.current !== value) {
-        return undefined;
-      }
-
-      const triggerSettings = {
-        toolTriggerSettings: isDefined(formValues.toolTriggerSettings)
-          ? {
-              ...formValues.toolTriggerSettings,
-              inputSchema: inferredJsonSchema,
-            }
-          : null,
-        workflowActionTriggerSettings: isDefined(
-          formValues.workflowActionTriggerSettings,
-        )
-          ? {
-              ...formValues.workflowActionTriggerSettings,
-              inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
-            }
-          : null,
-      };
-
-      setFormValues((prevState: LogicFunctionFormValues) => ({
-        ...prevState,
-        ...triggerSettings,
-      }));
-
       await handleSave({
         targetLogicFunctionId,
-        update: { ...formValues, sourceHandlerCode: value, ...triggerSettings },
+        update: { ...formValues, sourceHandlerCode: value },
+        isSourceHandlerCodeChange,
       });
-
-      return inferredJsonSchema;
     };
   };
 
