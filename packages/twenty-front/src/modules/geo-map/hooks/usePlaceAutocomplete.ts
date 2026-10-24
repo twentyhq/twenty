@@ -4,7 +4,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isNonEmptyString } from '@sniptt/guards';
 import { atom, useAtomValue, useStore } from 'jotai';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
@@ -32,16 +32,6 @@ export const usePlaceAutocomplete = (dropdownId: string) => {
   );
   const placeAutocompleteSession = useAtomValue(placeAutocompleteSessionAtom);
   const store = useStore();
-
-  // Ignores a response still in flight when the input unmounts
-  useEffect(
-    () => () =>
-      store.set(placeAutocompleteSessionAtom, (currentSession) => ({
-        ...currentSession,
-        latestRequestId: currentSession.latestRequestId + 1,
-      })),
-    [placeAutocompleteSessionAtom, store],
-  );
 
   const { getPlaceAutocompleteData } = useGetPlaceApiData();
   const { openDropdown } = useOpenDropdown();
