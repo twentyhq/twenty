@@ -4,7 +4,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { type Observable } from 'rxjs';
 
 import { userIsFullAdmin } from 'src/engine/core-modules/impersonation/utils/user-is-full-admin.util';
-import { isFirstPersonSession } from 'src/engine/guards/utils/is-first-person-session.util';
+import { isImpersonating } from 'src/engine/guards/utils/is-impersonating.util';
 
 export class AdminPanelGuard implements CanActivate {
   canActivate(
@@ -14,7 +14,7 @@ export class AdminPanelGuard implements CanActivate {
     const request = ctx.getContext().req;
 
     return (
-      isFirstPersonSession(request.impersonationContext) &&
+      !isImpersonating(request.impersonationContext) &&
       userIsFullAdmin(request.user)
     );
   }
