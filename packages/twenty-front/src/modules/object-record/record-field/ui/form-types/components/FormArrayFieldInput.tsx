@@ -415,7 +415,7 @@ export const FormArrayFieldInput = ({
                   <Dropdown.Separator />
 
                   {isInputDisplayed ? (
-                    <MultiItemFieldInputRow>
+                    <MultiItemFieldInputRow hasPadding>
                       <MultiItemFieldTextInput
                         autoFocus
                         placeholder={placeholder}

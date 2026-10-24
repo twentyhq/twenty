@@ -1,9 +1,12 @@
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormEmailsFieldInput } from '@/object-record/record-field/ui/form-types/components/FormEmailsFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
+import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '@/object-record/record-field/ui/types/guards/isFieldBooleanValue';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
@@ -16,11 +19,14 @@ import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldNumberValue } from '@/object-record/record-field/ui/types/guards/isFieldNumberValue';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 import { isFieldPhonesValue } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
+import { RecordFormArrayFieldInput } from '@/object-record/record-form/components/RecordFormArrayFieldInput';
 import { RecordFormBooleanFieldInput } from '@/object-record/record-form/components/RecordFormBooleanFieldInput';
 import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/components/RecordFormCurrencyFieldInput';
+import { RecordFormEmailsFieldInput } from '@/object-record/record-form/components/RecordFormEmailsFieldInput';
 import { RecordFormPercentageFieldInput } from '@/object-record/record-form/components/RecordFormPercentageFieldInput';
 import { RecordFormPhoneFieldInput } from '@/object-record/record-form/components/RecordFormPhoneFieldInput';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type JsonValue } from 'type-fest';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -47,6 +53,10 @@ export const RecordFormFieldInput = ({
   placeholder,
   subFieldPlaceholders,
 }: RecordFormFieldInputProps) => {
+  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
   if (isFieldLinks(field)) {
     return (
       <FormLinksFieldInput
@@ -58,6 +68,33 @@ export const RecordFormFieldInput = ({
         readonly={readonly}
         subFieldPlaceholders={subFieldPlaceholders}
         isPrimaryLinkUrlOnly
+      />
+    );
+  }
+
+  if (isFieldEmails(field) && !readonly) {
+    return (
+      <RecordFormEmailsFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldEmailsValue(defaultValue) ? defaultValue : undefined
+        }
+        maxNumberOfValues={field.metadata.settings?.maxNumberOfValues}
+        placeholder={subFieldPlaceholders?.primaryEmail}
+        onChange={onChange}
+      />
+    );
+  }
+
+  if (isFieldArray(field) && !readonly) {
+    return (
+      <RecordFormArrayFieldInput
+        label={field.label}
+        defaultValue={
+          isFieldArrayValue(defaultValue) ? defaultValue : undefined
+        }
+        maxNumberOfValues={field.metadata.settings?.maxNumberOfValues}
+        onChange={onChange}
       />
     );
   }
@@ -147,6 +184,9 @@ export const RecordFormFieldInput = ({
       defaultValue={defaultValue}
       onChange={onChange}
       onClear={onClear}
+      onError={(error) =>
+        setRecordFieldInputIsFieldInError(isNonEmptyString(error))
+      }
       readonly={readonly}
       placeholder={placeholder}
       subFieldPlaceholders={subFieldPlaceholders}

@@ -7774,7 +7774,7 @@ export interface SendChatMessageResultGenqlSelection{
 
 export interface SendEmailAttachmentInput {id: Scalars['String'],name: Scalars['String']}
 
-export interface SendEmailInput {bcc?: (Scalars['String'] | null),body: Scalars['String'],cc?: (Scalars['String'] | null),connectedAccountId: Scalars['String'],draftMessageId?: (Scalars['String'] | null),files?: (SendEmailAttachmentInput[] | null),fromHandle?: (Scalars['String'] | null),inReplyTo?: (Scalars['String'] | null),subject: Scalars['String'],to: Scalars['String']}
+export interface SendEmailInput {bcc?: (Scalars['String'] | null),body: Scalars['String'],cc?: (Scalars['String'] | null),connectedAccountId: Scalars['String'],draftMessageId?: (Scalars['String'] | null),files?: (SendEmailAttachmentInput[] | null),fromHandle?: (Scalars['String'] | null),inReplyTo?: (Scalars['String'] | null),subject: Scalars['String'],targetRecord?: (SendEmailTargetRecordInput | null),to: Scalars['String']}
 
 export interface SendEmailOutputGenqlSelection{
     error?: boolean | number
@@ -7783,6 +7783,8 @@ export interface SendEmailOutputGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface SendEmailTargetRecordInput {objectNameSingular: Scalars['String'],recordId: Scalars['UUID']}
 
 export interface SendEmailViaDomainOutputGenqlSelection{
     messageId?: boolean | number
