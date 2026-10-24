@@ -26,7 +26,8 @@ const StyledPhoneInputContainer = styled.div<{
             : themeCssVariables.border.color.medium
         }`
       : 'none'};
-  border-radius: ${({ hasBorder }) => (hasBorder ? '4px' : '0')};
+  border-radius: ${({ hasBorder }) =>
+    hasBorder ? themeCssVariables.border.radius.sm : '0'};
   flex: 1;
   height: ${({ hasBorder }) => (hasBorder ? '30px' : 'auto')};
   min-width: 0;

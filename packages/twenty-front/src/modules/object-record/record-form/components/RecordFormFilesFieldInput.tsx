@@ -191,8 +191,8 @@ export const RecordFormFilesFieldInput = ({
               key={file.fileId}
               dropdownId={`${instanceId}-file-${index}`}
               file={file}
-              onEdit={() => handleEdit(index)}
-              onDelete={() => handleDelete(index)}
+              onEdit={isUploading ? undefined : () => handleEdit(index)}
+              onDelete={isUploading ? undefined : () => handleDelete(index)}
             />
           ),
         )}

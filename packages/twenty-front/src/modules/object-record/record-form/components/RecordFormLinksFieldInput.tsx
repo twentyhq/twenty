@@ -11,6 +11,7 @@ import { type LinkRecord } from '@/object-record/record-field/ui/meta-types/inpu
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
+import { validateLinkInput } from '@/object-record/record-field/ui/meta-types/input/utils/validateLinkInput';
 import { getLinkLabelFromDraft } from '@/object-record/record-field/ui/meta-types/input/utils/getLinkLabelFromDraft';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -22,12 +23,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useRef, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
-import {
-  absoluteUrlSchema,
-  isDefined,
-  isNonEmptyArray,
-  isValidDomain,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Field } from 'twenty-ui/primitives/input';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
@@ -71,12 +67,8 @@ export const RecordFormLinksFieldInput = ({
   const maxItemCount = maxNumberOfValues ?? MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
   const isSingleItemMode = maxItemCount === 1;
 
-  const validateLink = (input: string) => ({
-    isValid: isDomainField
-      ? isValidDomain(input)
-      : absoluteUrlSchema.safeParse(input).success,
-    errorMessage: '',
-  });
+  const validateLink = (input: string) =>
+    validateLinkInput({ input, isDomainField });
 
   const [savedLinks, setSavedLinks] = useState(() =>
     getFieldLinkDefinedLinks(defaultValue),
@@ -316,6 +308,9 @@ export const RecordFormLinksFieldInput = ({
     />
   );
 
+  const handleInputBlur = () =>
+    setIsInvalidInputLeft(!isInputValueValid(inputValue));
+
   const itemInput = (
     <MultiItemFieldInputRow
       spacing={inputSpacing}
@@ -328,12 +323,35 @@ export const RecordFormLinksFieldInput = ({
         spacing={inputSpacing}
         placeholder={placeholder ?? inputPlaceholder}
         value={inputValue}
-        onBlur={() => setIsInvalidInputLeft(!isInputValueValid(inputValue))}
+        onBlur={handleInputBlur}
         onChange={handleTyping}
         onEnter={handleEnter}
         onEscape={handleEscape}
       />
     </MultiItemFieldInputRow>
+  );
+
+  const editedLinkInputs = shouldEditLabel ? (
+    <>
+      <LinksFieldEditPreview
+        url={inputValue}
+        label={getLinkLabelFromDraft(labelDraft)}
+        saveButton={saveButton}
+      />
+      <MultiItemFieldItemSeparator />
+      <LinksFieldEditInputs
+        url={inputValue}
+        label={labelDraft}
+        hasError={isInputValueInvalid}
+        onUrlChange={handleTyping}
+        onLabelChange={handleLabelTyping}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        onUrlBlur={handleInputBlur}
+      />
+    </>
+  ) : (
+    itemInput
   );
 
   return (
@@ -350,30 +368,7 @@ export const RecordFormLinksFieldInput = ({
               hasSeparatorBefore={!shouldEditLabel && index > 0}
               hasSeparatorAfter={index < savedLinks.length - 1}
             >
-              {shouldEditLabel ? (
-                <>
-                  <LinksFieldEditPreview
-                    url={inputValue}
-                    label={getLinkLabelFromDraft(labelDraft)}
-                    saveButton={saveButton}
-                  />
-                  <MultiItemFieldItemSeparator />
-                  <LinksFieldEditInputs
-                    url={inputValue}
-                    label={labelDraft}
-                    hasError={isInputValueInvalid}
-                    onUrlChange={handleTyping}
-                    onLabelChange={handleLabelTyping}
-                    onEnter={handleEnter}
-                    onEscape={handleEscape}
-                    onUrlBlur={() =>
-                      setIsInvalidInputLeft(!isInputValueValid(inputValue))
-                    }
-                  />
-                </>
-              ) : (
-                itemInput
-              )}
+              {editedLinkInputs}
             </MultiItemFieldEditedItem>
           ) : (
             <LinksFieldMenuItem

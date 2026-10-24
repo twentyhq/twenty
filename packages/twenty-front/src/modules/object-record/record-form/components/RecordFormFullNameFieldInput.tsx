@@ -19,7 +19,7 @@ const StyledFullNameRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  height: 32px;
+  height: ${themeCssVariables.spacing[8]};
   padding-right: ${themeCssVariables.spacing[1]};
 `;
 
