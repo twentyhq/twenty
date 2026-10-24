@@ -23,7 +23,6 @@ import { t } from '@lingui/core/macro';
 import { type AllowedAddressSubField } from 'twenty-shared/types';
 import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
 import { useAddressInputClickOutside } from '@/ui/field/input/hooks/useAddressInputClickOutside';
-import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 import { useFocusManagement } from '@/ui/field/input/hooks/useFocusManagement';
 
 const StyledAddressContainer = styled.div`
@@ -84,15 +83,11 @@ export const AddressInput = ({
     [],
   );
 
-  const { findCountryCodeByCountryName } = useCountryUtils();
-
   const {
     placeAutocompleteData,
-    tokenForPlaceApi,
     typeOfAddressForAutocomplete,
-    setTypeOfAddressForAutocomplete,
-    getAutocompletePlaceData,
-    autoFillInputsFromPlaceDetails,
+    searchPlaces,
+    selectPlace,
     closeDropdownOfAutocomplete,
   } = useAddressAutocomplete({ onChange });
 
@@ -144,49 +139,20 @@ export const AddressInput = ({
       onChange?.(updatedAddress);
 
       if (field === 'addressStreet1' || field === 'addressCity') {
-        const countryCode = findCountryCodeByCountryName(
-          updatedAddress.addressCountry ?? '',
-        );
-        if (field !== typeOfAddressForAutocomplete) {
-          setTypeOfAddressForAutocomplete(field);
-        }
-        const isFieldCity = field === 'addressCity';
-        getAutocompletePlaceData({
-          address: updatedAddressPart,
-          country: countryCode,
-          isFieldCity,
+        searchPlaces({
+          subField: field,
+          text: updatedAddressPart,
+          countryName: updatedAddress.addressCountry ?? '',
         });
       }
     },
-    [
-      internalValue,
-      setInternalValue,
-      onChange,
-      findCountryCodeByCountryName,
-      typeOfAddressForAutocomplete,
-      setTypeOfAddressForAutocomplete,
-      getAutocompletePlaceData,
-      subFields,
-    ],
+    [internalValue, setInternalValue, onChange, searchPlaces, subFields],
   );
 
   const handlePlaceSelection = useCallback(
     async (placeId: string) => {
-      const placeAutocomplete = placeAutocompleteData?.find(
-        (place) => place.placeId === placeId,
-      );
-      const token = tokenForPlaceApi ?? '';
-      if (!isDefined(placeAutocomplete)) return;
-
-      const text: string | undefined =
-        typeOfAddressForAutocomplete !== 'addressCity'
-          ? placeAutocomplete.text
-          : undefined;
-
-      const updatedAddress = await autoFillInputsFromPlaceDetails({
+      const updatedAddress = await selectPlace({
         placeId,
-        token,
-        addressStreet1: text,
         getInternalValue: () => store.get(internalValueAtom),
       });
 
@@ -200,16 +166,7 @@ export const AddressInput = ({
         setIsExpanded(true);
       }
     },
-    [
-      placeAutocompleteData,
-      tokenForPlaceApi,
-      typeOfAddressForAutocomplete,
-      autoFillInputsFromPlaceDetails,
-      internalValueAtom,
-      setInternalValue,
-      store,
-      subFields,
-    ],
+    [selectPlace, internalValueAtom, setInternalValue, store, subFields],
   );
 
   const handleEnter = useCallback(() => {

@@ -13,7 +13,6 @@ import { hasAddressDetailValue } from '@/ui/field/input/utils/hasAddressDetailVa
 import { StyledFieldInputFullWidthDetail } from '@/ui/field/input/components/StyledFieldInputFullWidthDetail';
 import { AddressAutocompleteRoot } from '@/ui/field/input/components/AddressAutocompleteRoot';
 import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
-import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { atom, useAtomValue, useStore } from 'jotai';
@@ -65,15 +64,11 @@ export const RecordFormAddressFieldInput = ({
   );
   const address = useAtomValue(addressAtom);
 
-  const { findCountryCodeByCountryName } = useCountryUtils();
-
   const {
     placeAutocompleteData,
-    tokenForPlaceApi,
     typeOfAddressForAutocomplete,
-    setTypeOfAddressForAutocomplete,
-    getAutocompletePlaceData,
-    autoFillInputsFromPlaceDetails,
+    searchPlaces,
+    selectPlace,
     closeDropdownOfAutocomplete,
   } = useAddressAutocomplete({
     onChange: (updatedAddress) =>
@@ -104,28 +99,16 @@ export const RecordFormAddressFieldInput = ({
   const handleSuggestedSubFieldChange =
     (subField: AddressSuggestedSubField) => (subFieldValue: string) => {
       handleSubFieldChange(subField)(subFieldValue);
-      setTypeOfAddressForAutocomplete(subField);
-      getAutocompletePlaceData({
-        address: subFieldValue,
-        country: findCountryCodeByCountryName(address.addressCountry ?? ''),
-        isFieldCity: subField === 'addressCity',
+      searchPlaces({
+        subField,
+        text: subFieldValue,
+        countryName: address.addressCountry ?? '',
       });
     };
 
   const handlePlaceSelection = async (placeId: string) => {
-    const place = placeAutocompleteData.find(
-      (placeAutocomplete) => placeAutocomplete.placeId === placeId,
-    );
-
-    if (!isDefined(place)) {
-      return;
-    }
-
-    const updatedAddress = await autoFillInputsFromPlaceDetails({
+    const updatedAddress = await selectPlace({
       placeId,
-      token: tokenForPlaceApi ?? '',
-      addressStreet1:
-        typeOfAddressForAutocomplete !== 'addressCity' ? place.text : undefined,
       getInternalValue: () => store.get(addressAtom),
     });
 

@@ -5,6 +5,8 @@ import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/Select
 import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
 import { usePlaceAutocomplete } from '@/geo-map/hooks/usePlaceAutocomplete';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
+import { isDefined } from 'twenty-shared/utils';
+
 import { keepAddressFieldsEditedDuringAutofill } from '@/ui/field/input/utils/keepAddressFieldsEditedDuringAutofill';
 
 import { useCountryUtils } from './useCountryUtils';
@@ -22,7 +24,8 @@ export const useAddressAutocomplete = ({
   const store = useStore();
 
   const { getPlaceDetailsData } = useGetPlaceApiData();
-  const { findCountryNameByCountryCode } = useCountryUtils();
+  const { findCountryNameByCountryCode, findCountryCodeByCountryName } =
+    useCountryUtils();
 
   const {
     placeAutocompleteData,
@@ -111,6 +114,60 @@ export const useAddressAutocomplete = ({
     ],
   );
 
+  const searchPlaces = useCallback(
+    ({
+      subField,
+      text,
+      countryName,
+    }: {
+      subField: 'addressStreet1' | 'addressCity';
+      text: string;
+      countryName: string;
+    }) => {
+      setTypeOfAddressForAutocomplete(subField);
+      getAutocompletePlaceData({
+        address: text,
+        country: findCountryCodeByCountryName(countryName),
+        isFieldCity: subField === 'addressCity',
+      });
+    },
+    [findCountryCodeByCountryName, getAutocompletePlaceData],
+  );
+
+  const selectPlace = useCallback(
+    async ({
+      placeId,
+      getInternalValue,
+    }: {
+      placeId: string;
+      getInternalValue: () => FieldAddressDraftValue;
+    }) => {
+      const place = placeAutocompleteData.find(
+        (placeAutocomplete) => placeAutocomplete.placeId === placeId,
+      );
+
+      if (!isDefined(place) || !isDefined(tokenForPlaceApi)) {
+        return undefined;
+      }
+
+      return autoFillInputsFromPlaceDetails({
+        placeId,
+        token: tokenForPlaceApi,
+        addressStreet1:
+          typeOfAddressForAutocomplete !== 'addressCity'
+            ? place.text
+            : undefined,
+        getInternalValue,
+      });
+    },
+    [
+      placeAutocompleteData,
+      tokenForPlaceApi,
+      typeOfAddressForAutocomplete,
+      autoFillInputsFromPlaceDetails,
+    ],
+  );
+
   return {
     placeAutocompleteData,
     tokenForPlaceApi,
@@ -118,6 +175,8 @@ export const useAddressAutocomplete = ({
     setTypeOfAddressForAutocomplete,
     getAutocompletePlaceData,
     autoFillInputsFromPlaceDetails,
+    searchPlaces,
+    selectPlace,
     closeDropdownOfAutocomplete,
   };
 };
