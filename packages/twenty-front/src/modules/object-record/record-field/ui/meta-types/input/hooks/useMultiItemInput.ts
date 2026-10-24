@@ -36,6 +36,10 @@ export const useMultiItemInput = <TItem>({
   const openInput = (nextInputTarget: MultiItemInputTarget) => {
     setInputTarget(nextInputTarget);
     setInputValue(getInputTextForTarget(nextInputTarget));
+
+    if (hasError) {
+      updateHasError(false);
+    }
   };
 
   const handleInputChange = (value: string) => {
