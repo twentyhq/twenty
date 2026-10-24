@@ -19,6 +19,17 @@ describe('formatBytes', () => {
     expect(formatBytes(1024 ** 5)).toBe('1024 TB');
   });
 
+  it.each([
+    [1024 ** 2 - 1, '1 MB'],
+    [1024 ** 3 - 1, '1 GB'],
+    [1024 ** 4 - 1, '1 TB'],
+  ])(
+    'moves to the next unit when rounding reaches 1024: %i as %s',
+    (bytes, expected) => {
+      expect(formatBytes(bytes)).toBe(expected);
+    },
+  );
+
   it('keeps a negative size on bytes rather than producing NaN', () => {
     expect(formatBytes(-1)).toBe('-1 B');
   });
