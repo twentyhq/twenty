@@ -15,7 +15,6 @@ import { useMultiItemFieldDismiss } from '@/object-record/record-field/ui/meta-t
 import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemSearch';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
 import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -101,7 +100,7 @@ export const FilesFieldInput = () => {
       return;
     }
 
-    const currentFiles = commitEditedItemInPlace();
+    const currentFiles = saveEditedItemInPlace();
 
     if (!isDefined(currentFiles)) {
       return;
@@ -169,20 +168,18 @@ export const FilesFieldInput = () => {
   const isLimitReached = files.length >= maxNumberOfValues;
 
   const {
-    inputTarget,
+    isInputOpen,
+    editedItemIndex,
     inputValue,
     hasError,
-    openInput,
+    startEditingItem,
+    closeInput,
     handleInputChange,
     validateInputValue,
   } = useMultiItemInput({
     items: files,
     getItemText: getFileText,
-    initialInputTarget: getInitialMultiItemInputTarget({
-      itemCount: files.length,
-      isSingleItemMode,
-      shouldOpenWhenEmpty: false,
-    }),
+    isInputInitiallyOpen: false,
     validateInput: validateFileLabel,
     onHasErrorChange: (hasError) =>
       setRecordFieldInputIsFieldInError(hasError && files.length === 0),
@@ -195,14 +192,9 @@ export const FilesFieldInput = () => {
     filteredItemEntries,
   } = useMultiItemSearch({ items: files, getItemText: getFileText });
 
-  const isInputDisplayed = inputTarget.type !== 'closed';
-  const editedItemIndex =
-    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-  const closeInput = () => openInput({ type: 'closed' });
-
-  const commitInput = () => {
+  const saveInputValue = () => {
     const sanitizedInput = validateInputValue();
 
     if (!isDefined(sanitizedInput)) {
@@ -222,12 +214,12 @@ export const FilesFieldInput = () => {
     return updatedFiles;
   };
 
-  const commitEditedItemInPlace = () => {
+  const saveEditedItemInPlace = () => {
     if (!isEditingItemInPlace) {
       return files;
     }
 
-    const updatedFiles = commitInput();
+    const updatedFiles = saveInputValue();
 
     if (isDefined(updatedFiles)) {
       handleSubmit(updatedFiles);
@@ -237,7 +229,7 @@ export const FilesFieldInput = () => {
   };
 
   const handleInputEnter = () => {
-    const updatedFiles = commitInput();
+    const updatedFiles = saveInputValue();
 
     if (!isDefined(updatedFiles)) {
       return;
@@ -260,7 +252,7 @@ export const FilesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedFiles = isInputDisplayed ? commitInput() : files;
+      const updatedFiles = isInputOpen ? saveInputValue() : files;
 
       if (!isDefined(updatedFiles)) {
         return;
@@ -291,10 +283,9 @@ export const FilesFieldInput = () => {
   }
 
   const shouldShowItems =
-    isNonEmptyArray(filteredItemEntries) &&
-    (!isSingleItemMode || !isInputDisplayed);
+    isNonEmptyArray(filteredItemEntries) && (!isSingleItemMode || !isInputOpen);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowInputInFooter = isInputOpen && !isEditingItemInPlace;
   const editedFile = isDefined(editedItemIndex)
     ? files[editedItemIndex]
     : undefined;
@@ -325,7 +316,7 @@ export const FilesFieldInput = () => {
     <MultiItemFieldList
       ref={containerRef}
       hasItems={shouldShowItems}
-      shouldShowSearch={shouldShowSearch && !isInputDisplayed}
+      shouldShowSearch={shouldShowSearch && !isInputOpen}
       searchFilter={searchFilter}
       onSearchFilterChange={setSearchFilter}
       footerInput={shouldShowInputInFooter ? fileLabelInput : undefined}
@@ -352,9 +343,7 @@ export const FilesFieldInput = () => {
             key={file.fileId}
             dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
             file={file}
-            onEdit={() =>
-              openInput({ type: 'existing-item', itemIndex: index })
-            }
+            onEdit={() => startEditingItem({ itemIndex: index })}
             onDelete={() => handleDelete(index)}
             onClick={() => handlePreview(file)}
           />

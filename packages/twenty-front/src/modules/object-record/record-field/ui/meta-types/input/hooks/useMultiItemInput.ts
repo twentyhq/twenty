@@ -1,4 +1,3 @@
-import { type MultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemInputTarget';
 import { sanitizeAndValidateInput } from '@/object-record/record-field/ui/meta-types/input/utils/sanitizeAndValidateInput';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,24 +6,26 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 export const useMultiItemInput = <TItem>({
   items,
   getItemText,
-  initialInputTarget,
+  isInputInitiallyOpen,
+  initialEditedItemIndex = null,
   validateInput,
   onHasErrorChange,
 }: {
   items: TItem[];
   getItemText: (item: TItem) => string;
-  initialInputTarget: MultiItemInputTarget;
+  isInputInitiallyOpen: boolean;
+  initialEditedItemIndex?: number | null;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
   onHasErrorChange?: (hasError: boolean) => void;
 }) => {
-  const getInputTextForTarget = (inputTarget: MultiItemInputTarget) =>
-    inputTarget.type === 'existing-item'
-      ? getItemText(items[inputTarget.itemIndex])
-      : '';
-
-  const [inputTarget, setInputTarget] = useState(initialInputTarget);
+  const [isInputOpen, setIsInputOpen] = useState(isInputInitiallyOpen);
+  const [editedItemIndex, setEditedItemIndex] = useState<number | null>(
+    isInputInitiallyOpen ? initialEditedItemIndex : null,
+  );
   const [inputValue, setInputValue] = useState(() =>
-    getInputTextForTarget(initialInputTarget),
+    isInputInitiallyOpen && isDefined(initialEditedItemIndex)
+      ? getItemText(items[initialEditedItemIndex])
+      : '',
   );
   const [hasError, setHasError] = useState(false);
 
@@ -33,13 +34,37 @@ export const useMultiItemInput = <TItem>({
     onHasErrorChange?.(nextHasError);
   };
 
-  const openInput = (nextInputTarget: MultiItemInputTarget) => {
-    setInputTarget(nextInputTarget);
-    setInputValue(getInputTextForTarget(nextInputTarget));
-
+  const clearError = () => {
     if (hasError) {
       updateHasError(false);
     }
+  };
+
+  const startAddingItem = () => {
+    setIsInputOpen(true);
+    setEditedItemIndex(null);
+    setInputValue('');
+    clearError();
+  };
+
+  const startEditingItem = ({
+    itemIndex,
+    currentItems = items,
+  }: {
+    itemIndex: number;
+    currentItems?: TItem[];
+  }) => {
+    setIsInputOpen(true);
+    setEditedItemIndex(itemIndex);
+    setInputValue(getItemText(currentItems[itemIndex]));
+    clearError();
+  };
+
+  const closeInput = () => {
+    setIsInputOpen(false);
+    setEditedItemIndex(null);
+    setInputValue('');
+    clearError();
   };
 
   const handleInputChange = (value: string) => {
@@ -66,10 +91,13 @@ export const useMultiItemInput = <TItem>({
   };
 
   return {
-    inputTarget,
+    isInputOpen,
+    editedItemIndex,
     inputValue,
     hasError,
-    openInput,
+    startAddingItem,
+    startEditingItem,
+    closeInput,
     handleInputChange,
     validateInputValue,
   };
