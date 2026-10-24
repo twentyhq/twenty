@@ -17,6 +17,7 @@ type FormFieldInputInnerContainerProps = {
   enableGlobalEscapeHotkeysConflictingWithKeyboard?: boolean;
   formFieldInputInstanceId: string;
   variant?: FormFieldInputVariant;
+  highlightsOnParentFocus?: boolean;
 };
 
 const getFocusBorderColor = ({
@@ -30,7 +31,7 @@ const getFocusBorderColor = ({
     ? themeCssVariables.color.blue
     : themeCssVariables.border.color.medium;
 
-export const StyledFormFieldInputInnerContainer = styled.div<
+const StyledFormFieldInputInnerContainer = styled.div<
   Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'> & {
     $variant: FormFieldInputVariant;
   }
@@ -82,6 +83,13 @@ export const StyledFormFieldInputInnerContainer = styled.div<
     border-color: ${getFocusBorderColor};
   }
 
+  *:focus-visible > & {
+    border-color: ${({ highlightsOnParentFocus, hasRightElement, $variant }) =>
+      highlightsOnParentFocus === true
+        ? getFocusBorderColor({ hasRightElement, $variant })
+        : themeCssVariables.border.color.medium};
+  }
+
   &:hover,
   &[data-open='true'] {
     background-color: ${({ hoverable, $variant }) =>
@@ -109,6 +117,7 @@ export const FormFieldInputInnerContainer = forwardRef(
       onClick,
       formFieldInputInstanceId,
       variant = 'default',
+      highlightsOnParentFocus = false,
     }: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps,
     ref: Ref<HTMLDivElement>,
   ) => {
@@ -158,6 +167,7 @@ export const FormFieldInputInnerContainer = forwardRef(
         multiline={multiline}
         readonly={readonly}
         $variant={variant}
+        highlightsOnParentFocus={highlightsOnParentFocus}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onClick={onClick}

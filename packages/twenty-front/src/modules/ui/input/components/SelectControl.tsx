@@ -19,6 +19,7 @@ export const StyledControlContainer = styled.div<{
   selectSizeVariant?: SelectSizeVariant;
   textAccent: SelectControlTextAccent;
   hasRightElement?: boolean;
+  highlightsOnParentFocus?: boolean;
   $variant?: FormFieldInputVariant;
 }>`
   align-items: center;
@@ -80,6 +81,13 @@ export const StyledControlContainer = styled.div<{
   padding: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : `0 ${themeCssVariables.spacing[2]}`};
   text-align: left;
+
+  *:focus-visible > & {
+    border-color: ${({ highlightsOnParentFocus }) =>
+      highlightsOnParentFocus
+        ? themeCssVariables.color.blue
+        : themeCssVariables.border.color.medium};
+  }
 `;
 
 const StyledLeadingContent = styled.div`
@@ -112,6 +120,7 @@ export type SelectControlProps = {
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
   hasRightElement?: boolean;
+  highlightsOnParentFocus?: boolean;
   variant?: FormFieldInputVariant;
 };
 
@@ -123,6 +132,7 @@ export const SelectControl = ({
   selectSizeVariant,
   textAccent = 'default',
   hasRightElement,
+  highlightsOnParentFocus = false,
   variant = 'default',
 }: SelectControlProps) => {
   const theme = useTheme();
@@ -137,6 +147,7 @@ export const SelectControl = ({
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
+      highlightsOnParentFocus={highlightsOnParentFocus}
       $variant={variant}
       title={selectedOption.fullLabel}
     >

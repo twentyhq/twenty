@@ -14,10 +14,7 @@ import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { getSelectOptionIdentifier } from '@/ui/input/components/internal/select/utils/getSelectOptionIdentifier';
 import { isFocusMovingWithinSelect } from '@/ui/input/components/internal/select/utils/isFocusMovingWithinSelect';
 import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
-import {
-  SelectControl,
-  StyledControlContainer,
-} from '@/ui/input/components/SelectControl';
+import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -30,13 +27,6 @@ const StyledContainer = styled.div<{ fullWidth?: boolean }>`
 const StyledSelectTrigger = styled.div<{ hasFocusBorder: boolean }>`
   &:focus-visible {
     outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
-  }
-
-  &:focus-visible > ${StyledControlContainer} {
-    border-color: ${({ hasFocusBorder }) =>
-      hasFocusBorder
-        ? themeCssVariables.color.blue
-        : themeCssVariables.border.color.medium};
   }
 `;
 
@@ -215,6 +205,10 @@ export const Select = <TValue extends SelectValue>({
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
+              highlightsOnParentFocus={hasFormFieldFocusBorder({
+                hasRightElement,
+                variant,
+              })}
               variant={variant}
             />
           </Dropdown.Trigger>

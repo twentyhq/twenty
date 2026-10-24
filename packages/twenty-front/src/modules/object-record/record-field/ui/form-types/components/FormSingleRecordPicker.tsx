@@ -1,9 +1,6 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import {
-  FormFieldInputInnerContainer,
-  StyledFormFieldInputInnerContainer,
-} from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
+import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormSingleRecordFieldChip } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip';
 import {
@@ -47,13 +44,6 @@ const StyledFormSelectContainerWrapper = styled.div<{
 
   &:focus-visible {
     outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
-  }
-
-  &:focus-visible > ${StyledFormFieldInputInnerContainer} {
-    border-color: ${({ hasFocusBorder }) =>
-      hasFocusBorder
-        ? themeCssVariables.color.blue
-        : themeCssVariables.border.color.medium};
   }
 `;
 
@@ -295,6 +285,7 @@ export const FormSingleRecordPicker = ({
                   <FormFieldInputInnerContainer
                     formFieldInputInstanceId={componentId}
                     hasRightElement={isDefined(VariablePicker) && !disabled}
+                    highlightsOnParentFocus
                     hoverable
                     preventFocusStackUpdate={true}
                     variant={variant}
