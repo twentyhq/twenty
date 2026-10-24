@@ -43,8 +43,8 @@ export const resolvePersistedStepOutputSchema = ({
     return getOutputSchemaFromValue(expectedOutputSchema);
   }
 
-  if (isLinkOutputSchema(outputSchema as OutputSchemaV2)) {
-    return outputSchema as OutputSchemaV2;
+  if (isLinkOutputSchema(outputSchema)) {
+    return outputSchema;
   }
 
   if (stepType === 'AI_AGENT') {

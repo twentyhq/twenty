@@ -49,7 +49,10 @@ import {
 } from 'twenty-shared/logic-function';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
+import {
+  getFunctionInputFromInputSchema,
+  isBaseOutputSchemaV2,
+} from 'twenty-shared/workflow';
 import { IconCode, IconPlayerPlay } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -180,15 +183,17 @@ export const WorkflowEditActionCode = ({
       ...action,
       settings: {
         ...action.settings,
-        outputSchema: {
-          link: {
-            isLeaf: true,
-            icon: 'IconVariable',
-            tab: 'test',
-            label: t`Generate Function Output`,
-          },
-          _outputSchemaType: 'LINK',
-        },
+        outputSchema: isBaseOutputSchemaV2(action.settings.outputSchema)
+          ? action.settings.outputSchema
+          : {
+              link: {
+                isLeaf: true,
+                icon: 'IconVariable',
+                tab: 'test',
+                label: t`Generate Function Output`,
+              },
+              _outputSchemaType: 'LINK',
+            },
         input: {
           ...action.settings.input,
           logicFunctionId: targetLogicFunctionId,
