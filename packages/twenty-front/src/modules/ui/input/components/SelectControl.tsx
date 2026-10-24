@@ -1,6 +1,6 @@
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
-import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
+import { getFormFieldBorderColor } from '@/ui/input/utils/getFormFieldBorderColor';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,19 +14,6 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
-const getBorderColor = ({
-  isFocused,
-  hasRightElement,
-  $variant,
-}: {
-  isFocused?: boolean;
-  hasRightElement?: boolean;
-  $variant?: FormFieldInputVariant;
-}) =>
-  isFocused && hasFullFormFieldBorder({ hasRightElement, variant: $variant })
-    ? themeCssVariables.color.blue
-    : themeCssVariables.border.color.medium;
-
 export const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;
@@ -53,13 +40,18 @@ export const StyledControlContainer = styled.div<{
       : hasRightElement
         ? '0'
         : themeCssVariables.border.radius.md};
-  border-color: ${getBorderColor};
+  border-color: ${({ isFocused, hasRightElement, $variant }) =>
+    getFormFieldBorderColor({ isFocused, hasRightElement, variant: $variant })};
   border-right: ${({ isFocused, hasRightElement, $variant }) =>
     $variant === 'transparent'
       ? 'none'
       : hasRightElement
         ? 'none'
-        : `1px solid ${getBorderColor({ isFocused, hasRightElement, $variant })}`};
+        : `1px solid ${getFormFieldBorderColor({
+            isFocused,
+            hasRightElement,
+            variant: $variant,
+          })}`};
   border-top-left-radius: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
   border-top-right-radius: ${({ hasRightElement, $variant }) =>

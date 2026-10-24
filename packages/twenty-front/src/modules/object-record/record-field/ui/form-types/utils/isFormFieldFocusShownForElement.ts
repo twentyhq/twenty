@@ -3,7 +3,6 @@ const isTextEntryElement = (element: Element) =>
   element instanceof HTMLTextAreaElement ||
   (element instanceof HTMLElement && element.isContentEditable);
 
-// Buttons inside a field keep their own focus ring; other triggers count only when the field opts in.
 export const isFormFieldFocusShownForElement = ({
   element,
   shouldHighlightOnTriggerFocus,

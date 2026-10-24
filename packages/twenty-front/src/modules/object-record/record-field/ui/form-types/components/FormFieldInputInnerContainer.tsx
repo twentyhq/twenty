@@ -4,7 +4,7 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { isFormFieldFocusShownForElement } from '@/object-record/record-field/ui/form-types/utils/isFormFieldFocusShownForElement';
-import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
+import { getFormFieldBorderColor } from '@/ui/input/utils/getFormFieldBorderColor';
 import { styled } from '@linaria/react';
 import { forwardRef, type HTMLAttributes, type Ref, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -21,19 +21,6 @@ type FormFieldInputInnerContainerProps = {
   isFocused?: boolean;
   shouldHighlightOnTriggerFocus?: boolean;
 };
-
-const getBorderColor = ({
-  isFocused,
-  hasRightElement,
-  $variant,
-}: {
-  isFocused?: boolean;
-  hasRightElement: boolean;
-  $variant: FormFieldInputVariant;
-}) =>
-  isFocused && hasFullFormFieldBorder({ hasRightElement, variant: $variant })
-    ? themeCssVariables.color.blue
-    : themeCssVariables.border.color.medium;
 
 const StyledFormFieldInputInnerContainer = styled.div<
   Omit<
@@ -60,12 +47,17 @@ const StyledFormFieldInputInnerContainer = styled.div<
       : multiline || !hasRightElement
         ? themeCssVariables.border.radius.md
         : '0'};
-  border-color: ${getBorderColor};
+  border-color: ${({ isFocused, hasRightElement, $variant }) =>
+    getFormFieldBorderColor({ isFocused, hasRightElement, variant: $variant })};
   border-right: ${({ multiline, isFocused, hasRightElement, $variant }) =>
     $variant === 'transparent'
       ? 'none'
       : multiline || !hasRightElement
-        ? `1px solid ${getBorderColor({ isFocused, hasRightElement, $variant })}`
+        ? `1px solid ${getFormFieldBorderColor({
+            isFocused,
+            hasRightElement,
+            variant: $variant,
+          })}`
         : 'none'};
   border-top-left-radius: ${({ $variant }) =>
     $variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
