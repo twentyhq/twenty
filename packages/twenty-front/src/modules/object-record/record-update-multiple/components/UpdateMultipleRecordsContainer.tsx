@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRecordFormFieldInputIsInErrorAtom } from '@/object-record/record-form/utils/getRecordFormFieldInputIsInErrorAtom';
-import { scrollToFirstRecordFormAlert } from '@/object-record/record-form/utils/scrollToFirstRecordFormAlert';
+import { revealFirstRecordFormAlert } from '@/object-record/record-form/utils/revealFirstRecordFormAlert';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter';
 import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
@@ -87,7 +87,7 @@ export const UpdateMultipleRecordsContainer = ({
     );
 
     if (isAnyFieldInputInError) {
-      scrollToFirstRecordFormAlert({ containerId: contentId });
+      revealFirstRecordFormAlert({ containerId: contentId });
       return;
     }
 
