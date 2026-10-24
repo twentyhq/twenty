@@ -122,8 +122,9 @@ export class RecordAccessPolicyService {
         events: admittedEvents,
         objectsPermissions,
       }) => {
-        const { flatFieldMetadataMapsOrm } =
+        const { flatObjectMetadataMaps, flatFieldMetadataMapsOrm } =
           await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'flatObjectMetadataMaps',
             'flatFieldMetadataMapsOrm',
           ]);
 
@@ -132,6 +133,7 @@ export class RecordAccessPolicyService {
             events: admittedEvents,
             flatObjectMetadata: objectMetadata,
             objectsPermissions,
+            flatObjectMetadataMaps,
             flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
           },
         );

@@ -11,17 +11,24 @@ import { In } from 'typeorm';
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { buildRestrictedFieldNames } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type TimelineActivityTargetJoinColumn } from 'src/modules/timeline/types/timeline-activity-target-join-column.type';
-import { omitReadDeniedFieldsFromTimelineActivityProperties } from 'src/modules/timeline/utils/omit-read-denied-fields-from-timeline-activity-properties.util';
+import { buildReadableFieldNames } from 'src/modules/timeline/utils/build-readable-field-names.util';
+import { keepReadableFieldsInTimelineActivityProperties } from 'src/modules/timeline/utils/keep-readable-fields-in-timeline-activity-properties.util';
 import { resolveTimelineActivitySubjectObjectMetadataId } from 'src/modules/timeline/utils/resolve-timeline-activity-subject-object-metadata-id.util';
 import { resolveTimelineActivityTargetJoinColumns } from 'src/modules/timeline/utils/resolve-timeline-activity-target-join-columns.util';
+
+type MetadataContext = {
+  objectsPermissions: ObjectsPermissions;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+};
 
 const hasSubjectColumns = ({
   timelineActivity,
@@ -54,21 +61,16 @@ export class ApplyTimelineActivitiesFieldPermissionsService
   public async applyVisibilityRestrictions({
     records,
     authContext,
-    objectsPermissions,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-  }: {
+    ...metadataContext
+  }: MetadataContext & {
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
-    objectsPermissions: ObjectsPermissions;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<void> {
     const timelineActivityFlatObjectMetadata =
       findFlatEntityByUniversalIdentifier({
         universalIdentifier:
           STANDARD_OBJECTS.timelineActivity.universalIdentifier,
-        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityMaps: metadataContext.flatObjectMetadataMaps,
       });
     const timelineActivities = records.filter(
       (record) => 'properties' in record,
@@ -83,7 +85,7 @@ export class ApplyTimelineActivitiesFieldPermissionsService
 
     const targetJoinColumns = resolveTimelineActivityTargetJoinColumns({
       timelineActivityFlatObjectMetadata,
-      flatFieldMetadataMaps,
+      flatFieldMetadataMaps: metadataContext.flatFieldMetadataMaps,
     });
 
     const storedTimelineActivityById =
@@ -93,53 +95,47 @@ export class ApplyTimelineActivitiesFieldPermissionsService
         workspaceId: authContext.workspace.id,
       });
 
-    this.omitReadDeniedFields({
+    this.keepReadableFields({
       timelineActivities,
       resolveSubjectRecord: (timelineActivity) =>
         storedTimelineActivityById.get(timelineActivity.id) ?? timelineActivity,
       targetJoinColumns,
-      objectsPermissions,
-      flatFieldMetadataMaps,
+      ...metadataContext,
     });
   }
 
   public async applyEventVisibilityRestrictions({
     records,
     flatObjectMetadata,
-    objectsPermissions,
-    flatFieldMetadataMaps,
-  }: {
+    ...metadataContext
+  }: MetadataContext & {
     records: Record<string, unknown>[];
     flatObjectMetadata: FlatObjectMetadata;
-    objectsPermissions: ObjectsPermissions;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<void> {
-    this.omitReadDeniedFields({
+    this.keepReadableFields({
       timelineActivities: records,
       resolveSubjectRecord: (timelineActivity) => timelineActivity,
       targetJoinColumns: resolveTimelineActivityTargetJoinColumns({
         timelineActivityFlatObjectMetadata: flatObjectMetadata,
-        flatFieldMetadataMaps,
+        flatFieldMetadataMaps: metadataContext.flatFieldMetadataMaps,
       }),
-      objectsPermissions,
-      flatFieldMetadataMaps,
+      ...metadataContext,
     });
   }
 
-  private omitReadDeniedFields<TRecord extends Record<string, unknown>>({
+  private keepReadableFields<TRecord extends Record<string, unknown>>({
     timelineActivities,
     resolveSubjectRecord,
     targetJoinColumns,
     objectsPermissions,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-  }: {
+  }: MetadataContext & {
     timelineActivities: TRecord[];
     resolveSubjectRecord: (
       timelineActivity: TRecord,
     ) => Record<string, unknown>;
     targetJoinColumns: TimelineActivityTargetJoinColumn[];
-    objectsPermissions: ObjectsPermissions;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): void {
     for (const timelineActivity of timelineActivities) {
       const subjectObjectMetadataId =
@@ -148,17 +144,23 @@ export class ApplyTimelineActivitiesFieldPermissionsService
           targetJoinColumns,
         });
 
-      if (!isDefined(subjectObjectMetadataId)) {
+      const subjectFlatObjectMetadata = isDefined(subjectObjectMetadataId)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: subjectObjectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
+        : undefined;
+
+      if (!isDefined(subjectFlatObjectMetadata)) {
         continue;
       }
 
       Object.assign(timelineActivity, {
-        properties: omitReadDeniedFieldsFromTimelineActivityProperties({
+        properties: keepReadableFieldsInTimelineActivityProperties({
           properties: timelineActivity.properties,
-          readDeniedFieldNames: buildRestrictedFieldNames({
-            restrictedFields:
-              objectsPermissions[subjectObjectMetadataId]?.restrictedFields ??
-              {},
+          readableFieldNames: buildReadableFieldNames({
+            flatObjectMetadata: subjectFlatObjectMetadata,
+            objectsPermissions,
             flatFieldMetadataMaps,
           }),
         }),

@@ -4,14 +4,20 @@ import { isPlainObject } from 'twenty-shared/utils';
 export const rebuildEventDiffFromRecords = <TEvent extends ObjectRecordEvent>(
   event: TEvent,
 ): TEvent => {
-  const properties: Record<string, unknown> = { ...event.properties };
+  const { properties } = event;
 
-  if (!isPlainObject(properties.diff)) {
+  if (!('diff' in properties) || !isPlainObject(properties.diff)) {
     return event;
   }
 
-  const before = isPlainObject(properties.before) ? properties.before : {};
-  const after = isPlainObject(properties.after) ? properties.after : {};
+  const before =
+    'before' in properties && isPlainObject(properties.before)
+      ? properties.before
+      : {};
+  const after =
+    'after' in properties && isPlainObject(properties.after)
+      ? properties.after
+      : {};
 
   return {
     ...event,

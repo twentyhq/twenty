@@ -1,19 +1,19 @@
 import { randomUUID } from 'crypto';
 
-import gql from 'graphql-tag';
 import request from 'supertest';
 import { createCustomRoleWithObjectPermissions } from 'test/integration/graphql/utils/create-custom-role-with-object-permissions.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
 import { findFieldMetadataIdsOrThrow } from 'test/integration/graphql/suites/timeline/utils/find-field-metadata-ids-or-throw.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
@@ -62,20 +62,7 @@ describe('Timeline activity field permissions', () => {
   let originalMemberRoleId: string;
 
   beforeAll(async () => {
-    const rolesResponse = await makeMetadataApiRequest({
-      query: gql`
-        query {
-          getRoles {
-            id
-            label
-          }
-        }
-      `,
-    });
-
-    originalMemberRoleId = rolesResponse.body.data.getRoles.find(
-      (role: { label: string }) => role.label === 'Member',
-    ).id;
+    originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
 
     const restrictedFields = await findFieldMetadataIdsOrThrow([
       { objectNameSingular: 'person', fieldName: 'jobTitle' },
@@ -199,28 +186,15 @@ describe('Timeline activity field permissions', () => {
   });
 
   it('should omit fields the role cannot read from grouped records', async () => {
-    const response = await makeGraphqlApiRequestWithMemberRole({
-      query: gql`
-        query TimelineActivitiesGroupBy(
-          $groupBy: [TimelineActivityGroupByInput!]!
-          $filter: TimelineActivityFilterInput
-        ) {
-          timelineActivitiesGroupBy(groupBy: $groupBy, filter: $filter) {
-            groupByDimensionValues
-            edges {
-              node {
-                id
-                properties
-              }
-            }
-          }
-        }
-      `,
-      variables: {
+    const response = await makeGraphqlApiRequestWithMemberRole(
+      groupByOperationFactory({
+        objectMetadataSingularName: 'timelineActivity',
+        objectMetadataPluralName: 'timelineActivities',
         groupBy: [{ targetPersonId: true }],
         filter: { targetPersonId: { eq: personId } },
-      },
-    });
+        gqlFields: 'edges { node { id properties } }',
+      }),
+    );
 
     expect(response.body.errors).toBeUndefined();
 

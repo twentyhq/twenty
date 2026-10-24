@@ -84,11 +84,13 @@ export class CommonRecordVisibilityService {
     events,
     flatObjectMetadata,
     objectsPermissions,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
     events: TEvent[];
     flatObjectMetadata: FlatObjectMetadata;
     objectsPermissions: ObjectsPermissions;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<TEvent[]> {
     const handler = this.handlersByObjectNameSingular.get(
@@ -107,15 +109,15 @@ export class CommonRecordVisibilityService {
     const clonedEvents = events.map(cloneEventRecords);
 
     await applyEventVisibilityRestrictions({
-      records: clonedEvents.flatMap((event) => {
-        const properties: Record<string, unknown> = { ...event.properties };
-
-        return [properties.before, properties.after].flatMap((record) =>
-          isPlainObject(record) ? [record] : [],
-        );
-      }),
+      records: clonedEvents.flatMap(({ properties }) =>
+        [
+          'before' in properties ? properties.before : undefined,
+          'after' in properties ? properties.after : undefined,
+        ].filter(isPlainObject),
+      ),
       flatObjectMetadata,
       objectsPermissions,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
 

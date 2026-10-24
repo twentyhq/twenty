@@ -1,6 +1,6 @@
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const omitFieldNames = ({
+const keepFieldNames = ({
   value,
   fieldNames,
 }: {
@@ -9,46 +9,46 @@ const omitFieldNames = ({
 }): unknown =>
   isPlainObject(value)
     ? Object.fromEntries(
-        Object.entries(value).filter(
-          ([fieldName]) => !fieldNames.has(fieldName),
+        Object.entries(value).filter(([fieldName]) =>
+          fieldNames.has(fieldName),
         ),
       )
     : value;
 
-export const omitReadDeniedFieldsFromTimelineActivityProperties = ({
+export const keepReadableFieldsInTimelineActivityProperties = ({
   properties,
-  readDeniedFieldNames,
+  readableFieldNames,
 }: {
   properties: unknown;
-  readDeniedFieldNames: Set<string>;
+  readableFieldNames: Set<string>;
 }): unknown => {
-  if (!isPlainObject(properties) || readDeniedFieldNames.size === 0) {
+  if (!isPlainObject(properties)) {
     return properties;
   }
 
   return {
     ...properties,
     ...(isDefined(properties.diff) && {
-      diff: omitFieldNames({
+      diff: keepFieldNames({
         value: properties.diff,
-        fieldNames: readDeniedFieldNames,
+        fieldNames: readableFieldNames,
       }),
     }),
     ...(isDefined(properties.before) && {
-      before: omitFieldNames({
+      before: keepFieldNames({
         value: properties.before,
-        fieldNames: readDeniedFieldNames,
+        fieldNames: readableFieldNames,
       }),
     }),
     ...(isDefined(properties.after) && {
-      after: omitFieldNames({
+      after: keepFieldNames({
         value: properties.after,
-        fieldNames: readDeniedFieldNames,
+        fieldNames: readableFieldNames,
       }),
     }),
     ...(Array.isArray(properties.updatedFields) && {
-      updatedFields: properties.updatedFields.filter(
-        (fieldName) => !readDeniedFieldNames.has(fieldName),
+      updatedFields: properties.updatedFields.filter((fieldName) =>
+        readableFieldNames.has(fieldName),
       ),
     }),
   };

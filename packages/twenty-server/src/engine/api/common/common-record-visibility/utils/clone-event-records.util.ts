@@ -1,21 +1,21 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const cloneEventRecords = <TEvent extends ObjectRecordEvent>(
   event: TEvent,
 ): TEvent => {
-  const properties: Record<string, unknown> = { ...event.properties };
+  const { properties } = event;
 
   return {
     ...event,
     properties: {
       ...properties,
-      ...(isPlainObject(properties.before) && {
-        before: { ...properties.before },
-      }),
-      ...(isPlainObject(properties.after) && {
-        after: { ...properties.after },
-      }),
+      ...('before' in properties &&
+        isDefined(properties.before) && {
+          before: { ...properties.before },
+        }),
+      ...('after' in properties &&
+        isDefined(properties.after) && { after: { ...properties.after } }),
     },
   };
 };
