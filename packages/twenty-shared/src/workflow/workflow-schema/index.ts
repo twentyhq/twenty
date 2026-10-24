@@ -27,6 +27,7 @@ export type {
   FindRecordsOutputSchema,
   FormFieldLeaf,
   FormFieldNode,
+  FormSelectFieldLeaf,
   FormOutputSchema,
   IteratorOutputSchema,
   ManualTriggerOutputSchema,

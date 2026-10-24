@@ -449,6 +449,8 @@ const searchThroughFormOutputSchema = ({
       variableLabel: formField.label,
       variablePathLabel: `${stepName} > ${formField.label}`,
       variableType: formField.type,
+      fieldMetadataId:
+        'fieldMetadataId' in formField ? formField.fieldMetadataId : undefined,
     };
   }
 

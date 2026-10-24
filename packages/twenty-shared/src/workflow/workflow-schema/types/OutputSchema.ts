@@ -69,13 +69,20 @@ export type FormFieldLeaf = {
   value: unknown;
 };
 
+export type FormSelectFieldLeaf = FormFieldLeaf & {
+  fieldMetadataId: string;
+};
+
 export type FormFieldNode = {
   isLeaf: false;
   label: string;
   value: RecordOutputSchemaV2;
 };
 
-export type FormOutputSchema = Record<string, FormFieldLeaf | FormFieldNode>;
+export type FormOutputSchema = Record<
+  string,
+  FormFieldLeaf | FormSelectFieldLeaf | FormFieldNode
+>;
 
 export type CodeOutputSchema = BaseOutputSchemaV2;
 
