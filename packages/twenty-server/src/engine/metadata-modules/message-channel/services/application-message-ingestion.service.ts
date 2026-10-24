@@ -18,6 +18,9 @@ import { buildAppMessageHeaderMessageId } from 'src/engine/metadata-modules/mess
 import { resolveAppMessageDirection } from 'src/engine/metadata-modules/message-channel/utils/resolve-app-message-direction.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
+import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
+import { canonicalizePersonHandle } from 'src/modules/match-participant/person-handle-field/utils/canonicalize-person-handle.util';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
@@ -49,6 +52,7 @@ export class ApplicationMessageIngestionService {
     private readonly saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly cacheLockService: CacheLockService,
+    private readonly personHandleFieldService: PersonHandleFieldService,
   ) {}
 
   async ingest({
@@ -77,9 +81,20 @@ export class ApplicationMessageIngestionService {
     this.assertExternalIdsAreUnique(messages);
     await this.assertReferencedIdentitiesExist({ messages, workspaceId });
 
+    const personHandleField = await this.findPersonHandleFieldOrThrow({
+      workspaceId,
+      participantHandleFieldUniversalIdentifier:
+        messageChannel.participantHandleFieldUniversalIdentifier,
+    });
+
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({
-        message,
+        message: isDefined(personHandleField)
+          ? this.withCanonicalParticipantHandlesOrThrow({
+              message,
+              personHandleField,
+            })
+          : message,
         applicationId,
         messageChannel,
       }),
@@ -89,13 +104,14 @@ export class ApplicationMessageIngestionService {
     // locked per channel, the narrowest scope since dedup never spans channels
     const savedMessages = await this.cacheLockService.withLock(
       () =>
-        this.saveMessagesService.saveMessagesAndEnqueueContactCreation(
+        this.saveMessagesService.saveMessagesAndEnqueueContactCreation({
           messagesToSave,
           // the save path only reads inert settings and the id off the channel
           messageChannel,
           connectedAccount,
           workspaceId,
-        ),
+          personHandleField: personHandleField ?? undefined,
+        }),
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),
       INGESTION_LOCK_OPTIONS,
     );
@@ -169,6 +185,81 @@ export class ApplicationMessageIngestionService {
         personId: participant.personId ?? null,
         workspaceMemberId: participant.workspaceMemberId ?? null,
       })),
+    };
+  }
+
+  // raw handles would mix with the canonical ones already stored and stop matching the channel's own handle
+  private async findPersonHandleFieldOrThrow({
+    workspaceId,
+    participantHandleFieldUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    participantHandleFieldUniversalIdentifier: string | null;
+  }): Promise<PersonHandleField | null> {
+    if (!isDefined(participantHandleFieldUniversalIdentifier)) {
+      return null;
+    }
+
+    const personHandleField =
+      await this.personHandleFieldService.findByUniversalIdentifier({
+        workspaceId,
+        fieldUniversalIdentifier: participantHandleFieldUniversalIdentifier,
+      });
+
+    if (!isDefined(personHandleField)) {
+      throw new MessageChannelException(
+        `The person field ${participantHandleFieldUniversalIdentifier} this channel matches participants on no longer exists or is inactive`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    return personHandleField;
+  }
+
+  // stored canonical so a person change finds these participants by exact handle, whatever format the provider sent
+  private withCanonicalParticipantHandlesOrThrow({
+    message,
+    personHandleField,
+  }: {
+    message: AppMessageInput;
+    personHandleField: Pick<PersonHandleField, 'type'>;
+  }): AppMessageInput {
+    // spellings of one handle collapse to the same canonical form, which must stay one participant per role
+    const participantsByRoleAndHandle = new Map<
+      string,
+      AppMessageInput['participants'][number]
+    >();
+
+    for (const participant of message.participants) {
+      const handle = canonicalizePersonHandle({
+        type: personHandleField.type,
+        value: participant.handle,
+      });
+
+      if (!isDefined(handle)) {
+        throw new MessageChannelException(
+          `Participant handle ${participant.handle} on message ${message.externalId} is not a valid ${personHandleField.type} value`,
+          MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+        );
+      }
+
+      const key = `${participant.role}:${handle}`;
+      const earlierParticipant = participantsByRoleAndHandle.get(key);
+
+      participantsByRoleAndHandle.set(key, {
+        role: participant.role,
+        handle,
+        displayName: earlierParticipant?.displayName ?? participant.displayName,
+        personId: earlierParticipant?.personId ?? participant.personId,
+        workspaceMemberId:
+          earlierParticipant?.workspaceMemberId ??
+          participant.workspaceMemberId,
+      });
+    }
+
+    return {
+      ...message,
+      participants: [...participantsByRoleAndHandle.values()],
     };
   }
 

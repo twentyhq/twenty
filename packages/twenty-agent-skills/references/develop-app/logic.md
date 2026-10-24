@@ -92,6 +92,13 @@ When adding AI behavior:
 - The app's default role needs `SystemPermissionFlag.AI`, and every member needs the AI permission.
 - It always uses the app's access and ignores `runAs`.
 
+## Message Channels
+
+- To link participants of an app message channel to People automatically, pass `participantHandleFieldUniversalIdentifier` to `createMessageChannel`: the universal identifier of an active person field of type emails, phones, links or text, standard (`STANDARD_OBJECTS.person.fields.phones.universalIdentifier`) or added by the app. It is set once at creation.
+- Handles on that channel, including the channel's own, are stored in the field's canonical form (phones `+` and digits, links lowercased without scheme, `www`, fragment or trailing slash but with the query kept as sent, emails and text lowercased), so send values people store on contacts, such as E.164 numbers or public profile URLs. A handle with no usable value is rejected.
+- Twenty links participants the app left without `personId`, and re-matches them when a person gains or loses that value; a `personId` the app passes still wins. Without a declared field, resolve the person yourself and pass `personId`.
+- Requires `"engines": { "twenty": ">=2.52.0" }`.
+
 ## Connection Providers
 
 For third-party connections:
