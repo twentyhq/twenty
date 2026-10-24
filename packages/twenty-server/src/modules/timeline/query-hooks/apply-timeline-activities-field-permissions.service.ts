@@ -5,7 +5,7 @@ import {
   type ObjectRecord,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
@@ -76,7 +76,7 @@ export class ApplyTimelineActivitiesFieldPermissionsService
 
     if (
       !isDefined(timelineActivityFlatObjectMetadata) ||
-      timelineActivities.length === 0
+      !isNonEmptyArray(timelineActivities)
     ) {
       return;
     }
@@ -182,7 +182,7 @@ export class ApplyTimelineActivitiesFieldPermissionsService
       )
       .map((timelineActivity) => timelineActivity.id);
 
-    if (timelineActivityIdsMissingSubjectColumns.length === 0) {
+    if (!isNonEmptyArray(timelineActivityIdsMissingSubjectColumns)) {
       return new Map();
     }
 

@@ -5,7 +5,7 @@ import {
   type ObjectRecord,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { cloneEventRecords } from 'src/engine/api/common/common-record-visibility/utils/clone-event-records.util';
@@ -97,7 +97,10 @@ export class CommonRecordVisibilityService {
     const applyEventVisibilityRestrictions =
       handler?.applyEventVisibilityRestrictions?.bind(handler);
 
-    if (!isDefined(applyEventVisibilityRestrictions) || events.length === 0) {
+    if (
+      !isDefined(applyEventVisibilityRestrictions) ||
+      !isNonEmptyArray(events)
+    ) {
       return events;
     }
 
