@@ -6,10 +6,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -249,9 +246,7 @@ describe('WorkspaceRepository mutations', () => {
         executorRows: records,
       });
 
-      await expect(
-        repository.delete({ state: 'SENT' }),
-      ).rejects.toThrow(
+      await expect(repository.delete({ state: 'SENT' })).rejects.toThrow(
         expect.objectContaining({
           code: TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE,
         }),
@@ -267,9 +262,7 @@ describe('WorkspaceRepository mutations', () => {
         executorRows: records,
       });
 
-      await expect(
-        repository.softDelete({ state: 'SENT' }),
-      ).rejects.toThrow(
+      await expect(repository.softDelete({ state: 'SENT' })).rejects.toThrow(
         expect.objectContaining({
           code: TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE,
         }),
