@@ -3,7 +3,7 @@ import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionFo
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
-import { useGetUpdatableWorkflowVersionStepOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionStepOrThrow';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
@@ -101,7 +101,7 @@ export const WorkflowEditActionCode = ({
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
   const { getUpdatableWorkflowVersionStepOrThrow } =
-    useGetUpdatableWorkflowVersionStepOrThrow();
+    useGetUpdatableWorkflowVersionOrThrow();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,

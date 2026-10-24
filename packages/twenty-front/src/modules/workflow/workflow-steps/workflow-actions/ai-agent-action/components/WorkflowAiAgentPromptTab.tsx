@@ -8,7 +8,7 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useGetUpdatableWorkflowVersionStepOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionStepOrThrow';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
 import { AgentOutputSchemaBuilder } from '@/ai/components/AgentOutputSchemaBuilder';
@@ -62,7 +62,7 @@ export const WorkflowAiAgentPromptTab = ({
     useAtomState(workflowAiAgentActionAgentState);
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
   const { getUpdatableWorkflowVersionStepOrThrow } =
-    useGetUpdatableWorkflowVersionStepOrThrow();
+    useGetUpdatableWorkflowVersionOrThrow();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
