@@ -218,7 +218,6 @@ export class LogicFunctionFromSourceService {
     const sourceHandlerCode =
       updateLogicFunctionFromSourceInput.update.sourceHandlerCode;
 
-    // Workspace functions only become PREBUILT when their workflow version is activated
     if (
       isDefined(sourceHandlerCode) &&
       flatLogicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT

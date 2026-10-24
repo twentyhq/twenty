@@ -6,6 +6,10 @@ import {
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { getTriggerSettingsWithInputSchema } from '@/logic-functions/utils/getTriggerSettingsWithInputSchema';
 import {
+  shouldKeepUnsavedSourceHandlerCode,
+  type UnsavedSourceHandlerCode,
+} from '@/logic-functions/utils/shouldKeepUnsavedSourceHandlerCode';
+import {
   getInputSchemaFromSourceCode,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
@@ -18,12 +22,6 @@ import {
   type GetLogicFunctionSourceCodeQuery,
   type GetLogicFunctionSourceCodeQueryVariables,
 } from '~/generated-metadata/graphql';
-
-type UnsavedSourceHandlerCode = {
-  sourceHandlerCode: string;
-  // Undefined while the target is being resolved
-  targetLogicFunctionId?: string;
-};
 
 export const useLogicFunctionForm = ({
   logicFunctionId,
@@ -41,10 +39,10 @@ export const useLogicFunctionForm = ({
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({
       logicFunctionId,
-      shouldKeepSourceHandlerCode:
-        isDefined(unsavedSourceHandlerCode) &&
-        (!isDefined(unsavedSourceHandlerCode.targetLogicFunctionId) ||
-          unsavedSourceHandlerCode.targetLogicFunctionId === logicFunctionId),
+      shouldKeepSourceHandlerCode: shouldKeepUnsavedSourceHandlerCode({
+        unsavedSourceHandlerCode,
+        logicFunctionId,
+      }),
     });
 
   const handleSave = useDebouncedCallback(
