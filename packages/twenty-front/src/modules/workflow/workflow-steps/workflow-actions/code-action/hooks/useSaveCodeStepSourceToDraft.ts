@@ -11,6 +11,7 @@ import {
   getInputSchemaFromSourceCode,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
@@ -50,10 +51,10 @@ export const useSaveCodeStepSourceToDraft = () => {
     sourceHandlerCode,
     toolTriggerSettings,
     workflowActionTriggerSettings,
-  }: CodeStepSourceUpdate & { stepId: string }): Promise<
-    | { draftStep: WorkflowCodeAction; inferredJsonSchema: InputJsonSchema }
-    | undefined
-  > => {
+  }: CodeStepSourceUpdate & { stepId: string }): Promise<{
+    draftStep: WorkflowCodeAction;
+    inferredJsonSchema: InputJsonSchema;
+  }> => {
     const draftVersionId = await getUpdatableWorkflowVersion();
 
     const { data } = await apolloCoreClient.query({
@@ -66,7 +67,9 @@ export const useSaveCodeStepSourceToDraft = () => {
     )?.steps?.find((step) => step.id === stepId);
 
     if (!isDefined(draftStep) || draftStep.type !== 'CODE') {
-      return undefined;
+      throw new Error(
+        doNotTranslate('Failed to find the code step in the draft version'),
+      );
     }
 
     const draftLogicFunctionId = draftStep.settings.input.logicFunctionId;

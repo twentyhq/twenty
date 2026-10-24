@@ -288,19 +288,20 @@ export const WorkflowEditActionCode = ({
     }
 
     if (workflow.currentVersion.status !== 'DRAFT') {
-      const savedToDraft = await saveCodeStepSourceToDraft({
-        stepId: action.id,
-        sourceHandlerCode: newCode,
-        toolTriggerSettings: formValues.toolTriggerSettings,
-        workflowActionTriggerSettings: formValues.workflowActionTriggerSettings,
-      });
+      const { draftStep, inferredJsonSchema } = await saveCodeStepSourceToDraft(
+        {
+          stepId: action.id,
+          sourceHandlerCode: newCode,
+          toolTriggerSettings: formValues.toolTriggerSettings,
+          workflowActionTriggerSettings:
+            formValues.workflowActionTriggerSettings,
+        },
+      );
 
-      if (isDefined(savedToDraft)) {
-        await handleUpdateFunctionInputSchema({
-          inferredJsonSchema: savedToDraft.inferredJsonSchema,
-          step: savedToDraft.draftStep,
-        });
-      }
+      await handleUpdateFunctionInputSchema({
+        inferredJsonSchema,
+        step: draftStep,
+      });
 
       return;
     }
