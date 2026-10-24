@@ -280,24 +280,11 @@ export abstract class CommonBaseQueryRunnerService<
         queryRunnerContext,
       );
 
-    const selectWithVisibilityRequiredFields =
-      this.commonRecordVisibilityService.getSelectWithRequiredFields({
-        select: processedArgs.selectedFieldsResult.select,
-        flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-        objectsPermissions:
-          extendedQueryRunnerContext.repository.objectRecordsPermissions,
-        flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-      });
-
     const results = await this.run(
-      {
-        ...processedArgs,
-        selectedFieldsResult: {
-          ...processedArgs.selectedFieldsResult,
-          select: selectWithVisibilityRequiredFields,
-        },
-      },
+      this.withVisibilityRequiredFields({
+        args: processedArgs,
+        queryRunnerContext: extendedQueryRunnerContext,
+      }),
       {
         ...extendedQueryRunnerContext,
         commonQueryParser,
@@ -315,6 +302,32 @@ export abstract class CommonBaseQueryRunnerService<
       objectsPermissions:
         extendedQueryRunnerContext.repository.objectRecordsPermissions,
     });
+  }
+
+  private withVisibilityRequiredFields({
+    args,
+    queryRunnerContext,
+  }: {
+    args: CommonExtendedInput<Args>;
+    queryRunnerContext: Omit<
+      CommonExtendedQueryRunnerContext,
+      'commonQueryParser'
+    >;
+  }): CommonExtendedInput<Args> {
+    return {
+      ...args,
+      selectedFieldsResult: {
+        ...args.selectedFieldsResult,
+        select: this.commonRecordVisibilityService.getSelectWithRequiredFields({
+          select: args.selectedFieldsResult.select,
+          flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+          objectsPermissions:
+            queryRunnerContext.repository.objectRecordsPermissions,
+          flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+        }),
+      },
+    };
   }
 
   private async enrichResultsWithGettersAndHooks({
