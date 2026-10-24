@@ -8,7 +8,9 @@ export const SingleRecordPickerLoadingEffect = ({
 }: {
   loading: boolean;
 }) => {
-  const [previousLoading, setPreviousLoading] = useState(false);
+  const [previousLoading, setPreviousLoading] = useState<boolean | undefined>(
+    undefined,
+  );
 
   const setSingleRecordPickerShouldShowSkeleton = useSetAtomComponentState(
     singleRecordPickerShouldShowSkeletonComponentState,

@@ -36,20 +36,27 @@ export const useObjectRecordSearchRecords = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error, previousData } = useQuery(SearchDocument, {
-    skip:
-      skip || !areDefined || !currentWorkspaceMember || !isDefined(searchInput),
-    variables: {
-      searchInput: searchInput ?? '',
-      limit: limit ?? MAX_SEARCH_RESULTS,
-      filter: filter ?? {},
-      includedObjectNameSingulars: objectNameSingulars,
+  const { data, dataState, loading, error, previousData } = useQuery(
+    SearchDocument,
+    {
+      skip:
+        skip ||
+        !areDefined ||
+        !currentWorkspaceMember ||
+        !isDefined(searchInput),
+      variables: {
+        searchInput: searchInput ?? '',
+        limit: limit ?? MAX_SEARCH_RESULTS,
+        filter: filter ?? {},
+        includedObjectNameSingulars: objectNameSingulars,
+      },
+      fetchPolicy: fetchPolicy,
+      client: apolloCoreClient,
     },
-    fetchPolicy: fetchPolicy,
-    client: apolloCoreClient,
-  });
+  );
 
-  const effectiveData = loading ? previousData : data;
+  const isWaitingForData = loading && dataState !== 'complete';
+  const effectiveData = isWaitingForData ? previousData : data;
 
   const searchRecords = useMemo(
     () => effectiveData?.search?.edges?.map((edge) => edge.node) || [],
@@ -58,7 +65,7 @@ export const useObjectRecordSearchRecords = ({
 
   return {
     searchRecords,
-    loading,
+    loading: isWaitingForData,
     error,
   };
 };
