@@ -181,7 +181,8 @@ export const isFieldValueEmpty = ({
   if (isFieldRichText(fieldDefinition)) {
     return (
       !isFieldRichTextValue(fieldValue) ||
-      (isValueEmpty(fieldValue?.blocknote) &&
+      (isValueEmpty(fieldValue?.tiptap) &&
+        isValueEmpty(fieldValue?.blocknote) &&
         isValueEmpty(fieldValue?.markdown))
     );
   }

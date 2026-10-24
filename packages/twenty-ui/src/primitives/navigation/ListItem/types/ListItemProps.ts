@@ -20,6 +20,8 @@ export type ListItemProps = Omit<
      * `indicator` is set.
      */
     selected?: boolean;
+    active?: boolean;
+    selectionAppearance?: 'default' | 'accent';
     /** Applies the highlighted style, for example to the focused item of a list. */
     focused?: boolean;
     disabled?: boolean;
@@ -42,6 +44,7 @@ export type ListItemProps = Omit<
     /** Trailing content, such as buttons, rendered after the content. */
     actions?: ReactNode;
     actionsVisibility?: 'hover' | 'always';
+    actionsPlacement?: 'auto' | 'end';
     /**
      * Keyboard shortcut keys displayed at the end of the row. Registering the
      * shortcut is up to the application.

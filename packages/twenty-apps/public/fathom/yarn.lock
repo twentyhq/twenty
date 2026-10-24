@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 10
   cacheKey: 10c0
 
 "@alcalzone/ansi-tokenize@npm:^0.2.4":
@@ -933,7 +933,7 @@ __metadata:
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     fathom-typescript: "npm:0.0.43"
     oxlint: "npm:^0.16.0"
-    twenty-client-sdk: "npm:2.38.0"
+    twenty-client-sdk: "npm:2.50.0"
     twenty-sdk: "npm:2.38.0"
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^4.2.1"
@@ -2819,6 +2819,19 @@ __metadata:
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
   checksum: 10c0/2ab1c0371a5b48187211477740d833c8454e624d45b4ea1b964864077745d85e6921f5e8452eacb1eceab44e698507a4854686e225e467dd4f5fc481553b047b
+  languageName: node
+  linkType: hard
+
+"twenty-client-sdk@npm:2.50.0":
+  version: 2.50.0
+  resolution: "twenty-client-sdk@npm:2.50.0"
+  dependencies:
+    "@genql/runtime": "npm:^2.10.0"
+    esbuild: "npm:^0.28.1"
+    graphql: "npm:^16.8.1"
+    lodash: "npm:^4.17.21"
+    prettier: "npm:^3.8.3"
+  checksum: 10c0/d1a545e9f986747dcf30efbb37dbf8a6a0da773a2c91ef83cc04cf7c4a90767d7bfbb223dacc293e7f5f8fdcfe431c67690d838ff9553eb24dec0c897d75dd66
   languageName: node
   linkType: hard
 

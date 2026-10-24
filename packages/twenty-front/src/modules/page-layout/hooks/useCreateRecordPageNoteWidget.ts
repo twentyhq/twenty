@@ -39,7 +39,7 @@ export const useCreateRecordPageNoteWidget = (pageLayoutId?: string) => {
     const newWidget = createDefaultStandaloneRichTextWidget({
       id: widgetId,
       pageLayoutTabId: tabId,
-      body: { blocknote: '', markdown: null },
+      body: { tiptap: '', markdown: null },
       position: {
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
         index: positionIndex ?? activeTab?.widgets.length ?? 0,

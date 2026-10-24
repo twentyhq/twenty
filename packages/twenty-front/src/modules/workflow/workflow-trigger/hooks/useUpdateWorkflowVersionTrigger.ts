@@ -1,9 +1,6 @@
 import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
-import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useStepsOutputSchema';
 import { useMutation } from '@apollo/client/react';
@@ -20,27 +17,26 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
     onError: handleCoreMutationError,
   });
 
-  const { getUpdatableWorkflowVersion } =
-    useGetUpdatableWorkflowVersionOrThrow(instanceId);
-
   const { markStepForRecomputation } = useStepsOutputSchema();
 
-  const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
-
-  const updateTrigger = async (updatedTrigger: WorkflowTrigger) => {
-    const workflowVersionId = await getUpdatableWorkflowVersion();
-
+  const updateWorkflowVersionTrigger = async ({
+    workflowVersionId,
+    trigger,
+  }: {
+    workflowVersionId: string;
+    trigger: WorkflowTrigger;
+  }) => {
     const { data } = await mutateCore({
       variables: {
         input: {
           coreWorkflowVersionId: workflowVersionId,
-          trigger: updatedTrigger,
+          trigger,
         },
       },
     });
 
     if (!isDefined(data?.updateWorkflowVersionTrigger)) {
-      return;
+      return false;
     }
 
     markStepForRecomputation({
@@ -48,18 +44,10 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
       workflowVersionId,
     });
 
-    setFlow((currentFlow) => {
-      if (!isDefined(currentFlow)) {
-        return currentFlow;
-      }
-
-      return { ...currentFlow, workflowVersionId, trigger: updatedTrigger };
-    });
-
     await invalidateCoreWorkflowVersions(apolloCoreClient);
+
+    return true;
   };
 
-  return {
-    updateTrigger,
-  };
+  return { updateWorkflowVersionTrigger };
 };

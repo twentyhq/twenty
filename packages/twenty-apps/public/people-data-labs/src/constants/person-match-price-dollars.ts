@@ -1,0 +1,1 @@
+export const PERSON_MATCH_PRICE_DOLLARS = 0.15;

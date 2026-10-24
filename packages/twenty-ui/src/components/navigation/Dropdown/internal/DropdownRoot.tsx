@@ -44,8 +44,12 @@ export const DropdownRoot = ({
     };
   }, []);
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
-  const open = controlledOpen ?? uncontrolledOpen;
+  const isPageActive =
+    !isDefined(parent) ||
+    (parent.isPageActive && (!parent.isInsideContent || parent.open));
+  const open = isPageActive && (controlledOpen ?? uncontrolledOpen);
   const [previousOpen, setPreviousOpen] = useState(open);
+  const [sessionId, setSessionId] = useState(0);
   const [pageHistory, setPageHistory] = useState<PageHistoryEntry[]>([
     { id: defaultPage },
   ]);
@@ -69,15 +73,21 @@ export const DropdownRoot = ({
   const isOpening = open && !previousOpen;
   const isClosing = !open && previousOpen;
 
+  if (!isPageActive && uncontrolledOpen && !isDefined(controlledOpen)) {
+    setUncontrolledOpen(false);
+  }
+
   if (isOpening || isClosing) {
     setPreviousOpen(open);
   }
 
   if (isOpening) {
+    setSessionId(sessionId + 1);
     setPageHistory([{ id: defaultPage }]);
     setActivePage(undefined);
     setPageFocusRequest(undefined);
     setFocusedRowId(undefined);
+    setRowIds(undefined);
   }
 
   if (isClosing) {
@@ -189,7 +199,7 @@ export const DropdownRoot = ({
     <Popover.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
-        if (!nextOpen && !open) {
+        if (!isPageActive || (!nextOpen && !open)) {
           eventDetails.cancel();
           return;
         }
@@ -237,6 +247,9 @@ export const DropdownRoot = ({
               : type,
           rootType: type,
           open,
+          isPageActive,
+          isInsideContent: false,
+          sessionId,
           multiple,
           selections,
           initializeSelection,

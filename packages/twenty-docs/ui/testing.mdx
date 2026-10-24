@@ -6,7 +6,7 @@ description: Present component previews and variant catalogs with twenty-ui/test
 import ComponentStorybookLayoutReference from '/snippets/ui/generated/testing/component-storybook-layout.mdx';
 import GroupedCatalogReference from '/snippets/ui/generated/testing/grouped-catalog.mdx';
 
-`twenty-ui/testing` exposes Storybook decorators and preview layout helpers. Configure styles and a [ThemeProvider](/ui/theming) in your Storybook preview before rendering themed components.
+`twenty-ui/testing` exposes Storybook decorators, preview layout helpers, and media-query overrides. Configure styles and a [ThemeProvider](/ui/theming) in your Storybook preview before rendering themed components.
 
 ## Story roles
 
@@ -82,7 +82,8 @@ import { CatalogDecorator } from 'twenty-ui/testing';
 const meta = { component: Button };
 export default meta;
 
-export const Catalog = {
+export const VisualRegression = {
+  tags: ['!autodocs'],
   args: { children: 'Save changes' },
   decorators: [CatalogDecorator],
   parameters: {
@@ -115,6 +116,31 @@ export const ButtonPreview = () => (
 ```
 
 <ComponentStorybookLayoutReference />
+
+## Media query overrides
+
+Use `overrideMediaQueryMatches` in a story's `beforeEach` to force responsive hook results. Return its cleanup function to restore `window.matchMedia` after the story:
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { overrideMediaQueryMatches } from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY, useIsMobile } from 'twenty-ui/utilities';
+
+const ResponsiveAction = () => {
+  const isMobile = useIsMobile();
+
+  return <Button fullWidth={isMobile}>Save changes</Button>;
+};
+
+const meta = { component: ResponsiveAction };
+export default meta;
+
+export const Mobile = {
+  beforeEach: () => overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true }),
+};
+```
+
+Queries omitted from the override retain their native behavior. Override `TOUCH_DEVICE_MEDIA_QUERY` separately when an example depends on touch input. These overrides control `matchMedia` results; use a Storybook viewport to change CSS media queries and the preview width.
 
 ## Documentation previews
 

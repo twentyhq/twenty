@@ -14,7 +14,7 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'Microsoft Teams',
   description:
-    'Your CRM, in the conversation. Mention the bot or message it directly to read, create, update and soft-delete records without leaving Teams, and post messages from your workflows. Connect your Microsoft account for meeting transcripts.',
+    'Sync Microsoft Teams meeting transcripts into Call Recordings, including an initial import of the last 31 days. Optionally generate AI summaries using your workspace AI credits.',
   logo: 'public/teams.svg',
   author: 'Twenty',
   category: 'Communication',

@@ -220,16 +220,26 @@ describe('isFieldValueEmpty', () => {
     expect(
       isFieldValueEmpty({
         fieldDefinition: richTextFieldDefinition,
-        fieldValue: { blocknote: null, markdown: null },
+        fieldValue: { tiptap: null, markdown: null },
       }),
     ).toBe(true);
 
     expect(
       isFieldValueEmpty({
         fieldDefinition: richTextFieldDefinition,
-        fieldValue: { blocknote: '', markdown: null },
+        fieldValue: { tiptap: '', markdown: null },
       }),
     ).toBe(true);
+
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: richTextFieldDefinition,
+        fieldValue: {
+          tiptap: '{"type":"doc","content":[{"type":"paragraph"}]}',
+          markdown: null,
+        },
+      }),
+    ).toBe(false);
 
     expect(
       isFieldValueEmpty({
@@ -241,10 +251,7 @@ describe('isFieldValueEmpty', () => {
     expect(
       isFieldValueEmpty({
         fieldDefinition: richTextFieldDefinition,
-        fieldValue: {
-          blocknote: '[{"type":"paragraph"}]',
-          markdown: 'some text',
-        },
+        fieldValue: { tiptap: null, markdown: 'some text' },
       }),
     ).toBe(false);
   });

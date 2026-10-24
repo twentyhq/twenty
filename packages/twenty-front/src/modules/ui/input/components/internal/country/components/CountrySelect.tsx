@@ -22,21 +22,23 @@ type CountrySelectProps = {
   label: string;
   selectedCountryName: string;
   onChange: (countryName: string) => void;
+  dropdownId?: string;
 };
 
 export const CountrySelect = ({
   label,
   selectedCountryName,
   onChange,
+  dropdownId = SELECT_COUNTRY_DROPDOWN_ID,
 }: CountrySelectProps) => {
   const countries = useCountries();
   const parentClickOutsideId = useContext(ParentClickOutsideIdContext);
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    SELECT_COUNTRY_DROPDOWN_ID,
+    dropdownId,
   );
   const { handleDropdownOpenChange } = useHandleDropdownOpenChange({
-    dropdownId: SELECT_COUNTRY_DROPDOWN_ID,
+    dropdownId,
   });
 
   const countryChoices = useMemo<CountryChoice[]>(
@@ -65,7 +67,7 @@ export const CountrySelect = ({
 
   return (
     <>
-      <DropdownCleanupEffect dropdownId={SELECT_COUNTRY_DROPDOWN_ID} />
+      <DropdownCleanupEffect dropdownId={dropdownId} />
       <SharedCountrySelect
         countries={countryChoices}
         value={selectedCountryValue}
