@@ -27,6 +27,16 @@ describe('validateCurrencyFieldOrThrow', () => {
 
       expect(result).toEqual(currencyValue);
     });
+
+    it('should return the currency object when currencyCode is null', () => {
+      const currencyValue = {
+        amountMicros: 1000000,
+        currencyCode: null,
+      };
+      const result = validateCurrencyFieldOrThrow(currencyValue, 'testField');
+
+      expect(result).toEqual(currencyValue);
+    });
   });
 
   describe('invalid inputs', () => {
@@ -51,6 +61,17 @@ describe('validateCurrencyFieldOrThrow', () => {
       const currencyValue = {
         amountMicros: 1000000,
         currencyCode: 123,
+      };
+
+      expect(() =>
+        validateCurrencyFieldOrThrow(currencyValue, 'testField'),
+      ).toThrow(CommonQueryRunnerException);
+    });
+
+    it('should throw when currencyCode is an unknown currency code', () => {
+      const currencyValue = {
+        amountMicros: 12500000000,
+        currencyCode: 'XYZ',
       };
 
       expect(() =>
