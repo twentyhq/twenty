@@ -3,9 +3,10 @@ import { useQuery } from '@apollo/client/react';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
-import { getEmailingDomainStatusDisplay } from '@/settings/emailing-domains/utils/getEmailingDomainStatusDisplay';
+import { getEmailingDomainSetupStatusDisplay } from '@/settings/emailing-domains/utils/getEmailingDomainSetupStatusDisplay';
 import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type SettingsWorkspaceEmailChannelDomainStatusCellProps = {
   item: MessageChannel;
@@ -25,9 +26,16 @@ export const SettingsWorkspaceEmailChannelDomainStatusCell = ({
     return null;
   }
 
-  const { label, color } = getEmailingDomainStatusDisplay(
-    emailingDomain.status,
-  );
+  const { label, color, tooltip } =
+    getEmailingDomainSetupStatusDisplay(emailingDomain);
 
-  return <Status color={color}>{label}</Status>;
+  if (!isDefined(tooltip)) {
+    return <Status color={color}>{label}</Status>;
+  }
+
+  return (
+    <Tooltip content={tooltip.content} description={tooltip.description}>
+      <Status color={color}>{label}</Status>
+    </Tooltip>
+  );
 };
