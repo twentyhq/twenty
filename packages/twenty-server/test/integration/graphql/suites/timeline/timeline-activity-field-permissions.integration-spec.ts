@@ -14,6 +14,7 @@ import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-fi
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -57,6 +58,9 @@ describe('Timeline activity field permissions', () => {
       (field) => field.name === 'jobTitle',
     );
 
+    assertIsDefinedOrThrow(personObject);
+    assertIsDefinedOrThrow(jobTitleField);
+
     const { roleId } = await createCustomRoleWithObjectPermissions({
       label: 'TimelineRestrictedJobTitleRole',
       canReadPerson: true,
@@ -68,8 +72,8 @@ describe('Timeline activity field permissions', () => {
       roleId: customRoleId,
       fieldPermissions: [
         {
-          objectMetadataId: personObject?.id ?? '',
-          fieldMetadataId: jobTitleField?.id ?? '',
+          objectMetadataId: personObject.id,
+          fieldMetadataId: jobTitleField.id,
           canReadFieldValue: false,
           canUpdateFieldValue: false,
         },
