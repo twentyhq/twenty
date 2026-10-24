@@ -2,9 +2,9 @@ import { type CanActivate, type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { type Observable } from 'rxjs';
-import { isDefined } from 'twenty-shared/utils';
 
 import { userIsFullAdmin } from 'src/engine/core-modules/impersonation/utils/user-is-full-admin.util';
+import { isFirstPersonSession } from 'src/engine/guards/utils/is-first-person-session.util';
 
 export class AdminPanelGuard implements CanActivate {
   canActivate(
@@ -14,7 +14,8 @@ export class AdminPanelGuard implements CanActivate {
     const request = ctx.getContext().req;
 
     return (
-      !isDefined(request.impersonationContext) && userIsFullAdmin(request.user)
+      isFirstPersonSession(request.impersonationContext) &&
+      userIsFullAdmin(request.user)
     );
   }
 }

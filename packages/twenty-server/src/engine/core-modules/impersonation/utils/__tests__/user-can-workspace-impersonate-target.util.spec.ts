@@ -1,4 +1,4 @@
-import { userCanImpersonateTarget } from 'src/engine/core-modules/impersonation/utils/user-can-impersonate-target.util';
+import { userCanWorkspaceImpersonateTarget } from 'src/engine/core-modules/impersonation/utils/user-can-workspace-impersonate-target.util';
 
 const REGULAR_USER = { canImpersonate: false, canAccessFullAdminPanel: false };
 const IMPERSONATOR_USER = {
@@ -10,10 +10,10 @@ const FULL_ADMIN_USER = {
   canAccessFullAdminPanel: true,
 };
 
-describe('userCanImpersonateTarget', () => {
-  it('should allow anyone to impersonate a regular user', () => {
+describe('userCanWorkspaceImpersonateTarget', () => {
+  it('should allow a regular user to impersonate another regular user', () => {
     expect(
-      userCanImpersonateTarget({
+      userCanWorkspaceImpersonateTarget({
         impersonatorUser: REGULAR_USER,
         targetUser: REGULAR_USER,
       }),
@@ -22,25 +22,16 @@ describe('userCanImpersonateTarget', () => {
 
   it('should not allow a regular user to impersonate a user who can impersonate', () => {
     expect(
-      userCanImpersonateTarget({
+      userCanWorkspaceImpersonateTarget({
         impersonatorUser: REGULAR_USER,
         targetUser: IMPERSONATOR_USER,
       }),
     ).toBe(false);
   });
 
-  it('should allow a user who can impersonate to impersonate another one', () => {
+  it('should not allow a user who is not a full admin to impersonate a full admin', () => {
     expect(
-      userCanImpersonateTarget({
-        impersonatorUser: IMPERSONATOR_USER,
-        targetUser: IMPERSONATOR_USER,
-      }),
-    ).toBe(true);
-  });
-
-  it('should not allow a user who can only impersonate to impersonate a full admin', () => {
-    expect(
-      userCanImpersonateTarget({
+      userCanWorkspaceImpersonateTarget({
         impersonatorUser: IMPERSONATOR_USER,
         targetUser: FULL_ADMIN_USER,
       }),
@@ -49,7 +40,7 @@ describe('userCanImpersonateTarget', () => {
 
   it('should allow a full admin to impersonate another full admin', () => {
     expect(
-      userCanImpersonateTarget({
+      userCanWorkspaceImpersonateTarget({
         impersonatorUser: FULL_ADMIN_USER,
         targetUser: FULL_ADMIN_USER,
       }),

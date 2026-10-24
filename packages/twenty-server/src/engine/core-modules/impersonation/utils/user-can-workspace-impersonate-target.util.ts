@@ -2,13 +2,13 @@ import { type ImpersonationAuthorizationUser } from 'src/engine/core-modules/imp
 import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
 import { userIsFullAdmin } from 'src/engine/core-modules/impersonation/utils/user-is-full-admin.util';
 
-export const userCanImpersonateTarget = ({
+export const userCanWorkspaceImpersonateTarget = ({
   impersonatorUser,
   targetUser,
 }: {
   impersonatorUser: ImpersonationAuthorizationUser;
   targetUser: ImpersonationAuthorizationUser;
 }): boolean =>
-  (!userIsFullAdmin(targetUser) || userIsFullAdmin(impersonatorUser)) &&
   (!userHasAdminPrivileges(targetUser) ||
-    userHasAdminPrivileges(impersonatorUser));
+    userHasAdminPrivileges(impersonatorUser)) &&
+  (!userIsFullAdmin(targetUser) || userIsFullAdmin(impersonatorUser));
