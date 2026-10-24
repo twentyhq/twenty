@@ -59,6 +59,22 @@ describe('generateFormOutputSchema', () => {
       });
     });
 
+    it('should not expose a field metadata id for a SELECT field with no selected field', () => {
+      const formFields: WorkflowFormActionField[] = [
+        {
+          id: 'field-1',
+          name: 'status',
+          label: 'Status',
+          type: FieldMetadataType.SELECT,
+          settings: { selectType: 'EXISTING_FIELD' },
+        },
+      ];
+
+      const result = generateFormOutputSchema(formFields, []);
+
+      expect(result.status).not.toHaveProperty('fieldMetadataId');
+    });
+
     it('should use placeholder as value when defined', () => {
       const formFields: WorkflowFormActionField[] = [
         {
