@@ -3,6 +3,7 @@ import { type SelectProps } from '@/ui/input/types/SelectProps';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useRef, useState } from 'react';
@@ -189,7 +190,10 @@ export const Select = <TValue extends SelectValue>({
           <Dropdown.Trigger
             render={
               <StyledSelectTrigger
-                hasFocusBorder={!hasRightElement && variant !== 'transparent'}
+                hasFocusBorder={hasFormFieldFocusBorder({
+                  hasRightElement,
+                  variant,
+                })}
               />
             }
             nativeButton={false}

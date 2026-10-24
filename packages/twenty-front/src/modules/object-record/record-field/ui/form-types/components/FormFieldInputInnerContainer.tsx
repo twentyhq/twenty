@@ -3,6 +3,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
 import { styled } from '@linaria/react';
 import { forwardRef, type HTMLAttributes, type Ref } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -25,7 +26,7 @@ const getFocusBorderColor = ({
   hasRightElement: boolean;
   $variant: FormFieldInputVariant;
 }) =>
-  !hasRightElement && $variant !== 'transparent'
+  hasFormFieldFocusBorder({ hasRightElement, variant: $variant })
     ? themeCssVariables.color.blue
     : themeCssVariables.border.color.medium;
 

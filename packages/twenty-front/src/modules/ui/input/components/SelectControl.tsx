@@ -1,5 +1,6 @@
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
+import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -83,7 +84,7 @@ export const StyledControlContainer = styled.div<{
 
   *:focus-visible > & {
     border-color: ${({ hasRightElement, $variant }) =>
-      !hasRightElement && $variant !== 'transparent'
+      hasFormFieldFocusBorder({ hasRightElement, variant: $variant })
         ? themeCssVariables.color.blue
         : themeCssVariables.border.color.medium};
   }

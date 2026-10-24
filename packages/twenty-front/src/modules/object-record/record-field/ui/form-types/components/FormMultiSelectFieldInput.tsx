@@ -1,3 +1,4 @@
+import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
@@ -208,7 +209,9 @@ export const FormMultiSelectFieldInput = ({
                 <Dropdown.Trigger
                   render={
                     <StyledDisplayModeContainer
-                      hasFocusBorder={!isDefined(VariablePicker)}
+                      hasFocusBorder={hasFormFieldFocusBorder({
+                        hasRightElement: isDefined(VariablePicker) && !readonly,
+                      })}
                     />
                   }
                   nativeButton={false}

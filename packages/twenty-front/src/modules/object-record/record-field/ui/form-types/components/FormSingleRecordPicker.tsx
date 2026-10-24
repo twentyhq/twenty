@@ -20,6 +20,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
+import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type KeyboardEvent, useCallback, useId } from 'react';
@@ -274,9 +275,10 @@ export const FormSingleRecordPicker = ({
                 <StyledFormSelectContainerWrapper
                   id={triggerId}
                   $variant={variant}
-                  hasFocusBorder={
-                    !isDefined(VariablePicker) && variant !== 'transparent'
-                  }
+                  hasFocusBorder={hasFormFieldFocusBorder({
+                    hasRightElement: isDefined(VariablePicker) && !disabled,
+                    variant,
+                  })}
                   tabIndex={0}
                   onKeyDown={handleTriggerKeyDown}
                 >
