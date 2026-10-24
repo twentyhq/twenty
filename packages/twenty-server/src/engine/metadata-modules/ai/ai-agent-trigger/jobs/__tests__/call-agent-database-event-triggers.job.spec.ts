@@ -11,6 +11,7 @@ import {
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { CallAgentDatabaseEventTriggersJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/call-agent-database-event-triggers.job';
@@ -184,6 +185,7 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
       providers: [
         CallAgentDatabaseEventTriggersJob,
         RecordAccessPolicyService,
+        CommonRecordVisibilityService,
         {
           provide: getQueueToken(MessageQueue.aiQueue),
           useValue: messageQueueService,

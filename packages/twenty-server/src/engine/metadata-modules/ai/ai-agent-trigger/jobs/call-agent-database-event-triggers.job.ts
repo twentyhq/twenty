@@ -14,7 +14,7 @@ import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
 import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
-import { omitReadDeniedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-event.util';
+import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
 import { AGENT_TRIGGER_RUN_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-run-limits.const';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
@@ -103,22 +103,29 @@ export class CallAgentDatabaseEventTriggersJob {
             flatObjectMetadataMaps,
           }),
         );
-      const admittedEvents = workspaceEventBatch.events
-        .filter((event) => admittedRecordIds.has(event.recordId))
-        .filter(
-          (event) =>
-            !isDatabaseEventCausedByAgent({
-              event,
-              eventName,
-              agentId: flatAgent.id,
-            }),
-        )
+      const restrictedFields =
+        agentObjectsPermissions[objectMetadata.id]?.restrictedFields;
+
+      const visibleEvents =
+        await eventRecordAccessGate.applyVisibilityRestrictions({
+          events: workspaceEventBatch.events.filter(
+            (event) =>
+              admittedRecordIds.has(event.recordId) &&
+              !isDatabaseEventCausedByAgent({
+                event,
+                eventName,
+                agentId: flatAgent.id,
+              }),
+          ),
+          objectsPermissions: agentObjectsPermissions,
+        });
+
+      const admittedEvents = visibleEvents
         .map((event) =>
           omitInheritedReadabilityChildRecords(
-            omitReadDeniedFieldsFromEvent({
+            omitRestrictedFieldsFromEvent({
               event,
-              flatObjectMetadata: objectMetadata,
-              objectsPermissions: agentObjectsPermissions,
+              restrictedFields,
               flatFieldMetadataMaps,
             }),
           ),

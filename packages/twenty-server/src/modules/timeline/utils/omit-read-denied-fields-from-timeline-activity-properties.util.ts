@@ -15,39 +15,39 @@ const omitFieldNames = ({
       )
     : value;
 
-export const omitReadDeniedFieldsFromFieldValueSnapshot = ({
-  snapshot,
+export const omitReadDeniedFieldsFromTimelineActivityProperties = ({
+  properties,
   readDeniedFieldNames,
 }: {
-  snapshot: unknown;
+  properties: unknown;
   readDeniedFieldNames: Set<string>;
 }): unknown => {
-  if (!isPlainObject(snapshot) || readDeniedFieldNames.size === 0) {
-    return snapshot;
+  if (!isPlainObject(properties) || readDeniedFieldNames.size === 0) {
+    return properties;
   }
 
   return {
-    ...snapshot,
-    ...(isDefined(snapshot.diff) && {
+    ...properties,
+    ...(isDefined(properties.diff) && {
       diff: omitFieldNames({
-        value: snapshot.diff,
+        value: properties.diff,
         fieldNames: readDeniedFieldNames,
       }),
     }),
-    ...(isDefined(snapshot.before) && {
+    ...(isDefined(properties.before) && {
       before: omitFieldNames({
-        value: snapshot.before,
+        value: properties.before,
         fieldNames: readDeniedFieldNames,
       }),
     }),
-    ...(isDefined(snapshot.after) && {
+    ...(isDefined(properties.after) && {
       after: omitFieldNames({
-        value: snapshot.after,
+        value: properties.after,
         fieldNames: readDeniedFieldNames,
       }),
     }),
-    ...(Array.isArray(snapshot.updatedFields) && {
-      updatedFields: snapshot.updatedFields.filter(
+    ...(Array.isArray(properties.updatedFields) && {
+      updatedFields: properties.updatedFields.filter(
         (fieldName) => !readDeniedFieldNames.has(fieldName),
       ),
     }),

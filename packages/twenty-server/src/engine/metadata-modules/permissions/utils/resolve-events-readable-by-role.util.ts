@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
-import { omitReadDeniedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-event.util';
+import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -59,13 +59,23 @@ export const resolveEventsReadableByRole = async <
         flatObjectMetadataMaps,
       }),
     );
-  return workspaceEventBatch.events
-    .filter((event) => admittedRecordIds.has(event.recordId))
+  const restrictedFields =
+    objectsPermissions[workspaceEventBatch.objectMetadata.id]?.restrictedFields;
+
+  const visibleEvents = await eventRecordAccessGate.applyVisibilityRestrictions(
+    {
+      events: workspaceEventBatch.events.filter((event) =>
+        admittedRecordIds.has(event.recordId),
+      ),
+      objectsPermissions,
+    },
+  );
+
+  return visibleEvents
     .map((event) =>
-      omitReadDeniedFieldsFromEvent({
+      omitRestrictedFieldsFromEvent({
         event,
-        flatObjectMetadata: workspaceEventBatch.objectMetadata,
-        objectsPermissions,
+        restrictedFields,
         flatFieldMetadataMaps,
       }),
     )

@@ -34,7 +34,7 @@ import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-mo
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
-import { omitReadDeniedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-event.util';
+import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -227,7 +227,17 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
-    for (const event of workspaceEventBatch.events) {
+    const restrictedFields =
+      objectsPermissions[workspaceEventBatch.objectMetadata.id]
+        ?.restrictedFields ?? {};
+
+    const visibleEvents =
+      await eventRecordAccessGate.applyVisibilityRestrictions({
+        events: workspaceEventBatch.events,
+        objectsPermissions,
+      });
+
+    for (const event of visibleEvents) {
       const { action } = parseEventNameOrThrow(workspaceEventBatch.name);
 
       const eventWithObjectName: ObjectRecordSubscriptionEvent = {
@@ -236,10 +246,9 @@ export class ObjectRecordEventPublisher {
         ...omitInheritedReadabilityChildRecords(event),
       };
 
-      const filteredEvent = omitReadDeniedFieldsFromEvent({
+      const filteredEvent = omitRestrictedFieldsFromEvent({
         event: eventWithObjectName,
-        flatObjectMetadata: workspaceEventBatch.objectMetadata,
-        objectsPermissions,
+        restrictedFields,
         flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
       });
 

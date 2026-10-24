@@ -16,4 +16,10 @@ export type RecordVisibilityRestrictionHandler = {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }) => Promise<void>;
+  applyEventVisibilityRestrictions?: (args: {
+    records: Record<string, unknown>[];
+    flatObjectMetadata: FlatObjectMetadata;
+    objectsPermissions: ObjectsPermissions;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }) => Promise<void>;
 };

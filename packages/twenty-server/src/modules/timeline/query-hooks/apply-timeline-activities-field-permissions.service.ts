@@ -11,29 +11,28 @@ import { In } from 'typeorm';
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildRestrictedFieldNames } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type ResolvedFieldValueSnapshotField } from 'src/engine/metadata-modules/permissions/types/resolved-field-value-snapshot-field.type';
-import { buildReadDeniedFieldNamesForObject } from 'src/engine/metadata-modules/permissions/utils/build-read-denied-field-names-for-object.util';
-import { omitReadDeniedFieldsFromFieldValueSnapshot } from 'src/engine/metadata-modules/permissions/utils/omit-read-denied-fields-from-field-value-snapshot.util';
-import { resolveFieldValueSnapshotFields } from 'src/engine/metadata-modules/permissions/utils/resolve-field-value-snapshot-fields.util';
-import { resolveFieldValueSnapshotSubjectObjectMetadataId } from 'src/engine/metadata-modules/permissions/utils/resolve-field-value-snapshot-subject-object-metadata-id.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type TimelineActivityTargetJoinColumn } from 'src/modules/timeline/types/timeline-activity-target-join-column.type';
+import { omitReadDeniedFieldsFromTimelineActivityProperties } from 'src/modules/timeline/utils/omit-read-denied-fields-from-timeline-activity-properties.util';
+import { resolveTimelineActivitySubjectObjectMetadataId } from 'src/modules/timeline/utils/resolve-timeline-activity-subject-object-metadata-id.util';
+import { resolveTimelineActivityTargetJoinColumns } from 'src/modules/timeline/utils/resolve-timeline-activity-target-join-columns.util';
 
 const hasSubjectColumns = ({
-  record,
-  snapshotField,
+  timelineActivity,
+  targetJoinColumns,
 }: {
-  record: ObjectRecord;
-  snapshotField: ResolvedFieldValueSnapshotField;
+  timelineActivity: Record<string, unknown>;
+  targetJoinColumns: TimelineActivityTargetJoinColumn[];
 }): boolean =>
-  snapshotField.subjectObjectMetadataIdFieldName in record &&
-  snapshotField.subjectJoinColumns.every(
-    ({ joinColumnName }) => joinColumnName in record,
+  'linkedObjectMetadataId' in timelineActivity &&
+  targetJoinColumns.every(
+    ({ joinColumnName }) => joinColumnName in timelineActivity,
   );
 
 @Injectable()
@@ -65,87 +64,129 @@ export class ApplyTimelineActivitiesFieldPermissionsService
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<void> {
-    const propertiesField = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        STANDARD_OBJECTS.timelineActivity.fields.properties.universalIdentifier,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const timelineActivityFlatObjectMetadata =
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier:
+          STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+    const timelineActivities = records.filter(
+      (record) => 'properties' in record,
+    );
 
-    const timelineActivityObjectMetadata = isDefined(propertiesField)
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: propertiesField.objectMetadataId,
-          flatEntityMaps: flatObjectMetadataMaps,
-        })
-      : undefined;
-
-    if (!isDefined(timelineActivityObjectMetadata)) {
+    if (
+      !isDefined(timelineActivityFlatObjectMetadata) ||
+      timelineActivities.length === 0
+    ) {
       return;
     }
 
-    const [snapshotField] = resolveFieldValueSnapshotFields({
-      flatObjectMetadata: timelineActivityObjectMetadata,
+    const targetJoinColumns = resolveTimelineActivityTargetJoinColumns({
+      timelineActivityFlatObjectMetadata,
       flatFieldMetadataMaps,
     });
 
-    if (!isDefined(snapshotField)) {
-      return;
-    }
+    const storedTimelineActivityById =
+      await this.findStoredTimelineActivitiesMissingSubjectColumns({
+        timelineActivities,
+        targetJoinColumns,
+        workspaceId: authContext.workspace.id,
+      });
 
-    const recordsWithProperties = records.filter(
-      (record) => snapshotField.snapshotFieldName in record,
-    );
-
-    if (recordsWithProperties.length === 0) {
-      return;
-    }
-
-    const storedRecordById = await this.findStoredRecordsMissingSubjectColumns({
-      records: recordsWithProperties,
-      snapshotField,
-      workspaceId: authContext.workspace.id,
+    this.omitReadDeniedFields({
+      timelineActivities,
+      resolveSubjectRecord: (timelineActivity) =>
+        storedTimelineActivityById.get(timelineActivity.id) ?? timelineActivity,
+      targetJoinColumns,
+      objectsPermissions,
+      flatFieldMetadataMaps,
     });
+  }
 
-    for (const record of recordsWithProperties) {
+  public async applyEventVisibilityRestrictions({
+    records,
+    flatObjectMetadata,
+    objectsPermissions,
+    flatFieldMetadataMaps,
+  }: {
+    records: Record<string, unknown>[];
+    flatObjectMetadata: FlatObjectMetadata;
+    objectsPermissions: ObjectsPermissions;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }): Promise<void> {
+    this.omitReadDeniedFields({
+      timelineActivities: records,
+      resolveSubjectRecord: (timelineActivity) => timelineActivity,
+      targetJoinColumns: resolveTimelineActivityTargetJoinColumns({
+        timelineActivityFlatObjectMetadata: flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+      objectsPermissions,
+      flatFieldMetadataMaps,
+    });
+  }
+
+  private omitReadDeniedFields<TRecord extends Record<string, unknown>>({
+    timelineActivities,
+    resolveSubjectRecord,
+    targetJoinColumns,
+    objectsPermissions,
+    flatFieldMetadataMaps,
+  }: {
+    timelineActivities: TRecord[];
+    resolveSubjectRecord: (
+      timelineActivity: TRecord,
+    ) => Record<string, unknown>;
+    targetJoinColumns: TimelineActivityTargetJoinColumn[];
+    objectsPermissions: ObjectsPermissions;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }): void {
+    for (const timelineActivity of timelineActivities) {
       const subjectObjectMetadataId =
-        resolveFieldValueSnapshotSubjectObjectMetadataId({
-          record: storedRecordById.get(record.id) ?? record,
-          snapshotField,
+        resolveTimelineActivitySubjectObjectMetadataId({
+          timelineActivity: resolveSubjectRecord(timelineActivity),
+          targetJoinColumns,
         });
 
       if (!isDefined(subjectObjectMetadataId)) {
         continue;
       }
 
-      record[snapshotField.snapshotFieldName] =
-        omitReadDeniedFieldsFromFieldValueSnapshot({
-          snapshot: record[snapshotField.snapshotFieldName],
-          readDeniedFieldNames: buildReadDeniedFieldNamesForObject({
-            objectMetadataId: subjectObjectMetadataId,
-            objectsPermissions,
+      Object.assign(timelineActivity, {
+        properties: omitReadDeniedFieldsFromTimelineActivityProperties({
+          properties: timelineActivity.properties,
+          readDeniedFieldNames: buildRestrictedFieldNames({
+            restrictedFields:
+              objectsPermissions[subjectObjectMetadataId]?.restrictedFields ??
+              {},
             flatFieldMetadataMaps,
           }),
-        });
+        }),
+      });
     }
   }
 
-  private async findStoredRecordsMissingSubjectColumns({
-    records,
-    snapshotField,
+  private async findStoredTimelineActivitiesMissingSubjectColumns({
+    timelineActivities,
+    targetJoinColumns,
     workspaceId,
   }: {
-    records: ObjectRecord[];
-    snapshotField: ResolvedFieldValueSnapshotField;
+    timelineActivities: ObjectRecord[];
+    targetJoinColumns: TimelineActivityTargetJoinColumn[];
     workspaceId: string;
   }): Promise<Map<string, ObjectRecord>> {
-    const recordIdsMissingSubjectColumns = records
-      .filter((record) => !hasSubjectColumns({ record, snapshotField }))
-      .map((record) => record.id);
+    const timelineActivityIdsMissingSubjectColumns = timelineActivities
+      .filter(
+        (timelineActivity) =>
+          !hasSubjectColumns({ timelineActivity, targetJoinColumns }),
+      )
+      .map((timelineActivity) => timelineActivity.id);
 
-    if (recordIdsMissingSubjectColumns.length === 0) {
+    if (timelineActivityIdsMissingSubjectColumns.length === 0) {
       return new Map();
     }
 
-    const storedRecords =
+    const storedTimelineActivities =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () =>
           this.workspaceOrmManager
@@ -153,13 +194,18 @@ export class ApplyTimelineActivitiesFieldPermissionsService
               shouldBypassPermissionChecks: true,
             })
             .find({
-              where: { id: In(recordIdsMissingSubjectColumns) },
+              where: { id: In(timelineActivityIdsMissingSubjectColumns) },
               withDeleted: true,
             }),
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );
 
-    return new Map(storedRecords.map((record) => [record.id, record]));
+    return new Map(
+      storedTimelineActivities.map((timelineActivity) => [
+        timelineActivity.id,
+        timelineActivity,
+      ]),
+    );
   }
 }
