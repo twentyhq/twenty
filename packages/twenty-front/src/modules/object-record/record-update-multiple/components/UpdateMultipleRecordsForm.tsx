@@ -26,6 +26,7 @@ export type UpdateMultipleRecordsFormProps = {
   disabled?: boolean;
   values: UpdateMultipleRecordsState;
   onChange: (fieldName: string, value: any) => void;
+  formInstanceId?: string;
 };
 
 export const UpdateMultipleRecordsForm = ({
@@ -33,11 +34,13 @@ export const UpdateMultipleRecordsForm = ({
   disabled = false,
   values,
   onChange,
+  formInstanceId,
 }: UpdateMultipleRecordsFormProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const formInstanceId = useId();
+  const defaultFormInstanceId = useId();
+  const resolvedFormInstanceId = formInstanceId ?? defaultFormInstanceId;
 
   const editableFields = objectMetadataItem.fields
     .filter(shouldDisplayFormMultiEditField)
@@ -85,7 +88,7 @@ export const UpdateMultipleRecordsForm = ({
             key={fieldDefinition.metadata.fieldName}
             value={{
               instanceId: getRecordFormFieldInputInstanceId({
-                formInstanceId,
+                formInstanceId: resolvedFormInstanceId,
                 fieldMetadataId: fieldMetadataItem.id,
               }),
             }}
