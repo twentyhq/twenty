@@ -47,6 +47,7 @@ import {
   jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { IconCode, IconPlayerPlay } from 'twenty-ui/icon';
@@ -405,8 +406,12 @@ export const WorkflowEditActionCode = ({
     isFullScreen,
   );
 
+  // Unmounting while the draft's copy loads would drop focus and keystrokes, so only the first load hides the editor
+  const isInitialLoading =
+    loading && !isNonEmptyString(formValues.sourceHandlerCode);
+
   return (
-    !loading && (
+    !isInitialLoading && (
       <TabListRoot
         componentInstanceId={WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID}
       >

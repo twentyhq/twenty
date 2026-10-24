@@ -11,12 +11,19 @@ import {
 } from 'twenty-shared/logic-function';
 import { useApolloClient } from '@apollo/client/react';
 import { isString } from '@sniptt/guards';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   type GetLogicFunctionSourceCodeQuery,
   type GetLogicFunctionSourceCodeQueryVariables,
 } from '~/generated-metadata/graphql';
+
+type UnsavedSourceHandlerCode = {
+  sourceHandlerCode: string;
+  // Undefined while the target is being resolved
+  targetLogicFunctionId?: string;
+};
 
 export const useLogicFunctionForm = ({
   logicFunctionId,
@@ -28,17 +35,49 @@ export const useLogicFunctionForm = ({
   const apolloClient = useApolloClient();
   const { updateLogicFunction } = usePersistLogicFunction();
 
+  const [unsavedSourceHandlerCode, setUnsavedSourceHandlerCode] =
+    useState<UnsavedSourceHandlerCode>();
+
   const { formValues, setFormValues, logicFunction, loading } =
-    useLogicFunctionUpdateFormState({ logicFunctionId });
+    useLogicFunctionUpdateFormState({
+      logicFunctionId,
+      shouldKeepSourceHandlerCode:
+        isDefined(unsavedSourceHandlerCode) &&
+        (!isDefined(unsavedSourceHandlerCode.targetLogicFunctionId) ||
+          unsavedSourceHandlerCode.targetLogicFunctionId === logicFunctionId),
+    });
 
   const handleSave = useDebouncedCallback(
-    async (targetLogicFunctionId: string) => {
-      await updateLogicFunction({
-        input: {
-          id: targetLogicFunctionId,
-          update: formValues,
-        },
+    async ({
+      targetLogicFunctionId,
+      update,
+    }: {
+      targetLogicFunctionId: string;
+      update: LogicFunctionFormValues;
+    }) => {
+      const result = await updateLogicFunction({
+        input: { id: targetLogicFunctionId, update },
       });
+
+      if (result.status !== 'successful') {
+        return;
+      }
+
+      apolloClient.cache.writeQuery<
+        GetLogicFunctionSourceCodeQuery,
+        GetLogicFunctionSourceCodeQueryVariables
+      >({
+        query: GET_LOGIC_FUNCTION_SOURCE_CODE,
+        variables: { input: { id: targetLogicFunctionId } },
+        data: { getLogicFunctionSourceCode: update.sourceHandlerCode },
+      });
+
+      setUnsavedSourceHandlerCode((currentUnsavedSourceHandlerCode) =>
+        currentUnsavedSourceHandlerCode?.sourceHandlerCode ===
+        update.sourceHandlerCode
+          ? undefined
+          : currentUnsavedSourceHandlerCode,
+      );
     },
     500,
   );
@@ -52,44 +91,49 @@ export const useLogicFunctionForm = ({
         [key]: value,
       }));
 
+      const isSourceHandlerCodeChange =
+        key === 'sourceHandlerCode' && isString(value);
+
+      if (isSourceHandlerCodeChange) {
+        setUnsavedSourceHandlerCode({ sourceHandlerCode: value });
+      }
+
       const targetLogicFunctionId = isDefined(getTargetLogicFunctionId)
         ? await getTargetLogicFunctionId()
         : logicFunctionId;
 
-      if (key !== 'sourceHandlerCode' || !isString(value)) {
-        await handleSave(targetLogicFunctionId);
+      if (!isSourceHandlerCodeChange) {
+        await handleSave({
+          targetLogicFunctionId,
+          update: { ...formValues, [key]: value },
+        });
 
         return undefined;
       }
 
-      const sourceHandlerCode = value;
+      setUnsavedSourceHandlerCode((currentUnsavedSourceHandlerCode) =>
+        currentUnsavedSourceHandlerCode?.sourceHandlerCode === value
+          ? { sourceHandlerCode: value, targetLogicFunctionId }
+          : currentUnsavedSourceHandlerCode,
+      );
 
-      // The form reloads the target's source once it switches to it, so it must already hold the new code
-      if (targetLogicFunctionId !== logicFunctionId) {
-        apolloClient.cache.writeQuery<
-          GetLogicFunctionSourceCodeQuery,
-          GetLogicFunctionSourceCodeQueryVariables
-        >({
-          query: GET_LOGIC_FUNCTION_SOURCE_CODE,
-          variables: { input: { id: targetLogicFunctionId } },
-          data: { getLogicFunctionSourceCode: sourceHandlerCode },
-        });
-      }
+      const inferredJsonSchema = await getInputSchemaFromSourceCode(value);
 
-      const inferredJsonSchema =
-        await getInputSchemaFromSourceCode(sourceHandlerCode);
+      const triggerSettings = getTriggerSettingsWithInputSchema({
+        toolTriggerSettings: formValues.toolTriggerSettings,
+        workflowActionTriggerSettings: formValues.workflowActionTriggerSettings,
+        inputJsonSchema: inferredJsonSchema,
+      });
 
       setFormValues((prevState: LogicFunctionFormValues) => ({
         ...prevState,
-        ...getTriggerSettingsWithInputSchema({
-          toolTriggerSettings: prevState.toolTriggerSettings,
-          workflowActionTriggerSettings:
-            prevState.workflowActionTriggerSettings,
-          inputJsonSchema: inferredJsonSchema,
-        }),
+        ...triggerSettings,
       }));
 
-      await handleSave(targetLogicFunctionId);
+      await handleSave({
+        targetLogicFunctionId,
+        update: { ...formValues, sourceHandlerCode: value, ...triggerSettings },
+      });
 
       return inferredJsonSchema;
     };
