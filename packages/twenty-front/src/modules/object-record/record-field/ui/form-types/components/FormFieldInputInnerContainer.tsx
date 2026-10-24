@@ -30,7 +30,7 @@ const getFocusBorderColor = ({
     ? themeCssVariables.color.blue
     : themeCssVariables.border.color.medium;
 
-const StyledFormFieldInputInnerContainer = styled.div<
+export const StyledFormFieldInputInnerContainer = styled.div<
   Omit<FormFieldInputInnerContainerProps, 'formFieldInputInstanceId'> & {
     $variant: FormFieldInputVariant;
   }
@@ -78,8 +78,7 @@ const StyledFormFieldInputInnerContainer = styled.div<
     display: none;
   }
 
-  &:has(:focus-visible:not(button)),
-  *:focus-visible > & {
+  &:has(:focus-visible:not(button)) {
     border-color: ${getFocusBorderColor};
   }
 
