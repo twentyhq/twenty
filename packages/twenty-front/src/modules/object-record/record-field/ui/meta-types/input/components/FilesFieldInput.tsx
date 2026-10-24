@@ -339,7 +339,7 @@ export const FilesFieldInput = () => {
   );
 
   return (
-    <FilesFieldDropZone isDisabled={isUploading} onDrop={handleDrop}>
+    <FilesFieldDropZone onDrop={handleDrop}>
       <MultiItemFieldList
         ref={containerRef}
         hasItems={shouldShowItems}

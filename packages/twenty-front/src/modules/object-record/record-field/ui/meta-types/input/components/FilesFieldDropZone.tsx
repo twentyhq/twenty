@@ -14,13 +14,11 @@ const StyledFilesFieldDropZone = styled.div<{ isDragActive: boolean }>`
 `;
 
 type FilesFieldDropZoneProps = {
-  isDisabled: boolean;
   onDrop: (files: File[]) => void;
   children: ReactNode;
 };
 
 export const FilesFieldDropZone = ({
-  isDisabled,
   onDrop,
   children,
 }: FilesFieldDropZoneProps) => {
@@ -28,7 +26,6 @@ export const FilesFieldDropZone = ({
     noClick: true,
     noKeyboard: true,
     multiple: true,
-    disabled: isDisabled,
     onDropAccepted: onDrop,
   });
 

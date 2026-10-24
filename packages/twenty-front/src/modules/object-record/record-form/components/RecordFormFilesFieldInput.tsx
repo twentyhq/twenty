@@ -156,15 +156,20 @@ export const RecordFormFilesFieldInput = ({
     });
   };
 
-  const handleDrop = (selectedFiles: File[]) =>
+  const handleDrop = (selectedFiles: File[]) => {
+    if (isUploading) {
+      return;
+    }
+
     uploadFiles({ selectedFiles, currentFiles: saveInputValue() });
+  };
 
   const visibleFiles = isNonEmptyArray(savedFiles) ? savedFiles : undefined;
 
   return (
     <FormFieldInputContainer>
       {isNonEmptyString(label) ? <Field.Label>{label}</Field.Label> : null}
-      <FilesFieldDropZone isDisabled={isUploading} onDrop={handleDrop}>
+      <FilesFieldDropZone onDrop={handleDrop}>
         <RecordFormMultiItemList
           footer={
             savedFiles.length < maxItemCount ? (
