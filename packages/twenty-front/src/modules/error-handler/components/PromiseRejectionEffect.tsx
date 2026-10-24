@@ -35,22 +35,26 @@ export const PromiseRejectionEffect = () => {
   const handlePromiseRejection = useCallback(
     async (event: PromiseRejectionEvent) => {
       const error = event.reason;
+      const isAbortError =
+        error?.networkError?.name === 'AbortError' ||
+        error?.name === 'AbortError' ||
+        ((error instanceof TypeError || error instanceof Error) &&
+          /^cancel+ed$/i.test(error.message));
+
+      if (isAbortError) {
+        return;
+      }
+
       if (isApolloError(error)) {
         enqueueToast(getToastOptionsFromError({ error }));
         return; // already handled by apolloLink
       }
 
-      const isAbortError =
-        error?.networkError?.name === 'AbortError' ||
-        error?.name === 'AbortError' ||
-        (error instanceof TypeError &&
-          error.message.toLowerCase() === 'cancelled');
-
       const isViteStaleChunkLazyLoadingError =
         error instanceof Error &&
         checkIfItsAViteStaleChunkLazyLoadingError(error);
 
-      if (!isAbortError && !isViteStaleChunkLazyLoadingError) {
+      if (!isViteStaleChunkLazyLoadingError) {
         enqueueToast(getToastOptionsFromError({ error }));
       }
 
