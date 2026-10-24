@@ -22,4 +22,8 @@ export type RecordVisibilityRestrictionHandler = {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }) => Promise<void>;
+  getRequiredFieldNames?: (args: {
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }) => string[];
 };

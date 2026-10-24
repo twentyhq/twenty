@@ -41,7 +41,7 @@ const findPersonTimelineActivities = async ({
   const operation = findManyOperationFactory({
     objectMetadataSingularName: 'timelineActivity',
     objectMetadataPluralName: 'timelineActivities',
-    gqlFields: 'id properties linkedObjectMetadataId targetPersonId',
+    gqlFields: 'id properties',
     filter: { targetPersonId: { eq: personId } },
   });
 
@@ -170,25 +170,6 @@ describe('Timeline activity field permissions', () => {
     );
   });
 
-  it('should omit the diff when the target columns are not selected', async () => {
-    const response = await makeGraphqlApiRequestWithMemberRole(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'timelineActivity',
-        objectMetadataPluralName: 'timelineActivities',
-        gqlFields: 'id properties',
-        filter: { targetPersonId: { eq: personId } },
-      }),
-    );
-
-    expect(response.body.errors).toBeUndefined();
-    expect(JSON.stringify(response.body.data)).not.toContain(
-      RESTRICTED_JOB_TITLE,
-    );
-    expect(JSON.stringify(response.body.data)).not.toContain(
-      READABLE_FIRST_NAME,
-    );
-  });
-
   it('should omit fields the role cannot read from the REST response', async () => {
     const response = await makeRestApiRequest({
       method: 'get',
@@ -211,8 +192,7 @@ describe('Timeline activity field permissions', () => {
         objectMetadataPluralName: 'timelineActivities',
         groupBy: [{ targetPersonId: true }],
         filter: { targetPersonId: { eq: personId } },
-        gqlFields:
-          'edges { node { id properties linkedObjectMetadataId targetPersonId } }',
+        gqlFields: 'edges { node { id properties } }',
       }),
     );
 

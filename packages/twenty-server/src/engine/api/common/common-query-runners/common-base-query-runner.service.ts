@@ -148,9 +148,14 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
     );
 
-    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
-      args.selectedFields,
-    );
+    const selectedFieldsResult =
+      this.commonRecordVisibilityService.extendSelectedFields({
+        selectedFieldsResult: commonQueryParser.parseSelectedFields(
+          args.selectedFields,
+        ),
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
 
     const processedArgs = {
       ...(await this.processArgs(args, queryRunnerContext, this.operationName)),

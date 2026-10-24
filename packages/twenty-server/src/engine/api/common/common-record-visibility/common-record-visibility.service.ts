@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
+import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { cloneEventRecords } from 'src/engine/api/common/common-record-visibility/utils/clone-event-records.util';
 import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-visibility/utils/collect-records-by-object-name-singular.util';
@@ -121,5 +122,33 @@ export class CommonRecordVisibilityService {
     });
 
     return clonedEvents.map(rebuildEventDiffFromRecords);
+  }
+
+  public extendSelectedFields({
+    selectedFieldsResult,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  }: {
+    selectedFieldsResult: CommonSelectedFieldsResult;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }): CommonSelectedFieldsResult {
+    const requiredFieldNames = this.handlersByObjectNameSingular
+      .get(flatObjectMetadata.nameSingular)
+      ?.getRequiredFieldNames?.({ flatObjectMetadata, flatFieldMetadataMaps });
+
+    if (!isNonEmptyArray(requiredFieldNames)) {
+      return selectedFieldsResult;
+    }
+
+    return {
+      ...selectedFieldsResult,
+      select: {
+        ...selectedFieldsResult.select,
+        ...Object.fromEntries(
+          requiredFieldNames.map((fieldName) => [fieldName, true]),
+        ),
+      },
+    };
   }
 }

@@ -91,8 +91,14 @@ const DIFF = {
   },
 };
 
+type TimelineActivityFixture = {
+  linkedObjectMetadataId?: string | null;
+  targetPersonId?: string | null;
+  properties: unknown;
+};
+
 const keepReadableFields = (
-  timelineActivity: Record<string, unknown>,
+  timelineActivity: TimelineActivityFixture,
   objectsPermissions = PERSON_JOB_TITLE_DENIED,
 ) => {
   keepReadableFieldsInTimelineActivities({
