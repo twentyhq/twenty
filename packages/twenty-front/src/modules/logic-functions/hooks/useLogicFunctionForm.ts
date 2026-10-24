@@ -31,7 +31,7 @@ export const useLogicFunctionForm = ({
     useState<UnsavedSourceHandlerCode>();
 
   // oxlint-disable-next-line twenty/no-state-useref -- Read by in-flight saves, not render state.
-  const latestSourceHandlerCodeRef = useRef<string>();
+  const latestSourceHandlerCodeRef = useRef<string | undefined>(undefined);
 
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({
