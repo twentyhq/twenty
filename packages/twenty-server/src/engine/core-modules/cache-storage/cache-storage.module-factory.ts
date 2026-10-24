@@ -6,6 +6,7 @@ import { redisInsStore } from 'cache-manager-redis-yet';
 import { createClient } from 'redis';
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
+import { getNodeRedisConnectionOptions } from 'src/engine/core-modules/redis-client/utils/get-node-redis-connection-options.util';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const cacheStorageLogger = new Logger('CacheStorage');
@@ -36,7 +37,7 @@ export const cacheStorageModuleFactory = (
         ...cacheModuleOptions,
         store: async () => {
           const redisClient = createClient({
-            url: redisUrl,
+            ...getNodeRedisConnectionOptions(redisUrl),
             pingInterval: REDIS_PING_INTERVAL_MS,
           });
 

@@ -6,6 +6,7 @@ import { createClient } from 'redis';
 import type session from 'express-session';
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
+import { getNodeRedisConnectionOptions } from 'src/engine/core-modules/redis-client/utils/get-node-redis-connection-options.util';
 import { resolveSessionCookieSecretsOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-session-cookie-secrets.util';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -48,7 +49,7 @@ export const getSessionStorageOptions = (
       }
 
       const redisClient = createClient({
-        url: connectionString,
+        ...getNodeRedisConnectionOptions(connectionString),
         pingInterval: REDIS_PING_INTERVAL_MS,
       });
 
