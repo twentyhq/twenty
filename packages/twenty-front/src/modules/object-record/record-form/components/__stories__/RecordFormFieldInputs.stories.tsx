@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { graphql, HttpResponse } from 'msw';
+import { graphql, http, HttpResponse } from 'msw';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
@@ -667,6 +667,70 @@ export const InvalidLink: Story = {
     await expect(canvas.getByRole('alert')).toHaveTextContent(
       'Enter a valid URL',
     );
+  },
+};
+
+export const FilesDropUpload: Story = {
+  args: {
+    fieldMetadataItems: [filesFieldMetadataItem],
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.mutation('CreateFileUpload', () =>
+          HttpResponse.json({
+            data: {
+              createFileUpload: {
+                __typename: 'FileUploadTarget',
+                fileId: 'dropped-file-id',
+                uploadUrl: 'https://upload.example.com/dropped-file-id',
+                contentType: 'application/pdf',
+              },
+            },
+          }),
+        ),
+        http.put(
+          'https://upload.example.com/dropped-file-id',
+          () => new HttpResponse(null, { status: 200 }),
+        ),
+        graphql.mutation('CompleteFileUpload', () =>
+          HttpResponse.json({
+            data: {
+              completeFileUpload: {
+                __typename: 'FileWithSignedUrl',
+                id: 'dropped-file-id',
+                path: 'files/brief.pdf',
+                size: 4,
+                createdAt: '2026-10-24T00:00:00.000Z',
+                url: 'https://example.com/brief.pdf',
+              },
+            },
+          }),
+        ),
+      ],
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const dataTransfer = new DataTransfer();
+
+    dataTransfer.items.add(
+      new File(['test'], 'brief.pdf', { type: 'application/pdf' }),
+    );
+
+    canvas
+      .getByRole('button', { name: 'Upload file' })
+      .dispatchEvent(new DragEvent('drop', { bubbles: true, dataTransfer }));
+
+    await waitFor(() =>
+      expect(args.onFieldValueChange).toHaveBeenLastCalledWith('attachments', [
+        expect.objectContaining({
+          fileId: 'dropped-file-id',
+          label: 'brief.pdf',
+        }),
+      ]),
+    );
+    await expect(await canvas.findByText('brief.pdf')).toBeVisible();
   },
 };
 
