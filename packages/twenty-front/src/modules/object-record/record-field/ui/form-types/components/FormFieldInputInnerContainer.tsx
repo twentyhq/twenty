@@ -18,6 +18,7 @@ type FormFieldInputInnerContainerProps = {
   formFieldInputInstanceId: string;
   variant?: FormFieldInputVariant;
   highlightsOnParentFocus?: boolean;
+  highlightsOnChildFocus?: boolean;
 };
 
 const getFocusBorderColor = ({
@@ -80,6 +81,17 @@ const StyledFormFieldInputInnerContainer = styled.div<
   }
 
   &:has(:focus-visible:not(button)) {
+    border-color: ${({ highlightsOnChildFocus, hasRightElement, $variant }) =>
+      highlightsOnChildFocus === true
+        ? getFocusBorderColor({ hasRightElement, $variant })
+        : themeCssVariables.border.color.medium};
+  }
+
+  &:has(
+    input:focus-visible,
+    textarea:focus-visible,
+    [contenteditable='true']:focus-visible
+  ) {
     border-color: ${getFocusBorderColor};
   }
 
@@ -118,6 +130,7 @@ export const FormFieldInputInnerContainer = forwardRef(
       formFieldInputInstanceId,
       variant = 'default',
       highlightsOnParentFocus = false,
+      highlightsOnChildFocus = false,
     }: HTMLAttributes<HTMLDivElement> & FormFieldInputInnerContainerProps,
     ref: Ref<HTMLDivElement>,
   ) => {
@@ -168,6 +181,7 @@ export const FormFieldInputInnerContainer = forwardRef(
         readonly={readonly}
         $variant={variant}
         highlightsOnParentFocus={highlightsOnParentFocus}
+        highlightsOnChildFocus={highlightsOnChildFocus}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onClick={onClick}

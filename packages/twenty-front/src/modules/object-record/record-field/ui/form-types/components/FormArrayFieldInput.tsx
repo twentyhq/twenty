@@ -1,4 +1,5 @@
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { hasFormFieldFocusBorder } from '@/ui/input/utils/hasFormFieldFocusBorder';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
@@ -52,7 +53,7 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div`
+const StyledDisplayModeContainer = styled.div<{ hasFocusBorder: boolean }>`
   align-items: center;
   background: transparent;
   border: none;
@@ -67,6 +68,10 @@ const StyledDisplayModeContainer = styled.div`
   &:hover,
   &[data-popup-open] {
     background-color: ${themeCssVariables.background.transparent.lighter};
+  }
+
+  &:focus-visible {
+    outline: ${({ hasFocusBorder }) => (hasFocusBorder ? 'none' : 'revert')};
   }
 `;
 
@@ -356,6 +361,7 @@ export const FormArrayFieldInput = ({
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
           hasRightElement={isDefined(VariablePicker) && !readonly}
+          highlightsOnChildFocus
         >
           {draftValue.type === 'static' ? (
             readonly ? (
@@ -383,7 +389,13 @@ export const FormArrayFieldInput = ({
             ) : (
               <DropdownRoot dropdownId={dropdownId} type="panel">
                 <Dropdown.Trigger
-                  render={<StyledDisplayModeContainer />}
+                  render={
+                    <StyledDisplayModeContainer
+                      hasFocusBorder={hasFormFieldFocusBorder({
+                        hasRightElement: isDefined(VariablePicker) && !readonly,
+                      })}
+                    />
+                  }
                   nativeButton={false}
                   aria-label={accessibleLabel}
                 >

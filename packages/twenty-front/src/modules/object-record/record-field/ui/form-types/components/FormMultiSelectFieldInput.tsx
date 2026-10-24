@@ -178,6 +178,7 @@ export const FormMultiSelectFieldInput = ({
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
+          highlightsOnChildFocus
           hoverable={!readonly}
           preventFocusStackUpdate={draftValue.type === 'static' && !readonly}
         >
