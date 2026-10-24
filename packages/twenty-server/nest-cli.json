@@ -67,6 +67,14 @@
       {
         "include": "engine/core-modules/dpa/constants/subprocessors.json",
         "outDir": "dist"
+      },
+      {
+        "include": "engine/metadata-modules/ai/ai-front-component/generated/**",
+        "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**",
+        "outDir": "dist/assets"
       }
     ]
   },

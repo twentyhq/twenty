@@ -1,13 +1,17 @@
-import { type SharedDependenciesBuildContext } from '@/app/bundles/front-component-build/shared-dependencies-build/types/shared-dependencies-build-context.type';
-import { getSharedDependenciesShimSource } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/get-shared-dependencies-shim-source';
+import { type SharedDependenciesBuildContext } from '@/front-component-build/shared-dependencies-build-context.type';
+import { getSharedDependenciesShimSource } from '@/front-component-build/get-shared-dependencies-shim-source';
 import type * as esbuild from 'esbuild';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@/utils/validation/isDefined';
 
 const SHARED_DEPENDENCIES_SHIM_NAMESPACE = 'twenty-shared-dependencies-shim';
 
-export const createSharedDependenciesShimPlugin = (
-  getSharedDependenciesBuildContext: () => SharedDependenciesBuildContext | null,
-): esbuild.Plugin => ({
+export const createSharedDependenciesShimPlugin = ({
+  getSharedDependenciesBuildContext,
+  getShimSource = getSharedDependenciesShimSource,
+}: {
+  getSharedDependenciesBuildContext: () => SharedDependenciesBuildContext | null;
+  getShimSource?: typeof getSharedDependenciesShimSource;
+}): esbuild.Plugin => ({
   name: 'twenty-shared-dependencies-shim',
   setup: (build) => {
     build.onResolve({ filter: /.*/ }, ({ path: specifier }) => {
@@ -40,7 +44,7 @@ export const createSharedDependenciesShimPlugin = (
         }
 
         return {
-          contents: getSharedDependenciesShimSource({ specifier, exportNames }),
+          contents: getShimSource({ specifier, exportNames }),
           loader: 'js' as const,
         };
       },

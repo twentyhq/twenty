@@ -1,3 +1,4 @@
+import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -565,7 +566,9 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    const defaultPackageFields = await getDefaultApplicationPackageFields({
+      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+    });
 
     const applicationRegistration =
       await this.createWorkspaceCustomApplicationRegistration(
@@ -598,10 +601,12 @@ export class ApplicationService {
       queryRunner,
     );
 
-    await this.uploadDefaultPackageFilesAndSetFileIds(
-      workspaceCustomApplication,
+    await this.uploadPackageFilesAndSetFileIds({
+      application: workspaceCustomApplication,
+      packageJsonContent: defaultPackageFields.packageJsonContent,
+      yarnLockContent: defaultPackageFields.yarnLockContent,
       queryRunner,
-    );
+    });
 
     return workspaceCustomApplication;
   }

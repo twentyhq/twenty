@@ -17,6 +17,7 @@ export type LambdaDriverExecutorPayload = {
 
 export type YarnInstallLambdaPayload = {
   action: 'createLayer';
+  shouldInstallAllDependencies?: boolean;
   packageJson: string;
   yarnLock: string;
   presignedUploadUrl: string;
@@ -37,19 +38,22 @@ export type BuilderLambdaResult = {
   builtCode: string;
 };
 
-export interface LambdaDriverOptions extends LambdaClientConfig {
+export type LambdaDriverOptions = LambdaConnectionOptions & {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientArchiveService: SdkClientArchiveService;
   cacheLockService: CacheLockService;
   cacheStorageService: CacheStorageService;
   workspaceCacheService: WorkspaceCacheService;
+};
+
+export type LambdaConnectionOptions = LambdaClientConfig & {
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
   layerBucket: string;
   layerBucketRegion: string;
   resourceNamespace: string;
-}
+};
 
 export enum LambdaExecutionPhase {
   BUILD = 'build',
