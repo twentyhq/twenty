@@ -26,6 +26,7 @@ import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/serv
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
+import { buildPublishedWorkflowVersionPointers } from 'src/engine/core-modules/workflow/utils/build-published-workflow-version-pointers.util';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -285,9 +286,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
           statusByCoreWorkflowVersionId,
           coreWorkflowUpdate: {
             coreWorkflowId: coreWorkflow.id,
-            lastPublishedCoreWorkflowVersionId: coreWorkflowVersion.id,
-            lastPublishedVersionId:
-              coreWorkflowVersion.workspaceWorkflowVersionId ?? null,
+            ...buildPublishedWorkflowVersionPointers({
+              coreWorkflowVersionId: coreWorkflowVersion.id,
+              workspaceWorkflowVersionId:
+                coreWorkflowVersion.workspaceWorkflowVersionId,
+            }),
           },
         });
 

@@ -90,11 +90,18 @@ const buildCodeFreeStep = (id: string, name: string) => ({
 
 const readCoreWorkflowRow = async (coreWorkflowId: string) => {
   const rows = await global.testDataSource.query(
-    `SELECT id, "workspaceWorkflowId" FROM core."workflow" WHERE id = $1`,
+    `SELECT id, "workspaceWorkflowId", "lastPublishedVersionId",
+            "lastPublishedCoreWorkflowVersionId"
+     FROM core."workflow" WHERE id = $1`,
     [coreWorkflowId],
   );
 
-  return rows[0] as { id: string; workspaceWorkflowId: string | null };
+  return rows[0] as {
+    id: string;
+    workspaceWorkflowId: string | null;
+    lastPublishedVersionId: string | null;
+    lastPublishedCoreWorkflowVersionId: string | null;
+  };
 };
 
 const readCoreVersionRow = async (coreWorkflowVersionId: string) => {
@@ -318,8 +325,50 @@ describe('workflow MCP tools on core identities (integration)', () => {
       const activatedCoreVersion = await readCoreVersionRow(
         coreWorkflowVersionId,
       );
+      const activatedCoreWorkflow = await readCoreWorkflowRow(coreWorkflowId);
 
       expect(activatedCoreVersion.status).toBe('ACTIVE');
+      expect(activatedCoreWorkflow.lastPublishedCoreWorkflowVersionId).toBe(
+        coreWorkflowVersionId,
+      );
+      expect(activatedCoreWorkflow.lastPublishedVersionId).toBe(
+        coreWorkflowVersionId,
+      );
+    });
+
+    it('should point lastPublishedVersionId at the newly activated version', async () => {
+      const drafted = await callWorkflowTool<{
+        success: boolean;
+        coreWorkflowVersionId: string;
+      }>('create_draft_from_workflow_version', {
+        coreWorkflowId,
+        coreWorkflowVersionIdToCopy: coreWorkflowVersionId,
+      });
+
+      expect(drafted.success).toBe(true);
+
+      const nextCoreWorkflowVersionId = drafted.coreWorkflowVersionId;
+
+      await callWorkflowTool('activate_workflow_version', {
+        coreWorkflowVersionId: nextCoreWorkflowVersionId,
+      });
+
+      const previousCoreVersion = await readCoreVersionRow(
+        coreWorkflowVersionId,
+      );
+      const nextCoreVersion = await readCoreVersionRow(
+        nextCoreWorkflowVersionId,
+      );
+      const republishedCoreWorkflow = await readCoreWorkflowRow(coreWorkflowId);
+
+      expect(previousCoreVersion.status).toBe('ARCHIVED');
+      expect(nextCoreVersion.status).toBe('ACTIVE');
+      expect(republishedCoreWorkflow.lastPublishedCoreWorkflowVersionId).toBe(
+        nextCoreWorkflowVersionId,
+      );
+      expect(republishedCoreWorkflow.lastPublishedVersionId).toBe(
+        nextCoreWorkflowVersionId,
+      );
     });
 
     it('should filter runs by core workflow id', async () => {
