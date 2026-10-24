@@ -41,5 +41,5 @@ export class CreateMcpServerInput {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  isEnabled?: boolean;
+  isActive?: boolean;
 }

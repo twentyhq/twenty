@@ -38,7 +38,7 @@ export class UpdateMcpServerInputUpdates {
   @IsOptional()
   @IsBoolean()
   @Field({ nullable: true })
-  isEnabled?: boolean;
+  isActive?: boolean;
 }
 
 @InputType()

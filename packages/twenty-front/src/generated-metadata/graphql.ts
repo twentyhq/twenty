@@ -1697,7 +1697,7 @@ export type CreateLogicFunctionFromSourceInput = {
 export type CreateMcpServerInput = {
   authorizationHeaderValue?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
-  isEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label: Scalars['String']['input'];
   name: Scalars['String']['input'];
   url: Scalars['String']['input'];
@@ -2395,7 +2395,6 @@ export enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_APPLICATION_MONITORING_ENABLED = 'IS_APPLICATION_MONITORING_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
-  IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
@@ -3090,7 +3089,7 @@ export type McpServer = {
   createdAt: Scalars['DateTime']['output'];
   hasAuthorizationHeader: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
-  isEnabled: Scalars['Boolean']['output'];
+  isActive: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -6699,6 +6698,7 @@ export type SendEmailInput = {
   fromHandle?: InputMaybe<Scalars['String']['input']>;
   inReplyTo?: InputMaybe<Scalars['String']['input']>;
   subject: Scalars['String']['input'];
+  targetRecord?: InputMaybe<SendEmailTargetRecordInput>;
   to: Scalars['String']['input'];
 };
 
@@ -6707,6 +6707,11 @@ export type SendEmailOutput = {
   error?: Maybe<Scalars['String']['output']>;
   messageThreadId?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
+};
+
+export type SendEmailTargetRecordInput = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 export type SendEmailViaDomainOutput = {
@@ -7273,7 +7278,7 @@ export type UpdateMcpServerInput = {
 
 export type UpdateMcpServerInputUpdates = {
   authorizationHeaderValue?: InputMaybe<Scalars['String']['input']>;
-  isEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   url?: InputMaybe<Scalars['String']['input']>;

@@ -5,7 +5,8 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
-import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
+import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
@@ -414,17 +415,18 @@ export const FormArrayFieldInput = ({
                   <Dropdown.Separator />
 
                   {isInputDisplayed ? (
-                    <MultiItemBaseInput
-                      instanceId={newItemInputInstanceId}
-                      autoFocus
-                      placeholder={placeholder}
-                      value={inputValue}
-                      onFocus={handleNewItemInputFocus}
-                      onBlur={handleNewItemInputBlur}
-                      onEscape={handleNewItemInputEscape}
-                      onChange={handleNewItemInputChange}
-                      onEnter={handleNewItemInputSubmit}
-                    />
+                    <MultiItemFieldInputRow hasPadding>
+                      <MultiItemFieldTextInput
+                        autoFocus
+                        placeholder={placeholder}
+                        value={inputValue}
+                        onFocus={handleNewItemInputFocus}
+                        onBlur={handleNewItemInputBlur}
+                        onEscape={handleNewItemInputEscape}
+                        onChange={handleNewItemInputChange}
+                        onEnter={handleNewItemInputSubmit}
+                      />
+                    </MultiItemFieldInputRow>
                   ) : !isLimitReached ? (
                     <Dropdown.Section>
                       <Dropdown.ActionItem

@@ -44,7 +44,7 @@ export class McpServerEntity
   authorizationHeaderValue: EncryptedString | null;
 
   @Column({ nullable: false, type: 'boolean', default: true })
-  isEnabled: boolean;
+  isActive: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

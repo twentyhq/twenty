@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import {
   isDefined,
+  normalizeUrl,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -23,7 +24,6 @@ import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/m
 import { type UpdateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/update-mcp-server.input';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { normalizeUrl } from 'src/utils/normalize-url.util';
 
 @Injectable()
 export class McpServerService {
@@ -79,7 +79,7 @@ export class McpServerService {
         flatApplication: workspaceCustomFlatApplication,
       });
 
-    await this.runMigration({
+    await this.runMigrationOrThrow({
       operation: { flatEntityToCreate: [flatMcpServerToCreate] },
       workspaceId,
       applicationUniversalIdentifier:
@@ -110,7 +110,7 @@ export class McpServerService {
         input.update,
         ['name', 'label', 'url'],
       );
-    const { authorizationHeaderValue, isEnabled } = input.update;
+    const { authorizationHeaderValue, isActive } = input.update;
 
     const flatMcpServerToUpdate =
       fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow({
@@ -120,7 +120,7 @@ export class McpServerService {
           ...(isDefined(name) && { name }),
           ...(isDefined(label) && { label }),
           ...(isDefined(url) && { url: normalizeUrl(url) }),
-          ...(isDefined(isEnabled) && { isEnabled }),
+          ...(isDefined(isActive) && { isActive }),
           ...(!isUndefined(authorizationHeaderValue) && {
             authorizationHeaderValue: this.encryptAuthorizationHeaderValue({
               value: authorizationHeaderValue,
@@ -130,7 +130,7 @@ export class McpServerService {
         },
       });
 
-    await this.runMigration({
+    await this.runMigrationOrThrow({
       operation: { flatEntityToUpdate: [flatMcpServerToUpdate] },
       workspaceId,
       applicationUniversalIdentifier:
@@ -159,7 +159,7 @@ export class McpServerService {
         mcpServerId: id,
       });
 
-    await this.runMigration({
+    await this.runMigrationOrThrow({
       operation: { flatEntityToDelete: [flatMcpServerToDelete] },
       workspaceId,
       applicationUniversalIdentifier:
@@ -196,7 +196,7 @@ export class McpServerService {
     return flatMcpServerMaps;
   }
 
-  private async runMigration({
+  private async runMigrationOrThrow({
     operation,
     workspaceId,
     applicationUniversalIdentifier,

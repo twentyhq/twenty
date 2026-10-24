@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUrl } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WebhookExceptionCode } from 'src/engine/metadata-modules/webhook/webhook.exception';
@@ -11,7 +11,6 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { isHttpUrl } from 'src/utils/is-http-url.util';
 
 @Injectable()
 export class FlatWebhookValidatorService {
@@ -37,7 +36,7 @@ export class FlatWebhookValidatorService {
       });
     }
 
-    if (!isHttpUrl(flatWebhook.targetUrl)) {
+    if (!isValidUrl(flatWebhook.targetUrl)) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
         message: t`Invalid target URL provided`,
@@ -115,7 +114,7 @@ export class FlatWebhookValidatorService {
 
     const targetUrlUpdate = flatEntityUpdate.targetUrl;
 
-    if (isDefined(targetUrlUpdate) && !isHttpUrl(targetUrlUpdate)) {
+    if (isDefined(targetUrlUpdate) && !isValidUrl(targetUrlUpdate)) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
         message: t`Invalid target URL provided`,

@@ -4,7 +4,6 @@ import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/comp
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
@@ -61,13 +60,14 @@ const StyledGroupsContainer = styled.div`
 `;
 
 type WorkflowAiAgentPermissionsTabProps = {
-  action: WorkflowAiAgentAction;
+  stepId: string;
   readonly: boolean;
   isAgentLoading: boolean;
   refetchAgent: () => Promise<{ data?: { findOneAgent?: Agent } }>;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
+  stepId,
   readonly,
   isAgentLoading,
   refetchAgent,
@@ -162,6 +162,7 @@ export const WorkflowAiAgentPermissionsTab = ({
     handleAddPermissionFlag,
     handleDeletePermissionFlag,
   } = useWorkflowAiAgentPermissionActions({
+    stepId,
     readonly,
     objectPermissions,
     permissionFlagKeys,

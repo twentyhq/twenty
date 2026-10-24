@@ -12,7 +12,10 @@ export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
   workspaceId,
   flatApplication,
 }: {
-  createMcpServerInput: Omit<CreateMcpServerInput, 'authorizationHeaderValue'>;
+  createMcpServerInput: Pick<
+    CreateMcpServerInput,
+    'id' | 'name' | 'label' | 'url' | 'isActive'
+  >;
   encryptedAuthorizationHeaderValue: EncryptedString | null;
   workspaceId: string;
   flatApplication: FlatApplication;
@@ -33,7 +36,7 @@ export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
     label,
     url,
     authorizationHeaderValue: encryptedAuthorizationHeaderValue,
-    isEnabled: createMcpServerInput.isEnabled ?? true,
+    isActive: createMcpServerInput.isActive ?? true,
     workspaceId,
     createdAt: now,
     updatedAt: now,

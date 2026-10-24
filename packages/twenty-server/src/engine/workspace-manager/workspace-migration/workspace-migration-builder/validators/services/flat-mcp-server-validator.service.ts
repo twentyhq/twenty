@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUrl } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { MCP_SERVER_NAME_REGEX } from 'src/engine/metadata-modules/mcp-server/constants/mcp-server-name-regex.constant';
@@ -16,7 +16,6 @@ import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manag
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { isHttpUrl } from 'src/utils/is-http-url.util';
 
 @Injectable()
 export class FlatMcpServerValidatorService {
@@ -190,7 +189,7 @@ export class FlatMcpServerValidatorService {
   private getUrlErrors(
     url: string,
   ): FlatEntityValidationError<McpServerExceptionCode>[] {
-    if (isHttpUrl(url)) {
+    if (isValidUrl(url)) {
       return [];
     }
 

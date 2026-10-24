@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, normalizeUrl } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -14,7 +14,6 @@ import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dto
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { normalizeUrl } from 'src/utils/normalize-url.util';
 
 @Injectable()
 export class WebhookService {

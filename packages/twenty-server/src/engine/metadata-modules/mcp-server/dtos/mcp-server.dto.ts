@@ -20,7 +20,7 @@ export class McpServerDTO {
   hasAuthorizationHeader: boolean;
 
   @Field()
-  isEnabled: boolean;
+  isActive: boolean;
 
   @HideField()
   workspaceId: string;

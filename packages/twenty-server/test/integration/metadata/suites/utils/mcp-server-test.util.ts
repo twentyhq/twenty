@@ -8,7 +8,7 @@ const MCP_SERVER_FIELDS = `
   label
   url
   hasAuthorizationHeader
-  isEnabled
+  isActive
   applicationId
 `;
 
@@ -57,7 +57,7 @@ export type McpServerInput = {
   label: string;
   url: string;
   authorizationHeaderValue?: string | null;
-  isEnabled?: boolean;
+  isActive?: boolean;
 };
 
 export const createMcpServer = (input: McpServerInput) =>

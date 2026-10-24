@@ -5,5 +5,5 @@ export const FLAT_MCP_SERVER_EDITABLE_PROPERTIES = [
   'label',
   'url',
   'authorizationHeaderValue',
-  'isEnabled',
+  'isActive',
 ] as const satisfies MetadataEntityPropertyName<'mcpServer'>[];

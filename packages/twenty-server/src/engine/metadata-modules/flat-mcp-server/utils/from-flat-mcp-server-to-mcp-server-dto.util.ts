@@ -11,7 +11,7 @@ export const fromFlatMcpServerToMcpServerDto = (
   label: flatMcpServer.label,
   url: flatMcpServer.url,
   hasAuthorizationHeader: isDefined(flatMcpServer.authorizationHeaderValue),
-  isEnabled: flatMcpServer.isEnabled,
+  isActive: flatMcpServer.isActive,
   workspaceId: flatMcpServer.workspaceId,
   applicationId: flatMcpServer.applicationId,
   createdAt: new Date(flatMcpServer.createdAt),

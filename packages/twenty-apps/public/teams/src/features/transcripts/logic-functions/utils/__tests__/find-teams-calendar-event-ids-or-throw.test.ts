@@ -39,6 +39,51 @@ describe('findTeamsCalendarEventIdsOrThrow', () => {
     vi.mocked(getTeamsCalendarEventICalUIdOrThrow).mockReset();
   });
 
+  it('ignores associations without an external ID or calendar event ID', async () => {
+    const query = vi.fn().mockResolvedValue({
+      calendarChannelEventAssociations: toConnection({
+        nodes: [
+          { eventExternalId: undefined, calendarEventId: 'unrelated' },
+          { eventExternalId: 'external', calendarEventId: undefined },
+          { eventExternalId: 'external', calendarEventId: 'calendar-event' },
+        ],
+      }),
+    });
+
+    await expect(
+      findTeamsCalendarEventIdsOrThrow({
+        accessToken: 'token',
+        coreApiClient: { query },
+        references: [{ eventExternalId: 'external' }],
+      }),
+    ).resolves.toEqual(new Map([['external', 'calendar-event']]));
+    expect(getTeamsCalendarEventICalUIdOrThrow).not.toHaveBeenCalled();
+  });
+
+  it('uses the iCal fallback when an association has no calendar event ID', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce({
+        calendarChannelEventAssociations: toConnection({
+          nodes: [{ eventExternalId: 'external', calendarEventId: null }],
+        }),
+      })
+      .mockResolvedValueOnce({
+        calendarEvents: toConnection({
+          nodes: [{ id: 'calendar-event', iCalUid: 'ical-uid' }],
+        }),
+      });
+
+    await expect(
+      findTeamsCalendarEventIdsOrThrow({
+        accessToken: 'token',
+        coreApiClient: { query },
+        references: [{ eventExternalId: 'external', iCalUId: 'ical-uid' }],
+      }),
+    ).resolves.toEqual(new Map([['external', 'calendar-event']]));
+    expect(getTeamsCalendarEventICalUIdOrThrow).not.toHaveBeenCalled();
+  });
+
   it('should not link a reference whose associations point to different events on different pages', async () => {
     vi.mocked(getTeamsCalendarEventICalUIdOrThrow).mockResolvedValue(
       'ical-series-master-1',

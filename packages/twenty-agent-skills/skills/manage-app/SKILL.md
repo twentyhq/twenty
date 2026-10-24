@@ -45,7 +45,7 @@ Inspect current app and scripts before running operational commands:
 
 ```bash
 sed -n '1,220p' package.json
-yarn twenty remote:list
+twenty remote list
 ```
 
 Treat deploys, uninstalls, production remote changes, and production syncs as externally visible actions. Ask for explicit confirmation before running them when the target is production or user data could be affected.
@@ -55,7 +55,7 @@ For command details, remotes, validation command semantics, sync modes, troubles
 If the user asks to run tests, also read `../../references/develop-app/tests.md` before running any test command. Full test suites include integration tests that install and uninstall the app on their target server, so start or verify the isolated test instance and run:
 
 ```bash
-yarn twenty docker:start --test
+docker start twenty-app-dev-test
 TWENTY_API_URL=http://localhost:2021 yarn test
 ```
 
@@ -63,25 +63,25 @@ Do not run integration tests against the dev instance on `http://localhost:2020`
 
 # Remotes
 
-A remote is a Twenty server that the app can sync or deploy to. Credentials are stored locally in `~/.twenty/config.json`.
+A remote is a Twenty server that the app can sync or deploy to. Credentials are managed by the standalone CLI. Use `twenty auth login` and `twenty remote list`.
 
 Common commands:
 
 ```bash
 # Add a remote interactively.
-yarn twenty remote:add
+twenty auth login
 
 # Connect to a local Twenty server.
-yarn twenty remote:add --local
+twenty auth login --url http://localhost:2020
 
 # Add a remote non-interactively.
-yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as production
+printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url https://your-twenty-server.com --name production
 
 # List configured remotes.
-yarn twenty remote:list
+twenty remote list
 
 # Switch the active remote.
-yarn twenty remote:use <name>
+twenty remote use <name>
 ```
 
 When the user says "prod", "production", or "workspace de prod", identify the target remote before syncing or deploying. If it is missing, add it with `--as production` or the user-provided name.
@@ -91,10 +91,10 @@ When the user says "prod", "production", or "workspace de prod", identify the ta
 Always use bounded apply to synchronize app changes with the active remote:
 
 ```bash
-yarn twenty apply
+twenty app apply
 ```
 
-Do not use bare `yarn twenty dev` (watch mode). Run `yarn twenty apply` each time changes need to be synced.
+Do not use bare `twenty app dev` (watch mode). Run `twenty app apply` each time changes need to be synced.
 
 Bounded apply requires an authenticated remote. If authentication fails, re-add or switch the remote before retrying.
 
@@ -114,33 +114,33 @@ Collect the minimum useful context before changing configuration:
 ```bash
 sed -n '1,220p' package.json
 sed -n '1,220p' src/application-config.ts
-yarn twenty remote:list
-yarn twenty apply --verbose
+twenty remote list
+twenty app apply --json
 ```
 
 For remote or authentication issues:
 
 - Check that the active remote is the intended workspace or server.
-- Re-run `yarn twenty remote:add --local` for local app-dev servers.
-- Re-run `yarn twenty remote:add --url <url> --as <name>` for remote servers.
+- Re-run `twenty auth login --url http://localhost:2020` for local app-dev servers.
+- Re-run `twenty auth login --url <url> --name <name>` for remote servers.
 - Avoid overwriting a production remote until the target URL is confirmed.
 
 For sync issues:
 
-- Prefer `yarn twenty apply --verbose` to get a bounded failure.
+- Prefer `twenty app apply --json` to get a bounded failure.
 - Check generated type or schema errors before editing app entities.
 - If the app depends on a changed data model, use `$develop-app` to fix the entity definitions.
 
 For build or deploy issues:
 
-- Run `yarn twenty dev:build` before `yarn twenty app:publish --private` or `yarn twenty app:publish`.
+- Run `twenty app build` before `twenty app publish --private` or `twenty app publish`.
 - Check `package.json` version when updating an already deployed app.
-- Confirm the target with `yarn twenty app:publish --private --remote <name>` instead of relying on the active remote when production is involved.
+- Confirm the target with `twenty app publish --private --remote <name>` instead of relying on the active remote when production is involved.
 
 For runtime behavior:
 
-- Use `yarn twenty dev:function:logs` to inspect function execution logs.
-- Use `yarn twenty dev:function:exec -n <function-name> -p '<json>'` to reproduce a logic function with a controlled payload.
+- Use `twenty app logs` to inspect function execution logs.
+- Use `twenty app exec --name <function-name> --payload '<json>'` to reproduce a logic function with a controlled payload.
 
 For CI/CD failures:
 
@@ -153,18 +153,18 @@ For CI/CD failures:
 Build before deploy when the user asks for release readiness or when debugging packaging issues:
 
 ```bash
-yarn twenty dev:build
+twenty app build
 ```
 
 Publish an app to npm, or publish privately to a configured Twenty server registry:
 
 ```bash
-yarn twenty app:publish
-yarn twenty app:publish --private --remote production
-yarn twenty app:install --remote production
+twenty app publish
+twenty app publish --private --remote production
+twenty app install --remote production
 ```
 
-Before deploying an update, check that `package.json` has a strictly higher semver `version` than the currently deployed version. Re-deploying the same version is rejected. After a private publish, install the deployed version with `yarn twenty app:install` when the target workspace should use it.
+Before deploying an update, check that `package.json` has a strictly higher semver `version` than the currently deployed version. Re-deploying the same version is rejected. After a private publish, install the deployed version with `twenty app install` when the target workspace should use it.
 
 Use `$publish-app` instead when the user wants npm marketplace publishing, listing copy, screenshots, or public app store metadata.
 
@@ -173,27 +173,27 @@ Use `$publish-app` instead when the user wants npm marketplace publishing, listi
 Use function logs when debugging runtime behavior on the connected server:
 
 ```bash
-yarn twenty dev:function:logs
-yarn twenty dev:function:logs -n <function-name>
+twenty app logs
+twenty app logs --name <function-name>
 ```
 
 Run a logic function manually when testing behavior without its trigger:
 
 ```bash
-yarn twenty dev:function:exec -n <function-name>
-yarn twenty dev:function:exec -n <function-name> -p '{"key":"value"}'
+twenty app exec --name <function-name>
+twenty app exec --name <function-name> --payload '{"key":"value"}'
 ```
 
 Uninstall only after confirmation:
 
 ```bash
-yarn twenty app:uninstall
-yarn twenty app:uninstall --yes
+twenty app uninstall
+twenty app uninstall --yes
 ```
 
 # CI/CD
 
-Apps generated with `create-twenty-app` can use GitHub Actions for CI and CD. For deployment automation, check the app's `.github/workflows/` files and configure:
+Apps generated with `twenty app init` can use GitHub Actions for CI and CD. For deployment automation, check the app's `.github/workflows/` files and configure:
 
 - `TWENTY_DEPLOY_URL`
 - `TWENTY_DEPLOY_API_KEY`

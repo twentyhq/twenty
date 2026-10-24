@@ -107,7 +107,7 @@
         "{projectRoot}/src/__stories__/showcase/**/*",
         "{projectRoot}/src/__stories__/twenty-ui-gallery/**/*",
         "{projectRoot}/src/__stories__/shared/front-components/**/*",
-        "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*",
+        "{workspaceRoot}/packages/twenty-sdk/src/front-component-renderer/build/**/*",
         "{workspaceRoot}/packages/twenty-shared/src/front-component-build/**/*",
         "{workspaceRoot}/packages/twenty-shared/vite.bundled-source-plugin.ts"
       ],

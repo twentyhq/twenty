@@ -7,6 +7,7 @@ import {
   updateMcpServer,
 } from 'test/integration/metadata/suites/utils/mcp-server-test.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 const VALID_INPUT = {
   name: 'docs',
@@ -27,20 +28,22 @@ describe('mcpServersResolver (e2e)', () => {
 
   afterEach(async () => {
     for (const id of createdMcpServerIds.splice(0)) {
-      await deleteMcpServer(id).catch(() => {});
+      await deleteMcpServer(id);
     }
   });
 
   const createAndTrack = async (
     input: Partial<typeof VALID_INPUT> & {
       authorizationHeaderValue?: string | null;
-      isEnabled?: boolean;
+      isActive?: boolean;
     } = {},
   ) => {
     const response = await createMcpServer({ ...VALID_INPUT, ...input });
 
-    if (response.body.data?.createMcpServer?.id) {
-      createdMcpServerIds.push(response.body.data.createMcpServer.id);
+    const createdId = response.body.data?.createMcpServer?.id;
+
+    if (isDefined(createdId)) {
+      createdMcpServerIds.push(createdId);
     }
 
     return response;
@@ -54,7 +57,7 @@ describe('mcpServersResolver (e2e)', () => {
       expect(response.body.data.createMcpServer).toMatchObject({
         ...VALID_INPUT,
         hasAuthorizationHeader: false,
-        isEnabled: true,
+        isActive: true,
       });
     });
 
@@ -125,7 +128,7 @@ describe('mcpServersResolver (e2e)', () => {
         id: created.id,
         update: {
           label: 'Renamed',
-          isEnabled: false,
+          isActive: false,
           authorizationHeaderValue: null,
         },
       });
@@ -134,7 +137,7 @@ describe('mcpServersResolver (e2e)', () => {
       expect(response.body.data.updateMcpServer).toMatchObject({
         id: created.id,
         label: 'Renamed',
-        isEnabled: false,
+        isActive: false,
         hasAuthorizationHeader: false,
       });
     });

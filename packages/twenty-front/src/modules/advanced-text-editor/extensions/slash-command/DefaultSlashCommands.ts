@@ -7,6 +7,9 @@ import {
   IconH1,
   IconH2,
   IconH3,
+  IconH4,
+  IconH5,
+  IconH6,
   IconList,
   IconListCheck,
   IconListNumbers,
@@ -57,6 +60,39 @@ const TEXT_SLASH_COMMANDS: SlashCommandConfig[] = [
     getIsVisible: (editor) => editor.can().setHeading?.({ level: 3 }) ?? false,
     getOnSelect: (editor, range) => () =>
       editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run(),
+  },
+  {
+    id: 'h4',
+    title: msg`Heading 4`,
+    description: msg`Subsection heading`,
+    icon: IconH4,
+    keywords: [msg`heading`, msg`h4`, msg`subheading`],
+    getIsActive: (editor) => editor.isActive('heading', { level: 4 }),
+    getIsVisible: (editor) => editor.can().setHeading?.({ level: 4 }) ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).setHeading({ level: 4 }).run(),
+  },
+  {
+    id: 'h5',
+    title: msg`Heading 5`,
+    description: msg`Minor subsection heading`,
+    icon: IconH5,
+    keywords: [msg`heading`, msg`h5`, msg`subheading`],
+    getIsActive: (editor) => editor.isActive('heading', { level: 5 }),
+    getIsVisible: (editor) => editor.can().setHeading?.({ level: 5 }) ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).setHeading({ level: 5 }).run(),
+  },
+  {
+    id: 'h6',
+    title: msg`Heading 6`,
+    description: msg`Smallest heading`,
+    icon: IconH6,
+    keywords: [msg`heading`, msg`h6`, msg`subheading`],
+    getIsActive: (editor) => editor.isActive('heading', { level: 6 }),
+    getIsVisible: (editor) => editor.can().setHeading?.({ level: 6 }) ?? false,
+    getOnSelect: (editor, range) => () =>
+      editor.chain().focus().deleteRange(range).setHeading({ level: 6 }).run(),
   },
   {
     id: 'blockquote',
