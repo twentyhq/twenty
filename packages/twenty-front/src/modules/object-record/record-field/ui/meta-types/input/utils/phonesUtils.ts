@@ -6,7 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const createPhonesFromFieldValue = (
-  fieldValue: FieldPhonesValue,
+  fieldValue: FieldPhonesValue | null | undefined,
 ): PhoneRecord[] => {
   if (!isDefined(fieldValue)) {
     return [];
