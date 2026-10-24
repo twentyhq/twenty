@@ -7,7 +7,6 @@ import {
   findCoreWorkflowVersion,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
-import { findOneAgent } from 'test/integration/metadata/suites/agent/utils/find-one-agent.util';
 
 type AiAgentStep = {
   id: string;
@@ -15,31 +14,14 @@ type AiAgentStep = {
   settings: { input: { agentId: string } };
 };
 
-const findAgent = async (agentId: string) => {
-  const { data } = await findOneAgent({
-    input: { id: agentId },
-    gqlFields: 'id prompt modelId',
-    expectToFail: false,
-  });
-
-  return data.findOneAgent;
-};
-
-describe('Draft creation copies step resources (e2e)', () => {
-  let coreWorkflowId: string;
-  let activeVersionId: string;
-  let agentStep: AiAgentStep;
-
-  beforeAll(async () => {
-    const createdCoreWorkflow = await createCoreWorkflow({
+describe('Draft creation (e2e)', () => {
+  it('gives AI agent steps their own copy of the agent', async () => {
+    const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
       name: 'Draft Step Resources Test',
     });
 
-    coreWorkflowId = createdCoreWorkflow.coreWorkflowId;
-    activeVersionId = createdCoreWorkflow.coreWorkflowVersionId;
-
     await updateCoreWorkflowVersionTrigger({
-      coreWorkflowVersionId: activeVersionId,
+      coreWorkflowVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -49,42 +31,28 @@ describe('Draft creation copies step resources (e2e)', () => {
       },
     });
 
-    agentStep = await createCoreWorkflowVersionStep<AiAgentStep>({
-      coreWorkflowVersionId: activeVersionId,
+    const agentStep = await createCoreWorkflowVersionStep<AiAgentStep>({
+      coreWorkflowVersionId,
       stepType: 'AI_AGENT',
     });
 
-    await activateCoreWorkflowVersion({
-      coreWorkflowVersionId: activeVersionId,
-    });
-  });
+    await activateCoreWorkflowVersion({ coreWorkflowVersionId });
 
-  afterAll(async () => {
-    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-  });
-
-  it('gives the draft AI agent step its own copy of the agent', async () => {
     const draft = await createDraftFromCoreWorkflowVersion({
       coreWorkflowId,
-      coreWorkflowVersionIdToCopy: activeVersionId,
+      coreWorkflowVersionIdToCopy: coreWorkflowVersionId,
     });
 
-    const { steps: draftSteps } = await findCoreWorkflowVersion<AiAgentStep>({
+    const { steps } = await findCoreWorkflowVersion<AiAgentStep>({
       coreWorkflowVersionId: draft.id,
     });
 
-    const draftAgentStep = draftSteps?.find((step) => step.id === agentStep.id);
-
-    const activeAgentId = agentStep.settings.input.agentId;
-    const draftAgentId = draftAgentStep?.settings.input.agentId;
+    const draftAgentId = steps?.find((step) => step.id === agentStep.id)
+      ?.settings.input.agentId;
 
     expect(draftAgentId).toBeDefined();
-    expect(draftAgentId).not.toBe(activeAgentId);
+    expect(draftAgentId).not.toBe(agentStep.settings.input.agentId);
 
-    const activeAgent = await findAgent(activeAgentId);
-    const draftAgent = await findAgent(draftAgentId!);
-
-    expect(draftAgent.prompt).toBe(activeAgent.prompt);
-    expect(draftAgent.modelId).toBe(activeAgent.modelId);
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });
 });

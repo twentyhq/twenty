@@ -84,7 +84,15 @@ export const useWorkflowAiAgentPermissionActions = ({
     [settingsPermissionsConfig, actionPermissionsConfig],
   );
 
-  const getUpdatableAgentIdOrThrow = async () => {
+  const ensureRoleId = async (): Promise<string | undefined> => {
+    if (isDefined(roleId)) {
+      return roleId;
+    }
+
+    if (!isDefined(workflowAiAgentActionAgent) || readonly) {
+      return undefined;
+    }
+
     const updatableStep = await getUpdatableWorkflowVersionStepOrThrow({
       stepId,
       stepType: 'AI_AGENT',
@@ -94,20 +102,6 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     if (!isDefined(updatableAgentId)) {
       throw new Error(doNotTranslate('The AI agent step has no agent'));
-    }
-
-    return updatableAgentId;
-  };
-
-  const ensureRoleId = async (): Promise<string | undefined> => {
-    if (!isDefined(workflowAiAgentActionAgent) || readonly) {
-      return undefined;
-    }
-
-    const updatableAgentId = await getUpdatableAgentIdOrThrow();
-
-    if (isDefined(roleId)) {
-      return roleId;
     }
 
     const agentDisplayName =
@@ -239,8 +233,6 @@ export const useWorkflowAiAgentPermissionActions = ({
       return;
     }
 
-    await getUpdatableAgentIdOrThrow();
-
     const objectPermission = objectPermissions.find(
       (permission) => permission.objectMetadataId === objectMetadataId,
     );
@@ -360,8 +352,6 @@ export const useWorkflowAiAgentPermissionActions = ({
     if (!permissionFlagKeys.includes(permissionFlagKey)) {
       return;
     }
-
-    await getUpdatableAgentIdOrThrow();
 
     const permissionFlagKeysAfterRemoval = permissionFlagKeys.filter(
       (flag) => flag !== permissionFlagKey,

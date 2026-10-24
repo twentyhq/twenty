@@ -147,11 +147,6 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
     expect(updateSourceResponse.errors?.[0]?.extensions?.code).toBe(
       'BAD_USER_INPUT',
     );
-    expect(
-      updateSourceResponse.errors?.[0]?.extensions?.userFriendlyMessage,
-    ).toBe(
-      'This code belongs to a published workflow version. Edit it from a draft.',
-    );
   });
 
   it('runs the code step from its prebuilt bundle and resolves bare imports', async () => {

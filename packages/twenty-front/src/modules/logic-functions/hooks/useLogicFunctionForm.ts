@@ -4,13 +4,9 @@ import {
   useLogicFunctionUpdateFormState,
 } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
-import { getTriggerSettingsWithInputSchema } from '@/logic-functions/utils/getTriggerSettingsWithInputSchema';
-import {
-  shouldKeepUnsavedSourceHandlerCode,
-  type UnsavedSourceHandlerCode,
-} from '@/logic-functions/utils/shouldKeepUnsavedSourceHandlerCode';
 import {
   getInputSchemaFromSourceCode,
+  jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
 import { useApolloClient } from '@apollo/client/react';
@@ -22,6 +18,12 @@ import {
   type GetLogicFunctionSourceCodeQuery,
   type GetLogicFunctionSourceCodeQueryVariables,
 } from '~/generated-metadata/graphql';
+
+type UnsavedSourceHandlerCode = {
+  sourceHandlerCode: string;
+  // Undefined while the target is being resolved
+  targetLogicFunctionId?: string;
+};
 
 export const useLogicFunctionForm = ({
   logicFunctionId,
@@ -39,10 +41,10 @@ export const useLogicFunctionForm = ({
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({
       logicFunctionId,
-      shouldKeepSourceHandlerCode: shouldKeepUnsavedSourceHandlerCode({
-        unsavedSourceHandlerCode,
-        logicFunctionId,
-      }),
+      shouldKeepSourceHandlerCode:
+        isDefined(unsavedSourceHandlerCode) &&
+        (!isDefined(unsavedSourceHandlerCode.targetLogicFunctionId) ||
+          unsavedSourceHandlerCode.targetLogicFunctionId === logicFunctionId),
     });
 
   const handleSave = useDebouncedCallback(
@@ -117,11 +119,22 @@ export const useLogicFunctionForm = ({
 
       const inferredJsonSchema = await getInputSchemaFromSourceCode(value);
 
-      const triggerSettings = getTriggerSettingsWithInputSchema({
-        toolTriggerSettings: formValues.toolTriggerSettings,
-        workflowActionTriggerSettings: formValues.workflowActionTriggerSettings,
-        inputJsonSchema: inferredJsonSchema,
-      });
+      const triggerSettings = {
+        toolTriggerSettings: isDefined(formValues.toolTriggerSettings)
+          ? {
+              ...formValues.toolTriggerSettings,
+              inputSchema: inferredJsonSchema,
+            }
+          : null,
+        workflowActionTriggerSettings: isDefined(
+          formValues.workflowActionTriggerSettings,
+        )
+          ? {
+              ...formValues.workflowActionTriggerSettings,
+              inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
+            }
+          : null,
+      };
 
       setFormValues((prevState: LogicFunctionFormValues) => ({
         ...prevState,
