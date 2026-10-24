@@ -194,30 +194,20 @@ export class ApolloFactory implements ApolloManager {
           });
       };
 
-      // Sent with the cookie of a session a sign-in has since replaced, so resend it with the new one
+      // Resent outside errorLink so a second rejection still goes through its sign-out
       const replacedSessionRetryLink = new ErrorLink(
         ({ error, operation, forward }) => {
-          const requestSessionGeneration =
-            operation.getContext().sessionGeneration;
-          const currentSessionGeneration = getSessionGeneration();
-
-          const isRejectedForReplacedSession =
-            isDefined(requestSessionGeneration) &&
-            isDefined(currentSessionGeneration) &&
-            requestSessionGeneration !== currentSessionGeneration &&
-            ((CombinedGraphQLErrors.is(error) &&
-              error.errors.some(isUnauthenticatedGraphQLError)) ||
-              (ServerError.is(error) &&
-                this.isRestOperation(operation) &&
-                this.isAuthenticationError(error)));
-
-          if (isRejectedForReplacedSession) {
+          if (this.isRejectedForReplacedSession({ error, operation })) {
             return forward(operation);
           }
         },
       );
 
       const errorLink = new ErrorLink(({ error, operation }) => {
+        if (this.isRejectedForReplacedSession({ error, operation })) {
+          return;
+        }
+
         const requestSessionGeneration =
           operation.getContext().sessionGeneration;
         // Missing context must keep sign-out behavior if the link chain changes.
@@ -338,6 +328,36 @@ export class ApolloFactory implements ApolloManager {
 
   private isAuthenticationError(error: ErrorLike): boolean {
     return ServerError.is(error) && error.statusCode === 401;
+  }
+
+  // Sent with the cookie of a session a sign-in has since replaced, so it can be resent with the new one
+  private isRejectedForReplacedSession({
+    error,
+    operation,
+  }: {
+    error: ErrorLike;
+    operation: ApolloLink.Operation;
+  }): boolean {
+    const { sessionGeneration: requestSessionGeneration, skipRetry } =
+      operation.getContext();
+    const currentSessionGeneration = getSessionGeneration();
+
+    // A resend carries the new cookie. See PendingServerSignOutEffect.
+    if (skipRetry === true) {
+      return false;
+    }
+
+    const isUnauthenticatedRejection =
+      (CombinedGraphQLErrors.is(error) &&
+        error.errors.some(isUnauthenticatedGraphQLError)) ||
+      (this.isRestOperation(operation) && this.isAuthenticationError(error));
+
+    return (
+      isDefined(requestSessionGeneration) &&
+      isDefined(currentSessionGeneration) &&
+      requestSessionGeneration !== currentSessionGeneration &&
+      isUnauthenticatedRejection
+    );
   }
 
   private isPayloadTooLargeError(error: ErrorLike): boolean {

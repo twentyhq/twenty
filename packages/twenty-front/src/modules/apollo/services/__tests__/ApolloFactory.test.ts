@@ -318,9 +318,11 @@ describe('ApolloFactory', () => {
   const makeRequestRejectedAfterSessionChange = async ({
     changeSession,
     retriedResponse,
+    context,
   }: {
     changeSession: () => void;
     retriedResponse: string;
+    context?: Record<string, unknown>;
   }) => {
     let markRequestStarted!: () => void;
     const requestStarted = new Promise<void>((resolve) => {
@@ -340,7 +342,7 @@ describe('ApolloFactory', () => {
 
     rotateSessionGeneration();
     const requestSessionGeneration = getSessionGeneration();
-    const request = makeRequest();
+    const request = makeRequestWithContext(context);
 
     expect(requestSessionGeneration).not.toBeNull();
 
@@ -376,6 +378,19 @@ describe('ApolloFactory', () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not resend a request that must not be retried', async () => {
+    await expect(
+      makeRequestRejectedAfterSessionChange({
+        changeSession: rotateSessionGeneration,
+        retriedResponse: UNAUTHENTICATED_RESPONSE,
+        context: { skipRetry: true },
+      }),
+    ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
   });
 
   it('should not resend a request rejected after sign out', async () => {
