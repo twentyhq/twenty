@@ -220,7 +220,7 @@ export const PhonesFieldInput = () => {
 
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-  const commitInput = () => {
+  const saveInputValue = () => {
     const sanitizedInput = validateInputValue();
 
     if (!isDefined(sanitizedInput)) {
@@ -241,7 +241,7 @@ export const PhonesFieldInput = () => {
   };
 
   const handleInputEnter = () => {
-    const updatedPhones = commitInput();
+    const updatedPhones = saveInputValue();
 
     if (!isDefined(updatedPhones)) {
       return;
@@ -258,7 +258,7 @@ export const PhonesFieldInput = () => {
 
   const handleAddClick = () => {
     if (isEditingItemInPlace) {
-      const updatedPhones = commitInput();
+      const updatedPhones = saveInputValue();
 
       if (!isDefined(updatedPhones)) {
         return;
@@ -279,7 +279,7 @@ export const PhonesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedPhones = isInputOpen ? commitInput() : phones;
+      const updatedPhones = isInputOpen ? saveInputValue() : phones;
 
       if (!isDefined(updatedPhones)) {
         return;

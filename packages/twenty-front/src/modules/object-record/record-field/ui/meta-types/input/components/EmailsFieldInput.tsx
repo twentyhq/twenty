@@ -126,7 +126,7 @@ export const EmailsFieldInput = () => {
 
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-  const commitInput = () => {
+  const saveInputValue = () => {
     const sanitizedInput = validateInputValue();
 
     if (!isDefined(sanitizedInput)) {
@@ -146,7 +146,7 @@ export const EmailsFieldInput = () => {
   };
 
   const handleInputEnter = () => {
-    const updatedEmails = commitInput();
+    const updatedEmails = saveInputValue();
 
     if (!isDefined(updatedEmails)) {
       return;
@@ -163,7 +163,7 @@ export const EmailsFieldInput = () => {
 
   const handleAddClick = () => {
     if (isEditingItemInPlace) {
-      const updatedEmails = commitInput();
+      const updatedEmails = saveInputValue();
 
       if (!isDefined(updatedEmails)) {
         return;
@@ -184,7 +184,7 @@ export const EmailsFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedEmails = isInputOpen ? commitInput() : emails;
+      const updatedEmails = isInputOpen ? saveInputValue() : emails;
 
       if (!isDefined(updatedEmails)) {
         return;

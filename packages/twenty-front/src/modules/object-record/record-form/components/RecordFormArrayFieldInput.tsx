@@ -7,7 +7,7 @@ import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-ty
 import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getRecordFormItemIndexAfterCommit } from '@/object-record/record-form/utils/getRecordFormItemIndexAfterCommit';
+import { getRecordFormItemIndexAfterSave } from '@/object-record/record-form/utils/getRecordFormItemIndexAfterSave';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { useLingui } from '@lingui/react/macro';
@@ -96,7 +96,7 @@ export const RecordFormArrayFieldInput = ({
     onChange(getItemsWithInput(value.trim()));
   };
 
-  const commitInput = () => {
+  const saveInputValue = () => {
     const sanitizedInput = validateInputValue();
 
     if (!isDefined(sanitizedInput)) {
@@ -111,7 +111,7 @@ export const RecordFormArrayFieldInput = ({
   };
 
   const handleEnter = () => {
-    const updatedItems = commitInput();
+    const updatedItems = saveInputValue();
 
     if (!isDefined(updatedItems) || isSingleItemMode) {
       return;
@@ -127,18 +127,18 @@ export const RecordFormArrayFieldInput = ({
     openNextInput(savedItems);
   };
 
-  const commitInputBeforeRowAction = (itemIndex: number) => {
-    const committedItems = commitInput();
+  const saveInputValueBeforeRowAction = (itemIndex: number) => {
+    const updatedItems = saveInputValue();
 
-    if (!isDefined(committedItems)) {
+    if (!isDefined(updatedItems)) {
       return null;
     }
 
-    const hasRemovedEditedItem = committedItems.length < savedItems.length;
+    const hasRemovedEditedItem = updatedItems.length < savedItems.length;
 
     return {
-      committedItems,
-      committedItemIndex: getRecordFormItemIndexAfterCommit({
+      updatedItems,
+      itemIndexAfterSave: getRecordFormItemIndexAfterSave({
         itemIndex,
         removedItemIndex: hasRemovedEditedItem ? editedItemIndex : null,
       }),
@@ -146,34 +146,34 @@ export const RecordFormArrayFieldInput = ({
   };
 
   const handleEdit = (index: number) => {
-    const committed = commitInputBeforeRowAction(index);
+    const saveResult = saveInputValueBeforeRowAction(index);
 
-    if (!isDefined(committed)) {
+    if (!isDefined(saveResult)) {
       return;
     }
 
     setShouldFocusInput(true);
-    if (isDefined(committed.committedItemIndex)) {
+    if (isDefined(saveResult.itemIndexAfterSave)) {
       startEditingItem({
-        itemIndex: committed.committedItemIndex,
-        currentItems: committed.committedItems,
+        itemIndex: saveResult.itemIndexAfterSave,
+        currentItems: saveResult.updatedItems,
       });
       return;
     }
 
-    openNextInput(committed.committedItems);
+    openNextInput(saveResult.updatedItems);
   };
 
   const handleDelete = (index: number) => {
-    const committed = commitInputBeforeRowAction(index);
+    const saveResult = saveInputValueBeforeRowAction(index);
 
-    if (!isDefined(committed)) {
+    if (!isDefined(saveResult)) {
       return;
     }
 
-    const updatedItems = isDefined(committed.committedItemIndex)
-      ? toSpliced(committed.committedItems, committed.committedItemIndex, 1)
-      : committed.committedItems;
+    const updatedItems = isDefined(saveResult.itemIndexAfterSave)
+      ? toSpliced(saveResult.updatedItems, saveResult.itemIndexAfterSave, 1)
+      : saveResult.updatedItems;
 
     saveItems(updatedItems);
     openNextInput(updatedItems);

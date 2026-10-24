@@ -97,7 +97,7 @@ export const ArrayFieldInput = () => {
 
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-  const commitInput = () => {
+  const saveInputValue = () => {
     const sanitizedInput = validateInputValue();
 
     if (!isDefined(sanitizedInput)) {
@@ -117,7 +117,7 @@ export const ArrayFieldInput = () => {
   };
 
   const handleInputEnter = () => {
-    const updatedItems = commitInput();
+    const updatedItems = saveInputValue();
 
     if (!isDefined(updatedItems)) {
       return;
@@ -134,7 +134,7 @@ export const ArrayFieldInput = () => {
 
   const handleAddClick = () => {
     if (isEditingItemInPlace) {
-      const updatedItems = commitInput();
+      const updatedItems = saveInputValue();
 
       if (!isDefined(updatedItems)) {
         return;
@@ -155,7 +155,7 @@ export const ArrayFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = isInputOpen ? commitInput() : arrayItems;
+      const updatedItems = isInputOpen ? saveInputValue() : arrayItems;
 
       if (!isDefined(updatedItems)) {
         return;

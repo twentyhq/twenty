@@ -7,7 +7,7 @@ import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-ty
 import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
-import { getRecordFormItemIndexAfterCommit } from '@/object-record/record-form/utils/getRecordFormItemIndexAfterCommit';
+import { getRecordFormItemIndexAfterSave } from '@/object-record/record-form/utils/getRecordFormItemIndexAfterSave';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -147,7 +147,7 @@ export const RecordFormEmailsFieldInput = ({
     );
   };
 
-  const commitInput = () => {
+  const saveInputValue = () => {
     const sanitizedInput = validateInputValue();
 
     if (!isDefined(sanitizedInput)) {
@@ -162,7 +162,7 @@ export const RecordFormEmailsFieldInput = ({
   };
 
   const handleEnter = () => {
-    const updatedEmails = commitInput();
+    const updatedEmails = saveInputValue();
 
     if (!isDefined(updatedEmails) || isSingleItemMode) {
       return;
@@ -178,18 +178,18 @@ export const RecordFormEmailsFieldInput = ({
     openNextInput(savedEmails);
   };
 
-  const commitInputBeforeRowAction = (itemIndex: number) => {
-    const committedEmails = commitInput();
+  const saveInputValueBeforeRowAction = (itemIndex: number) => {
+    const updatedEmails = saveInputValue();
 
-    if (!isDefined(committedEmails)) {
+    if (!isDefined(updatedEmails)) {
       return null;
     }
 
-    const hasRemovedEditedItem = committedEmails.length < savedEmails.length;
+    const hasRemovedEditedItem = updatedEmails.length < savedEmails.length;
 
     return {
-      committedEmails,
-      committedItemIndex: getRecordFormItemIndexAfterCommit({
+      updatedEmails,
+      itemIndexAfterSave: getRecordFormItemIndexAfterSave({
         itemIndex,
         removedItemIndex: hasRemovedEditedItem ? editedItemIndex : null,
       }),
@@ -197,22 +197,22 @@ export const RecordFormEmailsFieldInput = ({
   };
 
   const handleEdit = (index: number) => {
-    const committed = commitInputBeforeRowAction(index);
+    const saveResult = saveInputValueBeforeRowAction(index);
 
-    if (!isDefined(committed)) {
+    if (!isDefined(saveResult)) {
       return;
     }
 
     setShouldFocusInput(true);
-    if (isDefined(committed.committedItemIndex)) {
+    if (isDefined(saveResult.itemIndexAfterSave)) {
       startEditingItem({
-        itemIndex: committed.committedItemIndex,
-        currentItems: committed.committedEmails,
+        itemIndex: saveResult.itemIndexAfterSave,
+        currentItems: saveResult.updatedEmails,
       });
       return;
     }
 
-    openNextInput(committed.committedEmails);
+    openNextInput(saveResult.updatedEmails);
   };
 
   const updateEmails = ({
@@ -225,18 +225,18 @@ export const RecordFormEmailsFieldInput = ({
       itemIndex: number;
     }) => string[];
   }) => {
-    const committed = commitInputBeforeRowAction(itemIndex);
+    const saveResult = saveInputValueBeforeRowAction(itemIndex);
 
-    if (!isDefined(committed)) {
+    if (!isDefined(saveResult)) {
       return;
     }
 
-    const updatedEmails = isDefined(committed.committedItemIndex)
+    const updatedEmails = isDefined(saveResult.itemIndexAfterSave)
       ? getUpdatedEmails({
-          emails: committed.committedEmails,
-          itemIndex: committed.committedItemIndex,
+          emails: saveResult.updatedEmails,
+          itemIndex: saveResult.itemIndexAfterSave,
         })
-      : committed.committedEmails;
+      : saveResult.updatedEmails;
 
     saveEmails(updatedEmails);
     openNextInput(updatedEmails);

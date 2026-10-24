@@ -100,7 +100,7 @@ export const FilesFieldInput = () => {
       return;
     }
 
-    const currentFiles = commitEditedItemInPlace();
+    const currentFiles = saveEditedItemInPlace();
 
     if (!isDefined(currentFiles)) {
       return;
@@ -194,7 +194,7 @@ export const FilesFieldInput = () => {
 
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-  const commitInput = () => {
+  const saveInputValue = () => {
     const sanitizedInput = validateInputValue();
 
     if (!isDefined(sanitizedInput)) {
@@ -214,12 +214,12 @@ export const FilesFieldInput = () => {
     return updatedFiles;
   };
 
-  const commitEditedItemInPlace = () => {
+  const saveEditedItemInPlace = () => {
     if (!isEditingItemInPlace) {
       return files;
     }
 
-    const updatedFiles = commitInput();
+    const updatedFiles = saveInputValue();
 
     if (isDefined(updatedFiles)) {
       handleSubmit(updatedFiles);
@@ -229,7 +229,7 @@ export const FilesFieldInput = () => {
   };
 
   const handleInputEnter = () => {
-    const updatedFiles = commitInput();
+    const updatedFiles = saveInputValue();
 
     if (!isDefined(updatedFiles)) {
       return;
@@ -252,7 +252,7 @@ export const FilesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedFiles = isInputOpen ? commitInput() : files;
+      const updatedFiles = isInputOpen ? saveInputValue() : files;
 
       if (!isDefined(updatedFiles)) {
         return;

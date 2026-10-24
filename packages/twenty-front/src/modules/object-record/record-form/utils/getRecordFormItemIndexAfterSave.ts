@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-export const getRecordFormItemIndexAfterCommit = ({
+export const getRecordFormItemIndexAfterSave = ({
   itemIndex,
   removedItemIndex,
 }: {

@@ -147,7 +147,7 @@ export const LinksFieldInput = () => {
   const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
   const shouldEditLabel = isEditingItemInPlace && !isDomainField;
 
-  const commitInput = () => {
+  const saveInputValue = () => {
     const sanitizedInput = validateInputValue();
 
     if (!isDefined(sanitizedInput)) {
@@ -173,7 +173,7 @@ export const LinksFieldInput = () => {
   };
 
   const handleInputEnter = () => {
-    const updatedLinks = commitInput();
+    const updatedLinks = saveInputValue();
 
     if (!isDefined(updatedLinks)) {
       return;
@@ -190,7 +190,7 @@ export const LinksFieldInput = () => {
 
   const handleAddClick = () => {
     if (isEditingItemInPlace) {
-      const updatedLinks = commitInput();
+      const updatedLinks = saveInputValue();
 
       if (!isDefined(updatedLinks)) {
         return;
@@ -211,7 +211,7 @@ export const LinksFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedLinks = isInputOpen ? commitInput() : links;
+      const updatedLinks = isInputOpen ? saveInputValue() : links;
 
       if (!isDefined(updatedLinks)) {
         return;
