@@ -41,9 +41,11 @@ export class ApplyTimelineActivitiesFieldPermissionsService
     await this.applyVisibilityRestrictions(args);
   }
 
-  public getRequiredFieldNames(
+  public getRequiredFieldNamesToSelect(
     args: Parameters<
-      NonNullable<RecordVisibilityRestrictionHandler['getRequiredFieldNames']>
+      NonNullable<
+        RecordVisibilityRestrictionHandler['getRequiredFieldNamesToSelect']
+      >
     >[0],
   ): string[] {
     return resolveTimelineActivityObjectColumnNames(args);

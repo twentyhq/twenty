@@ -147,7 +147,7 @@ export class CommonRecordVisibilityService {
       resolveRequiredFieldNames: (selectedFlatObjectMetadata) =>
         this.handlersByObjectNameSingular
           .get(selectedFlatObjectMetadata.nameSingular)
-          ?.getRequiredFieldNames?.({
+          ?.getRequiredFieldNamesToSelect?.({
             flatObjectMetadata: selectedFlatObjectMetadata,
             objectsPermissions,
             flatFieldMetadataMaps,
