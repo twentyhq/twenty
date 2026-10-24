@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
@@ -25,10 +25,6 @@ import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   LogicFunctionException,
@@ -78,10 +74,6 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 
 @Injectable()
 export class WorkflowVersionStepOperationsWorkspaceService {
-  private readonly logger = new Logger(
-    WorkflowVersionStepOperationsWorkspaceService.name,
-  );
-
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -1144,24 +1136,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           agentId,
           labelSuffix: v4().substring(0, 4),
           workspaceId,
-        }).catch((error: unknown) => {
-          if (
-            error instanceof AiException &&
-            error.code === AiExceptionCode.AGENT_NOT_FOUND
-          ) {
-            this.logger.warn(
-              `AI agent step ${step.id} in workspace ${workspaceId} references deleted agent ${agentId}, copying it unchanged`,
-            );
-
-            return undefined;
-          }
-
-          throw error;
         });
-
-        if (!isDefined(newAgent)) {
-          return step;
-        }
 
         const roleId = await this.aiAgentRoleService.findAgentRoleId({
           agentId,
