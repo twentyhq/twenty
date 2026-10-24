@@ -242,6 +242,7 @@ export const RecordFormEmailsFieldInput = ({
     openNextInput(updatedEmails);
   };
 
+  const isInputValueInvalid = hasError || isInvalidInputLeft;
   const shouldShowItems = !isSingleItemMode && isNonEmptyArray(savedEmails);
   const visibleEmails = shouldShowItems ? savedEmails : undefined;
   const shouldShowInputInFooter = isInputOpen && !isEditingItemInPlace;
@@ -268,7 +269,6 @@ export const RecordFormEmailsFieldInput = ({
         spacing={inputSpacing}
         placeholder={placeholder ?? t`Email`}
         value={inputValue}
-        hasError={hasError || isInvalidInputLeft}
         onBlur={() => setIsInvalidInputLeft(!isInputValueValid(inputValue))}
         onChange={handleTyping}
         onEnter={handleEnter}
@@ -281,6 +281,7 @@ export const RecordFormEmailsFieldInput = ({
     <FormFieldInputContainer>
       {isNonEmptyString(label) ? <Field.Label>{label}</Field.Label> : null}
       <RecordFormMultiItemList
+        hasError={isInputValueInvalid}
         footer={shouldShowInputInFooter ? itemInput : undefined}
       >
         {visibleEmails?.map((email, index) =>
@@ -325,7 +326,7 @@ export const RecordFormEmailsFieldInput = ({
           ),
         )}
       </RecordFormMultiItemList>
-      {hasError || isInvalidInputLeft ? (
+      {isInputValueInvalid ? (
         <Field.Error match role="alert">
           {t`Enter a valid email`}
         </Field.Error>
