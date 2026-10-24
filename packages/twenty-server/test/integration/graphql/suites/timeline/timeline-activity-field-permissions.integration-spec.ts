@@ -6,6 +6,7 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -168,6 +169,23 @@ describe('Timeline activity field permissions', () => {
     expect(JSON.stringify(timelineActivities)).not.toContain(
       RESTRICTED_JOB_TITLE,
     );
+  });
+
+  it('should omit fields the role cannot read from nested timeline activities', async () => {
+    const response = await makeGraphqlApiRequestWithMemberRole(
+      findOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id timelineActivities { edges { node { id properties } } }',
+        filter: { id: { eq: personId } },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const serializedPerson = JSON.stringify(response.body.data.person);
+
+    expect(serializedPerson).toContain(READABLE_FIRST_NAME);
+    expect(serializedPerson).not.toContain(RESTRICTED_JOB_TITLE);
   });
 
   it('should omit fields the role cannot read from the REST response', async () => {

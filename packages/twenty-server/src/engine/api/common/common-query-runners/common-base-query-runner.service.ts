@@ -289,6 +289,7 @@ export abstract class CommonBaseQueryRunnerService<
             flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
             objectsPermissions:
               extendedQueryRunnerContext.repository.objectRecordsPermissions,
+            flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
             flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
           }),
       },

@@ -9,6 +9,7 @@ import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
+import { addRequiredFieldsToSelect } from 'src/engine/api/common/common-record-visibility/utils/add-required-fields-to-select.util';
 import { cloneEventRecords } from 'src/engine/api/common/common-record-visibility/utils/clone-event-records.util';
 import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-visibility/utils/collect-records-by-object-name-singular.util';
 import { rebuildEventDiffFromRecords } from 'src/engine/api/common/common-record-visibility/utils/rebuild-event-diff-from-records.util';
@@ -128,33 +129,35 @@ export class CommonRecordVisibilityService {
     selectedFieldsResult,
     flatObjectMetadata,
     objectsPermissions,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }: {
     selectedFieldsResult: CommonSelectedFieldsResult;
     flatObjectMetadata: FlatObjectMetadata;
     objectsPermissions: ObjectsPermissions;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): CommonSelectedFieldsResult {
-    const requiredFieldNames = this.handlersByObjectNameSingular
-      .get(flatObjectMetadata.nameSingular)
-      ?.getRequiredFieldNames?.({
-        flatObjectMetadata,
-        objectsPermissions,
-        flatFieldMetadataMaps,
-      });
-
-    if (!isNonEmptyArray(requiredFieldNames)) {
+    if (this.handlersByObjectNameSingular.size === 0) {
       return selectedFieldsResult;
     }
 
     return {
       ...selectedFieldsResult,
-      select: {
-        ...selectedFieldsResult.select,
-        ...Object.fromEntries(
-          requiredFieldNames.map((fieldName) => [fieldName, true]),
-        ),
-      },
+      select: addRequiredFieldsToSelect({
+        select: selectedFieldsResult.select,
+        flatObjectMetadata,
+        resolveRequiredFieldNames: (selectedFlatObjectMetadata) =>
+          this.handlersByObjectNameSingular
+            .get(selectedFlatObjectMetadata.nameSingular)
+            ?.getRequiredFieldNames?.({
+              flatObjectMetadata: selectedFlatObjectMetadata,
+              objectsPermissions,
+              flatFieldMetadataMaps,
+            }) ?? [],
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
     };
   }
 }
