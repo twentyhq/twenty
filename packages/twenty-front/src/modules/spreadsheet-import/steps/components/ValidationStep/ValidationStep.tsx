@@ -1,3 +1,8 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { SpreadsheetImportSubmissionError } from '@/spreadsheet-import/errors/SpreadsheetImportSubmissionError';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useToast } from 'twenty-ui/components/feedback';
 import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
@@ -107,6 +112,10 @@ export const ValidationStep = ({
   onBack,
 }: ValidationStepProps) => {
   const hideStepBar = useHideStepBar();
+  const setSpreadsheetImportDialog = useSetAtomState(
+    spreadsheetImportDialogState,
+  );
+  const { enqueueToast } = useToast();
   const { enqueueDialog } = useDialogManager();
   const {
     spreadsheetImportFields: fields,
@@ -249,7 +258,49 @@ export const ValidationStep = ({
     });
     hideStepBar();
 
-    await onSubmit(calculatedData, file);
+    try {
+      await onSubmit(calculatedData, file);
+    } catch (error) {
+      const importedRowCount =
+        error instanceof SpreadsheetImportSubmissionError
+          ? error.importedRowCount
+          : 0;
+      const importedRowIndexes = new Set(
+        data
+          .filter(
+            (row) =>
+              !Object.values(row.__errors ?? {}).some(
+                (error) => error.level === 'error',
+              ),
+          )
+          .slice(0, importedRowCount)
+          .map((row) => row.__index),
+      );
+
+      const remainingData = data.filter(
+        (row) => !importedRowIndexes.has(row.__index),
+      );
+      updateData(remainingData);
+      setSelectedRows(new Set());
+      setCurrentStepState({
+        type: SpreadsheetImportStepType.validateData,
+        data: remainingData,
+        importedColumns,
+      });
+      setSpreadsheetImportDialog((state) => ({
+        ...state,
+        isStepBarVisible: true,
+      }));
+      enqueueToast(
+        getToastOptionsFromError({
+          error:
+            error instanceof SpreadsheetImportSubmissionError
+              ? error.cause
+              : error,
+        }),
+      );
+      return;
+    }
     onClose();
   };
   const onContinue = () => {
