@@ -13,7 +13,7 @@ const keepFieldNames = ({
           fieldNames.has(fieldName),
         ),
       )
-    : value;
+    : undefined;
 
 export const keepReadableFieldsInTimelineActivityProperties = ({
   properties,
@@ -23,7 +23,7 @@ export const keepReadableFieldsInTimelineActivityProperties = ({
   readableFieldNames: Set<string>;
 }): unknown => {
   if (!isPlainObject(properties)) {
-    return properties;
+    return null;
   }
 
   return {

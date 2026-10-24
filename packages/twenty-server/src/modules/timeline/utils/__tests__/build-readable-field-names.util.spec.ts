@@ -92,4 +92,17 @@ describe('buildReadableFieldNames', () => {
       }).has('city'),
     ).toBe(true);
   });
+
+  it('should not add a join column name for a non-relation field', () => {
+    expect(
+      buildReadableFieldNames({
+        flatObjectMetadata: PERSON_OBJECT,
+        isLinkedActivity: false,
+        objectsPermissions: {
+          [PERSON_OBJECT.id]: buildObjectPermissions({}),
+        },
+        flatFieldMetadataMaps,
+      }).has('cityId'),
+    ).toBe(false);
+  });
 });

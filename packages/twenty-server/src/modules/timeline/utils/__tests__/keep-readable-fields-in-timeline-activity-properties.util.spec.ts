@@ -43,4 +43,13 @@ describe('keepReadableFieldsInTimelineActivityProperties', () => {
       }),
     ).toBeNull();
   });
+
+  it('should drop a diff that is not an object', () => {
+    expect(
+      keepReadableFieldsInTimelineActivityProperties({
+        properties: { diff: [{ jobTitle: 'Manager' }] },
+        readableFieldNames: READABLE_FIELD_NAMES,
+      }),
+    ).toEqual({ diff: undefined });
+  });
 });
