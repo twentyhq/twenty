@@ -30,19 +30,26 @@ export const keepReadableFieldsInTimelineActivities = ({
       flatObjectMetadataMaps,
     });
 
+    if (!isDefined(flatObjectMetadata)) {
+      timelineActivity.properties =
+        keepReadableFieldsInTimelineActivityProperties({
+          properties: timelineActivity.properties,
+          readableFieldNames: new Set(),
+        });
+      continue;
+    }
+
     timelineActivity.properties =
       keepReadableFieldsInTimelineActivityProperties({
         properties: timelineActivity.properties,
-        readableFieldNames: isDefined(flatObjectMetadata)
-          ? buildReadableFieldNames({
-              flatObjectMetadata,
-              isLinkedActivity: isNonEmptyString(
-                timelineActivity.linkedObjectMetadataId,
-              ),
-              objectsPermissions,
-              flatFieldMetadataMaps,
-            })
-          : new Set(),
+        readableFieldNames: buildReadableFieldNames({
+          flatObjectMetadata,
+          isLinkedActivity: isNonEmptyString(
+            timelineActivity.linkedObjectMetadataId,
+          ),
+          objectsPermissions,
+          flatFieldMetadataMaps,
+        }),
       });
   }
 };
