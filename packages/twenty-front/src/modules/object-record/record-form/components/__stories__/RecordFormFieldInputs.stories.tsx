@@ -75,6 +75,7 @@ const RecordFormFieldInputsWithDraft = ({
     <RecordFormFieldInputs
       objectMetadataItem={companyObjectMetadataItem}
       fieldMetadataItems={fieldMetadataItems}
+      formInstanceId="record-form-story"
       draftRecord={draftRecord}
       onFieldValueChange={(gqlFieldName, value) =>
         writeDraft({ gqlFieldName, value })

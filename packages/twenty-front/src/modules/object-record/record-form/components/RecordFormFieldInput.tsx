@@ -1,6 +1,7 @@
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormEmailsFieldInput } from '@/object-record/record-field/ui/form-types/components/FormEmailsFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FormFieldInputSubFieldPlaceholders } from '@/object-record/record-field/ui/form-types/types/FormFieldInputSubFieldPlaceholders';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -21,6 +22,7 @@ import { RecordFormCurrencyFieldInput } from '@/object-record/record-form/compon
 import { RecordFormPercentageFieldInput } from '@/object-record/record-form/components/RecordFormPercentageFieldInput';
 import { RecordFormPhoneFieldInput } from '@/object-record/record-form/components/RecordFormPhoneFieldInput';
 import { getRecordFormCurrencyFieldDefaultValue } from '@/object-record/record-form/utils/getRecordFormCurrencyFieldDefaultValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type JsonValue } from 'type-fest';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -47,6 +49,10 @@ export const RecordFormFieldInput = ({
   placeholder,
   subFieldPlaceholders,
 }: RecordFormFieldInputProps) => {
+  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
+    recordFieldInputIsFieldInErrorComponentState,
+  );
+
   if (isFieldLinks(field)) {
     return (
       <FormLinksFieldInput
@@ -147,6 +153,9 @@ export const RecordFormFieldInput = ({
       defaultValue={defaultValue}
       onChange={onChange}
       onClear={onClear}
+      onError={(error) =>
+        setRecordFieldInputIsFieldInError(isNonEmptyString(error))
+      }
       readonly={readonly}
       placeholder={placeholder}
       subFieldPlaceholders={subFieldPlaceholders}
