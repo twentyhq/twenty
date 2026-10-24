@@ -113,7 +113,7 @@ export const AddressInput = ({
     isFieldInputInSubFieldsAddress,
   );
   const [isExpanded, setIsExpanded] = useState(() =>
-    hasAddressDetailValue(value),
+    hasAddressDetailValue({ address: value, subFields }),
   );
   const shouldShowDetails = hasDetails && (!hasStreet1 || isExpanded);
 
@@ -198,7 +198,7 @@ export const AddressInput = ({
 
       setInternalValue(updatedAddress);
 
-      if (hasAddressDetailValue(updatedAddress)) {
+      if (hasAddressDetailValue({ address: updatedAddress, subFields })) {
         setIsExpanded(true);
       }
     },
@@ -210,6 +210,7 @@ export const AddressInput = ({
       internalValueAtom,
       setInternalValue,
       store,
+      subFields,
     ],
   );
 

@@ -64,7 +64,7 @@ export const RecordFormAddressFieldInput = ({
   const hasDetails = ADDRESS_DETAIL_SUB_FIELDS.some(hasSubField);
 
   const [isExpanded, setIsExpanded] = useState(() =>
-    hasAddressDetailValue(address),
+    hasAddressDetailValue({ address, subFields }),
   );
 
   const shouldShowDetails = hasDetails && (!hasStreet1 || isExpanded);
