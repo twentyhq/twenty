@@ -1,4 +1,3 @@
-import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import {
   type LogicFunctionFormValues,
   useLogicFunctionUpdateFormState,
@@ -9,15 +8,10 @@ import {
   jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
-import { useApolloClient } from '@apollo/client/react';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
-import {
-  type GetLogicFunctionSourceCodeQuery,
-  type GetLogicFunctionSourceCodeQueryVariables,
-} from '~/generated-metadata/graphql';
 
 type UnsavedSourceHandlerCode = {
   sourceHandlerCode: string;
@@ -31,7 +25,6 @@ export const useLogicFunctionForm = ({
   logicFunctionId: string;
   getTargetLogicFunctionId?: () => Promise<string>;
 }) => {
-  const apolloClient = useApolloClient();
   const { updateLogicFunction } = usePersistLogicFunction();
 
   const [unsavedSourceHandlerCode, setUnsavedSourceHandlerCode] =
@@ -61,15 +54,6 @@ export const useLogicFunctionForm = ({
       if (result.status !== 'successful') {
         return;
       }
-
-      apolloClient.cache.writeQuery<
-        GetLogicFunctionSourceCodeQuery,
-        GetLogicFunctionSourceCodeQueryVariables
-      >({
-        query: GET_LOGIC_FUNCTION_SOURCE_CODE,
-        variables: { input: { id: targetLogicFunctionId } },
-        data: { getLogicFunctionSourceCode: update.sourceHandlerCode },
-      });
 
       setUnsavedSourceHandlerCode((currentUnsavedSourceHandlerCode) =>
         currentUnsavedSourceHandlerCode?.sourceHandlerCode ===
