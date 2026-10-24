@@ -3,13 +3,15 @@ import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks
 import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
 import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
+import { MultiItemFieldList } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldList';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
-import { MultiItemFieldSearchHeader } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSearchHeader';
 import { PhonesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/PhonesFieldMenuItem';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
-import { useMultiItemDraft } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemDraft';
 import { useMultiItemFieldDismiss } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemFieldDismiss';
+import { useMultiItemInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemInput';
 import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemSearch';
+import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
+import { getInitialMultiItemInputTarget } from '@/object-record/record-field/ui/meta-types/input/utils/getInitialMultiItemInputTarget';
 import { getMultiItemInputKeyDownHandler } from '@/object-record/record-field/ui/meta-types/input/utils/getMultiItemInputKeyDownHandler';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
@@ -20,8 +22,6 @@ import {
 import { phoneSchema } from '@/object-record/record-field/ui/validation-schemas/phoneSchema';
 import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
-import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
-import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -170,6 +170,10 @@ export const PhonesFieldInput = () => {
   };
 
   const handleSubmit = (updatedPhones: PhoneRecord[]) => {
+    if (isDeeplyEqual(phones, updatedPhones)) {
+      return;
+    }
+
     onSubmit?.({
       newValue: parseArrayToPhonesValue(updatedPhones),
       skipClose: true,
@@ -180,30 +184,25 @@ export const PhonesFieldInput = () => {
     recordFieldInputIsFieldInErrorComponentState,
   );
 
+  const isSingleItemMode = maxNumberOfValues === 1;
+  const isLimitReached = phones.length >= maxNumberOfValues;
+
   const {
-    isInputDisplayed,
+    inputTarget,
     inputValue,
-    isAddingNewItem,
-    editedItemIndex,
-    isEditingItemInPlace,
     hasError,
-    isSingleItemMode,
-    isLimitReached,
+    openInput,
     handleInputChange,
-    startAdding,
-    startEditing,
-    closeInput,
-    resetInputForItems,
-    commitInput,
-  } = useMultiItemDraft({
+    validateInputValue,
+  } = useMultiItemInput({
     items: phones,
-    onItemsChange: handleChange,
-    onItemsSubmit: handleSubmit,
     getItemText: getPhoneText,
+    initialInputTarget: getInitialMultiItemInputTarget({
+      itemCount: phones.length,
+      isSingleItemMode,
+    }),
     validateInput: validatePhone,
-    formatInput: formatPhoneInput,
-    maxItemCount: maxNumberOfValues,
-    onError: (hasError) =>
+    onHasErrorChange: (hasError) =>
       setRecordFieldInputIsFieldInError(hasError && phones.length === 0),
   });
 
@@ -214,20 +213,61 @@ export const PhonesFieldInput = () => {
     filteredItemEntries,
   } = useMultiItemSearch({ items: phones, getItemText: getPhoneText });
 
-  const handleInputEnter = () => {
-    const updatedItems = commitInput();
+  const isInputDisplayed = inputTarget.type !== 'closed';
+  const editedItemIndex =
+    inputTarget.type === 'existing-item' ? inputTarget.itemIndex : null;
+  const isEditingItemInPlace = isDefined(editedItemIndex) && !isSingleItemMode;
 
-    if (!isDefined(updatedItems)) {
+  const closeInput = () => openInput({ type: 'closed' });
+
+  const commitInput = () => {
+    const sanitizedInput = validateInputValue();
+
+    if (!isDefined(sanitizedInput)) {
+      return null;
+    }
+
+    const updatedPhones = computeUpdatedMultiItemFieldItems({
+      sanitizedInput,
+      items: phones,
+      editingIndex: editedItemIndex,
+      singleItemMode: isSingleItemMode,
+      formatInput: formatPhoneInput,
+    });
+
+    handleChange(updatedPhones);
+
+    return updatedPhones;
+  };
+
+  const handleInputEnter = () => {
+    const updatedPhones = commitInput();
+
+    if (!isDefined(updatedPhones)) {
       return;
     }
 
     if (isSingleItemMode) {
-      onEnter?.({ newValue: parseArrayToPhonesValue(updatedItems) });
-    } else if (!isDeeplyEqual(phones, updatedItems)) {
-      handleSubmit(updatedItems);
+      onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+    } else {
+      handleSubmit(updatedPhones);
     }
 
     closeInput();
+  };
+
+  const handleAddClick = () => {
+    if (isEditingItemInPlace) {
+      const updatedPhones = commitInput();
+
+      if (!isDefined(updatedPhones)) {
+        return;
+      }
+
+      handleSubmit(updatedPhones);
+    }
+
+    openInput({ type: 'new-item' });
   };
 
   const handleEscape = () => {
@@ -238,14 +278,14 @@ export const PhonesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = isInputDisplayed ? commitInput() : phones;
+      const updatedPhones = isInputDisplayed ? commitInput() : phones;
 
-      if (!isDefined(updatedItems)) {
+      if (!isDefined(updatedPhones)) {
         return;
       }
 
       onClickOutside?.({
-        newValue: parseArrayToPhonesValue(updatedItems),
+        newValue: parseArrayToPhonesValue(updatedPhones),
         event,
       });
     },
@@ -270,26 +310,28 @@ export const PhonesFieldInput = () => {
 
     handleChange(updatedPhones);
     handleSubmit(updatedPhones);
-    resetInputForItems(updatedPhones);
+    openInput(
+      isNonEmptyArray(updatedPhones)
+        ? { type: 'closed' }
+        : { type: 'new-item' },
+    );
   };
 
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
     (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const visibleItemCount = visibleItemEntries?.length ?? 0;
   const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
-  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
   const isInputInRow = isNonEmptyArray(phones) && !isSingleItemMode;
 
   const itemInput = (
     <MultiItemFieldInputRow
       isInRow={isInputInRow}
-      isInFooter={shouldShowInputInFooter}
+      hasInset={shouldShowInputInFooter && shouldShowItems}
       rightComponent={
         isNonEmptyArray(phones) ? (
           <MultiItemFieldSaveButton
-            isAddingNewItem={isAddingNewItem}
+            isAddingNewItem={inputTarget.type === 'new-item'}
             onClick={handleInputEnter}
           />
         ) : undefined
@@ -322,38 +364,28 @@ export const PhonesFieldInput = () => {
   );
 
   return (
-    <OverlayMenuList
+    <MultiItemFieldList
       ref={containerRef}
-      header={
-        shouldShowSearch && !isInputDisplayed ? (
-          <MultiItemFieldSearchHeader
-            value={searchFilter}
-            onChange={setSearchFilter}
+      hasItems={shouldShowItems}
+      shouldShowSearch={shouldShowSearch && !isInputDisplayed}
+      searchFilter={searchFilter}
+      onSearchFilterChange={setSearchFilter}
+      footerInput={shouldShowInputInFooter ? itemInput : undefined}
+      addButton={
+        !shouldShowInputInFooter && !isLimitReached ? (
+          <MultiItemFieldAddButton
+            label={t`Add Phone`}
+            onClick={handleAddClick}
           />
         ) : undefined
       }
-      footer={
-        <>
-          {shouldShowItems &&
-            (shouldShowInputInFooter || shouldShowAddButton) && (
-              <OverlayMenuListSeparator />
-            )}
-          {shouldShowInputInFooter && itemInput}
-          {shouldShowAddButton && (
-            <MultiItemFieldAddButton
-              label={t`Add Phone`}
-              onClick={startAdding}
-            />
-          )}
-        </>
-      }
     >
-      {visibleItemEntries?.map(({ item: phone, index }, position) =>
-        isEditingItemInPlace && index === editedItemIndex ? (
+      {visibleItemEntries?.map(({ item: phone, index }, position, entries) =>
+        index === editedItemIndex && isEditingItemInPlace ? (
           <MultiItemFieldEditedItem
             key={index}
             hasSeparatorBefore={position > 0}
-            hasSeparatorAfter={position < visibleItemCount - 1}
+            hasSeparatorAfter={position < entries.length - 1}
           >
             {itemInput}
           </MultiItemFieldEditedItem>
@@ -364,12 +396,14 @@ export const PhonesFieldInput = () => {
             showPrimaryIcon={index === 0 && phones.length > 1}
             showSetAsPrimaryButton={index > 0}
             phone={phone}
-            onEdit={() => startEditing(index)}
+            onEdit={() =>
+              openInput({ type: 'existing-item', itemIndex: index })
+            }
             onSetAsPrimary={() => handleSetAsPrimary(index)}
             onDelete={() => handleDelete(index)}
           />
         ),
       )}
-    </OverlayMenuList>
+    </MultiItemFieldList>
   );
 };
