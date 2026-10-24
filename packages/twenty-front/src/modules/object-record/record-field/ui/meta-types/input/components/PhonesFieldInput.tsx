@@ -1,5 +1,6 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
+import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
 import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
@@ -39,7 +40,9 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 const StyledCustomPhoneInputContainer = styled.div<{
   hasItem: boolean;
   hasError?: boolean;
+  isInRow: boolean;
 }>`
+  align-self: ${({ isInRow }) => (isInRow ? 'stretch' : 'auto')};
   background-color: ${({ hasItem }) =>
     hasItem ? themeCssVariables.background.transparent.lighter : 'transparent'};
   border: ${({ hasItem, hasError }) =>
@@ -54,7 +57,7 @@ const StyledCustomPhoneInputContainer = styled.div<{
   min-width: 0;
 `;
 
-const StyledCustomPhoneInputWrapper = styled.div`
+const StyledCustomPhoneInputWrapper = styled.div<{ isInRow: boolean }>`
   background-color: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
@@ -74,7 +77,8 @@ const StyledCustomPhoneInputWrapper = styled.div`
     box-sizing: border-box;
     color: ${themeCssVariables.font.color.primary};
     height: 100%;
-    padding-left: ${themeCssVariables.spacing[2]};
+    padding-left: ${({ isInRow }) =>
+      isInRow ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
 
     &::placeholder,
     &::-webkit-input-placeholder {
@@ -176,9 +180,25 @@ export const PhonesFieldInput = () => {
     recordFieldInputIsFieldInErrorComponentState,
   );
 
-  const draft = useMultiItemDraft({
+  const {
+    isInputDisplayed,
+    inputValue,
+    isAddingNewItem,
+    editedItemIndex,
+    isEditingItemInPlace,
+    hasError,
+    isSingleItemMode,
+    isLimitReached,
+    handleInputChange,
+    startAdding,
+    startEditing,
+    closeInput,
+    resetInputForItems,
+    commitInput,
+  } = useMultiItemDraft({
     items: phones,
     onItemsChange: handleChange,
+    onItemsSubmit: handleSubmit,
     getItemText: getPhoneText,
     validateInput: validatePhone,
     formatInput: formatPhoneInput,
@@ -195,19 +215,19 @@ export const PhonesFieldInput = () => {
   } = useMultiItemSearch({ items: phones, getItemText: getPhoneText });
 
   const handleInputEnter = () => {
-    const updatedItems = draft.commitInput();
+    const updatedItems = commitInput();
 
     if (!isDefined(updatedItems)) {
       return;
     }
 
-    if (draft.isSingleItemMode) {
+    if (isSingleItemMode) {
       onEnter?.({ newValue: parseArrayToPhonesValue(updatedItems) });
     } else if (!isDeeplyEqual(phones, updatedItems)) {
       handleSubmit(updatedItems);
     }
 
-    draft.closeInput();
+    closeInput();
   };
 
   const handleEscape = () => {
@@ -218,9 +238,7 @@ export const PhonesFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = draft.isInputDisplayed
-        ? draft.commitInput()
-        : phones;
+      const updatedItems = isInputDisplayed ? commitInput() : phones;
 
       if (!isDefined(updatedItems)) {
         return;
@@ -239,6 +257,10 @@ export const PhonesFieldInput = () => {
       toIndex: 0,
     });
 
+    if (isEditingItemInPlace) {
+      closeInput();
+    }
+
     handleChange(updatedPhones);
     handleSubmit(updatedPhones);
   };
@@ -248,20 +270,62 @@ export const PhonesFieldInput = () => {
 
     handleChange(updatedPhones);
     handleSubmit(updatedPhones);
-    draft.resetInputForItems(updatedPhones);
+    resetInputForItems(updatedPhones);
   };
 
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
-    (!draft.isSingleItemMode || !draft.isInputDisplayed);
+    (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const shouldShowAddButton = !draft.isInputDisplayed && !draft.isLimitReached;
+  const visibleItemCount = visibleItemEntries?.length ?? 0;
+  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
+  const isInputInRow = isNonEmptyArray(phones) && !isSingleItemMode;
+
+  const itemInput = (
+    <MultiItemFieldInputRow
+      isInRow={isInputInRow}
+      isInFooter={shouldShowInputInFooter}
+      rightComponent={
+        isNonEmptyArray(phones) ? (
+          <MultiItemFieldSaveButton
+            isAddingNewItem={isAddingNewItem}
+            onClick={handleInputEnter}
+          />
+        ) : undefined
+      }
+    >
+      <StyledCustomPhoneInputContainer
+        hasItem={isNonEmptyArray(phones) && !isInputInRow}
+        hasError={hasError}
+        isInRow={isInputInRow}
+      >
+        <StyledCustomPhoneInputWrapper isInRow={isInputInRow}>
+          <ReactPhoneNumberInput
+            autoFocus
+            placeholder={t`Phone`}
+            value={inputValue as E164Number}
+            onChange={(value?: E164Number) => handleInputChange(value ?? '')}
+            onKeyDown={getMultiItemInputKeyDownHandler({
+              onEnter: handleInputEnter,
+              onEscape: handleEscape,
+              shouldPreventTabNavigation: true,
+            })}
+            international={true}
+            withCountryCallingCode={true}
+            countrySelectComponent={PhoneCountryPickerDropdownButton}
+            defaultCountry={defaultCountry}
+          />
+        </StyledCustomPhoneInputWrapper>
+      </StyledCustomPhoneInputContainer>
+    </MultiItemFieldInputRow>
+  );
 
   return (
     <OverlayMenuList
       ref={containerRef}
       header={
-        shouldShowSearch && !draft.isInputDisplayed ? (
+        shouldShowSearch && !isInputDisplayed ? (
           <MultiItemFieldSearchHeader
             value={searchFilter}
             onChange={setSearchFilter}
@@ -271,67 +335,41 @@ export const PhonesFieldInput = () => {
       footer={
         <>
           {shouldShowItems &&
-            (draft.isInputDisplayed || shouldShowAddButton) && (
+            (shouldShowInputInFooter || shouldShowAddButton) && (
               <OverlayMenuListSeparator />
             )}
-          {draft.isInputDisplayed && (
-            <MultiItemFieldInputRow
-              rightComponent={
-                isNonEmptyArray(phones) ? (
-                  <MultiItemFieldSaveButton
-                    isAddingNewItem={draft.isAddingNewItem}
-                    onClick={handleInputEnter}
-                  />
-                ) : undefined
-              }
-            >
-              <StyledCustomPhoneInputContainer
-                hasItem={isNonEmptyArray(phones)}
-                hasError={draft.hasError}
-              >
-                <StyledCustomPhoneInputWrapper>
-                  <ReactPhoneNumberInput
-                    autoFocus={!shouldShowSearch}
-                    placeholder={t`Phone`}
-                    value={draft.inputValue as E164Number}
-                    onChange={(value?: E164Number) =>
-                      draft.handleInputChange(value ?? '')
-                    }
-                    onKeyDown={getMultiItemInputKeyDownHandler({
-                      onEnter: handleInputEnter,
-                      onEscape: handleEscape,
-                      shouldPreventTabNavigation: true,
-                    })}
-                    international={true}
-                    withCountryCallingCode={true}
-                    countrySelectComponent={PhoneCountryPickerDropdownButton}
-                    defaultCountry={defaultCountry}
-                  />
-                </StyledCustomPhoneInputWrapper>
-              </StyledCustomPhoneInputContainer>
-            </MultiItemFieldInputRow>
-          )}
+          {shouldShowInputInFooter && itemInput}
           {shouldShowAddButton && (
             <MultiItemFieldAddButton
               label={t`Add Phone`}
-              onClick={draft.startAdding}
+              onClick={startAdding}
             />
           )}
         </>
       }
     >
-      {visibleItemEntries?.map(({ item: phone, index }) => (
-        <PhonesFieldMenuItem
-          key={index}
-          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-          showPrimaryIcon={index === 0 && phones.length > 1}
-          showSetAsPrimaryButton={index > 0}
-          phone={phone}
-          onEdit={() => draft.startEditing(index)}
-          onSetAsPrimary={() => handleSetAsPrimary(index)}
-          onDelete={() => handleDelete(index)}
-        />
-      ))}
+      {visibleItemEntries?.map(({ item: phone, index }, position) =>
+        isEditingItemInPlace && index === editedItemIndex ? (
+          <MultiItemFieldEditedItem
+            key={index}
+            hasSeparatorBefore={position > 0}
+            hasSeparatorAfter={position < visibleItemCount - 1}
+          >
+            {itemInput}
+          </MultiItemFieldEditedItem>
+        ) : (
+          <PhonesFieldMenuItem
+            key={index}
+            dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+            showPrimaryIcon={index === 0 && phones.length > 1}
+            showSetAsPrimaryButton={index > 0}
+            phone={phone}
+            onEdit={() => startEditing(index)}
+            onSetAsPrimary={() => handleSetAsPrimary(index)}
+            onDelete={() => handleDelete(index)}
+          />
+        ),
+      )}
     </OverlayMenuList>
   );
 };

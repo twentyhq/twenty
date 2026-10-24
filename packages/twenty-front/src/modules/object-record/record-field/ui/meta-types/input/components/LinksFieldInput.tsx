@@ -1,9 +1,13 @@
 import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/useLinksField';
+import { LinksFieldEditInputs } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditInputs';
+import { LinksFieldEditPreview } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditPreview';
 import { LinksFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldMenuItem';
 import { MultiItemFieldAddButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldAddButton';
+import { MultiItemFieldEditedItem } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldEditedItem';
 import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
+import { MultiItemFieldItemSeparator } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldItemSeparator';
 import { MultiItemFieldSaveButton } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton';
 import { MultiItemFieldSearchHeader } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSearchHeader';
 import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
@@ -11,7 +15,9 @@ import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/recor
 import { useMultiItemDraft } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemDraft';
 import { useMultiItemFieldDismiss } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemFieldDismiss';
 import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/input/hooks/useMultiItemSearch';
+import { type LinkRecord } from '@/object-record/record-field/ui/meta-types/input/types/LinkRecord';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
+import { getLinkLabelFromDraft } from '@/object-record/record-field/ui/meta-types/input/utils/getLinkLabelFromDraft';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { linksFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/linksFieldValueSchema';
@@ -19,7 +25,7 @@ import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList'
 import { OverlayMenuListSeparator } from '@/ui/layout/overlay/components/OverlayMenuListSeparator';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useRef } from 'react';
+import { useContext, useMemo, useRef, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import {
   absoluteUrlSchema,
@@ -32,17 +38,7 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type LinkRecord = {
-  url: string;
-  label: string | null;
-};
-
 const getLinkText = (link: LinkRecord) => link.url;
-
-const formatLinkInput = ({ input }: { input: string }): LinkRecord => ({
-  url: input,
-  label: null,
-});
 
 export const LinksFieldInput = () => {
   const { t } = useLingui();
@@ -88,6 +84,11 @@ export const LinksFieldInput = () => {
     });
   };
 
+  const [labelDraft, setLabelDraft] = useState('');
+
+  const getExistingLinkLabel = (itemIndex?: number) =>
+    isDefined(itemIndex) ? (links[itemIndex]?.label ?? null) : null;
+
   const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
@@ -109,12 +110,33 @@ export const LinksFieldInput = () => {
     errorMessage: '',
   });
 
-  const draft = useMultiItemDraft({
+  const {
+    isInputDisplayed,
+    inputValue,
+    isAddingNewItem,
+    editedItemIndex,
+    isEditingItemInPlace,
+    hasError,
+    isSingleItemMode,
+    isLimitReached,
+    handleInputChange,
+    startAdding,
+    startEditing,
+    closeInput,
+    resetInputForItems,
+    commitInput,
+  } = useMultiItemDraft({
     items: links,
     onItemsChange: handleChange,
+    onItemsSubmit: handleSubmit,
     getItemText: getLinkText,
     validateInput: validateLink,
-    formatInput: formatLinkInput,
+    formatInput: ({ input, itemIndex }): LinkRecord => ({
+      url: input,
+      label: shouldEditLabel
+        ? getLinkLabelFromDraft(labelDraft)
+        : getExistingLinkLabel(itemIndex),
+    }),
     maxItemCount: maxNumberOfValues,
     onError: (hasError) =>
       setRecordFieldInputIsFieldInError(hasError && links.length === 0),
@@ -128,19 +150,19 @@ export const LinksFieldInput = () => {
   } = useMultiItemSearch({ items: links, getItemText: getLinkText });
 
   const handleInputEnter = () => {
-    const updatedItems = draft.commitInput();
+    const updatedItems = commitInput();
 
     if (!isDefined(updatedItems)) {
       return;
     }
 
-    if (draft.isSingleItemMode) {
+    if (isSingleItemMode) {
       onEnter?.({ newValue: parseArrayToLinksValue(updatedItems) });
     } else if (!isDeeplyEqual(links, updatedItems)) {
       handleSubmit(updatedItems);
     }
 
-    draft.closeInput();
+    closeInput();
   };
 
   const handleEscape = () => {
@@ -151,7 +173,7 @@ export const LinksFieldInput = () => {
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedItems = draft.isInputDisplayed ? draft.commitInput() : links;
+      const updatedItems = isInputDisplayed ? commitInput() : links;
 
       if (!isDefined(updatedItems)) {
         return;
@@ -164,8 +186,17 @@ export const LinksFieldInput = () => {
     },
   });
 
+  const handleEdit = (index: number) => {
+    setLabelDraft(links[index]?.label ?? '');
+    startEditing(index);
+  };
+
   const handleSetAsPrimary = (index: number) => {
     const updatedLinks = moveArrayItem(links, { fromIndex: index, toIndex: 0 });
+
+    if (isEditingItemInPlace) {
+      closeInput();
+    }
 
     handleChange(updatedLinks);
     handleSubmit(updatedLinks);
@@ -176,22 +207,74 @@ export const LinksFieldInput = () => {
 
     handleChange(updatedLinks);
     handleSubmit(updatedLinks);
-    draft.resetInputForItems(updatedLinks);
+    resetInputForItems(updatedLinks);
   };
 
   const placeholder = isDomainField ? t`Domain` : t`URL`;
 
   const shouldShowItems =
     isNonEmptyArray(filteredItemEntries) &&
-    (!draft.isSingleItemMode || !draft.isInputDisplayed);
+    (!isSingleItemMode || !isInputDisplayed);
   const visibleItemEntries = shouldShowItems ? filteredItemEntries : undefined;
-  const shouldShowAddButton = !draft.isInputDisplayed && !draft.isLimitReached;
+  const visibleItemCount = visibleItemEntries?.length ?? 0;
+  const shouldShowInputInFooter = isInputDisplayed && !isEditingItemInPlace;
+  const shouldShowAddButton = !shouldShowInputInFooter && !isLimitReached;
+  const isInputInRow = isNonEmptyArray(links) && !isSingleItemMode;
+  const shouldEditLabel = isEditingItemInPlace && !isDomainField;
+
+  const saveButton = isNonEmptyArray(links) ? (
+    <MultiItemFieldSaveButton
+      isAddingNewItem={isAddingNewItem}
+      onClick={handleInputEnter}
+    />
+  ) : undefined;
+
+  const itemInput = (
+    <MultiItemFieldInputRow
+      isInRow={isInputInRow}
+      isInFooter={shouldShowInputInFooter}
+      rightComponent={saveButton}
+    >
+      <MultiItemFieldTextInput
+        autoFocus
+        isInRow={isInputInRow}
+        placeholder={placeholder}
+        value={inputValue}
+        hasError={hasError}
+        onChange={handleInputChange}
+        onEnter={handleInputEnter}
+        onEscape={handleEscape}
+        shouldPreventTabNavigation
+      />
+    </MultiItemFieldInputRow>
+  );
+
+  const editedLinkInputs = shouldEditLabel ? (
+    <>
+      <LinksFieldEditPreview
+        url={inputValue}
+        label={getLinkLabelFromDraft(labelDraft)}
+        saveButton={saveButton}
+      />
+      <MultiItemFieldItemSeparator />
+      <LinksFieldEditInputs
+        url={inputValue}
+        label={labelDraft}
+        hasError={hasError}
+        onUrlChange={handleInputChange}
+        onLabelChange={setLabelDraft}
+        onEnter={handleInputEnter}
+      />
+    </>
+  ) : (
+    itemInput
+  );
 
   return (
     <OverlayMenuList
       ref={containerRef}
       header={
-        shouldShowSearch && !draft.isInputDisplayed ? (
+        shouldShowSearch && !isInputDisplayed ? (
           <MultiItemFieldSearchHeader
             value={searchFilter}
             onChange={setSearchFilter}
@@ -201,54 +284,42 @@ export const LinksFieldInput = () => {
       footer={
         <>
           {shouldShowItems &&
-            (draft.isInputDisplayed || shouldShowAddButton) && (
+            (shouldShowInputInFooter || shouldShowAddButton) && (
               <OverlayMenuListSeparator />
             )}
-          {draft.isInputDisplayed && (
-            <MultiItemFieldInputRow
-              rightComponent={
-                isNonEmptyArray(links) ? (
-                  <MultiItemFieldSaveButton
-                    isAddingNewItem={draft.isAddingNewItem}
-                    onClick={handleInputEnter}
-                  />
-                ) : undefined
-              }
-            >
-              <MultiItemFieldTextInput
-                autoFocus={!shouldShowSearch}
-                placeholder={placeholder}
-                value={draft.inputValue}
-                hasError={draft.hasError}
-                onChange={draft.handleInputChange}
-                onEnter={handleInputEnter}
-                onEscape={handleEscape}
-                shouldPreventTabNavigation
-              />
-            </MultiItemFieldInputRow>
-          )}
+          {shouldShowInputInFooter && itemInput}
           {shouldShowAddButton && (
             <MultiItemFieldAddButton
               label={t`Add ${placeholder}`}
-              onClick={draft.startAdding}
+              onClick={startAdding}
             />
           )}
         </>
       }
     >
-      {visibleItemEntries?.map(({ item: link, index }) => (
-        <LinksFieldMenuItem
-          key={index}
-          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-          showPrimaryIcon={index === 0 && links.length > 1}
-          showSetAsPrimaryButton={index > 0}
-          label={link.label}
-          onEdit={() => draft.startEditing(index)}
-          onSetAsPrimary={() => handleSetAsPrimary(index)}
-          onDelete={() => handleDelete(index)}
-          url={link.url}
-        />
-      ))}
+      {visibleItemEntries?.map(({ item: link, index }, position) =>
+        isEditingItemInPlace && index === editedItemIndex ? (
+          <MultiItemFieldEditedItem
+            key={index}
+            hasSeparatorBefore={!shouldEditLabel && position > 0}
+            hasSeparatorAfter={position < visibleItemCount - 1}
+          >
+            {editedLinkInputs}
+          </MultiItemFieldEditedItem>
+        ) : (
+          <LinksFieldMenuItem
+            key={index}
+            dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+            showPrimaryIcon={index === 0 && links.length > 1}
+            showSetAsPrimaryButton={index > 0}
+            label={link.label}
+            onEdit={() => handleEdit(index)}
+            onSetAsPrimary={() => handleSetAsPrimary(index)}
+            onDelete={() => handleDelete(index)}
+            url={link.url}
+          />
+        ),
+      )}
     </OverlayMenuList>
   );
 };
