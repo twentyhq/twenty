@@ -3,8 +3,6 @@ title: Visão Geral
 description: Modele os dados que seu app adiciona a um workspace — objetos, campos e relações.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 A **camada de dados** de um app Twenty é o conjunto de dados que seu app *adiciona* a um workspace — os novos tipos de registros que ele declara, as colunas que adiciona a objetos existentes e como esses registros se conectam entre si.
 
 ```text
@@ -26,17 +24,17 @@ A **camada de dados** de um app Twenty é o conjunto de dados que seu app *adici
 
 ## Nesta seção
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="Objetos" icon="table" href="/pt/developers/extend/apps/data/objects" img="/images/documentation/illustrations/objects.svg">
+<CardGroup cols={2}>
+  <Card title="Objetos" icon="table" href="/pt/developers/extend/apps/data/objects">
     `defineObject` — declare novos tipos de registros com seus próprios campos.
   </Card>
-  <Card title="Estendendo objetos" icon="wand" href="/pt/developers/extend/apps/data/extending-objects" img="/images/documentation/illustrations/extending-objects.svg">
+  <Card title="Estendendo objetos" icon="wand" href="/pt/developers/extend/apps/data/extending-objects">
     `defineField` — adicione campos a objetos padrão ou de outros apps.
   </Card>
-  <Card title="Relações" icon="sitemap" href="/pt/developers/extend/apps/data/relations" img="/images/documentation/illustrations/relations.svg">
+  <Card title="Relações" icon="sitemap" href="/pt/developers/extend/apps/data/relations">
     Conexões bidirecionais `MANY_TO_ONE` / `ONE_TO_MANY` entre objetos.
   </Card>
-  <Card title="Tipos de atividade da cronologia" icon="history" href="/pt/developers/extend/apps/data/timeline-activity-types" img="/images/documentation/illustrations/timeline.svg">
+  <Card title="Tipos de atividade da cronologia" icon="history" href="/pt/developers/extend/apps/data/timeline-activity-types">
     Defina eventos de auditoria automáticos e eventos explícitos do app para linhas do tempo de registros.
   </Card>
 </CardGroup>
@@ -100,5 +98,3 @@ Ordene o array `fields` da forma como o Postgres deve usá-lo — coluna mais à
 <Note>
 Procurando por **Application Config** ou **Roles & Permissions**? Esses descrevem o próprio app em vez dos dados que ele adiciona — eles ficam em [Config](/pt/developers/extend/apps/config/overview). Procurando por **Connections** (Linear, GitHub, Slack OAuth)? Essas existem para serem chamadas *a partir de* funções de lógica e ficam em [Logic](/pt/developers/extend/apps/logic/connections).
 </Note>
-
-<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

@@ -3,8 +3,6 @@ title: Roluri și permisiuni
 description: Declarați ce obiecte și câmpuri pot citi și scrie funcțiile de logică și componentele front-end ale aplicației dvs.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Un **rol** este un set de permisiuni: ce obiecte poate citi sau scrie o aplicație, ce câmpuri poate vedea și ce capabilități la nivel de platformă poate folosi. Funcțiile de logică și componentele front-end ale fiecărei aplicații moștenesc permisiunile rolului marcat cu `defineApplicationRole()` (consultați [Rolul implicit pentru funcții](#the-default-function-role) mai jos).
 
 ```ts src/roles/restricted-company-role.ts
@@ -211,5 +209,3 @@ Notițe:
 * Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele și câmpurile de care au nevoie efectiv funcțiile dvs.
 * `permissionFlagUniversalIdentifiers` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
 * Vedeți un exemplu funcțional: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
-
-<PageBanner illustration="roles" pattern="developers-api" />

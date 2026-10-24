@@ -3,8 +3,6 @@ title: Přehled
 description: Server-side TypeScript, který běží uvnitř Twenty — spouštěný pomocí HTTP rout, plánů CRON, databázových událostí, nástrojů AI nebo akcí pracovního postupu.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 **Logická vrstva** aplikace Twenty je kód, který *běží* — server-side TypeScript handlery reagující na HTTP požadavky, plány CRON a změny záznamů; AI dovednosti a agenti, kteří fungují uvnitř pracovního prostoru; a připojení OAuth, která umožňují vašim funkcím jednat jménem uživatele ve službách třetích stran.
 
 ```text
@@ -25,20 +23,20 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## V této části
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="Logické funkce" icon="bolt" href="/cs/developers/extend/apps/logic/logic-functions" img="/images/documentation/illustrations/logic-functions.svg">
+<CardGroup cols={2}>
+  <Card title="Logické funkce" icon="bolt" href="/cs/developers/extend/apps/logic/logic-functions">
     Základní stavební blok — typy spouštěčů, payloady a typovaný klient API.
   </Card>
-  <Card title="Dovednosti a agenti" icon="robot" href="/cs/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/illustrations/skills-agents.svg">
+  <Card title="Dovednosti a agenti" icon="robot" href="/cs/developers/extend/apps/logic/skills-and-agents">
     Opakovaně použitelné pokyny pro agenty AI a asistenti s vlastními systémovými prompty.
   </Card>
-  <Card title="Připojení" icon="plug" href="/cs/developers/extend/apps/logic/connections" img="/images/documentation/illustrations/connections.svg">
+  <Card title="Připojení" icon="plug" href="/cs/developers/extend/apps/logic/connections">
     Přihlašovací údaje OAuth, které vaše aplikace uchovává pro služby třetích stran — Linear, GitHub, Slack a další.
   </Card>
-  <Card title="Úložiště typu klíč–hodnota" icon="database" href="/cs/developers/extend/apps/logic/key-value-store" img="/images/documentation/illustrations/key-value-store.svg">
+  <Card title="Úložiště typu klíč–hodnota" icon="database" href="/cs/developers/extend/apps/logic/key-value-store">
     Udržujte stav mezi spuštěními logických funkcí – cache, kurzory a nároky napříč pracovními prostory.
   </Card>
-  <Card title="Úlohy na pozadí" icon="stack-2" href="/cs/developers/extend/apps/logic/background-jobs" img="/images/documentation/illustrations/background-jobs.svg">
+  <Card title="Úlohy na pozadí" icon="stack-2" href="/cs/developers/extend/apps/logic/background-jobs">
     Zařaďte spuštění logické funkce do fronty pro pracovníky, abyste obešli časový limit na jedno spuštění.
   </Card>
 </CardGroup>
@@ -60,5 +58,3 @@ Funkce běží v izolovaných sandboxovaných procesech Node.js a přistupují k
 <Note>
 **Instalační hooky** — kód, který běží před nebo po instalaci — sdílejí toto běhové prostředí, ale používají vlastní funkce `define` a nacházejí se pod [Config → Install Hooks](/cs/developers/extend/apps/config/install-hooks).
 </Note>
-
-<PageBanner illustration="apps-logic" pattern="user-guide-workflows" />

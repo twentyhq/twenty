@@ -3,7 +3,6 @@ title: Webhooks
 description: CRM でイベントが発生したときにリアルタイム通知を受信します。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ウェブフックは、Twenty でイベントが発生したときに、ポーリング不要でリアルタイムにお使いのシステムへデータをプッシュします。 外部システムとの同期を保ち、オートメーションをトリガーしたり、アラートを送信したりするために使用できます。
@@ -111,5 +110,3 @@ const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 | **ワークフローのウェブフックトリガー**   | IN  | 外部システムから Twenty にデータを受信     |
 
 外部データの受信については、[Webhook トリガーを設定](/ja/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)を参照してください。
-
-<PageBanner illustration="webhooks" pattern="developers-api" />

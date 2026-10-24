@@ -3,8 +3,6 @@ title: Gezinme Menüsü Öğeleri
 description: Çalışma alanı kenar çubuğuna özel öğeler ekleyin — kaydedilmiş görünümlere veya harici URL’lere bağlantılar.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Bir **gezinme menüsü öğesi**, sol kenar çubuğundaki bir öğedir. Özel kenar çubuğu bağlantıları sunmak için `defineNavigationMenuItem()` kullanın — genellikle sunduğunuz her [görünüm](/tr/developers/extend/apps/layout/views) için bir tane — veya harici URL’lere işaret etmek için kullanın.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
@@ -45,5 +43,3 @@ export default defineNavigationMenuItem({
 <Note>
 **Yaygın hata:** gezinme menüsü öğesiyle ilişkilendirilmemiş bir nesne oluşturmak, o nesneyi kenar çubuğundan erişilemez hale getirir. Teknik/içsel bir nesne olmadığı sürece, her özel nesnenin ona işaret eden bir kenar çubuğu öğesi olmalıdır.
 </Note>
-
-<PageBanner illustration="navigation" pattern="developers-api" />

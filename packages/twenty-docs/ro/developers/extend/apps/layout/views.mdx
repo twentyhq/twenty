@@ -3,8 +3,6 @@ title: Vizualizări
 description: Livrați vizualizări salvate preconfigurate — ordinea coloanelor, filtre, grupuri — pentru obiectele din aplicația dvs.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 O **vizualizare** este o configurație salvată pentru modul în care sunt afișate înregistrările unui obiect: ce câmpuri apar, ordinea lor, dacă sunt vizibile și ce filtre sau grupuri sunt aplicate. Utilizați `defineView()` pentru a livra vizualizări preconfigurate împreună cu aplicația.
 
 Fiecărui obiect i se atribuie automat vizualizarea principală de listă (tabelul „All ...” pe care îl deschide un element de navigare `OBJECT`) furnizată de server — inclusiv obiectele pe care le creează aplicația dvs., cu o coloană pentru fiecare câmp declarat de aplicația dvs. Vizualizările pe care le definiți cu `defineView()` sunt întotdeauna vizualizări **suplimentare** pe lângă cea implicită.
@@ -112,5 +110,3 @@ Câmpul `value` este întotdeauna o valoare serializabilă JSON, dar forma sa a�
 ## Cum apar vizualizările în interfața utilizatorului
 
 O vizualizare, de una singură, nu este accesibilă din bara laterală. Pentru a o face să apară acolo, asociați-o cu un [element de meniu de navigare](/ro/developers/extend/apps/layout/navigation-menu-items) de tip `VIEW` care indică către `universalIdentifier` al vizualizării. Acesta este tiparul canonic: fiecare obiect personalizat primește o vizualizare index implicită generată automat la creare, astfel încât trebuie doar să livrezi intrarea din bara laterală care o deschide.
-
-<PageBanner illustration="views-pipelines" pattern="developers-api" />

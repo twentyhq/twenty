@@ -3,8 +3,6 @@ title: Vue d'ensemble
 description: Créez, testez et livrez votre application — commandes CLI, tests d’intégration, CI et publication sur un serveur ou sur npm.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 La **couche d’opérations** regroupe tout ce que vous faites *à* votre application plutôt qu’*avec* elle : lancer des commandes CLI, exécuter des tests d’intégration sur un véritable serveur Twenty, configurer la CI et livrer des versions — soit sous la forme d’une archive tar déployée sur un seul serveur, soit sous la forme d’un package npm répertorié sur la place de marché.
 
 ```text
@@ -17,19 +15,17 @@ La **couche d’opérations** regroupe tout ce que vous faites *à* votre applic
 
 ## Dans cette section
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="CLI" icon="terminal" href="/fr/developers/extend/apps/operations/cli" img="/images/documentation/illustrations/cli.svg">
+<CardGroup cols={2}>
+  <Card title="CLI" icon="terminal" href="/fr/developers/extend/apps/operations/cli">
     Référence `yarn twenty` — exec, logs, uninstall, remotes.
   </Card>
-  <Card title="Synchronisation et récupération" icon="compass" href="/fr/developers/extend/apps/operations/sync-and-recovery" img="/images/documentation/illustrations/sync-recovery.svg">
+  <Card title="Synchronisation et récupération" icon="compass" href="/fr/developers/extend/apps/operations/sync-and-recovery">
     Quelle commande utiliser et quand, comment lire le diff de synchronisation, et une procédure de récupération.
   </Card>
-  <Card title="Tests" icon="flask" href="/fr/developers/extend/apps/operations/testing" img="/images/documentation/illustrations/testing.svg">
+  <Card title="Tests" icon="flask" href="/fr/developers/extend/apps/operations/testing">
     Configuration de Vitest, tests d’intégration, vérification des types, flux de travail CI.
   </Card>
-  <Card title="Publication" icon="upload" href="/fr/developers/extend/apps/operations/publishing" img="/images/documentation/illustrations/publishing.svg">
+  <Card title="Publication" icon="upload" href="/fr/developers/extend/apps/operations/publishing">
     Générer, déployer une archive tar, publier sur npm, installer.
   </Card>
 </CardGroup>
-
-<PageBanner illustration="apps-operations" pattern="developers-contribute" />

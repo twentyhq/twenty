@@ -3,8 +3,6 @@ title: 2. ドキュメントの生成
 description: AIツールとワークフローアクションとして公開されるロジック機能の1つ。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 コア: [ロジック関数](/ja/developers/extend/apps/logic/logic-functions)
 テンプレートとレコードをロードし、プレースホルダを埋め、新しい
 ドキュメントを保存します。
@@ -229,10 +227,6 @@ await client.mutation({
 **このステップの後:** それぞれの生成されたドキュメントには、実際のダウンロード可能なPDFがあります。 しかし、
 はまだ UI からジェネレーターを呼び出すことはできません。そのために HTTP ルートが必要です。
 
-<CardGroup cols={2} className="documentation-card-group">
-<Card title="次へ: HTTP ルート →" icon="world" href="/ja/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/documentation/illustrations/tutorial-http.svg">
+<Card title="次へ: HTTP ルート →" icon="world" href="/ja/developers/extend/apps/tutorials/document-generator/http-routes">
   HTTP 経由で関数を提供し、ドキュメントを Web ページとして表示します。
 </Card>
-</CardGroup>
-
-<PageBanner illustration="tutorial-documents" pattern="developers-api" />

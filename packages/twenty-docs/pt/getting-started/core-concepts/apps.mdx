@@ -3,8 +3,6 @@ title: Aplicativos
 description: Estenda o Twenty com código — objetos personalizados, lógica do lado do servidor, componentes de UI e agentes de IA, todos como pacotes em TypeScript.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 A maioria dos CRMs oferece um painel de configuração. O Twenty oferece uma plataforma. Os aplicativos são como os desenvolvedores estendem o Twenty além do que a UI oferece — definindo modelos de dados, lógica do lado do servidor, componentes de UI e recursos de IA como código e, depois, implantando-os em um ou mais espaços de trabalho.
 
 ## Por que os aplicativos existem
@@ -37,10 +35,6 @@ Tudo é detectado por meio de análise de AST em tempo de build — sem arquivos
 
 Você escreve seu aplicativo como um projeto TypeScript na sua máquina. A CLI observa seus arquivos-fonte e os sincroniza em tempo real com um servidor Twenty em execução — edite um arquivo e veja a alteração na UI em segundos. O cliente de API tipado é regenerado automaticamente quando o esquema muda. Quando estiver pronto, `yarn twenty app:publish --private` faz o push para um servidor de produção, ou `yarn twenty app:publish` lista seu aplicativo no npm e no marketplace do Twenty.
 
-<CardGroup cols={2} className="documentation-card-group">
-<Card title="Crie seu primeiro aplicativo" icon="arrow-right" href="/pt/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
+<Card title="Crie seu primeiro aplicativo" icon="arrow-right" href="/pt/developers/extend/apps/getting-started/quick-start">
   Tutorial em três fases — gerar o esqueleto, executar um servidor local, sincronizar suas alterações.
 </Card>
-</CardGroup>
-
-<PageBanner illustration="dev-apps" pattern="developers-apps" />

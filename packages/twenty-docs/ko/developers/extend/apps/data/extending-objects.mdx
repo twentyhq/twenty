@@ -3,8 +3,6 @@ title: 객체 확장하기
 description: 표준 Twenty 객체(Person, Company 등)에 필드를 추가합니다. 또는 `defineField`를 사용해 다른 앱의 객체에 필드를 추가합니다.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 `defineField()`를 사용해 소유하지 않은 객체(예: Person이나 Company 같은 표준 Twenty 객체 또는 다른 설치된 앱에서 제공하는 객체)에 필드를 추가합니다. [`defineObject`](/ko/developers/extend/apps/data/objects) 안에 선언된 인라인 필드와 달리, 독립형 필드는 어느 객체를 확장할지 지정하기 위해 `objectUniversalIdentifier`가 필요합니다.
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -51,5 +49,3 @@ export default defineField({
 ## 기존 객체에 관계 추가하기
 
 관계 필드(예: 사용자 정의 객체를 표준 `Person`에 연결)를 추가하려면, `FieldType.RELATION`과 함께 `defineField()`를 사용하세요. 패턴은 인라인 관계와 동일하지만, `objectUniversalIdentifier`를 명시적으로 설정합니다. 양방향 패턴은 [Relations](/ko/developers/extend/apps/data/relations)를 참조하세요.
-
-<PageBanner illustration="extending-objects" pattern="developers-api" />

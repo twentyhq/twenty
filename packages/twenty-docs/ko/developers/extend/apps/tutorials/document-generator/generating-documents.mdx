@@ -3,8 +3,6 @@ title: 2. 문서 생성하기
 description: 하나의 로직 함수로, AI 도구이자 워크플로 작업으로 노출됩니다.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 이제 핵심입니다. 템플릿과 레코드를 불러와 플레이스홀더를 채우고 새 문서를 저장하는 [로직 함수](/ko/developers/extend/apps/logic/logic-functions)입니다.
 
 비즈니스 로직은 **핸들러**로 한 번만 작성한 다음, 여러 트리거를 통해 노출합니다. 이 장에서는 그중 두 가지, 즉 **AI 도구**와 **워크플로 작업**을 연결합니다.
@@ -206,10 +204,6 @@ await client.mutation({
 
 **이 단계를 마치면:** 각 생성된 문서에 실제 다운로드 가능한 PDF가 포함됩니다. 하지만 아직 UI에서 생성기를 *호출*할 수는 없습니다. 그러려면 HTTP 경로가 필요합니다.
 
-<CardGroup cols={2} className="documentation-card-group">
-<Card title="다음: HTTP 경로 →" icon="world" href="/ko/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/documentation/illustrations/tutorial-http.svg">
+<Card title="다음: HTTP 경로 →" icon="world" href="/ko/developers/extend/apps/tutorials/document-generator/http-routes">
   HTTP를 통해 함수를 제공하고 문서를 웹 페이지로 렌더링합니다.
 </Card>
-</CardGroup>
-
-<PageBanner illustration="tutorial-documents" pattern="developers-api" />

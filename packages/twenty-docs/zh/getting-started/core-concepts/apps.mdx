@@ -3,8 +3,6 @@ title: 应用
 description: 通过代码扩展 Twenty——将自定义对象、服务器端逻辑、UI 组件和 AI 代理全部构建为 TypeScript 软件包。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 大多数 CRM 只给你一个配置面板。 Twenty 给你的是一个平台。 应用是开发者将 Twenty 扩展到超出 UI 所提供能力的方式——将数据模型、服务器端逻辑、UI 组件和 AI 能力定义为代码，然后将它们部署到一个或多个工作区。
 
 ## 应用存在的原因
@@ -37,10 +35,6 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 你在本机上以一个 TypeScript 项目的形式编写你的应用。 CLI 监听你的源码文件，并将它们实时同步到正在运行的 Twenty 服务器——编辑文件后，你可以在一秒内在 UI 中看到变更。 当模式发生变化时，会自动重新生成类型化的 API 客户端。 准备就绪后，使用 `yarn twenty app:publish --private` 推送到生产服务器，或者使用 `yarn twenty app:publish` 将你的应用发布到 npm 和 Twenty 应用市场。
 
-<CardGroup cols={2} className="documentation-card-group">
-<Card title="构建你的第一个应用" icon="arrow-right" href="/zh/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
+<Card title="构建你的第一个应用" icon="arrow-right" href="/zh/developers/extend/apps/getting-started/quick-start">
   三阶段引导——脚手架搭建、本地服务器运行、同步你的更改。
 </Card>
-</CardGroup>
-
-<PageBanner illustration="dev-apps" pattern="developers-apps" />

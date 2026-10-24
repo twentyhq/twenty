@@ -3,8 +3,6 @@ title: Systemmetadaten ansprechen
 description: Lösen Sie die deterministischen universellen Bezeichner der Metadaten auf, die Twenty für jedes Objekt automatisch bereitstellt, damit Ihre App ohne Hardcoding darauf verweisen kann.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Jedes Objekt in Twenty verfügt über **Systemmetadaten**, die Sie selbst nie deklarieren, wie etwa eine Reihe von Feldern und eine Hauptlistenansicht mit ihren Spalten. Der Server erstellt all dies, wenn das Objekt bereitgestellt wird, und der Umfang wächst mit Twenty.
 
 Da Sie sie nicht deklarieren, gibt es keine `universalIdentifier`-Konstante, die Sie importieren könnten. Stattdessen **leitet** der Server jeden Bezeichner deterministisch ab, und `twenty-sdk` stellt dieselbe Ableitung zur Verfügung, sodass Ihr Manifest den genauen Wert auflösen kann, den der Server verwendet.
@@ -204,5 +202,3 @@ Greifen Sie auf die obigen Helfer zurück, wenn es sich um ein Objekt handelt, d
   `getFieldUniversalIdentifier` aufgelöst. Für Objekte, die Sie definieren, referenzieren Sie das
   `name`-Feld über die Kennung, die Sie ihm in `defineObject()` gegeben haben.
 </Note>
-
-<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

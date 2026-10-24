@@ -4,13 +4,12 @@ description: See what makes Twenty different, set up your workspace, and learn t
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
-import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-<LandingActions>
-  <LandingButton href="/getting-started/quickstart">Quickstart</LandingButton>
-  <LandingButton href="/getting-started/key-features" outlined>Key features</LandingButton>
-</LandingActions>
+<div className="landing-actions">
+  <a href="/getting-started/quickstart">Quickstart</a>
+  <a href="/getting-started/key-features">Key features</a>
+</div>
 
 ## Why Twenty
 
@@ -21,20 +20,20 @@ You've been choosing between software that's easy to start but impossible to cha
 
 Twenty is a platform you can build on, not a product you configure.
 
-<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
-  <Card href="/getting-started/core-concepts/ai" img="/images/documentation/illustrations/ai.svg">
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--getting-started">
+  <Card href="/getting-started/core-concepts/ai" img="/images/documentation/banner-icons-v2/ai.svg">
     <CardTitle>Built for Agents</CardTitle>
     Agents operate inside your data model with real permissions. Skills, Tools, MCP.
   </Card>
-  <Card href="/getting-started/core-concepts/apps" img="/images/documentation/illustrations/dev-apps.svg">
+  <Card href="/getting-started/core-concepts/apps" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>Secured Extensibility</CardTitle>
     The flexibility of vibe-coded tools on secured foundations.
   </Card>
-  <Card href="/developers/introduction" img="/images/documentation/illustrations/dev-api.svg">
+  <Card href="/developers/introduction" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>Modern Stack</CardTitle>
     React, TypeScript. Your team already knows how to extend Twenty. No proprietary languages, no gatekeeping.
   </Card>
-  <Card href="/user-guide/data-migration/how-tos/export-your-data" img="/images/documentation/illustrations/no-lock-in.png">
+  <Card href="/user-guide/data-migration/how-tos/export-your-data" img="/images/user-guide/halftone/no-lock-in.png">
     <CardTitle>No Lock-In</CardTitle>
     Open-source core, self-hostable, export your data anytime.
   </Card>
@@ -80,11 +79,11 @@ to you without learning APEX or getting proprietary certifications.
   authority to pick their own tools.
 
 <CardGroup cols={2} className="documentation-card-group">
-<Card href="/getting-started/quickstart" img="/images/documentation/illustrations/quickstart.svg">
+<Card href="/getting-started/quickstart" img="/images/documentation/getting-started-icons-v1/quickstart.svg">
   <CardTitle>Ready to get started?</CardTitle>
   Set up Twenty in under 5 minutes — cloud or self-hosted.
 </Card>
-<Card href="https://discord.gg/cx5n4Jzs57" img="/images/documentation/illustrations/discord.svg">
+<Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
   <CardTitle>Discord</CardTitle>
   Ask questions and share what you build with the Twenty community.
 </Card>

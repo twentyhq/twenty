@@ -3,8 +3,6 @@ title: 前端组件
 description: 构建可在 Twenty 的 UI 中渲染并具备沙盒隔离的 React 组件。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 前端组件是直接在 Twenty 的 UI 内渲染的 React 组件。 它们在使用 Remote DOM 的**隔离 Web Worker**中运行——你的代码在沙盒化的、不透明来源的 iframe 中执行，但其 UI 仍然原生渲染在页面中，而不是被限制在该 iframe 内。
 
 <Warning>
@@ -848,5 +846,3 @@ Portal间隙是为什么Radix、Headless UI、MUI和react-selected popover默认
 * **拖放payloads.** 拖动事件触发，但`event.dataTransfer` 是未定义的。
 * **Node 内置。** `fs`、`path` 和 `node:crypto` 失败，所以将其移动到一个[逻辑函数](/zh/developers/extend/apps/logic/logic-functions)。 Web Crypto, `fetch`, `TextEncoder` 和 `URL` 都是可用的。
 * **`iframe`** 始终会在没有 `allow-same-origin` 的情况下重新沙箱化，因此依赖其自身会话的嵌入内容会呈现为未登录状态。 它也没有`onLoad`文件。
-
-<PageBanner illustration="front-components" pattern="developers-api" />

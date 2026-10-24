@@ -3,8 +3,6 @@ title: 개요
 description: 워크스페이스에 앱이 추가하는 데이터(개체, 필드, 관계)의 구성을 정의하세요.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Twenty 앱의 **데이터 레이어**는 워크스페이스에 앱이 *추가하는* 데이터입니다. 앱이 선언하는 새로운 레코드 타입, 기존 개체에 추가하는 열, 그리고 이러한 레코드들이 서로 연결되는 방식이 여기에 포함됩니다.
 
 ```text
@@ -26,17 +24,17 @@ Twenty 앱의 **데이터 레이어**는 워크스페이스에 앱이 *추가하
 
 ## 이 섹션에서 다루는 내용
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="개체" icon="table" href="/ko/developers/extend/apps/data/objects" img="/images/documentation/illustrations/objects.svg">
+<CardGroup cols={2}>
+  <Card title="개체" icon="table" href="/ko/developers/extend/apps/data/objects">
     `defineObject` — 자체 필드를 가진 새로운 레코드 타입을 선언합니다.
   </Card>
-  <Card title="객체 확장하기" icon="wand" href="/ko/developers/extend/apps/data/extending-objects" img="/images/documentation/illustrations/extending-objects.svg">
+  <Card title="객체 확장하기" icon="wand" href="/ko/developers/extend/apps/data/extending-objects">
     `defineField` — 표준 개체 또는 다른 앱의 개체에 필드를 추가합니다.
   </Card>
-  <Card title="관계" icon="sitemap" href="/ko/developers/extend/apps/data/relations" img="/images/documentation/illustrations/relations.svg">
+  <Card title="관계" icon="sitemap" href="/ko/developers/extend/apps/data/relations">
     개체 간의 양방향 `MANY_TO_ONE` / `ONE_TO_MANY` 연결입니다.
   </Card>
-  <Card title="타임라인 활동 유형" icon="history" href="/ko/developers/extend/apps/data/timeline-activity-types" img="/images/documentation/illustrations/timeline.svg">
+  <Card title="타임라인 활동 유형" icon="history" href="/ko/developers/extend/apps/data/timeline-activity-types">
     레코드 타임라인의 자동 감사 이벤트 및 명시적 앱 이벤트를 정의합니다.
   </Card>
 </CardGroup>
@@ -100,5 +98,3 @@ defineIndex({
 <Note>
 **Application Config** 또는 **Roles & Permissions**를 찾고 계신가요? 이러한 항목은 앱이 추가하는 데이터가 아니라 앱 자체를 설명하며, [Config](/ko/developers/extend/apps/config/overview) 아래에 있습니다. **Connections**(Linear, GitHub, Slack OAuth)를 찾고 계신가요? 이들은 로직 함수 *내부에서* 호출되기 위한 것이며, [Logic](/ko/developers/extend/apps/logic/connections) 아래에 있습니다.
 </Note>
-
-<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

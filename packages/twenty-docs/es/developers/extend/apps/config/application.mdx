@@ -3,8 +3,6 @@ title: Configuración de la aplicación
 description: Declara la identidad de tu aplicación, el rol predeterminado, las variables y los metadatos del marketplace con defineApplication.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Cada aplicación debe tener exactamente una llamada a `defineApplication`. Declara:
 
 * **Identidad** — identificador universal, nombre para mostrar, descripción.
@@ -123,5 +121,3 @@ Si planeas [publicar tu aplicación](/es/developers/extend/apps/operations/publi
 <Note>
 `logoUrl` y `screenshots` son alias obsoletos de `logo` y `galleryImages`. Las URL absolutas externas (`http://` o `https://`) no son compatibles para estos campos: se descartan con una advertencia en tiempo de compilación. En su lugar, incluye las imágenes en la carpeta `public/` de tu aplicación.
 </Note>
-
-<PageBanner illustration="application-config" pattern="developers-api" />

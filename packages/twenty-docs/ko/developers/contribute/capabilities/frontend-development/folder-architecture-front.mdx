@@ -3,8 +3,6 @@ title: 폴더 아키텍처
 info: 우리의 폴더 아키텍처를 자세히 살펴보기
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 이 가이드에서는 프로젝트 디렉토리 구조의 세부 사항과 그것이 Twenty의 구조화와 유지관리성에 어떻게 기여하는지 살펴봅니다.
 
 이 폴더 아키텍처 관례를 따르면 특정 기능과 관련된 파일을 더 쉽게 찾을 수 있고, 애플리케이션의 확장성과 유지관리성을 보장하기가 쉬워집니다.
@@ -109,5 +107,3 @@ React의 내장 상태 관리는 구성 요소 내에서의 상태를 여전히 
 ### 내부
 
 각 부분(훅, 상태, ...) 모듈의 각 부분은 모듈 내에서만 사용하는 `internal` 폴더를 가질 수 있습니다.
-
-<PageBanner illustration="frontend-architecture" pattern="developers-api" />

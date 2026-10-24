@@ -2,8 +2,6 @@
 title: Schlüsselrotation
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Twenty hat zwei unabhängige Schlüsselfamilien:
 
 * **JWT-Signaturschlüssel** — asymmetrische ES256-Schlüsselpaare (`kid`-markiert), die in `core."signingKey"` gespeichert sind und zum Signieren und Verifizieren von Access-/Refresh-Tokens verwendet werden.
@@ -59,5 +57,3 @@ Jeder verschlüsselte Wert wird als `enc:v2:\<keyId>:\<payload>` verpackt, wobei
 ## Legacy-Unterstützung für `APP_SECRET`
 
 Ältere Instanzen, die niemals `ENCRYPTION_KEY` gesetzt haben, verwenden `APP_SECRET` als At-Rest-Verschlüsselungsschlüssel (und als Session-Cookie-Secret, das daraus abgeleitet wird). Dieser Pfad wird aus Gründen der Abwärtskompatibilität beibehalten, ist aber **veraltet** — setze einen dedizierten `ENCRYPTION_KEY` und folge dem oben beschriebenen Rotationsverfahren, um davon zu migrieren. `APP_SECRET` selbst bleibt in Verwendung, um Legacy-HS256-Access-Tokens zu verifizieren.
-
-<PageBanner illustration="sso" pattern="user-guide-permissions" />

@@ -2,8 +2,6 @@
 title: Rotation des clés
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Twenty possède deux familles de clés indépendantes :
 
 * **Clés de signature JWT** — paires de clés asymétriques ES256 (avec balise `kid`) stockées dans `core."signingKey"`, utilisées pour signer et vérifier les jetons d’accès / de rafraîchissement.
@@ -59,5 +57,3 @@ Chaque valeur chiffrée est encapsulée sous la forme `enc:v2:\<keyId>:\<payload
 ## Prise en charge héritée de `APP_SECRET`
 
 Les instances plus anciennes qui n’ont jamais défini `ENCRYPTION_KEY` utilisent `APP_SECRET` comme clé de chiffrement au repos (et comme secret de cookie de session, dérivé de celle-ci). Ce chemin est conservé pour la rétrocompatibilité mais est **déprécié** — définissez une `ENCRYPTION_KEY` dédiée et suivez la procédure de rotation ci-dessus pour migrer. `APP_SECRET` reste lui-même utilisé pour vérifier les anciens jetons d’accès HS256.
-
-<PageBanner illustration="sso" pattern="user-guide-permissions" />

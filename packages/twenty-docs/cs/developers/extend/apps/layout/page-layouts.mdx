@@ -3,8 +3,6 @@ title: Rozvržení stránek
 description: Přizpůsobte stránky s detailem záznamu – karty, widgety a místa, kde se vykreslují frontendové komponenty – pomocí `definePageLayout` a `definePageLayoutTab`.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 **Rozvržení stránky** určuje, jak je uspořádána stránka s detailem záznamu: které karty se zobrazí a jaké widgety obsahují. Použijte `definePageLayout()` k deklaraci rozvržení pro objekt, který vlastníte, nebo `definePageLayoutTab()` k přidání jedné karty do rozvržení, které již existuje (vašeho nebo standardního rozvržení Twenty).
 
 | Případ použití                                                                                              | Entita                |
@@ -157,5 +155,3 @@ export default definePageLayoutTab({
 * `position` určuje pořadí vzhledem ke stávajícím kartám v cílovém rozvržení. Zvolte hodnotu, která umístí vaši kartu tam, kde ji chcete mít, relativně k vestavěným kartám.
 
 * Použijte to místo `definePageLayout`, když chcete do existujícího rozvržení pouze přidat. Použijte `definePageLayout`, když vlastníte celé rozvržení.
-
-<PageBanner illustration="page-layouts" pattern="developers-api" />

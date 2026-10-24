@@ -3,8 +3,6 @@ title: Logické funkce
 description: Definujte serverové funkce v TypeScriptu se spouštěči pro HTTP, cron a databázové události.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Logické funkce jsou serverové funkce v TypeScriptu, které běží na platformě Twenty. Mohou být spouštěny požadavky HTTP, plány cronu nebo databázovými událostmi — a lze je také zpřístupnit jako nástroje pro agenty AI.
 
 <AccordionGroup>
@@ -908,5 +906,3 @@ Hlavní body:
 
   Tyto hodnoty klientům **nemusíte** předávat — automaticky je čtou z `process.env` a [Čí přístup volání používá](#whose-access-a-call-uses) popisuje volbu mezi nimi. Vlastní oprávnění vaší aplikace jsou určena rolí deklarovanou pomocí `defineApplicationRole()` (nebo odkazovanou prostřednictvím `defaultRoleUniversalIdentifier` v `application-config.ts`); běh jednající jako osoba nikdy nemůže překročit ani tuto roli, ani roli této osoby.
 </Note>
-
-<PageBanner illustration="logic-functions" pattern="developers-api" />

@@ -3,8 +3,6 @@ title: 角色和权限
 description: 声明你的应用的逻辑函数和前端组件可以读取和写入哪些对象和字段。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 **角色（role）** 是一组权限：应用可以读取或写入哪些对象，可以查看哪些字段，以及可以使用哪些平台级能力。 每个应用的逻辑函数和前端组件都会继承使用 `defineApplicationRole()` 标记的角色的权限（参见下文的 [默认函数角色](#the-default-function-role)）。
 
 ```ts src/roles/restricted-company-role.ts
@@ -202,5 +200,3 @@ export default defineApplicationRole({
 * 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数实际需要的精确对象和字段。
 * `permissionFlagUniversalIdentifiers` 控制对平台级能力的访问。 尽量保持最小化。
 * 查看一个工作示例：[[`exampes/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts)
-
-<PageBanner illustration="roles" pattern="developers-api" />

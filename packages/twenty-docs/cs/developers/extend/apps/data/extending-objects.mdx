@@ -3,8 +3,6 @@ title: Rozšiřování objektů
 description: Přidávejte pole ke standardním objektům Twenty (Person, Company, …) nebo k objektům z jiných aplikací pomocí `defineField`.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Použijte `defineField()` pro přidání pole k objektu, který nevlastníte — standardnímu objektu Twenty, jako je Person nebo Company, nebo objektu dodanému jinou nainstalovanou aplikací. Na rozdíl od inline polí deklarovaných uvnitř [`defineObject`](/cs/developers/extend/apps/data/objects) vyžadují samostatná pole `objectUniversalIdentifier` k určení, který objekt rozšiřují.
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -51,5 +49,3 @@ export default defineField({
 ## Přidání relace k existujícímu objektu
 
 Chcete-li přidat relační pole (např. pro propojení vlastního objektu se standardním `Person`), použijte `defineField()` s `FieldType.RELATION`. Vzor je stejný jako u inline relací, ale s `objectUniversalIdentifier` nastaveným explicitně. Obousměrný vzor najdete v části [Relations](/cs/developers/extend/apps/data/relations).
-
-<PageBanner illustration="extending-objects" pattern="developers-api" />

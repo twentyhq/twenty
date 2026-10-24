@@ -3,8 +3,6 @@ title: Objetos
 description: Declara nuevos tipos de registro (tablas personalizadas con sus propios campos) usando defineObject.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Los **objetos** personalizados son nuevos tipos de registro que tu aplicación añade a un espacio de trabajo — Tarjeta postal, Factura, Suscripción, cualquier cosa específica de tu dominio. Cada objeto declara su esquema (campos, relaciones, valores predeterminados) y un identificador universal estable que se mantiene a través de sincronizaciones e implementaciones.
 
 ```ts src/objects/post-card.object.ts
@@ -142,5 +140,3 @@ Los cambios en `isNullable` se aplican en cada sincronización, incluidas las si
 * **Conecta este objeto con otros**: consulta [Relaciones](/es/developers/extend/apps/data/relations) para el patrón de relación bidireccional.
 * **Añade campos a objetos de otras aplicaciones**: consulta [Extender objetos](/es/developers/extend/apps/data/extending-objects) para `defineField()`.
 * **Mostrar este objeto en la IU** — consulta [Elementos del menú de navegación](/es/developers/extend/apps/layout/navigation-menu-items) para añadir una entrada en la barra lateral; consulta [Vistas](/es/developers/extend/apps/layout/views) para añadir configuraciones de lista personalizadas.
-
-<PageBanner illustration="objects" pattern="developers-api" />

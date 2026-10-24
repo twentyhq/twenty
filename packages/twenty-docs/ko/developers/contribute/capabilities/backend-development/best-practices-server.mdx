@@ -2,8 +2,6 @@
 title: 모범 사례
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 이 문서는 백엔드 작업 시 따를 모범 사례를 설명합니다.
 
 ## 모듈형 접근법 따르기
@@ -22,5 +20,3 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 변수를 `any`로 선언하면 TypeScript의 타입 검사자가 타입 검사를 수행하지 않으므로 변수에 모든 유형의 값을 할당할 수 있게 됩니다. TypeScript는 값에 따라 변수의 타입을 추론하기 위해 타입 추론을 사용합니다. 이를 `any`로 선언하면 TypeScript는 더 이상 타입을 추론할 수 없습니다. 이는 개발 중 타입 관련 오류를 잡기 어렵게 만들어 런타임 오류로 이어지고, 코드의 유지보수성과 신뢰성이 떨어지며, 다른 사람이 이해하기도 어려워집니다.
 
 이것이 모든 것이 타입을 가져야 하는 이유입니다. 따라서 이름(first name)과 성(last name)을 가진 새 개체를 만든다면, 다루는 개체의 구조를 정의하는 이름과 성을 포함한 인터페이스나 타입을 만들어야 합니다.
-
-<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

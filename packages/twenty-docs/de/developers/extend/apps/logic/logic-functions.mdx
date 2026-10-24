@@ -3,8 +3,6 @@ title: Logikfunktionen
 description: Definieren Sie serverseitige TypeScript-Funktionen mit HTTP-, cron- und Datenbankereignis-Triggern.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Logikfunktionen sind serverseitige TypeScript-Funktionen, die auf der Twenty-Plattform ausgeführt werden. Sie können durch HTTP-Anfragen, cron-Zeitpläne oder Datenbankereignisse ausgelöst werden — und außerdem als Tools für KI-Agenten bereitgestellt werden.
 
 <AccordionGroup>
@@ -907,5 +905,3 @@ Hauptpunkte:
 
   Sie müssen diese **nicht** an die Clients übergeben — sie lesen sie automatisch aus `process.env`, und [Wessen Zugriff ein Aufruf verwendet](#whose-access-a-call-uses) behandelt die Auswahl zwischen ihnen. Die eigenen Berechtigungen Ihrer Anwendung werden durch die Rolle bestimmt, die mit `defineApplicationRole()` deklariert wird (oder über `defaultRoleUniversalIdentifier` in `application-config.ts` referenziert wird); eine Ausführung, die als Person agiert, kann weder diese Rolle noch die der Person überschreiten.
 </Note>
-
-<PageBanner illustration="logic-functions" pattern="developers-api" />

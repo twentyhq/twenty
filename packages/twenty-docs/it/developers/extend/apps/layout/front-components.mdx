@@ -3,8 +3,6 @@ title: Componenti front-end
 description: Crea componenti React che vengono renderizzati all'interno della UI di Twenty con isolamento in sandbox.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 I componenti front-end sono componenti React che vengono renderizzati direttamente all'interno della UI di Twenty. Vengono eseguiti in un **Web Worker isolato** utilizzando Remote DOM — il tuo codice viene eseguito all'interno di un iframe con origine opaca e in sandbox, ma la sua interfaccia utente continua a essere renderizzata in modo nativo nella pagina invece di essere confinata in quell'iframe.
 
 <Warning>
@@ -848,5 +846,3 @@ Il CSS del componente, che provenga da `import './styles.css'`, da CSS-in-JS o d
 * **Payload di drag-and-drop.** Gli eventi di drag vengono attivati, ma `event.dataTransfer` è `undefined`.
 * **Built-in di Node.** `fs`, `path` e `node:crypto` fanno fallire la build, quindi sposta quel lavoro in una [logic function](/it/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` e `URL` sono disponibili.
 * **`iframe`** viene sempre nuovamente messo in sandbox senza `allow-same-origin`, quindi un embed che dipende dalla propria sessione viene renderizzato come disconnesso. Non ha nemmeno `onLoad`.
-
-<PageBanner illustration="front-components" pattern="developers-api" />

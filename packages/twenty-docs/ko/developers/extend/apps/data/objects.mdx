@@ -3,8 +3,6 @@ title: 개체
 description: defineObject를 사용하여 고유한 필드를 가진 사용자 정의 테이블인 새 레코드 유형을 선언합니다.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 사용자 정의 **개체**는 워크스페이스에 앱이 추가하는 새로운 레코드 유형입니다. 엽서(Post Card), 송장(Invoice), 구독(Subscription) 등 도메인에 특화된 어떤 것이라도 될 수 있습니다. 각 개체는 스키마(필드, 관계, 기본값)와 동기화 및 배포 간에도 유지되는 안정적인 범용 식별자를 선언합니다.
 
 ```ts src/objects/post-card.object.ts
@@ -142,5 +140,3 @@ export default defineObject({
 * **이 개체를 다른 개체와 연결** — 양방향 관계 패턴은 [Relations](/ko/developers/extend/apps/data/relations)를 참조하세요.
 * **다른 앱의 개체에 필드 추가** — `defineField()`에 대해서는 [Extending Objects](/ko/developers/extend/apps/data/extending-objects)를 참조하세요.
 * **이 오브젝트를 UI에 표시합니다** — 사이드바 항목을 추가하려면 [Navigation Menu Items](/ko/developers/extend/apps/layout/navigation-menu-items)를, 사용자 지정 목록 구성을 추가하려면 [Views](/ko/developers/extend/apps/layout/views)를 참조하세요.
-
-<PageBanner illustration="objects" pattern="developers-api" />

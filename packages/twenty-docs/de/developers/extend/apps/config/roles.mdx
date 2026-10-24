@@ -3,8 +3,6 @@ title: Rollen & Berechtigungen
 description: Legen Sie fest, welche Objekte und Felder die Logikfunktionen und Frontend-Komponenten Ihrer App lesen und schreiben können.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Eine **Rolle** ist ein Berechtigungssatz: welche Objekte eine App lesen oder schreiben kann, welche Felder sie sehen kann und welche plattformbezogenen Funktionen sie nutzen kann. Alle Logikfunktionen und Frontend-Komponenten einer App erben die Berechtigungen der Rolle, die mit `defineApplicationRole()` markiert ist (siehe [Die Standardfunktionsrolle](#the-default-function-role) unten).
 
 ```ts src/roles/restricted-company-role.ts
@@ -205,5 +203,3 @@ Notizen:
 * Ersetzen Sie `objectPermissions` und `fieldPermissions` durch die genauen Objekte und Felder, die Ihre Funktionen tatsächlich benötigen.
 * `permissionFlagUniversalIdentifiers` steuern den Zugriff auf Funktionen auf Plattformebene. Halten Sie sie minimal.
 * Ein funktionierendes Beispiel finden Sie unter: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
-
-<PageBanner illustration="roles" pattern="developers-api" />

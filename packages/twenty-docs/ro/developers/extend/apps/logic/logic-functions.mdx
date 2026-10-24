@@ -3,8 +3,6 @@ title: Funcții logice
 description: Definește funcții TypeScript pe partea de server cu declanșatoare HTTP, cron și de evenimente din baza de date.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Funcțiile de logică sunt funcții TypeScript pe partea de server care rulează pe platforma Twenty. Acestea pot fi declanșate de solicitări HTTP, programări cron sau evenimente din baza de date — și pot fi, de asemenea, expuse ca instrumente pentru agenți AI.
 
 <AccordionGroup>
@@ -908,5 +906,3 @@ Puncte cheie:
 
   Nu trebuie să transmiteți aceste valori clienților — aceștia citesc automat din `process.env`, iar [Ale cui accesări le utilizează un apel](#whose-access-a-call-uses) explică alegerea dintre ele. Permisiunile proprii ale aplicației dvs. sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`); o execuție care acționează ca o persoană nu poate depăși niciodată acel rol sau rolul persoanei.
 </Note>
-
-<PageBanner illustration="logic-functions" pattern="developers-api" />

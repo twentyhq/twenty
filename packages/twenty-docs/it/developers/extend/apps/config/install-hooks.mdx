@@ -3,8 +3,6 @@ title: Hook di installazione
 description: Esegui la logica durante il ciclo di vita di installazione, aggiornamento o disinstallazione — inserisci dati iniziali, esegui il backup dei record, valida l'aggiornamento, pulisci le risorse esterne.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Gli hook di installazione sono funzioni logiche speciali che vengono eseguite durante il ciclo di vita di installazione, aggiornamento o disinstallazione. Condividono lo stesso runtime del gestore delle [logic functions](/it/developers/extend/apps/logic/logic-functions) normali, ma sono dichiarati con le proprie funzioni di definizione e vivono al di fuori del normale modello di trigger (HTTP, cron, eventi del database). Gli hook di installazione ricevono un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` è `undefined` in caso di nuova installazione); l'hook di disinstallazione riceve un `UninstallPayload` (`{ version?: string }` — la versione che viene rimossa).
 
 Ogni app può definire **al massimo uno** per ciascun hook (pre-install, post-install, uninstall). La build del manifesto genera un errore se viene rilevato più di un hook per qualsiasi tipo.
@@ -187,5 +185,3 @@ export default defineUninstallLogicFunction({
   handler,
 });
 ```
-
-<PageBanner illustration="install-hooks" pattern="developers-api" />

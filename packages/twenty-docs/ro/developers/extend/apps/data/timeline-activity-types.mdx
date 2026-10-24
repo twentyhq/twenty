@@ -3,8 +3,6 @@ title: Tipuri de activitate cronologică
 description: Definiți evenimentele de audit automat și evenimentele de aplicație explicite care se execută în calendarele înregistrării.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Un tip de activitate cronologică definește vocabularul stabil pentru un eveniment afișat într-un calendar al înregistrării. Obiectele standard și obiectele din aplicație utilizează același contract: un tip are o etichetă și o pictogramă, poate declara opțional când este emis, și pot reda opțional prin una dintre [componentele frontale](/ro/developers/extend/apps/layout/front-components).
 
 <Note>
@@ -183,5 +181,3 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | `replacesTimelineActivityTypeUniversalIdentifier` | Nu          | Tipul de emit existent înlocuit; necesită `emit`                                   |
 
 Douăzeci de instantanee transformă identitatea semantică și prezentarea durabilă atunci când un eveniment este creat. Rândurile istorice păstrează acțiunea originală și semnificația obiectului. În timp ce tipul este instalat, eticheta curentă tradusă, pictograma și componenta frontală redare live; după dezinstalare, instantaneul face rândul să fie lizibil. Rezoluția folosește identificatorul universal, astfel încât prezentarea supraviețuiește și reinstalării aplicației.
-
-<PageBanner illustration="timeline" pattern="developers-api" />

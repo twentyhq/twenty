@@ -3,8 +3,6 @@ title: 页面布局
 description: 使用 `definePageLayout` 和 `definePageLayoutTab` 自定义记录详情页——包括选项卡、小部件以及前端组件的渲染位置。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 **页面布局（page layout）** 控制记录详情页的排布方式：显示哪些选项卡，以及这些选项卡中包含哪些小部件。 使用 `definePageLayout()` 为你拥有的对象声明一个布局，或者使用 `definePageLayoutTab()` 为已存在的布局（你的自定义布局或标准的 Twenty 布局）添加单个选项卡。
 
 | 用例                           | 实体                    |
@@ -154,5 +152,3 @@ export default definePageLayoutTab({
 * `position` 控制目标布局中相对于现有选项卡的排序。 选择一个取值，使你的选项卡相对于内置选项卡位于你想要的位置。
 
 * 当你只想向现有布局进行添加时，请使用此功能，而不是 `definePageLayout`。 当你拥有整个布局时，请使用 `definePageLayout`。
-
-<PageBanner illustration="page-layouts" pattern="developers-api" />

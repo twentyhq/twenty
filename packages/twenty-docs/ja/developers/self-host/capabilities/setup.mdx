@@ -2,8 +2,6 @@
 title: セットアップ
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 # 構成管理
 
 <Warning>
@@ -408,5 +406,3 @@ AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 
 マルチワークスペースが有効な場合、ここにすべてのワークスペースのサブドメインを列挙しないでください。
 代わりに、各ワークスペースのホスト名ごとに API パス（`/graphql`、`/metadata`、`/rest`、`/auth/`、`/client-config`、`/file`）をバックエンドにルーティングし、すべてのワークスペースが同一オリジンを維持するようにします。Twenty Cloud はこの方式で稼働しています。
-
-<PageBanner illustration="dev-self-host" pattern="developers-self-host" />

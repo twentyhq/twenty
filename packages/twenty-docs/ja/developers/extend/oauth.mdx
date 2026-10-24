@@ -3,8 +3,6 @@ title: OAuth
 description: PKCE を用いた認可コードフロー、およびサーバー間アクセス向けのクライアントクレデンシャル。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Twenty は、ユーザー向けアプリでは認可コード + PKCE、サーバー間アクセスではクライアントクレデンシャルを用いた OAuth 2.0 を実装しています。 クライアントは [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) に従って動的に登録され、ダッシュボードでの手動セットアップは不要です。
 
 ## OAuth を使用するタイミング
@@ -188,5 +186,3 @@ GET /.well-known/oauth-authorization-server
 | **最適な用途**       | スクリプト、社内ツール    | 外部アプリ、マルチユーザー統合   |
 | **トークンローテーション** | 手動             | リフレッシュトークンにより自動   |
 | **スコープによるアクセス** | API へのフルアクセス   | スコープによりきめ細かな制御    |
-
-<PageBanner illustration="sso" pattern="user-guide-permissions" />

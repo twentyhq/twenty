@@ -3,8 +3,6 @@ title: 2. Génération des documents
 description: Une fonction logique, exposée comme un outil AI et une action de workflow.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Maintenant le cœur : une [fonction logique](/fr/developers/extend/apps/logic/logic-functions)
 qui charge un modèle et un enregistrement, remplit les marqueurs et enregistre un nouveau document
 .
@@ -235,10 +233,6 @@ utilise pour les enregistrements.
 **Après cette étape:** chaque document généré a un PDF réel, téléchargeable. Mais
 rien ne peut *appeler* le générateur de l'interface utilisateur — pour cela nous avons besoin d'une route HTTP.
 
-<CardGroup cols={2} className="documentation-card-group">
-<Card title="Suivant : Routes HTTP →" icon="world" href="/fr/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/documentation/illustrations/tutorial-http.svg">
+<Card title="Suivant : Routes HTTP →" icon="world" href="/fr/developers/extend/apps/tutorials/document-generator/http-routes">
   Servez la fonction via HTTP et rendez les documents en tant que pages Web.
 </Card>
-</CardGroup>
-
-<PageBanner illustration="tutorial-documents" pattern="developers-api" />

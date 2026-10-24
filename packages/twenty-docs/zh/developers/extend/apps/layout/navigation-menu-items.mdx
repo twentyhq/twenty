@@ -3,8 +3,6 @@ title: 导航菜单项
 description: 向工作区侧边栏添加自定义条目——指向已保存视图或外部 URL 的链接。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 **导航菜单项** 是左侧边栏中的一个条目。 使用 `defineNavigationMenuItem()` 发布自定义侧边栏链接——通常为你发布的每个[视图](/zh/developers/extend/apps/layout/views)提供一个链接——或指向外部 URL。
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
@@ -45,5 +43,3 @@ export default defineNavigationMenuItem({
 <Note>
 **常见陷阱：** 创建一个没有关联导航菜单项的对象会使该对象无法从侧边栏访问。 除非是技术性/内部对象，否则每个自定义对象都应在侧边栏中有一个指向它的条目。
 </Note>
-
-<PageBanner illustration="navigation" pattern="developers-api" />

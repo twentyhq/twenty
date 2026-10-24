@@ -2,8 +2,6 @@
 title: 업그레이드 가이드
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 ## 일반 가이드라인
 
 **업그레이드 프로세스를 시작하기 전에 항상 데이터베이스를 백업하십시오** 다음 명령을 실행하세요:
@@ -105,5 +103,3 @@ docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status -
 ## v1.23 이전
 
 인스턴스가 v1.23보다 오래된 경우, v1.23에 도달할 때까지 각 주요 태그 버전(v1.6에서 v1.7, 이어서 v1.7에서 v1.8 등)을 순차적으로 업그레이드해야 합니다. 그 이후에는 최신 버전으로 바로 업그레이드할 수 있습니다.
-
-<PageBanner illustration="sync-recovery" pattern="developers-api" />

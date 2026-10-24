@@ -2,8 +2,6 @@
 title: Anahtar döndürme
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Twenty'nin iki bağımsız anahtar ailesi vardır:
 
 * **JWT imzalama anahtarları** — asimetrik ES256 anahtar çiftleri (`kid` etiketli) `core."signingKey"` içinde saklanır ve erişim/yenileme belirteçlerini imzalamak ve doğrulamak için kullanılır.
@@ -59,5 +57,3 @@ Her şifrelenmiş değer `enc:v2:\<keyId>:\<payload>` olarak sarılır; burada `
 ## Eski `APP_SECRET` desteği
 
 Hiç `ENCRYPTION_KEY` ayarlamamış eski örnekler, `APP_SECRET` değerini bekleme hâlindeki şifreleme anahtarı (ve ondan türetilen oturum çerezi gizli anahtarı) olarak kullanır. Bu yol, geriye dönük uyumluluk için korunmuştur ancak **kullanımdan kaldırılmıştır** — özel bir `ENCRYPTION_KEY` ayarlayın ve ondan çıkmak için yukarıdaki döndürme prosedürünü izleyin. `APP_SECRET`in kendisi eski HS256 erişim belirteçlerini doğrulamak için kullanılmaya devam eder.
-
-<PageBanner illustration="sso" pattern="user-guide-permissions" />

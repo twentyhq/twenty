@@ -3,8 +3,6 @@ title: Vue d'ensemble
 description: Configurer l'application elle-même — son identité, ses autorisations par défaut et ce qui s'exécute au moment de l'installation.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 La **couche de configuration** d'une application Twenty est ce qui décrit l'application *à la plateforme* — son identité, les autorisations qu'elle détient et le code qui s'exécute lors de l'installation ou de la mise à niveau. Ces déclarations n'ajoutent pas de nouvelles structures de données ni de comportement à l'exécution ; elles indiquent à Twenty *qui est l'application* et *comment la configurer*.
 
 ```text
@@ -34,14 +32,14 @@ La **couche de configuration** d'une application Twenty est ce qui décrit l'app
 
 ## Dans cette section
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="Configuration de l'application" icon="rocket" href="/fr/developers/extend/apps/config/application" img="/images/documentation/illustrations/application-config.svg">
+<CardGroup cols={2}>
+  <Card title="Configuration de l'application" icon="rocket" href="/fr/developers/extend/apps/config/application">
     `defineApplication` — identité, rôle par défaut, variables, métadonnées de la marketplace.
   </Card>
-  <Card title="Rôles et autorisations" icon="shield-half" href="/fr/developers/extend/apps/config/roles" img="/images/documentation/illustrations/roles.svg">
+  <Card title="Rôles et autorisations" icon="shield-half" href="/fr/developers/extend/apps/config/roles">
     `defineRole` — déclarez ce que les fonctions logiques de votre application peuvent lire et écrire.
   </Card>
-  <Card title="Hooks d'installation" icon="tool" href="/fr/developers/extend/apps/config/install-hooks" img="/images/documentation/illustrations/install-hooks.svg">
+  <Card title="Hooks d'installation" icon="tool" href="/fr/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction` et `defineUninstallLogicFunction` — sauvegarder les données, préremplir les valeurs par défaut, valider les mises à niveau, nettoyer lors de la suppression.
   </Card>
 </CardGroup>
@@ -55,5 +53,3 @@ La **couche de configuration** d'une application Twenty est ce qui décrit l'app
 <Note>
 Les hooks d'installation partagent l'environnement d'exécution des [fonctions logiques](/fr/developers/extend/apps/logic/logic-functions) — même signature de handler, mêmes variables d'environnement, même client d'API typé — mais ils sont déclarés avec leurs propres fonctions `define` et vivent en dehors du modèle de déclencheurs habituel (HTTP, cron, événements de base de données).
 </Note>
-
-<PageBanner illustration="apps-config" pattern="user-guide-settings" />

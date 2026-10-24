@@ -2,8 +2,6 @@
 title: 最佳实践
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 本文档概述了当您在后端工作时应遵循的最佳实践。
 
 ## 遵循模块化方法
@@ -22,5 +20,3 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 当您将变量声明为 `any` 类型时，TypeScript 的类型检查器不会进行任何类型检查，使得可以将任何类型的值赋给该变量。 TypeScript 使用类型推断，根据值来确定变量的类型。 若声明为 `any`，TypeScript 将无法再推断其类型。 这使开发过程中难以捕捉到与类型相关的错误，导致运行时错误，使代码维护性更差，可靠性更低，且更难以被他人理解。
 
 因此，一切都应该有一个类型。 因此，如果您创建包含名字和姓氏的新对象，应该创建一个包含名字和姓氏的接口或类型，以定义您正在操作的对象的形状。
-
-<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

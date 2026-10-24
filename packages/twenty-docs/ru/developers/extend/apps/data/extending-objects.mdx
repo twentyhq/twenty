@@ -3,8 +3,6 @@ title: Расширение объектов
 description: Добавляйте поля к стандартным объектам Twenty (Person, Company, …) или к объектам из других приложений с помощью `defineField`.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Используйте `defineField()` для добавления поля к объекту, которым вы не владеете — стандартному объекту Twenty, такому как Person или Company, или объекту, поставляемому другим установленным приложением. В отличие от встроенных полей, объявленных внутри [`defineObject`](/ru/developers/extend/apps/data/objects), отдельные поля требуют `objectUniversalIdentifier`, чтобы указать, какой объект они расширяют.
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -51,5 +49,3 @@ export default defineField({
 ## Добавление связи к существующему объекту
 
 Чтобы добавить поле связи (например, связать ваш пользовательский объект со стандартным `Person`), используйте `defineField()` с `FieldType.RELATION`. Шаблон тот же, что и для встроенных связей, но с явным указанием `objectUniversalIdentifier`. Смотрите раздел [Relations](/ru/developers/extend/apps/data/relations) для двунаправленного шаблона.
-
-<PageBanner illustration="extending-objects" pattern="developers-api" />

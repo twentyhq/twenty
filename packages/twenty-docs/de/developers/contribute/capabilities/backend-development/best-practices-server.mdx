@@ -2,8 +2,6 @@
 title: Beste Praktiken
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Dieses Dokument beschreibt die Best Practices, die Sie bei der Arbeit am Backend befolgen sollten.
 
 ## Verfolgen Sie einen modularen Ansatz
@@ -22,5 +20,3 @@ Sie sollten auch Dienste bereitstellen, die Sie in anderen Modulen verwenden mö
 Wenn Sie eine Variable als `any` deklarieren, führt der TypeScript-Typenprüfer keine Typprüfung durch, was es möglich macht, der Variablen Werte beliebigen Typs zuzuweisen. TypeScript verwendet Typinferenz, um den Typ einer Variable basierend auf dem Wert zu bestimmen. Durch die Deklaration als `any` kann TypeScript den Typ nicht mehr ableiten. Dies erschwert es, typbezogene Fehler während der Entwicklung zu erkennen, was zu Laufzeitfehlern führt und den Code weniger wartbar, weniger zuverlässig und schwerer verständlich für andere macht.
 
 Deshalb sollte alles einen Typ haben. Wenn Sie also ein neues Objekt mit Vor- und Nachnamen erstellen, sollten Sie eine Schnittstelle oder einen Typ definieren, der Vor- und Nachnamen enthält und die Struktur des Objekts definiert, mit dem Sie arbeiten.
-
-<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

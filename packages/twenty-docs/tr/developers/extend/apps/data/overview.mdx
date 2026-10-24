@@ -3,8 +3,6 @@ title: Genel Bakış
 description: Uygulamanızın bir çalışma alanına eklediği verileri şekillendirin — nesneler, alanlar ve ilişkiler.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Bir Twenty uygulamasının **veri katmanı**, uygulamanızın bir çalışma alanına *eklediği* veridir — bildirdiği yeni kayıt türleri, mevcut nesnelere eklediği sütunlar ve bu kayıtların birbirine nasıl bağlandığı.
 
 ```text
@@ -26,17 +24,17 @@ Bir Twenty uygulamasının **veri katmanı**, uygulamanızın bir çalışma ala
 
 ## Bu bölümde
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="Nesneler" icon="table" href="/tr/developers/extend/apps/data/objects" img="/images/documentation/illustrations/objects.svg">
+<CardGroup cols={2}>
+  <Card title="Nesneler" icon="table" href="/tr/developers/extend/apps/data/objects">
     `defineObject` — kendi alanlarına sahip yeni kayıt türleri bildirin.
   </Card>
-  <Card title="Nesneleri Genişletme" icon="wand" href="/tr/developers/extend/apps/data/extending-objects" img="/images/documentation/illustrations/extending-objects.svg">
+  <Card title="Nesneleri Genişletme" icon="wand" href="/tr/developers/extend/apps/data/extending-objects">
     `defineField` — standart nesnelere veya diğer uygulamaların nesnelerine alanlar ekleyin.
   </Card>
-  <Card title="İlişkiler" icon="sitemap" href="/tr/developers/extend/apps/data/relations" img="/images/documentation/illustrations/relations.svg">
+  <Card title="İlişkiler" icon="sitemap" href="/tr/developers/extend/apps/data/relations">
     Nesneler arasında çift yönlü `MANY_TO_ONE` / `ONE_TO_MANY` bağlantıları.
   </Card>
-  <Card title="Zaman Çizelgesi Aktivite Türleri" icon="history" href="/tr/developers/extend/apps/data/timeline-activity-types" img="/images/documentation/illustrations/timeline.svg">
+  <Card title="Zaman Çizelgesi Aktivite Türleri" icon="history" href="/tr/developers/extend/apps/data/timeline-activity-types">
     Kayıt zaman çizelgeleri için otomatik denetim olaylarını ve açık uygulama olaylarını tanımlayın.
   </Card>
 </CardGroup>
@@ -100,5 +98,3 @@ defineIndex({
 <Note>
 **Application Config** veya **Roles & Permissions** mı arıyorsunuz? Bunlar, ekledikleri verilerden çok uygulamanın kendisini tanımlar — [Config](/tr/developers/extend/apps/config/overview) altında bulunurlar. **Connections** (Linear, GitHub, Slack OAuth) mı arıyorsunuz? Bunlar, mantık fonksiyonları *içinden* çağrılmak için vardır ve [Logic](/tr/developers/extend/apps/logic/connections) altında bulunurlar.
 </Note>
-
-<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

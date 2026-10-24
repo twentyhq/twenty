@@ -3,8 +3,6 @@ title: Funções e Permissões
 description: Declare quais objetos e campos as funções de lógica e os componentes de front-end do seu app podem ler e gravar.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Um **papel** é um conjunto de permissões: quais objetos um app pode ler ou gravar, quais campos ele pode ver e quais recursos em nível de plataforma ele pode usar. Todas as funções de lógica e os componentes de front-end de cada app herdam as permissões do papel marcado com `defineApplicationRole()` (consulte [O papel padrão da função](#the-default-function-role) abaixo).
 
 ```ts src/roles/restricted-company-role.ts
@@ -206,5 +204,3 @@ Notas:
 * Substitua `objectPermissions` e `fieldPermissions` pelos objetos e campos de que suas funções realmente precisam.
 * `permissionFlagUniversalIdentifiers` controlam o acesso a recursos em nível de plataforma. Mantenha-os no mínimo necessário.
 * Veja um exemplo de trabalho: [`exemplos/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
-
-<PageBanner illustration="roles" pattern="developers-api" />

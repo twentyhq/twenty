@@ -3,8 +3,6 @@ title: 入站邮件自动回复
 description: 构建一个使用 AI 对入站邮件进行分拣，并自动以线程形式发送回复的工作流。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 在数秒内回复入站邮件—而不是数小时。 此工作流使用 AI 智能体筛除噪音（新闻通讯、垃圾邮件、自动回复），并为真实邮件起草个性化回复。 然后，AI 会在原始会话中以线程形式发送该回复。
 
 ## 电子邮件线程如何运作
@@ -121,5 +119,3 @@ Gmail 使用主题行将邮件归入同一会话。 要让 Gmail 在原始会话
 * **仅回复 VIP** — 添加一个分支，用于检查发件人的域名，或他们是否在 Twenty 中作为联系人存在
 * **按意图路由** — 使用不同的 AI Agent 提示词，将销售咨询与支持请求区分处理
 * **回复前先丰富信息** — 添加一个 Search Records 步骤，将发件人的公司或交易历史拉入 AI 提示词中，以获得更个性化的回复
-
-<PageBanner illustration="email" pattern="user-guide-calendar-emails" />

@@ -3,8 +3,6 @@ title: Recursos públicos
 description: Distribuye archivos estáticos — imágenes, íconos, fuentes — junto con tu aplicación mediante la carpeta `public/`.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 La carpeta `public/` en la raíz de tu aplicación contiene archivos estáticos: imágenes, íconos, fuentes o cualquier otro recurso que tu aplicación necesite en tiempo de ejecución. Estos archivos se incluyen automáticamente en las compilaciones, se sincronizan durante el modo de desarrollo y se suben al servidor.
 
 Los archivos ubicados en `public/` son:
@@ -66,5 +64,3 @@ export default defineFrontComponent({
 ```
 
 El argumento `path` es relativo a la carpeta `public/` de tu aplicación. Tanto `getPublicAssetUrl('logo.png')` como `getPublicAssetUrl('public/logo.png')` resuelven a la misma URL — el prefijo `public/` se elimina automáticamente si está presente.
-
-<PageBanner illustration="image" pattern="developers-api" />

@@ -3,8 +3,6 @@ title: Conexiuni
 description: Permite aplicației tale să acționeze în numele unui utilizator în servicii ale terților prin OAuth.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Conexiunile sunt acreditări pe care un utilizator le deține pentru un serviciu extern (Linear, GitHub, Slack, ...). Aplicația ta declară **cum** sunt obținute acele acreditări — un **furnizor de conexiune** — și le folosește în timpul execuției pentru a efectua apeluri autentificate către API-ul terț.
 
 În prezent este acceptat doar OAuth 2.0. Tipurile viitoare de acreditări (jetoane de acces personale, chei API, autentificare de bază) se vor integra în aceeași interfață — aplicațiile care deja folosesc `defineConnectionProvider({ type: 'oauth', ... })` nu vor trebui să migreze.
@@ -268,5 +266,3 @@ Pentru fiecare furnizor de conexiune, administratorul serverului trebuie mai în
 </Accordion>
 
 </AccordionGroup>
-
-<PageBanner illustration="connections" pattern="developers-api" />

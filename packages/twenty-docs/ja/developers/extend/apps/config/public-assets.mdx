@@ -3,8 +3,6 @@ title: 公開アセット
 description: 静的ファイル（画像、アイコン、フォントなど）を、public/ フォルダーを通じてアプリと一緒に配信します。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 アプリのルートにある `public/` フォルダーには、実行時に必要な画像、アイコン、フォントなどの静的ファイルが格納されます。 これらのファイルはビルドに自動的に含まれ、開発モード中に同期され、サーバーにアップロードされます。
 
 `public/` に配置されたファイルは次のとおりです：
@@ -66,5 +64,3 @@ export default defineFrontComponent({
 ```
 
 `path` 引数はアプリの `public/` フォルダーからの相対パスです。 `getPublicAssetUrl('logo.png')` と `getPublicAssetUrl('public/logo.png')` のどちらも同じ URL に解決されます—`public/` プレフィックスが付いている場合は自動的に取り除かれます。
-
-<PageBanner illustration="image" pattern="developers-api" />

@@ -3,8 +3,6 @@ title: アプリケーション設定
 description: "`defineApplication` を使用して、アプリの識別情報、デフォルトのロール、変数、およびマーケットプレイスのメタデータを宣言します。"
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 すべてのアプリは、`defineApplication` の呼び出しを厳密に 1 つ持つ必要があります。 ここでは次の内容を宣言します。
 
 * **Identity** — ユニバーサル識別子、表示名、説明。
@@ -123,5 +121,3 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 <Note>
 `logoUrl`と`screenshots`は、`logo`と`galleryImages`の別名は非推奨です。 外部絶対URL (`http://`または`https://`) はこれらのフィールドでサポートされていません: ビルド時に警告が表示されます。 アプリの `public/` フォルダに画像を束ねます。
 </Note>
-
-<PageBanner illustration="application-config" pattern="developers-api" />

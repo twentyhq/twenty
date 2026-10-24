@@ -3,8 +3,6 @@ title: Genel Bakış
 description: Uygulamanın kendisini yapılandırın — kimliğini, varsayılan izinlerini ve kurulum sırasında nelerin çalıştığını.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Bir Twenty uygulamasının **config katmanı**, uygulamayı *platforma tanımlar* — kimliğini, sahip olduğu izinleri ve kurulum veya yükseltme sırasında çalışan kodu açıklar. Bu deklarasyonlar yeni veri biçimleri veya çalışma zamanı davranışı eklemez; Twenty’ye *uygulamanın kim olduğunu* ve *nasıl kurulacağını* söyler.
 
 ```text
@@ -34,14 +32,14 @@ Bir Twenty uygulamasının **config katmanı**, uygulamayı *platforma tanımlar
 
 ## Bu bölümde
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="Uygulama Yapılandırması" icon="rocket" href="/tr/developers/extend/apps/config/application" img="/images/documentation/illustrations/application-config.svg">
+<CardGroup cols={2}>
+  <Card title="Uygulama Yapılandırması" icon="rocket" href="/tr/developers/extend/apps/config/application">
     `defineApplication` — kimlik, varsayılan rol, değişkenler, marketplace metaverisi.
   </Card>
-  <Card title="Roller ve İzinler" icon="shield-half" href="/tr/developers/extend/apps/config/roles" img="/images/documentation/illustrations/roles.svg">
+  <Card title="Roller ve İzinler" icon="shield-half" href="/tr/developers/extend/apps/config/roles">
     `defineRole` — uygulamanızın mantık fonksiyonlarının neleri okuyup yazabildiğini tanımlayın.
   </Card>
-  <Card title="Kurulum Kancaları" icon="tool" href="/tr/developers/extend/apps/config/install-hooks" img="/images/documentation/illustrations/install-hooks.svg">
+  <Card title="Kurulum Kancaları" icon="tool" href="/tr/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction` ve `defineUninstallLogicFunction` — verileri yedekleyin, varsayılanları tohumlayın, yükseltmeleri doğrulayın, kaldırma sırasında temizleyin.
   </Card>
 </CardGroup>
@@ -55,5 +53,3 @@ Bir Twenty uygulamasının **config katmanı**, uygulamayı *platforma tanımlar
 <Note>
 Kurulum kancaları, [mantık fonksiyonu](/tr/developers/extend/apps/logic/logic-functions) çalışma zamanını paylaşır — aynı handler imzası, aynı ortam değişkenleri, aynı türlendirilmiş API istemcisi — ancak kendi define fonksiyonlarıyla deklare edilir ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yaşarlar.
 </Note>
-
-<PageBanner illustration="apps-config" pattern="user-guide-settings" />

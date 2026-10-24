@@ -3,8 +3,6 @@ title: ロジック関数
 description: HTTP、cron、およびデータベースのイベントトリガーを備えたサーバーサイドの TypeScript 関数を定義します。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 ロジック関数は、Twenty プラットフォーム上で実行されるサーバーサイドの TypeScript 関数です。 HTTPリクエスト、cronスケジュール、またはデータベースイベントでトリガーでき、AIエージェント向けのツールとして公開することもできます。
 
 <AccordionGroup>
@@ -908,5 +906,3 @@ console.log(uploadedFile);
 
   これらをクライアントに渡す必要は**ありません**。クライアントは `process.env` から自動的に読み取り、どちらを選択するかについては[呼び出しで使用されるアクセス権](#whose-access-a-call-uses)で説明しています。 アプリケーション自身の権限は、`defineApplicationRole()` で宣言されたロール（または `application-config.ts` の `defaultRoleUniversalIdentifier` で参照されるロール）によって決まります。人物として動作する実行は、そのロールもその人物のロールも超えることはできません。
 </Note>
-
-<PageBanner illustration="logic-functions" pattern="developers-api" />

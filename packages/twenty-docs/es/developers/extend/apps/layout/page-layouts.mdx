@@ -3,8 +3,6 @@ title: Diseños de Página
 description: Personaliza las páginas de detalle de los registros — pestañas, widgets y dónde se renderizan los componentes de frontend — usando `definePageLayout` y `definePageLayoutTab`.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Un **page layout** controla cómo se organiza la página de detalle de un registro: qué pestañas aparecen y qué widgets contienen. Usa `definePageLayout()` para declarar un layout para un objeto que posees, o `definePageLayoutTab()` para agregar una sola pestaña a un layout que ya existe (tuyo o uno estándar de Twenty).
 
 | Caso de uso                                                                | Entidad               |
@@ -157,5 +155,3 @@ export default definePageLayoutTab({
 * `position` controla el orden con respecto a las pestañas existentes en el diseño de página de destino. Elige un valor que sitúe tu pestaña donde la quieras, en relación con las pestañas integradas.
 
 * Usa esto en lugar de `definePageLayout` cuando solo quieras agregar a un layout existente. Usa `definePageLayout` cuando eres propietario de todo el layout.
-
-<PageBanner illustration="page-layouts" pattern="developers-api" />

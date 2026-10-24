@@ -3,8 +3,6 @@ title: Sarcini în fundal
 description: Predă munca de durată sau supusă limitării ratei către lucrătorii Twenty, punând în coadă o altă execuție a unei funcții logice, în loc să rulezi totul inline.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 O rulare a unei funcții de logică este limitată de `timeoutSeconds` (maximum 900 de secunde). Orice lucru care nu poate fi finalizat în acel interval — o resincronizare completă, un fan-out per înregistrare, un API de la o terță parte care aplică limitare de rată — trebuie împărțit în execuții mai mici.
 
 `enqueueJobs` face exact asta: le cere lucrătorilor Twenty să ruleze mai târziu una dintre funcțiile de logică ale aplicației tale, o dată pentru fiecare payload, fiecare rulare în propriul său proces, cu propriul său buget de timeout. Apelantul returnează imediat.
@@ -196,5 +194,3 @@ Ce îl face robust:
 * **Păstrează progresul înainte de a pune în coadă următoarea rulare**, astfel încât o verigă eșuată să repornească de la ultimul segment finalizat în loc de la început.
 * **Păstrează fiecare segment idempotent.** Reprocesarea unui segment după o reîncercare nu trebuie să ducă la scrieri duble — leagă scrierile de înregistrarea sau ID-ul extern pe care îl procesezi.
 * **Preferă un lanț segmentat în locul unei dispersări uriașe** atunci când munca lovește o terță parte cu limită de rată: un lanț cu `delayMs` își dozează singur ritmul, în timp ce mii de joburi puse în coadă deodată devin toate eligibile imediat.
-
-<PageBanner illustration="background-jobs" pattern="developers-api" />

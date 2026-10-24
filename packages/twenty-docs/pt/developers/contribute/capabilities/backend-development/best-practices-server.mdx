@@ -2,8 +2,6 @@
 title: Melhores Práticas
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Este documento descreve as melhores práticas que você deve seguir ao trabalhar no backend.
 
 ## Siga uma abordagem modular
@@ -22,5 +20,3 @@ Você também deve expor serviços que deseja usar em outros módulos. Expor ser
 Quando você declara uma variável como `any`, o verificador de tipos do TypeScript não realiza nenhuma verificação de tipo, tornando possível atribuir qualquer tipo de valores à variável. O TypeScript usa inferência de tipos para determinar o tipo da variável com base no valor. Ao declará-lo como `any`, o TypeScript não pode mais inferir o tipo. Isso torna difícil capturar erros relacionados a tipos durante o desenvolvimento, levando a erros em tempo de execução e tornando o código menos mantenível, menos confiável e mais difícil de entender para os outros.
 
 Por isso, tudo deve ter um tipo. Assim, se você criar um novo objeto com um primeiro nome e um sobrenome, deve criar uma interface ou tipo que contenha um primeiro nome e um sobrenome que defina a forma do objeto que você está manipulando.
-
-<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

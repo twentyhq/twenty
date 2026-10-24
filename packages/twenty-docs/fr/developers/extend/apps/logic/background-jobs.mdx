@@ -3,8 +3,6 @@ title: Tâches en arrière-plan
 description: Confiez les travaux longs ou soumis à des limitations de débit aux workers de Twenty en mettant en file d’attente une autre exécution de fonction logique au lieu de tout faire en ligne.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Une exécution de fonction logique est limitée par son `timeoutSeconds` (900 secondes maximum). Tout ce qui ne peut pas se terminer dans cette fenêtre — une resynchronisation complète, une diffusion par enregistrement, une API tierce qui vous applique des limitations de débit — doit être découpé en exécutions plus petites.
 
 `enqueueJobs` fait exactement cela : il demande aux workers de Twenty d’exécuter plus tard l’une des fonctions logiques de votre application, une fois par charge utile, chaque exécution dans son propre processus avec son propre budget de délai d’expiration. La fonction appelante retourne immédiatement.
@@ -196,5 +194,3 @@ Ce qui rend cette approche robuste :
 * **Conservez la progression avant de mettre en file d’attente l’exécution suivante,** afin qu’un maillon ayant échoué redémarre au dernier bloc terminé plutôt qu’au début.
 * **Gardez chaque bloc idempotent.** Le retraitement d’un bloc après une nouvelle tentative ne doit pas provoquer une double écriture — indexez les écritures sur l’enregistrement ou l’identifiant externe que vous traitez.
 * **Préférez une chaîne par blocs à un énorme déploiement parallèle** lorsque le travail touche un tiers soumis à des limitations de débit : une chaîne avec `delayMs` se régule elle-même, alors que des milliers de jobs mis en file d’attente d’un coup deviennent tous éligibles immédiatement.
-
-<PageBanner illustration="background-jobs" pattern="developers-api" />

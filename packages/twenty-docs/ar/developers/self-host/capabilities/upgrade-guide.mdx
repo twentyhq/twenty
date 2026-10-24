@@ -2,8 +2,6 @@
 title: دليل الترقية
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 ## إرشادات عامة
 
 **احرص دائمًا على إنشاء نسخة احتياطية لقاعدة البيانات قبل بدء عملية الترقية** عن طريق تشغيل:
@@ -105,5 +103,3 @@ docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status -
 ## قبل v1.23
 
 إذا كان مثيلك أقدم من v1.23، فيجب عليك الترقية تدريجيًا عبر كل إصدار رئيسي موسوم (من v1.6 إلى v1.7، ثم من v1.7 إلى v1.8، وهكذا) حتى تصل إلى v1.23. ومن هناك، يمكنك الانتقال مباشرةً إلى أحدث إصدار.
-
-<PageBanner illustration="sync-recovery" pattern="developers-api" />

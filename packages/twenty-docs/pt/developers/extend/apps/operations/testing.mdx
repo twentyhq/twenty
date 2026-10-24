@@ -3,8 +3,6 @@ title: Testes
 description: Configuração do Vitest, testes de integração contra um servidor Twenty real, verificação de tipos e CI com GitHub Actions.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 O SDK fornece APIs programáticas que permitem compilar, implantar, instalar e desinstalar seu aplicativo a partir de código de teste. Em conjunto com [Vitest](https://vitest.dev/) e os clientes de API tipados, você pode escrever testes de integração que verificam que seu aplicativo funciona de ponta a ponta em um servidor Twenty real.
 
 ## Usando pacotes npm
@@ -263,5 +261,3 @@ Isso executa `tsc --noEmit` no `tsconfig.json` do seu app e informa quaisquer er
 O gerador de scaffold cria um workflow pronto para uso em `.github/workflows/ci.yml`. A cada push para `main` e a cada pull request, ele inicia um servidor Twenty efêmero no runner (por meio da action `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`) e então executa `yarn lint`, `yarn typecheck`, `yarn test:unit` e `yarn test` com `TWENTY_API_URL` / `TWENTY_API_KEY` apontando para esse servidor. Nenhum secret é necessário e você pode fixar a versão do servidor por meio da variável de ambiente `TWENTY_VERSION` no topo do workflow.
 
 Consulte [Publicação → CI/CD automatizado](/pt/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) para um passo a passo completo dos três workflows criados pelo scaffold (`ci.yml`, o pipeline de deploy `cd.yml` e `publish.yml` para publicação no npm).
-
-<PageBanner illustration="testing" pattern="developers-api" />

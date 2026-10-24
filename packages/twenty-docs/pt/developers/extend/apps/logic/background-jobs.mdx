@@ -3,8 +3,6 @@ title: Tarefas em segundo plano
 description: Entregue trabalhos longos ou com limitação de taxa aos workers do Twenty colocando na fila outra execução de função de lógica, em vez de fazer tudo inline.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Uma execução de função de lógica é limitada pelo seu `timeoutSeconds` (máximo de 900 segundos). Qualquer coisa que não consiga terminar nesse intervalo — uma re-sincronização completa, uma distribuição por registro, uma API de terceiros que impõe limitações de taxa — precisa ser dividida em execuções menores.
 
 `enqueueJobs` faz exatamente isso: solicita aos workers do Twenty que executem mais tarde uma das funções de lógica do seu aplicativo, uma vez por payload, cada execução em seu próprio processo com seu próprio orçamento de tempo limite. O chamador retorna imediatamente.
@@ -196,5 +194,3 @@ O que torna isso robusto:
 * **Persista o progresso antes de colocar a próxima execução na fila,** assim um elo com falha reinicia a partir do último fragmento concluído em vez do começo.
 * **Mantenha cada fragmento idempotente.** Reprocessar um fragmento após uma nova tentativa não deve gerar escrita em dobro — faça as gravações com base no registro ou id externo que você está processando.
 * **Prefira uma cadeia fragmentada em vez de uma grande ramificação** quando o trabalho aciona um serviço de terceiros com limitação de taxa: uma cadeia com `delayMs` se regula sozinha, enquanto milhares de jobs colocados na fila de uma vez se tornam elegíveis imediatamente.
-
-<PageBanner illustration="background-jobs" pattern="developers-api" />

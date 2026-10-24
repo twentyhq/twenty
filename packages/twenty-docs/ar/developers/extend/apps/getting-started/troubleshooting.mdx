@@ -3,8 +3,6 @@ title: استكشاف الأخطاء وإصلاحها
 description: مشكلات التشغيل الأول الشائعة — Docker، إصدار Node، Yarn، والتبعيات.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 * **أخطاء Docker** — تأكّد من أن Docker Desktop (أو الـ daemon) قيد التشغيل قبل `yarn twenty docker:start`. ستعرض رسالة الخطأ أمر البدء المناسب لنظام التشغيل لديك.
 * **إصدار Node غير صحيح** — تحتاج إلى 24.5+ (`engines.node: ^24.5.0`). تحقّق باستخدام `node -v`.
 * **Yarn 4 غير موجود** — شغّل `corepack enable`.
@@ -13,5 +11,3 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 * **`twenty dev:build` يُصدر تحذيرًا بشأن `twenty-client-sdk` تحت `dependencies`** — يتم توفيره في وقت التشغيل بواسطة Twenty، لذلك يجب نقله إلى `devDependencies` جنبًا إلى جنب مع `twenty-sdk`. انظر إلى [بنية المشروع → التبعيات](/ar/developers/extend/apps/getting-started/project-structure#dependencies).
 
 هل علِقت؟ اطلب المساعدة على [خادم Twenty على Discord](https://discord.com/channels/1130383047699738754/1130386664812982322).
-
-<PageBanner illustration="bug-requests" pattern="developers-api" />

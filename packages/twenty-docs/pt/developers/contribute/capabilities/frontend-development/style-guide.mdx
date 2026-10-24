@@ -2,8 +2,6 @@
 title: Guia de Estilo
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Este documento inclui as regras a seguir ao escrever código.
 
 O objetivo aqui é ter uma base de código consistente, fácil de ler e fácil de manter.
@@ -290,5 +288,3 @@ Uma regra do Oxlint, `typescript/consistent-type-imports`, aplica o padrão de n
 Observe que esta regra trata especificamente de casos isolados onde importações de tipos não intencionais ocorrem. O próprio TypeScript desencoraja essa prática, conforme mencionado nas [notas de lançamento do TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Na maioria das situações, não é necessário usar importações somente de tipo.
 
 Para garantir que seu código esteja em conformidade com essa regra, certifique-se de executar o Oxlint como parte do seu fluxo de trabalho de desenvolvimento.
-
-<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

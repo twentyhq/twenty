@@ -3,8 +3,6 @@ title: الاتصالات
 description: اسمح لتطبيقك بالتصرف نيابةً عن المستخدم في خدمات الجهات الخارجية عبر OAuth.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 الاتصالات هي بيانات اعتماد يحتفظ بها المستخدم لخدمة خارجية (Linear وGitHub وSlack، ...). يحدّد تطبيقك **كيف** يتم الحصول على تلك بيانات الاعتماد — **موفّر اتصال** — ويستخدمها وقت التشغيل لإجراء استدعاءات مُصادَقة إلى واجهة برمجة تطبيقات الطرف الثالث.
 
 حاليًا لا يُدعَم سوى OAuth 2.0. ستندمج الأنواع المستقبلية من بيانات الاعتماد (رموز الوصول الشخصية، مفاتيح API، المصادقة الأساسية) مع نفس الواجهة — التطبيقات التي تستخدم بالفعل `defineConnectionProvider({ type: 'oauth', ... })` لن تحتاج إلى الترحيل.
@@ -268,5 +266,3 @@ const conn = connections.find((c) => c.visibility === 'workspace');
 </Accordion>
 
 </AccordionGroup>
-
-<PageBanner illustration="connections" pattern="developers-api" />

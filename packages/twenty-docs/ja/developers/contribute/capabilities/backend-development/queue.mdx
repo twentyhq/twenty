@@ -2,8 +2,6 @@
 title: メッセージキュー
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 キューは非同期処理を実行するための手段を提供します。 それらは、登録時にウェルカムメールを送信するなどのバックグラウンドタスクを実行するために使用できます。
 各ユースケースには `MessageQueueServiceBase` から拡張された独自のキュークラスが必要です。
 
@@ -41,5 +39,3 @@ class CustomWorker {
   }
 }
 ```
-
-<PageBanner illustration="background-jobs" pattern="developers-api" />

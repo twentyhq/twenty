@@ -3,8 +3,6 @@ title: 逻辑函数
 description: 定义具有 HTTP、cron 和数据库事件触发器的服务端 TypeScript 函数。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 逻辑函数是在 Twenty 平台上运行的服务端 TypeScript 函数。 它们可以由 HTTP 请求、cron 调度或数据库事件触发——也可以作为工具暴露给 AI 智能体。
 
 <AccordionGroup>
@@ -908,5 +906,3 @@ console.log(uploadedFile);
 
   你**不**需要将这些传递给客户端 — 它们会自动从 `process.env` 读取，而[调用使用谁的访问权限](#whose-access-a-call-uses)介绍了如何在它们之间进行选择。 你的应用程序自身权限由通过 `defineApplicationRole()` 声明的角色（或在 `application-config.ts` 中通过 `defaultRoleUniversalIdentifier` 引用的角色）决定；以人员身份执行的运行绝不能超出该角色或该人员角色的权限。
 </Note>
-
-<PageBanner illustration="logic-functions" pattern="developers-api" />

@@ -3,8 +3,6 @@ title: Объекты
 description: Объявляйте новые типы записей — пользовательские таблицы с собственными полями — с помощью defineObject.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Пользовательские **объекты** — это новые типы записей, которые ваше приложение добавляет в рабочее пространство — открытка, счёт-фактура, подписка, что‑то специфичное для вашей предметной области. Каждый объект объявляет свою схему (поля, связи, значения по умолчанию) и стабильный универсальный идентификатор, который сохраняется между синхронизациями и развёртываниями.
 
 ```ts src/objects/post-card.object.ts
@@ -142,5 +140,3 @@ export default defineObject({
 * **Свяжите этот объект с другими** — см. [Relations](/ru/developers/extend/apps/data/relations) для двунаправленного шаблона связей.
 * **Добавляйте поля к объектам из других приложений** — см. [Extending Objects](/ru/developers/extend/apps/data/extending-objects) о `defineField()`.
 * **Отображать этот объект в интерфейсе** — см. [пункты меню навигации](/ru/developers/extend/apps/layout/navigation-menu-items), чтобы добавить пункт бокового меню; см. [представления](/ru/developers/extend/apps/layout/views), чтобы добавить пользовательские настройки списков.
-
-<PageBanner illustration="objects" pattern="developers-api" />

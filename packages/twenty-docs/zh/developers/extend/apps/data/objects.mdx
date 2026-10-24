@@ -3,8 +3,6 @@ title: 对象
 description: 使用 defineObject 声明新的记录类型——具有其自身字段的自定义表。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 自定义**对象**是你的应用在工作区中添加的新记录类型——Post Card、Invoice、Subscription，或任何特定于你业务领域的内容。 每个对象都会声明其模式（字段、关系、默认值）以及一个在多次同步和部署中保持稳定的通用标识符。
 
 ```ts src/objects/post-card.object.ts
@@ -142,5 +140,3 @@ export default defineObject({
 * **将此对象与其他对象关联**——关于双向关系模式，参见 [Relations](/zh/developers/extend/apps/data/relations)。
 * **为其他应用的对象添加字段**——关于 `defineField()`，参见 [Extending Objects](/zh/developers/extend/apps/data/extending-objects)。
 * **在界面中显示此对象** — 请参阅 [导航菜单项](/zh/developers/extend/apps/layout/navigation-menu-items) 以添加侧边栏条目；请参阅 [视图](/zh/developers/extend/apps/layout/views) 以添加自定义列表配置。
-
-<PageBanner illustration="objects" pattern="developers-api" />

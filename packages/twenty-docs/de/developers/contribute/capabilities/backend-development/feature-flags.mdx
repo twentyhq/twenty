@@ -2,8 +2,6 @@
 title: Feature-Flags
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Feature-Flags werden verwendet, um experimentelle Funktionen auszublenden. Für Twenty werden sie auf der Arbeitsbereichsebene und nicht auf Benutzerebene festgelegt.
 
 ## Hinzufügen eines neuen Feature-Flags
@@ -46,5 +44,3 @@ const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 | iD       | schlüssel                | workspaceId        | wert   |
 | -------- | ------------------------ | ------------------ | ------ |
 | Zufällig | `IS_FEATURENAME_ENABLED` | Arbeitsbereichs-ID | `wahr` |
-
-<PageBanner illustration="switch" pattern="developers-api" />

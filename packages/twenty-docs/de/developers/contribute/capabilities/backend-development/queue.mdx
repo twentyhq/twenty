@@ -2,8 +2,6 @@
 title: Nachrichtenwarteschlange
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Warteschlangen erleichtern die Durchführung asynchroner Vorgänge. Sie können für die Ausführung von Hintergrundaufgaben verwendet werden, wie z.B. das Versenden einer Willkommens-E-Mail bei der Registrierung.
 Jeder Anwendungsfall hat seine eigene Warteschlangenklasse, die von `MessageQueueServiceBase` erweitert wird.
 
@@ -41,5 +39,3 @@ class CustomWorker {
   }
 }
 ```
-
-<PageBanner illustration="background-jobs" pattern="developers-api" />

@@ -3,8 +3,6 @@ title: オブジェクトの拡張
 description: 標準の Twenty オブジェクト（Person、Company など）にフィールドを追加します。 または、`defineField` を使用して他のアプリのオブジェクトにフィールドを追加します。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 `defineField()` を使用すると、あなたが所有していないオブジェクト ― Person や Company のような標準の Twenty オブジェクトや、他のインストール済みアプリから提供されるオブジェクト ― にフィールドを追加できます。 [`defineObject`](/ja/developers/extend/apps/data/objects) 内で宣言されるインラインフィールドと異なり、スタンドアロンフィールドでは、どのオブジェクトを拡張するかを指定するために `objectUniversalIdentifier` が必要です。
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -51,5 +49,3 @@ export default defineField({
 ## 既存のオブジェクトへのリレーションの追加
 
 リレーションフィールド（例: カスタムオブジェクトを標準の `Person` にリンクする）を追加するには、`FieldType.RELATION` を指定して `defineField()` を使用します。 パターンはインラインのリレーションと同じですが、`objectUniversalIdentifier` を明示的に設定します。 双方向のパターンについては、[Relations](/ja/developers/extend/apps/data/relations) を参照してください。
-
-<PageBanner illustration="extending-objects" pattern="developers-api" />

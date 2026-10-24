@@ -3,8 +3,6 @@ title: Sayfa Düzenleri
 description: definePageLayout ve definePageLayoutTab kullanarak kayıt ayrıntı sayfalarını — sekmeleri, widget'ları ve ön uç bileşenlerinin nerede oluşturulacağını — özelleştirin.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Bir sayfa düzeni, bir kaydın ayrıntı sayfasının nasıl düzenleneceğini kontrol eder: hangi sekmelerin görüneceği ve bunların hangi widget'ları içereceği. Sahibi olduğunuz bir nesne için bir düzen tanımlamak amacıyla `definePageLayout()` kullanın veya halihazırda var olan bir düzene (size ait veya standart bir Twenty düzenine) tek bir sekme eklemek için `definePageLayoutTab()` kullanın.
 
 | Kullanım alanı                                                                 | Varlık                |
@@ -157,5 +155,3 @@ export default definePageLayoutTab({
 * `position`, hedeflenen düzende mevcut sekmelere göre sıralamayı kontrol eder. Yerleşik sekmelere göre sekmenizi istediğiniz konuma yerleştirecek bir değer seçin.
 
 * Yalnızca mevcut bir düzene ekleme yapmak istediğinizde `definePageLayout` yerine bunu kullanın. Tüm düzene sahip olduğunuzda `definePageLayout` kullanın.
-
-<PageBanner illustration="page-layouts" pattern="developers-api" />

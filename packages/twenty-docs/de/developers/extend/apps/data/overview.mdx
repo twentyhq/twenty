@@ -3,8 +3,6 @@ title: Übersicht
 description: Gestalten Sie die Daten, die Ihre App zu einem Workspace hinzufügt – Objekte, Felder und Beziehungen.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Die **Datenebene** einer Twenty-App umfasst die Daten, die Ihre App zu einem Workspace *hinzufügt* – die neuen Datensatztypen, die sie deklariert, die Spalten, die sie zu bestehenden Objekten hinzufügt, und wie diese Datensätze miteinander verknüpft sind.
 
 ```text
@@ -26,17 +24,17 @@ Die **Datenebene** einer Twenty-App umfasst die Daten, die Ihre App zu einem Wor
 
 ## In diesem Abschnitt
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="Objekte" icon="table" href="/de/developers/extend/apps/data/objects" img="/images/documentation/illustrations/objects.svg">
+<CardGroup cols={2}>
+  <Card title="Objekte" icon="table" href="/de/developers/extend/apps/data/objects">
     `defineObject` – deklarieren Sie neue Datensatztypen mit eigenen Feldern.
   </Card>
-  <Card title="Objekte erweitern" icon="wand" href="/de/developers/extend/apps/data/extending-objects" img="/images/documentation/illustrations/extending-objects.svg">
+  <Card title="Objekte erweitern" icon="wand" href="/de/developers/extend/apps/data/extending-objects">
     `defineField` – fügen Sie Standardobjekten oder Objekten anderer Apps Felder hinzu.
   </Card>
-  <Card title="Beziehungen" icon="sitemap" href="/de/developers/extend/apps/data/relations" img="/images/documentation/illustrations/relations.svg">
+  <Card title="Beziehungen" icon="sitemap" href="/de/developers/extend/apps/data/relations">
     Bidirektionale `MANY_TO_ONE`- / `ONE_TO_MANY`-Verbindungen zwischen Objekten.
   </Card>
-  <Card title="Zeitachsen-Aktivitätstypen" icon="history" href="/de/developers/extend/apps/data/timeline-activity-types" img="/images/documentation/illustrations/timeline.svg">
+  <Card title="Zeitachsen-Aktivitätstypen" icon="history" href="/de/developers/extend/apps/data/timeline-activity-types">
     Definieren Sie automatische Audit-Ereignisse und explizite App-Ereignisse für Datensatz-Zeitachsen.
   </Card>
 </CardGroup>
@@ -100,5 +98,3 @@ Ordnen Sie das `fields`-Array so an, wie Postgres es verwenden soll – die ganz
 <Note>
 Suchen Sie nach **Application Config** oder **Roles & Permissions**? Diese beschreiben die App selbst und nicht die Daten, die sie hinzufügt – sie befinden sich unter [Config](/de/developers/extend/apps/config/overview). Suchen Sie nach **Connections** (Linear, GitHub, Slack OAuth)? Diese existieren, um *von* Logikfunktionen aufgerufen zu werden, und befinden sich unter [Logic](/de/developers/extend/apps/logic/connections).
 </Note>
-
-<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

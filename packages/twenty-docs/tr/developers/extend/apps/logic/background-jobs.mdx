@@ -3,8 +3,6 @@ title: Arka Plan İşleri
 description: Uzun süren veya hız sınırına takılan işleri, her şeyi satır içi yapmak yerine başka bir mantık fonksiyonu çalıştırmasını kuyruğa alarak Twenty işleyicilerine devredin.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Bir mantık fonksiyonu çalıştırması, `timeoutSeconds` değeriyle sınırlandırılır (en fazla 900 saniye). Bu sürede tamamlanamayan her şey — tam bir yeniden eşitleme, kayıt başına dağıtım, sizi hız sınırına takan üçüncü taraf bir API — daha küçük çalıştırmalara bölünmek zorundadır.
 
 `enqueueJobs` tam olarak bunu yapar: Twenty işleyicilerinden, uygulamanızın mantık fonksiyonlarından birini daha sonra, her veri yükü için bir kez, her çalıştırma kendi işleminde ve kendi zaman aşımı bütçesiyle çalıştırmasını ister. Çağıran hemen döner.
@@ -196,5 +194,3 @@ Bunu işe yarar kılanlar:
 * **Sonraki çalıştırmayı kuyruğa almadan önce ilerlemeyi kalıcı hale getirin,** böylece başarısız olan bir halka baştan başlamak yerine son tamamlanan parçadan yeniden başlar.
 * **Her parçayı idempotent tutun.** Bir yeniden denemeden sonra aynı parçanın yeniden işlenmesi, iki kez yazma yapmamalıdır — yazma işlemlerini, işlediğiniz kayıt veya harici kimlik üzerinde anahtarlandırın.
 * **Oran sınırlamalı bir üçüncü tarafla çalışırken, tek bir dev fan-out yerine parçalara bölünmüş bir zinciri tercih edin;** `delayMs` içeren bir zincir kendi hızını ayarlar, oysa binlerce işi bir kerede kuyruğa almak, hepsinin aynı anda uygun hale gelmesine neden olur.
-
-<PageBanner illustration="background-jobs" pattern="developers-api" />

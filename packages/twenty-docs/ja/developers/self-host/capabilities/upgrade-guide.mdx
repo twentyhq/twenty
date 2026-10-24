@@ -2,8 +2,6 @@
 title: アップグレードガイド
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 ## 一般ガイドライン
 
 **アップグレードを開始する前に、必ずデータベースをバックアップしてください**。次を実行してください:
@@ -105,5 +103,3 @@ docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status -
 ## v1.23 以前
 
 インスタンスが v1.23 より前の場合は、v1.23 に到達するまで、各メジャーのタグ付きバージョンを順に（v1.6 から v1.7、次に v1.7 から v1.8、…）段階的にアップグレードする必要があります。 そこからは、最新バージョンに直接アップグレードできます。
-
-<PageBanner illustration="sync-recovery" pattern="developers-api" />

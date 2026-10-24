@@ -3,8 +3,6 @@ title: 2. Создание документов
 description: Одна логическая функция, выставленная в качестве инструмента ИИ и действий рабочего процесса.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Теперь ядро: [логическая функция](/ru/developers/extend/apps/logic/logic-functions)
 , загружающая шаблон и запись, заполняет плейсхолдеры, и сохраняет новый документ
 .
@@ -235,10 +233,6 @@ await client.mutation({
 **После этого шага:** у каждого сгенерированного документа есть реальный, загружаемый PDF. Но
 ничего не может *вызвать* генератор из пользовательского интерфейса — для этого нам нужен HTTP маршрут.
 
-<CardGroup cols={2} className="documentation-card-group">
-<Card title="Далее: HTTP-маршруты →" icon="world" href="/ru/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/documentation/illustrations/tutorial-http.svg">
+<Card title="Далее: HTTP-маршруты →" icon="world" href="/ru/developers/extend/apps/tutorials/document-generator/http-routes">
   Сервис функции по HTTP и рендеринг документов как веб-страниц.
 </Card>
-</CardGroup>
-
-<PageBanner illustration="tutorial-documents" pattern="developers-api" />

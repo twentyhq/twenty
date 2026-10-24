@@ -3,8 +3,6 @@ title: Visualizações
 description: Distribua visualizações salvas e pré-configuradas — ordem das colunas, filtros, grupos — para objetos no seu app.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Uma **visualização** é uma configuração salva de como os registros de um objeto são exibidos: quais campos aparecem, sua ordem, se estão visíveis e quaisquer filtros ou grupos aplicados. Use `defineView()` para enviar visualizações pré-configuradas com seu app.
 
 Cada objeto recebe automaticamente sua principal visualização de lista (a tabela "All ..." que um item de navegação `OBJECT` abre), provisionada pelo servidor — incluindo os objetos que seu app cria, com uma coluna por campo que seu app declara. As visualizações que você define com `defineView()` são sempre visualizações **adicionais** em cima daquela padrão.
@@ -112,5 +110,3 @@ O campo `value` é sempre um valor serializável em JSON, mas o seu formato espe
 ## Como as visualizações aparecem na UI
 
 Uma visualização por si só não é acessível a partir da barra lateral. Para fazê-la aparecer lá, associe-a a um [item de menu de navegação](/pt/developers/extend/apps/layout/navigation-menu-items) do tipo `VIEW` que aponte para o `universalIdentifier` da visualização. Esse é o padrão canônico: todo objeto personalizado recebe uma exibição de índice padrão gerada automaticamente no momento da criação, então você só precisa incluir o item da barra lateral que a abre.
-
-<PageBanner illustration="views-pipelines" pattern="developers-api" />

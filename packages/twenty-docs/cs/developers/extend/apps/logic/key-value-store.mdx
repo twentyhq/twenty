@@ -3,8 +3,6 @@ title: Úložiště typu klíč–hodnota
 description: Ukládejte průběžné výsledky, kešujte data a sdílejte stav mezi spuštěními logických funkcí pomocí vestavěného aplikačního úložiště typu klíč–hodnota.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Logické funkce běží v izolovaných, krátce žijících procesech Node.js — jakmile běh skončí, nic, co bylo v paměti, nepřežije. Když potřebujete **něco zapamatovat mezi běhy** (kešovat nákladnou odpověď z API, uložit kurzor pro inkrementální synchronizace, odložit práci nebo předat stav z jedné funkce do druhé), uložte to do vestavěného úložiště typu klíč–hodnota.
 
 Každá aplikace má svůj vlastní izolovaný jmenný prostor: položky jsou svázané s ověřenou aplikací, takže vaše klíče nikdy nemohou kolidovat s klíči jiné aplikace ani je jiná aplikace nemůže číst.
@@ -109,5 +107,3 @@ Vestavěné úložiště je záměrně neprůhledné: položky nejsou záznamy, 
 <Note>
 Na rozdíl od vestavěného úložiště je vlastní objekt vždy omezený na jeden pracovní prostor — nemůže sdílet položky napříč instalacemi tak, jako to dělají klíče `SERVER`.
 </Note>
-
-<PageBanner illustration="key-value-store" pattern="developers-api" />

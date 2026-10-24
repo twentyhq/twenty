@@ -3,8 +3,6 @@ title: OAuth
 description: PKCE'li yetkilendirme kodu akışı ve sunucudan sunucuya erişim için istemci kimlik bilgileri.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Twenty, kullanıcıya dönük uygulamalar için yetkilendirme kodu + PKCE'yi ve sunucudan sunucuya erişim için istemci kimlik bilgilerini kullanarak OAuth 2.0'ı uygular. İstemciler [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) aracılığıyla dinamik olarak kaydedilir — bir kontrol panelinde manuel kurulum gerekmez.
 
 ## OAuth Ne Zaman Kullanılır
@@ -188,5 +186,3 @@ Bu, tüm uç noktaları, desteklenen grant türlerini, kapsamları ve yetenekler
 | **En uygun**              | Betikler, dahili araçlar   | Harici uygulamalar, çok kullanıcılı entegrasyonlar |
 | **Belirteç döndürme**     | Manuel                     | Yenileme belirteçleri aracılığıyla otomatik olarak |
 | **Kapsama dayalı erişim** | Tam API erişimi            | Kapsamlar aracılığıyla ayrıntılı                   |
-
-<PageBanner illustration="sso" pattern="user-guide-permissions" />

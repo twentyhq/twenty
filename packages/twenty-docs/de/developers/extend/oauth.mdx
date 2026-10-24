@@ -3,8 +3,6 @@ title: OAuth
 description: Autorisierungscode-Flow mit PKCE und Client-Anmeldedaten für Server-zu-Server-Zugriff.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Twenty implementiert OAuth 2.0 mit Autorisierungscode + PKCE für benutzerorientierte Apps und Client-Anmeldedaten für Server-zu-Server-Zugriff. Clients werden dynamisch über [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) registriert — keine manuelle Einrichtung in einem Dashboard.
 
 ## Wann Sie OAuth verwenden sollten
@@ -188,5 +186,3 @@ Dies liefert alle Endpunkte, unterstützte Grant-Typen, Geltungsbereiche und Fä
 | **Am besten geeignet für**            | Skripte, interne Tools          | Externe Apps, Multi-User-Integrationen    |
 | **Token-Rotation**                    | Manuell                         | Automatisch über Refresh-Tokens           |
 | **Geltungsbereichsbasierter Zugriff** | Voller API-Zugriff              | Granular über Geltungsbereiche            |
-
-<PageBanner illustration="sso" pattern="user-guide-permissions" />

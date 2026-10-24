@@ -3,8 +3,6 @@ title: 定位系统元数据
 description: 解析 Twenty 在每个对象上自动预配置的元数据的确定性通用标识符，这样你的应用无需硬编码就能引用它。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Twenty 中的每个对象都带有你无需自行声明的**系统元数据**，例如一组字段以及带有列的主列表视图。 当对象被预配置时，服务器会创建所有这些内容，并且随着 Twenty 的发展，这个集合也会随之增长。
 
 由于你不会声明它，因此也就没有可供你导入的 `universalIdentifier` 常量。 相反，服务器会以确定性方式**派生**每个标识符，而 `twenty-sdk` 暴露了相同的派生逻辑，这样你的 manifest 就能解析出服务器实际使用的精确值。
@@ -204,5 +202,3 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
   `getFieldUniversalIdentifier` 解析。 在你定义的对象上，请使用你在 `defineObject()` 中赋予它的标识符来引用
   `name` 字段。
 </Note>
-
-<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

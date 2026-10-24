@@ -3,7 +3,6 @@ title: Webhooks
 description: CRM에서 이벤트가 발생하면 실시간 알림을 받으세요.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 웹훅은 Twenty에서 이벤트가 발생하면 데이터를 실시간으로 귀하의 시스템으로 푸시합니다 — 폴링이 필요 없습니다. 이를 사용하여 외부 시스템을 동기화 상태로 유지하고, 자동화를 트리거하거나, 알림을 보낼 수 있습니다.
@@ -111,5 +110,3 @@ const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 | **워크플로 웹훅 트리거**    | IN  | 외부 시스템에서 Twenty로 데이터를 수신합니다        |
 
 외부 데이터를 수신하려면 [웹훅 트리거 설정](/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)을 참조하세요.
-
-<PageBanner illustration="webhooks" pattern="developers-api" />

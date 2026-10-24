@@ -3,8 +3,6 @@ title: Übersicht
 description: Serverseitiges TypeScript, das innerhalb von Twenty ausgeführt wird – ausgelöst durch HTTP-Routen, Cron-Zeitpläne, Datenbankereignisse, KI-Tools oder Workflow-Aktionen.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Die **Logikschicht** einer Twenty-App ist der Code, der *ausgeführt wird* – serverseitige TypeScript-Handler, die auf HTTP-Anfragen, Cron-Zeitpläne und Datensatzänderungen reagieren; KI-Skills und -Agenten, die innerhalb des Workspaces leben; und OAuth-Verbindungen, die es Ihren Funktionen ermöglichen, im Namen eines Benutzers in Drittanbieterdiensten zu agieren.
 
 ```text
@@ -25,20 +23,20 @@ Die **Logikschicht** einer Twenty-App ist der Code, der *ausgeführt wird* – s
 
 ## In diesem Abschnitt
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="Logikfunktionen" icon="bolt" href="/de/developers/extend/apps/logic/logic-functions" img="/images/documentation/illustrations/logic-functions.svg">
+<CardGroup cols={2}>
+  <Card title="Logikfunktionen" icon="bolt" href="/de/developers/extend/apps/logic/logic-functions">
     Der zentrale Baustein – Auslösertypen, Payloads und der typisierte API-Client.
   </Card>
-  <Card title="Skills & Agenten" icon="robot" href="/de/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/illustrations/skills-agents.svg">
+  <Card title="Skills & Agenten" icon="robot" href="/de/developers/extend/apps/logic/skills-and-agents">
     Wiederverwendbare Anweisungen für KI-Agenten und Assistenten mit benutzerdefinierten System-Prompts.
   </Card>
-  <Card title="Verbindungen" icon="plug" href="/de/developers/extend/apps/logic/connections" img="/images/documentation/illustrations/connections.svg">
+  <Card title="Verbindungen" icon="plug" href="/de/developers/extend/apps/logic/connections">
     OAuth-Anmeldedaten, die Ihre App für Dienste von Drittanbietern verwaltet – Linear, GitHub, Slack und mehr.
   </Card>
-  <Card title="Key-Value-Store" icon="database" href="/de/developers/extend/apps/logic/key-value-store" img="/images/documentation/illustrations/key-value-store.svg">
+  <Card title="Key-Value-Store" icon="database" href="/de/developers/extend/apps/logic/key-value-store">
     Zustand zwischen Ausführungen von Logikfunktionen beibehalten — Caches, Cursor und arbeitsbereichsübergreifende Claims.
   </Card>
-  <Card title="Hintergrundjobs" icon="stack-2" href="/de/developers/extend/apps/logic/background-jobs" img="/images/documentation/illustrations/background-jobs.svg">
+  <Card title="Hintergrundjobs" icon="stack-2" href="/de/developers/extend/apps/logic/background-jobs">
     Reihen Sie die Ausführung einer Logikfunktion in die Warteschlange der Worker ein, um das Timeout je Ausführung zu umgehen.
   </Card>
 </CardGroup>
@@ -60,5 +58,3 @@ Funktionen werden in isolierten Node.js-Prozessen in einer Sandbox ausgeführt u
 <Note>
 **Installations-Hooks** – Code, der vor oder nach der Installation ausgeführt wird – teilen sich diese Laufzeitumgebung, verwenden jedoch eigene Define-Funktionen und befinden sich unter [Config → Install Hooks](/de/developers/extend/apps/config/install-hooks).
 </Note>
-
-<PageBanner illustration="apps-logic" pattern="user-guide-workflows" />

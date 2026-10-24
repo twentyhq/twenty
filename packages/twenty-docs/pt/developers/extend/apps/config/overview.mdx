@@ -3,8 +3,6 @@ title: Visão Geral
 description: Configure a própria aplicação — a sua identidade, permissões predefinidas e o que é executado no momento da instalação.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 A **camada de configuração** de uma aplicação Twenty é o que descreve a aplicação *para a plataforma* — a sua identidade, as permissões que detém e o código que é executado durante a instalação ou atualização. Estas declarações não adicionam novos formatos de dados nem comportamento em tempo de execução; dizem à Twenty *quem é a aplicação* e *como configurá-la*.
 
 ```text
@@ -34,14 +32,14 @@ A **camada de configuração** de uma aplicação Twenty é o que descreve a apl
 
 ## Nesta secção
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="Configuração da aplicação" icon="rocket" href="/pt/developers/extend/apps/config/application" img="/images/documentation/illustrations/application-config.svg">
+<CardGroup cols={2}>
+  <Card title="Configuração da aplicação" icon="rocket" href="/pt/developers/extend/apps/config/application">
     `defineApplication` — identidade, função predefinida, variáveis, metadados do marketplace.
   </Card>
-  <Card title="Funções e Permissões" icon="shield-half" href="/pt/developers/extend/apps/config/roles" img="/images/documentation/illustrations/roles.svg">
+  <Card title="Funções e Permissões" icon="shield-half" href="/pt/developers/extend/apps/config/roles">
     `defineRole` — declara o que as funções de lógica da sua aplicação podem ler e escrever.
   </Card>
-  <Card title="Hooks de instalação" icon="tool" href="/pt/developers/extend/apps/config/install-hooks" img="/images/documentation/illustrations/install-hooks.svg">
+  <Card title="Hooks de instalação" icon="tool" href="/pt/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction` e `defineUninstallLogicFunction` — criam cópias de segurança dos dados, inicializam valores predefinidos, validam atualizações e fazem a limpeza na remoção.
   </Card>
 </CardGroup>
@@ -55,5 +53,3 @@ A **camada de configuração** de uma aplicação Twenty é o que descreve a apl
 <Note>
 Os hooks de instalação partilham o ambiente de execução de [função de lógica](/pt/developers/extend/apps/logic/logic-functions) — a mesma assinatura de handler, as mesmas variáveis de ambiente, o mesmo cliente de API tipado — mas são declarados com as suas próprias funções "define" e vivem fora do modelo de disparo normal (HTTP, cron, eventos de base de dados).
 </Note>
-
-<PageBanner illustration="apps-config" pattern="user-guide-settings" />

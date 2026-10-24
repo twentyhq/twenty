@@ -3,8 +3,6 @@ title: Befehlsmenü-Einträge
 description: Stellen Sie Front-Komponenten als Schnellaktionen und Einträge im Befehlsmenü (Cmd+K) mit defineCommandMenuItem bereit.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Ein **Befehlsmenü-Eintrag** ist die Brücke zwischen dem Benutzer und einer [Front-Komponente](/de/developers/extend/apps/layout/front-components). Er registriert die Komponente im Twenty-Befehlsmenü (Cmd+K) und zeigt sie optional als angeheftete Schnellaktionsschaltfläche oben rechts auf der Seite an.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
@@ -117,5 +115,3 @@ Kombinieren Sie Variablen zu booleschen Ausdrücken:
 | `none(array, prop)`                 | `true`, wenn die Eigenschaft bei jedem Element falsy ist                                    |
 | `noneDefined(array, prop)`          | `true`, wenn die Eigenschaft bei jedem Element undefined ist                                |
 | `noneEquals(array, prop, value)`    | `true`, wenn die Eigenschaft bei keinem Element dem Wert entspricht                         |
-
-<PageBanner illustration="command-menu" pattern="developers-api" />

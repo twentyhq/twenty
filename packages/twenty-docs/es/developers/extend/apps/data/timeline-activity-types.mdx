@@ -3,8 +3,6 @@ title: Tipos de actividad del cronograma
 description: Definir eventos de auditoría automática y eventos de aplicación explícitos que renderizan en cronogramas de registro.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Un tipo de actividad de línea de tiempo define el vocabulario estable para un evento que se muestra en la línea de tiempo de un registro. Los objetos estándar y los objetos de aplicación utilizan el mismo contrato: un tipo tiene una etiqueta y un icono, puede opcionalmente declarar cuando se emita, y puede renderizar opcionalmente a través de uno de los [componentes frontales] de tu aplicación (/developers/extend/apps/layout/front-components).
 
 <Note>
@@ -183,5 +181,3 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | `replacesTimelineActivityTypeUniversalIdentifier` | No          | Tipo de emisión existente reemplazado; requiere `emit`                             |
 
 Veinte instantáneas capturan identidad semántica y presentaciones duraderas cuando se crea un evento. Las filas históricas mantienen su acción original y su objeto significado. Mientras el tipo está instalado, su actual etiqueta traducida, icono y componente frontal renderizan en vivo; después de desinstalar, la instantánea mantiene el registro legible. La resolución utiliza el identificador universal, así que la presentación también sobrevive a reinstalar la aplicación.
-
-<PageBanner illustration="timeline" pattern="developers-api" />

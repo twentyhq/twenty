@@ -2,8 +2,6 @@
 title: Meilleures pratiques
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Ce document décrit les meilleures pratiques à suivre lors de travaux sur le backend.
 
 ## Suivez une approche modulaire
@@ -22,5 +20,3 @@ Vous devez également exposer les services que vous souhaitez utiliser dans d'au
 Lorsque vous déclarez une variable comme `any`, le vérificateur de types de TypeScript ne procède à aucune vérification de type, ce qui permet d'affecter n'importe quel type de valeur à la variable. TypeScript utilise l'inférence de type pour déterminer le type d'une variable en fonction de sa valeur. En le déclarant comme `any`, TypeScript ne peut plus inférer le type. Cela rend difficile la détection des erreurs liées aux types pendant le développement, conduisant à des erreurs d'exécution et rendant le code moins maintenable, moins fiable et plus difficile à comprendre pour d'autres.
 
 C'est pourquoi tout devrait avoir un type. Donc si vous créez un nouvel objet avec un prénom et un nom, vous devriez créer une interface ou un type contenant un prénom et un nom qui définit la forme de l'objet que vous manipulez.
-
-<PageBanner illustration="campaign-practices" pattern="user-guide-calendar-emails" />

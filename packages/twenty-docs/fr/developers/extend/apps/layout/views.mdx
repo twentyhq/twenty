@@ -3,8 +3,6 @@ title: Vues
 description: Livrez des vues enregistrées préconfigurées — ordre des colonnes, filtres, groupes — pour les objets de votre application.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Une **vue** est une configuration enregistrée pour la façon dont les enregistrements d’un objet sont affichés : quels champs apparaissent, leur ordre, s’ils sont visibles, ainsi que les filtres ou groupes appliqués. Utilisez `defineView()` pour fournir des vues préconfigurées avec votre application.
 
 Chaque objet obtient automatiquement sa vue de liste principale (le tableau « All ... » ouvert par un élément de navigation `OBJECT`), provisionnée par le serveur — y compris les objets que votre application crée, avec une colonne par champ que votre application déclare. Les vues que vous définissez avec `defineView()` sont toujours des vues **supplémentaires** en plus de cette vue par défaut.
@@ -112,5 +110,3 @@ Le champ `value` est toujours une valeur sérialisable en JSON, mais sa forme at
 ## Comment les vues apparaissent dans l’interface utilisateur
 
 Une vue seule n’est pas accessible à partir de la barre latérale. Pour la faire apparaître là, associez-la à un [élément de menu de navigation](/fr/developers/extend/apps/layout/navigation-menu-items) de type `VIEW` qui pointe vers le `universalIdentifier` de la vue. C’est le schéma canonique : chaque objet personnalisé obtient une vue d’index par défaut générée automatiquement lors de sa création ; il vous suffit donc d’inclure l’élément de la barre latérale qui l’ouvre.
-
-<PageBanner illustration="views-pipelines" pattern="developers-api" />

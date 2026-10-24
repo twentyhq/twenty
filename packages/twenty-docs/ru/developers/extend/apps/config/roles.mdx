@@ -3,8 +3,6 @@ title: Роли и разрешения
 description: Укажите, к каким объектам и полям функции логики и фронтенд‑компоненты вашего приложения имеют доступ на чтение и запись.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 **Роль** — это набор разрешений: какие объекты приложение может читать или изменять, какие поля оно может видеть и какие возможности платформенного уровня оно может использовать. Функции логики и фронтенд‑компоненты каждого приложения наследуют разрешения роли, помеченной с помощью `defineApplicationRole()` (см. раздел [Роль функции по умолчанию](#the-default-function-role) ниже).
 
 ```ts src/roles/restricted-company-role.ts
@@ -204,5 +202,3 @@ export default defineApplicationRole({
 * Замените `objectPermissions` и `fieldPermissions` на точные объекты и поля, которые действительно нужны вашим функциям.
 * `permissionFlagUniversalIdentifiers` управляют доступом к возможностям на уровне платформы. Сведите их к минимуму.
 * Смотрите рабочий пример: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
-
-<PageBanner illustration="roles" pattern="developers-api" />

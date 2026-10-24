@@ -3,8 +3,6 @@ title: Recursos públicos
 description: Envie arquivos estáticos — imagens, ícones, fontes — junto com seu app por meio da pasta public/.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 A pasta `public/` na raiz do seu app contém arquivos estáticos — imagens, ícones, fontes ou quaisquer outros recursos de que seu app precisa em tempo de execução. Esses arquivos são incluídos automaticamente nas compilações, sincronizados durante o modo de desenvolvimento e enviados para o servidor.
 
 Arquivos colocados em `public/` são:
@@ -66,5 +64,3 @@ export default defineFrontComponent({
 ```
 
 O argumento `path` é relativo à pasta `public/` do seu app. Tanto `getPublicAssetUrl('logo.png')` quanto `getPublicAssetUrl('public/logo.png')` resolvem para a mesma URL — o prefixo `public/` é removido automaticamente, se presente.
-
-<PageBanner illustration="image" pattern="developers-api" />

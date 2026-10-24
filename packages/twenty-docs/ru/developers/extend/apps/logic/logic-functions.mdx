@@ -3,8 +3,6 @@ title: Логические функции
 description: Определяйте серверные функции на TypeScript с триггерами HTTP, cron и событиями базы данных.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Функции логики — это серверные функции на TypeScript, которые выполняются на платформе Twenty. Их можно запускать HTTP-запросами, расписаниями cron или событиями базы данных — а также предоставлять как инструменты для ИИ-агентов.
 
 <AccordionGroup>
@@ -907,5 +905,3 @@ console.log(uploadedFile);
 
   Вам **не** нужно передавать их клиентам — они автоматически считываются из `process.env`, а в разделе [Чьи права доступа использует вызов](#whose-access-a-call-uses) описан выбор между ними. Собственные разрешения вашего приложения определяются ролью, объявленной с помощью `defineApplicationRole()` (или указанной через `defaultRoleUniversalIdentifier` в `application-config.ts`); запуск, действующий от имени человека, никогда не может превысить ни эту роль, ни его собственную.
 </Note>
-
-<PageBanner illustration="logic-functions" pattern="developers-api" />

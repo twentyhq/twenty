@@ -3,8 +3,6 @@ title: 役割と権限
 description: アプリのロジック関数とフロントコンポーネントが読み取りおよび書き込みできるオブジェクトとフィールドを宣言します。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 **ロール**とは権限セットのことであり、アプリが読み取りまたは書き込みできるオブジェクト、参照できるフィールド、および使用できるプラットフォームレベルの機能を定義します。 すべてのアプリのロジック関数とフロントコンポーネントは、`defineApplicationRole()` でマークされたロールの権限を継承します（下記の[The default function role](#the-default-function-role)を参照してください）。
 
 ```ts src/roles/restricted-company-role.ts
@@ -202,5 +200,3 @@ export default defineApplicationRole({
 * `objectPermissions` と `fieldPermissions` を、関数が実際に必要とするオブジェクトとフィールドだけに置き換えてください。
 * `permissionFlagUniversalIdentifiers` はプラットフォームレベルの機能へのアクセスを制御します。 できるだけ最小限に保ってください。
 * 動作例を参照してください。[`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts)。
-
-<PageBanner illustration="roles" pattern="developers-api" />

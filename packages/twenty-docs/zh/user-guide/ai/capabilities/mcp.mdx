@@ -3,8 +3,6 @@ title: MCP服务器
 description: 使用 Model Context Protocol 将 AI 助手连接到你的 Twenty 工作区。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Twenty 提供一个 [MCP](https://modelcontextprotocol.io/) 服务器，使 AI 助手——Claude Desktop、Claude Code、Cursor、ChatGPT 等——能够通过自然语言读取和写入您的 CRM 数据。
 
 将您的**工作区 URL**（用于访问 Twenty 的 URL）用作 MCP 端点。 在 Twenty Cloud 上，您的工作区 URL 可能是 `https://{mycompany}.twenty.com`，也可能是自定义域名。 服务器可通过以下地址访问：
@@ -137,5 +135,3 @@ MCP 端点、OAuth 端点以及发现元数据都基于该值生成。
 **连接超时**
 
 * 确认从您的机器可以访问 MCP 端点 URL。 对于自托管实例，请检查服务器是否正在运行，并确认 `SERVER_URL` 设置正确。
-
-<PageBanner illustration="connections" pattern="developers-api" />

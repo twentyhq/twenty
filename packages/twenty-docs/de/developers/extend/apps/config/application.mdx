@@ -3,8 +3,6 @@ title: App-Konfiguration
 description: Deklarieren Sie die Identität, die Standardrolle, Variablen und Marktplatz-Metadaten Ihrer App mit `defineApplication`.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Jede App muss genau einen Aufruf von `defineApplication` haben. Dieser deklariert:
 
 * **Identität** — universeller Bezeichner, Anzeigename, Beschreibung.
@@ -123,5 +121,3 @@ Wenn Sie planen, [Ihre App zu veröffentlichen](/de/developers/extend/apps/opera
 <Note>
 `logoUrl` und `screenshots` sind veraltete Aliase von `logo` und `galleryImages`. Externe absolute URLs (`http://` oder `https://`) werden für diese Felder nicht unterstützt: Sie werden beim Build mit einer Warnung gelöscht. Bundle stattdessen die Bilder im `public/` Ordner deiner App.
 </Note>
-
-<PageBanner illustration="application-config" pattern="developers-api" />

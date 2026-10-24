@@ -3,8 +3,6 @@ title: Layouts de Página
 description: Personalize páginas de detalhes de registros — abas, widgets e onde os front components são renderizados — usando `definePageLayout` e `definePageLayoutTab`.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Um **layout de página** controla como a página de detalhes de um registro é organizada: quais abas aparecem e quais widgets elas contêm. Use `definePageLayout()` para declarar um layout para um objeto que você possui ou `definePageLayoutTab()` para adicionar uma única aba a um layout que já existe (seu ou um padrão da Twenty).
 
 | Caso de uso                                                                    | Entidade              |
@@ -157,5 +155,3 @@ export default definePageLayoutTab({
 * `position` controla a ordenação em relação às abas existentes no layout de destino. Escolha um valor que posicione sua aba onde você deseja em relação às abas nativas.
 
 * Use isto em vez de `definePageLayout` quando você quiser apenas adicionar a um layout existente. Use `definePageLayout` quando você possuir todo o layout.
-
-<PageBanner illustration="page-layouts" pattern="developers-api" />

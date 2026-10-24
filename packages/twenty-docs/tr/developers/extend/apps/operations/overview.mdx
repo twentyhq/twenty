@@ -3,8 +3,6 @@ title: Genel Bakış
 description: Uygulamanızı oluşturun, test edin ve yayınlayın — CLI komutları, entegrasyon testleri, CI ve bir sunucuya veya npm'e yayınlama.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 **Operasyon katmanı**, uygulamayı *kullanarak* yaptıklarınızdan ziyade, uygulamanız *üzerinde* yaptığınız her şeyi kapsar: CLI komutlarını çağırmak, gerçek bir Twenty sunucusunda entegrasyon testleri çalıştırmak, CI'yi yapılandırmak ve sürümleri yayımlamak — tek bir sunucuya dağıtılan bir tarball olarak ya da pazaryerinde listelenen bir npm paketi olarak.
 
 ```text
@@ -17,19 +15,17 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Bu bölümde
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="CLI" icon="terminal" href="/tr/developers/extend/apps/operations/cli" img="/images/documentation/illustrations/cli.svg">
+<CardGroup cols={2}>
+  <Card title="CLI" icon="terminal" href="/tr/developers/extend/apps/operations/cli">
     `yarn twenty` referansı — exec, logs, uninstall, remotes.
   </Card>
-  <Card title="Senkronizasyon ve kurtarma" icon="compass" href="/tr/developers/extend/apps/operations/sync-and-recovery" img="/images/documentation/illustrations/sync-recovery.svg">
+  <Card title="Senkronizasyon ve kurtarma" icon="compass" href="/tr/developers/extend/apps/operations/sync-and-recovery">
     Hangi komut ne zaman, senkronizasyon diff'ini okuma ve kurtarma basamakları.
   </Card>
-  <Card title="Test" icon="flask" href="/tr/developers/extend/apps/operations/testing" img="/images/documentation/illustrations/testing.svg">
+  <Card title="Test" icon="flask" href="/tr/developers/extend/apps/operations/testing">
     Vitest kurulumu, entegrasyon testleri, tür denetimi, CI iş akışı.
   </Card>
-  <Card title="Yayımlama" icon="upload" href="/tr/developers/extend/apps/operations/publishing" img="/images/documentation/illustrations/publishing.svg">
+  <Card title="Yayımlama" icon="upload" href="/tr/developers/extend/apps/operations/publishing">
     Oluşturun, bir tarball dağıtın, npm'e yayınlayın, yükleyin.
   </Card>
 </CardGroup>
-
-<PageBanner illustration="apps-operations" pattern="developers-contribute" />

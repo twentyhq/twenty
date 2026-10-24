@@ -3,8 +3,6 @@ title: Zaman Çizelgesi Aktivite Türleri
 description: Kayıt zaman çizelgelerinde görüntülenen otomatik denetim olaylarını ve açık uygulama olaylarını tanımlayın.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Bir zaman çizelgesi aktivite türü, bir kaydın zaman çizelgesinde gösterilen olay için kararlı sözlüğü tanımlar. Standart nesneler ve uygulama nesneleri aynı sözleşmeyi kullanır: bir türün etiketi ve simgesi vardır, isteğe bağlı olarak ne zaman yayımlandığını bildirebilir ve uygulamanızın [ön bileşenlerinden](/tr/developers/extend/apps/layout/front-components) biri aracılığıyla isteğe bağlı olarak işlenebilir.
 
 <Note>
@@ -183,5 +181,3 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | `replacesTimelineActivityTypeUniversalIdentifier` | Hayır    | Mevcut emit türü değiştirildi; `emit` gerektirir                                    |
 
 Twenty, bir olay oluşturulduğunda anlamsal kimliği ve kalıcı sunum geri dönüşlerini anlık görüntüler. Geçmiş satırlar özgün eylem ve nesne anlamlarını korur. Tür yüklüyken, mevcut çevrilmiş etiketi, simgesi ve ön uç bileşeni canlı olarak işlenir; kaldırıldıktan sonra anlık görüntü geri dönüşü satırı okunabilir tutar. Çözümleme evrensel tanımlayıcıyı kullanır, bu nedenle sunum uygulamanın yeniden yüklenmesinden de etkilenmez.
-
-<PageBanner illustration="timeline" pattern="developers-api" />

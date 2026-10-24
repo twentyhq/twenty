@@ -3,8 +3,6 @@ title: الأدوار والصلاحيات
 description: حدِّد الكائنات والحقول التي يمكن لوظائف منطق تطبيقك ومكوّنات الواجهة الأمامية قراءتها وكتابتها.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 **الدور** هو مجموعة من الأذونات: الكائنات التي يمكن لتطبيق ما قراءتها أو كتابتها، والحقول التي يمكنه رؤيتها، والقدرات على مستوى المنصّة التي يمكنه استخدامها. ترث جميع وظائف منطق كل تطبيق ومكوّنات الواجهة الأمامية الأذونات الخاصة بالدور المُعلَّم باستخدام `defineApplicationRole()` (انظر [دور الدالة الافتراضي](#the-default-function-role) أدناه).
 
 ```ts src/roles/restricted-company-role.ts
@@ -200,5 +198,3 @@ export default defineApplicationRole({
 * استبدل `objectPermissions` و`fieldPermissions` بالكائنات والحقول الدقيقة التي تحتاجها وظائفك فعليًا.
 * `permissionFlagUniversalIdentifiers` تتحكم في الوصول إلى القدرات على مستوى المنصة. اجعلها في حدّها الأدنى.
 * اطّلع على مثال عملي: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
-
-<PageBanner illustration="roles" pattern="developers-api" />

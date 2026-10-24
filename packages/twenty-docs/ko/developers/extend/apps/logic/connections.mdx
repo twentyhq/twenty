@@ -3,8 +3,6 @@ title: 연결
 description: 앱이 OAuth를 통해 타사 서비스에서 사용자를 대신해 동작하도록 하세요.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 연결은 사용자가 외부 서비스(Linear, GitHub, Slack 등)에 대한 자격 증명을 보유하는 것을 말합니다. 앱은 해당 자격 증명을 **어떻게** 얻는지(즉, **연결 제공자**)를 선언하고, 런타임에 이를 사용해 서드파티 API에 인증된 호출을 수행합니다.
 
 현재는 OAuth 2.0만 지원됩니다. 향후 자격 증명 유형(개인 액세스 토큰, API 키, 기본 인증)은 동일한 인터페이스에 연동되며 — 이미 `defineConnectionProvider({ type: 'oauth', ... })`를 사용하는 앱은 마이그레이션이 필요하지 않습니다.
@@ -268,5 +266,3 @@ const conn = connections.find((c) => c.visibility === 'workspace');
 </Accordion>
 
 </AccordionGroup>
-
-<PageBanner illustration="connections" pattern="developers-api" />

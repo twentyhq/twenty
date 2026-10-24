@@ -3,8 +3,6 @@ title: 3. HTTPルート
 description: HTTP 経由で関数をトリガーし、ドキュメントを Web ページとしてレンダリングします。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 同じハンドラは HTTP リクエストに応答することもできます。 2つのルートを追加します:
 
 * ドキュメントを生成するUI呼び出しの **POST** エンドポイントと
@@ -136,10 +134,6 @@ http://localhost:2020/s/documents/view?id=<documentId>
 
 **このステップの後:** アプリは HTTP 経由でドキュメントを生成し、Web ページとして配信できるようになります。 `curl`なしで使えるようにしましょう。
 
-<CardGroup cols={2} className="documentation-card-group">
-<Card title="次へ: UIの構築 →" icon="layout-columns" href="/ja/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/documentation/illustrations/tutorial-ui.svg">
+<Card title="次へ: UIの構築 →" icon="layout-columns" href="/ja/developers/extend/apps/tutorials/document-generator/building-the-ui">
   表示、ナビゲーション、コマンド、およびフロントコンポーネント。
 </Card>
-</CardGroup>
-
-<PageBanner illustration="tutorial-http" pattern="developers-api" />

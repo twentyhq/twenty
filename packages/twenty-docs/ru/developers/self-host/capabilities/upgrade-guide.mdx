@@ -2,8 +2,6 @@
 title: Руководство по обновлению
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 ## Общие рекомендации
 
 **Всегда создавайте резервную копию базы данных перед началом процесса обновления**, выполнив:
@@ -105,5 +103,3 @@ docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status -
 ## До v1.23
 
 Если ваш экземпляр старее v1.23, необходимо поэтапно обновляться через каждую основную помеченную версию (с v1.6 до v1.7, затем с v1.7 до v1.8 и так далее) до v1.23. После этого можно перейти сразу на последнюю версию.
-
-<PageBanner illustration="sync-recovery" pattern="developers-api" />

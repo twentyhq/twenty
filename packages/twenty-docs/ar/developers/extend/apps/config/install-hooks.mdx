@@ -3,8 +3,6 @@ title: خطافات التثبيت
 description: تشغيل المنطق أثناء دورة حياة التثبيت أو الترقية أو إلغاء التثبيت — مثل تعبئة البيانات الأوّلية، ونسخ السجلات احتياطيًا، والتحقق من الترقية، وتنظيف الموارد الخارجية.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 خطافات التثبيت هي دوال منطقية خاصة تعمل أثناء دورة حياة التثبيت أو الترقية أو إلغاء التثبيت. تستخدم نفس وقت تشغيل المعالج مثل [دوال المنطق](/ar/developers/extend/apps/logic/logic-functions) العادية، ولكن يتم التصريح عنها بدوال تعريف خاصة بها وتعمل خارج نموذج المشغّل المعتاد (HTTP، وcron، وأحداث قاعدة البيانات). تتلقى خطافات التثبيت `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — تكون قيمة `previousVersion` هي `undefined` في حالة التثبيت الجديد)، بينما يتلقى خطاف إلغاء التثبيت `UninstallPayload` (`{ version?: string }` — الإصدار الذي تتم إزالته).
 
 يمكن لكل تطبيق تعريف **خطاف واحد كحد أقصى** من كل نوع (قبل التثبيت، بعد التثبيت، إلغاء التثبيت). سيُنتِج إنشاء ملف البيان خطأً إذا تم اكتشاف أكثر من خطاف واحد من أي نوع.
@@ -187,5 +185,3 @@ export default defineUninstallLogicFunction({
   handler,
 });
 ```
-
-<PageBanner illustration="install-hooks" pattern="developers-api" />

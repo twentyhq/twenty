@@ -2,8 +2,6 @@
 title: Очередь сообщений
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Очереди позволяют выполнять асинхронные операции. Их можно использовать для выполнения фоновых задач, таких как отправка приветственного письма при регистрации.
 Каждый случай использования будет иметь собственный класс очереди, расширенный из `MessageQueueServiceBase`.
 
@@ -41,5 +39,3 @@ class CustomWorker {
   }
 }
 ```
-
-<PageBanner illustration="background-jobs" pattern="developers-api" />

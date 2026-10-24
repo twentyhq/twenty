@@ -3,8 +3,6 @@ title: Componente front-end
 description: Construiți componente React care se afișează în interfața Twenty, cu izolare în sandbox.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Acestea rulează într-un **Web Worker** izolat folosind Remote DOM — codul se execută într-un iframe cu origine opacă, într-un mediu izolat (sandboxed), însă interfața sa se redă în continuare nativ în pagină, în loc să fie limitată la acel iframe.
 
 <Warning>
@@ -848,5 +846,3 @@ CSS-ul componentelor, fie din `import './styles.css'`, CSS-in-JS sau un element 
 * **Payload-uri drag-and-drop.** Evenimentele de tip drag sunt declanșate, dar `event.dataTransfer` este `undefined`.
 * **Built-in-uri Node.** `fs`, `path` și `node:crypto` eșuează la build, așa că mută acea logică într-o [logic function](/ro/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` și `URL` sunt disponibile.
 * **`iframe`** este întotdeauna re-sandboxat fără `allow-same-origin`, astfel încât o încorporare care se bazează pe propria sesiune se afișează ca delogat. Nu are nici `onLoad`.
-
-<PageBanner illustration="front-components" pattern="developers-api" />

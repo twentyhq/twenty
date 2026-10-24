@@ -3,8 +3,6 @@ title: Itens do menu de navegação
 description: Adicione entradas personalizadas à barra lateral do espaço de trabalho — links para visualizações salvas ou URLs externas.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Um **item do menu de navegação** é uma entrada na barra lateral esquerda. Use `defineNavigationMenuItem()` para disponibilizar links personalizados na barra lateral — normalmente um por [visualização](/pt/developers/extend/apps/layout/views) que você disponibiliza — ou para apontar para URLs externas.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
@@ -45,5 +43,3 @@ export default defineNavigationMenuItem({
 <Note>
 **Armadilha comum:** criar um objeto sem um item de menu de navegação associado torna esse objeto inacessível a partir da barra lateral. A menos que seja um objeto técnico/interno, todo objeto personalizado deve ter uma entrada na barra lateral apontando para ele.
 </Note>
-
-<PageBanner illustration="navigation" pattern="developers-api" />

@@ -3,8 +3,6 @@ title: アプリ
 description: コードで Twenty を拡張しましょう。カスタムオブジェクト、サーバーサイドロジック、UI コンポーネント、AI エージェントをすべて TypeScript パッケージとして追加できます。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 ほとんどの CRM は設定パネルを提供します。 Twenty はプラットフォームを提供します。 アプリは、開発者が UI で提供される範囲を超えて Twenty を拡張する方法です。データモデル、サーバーサイドロジック、UI コンポーネント、AI 機能をコードとして定義し、それらを 1 つ以上のワークスペースにデプロイできます。
 
 ## アプリが存在する理由
@@ -37,10 +35,6 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ローカル環境で TypeScript プロジェクトとしてアプリを作成します。 CLI がソースファイルを監視し、実行中の Twenty サーバーとライブ同期します — ファイルを編集すると、1 秒以内に UI に変更が反映されます。 スキーマが変更されると、型付き API クライアントは自動的に再生成されます。 準備ができたら、`yarn twenty app:publish --private` で本番サーバーにプッシュするか、`yarn twenty app:publish` でアプリを npm と Twenty マーケットプレイスに掲載します。
 
-<CardGroup cols={2} className="documentation-card-group">
-<Card title="最初のアプリを構築する" icon="arrow-right" href="/ja/developers/extend/apps/getting-started/quick-start" img="/images/documentation/illustrations/dev-apps.svg">
+<Card title="最初のアプリを構築する" icon="arrow-right" href="/ja/developers/extend/apps/getting-started/quick-start">
   3 フェーズのウォークスルー — 雛形の作成、ローカルサーバーの実行、変更内容の同期。
 </Card>
-</CardGroup>
-
-<PageBanner illustration="dev-apps" pattern="developers-apps" />

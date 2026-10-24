@@ -3,8 +3,6 @@ title: Visão Geral
 description: TypeScript do lado do servidor que é executado dentro do Twenty — acionado por rotas HTTP, agendamentos cron, eventos de banco de dados, ferramentas de IA ou ações de fluxos de trabalho.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 A **camada de lógica** de um app do Twenty é o código que *é executado* — manipuladores TypeScript do lado do servidor que reagem a solicitações HTTP, agendamentos CRON e alterações de registros; habilidades e agentes de IA que vivem dentro do workspace; e conexões OAuth que permitem que suas funções ajam em nome de um usuário em serviços de terceiros.
 
 ```text
@@ -25,20 +23,20 @@ A **camada de lógica** de um app do Twenty é o código que *é executado* — 
 
 ## Nesta seção
 
-<CardGroup cols={2} className="documentation-card-group">
-  <Card title="Funções lógicas" icon="bolt" href="/pt/developers/extend/apps/logic/logic-functions" img="/images/documentation/illustrations/logic-functions.svg">
+<CardGroup cols={2}>
+  <Card title="Funções lógicas" icon="bolt" href="/pt/developers/extend/apps/logic/logic-functions">
     O bloco de construção principal — tipos de gatilho, payloads e o cliente de API tipado.
   </Card>
-  <Card title="Habilidades e agentes" icon="robot" href="/pt/developers/extend/apps/logic/skills-and-agents" img="/images/documentation/illustrations/skills-agents.svg">
+  <Card title="Habilidades e agentes" icon="robot" href="/pt/developers/extend/apps/logic/skills-and-agents">
     Instruções reutilizáveis para agentes de IA e assistentes com prompts de sistema personalizados.
   </Card>
-  <Card title="Conexões" icon="plug" href="/pt/developers/extend/apps/logic/connections" img="/images/documentation/illustrations/connections.svg">
+  <Card title="Conexões" icon="plug" href="/pt/developers/extend/apps/logic/connections">
     Credenciais OAuth que seu app mantém para serviços de terceiros — Linear, GitHub, Slack e outros.
   </Card>
-  <Card title="Armazenamento de chave-valor" icon="database" href="/pt/developers/extend/apps/logic/key-value-store" img="/images/documentation/illustrations/key-value-store.svg">
+  <Card title="Armazenamento de chave-valor" icon="database" href="/pt/developers/extend/apps/logic/key-value-store">
     Persistir o estado entre execuções de funções de lógica — caches, cursores e declarações entre espaços de trabalho.
   </Card>
-  <Card title="Tarefas em segundo plano" icon="stack-2" href="/pt/developers/extend/apps/logic/background-jobs" img="/images/documentation/illustrations/background-jobs.svg">
+  <Card title="Tarefas em segundo plano" icon="stack-2" href="/pt/developers/extend/apps/logic/background-jobs">
     Adicione à fila a execução de uma função de lógica nos workers para contornar o limite de tempo de cada execução.
   </Card>
 </CardGroup>
@@ -60,5 +58,3 @@ As funções são executadas em sandbox, em processos Node.js isolados, e acessa
 <Note>
 **Ganchos de instalação** — código que é executado antes ou depois da instalação — compartilham esse runtime, mas usam suas próprias funções define e ficam em [Config → Install Hooks](/pt/developers/extend/apps/config/install-hooks).
 </Note>
-
-<PageBanner illustration="apps-logic" pattern="user-guide-workflows" />

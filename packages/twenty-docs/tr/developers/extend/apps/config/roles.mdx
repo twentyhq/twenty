@@ -3,8 +3,6 @@ title: Roller ve İzinler
 description: Uygulamanızın mantık fonksiyonlarının ve ön bileşenlerinin hangi nesne ve alanları okuyup yazabileceğini belirtin.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Bir **rol**, bir izin kümesidir: bir uygulamanın hangi nesneleri okuyup yazabileceğini, hangi alanları görebileceğini ve hangi platform düzeyindeki yetenekleri kullanabileceğini tanımlar. Her uygulamanın mantık fonksiyonları ve ön bileşenleri, `defineApplicationRole()` ile işaretlenmiş rolün izinlerini devralır (aşağıda [Varsayılan fonksiyon rolü](#the-default-function-role) bölümüne bakın).
 
 ```ts src/roles/restricted-company-role.ts
@@ -206,5 +204,3 @@ Notlar:
 * `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın gerçekten ihtiyaç duyduğu nesne ve alanlarla değiştirin.
 * `permissionFlagUniversalIdentifiers`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
 * Çalışan bir örnek için bkz.: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).
-
-<PageBanner illustration="roles" pattern="developers-api" />

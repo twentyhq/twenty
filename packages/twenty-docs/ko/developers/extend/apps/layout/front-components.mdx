@@ -3,8 +3,6 @@ title: 프런트 컴포넌트
 description: Twenty의 UI 내부에서 샌드박스 환경으로 격리된 채 렌더링되는 React 컴포넌트를 빌드하세요.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 프런트 컴포넌트는 Twenty의 UI 내부에서 직접 렌더링되는 React 컴포넌트입니다. 이들은 Remote DOM을 사용하는 **격리된 Web Worker**에서 실행됩니다 — 코드는 샌드박스 처리된 opaque-origin iframe 내부에서 실행되지만, UI는 해당 iframe 안에 갇히지 않고 페이지 내에서 네이티브로 렌더링됩니다.
 
 <Warning>
@@ -848,5 +846,3 @@ Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링, �
 * **드래그 앤 드롭 페이로드.** 드래그 이벤트는 발생하지만, `event.dataTransfer`는 `undefined`입니다.
 * **Node 내장 모듈.** `fs`, `path` 및 `node:crypto`는 빌드에 실패하므로, 해당 작업은 [logic function](/ko/developers/extend/apps/logic/logic-functions)으로 옮기세요. Web Crypto, `fetch`, `TextEncoder` 및 `URL`은 사용할 수 있습니다.
 * \*\*`iframe`\*\*은 항상 `allow-same-origin` 없이 다시 샌드박싱되므로, 자체 세션에 의존하는 임베드는 로그아웃된 상태로 렌더링됩니다. 또한 `onLoad`도 지원되지 않습니다.
-
-<PageBanner illustration="front-components" pattern="developers-api" />

@@ -3,8 +3,6 @@ title: Referenciando metadados de sistema
 description: Resolva os identificadores universais determinísticos dos metadados que o Twenty provisiona automaticamente em cada objeto, para que seu app possa referenciá-los sem hardcoding.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Todo objeto no Twenty vem com **metadados de sistema** que você nunca declara explicitamente, como um conjunto de campos e uma visualização principal de lista com suas colunas. O servidor cria tudo isso quando o objeto é provisionado, e o conjunto cresce conforme o Twenty cresce.
 
 Como você não o declara, não existe nenhuma constante `universalIdentifier` para você importar. Em vez disso, o servidor **deriva** cada identificador de forma determinística, e o `twenty-sdk` expõe a mesma derivação para que seu manifesto possa resolver o valor exato que o servidor usa.
@@ -211,5 +209,3 @@ Use os helpers acima quando o objeto for um que **seu app** define com [`defineO
   `getFieldUniversalIdentifier`. Em objetos que você define, referencie o campo
   `name` pelo identificador que você atribuiu a ele em `defineObject()`.
 </Note>
-
-<PageBanner illustration="apps-data" pattern="user-guide-data-model" />

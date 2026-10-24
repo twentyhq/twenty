@@ -3,8 +3,6 @@ title: Objekte erweitern
 description: Fügen Sie Standard-Twenty-Objekten Felder hinzu (Person, Company, …) oder zu Objekten aus anderen Apps mit `defineField`.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Verwenden Sie `defineField()`, um einem Objekt, das Ihnen nicht gehört, ein Feld hinzuzufügen – ein Standard-Twenty-Objekt wie Person oder Company oder ein Objekt, das von einer anderen installierten App bereitgestellt wird. Im Gegensatz zu Inline-Feldern, die innerhalb von [`defineObject`](/de/developers/extend/apps/data/objects) deklariert werden, benötigen eigenständige Felder einen `objectUniversalIdentifier`, um anzugeben, welches Objekt sie erweitern.
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -51,5 +49,3 @@ export default defineField({
 ## Hinzufügen einer Relation zu einem bestehenden Objekt
 
 Um ein Relationsfeld hinzuzufügen (z. B. zur Verknüpfung Ihres benutzerdefinierten Objekts mit einer Standard-`Person`), verwenden Sie `defineField()` mit `FieldType.RELATION`. Das Muster ist dasselbe wie bei Inline-Relationen, jedoch mit explizit gesetztem `objectUniversalIdentifier`. Siehe [Relations](/de/developers/extend/apps/data/relations) für das bidirektionale Muster.
-
-<PageBanner illustration="extending-objects" pattern="developers-api" />

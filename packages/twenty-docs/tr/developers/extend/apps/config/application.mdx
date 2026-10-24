@@ -3,8 +3,6 @@ title: Uygulama Yapılandırması
 description: Uygulamanızın kimliğini, varsayılan rolünü, değişkenlerini ve pazaryeri meta verilerini `defineApplication` ile bildirin.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Her uygulamanın, tam olarak bir adet `defineApplication` çağrısı olması gerekir. Bu çağrı şunları bildirir:
 
 * **Kimlik** — evrensel tanımlayıcı, görünen ad, açıklama.
@@ -123,5 +121,3 @@ Eğer [uygulamanızı yayımlamayı](/tr/developers/extend/apps/operations/publi
 <Note>
 `logoUrl` ve `screenshots`, `logo` ve `galleryImages` için kullanımdan kaldırılmış takma adlardır. Bu alanlar için harici mutlak URL'ler (`http://` veya `https://`) desteklenmez: derleme sırasında uyarı ile birlikte kaldırılırlar. Bunun yerine görselleri uygulamanızın `public/` klasöründe paketleyin.
 </Note>
-
-<PageBanner illustration="application-config" pattern="developers-api" />

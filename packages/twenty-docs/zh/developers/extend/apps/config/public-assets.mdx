@@ -3,8 +3,6 @@ title: 公共资源
 description: 通过 public/ 文件夹将静态文件（图像、图标、字体）与应用一起发布。
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 应用根目录中的 `public/` 文件夹包含静态文件——图像、图标、字体，或应用在运行时所需的任何其他资源。 这些文件会在构建时自动包含、在开发模式下同步，并上传到服务器。
 
 放置在 `public/` 中的文件：
@@ -66,5 +64,3 @@ export default defineFrontComponent({
 ```
 
 `path` 参数是相对于应用的 `public/` 文件夹的。 `getPublicAssetUrl('logo.png')` 和 `getPublicAssetUrl('public/logo.png')` 均解析为相同的 URL——如果存在，`public/` 前缀会被自动移除。
-
-<PageBanner illustration="image" pattern="developers-api" />

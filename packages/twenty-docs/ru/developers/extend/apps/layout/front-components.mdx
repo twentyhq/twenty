@@ -3,8 +3,6 @@ title: Компоненты фронтенда
 description: Создавайте компоненты React, которые отображаются внутри интерфейса Twenty в изолированной песочнице.
 ---
 
-import { PageBanner } from "/snippets/page-banner.mdx"
-
 Фронтенд-компоненты — это компоненты React, которые отображаются непосредственно внутри интерфейса Twenty. Они выполняются в **изолированном Web Worker** с использованием Remote DOM — ваш код исполняется внутри изолированного iframe с непрозрачным источником (opaque-origin), но его UI всё равно нативно рендерится на странице, а не ограничивается этим iframe.
 
 <Warning>
@@ -848,5 +846,3 @@ CSS компонента, будь то из `import './styles.css'`, CSS-in-JS 
 * **Перетащите приложения.** Перетаскивайте события, но `event.dataTransfer` `неопределённый`.
 * **Узел встроенный** `fs`, `path` и `node:crypto` не срабатывают сборки, так что переместитесь с помощью [logic функции](/ru/developers/extend/apps/logic/logic-functions). Веб-криптовалюты, `fetch`, `TextEncoder` и `URL`.
 * **`iframe`** всегда повторно изолируется без `allow-same-origin`, поэтому встраиваемый контент, зависящий от собственной сессии, отображается как неавторизованный. У него также нет `onLoad`.
-
-<PageBanner illustration="front-components" pattern="developers-api" />
