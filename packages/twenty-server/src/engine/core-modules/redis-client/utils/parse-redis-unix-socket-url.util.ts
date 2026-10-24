@@ -11,7 +11,7 @@ export type RedisUnixSocketConnection = {
   password?: string;
 };
 
-// Same form ioredis reads: credentials go in the query string as there is no host.
+// Credentials go in the query string because a socket URL has no host.
 export const parseRedisUnixSocketUrl = (
   url: string,
 ): RedisUnixSocketConnection | null => {
@@ -23,7 +23,7 @@ export const parseRedisUnixSocketUrl = (
     url,
   );
   const parameters = [...searchParams.keys()];
-  // ioredis uses the path as written, so reject paths URL parsing rewrites.
+  // Reject paths URL parsing rewrites (escapes, dot segments) so the socket matches what was written.
   const writtenPath = url
     .slice(REDIS_UNIX_SOCKET_URL_PROTOCOL.length)
     .split('?')[0];

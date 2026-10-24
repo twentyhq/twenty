@@ -1,9 +1,10 @@
 import { Injectable, type OnModuleDestroy } from '@nestjs/common';
 
-import IORedis from 'ioredis';
+import type IORedis from 'ioredis';
 import { isDefined } from 'twenty-shared/utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
+import { createIORedisClient } from 'src/engine/core-modules/redis-client/utils/create-ioredis-client.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -24,7 +25,7 @@ export class RedisClientService implements OnModuleDestroy {
         throw new Error('REDIS_QUEUE_URL or REDIS_URL must be defined');
       }
 
-      this.redisQueueClient = new IORedis(redisQueueUrl, {
+      this.redisQueueClient = createIORedisClient(redisQueueUrl, {
         maxRetriesPerRequest: null,
       });
     }
@@ -44,7 +45,7 @@ export class RedisClientService implements OnModuleDestroy {
         throw new Error('REDIS_URL must be defined');
       }
 
-      this.redisClient = new IORedis(redisUrl, {
+      this.redisClient = createIORedisClient(redisUrl, {
         maxRetriesPerRequest: null,
       });
     }

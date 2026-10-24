@@ -1,6 +1,6 @@
-import IORedis from 'ioredis';
 import { createClient } from 'redis';
 
+import { createIORedisClient } from 'src/engine/core-modules/redis-client/utils/create-ioredis-client.util';
 import { getNodeRedisConnectionOptions } from 'src/engine/core-modules/redis-client/utils/get-node-redis-connection-options.util';
 
 describe('getNodeRedisConnectionOptions', () => {
@@ -22,10 +22,10 @@ describe('getNodeRedisConnectionOptions', () => {
     });
   });
 
-  it('should give node-redis the same connection ioredis reads from the URL', () => {
+  it('should give node-redis the same connection as ioredis', () => {
     const url = 'unix:///var/run/redis.sock?db=2&username=app&password=p%2Bss';
     const nodeRedisClient = createClient(getNodeRedisConnectionOptions(url));
-    const ioRedisClient = new IORedis(url, { lazyConnect: true });
+    const ioRedisClient = createIORedisClient(url, { lazyConnect: true });
 
     expect(nodeRedisClient.options).toMatchObject({
       socket: { path: '/var/run/redis.sock' },
