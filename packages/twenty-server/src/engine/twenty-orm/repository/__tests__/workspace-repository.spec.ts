@@ -6,6 +6,10 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import {
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 
@@ -89,9 +93,11 @@ const ROLE_ID = 'role-id';
 const buildRepository = ({
   shouldBypassPermissionChecks = true,
   shouldSkipEventEmission,
+  executorRows = [],
 }: {
   shouldBypassPermissionChecks?: boolean;
   shouldSkipEventEmission: boolean;
+  executorRows?: any[];
 }) => {
   const executedStatements: CompiledStatement[] = [];
 
@@ -117,7 +123,7 @@ const buildRepository = ({
       execute: async (statement: CompiledStatement) => {
         executedStatements.push(statement);
 
-        return [];
+        return executorRows;
       },
     },
     objectRecordsPermissions: {
@@ -230,6 +236,44 @@ describe('WorkspaceRepository mutations', () => {
       await repository.delete({ id: 'delivery-id' });
 
       expect(getExecutedStatementKinds()).toEqual(['SELECT', 'DELETE']);
+    });
+  });
+
+  describe('record limits on bulk mutations', () => {
+    it('should throw TOO_MANY_RECORDS_TO_DELETE when deleting more than QUERY_MAX_RECORDS records', async () => {
+      const records = Array.from({ length: 201 }, (_, i) => ({
+        id: `delivery-${i}`,
+      }));
+      const { repository } = buildRepository({
+        shouldSkipEventEmission: false,
+        executorRows: records,
+      });
+
+      await expect(
+        repository.delete({ state: 'SENT' }),
+      ).rejects.toThrow(
+        expect.objectContaining({
+          code: TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE,
+        }),
+      );
+    });
+
+    it('should throw TOO_MANY_RECORDS_TO_DELETE when soft-deleting more than QUERY_MAX_RECORDS records', async () => {
+      const records = Array.from({ length: 201 }, (_, i) => ({
+        id: `delivery-${i}`,
+      }));
+      const { repository } = buildRepository({
+        shouldSkipEventEmission: false,
+        executorRows: records,
+      });
+
+      await expect(
+        repository.softDelete({ state: 'SENT' }),
+      ).rejects.toThrow(
+        expect.objectContaining({
+          code: TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE,
+        }),
+      );
     });
   });
 });

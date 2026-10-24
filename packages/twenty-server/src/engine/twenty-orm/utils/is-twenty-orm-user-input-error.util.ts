@@ -16,6 +16,7 @@ export const isTwentyOrmUserInputError = (
     case TwentyOrmExceptionCode.UNKNOWN_RELATION:
     case TwentyOrmExceptionCode.UNSUPPORTED_OPERATION:
     case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
+    case TwentyOrmExceptionCode.TOO_MANY_RECORDS_TO_DELETE:
     case TwentyOrmExceptionCode.ENTITY_NOT_FOUND:
     case TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED:
     case TwentyOrmExceptionCode.CONNECT_RECORD_NOT_FOUND:
