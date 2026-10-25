@@ -22,11 +22,13 @@ export class DeleteApplicationRuntimeResourcesJob {
   async handle({
     workspaceId,
     applicationUniversalIdentifiers,
+    logicFunctionIds,
   }: DeleteApplicationRuntimeResourcesJobData): Promise<void> {
     await deleteApplicationRuntimeResources({
       logicFunctionDriver: this.logicFunctionDriverFactory.getCurrentDriver(),
       workspaceId,
       applicationUniversalIdentifiers,
+      logicFunctionIds,
     });
   }
 }

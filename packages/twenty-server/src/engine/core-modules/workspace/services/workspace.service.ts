@@ -98,6 +98,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -795,6 +796,14 @@ export class WorkspaceService {
             workspace,
           );
 
+          const logicFunctions = await this.coreDataSource
+            .getRepository(LogicFunctionEntity)
+            .find({
+              select: { id: true },
+              where: { workspaceId: workspace.id },
+              withDeleted: true,
+            });
+
           await this.deleteWorkspaceSyncableMetadataEntities(workspace);
 
           await this.workspaceSchemaService.deleteWorkspaceDBSchema(
@@ -834,6 +843,9 @@ export class WorkspaceService {
               workspaceId: workspace.id,
               applicationUniversalIdentifiers: applications.map(
                 (application) => application.universalIdentifier,
+              ),
+              logicFunctionIds: logicFunctions.map(
+                (logicFunction) => logicFunction.id,
               ),
             },
             DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_OPTIONS,

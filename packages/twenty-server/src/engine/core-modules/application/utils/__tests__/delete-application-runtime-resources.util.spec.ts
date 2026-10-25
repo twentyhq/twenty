@@ -3,49 +3,71 @@ import { deleteApplicationRuntimeResources } from 'src/engine/core-modules/appli
 describe('deleteApplicationRuntimeResources', () => {
   const workspaceId = 'workspace-id';
 
-  it('should delete the resources of every application', async () => {
-    const deleteApplicationResources = jest.fn().mockResolvedValue(undefined);
+  const buildLogicFunctionDriver = () => ({
+    delete: jest.fn().mockResolvedValue(undefined),
+    deleteApplicationResources: jest.fn().mockResolvedValue(undefined),
+  });
+
+  it('should delete every logic function and the resources of every application', async () => {
+    const logicFunctionDriver = buildLogicFunctionDriver();
 
     await deleteApplicationRuntimeResources({
-      logicFunctionDriver: { deleteApplicationResources },
+      logicFunctionDriver,
       workspaceId,
       applicationUniversalIdentifiers: ['application-a', 'application-b'],
+      logicFunctionIds: ['logic-function-a', 'logic-function-b'],
     });
 
-    expect(deleteApplicationResources.mock.calls).toEqual([
+    expect(logicFunctionDriver.delete.mock.calls).toEqual([
+      [{ id: 'logic-function-a' }],
+      [{ id: 'logic-function-b' }],
+    ]);
+    expect(logicFunctionDriver.deleteApplicationResources.mock.calls).toEqual([
       [{ workspaceId, applicationUniversalIdentifier: 'application-a' }],
       [{ workspaceId, applicationUniversalIdentifier: 'application-b' }],
     ]);
   });
 
-  it('should keep deleting after a failure and report the failed applications', async () => {
-    const deleteApplicationResources = jest
-      .fn()
-      .mockRejectedValueOnce(new Error('Rate exceeded'))
-      .mockResolvedValueOnce(undefined);
+  it('should keep deleting after a failure and report what failed', async () => {
+    const logicFunctionDriver = buildLogicFunctionDriver();
+
+    logicFunctionDriver.delete.mockRejectedValueOnce(
+      new Error('Rate exceeded'),
+    );
+    logicFunctionDriver.deleteApplicationResources.mockRejectedValueOnce(
+      new Error('Access denied'),
+    );
 
     await expect(
       deleteApplicationRuntimeResources({
-        logicFunctionDriver: { deleteApplicationResources },
+        logicFunctionDriver,
         workspaceId,
         applicationUniversalIdentifiers: ['application-a', 'application-b'],
+        logicFunctionIds: ['logic-function-a', 'logic-function-b'],
       }),
     ).rejects.toThrow(
-      'Failed to delete runtime resources for workspace workspace-id: application-a: Rate exceeded',
+      'Failed to delete runtime resources for workspace workspace-id: logic function logic-function-a: Rate exceeded; application application-a: Access denied',
     );
 
-    expect(deleteApplicationResources).toHaveBeenCalledTimes(2);
+    expect(logicFunctionDriver.delete).toHaveBeenCalledTimes(2);
+    expect(
+      logicFunctionDriver.deleteApplicationResources,
+    ).toHaveBeenCalledTimes(2);
   });
 
-  it('should do nothing when the workspace has no applications', async () => {
-    const deleteApplicationResources = jest.fn();
+  it('should do nothing when there is nothing to delete', async () => {
+    const logicFunctionDriver = buildLogicFunctionDriver();
 
     await deleteApplicationRuntimeResources({
-      logicFunctionDriver: { deleteApplicationResources },
+      logicFunctionDriver,
       workspaceId,
       applicationUniversalIdentifiers: [],
+      logicFunctionIds: [],
     });
 
-    expect(deleteApplicationResources).not.toHaveBeenCalled();
+    expect(logicFunctionDriver.delete).not.toHaveBeenCalled();
+    expect(
+      logicFunctionDriver.deleteApplicationResources,
+    ).not.toHaveBeenCalled();
   });
 });

@@ -6,12 +6,27 @@ export const deleteApplicationRuntimeResources = async ({
   logicFunctionDriver,
   workspaceId,
   applicationUniversalIdentifiers,
+  logicFunctionIds,
 }: {
-  logicFunctionDriver: Pick<LogicFunctionDriver, 'deleteApplicationResources'>;
+  logicFunctionDriver: Pick<
+    LogicFunctionDriver,
+    'delete' | 'deleteApplicationResources'
+  >;
   workspaceId: string;
   applicationUniversalIdentifiers: string[];
+  logicFunctionIds: string[];
 }): Promise<void> => {
   const failures: string[] = [];
+
+  for (const logicFunctionId of logicFunctionIds) {
+    try {
+      await logicFunctionDriver.delete({ id: logicFunctionId });
+    } catch (error) {
+      failures.push(
+        `logic function ${logicFunctionId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
 
   for (const applicationUniversalIdentifier of applicationUniversalIdentifiers) {
     try {
@@ -21,7 +36,7 @@ export const deleteApplicationRuntimeResources = async ({
       });
     } catch (error) {
       failures.push(
-        `${applicationUniversalIdentifier}: ${error instanceof Error ? error.message : String(error)}`,
+        `application ${applicationUniversalIdentifier}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }

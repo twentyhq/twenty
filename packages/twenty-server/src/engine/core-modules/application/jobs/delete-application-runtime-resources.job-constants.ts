@@ -12,4 +12,5 @@ export const DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_OPTIONS: QueueJobOptions =
 export type DeleteApplicationRuntimeResourcesJobData = {
   workspaceId: string;
   applicationUniversalIdentifiers: string[];
+  logicFunctionIds: string[];
 };

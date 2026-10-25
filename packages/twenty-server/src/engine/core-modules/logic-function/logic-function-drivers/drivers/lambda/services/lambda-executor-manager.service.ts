@@ -78,12 +78,14 @@ export class LambdaExecutorManagerService {
   }
 
   async clearLambdaExecutorCache(
-    flatLogicFunction: FlatLogicFunction,
+    flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
   ): Promise<void> {
     await this.awsClient.clearFunctionCache(flatLogicFunction.id);
   }
 
-  async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
+  async delete(
+    flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
+  ): Promise<void> {
     const lambdaClient = await this.awsClient.getLambdaClient();
 
     try {
