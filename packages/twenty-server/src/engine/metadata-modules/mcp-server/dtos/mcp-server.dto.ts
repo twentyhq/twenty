@@ -16,8 +16,8 @@ export class McpServerDTO {
   @Field()
   url: string;
 
-  @Field()
-  hasAuthorizationHeader: boolean;
+  @Field(() => UUIDScalarType, { nullable: true })
+  connectedAccountId: string | null;
 
   @Field()
   isActive: boolean;

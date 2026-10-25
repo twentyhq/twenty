@@ -3481,8 +3481,8 @@ export default {
             ]
         },
         "CreateMcpServerInput": {
-            "authorizationHeaderValue": [
-                1
+            "connectedAccountId": [
+                518
             ],
             "id": [
                 518
@@ -6051,11 +6051,11 @@ export default {
             "applicationId": [
                 518
             ],
+            "connectedAccountId": [
+                518
+            ],
             "createdAt": [
                 207
-            ],
-            "hasAuthorizationHeader": [
-                4
             ],
             "id": [
                 518
@@ -13315,8 +13315,8 @@ export default {
             ]
         },
         "UpdateMcpServerInputUpdates": {
-            "authorizationHeaderValue": [
-                1
+            "connectedAccountId": [
+                518
             ],
             "isActive": [
                 4

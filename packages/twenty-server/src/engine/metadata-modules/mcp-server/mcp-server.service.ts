@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import {
   getUrlSafely,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
+import { Repository } from 'typeorm';
+
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
-import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -21,6 +22,10 @@ import { fromFlatMcpServerToMcpServerDto } from 'src/engine/metadata-modules/fla
 import { fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow } from 'src/engine/metadata-modules/flat-mcp-server/utils/from-update-mcp-server-input-to-flat-mcp-server-to-update-or-throw.util';
 import { type CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
+import {
+  McpServerException,
+  McpServerExceptionCode,
+} from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import { type UpdateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/update-mcp-server.input';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -31,7 +36,8 @@ export class McpServerService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly secretEncryptionService: SecretEncryptionService,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
   async findAll(workspaceId: string): Promise<McpServerDTO[]> {
@@ -69,12 +75,14 @@ export class McpServerService {
         { workspaceId },
       );
 
+    await this.assertConnectedAccountBelongsToWorkspaceOrThrow({
+      connectedAccountId: input.connectedAccountId,
+      workspaceId,
+    });
+
     const flatMcpServerToCreate =
       fromCreateMcpServerInputToFlatMcpServerToCreate({
         createMcpServerInput: { ...input, url: this.normalizeUrl(input.url) },
-        encryptedAuthorizationHeaderValue: this.encryptAuthorizationHeaderValue(
-          { value: input.authorizationHeaderValue, workspaceId },
-        ),
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
       });
@@ -110,7 +118,12 @@ export class McpServerService {
         input.update,
         ['name', 'label', 'url'],
       );
-    const { authorizationHeaderValue, isActive } = input.update;
+    const { connectedAccountId, isActive } = input.update;
+
+    await this.assertConnectedAccountBelongsToWorkspaceOrThrow({
+      connectedAccountId,
+      workspaceId,
+    });
 
     const flatMcpServerToUpdate =
       fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow({
@@ -121,12 +134,7 @@ export class McpServerService {
           ...(isDefined(label) && { label }),
           ...(isDefined(url) && { url: this.normalizeUrl(url) }),
           ...(isDefined(isActive) && { isActive }),
-          ...(!isUndefined(authorizationHeaderValue) && {
-            authorizationHeaderValue: this.encryptAuthorizationHeaderValue({
-              value: authorizationHeaderValue,
-              workspaceId,
-            }),
-          }),
+          ...(!isUndefined(connectedAccountId) && { connectedAccountId }),
         },
       });
 
@@ -175,20 +183,28 @@ export class McpServerService {
     return getUrlSafely(url)?.toString() ?? url;
   }
 
-  private encryptAuthorizationHeaderValue({
-    value,
+  private async assertConnectedAccountBelongsToWorkspaceOrThrow({
+    connectedAccountId,
     workspaceId,
   }: {
-    value: PlaintextString | null | undefined;
+    connectedAccountId: string | null | undefined;
     workspaceId: string;
-  }): EncryptedString | null {
-    if (!isNonEmptyString(value)) {
-      return null;
+  }): Promise<void> {
+    if (!isDefined(connectedAccountId)) {
+      return;
     }
 
-    return this.secretEncryptionService.encryptVersioned(value, {
-      workspaceId,
+    const connectedAccount = await this.connectedAccountRepository.findOne({
+      where: { id: connectedAccountId, workspaceId },
+      select: { id: true },
     });
+
+    if (!isDefined(connectedAccount)) {
+      throw new McpServerException(
+        `Connected account ${connectedAccountId} not found in workspace`,
+        McpServerExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+      );
+    }
   }
 
   private async getFlatMcpServerMaps(workspaceId: string) {

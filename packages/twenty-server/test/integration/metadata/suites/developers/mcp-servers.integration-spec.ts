@@ -8,6 +8,9 @@ import {
 } from 'test/integration/metadata/suites/utils/mcp-server-test.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 as uuidv4 } from 'uuid';
+
+import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
 const VALID_INPUT = {
   name: 'docs',
@@ -47,7 +50,7 @@ describe('mcpServersResolver (e2e)', () => {
 
   const createAndTrack = async (
     input: Partial<typeof VALID_INPUT> & {
-      authorizationHeaderValue?: string | null;
+      connectedAccountId?: string | null;
       isActive?: boolean;
     } = {},
   ) => {
@@ -63,27 +66,33 @@ describe('mcpServersResolver (e2e)', () => {
   };
 
   describe('createMcpServer', () => {
-    it('creates an enabled server without an authorization header', async () => {
+    it('creates an active public server by default', async () => {
       const response = await createAndTrack();
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.createMcpServer).toMatchObject({
         ...VALID_INPUT,
-        hasAuthorizationHeader: false,
+        connectedAccountId: null,
         isActive: true,
       });
     });
 
-    it('never exposes the authorization header value', async () => {
+    it('links a connected account of the workspace', async () => {
       const response = await createAndTrack({
-        authorizationHeaderValue: 'Bearer super-secret-token',
+        connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
       });
 
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.createMcpServer.hasAuthorizationHeader).toBe(
-        true,
+      expect(response.body.data.createMcpServer.connectedAccountId).toBe(
+        CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
       );
-      expect(JSON.stringify(response.body)).not.toContain('super-secret-token');
+    });
+
+    it('rejects a connected account that is not in the workspace', async () => {
+      const response = await createAndTrack({ connectedAccountId: uuidv4() });
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.data).toBeNull();
     });
 
     it.each([
@@ -146,9 +155,11 @@ describe('mcpServersResolver (e2e)', () => {
   });
 
   describe('updateMcpServer', () => {
-    it('updates editable fields and clears the authorization header', async () => {
+    it('updates editable fields and unlinks the connected account', async () => {
       const created = (
-        await createAndTrack({ authorizationHeaderValue: 'Bearer abc' })
+        await createAndTrack({
+          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
+        })
       ).body.data.createMcpServer;
 
       const response = await updateMcpServer({
@@ -156,7 +167,7 @@ describe('mcpServersResolver (e2e)', () => {
         update: {
           label: 'Renamed',
           isActive: false,
-          authorizationHeaderValue: null,
+          connectedAccountId: null,
         },
       });
 
@@ -165,7 +176,7 @@ describe('mcpServersResolver (e2e)', () => {
         id: created.id,
         label: 'Renamed',
         isActive: false,
-        hasAuthorizationHeader: false,
+        connectedAccountId: null,
       });
     });
 

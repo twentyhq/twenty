@@ -2,21 +2,18 @@ import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'tw
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { type CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
 
 export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
   createMcpServerInput,
-  encryptedAuthorizationHeaderValue,
   workspaceId,
   flatApplication,
 }: {
   createMcpServerInput: Pick<
     CreateMcpServerInput,
-    'id' | 'name' | 'label' | 'url' | 'isActive'
+    'id' | 'name' | 'label' | 'url' | 'connectedAccountId' | 'isActive'
   >;
-  encryptedAuthorizationHeaderValue: EncryptedString | null;
   workspaceId: string;
   flatApplication: FlatApplication;
 }): FlatMcpServer => {
@@ -35,7 +32,7 @@ export const fromCreateMcpServerInputToFlatMcpServerToCreate = ({
     name,
     label,
     url,
-    authorizationHeaderValue: encryptedAuthorizationHeaderValue,
+    connectedAccountId: createMcpServerInput.connectedAccountId ?? null,
     isActive: createMcpServerInput.isActive ?? true,
     workspaceId,
     createdAt: now,

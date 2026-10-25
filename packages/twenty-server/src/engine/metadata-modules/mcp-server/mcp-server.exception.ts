@@ -10,6 +10,7 @@ export enum McpServerExceptionCode {
   INVALID_MCP_SERVER_INPUT = 'INVALID_MCP_SERVER_INPUT',
   INVALID_MCP_SERVER_NAME = 'INVALID_MCP_SERVER_NAME',
   INVALID_MCP_SERVER_URL = 'INVALID_MCP_SERVER_URL',
+  CONNECTED_ACCOUNT_NOT_FOUND = 'CONNECTED_ACCOUNT_NOT_FOUND',
 }
 
 const getMcpServerExceptionUserFriendlyMessage = (
@@ -26,6 +27,8 @@ const getMcpServerExceptionUserFriendlyMessage = (
       return msg`Invalid MCP server name. Use lowercase letters, digits and underscores, starting with a letter.`;
     case McpServerExceptionCode.INVALID_MCP_SERVER_URL:
       return msg`Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL.`;
+    case McpServerExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND:
+      return msg`Connected account not found.`;
     default:
       assertUnreachable(code);
   }

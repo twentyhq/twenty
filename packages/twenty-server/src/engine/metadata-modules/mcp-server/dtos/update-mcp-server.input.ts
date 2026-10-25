@@ -11,7 +11,6 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 
 @InputType()
 export class UpdateMcpServerInputUpdates {
@@ -31,9 +30,9 @@ export class UpdateMcpServerInputUpdates {
   url?: string;
 
   @IsOptional()
-  @IsString()
-  @Field(() => String, { nullable: true })
-  authorizationHeaderValue?: PlaintextString | null;
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  connectedAccountId?: string | null;
 
   @IsOptional()
   @IsBoolean()

@@ -7,7 +7,7 @@ const MCP_SERVER_FIELDS = `
   name
   label
   url
-  hasAuthorizationHeader
+  connectedAccountId
   isActive
   applicationId
 `;
@@ -56,7 +56,7 @@ export type McpServerInput = {
   name: string;
   label: string;
   url: string;
-  authorizationHeaderValue?: string | null;
+  connectedAccountId?: string | null;
   isActive?: boolean;
 };
 

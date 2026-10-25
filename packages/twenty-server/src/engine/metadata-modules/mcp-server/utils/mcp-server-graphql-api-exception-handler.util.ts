@@ -18,6 +18,7 @@ export const mcpServerGraphqlApiExceptionHandler = (error: Error) => {
       case McpServerExceptionCode.INVALID_MCP_SERVER_INPUT:
       case McpServerExceptionCode.INVALID_MCP_SERVER_NAME:
       case McpServerExceptionCode.INVALID_MCP_SERVER_URL:
+      case McpServerExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND:
         throw new UserInputError(error);
       case McpServerExceptionCode.MCP_SERVER_NAME_ALREADY_EXISTS:
         throw new ConflictError(error);

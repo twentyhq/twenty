@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { McpServerResolver } from 'src/engine/metadata-modules/mcp-server/mcp-server.resolver';
 import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-server.service';
@@ -16,7 +17,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
     PermissionsModule,
     FeatureFlagModule,
-    SecretEncryptionModule,
+    TypeOrmModule.forFeature([ConnectedAccountEntity]),
   ],
   providers: [McpServerService, McpServerResolver],
   exports: [McpServerService],

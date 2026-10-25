@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
 
@@ -10,7 +8,7 @@ export const fromFlatMcpServerToMcpServerDto = (
   name: flatMcpServer.name,
   label: flatMcpServer.label,
   url: flatMcpServer.url,
-  hasAuthorizationHeader: isDefined(flatMcpServer.authorizationHeaderValue),
+  connectedAccountId: flatMcpServer.connectedAccountId,
   isActive: flatMcpServer.isActive,
   workspaceId: flatMcpServer.workspaceId,
   applicationId: flatMcpServer.applicationId,
