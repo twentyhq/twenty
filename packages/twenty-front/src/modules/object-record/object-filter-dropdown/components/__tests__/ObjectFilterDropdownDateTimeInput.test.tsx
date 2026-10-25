@@ -62,8 +62,8 @@ const BaseWrapper = getJestMetadataAndApolloMocksWrapper({ apolloMocks: [] });
 
 const renderWithUserContext = (userContextValue: Partial<UserContextType>) => {
   const fullContextValue: UserContextType = {
-    dateFormat: DateFormat.DayMonthYear,
-    timeFormat: TimeFormat.Hour24,
+    dateFormat: DateFormat.SYSTEM,
+    timeFormat: TimeFormat.SYSTEM,
     // biome-ignore lint/suspicious/noExplicitAny: intentional undefined for testing fallback
     timeZone: undefined as any,
     ...userContextValue,
