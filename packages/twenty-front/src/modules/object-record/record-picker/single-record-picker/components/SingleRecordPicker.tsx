@@ -5,7 +5,6 @@ import { SingleRecordPickerMenuItemsWithSearch } from '@/object-record/record-pi
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -27,7 +26,7 @@ export const SingleRecordPicker = ({
   objectNameSingulars,
   componentInstanceId,
   layoutDirection,
-  dropdownWidth = GenericDropdownContentWidth.ExtraLarge,
+  dropdownWidth,
   focusId,
 }: SingleRecordPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
