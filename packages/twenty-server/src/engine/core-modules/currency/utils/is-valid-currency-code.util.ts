@@ -1,7 +1,11 @@
 import { CURRENCY_CODE_LABELS } from 'twenty-shared/constants';
 
 export const isValidCurrencyCode = (currencyCode: string): boolean => {
-  if (!currencyCode || typeof currencyCode !== 'string' || currencyCode.length !== 3) {
+  if (
+    !currencyCode ||
+    typeof currencyCode !== 'string' ||
+    currencyCode.length !== 3
+  ) {
     return false;
   }
 
