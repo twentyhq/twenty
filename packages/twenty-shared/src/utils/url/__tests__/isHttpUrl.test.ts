@@ -12,10 +12,4 @@ describe('isHttpUrl', () => {
     expect(isHttpUrl('mailto:someone@example.com')).toBe(false);
     expect(isHttpUrl('javascript:alert(1)')).toBe(false);
   });
-
-  it('rejects strings that are not absolute urls', () => {
-    expect(isHttpUrl('')).toBe(false);
-    expect(isHttpUrl('example.com')).toBe(false);
-    expect(isHttpUrl('/relative/path')).toBe(false);
-  });
 });

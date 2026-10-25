@@ -8,24 +8,24 @@ import {
   McpServerExceptionCode,
 } from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 
-export const fromDeleteMcpServerInputToFlatMcpServerOrThrow = ({
+export const findFlatMcpServerByIdOrThrow = ({
   flatMcpServerMaps,
   mcpServerId,
 }: {
   flatMcpServerMaps: FlatEntityMaps<FlatMcpServer>;
   mcpServerId: string;
 }): FlatMcpServer => {
-  const existingFlatMcpServer = findFlatEntityByIdInFlatEntityMaps({
+  const flatMcpServer = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: mcpServerId,
     flatEntityMaps: flatMcpServerMaps,
   });
 
-  if (!isDefined(existingFlatMcpServer)) {
+  if (!isDefined(flatMcpServer)) {
     throw new McpServerException(
       'MCP server not found',
       McpServerExceptionCode.MCP_SERVER_NOT_FOUND,
     );
   }
 
-  return existingFlatMcpServer;
+  return flatMcpServer;
 };

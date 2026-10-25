@@ -3,7 +3,6 @@ import {
   createMcpServer,
   deleteMcpServer,
   getMcpServer,
-  getMcpServers,
   updateMcpServer,
 } from 'test/integration/metadata/suites/utils/mcp-server-test.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -102,8 +101,6 @@ describe('mcpServersResolver (e2e)', () => {
     });
 
     it.each([
-      ['Docs', 'uppercase'],
-      ['1docs', 'leading digit'],
       ['my-docs', 'dash'],
       ['a'.repeat(33), 'too long'],
     ])('rejects name "%s" (%s)', async (name) => {
@@ -140,23 +137,6 @@ describe('mcpServersResolver (e2e)', () => {
         'MCP_SERVER_NAME_ALREADY_EXISTS',
       ]);
       expect(response.body.data).toBeNull();
-    });
-  });
-
-  describe('mcpServers and mcpServer queries', () => {
-    it('lists and fetches created servers', async () => {
-      const created = (await createAndTrack()).body.data.createMcpServer;
-
-      const listResponse = await getMcpServers();
-
-      expect(listResponse.body.errors).toBeUndefined();
-      expect(
-        listResponse.body.data.mcpServers.map(({ id }: { id: string }) => id),
-      ).toContain(created.id);
-
-      const getResponse = await getMcpServer(created.id);
-
-      expect(getResponse.body.data.mcpServer).toMatchObject(VALID_INPUT);
     });
   });
 

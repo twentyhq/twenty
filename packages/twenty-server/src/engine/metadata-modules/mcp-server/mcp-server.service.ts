@@ -14,7 +14,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { fromCreateMcpServerInputToFlatMcpServerToCreate } from 'src/engine/metadata-modules/flat-mcp-server/utils/from-create-mcp-server-input-to-flat-mcp-server-to-create.util';
-import { fromDeleteMcpServerInputToFlatMcpServerOrThrow } from 'src/engine/metadata-modules/flat-mcp-server/utils/from-delete-mcp-server-input-to-flat-mcp-server-or-throw.util';
+import { findFlatMcpServerByIdOrThrow } from 'src/engine/metadata-modules/flat-mcp-server/utils/find-flat-mcp-server-by-id-or-throw.util';
 import { fromFlatMcpServerToMcpServerDto } from 'src/engine/metadata-modules/flat-mcp-server/utils/from-flat-mcp-server-to-mcp-server-dto.util';
 import { fromUpdateMcpServerInputToFlatMcpServerToUpdateOrThrow } from 'src/engine/metadata-modules/flat-mcp-server/utils/from-update-mcp-server-input-to-flat-mcp-server-to-update-or-throw.util';
 import { type CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
@@ -86,8 +86,6 @@ export class McpServerService {
     await this.runMigrationOrThrow({
       operation: { flatEntityToCreate: [flatMcpServerToCreate] },
       workspaceId,
-      applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
       errorMessage:
         'Multiple validation errors occurred while creating MCP server',
     });
@@ -104,11 +102,6 @@ export class McpServerService {
     input: UpdateMcpServerInput,
     workspaceId: string,
   ): Promise<McpServerDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
     const { name, label, url } =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
         input.update,
@@ -137,8 +130,6 @@ export class McpServerService {
     await this.runMigrationOrThrow({
       operation: { flatEntityToUpdate: [flatMcpServerToUpdate] },
       workspaceId,
-      applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
       errorMessage:
         'Multiple validation errors occurred while updating MCP server',
     });
@@ -152,22 +143,14 @@ export class McpServerService {
   }
 
   async delete(id: string, workspaceId: string): Promise<McpServerDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const flatMcpServerToDelete =
-      fromDeleteMcpServerInputToFlatMcpServerOrThrow({
-        flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
-        mcpServerId: id,
-      });
+    const flatMcpServerToDelete = findFlatMcpServerByIdOrThrow({
+      flatMcpServerMaps: await this.getFlatMcpServerMaps(workspaceId),
+      mcpServerId: id,
+    });
 
     await this.runMigrationOrThrow({
       operation: { flatEntityToDelete: [flatMcpServerToDelete] },
       workspaceId,
-      applicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
       errorMessage:
         'Multiple validation errors occurred while deleting MCP server',
     });
@@ -215,7 +198,6 @@ export class McpServerService {
   private async runMigrationOrThrow({
     operation,
     workspaceId,
-    applicationUniversalIdentifier,
     errorMessage,
   }: {
     operation: Partial<{
@@ -224,9 +206,13 @@ export class McpServerService {
       flatEntityToDelete: FlatMcpServer[];
     }>;
     workspaceId: string;
-    applicationUniversalIdentifier: string;
     errorMessage: string;
   }): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -239,7 +225,8 @@ export class McpServerService {
             },
           },
           workspaceId,
-          applicationUniversalIdentifier,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

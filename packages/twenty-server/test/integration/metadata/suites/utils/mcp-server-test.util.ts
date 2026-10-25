@@ -44,14 +44,6 @@ const GET_MCP_SERVER_QUERY = gql`
   }
 `;
 
-const GET_MCP_SERVERS_QUERY = gql`
-  query GetMcpServers {
-    mcpServers {
-      ${MCP_SERVER_FIELDS}
-    }
-  }
-`;
-
 export type McpServerInput = {
   name: string;
   label: string;
@@ -89,6 +81,3 @@ export const getMcpServer = (id: string) =>
     query: GET_MCP_SERVER_QUERY,
     variables: { id },
   });
-
-export const getMcpServers = () =>
-  makeMetadataApiRequest({ query: GET_MCP_SERVERS_QUERY });
