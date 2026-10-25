@@ -70,6 +70,7 @@
     "docs:generate-paths": "tsx packages/twenty-docs/scripts/generate-documentation-paths.ts",
     "docs:prune-orphans": "tsx packages/twenty-docs/scripts/prune-orphan-translations.ts",
     "docs:fix-links": "tsx packages/twenty-docs/scripts/fix-translated-links.ts",
+    "docs:restore-attributes": "tsx packages/twenty-docs/scripts/restore-translated-attributes.ts",
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'"
   },
   "workspaces": {

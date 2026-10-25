@@ -121,6 +121,9 @@ jobs:
         if: github.event_name != 'pull_request'
         run: sudo chown -R runner:docker . || true
 
+      - name: Restore translated JSX attributes
+        run: yarn docs:restore-attributes
+
       - name: Fix translated documentation links
         run: yarn docs:fix-links
       - name: Prune orphan localized translations
