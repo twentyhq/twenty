@@ -151,7 +151,7 @@ export const LogConsoleDetailPanel = () => {
         })
       : undefined;
 
-  const DetailIcon = source.DetailIcon ?? source.Icon;
+  const DetailIcon = source.getDetailIcon?.(entry) ?? source.Icon;
 
   const title = isDefined(recordIdentifier)
     ? recordIdentifier.name

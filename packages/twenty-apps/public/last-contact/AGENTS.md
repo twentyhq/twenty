@@ -48,19 +48,13 @@
 
 ## Best practice
 
-It's highly recommended to create new app entities using `yarn twenty dev:add`. These are the options:
+Use the standalone Twenty CLI to generate supported entities:
 
-| Entity type          | Command                                  | Generated file                        |
-| -------------------- | ---------------------------------------- | ------------------------------------- |
-| Object               | `yarn twenty dev:add object`             | `src/objects/<name>.ts`               |
-| Field                | `yarn twenty dev:add field`              | `src/fields/<name>.ts`                |
-| Logic function       | `yarn twenty dev:add logicFunction`      | `src/logic-functions/<name>.ts`       |
-| Front component      | `yarn twenty dev:add frontComponent`     | `src/front-components/<name>.tsx`     |
-| Role                 | `yarn twenty dev:add role`               | `src/roles/<name>.ts`                 |
-| Skill                | `yarn twenty dev:add skill`              | `src/skills/<name>.ts`                |
-| Agent                | `yarn twenty dev:add agent`              | `src/agents/<name>.ts`                |
-| View                 | `yarn twenty dev:add view`               | `src/views/<name>.ts`                 |
-| Navigation menu item | `yarn twenty dev:add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Page layout          | `yarn twenty dev:add pageLayout`         | `src/page-layouts/<name>.ts`          |
+```bash
+twenty app add object --name invoice --name-plural invoices --create-view --create-navigation-menu-item --create-page-layout --no-input
+twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+twenty app add logic-function --name send-invoice --no-input
+twenty app add front-component --name invoice-panel --no-input
+```
 
-This helps automatically generate required IDs etc.
+For other entity types, use the corresponding `twenty-sdk/define` export and generate UUID v4 identifiers. The SDK no longer supplies a CLI.

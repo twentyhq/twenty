@@ -486,7 +486,9 @@
                       "developers/extend/apps/operations/sync-and-recovery",
                       "developers/extend/apps/operations/testing",
                       "developers/extend/apps/operations/translations",
-                      "developers/extend/apps/operations/publishing"
+                      "developers/extend/apps/operations/publishing",
+                      "developers/extend/apps/operations/marketplace-vetting",
+                      "developers/extend/apps/operations/monitoring"
                     ]
                   }
                 ]

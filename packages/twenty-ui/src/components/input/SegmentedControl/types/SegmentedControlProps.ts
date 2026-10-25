@@ -8,6 +8,7 @@ export type SegmentedControlProps<TValue extends string = string> = Omit<
   RadioGroupProps<TValue>,
   'aria-label' | 'aria-labelledby' | 'children' | 'orientation' | 'role'
 > & {
+  fullWidth?: boolean;
   itemWidth?: 'content' | 'equal';
   options: readonly SegmentedControlOption<TValue>[];
   size?: SegmentedControlSize;

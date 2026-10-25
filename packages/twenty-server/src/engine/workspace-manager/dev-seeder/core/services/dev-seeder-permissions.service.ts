@@ -184,6 +184,11 @@ export class DevSeederPermissionsService {
     workspaceId: string;
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<RoleDTO> {
+    await this.roleService.createWorkspaceCustomApplicationRole({
+      workspaceId,
+      workspaceCustomFlatApplication,
+    });
+
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
       ownerFlatApplication: workspaceCustomFlatApplication,
@@ -219,6 +224,7 @@ export class DevSeederPermissionsService {
         icon: 'IconSpy',
         canUpdateAllSettings: false,
         canAccessAllTools: false,
+        canAccessAllAgentChatChannels: false,
         canReadAllObjectRecords: true,
         canUpdateAllObjectRecords: false,
         canSoftDeleteAllObjectRecords: false,
@@ -254,6 +260,7 @@ export class DevSeederPermissionsService {
         icon: 'custom',
         canUpdateAllSettings: true,
         canAccessAllTools: true,
+        canAccessAllAgentChatChannels: true,
         canReadAllObjectRecords: true,
         canUpdateAllObjectRecords: true,
         canSoftDeleteAllObjectRecords: true,

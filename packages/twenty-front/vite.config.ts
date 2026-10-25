@@ -121,10 +121,7 @@ export default defineConfig(({ mode }) => {
             protocol: 'http',
           }),
       fs: {
-        allow: [
-          searchForWorkspaceRoot(process.cwd()),
-          '**/@blocknote/core/src/fonts/**',
-        ],
+        allow: [searchForWorkspaceRoot(process.cwd())],
       },
     },
 
@@ -210,6 +207,7 @@ export default defineConfig(({ mode }) => {
         '@nivo/arcs',
         '@react-spring/web',
         'd3-shape',
+        '@tiptap/pm/tables',
       ],
     },
 

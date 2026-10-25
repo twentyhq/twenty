@@ -6,7 +6,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
-import { type Editor } from '@tiptap/core';
+import { type ChainedCommands, type Editor } from '@tiptap/core';
 import { useId } from 'react';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -65,6 +65,24 @@ export const AdvancedTextEditorBlockHandleMenu = ({
   const currentBlockTypeTitle = turnIntoOptions.find(
     ({ id }) => id === currentBlockTypeOptionId,
   )?.title;
+  const isTable = blockNode.type.name === TIPTAP_NODE_TYPES.TABLE;
+  const hasHeaderRow =
+    blockNode.firstChild?.children.every(
+      (cell) => cell.type.name === TIPTAP_NODE_TYPES.TABLE_HEADER,
+    ) ?? false;
+  const hasHeaderColumn = blockNode.children.every(
+    (row) => row.firstChild?.type.name === TIPTAP_NODE_TYPES.TABLE_HEADER,
+  );
+
+  const handleToggleTableHeader = (
+    toggleHeader: (chain: ChainedCommands) => ChainedCommands,
+  ) =>
+    toggleHeader(
+      editor
+        .chain()
+        .focus()
+        .setCellSelection({ anchorCell: blockPos + 2 }),
+    ).run();
 
   const handleAddBlock = () =>
     editor
@@ -166,6 +184,29 @@ export const AdvancedTextEditorBlockHandleMenu = ({
                   {t`Block style`}
                 </Dropdown.ActionItem>
               )}
+            </Dropdown.Section>
+            <Dropdown.Separator />
+          </>
+        )}
+        {isTable && (
+          <>
+            <Dropdown.Section>
+              <Dropdown.OptionItem
+                selected={hasHeaderRow}
+                onSelect={() =>
+                  handleToggleTableHeader((chain) => chain.toggleHeaderRow())
+                }
+              >
+                {t`Header row`}
+              </Dropdown.OptionItem>
+              <Dropdown.OptionItem
+                selected={hasHeaderColumn}
+                onSelect={() =>
+                  handleToggleTableHeader((chain) => chain.toggleHeaderColumn())
+                }
+              >
+                {t`Header column`}
+              </Dropdown.OptionItem>
             </Dropdown.Section>
             <Dropdown.Separator />
           </>

@@ -7,4 +7,5 @@ export type InputProps = Omit<InputPrimitive.Props, 'size'> & {
   size?: InputSize;
   variant?: InputVariant;
   hasFocusRing?: boolean;
+  textAlign?: 'start' | 'end';
 };

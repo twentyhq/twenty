@@ -39,5 +39,16 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const dateElement = await canvas.findByText('1 May, 2025');
     expect(dateElement).toBeInTheDocument();
+
+    const dateRange = document.createRange();
+
+    dateRange.selectNodeContents(dateElement);
+
+    const textBounds = dateRange.getBoundingClientRect();
+    const displayBounds = dateElement.getBoundingClientRect();
+    const textCenter = textBounds.top + textBounds.height / 2;
+    const displayCenter = displayBounds.top + displayBounds.height / 2;
+
+    expect(Math.abs(textCenter - displayCenter)).toBeLessThanOrEqual(1);
   },
 };
