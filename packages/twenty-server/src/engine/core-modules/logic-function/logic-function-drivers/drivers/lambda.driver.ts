@@ -94,9 +94,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     return { builtCode };
   }
 
-  async delete(
-    flatLogicFunction: Pick<FlatLogicFunction, 'id'>,
-  ): Promise<void> {
+  async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
     await this.executorManager.delete(flatLogicFunction);
   }
 

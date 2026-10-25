@@ -53,7 +53,7 @@ export type LogicFunctionDeleteApplicationResourcesParams = {
 };
 
 export interface LogicFunctionDriver {
-  delete(flatLogicFunction: Pick<FlatLogicFunction, 'id'>): Promise<void>;
+  delete(flatLogicFunction: FlatLogicFunction): Promise<void>;
   deleteApplicationResources(
     params: LogicFunctionDeleteApplicationResourcesParams,
   ): Promise<void>;

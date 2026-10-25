@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -32,11 +32,6 @@ import {
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import {
-  DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_NAME,
-  DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_OPTIONS,
-  type DeleteApplicationRuntimeResourcesJobData,
-} from 'src/engine/core-modules/application/jobs/delete-application-runtime-resources.job-constants';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -61,6 +56,8 @@ import {
   FileWorkspaceFolderDeletionJob,
   type FileWorkspaceFolderDeletionJobData,
 } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
+import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -98,7 +95,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -201,6 +197,8 @@ export class WorkspaceService {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     private readonly applicationUninstallService: ApplicationUninstallService,
+    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly eventLogRetentionService: EventLogRetentionService,
     private readonly roleAssignmentValidationService: RoleAssignmentValidationService,
   ) {}
@@ -796,13 +794,9 @@ export class WorkspaceService {
             workspace,
           );
 
-          const logicFunctions = await this.coreDataSource
-            .getRepository(LogicFunctionEntity)
-            .find({
-              select: { id: true },
-              where: { workspaceId: workspace.id },
-              withDeleted: true,
-            });
+          await this.deleteApplicationRuntimeResourcesBeforeHardDelete(
+            workspace.id,
+          );
 
           await this.deleteWorkspaceSyncableMetadataEntities(workspace);
 
@@ -832,23 +826,6 @@ export class WorkspaceService {
                 (emailingDomain) => emailingDomain.domain,
               ),
             },
-          );
-
-          const applications =
-            await this.applicationService.findManyApplications(workspace.id);
-
-          await this.deleteCascadeMessageQueueService.add<DeleteApplicationRuntimeResourcesJobData>(
-            DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_NAME,
-            {
-              workspaceId: workspace.id,
-              applicationUniversalIdentifiers: applications.map(
-                (application) => application.universalIdentifier,
-              ),
-              logicFunctionIds: logicFunctions.map(
-                (logicFunction) => logicFunction.id,
-              ),
-            },
-            DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_OPTIONS,
           );
 
           if (workspace.customDomain) {
@@ -907,6 +884,49 @@ export class WorkspaceService {
         workspaceDeletedAt: workspace.deletedAt,
       },
     );
+  }
+
+  private async deleteApplicationRuntimeResourcesBeforeHardDelete(
+    workspaceId: string,
+  ): Promise<void> {
+    const logicFunctionDriver =
+      this.logicFunctionDriverFactory.getCurrentDriver();
+
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    for (const flatLogicFunction of Object.values(
+      flatLogicFunctionMaps.byUniversalIdentifier,
+    ).filter(isDefined)) {
+      try {
+        await logicFunctionDriver.delete(flatLogicFunction);
+      } catch (error) {
+        this.logger.warn(
+          `Failed to delete logic function ${flatLogicFunction.id} before hard deleting workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+
+    const applications =
+      await this.applicationService.findManyApplications(workspaceId);
+
+    for (const application of applications) {
+      try {
+        await logicFunctionDriver.deleteApplicationResources({
+          workspaceId,
+          applicationUniversalIdentifier: application.universalIdentifier,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to delete runtime resources of application ${application.universalIdentifier} before hard deleting workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
   }
 
   private async deleteWorkspaceSyncableMetadataEntities(
