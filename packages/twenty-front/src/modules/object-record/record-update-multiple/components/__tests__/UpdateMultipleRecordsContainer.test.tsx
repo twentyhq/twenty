@@ -70,13 +70,23 @@ jest.mock('@/ui/layout/dialog/components/ConfirmationDialog', () => ({
   ConfirmationDialog: () => null,
 }));
 
+type MockUpdateMultipleRecordsFormProps = {
+  values: Record<string, unknown>;
+  onChange: (fieldName: string, value: string) => void;
+  formInstanceId: string;
+};
+
+type WrapperProps = {
+  children: ReactNode;
+};
+
 jest.mock(
   '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm',
   () => {
-    const ReactForMock = require('react') as {
+    const ReactForMock: {
       createElement: typeof createElement;
       Fragment: typeof Fragment;
-    };
+    } = require('react');
     const jotaiStoreModuleForMock = require('@/ui/utilities/state/jotai/jotaiStore');
     const {
       recordFieldInputIsFieldInErrorComponentState: errorStateForMock,
@@ -84,17 +94,14 @@ jest.mock(
     const {
       getRecordFormFieldInputInstanceId: getInstanceIdForMock,
     } = require('@/object-record/record-form/utils/getRecordFormFieldInputInstanceId');
+    const { isString: isStringForMock } = require('@sniptt/guards');
 
     return {
       UpdateMultipleRecordsForm: ({
         values,
         onChange,
         formInstanceId,
-      }: {
-        values: Record<string, unknown>;
-        onChange: (fieldName: string, value: string) => void;
-        formInstanceId: string;
-      }) => {
+      }: MockUpdateMultipleRecordsFormProps) => {
         const isInvalid = values.amount === 'invalid';
 
         return ReactForMock.createElement(
@@ -102,7 +109,7 @@ jest.mock(
           null,
           ReactForMock.createElement('input', {
             'aria-label': 'Amount',
-            value: (values.amount as string) ?? '',
+            value: isStringForMock(values.amount) ? values.amount : '',
             onChange: (event: { target: { value: string } }) => {
               onChange('amount', event.target.value);
               jotaiStoreModuleForMock.jotaiStore.set(
@@ -129,7 +136,7 @@ jest.mock(
   },
 );
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
+const Wrapper = ({ children }: WrapperProps) => (
   <JotaiProvider store={jotaiStore}>
     <I18nProvider i18n={i18n}>{children}</I18nProvider>
   </JotaiProvider>
