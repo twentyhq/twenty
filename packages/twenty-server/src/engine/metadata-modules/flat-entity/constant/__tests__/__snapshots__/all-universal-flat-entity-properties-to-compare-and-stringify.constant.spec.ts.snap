@@ -15,10 +15,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "triggers",
       "isSystem",
     ],
-    "propertiesToReportDivergence": [
-      "isCustom",
-      "deletedAt",
-    ],
     "propertiesToStringify": [
       "responseFormat",
       "modelConfiguration",
@@ -32,9 +28,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "color",
       "position",
     ],
-    "propertiesToReportDivergence": [
-      "isCustom",
-    ],
     "propertiesToStringify": [],
   },
   "agentChatChannelRole": {
@@ -42,7 +35,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "channelUniversalIdentifier",
       "roleUniversalIdentifier",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [],
   },
   "applicationVariable": {
@@ -56,10 +48,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "options",
       "scope",
       "defaultValue",
-    ],
-    "propertiesToReportDivergence": [
-      "value",
-      "isSecret",
     ],
     "propertiesToStringify": [
       "options",
@@ -83,13 +71,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
       "universalOverrides",
     ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
-      "frontComponentUniversalIdentifier",
-      "workflowVersionId",
-      "coreWorkflowVersionId",
-      "pageLayoutUniversalIdentifier",
-    ],
     "propertiesToStringify": [
       "payload",
       "hotKeys",
@@ -108,7 +89,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "onConnectLogicFunctionUniversalIdentifier",
       "onDisconnectLogicFunctionUniversalIdentifier",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [
       "oauthConfig",
     ],
@@ -132,15 +112,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "writability",
       "isNullable",
     ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
-      "objectMetadataUniversalIdentifier",
-      "type",
-      "isSystem",
-      "relationTargetFieldMetadataUniversalIdentifier",
-      "relationTargetObjectMetadataUniversalIdentifier",
-      "morphId",
-    ],
     "propertiesToStringify": [
       "defaultValue",
       "options",
@@ -156,7 +127,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "canReadFieldValue",
       "canUpdateFieldValue",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [],
   },
   "frontComponent": {
@@ -171,7 +141,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalWidgetAvailability",
       "usesSdkClient",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [
       "universalWidgetAvailability",
     ],
@@ -183,11 +152,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isUnique",
       "name",
       "universalFlatIndexFieldMetadatas",
-    ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
-      "objectMetadataUniversalIdentifier",
-      "isCustom",
     ],
     "propertiesToStringify": [
       "universalFlatIndexFieldMetadatas",
@@ -212,9 +176,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "workflowActionTriggerSettings",
       "builtHandlerPath",
     ],
-    "propertiesToReportDivergence": [
-      "runtime",
-    ],
     "propertiesToStringify": [
       "cronTriggerSettings",
       "databaseEventTriggerSettings",
@@ -233,14 +194,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "link",
       "icon",
       "color",
-    ],
-    "propertiesToReportDivergence": [
-      "viewUniversalIdentifier",
-      "userWorkspaceId",
-      "targetRecordId",
-      "targetObjectMetadataUniversalIdentifier",
-      "pageLayoutUniversalIdentifier",
-      "agentChatChannelUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },
@@ -267,15 +220,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",
     ],
-    "propertiesToReportDivergence": [
-      "dataSourceId",
-      "isRemote",
-      "isSystem",
-      "isAuditLogged",
-      "duplicateCriteria",
-      "shortcut",
-      "targetTableName",
-    ],
     "propertiesToStringify": [
       "overrides",
       "readabilityParentFieldUniversalIdentifiers",
@@ -290,7 +234,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "canSoftDeleteObjectRecords",
       "canDestroyObjectRecords",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [],
   },
   "pageLayout": {
@@ -301,9 +244,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier",
       "isFirstTabPinned",
       "deletedAt",
-    ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
     ],
     "propertiesToStringify": [],
   },
@@ -316,10 +256,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "layoutMode",
       "isActive",
       "overrides",
-    ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
-      "pageLayoutUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "overrides",
@@ -339,10 +275,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
       "universalOverrides",
     ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
-      "gridPosition",
-    ],
     "propertiesToStringify": [
       "position",
       "universalConfiguration",
@@ -358,7 +290,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "icon",
       "permissionType",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [],
   },
   "role": {
@@ -377,18 +308,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "canBeAssignedToAgents",
       "canBeAssignedToApiKeys",
     ],
-    "propertiesToReportDivergence": [
-      "isEditable",
-    ],
     "propertiesToStringify": [],
   },
   "rolePermissionFlag": {
     "propertiesToCompare": [
       "permissionFlagUniversalIdentifier",
       "roleUniversalIdentifier",
-    ],
-    "propertiesToReportDivergence": [
-      "flag",
     ],
     "propertiesToStringify": [],
   },
@@ -399,7 +324,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "apiKeyId",
       "agentUniversalIdentifier",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [],
   },
   "rowLevelPermissionPredicate": {
@@ -414,10 +338,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "workspaceMemberSubFieldName",
       "deletedAt",
     ],
-    "propertiesToReportDivergence": [
-      "objectMetadataUniversalIdentifier",
-      "roleUniversalIdentifier",
-    ],
     "propertiesToStringify": [
       "value",
     ],
@@ -429,21 +349,11 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "parentRowLevelPermissionPredicateGroupUniversalIdentifier",
       "deletedAt",
     ],
-    "propertiesToReportDivergence": [
-      "objectMetadataUniversalIdentifier",
-      "roleUniversalIdentifier",
-    ],
     "propertiesToStringify": [],
   },
   "searchFieldMetadata": {
     "propertiesToCompare": [
       "position",
-    ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
-      "objectMetadataUniversalIdentifier",
-      "fieldMetadataUniversalIdentifier",
-      "tsVectorFieldMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },
@@ -455,7 +365,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "position",
       "scope",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [],
   },
   "skill": {
@@ -467,9 +376,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "content",
       "isActive",
       "isSystem",
-    ],
-    "propertiesToReportDivergence": [
-      "isCustom",
     ],
     "propertiesToStringify": [],
   },
@@ -488,7 +394,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
       "overrides",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [
       "overrides",
     ],
@@ -503,9 +408,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "bindings",
       "message",
       "isActive",
-    ],
-    "propertiesToReportDivergence": [
-      "objectMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "bindings",
@@ -535,12 +437,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
       "universalOverrides",
     ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
-      "key",
-      "objectMetadataUniversalIdentifier",
-      "isCustom",
-    ],
     "propertiesToStringify": [
       "universalOverrides",
     ],
@@ -557,10 +453,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
       "universalOverrides",
     ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
-      "fieldMetadataUniversalIdentifier",
-    ],
     "propertiesToStringify": [
       "universalOverrides",
     ],
@@ -574,9 +466,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "deletedAt",
       "viewUniversalIdentifier",
       "overrides",
-    ],
-    "propertiesToReportDivergence": [
-      "isSystemSideEffect",
     ],
     "propertiesToStringify": [
       "overrides",
@@ -594,7 +483,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "subFieldName",
       "relationTargetFieldMetadataUniversalIdentifier",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [
       "value",
     ],
@@ -607,7 +495,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "logicalOperator",
       "positionInViewFilterGroup",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [],
   },
   "viewGroup": {
@@ -618,7 +505,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "deletedAt",
       "viewUniversalIdentifier",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [],
   },
   "viewSort": {
@@ -629,7 +515,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "viewUniversalIdentifier",
       "deletedAt",
     ],
-    "propertiesToReportDivergence": [],
     "propertiesToStringify": [],
   },
   "webhook": {
@@ -638,9 +523,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "operations",
       "description",
       "secret",
-    ],
-    "propertiesToReportDivergence": [
-      "deletedAt",
     ],
     "propertiesToStringify": [
       "operations",
@@ -655,10 +537,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "lastPublishedVersionId",
       "lastPublishedCoreWorkflowVersionId",
     ],
-    "propertiesToReportDivergence": [
-      "createdByUserWorkspaceId",
-      "workspaceWorkflowId",
-    ],
     "propertiesToStringify": [],
   },
   "workflowVersion": {
@@ -668,10 +546,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "triggers",
       "steps",
       "coreWorkflowId",
-    ],
-    "propertiesToReportDivergence": [
-      "workflowId",
-      "workspaceWorkflowVersionId",
     ],
     "propertiesToStringify": [
       "triggers",

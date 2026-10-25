@@ -26,7 +26,6 @@ import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/wor
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { UniversalFlatEntityDiff } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-diff.type';
-import { MetadataUniversalFlatEntityPropertiesToReportDivergence } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-report-divergence.type';
 import { UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteUniversalFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-foreign-key-aggregators.util';
@@ -497,17 +496,13 @@ export abstract class WorkspaceEntityMigrationBuilderService<
   }
 
   private validateNoNonUpdatablePropertyDivergence(
-    nonUpdatablePropertyDivergences: MetadataUniversalFlatEntityPropertiesToReportDivergence<T>[],
+    nonUpdatablePropertyDivergences: string[],
   ): FlatEntityValidationError[] {
-    return nonUpdatablePropertyDivergences.map((property) => {
-      const propertyName = String(property);
-
-      return {
-        code: 'NON_UPDATABLE_PROPERTY_DIVERGENCE',
-        message: `${this.metadataName} property "${propertyName}" cannot be updated`,
-        userFriendlyMessage: msg`Property ${propertyName} cannot be updated`,
-      };
-    });
+    return nonUpdatablePropertyDivergences.map((property) => ({
+      code: 'NON_UPDATABLE_PROPERTY_DIVERGENCE',
+      message: `${this.metadataName} property "${property}" cannot be updated`,
+      userFriendlyMessage: msg`Property ${property} cannot be updated`,
+    }));
   }
 
   private validateUniversalIdentifier({

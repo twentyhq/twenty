@@ -6,7 +6,13 @@ import {
   type MetadataEntityComparablePropertyName,
 } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { type ExtractUniversalPropertyName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-universal-property-name.type';
+
+type ExtractPropertyToCompare<
+  MetadataConfig,
+  P extends keyof MetadataConfig,
+> = MetadataConfig[P] extends { universalProperty: string }
+  ? MetadataConfig[P]['universalProperty']
+  : P;
 
 export type MetadataUniversalFlatEntityPropertiesToCompare<
   T extends AllMetadataName,
@@ -15,7 +21,7 @@ export type MetadataUniversalFlatEntityPropertiesToCompare<
   TComparedKeys extends keyof MetadataConfig =
     MetadataEntityComparablePropertyName<T> & keyof MetadataConfig,
 > = {
-  [P in TComparedKeys]: ExtractUniversalPropertyName<MetadataConfig, P>;
+  [P in TComparedKeys]: ExtractPropertyToCompare<MetadataConfig, P>;
 }[TComparedKeys] &
   keyof MetadataUniversalFlatEntity<T>;
 
