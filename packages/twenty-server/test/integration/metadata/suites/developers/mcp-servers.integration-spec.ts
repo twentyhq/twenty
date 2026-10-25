@@ -20,13 +20,13 @@ const VALID_INPUT = {
 
 const getMcpServerValidationErrorCodes = (responseBody: {
   errors?: {
-    extensions: {
-      errors: { mcpServer?: { errors: { code: string }[] }[] };
+    extensions?: {
+      errors?: { mcpServer?: { errors: { code: string }[] }[] };
     };
   }[];
 }): string[] =>
   (responseBody.errors ?? []).flatMap((error) =>
-    (error.extensions.errors.mcpServer ?? []).flatMap((failedValidation) =>
+    (error.extensions?.errors?.mcpServer ?? []).flatMap((failedValidation) =>
       failedValidation.errors.map(({ code }) => code),
     ),
   );
