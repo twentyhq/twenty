@@ -5,7 +5,8 @@ inspect metadata and records, send API requests, and develop applications.
 
 ## Install
 
-The CLI needs Node.js 24.5 or later.
+The CLI needs Node.js 24.5 or later. Building apps is officially supported on
+Unix systems (macOS and Linux) only; on Windows, work inside WSL 2.
 
 ```bash
 npm install -g twenty
