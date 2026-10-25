@@ -6,8 +6,7 @@ type ApplicationVariableUniversalFlatEntity = UniversalFlatEntityFrom<
   'applicationVariable'
 >;
 
-// The value belongs to the workspace, not the definition: a manifest never
-// carries it and the create action handler initializes it
+// Workspace-owned: manifests never carry it, the create action handler sets it
 // Related to https://github.com/twentyhq/core-team-issues/issues/2934
 export type UniversalFlatApplicationVariable = Omit<
   ApplicationVariableUniversalFlatEntity,

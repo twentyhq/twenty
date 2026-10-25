@@ -8,13 +8,16 @@ export const validateApplicationVariableScope = ({
   scope,
 }: {
   scope: string;
-}): FlatEntityValidationError<ApplicationVariableEntityExceptionCode>[] =>
-  isApplicationVariableScope(scope)
-    ? []
-    : [
-        {
-          code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
-          message: t`Application variable scope "${scope}" is invalid`,
-          userFriendlyMessage: msg`This application variable scope is not supported.`,
-        },
-      ];
+}): FlatEntityValidationError<ApplicationVariableEntityExceptionCode>[] => {
+  if (isApplicationVariableScope(scope)) {
+    return [];
+  }
+
+  return [
+    {
+      code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+      message: t`Application variable scope "${scope}" is invalid`,
+      userFriendlyMessage: msg`This application variable scope is not supported.`,
+    },
+  ];
+};
