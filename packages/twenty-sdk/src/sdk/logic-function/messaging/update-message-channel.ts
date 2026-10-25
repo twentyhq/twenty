@@ -19,7 +19,7 @@ export type UpdateMessageChannelInput = {
   visibility?: MessageChannelVisibility;
   // False pauses ingestion (further ingests are rejected) without deleting the history
   isSyncEnabled?: boolean;
-  // Binds the channel to a messaging provider of this app; null unbinds it, leaving it ingestion-only
+  // null unbinds it, leaving the channel ingestion-only
   messagingProvider?: { universalIdentifier: string } | null;
 };
 

@@ -90,7 +90,6 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
     }
   }
 
-  // a messaging provider's send function can be disabled, rate limited or time out
   if (error instanceof LogicFunctionException) {
     return logicFunctionGraphQLApiExceptionHandler(error);
   }
