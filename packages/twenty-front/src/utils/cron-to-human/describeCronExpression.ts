@@ -12,6 +12,9 @@ import {
   DEFAULT_CRON_DESCRIPTION_OPTIONS,
 } from './types/CronDescriptionOptions';
 import { parseCronExpression } from './utils/parseCronExpression';
+import { formatTime as formatCronTime } from '~/utils/format/formatTime';
+import { isListValue } from '~/utils/validation/isListValue';
+import { isNumericRange } from '~/utils/validation/isNumericRange';
 
 export const describeCronExpression = (
   expression: string,
@@ -40,7 +43,79 @@ export const describeCronExpression = (
       mergedOptions,
     );
 
-    if (parts.minutes.includes('/') && parts.hours.includes('-')) {
+    const isMinutePattern =
+      parts.minutes.includes('/') ||
+      parts.minutes.includes('-') ||
+      parts.minutes === '*';
+
+    const isHourPattern =
+      parts.hours.includes('/') ||
+      parts.hours.includes('-') ||
+      parts.hours === '*';
+
+    const use24Hour = mergedOptions.use24HourTimeFormat ?? true;
+
+    if (isMinutePattern && !isHourPattern) {
+      if (
+        isNumericRange(parts.minutes) &&
+        !parts.minutes.includes('/') &&
+        !isListValue(parts.hours)
+      ) {
+        const [startMin, endMin] = parts.minutes.split('-');
+        const startTime = formatCronTime({
+          hour: parts.hours,
+          minute: startMin,
+          use24HourFormat: use24Hour,
+        });
+        const endTime = formatCronTime({
+          hour: parts.hours,
+          minute: endMin,
+          use24HourFormat: use24Hour,
+          appendUTC: true,
+        });
+        descriptions.push(t`every minute from ${startTime} to ${endTime}`);
+      } else {
+        if (isDefined(minutesDescription) && minutesDescription !== '') {
+          descriptions.push(minutesDescription);
+        }
+        if (isListValue(parts.hours)) {
+          const hoursList = parts.hours.split(',').map((h) => h.trim());
+          const formattedHours = hoursList.map((h) =>
+            formatCronTime({
+              hour: h,
+              minute: '0',
+              use24HourFormat: use24Hour,
+              appendUTC: false,
+            }),
+          );
+          if (formattedHours.length === 2) {
+            const first = formattedHours[0];
+            const second = formattedHours[1];
+            descriptions.push(t`during ${first} and ${second} UTC`);
+          } else {
+            const last = formattedHours.pop();
+            const remaining = formattedHours.join(', ');
+            descriptions.push(t`during ${remaining} and ${last} UTC`);
+          }
+        } else {
+          const startTime = formatCronTime({
+            hour: parts.hours,
+            minute: '0',
+            use24HourFormat: use24Hour,
+          });
+          const endTime = formatCronTime({
+            hour: parts.hours,
+            minute: '59',
+            use24HourFormat: use24Hour,
+            appendUTC: true,
+          });
+          descriptions.push(t`between ${startTime} and ${endTime}`);
+        }
+      }
+    } else if (
+      (parts.minutes.includes('/') || parts.minutes === '*') &&
+      parts.hours.includes('-')
+    ) {
       // Special case: minute intervals with hour ranges (e.g., "*/15 9-17")
       if (isDefined(minutesDescription) && minutesDescription !== '') {
         descriptions.push(minutesDescription);

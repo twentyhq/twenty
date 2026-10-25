@@ -81,5 +81,10 @@ describe('getHoursDescription', () => {
     it('should handle invalid hours', () => {
       expect(getHoursDescription('invalid', '0', options24)).toBe('invalid');
     });
+
+    it('should return empty string when formatted time is empty (non-numeric minute)', () => {
+      expect(getHoursDescription('9', '*/5', options24)).toBe('');
+      expect(getHoursDescription('9,17', '*', options24)).toBe('');
+    });
   });
 });

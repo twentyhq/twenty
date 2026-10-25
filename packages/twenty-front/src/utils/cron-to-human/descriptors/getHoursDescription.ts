@@ -84,6 +84,10 @@ export const getHoursDescription = (
       }),
     );
 
+    if (formattedTimes.some((time) => time === '')) {
+      return '';
+    }
+
     if (formattedTimes.length === 2) {
       const firstTime = formattedTimes[0];
       const secondTime = formattedTimes[1];
@@ -102,6 +106,11 @@ export const getHoursDescription = (
       use24HourFormat: use24Hour,
       appendUTC: true,
     });
+
+    if (formattedTime === '') {
+      return '';
+    }
+
     return t`at ${formattedTime}`;
   }
 
