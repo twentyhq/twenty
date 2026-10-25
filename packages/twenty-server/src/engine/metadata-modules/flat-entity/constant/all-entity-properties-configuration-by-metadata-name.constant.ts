@@ -2317,32 +2317,23 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
 export type MetadataEntityPropertyName<T extends AllMetadataName> =
   keyof (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T];
 
-type FilterComparableKeys<TConfig> = {
-  [P in keyof TConfig]: TConfig[P] extends { toCompare: true } ? P : never;
+type FilterPropertyNamesByConfiguration<
+  TMetadataName extends AllMetadataName,
+  TCondition,
+  TConfig =
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[TMetadataName],
+> = {
+  [P in keyof TConfig]: TConfig[P] extends TCondition ? P : never;
 }[keyof TConfig];
 
 export type MetadataEntityComparablePropertyName<T extends AllMetadataName> =
-  FilterComparableKeys<
-    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
-  >;
-
-type FilterNonComparableKeys<TConfig> = {
-  [P in keyof TConfig]: TConfig[P] extends { toCompare: false } ? P : never;
-}[keyof TConfig];
+  FilterPropertyNamesByConfiguration<T, { toCompare: true }>;
 
 export type MetadataEntityNonComparablePropertyName<T extends AllMetadataName> =
-  FilterNonComparableKeys<
-    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
-  >;
-
-type FilterOverridableKeys<TConfig> = {
-  [P in keyof TConfig]: TConfig[P] extends { isOverridable: true } ? P : never;
-}[keyof TConfig];
+  FilterPropertyNamesByConfiguration<T, { toCompare: false }>;
 
 export type MetadataEntityOverridablePropertyName<T extends AllMetadataName> =
-  FilterOverridableKeys<
-    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
-  >;
+  FilterPropertyNamesByConfiguration<T, { isOverridable: true }>;
 
 // owned by twenty-shared because the application SDK extracts against the same list at build time
 export type MetadataEntityTranslatablePropertyName<T extends AllMetadataName> =
