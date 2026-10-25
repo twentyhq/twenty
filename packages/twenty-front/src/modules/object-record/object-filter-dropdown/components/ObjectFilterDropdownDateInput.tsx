@@ -20,11 +20,16 @@ import {
 } from 'twenty-shared/utils';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 
 export const ObjectFilterDropdownDateInput = () => {
   const { dateFormat, timeZone } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+
+  const { userTimezone } = useUserTimezone();
+
+  const resolvedTimeZone = timeZone ?? userTimezone;
 
   const selectedOperandInDropdown = useAtomComponentStateValue(
     selectedOperandInDropdownComponentState,
@@ -48,7 +53,7 @@ export const ObjectFilterDropdownDateInput = () => {
     // TODO: remove this and use getDisplayValue instead
     const formattedDate = formatDateString({
       value: newPlainDate,
-      timeZone,
+      timeZone: resolvedTimeZone,
       dateFormat,
       localeCatalog: dateLocale.localeCatalog,
     });
@@ -76,7 +81,7 @@ export const ObjectFilterDropdownDateInput = () => {
     const newFilterValue = relativeDate
       ? stringifyRelativeDateFilter({
           ...relativeDate,
-          timezone: timeZone,
+          timezone: resolvedTimeZone,
           firstDayOfTheWeek: resolvedCalendarStartDay,
         })
       : '';
