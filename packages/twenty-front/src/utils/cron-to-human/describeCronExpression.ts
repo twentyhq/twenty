@@ -93,7 +93,7 @@ export const describeCronExpression = (
             const second = formattedHours[1];
             descriptions.push(t`during ${first} and ${second} UTC`);
           } else {
-            const last = formattedHours.pop();
+            const last = formattedHours.pop() ?? '';
             const remaining = formattedHours.join(', ');
             descriptions.push(t`during ${remaining} and ${last} UTC`);
           }

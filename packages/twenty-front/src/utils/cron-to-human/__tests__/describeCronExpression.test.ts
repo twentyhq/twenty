@@ -121,7 +121,7 @@ describe('describeCronExpression', () => {
     });
   });
 
-  describe('minute patterns with fixed or listed hours (#28811)', () => {
+  describe('minute patterns with fixed or listed hours (issue 28811)', () => {
     it('should describe step minutes with a single hour', () => {
       expect(describeCronExpression('*/5 9 * * *')).toBe(
         'every 5 minutes between 09:00 and 09:59 UTC',
