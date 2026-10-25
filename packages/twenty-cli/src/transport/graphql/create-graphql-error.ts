@@ -1,32 +1,56 @@
-import { isArray, isString } from '@sniptt/guards';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isArray, isNonEmptyArray, isString } from '@sniptt/guards';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { getAuthenticationHint } from '@/target/get-authentication-hint';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
+import {
+  extractMetadataValidationErrors,
+  type MetadataValidationError,
+} from '@/transport/graphql/extract-metadata-validation-errors';
 import { pickSafeResponseHeaders } from '@/transport/pick-safe-response-headers';
 
 const toPublicGraphqlError = (error: unknown) => {
   const entry: Record<string, unknown> = isPlainObject(error) ? error : {};
+  const extensions = isPlainObject(entry.extensions) ? entry.extensions : {};
+  const validationErrors = extractMetadataValidationErrors(extensions);
 
   return {
     message: isString(entry.message) ? entry.message : 'Unknown GraphQL error',
     path: isArray(entry.path) ? entry.path : null,
-    code:
-      isPlainObject(entry.extensions) && isString(entry.extensions.code)
-        ? entry.extensions.code
-        : null,
-    ...(isPlainObject(entry.extensions) && isString(entry.extensions.subCode)
-      ? { subCode: entry.extensions.subCode }
-      : {}),
+    code: isString(extensions.code) ? extensions.code : null,
+    ...(isString(extensions.subCode) ? { subCode: extensions.subCode } : {}),
+    ...(isNonEmptyArray(validationErrors) ? { validationErrors } : {}),
   };
 };
 
-const summarizeMessages = (errors: { message: string }[]) =>
-  errors.length === 1
-    ? errors[0].message
-    : `${errors[0].message} (and ${errors.length - 1} more errors)`;
+const formatValidationError = ({
+  metadataName,
+  universalIdentifier,
+  name,
+  summary,
+  message,
+}: MetadataValidationError) =>
+  `  ${metadataName} ${name ?? universalIdentifier ?? '(unknown)'}: ${
+    isDefined(summary) && summary !== message
+      ? `${summary} (${message})`
+      : message
+  }`;
+
+const summarizeMessages = (
+  errors: { message: string; validationErrors?: MetadataValidationError[] }[],
+) => {
+  const summary =
+    errors.length === 1
+      ? errors[0].message
+      : `${errors[0].message} (and ${errors.length - 1} more errors)`;
+  const validationErrors = errors.flatMap(
+    (error) => error.validationErrors ?? [],
+  );
+
+  return [summary, ...validationErrors.map(formatValidationError)].join('\n');
+};
 
 export const createGraphqlError = ({
   errors,
