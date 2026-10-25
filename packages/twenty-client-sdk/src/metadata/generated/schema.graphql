@@ -274,6 +274,7 @@ enum AllMetadataName {
   frontComponent
   index
   logicFunction
+  messagingProvider
   navigationMenuItem
   objectMetadata
   objectPermission
@@ -1427,6 +1428,7 @@ input CreateAppMessageChannelInput {
   connectedAccountId: UUID!
   displayName: String
   handle: String!
+  messagingProviderUniversalIdentifier: UUID
   visibility: MessageChannelVisibility!
 }
 
@@ -2930,6 +2932,7 @@ type MessageChannel {
   isContactAutoCreationEnabled: Boolean!
   isSyncEnabled: Boolean!
   messageFolderImportPolicy: MessageFolderImportPolicy!
+  messagingProviderUniversalIdentifier: UUID
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
   syncStage: MessageChannelSyncStage!
   syncStageStartedAt: DateTime
@@ -4859,6 +4862,7 @@ input UpdateAppMessageChannelInput {
   displayName: String
   id: UUID!
   isSyncEnabled: Boolean
+  messagingProviderUniversalIdentifier: UUID
   visibility: MessageChannelVisibility
 }
 

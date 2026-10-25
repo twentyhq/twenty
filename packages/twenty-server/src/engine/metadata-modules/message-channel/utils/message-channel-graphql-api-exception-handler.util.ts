@@ -15,6 +15,8 @@ import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
+import { LogicFunctionException } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { logicFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/logic-function/utils/logic-function-graphql-api-exception-handler.utils';
 import {
   MessageChannelException,
   MessageChannelExceptionCode,
@@ -86,6 +88,11 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
         return assertUnreachable(error.code);
       }
     }
+  }
+
+  // a messaging provider's send function can be disabled, rate limited or time out
+  if (error instanceof LogicFunctionException) {
+    return logicFunctionGraphQLApiExceptionHandler(error);
   }
 
   if (error instanceof ConnectedAccountException) {

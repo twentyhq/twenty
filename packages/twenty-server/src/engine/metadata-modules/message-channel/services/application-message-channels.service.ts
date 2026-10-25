@@ -212,16 +212,16 @@ export class ApplicationMessageChannelsService {
       data.isSyncEnabled = isSyncEnabled;
     }
 
-    if (messagingProviderUniversalIdentifier !== undefined) {
-      if (isDefined(messagingProviderUniversalIdentifier)) {
-        await this.assertMessagingProviderFitsConnectionOrThrow({
-          applicationId,
-          workspaceId,
-          connectedAccount,
-          messagingProviderUniversalIdentifier,
-        });
-      }
+    if (isDefined(messagingProviderUniversalIdentifier)) {
+      await this.assertMessagingProviderFitsConnectionOrThrow({
+        applicationId,
+        workspaceId,
+        connectedAccount,
+        messagingProviderUniversalIdentifier,
+      });
+    }
 
+    if (messagingProviderUniversalIdentifier !== undefined) {
       data.messagingProviderUniversalIdentifier =
         messagingProviderUniversalIdentifier;
     }
@@ -311,9 +311,7 @@ export class ApplicationMessageChannelsService {
     workspaceId,
     connectedAccount,
     messagingProviderUniversalIdentifier,
-  }: {
-    applicationId: string;
-    workspaceId: string;
+  }: Pick<ApplicationScope, 'applicationId' | 'workspaceId'> & {
     connectedAccount: Pick<ConnectedAccountEntity, 'connectionProviderId'>;
     messagingProviderUniversalIdentifier: string;
   }): Promise<void> {
