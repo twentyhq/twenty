@@ -7,6 +7,24 @@ import {
 
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
 
+const toStoredCustomConfig = (
+  connectionProviderManifest: ConnectionProviderManifest,
+): StoredCustomConnectionProviderConfig | null => {
+  if (connectionProviderManifest.type !== 'custom') {
+    return null;
+  }
+
+  const { authorizeLogicFunction, callbackLogicFunction } =
+    connectionProviderManifest.custom;
+
+  return {
+    authorizeLogicFunctionUniversalIdentifier:
+      authorizeLogicFunction.universalIdentifier,
+    callbackLogicFunctionUniversalIdentifier:
+      callbackLogicFunction.universalIdentifier,
+  };
+};
+
 export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
   ({
     connectionProviderManifest,
@@ -38,18 +56,6 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
           }
         : null;
 
-    const customConfig: StoredCustomConnectionProviderConfig | null =
-      connectionProviderManifest.type === 'custom'
-        ? {
-            authorizeLogicFunctionUniversalIdentifier:
-              connectionProviderManifest.custom.authorizeLogicFunction
-                .universalIdentifier,
-            callbackLogicFunctionUniversalIdentifier:
-              connectionProviderManifest.custom.callbackLogicFunction
-                .universalIdentifier,
-          }
-        : null;
-
     return {
       universalIdentifier: connectionProviderManifest.universalIdentifier,
       applicationUniversalIdentifier,
@@ -60,7 +66,7 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       scope:
         connectionProviderManifest.scope ?? DEFAULT_CONNECTION_PROVIDER_SCOPE,
       oauthConfig,
-      customConfig,
+      customConfig: toStoredCustomConfig(connectionProviderManifest),
       identifyAccountLogicFunctionUniversalIdentifier:
         connectionProviderManifest.identifyAccountLogicFunction
           ?.universalIdentifier ?? null,
