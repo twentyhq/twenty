@@ -126,7 +126,6 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         fromAllFlatEntityMaps,
         now,
-        workspaceId,
       });
 
     const dependencyAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps({
@@ -212,7 +211,6 @@ export class ApplicationManifestMigrationService {
         ownerFlatApplication,
         fromAllFlatEntityMaps,
         now,
-        workspaceId,
       });
 
     assertConnectionProviderLogicFunctionsAreOwn({
