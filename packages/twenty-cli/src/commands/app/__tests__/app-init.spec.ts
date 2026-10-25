@@ -245,6 +245,27 @@ describe('app init', () => {
     expect((await readPackageJson(appDirectory)).name).toBe('@acme/billing');
   });
 
+  it('warns on Windows that building apps needs WSL 2', async () => {
+    const platform = process.platform;
+
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+
+    try {
+      const result = await runJson(['my-app']);
+
+      expect(result.exitCode, result.stdout).toBe(0);
+      expect(result.envelope.warnings).toEqual([
+        {
+          code: 'PLATFORM_UNSUPPORTED',
+          message:
+            'Building apps is only supported on macOS and Linux. On Windows, work inside WSL 2.',
+        },
+      ]);
+    } finally {
+      Object.defineProperty(process, 'platform', { value: platform });
+    }
+  });
+
   it('writes quotes and replacement patterns in the display name and description literally', async () => {
     const result = await run([
       'my-app',
