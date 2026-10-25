@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isUndefined } from '@sniptt/guards';
 import {
@@ -8,10 +7,8 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
-import { Repository } from 'typeorm';
-
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -36,8 +33,7 @@ export class McpServerService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   async findAll(workspaceId: string): Promise<McpServerDTO[]> {
@@ -75,7 +71,7 @@ export class McpServerService {
         { workspaceId },
       );
 
-    await this.assertConnectedAccountBelongsToWorkspaceOrThrow({
+    await this.assertConnectedAccountIsWorkspaceSharedOrThrow({
       connectedAccountId: input.connectedAccountId,
       workspaceId,
     });
@@ -120,7 +116,7 @@ export class McpServerService {
       );
     const { connectedAccountId, isActive } = input.update;
 
-    await this.assertConnectedAccountBelongsToWorkspaceOrThrow({
+    await this.assertConnectedAccountIsWorkspaceSharedOrThrow({
       connectedAccountId,
       workspaceId,
     });
@@ -183,7 +179,7 @@ export class McpServerService {
     return getUrlSafely(url)?.toString() ?? url;
   }
 
-  private async assertConnectedAccountBelongsToWorkspaceOrThrow({
+  private async assertConnectedAccountIsWorkspaceSharedOrThrow({
     connectedAccountId,
     workspaceId,
   }: {
@@ -194,14 +190,14 @@ export class McpServerService {
       return;
     }
 
-    const connectedAccount = await this.connectedAccountRepository.findOne({
-      where: { id: connectedAccountId, workspaceId },
-      select: { id: true },
-    });
+    const isWorkspaceShared =
+      await this.connectedAccountMetadataService.isWorkspaceSharedConnectedAccount(
+        { id: connectedAccountId, workspaceId },
+      );
 
-    if (!isDefined(connectedAccount)) {
+    if (!isWorkspaceShared) {
       throw new McpServerException(
-        `Connected account ${connectedAccountId} not found in workspace`,
+        `Connected account ${connectedAccountId} is not a workspace-shared account of workspace ${workspaceId}`,
         McpServerExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }

@@ -77,21 +77,27 @@ describe('mcpServersResolver (e2e)', () => {
       });
     });
 
-    it('links a connected account of the workspace', async () => {
+    it('links a workspace-shared connected account', async () => {
       const response = await createAndTrack({
-        connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
+        connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY_SHARED,
       });
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.createMcpServer.connectedAccountId).toBe(
-        CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
+        CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY_SHARED,
       );
     });
 
-    it('rejects a connected account that is not in the workspace', async () => {
-      const response = await createAndTrack({ connectedAccountId: uuidv4() });
+    it.each([
+      ['unknown', uuidv4()],
+      ['personal', CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM],
+      ['archived shared', CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM_SHARED_ARCHIVED],
+    ])('rejects a %s connected account', async (_label, connectedAccountId) => {
+      const response = await createAndTrack({ connectedAccountId });
 
-      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
       expect(response.body.data).toBeNull();
     });
 
@@ -158,7 +164,7 @@ describe('mcpServersResolver (e2e)', () => {
     it('updates editable fields and unlinks the connected account', async () => {
       const created = (
         await createAndTrack({
-          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
+          connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY_SHARED,
         })
       ).body.data.createMcpServer;
 

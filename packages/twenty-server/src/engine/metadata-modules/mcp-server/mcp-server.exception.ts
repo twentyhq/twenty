@@ -28,7 +28,7 @@ const getMcpServerExceptionUserFriendlyMessage = (
     case McpServerExceptionCode.INVALID_MCP_SERVER_URL:
       return msg`Invalid MCP server URL. Please provide a valid HTTP or HTTPS URL.`;
     case McpServerExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND:
-      return msg`Connected account not found.`;
+      return msg`Connected account not found. Only workspace-shared accounts can be linked to an MCP server.`;
     default:
       assertUnreachable(code);
   }
