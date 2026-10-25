@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { MessageParticipantRole } from 'twenty-shared/types';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -16,11 +16,11 @@ import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/m
 import { buildAppIngestionLockKey } from 'src/engine/metadata-modules/message-channel/utils/build-app-ingestion-lock-key.util';
 import { buildAppMessageHeaderMessageId } from 'src/engine/metadata-modules/message-channel/utils/build-app-message-header-message-id.util';
 import { resolveAppMessageDirection } from 'src/engine/metadata-modules/message-channel/utils/resolve-app-message-direction.util';
+import { withCanonicalParticipantHandlesOrThrow } from 'src/engine/metadata-modules/message-channel/utils/with-canonical-participant-handles-or-throw.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
-import { canonicalizePersonHandle } from 'src/modules/match-participant/person-handle-field/utils/canonicalize-person-handle.util';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
@@ -90,7 +90,7 @@ export class ApplicationMessageIngestionService {
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({
         message: isDefined(personHandleField)
-          ? this.withCanonicalParticipantHandlesOrThrow({
+          ? withCanonicalParticipantHandlesOrThrow({
               message,
               personHandleField,
             })
@@ -214,56 +214,6 @@ export class ApplicationMessageIngestionService {
     }
 
     return personHandleField;
-  }
-
-  // stored canonical so a person change finds these participants by exact handle, whatever format the provider sent
-  private withCanonicalParticipantHandlesOrThrow({
-    message,
-    personHandleField,
-  }: {
-    message: AppMessageInput;
-    personHandleField: Pick<PersonHandleField, 'type'>;
-  }): AppMessageInput {
-    // spellings of one handle collapse to the same canonical form, which must stay one participant per role
-    const participantsByRoleAndHandle = new Map<
-      string,
-      AppMessageInput['participants'][number]
-    >();
-
-    for (const participant of message.participants) {
-      const handle = canonicalizePersonHandle({
-        type: personHandleField.type,
-        value: participant.handle,
-      });
-
-      if (!isDefined(handle)) {
-        throw new MessageChannelException(
-          `Participant handle ${participant.handle} on message ${message.externalId} is not a valid ${personHandleField.type} value`,
-          MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
-        );
-      }
-
-      const key = `${participant.role}:${handle}`;
-      const earlierParticipant = participantsByRoleAndHandle.get(key);
-      const earlierDisplayName = earlierParticipant?.displayName;
-
-      participantsByRoleAndHandle.set(key, {
-        role: participant.role,
-        handle,
-        displayName: isNonEmptyString(earlierDisplayName)
-          ? earlierDisplayName
-          : participant.displayName,
-        personId: earlierParticipant?.personId ?? participant.personId,
-        workspaceMemberId:
-          earlierParticipant?.workspaceMemberId ??
-          participant.workspaceMemberId,
-      });
-    }
-
-    return {
-      ...message,
-      participants: [...participantsByRoleAndHandle.values()],
-    };
   }
 
   // checked up front so the app gets an error rather than a dangling link that never renders
