@@ -168,6 +168,15 @@ export class MatchParticipantService<
         },
       );
 
+    const shouldMatchWithPerson =
+      matchWith === 'workspaceMemberAndPerson' || matchWith === 'personOnly';
+
+    // workspace members are only known by email
+    const shouldMatchWithWorkspaceMember =
+      (matchWith === 'workspaceMemberAndPerson' ||
+        matchWith === 'workspaceMemberOnly') &&
+      !isDefined(personHandleField);
+
     const chunkSize = 200;
     const chunkedParticipants = chunk(participants, chunkSize);
 
@@ -184,14 +193,13 @@ export class MatchParticipantService<
         .orderBy('person.createdAt', 'ASC')
         .getMany<PersonWorkspaceEntity>();
 
-      // workspace members are only known by email
-      const workspaceMembers = isDefined(personHandleField)
-        ? []
-        : await workspaceMemberRepository.find({
+      const workspaceMembers = shouldMatchWithWorkspaceMember
+        ? await workspaceMemberRepository.find({
             where: {
               userEmail: Any(uniqueParticipantsHandles),
             },
-          });
+          })
+        : [];
 
       const partipantsToBeUpdated = participants
         .map((participant) => ({
@@ -214,14 +222,6 @@ export class MatchParticipantService<
             (workspaceMember) =>
               workspaceMember.userEmail === participant.handle,
           );
-
-          const shouldMatchWithPerson =
-            matchWith === 'workspaceMemberAndPerson' ||
-            matchWith === 'personOnly';
-
-          const shouldMatchWithWorkspaceMember =
-            matchWith === 'workspaceMemberAndPerson' ||
-            matchWith === 'workspaceMemberOnly';
 
           const newParticipant = {
             ...participant,
@@ -337,28 +337,13 @@ export class MatchParticipantService<
             return;
           }
 
-          const associations =
-            await getWorkspaceRepositoryWithOptionalTransaction<MessageChannelMessageAssociationWorkspaceEntity>(
-              {
-                objectMetadataName: 'messageChannelMessageAssociation',
-                transactionScope,
-                workspaceOrmManager: this.workspaceOrmManager,
-                rolePermissionConfig: { shouldBypassPermissionChecks: true },
-              },
-            ).find({
-              where: {
-                messageId: Any([
-                  ...new Set(this.getSourceRecordIds(participantsWithHandle)),
-                ]),
-                messageChannelId: Any(messageChannelIds),
-              },
-              select: { messageId: true },
-            });
-
           // the same handle can sit on a channel that matches another field, which this change does not concern
-          const messageIdsOnMatchingChannels = new Set(
-            associations.map((association) => association.messageId),
-          );
+          const messageIdsOnMatchingChannels =
+            await this.findMessageIdsOnChannels({
+              participants: participantsWithHandle,
+              messageChannelIds,
+              transactionScope,
+            });
 
           // a link the app passed to someone else stands: only unlinked participants and those of the changed people move
           const participantsToRematch = participantsWithHandle.filter(
@@ -464,27 +449,13 @@ export class MatchParticipantService<
       return participants;
     }
 
-    const appChannelAssociations =
-      await getWorkspaceRepositoryWithOptionalTransaction<MessageChannelMessageAssociationWorkspaceEntity>(
-        {
-          objectMetadataName: 'messageChannelMessageAssociation',
-          transactionScope,
-          workspaceOrmManager: this.workspaceOrmManager,
-          rolePermissionConfig: { shouldBypassPermissionChecks: true },
-        },
-      ).find({
-        where: {
-          messageId: Any([...new Set(this.getSourceRecordIds(participants))]),
-          messageChannelId: Any(
-            appMessageChannels.map((messageChannel) => messageChannel.id),
-          ),
-        },
-        select: { messageId: true },
-      });
-
-    const appChannelMessageIds = new Set(
-      appChannelAssociations.map((association) => association.messageId),
-    );
+    const appChannelMessageIds = await this.findMessageIdsOnChannels({
+      participants,
+      messageChannelIds: appMessageChannels.map(
+        (messageChannel) => messageChannel.id,
+      ),
+      transactionScope,
+    });
 
     return participants.filter(
       (participant) =>
@@ -513,6 +484,34 @@ export class MatchParticipantService<
       personHandleField,
       handles,
     });
+  }
+
+  private async findMessageIdsOnChannels({
+    participants,
+    messageChannelIds,
+    transactionScope,
+  }: {
+    participants: ParticipantWorkspaceEntity[];
+    messageChannelIds: string[];
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<Set<string>> {
+    const associations =
+      await getWorkspaceRepositoryWithOptionalTransaction<MessageChannelMessageAssociationWorkspaceEntity>(
+        {
+          objectMetadataName: 'messageChannelMessageAssociation',
+          transactionScope,
+          workspaceOrmManager: this.workspaceOrmManager,
+          rolePermissionConfig: { shouldBypassPermissionChecks: true },
+        },
+      ).find({
+        where: {
+          messageId: Any([...new Set(this.getSourceRecordIds(participants))]),
+          messageChannelId: Any(messageChannelIds),
+        },
+        select: { messageId: true },
+      });
+
+    return new Set(associations.map((association) => association.messageId));
   }
 
   private getSourceRecordIds(

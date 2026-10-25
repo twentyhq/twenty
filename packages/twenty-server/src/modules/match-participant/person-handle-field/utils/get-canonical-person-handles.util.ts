@@ -1,6 +1,9 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isNonEmptyString,
+  isPlainObject,
+} from 'twenty-shared/utils';
 
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 import { canonicalizePersonHandle } from 'src/modules/match-participant/person-handle-field/utils/canonicalize-person-handle.util';
@@ -16,9 +19,7 @@ type RawPersonHandles = {
 };
 
 const toRecord = (value: unknown): Record<string, unknown> =>
-  isDefined(value) && typeof value === 'object'
-    ? Object.fromEntries(Object.entries(value))
-    : {};
+  isPlainObject(value) ? value : {};
 
 const toList = (value: unknown): unknown[] =>
   Array.isArray(value) ? value : [];

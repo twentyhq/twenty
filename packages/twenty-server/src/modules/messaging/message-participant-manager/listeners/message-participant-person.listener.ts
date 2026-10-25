@@ -7,6 +7,7 @@ import {
   type ObjectRecordUpdateEvent,
 } from 'twenty-shared/database-events';
 import { MessageChannelType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
@@ -75,29 +76,32 @@ export class MessageParticipantPersonListener {
       ObjectRecordUpdateEvent<PersonWorkspaceEntity>
     >,
   ) {
-    const personWithUpdatedEmails = payload.events.filter((eventPayload) =>
-      objectRecordUpdateEventChangedProperties(
+    const personChanges = payload.events.map((eventPayload) => ({
+      personId: eventPayload.recordId,
+      before: eventPayload.properties.before,
+      after: eventPayload.properties.after,
+      changedFieldNames: objectRecordUpdateEventChangedProperties(
         eventPayload.properties.before,
         eventPayload.properties.after,
-      ).includes('emails'),
-    );
+      ),
+    }));
 
     const personHandleMatching = await this.buildPersonHandleMatching({
       workspaceId: payload.workspaceId,
-      personChanges: payload.events.map((eventPayload) => ({
-        personId: eventPayload.recordId,
-        before: eventPayload.properties.before,
-        after: eventPayload.properties.after,
-      })),
+      personChanges,
     });
 
     await this.enqueueMatching({
       workspaceId: payload.workspaceId,
       participantMatching: {
-        personEmails: personWithUpdatedEmails.flatMap((eventPayload) => [
-          ...getPersonEmails(eventPayload.properties.before.emails),
-          ...getPersonEmails(eventPayload.properties.after.emails),
-        ]),
+        personEmails: personChanges
+          .filter(({ changedFieldNames }) =>
+            changedFieldNames.includes('emails'),
+          )
+          .flatMap(({ before, after }) => [
+            ...getPersonEmails(before.emails),
+            ...getPersonEmails(after.emails),
+          ]),
         workspaceMemberIds: [],
       },
       personHandleMatching,
@@ -129,6 +133,7 @@ export class MessageParticipantPersonListener {
       personId: string;
       before: PersonWorkspaceEntity | null;
       after: PersonWorkspaceEntity | null;
+      changedFieldNames?: string[];
     }[];
   }): Promise<PersonHandleMatching[]> {
     const changedHandlesByFieldUniversalIdentifier = new Map<
@@ -141,7 +146,11 @@ export class MessageParticipantPersonListener {
     )) {
       const changedHandles = getChangedPersonHandles({
         personHandleField,
-        personChanges,
+        personChanges: personChanges.filter(
+          ({ changedFieldNames }) =>
+            !isDefined(changedFieldNames) ||
+            changedFieldNames.includes(personHandleField.name),
+        ),
       });
 
       if (changedHandles.handles.length > 0) {

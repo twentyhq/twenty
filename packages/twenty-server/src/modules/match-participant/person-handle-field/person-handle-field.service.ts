@@ -4,6 +4,7 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
@@ -56,12 +57,26 @@ export class PersonHandleFieldService {
     workspaceId: string;
     fieldUniversalIdentifier: string;
   }): Promise<PersonHandleField | null> {
-    const personHandleField = (await this.findAll(workspaceId)).find(
-      (field) => field.universalIdentifier === fieldUniversalIdentifier,
-    );
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
 
-    return isDefined(personHandleField)
-      ? { name: personHandleField.name, type: personHandleField.type }
+    const fieldMetadata = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatFieldMetadataMaps,
+      universalIdentifier: fieldUniversalIdentifier,
+    });
+
+    const type = isDefined(fieldMetadata)
+      ? toPersonHandleFieldType(fieldMetadata.type)
+      : undefined;
+
+    return isDefined(fieldMetadata) &&
+      isDefined(type) &&
+      fieldMetadata.isActive &&
+      fieldMetadata.objectMetadataUniversalIdentifier ===
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person
+      ? { name: fieldMetadata.name, type }
       : null;
   }
 }

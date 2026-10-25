@@ -248,13 +248,25 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     messageIds: string[];
     workspaceId: string;
   }): Promise<void> {
+    if (!isDefined(personHandleField)) {
+      await this.messageParticipantService.matchMessageParticipants({
+        participants: [],
+        messageIds,
+        workspaceId,
+        matchWith: 'targetsOnly',
+      });
+
+      return;
+    }
+
     await this.messageParticipantService.matchMessageParticipants({
-      participants: isDefined(personHandleField)
-        ? await this.findUnlinkedParticipants({ messageIds, workspaceId })
-        : [],
+      participants: await this.findUnlinkedParticipants({
+        messageIds,
+        workspaceId,
+      }),
       messageIds,
       workspaceId,
-      matchWith: isDefined(personHandleField) ? 'personOnly' : 'targetsOnly',
+      matchWith: 'personOnly',
       personHandleField,
     });
   }

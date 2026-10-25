@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from 'twenty-shared/utils';
 
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 
