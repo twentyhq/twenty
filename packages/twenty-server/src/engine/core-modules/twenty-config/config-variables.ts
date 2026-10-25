@@ -809,6 +809,9 @@ export class ConfigVariables {
       'Resource tags applied when creating AWS Lambda functions (JSON object with up to 48 string values)',
     type: ConfigVariableType.JSON,
   })
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
+  )
   @IsLambdaResourceTags()
   LOGIC_FUNCTION_LAMBDA_RESOURCE_TAGS: Record<string, string> = {};
 
