@@ -167,6 +167,19 @@ export class FlatApplicationVariableValidatorService {
       });
     }
 
+    if (
+      fromFlatApplicationVariable.isSecret &&
+      flatEntityUpdate.isSecret === false
+    ) {
+      const key = fromFlatApplicationVariable.key;
+
+      validationResult.errors.push({
+        code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+        message: t`Secret application variable ${key} cannot be made non-secret`,
+        userFriendlyMessage: msg`Secret application variable ${key} cannot be made non-secret`,
+      });
+    }
+
     validationResult.errors.push(
       ...validateApplicationVariableDefaultValue({
         ...fromFlatApplicationVariable,
