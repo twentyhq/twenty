@@ -66,7 +66,7 @@ export class ConnectionProviderEntity
   @Column({ nullable: true, type: 'jsonb' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.52.0_AddCustomConfigToConnectionProviderFastInstanceCommand_1792768248235',
+      '2.52.0_AddCustomConfigToConnectionProviderFastInstanceCommand_1792909336247',
   })
   customConfig: StoredCustomConnectionProviderConfig | null;
 
