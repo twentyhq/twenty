@@ -67,16 +67,17 @@ export class PersonHandleFieldService {
       universalIdentifier: fieldUniversalIdentifier,
     });
 
-    const type = isDefined(fieldMetadata)
-      ? toPersonHandleFieldType(fieldMetadata.type)
-      : undefined;
-
-    return isDefined(fieldMetadata) &&
-      isDefined(type) &&
-      fieldMetadata.isActive &&
-      fieldMetadata.objectMetadataUniversalIdentifier ===
+    if (
+      !isDefined(fieldMetadata) ||
+      !fieldMetadata.isActive ||
+      fieldMetadata.objectMetadataUniversalIdentifier !==
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person
-      ? { name: fieldMetadata.name, type }
-      : null;
+    ) {
+      return null;
+    }
+
+    const type = toPersonHandleFieldType(fieldMetadata.type);
+
+    return isDefined(type) ? { name: fieldMetadata.name, type } : null;
   }
 }
