@@ -4,7 +4,6 @@ import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/fla
 import { type FlatMessagingProviderMaps } from 'src/engine/metadata-modules/flat-messaging-provider/types/flat-messaging-provider-maps.type';
 import { type FlatMessagingProvider } from 'src/engine/metadata-modules/flat-messaging-provider/types/flat-messaging-provider.type';
 
-// a channel sends with its own account, so its messaging provider must speak through that account's connection provider
 export const findMessagingProviderOnConnectionProvider = ({
   flatMessagingProviderMaps,
   flatConnectionProviderMaps,
