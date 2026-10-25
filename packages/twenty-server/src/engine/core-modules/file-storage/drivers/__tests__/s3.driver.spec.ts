@@ -337,6 +337,15 @@ describe('S3Driver.move', () => {
     { name: 'NotImplemented', $metadata: { httpStatusCode: 501 } },
   );
 
+  const conditionalRequestConflictError = Object.assign(
+    new Error('Concurrent operation occurred during conditional request'),
+    {
+      name: 'ConditionalRequestConflict',
+      Code: 'ConditionalRequestConflict',
+      $metadata: { httpStatusCode: 409 },
+    },
+  );
+
   const moveParams = {
     from: { folderPath: 'pending', filename: 'file.png' },
     to: { folderPath: 'final', filename: 'file.png' },
@@ -402,6 +411,63 @@ describe('S3Driver.move', () => {
     expect(copyCommands[0].input.CopySourceIfMatch).toBe('"etag"');
     expect(copyCommands[1].input.CopySourceIfMatch).toBeUndefined();
     expect(copyCommands[2].input.CopySourceIfMatch).toBeUndefined();
+  });
+
+  it('should fall back to an unconditional copy when conditional copy fails with 409 ConditionalRequestConflict without disabling conditional copy globally', async () => {
+    mockS3Send.mockImplementation(async (command) => {
+      if (
+        command instanceof CopyObjectCommand &&
+        isDefined(command.input.CopySourceIfMatch)
+      ) {
+        throw conditionalRequestConflictError;
+      }
+
+      return { ETag: '"etag"' };
+    });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await driver.move(moveParams);
+    await driver.move(moveParams);
+
+    const copyCommands = getCopyCommands();
+
+    expect(copyCommands).toHaveLength(4);
+    expect(copyCommands[0].input.CopySourceIfMatch).toBe('"etag"');
+    expect(copyCommands[1].input.CopySourceIfMatch).toBeUndefined();
+    expect(copyCommands[2].input.CopySourceIfMatch).toBe('"etag"');
+    expect(copyCommands[3].input.CopySourceIfMatch).toBeUndefined();
+  });
+
+  it('should re-throw other 409 errors that are not ConditionalRequestConflict', async () => {
+    const genericConflictError = Object.assign(new Error('Generic conflict'), {
+      name: 'Conflict',
+      $metadata: { httpStatusCode: 409 },
+    });
+
+    mockS3Send.mockImplementation(async (command) => {
+      if (
+        command instanceof CopyObjectCommand &&
+        isDefined(command.input.CopySourceIfMatch)
+      ) {
+        throw genericConflictError;
+      }
+
+      return { ETag: '"etag"' };
+    });
+
+    const driver = new S3Driver({
+      bucketName: 'test-bucket',
+      region: 'us-east-1',
+    });
+
+    await expect(driver.move(moveParams)).rejects.toMatchObject({
+      name: 'Conflict',
+    });
+    expect(getCopyCommands()).toHaveLength(1);
   });
 
   it('should still report a failed precondition', async () => {
