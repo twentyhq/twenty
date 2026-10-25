@@ -30,7 +30,9 @@ type UseWorkflowAiAgentPermissionActionsParams = {
   readonly: boolean;
   objectPermissions: ObjectPermission[];
   permissionFlagKeys: string[];
-  refetchAgentAndRoles: () => Promise<{ refetchedAgent?: Agent }>;
+  refetchAgentAndRoles: (
+    agentIdOverride?: string,
+  ) => Promise<{ refetchedAgent?: Agent }>;
 };
 
 export const useWorkflowAiAgentPermissionActions = ({
@@ -139,7 +141,7 @@ export const useWorkflowAiAgentPermissionActions = ({
       },
     });
 
-    const { refetchedAgent } = await refetchAgentAndRoles();
+    const { refetchedAgent } = await refetchAgentAndRoles(updatableAgentId);
 
     // Update state with the refetched agent to ensure roleId is available
     // Apollo's onCompleted is not called on refetch, so we need to update manually

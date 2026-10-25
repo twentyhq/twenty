@@ -63,7 +63,9 @@ type WorkflowAiAgentPermissionsTabProps = {
   stepId: string;
   readonly: boolean;
   isAgentLoading: boolean;
-  refetchAgent: () => Promise<{ data?: { findOneAgent?: Agent } }>;
+  refetchAgent: (variables?: {
+    id: string;
+  }) => Promise<{ data?: { findOneAgent?: Agent } }>;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
@@ -144,8 +146,10 @@ export const WorkflowAiAgentPermissionsTab = ({
     searchQuery,
   });
 
-  const refetchAgentAndRoles = async () => {
-    const result = await refetchAgent();
+  const refetchAgentAndRoles = async (agentIdOverride?: string) => {
+    const result = await refetchAgent(
+      isDefined(agentIdOverride) ? { id: agentIdOverride } : undefined,
+    );
     const refetchedAgent = result?.data?.findOneAgent;
 
     // The role may have just been created, so the query can still be skipped or bound to a stale id
