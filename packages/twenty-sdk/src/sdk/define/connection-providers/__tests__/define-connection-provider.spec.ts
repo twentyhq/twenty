@@ -37,9 +37,6 @@ describe('defineConnectionProvider', () => {
   });
 
   it('rejects a non-UUID universalIdentifier', () => {
-    // Catches the most common mistake: copy-pasting a slug or generated id
-    // string instead of running `uuidgen`. Server-side throws too — this
-    // arm of the check just shifts the error to `twenty deploy` time.
     const result = defineConnectionProvider({
       ...baseValidConfig,
       universalIdentifier: 'linear-provider',

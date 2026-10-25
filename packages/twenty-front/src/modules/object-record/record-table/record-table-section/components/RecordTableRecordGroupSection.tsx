@@ -52,7 +52,7 @@ const StyledRecordGroupHeaderContainer = styled.div<{ width: number }>`
   flex-direction: row;
   gap: ${themeCssVariables.spacing[1]};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  inset-inline-start: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
   min-width: ${({ width }) => width + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
   position: sticky;
@@ -82,7 +82,7 @@ const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
   border-bottom: 1px solid ${themeCssVariables.background.primary};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  left: 0;
+  inset-inline-start: 0;
 
   min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
 
