@@ -1,13 +1,18 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
-import { type AiModelTier } from 'twenty-shared/ai';
+import {
+  AI_DATA_RESIDENCY_POLICIES,
+  type AiDataResidencyPolicy,
+  type AiModelTier,
+} from 'twenty-shared/ai';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
 
 import {
   IsArray,
   IsBoolean,
   IsEnum,
+  IsIn,
   IsInt,
   IsOptional,
   IsObject,
@@ -159,6 +164,21 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   aiAdditionalInstructions?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsIn([...AI_DATA_RESIDENCY_POLICIES])
+  @IsOptional()
+  aiDataResidency?: AiDataResidencyPolicy | null;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isAiZeroDataRetentionRequired?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isProductImprovementDataSharingEnabled?: boolean;
 
   @Field(() => [String], { nullable: true })
   @IsArray()

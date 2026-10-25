@@ -1,5 +1,6 @@
 // By source path: the consuming repo runs this from a sparse checkout where 'twenty-shared/ai' does not resolve
 import { isAiSdkPackage } from '../../../../twenty-shared/src/ai/utils/is-ai-sdk-package.util';
+import { type DataResidency } from '../../../../twenty-shared/src/ai/constants/data-residency.const';
 import { isDataResidency } from '../../../../twenty-shared/src/ai/utils/is-data-residency.util';
 
 import {
@@ -50,6 +51,20 @@ const PROVIDER_CREDENTIAL_FIELDS = [
   'secretAccessKey',
   'sessionToken',
 ] as const;
+
+// Bedrock inference profiles name where they route, so a profile can be checked against its route's residency
+const DATA_RESIDENCY_BY_INFERENCE_PROFILE_PREFIX: Record<
+  string,
+  DataResidency
+> = {
+  eu: 'eu',
+  us: 'us',
+  global: 'global',
+  apac: 'ap',
+  jp: 'jp',
+  au: 'au',
+  ca: 'ca',
+};
 
 const asSpecModel = (entry: string | CatalogSpecModel): CatalogSpecModel =>
   typeof entry === 'string' ? { model: entry } : entry;
@@ -105,9 +120,11 @@ const projectModel = ({
 const assertProviderIsUsable = ({
   provider,
   seenNames,
+  requireDataPolicyOnEveryRoute,
 }: {
   provider: CatalogSpecProvider;
   seenNames: Set<string>;
+  requireDataPolicyOnEveryRoute: boolean;
 }): void => {
   // Providers key an object, so a repeat would drop the first one's credentials and models, and `__proto__` its own
   if (seenNames.has(provider.name) || provider.name === '__proto__') {
@@ -126,6 +143,40 @@ const assertProviderIsUsable = ({
   ) {
     throw new Error(
       `Provider "${provider.name}" names an unsupported data residency: ${provider.dataResidency}`,
+    );
+  }
+
+  if (
+    requireDataPolicyOnEveryRoute &&
+    (provider.dataResidency === undefined ||
+      provider.zeroDataRetention === undefined)
+  ) {
+    throw new Error(
+      `Provider "${provider.name}" must state both dataResidency and zeroDataRetention`,
+    );
+  }
+};
+
+const assertInferenceProfileMatchesResidency = ({
+  provider,
+  specModel,
+}: {
+  provider: Pick<CatalogSpecProvider, 'name' | 'dataResidency'>;
+  specModel: Pick<CatalogSpecModel, 'as'>;
+}): void => {
+  if (specModel.as === undefined || provider.dataResidency === undefined) {
+    return;
+  }
+
+  const [prefix] = specModel.as.split('.');
+  const profileResidency = DATA_RESIDENCY_BY_INFERENCE_PROFILE_PREFIX[prefix];
+
+  if (
+    profileResidency !== undefined &&
+    profileResidency !== provider.dataResidency
+  ) {
+    throw new Error(
+      `${provider.name}/${specModel.as} routes to "${profileResidency}" but its provider states "${provider.dataResidency}". Move it to a route with that residency.`,
     );
   }
 };
@@ -187,6 +238,7 @@ const resolveModels = ({
 
   return specModels.map((specModel) => {
     assertNumbersAreUsable({ provider, specModel });
+    assertInferenceProfileMatchesResidency({ provider, specModel });
 
     const canonicalModel = canonicalModels.get(specModel.model);
 
@@ -210,7 +262,12 @@ export const projectCatalog = ({
   const seenNames = new Set<string>();
 
   for (const provider of spec.providers) {
-    assertProviderIsUsable({ provider, seenNames });
+    assertProviderIsUsable({
+      provider,
+      seenNames,
+      requireDataPolicyOnEveryRoute:
+        spec.requireDataPolicyOnEveryRoute ?? false,
+    });
     seenNames.add(provider.name);
 
     const credentials = Object.fromEntries(

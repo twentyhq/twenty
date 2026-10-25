@@ -39,5 +39,7 @@ export type CatalogSpecProvider = {
 };
 
 export type CatalogSpec = {
+  // workspaces filter on residency and retention, so a deployment that sells them must state both on every route
+  requireDataPolicyOnEveryRoute?: boolean;
   providers: CatalogSpecProvider[];
 };

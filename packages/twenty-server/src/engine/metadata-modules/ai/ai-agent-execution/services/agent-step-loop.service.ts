@@ -364,6 +364,7 @@ export class AgentStepLoopService {
           model: registeredModel.model,
           billingContext: {
             aiBillingService: this.aiBillingService,
+            privacySettings: telemetry.privacySettings,
             modelId: registeredModel.modelId,
             workspaceId: billing.workspaceId,
             spenders: billing.spenders,

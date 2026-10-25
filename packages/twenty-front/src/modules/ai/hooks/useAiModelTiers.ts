@@ -8,7 +8,8 @@ import { getPercentDelta } from '@/ai/utils/getPercentDelta';
 import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryModel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
-import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { workspaceAiModelsSelector } from '@/ai/states/workspaceAiModelsSelector';
+import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { getAiModelBlendedCostPerMillionTokens } from '@/ai/utils/getAiModelBlendedCostPerMillionTokens';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
@@ -39,18 +40,20 @@ const getCostDeltaPercent = ({
   });
 };
 
-// Mirrors the server: a pin counts only with auto-selection off and the model still served.
+// Mirrors the server: a pin counts only with auto-selection off and the model still served and allowed by the data policy.
 export const useAiModelTiers = (): ResolvedAiModelTier[] => {
-  const aiModels = useAtomStateValue(aiModelsState);
+  const workspaceAiModels = useAtomStateValue(workspaceAiModelsSelector);
   const aiModelTiers = useAtomStateValue(aiModelTiersState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isAutoModelSelectionEnabled =
     currentWorkspace?.isAutoModelSelectionEnabled ?? true;
   const aiModelIdByTier = currentWorkspace?.aiModelIdByTier;
+  const { aiDataResidency, isAiZeroDataRetentionRequired } =
+    getWorkspaceAiDataPolicy(currentWorkspace);
 
   return useMemo(() => {
     const findModel = (modelId: string | undefined) =>
-      aiModels.find((model) => model.modelId === modelId);
+      workspaceAiModels.find((model) => model.modelId === modelId);
 
     const resolvedModels = AI_MODEL_TIERS.map((tier) => {
       const pinnedModel = isAutoModelSelectionEnabled
@@ -64,8 +67,13 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
       return {
         tier,
         model: findModel(
-          aiModelTiers.find((instanceTier) => instanceTier.tier === tier)
-            ?.modelId,
+          aiModelTiers.find(
+            (instanceTier) =>
+              instanceTier.tier === tier &&
+              (instanceTier.aiDataResidency ?? null) === aiDataResidency &&
+              instanceTier.isAiZeroDataRetentionRequired ===
+                isAiZeroDataRetentionRequired,
+          )?.modelId,
         ),
         isPinned: false,
       };
@@ -97,5 +105,12 @@ export const useAiModelTiers = (): ResolvedAiModelTier[] => {
         hasCostPerTaskForEveryTier,
       }),
     }));
-  }, [aiModels, aiModelTiers, isAutoModelSelectionEnabled, aiModelIdByTier]);
+  }, [
+    workspaceAiModels,
+    aiModelTiers,
+    isAutoModelSelectionEnabled,
+    aiModelIdByTier,
+    aiDataResidency,
+    isAiZeroDataRetentionRequired,
+  ]);
 };

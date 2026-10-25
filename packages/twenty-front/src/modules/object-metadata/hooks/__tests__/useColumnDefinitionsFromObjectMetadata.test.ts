@@ -75,6 +75,9 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       aiAgentModelTier: AiModelTier.fast,
       isAutoModelSelectionEnabled: true,
       aiModelIdByTier: {},
+      aiDataResidency: null,
+      isAiZeroDataRetentionRequired: false,
+      isProductImprovementDataSharingEnabled: true,
       isInternalMessagesImportEnabled: false,
     });
 

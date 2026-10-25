@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type ProviderOptions } from '@ai-sdk/provider-utils';
 import { type ToolSet } from 'ai';
+import { isAiDataPolicyActive, type AiDataPolicy } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -39,16 +40,26 @@ export class AiModelConfigService {
     });
   }
 
-  getNativeModelTools(
-    model: RegisteredAiModel,
-    options: NativeModelToolOptions = {},
-  ): ToolSet {
+  // provider-side tools run on the vendor's search backends, outside what a route's residency and retention cover
+  getNativeModelTools({
+    model,
+    aiDataPolicy,
+    options = {},
+  }: {
+    model: Pick<RegisteredAiModel, 'sdkPackage' | 'providerName'>;
+    aiDataPolicy: AiDataPolicy;
+    options?: NativeModelToolOptions;
+  }): ToolSet {
     const tools: Record<string, unknown> = {};
 
     const nativeTools = getNativeModelToolsForSdkPackage(model.sdkPackage);
     const providerName = model.providerName;
 
-    if (!isDefined(nativeTools) || !isDefined(providerName)) {
+    if (
+      isAiDataPolicyActive(aiDataPolicy) ||
+      !isDefined(nativeTools) ||
+      !isDefined(providerName)
+    ) {
       return tools as ToolSet;
     }
 

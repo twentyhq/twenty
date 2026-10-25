@@ -152,8 +152,15 @@ export class AgentRunTurnService {
       toolLoadingStrategy,
     });
 
+    if (!isDefined(workspace)) {
+      throw new AiException(
+        `Workspace ${workspaceId} not found`,
+        AiExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
     const turn = await this.agentTurnService.start({
-      workspace: workspace ?? undefined,
+      workspace,
       modelId: agent.modelId,
       toolset: {
         registryAccess,
@@ -289,6 +296,7 @@ export class AgentRunTurnService {
         }),
         ...buildAiTelemetry({
           functionId: 'agent-structured-output',
+          privacySettings: turn.privacySettings,
           workspaceId,
           userWorkspaceId,
           agentId: agent.id,

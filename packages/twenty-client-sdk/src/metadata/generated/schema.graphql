@@ -1244,9 +1244,12 @@ type ClientAiModelConfig {
   providerLabel: String
   providerName: String
   sdkPackage: String
+  zeroDataRetention: Boolean
 }
 
 type ClientAiModelTierConfig {
+  aiDataResidency: String
+  isAiZeroDataRetentionRequired: Boolean!
   modelId: String!
   tier: AiModelTier!
 }
@@ -4091,6 +4094,7 @@ type Query {
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   recordSharing(target: RecordTargetInput!): RecordSharingDTO!
+  requestCountryCode: String
   skill(id: UUID!): Skill
   skills: [Skill!]!
   timelineActivityTypes: [TimelineActivityType!]!
@@ -5307,6 +5311,7 @@ input UpdateWorkspaceInput {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier
   aiChatModelTier: AiModelTier
+  aiDataResidency: String
   aiEvaluationModelId: String
   aiModelIdByTier: JSON
   allowImpersonation: Boolean
@@ -5316,6 +5321,7 @@ input UpdateWorkspaceInput {
   editableProfileFields: [String!]
   eventLogRetentionDays: Float
   inviteHash: String
+  isAiZeroDataRetentionRequired: Boolean
   isAutoModelSelectionEnabled: Boolean
   isCampaignClickTrackingEnabled: Boolean
   isCampaignOpenTrackingEnabled: Boolean
@@ -5326,6 +5332,7 @@ input UpdateWorkspaceInput {
   isMicrosoftAuthEnabled: Boolean
   isPasswordAuthBypassEnabled: Boolean
   isPasswordAuthEnabled: Boolean
+  isProductImprovementDataSharingEnabled: Boolean
   isPublicInviteLinkEnabled: Boolean
   isTwoFactorAuthenticationEnforced: Boolean
   logo: String
@@ -6046,6 +6053,7 @@ type Workspace {
   aiAdditionalInstructions: String
   aiAgentModelTier: AiModelTier!
   aiChatModelTier: AiModelTier!
+  aiDataResidency: String
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
   allowImpersonation: Boolean!
@@ -6068,6 +6076,7 @@ type Workspace {
   id: UUID!
   installedApplications: [Application!]!
   inviteHash: String
+  isAiZeroDataRetentionRequired: Boolean!
   isAutoModelSelectionEnabled: Boolean!
   isCampaignClickTrackingEnabled: Boolean!
   isCampaignOpenTrackingEnabled: Boolean!
@@ -6079,6 +6088,7 @@ type Workspace {
   isMicrosoftAuthEnabled: Boolean!
   isPasswordAuthBypassEnabled: Boolean!
   isPasswordAuthEnabled: Boolean!
+  isProductImprovementDataSharingEnabled: Boolean!
   isPublicInviteLinkEnabled: Boolean!
   isTwoFactorAuthenticationEnforced: Boolean!
   logo: String

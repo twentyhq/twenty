@@ -92,6 +92,9 @@ export const mockCurrentWorkspace = {
   aiChatModelTier: AiModelTier.fast,
   aiAgentModelTier: AiModelTier.fast,
   isAutoModelSelectionEnabled: true,
+  aiDataResidency: null,
+  isAiZeroDataRetentionRequired: false,
+  isProductImprovementDataSharingEnabled: true,
   aiModelIdByTier: {},
   isInternalMessagesImportEnabled: false,
   currentBillingSubscription: {
