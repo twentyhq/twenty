@@ -21,12 +21,15 @@ export const fillSelectGaps = ({
   }
 
   const existingGroupsMap = new Map<string, GroupByRawResult>();
+  const nullGroupResults: GroupByRawResult[] = [];
 
   for (const item of data) {
     const dimensionValue = item.groupByDimensionValues?.[0];
 
     if (isDefined(dimensionValue)) {
       existingGroupsMap.set(String(dimensionValue), item);
+    } else {
+      nullGroupResults.push(item);
     }
   }
 
@@ -43,7 +46,7 @@ export const fillSelectGaps = ({
     };
   });
 
-  return filledData;
+  return [...filledData, ...nullGroupResults];
 };
 
 type FillSelectGapsTwoDimensionalParams = {
@@ -65,16 +68,20 @@ export const fillSelectGapsTwoDimensional = ({
 
   const existingGroupsMap = new Map<string, GroupByRawResult>();
   const uniqueSecondDimensionValues = new Set<unknown>();
+  const nullGroupResults: GroupByRawResult[] = [];
 
   for (const item of data) {
     const primaryValue = item.groupByDimensionValues?.[0];
     const secondaryValue = item.groupByDimensionValues?.[1] ?? null;
 
+    uniqueSecondDimensionValues.add(secondaryValue);
+
     if (isDefined(primaryValue)) {
       const key = `${String(primaryValue)}_${String(secondaryValue)}`;
 
       existingGroupsMap.set(key, item);
-      uniqueSecondDimensionValues.add(secondaryValue);
+    } else {
+      nullGroupResults.push(item);
     }
   }
 
@@ -94,5 +101,5 @@ export const fillSelectGapsTwoDimensional = ({
     }),
   );
 
-  return filledData;
+  return [...filledData, ...nullGroupResults];
 };

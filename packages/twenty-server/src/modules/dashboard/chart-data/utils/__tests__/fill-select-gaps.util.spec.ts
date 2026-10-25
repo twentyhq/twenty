@@ -124,6 +124,36 @@ describe('fillSelectGaps', () => {
       expect(result[1].groupByDimensionValues[0]).toBe('B');
       expect(result[2].groupByDimensionValues[0]).toBe('C');
     });
+
+    it('should preserve null dimension value records ("Not Set" group)', () => {
+      const data = [
+        { groupByDimensionValues: ['A'], aggregateValue: 4 },
+        { groupByDimensionValues: [null], aggregateValue: 7 },
+      ];
+
+      const result = fillSelectGaps({
+        data,
+        selectOptions,
+      });
+
+      expect(result).toHaveLength(4);
+      expect(result[0]).toEqual({
+        groupByDimensionValues: ['A'],
+        aggregateValue: 4,
+      });
+      expect(result[1]).toEqual({
+        groupByDimensionValues: ['B'],
+        aggregateValue: 0,
+      });
+      expect(result[2]).toEqual({
+        groupByDimensionValues: ['C'],
+        aggregateValue: 0,
+      });
+      expect(result[3]).toEqual({
+        groupByDimensionValues: [null],
+        aggregateValue: 7,
+      });
+    });
   });
 });
 
@@ -339,6 +369,36 @@ describe('fillSelectGapsTwoDimensional', () => {
       expect(uniqueSecondary).toHaveLength(2);
       expect(uniqueSecondary).toContain('X');
       expect(uniqueSecondary).toContain('Y');
+    });
+
+    it('should preserve null primary dimension value records ("Not Set" group)', () => {
+      const data = [
+        { groupByDimensionValues: ['A', 'X'], aggregateValue: 5 },
+        { groupByDimensionValues: [null, 'X'], aggregateValue: 3 },
+      ];
+
+      const result = fillSelectGapsTwoDimensional({
+        data,
+        selectOptions,
+      });
+
+      expect(result).toHaveLength(4);
+      expect(result).toContainEqual({
+        groupByDimensionValues: [null, 'X'],
+        aggregateValue: 3,
+      });
+      expect(result).toContainEqual({
+        groupByDimensionValues: ['A', 'X'],
+        aggregateValue: 5,
+      });
+      expect(result).toContainEqual({
+        groupByDimensionValues: ['B', 'X'],
+        aggregateValue: 0,
+      });
+      expect(result).toContainEqual({
+        groupByDimensionValues: ['C', 'X'],
+        aggregateValue: 0,
+      });
     });
   });
 });

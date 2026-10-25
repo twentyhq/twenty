@@ -138,6 +138,37 @@ describe('fillDateGaps', () => {
       });
     });
 
+    it('should preserve null date dimension value records ("Not Set" group)', () => {
+      const data = [
+        { groupByDimensionValues: ['2024-01-01'], aggregateValue: 5 },
+        { groupByDimensionValues: ['2024-01-03'], aggregateValue: 3 },
+        { groupByDimensionValues: [null], aggregateValue: 7 },
+      ];
+
+      const result = fillDateGaps({
+        data,
+        dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      });
+
+      expect(result.data).toHaveLength(4);
+      expect(result.data).toContainEqual({
+        groupByDimensionValues: ['2024-01-01'],
+        aggregateValue: 5,
+      });
+      expect(result.data).toContainEqual({
+        groupByDimensionValues: ['2024-01-02'],
+        aggregateValue: 0,
+      });
+      expect(result.data).toContainEqual({
+        groupByDimensionValues: ['2024-01-03'],
+        aggregateValue: 3,
+      });
+      expect(result.data).toContainEqual({
+        groupByDimensionValues: [null],
+        aggregateValue: 7,
+      });
+    });
+
     it('should preserve existing data values', () => {
       const data = [
         { groupByDimensionValues: ['2024-01-01'], aggregateValue: 10 },
@@ -344,6 +375,28 @@ describe('fillDateGapsTwoDimensional', () => {
       expect(result.data[0].groupByDimensionValues[0]).toBe('2024-01-03');
       expect(result.data[1].groupByDimensionValues[0]).toBe('2024-01-02');
       expect(result.data[2].groupByDimensionValues[0]).toBe('2024-01-01');
+    });
+
+    it('should preserve null primary date dimension value records ("Not Set" group)', () => {
+      const data = [
+        { groupByDimensionValues: ['2024-01-01', 'A'], aggregateValue: 5 },
+        { groupByDimensionValues: [null, 'A'], aggregateValue: 3 },
+      ];
+
+      const result = fillDateGapsTwoDimensional({
+        data,
+        dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
+      });
+
+      expect(result.data).toHaveLength(2);
+      expect(result.data).toContainEqual({
+        groupByDimensionValues: ['2024-01-01', 'A'],
+        aggregateValue: 5,
+      });
+      expect(result.data).toContainEqual({
+        groupByDimensionValues: [null, 'A'],
+        aggregateValue: 3,
+      });
     });
   });
 });

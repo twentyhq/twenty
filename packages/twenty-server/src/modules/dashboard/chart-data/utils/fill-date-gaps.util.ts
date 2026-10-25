@@ -36,11 +36,13 @@ export const fillDateGaps = ({
 
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Temporal.PlainDate[] = [];
+  const nullGroupResults: GroupByRawResult[] = [];
 
   for (const item of data) {
     const dateValue = item.groupByDimensionValues?.[0];
 
     if (!isDefined(dateValue)) {
+      nullGroupResults.push(item);
       continue;
     }
 
@@ -85,7 +87,7 @@ export const fillDateGaps = ({
     };
   });
 
-  return { data: filledData, wasTruncated };
+  return { data: [...filledData, ...nullGroupResults], wasTruncated };
 };
 
 type FillDateGapsTwoDimensionalParams = {
@@ -113,21 +115,22 @@ export const fillDateGapsTwoDimensional = ({
   const existingDateGroupsMap = new Map<string, GroupByRawResult>();
   const parsedDates: Temporal.PlainDate[] = [];
   const uniqueSecondDimensionValues = new Set<unknown>();
+  const nullGroupResults: GroupByRawResult[] = [];
 
   for (const item of data) {
     const dateValue = item.groupByDimensionValues?.[0];
+    const secondDimensionValue = item.groupByDimensionValues?.[1] ?? null;
+
+    uniqueSecondDimensionValues.add(secondDimensionValue);
 
     if (!isDefined(dateValue)) {
+      nullGroupResults.push(item);
       continue;
     }
 
     const parsedDate = Temporal.PlainDate.from(String(dateValue));
 
     parsedDates.push(parsedDate);
-
-    const secondDimensionValue = item.groupByDimensionValues?.[1] ?? null;
-
-    uniqueSecondDimensionValues.add(secondDimensionValue);
 
     const key = `${parsedDate.toString()}_${String(secondDimensionValue)}`;
 
@@ -171,5 +174,5 @@ export const fillDateGapsTwoDimensional = ({
     }),
   );
 
-  return { data: filledData, wasTruncated };
+  return { data: [...filledData, ...nullGroupResults], wasTruncated };
 };
