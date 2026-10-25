@@ -194,6 +194,7 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
+export type { MessagingProviderManifest } from './messagingProviderManifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type {
   NormalizedPageLayoutWidgetManifest,
@@ -234,6 +235,11 @@ export type {
   RunAgentInput,
   RunAgentResult,
 } from './runAgentType';
+export type {
+  SendAppMessageRecipient,
+  SendAppMessagePayload,
+  SendAppMessageResult,
+} from './sendAppMessageType';
 export type { SendInboxMessageInput } from './sendInboxMessageInputType';
 export type { SendInboxMessageResult } from './sendInboxMessageResultType';
 export type { SendInboxMessageToolCall } from './sendInboxMessageToolCallType';

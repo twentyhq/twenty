@@ -15,10 +15,16 @@ import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
+import { LogicFunctionException } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { logicFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/logic-function/utils/logic-function-graphql-api-exception-handler.utils';
 import {
   MessageChannelException,
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import {
+  MessagingProviderException,
+  MessagingProviderExceptionCode,
+} from 'src/engine/metadata-modules/messaging-provider/messaging-provider.exception';
 
 export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof MessageChannelException) {
@@ -65,6 +71,28 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
         return assertUnreachable(error.code);
       }
     }
+  }
+
+  if (error instanceof MessagingProviderException) {
+    switch (error.code) {
+      case MessagingProviderExceptionCode.MESSAGING_PROVIDER_NOT_FOUND:
+      case MessagingProviderExceptionCode.SEND_MESSAGE_NOT_AVAILABLE:
+        throw new NotFoundError(error);
+      case MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT:
+        throw new UserInputError(error);
+      case MessagingProviderExceptionCode.MESSAGING_PROVIDER_NAME_ALREADY_EXISTS:
+        throw new ConflictError(error);
+      case MessagingProviderExceptionCode.SEND_MESSAGE_FAILED:
+        throw new InternalServerError(error);
+      default: {
+        return assertUnreachable(error.code);
+      }
+    }
+  }
+
+  // a messaging provider's send function can be disabled, rate limited or time out
+  if (error instanceof LogicFunctionException) {
+    return logicFunctionGraphQLApiExceptionHandler(error);
   }
 
   if (error instanceof ConnectedAccountException) {

@@ -36,4 +36,9 @@ export class CreateAppMessageChannelInput {
   @IsEnum(MessageChannelVisibility)
   @IsNotEmpty()
   visibility: MessageChannelVisibility;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  messagingProviderUniversalIdentifier?: string;
 }

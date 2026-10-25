@@ -24,6 +24,8 @@ import {
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
+import { findMessagingProviderOnConnectionProvider } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-on-connection-provider.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 type ApplicationScope = {
@@ -39,6 +41,7 @@ type CreateArgs = ApplicationScope & {
   handle: string;
   displayName?: string;
   visibility: MessageChannelVisibility;
+  messagingProviderUniversalIdentifier?: string;
 };
 
 type UpdateArgs = ApplicationScope & {
@@ -46,11 +49,18 @@ type UpdateArgs = ApplicationScope & {
   displayName?: string | null;
   visibility?: MessageChannelVisibility;
   isSyncEnabled?: boolean;
+  messagingProviderUniversalIdentifier?: string | null;
 };
 
 // TypeORM's update() cannot take the relations Partial<MessageChannelEntity> carries
 type UpdatableChannelFields = Partial<
-  Pick<MessageChannelEntity, 'displayName' | 'visibility' | 'isSyncEnabled'>
+  Pick<
+    MessageChannelEntity,
+    | 'displayName'
+    | 'visibility'
+    | 'isSyncEnabled'
+    | 'messagingProviderUniversalIdentifier'
+  >
 >;
 
 export type OwnedMessageChannel = {
@@ -73,6 +83,7 @@ export class ApplicationMessageChannelsService {
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async list({
@@ -119,13 +130,23 @@ export class ApplicationMessageChannelsService {
     handle,
     displayName,
     visibility,
+    messagingProviderUniversalIdentifier,
   }: CreateArgs): Promise<MessageChannelDTO> {
-    await this.assertOwnsConnectedAccount({
+    const connectedAccount = await this.findOwnedConnectedAccountOrThrow({
       applicationId,
       workspaceId,
       requestUserWorkspaceId,
       connectedAccountId,
     });
+
+    if (isDefined(messagingProviderUniversalIdentifier)) {
+      await this.assertMessagingProviderFitsConnectionOrThrow({
+        applicationId,
+        workspaceId,
+        connectedAccount,
+        messagingProviderUniversalIdentifier,
+      });
+    }
 
     const existingChannel = await this.messageChannelRepository.findOne({
       where: { connectedAccountId, handle, workspaceId },
@@ -145,6 +166,8 @@ export class ApplicationMessageChannelsService {
       displayName: normalizeDisplayName(displayName),
       type: MessageChannelType.APP,
       visibility,
+      messagingProviderUniversalIdentifier:
+        messagingProviderUniversalIdentifier ?? null,
       isSyncEnabled: true,
       // inert since app channels skip the polling crons; mirrors EMAIL_GROUP so the UI reads healthy
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
@@ -167,8 +190,9 @@ export class ApplicationMessageChannelsService {
     displayName,
     visibility,
     isSyncEnabled,
+    messagingProviderUniversalIdentifier,
   }: UpdateArgs): Promise<MessageChannelDTO> {
-    const { messageChannel } = await this.findOwnedOrThrow({
+    const { messageChannel, connectedAccount } = await this.findOwnedOrThrow({
       applicationId,
       workspaceId,
       requestUserWorkspaceId,
@@ -187,6 +211,20 @@ export class ApplicationMessageChannelsService {
 
     if (isDefined(isSyncEnabled)) {
       data.isSyncEnabled = isSyncEnabled;
+    }
+
+    if (isDefined(messagingProviderUniversalIdentifier)) {
+      await this.assertMessagingProviderFitsConnectionOrThrow({
+        applicationId,
+        workspaceId,
+        connectedAccount,
+        messagingProviderUniversalIdentifier,
+      });
+    }
+
+    if (messagingProviderUniversalIdentifier !== undefined) {
+      data.messagingProviderUniversalIdentifier =
+        messagingProviderUniversalIdentifier;
     }
 
     if (Object.keys(data).length === 0) {
@@ -256,11 +294,48 @@ export class ApplicationMessageChannelsService {
   }
 
   // ownership alone would let any app user flip another member's private channel to SHARE_EVERYTHING
-  private async assertOwnsConnectedAccount(
+  private async findOwnedConnectedAccountOrThrow(
     args: ApplicationScope & { connectedAccountId: string },
-  ): Promise<void> {
-    if (!isDefined(await this.findReachableConnectedAccount(args))) {
+  ): Promise<ConnectedAccountEntity> {
+    const connectedAccount = await this.findReachableConnectedAccount(args);
+
+    if (!isDefined(connectedAccount)) {
       throw this.ownershipViolation(args.connectedAccountId);
+    }
+
+    return connectedAccount;
+  }
+
+  private async assertMessagingProviderFitsConnectionOrThrow({
+    applicationId,
+    workspaceId,
+    connectedAccount,
+    messagingProviderUniversalIdentifier,
+  }: Pick<ApplicationScope, 'applicationId' | 'workspaceId'> & {
+    connectedAccount: Pick<ConnectedAccountEntity, 'connectionProviderId'>;
+    messagingProviderUniversalIdentifier: string;
+  }): Promise<void> {
+    const { flatMessagingProviderMaps, flatConnectionProviderMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatMessagingProviderMaps',
+        'flatConnectionProviderMaps',
+      ]);
+
+    const messagingProvider = findMessagingProviderOnConnectionProvider({
+      flatMessagingProviderMaps,
+      flatConnectionProviderMaps,
+      messagingProviderUniversalIdentifier,
+      connectionProviderId: connectedAccount.connectionProviderId,
+    });
+
+    if (
+      !isDefined(messagingProvider) ||
+      messagingProvider.applicationId !== applicationId
+    ) {
+      throw new MessageChannelException(
+        `Messaging provider ${messagingProviderUniversalIdentifier} is not one of this application's providers on this connection's provider`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
     }
   }
 

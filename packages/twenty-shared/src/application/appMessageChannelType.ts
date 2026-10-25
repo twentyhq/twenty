@@ -12,4 +12,6 @@ export type AppMessageChannel = {
   connectedAccountId: string;
   // False rejects ingestion without deleting the channel; existing messages stay readable.
   isSyncEnabled: boolean;
+  // The messaging provider members reply through; null leaves the channel ingestion-only.
+  messagingProviderUniversalIdentifier: string | null;
 };
