@@ -13,6 +13,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -30,17 +31,19 @@ export class AgentChatThreadTargetService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // chat turns run in a queue worker, so the sender's context is passed to write the link as them
+  // turns run in a queue worker, so the sender's context is passed to write the link as them
   async attachThreadToRecord({
     workspaceId,
     threadId,
     objectNameSingular,
     recordId,
     authContext,
+    rolePermissionConfig,
   }: RecordReference & {
     workspaceId: string;
     threadId: string;
     authContext: WorkspaceAuthContext;
+    rolePermissionConfig: RolePermissionConfig;
   }): Promise<void> {
     const joinColumnName = await this.resolveJoinColumnNameOrThrow({
       workspaceId,
@@ -52,13 +55,14 @@ export class AgentChatThreadTargetService {
       await this.assertRecordIsReadableOrThrow({
         objectNameSingular,
         recordId,
+        rolePermissionConfig,
       });
 
       const link = { threadId, [joinColumnName]: recordId };
-      const repository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
-        );
+      const repository = this.workspaceOrmManager.getRepository(
+        AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
+        rolePermissionConfig,
+      );
 
       // only standard legs have a unique index, so custom-object links are deduplicated by lookup
       if (await repository.existsBy(link)) {
@@ -72,9 +76,12 @@ export class AgentChatThreadTargetService {
   private async assertRecordIsReadableOrThrow({
     objectNameSingular,
     recordId,
-  }: RecordReference): Promise<void> {
+    rolePermissionConfig,
+  }: RecordReference & {
+    rolePermissionConfig: RolePermissionConfig;
+  }): Promise<void> {
     const record = await this.workspaceOrmManager
-      .getRepositoryWithContextPermissions(objectNameSingular)
+      .getRepository(objectNameSingular, rolePermissionConfig)
       .findOne({ where: { id: recordId }, select: { id: true } })
       .catch((error: unknown) => {
         if (

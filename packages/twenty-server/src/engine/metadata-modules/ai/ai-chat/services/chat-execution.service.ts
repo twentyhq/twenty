@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { convertToModelMessages, hasToolCall } from 'ai';
 import {
-  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
   NO_REPLY_TOOL_NAME,
@@ -43,9 +42,7 @@ import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
-import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
-import { createAttachConversationToRecordTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
 import { createReactToMessageTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/react-to-message.tool';
 import { createCompleteWorkspaceSetupTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { createNoReplyTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/no-reply.tool';
@@ -113,7 +110,6 @@ export class ChatExecutionService {
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly messagePruningService: MessagePruningService,
     private readonly chatActorService: AgentChatActorService,
-    private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly agentChatMessageReactionService: AgentChatMessageReactionService,
     private readonly agentChatThreadParticipantService: AgentChatThreadParticipantService,
     private readonly featureFlagService: FeatureFlagService,
@@ -235,16 +231,6 @@ export class ChatExecutionService {
             : {}),
           ...(isGroupConversation
             ? { [NO_REPLY_TOOL_NAME]: createNoReplyTool() }
-            : {}),
-          ...(isInboxConversation
-            ? {
-                [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
-                  createAttachConversationToRecordTool({
-                    agentChatThreadTargetService:
-                      this.agentChatThreadTargetService,
-                    toolContext,
-                  }),
-              }
             : {}),
           ...(isAiChatInboxEnabled && isDefined(latestUserMessage)
             ? {

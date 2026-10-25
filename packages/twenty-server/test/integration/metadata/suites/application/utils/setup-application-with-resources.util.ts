@@ -1,3 +1,4 @@
+import { type RoleManifest } from 'twenty-shared/application';
 import { HTTPMethod } from 'twenty-shared/types';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { seedBuiltFrontComponentSharedDependenciesFile } from 'test/integration/metadata/suites/application/utils/seed-built-front-component-shared-dependencies-file.util';
@@ -64,10 +65,14 @@ export const setupApplicationWithResources = async ({
   name,
   permissionFlagUniversalIdentifiers = DEFAULT_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS,
   canReadAndUpdateAllObjectRecords = false,
+  objectPermissions,
+  shouldAssignDefaultRoleToAgent = false,
 }: {
   name: string;
   permissionFlagUniversalIdentifiers?: string[];
   canReadAndUpdateAllObjectRecords?: boolean;
+  objectPermissions?: RoleManifest['objectPermissions'];
+  shouldAssignDefaultRoleToAgent?: boolean;
 }): Promise<ApplicationWithResources> => {
   const applicationUniversalIdentifier = uuidv4();
   const roleUniversalIdentifier = uuidv4();
@@ -123,6 +128,7 @@ export const setupApplicationWithResources = async ({
             canReadAllObjectRecords: canReadAndUpdateAllObjectRecords,
             canUpdateAllObjectRecords: canReadAndUpdateAllObjectRecords,
             permissionFlagUniversalIdentifiers,
+            objectPermissions,
           },
         ],
         logicFunctions: [
@@ -172,6 +178,9 @@ export const setupApplicationWithResources = async ({
             description: 'An agent owned by the application',
             icon: 'IconRobot',
             prompt: `You are the ${name} agent.`,
+            ...(shouldAssignDefaultRoleToAgent
+              ? { roleUniversalIdentifier }
+              : {}),
           },
         ],
         skills: [

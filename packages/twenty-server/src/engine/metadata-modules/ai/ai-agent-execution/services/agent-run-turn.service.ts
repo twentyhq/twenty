@@ -74,6 +74,7 @@ type AgentRunTurnInput = {
   canAskHumans?: boolean;
   baseSystemPrompt: string;
   workspaceId: string;
+  threadId: string;
   executionContext: AgentRunExecutionContext;
   additionalExcludedToolNames?: readonly string[];
   toolLoadingStrategy?: AgentToolLoadingStrategy;
@@ -116,6 +117,7 @@ export class AgentRunTurnService {
     messages,
     baseSystemPrompt,
     workspaceId,
+    threadId,
     executionContext,
     additionalExcludedToolNames = [],
     toolLoadingStrategy = 'preload',
@@ -147,6 +149,7 @@ export class AgentRunTurnService {
     });
     const registryAccess = await this.buildAgentRegistryAccess({
       agent,
+      threadId,
       executionContext,
       additionalExcludedToolNames,
       toolLoadingStrategy,
@@ -343,14 +346,16 @@ export class AgentRunTurnService {
     };
   }
 
-  private async buildAgentRegistryAccess({
+  async buildAgentRegistryAccess({
     agent,
+    threadId,
     executionContext: { authContext, actorContext, agentRunRoleIds },
     additionalExcludedToolNames,
     toolLoadingStrategy,
   }: Pick<
     Required<AgentRunTurnInput>,
     | 'agent'
+    | 'threadId'
     | 'executionContext'
     | 'additionalExcludedToolNames'
     | 'toolLoadingStrategy'
@@ -367,6 +372,7 @@ export class AgentRunTurnService {
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
       agentId: agent.id,
+      threadId,
       authContext,
       application: resolveAgentRunCallingApplication(authContext),
       actorContext,

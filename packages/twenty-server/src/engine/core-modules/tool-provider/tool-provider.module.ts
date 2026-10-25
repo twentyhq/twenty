@@ -18,6 +18,7 @@ import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/servi
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AgentToolsModule } from 'src/engine/metadata-modules/ai/ai-agent/tools/agent-tools.module';
+import { AgentChatToolsModule } from 'src/engine/metadata-modules/ai/ai-chat/tools/agent-chat-tools.module';
 import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { NavigationMenuItemToolsModule } from 'src/engine/metadata-modules/navigation-menu-item/tools/navigation-menu-item-tools.module';
@@ -53,6 +54,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WebhookToolsModule,
     RoleToolsModule,
     AgentToolsModule,
+    AgentChatToolsModule,
     UserRoleModule,
     MetadataToolsModule,
     EmailingModule,

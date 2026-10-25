@@ -1,12 +1,19 @@
+import {
+  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+  ToolCategory,
+} from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
+import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 
-export const attachConversationToRecordInputSchema = z.object({
+const attachConversationToRecordInputSchema = z.object({
   objectNameSingular: z
     .string()
     .describe(
@@ -20,57 +27,58 @@ export const attachConversationToRecordInputSchema = z.object({
     ),
 });
 
-type AttachConversationToRecordInput = z.infer<
-  typeof attachConversationToRecordInputSchema
->;
-
-export const createAttachConversationToRecordTool = ({
-  agentChatThreadTargetService,
-  toolContext,
-}: {
-  agentChatThreadTargetService: Pick<
-    AgentChatThreadTargetService,
-    'attachThreadToRecord'
-  >;
-  toolContext: ToolContext;
-}) => ({
+@DefineTool({
+  name: ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+  category: ToolCategory.ACTION,
+  requiredPermissionFlags: [],
+  requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
   description:
     "Attach this conversation to a record, so it is listed on the record's Conversations tab " +
     'for anyone who can already see the conversation. Attach the records the conversation is ' +
     'materially about: the one the user is working on, and those you create or change for ' +
     'them. Do not attach records you only read, search or list along the way. Attaching a ' +
     'record twice is harmless.',
-  inputSchema: attachConversationToRecordInputSchema,
-  execute: async ({
-    objectNameSingular,
-    recordId,
-  }: AttachConversationToRecordInput): Promise<ToolOutput> => {
+})
+export class AttachConversationToRecordTool extends BaseTool<
+  typeof attachConversationToRecordInputSchema
+> {
+  readonly inputSchema = attachConversationToRecordInputSchema;
+
+  constructor(
+    private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input: { objectNameSingular, recordId },
+    context: { workspaceId, threadId, authContext, rolePermissionConfig },
+  }: ToolExecuteArgs<
+    typeof attachConversationToRecordInputSchema
+  >): Promise<ToolOutput> {
     const failureMessage = `Failed to attach this conversation to the ${objectNameSingular} record`;
 
+    if (
+      !isDefined(threadId) ||
+      !isDefined(authContext) ||
+      !isUserAuthContext(authContext)
+    ) {
+      return {
+        success: false,
+        message: failureMessage,
+        error:
+          'Only a conversation with a workspace member can be attached to a record.',
+      };
+    }
+
     try {
-      // resolved at call time so access withdrawn mid-turn is honored
-      const { workspaceId, threadId, authContext } =
-        await (toolContext.resolveExecutionContext?.() ?? toolContext);
-
-      if (
-        !isDefined(threadId) ||
-        !isDefined(authContext) ||
-        !isUserAuthContext(authContext)
-      ) {
-        return {
-          success: false,
-          message: failureMessage,
-          error:
-            'Only a conversation with a workspace member can be attached to a record.',
-        };
-      }
-
-      await agentChatThreadTargetService.attachThreadToRecord({
+      await this.agentChatThreadTargetService.attachThreadToRecord({
         workspaceId,
         threadId,
         objectNameSingular,
         recordId,
         authContext,
+        rolePermissionConfig,
       });
 
       return {
@@ -85,5 +93,5 @@ export const createAttachConversationToRecordTool = ({
         error: error instanceof Error ? error.message : String(error),
       };
     }
-  },
-});
+  }
+}

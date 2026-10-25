@@ -530,6 +530,7 @@ export class AgentRunnerService {
       canAskHumans: spec.capabilities.canAskHumans,
       responseFormat: spec.responseFormat ?? agent.responseFormat,
       workspaceId,
+      threadId,
       executionContext,
       additionalExcludedToolNames: spec.additionalExcludedToolNames,
       toolLoadingStrategy: spec.toolLoadingStrategy,
