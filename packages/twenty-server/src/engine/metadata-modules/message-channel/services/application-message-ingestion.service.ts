@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { MessageParticipantRole } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -245,11 +245,14 @@ export class ApplicationMessageIngestionService {
 
       const key = `${participant.role}:${handle}`;
       const earlierParticipant = participantsByRoleAndHandle.get(key);
+      const earlierDisplayName = earlierParticipant?.displayName;
 
       participantsByRoleAndHandle.set(key, {
         role: participant.role,
         handle,
-        displayName: earlierParticipant?.displayName ?? participant.displayName,
+        displayName: isNonEmptyString(earlierDisplayName)
+          ? earlierDisplayName
+          : participant.displayName,
         personId: earlierParticipant?.personId ?? participant.personId,
         workspaceMemberId:
           earlierParticipant?.workspaceMemberId ??
