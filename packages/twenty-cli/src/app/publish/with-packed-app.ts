@@ -1,8 +1,10 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { isDefined } from 'twenty-shared/utils';
 
 import { readSnapshotFile } from '@/app/deployment/read-snapshot-file';
 import { resolveSnapshotDirectory } from '@/app/deployment/resolve-snapshot-directory';
+import { copyYarnLockIntoPackage } from '@/app/publish/copy-yarn-lock-into-package';
 import { parseNpmPackOutputOrThrow } from '@/app/publish/parse-npm-pack-output-or-throw';
 import { runNpmCommand } from '@/app/publish/run-npm-command';
 import { type PackedApp } from '@/app/publish/types/packed-app.type';
@@ -29,6 +31,11 @@ export const withPackedApp = async <TResult>({
     signal.throwIfAborted();
     await readSnapshotFile({ snapshotDirectory, artifact });
   }
+
+  const packagedYarnLockPath = await copyYarnLockIntoPackage({
+    snapshotDirectory,
+    build,
+  });
 
   const packageDirectory = await mkdtemp(
     join(dirname(snapshotDirectory), 'package-'),
@@ -57,6 +64,7 @@ export const withPackedApp = async <TResult>({
       ...build.files
         .map((file) => file.path)
         .filter((path) => path !== 'yarn.lock'),
+      ...(isDefined(packagedYarnLockPath) ? [packagedYarnLockPath] : []),
     ];
     const missingPaths = [...new Set(requiredPaths)].filter(
       (path) => !includedPaths.has(path),
