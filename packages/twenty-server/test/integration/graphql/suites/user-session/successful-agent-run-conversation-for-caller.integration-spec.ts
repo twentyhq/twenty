@@ -191,11 +191,13 @@ const countThreadTargets = async (threadId: string) => {
   return count;
 };
 
-// what the run's registry tools see, resolved as the turn would have resolved it
-const attachThroughRegistry = async (
-  execution: AgentRunExecution,
-  input: { objectNameSingular: string; recordId: string },
-) => {
+const attachThroughRegistry = async ({
+  execution,
+  input,
+}: {
+  execution: AgentRunExecution;
+  input: { objectNameSingular: string; recordId: string };
+}) => {
   const registryAccess = await getAppProviderByClassName<AgentRunTurnService>(
     'AgentRunTurnService',
   ).buildAgentRegistryAccess({
@@ -458,9 +460,12 @@ describe('Agent run conversation should be recorded for the caller', () => {
     });
 
     await expect(
-      attachThroughRegistry(execution, {
-        objectNameSingular: 'company',
-        recordId: COMPANY_DATA_SEED_IDS.ID_1,
+      attachThroughRegistry({
+        execution,
+        input: {
+          objectNameSingular: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_1,
+        },
       }),
     ).resolves.toMatchObject({ success: true });
     expect(await countThreadTargets(execution.threadId)).toBe(1);
@@ -474,9 +479,12 @@ describe('Agent run conversation should be recorded for the caller', () => {
     });
 
     await expect(
-      attachThroughRegistry(execution, {
-        objectNameSingular: 'person',
-        recordId: PERSON_DATA_SEED_IDS.ID_1,
+      attachThroughRegistry({
+        execution,
+        input: {
+          objectNameSingular: 'person',
+          recordId: PERSON_DATA_SEED_IDS.ID_1,
+        },
       }),
     ).resolves.toMatchObject({ success: false });
     expect(await countThreadTargets(execution.threadId)).toBe(0);
@@ -489,9 +497,12 @@ describe('Agent run conversation should be recorded for the caller', () => {
     });
 
     await expect(
-      attachThroughRegistry(execution, {
-        objectNameSingular: 'company',
-        recordId: COMPANY_DATA_SEED_IDS.ID_1,
+      attachThroughRegistry({
+        execution,
+        input: {
+          objectNameSingular: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_1,
+        },
       }),
     ).resolves.toMatchObject({ success: false });
     expect(await countThreadTargets(execution.threadId)).toBe(0);

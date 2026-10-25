@@ -192,7 +192,7 @@ export class AgentToolsetService {
 
         return {
           directTools: await this.toolRegistry.getToolsByName(
-            preloadedToolNames,
+            preloadedToolNames.filter(isToolAllowed),
             toolContext,
             { compactOutput: true, spillLargeOutput: true },
           ),

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { convertToModelMessages, hasToolCall } from 'ai';
 import {
+  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   type ExtendedUIMessage,
   NO_REPLY_TOOL_NAME,
@@ -217,7 +218,12 @@ export class ChatExecutionService {
         registryAccess: {
           type: 'assistant',
           toolContext,
-          excludedToolNames: AI_CHAT_EXCLUDED_TOOL_NAMES,
+          excludedToolNames: isInboxConversation
+            ? AI_CHAT_EXCLUDED_TOOL_NAMES
+            : new Set([
+                ...AI_CHAT_EXCLUDED_TOOL_NAMES,
+                ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+              ]),
           preloadedToolNames: AI_CHAT_TOOL_NAMES_TO_PRELOAD,
         },
         canAskHumans: true,
