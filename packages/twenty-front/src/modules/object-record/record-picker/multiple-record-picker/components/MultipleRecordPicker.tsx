@@ -19,6 +19,7 @@ import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-
 import { upsertMorphItem } from '@/object-record/record-picker/multiple-record-picker/utils/upsertMorphItem';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -54,7 +55,7 @@ export const MultipleRecordPicker = ({
   layoutDirection = 'search-bar-on-bottom',
   componentInstanceId,
   focusId,
-  dropdownWidth,
+  dropdownWidth = GenericDropdownContentWidth.ExtraLarge,
   isCreatePending = false,
 }: MultipleRecordPickerProps) => {
   const [isSelectingCreateTarget, setIsSelectingCreateTarget] = useState(false);
