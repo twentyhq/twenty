@@ -175,7 +175,7 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'uuid', nullable: true })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.52.0_AddParticipantHandleFieldToMessageChannelFastInstanceCommand_1792767928382',
+      '2.52.0_AddParticipantHandleFieldToMessageChannelFastInstanceCommand_1792907887530',
   })
   participantHandleFieldUniversalIdentifier: string | null;
 
