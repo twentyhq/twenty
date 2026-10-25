@@ -3,10 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { getUrlSafely, isDefined } from 'twenty-shared/utils';
+import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { MCP_SERVER_NAME_REGEX } from 'src/engine/metadata-modules/mcp-server/constants/mcp-server-name-regex.constant';
+import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
+import { MCP_SERVER_NAME_MAX_LENGTH } from 'src/engine/metadata-modules/mcp-server/constants/mcp-server-name-max-length.constant';
 import { McpServerExceptionCode } from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import {
   type FailedFlatEntityValidation,
@@ -16,12 +17,6 @@ import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manag
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-
-const isHttpUrl = (url: string): boolean => {
-  const protocol = getUrlSafely(url)?.protocol;
-
-  return protocol === 'http:' || protocol === 'https:';
-};
 
 @Injectable()
 export class FlatMcpServerValidatorService {
@@ -148,7 +143,10 @@ export class FlatMcpServerValidatorService {
   }): FlatEntityValidationError<McpServerExceptionCode>[] {
     const errors: FlatEntityValidationError<McpServerExceptionCode>[] = [];
 
-    if (!MCP_SERVER_NAME_REGEX.test(name)) {
+    if (
+      !isSnakeCaseToolName(name) ||
+      name.length > MCP_SERVER_NAME_MAX_LENGTH
+    ) {
       errors.push({
         code: McpServerExceptionCode.INVALID_MCP_SERVER_NAME,
         message: t`Invalid MCP server name provided`,

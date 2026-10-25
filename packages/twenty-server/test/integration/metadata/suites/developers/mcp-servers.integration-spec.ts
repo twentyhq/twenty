@@ -15,6 +15,19 @@ const VALID_INPUT = {
   url: 'https://docs.example.com/mcp',
 };
 
+const getMcpServerValidationErrorCodes = (responseBody: {
+  errors?: {
+    extensions: {
+      errors: { mcpServer?: { errors: { code: string }[] }[] };
+    };
+  }[];
+}): string[] =>
+  (responseBody.errors ?? []).flatMap((error) =>
+    (error.extensions.errors.mcpServer ?? []).flatMap((failedValidation) =>
+      failedValidation.errors.map(({ code }) => code),
+    ),
+  );
+
 describe('mcpServersResolver (e2e)', () => {
   const createdMcpServerIds: string[] = [];
 
@@ -81,14 +94,26 @@ describe('mcpServersResolver (e2e)', () => {
     ])('rejects name "%s" (%s)', async (name) => {
       const response = await createAndTrack({ name });
 
-      expect(response.body.errors).toBeDefined();
+      expect(getMcpServerValidationErrorCodes(response.body)).toEqual([
+        'INVALID_MCP_SERVER_NAME',
+      ]);
       expect(response.body.data).toBeNull();
     });
 
     it('rejects a non-http URL', async () => {
       const response = await createAndTrack({ url: 'ftp://docs.example.com' });
 
-      expect(response.body.errors).toBeDefined();
+      expect(getMcpServerValidationErrorCodes(response.body)).toEqual([
+        'INVALID_MCP_SERVER_URL',
+      ]);
+    });
+
+    it('rejects a blank label', async () => {
+      const response = await createAndTrack({ label: '   ' });
+
+      expect(getMcpServerValidationErrorCodes(response.body)).toEqual([
+        'INVALID_MCP_SERVER_INPUT',
+      ]);
     });
 
     it('rejects a duplicate name in the workspace', async () => {
@@ -96,7 +121,9 @@ describe('mcpServersResolver (e2e)', () => {
 
       const response = await createAndTrack({ label: 'Docs again' });
 
-      expect(response.body.errors).toBeDefined();
+      expect(getMcpServerValidationErrorCodes(response.body)).toEqual([
+        'MCP_SERVER_NAME_ALREADY_EXISTS',
+      ]);
       expect(response.body.data).toBeNull();
     });
   });
@@ -152,7 +179,18 @@ describe('mcpServersResolver (e2e)', () => {
         update: { name: 'docs' },
       });
 
-      expect(response.body.errors).toBeDefined();
+      expect(getMcpServerValidationErrorCodes(response.body)).toEqual([
+        'MCP_SERVER_NAME_ALREADY_EXISTS',
+      ]);
+    });
+
+    it('rejects an unknown id', async () => {
+      const response = await updateMcpServer({
+        id: '20202020-0000-4000-8000-000000000000',
+        update: { label: 'Missing' },
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
     });
   });
 
