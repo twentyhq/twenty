@@ -187,16 +187,18 @@ export class MessageParticipantPersonListener {
           )
           .map((messageChannel) => messageChannel.id);
 
-        return messageChannelIds.length > 0
-          ? [
-              {
-                fieldUniversalIdentifier,
-                messageChannelIds,
-                handles,
-                changedPersonIds,
-              },
-            ]
-          : [];
+        if (messageChannelIds.length === 0) {
+          return [];
+        }
+
+        return [
+          {
+            fieldUniversalIdentifier,
+            messageChannelIds,
+            handles,
+            changedPersonIds,
+          },
+        ];
       },
     );
   }
