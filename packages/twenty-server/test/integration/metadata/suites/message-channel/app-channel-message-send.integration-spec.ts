@@ -97,10 +97,13 @@ describe('sendAppChannelMessage (e2e)', () => {
     operation: Parameters<typeof makeMetadataApiRequest>[0],
   ) => makeMetadataApiRequest(operation, applicationToken);
 
-  const createChannel = (
-    connectedAccountId: string,
-    messagingProviderUniversalIdentifier?: string,
-  ) =>
+  const createChannel = ({
+    connectedAccountId,
+    messagingProviderUniversalIdentifier,
+  }: {
+    connectedAccountId: string;
+    messagingProviderUniversalIdentifier?: string;
+  }) =>
     asApplication({
       query: CREATE_CHANNEL_MUTATION,
       variables: {
@@ -114,10 +117,13 @@ describe('sendAppChannelMessage (e2e)', () => {
       },
     });
 
-  const bindChannel = (
-    messageChannelId: string,
-    messagingProviderUniversalIdentifier: string | null,
-  ) =>
+  const bindChannel = ({
+    messageChannelId,
+    messagingProviderUniversalIdentifier,
+  }: {
+    messageChannelId: string;
+    messagingProviderUniversalIdentifier: string | null;
+  }) =>
     asApplication({
       query: UPDATE_CHANNEL_MUTATION,
       variables: {
@@ -125,14 +131,17 @@ describe('sendAppChannelMessage (e2e)', () => {
       },
     });
 
-  const startConversation = async (
-    connectedAccountId: string,
-    messagingProviderUniversalIdentifier?: string,
-  ) => {
-    const channelResponse = await createChannel(
+  const startConversation = async ({
+    connectedAccountId,
+    messagingProviderUniversalIdentifier,
+  }: {
+    connectedAccountId: string;
+    messagingProviderUniversalIdentifier?: string;
+  }) => {
+    const channelResponse = await createChannel({
       connectedAccountId,
       messagingProviderUniversalIdentifier,
-    );
+    });
 
     expect(channelResponse.body.errors).toBeUndefined();
 
@@ -382,10 +391,10 @@ export const handler = (payload) => {
   }, 120000);
 
   it('sends through the app and records the reply in the same thread', async () => {
-    const { messageChannelId, messageThreadId } = await startConversation(
-      sendingConnectionId,
-      MESSAGING_PROVIDER_IDENTIFIER,
-    );
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
 
     const response = await send({
       messageChannelId,
@@ -422,10 +431,10 @@ export const handler = (payload) => {
   });
 
   it('keeps one message when the app later ingests the reply it sent', async () => {
-    const { messageChannelId, messageThreadId } = await startConversation(
-      sendingConnectionId,
-      MESSAGING_PROVIDER_IDENTIFIER,
-    );
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
 
     const sendResponse = await send({
       messageChannelId,
@@ -472,10 +481,10 @@ export const handler = (payload) => {
   });
 
   it('records nothing when the app fails to send', async () => {
-    const { messageChannelId, messageThreadId } = await startConversation(
-      sendingConnectionId,
-      MESSAGING_PROVIDER_IDENTIFIER,
-    );
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
 
     const response = await send({
       messageChannelId,
@@ -494,10 +503,10 @@ export const handler = (payload) => {
   });
 
   it('refuses a channel whose sync is turned off without calling the app', async () => {
-    const { messageChannelId, messageThreadId } = await startConversation(
-      sendingConnectionId,
-      MESSAGING_PROVIDER_IDENTIFIER,
-    );
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
 
     await asApplication({
       query: UPDATE_CHANNEL_MUTATION,
@@ -515,8 +524,9 @@ export const handler = (payload) => {
   });
 
   it('sends only while the channel is bound to a messaging provider', async () => {
-    const { messageChannelId, messageThreadId } =
-      await startConversation(sendingConnectionId);
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+    });
 
     const unboundResponse = await send({
       messageChannelId,
@@ -528,10 +538,10 @@ export const handler = (payload) => {
       'NOT_FOUND',
     );
 
-    const bindResponse = await bindChannel(
+    const bindResponse = await bindChannel({
       messageChannelId,
-      MESSAGING_PROVIDER_IDENTIFIER,
-    );
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
 
     expect(bindResponse.body.errors).toBeUndefined();
 
@@ -543,7 +553,10 @@ export const handler = (payload) => {
 
     expect(boundResponse.body.errors).toBeUndefined();
 
-    await bindChannel(messageChannelId, null);
+    await bindChannel({
+      messageChannelId,
+      messagingProviderUniversalIdentifier: null,
+    });
 
     const unboundAgainResponse = await send({
       messageChannelId,
@@ -558,10 +571,10 @@ export const handler = (payload) => {
   });
 
   it('refuses a messaging provider that uses another connection provider', async () => {
-    const response = await createChannel(
-      silentConnectionId,
-      MESSAGING_PROVIDER_IDENTIFIER,
-    );
+    const response = await createChannel({
+      connectedAccountId: silentConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
 
     expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
   });

@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { parseSendAppMessageResult } from 'src/engine/metadata-modules/message-channel/utils/parse-send-app-message-result.util';
+import { parseSendAppMessageResult } from 'src/engine/metadata-modules/messaging-provider/utils/parse-send-app-message-result.util';
 import {
   MessagingProviderException,
   MessagingProviderExceptionCode,

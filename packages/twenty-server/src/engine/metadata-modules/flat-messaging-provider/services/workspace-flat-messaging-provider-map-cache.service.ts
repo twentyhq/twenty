@@ -12,7 +12,7 @@ import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/t
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
-const FLAT_CONNECTION_PROVIDER_ROWS_REQUIREMENT = {
+const FLAT_MESSAGING_PROVIDER_ROWS_REQUIREMENT = {
   messagingProvider: true,
   application: ['id', 'universalIdentifier', 'deletedAt'],
 } as const;
@@ -20,12 +20,12 @@ const FLAT_CONNECTION_PROVIDER_ROWS_REQUIREMENT = {
 @Injectable()
 @WorkspaceCache('flatMessagingProviderMaps', { packingPonderation: 1 })
 export class WorkspaceFlatMessagingProviderMapCacheService extends MetadataFlatEntityMapsCacheProvider<'messagingProvider'> {
-  override readonly rowsRequirement = FLAT_CONNECTION_PROVIDER_ROWS_REQUIREMENT;
+  override readonly rowsRequirement = FLAT_MESSAGING_PROVIDER_ROWS_REQUIREMENT;
 
   computeForCache({
     rows,
   }: WorkspaceCacheProviderContext<
-    typeof FLAT_CONNECTION_PROVIDER_ROWS_REQUIREMENT
+    typeof FLAT_MESSAGING_PROVIDER_ROWS_REQUIREMENT
   >): FlatMessagingProviderMaps {
     const { messagingProvider: messagingProviders, application: applications } =
       rows;

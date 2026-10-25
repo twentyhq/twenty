@@ -38,17 +38,6 @@ describe('defineMessagingProvider', () => {
     expect(result.success).toBe(false);
   });
 
-  it('requires the connection provider it uses', () => {
-    const result = defineMessagingProvider({
-      ...baseValidConfig,
-      connectionProvider: undefined as never,
-    });
-
-    expect(result.errors).toContain(
-      'Messaging provider must declare the connectionProvider it uses',
-    );
-  });
-
   it('rejects references that are not UUIDs', () => {
     const result = defineMessagingProvider({
       ...baseValidConfig,

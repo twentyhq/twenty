@@ -55,10 +55,13 @@ const buildMessagingProvider = (
   ...overrides,
 });
 
-const syncMessagingProviders = (
-  messagingProviders: MessagingProviderManifest[],
-  { expectToFail = false }: { expectToFail?: boolean } = {},
-) =>
+const syncMessagingProviders = ({
+  messagingProviders,
+  expectToFail = false,
+}: {
+  messagingProviders: MessagingProviderManifest[];
+  expectToFail?: boolean;
+}) =>
   syncApplication({
     manifest: buildBaseManifest({
       appId: TEST_APP_ID,
@@ -104,7 +107,9 @@ describe('messaging provider manifest sync', () => {
   });
 
   it('stores an ingestion-only messaging provider on its connection provider', async () => {
-    await syncMessagingProviders([buildMessagingProvider()]);
+    await syncMessagingProviders({
+      messagingProviders: [buildMessagingProvider()],
+    });
 
     expect(await findMessagingProviders()).toEqual([
       {
@@ -116,14 +121,14 @@ describe('messaging provider manifest sync', () => {
   }, 60000);
 
   it('refuses a connection provider that is not in the application', async () => {
-    const { errors } = await syncMessagingProviders(
-      [
+    const { errors } = await syncMessagingProviders({
+      messagingProviders: [
         buildMessagingProvider({
           connectionProvider: { universalIdentifier: uuidv4() },
         }),
       ],
-      { expectToFail: true },
-    );
+      expectToFail: true,
+    });
 
     expect(JSON.stringify(errors)).toContain(
       'was not found in this application',
@@ -132,31 +137,33 @@ describe('messaging provider manifest sync', () => {
   }, 60000);
 
   it('refuses a send function that is not in the application', async () => {
-    const { errors } = await syncMessagingProviders(
-      [
+    const { errors } = await syncMessagingProviders({
+      messagingProviders: [
         buildMessagingProvider({
           sendMessageLogicFunction: { universalIdentifier: uuidv4() },
         }),
       ],
-      { expectToFail: true },
-    );
+      expectToFail: true,
+    });
 
     expect(JSON.stringify(errors)).toContain('Send message logic function');
   }, 60000);
 
   it('refuses moving a messaging provider to another connection provider', async () => {
-    await syncMessagingProviders([buildMessagingProvider()]);
+    await syncMessagingProviders({
+      messagingProviders: [buildMessagingProvider()],
+    });
 
-    const { errors } = await syncMessagingProviders(
-      [
+    const { errors } = await syncMessagingProviders({
+      messagingProviders: [
         buildMessagingProvider({
           connectionProvider: {
             universalIdentifier: SECOND_CONNECTION_PROVIDER_ID,
           },
         }),
       ],
-      { expectToFail: true },
-    );
+      expectToFail: true,
+    });
 
     expect(JSON.stringify(errors)).toContain(
       'connection provider cannot be changed after creation',
@@ -175,25 +182,26 @@ describe('messaging provider manifest sync', () => {
       displayName: 'WhatsApp',
     });
 
-    await syncMessagingProviders([
-      buildMessagingProvider(),
-      otherMessagingProvider,
-    ]);
+    await syncMessagingProviders({
+      messagingProviders: [buildMessagingProvider(), otherMessagingProvider],
+    });
 
-    const { errors } = await syncMessagingProviders(
-      [
+    const { errors } = await syncMessagingProviders({
+      messagingProviders: [
         buildMessagingProvider(),
         { ...otherMessagingProvider, name: 'linkedin-messaging' },
       ],
-      { expectToFail: true },
-    );
+      expectToFail: true,
+    });
 
     expect(JSON.stringify(errors)).toContain('already exists');
   }, 60000);
 
   it('deletes a messaging provider the manifest no longer declares', async () => {
-    await syncMessagingProviders([buildMessagingProvider()]);
-    await syncMessagingProviders([]);
+    await syncMessagingProviders({
+      messagingProviders: [buildMessagingProvider()],
+    });
+    await syncMessagingProviders({ messagingProviders: [] });
 
     expect(await findMessagingProviders()).toEqual([]);
   }, 60000);

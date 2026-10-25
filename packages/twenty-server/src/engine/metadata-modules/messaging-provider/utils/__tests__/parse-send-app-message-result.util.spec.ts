@@ -1,4 +1,4 @@
-import { parseSendAppMessageResult } from 'src/engine/metadata-modules/message-channel/utils/parse-send-app-message-result.util';
+import { parseSendAppMessageResult } from 'src/engine/metadata-modules/messaging-provider/utils/parse-send-app-message-result.util';
 
 describe('parseSendAppMessageResult', () => {
   it('returns the trimmed external id with the send time', () => {

@@ -2,7 +2,7 @@ import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type'
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
 import { type MessagingProviderManifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
 
@@ -11,7 +11,7 @@ export const defineMessagingProvider: DefineEntity<
 > = (config) => {
   const errors: string[] = [];
 
-  if (!config.universalIdentifier) {
+  if (!isNonEmptyString(config.universalIdentifier)) {
     errors.push('Messaging provider must have a universalIdentifier');
   } else if (!isValidPostgresUuid(config.universalIdentifier)) {
     errors.push(
@@ -19,7 +19,7 @@ export const defineMessagingProvider: DefineEntity<
     );
   }
 
-  if (!config.name) {
+  if (!isNonEmptyString(config.name)) {
     errors.push('Messaging provider must have a name');
   } else if (!PROVIDER_NAME_PATTERN.test(config.name)) {
     errors.push(
@@ -27,7 +27,7 @@ export const defineMessagingProvider: DefineEntity<
     );
   }
 
-  if (!config.displayName) {
+  if (!isNonEmptyString(config.displayName)) {
     errors.push('Messaging provider must have a displayName');
   }
 
