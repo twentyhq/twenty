@@ -88,6 +88,7 @@ export const SingleRecordPickerMenuItem = ({
         selected={isRecordSelected}
         indicator="check"
         data-testid={'menu-item'}
+        title={searchRecordStore.label}
         description={
           showObjectName
             ? capitalize(searchRecordStore.objectLabelSingular)
