@@ -138,8 +138,6 @@ export class ApplicationRegistrationVariableService {
       if (existing) {
         await variableRepository.update(existing.id, {
           description: schema.description ?? '',
-          // Never downgrade a secret: its stored value would be returned in plaintext
-          isSecret: existing.isSecret || (schema.isSecret ?? true),
           isRequired,
           isDeprecated,
           type: schema.type ?? FieldMetadataType.TEXT,

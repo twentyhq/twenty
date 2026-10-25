@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 
-import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -27,7 +26,13 @@ const INITIAL_IS_SECRET_BY_KEY: IsSecretByKey = {
   PUBLIC_SERVER_KEY: false,
 };
 
-const buildManifest = (isSecretByKey: IsSecretByKey): Manifest => {
+const buildManifest = ({
+  isSecretByKey,
+  description,
+}: {
+  isSecretByKey: IsSecretByKey;
+  description: string;
+}): Manifest => {
   const baseManifest = buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
@@ -40,28 +45,36 @@ const buildManifest = (isSecretByKey: IsSecretByKey): Manifest => {
       applicationVariables: {
         SECRET_SETTING: {
           universalIdentifier: SECRET_SETTING_ID,
+          description,
           isSecret: isSecretByKey.SECRET_SETTING,
         },
         PUBLIC_SETTING: {
           universalIdentifier: PUBLIC_SETTING_ID,
+          description,
           isSecret: isSecretByKey.PUBLIC_SETTING,
         },
       },
       serverVariables: {
-        SECRET_SERVER_KEY: { isSecret: isSecretByKey.SECRET_SERVER_KEY },
-        PUBLIC_SERVER_KEY: { isSecret: isSecretByKey.PUBLIC_SERVER_KEY },
+        SECRET_SERVER_KEY: {
+          description,
+          isSecret: isSecretByKey.SECRET_SERVER_KEY,
+        },
+        PUBLIC_SERVER_KEY: {
+          description,
+          isSecret: isSecretByKey.PUBLIC_SERVER_KEY,
+        },
       },
     },
   };
 };
 
-const readIsSecretByKey = async (): Promise<Record<string, boolean>> => {
-  const rows: { key: string; isSecret: boolean }[] =
+const readVariablesByKey = async () => {
+  const rows: { key: string; description: string; isSecret: boolean }[] =
     await globalThis.testDataSource.query(
-      `SELECT key, "isSecret" FROM core."applicationVariable"
+      `SELECT key, description, "isSecret" FROM core."applicationVariable"
        WHERE "universalIdentifier" = ANY($1)
        UNION ALL
-       SELECT variable.key, variable."isSecret"
+       SELECT variable.key, variable.description, variable."isSecret"
        FROM core."applicationRegistrationVariable" variable
        JOIN core."applicationRegistration" registration
          ON registration.id = variable."applicationRegistrationId"
@@ -69,7 +82,12 @@ const readIsSecretByKey = async (): Promise<Record<string, boolean>> => {
       [[SECRET_SETTING_ID, PUBLIC_SETTING_ID], TEST_APP_ID],
     );
 
-  return Object.fromEntries(rows.map(({ key, isSecret }) => [key, isSecret]));
+  return Object.fromEntries(
+    rows.map(({ key, description, isSecret }) => [
+      key,
+      { description, isSecret },
+    ]),
+  );
 };
 
 describe('Manifest sync - variable isSecret', () => {
@@ -82,11 +100,12 @@ describe('Manifest sync - variable isSecret', () => {
     });
 
     await syncApplication({
-      manifest: buildManifest(INITIAL_IS_SECRET_BY_KEY),
+      manifest: buildManifest({
+        isSecretByKey: INITIAL_IS_SECRET_BY_KEY,
+        description: 'Initial description',
+      }),
       expectToFail: false,
     });
-
-    expect(await readIsSecretByKey()).toEqual(INITIAL_IS_SECRET_BY_KEY);
   }, 120000);
 
   afterAll(async () => {
@@ -95,35 +114,27 @@ describe('Manifest sync - variable isSecret', () => {
     });
   });
 
-  it('should refuse making a secret application variable non-secret', async () => {
-    const { errors } = await syncApplication({
-      manifest: buildManifest({
-        ...INITIAL_IS_SECRET_BY_KEY,
-        SECRET_SETTING: false,
-      }),
-      expectToFail: true,
-    });
-
-    expectOneNotInternalServerErrorSnapshot({ errors });
-    expect(await readIsSecretByKey()).toEqual(INITIAL_IS_SECRET_BY_KEY);
-  });
-
-  it('should make variables secret but keep a secret server variable secret', async () => {
+  it('should ignore isSecret changes on existing variables', async () => {
     await syncApplication({
       manifest: buildManifest({
-        SECRET_SETTING: true,
-        PUBLIC_SETTING: true,
-        SECRET_SERVER_KEY: false,
-        PUBLIC_SERVER_KEY: true,
+        isSecretByKey: {
+          SECRET_SETTING: false,
+          PUBLIC_SETTING: true,
+          SECRET_SERVER_KEY: false,
+          PUBLIC_SERVER_KEY: true,
+        },
+        description: 'Updated description',
       }),
       expectToFail: false,
     });
 
-    expect(await readIsSecretByKey()).toEqual({
-      SECRET_SETTING: true,
-      PUBLIC_SETTING: true,
-      SECRET_SERVER_KEY: true,
-      PUBLIC_SERVER_KEY: true,
-    });
+    expect(await readVariablesByKey()).toEqual(
+      Object.fromEntries(
+        Object.entries(INITIAL_IS_SECRET_BY_KEY).map(([key, isSecret]) => [
+          key,
+          { description: 'Updated description', isSecret },
+        ]),
+      ),
+    );
   });
 });
