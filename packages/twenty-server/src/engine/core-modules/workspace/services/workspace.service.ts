@@ -32,6 +32,11 @@ import {
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import {
+  DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_NAME,
+  DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_OPTIONS,
+  type DeleteApplicationRuntimeResourcesJobData,
+} from 'src/engine/core-modules/application/jobs/delete-application-runtime-resources.job-constants';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -818,6 +823,20 @@ export class WorkspaceService {
                 (emailingDomain) => emailingDomain.domain,
               ),
             },
+          );
+
+          const applications =
+            await this.applicationService.findManyApplications(workspace.id);
+
+          await this.deleteCascadeMessageQueueService.add<DeleteApplicationRuntimeResourcesJobData>(
+            DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_NAME,
+            {
+              workspaceId: workspace.id,
+              applicationUniversalIdentifiers: applications.map(
+                (application) => application.universalIdentifier,
+              ),
+            },
+            DELETE_APPLICATION_RUNTIME_RESOURCES_JOB_OPTIONS,
           );
 
           if (workspace.customDomain) {
