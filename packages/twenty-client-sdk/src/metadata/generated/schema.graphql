@@ -2251,7 +2251,6 @@ enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED
   IS_APPLICATION_MONITORING_ENABLED
   IS_APP_PREFERENCES_ENABLED
-  IS_ASYNC_CSV_EXPORT_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
@@ -4457,6 +4456,7 @@ input SendEmailInput {
   fromHandle: String
   inReplyTo: String
   subject: String!
+  targetRecord: SendEmailTargetRecordInput
   to: String!
 }
 
@@ -4464,6 +4464,11 @@ type SendEmailOutput {
   error: String
   messageThreadId: String
   success: Boolean!
+}
+
+input SendEmailTargetRecordInput {
+  objectNameSingular: String!
+  recordId: UUID!
 }
 
 type SendEmailViaDomainOutput {

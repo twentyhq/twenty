@@ -28,7 +28,7 @@ Local app development revolves around **syncing**: the CLI rebuilds your manifes
 
 ### Local sync does not need a version bump
 
-The strictly-increasing `version` rule (`VERSION_ALREADY_EXISTS` on deploy, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` on install) applies to **`app publish` / `app install`** — the release path. `twenty app dev` syncs your manifest in place and never requires a version change, so you don't need to touch `package.json` to iterate. If you find yourself bumping the version to test a local change, you're using the release path when you want the dev loop.
+The strictly-increasing `version` rule (`VERSION_ALREADY_EXISTS` on deploy, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` on install) applies to **`twenty app publish` / `twenty app install`** — the release path. `twenty app dev` syncs your manifest in place and never requires a version change, so you don't need to touch `package.json` to iterate. If you find yourself bumping the version to test a local change, you're using the release path when you want the dev loop.
 
 ## Reading the sync output
 

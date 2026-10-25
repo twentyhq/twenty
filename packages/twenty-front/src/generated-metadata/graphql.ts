@@ -2386,7 +2386,6 @@ export enum FeatureFlagKey {
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_APPLICATION_MONITORING_ENABLED = 'IS_APPLICATION_MONITORING_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
-  IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED = 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED',
@@ -6652,6 +6651,7 @@ export type SendEmailInput = {
   fromHandle?: InputMaybe<Scalars['String']['input']>;
   inReplyTo?: InputMaybe<Scalars['String']['input']>;
   subject: Scalars['String']['input'];
+  targetRecord?: InputMaybe<SendEmailTargetRecordInput>;
   to: Scalars['String']['input'];
 };
 
@@ -6660,6 +6660,11 @@ export type SendEmailOutput = {
   error?: Maybe<Scalars['String']['output']>;
   messageThreadId?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
+};
+
+export type SendEmailTargetRecordInput = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
 };
 
 export type SendEmailViaDomainOutput = {

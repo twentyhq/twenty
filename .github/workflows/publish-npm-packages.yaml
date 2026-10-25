@@ -163,7 +163,7 @@ jobs:
           # Template lockfiles resolve the released libraries from npm.
           published_libraries=""
           for package in $PACKAGES; do
-            if [[ "$package" == twenty || "$package" == create-twenty-app ]]; then
+            if [[ "$package" == twenty ]]; then
               for dependency in $published_libraries; do
                 for attempt in $(seq 1 60); do
                   if npm view "$dependency@$VERSION" version > /dev/null 2>&1; then break; fi
@@ -177,16 +177,8 @@ jobs:
             fi
 
             if curl --fail --silent --show-error "https://registry.npmjs.org/$package/$VERSION" > /dev/null; then
-              if [[ "$package" == create-twenty-app ]]; then
-                echo '::error::Scaffolder version already exists; release a new version to ship its lockfile'
-                exit 1
-              fi
               echo "$package@$VERSION already published; skipping"
             else
-              if [[ "$package" == create-twenty-app ]]; then
-                yarn nx run create-twenty-app:generate-template-lock --releaseVersion="$VERSION"
-                test -s packages/create-twenty-app/dist/constants/template/yarn.lock
-              fi
               yarn workspace "$package" npm publish --provenance --tag "$DIST_TAG" --access public
             fi
             if [[ "$package" != twenty && "$package" != create-twenty-app ]]; then

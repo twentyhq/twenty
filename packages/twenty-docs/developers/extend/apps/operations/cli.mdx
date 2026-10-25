@@ -21,12 +21,6 @@ npm install -g twenty
 twenty --version
 ```
 
-<Warning>
-  Inside an app project, use `npx twenty@latest`, not `npx twenty`. Apps depend
-  on `twenty-sdk`, which still ships an older `twenty` binary, and `npx twenty`
-  runs that local binary instead of this CLI.
-</Warning>
-
 The examples below use `twenty`. Prefix them with `npx twenty@latest` if you did not install it globally. Run `twenty commands` for the full command list and `twenty <command> --help` for the options of one command.
 
 | Command    | What it does                                                |
@@ -171,12 +165,6 @@ twenty doctor --offline
 ## Scripts and tests
 
 Build output belongs to the CLI. Do not read `.twenty/output/manifest.json` or import internal build code; read `data.manifest` from `twenty app build --json`.
-
-## Migrating from the SDK CLI
-
-The SDK's `twenty` binary, `twenty-sdk/cli`, `twenty-sdk/build`, and `create-twenty-app` are deprecated. Use `twenty app init`, then `yarn install` and `twenty auth login`. Keep `twenty-sdk` installed for application definitions and runtime helpers.
-
-Replace colon commands with the commands above. The standalone CLI does not provide `docker:*` or `dev:catalog-sync`; manage servers through Docker or the repository dev environment. Run `twenty doctor` to diagnose an older SDK binary shadowing the global CLI.
 
 ## Full reference
 
