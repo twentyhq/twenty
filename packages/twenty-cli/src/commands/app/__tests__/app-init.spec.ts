@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import semver from 'semver';
 import { isDefined } from 'twenty-shared/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -107,7 +108,7 @@ describe('app init', () => {
       engines: {
         node: '^24.5.0',
         npm: 'please-use-yarn',
-        twenty: `>=${APP_TEMPLATE_PACKAGE_VERSION}`,
+        twenty: `>=${semver.major(APP_TEMPLATE_PACKAGE_VERSION)}.${semver.minor(APP_TEMPLATE_PACKAGE_VERSION)}.0`,
         yarn: '>=4.0.2',
       },
       devDependencies: {
