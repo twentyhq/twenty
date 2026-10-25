@@ -86,5 +86,3 @@ for supported SDK exports and compiler configuration.
 
 Run `twenty commands` for the command inventory or `twenty <command> --help` for
 its arguments and options.
-
-Generated next-step commands use PowerShell on Windows and POSIX shell syntax on macOS/Linux.
