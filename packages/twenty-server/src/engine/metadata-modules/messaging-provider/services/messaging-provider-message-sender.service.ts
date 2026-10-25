@@ -24,7 +24,6 @@ export class MessagingProviderMessageSenderService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
   ) {}
 
-  // failures propagate so a message the app could not deliver is never recorded as sent
   async sendOrThrow({
     messagingProviderUniversalIdentifier,
     connectionProviderId,
