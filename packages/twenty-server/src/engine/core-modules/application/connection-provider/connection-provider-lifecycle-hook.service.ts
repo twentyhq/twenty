@@ -30,8 +30,8 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { findApplicationFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/find-application-flat-logic-function.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { CustomException } from 'src/utils/custom-exception';
 
 type ConnectionLifecycleHook =
   | 'identifyAccount'
@@ -338,36 +338,17 @@ export class ConnectionProviderLifecycleHookService {
       | AuthorizeConnectionPayload
       | ConnectionCallbackPayload;
   }): Promise<LogicFunctionExecuteResult['data']> {
-    const failureCode =
-      FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK[hook];
-
-    const executionResult: LogicFunctionExecuteResult =
-      await this.logicFunctionExecutorService
-        .execute({
-          logicFunctionId,
-          workspaceId,
-          payload,
-          shouldEnforceUsageLimits: true,
-        })
-        .catch((error: unknown) => {
-          if (error instanceof CustomException) {
-            throw error;
-          }
-
-          throw new ConnectionProviderException(
-            `${hook} logic function of connection provider ${provider.id} could not be executed: ${error instanceof Error ? error.message : String(error)}`,
-            failureCode,
-          );
-        });
-
-    if (isDefined(executionResult.error)) {
-      throw new ConnectionProviderException(
-        `${hook} logic function of connection provider ${provider.id} failed: ${executionResult.error.errorMessage}`,
-        failureCode,
-      );
-    }
-
-    return executionResult.data;
+    return this.logicFunctionExecutorService.executeOrThrow({
+      logicFunctionId,
+      workspaceId,
+      payload,
+      shouldEnforceUsageLimits: true,
+      toException: (reason) =>
+        new ConnectionProviderException(
+          `${hook} logic function of connection provider ${provider.id} ${reason}`,
+          FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK[hook],
+        ),
+    });
   }
 
   // Lifecycle hooks are best effort: a failing hook must never surface to the
@@ -434,16 +415,13 @@ export class ConnectionProviderLifecycleHookService {
         'flatLogicFunctionMaps',
       ]);
 
-    const flatLogicFunction =
-      flatLogicFunctionMaps.byUniversalIdentifier[
-        logicFunctionUniversalIdentifier
-      ];
+    const flatLogicFunction = findApplicationFlatLogicFunction({
+      flatLogicFunctionMaps,
+      universalIdentifier: logicFunctionUniversalIdentifier,
+      applicationId: provider.applicationId,
+    });
 
-    if (
-      !isDefined(flatLogicFunction) ||
-      isDefined(flatLogicFunction.deletedAt) ||
-      flatLogicFunction.applicationId !== provider.applicationId
-    ) {
+    if (!isDefined(flatLogicFunction)) {
       throw new ConnectionProviderException(
         `Connection provider ${provider.id} references ${hook} logic function ${logicFunctionUniversalIdentifier}, which was not found in its application.`,
         MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK[hook],

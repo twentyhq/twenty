@@ -2,6 +2,9 @@ import { type SendAppMessageResult } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { formatLogicFunctionResultIssues } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/format-logic-function-result-issues.util';
+import { isValidDate } from 'src/utils/date/isValidDate';
+
 const sendAppMessageResultSchema = z.object({
   externalId: z.string().trim().min(1).max(512),
   sentAt: z.union([z.string(), z.number()]).nullish(),
@@ -28,7 +31,7 @@ const toIsoDateOrUndefined = (
       : value,
   );
 
-  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+  return isValidDate(date) ? date.toISOString() : undefined;
 };
 
 export const parseSendAppMessageResult = (
@@ -39,9 +42,7 @@ export const parseSendAppMessageResult = (
   if (!parsed.success) {
     return {
       isValid: false,
-      reason: parsed.error.issues
-        .map((issue) => `${issue.path.join('.') || 'result'}: ${issue.message}`)
-        .join('; '),
+      reason: formatLogicFunctionResultIssues(parsed.error),
     };
   }
 

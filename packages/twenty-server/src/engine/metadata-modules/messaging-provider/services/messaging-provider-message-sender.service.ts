@@ -6,16 +6,16 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { parseSendAppMessageResult } from 'src/engine/metadata-modules/messaging-provider/utils/parse-send-app-message-result.util';
-import { findMessagingProviderOnConnectionProvider } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-on-connection-provider.util';
+import { findApplicationFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/find-application-flat-logic-function.util';
 import {
   MessagingProviderException,
   MessagingProviderExceptionCode,
 } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.exception';
+import { type MessagingProviderSender } from 'src/engine/metadata-modules/messaging-provider/types/messaging-provider-sender.type';
+import { findMessagingProviderOnConnectionProvider } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-on-connection-provider.util';
+import { parseSendAppMessageResult } from 'src/engine/metadata-modules/messaging-provider/utils/parse-send-app-message-result.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class MessagingProviderMessageSenderService {
@@ -24,17 +24,17 @@ export class MessagingProviderMessageSenderService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
   ) {}
 
-  async sendOrThrow({
+  async resolveSenderOrThrow({
     messagingProviderUniversalIdentifier,
     connectionProviderId,
+    messageChannelId,
     workspaceId,
-    payload,
   }: {
     messagingProviderUniversalIdentifier: string | null;
     connectionProviderId: string;
+    messageChannelId: string;
     workspaceId: string;
-    payload: Omit<SendAppMessagePayload, 'messagingProviderName'>;
-  }): Promise<SendAppMessageResult> {
+  }): Promise<MessagingProviderSender> {
     const {
       flatMessagingProviderMaps,
       flatConnectionProviderMaps,
@@ -54,7 +54,7 @@ export class MessagingProviderMessageSenderService {
 
     if (!isDefined(messagingProvider)) {
       throw new MessagingProviderException(
-        `Message channel ${payload.messageChannelId} has no messaging provider on its connection provider`,
+        `Message channel ${messageChannelId} has no messaging provider on its connection provider`,
         MessagingProviderExceptionCode.SEND_MESSAGE_NOT_AVAILABLE,
       );
     }
@@ -62,52 +62,49 @@ export class MessagingProviderMessageSenderService {
     const sendMessageLogicFunction = isDefined(
       messagingProvider.sendMessageLogicFunctionUniversalIdentifier,
     )
-      ? flatLogicFunctionMaps.byUniversalIdentifier[
-          messagingProvider.sendMessageLogicFunctionUniversalIdentifier
-        ]
+      ? findApplicationFlatLogicFunction({
+          flatLogicFunctionMaps,
+          universalIdentifier:
+            messagingProvider.sendMessageLogicFunctionUniversalIdentifier,
+          applicationId: messagingProvider.applicationId,
+        })
       : undefined;
 
-    if (
-      !isDefined(sendMessageLogicFunction) ||
-      isDefined(sendMessageLogicFunction.deletedAt) ||
-      sendMessageLogicFunction.applicationId !== messagingProvider.applicationId
-    ) {
+    if (!isDefined(sendMessageLogicFunction)) {
       throw new MessagingProviderException(
         `Messaging provider ${messagingProvider.id} has no sendMessage logic function in its application`,
         MessagingProviderExceptionCode.SEND_MESSAGE_NOT_AVAILABLE,
       );
     }
 
-    const executionResult: LogicFunctionExecuteResult =
-      await this.logicFunctionExecutorService
-        .execute({
-          logicFunctionId: sendMessageLogicFunction.id,
-          workspaceId,
-          payload: {
-            messagingProviderName: messagingProvider.name,
-            ...payload,
-          },
-          shouldEnforceUsageLimits: true,
-        })
-        .catch((error: unknown) => {
-          if (error instanceof CustomException) {
-            throw error;
-          }
+    return {
+      messagingProvider,
+      sendMessageLogicFunctionId: sendMessageLogicFunction.id,
+    };
+  }
 
-          throw new MessagingProviderException(
-            `sendMessage logic function of messaging provider ${messagingProvider.id} could not be executed: ${error instanceof Error ? error.message : String(error)}`,
-            MessagingProviderExceptionCode.SEND_MESSAGE_FAILED,
-          );
-        });
+  async sendOrThrow({
+    sender: { messagingProvider, sendMessageLogicFunctionId },
+    workspaceId,
+    payload,
+  }: {
+    sender: MessagingProviderSender;
+    workspaceId: string;
+    payload: Omit<SendAppMessagePayload, 'messagingProviderName'>;
+  }): Promise<SendAppMessageResult> {
+    const data = await this.logicFunctionExecutorService.executeOrThrow({
+      logicFunctionId: sendMessageLogicFunctionId,
+      workspaceId,
+      payload: { messagingProviderName: messagingProvider.name, ...payload },
+      shouldEnforceUsageLimits: true,
+      toException: (reason) =>
+        new MessagingProviderException(
+          `sendMessage logic function of messaging provider ${messagingProvider.id} ${reason}`,
+          MessagingProviderExceptionCode.SEND_MESSAGE_FAILED,
+        ),
+    });
 
-    if (isDefined(executionResult.error)) {
-      throw new MessagingProviderException(
-        `sendMessage logic function of messaging provider ${messagingProvider.id} failed: ${executionResult.error.errorMessage}`,
-        MessagingProviderExceptionCode.SEND_MESSAGE_FAILED,
-      );
-    }
-
-    const parsedResult = parseSendAppMessageResult(executionResult.data);
+    const parsedResult = parseSendAppMessageResult(data);
 
     if (!parsedResult.isValid) {
       throw new MessagingProviderException(

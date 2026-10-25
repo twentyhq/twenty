@@ -1,21 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ConnectionCallbackPayload } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
 import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
-import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { type ConnectionAuthorizationArgs } from 'src/engine/core-modules/application/connection-provider/types/connection-authorization-args.type';
 import { assertCustomProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-custom-provider.util';
 import { buildAppCustomConnectionCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-custom-connection-callback-url.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 // hosted logins can involve 2FA or checkpoints, and the account then arrives by notification
 const STATE_JWT_EXPIRES_IN = '1h';
@@ -44,8 +40,6 @@ export class ConnectionProviderCustomFlowService {
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     private readonly cacheLockService: CacheLockService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(ConnectedAccountEntity)
-    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
   async startAuthorizationFlow(
@@ -134,12 +128,14 @@ export class ConnectionProviderCustomFlowService {
           statePayload.reconnectingConnectedAccountId,
         )
           ? null
-          : await this.findCallerConnectedAccountForUpstreamAccount({
-              provider,
-              workspaceId: statePayload.workspaceId,
-              userWorkspaceId: statePayload.userWorkspaceId,
-              externalAccountId,
-            });
+          : await this.connectedAccountService.findCallerConnectedAccountForUpstreamAccount(
+              {
+                provider,
+                workspaceId: statePayload.workspaceId,
+                userWorkspaceId: statePayload.userWorkspaceId,
+                externalAccountId,
+              },
+            );
 
         return {
           isRepeatReport:
@@ -176,31 +172,5 @@ export class ConnectionProviderCustomFlowService {
     }
 
     return { ...callbackResult, connectedAccountId: connectedAccount.id };
-  }
-
-  // services report one account several times (browser return, notification, retries), and each must update one connection
-  private async findCallerConnectedAccountForUpstreamAccount({
-    provider,
-    workspaceId,
-    userWorkspaceId,
-    externalAccountId,
-  }: {
-    provider: Pick<ConnectionProviderEntity, 'id'>;
-    workspaceId: string;
-    userWorkspaceId: string;
-    externalAccountId: string;
-  }): Promise<Pick<
-    ConnectedAccountEntity,
-    'id' | 'archivedAt' | 'authFailedAt'
-  > | null> {
-    return this.connectedAccountRepository.findOne({
-      where: {
-        workspaceId,
-        connectionProviderId: provider.id,
-        userWorkspaceId,
-        externalAccountId,
-      },
-      select: { id: true, archivedAt: true, authFailedAt: true },
-    });
   }
 }

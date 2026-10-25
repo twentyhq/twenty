@@ -1,4 +1,5 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { PROVIDER_NAME_PATTERN } from '@/sdk/define/common/constants/provider-name-pattern.constant';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
 import {
@@ -8,7 +9,6 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
 const SUPPORTED_TYPES = ['oauth', 'custom'] as const;
 
 type ConnectionProviderLogicFunctionKey = Extract<

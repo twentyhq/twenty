@@ -21,6 +21,7 @@ import { SendAppChannelMessageInput } from 'src/engine/metadata-modules/message-
 import { SendAppChannelMessageOutput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.output';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
+import { MessagingProviderGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/messaging-provider/interceptors/messaging-provider-graphql-api-exception.interceptor';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -39,6 +40,7 @@ import { ApplicationMessageSendService } from 'src/engine/metadata-modules/messa
 @UseInterceptors(
   MessageChannelGraphqlApiExceptionInterceptor,
   ConnectedAccountGraphqlApiExceptionInterceptor,
+  MessagingProviderGraphqlApiExceptionInterceptor,
 )
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()

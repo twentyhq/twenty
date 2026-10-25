@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { formatLogicFunctionResultIssues } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/format-logic-function-result-issues.util';
+
 const authorizeConnectionResultSchema = z.object({
   authorizationUrl: z
     .string()
@@ -22,9 +24,7 @@ export const parseAuthorizeConnectionResult = (
   if (!parsed.success) {
     return {
       isValid: false,
-      reason: parsed.error.issues
-        .map((issue) => `${issue.path.join('.') || 'result'}: ${issue.message}`)
-        .join('; '),
+      reason: formatLogicFunctionResultIssues(parsed.error),
     };
   }
 

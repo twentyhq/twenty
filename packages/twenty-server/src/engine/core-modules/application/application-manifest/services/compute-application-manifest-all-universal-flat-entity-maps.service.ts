@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  type ConnectionProviderManifest,
   type Manifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
@@ -15,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
+import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromMessagingProviderManifestToUniversalFlatMessagingProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
@@ -57,25 +57,11 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
-const getConnectionFlowLogicFunctionUniversalIdentifiers = (
-  connectionProviderManifest: ConnectionProviderManifest,
-): string[] => {
-  const universalIdentifiers = [
-    connectionProviderManifest.identifyAccountLogicFunction
-      ?.universalIdentifier,
-  ];
-
-  if (connectionProviderManifest.type === 'custom') {
-    universalIdentifiers.push(
-      connectionProviderManifest.custom.authorizeLogicFunction
-        .universalIdentifier,
-      connectionProviderManifest.custom.callbackLogicFunction
-        .universalIdentifier,
-    );
-  }
-
-  return universalIdentifiers.filter(isDefined);
-};
+const CONNECTION_FLOW_HOOKS = new Set([
+  'identifyAccount',
+  'authorize',
+  'callback',
+]);
 
 @Injectable()
 export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
@@ -235,8 +221,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     const connectionFlowLogicFunctionUniversalIdentifiers = new Set(
-      (manifest.connectionProviders ?? []).flatMap(
-        getConnectionFlowLogicFunctionUniversalIdentifiers,
+      (manifest.connectionProviders ?? []).flatMap((connectionProvider) =>
+        getConnectionProviderManifestLogicFunctionReferences(connectionProvider)
+          .filter(({ hook }) => CONNECTION_FLOW_HOOKS.has(hook))
+          .map(({ universalIdentifier }) => universalIdentifier),
       ),
     );
 

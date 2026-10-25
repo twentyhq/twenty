@@ -103,6 +103,15 @@ export class ApplicationMessageSendService {
       );
     }
 
+    const sender =
+      await this.messagingProviderMessageSenderService.resolveSenderOrThrow({
+        messagingProviderUniversalIdentifier:
+          messageChannel.messagingProviderUniversalIdentifier,
+        connectionProviderId: connectedAccount.connectionProviderId,
+        messageChannelId,
+        workspaceId,
+      });
+
     const conversation = await this.findConversation({
       workspaceId,
       messageChannel,
@@ -111,9 +120,7 @@ export class ApplicationMessageSendService {
 
     const sentMessage =
       await this.messagingProviderMessageSenderService.sendOrThrow({
-        messagingProviderUniversalIdentifier:
-          messageChannel.messagingProviderUniversalIdentifier,
-        connectionProviderId: connectedAccount.connectionProviderId,
+        sender,
         workspaceId,
         payload: {
           connectedAccountId: connectedAccount.id,
@@ -287,14 +294,16 @@ export class ApplicationMessageSendService {
   private async dropLinksToDeletedRecords(
     recipients: Conversation['recipients'],
   ): Promise<Conversation['recipients']> {
-    const existingPersonIds = await this.findExistingRecordIds({
-      objectMetadataName: 'person',
-      ids: recipients.map((recipient) => recipient.personId),
-    });
-    const existingWorkspaceMemberIds = await this.findExistingRecordIds({
-      objectMetadataName: 'workspaceMember',
-      ids: recipients.map((recipient) => recipient.workspaceMemberId),
-    });
+    const [existingPersonIds, existingWorkspaceMemberIds] = await Promise.all([
+      this.findExistingRecordIds({
+        objectMetadataName: 'person',
+        ids: recipients.map((recipient) => recipient.personId),
+      }),
+      this.findExistingRecordIds({
+        objectMetadataName: 'workspaceMember',
+        ids: recipients.map((recipient) => recipient.workspaceMemberId),
+      }),
+    ]);
 
     return recipients.map((recipient) => ({
       ...recipient,

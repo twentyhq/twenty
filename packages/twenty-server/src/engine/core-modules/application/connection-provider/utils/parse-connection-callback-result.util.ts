@@ -6,6 +6,7 @@ import {
   type PlaintextString,
   plaintextStringSchema,
 } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { formatLogicFunctionResultIssues } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/format-logic-function-result-issues.util';
 import { EXTERNAL_ACCOUNT_ID_MAX_LENGTH } from 'src/engine/metadata-modules/connected-account/constants/external-account-id-max-length.constant';
 
 export type ParsedConnectedAccountFromCallback = Omit<
@@ -42,9 +43,7 @@ export const parseConnectionCallbackResult = (
   if (!parsed.success) {
     return {
       isValid: false,
-      reason: parsed.error.issues
-        .map((issue) => `${issue.path.join('.') || 'result'}: ${issue.message}`)
-        .join('; '),
+      reason: formatLogicFunctionResultIssues(parsed.error),
     };
   }
 
