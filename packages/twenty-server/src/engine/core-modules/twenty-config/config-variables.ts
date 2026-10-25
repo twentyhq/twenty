@@ -9,6 +9,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsOptional,
+  IsObject,
   IsString,
   IsUrl,
   Max,
@@ -801,6 +802,15 @@ export class ConfigVariables {
   )
   @IsOptional()
   LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description:
+      'Resource tags applied when creating AWS Lambda functions (JSON object with string values)',
+    type: ConfigVariableType.JSON,
+  })
+  @IsObject()
+  LOGIC_FUNCTION_LAMBDA_RESOURCE_TAGS: Record<string, string> = {};
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,

@@ -59,7 +59,10 @@ export class LambdaExecutorManagerService {
   private readonly logger = new Logger(LambdaExecutorManagerService.name);
 
   constructor(
-    private readonly options: Pick<LambdaDriverOptions, 'lambdaRole'>,
+    private readonly options: Pick<
+      LambdaDriverOptions,
+      'lambdaRole' | 'resourceTags'
+    >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly layerManager: LambdaLayerManagerService,
     private readonly cacheLockService: CacheLockService,
@@ -453,9 +456,15 @@ export class LambdaExecutorManagerService {
         Timeout: EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
         EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
-        Tags: isDefined(sdkClientCoreChecksum)
-          ? { [LAMBDA_SDK_CLIENT_CHECKSUM_TAG]: sdkClientCoreChecksum }
-          : undefined,
+        Tags:
+          this.options.resourceTags || isDefined(sdkClientCoreChecksum)
+            ? {
+                ...this.options.resourceTags,
+                ...(isDefined(sdkClientCoreChecksum)
+                  ? { [LAMBDA_SDK_CLIENT_CHECKSUM_TAG]: sdkClientCoreChecksum }
+                  : {}),
+              }
+            : undefined,
       };
 
       const lambdaClient = await this.awsClient.getLambdaClient();
