@@ -74,17 +74,17 @@ export const MultiItemFieldMenuItem = <TValue,>({
             startIcon={<IconPencil />}
             onClick={onEdit}
           >{t`Edit`}</Dropdown.ActionItem>
-          <Dropdown.ActionItem
-            color="danger"
-            startIcon={<IconTrash />}
-            onClick={handleDeleteClick}
-          >{t`Delete`}</Dropdown.ActionItem>
           {showCopyButton && (
             <Dropdown.ActionItem
               startIcon={<IconCopy />}
               onClick={handleCopyClick}
             >{t`Copy`}</Dropdown.ActionItem>
           )}
+          <Dropdown.ActionItem
+            color="danger"
+            startIcon={<IconTrash />}
+            onClick={handleDeleteClick}
+          >{t`Delete`}</Dropdown.ActionItem>
         </Dropdown.Section>
       }
     />

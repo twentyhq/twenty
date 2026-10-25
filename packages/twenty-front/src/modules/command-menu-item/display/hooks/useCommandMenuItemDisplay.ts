@@ -3,15 +3,10 @@ import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/ut
 import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMenuItemClick';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemDisplay = (item: CommandMenuItemDefinition) => {
-  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-  );
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const { getIcon } = useIcons();
 
@@ -31,7 +26,7 @@ export const useCommandMenuItemDisplay = (item: CommandMenuItemDefinition) => {
     shortLabel,
     handleClick,
     disabled,
-    progress: isAsyncCsvExportEnabled ? progress : undefined,
-    isLoading: isAsyncCsvExportEnabled && showDisabledLoader,
+    progress,
+    isLoading: showDisabledLoader,
   };
 };

@@ -25,7 +25,7 @@
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
     "fathom-typescript": "0.0.43",
-    "zod": "^4.1.11"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
