@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { parseSendAppMessageResult } from 'src/engine/metadata-modules/messaging-provider/utils/parse-send-app-message-result.util';
+import { findMessagingProviderOnConnectionProvider } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-on-connection-provider.util';
 import {
   MessagingProviderException,
   MessagingProviderExceptionCode,
@@ -45,27 +46,16 @@ export class MessagingProviderMessageSenderService {
       'flatLogicFunctionMaps',
     ]);
 
-    const messagingProvider = isDefined(messagingProviderUniversalIdentifier)
-      ? flatMessagingProviderMaps.byUniversalIdentifier[
-          messagingProviderUniversalIdentifier
-        ]
-      : undefined;
+    const messagingProvider = findMessagingProviderOnConnectionProvider({
+      flatMessagingProviderMaps,
+      flatConnectionProviderMaps,
+      messagingProviderUniversalIdentifier,
+      connectionProviderId,
+    });
 
     if (!isDefined(messagingProvider)) {
       throw new MessagingProviderException(
-        `Message channel ${payload.messageChannelId} has no messaging provider`,
-        MessagingProviderExceptionCode.SEND_MESSAGE_NOT_AVAILABLE,
-      );
-    }
-
-    const connectionProvider =
-      flatConnectionProviderMaps.byUniversalIdentifier[
-        messagingProvider.connectionProviderUniversalIdentifier
-      ];
-
-    if (connectionProvider?.id !== connectionProviderId) {
-      throw new MessagingProviderException(
-        `Messaging provider ${messagingProvider.id} does not use the connection provider of message channel ${payload.messageChannelId}`,
+        `Message channel ${payload.messageChannelId} has no messaging provider on its connection provider`,
         MessagingProviderExceptionCode.SEND_MESSAGE_NOT_AVAILABLE,
       );
     }

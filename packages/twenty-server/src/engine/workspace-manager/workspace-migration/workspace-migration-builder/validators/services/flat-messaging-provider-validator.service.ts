@@ -7,6 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { MessagingProviderExceptionCode } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.exception';
+import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type UniversalFlatMessagingProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-messaging-provider.type';
 import {
@@ -16,6 +18,18 @@ import {
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+
+const isInApplication = <TFlatEntity extends UniversalSyncableFlatEntity>({
+  flatEntityMaps,
+  universalIdentifier,
+  applicationUniversalIdentifier,
+}: {
+  flatEntityMaps: UniversalFlatEntityMaps<TFlatEntity>;
+  universalIdentifier: string;
+  applicationUniversalIdentifier: string;
+}): boolean =>
+  findFlatEntityByUniversalIdentifier({ flatEntityMaps, universalIdentifier })
+    ?.applicationUniversalIdentifier === applicationUniversalIdentifier;
 
 // a messaging provider runs with its application's access, so it may only point at that application's entities
 const validateMessagingProviderReferences = ({
@@ -34,16 +48,14 @@ const validateMessagingProviderReferences = ({
 }): FlatEntityValidationError[] => {
   const errors: FlatEntityValidationError[] = [];
 
-  const connectionProvider = findFlatEntityByUniversalIdentifier({
-    universalIdentifier:
-      flatMessagingProvider.connectionProviderUniversalIdentifier,
-    flatEntityMaps: flatConnectionProviderMaps,
-  });
-
   if (
-    !isDefined(connectionProvider) ||
-    connectionProvider.applicationUniversalIdentifier !==
-      flatMessagingProvider.applicationUniversalIdentifier
+    !isInApplication({
+      flatEntityMaps: flatConnectionProviderMaps,
+      universalIdentifier:
+        flatMessagingProvider.connectionProviderUniversalIdentifier,
+      applicationUniversalIdentifier:
+        flatMessagingProvider.applicationUniversalIdentifier,
+    })
   ) {
     errors.push({
       code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
@@ -55,23 +67,20 @@ const validateMessagingProviderReferences = ({
   const sendMessageLogicFunctionUniversalIdentifier =
     flatMessagingProvider.sendMessageLogicFunctionUniversalIdentifier;
 
-  if (isDefined(sendMessageLogicFunctionUniversalIdentifier)) {
-    const sendMessageLogicFunction = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: sendMessageLogicFunctionUniversalIdentifier,
+  if (
+    isDefined(sendMessageLogicFunctionUniversalIdentifier) &&
+    !isInApplication({
       flatEntityMaps: flatLogicFunctionMaps,
+      universalIdentifier: sendMessageLogicFunctionUniversalIdentifier,
+      applicationUniversalIdentifier:
+        flatMessagingProvider.applicationUniversalIdentifier,
+    })
+  ) {
+    errors.push({
+      code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
+      message: t`Send message logic function "${sendMessageLogicFunctionUniversalIdentifier}" was not found in this application`,
+      userFriendlyMessage: msg`The logic function this messaging provider sends with was not found in its application.`,
     });
-
-    if (
-      !isDefined(sendMessageLogicFunction) ||
-      sendMessageLogicFunction.applicationUniversalIdentifier !==
-        flatMessagingProvider.applicationUniversalIdentifier
-    ) {
-      errors.push({
-        code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
-        message: t`Send message logic function "${sendMessageLogicFunctionUniversalIdentifier}" was not found in this application`,
-        userFriendlyMessage: msg`The logic function this messaging provider sends with was not found in its application.`,
-      });
-    }
   }
 
   return errors;

@@ -24,6 +24,7 @@ import {
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
+import { findMessagingProviderOnConnectionProvider } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-on-connection-provider.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -305,7 +306,6 @@ export class ApplicationMessageChannelsService {
     return connectedAccount;
   }
 
-  // a channel sends through its messaging provider with the channel's own account, so both must belong to one connection provider
   private async assertMessagingProviderFitsConnectionOrThrow({
     applicationId,
     workspaceId,
@@ -321,29 +321,19 @@ export class ApplicationMessageChannelsService {
         'flatConnectionProviderMaps',
       ]);
 
-    const messagingProvider =
-      flatMessagingProviderMaps.byUniversalIdentifier[
-        messagingProviderUniversalIdentifier
-      ];
+    const messagingProvider = findMessagingProviderOnConnectionProvider({
+      flatMessagingProviderMaps,
+      flatConnectionProviderMaps,
+      messagingProviderUniversalIdentifier,
+      connectionProviderId: connectedAccount.connectionProviderId,
+    });
 
     if (
       !isDefined(messagingProvider) ||
       messagingProvider.applicationId !== applicationId
     ) {
       throw new MessageChannelException(
-        `Messaging provider ${messagingProviderUniversalIdentifier} not found in this application`,
-        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
-      );
-    }
-
-    const connectionProvider =
-      flatConnectionProviderMaps.byUniversalIdentifier[
-        messagingProvider.connectionProviderUniversalIdentifier
-      ];
-
-    if (connectionProvider?.id !== connectedAccount.connectionProviderId) {
-      throw new MessageChannelException(
-        `Messaging provider ${messagingProviderUniversalIdentifier} does not use this connection's provider`,
+        `Messaging provider ${messagingProviderUniversalIdentifier} is not one of this application's providers on this connection's provider`,
         MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
       );
     }
