@@ -16,7 +16,6 @@ import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-e
 import { keepWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/keep-workspace-owned-properties.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
-import { findNonUpdatablePropertyDivergences } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/find-non-updatable-property-divergences.util';
 import { canManifestExpressFlatEntity } from 'src/engine/core-modules/application/application-manifest/utils/can-manifest-express-flat-entity.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
@@ -94,16 +93,13 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
         existingEntity: fromFlatEntity,
         manifestEntity: toFlatEntity,
       });
-      const comparisonArgs = {
+      const update = compareTwoFlatEntity({
         fromUniversalFlatEntity: fromFlatEntity,
         toUniversalFlatEntity: toFlatEntityWithLocalState,
         metadataName,
-      };
-      const hasChanged =
-        isDefined(compareTwoFlatEntity(comparisonArgs)) ||
-        findNonUpdatablePropertyDivergences(comparisonArgs).length > 0;
+      });
 
-      return hasChanged ? toFlatEntityWithLocalState : undefined;
+      return isDefined(update) ? toFlatEntityWithLocalState : undefined;
     })
     .filter(isDefined);
 
