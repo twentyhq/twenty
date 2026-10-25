@@ -5,7 +5,7 @@
     "url": "git+https://github.com/twentyhq/twenty.git",
     "directory": "packages/twenty-sdk"
   },
-  "version": "2.51.1",
+  "version": "2.51.3",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
