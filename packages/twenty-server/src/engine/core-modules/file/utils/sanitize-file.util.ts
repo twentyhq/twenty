@@ -1,5 +1,5 @@
-import DOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
+import DOMPurify from "dompurify";
+import { JSDOM } from "jsdom";
 
 /**
  * Strips EXIF / GPS metadata segments (APP1 marker 0xFFE1) from JPEG image buffers.
@@ -30,7 +30,10 @@ function stripJpegExif(buffer: Buffer): Buffer {
       break;
     }
 
-    if (offset + 4 > buffer.length) break;
+    if (offset + 4 > buffer.length) {
+      break;
+    }
+
     const length = buffer.readUInt16BE(offset + 2);
     const nextOffset = offset + 2 + length;
 
@@ -55,33 +58,28 @@ export const sanitizeFile = ({
   ext: string;
   mimeType: string | undefined;
 }): Buffer | Uint8Array | string => {
-  if (ext === 'svg' || mimeType === 'image/svg+xml') {
-    const window = new JSDOM('').window;
+  if (ext === "svg" || mimeType === "image/svg+xml") {
+    const window = new JSDOM("").window;
     const purify = DOMPurify(window);
 
     let fileString: string;
 
-    if (typeof file === 'string') {
+    if (typeof file === "string") {
       fileString = file;
     } else if (Buffer.isBuffer(file)) {
-      fileString = file.toString('utf-8');
+      fileString = file.toString("utf-8");
     } else {
-      fileString = Buffer.from(file).toString('utf-8');
+      fileString = Buffer.from(file).toString("utf-8");
     }
 
     return purify.sanitize(fileString);
   }
 
-  if (
-    ext === 'jpg' ||
-    ext === 'jpeg' ||
-    mimeType === 'image/jpeg' ||
-    mimeType === 'image/jpg'
-  ) {
+  if (ext === "jpg" || ext === "jpeg" || mimeType === "image/jpeg" || mimeType === "image/jpg") {
     const buffer = Buffer.isBuffer(file)
       ? file
-      : typeof file === 'string'
-        ? Buffer.from(file, 'utf-8')
+      : typeof file === "string"
+        ? Buffer.from(file, "utf-8")
         : Buffer.from(file);
 
     return stripJpegExif(buffer);
