@@ -10,8 +10,14 @@ export const findMessagingProviderOnConnectionProvider = ({
   messagingProviderUniversalIdentifier,
   connectionProviderId,
 }: {
-  flatMessagingProviderMaps: FlatMessagingProviderMaps;
-  flatConnectionProviderMaps: FlatConnectionProviderMaps;
+  flatMessagingProviderMaps: Pick<
+    FlatMessagingProviderMaps,
+    'byUniversalIdentifier'
+  >;
+  flatConnectionProviderMaps: Pick<
+    FlatConnectionProviderMaps,
+    'byUniversalIdentifier'
+  >;
   messagingProviderUniversalIdentifier: string | null;
   connectionProviderId: string | null;
 }): FlatMessagingProvider | undefined => {

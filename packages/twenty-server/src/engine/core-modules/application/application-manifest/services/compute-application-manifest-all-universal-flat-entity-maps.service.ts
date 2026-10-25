@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  type ConnectionProviderManifest,
   type Manifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
@@ -55,6 +56,26 @@ import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-e
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
+
+const getConnectionFlowLogicFunctionUniversalIdentifiers = (
+  connectionProviderManifest: ConnectionProviderManifest,
+): string[] => {
+  const universalIdentifiers = [
+    connectionProviderManifest.identifyAccountLogicFunction
+      ?.universalIdentifier,
+  ];
+
+  if (connectionProviderManifest.type === 'custom') {
+    universalIdentifiers.push(
+      connectionProviderManifest.custom.authorizeLogicFunction
+        .universalIdentifier,
+      connectionProviderManifest.custom.callbackLogicFunction
+        .universalIdentifier,
+    );
+  }
+
+  return universalIdentifiers.filter(isDefined);
+};
 
 @Injectable()
 export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
@@ -214,20 +235,9 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     const connectionFlowLogicFunctionUniversalIdentifiers = new Set(
-      (manifest.connectionProviders ?? [])
-        .flatMap((connectionProviderManifest) => [
-          connectionProviderManifest.identifyAccountLogicFunction
-            ?.universalIdentifier,
-          ...(connectionProviderManifest.type === 'custom'
-            ? [
-                connectionProviderManifest.custom.authorizeLogicFunction
-                  .universalIdentifier,
-                connectionProviderManifest.custom.callbackLogicFunction
-                  .universalIdentifier,
-              ]
-            : []),
-        ])
-        .filter(isDefined),
+      (manifest.connectionProviders ?? []).flatMap(
+        getConnectionFlowLogicFunctionUniversalIdentifiers,
+      ),
     );
 
     for (const logicFunctionManifest of manifest.logicFunctions) {
