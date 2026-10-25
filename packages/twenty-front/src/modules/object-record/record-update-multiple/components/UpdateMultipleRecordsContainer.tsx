@@ -47,10 +47,6 @@ export const UpdateMultipleRecordsContainer = ({
   objectNameSingular: string;
   contextStoreInstanceId: string;
 }) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
   const { updateRecords, isUpdating, progress, cancel } =
     useUpdateMultipleRecordsActions({
       objectNameSingular,
@@ -64,6 +60,9 @@ export const UpdateMultipleRecordsContainer = ({
 
   const hasSelectedRecords = contextStoreNumberOfSelectedRecords > 0;
 
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
   const store = useStore();
   const formInstanceId = useId();
   const contentId = useId();
@@ -141,11 +140,11 @@ export const UpdateMultipleRecordsContainer = ({
         <StyledShowPageRightContainer>
           <StyledContentContainer id={contentId}>
             <UpdateMultipleRecordsForm
+              formInstanceId={formInstanceId}
               disabled={isUpdating}
               values={fieldUpdates}
               onChange={handleFieldChange}
               objectNameSingular={objectNameSingular}
-              formInstanceId={formInstanceId}
             />
           </StyledContentContainer>
           <UpdateMultipleRecordsFooter

@@ -1,9 +1,8 @@
+import { getMultiItemInputKeyDownHandler } from '@/object-record/record-field/ui/meta-types/input/utils/getMultiItemInputKeyDownHandler';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type KeyboardEvent, useCallback } from 'react';
-import { Key } from 'ts-key-enum';
+import { useCallback } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledLinksFieldEditInputsContainer = styled.div`
@@ -20,6 +19,8 @@ type LinksFieldEditInputsProps = {
   onUrlChange: (url: string) => void;
   onLabelChange: (label: string) => void;
   onEnter: () => void;
+  onEscape?: () => void;
+  onUrlBlur?: () => void;
 };
 
 export const LinksFieldEditInputs = ({
@@ -29,23 +30,14 @@ export const LinksFieldEditInputs = ({
   onUrlChange,
   onLabelChange,
   onEnter,
+  onEscape,
+  onUrlBlur,
 }: LinksFieldEditInputsProps) => {
   const scrollIntoViewOnMount = useCallback((node: HTMLDivElement | null) => {
     node?.scrollIntoView({ block: 'nearest' });
   }, []);
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (
-      event.key !== Key.Enter ||
-      isKeyboardEventComposing(event.nativeEvent)
-    ) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-    onEnter();
-  };
+  const handleKeyDown = getMultiItemInputKeyDownHandler({ onEnter, onEscape });
 
   return (
     <StyledLinksFieldEditInputsContainer ref={scrollIntoViewOnMount}>
@@ -53,6 +45,7 @@ export const LinksFieldEditInputs = ({
         label={t`URL`}
         value={url}
         onChange={onUrlChange}
+        onBlur={onUrlBlur}
         onKeyDown={handleKeyDown}
         error={hasError ? t`Enter a valid URL` : undefined}
         noErrorHelper

@@ -8,7 +8,6 @@ import { type UpdateMultipleRecordsState } from '@/object-record/record-update-m
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
 import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
 import { css } from '@linaria/core';
-import { useId } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -23,24 +22,22 @@ const updateMultipleRecordsFormSectionClassName = css`
 
 export type UpdateMultipleRecordsFormProps = {
   objectNameSingular: string;
+  formInstanceId: string;
   disabled?: boolean;
   values: UpdateMultipleRecordsState;
   onChange: (fieldName: string, value: any) => void;
-  formInstanceId?: string;
 };
 
 export const UpdateMultipleRecordsForm = ({
   objectNameSingular,
+  formInstanceId,
   disabled = false,
   values,
   onChange,
-  formInstanceId,
 }: UpdateMultipleRecordsFormProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const defaultFormInstanceId = useId();
-  const resolvedFormInstanceId = formInstanceId ?? defaultFormInstanceId;
 
   const editableFields = objectMetadataItem.fields
     .filter(shouldDisplayFormMultiEditField)
@@ -88,7 +85,7 @@ export const UpdateMultipleRecordsForm = ({
             key={fieldDefinition.metadata.fieldName}
             value={{
               instanceId: getRecordFormFieldInputInstanceId({
-                formInstanceId: resolvedFormInstanceId,
+                formInstanceId,
                 fieldMetadataId: fieldMetadataItem.id,
               }),
             }}

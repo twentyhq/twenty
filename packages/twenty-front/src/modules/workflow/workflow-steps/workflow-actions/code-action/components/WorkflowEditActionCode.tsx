@@ -128,11 +128,6 @@ export const WorkflowEditActionCode = ({
     return updatableStep.settings.input.logicFunctionId;
   };
 
-  const { formValues, loading, onChange } = useLogicFunctionForm({
-    logicFunctionId,
-    getTargetLogicFunctionId: getUpdatableLogicFunctionIdOrThrow,
-  });
-
   const {
     executeLogicFunction,
     isExecuting,
@@ -152,59 +147,53 @@ export const WorkflowEditActionCode = ({
       action.settings.input.logicFunctionInput ?? {},
     );
 
-  const handleUpdateFunctionInputSchema = useDebouncedCallback(
-    async ({
-      inferredJsonSchema,
-      logicFunctionId: updatableLogicFunctionId,
-    }: {
-      inferredJsonSchema: InputJsonSchema;
-      logicFunctionId: string;
-    }) => {
-      if (actionOptions.readonly === true) {
-        return;
-      }
+  const handleSourceHandlerCodeSaved = ({
+    targetLogicFunctionId,
+    inferredJsonSchema,
+  }: {
+    targetLogicFunctionId: string;
+    inferredJsonSchema: InputJsonSchema;
+  }) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
 
-      const inputSchema = jsonSchemaToInputSchema(inferredJsonSchema);
+    const inputSchema = jsonSchemaToInputSchema(inferredJsonSchema);
 
-      const newFunctionInput = getFunctionInputFromInputSchema(inputSchema)[0];
+    const newFunctionInput = getFunctionInputFromInputSchema(inputSchema)[0];
 
-      const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
-        newInput: newFunctionInput,
-        oldInput: action.settings.input.logicFunctionInput,
-      });
+    const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
+      newInput: newFunctionInput,
+      oldInput: action.settings.input.logicFunctionInput,
+    });
 
-      const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
-        newInput: newFunctionInput,
-        oldInput: logicFunctionTestData.input,
-      });
+    const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
+      newInput: newFunctionInput,
+      oldInput: logicFunctionTestData.input,
+    });
 
-      setFunctionInput(newMergedInput);
+    setFunctionInput(newMergedInput);
 
-      updateLogicFunctionInput(newMergedTestInput);
+    updateLogicFunctionInput(newMergedTestInput);
 
-      updateAction({
-        ...action,
-        settings: {
-          ...action.settings,
-          outputSchema: {
-            link: {
-              isLeaf: true,
-              icon: 'IconVariable',
-              tab: 'test',
-              label: t`Generate Function Output`,
-            },
-            _outputSchemaType: 'LINK',
-          },
-          input: {
-            ...action.settings.input,
-            logicFunctionId: updatableLogicFunctionId,
-            logicFunctionInput: newMergedInput,
-          },
+    updateAction({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: {
+          ...action.settings.input,
+          logicFunctionId: targetLogicFunctionId,
+          logicFunctionInput: newMergedInput,
         },
-      });
-    },
-    500,
-  );
+      },
+    });
+  };
+
+  const { formValues, loading, onChange } = useLogicFunctionForm({
+    logicFunctionId,
+    getTargetLogicFunctionId: getUpdatableLogicFunctionIdOrThrow,
+    onSourceHandlerCodeSaved: handleSourceHandlerCodeSaved,
+  });
 
   const handleInputChange = async (value: any, path: string[]) => {
     const updatedFunctionInput = setNestedValue(functionInput, path, value);
@@ -297,14 +286,7 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode);
-
-    if (isDefined(inferredJsonSchema)) {
-      await handleUpdateFunctionInputSchema({
-        inferredJsonSchema,
-        logicFunctionId: await getUpdatableLogicFunctionIdOrThrow(),
-      });
-    }
+    await onChange('sourceHandlerCode')(newCode);
   };
 
   const tabs = [
