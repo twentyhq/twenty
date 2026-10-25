@@ -15,9 +15,13 @@ export const findApplicationFlatLogicFunction = ({
   const flatLogicFunction =
     flatLogicFunctionMaps.byUniversalIdentifier[universalIdentifier];
 
-  return isDefined(flatLogicFunction) &&
-    !isDefined(flatLogicFunction.deletedAt) &&
-    flatLogicFunction.applicationId === applicationId
-    ? flatLogicFunction
-    : undefined;
+  if (
+    !isDefined(flatLogicFunction) ||
+    isDefined(flatLogicFunction.deletedAt) ||
+    flatLogicFunction.applicationId !== applicationId
+  ) {
+    return undefined;
+  }
+
+  return flatLogicFunction;
 };
