@@ -168,6 +168,29 @@ describe('messaging provider manifest sync', () => {
     ]);
   }, 60000);
 
+  it('refuses renaming a messaging provider to a name its application already uses', async () => {
+    const otherMessagingProvider = buildMessagingProvider({
+      universalIdentifier: uuidv4(),
+      name: 'whatsapp-messaging',
+      displayName: 'WhatsApp',
+    });
+
+    await syncMessagingProviders([
+      buildMessagingProvider(),
+      otherMessagingProvider,
+    ]);
+
+    const { errors } = await syncMessagingProviders(
+      [
+        buildMessagingProvider(),
+        { ...otherMessagingProvider, name: 'linkedin-messaging' },
+      ],
+      { expectToFail: true },
+    );
+
+    expect(JSON.stringify(errors)).toContain('already exists');
+  }, 60000);
+
   it('deletes a messaging provider the manifest no longer declares', async () => {
     await syncMessagingProviders([buildMessagingProvider()]);
     await syncMessagingProviders([]);

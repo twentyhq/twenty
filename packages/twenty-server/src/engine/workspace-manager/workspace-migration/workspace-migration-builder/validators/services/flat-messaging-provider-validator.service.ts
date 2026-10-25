@@ -77,6 +77,34 @@ const validateMessagingProviderReferences = ({
   return errors;
 };
 
+const findOtherMessagingProviderWithName = ({
+  flatMessagingProviderMaps,
+  name,
+  applicationUniversalIdentifier,
+  universalIdentifier,
+}: {
+  flatMessagingProviderMaps: MetadataUniversalFlatEntityMaps<'messagingProvider'>;
+  name: string;
+  applicationUniversalIdentifier: string;
+  universalIdentifier: string;
+}) =>
+  Object.values(flatMessagingProviderMaps.byUniversalIdentifier).find(
+    (existing) =>
+      isDefined(existing) &&
+      existing.name === name &&
+      existing.applicationUniversalIdentifier ===
+        applicationUniversalIdentifier &&
+      existing.universalIdentifier !== universalIdentifier,
+  );
+
+const getNameAlreadyExistsError = (
+  name: string,
+): FlatEntityValidationError => ({
+  code: MessagingProviderExceptionCode.MESSAGING_PROVIDER_NAME_ALREADY_EXISTS,
+  message: t`Messaging provider with name ${name} already exists for this application`,
+  userFriendlyMessage: msg`A messaging provider with this name already exists for this application`,
+});
+
 @Injectable()
 export class FlatMessagingProviderValidatorService {
   public validateFlatMessagingProviderCreation({
@@ -122,24 +150,20 @@ export class FlatMessagingProviderValidatorService {
       }),
     );
 
-    const existingByName = Object.values(
-      optimisticFlatMessagingProviderMaps.byUniversalIdentifier,
-    ).find(
-      (existing) =>
-        isDefined(existing) &&
-        existing.name === flatMessagingProvider.name &&
-        existing.applicationUniversalIdentifier ===
-          flatMessagingProvider.applicationUniversalIdentifier &&
-        existing.universalIdentifier !==
-          flatMessagingProvider.universalIdentifier,
-    );
-
-    if (isDefined(existingByName)) {
-      validationResult.errors.push({
-        code: MessagingProviderExceptionCode.MESSAGING_PROVIDER_NAME_ALREADY_EXISTS,
-        message: t`Messaging provider with name ${flatMessagingProvider.name} already exists for this application`,
-        userFriendlyMessage: msg`A messaging provider with this name already exists for this application`,
-      });
+    if (
+      isDefined(
+        findOtherMessagingProviderWithName({
+          flatMessagingProviderMaps: optimisticFlatMessagingProviderMaps,
+          name: flatMessagingProvider.name,
+          applicationUniversalIdentifier:
+            flatMessagingProvider.applicationUniversalIdentifier,
+          universalIdentifier: flatMessagingProvider.universalIdentifier,
+        }),
+      )
+    ) {
+      validationResult.errors.push(
+        getNameAlreadyExistsError(flatMessagingProvider.name),
+      );
     }
 
     return validationResult;
@@ -210,6 +234,24 @@ export class FlatMessagingProviderValidatorService {
       });
 
       return validationResult;
+    }
+
+    if (
+      isDefined(flatEntityUpdate.name) &&
+      flatEntityUpdate.name !== fromFlatMessagingProvider.name &&
+      isDefined(
+        findOtherMessagingProviderWithName({
+          flatMessagingProviderMaps: optimisticFlatMessagingProviderMaps,
+          name: flatEntityUpdate.name,
+          applicationUniversalIdentifier:
+            fromFlatMessagingProvider.applicationUniversalIdentifier,
+          universalIdentifier,
+        }),
+      )
+    ) {
+      validationResult.errors.push(
+        getNameAlreadyExistsError(flatEntityUpdate.name),
+      );
     }
 
     // channels bound to this provider were created against its connection provider's accounts
