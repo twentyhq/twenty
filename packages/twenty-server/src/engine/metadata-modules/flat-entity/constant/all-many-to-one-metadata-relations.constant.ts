@@ -54,11 +54,9 @@ type ManyToOneRelationValue<
 
 type ManyToOneMetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
-    [
-      TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
-        MetadataEntity<TSourceMetadataName>
-      >
-    ]: ManyToOneRelationValue<TSourceMetadataName, TRelationProperty>;
+    [TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
+      MetadataEntity<TSourceMetadataName>
+    >]: ManyToOneRelationValue<TSourceMetadataName, TRelationProperty>;
   };
 };
 
@@ -558,6 +556,10 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     },
   },
   connectionProvider: {
+    workspace: null,
+    application: null,
+  },
+  messagingProvider: {
     workspace: null,
     application: null,
   },

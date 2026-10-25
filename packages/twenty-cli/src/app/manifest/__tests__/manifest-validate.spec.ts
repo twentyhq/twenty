@@ -340,7 +340,6 @@ describe('manifestValidate', () => {
       'identifyAccountLogicFunction',
       'onConnectLogicFunction',
       'onDisconnectLogicFunction',
-      'sendMessageLogicFunction',
     ] as const)(
       'should not flag a connection provider referencing a logic function via %s as a duplicate',
       (lifecycleHookKey) => {
@@ -374,6 +373,55 @@ describe('manifestValidate', () => {
         expect(result.errors).toHaveLength(0);
       },
     );
+
+    it('should not flag a messaging provider referencing its connection provider and send logic function as duplicates', () => {
+      const connectionProviderId = '550e8400-e29b-41d4-a716-446655440045';
+      const sendMessageLogicFunctionId = '550e8400-e29b-41d4-a716-446655440046';
+
+      const result = manifestValidate({
+        ...validManifest,
+        logicFunctions: [
+          {
+            universalIdentifier: sendMessageLogicFunctionId,
+            name: 'send-message',
+            sourceHandlerPath: 'src/logic-functions/send-message.ts',
+            builtHandlerPath: 'dist/send-message.js',
+            builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
+            handlerName: 'handler',
+          },
+        ],
+        connectionProviders: [
+          {
+            universalIdentifier: connectionProviderId,
+            name: 'unipile',
+            displayName: 'Unipile',
+            type: 'custom',
+            custom: {
+              authorizeLogicFunction: {
+                universalIdentifier: sendMessageLogicFunctionId,
+              },
+              callbackLogicFunction: {
+                universalIdentifier: sendMessageLogicFunctionId,
+              },
+            },
+          },
+        ],
+        messagingProviders: [
+          {
+            universalIdentifier: '550e8400-e29b-41d4-a716-446655440047',
+            name: 'linkedin-messaging',
+            displayName: 'LinkedIn Messages',
+            connectionProvider: { universalIdentifier: connectionProviderId },
+            sendMessageLogicFunction: {
+              universalIdentifier: sendMessageLogicFunctionId,
+            },
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
 
     it('should not flag a custom connection provider referencing its authorize and callback logic functions as duplicates', () => {
       const authorizeLogicFunctionId = '550e8400-e29b-41d4-a716-446655440042';

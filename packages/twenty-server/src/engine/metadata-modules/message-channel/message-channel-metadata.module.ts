@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
@@ -16,6 +15,7 @@ import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/m
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
 import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { MessagingProviderModule } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
@@ -30,13 +30,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       ConnectedAccountEntity,
     ]),
     CacheLockModule,
-    ConnectionProviderModule,
     PermissionsModule,
     ConnectedAccountMetadataModule,
     MessagingImportManagerModule,
     MessagingCommonModule,
     EmailingDomainModule,
     WorkspaceCacheModule,
+    MessagingProviderModule,
   ],
   providers: [
     MessageChannelMetadataService,

@@ -30,6 +30,7 @@ const APPLICATION_IDENTIFIER = v4();
 const SENDING_PROVIDER_IDENTIFIER = v4();
 const SILENT_PROVIDER_IDENTIFIER = v4();
 const SEND_MESSAGE_IDENTIFIER = v4();
+const MESSAGING_PROVIDER_IDENTIFIER = v4();
 
 const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
@@ -96,8 +97,11 @@ describe('sendAppChannelMessage (e2e)', () => {
     operation: Parameters<typeof makeMetadataApiRequest>[0],
   ) => makeMetadataApiRequest(operation, applicationToken);
 
-  const startConversation = async (connectedAccountId: string) => {
-    const channelResponse = await asApplication({
+  const createChannel = (
+    connectedAccountId: string,
+    messagingProviderUniversalIdentifier?: string,
+  ) =>
+    asApplication({
       query: CREATE_CHANNEL_MUTATION,
       variables: {
         input: {
@@ -105,9 +109,30 @@ describe('sendAppChannelMessage (e2e)', () => {
           handle: CHANNEL_HANDLE,
           displayName: 'Jane Doe',
           visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+          messagingProviderUniversalIdentifier,
         },
       },
     });
+
+  const bindChannel = (
+    messageChannelId: string,
+    messagingProviderUniversalIdentifier: string | null,
+  ) =>
+    asApplication({
+      query: UPDATE_CHANNEL_MUTATION,
+      variables: {
+        input: { id: messageChannelId, messagingProviderUniversalIdentifier },
+      },
+    });
+
+  const startConversation = async (
+    connectedAccountId: string,
+    messagingProviderUniversalIdentifier?: string,
+  ) => {
+    const channelResponse = await createChannel(
+      connectedAccountId,
+      messagingProviderUniversalIdentifier,
+    );
 
     expect(channelResponse.body.errors).toBeUndefined();
 
@@ -246,9 +271,6 @@ export const handler = (payload) => {
               displayName: 'Sending',
               type: 'oauth',
               oauth,
-              sendMessageLogicFunction: {
-                universalIdentifier: SEND_MESSAGE_IDENTIFIER,
-              },
             },
             {
               universalIdentifier: SILENT_PROVIDER_IDENTIFIER,
@@ -256,6 +278,19 @@ export const handler = (payload) => {
               displayName: 'Silent',
               type: 'oauth',
               oauth,
+            },
+          ],
+          messagingProviders: [
+            {
+              universalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+              name: 'linkedin-messaging',
+              displayName: 'LinkedIn Messages',
+              connectionProvider: {
+                universalIdentifier: SENDING_PROVIDER_IDENTIFIER,
+              },
+              sendMessageLogicFunction: {
+                universalIdentifier: SEND_MESSAGE_IDENTIFIER,
+              },
             },
           ],
         },
@@ -347,8 +382,10 @@ export const handler = (payload) => {
   }, 120000);
 
   it('sends through the app and records the reply in the same thread', async () => {
-    const { messageChannelId, messageThreadId } =
-      await startConversation(sendingConnectionId);
+    const { messageChannelId, messageThreadId } = await startConversation(
+      sendingConnectionId,
+      MESSAGING_PROVIDER_IDENTIFIER,
+    );
 
     const response = await send({
       messageChannelId,
@@ -362,6 +399,7 @@ export const handler = (payload) => {
     );
     expect(readSendExecutions()).toEqual([
       expect.objectContaining({
+        messagingProviderName: 'linkedin-messaging',
         connectedAccountId: sendingConnectionId,
         messageChannelId,
         threadExternalId: THREAD_EXTERNAL_ID,
@@ -384,8 +422,10 @@ export const handler = (payload) => {
   });
 
   it('keeps one message when the app later ingests the reply it sent', async () => {
-    const { messageChannelId, messageThreadId } =
-      await startConversation(sendingConnectionId);
+    const { messageChannelId, messageThreadId } = await startConversation(
+      sendingConnectionId,
+      MESSAGING_PROVIDER_IDENTIFIER,
+    );
 
     const sendResponse = await send({
       messageChannelId,
@@ -432,8 +472,10 @@ export const handler = (payload) => {
   });
 
   it('records nothing when the app fails to send', async () => {
-    const { messageChannelId, messageThreadId } =
-      await startConversation(sendingConnectionId);
+    const { messageChannelId, messageThreadId } = await startConversation(
+      sendingConnectionId,
+      MESSAGING_PROVIDER_IDENTIFIER,
+    );
 
     const response = await send({
       messageChannelId,
@@ -452,8 +494,10 @@ export const handler = (payload) => {
   });
 
   it('refuses a channel whose sync is turned off without calling the app', async () => {
-    const { messageChannelId, messageThreadId } =
-      await startConversation(sendingConnectionId);
+    const { messageChannelId, messageThreadId } = await startConversation(
+      sendingConnectionId,
+      MESSAGING_PROVIDER_IDENTIFIER,
+    );
 
     await asApplication({
       query: UPDATE_CHANNEL_MUTATION,
@@ -470,17 +514,55 @@ export const handler = (payload) => {
     expect(readSendExecutions()).toEqual([]);
   });
 
-  it('refuses a channel whose provider declares no sendMessage function', async () => {
+  it('sends only while the channel is bound to a messaging provider', async () => {
     const { messageChannelId, messageThreadId } =
-      await startConversation(silentConnectionId);
+      await startConversation(sendingConnectionId);
 
-    const response = await send({
+    const unboundResponse = await send({
       messageChannelId,
       messageThreadId,
       text: 'Tuesday works',
     });
 
-    expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
-    expect(readSendExecutions()).toEqual([]);
+    expect(unboundResponse.body.errors?.[0]?.extensions?.code).toBe(
+      'NOT_FOUND',
+    );
+
+    const bindResponse = await bindChannel(
+      messageChannelId,
+      MESSAGING_PROVIDER_IDENTIFIER,
+    );
+
+    expect(bindResponse.body.errors).toBeUndefined();
+
+    const boundResponse = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'Tuesday works',
+    });
+
+    expect(boundResponse.body.errors).toBeUndefined();
+
+    await bindChannel(messageChannelId, null);
+
+    const unboundAgainResponse = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'Wednesday works',
+    });
+
+    expect(unboundAgainResponse.body.errors?.[0]?.extensions?.code).toBe(
+      'NOT_FOUND',
+    );
+    expect(readSendExecutions()).toHaveLength(1);
+  });
+
+  it('refuses a messaging provider that uses another connection provider', async () => {
+    const response = await createChannel(
+      silentConnectionId,
+      MESSAGING_PROVIDER_IDENTIFIER,
+    );
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
   });
 });

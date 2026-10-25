@@ -91,13 +91,6 @@ export class ConnectionProviderEntity
   })
   onDisconnectLogicFunctionUniversalIdentifier: string | null;
 
-  @Column({ nullable: true, type: 'uuid' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.52.0_AddSendMessageLogicFunctionToConnectionProviderFastInstanceCommand_1792768373578',
-  })
-  sendMessageLogicFunctionUniversalIdentifier: string | null;
-
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

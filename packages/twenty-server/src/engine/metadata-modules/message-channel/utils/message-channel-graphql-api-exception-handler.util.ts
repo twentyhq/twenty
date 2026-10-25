@@ -19,6 +19,10 @@ import {
   MessageChannelException,
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import {
+  MessagingProviderException,
+  MessagingProviderExceptionCode,
+} from 'src/engine/metadata-modules/messaging-provider/messaging-provider.exception';
 
 export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof MessageChannelException) {
@@ -60,6 +64,23 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
       case EmailingDomainExceptionCode.EMAILING_DOMAIN_CAMPAIGN_SENDING:
         throw new UserInputError(error);
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_RECOVERY_FAILED:
+        throw new InternalServerError(error);
+      default: {
+        return assertUnreachable(error.code);
+      }
+    }
+  }
+
+  if (error instanceof MessagingProviderException) {
+    switch (error.code) {
+      case MessagingProviderExceptionCode.MESSAGING_PROVIDER_NOT_FOUND:
+      case MessagingProviderExceptionCode.SEND_MESSAGE_NOT_AVAILABLE:
+        throw new NotFoundError(error);
+      case MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT:
+        throw new UserInputError(error);
+      case MessagingProviderExceptionCode.MESSAGING_PROVIDER_NAME_ALREADY_EXISTS:
+        throw new ConflictError(error);
+      case MessagingProviderExceptionCode.SEND_MESSAGE_FAILED:
         throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);

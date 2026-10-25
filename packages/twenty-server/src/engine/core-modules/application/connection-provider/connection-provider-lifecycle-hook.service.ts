@@ -5,8 +5,6 @@ import {
   type ConnectionCallbackPayload,
   type IdentifiedAccount,
   type IdentifyAccountPayload,
-  type SendAppMessagePayload,
-  type SendAppMessageResult,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -21,7 +19,6 @@ import {
   type ParsedConnectedAccountFromCallback,
 } from 'src/engine/core-modules/application/connection-provider/utils/parse-connection-callback-result.util';
 import { parseIdentifyAccountResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-identify-account-result.util';
-import { parseSendAppMessageResult } from 'src/engine/core-modules/application/connection-provider/utils/parse-send-app-message-result.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -41,12 +38,11 @@ type ConnectionLifecycleHook =
   | 'authorize'
   | 'callback'
   | 'onConnect'
-  | 'onDisconnect'
-  | 'sendMessage';
+  | 'onDisconnect';
 
-type InlineConnectionHook = Extract<
+type ConnectionFlowHook = Extract<
   ConnectionLifecycleHook,
-  'identifyAccount' | 'authorize' | 'callback' | 'sendMessage'
+  'identifyAccount' | 'authorize' | 'callback'
 >;
 
 type ConnectionLifecycleHookProvider = Pick<
@@ -66,20 +62,16 @@ const MISSING_LOGIC_FUNCTION_EXCEPTION_CODE_BY_HOOK: Record<
     ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,
   onDisconnect:
     ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND,
-  sendMessage:
-    ConnectionProviderExceptionCode.SEND_MESSAGE_LOGIC_FUNCTION_NOT_FOUND,
 };
 
-const FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_INLINE_HOOK: Record<
-  InlineConnectionHook,
+const FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK: Record<
+  ConnectionFlowHook,
   ConnectionProviderExceptionCode
 > = {
   identifyAccount:
     ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED,
   authorize: ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED,
   callback: ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED,
-  sendMessage:
-    ConnectionProviderExceptionCode.SEND_MESSAGE_LOGIC_FUNCTION_FAILED,
 };
 
 @Injectable()
@@ -170,7 +162,7 @@ export class ConnectionProviderLifecycleHookService {
       accessToken,
     };
 
-    const data = await this.executeInlineHook({
+    const data = await this.executeConnectionFlowHook({
       hook: 'identifyAccount',
       provider,
       logicFunctionId,
@@ -216,7 +208,7 @@ export class ConnectionProviderLifecycleHookService {
       callbackUrl,
     };
 
-    const data = await this.executeInlineHook({
+    const data = await this.executeConnectionFlowHook({
       hook: 'authorize',
       provider,
       logicFunctionId,
@@ -266,7 +258,7 @@ export class ConnectionProviderLifecycleHookService {
       ...request,
     };
 
-    const data = await this.executeInlineHook({
+    const data = await this.executeConnectionFlowHook({
       hook: 'callback',
       provider,
       logicFunctionId,
@@ -284,64 +276,6 @@ export class ConnectionProviderLifecycleHookService {
     }
 
     return parsedResult.connectedAccount;
-  }
-
-  // failures propagate so a message the app could not deliver is never recorded as sent
-  async runSendMessage({
-    provider,
-    workspaceId,
-    payload,
-  }: {
-    provider: Pick<
-      ConnectionProviderEntity,
-      | 'id'
-      | 'name'
-      | 'applicationId'
-      | 'sendMessageLogicFunctionUniversalIdentifier'
-    >;
-    workspaceId: string;
-    payload: Omit<
-      SendAppMessagePayload,
-      'connectionProviderId' | 'connectionProviderName'
-    >;
-  }): Promise<SendAppMessageResult> {
-    if (!isDefined(provider.sendMessageLogicFunctionUniversalIdentifier)) {
-      throw new ConnectionProviderException(
-        `Connection provider ${provider.id} has no sendMessage logic function.`,
-        ConnectionProviderExceptionCode.SEND_MESSAGE_LOGIC_FUNCTION_NOT_FOUND,
-      );
-    }
-
-    const logicFunctionId = await this.resolveLogicFunctionIdOrThrow({
-      hook: 'sendMessage',
-      logicFunctionUniversalIdentifier:
-        provider.sendMessageLogicFunctionUniversalIdentifier,
-      provider,
-      workspaceId,
-    });
-
-    const data = await this.executeInlineHook({
-      hook: 'sendMessage',
-      provider,
-      logicFunctionId,
-      workspaceId,
-      payload: {
-        connectionProviderId: provider.id,
-        connectionProviderName: provider.name,
-        ...payload,
-      },
-    });
-
-    const parsedResult = parseSendAppMessageResult(data);
-
-    if (!parsedResult.isValid) {
-      throw new ConnectionProviderException(
-        `sendMessage logic function of connection provider ${provider.id} returned an invalid result: ${parsedResult.reason}`,
-        ConnectionProviderExceptionCode.SEND_MESSAGE_LOGIC_FUNCTION_FAILED,
-      );
-    }
-
-    return parsedResult.sentMessage;
   }
 
   // Runs inline, before the connected account and its token are deleted, so the
@@ -388,25 +322,24 @@ export class ConnectionProviderLifecycleHookService {
     });
   }
 
-  private async executeInlineHook({
+  private async executeConnectionFlowHook({
     hook,
     provider,
     logicFunctionId,
     workspaceId,
     payload,
   }: {
-    hook: InlineConnectionHook;
+    hook: ConnectionFlowHook;
     provider: ConnectionLifecycleHookProvider;
     logicFunctionId: string;
     workspaceId: string;
     payload:
       | IdentifyAccountPayload
       | AuthorizeConnectionPayload
-      | ConnectionCallbackPayload
-      | SendAppMessagePayload;
+      | ConnectionCallbackPayload;
   }): Promise<LogicFunctionExecuteResult['data']> {
     const failureCode =
-      FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_INLINE_HOOK[hook];
+      FAILED_LOGIC_FUNCTION_EXCEPTION_CODE_BY_CONNECTION_FLOW_HOOK[hook];
 
     const executionResult: LogicFunctionExecuteResult =
       await this.logicFunctionExecutorService

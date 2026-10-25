@@ -20,7 +20,6 @@ const LOGIC_FUNCTION_KEYS = [
   'identifyAccountLogicFunction',
   'onConnectLogicFunction',
   'onDisconnectLogicFunction',
-  'sendMessageLogicFunction',
 ] as const satisfies readonly ConnectionProviderLogicFunctionKey[];
 
 const CUSTOM_LOGIC_FUNCTION_KEYS = [

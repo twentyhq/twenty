@@ -4,8 +4,7 @@ export type SendAppMessageRecipient = {
 };
 
 export type SendAppMessagePayload = {
-  connectionProviderId: string;
-  connectionProviderName: string;
+  messagingProviderName: string;
   connectedAccountId: string;
   messageChannelId: string;
   threadExternalId: string;

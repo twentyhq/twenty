@@ -25,11 +25,9 @@ type OneToManyRelationValue<
 
 type OneToManyMetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
-    [
-      TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<
-        MetadataEntity<TSourceMetadataName>
-      >
-    ]: OneToManyRelationValue<TSourceMetadataName, TRelationProperty>;
+    [TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<
+      MetadataEntity<TSourceMetadataName>
+    >]: OneToManyRelationValue<TSourceMetadataName, TRelationProperty>;
   };
 };
 
@@ -309,6 +307,7 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   applicationVariable: {},
   viewSort: {},
   connectionProvider: {},
+  messagingProvider: {},
   searchFieldMetadata: {},
   timelineActivityType: {},
   settingsMenuItem: {},

@@ -25,7 +25,6 @@ export const assertConnectionProviderLogicFunctionsAreOwn = ({
       identifyAccount: connectionProvider.identifyAccountLogicFunction,
       onConnect: connectionProvider.onConnectLogicFunction,
       onDisconnect: connectionProvider.onDisconnectLogicFunction,
-      sendMessage: connectionProvider.sendMessageLogicFunction,
       authorize:
         connectionProvider.type === 'custom'
           ? connectionProvider.custom.authorizeLogicFunction

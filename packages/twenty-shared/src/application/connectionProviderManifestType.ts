@@ -11,7 +11,6 @@ type ConnectionProviderManifestBase = SyncableEntityOptions & {
   identifyAccountLogicFunction?: SyncableEntityOptions;
   onConnectLogicFunction?: SyncableEntityOptions;
   onDisconnectLogicFunction?: SyncableEntityOptions;
-  sendMessageLogicFunction?: SyncableEntityOptions;
 };
 
 export type ConnectionProviderManifest = ConnectionProviderManifestBase &

@@ -9,7 +9,6 @@ import { Args, Mutation } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ConnectionProviderGraphqlApiExceptionInterceptor } from 'src/engine/core-modules/application/connection-provider/interceptors/connection-provider-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -40,7 +39,6 @@ import { ApplicationMessageSendService } from 'src/engine/metadata-modules/messa
 @UseInterceptors(
   MessageChannelGraphqlApiExceptionInterceptor,
   ConnectedAccountGraphqlApiExceptionInterceptor,
-  ConnectionProviderGraphqlApiExceptionInterceptor,
 )
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()

@@ -8,8 +8,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
-import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { type SendAppChannelMessageOutput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.output';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -22,6 +20,7 @@ import {
   type AppMessageReplyRecipient,
   buildAppMessageReplyRecipients,
 } from 'src/engine/metadata-modules/message-channel/utils/build-app-message-reply-recipients.util';
+import { MessagingProviderMessageSenderService } from 'src/engine/metadata-modules/messaging-provider/services/messaging-provider-message-sender.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -51,8 +50,7 @@ export class ApplicationMessageSendService {
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
-    private readonly connectionProviderService: ConnectionProviderService,
-    private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
+    private readonly messagingProviderMessageSenderService: MessagingProviderMessageSenderService,
     private readonly applicationMessageIngestionService: ApplicationMessageIngestionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -105,11 +103,6 @@ export class ApplicationMessageSendService {
       );
     }
 
-    const provider = await this.connectionProviderService.findOneByIdOrThrow({
-      id: connectedAccount.connectionProviderId,
-      workspaceId,
-    });
-
     const conversation = await this.findConversation({
       workspaceId,
       messageChannel,
@@ -117,8 +110,10 @@ export class ApplicationMessageSendService {
     });
 
     const sentMessage =
-      await this.connectionProviderLifecycleHookService.runSendMessage({
-        provider,
+      await this.messagingProviderMessageSenderService.sendOrThrow({
+        messagingProviderUniversalIdentifier:
+          messageChannel.messagingProviderUniversalIdentifier,
+        connectionProviderId: connectedAccount.connectionProviderId,
         workspaceId,
         payload: {
           connectedAccountId: connectedAccount.id,

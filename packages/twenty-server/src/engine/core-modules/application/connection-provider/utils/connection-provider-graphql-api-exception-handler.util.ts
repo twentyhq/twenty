@@ -20,7 +20,6 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND:
       case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_NOT_FOUND:
       case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_NOT_FOUND:
-      case ConnectionProviderExceptionCode.SEND_MESSAGE_LOGIC_FUNCTION_NOT_FOUND:
         throw new NotFoundError(error);
       case ConnectionProviderExceptionCode.FORBIDDEN:
         throw new ForbiddenError(error);
@@ -37,7 +36,6 @@ export const connectionProviderGraphqlApiExceptionHandler = (error: Error) => {
       case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED:
       case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED:
       case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED:
-      case ConnectionProviderExceptionCode.SEND_MESSAGE_LOGIC_FUNCTION_FAILED:
         throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);

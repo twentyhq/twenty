@@ -20,17 +20,30 @@ export type CreateMessageChannelInput = {
   // Required: decides whether one member's conversations are readable by the whole workspace, and only the app
   // knows how private its messages are ('METADATA' for personal inboxes, 'SHARE_EVERYTHING' for shared ones)
   visibility: MessageChannelVisibility;
+  // A messaging provider of this app on the connection's provider; members reply through it. Without one the channel only ingests
+  messagingProvider?: { universalIdentifier: string };
 };
 
-export const createMessageChannel = async (
-  input: CreateMessageChannelInput,
-): Promise<AppMessageChannel> => {
+export const createMessageChannel = async ({
+  messagingProvider,
+  ...input
+}: CreateMessageChannelInput): Promise<AppMessageChannel> => {
   const { createAppMessageChannel } = await postGraphqlRequest<
-    { input: CreateMessageChannelInput },
+    {
+      input: Omit<CreateMessageChannelInput, 'messagingProvider'> & {
+        messagingProviderUniversalIdentifier?: string;
+      };
+    },
     { createAppMessageChannel: AppMessageChannel }
   >({
     query: CREATE_APP_MESSAGE_CHANNEL_MUTATION,
-    variables: { input },
+    variables: {
+      input: {
+        ...input,
+        messagingProviderUniversalIdentifier:
+          messagingProvider?.universalIdentifier,
+      },
+    },
     caller: 'createMessageChannel',
   });
 
