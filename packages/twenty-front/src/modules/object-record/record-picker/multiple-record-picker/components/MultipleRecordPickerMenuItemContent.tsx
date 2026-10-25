@@ -86,6 +86,7 @@ export const MultipleRecordPickerMenuItemContent = ({
         aria-selected={isRecordSelectedWithObjectItem}
         selected={isRecordSelectedWithObjectItem}
         indicator="checkbox"
+        title={displayText}
         description={
           showObjectName
             ? capitalize(objectMetadataItem.labelSingular)
