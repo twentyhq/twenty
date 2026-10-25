@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import {
   isValidUniversalIdentifier,
   MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
@@ -25,6 +26,7 @@ import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/wor
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { UniversalFlatEntityDiff } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-diff.type';
+import { MetadataUniversalFlatEntityPropertiesToReportDivergence } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-report-divergence.type';
 import { UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteUniversalFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-foreign-key-aggregators.util';
@@ -341,9 +343,27 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         additionalCacheDataMaps,
         universalIdentifier: flatEntityToUpdateUniversalIdentifier,
       });
+      const divergenceErrors = this.validateNoNonUpdatablePropertyDivergence(
+        flatEntityUpdate.nonUpdatablePropertyDivergences,
+      );
 
       if (validationResult.status === 'fail') {
-        allValidationResult.push(validationResult);
+        allValidationResult.push({
+          ...validationResult,
+          errors: [...validationResult.errors, ...divergenceErrors],
+        });
+        continue;
+      }
+
+      if (divergenceErrors.length > 0) {
+        allValidationResult.push({
+          flatEntityMinimalInformation: {
+            universalIdentifier: flatEntityToUpdateUniversalIdentifier,
+          } as Partial<MetadataFlatEntity<T>>,
+          errors: divergenceErrors,
+          metadataName: this.metadataName,
+          type: 'update',
+        });
         continue;
       }
 
@@ -473,6 +493,20 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       unit: 'ms',
       attributes: { metadataName: this.metadataName, phase },
       bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+    });
+  }
+
+  private validateNoNonUpdatablePropertyDivergence(
+    nonUpdatablePropertyDivergences: MetadataUniversalFlatEntityPropertiesToReportDivergence<T>[],
+  ): FlatEntityValidationError[] {
+    return nonUpdatablePropertyDivergences.map((property) => {
+      const propertyName = String(property);
+
+      return {
+        code: 'NON_UPDATABLE_PROPERTY_DIVERGENCE',
+        message: `${this.metadataName} property "${propertyName}" cannot be updated`,
+        userFriendlyMessage: msg`Property ${propertyName} cannot be updated`,
+      };
     });
   }
 

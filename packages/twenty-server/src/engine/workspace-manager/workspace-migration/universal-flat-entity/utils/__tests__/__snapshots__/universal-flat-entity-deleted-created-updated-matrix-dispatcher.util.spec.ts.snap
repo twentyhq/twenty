@@ -149,6 +149,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an upd
   "updatedFlatEntityMaps": {
     "byUniversalIdentifier": {
       "universal-identifier-1": {
+        "nonUpdatablePropertyDivergences": [],
         "update": {
           "isActive": true,
         },
@@ -279,6 +280,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
   "updatedFlatEntityMaps": {
     "byUniversalIdentifier": {
       "universal-identifier-1": {
+        "nonUpdatablePropertyDivergences": [],
         "update": {
           "isActive": false,
         },

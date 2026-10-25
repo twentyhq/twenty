@@ -2326,6 +2326,15 @@ export type MetadataEntityComparablePropertyName<T extends AllMetadataName> =
     (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
   >;
 
+type FilterNonComparableKeys<TConfig> = {
+  [P in keyof TConfig]: TConfig[P] extends { toCompare: false } ? P : never;
+}[keyof TConfig];
+
+export type MetadataEntityNonComparablePropertyName<T extends AllMetadataName> =
+  FilterNonComparableKeys<
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
+  >;
+
 type FilterOverridableKeys<TConfig> = {
   [P in keyof TConfig]: TConfig[P] extends { isOverridable: true } ? P : never;
 }[keyof TConfig];

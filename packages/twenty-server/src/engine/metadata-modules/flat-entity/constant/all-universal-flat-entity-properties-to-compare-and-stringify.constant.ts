@@ -4,8 +4,10 @@ import {
 } from 'twenty-shared/metadata';
 
 import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import { SERVER_MANAGED_FLAT_ENTITY_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/server-managed-flat-entity-properties.constant';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
+import { type MetadataUniversalFlatEntityPropertiesToReportDivergence } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-report-divergence.type';
 import { type MetadataUniversalFlatEntityPropertiesToStringify } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-stringify.type';
 
 type PropertyConfiguration = {
@@ -29,11 +31,16 @@ const EXTRA_PROPERTIES_TO_COMPARE = {
   >;
 };
 
+const SERVER_MANAGED_PROPERTIES = new Set<string>(
+  SERVER_MANAGED_FLAT_ENTITY_PROPERTIES,
+);
+
 type UniversalFlatEntityPropertiesToCompareAndStringify<
   T extends AllMetadataName,
 > = {
   propertiesToCompare: MetadataUniversalFlatEntityPropertiesToCompare<T>[];
   propertiesToStringify: MetadataUniversalFlatEntityPropertiesToStringify<T>[];
+  propertiesToReportDivergence: MetadataUniversalFlatEntityPropertiesToReportDivergence<T>[];
 };
 const computeUniversalFlatEntityPropertiesToCompareAndStringify = <
   T extends AllMetadataName,
@@ -50,10 +57,18 @@ const computeUniversalFlatEntityPropertiesToCompareAndStringify = <
   const accumulator: UniversalFlatEntityPropertiesToCompareAndStringify<T> = {
     propertiesToCompare: [],
     propertiesToStringify: [],
+    propertiesToReportDivergence: [],
   };
 
   for (const [property, configuration] of entries) {
     if (!configuration.toCompare) {
+      if (!SERVER_MANAGED_PROPERTIES.has(property)) {
+        accumulator.propertiesToReportDivergence.push(
+          (configuration.universalProperty ??
+            property) as MetadataUniversalFlatEntityPropertiesToReportDivergence<T>,
+        );
+      }
+
       continue;
     }
 
