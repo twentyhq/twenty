@@ -1,4 +1,8 @@
-import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  OrderByDirection,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
@@ -9,6 +13,7 @@ import {
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 describe('resolveOrderByLeaves', () => {
@@ -401,10 +406,9 @@ describe('resolveOrderByLeaves', () => {
         name: 'activity',
         relationTargetObjectMetadataId: 'timeline-activity-object-id',
         settings: {
-          relationType: 'MANY_TO_ONE',
+          relationType: RelationType.MANY_TO_ONE,
           joinColumnName: 'activityId',
-          // oxlint-disable-next-line typescript/no-explicit-any
-        } as any,
+        },
       });
       const propertiesField = createMockField({
         id: 'properties-id',
@@ -412,13 +416,12 @@ describe('resolveOrderByLeaves', () => {
         name: 'properties',
         objectMetadataId: 'timeline-activity-object-id',
       });
-      const timelineActivityObjectMetadata = {
+      const timelineActivityObjectMetadata = getFlatObjectMetadataMock({
         id: 'timeline-activity-object-id',
         universalIdentifier: 'timeline-activity-object-id',
-        workspaceId,
         nameSingular: 'timelineActivity',
         fieldIds: [propertiesField.id],
-      } as unknown as FlatObjectMetadata;
+      });
       const fieldsWithActivity = [...fields, activityField, propertiesField];
 
       expect(() =>
