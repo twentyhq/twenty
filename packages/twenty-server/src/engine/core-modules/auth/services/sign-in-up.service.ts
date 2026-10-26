@@ -14,7 +14,6 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -27,7 +26,6 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   AuthException,
@@ -37,7 +35,6 @@ import {
   PASSWORD_REGEX,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { MAX_UNPAID_WORKSPACES_PER_USER } from 'src/engine/core-modules/auth/constants/max-unpaid-workspaces-per-user.constant';
 import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-organization-key.constant';
 import { getSignUpWithoutWorkspaceDecision } from 'src/engine/core-modules/auth/utils/get-sign-up-without-workspace-decision.util';
 import { hasProvisionedSignUpDestination } from 'src/engine/core-modules/auth/utils/has-provisioned-sign-up-destination.util';
@@ -98,8 +95,6 @@ export class SignInUpService {
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly billingService: BillingService,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -556,35 +551,6 @@ export class SignInUpService {
     );
   }
 
-  private async assertUnpaidCreatedWorkspaceCountWithinLimit(
-    userId: string,
-  ): Promise<void> {
-    const createdWorkspaceIds =
-      await this.userWorkspaceService.findWorkspaceIdsCreatedByUser(userId);
-
-    const paidWorkspaceIds = new Set(
-      await this.billingSubscriptionService.findWorkspaceIdsWithActiveSubscription(
-        createdWorkspaceIds,
-      ),
-    );
-
-    const unpaidWorkspaceCount = createdWorkspaceIds.filter(
-      (workspaceId) => !paidWorkspaceIds.has(workspaceId),
-    ).length;
-
-    if (unpaidWorkspaceCount < MAX_UNPAID_WORKSPACES_PER_USER) {
-      return;
-    }
-
-    throw new AuthException(
-      `User ${userId} already created ${unpaidWorkspaceCount} workspaces without a paid subscription`,
-      AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      {
-        userFriendlyMessage: msg`You already created ${MAX_UNPAID_WORKSPACES_PER_USER} workspaces without a paid subscription. Subscribe in one of them to create another.`,
-      },
-    );
-  }
-
   private async deleteInferredWorkspaceLogo({
     fileId,
     workspaceId,
@@ -672,42 +638,6 @@ export class SignInUpService {
   }
 
   async signUpOnNewWorkspace(
-    userData: ExistingUserOrPartialUserWithPicture['userData'],
-    options?: { displayName?: string; subdomain?: string; partner?: string },
-  ) {
-    if (
-      !this.billingService.isBillingEnabled() ||
-      userData.type !== 'existingUser' ||
-      userData.existingUser.canAccessFullAdminPanel
-    ) {
-      return this.createWorkspaceForUser(userData, options);
-    }
-
-    const userId = userData.existingUser.id;
-
-    const lockResult = await this.postgresAdvisoryLockService.tryWithLock(
-      `workspace-creation:${userId}`,
-      async () => {
-        await this.assertUnpaidCreatedWorkspaceCountWithinLimit(userId);
-
-        return this.createWorkspaceForUser(userData, options);
-      },
-    );
-
-    if (!lockResult.acquired) {
-      throw new AuthException(
-        `User ${userId} is already creating a workspace`,
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        {
-          userFriendlyMessage: msg`A workspace is already being created. Try again in a moment.`,
-        },
-      );
-    }
-
-    return lockResult.value;
-  }
-
-  private async createWorkspaceForUser(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
     options?: { displayName?: string; subdomain?: string; partner?: string },
   ) {

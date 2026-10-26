@@ -135,12 +135,19 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
+    const isPaymentMethodRequired =
+      requirePaymentMethod === true ||
+      (await this.billingPortalWorkspaceService.hasReachedNoCardTrialLimit({
+        userId: user.id,
+        workspaceId: workspace.id,
+      }));
+
     const checkoutSessionParams = {
       user,
       workspace,
       successUrlPath,
       plan,
-      requirePaymentMethod,
+      requirePaymentMethod: isPaymentMethodRequired,
     };
 
     const billingPricesPerPlan =
@@ -149,7 +156,7 @@ export class BillingResolver {
         interval: recurringInterval,
       });
 
-    if (!requirePaymentMethod) {
+    if (!isPaymentMethodRequired) {
       const successUrl =
         await this.billingPortalWorkspaceService.createDirectSubscription({
           ...checkoutSessionParams,

@@ -16,6 +16,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { MAX_UNPAID_WORKSPACES_BEFORE_CARD_REQUIRED } from 'src/engine/core-modules/billing/constants/max-unpaid-workspaces-before-card-required.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -48,6 +49,50 @@ export class BillingPortalWorkspaceService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
+
+  async hasReachedNoCardTrialLimit({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const otherUnpaidCreatedWorkspaceCount = await this.userWorkspaceRepository
+      .createQueryBuilder('userWorkspace')
+      .withDeleted()
+      .where('userWorkspace.userId = :userId', { userId })
+      .andWhere('userWorkspace.workspaceId != :workspaceId', { workspaceId })
+      .andWhere((queryBuilder) => {
+        const earlierUserWorkspaceQuery = queryBuilder
+          .subQuery()
+          .select('1')
+          .from(UserWorkspaceEntity, 'earlierUserWorkspace')
+          .withDeleted()
+          .where('earlierUserWorkspace.workspaceId = userWorkspace.workspaceId')
+          .andWhere('earlierUserWorkspace.createdAt < userWorkspace.createdAt')
+          .getQuery();
+
+        return `NOT EXISTS ${earlierUserWorkspaceQuery}`;
+      })
+      .andWhere((queryBuilder) => {
+        const activeSubscriptionQuery = queryBuilder
+          .subQuery()
+          .select('1')
+          .from(BillingSubscriptionEntity, 'activeSubscription')
+          .where('activeSubscription.workspaceId = userWorkspace.workspaceId')
+          .andWhere('activeSubscription.status = :activeStatus')
+          .getQuery();
+
+        return `NOT EXISTS ${activeSubscriptionQuery}`;
+      })
+      .setParameter('activeStatus', SubscriptionStatus.Active)
+      .getCount();
+
+    return (
+      otherUnpaidCreatedWorkspaceCount >=
+      MAX_UNPAID_WORKSPACES_BEFORE_CARD_REQUIRED
+    );
+  }
 
   async computeCheckoutSessionURL({
     user,

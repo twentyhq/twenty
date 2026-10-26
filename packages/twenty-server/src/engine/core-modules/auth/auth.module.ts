@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
@@ -123,7 +122,6 @@ import { AuthService } from './services/auth.service';
     ConnectedAccountTokenEncryptionModule,
     EmailAliasManagerModule,
     UserSessionModule,
-    TypeORMModule,
   ],
   controllers: [
     GoogleAuthController,

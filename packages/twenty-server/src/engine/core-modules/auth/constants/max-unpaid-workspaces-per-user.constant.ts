@@ -1,1 +1,0 @@
-export const MAX_UNPAID_WORKSPACES_PER_USER = 3;
