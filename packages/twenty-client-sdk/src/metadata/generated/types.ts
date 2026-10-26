@@ -1315,6 +1315,9 @@ export default {
             "creditsUsed": [
                 6
             ],
+            "operationType": [
+                601
+            ],
             "__typename": [
                 1
             ]

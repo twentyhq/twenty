@@ -3,10 +3,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
 import { ApplicationMonitoringLineChart } from '@/settings/application-monitoring/components/ApplicationMonitoringLineChart';
+import { APPLICATION_MONITORING_CREDIT_SERIES_COLORS } from '@/settings/application-monitoring/constants/ApplicationMonitoringCreditSeriesColors';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
 import { buildApplicationMonitoringCreditChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringCreditChartData';
 import { getApplicationMonitoringCreditsFormatOptions } from '@/settings/application-monitoring/utils/getApplicationMonitoringCreditsFormatOptions';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
+import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
 
 type ApplicationMonitoringCreditsSectionProps = {
   monitoring: Pick<
@@ -26,7 +28,7 @@ export const ApplicationMonitoringCreditsSection = ({
   axisLabel,
   isAdminView,
 }: ApplicationMonitoringCreditsSectionProps) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const { creditsUsed, creditUsage } = monitoring;
 
   if (!isDefined(creditsUsed) || !isDefined(creditUsage)) {
@@ -38,23 +40,41 @@ export const ApplicationMonitoringCreditsSection = ({
     );
   }
 
+  const creditChartData = buildApplicationMonitoringCreditChartData({
+    ...monitoring,
+    creditUsage,
+  });
+
   return (
     <Section.Root>
       <Section.Header
         title={t`Credits used`}
         description={
-          isAdminView ? undefined : t`Across every install in this period`
+          isAdminView
+            ? t`By operation type`
+            : t`By operation type, across every install in this period`
         }
       />
       {creditUsage.length === 0 ? (
         <SettingsEmptyPlaceholder>{t`No credits used in this period`}</SettingsEmptyPlaceholder>
       ) : (
         <ApplicationMonitoringLineChart
-          data={buildApplicationMonitoringCreditChartData({
-            ...monitoring,
-            creditUsage,
+          data={creditChartData.data}
+          series={creditChartData.operationTypes.map((operationType, index) => {
+            const operationTypeLabel =
+              getUsageOperationTypeLabel(operationType);
+
+            return {
+              key: operationType,
+              label: isDefined(operationTypeLabel)
+                ? i18n._(operationTypeLabel)
+                : operationType,
+              color:
+                APPLICATION_MONITORING_CREDIT_SERIES_COLORS[
+                  index % APPLICATION_MONITORING_CREDIT_SERIES_COLORS.length
+                ],
+            };
           })}
-          series={[{ key: 'creditsUsed', label: t`Credits`, color: 'purple' }]}
           axisLabel={axisLabel}
           getTotalFormatOptions={getApplicationMonitoringCreditsFormatOptions}
         />

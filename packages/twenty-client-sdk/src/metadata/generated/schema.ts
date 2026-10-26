@@ -501,6 +501,7 @@ export interface ApplicationMonitoringActivityBucket {
 export interface ApplicationMonitoringCreditBucket {
     bucketStart: Scalars['DateTime']
     creditsUsed: Scalars['Float']
+    operationType: UsageOperationType
     __typename: 'ApplicationMonitoringCreditBucket'
 }
 
@@ -4666,6 +4667,7 @@ export interface ApplicationMonitoringActivityBucketGenqlSelection{
 export interface ApplicationMonitoringCreditBucketGenqlSelection{
     bucketStart?: boolean | number
     creditsUsed?: boolean | number
+    operationType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
