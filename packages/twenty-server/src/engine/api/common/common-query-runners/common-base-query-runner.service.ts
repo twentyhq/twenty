@@ -75,6 +75,7 @@ import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
 
 @Injectable()
 export abstract class CommonBaseQueryRunnerService<
@@ -280,10 +281,26 @@ export abstract class CommonBaseQueryRunnerService<
         queryRunnerContext,
       );
 
-    const results = await this.run(processedArgs, {
-      ...extendedQueryRunnerContext,
-      commonQueryParser,
-    });
+    const results = await this.run(
+      {
+        ...processedArgs,
+        selectedFieldsResult: {
+          ...processedArgs.selectedFieldsResult,
+          select: addTimelineActivityObjectColumnsToSelect({
+            select: processedArgs.selectedFieldsResult.select,
+            flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
+            objectsPermissions:
+              extendedQueryRunnerContext.repository.objectRecordsPermissions,
+            flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+          }),
+        },
+      },
+      {
+        ...extendedQueryRunnerContext,
+        commonQueryParser,
+      },
+    );
 
     return this.enrichResultsWithGettersAndHooks({
       results,

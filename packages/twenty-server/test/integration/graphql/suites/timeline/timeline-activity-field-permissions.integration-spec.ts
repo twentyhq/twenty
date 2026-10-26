@@ -42,6 +42,9 @@ describe('Timeline activity field permissions', () => {
   let personId: string;
   let customRoleId: string;
   let originalMemberRoleId: string;
+  let personObjectId: string;
+  let jobTitleFieldId: string;
+  let timelineActivitiesFieldId: string;
 
   beforeAll(async () => {
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
@@ -57,9 +60,17 @@ describe('Timeline activity field permissions', () => {
     const jobTitleField = personObject?.fieldsList?.find(
       (field) => field.name === 'jobTitle',
     );
+    const timelineActivitiesField = personObject?.fieldsList?.find(
+      (field) => field.name === 'timelineActivities',
+    );
 
     assertIsDefinedOrThrow(personObject);
     assertIsDefinedOrThrow(jobTitleField);
+    assertIsDefinedOrThrow(timelineActivitiesField);
+
+    personObjectId = personObject.id;
+    jobTitleFieldId = jobTitleField.id;
+    timelineActivitiesFieldId = timelineActivitiesField.id;
 
     const { roleId } = await createCustomRoleWithObjectPermissions({
       label: 'TimelineRestrictedJobTitleRole',
@@ -72,8 +83,8 @@ describe('Timeline activity field permissions', () => {
       roleId: customRoleId,
       fieldPermissions: [
         {
-          objectMetadataId: personObject.id,
-          fieldMetadataId: jobTitleField.id,
+          objectMetadataId: personObjectId,
+          fieldMetadataId: jobTitleFieldId,
           canReadFieldValue: false,
           canUpdateFieldValue: false,
         },
@@ -158,6 +169,48 @@ describe('Timeline activity field permissions', () => {
 
     expect(response.body.errors?.[0]?.message).toContain(
       PermissionsExceptionMessage.PERMISSION_DENIED,
+    );
+  });
+
+  // Restricting person.timelineActivities is mirrored onto timelineActivity.targetPerson
+  it('should still read properties when the role cannot read the target relation', async () => {
+    const adminResponse = await makeGraphqlApiRequest(
+      buildTimelineActivitiesOperation({ personId }),
+    );
+    const activityIds = adminResponse.body.data.timelineActivities.edges.map(
+      ({ node }: { node: { id: string } }) => node.id,
+    );
+
+    await upsertFieldPermissions({
+      roleId: customRoleId,
+      fieldPermissions: [
+        {
+          objectMetadataId: personObjectId,
+          fieldMetadataId: jobTitleFieldId,
+          canReadFieldValue: false,
+          canUpdateFieldValue: false,
+        },
+        {
+          objectMetadataId: personObjectId,
+          fieldMetadataId: timelineActivitiesFieldId,
+          canReadFieldValue: false,
+          canUpdateFieldValue: false,
+        },
+      ],
+    });
+
+    const response = await makeGraphqlApiRequestWithMemberRole(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'timelineActivity',
+        objectMetadataPluralName: 'timelineActivities',
+        gqlFields: 'id properties',
+        filter: { id: { in: activityIds } },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(JSON.stringify(response.body.data)).not.toContain(
+      RESTRICTED_JOB_TITLE,
     );
   });
 });
