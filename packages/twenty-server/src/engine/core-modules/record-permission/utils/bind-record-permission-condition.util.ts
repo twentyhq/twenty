@@ -6,6 +6,7 @@ import {
 import {
   convertViewFilterValueToString,
   isDefined,
+  isRecordFilterValueValid,
   type RecordFilter,
 } from 'twenty-shared/utils';
 import { isRecordPermissionConditionMemberDependent } from 'src/engine/core-modules/record-permission/utils/is-record-permission-condition-member-dependent.util';
@@ -122,18 +123,23 @@ export const bindRecordPermissionCondition = ({
     return UNSATISFIABLE_RECORD_FILTER;
   }
 
+  const recordFilter = {
+    fieldMetadataId: fieldMetadata.id,
+    operand: condition.operand as unknown as RecordFilter['operand'],
+    value: convertViewFilterValueToString(value),
+    subFieldName: condition.subFieldName as
+      | CompositeFieldSubFieldName
+      | undefined,
+  };
+
+  // The ordinary filter builder drops empty values, which would grant every record.
+  if (!isRecordFilterValueValid(recordFilter)) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
+
   return computeRecordGqlOperationFilterFromFlatMaps({
     ...metadata,
-    recordFilters: [
-      {
-        fieldMetadataId: fieldMetadata.id,
-        operand: condition.operand as unknown as RecordFilter['operand'],
-        value: convertViewFilterValueToString(value),
-        subFieldName: condition.subFieldName as
-          | CompositeFieldSubFieldName
-          | undefined,
-      },
-    ],
+    recordFilters: [recordFilter],
     recordFilterGroups: [],
     filterValueDependencies: {
       currentWorkspaceMemberId: authority.workspaceMember?.id,

@@ -115,6 +115,34 @@ describe('Record permission policies', () => {
     ).toEqual({ not: { and: [] } });
   });
 
+  it.each([null, undefined, '', []])(
+    'fails closed when a member city is empty: %p',
+    (city) => {
+      const { context, rule, memberCity, objects } =
+        createRecordPermissionTestContext();
+
+      if (rule.condition?.kind !== 'predicate')
+        throw new Error('Expected predicate fixture');
+
+      expect(
+        bindRecordPermissionCondition({
+          condition: {
+            ...rule.condition,
+            memberFieldUniversalIdentifier: memberCity.universalIdentifier,
+          },
+          authority: {
+            ...context.authorities[0],
+            workspaceMember: { id: v4(), city } as unknown as NonNullable<
+              (typeof context.authorities)[number]['workspaceMember']
+            >,
+          },
+          metadata: context,
+          objectUniversalIdentifier: objects.company.universalIdentifier,
+        }),
+      ).toEqual({ not: { and: [] } });
+    },
+  );
+
   it.each([
     JSON.stringify({ isCurrentWorkspaceMemberSelected: true }),
     { isCurrentWorkspaceMemberSelected: true },
