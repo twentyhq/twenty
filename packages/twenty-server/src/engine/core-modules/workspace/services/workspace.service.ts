@@ -7,6 +7,7 @@ import assert from 'assert';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { msg } from '@lingui/core/macro';
+import chunk from 'lodash.chunk';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
 import {
   MAX_ALLOWED_IFRAME_ORIGINS,
@@ -889,8 +890,40 @@ export class WorkspaceService {
   private async deleteApplicationRuntimeResourcesBeforeHardDelete(
     workspaceId: string,
   ): Promise<void> {
+    // Lambda's control plane quota (15 req/s per region) is shared with live function builds
+    const LOGIC_FUNCTION_DELETION_BATCH_SIZE = 3;
+
     const logicFunctionDriver =
       this.logicFunctionDriverFactory.getCurrentDriver();
+
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    const flatLogicFunctions = Object.values(
+      flatLogicFunctionMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+
+    for (const flatLogicFunctionBatch of chunk(
+      flatLogicFunctions,
+      LOGIC_FUNCTION_DELETION_BATCH_SIZE,
+    )) {
+      await Promise.all(
+        flatLogicFunctionBatch.map(async (flatLogicFunction) => {
+          try {
+            await logicFunctionDriver.delete(flatLogicFunction);
+          } catch (error) {
+            this.logger.warn(
+              `Failed to delete logic function ${flatLogicFunction.id} before hard deleting workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+            );
+          }
+        }),
+      );
+    }
 
     const applications =
       await this.applicationService.findManyApplications(workspaceId);
