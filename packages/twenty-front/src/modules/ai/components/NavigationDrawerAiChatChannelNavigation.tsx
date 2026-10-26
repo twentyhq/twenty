@@ -6,17 +6,15 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatChannelNavigationItems';
+import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { getAgentChatChannelNavigationItem } from '@/ai/utils/getAgentChatChannelNavigationItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import {
-  type AgentChatChannel,
-  AgentChatChannelAssignmentFilter,
-  AgentChatChannelThreadStatus,
-} from '~/generated-metadata/graphql';
+import { type AgentChatChannel } from '~/generated-metadata/graphql';
 
 type NavigationDrawerAiChatChannelNavigationProps = {
   channel: AgentChatChannel;
@@ -26,7 +24,6 @@ type NavigationDrawerAiChatChannelNavigationProps = {
   icon?: ReactElement;
   rightOptions?: ReactNode;
   isRightOptionsDropdownOpen?: boolean;
-  onNavigate: (channelView: AgentChatChannelView) => void;
 };
 
 export const NavigationDrawerAiChatChannelNavigation = ({
@@ -37,67 +34,61 @@ export const NavigationDrawerAiChatChannelNavigation = ({
   icon,
   rightOptions,
   isRightOptionsDropdownOpen,
-  onNavigate,
 }: NavigationDrawerAiChatChannelNavigationProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const childrenId = useId();
+  const { openAgentChatChannel } = useOpenAgentChatChannel();
   const isNavigationDrawerContentExpanded =
     useIsNavigationDrawerContentExpanded();
-  const [expansionOverride, setExpansionOverride] = useState<{
-    channelView: AgentChatChannelView | null;
-    isExpanded: boolean;
-  } | null>(null);
+  const [collapsedChannelView, setCollapsedChannelView] =
+    useState<AgentChatChannelView | null>(null);
+  const isChannelAccessible = channel.isAccessible ?? false;
   const isExpanded =
-    channel.isAccessible === true &&
-    (isDefined(expansionOverride) &&
-    expansionOverride.channelView === channelView
-      ? expansionOverride.isExpanded
-      : isActive);
-  const matchingIndex = isActive
-    ? AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.findIndex(
-        ({ channelStatus, assignment }) =>
-          channelStatus === channelView?.channelStatus &&
-          assignment === channelView.assignment,
-      )
-    : -1;
-  const selectedIndex =
-    isActive && matchingIndex < 0
-      ? AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.findIndex(
-          ({ channelStatus }) => channelStatus === channelView?.channelStatus,
-        )
-      : matchingIndex;
+    isChannelAccessible && isActive && collapsedChannelView !== channelView;
+  const selectedItem =
+    isActive && isDefined(channelView)
+      ? getAgentChatChannelNavigationItem(channelView)
+      : undefined;
+  const selectedIndex = AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.findIndex(
+    (item) => item === selectedItem,
+  );
   const areChildrenVisible = isExpanded && isNavigationDrawerContentExpanded;
   const ChevronIcon = isExpanded ? IconChevronDown : IconChevronRight;
 
   const handleClick = () => {
-    setExpansionOverride({ channelView, isExpanded: !isExpanded });
+    if (!isActive) {
+      setCollapsedChannelView(null);
+      openAgentChatChannel({ channelId: channel.id });
 
-    if (!isActive || !isNavigationDrawerContentExpanded) {
-      onNavigate({
-        channelId: channel.id,
-        channelStatus: AgentChatChannelThreadStatus.OPEN,
-        assignment: AgentChatChannelAssignmentFilter.ANY,
-      });
+      return;
     }
+
+    if (!isNavigationDrawerContentExpanded && isDefined(channelView)) {
+      openAgentChatChannel(channelView);
+
+      return;
+    }
+
+    setCollapsedChannelView(isExpanded ? channelView : null);
   };
 
   return (
     <NavigationDrawerItemGroup>
       <NavigationDrawerItem
         label={channel.name}
-        secondaryLabel={channel.isAccessible ? undefined : t`Not open to you`}
+        secondaryLabel={isChannelAccessible ? undefined : t`Not open to you`}
         Icon={icon ?? <AgentChatChannelIcon channel={channel} />}
-        variant={channel.isAccessible ? 'default' : 'tertiary'}
+        variant={isChannelAccessible ? 'default' : 'tertiary'}
         isUnread={summary?.hasUnreadOpen}
         active={isActive && !areChildrenVisible}
-        onClick={channel.isAccessible ? handleClick : undefined}
+        onClick={isChannelAccessible ? handleClick : undefined}
         triggerEvent="CLICK"
         preventCollapseOnMobile={isNavigationDrawerContentExpanded}
-        aria-expanded={channel.isAccessible ? areChildrenVisible : undefined}
+        aria-expanded={isChannelAccessible ? areChildrenVisible : undefined}
         aria-controls={areChildrenVisible ? childrenId : undefined}
         trailingIcon={
-          channel.isAccessible ? (
+          isChannelAccessible ? (
             <ChevronIcon size={theme.icon.size.sm} />
           ) : undefined
         }
@@ -131,7 +122,7 @@ export const NavigationDrawerAiChatChannelNavigation = ({
                     selectedIndex,
                   })}
                   onClick={() =>
-                    onNavigate({
+                    openAgentChatChannel({
                       channelId: channel.id,
                       channelStatus,
                       assignment,

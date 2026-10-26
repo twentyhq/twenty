@@ -11,7 +11,6 @@ import { NavigationDrawerAiChatChannelActionsDropdown } from '@/ai/components/Na
 import { NavigationDrawerAiChatChannelNavigation } from '@/ai/components/NavigationDrawerAiChatChannelNavigation';
 import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { useDeleteAgentChatChannel } from '@/ai/hooks/useDeleteAgentChatChannel';
-import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { useUpdateAgentChatChannel } from '@/ai/hooks/useUpdateAgentChatChannel';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
@@ -62,7 +61,6 @@ export const NavigationDrawerAiChatChannelItem = ({
     isDropdownOpenComponentState,
     dropdownId,
   );
-  const { openAgentChatChannel } = useOpenAgentChatChannel();
   const { updateAgentChatChannel } = useUpdateAgentChatChannel();
   const { deleteAgentChatChannel } = useDeleteAgentChatChannel();
   const { openDropdown } = useOpenDropdown();
@@ -149,7 +147,6 @@ export const NavigationDrawerAiChatChannelItem = ({
           isAiChatInboxPath(location.pathname) &&
           agentChatShownChannelView?.channelId === channel.id
         }
-        onNavigate={openAgentChatChannel}
         isRightOptionsDropdownOpen={isDropdownOpen}
         rightOptions={
           canManage || channel.isAccessible ? (

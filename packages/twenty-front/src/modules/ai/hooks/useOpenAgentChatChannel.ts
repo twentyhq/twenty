@@ -20,7 +20,7 @@ export const useOpenAgentChatChannel = () => {
       channelStatus = AgentChatChannelThreadStatus.OPEN,
       assignment = AgentChatChannelAssignmentFilter.ANY,
     }: Pick<AgentChatChannelView, 'channelId'> &
-      Partial<AgentChatChannelView>) => {
+      Partial<Pick<AgentChatChannelView, 'channelStatus' | 'assignment'>>) => {
       store.set(agentChatChannelViewState.atom, {
         channelId,
         channelStatus,

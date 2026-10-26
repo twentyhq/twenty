@@ -1,13 +1,16 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ComponentProps, useState } from 'react';
+import { type ComponentProps } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconDotsVertical } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NavigationDrawerAiChatChannelNavigation } from '@/ai/components/NavigationDrawerAiChatChannelNavigation';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
@@ -34,16 +37,9 @@ const onOptions = fn();
 const ChannelNavigationStory = ({
   channel,
   summary,
-  channelView: initialChannelView,
-  onNavigate,
   rightOptions,
 }: ComponentProps<typeof NavigationDrawerAiChatChannelNavigation>) => {
-  const [channelView, setChannelView] = useState(initialChannelView);
-
-  const handleNavigate = (nextChannelView: AgentChatChannelView) => {
-    onNavigate(nextChannelView);
-    setChannelView(nextChannelView);
-  };
+  const channelView = useAtomStateValue(agentChatChannelViewState);
 
   return (
     <StyledNavigation>
@@ -52,7 +48,6 @@ const ChannelNavigationStory = ({
         summary={summary}
         channelView={channelView}
         isActive={channelView?.channelId === channel.id}
-        onNavigate={handleNavigate}
         rightOptions={rightOptions}
       />
     </StyledNavigation>
@@ -64,6 +59,9 @@ const meta = {
   component: NavigationDrawerAiChatChannelNavigation,
   decorators: [IconsProviderDecorator, ComponentWithRouterDecorator],
   render: ChannelNavigationStory,
+  beforeEach: ({ args }) => {
+    jotaiStore.set(agentChatChannelViewState.atom, args.channelView);
+  },
   args: {
     channel: {
       id: 'sales',
@@ -85,7 +83,6 @@ const meta = {
     },
     channelView: OPEN_VIEW,
     isActive: true,
-    onNavigate: fn(),
   },
 } satisfies Meta<typeof NavigationDrawerAiChatChannelNavigation>;
 
@@ -93,14 +90,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Open: Story = {
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
       canvas.getByRole('button', { name: 'Open · 6' }),
     ).toHaveAttribute('aria-current', 'true');
     await userEvent.click(canvas.getByRole('button', { name: 'Assigned · 1' }));
-    await expect(args.onNavigate).toHaveBeenLastCalledWith({
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
       ...OPEN_VIEW,
       assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
     });
@@ -108,12 +105,12 @@ export const Open: Story = {
       canvas.getByRole('button', { name: 'Assigned · 1' }),
     ).toHaveAttribute('aria-current', 'true');
     await userEvent.click(canvas.getByRole('button', { name: 'Snoozed' }));
-    await expect(args.onNavigate).toHaveBeenLastCalledWith({
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
       ...OPEN_VIEW,
       channelStatus: AgentChatChannelThreadStatus.SNOOZED,
     });
     await userEvent.click(canvas.getByRole('button', { name: 'Done' }));
-    await expect(args.onNavigate).toHaveBeenLastCalledWith({
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
       ...OPEN_VIEW,
       channelStatus: AgentChatChannelThreadStatus.DONE,
     });
@@ -126,19 +123,24 @@ export const Open: Story = {
       'aria-current',
       'true',
     );
-    await expect(args.onNavigate).toHaveBeenCalledTimes(3);
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
+      ...OPEN_VIEW,
+      channelStatus: AgentChatChannelThreadStatus.DONE,
+    });
   },
 };
 
 export const Collapsed: Story = {
   args: { channelView: null, isActive: false },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const channel = canvas.getByRole('button', { name: 'Sales' });
 
     await expect(channel).toHaveAttribute('aria-expanded', 'false');
     await userEvent.click(channel);
-    await expect(args.onNavigate).toHaveBeenCalledWith(OPEN_VIEW);
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual(
+      OPEN_VIEW,
+    );
     await expect(channel).toHaveAttribute('aria-expanded', 'true');
   },
 };
@@ -153,7 +155,7 @@ export const KeyboardAndOptions: Story = {
       </IconButton>
     ),
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const channel = canvas.getByRole('button', { name: /^Sales/ });
 
@@ -167,7 +169,9 @@ export const KeyboardAndOptions: Story = {
     ).toHaveFocus();
     await userEvent.keyboard(' ');
     await expect(onOptions).toHaveBeenCalledTimes(1);
-    await expect(args.onNavigate).toHaveBeenCalledTimes(1);
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual(
+      OPEN_VIEW,
+    );
     await userEvent.tab();
     await expect(
       canvas.getByRole('button', { name: 'Open · 6' }),
@@ -246,15 +250,46 @@ export const Inaccessible: Story = {
     isActive: false,
     summary: undefined,
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await userEvent.click(
       canvas.getByRole('button', { name: 'Sales · Not open to you' }),
     );
-    await expect(args.onNavigate).not.toHaveBeenCalled();
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toBeNull();
     await expect(
       canvas.queryByRole('button', { name: 'Open' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const ReturnToTriage: Story = {
+  args: { channelView: null, isActive: false },
+  render: (args) => (
+    <>
+      <ChannelNavigationStory
+        channel={args.channel}
+        summary={args.summary}
+        channelView={args.channelView}
+        isActive={args.isActive}
+      />
+      <Button
+        onClick={() => jotaiStore.set(agentChatChannelViewState.atom, null)}
+      >
+        Open triage
+      </Button>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const channel = canvas.getByRole('button', { name: 'Sales' });
+
+    await userEvent.click(channel);
+    await expect(channel).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.click(canvas.getByRole('button', { name: 'Open triage' }));
+    await expect(channel).toHaveAttribute('aria-expanded', 'false');
+    await expect(
+      canvas.queryByRole('button', { name: 'Open · 6' }),
     ).not.toBeInTheDocument();
   },
 };
