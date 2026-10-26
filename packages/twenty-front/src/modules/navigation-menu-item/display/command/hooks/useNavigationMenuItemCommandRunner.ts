@@ -13,9 +13,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useNavigationMenuItemCommandRunner = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const { switchToNewChat } = useSwitchToNewAiChat({
-    shouldOpenInFullPage: true,
-  });
+  const { switchToNewChat } = useSwitchToNewAiChat();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const { createCoreAgent, canCreateCoreAgent } = useCreateCoreAgent();
   const navigateSettings = useNavigateSettings();
