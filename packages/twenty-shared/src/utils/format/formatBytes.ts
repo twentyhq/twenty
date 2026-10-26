@@ -1,7 +1,12 @@
 const BYTE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB'] as const;
 
-const roundToUnit = (bytes: number, unitIndex: number) =>
-  Number((bytes / 1024 ** unitIndex).toFixed(unitIndex === 0 ? 0 : 1));
+const roundToUnit = ({
+  bytes,
+  unitIndex,
+}: {
+  bytes: number;
+  unitIndex: number;
+}) => Number((bytes / 1024 ** unitIndex).toFixed(unitIndex === 0 ? 0 : 1));
 
 export const formatBytes = (bytes: number): string => {
   const magnitudeUnitIndex = Math.min(
@@ -10,9 +15,9 @@ export const formatBytes = (bytes: number): string => {
   );
   const unitIndex =
     magnitudeUnitIndex < BYTE_UNITS.length - 1 &&
-    roundToUnit(bytes, magnitudeUnitIndex) >= 1024
+    roundToUnit({ bytes, unitIndex: magnitudeUnitIndex }) >= 1024
       ? magnitudeUnitIndex + 1
       : magnitudeUnitIndex;
 
-  return `${roundToUnit(bytes, unitIndex)} ${BYTE_UNITS[unitIndex]}`;
+  return `${roundToUnit({ bytes, unitIndex })} ${BYTE_UNITS[unitIndex]}`;
 };
