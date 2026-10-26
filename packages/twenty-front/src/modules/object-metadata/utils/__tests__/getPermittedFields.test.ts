@@ -34,4 +34,38 @@ describe('getPermittedFields', () => {
       updatableFields: [nameField, addressField],
     });
   });
+
+  it('should drop morph relation targets the role cannot read', () => {
+    const targetField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('timelineActivity'),
+      fieldName: 'target',
+    });
+    const targetNames = (targetField.morphRelations ?? []).map(
+      (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
+    );
+    const companySourceFieldMetadataId = targetField.morphRelations?.find(
+      (morphRelation) =>
+        morphRelation.targetObjectMetadata.nameSingular === 'company',
+    )?.sourceFieldMetadata.id;
+
+    expect(targetNames).toContain('company');
+
+    const { readableFields } = getPermittedFields({
+      fields: [targetField],
+      objectPermissions: {
+        restrictedFields: {
+          [companySourceFieldMetadataId as string]: {
+            canRead: false,
+            canUpdate: false,
+          },
+        },
+      },
+    });
+
+    expect(
+      readableFields[0].morphRelations?.map(
+        (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
+      ),
+    ).toEqual(targetNames.filter((targetName) => targetName !== 'company'));
+  });
 });

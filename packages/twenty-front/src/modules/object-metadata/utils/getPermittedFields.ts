@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { type ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type GetPermittedFieldsArgs = {
   fields: FieldMetadataItem[];
@@ -20,7 +21,18 @@ export const getPermittedFields = ({
       fieldMetadataId: field.id,
     });
 
-    if (canReadField) {
+    if (canReadField && isDefined(field.morphRelations)) {
+      readableFields.push({
+        ...field,
+        morphRelations: field.morphRelations.filter(
+          (morphRelation) =>
+            getFieldPermissions({
+              objectPermissions,
+              fieldMetadataId: morphRelation.sourceFieldMetadata.id,
+            }).canReadField,
+        ),
+      });
+    } else if (canReadField) {
       readableFields.push(field);
     }
 
