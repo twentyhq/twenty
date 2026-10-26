@@ -36,7 +36,7 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input.type';
-import { assertStepTypeAvailableToApplicationRun } from 'src/modules/workflow/workflow-executor/utils/assert-step-type-available-to-application-run.util';
+import { assertApplicationRunMayUseStep } from 'src/modules/workflow/workflow-executor/utils/assert-application-run-may-use-step.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
@@ -57,6 +57,7 @@ import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/ty
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
 
@@ -79,6 +80,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowStepWaitWorkspaceService: WorkflowStepWaitWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async executeFromSteps({
@@ -601,9 +603,17 @@ export class WorkflowExecutorWorkspaceService {
     try {
       await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
-      assertStepTypeAvailableToApplicationRun({
+      await assertApplicationRunMayUseStep({
         stepType: step.type,
         runApplicationId,
+        applicationHasPermissionFlag: (applicationId, setting) =>
+          this.permissionsService.userHasWorkspaceSettingPermission({
+            userWorkspaceId: undefined,
+            workspaceId,
+            setting,
+            applicationId,
+            agentId: undefined,
+          }),
       });
 
       const nodeRunRefusal = await this.getNodeRunRefusal({
