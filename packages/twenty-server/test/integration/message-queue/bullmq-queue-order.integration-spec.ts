@@ -1,113 +1,50 @@
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Test } from '@nestjs/testing';
-import { Queue } from 'bullmq';
-import IORedis from 'ioredis';
-import { v4 as generateUuid } from 'uuid';
-
-import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-const createSignal = () => {
-  let resolve!: () => void;
-  const promise = new Promise<void>((resolvePromise) => {
-    resolve = resolvePromise;
-  });
+import {
+  createQueueOrderSignal,
+  withQueueOrderTestContext,
+} from 'test/integration/message-queue/utils/with-queue-order-test-context.util';
 
-  return { promise, resolve };
-};
+const queue1 = MessageQueue.workflowQueue;
+const queue2 = MessageQueue.delayedJobsQueue;
 
-// Real Redis and workers: mocks cannot establish ordering across queues.
 describe('BullMQDriver queue ordering (integration)', () => {
-  it.each([false, true])(
-    'processes queues independently (explicit priorities: %s)',
-    async (explicitPriorities) => {
-      const connection = new IORedis(
-        process.env.REDIS_QUEUE_URL ??
-          process.env.REDIS_URL ??
-          'redis://localhost:6379',
-        { maxRetriesPerRequest: null },
-      );
-      const options = { connection, prefix: `queue-order-${generateUuid()}` };
-      const queue1 = MessageQueue.workflowQueue;
-      const queue2 = MessageQueue.delayedJobsQueue;
-      const inspectionQueues = [queue1, queue2].map(
-        (name) => new Queue(name, options),
-      );
-      const module = await Test.createTestingModule({
-        providers: [
-          {
-            provide: MetricsService,
-            useValue: {
-              recordHistogram: jest.fn(),
-              incrementCounterForEvent: jest.fn(),
-            },
-          },
-          { provide: TwentyConfigService, useValue: {} },
-          { provide: EventEmitter2, useValue: new EventEmitter2() },
-          {
-            provide: BullMQDriver,
-            useFactory: (
-              metrics: MetricsService,
-              config: TwentyConfigService,
-              events: EventEmitter2,
-            ) => new BullMQDriver(options, metrics, config, events),
-            inject: [MetricsService, TwentyConfigService, EventEmitter2],
-          },
-        ],
-      }).compile();
-      const driver = module.get(BullMQDriver);
-      const started: string[] = [];
-      const firstStarted = createSignal();
-      const releaseFirst = createSignal();
-      const secondQueueDone = createSignal();
-      const firstQueueDone = createSignal();
-      const priorityJobsDone = createSignal();
+  it('preserves FIFO within a queue while another queue progresses independently', async () => {
+    const jobs = [
+      { queue: queue1, name: 'job-queue1-1', priority: 1 },
+      { queue: queue2, name: 'job-queue2-1', priority: 0 },
+      { queue: queue1, name: 'job-queue1-2', priority: 1 },
+      { queue: queue1, name: 'job-queue1-3', priority: 1 },
+    ];
+    const expectedOrder = [
+      'job-queue1-1',
+      'job-queue2-1',
+      'job-queue1-2',
+      'job-queue1-3',
+    ];
+    const actualOrder: string[] = [];
+    const firstStarted = createQueueOrderSignal();
+    const releaseFirst = createQueueOrderSignal();
+    const queue2Started = createQueueOrderSignal();
+    const queue1Done = createQueueOrderSignal();
 
-      driver.register(queue1);
-      driver.register(queue2);
+    await withQueueOrderTestContext(async (driver) => {
+      for (const job of jobs) {
+        await driver.add(job.queue, job.name, {}, { priority: job.priority });
+      }
 
       try {
-        await driver.add(
-          queue1,
-          'job-queue1-1',
-          {},
-          explicitPriorities ? { priority: 1 } : undefined,
-        );
-        await driver.add(
-          queue2,
-          'job-queue2-1',
-          {},
-          explicitPriorities ? { priority: 0 } : undefined,
-        );
-        await driver.add(
-          queue1,
-          'job-queue1-2',
-          {},
-          explicitPriorities ? { priority: 1 } : undefined,
-        );
-        await driver.add(
-          queue1,
-          'job-queue1-3',
-          {},
-          explicitPriorities ? { priority: 1 } : undefined,
-        );
-
         driver.work(
           queue1,
           async (job) => {
-            started.push(job.name);
+            actualOrder.push(job.name);
             if (job.name === 'job-queue1-1') {
               firstStarted.resolve();
               await releaseFirst.promise;
             }
-            if (job.name === 'application-job') {
-              priorityJobsDone.resolve();
-            }
             if (job.name === 'job-queue1-3') {
-              firstQueueDone.resolve();
+              queue1Done.resolve();
             }
           },
           MESSAGE_QUEUE_WORKER_CONFIG[queue1].workerOptions,
@@ -117,44 +54,58 @@ describe('BullMQDriver queue ordering (integration)', () => {
         driver.work(
           queue2,
           async (job) => {
-            started.push(job.name);
-            secondQueueDone.resolve();
+            actualOrder.push(job.name);
+            queue2Started.resolve();
           },
           MESSAGE_QUEUE_WORKER_CONFIG[queue2].workerOptions,
         );
 
-        await secondQueueDone.promise;
-        expect(started).toEqual(['job-queue1-1', 'job-queue2-1']);
+        await queue2Started.promise;
+        expect(actualOrder).toEqual(expectedOrder.slice(0, 2));
         releaseFirst.resolve();
-        await firstQueueDone.promise;
-        expect(started).toEqual([
-          'job-queue1-1',
-          'job-queue2-1',
-          'job-queue1-2',
-          'job-queue1-3',
-        ]);
-        await inspectionQueues[0].pause();
-        await driver.add(queue1, 'application-job', {}, { priority: 10 });
-        await driver.add(queue1, 'ordinary-job', {});
-        await driver.add(queue1, 'urgent-job', {}, { priority: 1 });
-        await driver.add(queue1, 'zero-priority-job', {}, { priority: 0 });
-        await inspectionQueues[0].resume();
-        await priorityJobsDone.promise;
-        expect(started.slice(4)).toEqual([
-          'zero-priority-job',
-          'urgent-job',
-          'ordinary-job',
-          'application-job',
-        ]);
+        await queue1Done.promise;
+        expect(actualOrder).toEqual(expectedOrder);
       } finally {
         releaseFirst.resolve();
-        await driver.onModuleDestroy();
-        for (const queue of inspectionQueues) {
-          await queue.obliterate({ force: true });
-          await queue.close();
-        }
-        await connection.quit();
       }
-    },
-  );
+    });
+  });
+
+  it('orders jobs by priority within one queue and uses FIFO for equal default priorities', async () => {
+    const jobs = [
+      { name: 'application-job', priority: 10 },
+      { name: 'ordinary-job-1', priority: undefined },
+      { name: 'urgent-job', priority: 1 },
+      { name: 'ordinary-job-2', priority: undefined },
+      { name: 'zero-priority-job', priority: 0 },
+    ];
+    const expectedOrder = [
+      'zero-priority-job',
+      'urgent-job',
+      'ordinary-job-1',
+      'ordinary-job-2',
+      'application-job',
+    ];
+    const actualOrder: string[] = [];
+    const done = createQueueOrderSignal();
+
+    await withQueueOrderTestContext(async (driver) => {
+      for (const job of jobs) {
+        await driver.add(queue1, job.name, {}, { priority: job.priority });
+      }
+      driver.work(
+        queue1,
+        async (job) => {
+          actualOrder.push(job.name);
+          if (actualOrder.length === jobs.length) {
+            done.resolve();
+          }
+        },
+        MESSAGE_QUEUE_WORKER_CONFIG[queue1].workerOptions,
+      );
+
+      await done.promise;
+      expect(actualOrder).toEqual(expectedOrder);
+    });
+  });
 });
