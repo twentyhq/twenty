@@ -174,18 +174,22 @@ export const PhonesFieldInput = () => {
   };
 
   const handleEscape = () => {
-    onEscape?.({ newValue: parseArrayToPhonesValue(phones) });
+    if (isInputOpen && isNonEmptyArray(phones)) {
+      closeInput();
+      return;
+    }
+
+    onEscape?.({
+      newValue: parseArrayToPhonesValue(phones),
+      skipPersist: true,
+    });
   };
 
   useMultiItemFieldDismiss({
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedPhones = isInputOpen ? saveInputValue() : phones;
-
-      if (!isDefined(updatedPhones)) {
-        return;
-      }
+      const updatedPhones = isInputOpen ? (saveInputValue() ?? phones) : phones;
 
       onClickOutside?.({
         newValue: parseArrayToPhonesValue(updatedPhones),

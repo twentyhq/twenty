@@ -177,18 +177,22 @@ export const EmailsFieldInput = () => {
   };
 
   const handleEscape = () => {
-    onEscape?.({ newValue: parseStringArrayToEmailsValue(emails) });
+    if (isInputOpen && isNonEmptyArray(emails)) {
+      closeInput();
+      return;
+    }
+
+    onEscape?.({
+      newValue: parseStringArrayToEmailsValue(emails),
+      skipPersist: true,
+    });
   };
 
   useMultiItemFieldDismiss({
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedEmails = isInputOpen ? saveInputValue() : emails;
-
-      if (!isDefined(updatedEmails)) {
-        return;
-      }
+      const updatedEmails = isInputOpen ? (saveInputValue() ?? emails) : emails;
 
       onClickOutside?.({
         newValue: parseStringArrayToEmailsValue(updatedEmails),

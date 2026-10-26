@@ -27,8 +27,8 @@ export const useMultiItemFieldDismiss = ({
     refs: [containerRef],
     callback: (event) => {
       if (
-        currentFocusedItem?.componentInstance.componentType !==
-        FocusComponentType.OPENED_FIELD_INPUT
+        currentFocusedItem?.componentInstance.componentType ===
+        FocusComponentType.DROPDOWN
       ) {
         return;
       }

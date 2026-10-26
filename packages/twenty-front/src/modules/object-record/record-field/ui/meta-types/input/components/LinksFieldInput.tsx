@@ -197,18 +197,22 @@ export const LinksFieldInput = () => {
   };
 
   const handleEscape = () => {
-    onEscape?.({ newValue: parseArrayToLinksValue(links) });
+    if (isInputOpen && isNonEmptyArray(links)) {
+      closeInput();
+      return;
+    }
+
+    onEscape?.({
+      newValue: parseArrayToLinksValue(links),
+      skipPersist: true,
+    });
   };
 
   useMultiItemFieldDismiss({
     containerRef,
     onEscape: handleEscape,
     onClickOutside: (event) => {
-      const updatedLinks = isInputOpen ? saveInputValue() : links;
-
-      if (!isDefined(updatedLinks)) {
-        return;
-      }
+      const updatedLinks = isInputOpen ? (saveInputValue() ?? links) : links;
 
       onClickOutside?.({
         newValue: parseArrayToLinksValue(updatedLinks),
