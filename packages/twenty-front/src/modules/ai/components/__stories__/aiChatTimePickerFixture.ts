@@ -3,7 +3,7 @@ import { type AiChatSchedulingAvailability } from '@/ai/types/AiChatSchedulingAv
 export const AI_CHAT_TIME_PICKER_FIXTURE = {
   date: '2026-10-07',
   viewedMonth: '2026-10',
-  timezone: 'Europe/Paris',
+  timeZone: 'Europe/Paris',
   availability: {
     status: 'ready',
     date: '2026-10-07',
@@ -34,6 +34,6 @@ export const AI_CHAT_TIME_PICKER_FIXTURE = {
 } as const satisfies {
   date: string;
   viewedMonth: string;
-  timezone: string;
+  timeZone: string;
   availability: AiChatSchedulingAvailability;
 };

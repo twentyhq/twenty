@@ -104,7 +104,7 @@ type AiChatTimePickerCardProps = {
   selectedSlotId: string | null;
   onSlotChange: (slotId: string | null) => void;
   availability: AiChatSchedulingAvailability;
-  timezone: string;
+  timeZone: string;
   locale: string;
   timeFormat: TimeFormat;
   weekStart: 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -128,7 +128,7 @@ export const AiChatTimePickerCard = ({
   selectedSlotId,
   onSlotChange,
   availability,
-  timezone,
+  timeZone,
   locale,
   timeFormat,
   weekStart,
@@ -162,7 +162,7 @@ export const AiChatTimePickerCard = ({
       return;
     }
 
-    onSendInvite({ date, slotId: selectedSlot.id, timezone });
+    onSendInvite({ date, slotId: selectedSlot.id, timeZone });
   };
 
   return (
@@ -199,7 +199,7 @@ export const AiChatTimePickerCard = ({
               selectedSlotId={isDefined(selectedSlot) ? selectedSlot.id : null}
               onSlotChange={onSlotChange}
               onRetry={onRetry}
-              timezone={timezone}
+              timeZone={timeZone}
               locale={locale}
               timeFormat={timeFormat}
               disabled={areControlsDisabled}

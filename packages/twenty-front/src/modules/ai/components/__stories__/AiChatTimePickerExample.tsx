@@ -79,7 +79,7 @@ export const AiChatTimePickerExample = ({
           onSlotChange(slotId);
         }}
         availability={availability}
-        timezone={AI_CHAT_TIME_PICKER_FIXTURE.timezone}
+        timeZone={AI_CHAT_TIME_PICKER_FIXTURE.timeZone}
         locale="en-US"
         timeFormat={TimeFormat.HOUR_24}
         weekStart={1}

@@ -39,7 +39,7 @@ type AiChatSchedulingSlotsProps = {
   selectedSlotId: string | null;
   onSlotChange: (slotId: string | null) => void;
   onRetry: () => void;
-  timezone: string;
+  timeZone: string;
   locale: string;
   timeFormat: TimeFormat;
   disabled: boolean;
@@ -52,7 +52,7 @@ export const AiChatSchedulingSlots = ({
   selectedSlotId,
   onSlotChange,
   onRetry,
-  timezone,
+  timeZone,
   locale,
   timeFormat,
   disabled,
@@ -69,7 +69,7 @@ export const AiChatSchedulingSlots = ({
   const timeFormatter = new Intl.DateTimeFormat(locale, {
     hour: timeFormat === TimeFormat.HOUR_24 ? '2-digit' : 'numeric',
     minute: '2-digit',
-    timeZone: timezone,
+    timeZone: timeZone,
     ...(timeFormat === TimeFormat.SYSTEM
       ? {}
       : { hour12: timeFormat === TimeFormat.HOUR_12 }),
@@ -82,7 +82,7 @@ export const AiChatSchedulingSlots = ({
   return (
     <StyledSlots aria-busy={isLoading}>
       <StyledDate>{dateLabel}</StyledDate>
-      <StyledDate>{timezone}</StyledDate>
+      <StyledDate>{timeZone}</StyledDate>
       {availability.status === 'error' && (
         <InlineBanner
           status="error"

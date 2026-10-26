@@ -52,7 +52,7 @@ export const SelectAndSend: Story = {
     await expect(args.onSendInvite).toHaveBeenCalledWith({
       date: AI_CHAT_TIME_PICKER_FIXTURE.date,
       slotId: 'slot-1100',
-      timezone: AI_CHAT_TIME_PICKER_FIXTURE.timezone,
+      timeZone: AI_CHAT_TIME_PICKER_FIXTURE.timeZone,
     });
   },
 };
@@ -151,7 +151,7 @@ export const AvailabilityChanged: Story = {
     await expect(args.onSendInvite).toHaveBeenCalledWith({
       date: AI_CHAT_TIME_PICKER_FIXTURE.date,
       slotId: 'slot-1400',
-      timezone: AI_CHAT_TIME_PICKER_FIXTURE.timezone,
+      timeZone: AI_CHAT_TIME_PICKER_FIXTURE.timeZone,
     });
   },
 };
