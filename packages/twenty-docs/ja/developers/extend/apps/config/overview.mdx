@@ -1,7 +1,6 @@
 ---
 title: 概要
 description: アプリ自体の設定 — アプリのアイデンティティ、デフォルト権限、およびインストール時に実行される内容を構成します。
-icon: screwdriver-wrench
 ---
 
 Twenty アプリの **config layer** は、アプリのアイデンティティ、保持する権限、インストールやアップグレード時に実行されるコードなど、アプリを *プラットフォームに対して* 説明するものです。 これらの宣言は新しいデータ構造や実行時の動作を追加するものではなく、アプリが *何者であるか*、そして *どのようにセットアップするか* を Twenty に伝える役割を持ちます。
@@ -37,10 +36,10 @@ Twenty アプリの **config layer** は、アプリのアイデンティティ�
   <Card title="アプリケーション設定" icon="rocket" href="/ja/developers/extend/apps/config/application">
     `defineApplication` — アイデンティティ、デフォルトロール、変数、マーケットプレイスのメタデータ。
   </Card>
-  <Card title="ロールと権限" icon="shield-halved" href="/ja/developers/extend/apps/config/roles">
+  <Card title="ロールと権限" icon="shield-half" href="/ja/developers/extend/apps/config/roles">
     `defineRole` — アプリのロジック関数が読み書きできる内容を宣言します。
   </Card>
-  <Card title="インストールフック" icon="wrench" href="/ja/developers/extend/apps/config/install-hooks">
+  <Card title="インストールフック" icon="tool" href="/ja/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`、`definePostInstallLogicFunction`、および `defineUninstallLogicFunction` — データのバックアップ、デフォルト値の投入、アップグレードの検証、アンインストール時のクリーンアップを行います。
   </Card>
 </CardGroup>

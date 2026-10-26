@@ -7,10 +7,8 @@ const SHARED_DEPENDENCIES_SHIM_NAMESPACE = 'twenty-shared-dependencies-shim';
 
 export const createSharedDependenciesShimPlugin = ({
   getSharedDependenciesBuildContext,
-  getShimSource = getSharedDependenciesShimSource,
 }: {
   getSharedDependenciesBuildContext: () => SharedDependenciesBuildContext | null;
-  getShimSource?: typeof getSharedDependenciesShimSource;
 }): esbuild.Plugin => ({
   name: 'twenty-shared-dependencies-shim',
   setup: (build) => {
@@ -44,7 +42,7 @@ export const createSharedDependenciesShimPlugin = ({
         }
 
         return {
-          contents: getShimSource({ specifier, exportNames }),
+          contents: getSharedDependenciesShimSource({ specifier, exportNames }),
           loader: 'js' as const,
         };
       },

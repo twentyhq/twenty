@@ -1,4 +1,5 @@
 import { clear, createStore, del, entries, set } from 'idb-keyval';
+import { BroadcastChannel as NodeBroadcastChannel } from 'worker_threads';
 
 import { createIndexedDbBackedJotaiStorage } from '@/ui/utilities/state/jotai/utils/createIndexedDbBackedJotaiStorage';
 import { isIndexedDbAvailable } from '@/ui/utilities/state/jotai/utils/isIndexedDbAvailable';
@@ -132,6 +133,49 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     await flushMicrotasks();
 
     expect(mockedLogError).toHaveBeenCalled();
+  });
+
+  describe('across tabs', () => {
+    class UnrefBroadcastChannel extends NodeBroadcastChannel {
+      constructor(name: string) {
+        super(name);
+        this.unref();
+      }
+    }
+
+    beforeAll(() => {
+      Object.defineProperty(globalThis, 'BroadcastChannel', {
+        value: UnrefBroadcastChannel,
+        configurable: true,
+        writable: true,
+      });
+    });
+
+    afterAll(() => {
+      Reflect.deleteProperty(globalThis, 'BroadcastChannel');
+    });
+
+    it('should deliver the writes of one synchronous run to other tabs together', async () => {
+      const { storage: senderStorage } =
+        createIndexedDbBackedJotaiStorage<Item>('cross-tab');
+      const { storage: receiverStorage } =
+        createIndexedDbBackedJotaiStorage<Item>('cross-tab');
+
+      const secondValueSeenByFirstSubscriber = new Promise<Item>((resolve) => {
+        receiverStorage.subscribe?.(
+          'first',
+          () => resolve(receiverStorage.getItem('second', INITIAL)),
+          INITIAL,
+        );
+      });
+
+      senderStorage.setItem('first', { value: 1 });
+      senderStorage.setItem('second', { value: 2 });
+
+      await expect(secondValueSeenByFirstSubscriber).resolves.toEqual({
+        value: 2,
+      });
+    });
   });
 
   describe('when IndexedDB is unavailable', () => {

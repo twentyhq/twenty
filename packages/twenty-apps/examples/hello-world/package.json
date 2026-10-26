@@ -15,7 +15,6 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@types/react": "^18.2.0",

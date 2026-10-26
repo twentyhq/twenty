@@ -1,7 +1,6 @@
 ---
 title: Hooks de instalação
 description: Execute lógica durante o ciclo de vida de instalação, atualização ou desinstalação — popule dados iniciais, faça backup de registros, valide a atualização, limpe recursos externos.
-icon: wrench
 ---
 
 Hooks de instalação são funções de lógica especiais que são executadas durante o ciclo de vida de instalação, atualização ou desinstalação. Elas compartilham o mesmo runtime de handler que as [logic functions](/pt/developers/extend/apps/logic/logic-functions) normais, mas são declaradas com suas próprias funções de definição e ficam fora do modelo de gatilhos normal (HTTP, cron, eventos de banco de dados). Hooks de instalação recebem um `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` é `undefined` em uma instalação nova); o hook de desinstalação recebe um `UninstallPayload` (`{ version?: string }` — a versão que está sendo removida).
