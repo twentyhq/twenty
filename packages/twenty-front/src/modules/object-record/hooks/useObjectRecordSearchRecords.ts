@@ -3,6 +3,7 @@ import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isSearchQueryWaitingForData } from '@/object-record/utils/isSearchQueryWaitingForData';
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
@@ -36,20 +37,28 @@ export const useObjectRecordSearchRecords = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error, previousData } = useQuery(SearchDocument, {
-    skip:
-      skip || !areDefined || !currentWorkspaceMember || !isDefined(searchInput),
-    variables: {
-      searchInput: searchInput ?? '',
-      limit: limit ?? MAX_SEARCH_RESULTS,
-      filter: filter ?? {},
-      includedObjectNameSingulars: objectNameSingulars,
+  const { data, dataState, loading, error, previousData } = useQuery(
+    SearchDocument,
+    {
+      skip:
+        skip ||
+        !areDefined ||
+        !currentWorkspaceMember ||
+        !isDefined(searchInput),
+      variables: {
+        searchInput: searchInput ?? '',
+        limit: limit ?? MAX_SEARCH_RESULTS,
+        filter: filter ?? {},
+        includedObjectNameSingulars: objectNameSingulars,
+      },
+      fetchPolicy: fetchPolicy,
+      client: apolloCoreClient,
     },
-    fetchPolicy: fetchPolicy,
-    client: apolloCoreClient,
-  });
+  );
 
-  const effectiveData = loading ? previousData : data;
+  const isWaitingForData = isSearchQueryWaitingForData({ loading, dataState });
+
+  const effectiveData = isWaitingForData ? previousData : data;
 
   const searchRecords = useMemo(
     () => effectiveData?.search?.edges?.map((edge) => edge.node) || [],
@@ -58,7 +67,7 @@ export const useObjectRecordSearchRecords = ({
 
   return {
     searchRecords,
-    loading,
+    loading: isWaitingForData,
     error,
   };
 };

@@ -8,6 +8,7 @@ import {
   getCommonFrontComponentBuildOptions,
   getSharedDependenciesEntrySource,
   toSharedDependenciesNamespaceIdentifier,
+  type SharedDependenciesExportNames,
 } from 'twenty-shared/front-component-build';
 
 import { FRONT_COMPONENT_UI_IMPORTS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-imports.constant';
@@ -26,20 +27,32 @@ export const buildFrontComponentSharedDependencies = async ({
     'react/jsx-runtime',
     ...FRONT_COMPONENT_UI_IMPORTS,
   ];
-  const result = await buildFrontComponentWithLimitsOrThrow({
-    ...getCommonFrontComponentBuildOptions(),
-    stdin: {
-      contents: getSharedDependenciesEntrySource(dependencies),
-      resolveDir: resolveDirectory,
-      sourcefile: 'front-component-shared-dependencies.js',
-      loader: 'js',
-    },
-    write: false,
-    platform: 'browser',
-    plugins: [createJsxRuntimeRemoteWrapperPlugin(), cssInjectionPlugin],
+  const buildVendor = (
+    exportNamesBySpecifier: Map<string, SharedDependenciesExportNames>,
+  ) =>
+    buildFrontComponentWithLimitsOrThrow({
+      ...getCommonFrontComponentBuildOptions(),
+      stdin: {
+        contents: getSharedDependenciesEntrySource(exportNamesBySpecifier),
+        resolveDir: resolveDirectory,
+        sourcefile: 'front-component-shared-dependencies.js',
+        loader: 'js',
+      },
+      write: false,
+      platform: 'browser',
+      plugins: [createJsxRuntimeRemoteWrapperPlugin(), cssInjectionPlugin],
+    });
+  const probe = await buildVendor(
+    new Map(
+      dependencies.map((specifier) => [
+        specifier,
+        { namedExports: [], hasDefaultExport: false },
+      ]),
+    ),
+  );
+  const { code } = await transform(probe.outputFiles[0].text, {
+    format: 'cjs',
   });
-  const source = result.outputFiles[0].text;
-  const { code } = await transform(source, { format: 'cjs' });
   const module: { exports: Record<string, Record<string, unknown>> } = {
     exports: {},
   };
@@ -67,6 +80,9 @@ export const buildFrontComponentSharedDependencies = async ({
       ] as const;
     }),
   );
+
+  const result = await buildVendor(exportNamesBySpecifier);
+  const source = result.outputFiles[0].text;
 
   return {
     source,

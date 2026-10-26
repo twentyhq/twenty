@@ -1,7 +1,6 @@
 ---
 title: Kurulum Kancaları
 description: Kurulum, yükseltme veya kaldırma yaşam döngüsü sırasında mantık çalıştırın — başlangıç verilerini yükleyin, kayıtları yedekleyin, yükseltmeyi doğrulayın, harici kaynakları temizleyin.
-icon: wrench
 ---
 
 Kurulum kancaları, kurulum, yükseltme veya kaldırma yaşam döngüsü sırasında çalışan özel mantık işlevleridir. Bunlar, normal [mantık işlevleri](/tr/developers/extend/apps/logic/logic-functions) ile aynı işleyici çalışma zamanını paylaşır, ancak kendi tanımlama işlevleriyle bildirilirler ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yaşarlar. Kurulum kancaları bir `InstallPayload` alır (`{ previousVersion?: string; newVersion: string }` — yeni bir kurulumda `previousVersion`, `undefined` olur); kaldırma kancası ise bir `UninstallPayload` alır (`{ version?: string }` — kaldırılan sürüm).

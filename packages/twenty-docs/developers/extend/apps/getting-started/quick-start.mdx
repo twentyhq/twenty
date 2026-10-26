@@ -1,10 +1,18 @@
 ---
 title: Quick Start
-icon: 'rocket'
 description: Create your first Twenty app with the standalone CLI.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Before you start
+
 Use Node.js 24.5+ and Yarn 4. Install the CLI globally; your app keeps its own SDK dependencies.
+
+<Note>
+Building Twenty apps is officially supported on Unix systems (macOS and Linux) only. On Windows, work inside WSL 2.
+</Note>
 
 ## Create the project
 
@@ -48,8 +56,6 @@ twenty app apply
 
 `plan` previews changes. `apply` uploads and synchronizes once. Use `--no-delete` to keep remote entities missing from source, or `--yes` to permit object and field deletions without a prompt. All three commands require an authenticated remote and registration ownership.
 
-`create-twenty-app` and the SDK's bundled CLI are retired. See the [CLI migration guide](/developers/extend/apps/operations/cli#migrating-from-the-sdk-cli).
-
 ## What you can build
 
 Apps are composed of **entities** — each defined as a TypeScript file with a single `export default`:
@@ -82,37 +88,27 @@ Each skill installs with its own reference docs. The `agent-skills` branch becom
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card
-    title="Config"
-    icon="screwdriver-wrench"
-    href="/developers/extend/apps/config/overview"
-  >
-    Application identity, default role, install and uninstall hooks, public
-    assets.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/extend/apps/config/overview" img="/images/documentation/section-overview-icons-v1/apps-config.svg">
+    <CardTitle>Config</CardTitle>
+    Application identity, default role, install and uninstall hooks, public assets.
   </Card>
-  <Card
-    title="Data"
-    icon="database"
-    href="/developers/extend/apps/data/overview"
-  >
+  <Card href="/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>Data</CardTitle>
     Objects, fields, and bidirectional relations.
   </Card>
-  <Card title="Logic" icon="bolt" href="/developers/extend/apps/logic/overview">
+  <Card href="/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>Logic</CardTitle>
     Logic functions, skills, agents, and OAuth connections.
   </Card>
-  <Card
-    title="Layout"
-    icon="table-columns"
-    href="/developers/extend/apps/layout/overview"
-  >
+  <Card href="/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Layout</CardTitle>
     Views, navigation, page layouts, front components.
   </Card>
-  <Card
-    title="Operations"
-    icon="rocket"
-    href="/developers/extend/apps/operations/overview"
-  >
+  <Card href="/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>Operations</CardTitle>
     CLI, testing, remotes, CI, and publishing your app.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" />

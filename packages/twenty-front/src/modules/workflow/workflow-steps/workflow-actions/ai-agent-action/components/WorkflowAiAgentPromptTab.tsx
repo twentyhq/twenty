@@ -8,6 +8,7 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
 import { AgentOutputSchemaBuilder } from '@/ai/components/AgentOutputSchemaBuilder';
@@ -20,7 +21,9 @@ import {
   type AgentResponseSchema,
   type ModelConfiguration,
 } from 'twenty-shared/ai';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
 import {
   FeatureFlagKey,
@@ -58,6 +61,8 @@ export const WorkflowAiAgentPromptTab = ({
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
   const [updateAgent] = useMutation(UpdateOneAgentDocument);
+  const { getUpdatableWorkflowVersionStepOrThrow } =
+    useGetUpdatableWorkflowVersionOrThrow();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -91,10 +96,21 @@ export const WorkflowAiAgentPromptTab = ({
       return;
     }
 
+    const updatableStep = await getUpdatableWorkflowVersionStepOrThrow({
+      stepId: action.id,
+      stepType: 'AI_AGENT',
+    });
+
+    const updatableAgentId = updatableStep.settings.input.agentId;
+
+    if (!isDefined(updatableAgentId)) {
+      throw new Error(doNotTranslate('The AI agent step has no agent'));
+    }
+
     const response = await updateAgent({
       variables: {
         input: {
-          id: workflowAiAgentActionAgent.id,
+          id: updatableAgentId,
           ...input,
         },
       },

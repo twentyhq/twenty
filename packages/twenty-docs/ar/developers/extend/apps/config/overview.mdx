@@ -1,7 +1,6 @@
 ---
 title: نظرة عامة
 description: قم بتهيئة التطبيق نفسه — هويته، والأذونات الافتراضية، وما الذي يعمل في وقت التثبيت.
-icon: screwdriver-wrench
 ---
 
 طبقة **الإعدادات (config layer)** لتطبيق Twenty هي ما يصف التطبيق *للمنصة* — هويته، والأذونات التي يمتلكها، والكود الذي يعمل أثناء التثبيت أو الترقية. هذه التصريحات لا تضيف أشكال بيانات جديدة أو سلوكًا وقت التشغيل؛ بل تخبر Twenty *من هو التطبيق* و*كيفية إعداده*.
@@ -37,10 +36,10 @@ icon: screwdriver-wrench
   <Card title="تكوين التطبيق" icon="rocket" href="/ar/developers/extend/apps/config/application">
     `defineApplication` — الهوية، الدور الافتراضي، المتغيرات، والبيانات الوصفية لسوق التطبيقات.
   </Card>
-  <Card title="الأدوار والصلاحيات" icon="shield-halved" href="/ar/developers/extend/apps/config/roles">
+  <Card title="الأدوار والصلاحيات" icon="shield-half" href="/ar/developers/extend/apps/config/roles">
     `defineRole` — حدِّد ما يمكن لوظائف منطق التطبيق قراءته وكتابته.
   </Card>
-  <Card title="خطافات التثبيت" icon="wrench" href="/ar/developers/extend/apps/config/install-hooks">
+  <Card title="خطافات التثبيت" icon="tool" href="/ar/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction` و`definePostInstallLogicFunction` و`defineUninstallLogicFunction` — نسخ البيانات احتياطيًا، تهيئة القيم الافتراضية، التحقق من صحة الترقيات، والتنظيف عند الإزالة.
   </Card>
 </CardGroup>
