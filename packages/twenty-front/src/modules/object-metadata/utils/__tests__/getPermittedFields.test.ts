@@ -40,8 +40,13 @@ describe('getPermittedFields', () => {
       objectMetadataItem: getMockObjectMetadataItemOrThrow('taskTarget'),
       fieldName: 'target',
     });
-    const morphRelations = targetField.morphRelations ?? [];
-    const [headMorphRelation, secondMorphRelation] = morphRelations;
+    // Metadata reads serve a head row whose id belongs to no target
+    const headField: FieldMetadataItem = {
+      ...targetField,
+      id: '6f1c0e0a-5d3b-4c6e-9a51-3b8f6e2d7c40',
+    };
+    const morphRelations = headField.morphRelations ?? [];
+    const [firstMorphRelation] = morphRelations;
 
     const getTargetNames = (field: FieldMetadataItem | undefined) =>
       field?.morphRelations?.map(
@@ -50,10 +55,10 @@ describe('getPermittedFields', () => {
 
     it('should drop only the targets the role cannot read or update', () => {
       const { readableFields, updatableFields } = getPermittedFields({
-        fields: [targetField],
+        fields: [headField],
         objectPermissions: {
           restrictedFields: {
-            [secondMorphRelation.sourceFieldMetadata.id]: {
+            [firstMorphRelation.sourceFieldMetadata.id]: {
               canRead: false,
               canUpdate: false,
             },
@@ -61,35 +66,28 @@ describe('getPermittedFields', () => {
         },
       });
 
-      const expectedTargetNames = getTargetNames(targetField)?.filter(
-        (targetName) =>
-          targetName !== secondMorphRelation.targetObjectMetadata.nameSingular,
-      );
+      const expectedTargetNames = getTargetNames(headField)?.slice(1);
 
       expect(getTargetNames(readableFields[0])).toEqual(expectedTargetNames);
       expect(getTargetNames(updatableFields[0])).toEqual(expectedTargetNames);
     });
 
-    it('should keep the field when only the target sharing its id is restricted', () => {
-      expect(headMorphRelation.sourceFieldMetadata.id).toBe(targetField.id);
-
-      const { readableFields } = getPermittedFields({
-        fields: [targetField],
-        objectPermissions: {
-          restrictedFields: {
-            [targetField.id]: { canRead: false, canUpdate: false },
+    it('should drop the field when its head is restricted', () => {
+      expect(
+        getPermittedFields({
+          fields: [headField],
+          objectPermissions: {
+            restrictedFields: {
+              [headField.id]: { canRead: false, canUpdate: true },
+            },
           },
-        },
-      });
-
-      expect(getTargetNames(readableFields[0])).toEqual(
-        getTargetNames(targetField)?.slice(1),
-      );
+        }),
+      ).toEqual({ readableFields: [], updatableFields: [headField] });
     });
 
     it('should drop the field when no target is readable', () => {
       const { readableFields, updatableFields } = getPermittedFields({
-        fields: [targetField],
+        fields: [headField],
         objectPermissions: {
           restrictedFields: Object.fromEntries(
             morphRelations.map((morphRelation) => [
@@ -101,7 +99,7 @@ describe('getPermittedFields', () => {
       });
 
       expect(readableFields).toEqual([]);
-      expect(updatableFields).toEqual([targetField]);
+      expect(updatableFields).toEqual([headField]);
     });
   });
 });

@@ -10,7 +10,7 @@ type GetPermittedFieldsArgs = {
 
 type FieldPermission = 'canReadField' | 'canUpdateField';
 
-// A morph field's id is its first target's id, so each target is checked on its own.
+// A head restriction covers every morph target, a target restriction only its own column.
 const getPermittedField = ({
   field,
   objectPermissions,
@@ -20,13 +20,17 @@ const getPermittedField = ({
   objectPermissions: GetPermittedFieldsArgs['objectPermissions'];
   permission: FieldPermission;
 }): FieldMetadataItem | undefined => {
+  const isFieldPermitted = getFieldPermissions({
+    objectPermissions,
+    fieldMetadataId: field.id,
+  })[permission];
+
+  if (!isFieldPermitted) {
+    return undefined;
+  }
+
   if (!isNonEmptyArray(field.morphRelations)) {
-    return getFieldPermissions({
-      objectPermissions,
-      fieldMetadataId: field.id,
-    })[permission]
-      ? field
-      : undefined;
+    return field;
   }
 
   const permittedMorphRelations = field.morphRelations.filter(
