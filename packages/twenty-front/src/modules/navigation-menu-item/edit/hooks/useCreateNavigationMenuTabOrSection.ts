@@ -105,17 +105,9 @@ export const useCreateNavigationMenuTabOrSection = () => {
     setNavigationMenuItemIdToRename(section.id);
   };
 
-  const pinCommand = ({
-    parentId,
-    commandKey,
-  }: {
-    parentId: string | null;
-    commandKey: NavigationMenuItemCommandKey;
-  }) => {
+  const pinCommand = (commandKey: NavigationMenuItemCommandKey) => {
     const commandsContainer = workspaceNavigationMenuItems.find(
-      (item) =>
-        isNavigationMenuItemCommandsContainer(item) &&
-        (item.folderId ?? null) === parentId,
+      isNavigationMenuItemCommandsContainer,
     );
     const commandsContainerId = commandsContainer?.id ?? v4();
 
@@ -124,7 +116,6 @@ export const useCreateNavigationMenuTabOrSection = () => {
         buildOptimisticNavigationMenuItem({
           id: commandsContainerId,
           type: NavigationMenuItemType.COMMANDS,
-          folderId: parentId ?? undefined,
           position: -1,
         }),
       );

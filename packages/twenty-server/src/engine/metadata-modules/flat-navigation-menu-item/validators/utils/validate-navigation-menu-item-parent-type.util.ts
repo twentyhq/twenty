@@ -10,6 +10,7 @@ const getAllowedParentTypes = (
 ): NavigationMenuItemType[] => {
   switch (type) {
     case NavigationMenuItemType.TAB:
+    case NavigationMenuItemType.COMMANDS:
       return [];
     case NavigationMenuItemType.SECTION:
     case NavigationMenuItemType.AI_CHAT_TRIAGE:
@@ -17,7 +18,6 @@ const getAllowedParentTypes = (
     case NavigationMenuItemType.AI_CHAT_RECENTS:
     case NavigationMenuItemType.AI_AGENTS:
     case NavigationMenuItemType.AI_CHAT_CHANNELS:
-    case NavigationMenuItemType.COMMANDS:
       return [NavigationMenuItemType.TAB];
     case NavigationMenuItemType.COMMAND:
       return [NavigationMenuItemType.COMMANDS];

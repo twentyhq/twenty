@@ -13,25 +13,16 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const PINNED_COMMANDS = [
-  {
-    container: STANDARD_NAVIGATION_MENU_ITEMS.homeCommands,
-    commands: [STANDARD_NAVIGATION_MENU_ITEMS.homeCommandsSearch],
-  },
-  {
-    container: STANDARD_NAVIGATION_MENU_ITEMS.chatsTabCommands,
-    commands: [
-      STANDARD_NAVIGATION_MENU_ITEMS.chatsTabCommandsNewChat,
-      STANDARD_NAVIGATION_MENU_ITEMS.chatsTabCommandsSearch,
-    ],
-  },
+const DEFAULT_PINNED_COMMANDS = [
+  STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommandsSearch,
+  STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommandsNewChat,
 ];
 
 @RegisteredWorkspaceCommand('2.52.0', 1793031015299)
 @Command({
   name: 'upgrade:2-52:add-pinned-navigation-menu-commands',
   description:
-    'Pin the default commands at the top of Home and of the Chats tab, for workspaces where they have none',
+    'Pin Search and New chat at the top of the sidebar, for workspaces that have no pinned commands',
 })
 export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -52,45 +43,16 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
         'flatNavigationMenuItemMaps',
       ]);
 
-    const workspaceNavigationMenuItems = Object.values(
+    const hasPinnedCommands = Object.values(
       flatNavigationMenuItemMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((navigationMenuItem) => !isDefined(navigationMenuItem.userWorkspaceId));
-
-    const parentIdsWithCommands = new Set(
-      workspaceNavigationMenuItems
-        .filter(
-          (navigationMenuItem) =>
-            navigationMenuItem.type === NavigationMenuItemType.COMMANDS,
-        )
-        .map((navigationMenuItem) => navigationMenuItem.folderId ?? null),
+    ).some(
+      (navigationMenuItem) =>
+        isDefined(navigationMenuItem) &&
+        !isDefined(navigationMenuItem.userWorkspaceId) &&
+        navigationMenuItem.type === NavigationMenuItemType.COMMANDS,
     );
 
-    const getParent = (folderUniversalIdentifier: string | undefined) =>
-      isDefined(folderUniversalIdentifier)
-        ? workspaceNavigationMenuItems.find(
-            (navigationMenuItem) =>
-              navigationMenuItem.universalIdentifier ===
-              folderUniversalIdentifier,
-          )
-        : undefined;
-
-    const pinnedCommandsToAdd = PINNED_COMMANDS.filter(({ container }) => {
-      const folderUniversalIdentifier =
-        'folderUniversalIdentifier' in container
-          ? container.folderUniversalIdentifier
-          : undefined;
-      const parent = getParent(folderUniversalIdentifier);
-
-      if (isDefined(folderUniversalIdentifier) && !isDefined(parent)) {
-        return false;
-      }
-
-      return !parentIdsWithCommands.has(parent?.id ?? null);
-    });
-
-    if (pinnedCommandsToAdd.length === 0) {
+    if (hasPinnedCommands) {
       this.logger.log(
         `Pinned commands already present for workspace ${workspaceId}, skipping`,
       );
@@ -100,7 +62,7 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Would pin the default commands in ${pinnedCommandsToAdd.length} tabs for workspace ${workspaceId}`,
+        `[DRY RUN] Would pin the default commands for workspace ${workspaceId}`,
       );
 
       return;
@@ -149,50 +111,31 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
       updatedAt: now,
     });
 
-    const flatNavigationMenuItemsToCreate = pinnedCommandsToAdd.flatMap(
-      ({ container, commands }) => {
-        const parent = getParent(
-          'folderUniversalIdentifier' in container
-            ? container.folderUniversalIdentifier
-            : undefined,
-        );
-        const parentId = parent?.id ?? null;
-        const siblingPositions = workspaceNavigationMenuItems
-          .filter(
-            (navigationMenuItem) =>
-              (navigationMenuItem.folderId ?? null) === parentId &&
-              navigationMenuItem.type !== NavigationMenuItemType.TAB,
-          )
-          .map((navigationMenuItem) => navigationMenuItem.position);
-        const containerId = v4();
+    const pinnedCommands = STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommands;
+    const pinnedCommandsId = v4();
 
-        return [
-          buildFlatNavigationMenuItem({
-            id: containerId,
-            universalIdentifier: container.universalIdentifier,
-            type: container.type,
-            folderId: parentId,
-            folderUniversalIdentifier: parent?.universalIdentifier ?? null,
-            position: Math.min(
-              container.position,
-              ...siblingPositions.map((position) => position - 1),
-            ),
-            commandKey: null,
-          }),
-          ...commands.map((command) =>
-            buildFlatNavigationMenuItem({
-              id: v4(),
-              universalIdentifier: command.universalIdentifier,
-              type: command.type,
-              folderId: containerId,
-              folderUniversalIdentifier: command.folderUniversalIdentifier,
-              position: command.position,
-              commandKey: command.commandKey,
-            }),
-          ),
-        ];
-      },
-    );
+    const flatNavigationMenuItemsToCreate = [
+      buildFlatNavigationMenuItem({
+        id: pinnedCommandsId,
+        universalIdentifier: pinnedCommands.universalIdentifier,
+        type: pinnedCommands.type,
+        folderId: null,
+        folderUniversalIdentifier: null,
+        position: pinnedCommands.position,
+        commandKey: null,
+      }),
+      ...DEFAULT_PINNED_COMMANDS.map((command) =>
+        buildFlatNavigationMenuItem({
+          id: v4(),
+          universalIdentifier: command.universalIdentifier,
+          type: command.type,
+          folderId: pinnedCommandsId,
+          folderUniversalIdentifier: command.folderUniversalIdentifier,
+          position: command.position,
+          commandKey: command.commandKey,
+        }),
+      ),
+    ];
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
@@ -221,8 +164,6 @@ export class AddPinnedNavigationMenuCommandsCommand extends ProvisionedWorkspace
       );
     }
 
-    this.logger.log(
-      `Pinned the default commands in ${pinnedCommandsToAdd.length} tabs for workspace ${workspaceId}`,
-    );
+    this.logger.log(`Pinned the default commands for workspace ${workspaceId}`);
   }
 }

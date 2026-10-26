@@ -2,28 +2,29 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { isNavigationMenuItemCommandsContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemCommandsContainer';
 import { getNavigationMenuItemCommandKey } from '@/navigation-menu-item/common/utils/getNavigationMenuItemCommandKey';
 import { useNavigationMenuItemCommandRunner } from '@/navigation-menu-item/display/command/hooks/useNavigationMenuItemCommandRunner';
-import { useNavigationMenuItemCommands } from '@/navigation-menu-item/display/command/hooks/useNavigationMenuItemCommands';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { useNavigationMenuItemsInContainers } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsInContainers';
 import { WorkspaceSectionContainer } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionContainer';
 import { useWorkspaceSectionItemClickHandlers } from '@/navigation-menu-item/display/sections/workspace/hooks/useWorkspaceSectionItemClickHandlers';
 import { NavigationMenuItemAddCommandButton } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddCommandButton';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type NavigationMenuItemCommandsProps = {
-  parentId: string | null;
-};
-
-export const NavigationMenuItemCommands = ({
-  parentId,
-}: NavigationMenuItemCommandsProps) => {
+export const NavigationMenuItemCommands = () => {
   const isMobile = useIsMobile();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { commandsContainer, commandItems } =
-    useNavigationMenuItemCommands(parentId);
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const commandsContainer = workspaceNavigationMenuItems.find(
+    isNavigationMenuItemCommandsContainer,
+  );
+  const commandItems = useNavigationMenuItemsInContainers(
+    isDefined(commandsContainer) ? [commandsContainer.id] : [],
+  );
   const { isCommandAvailable } = useNavigationMenuItemCommandRunner();
   const {
     selectedNavigationMenuItemId,
@@ -40,10 +41,7 @@ export const NavigationMenuItemCommands = ({
         return isDefined(commandKey) && isCommandAvailable(commandKey);
       });
   const addCommandButton = isEditable ? (
-    <NavigationMenuItemAddCommandButton
-      parentId={parentId}
-      commandItems={commandItems}
-    />
+    <NavigationMenuItemAddCommandButton commandItems={commandItems} />
   ) : undefined;
 
   if (!isDefined(commandsContainer) || visibleCommandItems.length === 0) {

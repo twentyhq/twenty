@@ -13,12 +13,10 @@ import { useCreateNavigationMenuTabOrSection } from '@/navigation-menu-item/edit
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 type NavigationMenuItemAddCommandButtonProps = {
-  parentId: string | null;
   commandItems: NavigationMenuItem[];
 };
 
 export const NavigationMenuItemAddCommandButton = ({
-  parentId,
   commandItems,
 }: NavigationMenuItemAddCommandButtonProps) => {
   const { t } = useLingui();
@@ -31,7 +29,7 @@ export const NavigationMenuItemAddCommandButton = ({
   return (
     <NavigationMenuItemEntrance>
       <NavigationMenuItemContainerTemplateMenu
-        dropdownId={`navigation-menu-add-command-${parentId ?? 'home'}`}
+        dropdownId="navigation-menu-add-command"
         title={t`Add command`}
         isTriggerNativeButton={false}
         trigger={
@@ -59,7 +57,7 @@ export const NavigationMenuItemAddCommandButton = ({
                 Icon,
                 isDisabled: isAlreadyInSidebar,
                 isAlreadyInSidebar,
-                onClick: () => pinCommand({ parentId, commandKey }),
+                onClick: () => pinCommand(commandKey),
               };
             }),
           },

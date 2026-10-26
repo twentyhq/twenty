@@ -1,3 +1,4 @@
+import { NavigationMenuItemCommands } from '@/navigation-menu-item/display/command/components/NavigationMenuItemCommands';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
 import { NavigationMenuTabContent } from '@/navigation-menu-item/display/tab/components/NavigationMenuTabContent';
@@ -28,6 +29,7 @@ export const MainNavigationDrawerScrollableItems = () => {
 
   return (
     <StyledScrollableItemsContainer>
+      <NavigationMenuItemCommands />
       <NavigationDrawerOpenedSection />
       {isDefined(activeNavigationMenuTab) ? (
         <NavigationMenuTabContent

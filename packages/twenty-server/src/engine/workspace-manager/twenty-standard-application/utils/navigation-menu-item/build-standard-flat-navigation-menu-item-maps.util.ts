@@ -28,11 +28,9 @@ const WORKFLOWS_FOLDER_ITEM_NAMES = [
   'workflowsFolderAllWorkflowVersions',
 ] as const;
 
-const HOME_COMMAND_NAMES = ['homeCommandsSearch'] as const;
-
-const CHATS_TAB_COMMAND_NAMES = [
-  'chatsTabCommandsNewChat',
-  'chatsTabCommandsSearch',
+const PINNED_COMMAND_NAMES = [
+  'pinnedCommandsSearch',
+  'pinnedCommandsNewChat',
 ] as const;
 
 const CHATS_TAB_SECTION_NAMES = [
@@ -59,68 +57,46 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     byUserWorkspaceIdAndFolderId: {},
   };
 
-  const addPinnedCommands = ({
-    containerName,
-    commandNames,
-    folderId,
-  }: {
-    containerName: 'homeCommands' | 'chatsTabCommands';
-    commandNames: readonly (
-      | (typeof HOME_COMMAND_NAMES)[number]
-      | (typeof CHATS_TAB_COMMAND_NAMES)[number]
-    )[];
-    folderId: string | null;
-  }) => {
-    const containerDefinition = STANDARD_NAVIGATION_MENU_ITEMS[containerName];
-    const containerId = v4();
+  const pinnedCommandsDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.pinnedCommands;
+  const pinnedCommandsId = v4();
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem:
+      createStandardNavigationMenuItemContainerFlatMetadata({
+        universalIdentifier: pinnedCommandsDefinition.universalIdentifier,
+        type: pinnedCommandsDefinition.type,
+        position: pinnedCommandsDefinition.position,
+        navigationMenuItemId: pinnedCommandsId,
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      }),
+    flatNavigationMenuItemMaps,
+  });
+
+  for (const pinnedCommandName of PINNED_COMMAND_NAMES) {
+    const pinnedCommandDefinition =
+      STANDARD_NAVIGATION_MENU_ITEMS[pinnedCommandName];
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
       flatNavigationMenuItem:
         createStandardNavigationMenuItemContainerFlatMetadata({
-          universalIdentifier: containerDefinition.universalIdentifier,
-          type: containerDefinition.type,
-          folderId,
+          universalIdentifier: pinnedCommandDefinition.universalIdentifier,
+          type: pinnedCommandDefinition.type,
+          commandKey: pinnedCommandDefinition.commandKey,
+          folderId: pinnedCommandsId,
           folderUniversalIdentifier:
-            'folderUniversalIdentifier' in containerDefinition
-              ? containerDefinition.folderUniversalIdentifier
-              : null,
-          position: containerDefinition.position,
-          navigationMenuItemId: containerId,
+            pinnedCommandDefinition.folderUniversalIdentifier,
+          position: pinnedCommandDefinition.position,
+          navigationMenuItemId: v4(),
           workspaceId,
           twentyStandardApplicationId,
           now,
         }),
       flatNavigationMenuItemMaps,
     });
-
-    for (const commandName of commandNames) {
-      const commandDefinition = STANDARD_NAVIGATION_MENU_ITEMS[commandName];
-
-      addFlatNavigationMenuItemToMapsAndUpdateIndex({
-        flatNavigationMenuItem:
-          createStandardNavigationMenuItemContainerFlatMetadata({
-            universalIdentifier: commandDefinition.universalIdentifier,
-            type: commandDefinition.type,
-            commandKey: commandDefinition.commandKey,
-            folderId: containerId,
-            folderUniversalIdentifier:
-              commandDefinition.folderUniversalIdentifier,
-            position: commandDefinition.position,
-            navigationMenuItemId: v4(),
-            workspaceId,
-            twentyStandardApplicationId,
-            now,
-          }),
-        flatNavigationMenuItemMaps,
-      });
-    }
-  };
-
-  addPinnedCommands({
-    containerName: 'homeCommands',
-    commandNames: HOME_COMMAND_NAMES,
-    folderId: null,
-  });
+  }
 
   const inboxSectionDefinition = STANDARD_NAVIGATION_MENU_ITEMS.inboxSection;
 
@@ -249,12 +225,6 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
         now,
       }),
     flatNavigationMenuItemMaps,
-  });
-
-  addPinnedCommands({
-    containerName: 'chatsTabCommands',
-    commandNames: CHATS_TAB_COMMAND_NAMES,
-    folderId: chatsTabId,
   });
 
   for (const chatsTabSectionName of CHATS_TAB_SECTION_NAMES) {
