@@ -40,7 +40,6 @@ describe('getPermittedFields', () => {
       objectMetadataItem: getMockObjectMetadataItemOrThrow('taskTarget'),
       fieldName: 'target',
     });
-    // Metadata reads serve a head row whose id belongs to no target
     const headField: FieldMetadataItem = {
       ...targetField,
       id: '6f1c0e0a-5d3b-4c6e-9a51-3b8f6e2d7c40',

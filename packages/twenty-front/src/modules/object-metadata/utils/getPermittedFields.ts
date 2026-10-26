@@ -10,7 +10,6 @@ type GetPermittedFieldsArgs = {
 
 type FieldPermission = 'canReadField' | 'canUpdateField';
 
-// A head restriction covers every morph target, a target restriction only its own column.
 const getFieldWithPermittedMorphTargets = ({
   field,
   objectPermissions,
