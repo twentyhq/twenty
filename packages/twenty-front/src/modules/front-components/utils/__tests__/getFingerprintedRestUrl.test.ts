@@ -2,18 +2,17 @@ import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 
 describe('getFingerprintedRestUrl', () => {
-  it.each(['front-components', 'front-component-shared-dependencies'] as const)(
-    'keeps %s checksums outside static asset paths',
-    (resource) => {
-      expect(
-        getFingerprintedRestUrl({
-          resource,
-          id: 'resource-id',
-          checksum: 'abc123',
-        }),
-      ).toBe(`${REST_API_BASE_URL}/${resource}/resource-id/abc123`);
-    },
-  );
+  it('builds a checksum-fingerprinted path URL when a checksum is provided', () => {
+    expect(
+      getFingerprintedRestUrl({
+        resource: 'front-components',
+        id: 'front-component-id',
+        checksum: 'abc123',
+      }),
+    ).toBe(
+      `${REST_API_BASE_URL}/front-components/front-component-id/abc123.js`,
+    );
+  });
 
   it('falls back to the bare id URL when no checksum is provided', () => {
     expect(
@@ -23,6 +22,18 @@ describe('getFingerprintedRestUrl', () => {
       }),
     ).toBe(
       `${REST_API_BASE_URL}/front-component-shared-dependencies/application-id`,
+    );
+  });
+
+  it('keeps shared dependency checksums outside static asset paths', () => {
+    expect(
+      getFingerprintedRestUrl({
+        resource: 'front-component-shared-dependencies',
+        id: 'application-id',
+        checksum: 'abc123',
+      }),
+    ).toBe(
+      `${REST_API_BASE_URL}/front-component-shared-dependencies/application-id/abc123`,
     );
   });
 });

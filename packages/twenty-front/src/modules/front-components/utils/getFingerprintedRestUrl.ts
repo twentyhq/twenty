@@ -9,7 +9,16 @@ export const getFingerprintedRestUrl = ({
   resource: 'front-components' | 'front-component-shared-dependencies';
   id: string;
   checksum?: string;
-}): string =>
-  isDefined(checksum)
-    ? `${REST_API_BASE_URL}/${resource}/${id}/${checksum}`
-    : `${REST_API_BASE_URL}/${resource}/${id}`;
+}): string => {
+  const resourceUrl = `${REST_API_BASE_URL}/${resource}/${id}`;
+
+  if (!isDefined(checksum)) {
+    return resourceUrl;
+  }
+
+  const isSharedDependencies =
+    resource === 'front-component-shared-dependencies';
+  const cacheKey = isSharedDependencies ? checksum : `${checksum}.js`;
+
+  return `${resourceUrl}/${cacheKey}`;
+};
