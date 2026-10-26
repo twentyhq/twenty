@@ -16,7 +16,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { MAX_UNPAID_WORKSPACES_WITH_TRIAL } from 'src/engine/core-modules/billing/constants/max-unpaid-workspaces-with-trial.constant';
+import { MAX_TRIAL_WORKSPACES_PER_USER } from 'src/engine/core-modules/billing/constants/max-trial-workspaces-per-user.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -57,38 +57,21 @@ export class BillingPortalWorkspaceService {
     userId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const otherUnpaidCreatedWorkspaceCount = await this.userWorkspaceRepository
+    const otherTrialWorkspaceCount = await this.userWorkspaceRepository
       .createQueryBuilder('userWorkspace')
-      .withDeleted()
+      .innerJoin(
+        BillingSubscriptionEntity,
+        'billingSubscription',
+        'billingSubscription.workspaceId = userWorkspace.workspaceId',
+      )
       .where('userWorkspace.userId = :userId', { userId })
       .andWhere('userWorkspace.workspaceId != :workspaceId', { workspaceId })
-      .andWhere((queryBuilder) => {
-        const earlierUserWorkspaceQuery = queryBuilder
-          .subQuery()
-          .select('1')
-          .from(UserWorkspaceEntity, 'earlierUserWorkspace')
-          .withDeleted()
-          .where('earlierUserWorkspace.workspaceId = userWorkspace.workspaceId')
-          .andWhere('earlierUserWorkspace.createdAt < userWorkspace.createdAt')
-          .getQuery();
-
-        return `NOT EXISTS ${earlierUserWorkspaceQuery}`;
+      .andWhere('billingSubscription.status = :trialingStatus', {
+        trialingStatus: SubscriptionStatus.Trialing,
       })
-      .andWhere((queryBuilder) => {
-        const activeSubscriptionQuery = queryBuilder
-          .subQuery()
-          .select('1')
-          .from(BillingSubscriptionEntity, 'activeSubscription')
-          .where('activeSubscription.workspaceId = userWorkspace.workspaceId')
-          .andWhere('activeSubscription.status = :activeStatus')
-          .getQuery();
-
-        return `NOT EXISTS ${activeSubscriptionQuery}`;
-      })
-      .setParameter('activeStatus', SubscriptionStatus.Active)
       .getCount();
 
-    return otherUnpaidCreatedWorkspaceCount >= MAX_UNPAID_WORKSPACES_WITH_TRIAL;
+    return otherTrialWorkspaceCount >= MAX_TRIAL_WORKSPACES_PER_USER;
   }
 
   async computeCheckoutSessionURL({
