@@ -389,7 +389,7 @@ export class BullMQDriver
     }
 
     const queueOptions: JobsOptions = {
-      priority: options?.priority ?? DEFAULT_JOB_PRIORITY,
+      priority: options?.priority,
       repeat: options?.repeat,
       removeOnComplete: {
         age: QUEUE_RETENTION.completedMaxAge,

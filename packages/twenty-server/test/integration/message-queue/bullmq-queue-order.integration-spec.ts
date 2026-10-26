@@ -1,5 +1,5 @@
-import { Test } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Test } from '@nestjs/testing';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { v4 as generateUuid } from 'uuid';
@@ -7,8 +7,8 @@ import { v4 as generateUuid } from 'uuid';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const createSignal = () => {
   let resolve!: () => void;
