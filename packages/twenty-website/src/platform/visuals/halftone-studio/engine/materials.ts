@@ -284,9 +284,9 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
                 modelMatrix
               );
               vec3 refractedRayExit = position + transmissionRay;
-              vec4 ndcPos =
+              vec4 normalizedDeviceCoordinates =
                 projMatrix * viewMatrix * vec4(refractedRayExit, 1.0);
-              vec2 refractionCoords = ndcPos.xy / ndcPos.w;
+              vec2 refractionCoords = normalizedDeviceCoordinates.xy / normalizedDeviceCoordinates.w;
               refractionCoords += 1.0;
               refractionCoords /= 2.0;
               vec3 transmissionDirection = normalize(transmissionRay);
@@ -333,10 +333,10 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
             material.thickness *= texture2D(thicknessMap, vUv).g;
           #endif
 
-          vec3 pos = vWorldPosition;
+          vec3 transmissionPosition = vWorldPosition;
           float runningSeed = 0.0;
-          vec3 v = normalize(cameraPosition - pos);
-          vec3 n = inverseTransformDirection(normal, viewMatrix);
+          vec3 transmissionViewDirection = normalize(cameraPosition - transmissionPosition);
+          vec3 transmissionNormal = inverseTransformDirection(normal, viewMatrix);
           vec3 transmission = vec3(0.0);
           float transmissionR;
           float transmissionG;
@@ -349,15 +349,15 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
 
           if (distortion > 0.0) {
             distortionNormal = distortion * vec3(
-              snoiseFractal(vec3(pos * distortionScale + temporalOffset)),
-              snoiseFractal(vec3(pos.zxy * distortionScale - temporalOffset)),
-              snoiseFractal(vec3(pos.yxz * distortionScale + temporalOffset))
+              snoiseFractal(vec3(transmissionPosition * distortionScale + temporalOffset)),
+              snoiseFractal(vec3(transmissionPosition.zxy * distortionScale - temporalOffset)),
+              snoiseFractal(vec3(transmissionPosition.yxz * distortionScale + temporalOffset))
             );
           }
 
           for (float i = 0.0; i < ${samples}.0; i++) {
             vec3 sampleNorm = normalize(
-              n +
+              transmissionNormal +
               roughnessFactor * roughnessFactor * 2.0 *
               normalize(
                 vec3(
@@ -372,12 +372,12 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
 
             transmissionR = getIBLVolumeRefraction(
               sampleNorm,
-              v,
+              transmissionViewDirection,
               material.roughness,
               material.diffuseColor,
               material.specularColor,
               material.specularF90,
-              pos,
+              transmissionPosition,
               modelMatrix,
               viewMatrix,
               projectionMatrix,
@@ -389,12 +389,12 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
 
             transmissionG = getIBLVolumeRefraction(
               sampleNorm,
-              v,
+              transmissionViewDirection,
               material.roughness,
               material.diffuseColor,
               material.specularColor,
               material.specularF90,
-              pos,
+              transmissionPosition,
               modelMatrix,
               viewMatrix,
               projectionMatrix,
@@ -406,12 +406,12 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
 
             transmissionB = getIBLVolumeRefraction(
               sampleNorm,
-              v,
+              transmissionViewDirection,
               material.roughness,
               material.diffuseColor,
               material.specularColor,
               material.specularF90,
-              pos,
+              transmissionPosition,
               modelMatrix,
               viewMatrix,
               projectionMatrix,
@@ -447,10 +447,13 @@ class TransmissionMaterial extends THREE.MeshPhysicalMaterial {
 
 const MAX_TEXTURE_ANISOTROPY = 8;
 
-function setTextureSampling(
-  texture: THREE.Texture,
-  renderer: THREE.WebGLRenderer,
-) {
+function setTextureSampling({
+  renderer,
+  texture,
+}: {
+  renderer: THREE.WebGLRenderer;
+  texture: THREE.Texture;
+}) {
   texture.generateMipmaps = true;
   texture.magFilter = THREE.LinearFilter;
   texture.minFilter = THREE.LinearMipmapLinearFilter;
@@ -469,11 +472,15 @@ function createGlassTransmissionScene() {
   return transmissionScene;
 }
 
-function loadTexture(
-  url: string,
-  renderer: THREE.WebGLRenderer,
-  colorSpace: THREE.ColorSpace,
-) {
+function loadTexture({
+  colorSpace,
+  renderer,
+  url,
+}: {
+  colorSpace: THREE.ColorSpace;
+  renderer: THREE.WebGLRenderer;
+  url: string;
+}) {
   const loader = new THREE.TextureLoader();
 
   return new Promise<THREE.Texture>((resolve, reject) => {
@@ -481,7 +488,7 @@ function loadTexture(
       url,
       (texture) => {
         texture.colorSpace = colorSpace;
-        setTextureSampling(texture, renderer);
+        setTextureSampling({ renderer, texture });
         resolve(texture);
       },
       undefined,
@@ -491,11 +498,11 @@ function loadTexture(
 }
 
 async function loadEnvironmentTexture(renderer: THREE.WebGLRenderer) {
-  const equirectangularTexture = await loadTexture(
-    HALFTONE_ENVIRONMENT_DATA_URL,
+  const equirectangularTexture = await loadTexture({
+    colorSpace: THREE.SRGBColorSpace,
     renderer,
-    THREE.SRGBColorSpace,
-  );
+    url: HALFTONE_ENVIRONMENT_DATA_URL,
+  });
   equirectangularTexture.mapping = THREE.EquirectangularReflectionMapping;
   equirectangularTexture.wrapS = THREE.RepeatWrapping;
   equirectangularTexture.wrapT = THREE.ClampToEdgeWrapping;
@@ -516,11 +523,11 @@ async function loadImageTextures(
   const entries = await Promise.all(
     typedObjectEntries(HALFTONE_MATERIAL_TEXTURE_DATA_URLS).map(
       async ([image, dataUrl]) => {
-        const texture = await loadTexture(
-          dataUrl,
+        const texture = await loadTexture({
+          colorSpace: THREE.NoColorSpace,
           renderer,
-          THREE.NoColorSpace,
-        );
+          url: dataUrl,
+        });
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
 

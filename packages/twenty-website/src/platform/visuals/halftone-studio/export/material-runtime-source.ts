@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { HALFTONE_ENVIRONMENT_DATA_URL } from '../engine/environment-data';
 import { HALFTONE_MATERIAL_CONSTANTS } from '../engine/material-constants';
 import type { HalftoneMaterialTexture } from '../engine/material-texture';
@@ -217,9 +219,9 @@ const HALFTONE_TRANSMISSION_PARS_FRAGMENT = String.raw`
       modelMatrix
     );
     vec3 refractedRayExit = position + transmissionRay;
-    vec4 ndcPos =
+    vec4 normalizedDeviceCoordinates =
       projMatrix * viewMatrix * vec4(refractedRayExit, 1.0);
-    vec2 refractionCoords = ndcPos.xy / ndcPos.w;
+    vec2 refractionCoords = normalizedDeviceCoordinates.xy / normalizedDeviceCoordinates.w;
     refractionCoords += 1.0;
     refractionCoords /= 2.0;
     vec3 transmissionDirection = normalize(transmissionRay);
@@ -263,10 +265,10 @@ material.attenuationColor = attenuationColor;
   material.thickness *= texture2D(thicknessMap, vUv).g;
 #endif
 
-vec3 pos = vWorldPosition;
+vec3 transmissionPosition = vWorldPosition;
 float runningSeed = 0.0;
-vec3 v = normalize(cameraPosition - pos);
-vec3 n = inverseTransformDirection(normal, viewMatrix);
+vec3 transmissionViewDirection = normalize(cameraPosition - transmissionPosition);
+vec3 transmissionNormal = inverseTransformDirection(normal, viewMatrix);
 vec3 transmission = vec3(0.0);
 float transmissionR;
 float transmissionG;
@@ -279,15 +281,15 @@ vec3 temporalOffset = vec3(time, -time, -time) * temporalDistortion;
 
 if (distortion > 0.0) {
   distortionNormal = distortion * vec3(
-    snoiseFractal(vec3(pos * distortionScale + temporalOffset)),
-    snoiseFractal(vec3(pos.zxy * distortionScale - temporalOffset)),
-    snoiseFractal(vec3(pos.yxz * distortionScale + temporalOffset))
+    snoiseFractal(vec3(transmissionPosition * distortionScale + temporalOffset)),
+    snoiseFractal(vec3(transmissionPosition.zxy * distortionScale - temporalOffset)),
+    snoiseFractal(vec3(transmissionPosition.yxz * distortionScale + temporalOffset))
   );
 }
 
 for (float i = 0.0; i < __SAMPLES__.0; i++) {
   vec3 sampleNorm = normalize(
-    n +
+    transmissionNormal +
     roughnessFactor * roughnessFactor * 2.0 *
     normalize(
       vec3(
@@ -302,12 +304,12 @@ for (float i = 0.0; i < __SAMPLES__.0; i++) {
 
   transmissionR = getIBLVolumeRefraction(
     sampleNorm,
-    v,
+    transmissionViewDirection,
     material.roughness,
     material.diffuseColor,
     material.specularColor,
     material.specularF90,
-    pos,
+    transmissionPosition,
     modelMatrix,
     viewMatrix,
     projectionMatrix,
@@ -319,12 +321,12 @@ for (float i = 0.0; i < __SAMPLES__.0; i++) {
 
   transmissionG = getIBLVolumeRefraction(
     sampleNorm,
-    v,
+    transmissionViewDirection,
     material.roughness,
     material.diffuseColor,
     material.specularColor,
     material.specularF90,
-    pos,
+    transmissionPosition,
     modelMatrix,
     viewMatrix,
     projectionMatrix,
@@ -336,12 +338,12 @@ for (float i = 0.0; i < __SAMPLES__.0; i++) {
 
   transmissionB = getIBLVolumeRefraction(
     sampleNorm,
-    v,
+    transmissionViewDirection,
     material.roughness,
     material.diffuseColor,
     material.specularColor,
     material.specularF90,
-    pos,
+    transmissionPosition,
     modelMatrix,
     viewMatrix,
     projectionMatrix,
@@ -442,7 +444,7 @@ class HalftoneTransmissionMaterial extends THREE.MeshPhysicalMaterial {
   }
 }
 
-function setTextureSampling(texture, renderer) {
+function setTextureSampling({ renderer, texture }) {
   texture.generateMipmaps = true;
   texture.magFilter = THREE.LinearFilter;
   texture.minFilter = THREE.LinearMipmapLinearFilter;
@@ -459,7 +461,7 @@ function createGlassTransmissionScene() {
   return transmissionScene;
 }
 
-function loadTexture(url, renderer, colorSpace) {
+function loadTexture({ colorSpace, renderer, url }) {
   const loader = new THREE.TextureLoader();
 
   return new Promise((resolve, reject) => {
@@ -467,7 +469,7 @@ function loadTexture(url, renderer, colorSpace) {
       url,
       (texture) => {
         texture.colorSpace = colorSpace;
-        setTextureSampling(texture, renderer);
+        setTextureSampling({ renderer, texture });
         resolve(texture);
       },
       undefined,
@@ -477,11 +479,11 @@ function loadTexture(url, renderer, colorSpace) {
 }
 
 async function loadEnvironmentTexture(renderer) {
-  const equirectangularTexture = await loadTexture(
-    ENVIRONMENT_DATA_URL,
+  const equirectangularTexture = await loadTexture({
+    colorSpace: THREE.SRGBColorSpace,
     renderer,
-    THREE.SRGBColorSpace,
-  );
+    url: ENVIRONMENT_DATA_URL,
+  });
   equirectangularTexture.mapping = THREE.EquirectangularReflectionMapping;
   equirectangularTexture.wrapS = THREE.RepeatWrapping;
   equirectangularTexture.wrapT = THREE.ClampToEdgeWrapping;
@@ -497,11 +499,11 @@ async function loadEnvironmentTexture(renderer) {
 }
 
 async function loadImageTexture({ renderer, url }) {
-  if (url === null) {
-    return null;
-  }
-
-  const texture = await loadTexture(url, renderer, THREE.NoColorSpace);
+  const texture = await loadTexture({
+    colorSpace: THREE.NoColorSpace,
+    renderer,
+    url,
+  });
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
 
@@ -509,11 +511,11 @@ async function loadImageTexture({ renderer, url }) {
 }
 
 async function createHalftoneMaterialAssets(renderer) {
-  const [environmentTexture, roughnessTexture, bumpTexture] = await Promise.all([
-    loadEnvironmentTexture(renderer),
-    loadImageTexture({ renderer, url: ROUGHNESS_IMAGE_DATA_URL }),
-    loadImageTexture({ renderer, url: BUMP_IMAGE_DATA_URL }),
-  ]);
+  const [environmentTexture, [roughnessTexture, bumpTexture]] =
+    await Promise.all([
+      loadEnvironmentTexture(renderer),
+      loadMaterialImageTextures(renderer),
+    ]);
 
   return {
     bumpTexture,
@@ -566,7 +568,7 @@ function applyHalftoneMaterialSettings(material, materialSettings, materialAsset
   material.buffer = null;
   material.roughnessMap = roughnessTexture;
   material.bumpMap = bumpTexture;
-  material.bumpScale = bumpTexture === null ? 0 : BUMP_SCALE;
+  material.bumpScale = BUMP_SCALE;
   material.side = THREE.FrontSide;
   material.attenuationColor.set('white');
   material.attenuationDistance = Infinity;
@@ -626,6 +628,12 @@ function disposeHalftoneMaterialAssets(materialAssets) {
 }
 `;
 
+function createImageTextureLoadSource(url: string | null) {
+  return isDefined(url)
+    ? `loadImageTexture({ renderer, url: ${JSON.stringify(url)} })`
+    : 'null';
+}
+
 export function createMaterialRuntimeSource(texture: HalftoneMaterialTexture) {
   const textureSources = resolveMaterialTextureSources({
     sources: HALFTONE_MATERIAL_TEXTURE_DATA_URLS,
@@ -636,8 +644,13 @@ export function createMaterialRuntimeSource(texture: HalftoneMaterialTexture) {
 /*!
 ${DREI_LICENSE_NOTICE}
 */
-const ROUGHNESS_IMAGE_DATA_URL = ${JSON.stringify(textureSources.roughness)};
-const BUMP_IMAGE_DATA_URL = ${JSON.stringify(textureSources.bump)};
 const BUMP_SCALE = ${textureSources.bumpScale};
+
+function loadMaterialImageTextures(renderer) {
+  return Promise.all([
+    ${createImageTextureLoadSource(textureSources.roughness)},
+    ${createImageTextureLoadSource(textureSources.bump)},
+  ]);
+}
 ${MATERIAL_RUNTIME_SOURCE}`;
 }
