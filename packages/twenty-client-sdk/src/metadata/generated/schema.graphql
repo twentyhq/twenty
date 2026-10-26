@@ -4438,6 +4438,7 @@ type SearchField {
 }
 
 input SendAppChannelMessageInput {
+  idempotencyKey: UUID!
   messageChannelId: UUID!
   messageThreadId: UUID!
   text: String!

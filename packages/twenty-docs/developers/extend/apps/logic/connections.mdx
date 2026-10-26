@@ -168,7 +168,7 @@ export const linkedinAuthorizeHandler = async ({
 };
 ```
 
-Hand `callbackUrl` to the service unchanged. Twenty accepts it as a browser redirect (`GET`) and as a server notification (`POST`), and runs `callbackLogicFunction` for each request with its method, query parameters and body. Return the account the request proves, or `null` when it carries none — typically the browser coming back while the account id travels by notification:
+Hand `callbackUrl` to the service unchanged. Twenty accepts it as a browser redirect (`GET`) and as a server notification (`POST`), and runs `callbackLogicFunction` for each request with its method, query parameters, headers, parsed body and `rawBody` (the exact request bytes, `null` on `GET`). Return the account the request proves, or `null` when it carries none — typically the browser coming back while the account id travels by notification:
 
 ```ts src/logic-functions/handlers/linkedin-callback-handler.ts
 import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
@@ -190,6 +190,37 @@ export const linkedinCallbackHandler = async ({
 };
 ```
 
+The signed state in `callbackUrl` only proves the request carries that URL, not that the service sent it. When the service signs its notifications, verify the signature over `rawBody` before trusting the body. Headers are lowercased, and `cookie`, `authorization` and `proxy-authorization` are never passed on:
+
+```ts src/logic-functions/handlers/hosted-callback-handler.ts
+import { createHmac, timingSafeEqual } from 'node:crypto';
+
+import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
+
+export const hostedCallbackHandler = async ({
+  httpMethod,
+  headers,
+  rawBody,
+}: ConnectionCallbackPayload) => {
+  if (httpMethod !== 'POST' || rawBody === null) {
+    return null;
+  }
+
+  const expected = createHmac('sha256', process.env.WEBHOOK_SECRET ?? '')
+    .update(rawBody)
+    .digest();
+  const received = Buffer.from(headers['x-signature'] ?? '', 'hex');
+
+  if (received.length !== expected.length || !timingSafeEqual(received, expected)) {
+    throw new Error('Invalid notification signature');
+  }
+
+  const { account_id: accountId } = JSON.parse(rawBody) as { account_id: string };
+
+  return { externalAccountId: accountId };
+};
+```
+
 The callback returns:
 
 | Field               | Description                                                                                                                                     |
@@ -198,7 +229,7 @@ The callback returns:
 | `handle`            | Optional label shown for the connection. Defaults to the member's email.                                                                       |
 | `accessToken`       | Optional per-account token, stored encrypted and returned by `getConnection`. Leave it out when your app calls the service with its own key. |
 
-Both functions run while the member waits on a redirect, so their timeout is capped at 10 seconds. A failure or an invalid return aborts the connection: nothing is saved and `onConnectLogicFunction` does not run. `onConnectLogicFunction` runs when a connection is created, reconnected or restored, not again when the service reports an account that is already connected. The state expires after an hour, so a notification arriving later is refused.
+Both functions run while the member waits on a redirect, so their timeout is capped at 10 seconds. A failure or an invalid return aborts the connection: nothing is saved and `onConnectLogicFunction` does not run. `onConnectLogicFunction` runs when a connection is created, reconnected or restored, not again when the service reports an account that is already connected. The state expires after an hour, so a notification arriving later is refused. Services commonly retry notifications: a repeat for an account already connected updates that connection, so returning the same account again is safe.
 
 Twenty does not refresh or revoke custom connections. Release what the service holds for the account in `onDisconnectLogicFunction`.
 

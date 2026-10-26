@@ -257,7 +257,7 @@ export class ConnectionProviderLifecycleHookService {
     workspaceId: string;
     request: Pick<
       ConnectionCallbackPayload,
-      'httpMethod' | 'queryStringParameters' | 'body'
+      'httpMethod' | 'queryStringParameters' | 'headers' | 'body' | 'rawBody'
     >;
   }): Promise<ParsedConnectedAccountFromCallback | null> {
     const logicFunctionId = await this.resolveLogicFunctionIdOrThrow({

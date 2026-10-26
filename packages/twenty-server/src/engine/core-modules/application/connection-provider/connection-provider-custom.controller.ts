@@ -22,6 +22,8 @@ import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/f
 import { LogicFunctionExecutionRestApiExceptionFilter } from 'src/engine/core-modules/logic-function/logic-function-executor/filters/logic-function-execution-rest-api-exception.filter';
 import {
   extractBody,
+  extractRawBody,
+  filterRequestHeaders,
   normalizeQueryStringParameters,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { UsageLimitRestApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-rest-api-exception.filter';
@@ -53,7 +55,9 @@ export class ConnectionProviderCustomController {
           request: {
             httpMethod: 'GET',
             queryStringParameters: callbackRequest.queryStringParameters,
+            headers: callbackRequest.headers,
             body: null,
+            rawBody: null,
           },
         });
 
@@ -83,7 +87,7 @@ export class ConnectionProviderCustomController {
     BillingRestApiExceptionFilter,
   )
   async callbackNotification(@Req() req: Request): Promise<{ success: true }> {
-    const { state, queryStringParameters } =
+    const { state, queryStringParameters, headers } =
       this.readCallbackRequestOrThrow(req);
 
     await this.customFlowService.completeAuthorizationFlow({
@@ -91,7 +95,9 @@ export class ConnectionProviderCustomController {
       request: {
         httpMethod: 'POST',
         queryStringParameters,
+        headers,
         body: extractBody(req),
+        rawBody: extractRawBody(req) ?? null,
       },
     });
 
@@ -101,6 +107,7 @@ export class ConnectionProviderCustomController {
   private readCallbackRequestOrThrow(req: Request): {
     state: string;
     queryStringParameters: Record<string, string | undefined>;
+    headers: Record<string, string | undefined>;
   } {
     const { state, ...queryStringParameters } = normalizeQueryStringParameters(
       req.query,
@@ -113,6 +120,14 @@ export class ConnectionProviderCustomController {
       );
     }
 
-    return { state, queryStringParameters };
+    return {
+      state,
+      queryStringParameters,
+      headers: filterRequestHeaders({
+        requestHeaders: req.headers,
+        forwardedRequestHeaders: [],
+        forwardAllHeaders: true,
+      }),
+    };
   }
 }

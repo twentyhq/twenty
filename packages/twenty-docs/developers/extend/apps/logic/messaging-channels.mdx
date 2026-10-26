@@ -223,7 +223,7 @@ await createMessageChannel({
 
 The messaging provider must belong to your app and use the connection provider of the channel's account; its connection provider cannot change after the first sync. Changing the send function in a later version applies to every channel bound to the provider.
 
-Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread and the text, and runs the provider's function:
+Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread, the text and an `idempotencyKey` (a UUID the client generates per reply and reuses when retrying it), and runs the provider's function:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
@@ -232,22 +232,26 @@ export const linkedinSendMessageHandler = async ({
   connectedAccountId,
   threadExternalId,
   text,
+  idempotencyKey,
 }: SendAppMessagePayload) => {
   const sent = await sendLinkedinMessage({
     connectedAccountId,
     conversationUrn: threadExternalId,
     text,
+    idempotencyKey,
   });
 
   return { externalId: sent.messageUrn, sentAt: sent.createdAt };
 };
 ```
 
-The payload carries the `messagingProviderName`, the conversation's `threadExternalId` as you ingested it, the `text`, and the `recipients`: every participant of the thread other than the channel's own handle. Return the provider's id for the sent message as `externalId`.
+The payload carries the `messagingProviderName`, the conversation's `threadExternalId` as you ingested it, the `text`, the `idempotencyKey`, and the `recipients`: the participants of the thread's latest message other than the channel's own handle, so someone who only took part in an earlier exchange is not messaged. Prefer the provider's own conversation over `recipients` when its API sends to a conversation id. Return the provider's id for the sent message as `externalId`.
 
 Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
 
-The function runs inside the `sendAppChannelMessage` request. If it throws or returns no `externalId`, the mutation fails and nothing is recorded. A channel with `isSyncEnabled: false` refuses replies without calling your function. A channel with no messaging provider, or whose provider has no `sendMessageLogicFunction` or no longer exists, cannot send; its conversations stay as they are. Requires `"engines": { "twenty": ">=2.52.0" }`.
+The function runs inside the `sendAppChannelMessage` request. If it throws or returns no `externalId`, the mutation fails and nothing is recorded.
+
+Once your function returns, Twenty keeps the delivery for 24 hours under the member, the channel, the thread and the `idempotencyKey`. If recording the reply then fails, the mutation fails, and retrying it with the same key records the delivered reply without calling your function again; a retry of a reply already recorded returns it. A retry while the first call is still sending waits for it. A new key is a new reply. Your function can still be called twice for one reply if the client retries with a new key or after those 24 hours, or if your function itself fails after the provider accepted the message, so forward `idempotencyKey` to the provider when its API supports idempotent sends. A channel with `isSyncEnabled: false` refuses replies without calling your function. A channel with no messaging provider, or whose provider has no `sendMessageLogicFunction` or no longer exists, cannot send; its conversations stay as they are. Requires `"engines": { "twenty": ">=2.52.0" }`.
 
 ## Listing and updating channels
 

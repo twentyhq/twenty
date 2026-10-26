@@ -6637,6 +6637,7 @@ export type SearchField = {
 };
 
 export type SendAppChannelMessageInput = {
+  idempotencyKey: Scalars['UUID']['input'];
   messageChannelId: Scalars['UUID']['input'];
   messageThreadId: Scalars['UUID']['input'];
   text: Scalars['String']['input'];

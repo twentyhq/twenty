@@ -20,4 +20,9 @@ export class SendAppChannelMessageInput {
   @IsNotEmpty()
   @MaxLength(MAX_APP_MESSAGE_TEXT_LENGTH)
   text: string;
+
+  // reused when retrying the same reply, so a delivered one is recorded instead of sent again
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  idempotencyKey: string;
 }

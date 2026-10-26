@@ -21,7 +21,7 @@ type CallbackArgs = {
   state: string;
   request: Pick<
     ConnectionCallbackPayload,
-    'httpMethod' | 'queryStringParameters' | 'body'
+    'httpMethod' | 'queryStringParameters' | 'headers' | 'body' | 'rawBody'
   >;
 };
 

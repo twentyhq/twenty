@@ -12001,6 +12001,9 @@ export default {
             ]
         },
         "SendAppChannelMessageInput": {
+            "idempotencyKey": [
+                518
+            ],
             "messageChannelId": [
                 518
             ],

@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { createHash, createHmac } from 'crypto';
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -28,14 +28,20 @@ const AUTHORIZE_IDENTIFIER = v4();
 const CALLBACK_IDENTIFIER = v4();
 const ON_CONNECT_IDENTIFIER = v4();
 const HOSTED_AUTH_ORIGIN = 'https://hosted-auth.example.com';
+const WEBHOOK_SECRET = 'webhook-secret';
 
 const AUTHORIZE_SOURCE = `export const handler = ({ callbackUrl }) => ({
   authorizationUrl: ${JSON.stringify(HOSTED_AUTH_ORIGIN)} + '/connect?notify=' + encodeURIComponent(callbackUrl),
 });`;
 
-// The browser return carries no account; the notification posts it.
-const CALLBACK_SOURCE = `export const handler = ({ httpMethod, body }) => {
+// The browser return carries no account; the notification posts it, signed when it has an x-signature header.
+const CALLBACK_SOURCE = `import { createHmac } from 'node:crypto';
+export const handler = ({ httpMethod, headers, body, rawBody }) => {
   if (httpMethod === 'GET') return null;
+  if (headers.cookie !== undefined) throw new Error('cookie header reached the app');
+  if (headers['x-signature'] !== undefined && headers['x-signature'] !== createHmac('sha256', ${JSON.stringify(WEBHOOK_SECRET)}).update(rawBody).digest('hex')) {
+    throw new Error('invalid signature');
+  }
   if (body.account_id === 'broken') throw new Error('upstream account lookup failed');
   return {
     externalAccountId: body.account_id,
@@ -96,12 +102,15 @@ describe('app connection custom flow', () => {
   const notify = async ({
     callbackUrl,
     body,
+    headers = {},
   }: {
     callbackUrl: URL;
-    body: Record<string, string>;
+    body: Record<string, string> | string;
+    headers?: Record<string, string>;
   }) => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .post(`${callbackUrl.pathname}${callbackUrl.search}`)
+      .set({ 'content-type': 'application/json', ...headers })
       .send(body);
 
     await waitForAllJobsToFinish();
@@ -268,6 +277,37 @@ export const handler = ({ connectedAccountId }) => {
       scope: 'WORKSPACE',
     });
     expect(readOnConnectExecutions()).toEqual([connection.id]);
+  });
+
+  it('gives the callback the headers and exact bytes to verify a signed notification, without cookies', async () => {
+    const rawBody = '{"account_id":  "account-signed"}';
+
+    const response = await notify({
+      callbackUrl: await authorize(),
+      body: rawBody,
+      headers: {
+        'x-signature': createHmac('sha256', WEBHOOK_SECRET)
+          .update(rawBody)
+          .digest('hex'),
+        cookie: 'tokenPair=member-session',
+      },
+    });
+
+    expect(response.status).toBe(200);
+    expect(await readAccounts()).toEqual([
+      expect.objectContaining({ externalAccountId: 'account-signed' }),
+    ]);
+  });
+
+  it('saves nothing when the callback rejects the notification signature', async () => {
+    const response = await notify({
+      callbackUrl: await authorize(),
+      body: { account_id: 'account-forged' },
+      headers: { 'x-signature': 'forged' },
+    });
+
+    expect(response.status).toBe(500);
+    expect(await readAccounts()).toHaveLength(0);
   });
 
   it('returns the browser to the app settings without saving anything itself', async () => {

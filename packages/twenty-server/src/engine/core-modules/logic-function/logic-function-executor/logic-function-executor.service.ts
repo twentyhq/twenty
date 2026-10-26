@@ -128,7 +128,7 @@ export class LogicFunctionExecutorService {
     toException,
     ...executeArgs
   }: Parameters<LogicFunctionExecutorService['execute']>[0] & {
-    toException: (reason: string) => Error;
+    toException: (reason: string) => CustomException;
   }): Promise<LogicFunctionExecuteResult['data']> {
     const executionResult = await this.execute(executeArgs).catch(
       (error: unknown) => {

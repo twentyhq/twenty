@@ -7,6 +7,7 @@ const buildParticipant = (
     Parameters<typeof buildAppMessageReplyRecipients>[0]['participants'][0]
   > = {},
 ) => ({
+  messageId: 'message-latest',
   handle: 'urn:li:person:ada',
   displayName: 'Ada Lovelace',
   personId: null,
@@ -62,7 +63,10 @@ describe('buildAppMessageReplyRecipients', () => {
       buildAppMessageReplyRecipients({
         participants: [
           buildParticipant({ displayName: 'Ada L.', personId: 'person-new' }),
-          buildParticipant({ personId: 'person-old' }),
+          buildParticipant({
+            messageId: 'message-older',
+            personId: 'person-old',
+          }),
         ],
         channelHandle: 'urn:li:person:jane',
       }),
@@ -82,6 +86,7 @@ describe('buildAppMessageReplyRecipients', () => {
         participants: [
           buildParticipant({ displayName: '' }),
           buildParticipant({
+            messageId: 'message-older',
             personId: 'person-a',
             workspaceMemberId: 'member-a',
           }),
@@ -105,5 +110,57 @@ describe('buildAppMessageReplyRecipients', () => {
         channelHandle: 'urn:li:person:jane',
       }),
     ).toEqual([]);
+  });
+
+  it('replies only to the latest message participants, not to someone who left the conversation', () => {
+    expect(
+      buildAppMessageReplyRecipients({
+        participants: [
+          buildParticipant({ role: MessageParticipantRole.FROM }),
+          buildParticipant({
+            handle: 'urn:li:person:jane',
+            role: MessageParticipantRole.TO,
+          }),
+          buildParticipant({
+            messageId: 'message-older',
+            handle: 'urn:li:person:grace',
+            displayName: 'Grace Hopper',
+            role: MessageParticipantRole.TO,
+          }),
+          buildParticipant({
+            messageId: 'message-older',
+            personId: 'person-a',
+            role: MessageParticipantRole.TO,
+          }),
+        ],
+        channelHandle: 'urn:li:person:jane',
+      }),
+    ).toEqual([
+      {
+        handle: 'urn:li:person:ada',
+        displayName: 'Ada Lovelace',
+        personId: 'person-a',
+        workspaceMemberId: undefined,
+      },
+    ]);
+  });
+
+  it('takes recipients from an older message when the latest has only the channel itself', () => {
+    expect(
+      buildAppMessageReplyRecipients({
+        participants: [
+          buildParticipant({ handle: 'urn:li:person:jane' }),
+          buildParticipant({ messageId: 'message-older' }),
+        ],
+        channelHandle: 'urn:li:person:jane',
+      }),
+    ).toEqual([
+      {
+        handle: 'urn:li:person:ada',
+        displayName: 'Ada Lovelace',
+        personId: undefined,
+        workspaceMemberId: undefined,
+      },
+    ]);
   });
 });

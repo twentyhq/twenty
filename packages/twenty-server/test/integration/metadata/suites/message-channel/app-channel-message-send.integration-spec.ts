@@ -185,14 +185,18 @@ describe('sendAppChannelMessage (e2e)', () => {
     return { messageChannelId, messageThreadId };
   };
 
-  const send = (input: {
+  const send = ({
+    idempotencyKey = v4(),
+    ...input
+  }: {
     messageChannelId: string;
     messageThreadId: string;
     text: string;
+    idempotencyKey?: string;
   }) =>
     makeMetadataApiRequest({
       query: SEND_MESSAGE_MUTATION,
-      variables: { input },
+      variables: { input: { ...input, idempotencyKey } },
     });
 
   const insertConnection = async (connectionProviderId: string) => {
@@ -477,6 +481,82 @@ export const handler = (payload) => {
     expect(participants).toEqual([
       { handle: CHANNEL_HANDLE, role: MessageParticipantRole.FROM },
       { handle: CONTACT_HANDLE, role: MessageParticipantRole.TO },
+    ]);
+  });
+
+  it('sends once and returns the recorded reply when retried with the same idempotency key', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+    const idempotencyKey = v4();
+
+    const firstResponse = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'Tuesday works',
+      idempotencyKey,
+    });
+    const retryResponse = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'Tuesday works',
+      idempotencyKey,
+    });
+
+    expect(retryResponse.body.errors).toBeUndefined();
+    expect(retryResponse.body.data.sendAppChannelMessage.messageId).toBe(
+      firstResponse.body.data.sendAppChannelMessage.messageId,
+    );
+    expect(readSendExecutions()).toEqual([
+      expect.objectContaining({ text: 'Tuesday works', idempotencyKey }),
+    ]);
+  });
+
+  it('replies to the latest message participants only, not to someone who left the conversation', async () => {
+    const { messageChannelId, messageThreadId } = await startConversation({
+      connectedAccountId: sendingConnectionId,
+      messagingProviderUniversalIdentifier: MESSAGING_PROVIDER_IDENTIFIER,
+    });
+
+    const olderMessageResponse = await asApplication({
+      query: INGEST_MESSAGES_MUTATION,
+      variables: {
+        input: {
+          messageChannelId,
+          messages: [
+            {
+              externalId: 'inbound-older',
+              threadExternalId: THREAD_EXTERNAL_ID,
+              text: 'Welcome Grace',
+              receivedAt: '2026-10-19T10:00:00.000Z',
+              participants: [
+                { role: MessageParticipantRole.FROM, handle: CONTACT_HANDLE },
+                { role: MessageParticipantRole.TO, handle: CHANNEL_HANDLE },
+                {
+                  role: MessageParticipantRole.TO,
+                  handle: 'urn:li:person:grace',
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    expect(olderMessageResponse.body.errors).toBeUndefined();
+
+    const response = await send({
+      messageChannelId,
+      messageThreadId,
+      text: 'Tuesday works',
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(readSendExecutions()).toEqual([
+      expect.objectContaining({
+        recipients: [{ handle: CONTACT_HANDLE, displayName: 'Ada Lovelace' }],
+      }),
     ]);
   });
 

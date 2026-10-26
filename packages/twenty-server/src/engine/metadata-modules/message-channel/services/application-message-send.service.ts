@@ -8,6 +8,10 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { type SendAppChannelMessageOutput } from 'src/engine/metadata-modules/message-channel/dtos/send-app-channel-message.output';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -28,8 +32,13 @@ import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/module
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
-// recipients and the provider thread id come from the latest messages; older ones only slow the lookup
+// the provider thread id and recipient names come from recent messages; older ones only slow the lookup
 const CONVERSATION_LOOKUP_MESSAGE_LIMIT = 50;
+
+const APP_MESSAGE_DELIVERY_TTL_MS = 24 * 60 * 60 * 1000;
+
+// a concurrent retry fails rather than sends when the send in flight outlasts this wait
+const APP_MESSAGE_DELIVERY_LOCK_OPTIONS = { ms: 500, maxRetries: 60 };
 
 type SendArgs = {
   workspaceId: string;
@@ -37,11 +46,18 @@ type SendArgs = {
   messageChannelId: string;
   messageThreadId: string;
   text: string;
+  idempotencyKey: string;
 };
 
 type Conversation = {
   threadExternalId: string;
   recipients: AppMessageReplyRecipient[];
+};
+
+type AppMessageDelivery = Conversation & {
+  externalId: string;
+  text: string;
+  sentAt: string;
 };
 
 @Injectable()
@@ -54,6 +70,9 @@ export class ApplicationMessageSendService {
     private readonly applicationMessageIngestionService: ApplicationMessageIngestionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly cacheLockService: CacheLockService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   async send({
@@ -62,6 +81,7 @@ export class ApplicationMessageSendService {
     messageChannelId,
     messageThreadId,
     text,
+    idempotencyKey,
   }: SendArgs): Promise<SendAppChannelMessageOutput> {
     const messageChannel = await this.messageChannelRepository.findOne({
       where: {
@@ -103,12 +123,101 @@ export class ApplicationMessageSendService {
       );
     }
 
+    const { applicationId, connectionProviderId } = connectedAccount;
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    const deliveryKey = `app-message-delivery:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${messageThreadId}:${idempotencyKey}`;
+
+    // a retry after the provider delivered but recording failed must record, not send again
+    return this.cacheLockService.withLock(
+      async () => {
+        const delivery =
+          (await this.cacheStorageService.get<AppMessageDelivery>(
+            deliveryKey,
+          )) ??
+          (await this.deliver({
+            workspaceId,
+            messageChannel,
+            connectionProviderId,
+            connectedAccountId: connectedAccount.id,
+            messageThreadId,
+            idempotencyKey,
+            text,
+            deliveryKey,
+          }));
+
+        // the provider usually echoes the sent message back through the app's webhook; the shared externalId makes that a no-op
+        const {
+          messages: [ingestedMessage],
+        } = await this.applicationMessageIngestionService.ingest({
+          applicationId,
+          workspaceId,
+          requestUserWorkspaceId: userWorkspaceId,
+          messageChannelId,
+          messages: [
+            {
+              externalId: delivery.externalId,
+              threadExternalId: delivery.threadExternalId,
+              text: delivery.text,
+              receivedAt: new Date(delivery.sentAt),
+              participants: [
+                {
+                  role: MessageParticipantRole.FROM,
+                  handle: messageChannel.handle,
+                  displayName: messageChannel.displayName ?? undefined,
+                  workspaceMemberId:
+                    flatWorkspaceMemberMaps.idByUserWorkspaceId[
+                      userWorkspaceId
+                    ],
+                },
+                ...delivery.recipients.map((recipient) => ({
+                  role: MessageParticipantRole.TO,
+                  ...recipient,
+                })),
+              ],
+            },
+          ],
+        });
+
+        return {
+          messageId: ingestedMessage.messageId,
+          messageThreadId: ingestedMessage.messageThreadId,
+        };
+      },
+      deliveryKey,
+      APP_MESSAGE_DELIVERY_LOCK_OPTIONS,
+    );
+  }
+
+  private async deliver({
+    workspaceId,
+    messageChannel,
+    connectionProviderId,
+    connectedAccountId,
+    messageThreadId,
+    idempotencyKey,
+    text,
+    deliveryKey,
+  }: {
+    workspaceId: string;
+    messageChannel: MessageChannelEntity;
+    connectionProviderId: string;
+    connectedAccountId: string;
+    messageThreadId: string;
+    idempotencyKey: string;
+    text: string;
+    deliveryKey: string;
+  }): Promise<AppMessageDelivery> {
     const sender =
       await this.messagingProviderMessageSenderService.resolveSenderOrThrow({
         messagingProviderUniversalIdentifier:
           messageChannel.messagingProviderUniversalIdentifier,
-        connectionProviderId: connectedAccount.connectionProviderId,
-        messageChannelId,
+        connectionProviderId,
+        messageChannelId: messageChannel.id,
         workspaceId,
       });
 
@@ -123,10 +232,11 @@ export class ApplicationMessageSendService {
         sender,
         workspaceId,
         payload: {
-          connectedAccountId: connectedAccount.id,
-          messageChannelId,
+          connectedAccountId,
+          messageChannelId: messageChannel.id,
           threadExternalId: conversation.threadExternalId,
           text,
+          idempotencyKey,
           recipients: conversation.recipients.map(
             ({ handle, displayName }) => ({
               handle,
@@ -136,48 +246,21 @@ export class ApplicationMessageSendService {
         },
       });
 
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-
-    // the provider usually echoes the sent message back through the app's webhook; the shared externalId makes that a no-op
-    const {
-      messages: [ingestedMessage],
-    } = await this.applicationMessageIngestionService.ingest({
-      applicationId: connectedAccount.applicationId,
-      workspaceId,
-      requestUserWorkspaceId: userWorkspaceId,
-      messageChannelId,
-      messages: [
-        {
-          externalId: sentMessage.externalId,
-          threadExternalId: conversation.threadExternalId,
-          text,
-          receivedAt: isDefined(sentMessage.sentAt)
-            ? new Date(sentMessage.sentAt)
-            : new Date(),
-          participants: [
-            {
-              role: MessageParticipantRole.FROM,
-              handle: messageChannel.handle,
-              displayName: messageChannel.displayName ?? undefined,
-              workspaceMemberId:
-                flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId],
-            },
-            ...conversation.recipients.map((recipient) => ({
-              role: MessageParticipantRole.TO,
-              ...recipient,
-            })),
-          ],
-        },
-      ],
-    });
-
-    return {
-      messageId: ingestedMessage.messageId,
-      messageThreadId: ingestedMessage.messageThreadId,
+    const delivery: AppMessageDelivery = {
+      externalId: sentMessage.externalId,
+      threadExternalId: conversation.threadExternalId,
+      text,
+      sentAt: sentMessage.sentAt ?? new Date().toISOString(),
+      recipients: conversation.recipients,
     };
+
+    await this.cacheStorageService.set(
+      deliveryKey,
+      delivery,
+      APP_MESSAGE_DELIVERY_TTL_MS,
+    );
+
+    return delivery;
   }
 
   private async findConversation({
