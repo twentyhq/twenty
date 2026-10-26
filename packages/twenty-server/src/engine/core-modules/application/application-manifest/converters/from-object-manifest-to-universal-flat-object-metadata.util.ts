@@ -1,4 +1,5 @@
 import { type ObjectManifest } from 'twenty-shared/application';
+import { parseRecordCapabilities } from 'src/engine/core-modules/record-permission/utils/parse-record-capabilities.util';
 import {
   MetadataReadability,
   MetadataWritability,
@@ -39,6 +40,9 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     readability: objectManifest.readability ?? MetadataReadability.OPEN,
     readabilityParentFieldUniversalIdentifiers:
       objectManifest.readabilityParentFieldUniversalIdentifiers ?? null,
+    recordCapabilities: parseRecordCapabilities(
+      objectManifest.recordCapabilities,
+    ),
     sharingReach: objectManifest.sharingReach ?? ObjectSharingReach.WORKSPACE,
     isAuditLogged: true,
     isSearchable: objectManifest.isSearchable ?? true,

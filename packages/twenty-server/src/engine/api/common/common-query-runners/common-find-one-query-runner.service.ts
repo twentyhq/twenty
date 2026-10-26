@@ -54,6 +54,16 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadata.nameSingular,
     );
 
+    readRepository.applyLiveRecordPermissionsForUniqueLookup(
+      queryBuilder,
+      Object.fromEntries(
+        Object.entries(args.filter ?? {}).map(([name, predicate]) => [
+          name,
+          predicate?.eq,
+        ]),
+      ),
+    );
+
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
       flatObjectMetadata.nameSingular,

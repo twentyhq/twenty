@@ -1,5 +1,6 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
@@ -47,6 +48,15 @@ export const resolveAutomationAdmittedRecordIds = async ({
     .buildEventRecordAccessGate(payload)
     .resolveAdmittedRecordIds(
       buildRoleRowAccessPolicySubject({
+        recordPermissionAuthorityIdentity: isDefined(
+          standardApplication?.defaultRoleId,
+        )
+          ? {
+              type: 'application',
+              workspace: { id: payload.workspaceId },
+              application: { id: standardApplication.id },
+            }
+          : undefined,
         roleId:
           standardApplication?.defaultRoleId ??
           findFlatEntityByUniversalIdentifier({

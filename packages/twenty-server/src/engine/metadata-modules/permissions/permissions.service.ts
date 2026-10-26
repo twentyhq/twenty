@@ -1,8 +1,16 @@
+import {
+  resolveObjectRecordPermissionPolicy,
+  isDefined,
+} from 'twenty-shared/utils';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { RecordPermissionRevisionEntity } from 'src/engine/metadata-modules/record-permissions/entities/record-permission-revision.entity';
+import { getPotentialRecordPermissionActions } from 'src/engine/core-modules/record-permission/utils/get-potential-record-permission-actions.util';
+import { getRecordCapabilities } from 'src/engine/core-modules/record-permission/utils/get-record-capabilities.util';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
@@ -37,6 +45,7 @@ export class PermissionsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
+    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 
   public async getUserWorkspacePermissions({
@@ -75,10 +84,57 @@ export class PermissionsService {
       ]),
     ) as Record<PermissionFlagType, boolean>;
 
-    return {
-      permissionFlags,
-      objectsPermissions: rolesPermissions[flatRole.id] ?? {},
-    };
+    const objectsPermissions = { ...(rolesPermissions[flatRole.id] ?? {}) };
+    const revision = await this.dataSource
+      .getRepository(RecordPermissionRevisionEntity)
+      .findOneBy({ workspaceId, status: 'active' });
+
+    if (isDefined(revision)) {
+      const { flatObjectMetadataMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatObjectMetadataMaps',
+        ]);
+      const objects = Object.values(
+        flatObjectMetadataMaps.byUniversalIdentifier,
+      ).filter(isDefined);
+      const context = {
+        definition: {
+          version: 1 as const,
+          objects: objects.map((object) =>
+            resolveObjectRecordPermissionPolicy(
+              revision.definition,
+              object.universalIdentifier,
+            ),
+          ),
+        },
+        capabilitiesByObjectUniversalIdentifier: Object.fromEntries(
+          objects.map((object) => [
+            object.universalIdentifier,
+            getRecordCapabilities(object),
+          ]),
+        ),
+      };
+
+      for (const object of objects) {
+        const actions = getPotentialRecordPermissionActions({
+          context,
+          objectUniversalIdentifier: object.universalIdentifier,
+          roleUniversalIdentifier: flatRole.universalIdentifier,
+        });
+        objectsPermissions[object.id] = {
+          restrictedFields:
+            objectsPermissions[object.id]?.restrictedFields ?? {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
+          canReadObjectRecords: actions.has('read'),
+          canUpdateObjectRecords: actions.has('update'),
+          canSoftDeleteObjectRecords: actions.has('softDelete'),
+          canDestroyObjectRecords: actions.has('destroy'),
+        };
+      }
+    }
+
+    return { permissionFlags, objectsPermissions };
   }
 
   public getDefaultUserWorkspacePermissions = (): UserWorkspacePermissions => ({

@@ -1,3 +1,6 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, type ObjectLiteral } from 'typeorm';
+import { loadActiveRecordPermissionContext } from 'src/engine/core-modules/record-permission/utils/load-active-record-permission-context.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -6,8 +9,6 @@ import {
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 import { Injectable, type Type } from '@nestjs/common';
-
-import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,6 +34,7 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 @Injectable()
 export class WorkspaceOrmManager {
   constructor(
+    @InjectDataSource() private readonly permissionDataSource: DataSource,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly enterprisePlanService: EnterprisePlanService,
@@ -129,6 +131,11 @@ export class WorkspaceOrmManager {
     const context = options?.lite
       ? await this.loadLiteWorkspaceContext(resolvedAuthContext)
       : await this.loadWorkspaceContext(resolvedAuthContext);
+
+    context.recordPermissionContext = await loadActiveRecordPermissionContext({
+      dataSource: this.permissionDataSource,
+      workspaceContext: context,
+    });
 
     return withWorkspaceContext(context, fn);
   }

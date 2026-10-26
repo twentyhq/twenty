@@ -1,3 +1,4 @@
+import { RecordPermissionModule } from 'src/engine/core-modules/record-permission/record-permission.module';
 import { Module } from '@nestjs/common';
 import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
 import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
@@ -95,6 +96,7 @@ import { FileApiModule } from './file/file-api.module';
     ClientConfigModule,
     FeatureFlagModule,
     FileApiModule,
+    RecordPermissionModule,
     RecordShareModule,
     RowLevelPermissionModule,
     OpenApiModule,

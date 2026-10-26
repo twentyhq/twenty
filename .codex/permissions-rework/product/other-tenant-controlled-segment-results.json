@@ -1,0 +1,13 @@
+{
+  "rows": 1000000,
+  "concurrency": 4,
+  "elapsedSeconds": 340.280586667,
+  "queries": 29400,
+  "errors": 0,
+  "errorSamples": [],
+  "p50Ms": 1.8199579999782145,
+  "p99Ms": 17.436584000010043,
+  "maximumMs": 125.14975000001141,
+  "updatedAt": "2026-10-26T20:28:15.267Z",
+  "finishedAt": "2026-10-26T20:28:15.267Z"
+}

@@ -149,6 +149,8 @@ const meta: Meta<typeof SidePanelShareRecordContent> = {
       setShare,
       removeShare,
       refetch,
+      loadMoreShares: async () => undefined,
+      loadMoreInheritedShares: async () => undefined,
     },
   },
   beforeEach: () => {
@@ -334,6 +336,8 @@ export const ChangeAccessWithoutMovingRecipients: Story = {
       setShare,
       removeShare,
       refetch,
+      loadMoreShares: async () => undefined,
+      loadMoreInheritedShares: async () => undefined,
     },
   },
   render: (args) => {
@@ -490,6 +494,8 @@ export const InviteRole: Story = {
       setShare,
       removeShare,
       refetch,
+      loadMoreShares: async () => undefined,
+      loadMoreInheritedShares: async () => undefined,
     },
   },
   play: async ({ canvasElement }) => {
@@ -533,6 +539,8 @@ export const DefaultGeneralAccess: Story = {
       setShare,
       removeShare,
       refetch,
+      loadMoreShares: async () => undefined,
+      loadMoreInheritedShares: async () => undefined,
     },
   },
   play: async ({ canvasElement }) => {
@@ -615,6 +623,8 @@ export const Loading: Story = {
       setShare,
       removeShare,
       refetch,
+      loadMoreShares: async () => undefined,
+      loadMoreInheritedShares: async () => undefined,
     },
   },
   play: async ({ canvasElement }) => {
@@ -649,6 +659,8 @@ export const Saving: Story = {
       setShare,
       removeShare,
       refetch,
+      loadMoreShares: async () => undefined,
+      loadMoreInheritedShares: async () => undefined,
     },
   },
   play: async ({ canvasElement }) => {
@@ -693,6 +705,8 @@ export const ReadOnly: Story = {
       setShare,
       removeShare,
       refetch,
+      loadMoreShares: async () => undefined,
+      loadMoreInheritedShares: async () => undefined,
     },
   },
   play: async ({ canvasElement, args }) => {
@@ -733,6 +747,8 @@ export const LoadError: Story = {
       setShare,
       removeShare,
       refetch,
+      loadMoreShares: async () => undefined,
+      loadMoreInheritedShares: async () => undefined,
     },
   },
   play: async ({ canvasElement }) => {
@@ -769,6 +785,8 @@ export const ManagedAccess: Story = {
       setShare,
       removeShare,
       refetch,
+      loadMoreShares: async () => undefined,
+      loadMoreInheritedShares: async () => undefined,
     },
   },
   play: async ({ canvasElement }) => {

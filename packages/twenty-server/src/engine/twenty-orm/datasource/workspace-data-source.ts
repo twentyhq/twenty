@@ -23,6 +23,7 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/utils/run-in-rollback-safe-transaction.util';
+import { runWithRecordPermissionBudget } from 'src/engine/twenty-orm/datasource/utils/run-with-record-permission-budget.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
@@ -65,7 +66,12 @@ export class WorkspaceDataSource {
     return this.buildRepository<T>({
       nameSingular,
       rolePermissionConfig,
-      executor: new PoolQueryExecutor({ pool: this.pool }),
+      executor: new PoolQueryExecutor({
+        pool: this.pool,
+        permissionWorkspaceId: this.internalContext.recordPermissionContext
+          ? this.internalContext.workspaceId
+          : undefined,
+      }),
       shouldSkipEventEmission:
         repositoryOptions?.shouldSkipEventEmission ?? false,
     });
@@ -142,6 +148,13 @@ export class WorkspaceDataSource {
   private async runInClientTransaction<T>(
     work: (executor: QueryExecutor) => Promise<T>,
   ): Promise<T> {
+    if (this.internalContext.recordPermissionContext) {
+      return runWithRecordPermissionBudget({
+        pool: this.pool,
+        workspaceId: this.internalContext.workspaceId,
+        work: (client) => work(new ClientQueryExecutor({ client })),
+      });
+    }
     return runInRollbackSafeTransaction({
       pool: this.pool,
       work: (client) => work(new ClientQueryExecutor({ client })),

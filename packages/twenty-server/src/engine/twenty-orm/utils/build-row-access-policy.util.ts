@@ -1,3 +1,6 @@
+import { usesLegacyApplicationRecordPermissions } from 'src/engine/core-modules/record-permission/utils/uses-legacy-application-record-permissions.util';
+import { RECORD_CAPABILITY_BY_OPERATION } from 'src/engine/core-modules/record-permission/utils/record-permission-action-for-operation.util';
+import { compileRecordPermission } from 'src/engine/core-modules/record-permission/utils/compile-record-permission.util';
 import { isMetadataWritePermitted } from 'src/engine/twenty-orm/utils/is-metadata-write-permitted.util';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,13 +19,61 @@ import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils
 export const buildRowAccessPolicy = ({
   subject,
   environment,
-  ...target
+  ...requestedTarget
 }: RowAccessPolicyContext & RowAccessPolicyTarget): RowAccessPolicy => {
   if (subject.isSystemContext) {
     return { kind: 'open' };
   }
 
+  const target = {
+    ...requestedTarget,
+    flatObjectMetadata:
+      subject.recordPermissionContext?.flatObjectMetadataMaps
+        .byUniversalIdentifier[
+        requestedTarget.flatObjectMetadata.universalIdentifier
+      ] ?? requestedTarget.flatObjectMetadata,
+  };
+
+  if (
+    target.flatObjectMetadata.recordCapabilities?.[
+      RECORD_CAPABILITY_BY_OPERATION[target.operationType]
+    ] === false
+  ) {
+    return { kind: 'denied' };
+  }
+
   const context = { subject, environment };
+  if (
+    isDefined(subject.recordPermissionContext) &&
+    target.operationType !== 'insert' &&
+    !usesLegacyApplicationRecordPermissions({
+      subject,
+      object: target.flatObjectMetadata,
+      operationType: target.operationType,
+    })
+  ) {
+    const action =
+      target.operationType === 'restore'
+        ? 'softDelete'
+        : RECORD_CAPABILITY_BY_OPERATION[target.operationType];
+
+    return {
+      kind: 'gated',
+      expression: {
+        kind: 'recordPermission',
+        tableAlias: target.tableAlias,
+        objectMetadataId: target.flatObjectMetadata.id,
+        condition: compileRecordPermission({
+          context: subject.recordPermissionContext,
+          action,
+          objectUniversalIdentifier:
+            target.flatObjectMetadata.universalIdentifier,
+          tableAlias: target.tableAlias,
+          strategy: target.permissionStrategy ?? 'live',
+        }),
+      },
+    };
+  }
   // Inherited writes also need the parent's writability, or a child could become writable through a SYSTEM parent
   if (
     target.operationType !== 'select' &&

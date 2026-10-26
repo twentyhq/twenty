@@ -1,6 +1,9 @@
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
+import { RecordPermissionExplanationService } from 'src/engine/core-modules/record-permission/services/record-permission-explanation.service';
 
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
@@ -34,12 +37,41 @@ import { RecordTargetInput } from 'src/engine/metadata-modules/record-permission
   CustomPermissionGuard,
 )
 export class RecordSharingResolver {
-  constructor(private readonly sharingService: RecordSharingService) {}
+  constructor(
+    private readonly sharingService: RecordSharingService,
+    private readonly explanationService: RecordPermissionExplanationService,
+  ) {}
+
+  @Query(() => GraphQLJSON)
+  explainRecordPermission(
+    @Args('target') target: RecordTargetInput,
+    @Args('workspaceMemberId', { type: () => UUIDScalarType })
+    workspaceMemberId: string,
+    @Args('action') action: string,
+  ) {
+    return this.explanationService.explain({
+      authContext: this.getUserContext(),
+      target,
+      workspaceMemberId,
+      action,
+    });
+  }
 
   @Query(() => RecordSharingDTO)
-  recordSharing(@Args('target') target: RecordTargetInput) {
+  recordSharing(
+    @Args('target') target: RecordTargetInput,
+    @Args('inheritedSharesAfter', {
+      type: () => UUIDScalarType,
+      nullable: true,
+    })
+    inheritedSharesAfter?: string,
+    @Args('sharesAfter', { type: () => UUIDScalarType, nullable: true })
+    sharesAfter?: string,
+  ) {
     return this.sharingService.getSharing({
       ...target,
+      inheritedSharesAfter,
+      sharesAfter,
       authContext: this.getUserContext(),
     });
   }

@@ -49,6 +49,11 @@ export const resolveEventsReadableByRole = async <
   const admittedRecordIds =
     await eventRecordAccessGate.resolveAdmittedRecordIds(
       buildRoleRowAccessPolicySubject({
+        recordPermissionAuthorityIdentity: {
+          type: 'application',
+          workspace: { id: workspaceEventBatch.workspaceId },
+          application: { id: owningApplicationId },
+        },
         roleId,
         owningApplicationId,
         rolesPermissions,

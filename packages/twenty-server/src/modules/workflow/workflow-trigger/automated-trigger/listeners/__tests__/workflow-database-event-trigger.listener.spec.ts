@@ -1,3 +1,4 @@
+import { DataSource } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
@@ -205,6 +206,14 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         },
 
         RecordAccessPolicyService,
+        {
+          provide: DataSource,
+          useValue: {
+            getRepository: () => ({
+              findOneBy: jest.fn().mockResolvedValue(null),
+            }),
+          },
+        },
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',
           useValue: messageQueueService,

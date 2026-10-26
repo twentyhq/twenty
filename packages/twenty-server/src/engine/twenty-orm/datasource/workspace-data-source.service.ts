@@ -84,9 +84,11 @@ export class WorkspaceDataSourceService
   }
 
   getDataSource({ useReplica }: { useReplica: boolean }): WorkspaceDataSource {
-    const pool = useReplica
-      ? (this.replicaPool ?? this.primaryPool)
-      : this.primaryPool;
+    const workspaceContext = getWorkspaceContext();
+    const pool =
+      useReplica && !isDefined(workspaceContext.recordPermissionContext)
+        ? (this.replicaPool ?? this.primaryPool)
+        : this.primaryPool;
 
     if (!isDefined(pool)) {
       throw new TwentyOrmException(
@@ -94,8 +96,6 @@ export class WorkspaceDataSourceService
         TwentyOrmExceptionCode.UNSUPPORTED_OPERATION,
       );
     }
-
-    const workspaceContext = getWorkspaceContext();
 
     return new WorkspaceDataSource({
       pool,
@@ -109,6 +109,7 @@ export class WorkspaceDataSourceService
     workspaceContext: ReturnType<typeof getWorkspaceContext>,
   ): WorkspaceInternalContext {
     return {
+      recordPermissionContext: workspaceContext.recordPermissionContext,
       workspaceId: workspaceContext.authContext.workspace.id,
       flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,

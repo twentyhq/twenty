@@ -1,0 +1,187 @@
+Pager usage is off.
+SET
+                                                            version                                                            | current_setting | current_setting
+-------------------------------------------------------------------------------------------------------------------------------+-----------------+-----------------
+ PostgreSQL 15.14 (Homebrew) on aarch64-apple-darwin24.4.0, compiled by Apple clang version 17.0.0 (clang-1700.0.13.3), 64-bit | 128MB           | 4MB
+(1 row)
+
+      relname      | total_size
+-------------------+------------
+ permission_record | 1934 MB
+ record_share      | 11 MB
+(2 rows)
+
+baseline_top_50
+                                                                   QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.43..3.95 rows=50 width=48) (actual rows=50 loops=1)
+   Buffers: shared hit=1 read=3
+   ->  Index Scan using permission_record_created_at on permission_record  (cost=0.43..703527.26 rows=9999976 width=48) (actual rows=50 loops=1)
+         Buffers: shared hit=1 read=3
+ Planning:
+   Buffers: shared hit=37 read=1
+ Planning Time: 0.599 ms
+ Execution Time: 0.275 ms
+(8 rows)
+
+dense_role_top_50
+                                                                   QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.43..7.68 rows=50 width=48) (actual rows=50 loops=1)
+   Buffers: shared hit=8
+   ->  Index Scan using permission_record_created_at on permission_record  (cost=0.43..728527.20 rows=5029988 width=48) (actual rows=50 loops=1)
+         Filter: (readable_role_ids @> '{00000000-0000-0000-0000-000000000001}'::uuid[])
+         Rows Removed by Filter: 49
+         Buffers: shared hit=8
+ Planning:
+   Buffers: shared hit=40
+ Planning Time: 0.165 ms
+ Execution Time: 0.053 ms
+(10 rows)
+
+scattered_role_top_50
+                                                                  QUERY PLAN
+----------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.43..4751.49 rows=50 width=48) (actual rows=50 loops=1)
+   Buffers: shared hit=757 read=241
+   ->  Index Scan using permission_record_created_at on permission_record  (cost=0.43..728527.20 rows=7667 width=48) (actual rows=50 loops=1)
+         Filter: (readable_role_ids @> '{00000000-0000-0000-0000-000005f5e100}'::uuid[])
+         Rows Removed by Filter: 48951
+         Buffers: shared hit=757 read=241
+ Planning:
+   Buffers: shared hit=9 read=1
+ Planning Time: 0.161 ms
+ Execution Time: 15.073 ms
+(10 rows)
+
+oldest_records_role_top_50
+                                                                QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=8564.27..8564.39 rows=50 width=48) (actual rows=50 loops=1)
+   Buffers: shared hit=9 read=18
+   ->  Sort  (cost=8564.27..8570.10 rows=2333 width=48) (actual rows=50 loops=1)
+         Sort Key: created_at DESC, id DESC
+         Sort Method: top-N heapsort  Memory: 32kB
+         Buffers: shared hit=9 read=18
+         ->  Bitmap Heap Scan on permission_record  (cost=46.08..8486.77 rows=2333 width=48) (actual rows=1000 loops=1)
+               Recheck Cond: ((readable_role_ids @> '{00000000-0000-0000-0000-000000000002}'::uuid[]) AND (deleted_at IS NULL))
+               Heap Blocks: exact=18
+               Buffers: shared hit=3 read=18
+               ->  Bitmap Index Scan on permission_record_readable_roles  (cost=0.00..45.50 rows=2333 width=0) (actual rows=1000 loops=1)
+                     Index Cond: (readable_role_ids @> '{00000000-0000-0000-0000-000000000002}'::uuid[])
+                     Buffers: shared hit=3
+ Planning:
+   Buffers: shared hit=1
+ Planning Time: 0.094 ms
+ Execution Time: 0.374 ms
+(17 rows)
+
+shared_only_uncorrelated_top_50
+                                                                                   QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=621.40..621.43 rows=10 width=48) (actual rows=50 loops=1)
+   Buffers: shared hit=1355 read=1152
+   InitPlan 1 (returns $0)
+     ->  Bitmap Heap Scan on record_share  (cost=25.95..572.71 rows=540 width=16) (actual rows=500 loops=1)
+           Recheck Cond: ((principal_id = '00000000-0000-0000-0000-00000bebc200'::uuid) AND (object_id = '00000000-0000-0000-0000-000000000010'::uuid) AND (deleted_at IS NULL))
+           Filter: (access_level = ANY ('{READ,READ_WRITE,FULL}'::text[]))
+           Heap Blocks: exact=500
+           Buffers: shared hit=500 read=7
+           ->  Bitmap Index Scan on record_share_principal  (cost=0.00..25.81 rows=540 width=0) (actual rows=500 loops=1)
+                 Index Cond: ((principal_id = '00000000-0000-0000-0000-00000bebc200'::uuid) AND (object_id = '00000000-0000-0000-0000-000000000010'::uuid))
+                 Buffers: shared read=7
+   ->  Sort  (cost=48.69..48.72 rows=10 width=48) (actual rows=50 loops=1)
+         Sort Key: permission_record.created_at DESC, permission_record.id DESC
+         Sort Method: top-N heapsort  Memory: 36kB
+         Buffers: shared hit=1355 read=1152
+         ->  Index Scan using permission_record_pkey on permission_record  (cost=0.43..48.53 rows=10 width=48) (actual rows=500 loops=1)
+               Index Cond: (id = ANY ($0))
+               Filter: (deleted_at IS NULL)
+               Buffers: shared hit=1355 read=1152
+ Planning:
+   Buffers: shared hit=82
+ Planning Time: 0.372 ms
+ Execution Time: 12.819 ms
+(23 rows)
+
+role_or_shared_correlated_top_50
+                                                                                      QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=0.43..851.65 rows=50 width=48) (actual rows=50 loops=1)
+   Buffers: shared hit=5596 read=14818 written=7371
+   ->  Index Scan using permission_record_created_at on permission_record record  (cost=0.43..85140824.61 rows=5001155 width=48) (actual rows=50 loops=1)
+         Filter: ((readable_role_ids @> '{00000000-0000-0000-0000-000000000002}'::uuid[]) OR (hashed SubPlan 2))
+         Rows Removed by Filter: 979951
+         Buffers: shared hit=5596 read=14818 written=7371
+         SubPlan 2
+           ->  Bitmap Heap Scan on record_share share  (cost=25.95..572.71 rows=540 width=16) (actual rows=500 loops=1)
+                 Recheck Cond: ((principal_id = '00000000-0000-0000-0000-00000bebc200'::uuid) AND (object_id = '00000000-0000-0000-0000-000000000010'::uuid) AND (deleted_at IS NULL))
+                 Filter: (access_level = ANY ('{READ,READ_WRITE,FULL}'::text[]))
+                 Heap Blocks: exact=500
+                 Buffers: shared hit=507
+                 ->  Bitmap Index Scan on record_share_principal  (cost=0.00..25.81 rows=540 width=0) (actual rows=500 loops=1)
+                       Index Cond: ((principal_id = '00000000-0000-0000-0000-00000bebc200'::uuid) AND (object_id = '00000000-0000-0000-0000-000000000010'::uuid))
+                       Buffers: shared hit=7
+ Planning:
+   Buffers: shared hit=2
+ Planning Time: 0.174 ms
+ Execution Time: 463.871 ms
+(19 rows)
+
+role_or_shared_uncorrelated_top_50
+                                                                                   QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=9246.21..9246.34 rows=50 width=48) (actual rows=50 loops=1)
+   Buffers: shared hit=1552 read=976 written=313
+   InitPlan 1 (returns $0)
+     ->  Bitmap Heap Scan on record_share  (cost=25.95..572.71 rows=540 width=16) (actual rows=500 loops=1)
+           Recheck Cond: ((principal_id = '00000000-0000-0000-0000-00000bebc200'::uuid) AND (object_id = '00000000-0000-0000-0000-000000000010'::uuid) AND (deleted_at IS NULL))
+           Filter: (access_level = ANY ('{READ,READ_WRITE,FULL}'::text[]))
+           Heap Blocks: exact=500
+           Buffers: shared hit=507
+           ->  Bitmap Index Scan on record_share_principal  (cost=0.00..25.81 rows=540 width=0) (actual rows=500 loops=1)
+                 Index Cond: ((principal_id = '00000000-0000-0000-0000-00000bebc200'::uuid) AND (object_id = '00000000-0000-0000-0000-000000000010'::uuid))
+                 Buffers: shared hit=7
+   ->  Sort  (cost=8673.50..8679.36 rows=2343 width=48) (actual rows=50 loops=1)
+         Sort Key: permission_record.created_at DESC, permission_record.id DESC
+         Sort Method: top-N heapsort  Memory: 36kB
+         Buffers: shared hit=1552 read=976 written=313
+         ->  Bitmap Heap Scan on permission_record  (cost=91.10..8595.67 rows=2343 width=48) (actual rows=1500 loops=1)
+               Recheck Cond: (((readable_role_ids @> '{00000000-0000-0000-0000-000000000002}'::uuid[]) AND (deleted_at IS NULL)) OR (id = ANY ($0)))
+               Filter: (deleted_at IS NULL)
+               Heap Blocks: exact=518
+               Buffers: shared hit=1552 read=976 written=313
+               ->  BitmapOr  (cost=91.10..91.10 rows=2343 width=0) (actual rows=0 loops=1)
+                     Buffers: shared hit=1510 read=500 written=116
+                     ->  Bitmap Index Scan on permission_record_readable_roles  (cost=0.00..45.50 rows=2333 width=0) (actual rows=1000 loops=1)
+                           Index Cond: (readable_role_ids @> '{00000000-0000-0000-0000-000000000002}'::uuid[])
+                           Buffers: shared hit=3
+                     ->  Bitmap Index Scan on permission_record_pkey  (cost=0.00..44.43 rows=10 width=0) (actual rows=500 loops=1)
+                           Index Cond: (id = ANY ($0))
+                           Buffers: shared hit=1507 read=500 written=116
+ Planning:
+   Buffers: shared hit=2
+ Planning Time: 0.181 ms
+ Execution Time: 6.532 ms
+(32 rows)
+
+dense_role_exact_count
+                                                             QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=212170.99..212171.00 rows=1 width=8) (actual rows=1 loops=1)
+   Buffers: shared hit=10578 read=143610 written=42
+   ->  Gather  (cost=212170.78..212170.99 rows=2 width=8) (actual rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=10578 read=143610 written=42
+         ->  Partial Aggregate  (cost=211170.78..211170.79 rows=1 width=8) (actual rows=1 loops=3)
+               Buffers: shared hit=10578 read=143610 written=42
+               ->  Parallel Seq Scan on permission_record  (cost=0.00..205931.21 rows=2095828 width=0) (actual rows=1666667 loops=3)
+                     Filter: ((deleted_at IS NULL) AND (readable_role_ids @> '{00000000-0000-0000-0000-000000000001}'::uuid[]))
+                     Rows Removed by Filter: 1666667
+                     Buffers: shared hit=10578 read=143610 written=42
+ Planning:
+   Buffers: shared hit=3 read=1 written=1
+ Planning Time: 0.252 ms
+ Execution Time: 772.713 ms
+(16 rows)

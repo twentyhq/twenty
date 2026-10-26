@@ -1,4 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
@@ -327,6 +328,14 @@ describe('ObjectRecordEventPublisher', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ObjectRecordEventPublisher,
+        {
+          provide: DataSource,
+          useValue: {
+            getRepository: () => ({
+              findOneBy: jest.fn().mockResolvedValue(null),
+            }),
+          },
+        },
         {
           provide: SubscriptionService,
           useValue: mockSubscriptionService,

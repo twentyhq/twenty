@@ -1,13 +1,15 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, In, MoreThanOrEqual } from 'typeorm';
+import { loadRecordPermissionContextForAuthorities } from 'src/engine/core-modules/record-permission/utils/load-active-record-permission-context.util';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, MoreThanOrEqual } from 'typeorm';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
@@ -46,6 +48,7 @@ type SnapshotIdsThroughParent = {
 @Injectable()
 export class RecordAccessPolicyService {
   constructor(
+    @InjectDataSource() private readonly dataSource: DataSource,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
@@ -126,7 +129,51 @@ export class RecordAccessPolicyService {
           'flatFieldMetadataMapsOrm',
           'featureFlagsMap',
         ]);
+        const recordPermissionContext =
+          await loadRecordPermissionContextForAuthorities({
+            dataSource: this.dataSource,
+            workspaceId,
+            roleIds: subject.recordPermissionRoleIds ?? [],
+            authContext: subject.recordPermissionAuthorityIdentity,
+            workspaceMember: subject.workspaceMember,
+            metadata: {
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+            },
+          });
+        if (isDefined(recordPermissionContext)) {
+          const cachedRoleIds = subject.recordPermissionRoleIds ?? [];
+          const currentRoleIds = recordPermissionContext.authorities.map(
+            (authority) => authority.roleId,
+          );
+
+          // Field restrictions still belong to the cached role context.
+          if (
+            recordPermissionContext.denyAll ||
+            cachedRoleIds.length !== currentRoleIds.length ||
+            currentRoleIds.some((roleId) => !cachedRoleIds.includes(roleId))
+          )
+            return new Set<string>();
+        }
         const context: RowAccessEvaluationContext<EventRecordSnapshot> = {
+          resolveRecordPermissionIds: (expression, records) =>
+            this.workspaceOrmManager.executeInWorkspaceContext(
+              () =>
+                this.workspaceOrmManager
+                  .getRepository(objectMetadata.nameSingular, {
+                    shouldBypassPermissionChecks: true,
+                  })
+                  .findRecordSnapshotIdsAdmittedByPermission(
+                    expression,
+                    records.map(
+                      ({
+                        inheritedReadabilityChildRecords: _children,
+                        ...record
+                      }) => record,
+                    ),
+                  ),
+              buildSystemAuthContext(workspaceId),
+            ),
           flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
           shouldIgnoreSoftDeleteDefaultFilter: true,
           fetchRecordShares,
@@ -172,7 +219,7 @@ export class RecordAccessPolicyService {
 
         return evaluateRowAccessPolicy({
           policy: buildRowAccessPolicy({
-            subject,
+            subject: { ...subject, recordPermissionContext },
             environment: {
               flatObjectMetadataMaps,
               flatFieldMetadataMaps: flatFieldMetadataMapsOrm,

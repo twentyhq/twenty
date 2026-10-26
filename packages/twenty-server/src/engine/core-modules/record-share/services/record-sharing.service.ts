@@ -1,15 +1,20 @@
+import { compileInheritedRecordShares } from 'src/engine/core-modules/record-permission/utils/compile-inherited-record-shares.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import {
+  FeatureFlagKey,
+  type RecordPermissionAction,
+  type ObjectRecord,
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
 import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import {
-  type ObjectRecord,
-  RecordShareAccessLevel,
-  RecordSharePrincipalType,
-  RecordShareRowCause,
-} from 'twenty-shared/types';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -19,6 +24,7 @@ import {
   type RecordSharePrincipalInput,
   type RecordSharingDTO,
   type RecordSharingGrantDTO,
+  type InheritedRecordSharingGrantDTO,
   type RecordSharingRoleDTO,
 } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
@@ -57,11 +63,15 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 type RecordSharingArgs = RecordTargetInput & {
+  inheritedSharesAfter?: string;
+  sharesAfter?: string;
   authContext: UserWorkspaceAuthContext;
 };
 
 type RecordSharingObject = ObjectSharing & {
   flatObjectMetadata: FlatObjectMetadata;
+  usesRecordPermissionPolicy?: boolean;
+  isSharingEnabled?: boolean;
 };
 
 type RecordSharingChange = {
@@ -142,16 +152,17 @@ export class RecordSharingService {
             sourceId: args.recordId,
           },
         });
-        await this.recordSharePrincipalService.assertPrincipalsReachRecordsOrThrow(
-          {
-            workspaceId,
-            transactionScope,
-            flatObjectMetadata: sharingObject.flatObjectMetadata,
-            canShareBeyondRole: sharingObject.canShareBeyondRole,
-            principals: [principal],
-            recordIds: [args.recordId],
-          },
-        );
+        if (!sharingObject.usesRecordPermissionPolicy)
+          await this.recordSharePrincipalService.assertPrincipalsReachRecordsOrThrow(
+            {
+              workspaceId,
+              transactionScope,
+              flatObjectMetadata: sharingObject.flatObjectMetadata,
+              canShareBeyondRole: sharingObject.canShareBeyondRole,
+              principals: [principal],
+              recordIds: [args.recordId],
+            },
+          );
       },
     );
   }
@@ -178,14 +189,18 @@ export class RecordSharingService {
   }
 
   private async changeSharing(
-    args: RecordSharingArgs,
+    args: RecordSharingArgs & { accessLevel?: RecordShareAccessLevel },
     write: (change: RecordSharingChange) => Promise<void>,
   ): Promise<RecordSharingDTO> {
     const sharingObject = await this.getSharingObject(args);
     const { flatObjectMetadata, sharingMode } = sharingObject;
     const workspaceId = args.authContext.workspace.id;
 
-    if (sharingMode === RecordSharingMode.ROLE_ONLY) {
+    if (
+      sharingMode === RecordSharingMode.ROLE_ONLY ||
+      (sharingObject.usesRecordPermissionPolicy &&
+        !sharingObject.isSharingEnabled)
+    ) {
       throw new NotFoundError('Record not found');
     }
 
@@ -193,6 +208,13 @@ export class RecordSharingService {
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
+            if (sharingObject.usesRecordPermissionPolicy) {
+              // Ancestor and member changes must not race the authorization that creates a durable grant.
+              await transactionScope.executeRawQuery(
+                'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+                [getWorkspaceSchemaName(workspaceId) + ':record-permissions'],
+              );
+            }
             await transactionScope.executeRawQuery(
               'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
               [
@@ -204,37 +226,81 @@ export class RecordSharingService {
               ],
             );
             // Lock the target as well as its grants, so deletion cannot leave an orphan grant.
-            await transactionScope.executeRawQuery(
-              `SELECT id FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(flatObjectMetadata))} WHERE id = $1 FOR UPDATE`,
+            const lockedRecords = await transactionScope.executeRawQuery(
+              `SELECT id FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(flatObjectMetadata))} WHERE id = $1 AND "deletedAt" IS NULL FOR UPDATE`,
               [args.recordId],
             );
+            if (lockedRecords.length === 0)
+              throw new NotFoundError('Record not found');
             const repository =
               this.workspaceOrmManager.getRepositoryWithContextPermissions(
                 flatObjectMetadata.nameSingular,
                 transactionScope,
               );
-            const writableIds =
-              await repository.findRecordIdsAllowedForOperation({
+            if (sharingObject.usesRecordPermissionPolicy)
+              await repository.refreshRecordPermissionContext();
+            const sharedIds =
+              await repository.findRecordIdsAllowedForRecordPermissionAction({
                 recordIds: [args.recordId],
-                operationType: 'update',
-                withDeleted: true,
+                action: 'share',
+                delegatedAccessLevel: args.accessLevel,
               });
-            // A grant may let someone edit a record beyond their role, never
-            // decide who else gets it
-            if (
-              writableIds.length !== 1 ||
-              !repository.isObjectOperationPermittedByRole('update')
-            ) {
-              throw new NotFoundError('Record not found');
-            }
-            const { viewerAccessLevel, creatorWorkspaceMemberId } =
-              await this.getRecordShares({
+            let creatorWorkspaceMemberId: string | undefined;
+
+            if (isDefined(sharedIds)) {
+              const requiredActions: RecordPermissionAction[] = ['read'];
+
+              if (
+                args.accessLevel === RecordShareAccessLevel.READ_WRITE ||
+                args.accessLevel === RecordShareAccessLevel.FULL
+              )
+                requiredActions.push('update');
+              if (args.accessLevel === RecordShareAccessLevel.FULL)
+                requiredActions.push('softDelete', 'destroy');
+              if (!sharedIds.includes(args.recordId))
+                throw new NotFoundError('Record not found');
+              for (const action of requiredActions) {
+                const admittedIds =
+                  await repository.findRecordIdsAllowedForRecordPermissionAction(
+                    { recordIds: [args.recordId], action },
+                  );
+                if (!admittedIds?.includes(args.recordId)) {
+                  throw new RecordShareException(
+                    'Cannot delegate access that the grantor does not hold',
+                    RecordShareExceptionCode.INVALID_SHARE_WITH,
+                    {
+                      userFriendlyMessage: msg`You cannot share more access than you have.`,
+                    },
+                  );
+                }
+              }
+            } else {
+              const writableIds =
+                await repository.findRecordIdsAllowedForOperation({
+                  recordIds: [args.recordId],
+                  operationType: 'update',
+                  withDeleted: true,
+                });
+              // A grant may let someone edit a record beyond their role, never
+              // decide who else gets it
+              if (
+                writableIds.length !== 1 ||
+                !repository.isObjectOperationPermittedByRole('update')
+              ) {
+                throw new NotFoundError('Record not found');
+              }
+              const {
+                viewerAccessLevel,
+                creatorWorkspaceMemberId: legacyCreatorId,
+              } = await this.getRecordShares({
                 ...args,
                 sharingObject,
                 transactionScope,
               });
-            if (viewerAccessLevel !== RecordShareAccessLevel.FULL) {
-              throw new NotFoundError('Record not found');
+              if (viewerAccessLevel !== RecordShareAccessLevel.FULL) {
+                throw new NotFoundError('Record not found');
+              }
+              creatorWorkspaceMemberId = legacyCreatorId;
             }
             await write({
               workspaceId,
@@ -379,34 +445,100 @@ export class RecordSharingService {
     permissions: RecordPermissionsDTO;
   }): Promise<RecordSharingDTO> {
     const { flatObjectMetadata, sharingMode } = sharingObject;
-    const { shares, viewerAccessLevel, generalAccessLevel } =
-      await this.getRecordShares({ ...args, sharingObject });
-    const canManageSharing =
-      sharingMode !== RecordSharingMode.ROLE_ONLY &&
-      permissions.canUpdate &&
-      viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.isUpdatePermittedByRole({
-        authContext: args.authContext,
-        flatObjectMetadata,
-      }));
+    const {
+      shares,
+      viewerAccessLevel,
+      generalAccessLevel,
+      hasMoreShares,
+      hasManagedGeneralAccess,
+    } = await this.getRecordShares({ ...args, sharingObject });
+    const liveShareIds =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager
+            .getRepositoryWithContextPermissions(
+              flatObjectMetadata.nameSingular,
+            )
+            .findRecordIdsAllowedForRecordPermissionAction({
+              recordIds: [args.recordId],
+              action: 'share',
+            }),
+        args.authContext,
+      );
+    const canManageSharing = isDefined(liveShareIds)
+      ? Boolean(
+          sharingObject.isSharingEnabled &&
+          liveShareIds.includes(args.recordId),
+        )
+      : sharingMode !== RecordSharingMode.ROLE_ONLY &&
+        permissions.canUpdate &&
+        viewerAccessLevel === RecordShareAccessLevel.FULL &&
+        (await this.isUpdatePermittedByRole({
+          authContext: args.authContext,
+          flatObjectMetadata,
+        }));
+    const allowedShareAccessLevels = sharingObject.usesRecordPermissionPolicy
+      ? await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+          if (!canManageSharing || !permissions.canRead) return [];
+          const repository =
+            this.workspaceOrmManager.getRepositoryWithContextPermissions(
+              flatObjectMetadata.nameSingular,
+            );
+          const levels = [
+            RecordShareAccessLevel.READ,
+            ...(permissions.canUpdate
+              ? [RecordShareAccessLevel.READ_WRITE]
+              : []),
+            ...(permissions.canUpdate &&
+            permissions.canDelete &&
+            permissions.canSoftDelete
+              ? [RecordShareAccessLevel.FULL]
+              : []),
+          ];
+          const allowed: RecordShareAccessLevel[] = [];
+          for (const level of levels) {
+            const ids =
+              await repository.findRecordIdsAllowedForRecordPermissionAction({
+                recordIds: [args.recordId],
+                action: 'share',
+                delegatedAccessLevel: level,
+              });
+            if (ids?.includes(args.recordId)) allowed.push(level);
+          }
+          return allowed;
+        }, args.authContext)
+      : undefined;
     const grants = shares.filter(
       (share) =>
         share.principalType !== RecordSharePrincipalType.EVERYONE &&
         share.accessLevel !== RecordShareAccessLevel.NONE,
     );
 
+    const inherited =
+      canManageSharing && sharingObject.usesRecordPermissionPolicy
+        ? await this.getInheritedShares(args, flatObjectMetadata)
+        : { shares: [], hasMore: false };
+
     return {
+      hasMoreShares,
+      allowedShareAccessLevels,
+      inheritedShares: inherited.shares,
+      hasMoreInheritedShares: inherited.hasMore,
+      usesRecordPermissionPolicy:
+        sharingObject.usesRecordPermissionPolicy ?? false,
       sharingMode,
       canManageSharing,
       permissions,
       generalAccessLevel,
       defaultGeneralAccessLevel: resolveDefaultGeneralAccessLevel(sharingMode),
-      hasManagedGeneralAccess: shares.some(
-        (share) =>
-          share.principalType === RecordSharePrincipalType.EVERYONE &&
-          share.rowCause !== RecordShareRowCause.MANUAL &&
-          share.accessLevel !== RecordShareAccessLevel.NONE,
-      ),
+      hasManagedGeneralAccess:
+        hasManagedGeneralAccess ??
+        shares.some(
+          (share) =>
+            share.principalType === RecordSharePrincipalType.EVERYONE &&
+            share.rowCause !== RecordShareRowCause.MANUAL &&
+            share.accessLevel !== RecordShareAccessLevel.NONE,
+        ),
       shares: canManageSharing
         ? await this.buildGrants({
             workspaceId: args.authContext.workspace.id,
@@ -421,6 +553,45 @@ export class RecordSharingService {
           })
         : [],
     };
+  }
+
+  private async getInheritedShares(
+    args: RecordSharingArgs,
+    object: FlatObjectMetadata,
+  ): Promise<{ shares: InheritedRecordSharingGrantDTO[]; hasMore: boolean }> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const context = getWorkspaceContext().recordPermissionContext;
+
+      if (!isDefined(context)) return { shares: [], hasMore: false };
+      const statement = compileInheritedRecordShares({
+        context,
+        targetObjectUniversalIdentifier: object.universalIdentifier,
+        recordId: args.recordId,
+        after: args.inheritedSharesAfter,
+      });
+
+      if (!isDefined(statement)) return { shares: [], hasMore: false };
+      const repository =
+        this.workspaceOrmManager.getRepositoryWithContextPermissions(
+          object.nameSingular,
+        );
+      const sources = await repository.executeRaw<
+        RecordShare & { fieldUniversalIdentifiers: string[] }
+      >(statement.sql, statement.parameters);
+      const grants = await this.buildGrants({
+        workspaceId: args.authContext.workspace.id,
+        grants: sources.slice(0, 100),
+      });
+
+      return {
+        hasMore: sources.length > 100,
+        shares: grants.map((grant, index) => ({
+          ...grant,
+          sourceObjectMetadataId: sources[index].objectMetadataId,
+          fieldUniversalIdentifiers: sources[index].fieldUniversalIdentifiers,
+        })),
+      };
+    }, args.authContext);
   }
 
   private async buildGrants({
@@ -498,10 +669,21 @@ export class RecordSharingService {
     recordId,
     sharingObject,
     transactionScope,
+    sharesAfter,
   }: RecordSharingArgs & {
     sharingObject: RecordSharingObject;
     transactionScope?: WorkspaceTransactionScope;
   }) {
+    if (sharingObject.usesRecordPermissionPolicy) {
+      return this.getPolicyRecordShares({
+        authContext,
+        objectMetadataId,
+        recordId,
+        sharingObject,
+        transactionScope,
+        sharesAfter,
+      });
+    }
     const workspaceId = authContext.workspace.id;
     const isOpenByDefault =
       sharingObject.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT;
@@ -566,7 +748,56 @@ export class RecordSharingService {
       viewerAccessLevel,
       generalAccessLevel,
       creatorWorkspaceMemberId,
+      hasMoreShares: false,
+      hasManagedGeneralAccess: undefined,
     };
+  }
+
+  private async getPolicyRecordShares({
+    authContext,
+    objectMetadataId,
+    recordId,
+    sharingObject,
+    transactionScope,
+    sharesAfter,
+  }: RecordSharingArgs & {
+    sharingObject: RecordSharingObject;
+    transactionScope?: WorkspaceTransactionScope;
+  }) {
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository =
+        transactionScope?.getRepository(
+          sharingObject.flatObjectMetadata.nameSingular,
+        ) ??
+        this.workspaceOrmManager.getRepositoryWithContextPermissions(
+          sharingObject.flatObjectMetadata.nameSingular,
+        );
+      const table = `${escapeIdentifier(getWorkspaceSchemaName(authContext.workspace.id))}."recordShare"`;
+      const shares = await repository.executeRaw<RecordShare>(
+        `SELECT * FROM ${table} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = :recordId AND "principalType" <> 'EVERYONE' AND "accessLevel" <> 'NONE' AND (:sharesAfter::uuid IS NULL OR id > :sharesAfter::uuid) ORDER BY id LIMIT 101`,
+        { objectMetadataId, recordId, sharesAfter: sharesAfter ?? null },
+      );
+      const [general] = await repository.executeRaw<{
+        level: number;
+        managed: boolean;
+      }>(
+        `SELECT COALESCE(MAX(CASE "accessLevel" WHEN 'FULL' THEN 3 WHEN 'READ_WRITE' THEN 2 WHEN 'READ' THEN 1 ELSE 0 END), 0)::int AS level, COALESCE(bool_or("rowCause" <> 'MANUAL' AND "accessLevel" <> 'NONE'), false) AS managed FROM ${table} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = :recordId AND "principalType" = 'EVERYONE'`,
+        { objectMetadataId, recordId },
+      );
+      return {
+        shares: shares.slice(0, 100),
+        hasMoreShares: shares.length > 100,
+        hasManagedGeneralAccess: general.managed,
+        generalAccessLevel: [
+          RecordShareAccessLevel.NONE,
+          RecordShareAccessLevel.READ,
+          RecordShareAccessLevel.READ_WRITE,
+          RecordShareAccessLevel.FULL,
+        ][general.level],
+        viewerAccessLevel: RecordShareAccessLevel.NONE,
+        creatorWorkspaceMemberId: undefined,
+      };
+    }, authContext);
   }
 
   private async findCreatorWorkspaceMemberId({
@@ -667,9 +898,22 @@ export class RecordSharingService {
       throw new NotFoundError('Record not found');
     }
 
+    const usesRecordPermissionPolicy =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () => isDefined(getWorkspaceContext().recordPermissionContext),
+        authContext,
+      );
+
     return {
       flatObjectMetadata,
       ...resolveObjectSharing({ flatObjectMetadata, featureFlagsMap }),
+      ...(usesRecordPermissionPolicy
+        ? { sharingMode: RecordSharingMode.PRIVATE, canShareBeyondRole: true }
+        : {}),
+      usesRecordPermissionPolicy,
+      isSharingEnabled:
+        featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ===
+        true,
     };
   }
 }

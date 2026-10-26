@@ -19,6 +19,7 @@ import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SidePanelShareRecordGeneralAccessItemProps = {
+  allowedAccessLevels?: RecordShareAccessLevel[] | null;
   generalAccessLevel: RecordShareAccessLevel | null | undefined;
   defaultGeneralAccessLevel: RecordShareAccessLevel | null | undefined;
   hasManagedGeneralAccess: boolean;
@@ -28,6 +29,7 @@ type SidePanelShareRecordGeneralAccessItemProps = {
 };
 
 export const SidePanelShareRecordGeneralAccessItem = ({
+  allowedAccessLevels,
   generalAccessLevel,
   defaultGeneralAccessLevel,
   hasManagedGeneralAccess,
@@ -100,7 +102,10 @@ export const SidePanelShareRecordGeneralAccessItem = ({
       <Dropdown.Section label={t(generalAccessLabel)}>
         {RECORD_SHARE_ACCESS_LEVEL_OPTIONS.filter(
           // Full access lets its holder manage sharing, so it is only granted by name
-          (option) => option.value !== RecordShareAccessLevel.FULL,
+          (option) =>
+            option.value !== RecordShareAccessLevel.FULL &&
+            (!allowedAccessLevels ||
+              allowedAccessLevels.includes(option.value)),
         ).map((option) => (
           <Dropdown.OptionItem
             key={option.value}

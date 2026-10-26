@@ -28,6 +28,7 @@ const SidePanelShareRecordPageContent = ({
       />
       <RecordSharingRefreshEffect refetch={sharingState.refetch} />
       <SidePanelShareRecordContent
+        recordTarget={target}
         objectLabelPlural={objectMetadataItem.labelPlural}
         sharingReach={objectMetadataItem.sharingReach}
         recordUrl={

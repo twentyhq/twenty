@@ -9,11 +9,15 @@ const logger = new Logger('runInRollbackSafeTransaction');
 export const runInRollbackSafeTransaction = async <T>({
   pool,
   work,
+  acquireConnection,
 }: {
   pool: Pool;
+  acquireConnection?: () => Promise<PoolClient>;
   work: (client: PoolClient) => Promise<T>;
 }): Promise<T> => {
-  const client = await pool.connect().catch((error: unknown) => {
+  const client = await (
+    acquireConnection ? acquireConnection() : pool.connect()
+  ).catch((error: unknown) => {
     throw computeTwentyOrmException(error);
   });
   let shouldDestroyConnection = false;

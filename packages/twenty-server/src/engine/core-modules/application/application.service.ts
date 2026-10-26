@@ -42,6 +42,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
@@ -794,7 +795,22 @@ export class ApplicationService {
       workspaceId: string;
     },
   ): Promise<ApplicationEntity> {
-    await this.applicationRepository.update(data.workspaceId, { id }, data);
+    if ('defaultRoleId' in data) {
+      await this.coreDataSource.transaction(async (manager) => {
+        await manager.query(`SET LOCAL lock_timeout = '8s'`);
+        await manager.query(
+          'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+          [getWorkspaceSchemaName(data.workspaceId) + ':record-permissions'],
+        );
+        await manager.update(
+          ApplicationEntity,
+          { id, workspaceId: data.workspaceId },
+          data,
+        );
+      });
+    } else {
+      await this.applicationRepository.update(data.workspaceId, { id }, data);
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(data.workspaceId, [
       'flatApplicationMaps',
@@ -845,6 +861,11 @@ export class ApplicationService {
     await queryRunner.startTransaction();
 
     try {
+      await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
+      await queryRunner.query(
+        'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+        [getWorkspaceSchemaName(workspaceId) + ':record-permissions'],
+      );
       await queryRunner.manager.update(
         ApplicationEntity,
         { id: application.id },

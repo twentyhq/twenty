@@ -19,6 +19,7 @@ const ACCESS_LEVEL_ICONS = {
 };
 
 type RecordSharingAccessLevelOptionsProps = {
+  allowedAccessLevels?: RecordShareAccessLevel[] | null;
   value: RecordShareAccessLevel;
   onChange: (value: RecordShareAccessLevel) => void;
   onRemove?: () => void;
@@ -27,6 +28,7 @@ type RecordSharingAccessLevelOptionsProps = {
 };
 
 export const RecordSharingAccessLevelOptions = ({
+  allowedAccessLevels,
   value,
   onChange,
   onRemove,
@@ -36,7 +38,9 @@ export const RecordSharingAccessLevelOptions = ({
   const { t } = useLingui();
   const options = RECORD_SHARE_ACCESS_LEVEL_OPTIONS.filter(
     (option) =>
-      !shouldExcludeFullAccess || option.value !== RecordShareAccessLevel.FULL,
+      (!shouldExcludeFullAccess ||
+        option.value !== RecordShareAccessLevel.FULL) &&
+      (!allowedAccessLevels || allowedAccessLevels.includes(option.value)),
   );
 
   return (

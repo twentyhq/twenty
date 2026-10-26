@@ -1,0 +1,8 @@
+{
+  "sharingReadGrant": true,
+  "sharingRevoke": true,
+  "generalFullRejected": true,
+  "staleCancellationRejected": true,
+  "activeRevisionPreserved": true,
+  "verifiedAt": "2026-10-26T19:51:22.354Z"
+}

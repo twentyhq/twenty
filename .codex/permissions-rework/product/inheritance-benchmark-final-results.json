@@ -1,0 +1,33 @@
+{
+  "shares": 50000,
+  "descendantsPerShare": 30,
+  "descendants": 1500000,
+  "members": 1000,
+  "startedAt": "2026-10-26T20:31:14.608Z",
+  "reads": {
+    "livePoint": {
+      "p50Ms": 3.0811659999999392,
+      "p99Ms": 4.600125000000844,
+      "samples": 100
+    },
+    "inheritedShares": {
+      "p50Ms": 0.8388750000012806,
+      "p99Ms": 1.850125000000844,
+      "samples": 100
+    }
+  },
+  "processed": 1500000,
+  "changed": 1500000,
+  "scan": {
+    "blockCursor": 50000,
+    "blockLimit": 50000,
+    "relationFileNode": 16683
+  },
+  "retries": 0,
+  "elapsedSeconds": 501.166329792,
+  "verified": {
+    "total": 1500000,
+    "projected": 1500000
+  },
+  "finishedAt": "2026-10-26T20:39:52.195Z"
+}

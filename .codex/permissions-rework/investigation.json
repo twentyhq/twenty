@@ -1,0 +1,1117 @@
+{
+  "phase": "Implementation design updated with decisions 1–19 and live point/materialized collection routing; no pending product questions; implementation and performance acceptance pending",
+  "date": "2026-10-26",
+  "baseCommit": "fc69b162c35",
+  "checkout": "main, fast-forwarded from origin/main by 28 commits; preexisting untracked files preserved",
+  "scope": {
+    "ui": "Object permissions, field permissions, RLS, record sharing",
+    "inheritance": "Explicit relation FIELD paths, at most three hops; propagate all parent actions, capped by target record capabilities and field restrictions",
+    "storage": "RLS policy metadata portable staging-to-production; sharing configuration and grants in workspace schema; materialized permission columns per record",
+    "scale": "10 million records per table; 1,000 workspace members; roughly 50,000 explicit source shares per workspace, excluding derived access",
+    "rollout": "Both features behind flags; RLS enterprise; preserve record-sharing licensing behavior found in repository",
+    "workflow": "Detailed investigation, grill user, design doc, autonomous product branch, then successive small PRs",
+    "managedObjects": "Application-introduced technical objects with non-overridable per-operation record capabilities on ObjectMetadata; naming not final",
+    "excluded": "Application-install permission negotiation, application-role bypass design and owning-app governance changes; allowing edits that remove the editor's access; revocation of existing bearer file links and download-time reauthorization; a new criteria-based automatic-sharing editor or generic sharing-rule subsystem. Metadata record capabilities and user/API enforcement, new link issuance checks, and existing explicit/application grant producers remain in scope."
+  },
+  "currentBehavior": [
+    {
+      "finding": "RLS predicates and groups already live in core metadata, extend SyncableEntity, and participate in application manifests and universal identifiers.",
+      "files": [
+        "packages/twenty-server/src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity.ts",
+        "packages/twenty-shared/src/application/roleManifestType.ts"
+      ]
+    },
+    {
+      "finding": "Record shares already use one cross-object workspace table. Identity includes objectMetadataId, recordId, principalId, rowCause and sourceId. Principals are EVERYONE, WORKSPACE_MEMBER or ROLE; access levels NONE, READ, READ_WRITE, FULL. Causes OWNER, MANUAL, RULE, APPLICATION. Generic user-defined share-rule configuration was not found; RULE is used by workflow-run grant producers.",
+      "files": [
+        "packages/twenty-server/src/engine/core-modules/record-share/services/record-share-storage.service.ts",
+        "packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-record-share-standard-flat-index-metadata.util.ts",
+        "packages/twenty-server/src/engine/core-modules/workflow/utils/build-workflow-run-record-shares.util.ts"
+      ]
+    },
+    {
+      "finding": "Named shares can bypass the role object gate and RLS for SELECT and UPDATE when sharingReach=WORKSPACE and IS_RECORD_LEVEL_SHARING_ENABLED. ROLE_ACCESS preserves the role ceiling. General everyone shares cannot widen beyond the role. Fields are checked separately. FULL share holders still need role UPDATE to manage sharing.",
+      "files": [
+        "packages/twenty-server/src/engine/twenty-orm/utils/build-row-access-policy.util.ts",
+        "packages/twenty-server/src/engine/core-modules/record-share/utils/resolve-object-sharing.util.ts",
+        "packages/twenty-server/src/engine/core-modules/record-share/services/record-sharing.service.ts",
+        "packages/twenty-server/test/integration/graphql/suites/object-records-permissions/record-sharing-beyond-role.integration-spec.ts"
+      ]
+    },
+    {
+      "finding": "RLS currently compiles at query time and supports current-member field substitution, including custom member fields. Applicable roles intersect (user/application/agent scopes), rather than representing multiple additive human roles. Mutations validate before and after values, refusing updates that leave the RLS update policy.",
+      "files": [
+        "packages/twenty-server/src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util.ts",
+        "packages/twenty-server/src/engine/twenty-orm/utils/resolve-role-permission-config.util.ts",
+        "packages/twenty-server/src/engine/twenty-orm/repository/workspace-repository.ts"
+      ]
+    },
+    {
+      "finding": "Existing inherited readability declares relation-field universal identifiers on objects, supports many-to-one, one-to-many and morph siblings, recursively compiles parent policies at read time, with max depth 3. Parent alternatives and own shares are ORed. Notes/tasks have special detached behavior and deleted-link timing for trash. This is not a reusable explicit path-definition UI/model yet.",
+      "files": [
+        "packages/twenty-server/src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util.ts",
+        "packages/twenty-server/src/engine/core-modules/record-share/utils/build-record-share-gate.util.ts",
+        "packages/twenty-server/src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util.ts",
+        "packages/twenty-server/src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant.ts"
+      ]
+    },
+    {
+      "finding": "Repository before-execute policy applies to root and joined aliases. Search uses that repository. Event delivery uses an in-memory evaluator of the shared policy tree across subscriptions, webhooks, workflows, agents and logic functions. All must remain consistent when adding materialized reads; not only GraphQL lists.",
+      "files": [
+        "packages/twenty-server/src/engine/twenty-orm/repository/workspace-repository.ts",
+        "packages/twenty-server/src/engine/core-modules/record-share/services/record-access-policy.service.ts",
+        "packages/twenty-server/src/engine/subscriptions/object-record-event/object-record-event-publisher.ts",
+        "packages/twenty-server/src/engine/core-modules/search/services/search.service.ts",
+        "packages/twenty-server/test/integration/graphql/suites/object-records-permissions/record-level-sharing-restricted-record-surfaces.integration-spec.ts"
+      ]
+    },
+    {
+      "finding": "Transaction event callbacks run after commit in process; errors are logged and swallowed. WorkspaceEventEmitter uses EventEmitter2.emit. Share storage disables event emission explicitly. No durable permission propagation outbox/reconciliation system was found.",
+      "files": [
+        "packages/twenty-server/src/engine/twenty-orm/datasource/workspace-data-source.ts",
+        "packages/twenty-server/src/engine/workspace-event-emitter/workspace-event-emitter.ts",
+        "packages/twenty-server/src/engine/core-modules/record-share/services/record-share-storage.service.ts"
+      ]
+    },
+    {
+      "finding": "RLS service enforces EnterprisePlanService.isValid AND BillingEntitlementKey.RLS. Current FeatureFlagKey has record-level-sharing flag, but no RLS rollout flag. No separate sharing billing entitlement check was found in inspected sharing service; many underlying sharing files bear Enterprise license headers, which must be preserved.",
+      "files": [
+        "packages/twenty-server/src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service.ts",
+        "packages/twenty-shared/src/types/FeatureFlagKey.ts"
+      ]
+    },
+    {
+      "finding": "Record exports use CommonFindManyQueryRunnerService with workspace auth. File downloads use signed workspace/file JWTs in FileByIdGuard, not a fresh record authorization check; already-issued URLs are a separate revocation scope. FilesField token expiry is checked and private cache max-age is 86400 seconds.",
+      "files": [
+        "packages/twenty-server/src/engine/core-modules/file/guards/file-by-id.guard.ts",
+        "packages/twenty-server/src/engine/core-modules/file/file-url/file-url.service.ts",
+        "packages/twenty-server/src/engine/core-modules/file/interfaces/file-folder.interface.ts",
+        "packages/twenty-server/src/engine/core-modules/record-export/services/record-export-query.service.ts"
+      ]
+    }
+  ],
+  "figma": {
+    "file": "xt8O9mFeLl46C5InWwoMrN",
+    "requestedNode": "121496-239702",
+    "requestedNodeStatus": "Repeatedly redirects to Primitives, including after authentication. Relevant designs reached through Settings page after slow load.",
+    "settingsPage": "34844-84769",
+    "rolesSharingSection": "121885-364990",
+    "rolePermissionsFrame": "121687-234280",
+    "invoicePermissionsFrame": "121893-224348",
+    "objectSettingsFrame": "121491-360691",
+    "sharingAtRestFrame": "121109-222086",
+    "observations": [
+      "Default for all objects; per-object overrides with See / Advanced summary; inline expanded card",
+      "All records actions: See with field selector, Edit with field selector, Delete, Destroy, Receive, Share with access-level selector",
+      "Some records rules: Account owner is me; allows chosen actions such as Delete, destroy, share",
+      "Invoice example locks editing/deleting/destroying to Stripe application, hides card details from field picker",
+      "Related records table lives in object settings, columns Object / Relation / Type, examples Notes via Note targets, Tasks via Task targets, People via Company",
+      "Sharing at rest separates Shared directly from Through roles; mixed role access shown as Some can edit",
+      "Invitation can select people or roles, choose Can view/Can edit, and explains that linked notes/tasks/files will also become visible"
+    ],
+    "connection": "Chrome browser works after user retry/authentication. Figma plugin suggested but not installed/connected as of tool discovery. No plugin required for ongoing browser inspection."
+  },
+  "benchmark": {
+    "database": "permissions_rework_bench_20261026",
+    "isolated": true,
+    "postgres": "15.14 Homebrew, arm64, shared_buffers=128MB, work_mem=4MB",
+    "records": 10000000,
+    "shares": 50000,
+    "size": "Records and indexes 1934 MB; share table and indexes 11 MB",
+    "distribution": "1000 region roles (10k records each), dense role (5M records), old-only role (first 1000 records); 100 share principals (500 records each)",
+    "files": [
+      "bench/setup.sql",
+      "bench/queries.sql",
+      "bench/results-first-run.txt",
+      "bench/results-second-run.txt",
+      "bench/equivalence.txt"
+    ],
+    "secondRunMilliseconds": {
+      "baselineTop50": 0.05,
+      "denseRoleTop50": 0.071,
+      "scatteredRoleTop50": 19.421,
+      "oldestRecordsRoleTop50": 0.321,
+      "sharedOnlyTop50": 5.056,
+      "roleOrCorrelatedShareTop50": 327.099,
+      "roleOrUncorrelatedShareTop50": 10.696,
+      "denseRoleExactCount": 568.834
+    },
+    "equivalence": "Correlated and uncorrelated formulations returned identical 50 record IDs in this scenario.",
+    "limitations": "Two serial synthetic SQL runs, not p95, not true cold cache, not full app/API load. No three-hop fanout, concurrent writes, generic prepared plans, update throughput or failure recovery benchmark yet. PG15 differs from requested setup's PG16. Current code already uses uncorrelated named grants, so benchmark is not evidence current code necessarily has the measured correlated regression.",
+    "documentation": [
+      "https://www.postgresql.org/docs/15/indexes-types.html",
+      "https://www.postgresql.org/docs/15/indexes-bitmap-scans.html"
+    ]
+  },
+  "runtime": {
+    "status": "Fresh main server and worker launched; shared and UI rebuilt successfully; backend healthz HTTP200; browser tabs reached Sign in or Create an account at localhost:3001/welcome. Permission UI not inspected live yet: extension reported Debugger unattached after load; fresh tab same issue; native fallback interrupted by user changing Chrome, stopped to avoid interfering.",
+    "postgresAndRedis": "Already listening locally on 5432 and 6379",
+    "postgresMcp": "Failed Unexpected response type; read-only psql fallback worked",
+    "existingDatabase": "default, 91MB, Apple and YCombinator seeded workspaces. No application data changed. Do not reset this DB without need.",
+    "dependencyIssue": "Resolved: immutable Yarn install completed using Node24.21, ipv4first, concurrency8. No tracked dependency configuration changed.",
+    "activeInstall": null,
+    "requiredNext": "Continue after product answers; finish live permission UI comparison when browser control available. No app source edits, DB migrations or reset performed.",
+    "builds": "Shared and UI builds succeeded with skip-nx-cache and excludeTaskDependencies. Standard shared barrel generation hung during ESM import of @prettier/sync; transpiled same script to scratch CJS and ran it successfully, no tracked diff.",
+    "processes": {
+      "appSession": 84933,
+      "workerSession": 7148,
+      "appLog": "/tmp/twenty-permissions-app.log",
+      "workerLog": "/tmp/twenty-permissions-worker.log"
+    },
+    "lastHealthCheck": "Frontend HTTP 200 and backend healthz HTTP 200 during draft writing; permission UI inspection remains incomplete."
+  },
+  "questionsAlreadySent": [
+    "May explicit sharing override RLS: keep per-object choice, RLS always wins, or sharing always wins?",
+    "Must inherited revocation be immediate at source commit, accepting temporary deny/live checks, or is bounded staleness acceptable?",
+    "Retain arbitrary current-user field predicates, owner=me only, or role-wide rules only?"
+  ],
+  "nextQuestions": [],
+  "validation": {
+    "tests": "build-row-access-policy and resolve-object-sharing unit suites: 45 tests passed, 2 suites; Jest emitted existing .local-storage package-name collision warnings",
+    "trackedChanges": "None as of most recent git status check"
+  },
+  "currentCheckoutCommit": "f6954a97f56",
+  "checkoutNote": "At final check main and origin/main had advanced three commits beyond the originally pulled base; delta is email docs, monitoring flag removal and OpenAPI helper renames. No tracked local edits. Rebuilt shared again from current HEAD.",
+  "confirmedDecisions": [
+    {
+      "decision": "Explicit sharing may grant access beyond RLS",
+      "userAnswer": "1. yes",
+      "openDetail": "Explicit sharing may grant outside normal RLS; Receive enables this. Field and application constraints remain hard ceilings. Retention of a separate per-object sharingReach switch remains a UI/model decision."
+    },
+    {
+      "decision": "Delay in permission propagation/revocation is acceptable",
+      "userAnswer": "2. delay is acceptable",
+      "openDetail": "Up to 60 minutes accepted for a 10-million-record recomputation; ordinary changes target still unspecified."
+    },
+    {
+      "decision": "Retain current-user-relative predicates and recompute materialized permission state when relevant values change",
+      "userAnswer": "3. yes we should keep that. RLS rules should keep this dynamic but roleIds column on object table should be recomputed when value changes to keep in sync",
+      "technicalConstraint": "Multiple workspace members share a role, so role IDs alone cannot express owner=me or differing member-field values. Resolved by the later accessGroupId decision: evaluated member bindings identify reusable groups whose effective actions are materialized on business records."
+    },
+    {
+      "decision": "Receive allows explicitly shared access outside normal record grants; field restrictions and application restrictions remain hard limits",
+      "userAnswer": "4. yes and yes. Field restriction is restricting, while object / record sharing / rls are opening"
+    },
+    {
+      "decision": "Start private and combine grants additively per action from object permissions, RLS and record sharing; matching grants do not veto one another",
+      "userAnswer": "5. yes, we start from everythning is private and we open"
+    },
+    {
+      "decision": "Allow up to 60 minutes for a recomputation affecting 10 million records",
+      "userAnswer": "6. it's fine to go up to 60minutes for 10million case",
+      "openDetail": "Ordinary single-record propagation target remains unspecified; do not interpret 60 minutes as the normal target for every change"
+    },
+    {
+      "decision": "Design for 1,000 workspace members",
+      "userAnswer": "7. 1000 workspace members"
+    },
+    {
+      "decision": "50K estimate counts explicit source share grants, excluding derived RLS and inherited access",
+      "userAnswer": "8. yes"
+    },
+    {
+      "decision": "Inherited access propagates all parent actions, including sharing and deletion, subject to target object capabilities and field restrictions",
+      "userAnswer": "9. inherited should inherit all like the parent",
+      "note": "Do not treat this as authorization for destructive cascading operations; this defines authority on related records."
+    },
+    {
+      "decision": "Technical objects introduced by applications need per-operation hard limits on ObjectMetadata that no role, RLS, sharing or inherited permission can override",
+      "userAnswer": "I also forgot to mention that we want system owned (we must find a better naming) object that are technical object introduced by apps. It's what record sharing started to implement. What we want is that we attach metadata on the objectMetadata to say if the object is readable, editrable, deletable... and that these cannot be overriden by any permission",
+      "openDetail": "Record capability limits cannot be overridden by user/API role grants, RLS, sharing or inheritance. User clarified future application-role bypass is out of scope. Preserve/document existing internal behavior rather than designing install permissions here."
+    },
+    {
+      "decision": "Use accessGroupId and record capabilities terminology",
+      "userAnswer": "I like accessGroupId and record capabilities"
+    },
+    {
+      "decision": "Applications also have roles; application-role bypass of record capabilities belongs to the future app-install permission model and is out of scope for this work",
+      "userAnswer": "10. we were previously mainly discussing userRole and ApiRole but applicaiton also get roles. this role can bypass the recordCapabilities indeed but that's out of scope as permissions on app install are still TBD",
+      "scopeBoundary": "Do not implement a new blanket owner-application bypass, install consent flow, or application-role permission redesign. Focus new user/API-role enforcement; document and preserve applicable existing application/internal behavior without treating app identity alone as authorization for new bypasses."
+    },
+    {
+      "decision": "Owning app defines record capabilities; workspace administrators cannot loosen them. App ownership/install-permission governance is out of scope for now",
+      "userAnswer": "11. yes, out of scope for now"
+    },
+    {
+      "decision": "Sharing requires a Share grant and cannot delegate actions beyond those the sender possesses",
+      "userAnswer": "12. yes we cannot share more than what we have"
+    },
+    {
+      "decision": "No implicit permanent access for a record creator; access must come from configured grants",
+      "userAnswer": "13. agree"
+    },
+    {
+      "decision": "Allowing an authorized edit that removes the editor access is desirable but deferred for this artifact",
+      "userAnswer": "14. yes but can be out of scope for now",
+      "scopeBoundary": "Preserve current post-update restriction; do not silently implement new ownership-transfer/self-revocation behavior."
+    },
+    {
+      "decision": "Existing explicit shares persist when the sender loses access; no automatic cascade based on sender authority",
+      "userAnswer": "15. yes"
+    },
+    {
+      "decisionKey": "query_routing_live_point_materialized_collections",
+      "decision": "Sharing operations and single-record lookups evaluate live SQL through declared inheritance; collection/list/batch reads use materialized access on business records.",
+      "userAnswer": "Ok, then I feel RecordSharing should be built this way (SQL going through inheritance), one record query should also (going through inheritance) and batch read should go through materizalized on each record",
+      "date": "2026-10-26"
+    },
+    {
+      "decisionKey": "atomic_policy_activation",
+      "questionNumber": 16,
+      "decision": "Keep the previous policy active while the candidate is built and caught up; activate the complete candidate atomically.",
+      "userAnswer": "16. yes",
+      "date": "2026-10-26"
+    },
+    {
+      "decisionKey": "unreadable_intermediary_traversal",
+      "questionNumber": 17,
+      "decision": "Permit internal traversal of declared relation keys through unreadable technical intermediaries without exposing those records or fields; enforce the granting source policy and final target capabilities.",
+      "userAnswer": "17. yes",
+      "date": "2026-10-26"
+    },
+    {
+      "decisionKey": "existing_file_links_deferred",
+      "questionNumber": 18,
+      "decision": "Protect new file-link issuance; defer revocation of already-issued bearer links and download-time reauthorization.",
+      "userAnswer": "18. no need",
+      "date": "2026-10-26"
+    },
+    {
+      "decisionKey": "automatic_sharing_editor_deferred",
+      "questionNumber": 19,
+      "decision": "Keep explicit and existing application-produced source grants; no new criteria-based automatic-sharing editor or generic rule subsystem.",
+      "userAnswer": "19. no need",
+      "date": "2026-10-26"
+    }
+  ],
+  "materializationInvestigation": {
+    "roleModel": "RoleTarget unique per workspace/userWorkspace, many targets share the same role; viewer field values are bound in build-row-level-permission-record-filter at query time today",
+    "dependencyChangesToCover": [
+      "record field values",
+      "workspace member field values",
+      "role assignment",
+      "policy changes",
+      "relation additions/removals/retargeting",
+      "source grant changes",
+      "object/field metadata changes",
+      "time passing for any time-relative predicates if supported"
+    ],
+    "candidateToEvaluate": "Role-wide role arrays plus viewer-dependent materialized access identifiers; consider grouping identical role+parameter bindings to avoid duplicating per-user grants. No implementation chosen.",
+    "recommendation": "Prefer compact per-action permission/access identifiers: role-wide entries plus internal scopes tied to role, rule/version and bound current-member values. Resolve active scope membership per auth context; never union user and application authority into one bypass. A per-member-only array is simple but expands broad rules by member count. Scope grouping compresses owner/region examples but cannot bound all arbitrary high-cardinality predicates; benchmark those. New scope bindings may need backfill. This is a recommendation, not an approved final schema.",
+    "memberArrayComparison": {
+      "file": "bench/member-array-comparison.sql",
+      "results": "bench/member-array-comparison-results.txt",
+      "rows": 100000,
+      "members": 1000,
+      "regions": 10,
+      "eligibleMembersPerRecord": 100,
+      "expandedMemberArray": {
+        "heapBytes": 204800000,
+        "indexBytes": 24641536,
+        "totalBytes": 229449728
+      },
+      "oneScopeArray": {
+        "heapBytes": 7659520,
+        "indexBytes": 262144,
+        "totalBytes": 7929856
+      },
+      "matchingRowsForOneMemberInBothModels": 10000,
+      "rawUuidPayloadAt10mRows": {
+        "100MembersPerRecordBytes": 16000000000,
+        "1000MembersPerRecordBytes": 160000000000
+      },
+      "limitations": "Synthetic PostgreSQL temporary tables, one run, identical regional access, storage comparison only. Does not establish application p95, durable-write throughput, arbitrary-rule compression, or whole-system recomputation SLA. No application data changed.",
+      "documentation": [
+        "https://www.postgresql.org/docs/15/indexes-types.html",
+        "https://www.postgresql.org/docs/15/gin-implementation.html"
+      ]
+    }
+  },
+  "questionsPending": [],
+  "proposedTerminology": {
+    "materializedGrantee": "Accepted: access group; accessGroupId; per-action columns such as readableByAccessGroupIds. One RLS rule may produce many groups tied to role/rule/bound values.",
+    "technicalObject": "Application-managed object; UI may say Managed by [app]. Proposed, not yet accepted.",
+    "hardLimits": "Accepted: record capabilities on ObjectMetadata. Hard ceilings for user/API authority; future application-role bypass model explicitly deferred."
+  },
+  "managedObjectInvestigation": {
+    "existingFields": "ObjectMetadata has isSystem, isUIEditable, isUICreatable, readability and writability. MetadataReadability mixes OPEN/PRIVATE/INHERITED/APPLICATION/SYSTEM; MetadataWritability OPEN/APPLICATION/SYSTEM controls all non-select operations.",
+    "manifest": "ObjectManifest already includes readability and writability, so hard-limit portability can follow existing metadata/manifests.",
+    "currentBypasses": "System auth context bypasses policy. Owning application identity may be present in either user auth or application auth contexts. Clarify intended actor classes before design; never assume an application token on a user request may bypass user restrictions.",
+    "schemaProtection": "Existing isSystem also restricts metadata updates to cosmetic overrides/isActive for non-system builds. Must not conflate schema mutability/UI visibility with record operation capabilities.",
+    "pathTraversalProposal": "Explicit three-hop inheritance paths may need to traverse unreadable technical join objects, e.g. messageParticipant. Internal graph traversal should not expose those intermediate records; target hard limits still apply. This is a proposed interpretation, not an answered product decision.",
+    "files": [
+      "packages/twenty-server/src/engine/metadata-modules/object-metadata/object-metadata.entity.ts",
+      "packages/twenty-shared/src/types/MetadataReadability.ts",
+      "packages/twenty-shared/src/types/MetadataWritability.ts",
+      "packages/twenty-shared/src/application/objectManifestType.ts",
+      "packages/twenty-server/src/engine/twenty-orm/repository/validate-writability-or-throw.util.ts",
+      "packages/twenty-server/src/engine/twenty-orm/utils/build-row-access-policy.util.ts",
+      "packages/twenty-server/src/engine/twenty-orm/utils/is-owning-application-auth-context.util.ts",
+      "packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts"
+    ],
+    "appScopeClarification": "Owning-app-only capability modes suggested earlier are not approved work. Applications have roles; app-role capability bypass/install permissions are deferred by the user."
+  },
+  "remainingDesignTopics": [],
+  "designDocument": {
+    "path": "design-doc-record-permissions.md",
+    "status": "Implementation design; product questions resolved; implementation and performance acceptance pending",
+    "words": 11258,
+    "openedInEditor": "open_in_codex returned queued",
+    "verification": "Product decisions 1–19 recorded; no remaining question placeholders; local Markdown links resolve and code fences are balanced. No application source changes."
+  },
+  "separateAccessInvestigation": {
+    "trigger": "User asks whether keeping derived access in a separate table forces joining all 10M rows for filtered pagination.",
+    "status": "Physical layout remains open. Separate tables demonstrated viable; query-plan stability and durable write costs are next design gates.",
+    "database": "permissions_rework_bench_20261026",
+    "recordCount": 10000000,
+    "selectedCityRecordCount": 100205,
+    "selectedCityDenseAccessCount": 50182,
+    "selectedCitySparseAccessCount": 98,
+    "layouts": [
+      "arrays on business record",
+      "one separate array row per record",
+      "normalized record/group rows"
+    ],
+    "separateTableSizesIncludingIndexes": {
+      "arrayRows": "1233 MB, 10M rows",
+      "normalizedRows": "2284 MB, 15,001,000 rows"
+    },
+    "directQueryMediansMs": {
+      "city_dense": {
+        "on_record": 0.283,
+        "separate_row": 0.903,
+        "separate_edges": 0.727
+      },
+      "city_sparse": {
+        "on_record": 17.274,
+        "separate_row": 77.164,
+        "separate_edges": 128.122
+      },
+      "city_oldest_only": {
+        "on_record": 0.288,
+        "separate_row": 1.261,
+        "separate_edges": 2.522
+      },
+      "city_overlapping_groups": {
+        "on_record": 0.408,
+        "separate_row": 1.175,
+        "separate_edges": 0.692
+      },
+      "global_sparse": {
+        "on_record": 13.831,
+        "separate_row": 75.945,
+        "separate_edges": 73.988
+      },
+      "global_oldest_only": {
+        "on_record": 0.402,
+        "separate_row": 1.277,
+        "separate_edges": 2.694
+      },
+      "city_dense_next_page": {
+        "on_record": 0.486,
+        "separate_row": 1.254,
+        "separate_edges": 0.878
+      },
+      "city_sparse_next_page": {
+        "on_record": 22.129,
+        "separate_row": 76.757,
+        "separate_edges": 143.876
+      }
+    },
+    "lateFetchMediansMs": {
+      "city_dense": {
+        "on_record": 0.686,
+        "separate_row": 1.191,
+        "separate_edges": 1.115
+      },
+      "city_sparse": {
+        "on_record": 23.439,
+        "separate_row": 35.424,
+        "separate_edges": 16.112
+      },
+      "city_oldest_only": {
+        "on_record": 0.223,
+        "separate_row": 18.604,
+        "separate_edges": 18.331
+      },
+      "city_overlapping_groups": {
+        "on_record": 0.282,
+        "separate_row": 1.175,
+        "separate_edges": 1.119
+      },
+      "global_sparse": {
+        "on_record": 10.007,
+        "separate_row": 73.509,
+        "separate_edges": 97.06
+      },
+      "global_oldest_only": {
+        "on_record": 0.346,
+        "separate_row": 1.692,
+        "separate_edges": 4820.705
+      },
+      "city_dense_next_page": {
+        "on_record": 0.427,
+        "separate_row": 1.078,
+        "separate_edges": 0.869
+      },
+      "city_sparse_next_page": {
+        "on_record": 21.727,
+        "separate_row": 26.443,
+        "separate_edges": 9.687
+      }
+    },
+    "findings": [
+      "Dense city case examines only 97 company candidates and 97 permission probes to return 50 rows.",
+      "Direct sparse city queries start from 10K accessible IDs instead of joining 10M companies.",
+      "IDs-first normalized sparse city plan hash-matches 100205 city index entries against 10K access index entries, retains 98, fetches 50 full records; 16.112ms.",
+      "IDs-first is not universally safe for latency: oldest-only global normalized case probes 9999101 records and takes 4820.705ms; direct query takes 2.694ms.",
+      "All 8 cases have identical ordered results across layouts and query forms, including multi-group overlap and next-page cursors.",
+      "50K explicit source grants do not bound the derived access association table."
+    ],
+    "limitations": "Three serial repetitions after equivalence query; PG15.14, shared_buffers128MB, work_mem4MB; same company heap including arrays for all layouts; one action/object; freshly vacuumed index-only reads; no concurrent writes, generic prepared plans or durable rebuild throughput. Not production p95 or full-layout storage comparison.",
+    "files": [
+      "bench/separate-access-late-fetch-first-run.json",
+      "bench/separate-access-late-fetch-results.json",
+      "bench/separate-access-late-fetch-run-results.txt",
+      "bench/separate-access-late-fetch.py",
+      "bench/separate-access-queries.sql",
+      "bench/separate-access-results.json",
+      "bench/separate-access-run-results.txt",
+      "bench/separate-access-run.py",
+      "bench/separate-access-setup-results.txt",
+      "bench/separate-access-setup.sql"
+    ],
+    "documentation": [
+      "https://www.postgresql.org/docs/15/using-explain.html",
+      "https://www.postgresql.org/docs/15/indexes-bitmap-scans.html",
+      "https://www.postgresql.org/docs/15/indexes-ordering.html"
+    ]
+  },
+  "competitorAccessResearch": {
+    "date": "2026-10-26",
+    "trigger": "User asks how Salesforce and other systems store access and expresses concern about worst-case latency.",
+    "salesforce": {
+      "documented": [
+        "Object Sharing tables and Group Maintenance tables joined with record data",
+        "Persisted record access calculations",
+        "Tenant/group/user visibility statistics, runtime prequeries and different underlying query strategies",
+        "Custom optimizer influences starting table, indexes and sharing joins",
+        "Engineering guidance acknowledges large ordered scans when matches occur late"
+      ],
+      "limits": "Public architecture is conceptual, not a complete current physical schema. No reviewed documentation establishes fast worst-case latency for arbitrary filters, sort orders and permission distributions. Sort-optimization engineering article dates to 2014.",
+      "sources": [
+        "https://developer.salesforce.com/docs/platform/salesforce-record-access-under-the-hood/guide/uth-arch.html",
+        "https://developer.salesforce.com/docs/platform/salesforce-record-access-under-the-hood/guide/uth-determination.html",
+        "https://architect.salesforce.com/docs/architect/fundamentals/guide/platform-multitenant-architecture.html",
+        "https://developer.salesforce.com/docs/platform/salesforce-large-data-volumes-bp/guide/ldv-deployments-infrastructure-salesforce-query-optimizer.html",
+        "https://developer.salesforce.com/blogs/engineering/2014/03/force-com-soql-best-practice-sort-optimization"
+      ]
+    },
+    "dataverse": {
+      "finding": "Separate PrincipalObjectAccess table for direct and cascaded sharing; documented growth management and recommendation to use team sharing for repeated recipients.",
+      "source": "https://learn.microsoft.com/en-us/power-platform/admin/manage-principalobjectaccess-storage"
+    },
+    "spicedb": {
+      "finding": "List endpoint strategies include accessible-ID prefiltering, bulk checking candidate pages, and materializing permission state into local joinable tables. Does not remove business-query pagination costs.",
+      "source": "https://authzed.com/docs/spicedb/modeling/protecting-a-list-endpoint"
+    },
+    "designImplication": "Keep physical layout open and on-record arrays as measured baseline. The 4.8-second/10M-probe case is a failure to eliminate, not acceptable because average queries are fast. Separate storage needs deliberate candidate strategies, skew tests and a measured exact fallback. Competitor architectures demonstrate feasibility, not our performance.",
+    "unmeasuredProposals": [
+      "Explicit materialization of small accessible sets",
+      "Candidate-work limit plus exact bulk intersection fallback preserving ordering and page completeness",
+      "Additional access/filter/sort indexes if stronger latency bounds are required"
+    ]
+  },
+  "tenantResourceIsolation": {
+    "constraint": "User rejects 4-second interactive queries on shared PostgreSQL and requires stopping expensive work to protect other customers.",
+    "sourceFindings": {
+      "workspacePool": "One primary and optional replica pool per app process shared by workspaces; config supplies pg query_timeout but no generic statement_timeout.",
+      "defaultTimeoutMs": 10000,
+      "existingServerDeadline": "Search ILIKE fallback uses SET LOCAL via set_config inside a workspace transaction; default 2000ms.",
+      "limits": "API request rate limits and nested-relation concurrency limit exist; no general cross-workspace distributed database admission controller found in inspected source. Production infrastructure settings not audited."
+    },
+    "cancellationProbe": {
+      "postgres": "PostgreSQL 15.14 (Homebrew) on aarch64-apple-darwin24.4.0, compiled by Apple clang version 17.0.0 (clang-1700.0.13.3), 64-bit",
+      "driverVersion": "8.12.0",
+      "results": [
+        {
+          "case": "driver_query_timeout_100ms",
+          "elapsedMs": 101.34833400000001,
+          "error": "Query read timeout",
+          "backendAfterClientTimeout": {
+            "pid": 54271,
+            "state": "active",
+            "wait_event_type": "Timeout",
+            "wait_event": "PgSleep"
+          },
+          "backendAfterNaturalCompletion": null
+        },
+        {
+          "case": "server_statement_timeout_sleep_200ms",
+          "elapsedMs": 274.46070800000007,
+          "sqlState": "57014",
+          "message": "canceling statement due to statement timeout",
+          "backendAfterServerTimeout": {
+            "pid": 54387,
+            "state": "idle in transaction (aborted)",
+            "wait_event_type": "Client",
+            "wait_event": "ClientRead"
+          },
+          "cleanupMs": 0.24074999999993452,
+          "elapsedUntilRollbackMs": 275.982583,
+          "backendAfterRollback": {
+            "pid": 54387,
+            "state": "idle",
+            "wait_event_type": "Client",
+            "wait_event": "ClientRead"
+          },
+          "recoveryMs": 0.19466699999998127,
+          "sameConnectionRecovered": true,
+          "timeoutAfterRollback": "0"
+        },
+        {
+          "case": "server_statement_timeout_actual_slow_query_200ms",
+          "elapsedMs": 275.4432079999999,
+          "sqlState": "57014",
+          "message": "canceling statement due to statement timeout",
+          "backendAfterServerTimeout": {
+            "pid": 54391,
+            "state": "active",
+            "wait_event_type": "IPC",
+            "wait_event": "BgWorkerShutdown"
+          },
+          "cleanupMs": 0.814542000000074,
+          "elapsedUntilRollbackMs": 277.01595799999996,
+          "backendAfterRollback": {
+            "pid": 54391,
+            "state": "idle",
+            "wait_event_type": "Client",
+            "wait_event": "ClientRead"
+          },
+          "recoveryMs": 0.15695800000003146,
+          "sameConnectionRecovered": true,
+          "timeoutAfterRollback": "0"
+        },
+        {
+          "case": "server_statement_timeout_actual_slow_query_200ms",
+          "elapsedMs": 275.85204199999976,
+          "sqlState": "57014",
+          "message": "canceling statement due to statement timeout",
+          "backendAfterServerTimeout": {
+            "pid": 54402,
+            "state": "active",
+            "wait_event_type": "IPC",
+            "wait_event": "BgWorkerShutdown"
+          },
+          "cleanupMs": 0.7583749999998872,
+          "elapsedUntilRollbackMs": 279.57475,
+          "backendAfterRollback": {
+            "pid": 54402,
+            "state": "idle",
+            "wait_event_type": "Client",
+            "wait_event": "ClientRead"
+          },
+          "recoveryMs": 0.8436670000000959,
+          "sameConnectionRecovered": true,
+          "timeoutAfterRollback": "0"
+        },
+        {
+          "case": "server_statement_timeout_actual_slow_query_200ms",
+          "elapsedMs": 276.19116699999995,
+          "sqlState": "57014",
+          "message": "canceling statement due to statement timeout",
+          "backendAfterServerTimeout": {
+            "pid": 54440,
+            "state": "active",
+            "wait_event_type": "IPC",
+            "wait_event": "BgWorkerShutdown"
+          },
+          "cleanupMs": 3.4096660000000156,
+          "elapsedUntilRollbackMs": 287.094333,
+          "backendAfterRollback": {
+            "pid": 54440,
+            "state": "idle",
+            "wait_event_type": "Client",
+            "wait_event": "ClientRead"
+          },
+          "recoveryMs": 0.3362080000001697,
+          "sameConnectionRecovered": true,
+          "timeoutAfterRollback": "0"
+        }
+      ],
+      "limitation": "Local cancellation and connection-recovery probe. This is not a multi-tenant load test or a hard real-time cancellation guarantee."
+    },
+    "evidenceFiles": [
+      "bench/query-deadline-check.cjs",
+      "bench/query-deadline-results.json"
+    ],
+    "proposedRequirements": [
+      "Server execution deadline plus end-to-end request and cleanup budget",
+      "Per-workspace and global admission before connection checkout, across app instances",
+      "Fair queues, bounded wait/fanout/retries and sustained-work budgets",
+      "Parallel worker, memory and temporary-file controls; no claim work_mem caps total query memory",
+      "Separate interactive/report/recompute budgets and checkpointed background batches",
+      "No partial authorized page presented as complete; cancellation cannot resume an arbitrary SQL plan",
+      "Mixed-tenant normal-traffic SLO benchmark under pathological reads and recomputation",
+      "Stronger infrastructure isolation if zero resource interference is literal requirement"
+    ],
+    "status": "Local server cancellation and post-rollback connection recovery verified. Mixed-tenant load test not yet run; production execution controls not implemented. On-record projections now selected for collection reads, with live sharing and point evaluation; performance acceptance remains pending."
+  },
+  "confirmedWorkload": {
+    "largePermissionRebuilds": "Occasional",
+    "smallUpdates": "Frequent",
+    "source": "User response to workload clarification, 2026-10-26",
+    "interpretation": "Count affected records including inherited descendants; a small source edit can still require a large rebuild."
+  },
+  "onRecordWriteInvestigation": {
+    "date": "2026-10-26",
+    "recommendation": "User selected on-record access projections for batch/list reads with live SQL for sharing and single-record reads. Performance acceptance remains pending: full rebuild hit its experimental deadline; short throttled samples passed. Benchmarks do not validate the new complete live/projection compiler.",
+    "unthrottled": {
+      "setup": {
+        "rows": 10000000,
+        "actionColumns": 6,
+        "accessIndexes": 1,
+        "businessIndexes": 4,
+        "batchSize": 1000,
+        "writeStatementTimeoutMs": 2000,
+        "readStatementTimeoutMs": 200
+      },
+      "committedRows": 4701250,
+      "lastSuccessfulBatch": {
+        "first": 4701126,
+        "last": 4701251,
+        "rows": 125,
+        "elapsedMs": 1485.1526669999585
+      },
+      "failure": {
+        "message": "canceling statement due to statement timeout",
+        "code": "57014"
+      },
+      "errors": [
+        {
+          "first": 296001,
+          "last": 297001,
+          "error": "57014",
+          "elapsedMs": 2689.0909170000014
+        },
+        {
+          "first": 1170001,
+          "last": 1170501,
+          "error": "57014",
+          "elapsedMs": 2119.5640830000048
+        },
+        {
+          "first": 2593501,
+          "last": 2593751,
+          "error": "57014",
+          "elapsedMs": 2051.7860420000507
+        },
+        {
+          "first": 4701251,
+          "last": 4701376,
+          "error": "57014",
+          "elapsedMs": 2183.761832999997
+        }
+      ],
+      "phases": {
+        "baseline": {
+          "other_table_dense": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 1.8632079999997586,
+            "p95Ms": 5.963792000000012,
+            "p99Ms": 31.851916000000074,
+            "maxMs": 31.851916000000074,
+            "errorCodes": [],
+            "errorMaxMs": 0
+          },
+          "other_table_sparse": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 19.065791999999874,
+            "p95Ms": 52.57595800000013,
+            "p99Ms": 83.25425000000041,
+            "maxMs": 83.25425000000041,
+            "errorCodes": [],
+            "errorMaxMs": 0
+          },
+          "same_table_sparse_city": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 36.516749999999774,
+            "p95Ms": 69.65195799999992,
+            "p99Ms": 93.16037499999993,
+            "maxMs": 93.16037499999993,
+            "errorCodes": [],
+            "errorMaxMs": 0
+          }
+        },
+        "rebuild": {
+          "other_table_dense": {
+            "samples": 7350,
+            "errors": 0,
+            "p50Ms": 0.7234590000007302,
+            "p95Ms": 2.031542000011541,
+            "p99Ms": 11.069375000079162,
+            "maxMs": 174.52929199999198,
+            "errorCodes": [],
+            "errorMaxMs": 0
+          },
+          "other_table_sparse": {
+            "samples": 7331,
+            "errors": 3,
+            "p50Ms": 8.898874999955297,
+            "p95Ms": 14.263458000001265,
+            "p99Ms": 44.36341700004414,
+            "maxMs": 325.3243750000838,
+            "errorCodes": [
+              "57014"
+            ],
+            "errorMaxMs": 372.40770799992606
+          },
+          "same_table_sparse_city": {
+            "samples": 7295,
+            "errors": 13,
+            "p50Ms": 28.014833999914117,
+            "p95Ms": 41.232709000003524,
+            "p99Ms": 90.65862499992363,
+            "maxMs": 272.24433300003875,
+            "errorCodes": [
+              "57014"
+            ],
+            "errorMaxMs": 411.0744170000544
+          }
+        }
+      },
+      "hardware": {
+        "cpu": "Apple M2 Pro",
+        "logicalCpus": 10,
+        "memoryBytes": 34359738368
+      },
+      "postFailureApproximation": {
+        "clusterWal": "Approximately 24 GiB since the pre-rebuild snapshot",
+        "tableAndIndexes": "Approximately 12 GiB",
+        "note": "psql observation after the failed run, before starting the throttled follow-up. Cluster WAL includes ongoing maintenance and other writes; this is not exact statement attribution."
+      }
+    },
+    "throttled": {
+      "setup": {
+        "rows": 250000,
+        "existingTableRows": 10000000,
+        "targetRowsPerSecond": 3000,
+        "actionColumns": 6,
+        "accessIndexes": 1,
+        "businessIndexes": 4,
+        "batchSize": 250,
+        "writeStatementTimeoutMs": 2000,
+        "readStatementTimeoutMs": 200
+      },
+      "rebuild": {
+        "affectedRows": 250000,
+        "elapsedMs": 85386.52083400001,
+        "rowsPerSecond": 2927.862589530087,
+        "batchLatency": {
+          "samples": 1000,
+          "errors": 0,
+          "p50Ms": 30.424208000004,
+          "p95Ms": 46.234792000002926,
+          "p99Ms": 124.1107090000005,
+          "maxMs": 346.25912500000413
+        },
+        "clusterWalBytes": "2041199920"
+      },
+      "phases": {
+        "baseline": {
+          "other_table_dense": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 1.1862909999999829,
+            "p95Ms": 4.32104100000015,
+            "p99Ms": 12.619792000000004,
+            "maxMs": 12.619792000000004
+          },
+          "other_table_sparse": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 13.28399999999965,
+            "p95Ms": 20.965957999999773,
+            "p99Ms": 35.15083300000015,
+            "maxMs": 35.15083300000015
+          },
+          "same_table_sparse_city": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 34.91354199999978,
+            "p95Ms": 48.401082999999744,
+            "p99Ms": 82.26366700000017,
+            "maxMs": 82.26366700000017
+          }
+        },
+        "rebuild": {
+          "other_table_dense": {
+            "samples": 849,
+            "errors": 0,
+            "p50Ms": 0.9020409999939147,
+            "p95Ms": 2.698666999996931,
+            "p99Ms": 5.53650000000016,
+            "maxMs": 70.26133299998764
+          },
+          "other_table_sparse": {
+            "samples": 849,
+            "errors": 0,
+            "p50Ms": 9.268125000002328,
+            "p95Ms": 11.960082999998122,
+            "p99Ms": 25.51220900000044,
+            "maxMs": 85.62745800000266
+          },
+          "same_table_sparse_city": {
+            "samples": 848,
+            "errors": 0,
+            "p50Ms": 29.7532910000009,
+            "p95Ms": 35.21758399999999,
+            "p99Ms": 73.36541699999907,
+            "maxMs": 174.0852500000001
+          }
+        },
+        "after": {
+          "other_table_dense": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 1.0528750000084983,
+            "p95Ms": 2.9197090000088792,
+            "p99Ms": 10.70175000000745,
+            "maxMs": 10.70175000000745
+          },
+          "other_table_sparse": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 11.706875000003492,
+            "p95Ms": 17.255124999996042,
+            "p99Ms": 25.048957999999402,
+            "maxMs": 25.048957999999402
+          },
+          "same_table_sparse_city": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 34.42979199999536,
+            "p95Ms": 42.56037500000093,
+            "p99Ms": 72.69124999998894,
+            "maxMs": 72.69124999998894
+          }
+        }
+      }
+    },
+    "smallerGinPendingList": {
+      "setup": {
+        "rows": 250000,
+        "existingTableRows": 10000000,
+        "targetRowsPerSecond": 3000,
+        "ginPendingListLimitKilobytes": 256,
+        "actionColumns": 6,
+        "accessIndexes": 1,
+        "businessIndexes": 4,
+        "batchSize": 250,
+        "writeStatementTimeoutMs": 2000,
+        "readStatementTimeoutMs": 200
+      },
+      "rebuild": {
+        "affectedRows": 250000,
+        "elapsedMs": 86824.020958,
+        "rowsPerSecond": 2879.3874925573223,
+        "batchLatency": {
+          "samples": 1000,
+          "errors": 0,
+          "p50Ms": 34.31854100000055,
+          "p95Ms": 58.16887500000303,
+          "p99Ms": 176.05641699999978,
+          "maxMs": 572.1626249999972
+        },
+        "clusterWalBytes": "2204562456"
+      },
+      "phases": {
+        "baseline": {
+          "other_table_dense": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 1.2706669999997757,
+            "p95Ms": 2.9642499999999927,
+            "p99Ms": 8.516541999999845,
+            "maxMs": 8.516541999999845
+          },
+          "other_table_sparse": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 10.387124999999287,
+            "p95Ms": 20.58295800000019,
+            "p99Ms": 80.19116699999995,
+            "maxMs": 80.19116699999995
+          },
+          "same_table_sparse_city": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 31.313709000000017,
+            "p95Ms": 47.36829100000068,
+            "p99Ms": 120.25841700000001,
+            "maxMs": 120.25841700000001
+          }
+        },
+        "rebuild": {
+          "other_table_dense": {
+            "samples": 865,
+            "errors": 0,
+            "p50Ms": 0.9102080000011483,
+            "p95Ms": 1.8329579999990528,
+            "p99Ms": 4.279749999997875,
+            "maxMs": 52.56095800000185
+          },
+          "other_table_sparse": {
+            "samples": 865,
+            "errors": 0,
+            "p50Ms": 9.27862499999901,
+            "p95Ms": 11.406999999991967,
+            "p99Ms": 43.197375000003376,
+            "maxMs": 95.2298750000009
+          },
+          "same_table_sparse_city": {
+            "samples": 864,
+            "errors": 0,
+            "p50Ms": 28.412624999997206,
+            "p95Ms": 35.82233299998916,
+            "p99Ms": 74.03508299999885,
+            "maxMs": 130.91941699999734
+          }
+        },
+        "after": {
+          "other_table_dense": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 1.0299159999995027,
+            "p95Ms": 2.447708000006969,
+            "p99Ms": 14.050333999999566,
+            "maxMs": 14.050333999999566
+          },
+          "other_table_sparse": {
+            "samples": 100,
+            "errors": 0,
+            "p50Ms": 9.727083000005223,
+            "p95Ms": 27.401167000003625,
+            "p99Ms": 76.30624999999418,
+            "maxMs": 76.30624999999418
+          },
+          "same_table_sparse_city": {
+            "samples": 99,
+            "errors": 0,
+            "p50Ms": 31.458791999990353,
+            "p95Ms": 62.04274999999325,
+            "p99Ms": 173.9881250000035,
+            "maxMs": 173.9881250000035
+          }
+        }
+      }
+    },
+    "contention": {
+      "results": [
+        {
+          "permissionTable": "permission_write_record",
+          "elapsedMs": 179.08466600000003,
+          "error": "55P03",
+          "message": "canceling statement due to lock timeout"
+        },
+        {
+          "permissionTable": "permission_write_sidecar",
+          "businessUpdateRows": 1,
+          "elapsedMs": 1.737792000000013
+        }
+      ],
+      "limitation": "A deliberately held row lock demonstrates contention mechanics, not its frequency under representative traffic. All updates rolled back. Run independently of the full rebuild for a clean workload."
+    },
+    "implications": [
+      "Index readable initially; specific-record action checks can follow PK lookup. Additional action indexes need measured workload justification.",
+      "Existing ready access-group membership changes need not rewrite business records; unseen bindings and changed predicates do.",
+      "One update for all changed action sets; coalesce invalidations, track actual inherited fanout, skip unchanged sets.",
+      "Batch size alone does not bound latency; require server deadlines, safe retries, workload admission, WAL/replica/disk budgets and measured vacuum/GIN maintenance.",
+      "Small arrays and occasional broad rewrites favor on-record projection; arbitrary dynamic predicates can still create large per-record group sets.",
+      "Smaller GIN pending list did not show a clear benefit in short sequential follow-ups. Do not attribute individual spikes to GIN without direct observation."
+    ],
+    "limitations": [
+      "Apple M2 Pro 10 logical CPUs,32GiB RAM; PG15.14 shared_buffers128MiB, OS cache additionally available.",
+      "Six small arrays,256-byte inline payload,4 B-trees,1GIN; physical insertion-order scan through created-time index.",
+      "Three fixed SQL probes up to30QPS total, no representative 1000-user application traffic or ordinary business-write throughput.",
+      "Projection writes only; excludes predicate evaluation,3-hop traversal,catch-up,activation and retirement.",
+      "Unthrottled run stopped at4,701,250 updates; follow-ups cover250K each, not full10M passes."
+    ],
+    "sources": [
+      "https://www.postgresql.org/docs/15/storage-hot.html",
+      "https://www.postgresql.org/docs/15/storage-toast.html",
+      "https://www.postgresql.org/docs/15/gin-implementation.html",
+      "https://learn.microsoft.com/en-us/azure/search/search-security-trimming-for-azure-search"
+    ]
+  },
+  "sharingStorageRecommendation": {
+    "status": "Updated for user-selected query routing; previous direct-share OR collection path superseded",
+    "sourceGrants": "One cross-object recordShare table in the workspace schema; approximately50K source grants. Keep target identity, recipient, action set, source identity and audit information.",
+    "directReadPath": "Live source queries for sharing and point operations. Collections use record action arrays containing eligible direct-sharing effects as well as inherited/RLS access.",
+    "inherited": "Live declared-path evaluation for point/sharing operations; materialized access on business records for collections. No persistent per-descendant recordShare rows.",
+    "automaticRules": "A new criteria-based automatic-sharing editor and generic rule-definition table are out of scope (question 19). Preserve existing application/workflow-produced source grants and their source identities in workspace recordShare storage.",
+    "inheritanceDefinitions": "Portable metadata field paths, at most3hops.",
+    "revocation": "Recompute from remaining direct/parent/rule sources, preserving overlapping grants. Capture old relationship endpoints transactionally; use bounded recomputation or conservative rebuild when old reachability cannot be recovered.",
+    "groupIdentity": "Source-grant identity and access-group identity are distinct. Recipient membership groups can be reused across grants; do not blindly remove a shared group when one source is revoked.",
+    "provenance": "On-demand indexed source/path explanations initially; add a derived provenance index only if measured workloads justify its potentially large cardinality and maintenance cost."
+  },
+  "queryRoutingDecision": {
+    "status": "User selected",
+    "date": "2026-10-26",
+    "live": [
+      "Sharing panels and permitted source explanations",
+      "Sharing authorization and delegation checks",
+      "Single-record lookup by primary key or another unique indexed key"
+    ],
+    "materialized": [
+      "Lists and searches",
+      "Explicit multi-record fetches",
+      "Collection relations",
+      "Counts, aggregates and exports"
+    ],
+    "projectionCoverage": "Complete eligible record access including direct shares, inherited shares and RLS. The former direct-share OR lookup on collection reads is superseded.",
+    "commonSemantics": "One policy definition compiled for live evaluation and materialization; same Receive, record capabilities, field restrictions, max-three-hop paths, authority intersection and active revision.",
+    "freshness": "Live routes use authoritative source state, including ancestor inputs, in a coherent snapshot; no stale parent permission arrays or silent projection fallback. Primary/fenced reads and version-validated policy/member/role caches required.",
+    "consistency": "Accepted propagation delay remains on collections: selected record fields may still be returned after live access is revoked; new live access can precede collection visibility. No per-row live post-filtering of collection pages.",
+    "routing": "Declared query scope, not output length. A filtered LIMIT1 query remains a collection; nested collections use projections even under a live detail root.",
+    "mutationRecommendation": "Use live transactional authorization for point edits/deletes and existing post-update checks. Bulk operations may select candidates through projections then validate live actions in bounded SQL batches. These are proposed engineering extensions, not separately confirmed product answers.",
+    "requiredValidation": [
+      "Live/projected equivalence after catch-up",
+      "Intentional stale-list/live-deny and live-allow/not-yet-listed cases",
+      "Direct target projection invalidation on share change",
+      "Recipient-specific Receive eligibility for role shares",
+      "Timeouts never grant via stale fallback",
+      "Active revision and cache/replica freshness",
+      "High-fanout point checks with deadlines and admission budgets"
+    ]
+  },
+  "historicalQuestionBacklog": [
+    "Are Some records rules additive action grants, replacing the current single restrictive RLS filter? How do overlapping rules combine?",
+    "What exactly does Receive permit, and does it replace per-object sharingReach?",
+    "What share levels can each role delegate, and can recipients re-share/delete?",
+    "Inheritance direction, ANY versus ALL parents, empty/detached records, independent target access, cycles, cross-rule chaining beyond 3 hops",
+    "Does read inheritance also carry edit/delete/share, or is each action configured?",
+    "Is 50k a count of explicit source grants only, excluding computed inherited grants, owner grants and rule-generated grants?",
+    "Expected max members, roles, rules and fanout; latency targets for lists, counts, save, backfill and rule activation",
+    "Creator access and ability to edit oneself out of a rule; restore semantics",
+    "Application/API/agent intersection caps, enterprise expiry and feature-flag rollback behavior",
+    "Explain access UI and rule application status/audit expectations",
+    "Must previously issued file URLs stop working after record revocation, or may they remain valid until token/cache expiry?"
+  ],
+  "engineeringDecisions": {
+    "receiveAndInheritance": "Receive admits source shares on the original target. A declared inheritance path carries the granting parent's effective actions, capped by the final target capabilities and field restrictions; absence of a separate target Receive grant does not veto inheritance. Relation-only intermediaries are not extra granting parents.",
+    "creation": "Preserve separate create and proposed-value authorization; no parent-conditioned creation editor and no implicit permanent creator grant.",
+    "mutations": "Use live transactional action validation for point mutations and bounded SQL batches for bulk targets; retain the deferred post-update restriction.",
+    "publicationFence": "Shared transaction-scoped workspace fence for permission-relevant source/projection writers, exclusive for short publication check/switch after catch-up; release and retry if pending work remains. Audit all writers and validate concurrency before relying on this design."
+  },
+  "implementationValidationWork": [
+    "Finish local live permission UI comparison and exercise the complete artifact flows against the inspected Figma designs.",
+    "Implement shared policy semantics and behavioral coverage for Receive, inheritance, capabilities, authority intersections and deferred post-update behavior.",
+    "Implement durable invalidation, generation fencing, writer coverage, crash/replay handling and atomic publication concurrency tests.",
+    "Verify live/projected equivalence after catch-up for a pinned source snapshot and policy revision.",
+    "Complete a full 10M-row rebuild within 60 minutes with realistic rule evaluation, traversal and concurrent interactive workloads; validate skew/fanout, cancellation cleanup and tenant admission."
+  ]
+}

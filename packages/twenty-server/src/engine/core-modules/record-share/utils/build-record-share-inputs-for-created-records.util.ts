@@ -121,6 +121,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
   apiKeyRoleMap,
   shareWith,
   isOpenByDefault = false,
+  shouldGrantCreatorAccess = true,
 }: {
   recordIds: string[];
   objectMetadataId: string;
@@ -128,27 +129,30 @@ export const buildRecordShareInputsForCreatedRecords = ({
   apiKeyRoleMap: Record<string, string>;
   shareWith?: ShareWithInput[] | null;
   isOpenByDefault?: boolean;
+  shouldGrantCreatorAccess?: boolean;
 }): RecordShareInput[] => {
   const shareWithEntries = shareWith ?? [];
   const creatorRoleId = resolveCreatorRoleId({ authContext, apiKeyRoleMap });
   const shareWithPrincipals = shareWithEntries
     .map(resolveShareWithPrincipalOrThrow)
     .map((shareWithPrincipal) =>
+      shouldGrantCreatorAccess &&
       shareWithPrincipal.principalId === creatorRoleId
         ? { ...shareWithPrincipal, accessLevel: RecordShareAccessLevel.FULL }
         : shareWithPrincipal,
     );
 
   const shouldWriteCreatorRows =
-    !isOpenByDefault ||
-    shareWithPrincipals.some(
-      (shareWithPrincipal) =>
-        shareWithPrincipal.principalType ===
-          RecordSharePrincipalType.EVERYONE &&
-        ACCESS_LEVELS_RESTRICTING_OPEN_RECORDS.includes(
-          shareWithPrincipal.accessLevel,
-        ),
-    );
+    shouldGrantCreatorAccess &&
+    (!isOpenByDefault ||
+      shareWithPrincipals.some(
+        (shareWithPrincipal) =>
+          shareWithPrincipal.principalType ===
+            RecordSharePrincipalType.EVERYONE &&
+          ACCESS_LEVELS_RESTRICTING_OPEN_RECORDS.includes(
+            shareWithPrincipal.accessLevel,
+          ),
+      ));
 
   return [
     ...recordIds.flatMap((recordId) => [

@@ -1,0 +1,16 @@
+{
+  "results": [
+    {
+      "permissionTable": "permission_write_record",
+      "elapsedMs": 179.08466600000003,
+      "error": "55P03",
+      "message": "canceling statement due to lock timeout"
+    },
+    {
+      "permissionTable": "permission_write_sidecar",
+      "businessUpdateRows": 1,
+      "elapsedMs": 1.737792000000013
+    }
+  ],
+  "limitation": "A deliberately held row lock demonstrates contention mechanics, not its frequency under representative traffic. All updates rolled back. Run independently of the full rebuild for a clean workload."
+}

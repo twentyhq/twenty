@@ -4,8 +4,16 @@ import { RECORD_SHARING_FRAGMENT } from '@/object-record/record-sharing/graphql/
 
 export const GET_RECORD_SHARING = gql`
   ${RECORD_SHARING_FRAGMENT}
-  query GetRecordSharing($target: RecordTargetInput!) {
-    recordSharing(target: $target) {
+  query GetRecordSharing(
+    $target: RecordTargetInput!
+    $inheritedSharesAfter: UUID
+    $sharesAfter: UUID
+  ) {
+    recordSharing(
+      target: $target
+      inheritedSharesAfter: $inheritedSharesAfter
+      sharesAfter: $sharesAfter
+    ) {
       ...RecordSharingFields
     }
   }

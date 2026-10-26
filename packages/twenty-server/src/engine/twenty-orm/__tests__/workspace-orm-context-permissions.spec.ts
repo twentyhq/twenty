@@ -11,6 +11,7 @@ const setup = (userRoleId: string | undefined = 'member-role') => {
   const getRepository = jest.fn().mockReturnValue(repository);
   const manager = new WorkspaceOrmManager(
     {} as never,
+    {} as never,
     { getDataSource: () => ({ getRepository }) } as never,
     {} as never,
     {} as never,

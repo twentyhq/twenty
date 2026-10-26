@@ -14,6 +14,7 @@ import { ListItemIconContainer } from '@/ui/navigation/list-item/components/List
 import { type RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 type RecordSharingInvitationAccessPickerProps = {
+  allowedAccessLevels?: RecordShareAccessLevel[] | null;
   value: RecordShareAccessLevel;
   hasEveryoneRecipient: boolean;
   disabled: boolean;
@@ -21,6 +22,7 @@ type RecordSharingInvitationAccessPickerProps = {
 };
 
 export const RecordSharingInvitationAccessPicker = ({
+  allowedAccessLevels,
   value,
   hasEveryoneRecipient,
   disabled,
@@ -60,6 +62,7 @@ export const RecordSharingInvitationAccessPicker = ({
         width={GenericDropdownContentWidth.Narrow}
       >
         <RecordSharingAccessLevelOptions
+          allowedAccessLevels={allowedAccessLevels}
           value={value}
           onChange={onChange}
           shouldExcludeFullAccess={hasEveryoneRecipient}

@@ -93,6 +93,11 @@ export class CallAgentDatabaseEventTriggersJob {
       const admittedRecordIds =
         await eventRecordAccessGate.resolveAdmittedRecordIds(
           buildRoleRowAccessPolicySubject({
+            recordPermissionAuthorityIdentity: {
+              type: 'agent',
+              workspace: { id: workspaceId },
+              agentId: flatAgent.id,
+            },
             roleId: agentRoleId,
             owningApplicationId: flatAgent.applicationId,
             rolesPermissions,

@@ -1,0 +1,46 @@
+Timing is on.
+SELECT 1000
+Time: 18.741 ms
+SELECT 10
+Time: 9.291 ms
+SELECT 100000
+Time: 374.356 ms
+SELECT 100000
+Time: 123.312 ms
+CREATE INDEX
+Time: 1396.903 ms (00:01.397)
+CREATE INDEX
+Time: 26.179 ms
+ANALYZE
+Time: 250.623 ms
+ANALYZE
+Time: 30.290 ms
+            name             | heap_bytes | index_bytes | total_bytes
+-----------------------------+------------+-------------+-------------
+ expanded_member_permissions |  204800000 |    24641536 |   229449728
+ grouped_scope_permissions   |    7659520 |      262144 |     7929856
+(2 rows)
+
+Time: 1.100 ms
+  model   | matching_rows
+----------+---------------
+ expanded |         10000
+ grouped  |         10000
+(2 rows)
+
+Time: 11.329 ms
+                                                      QUERY PLAN
+----------------------------------------------------------------------------------------------------------------------
+ Update on expanded_member_permissions  (cost=0.00..26275.22 rows=0 width=0) (actual rows=0 loops=1)
+   Buffers: local hit=93407 read=26825 dirtied=6832 written=10049
+   ->  Seq Scan on expanded_member_permissions  (cost=0.00..26275.22 rows=10090 width=38) (actual rows=10000 loops=1)
+         Filter: (region = 1)
+         Rows Removed by Filter: 90000
+         Buffers: local read=25000 written=2994
+ Planning:
+   Buffers: shared hit=6
+ Planning Time: 0.049 ms
+ Execution Time: 266.989 ms
+(10 rows)
+
+Time: 268.073 ms

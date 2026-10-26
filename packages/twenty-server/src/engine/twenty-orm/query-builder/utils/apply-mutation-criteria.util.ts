@@ -38,7 +38,9 @@ export const applyMutationCriteriaToQueryBuilder = (
       );
     }
 
-    queryBuilder.where({ id: criteria });
+    queryBuilder
+      .where({ id: criteria })
+      .useLiveRecordPermissionsForId(criteria);
 
     return queryBuilder;
   }
@@ -84,6 +86,8 @@ export const applyMutationCriteriaToQueryBuilder = (
   assertWhereObjectFilters(criteria);
 
   queryBuilder.where(criteria);
+  if (typeof criteria.id === 'string')
+    queryBuilder.useLiveRecordPermissionsForId(criteria.id);
 
   return queryBuilder;
 };

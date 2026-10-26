@@ -1,3 +1,6 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { SettingsRelatedRecordPermissions } from '@/settings/record-permissions/components/SettingsRelatedRecordPermissions';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
@@ -104,7 +107,11 @@ export const ObjectSettings = ({
   const isRecordCreationFormEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
+  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
+  const isRecordPermissionPoliciesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_PERMISSION_POLICIES_ENABLED,
+  );
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
@@ -162,6 +169,12 @@ export const ObjectSettings = ({
           objectMetadataItem={objectMetadataItem}
         />
       </Section.Root>
+      {isRecordPermissionPoliciesEnabled && hasRolesPermission && (
+        <SettingsRelatedRecordPermissions
+          objectMetadataItem={objectMetadataItem}
+          disabled={isDDLLocked}
+        />
+      )}
       {isRecordCreationFormEnabled &&
         !objectMetadataItem.isRemote &&
         !objectMetadataItem.isSystem && (
@@ -186,6 +199,7 @@ export const ObjectSettings = ({
           </Section.Root>
         )}
       {isRecordLevelSharingEnabled &&
+        !isRecordPermissionPoliciesEnabled &&
         isShareableObjectMetadataItem(objectMetadataItem) && (
           <Section.Root>
             <Section.Header

@@ -1,0 +1,25 @@
+city_dense on_record 0.686
+city_dense separate_row 1.191
+city_dense separate_edges 1.115
+city_sparse on_record 23.439
+city_sparse separate_row 35.424
+city_sparse separate_edges 16.112
+city_oldest_only on_record 0.223
+city_oldest_only separate_row 18.604
+city_oldest_only separate_edges 18.331
+city_overlapping_groups on_record 0.282
+city_overlapping_groups separate_row 1.175
+city_overlapping_groups separate_edges 1.119
+global_sparse on_record 10.007
+global_sparse separate_row 73.509
+global_sparse separate_edges 97.06
+global_oldest_only on_record 0.346
+global_oldest_only separate_row 1.692
+global_oldest_only separate_edges 4820.705
+city_dense_next_page on_record 0.427
+city_dense_next_page separate_row 1.078
+city_dense_next_page separate_edges 0.869
+city_sparse_next_page on_record 21.727
+city_sparse_next_page separate_row 26.443
+city_sparse_next_page separate_edges 9.687
+All ordered result sets match their baseline and therefore each other.

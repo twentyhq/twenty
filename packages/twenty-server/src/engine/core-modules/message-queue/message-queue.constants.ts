@@ -3,6 +3,7 @@ export const PROCESS_METADATA = Symbol('message-queue:process_metadata');
 export const QUEUE_DRIVER = Symbol('message-queue:queue_driver');
 
 export enum MessageQueue {
+  recordPermissionQueue = 'record-permission-queue',
   recordExportQueue = 'record-export-queue',
   workspaceDataExportQueue = 'workspace-data-export-queue',
   taskAssignedQueue = 'task-assigned-queue',

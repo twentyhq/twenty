@@ -1,3 +1,4 @@
+import { RECORD_PERMISSION_ACCESS_COLUMNS } from 'twenty-shared/constants';
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -172,6 +173,23 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       schemaName,
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
     });
+
+    const [{ installed }] = await queryRunner.query(
+      'SELECT to_regclass($1) IS NOT NULL AS installed',
+      [schemaName + '."recordPermissionState"'],
+    );
+
+    if (installed && flatObjectMetadata.nameSingular !== 'recordShare') {
+      columnDefinitions.push(
+        ...Object.values(RECORD_PERMISSION_ACCESS_COLUMNS).map((name) => ({
+          name,
+          type: 'uuid',
+          isArray: true,
+          isNullable: false,
+          default: "'{}'::uuid[]",
+        })),
+      );
+    }
 
     await this.workspaceSchemaManagerService.tableManager.createTable({
       queryRunner,

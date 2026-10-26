@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { In, type FindOptionsWhere } from 'typeorm';
@@ -9,7 +9,9 @@ import {
   type RelationPathToPerson,
 } from 'src/engine/core-modules/related-person-ids/utils/find-relation-paths-to-person.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { getRecordPermissionReadAuthContext } from 'src/engine/core-modules/record-permission/utils/get-record-permission-read-auth-context.util';
+import { getRecordPermissionReadRepository } from 'src/engine/core-modules/record-permission/utils/get-record-permission-read-repository.util';
+import { findLiveReadableRecordIdentifiers } from 'src/engine/core-modules/record-permission/utils/find-live-readable-record-identifiers.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const PERSON_OBJECT_NAME_SINGULAR = 'person';
@@ -32,40 +34,44 @@ export class RelatedPersonIdsService {
     objectNameSingular: string;
     recordId: string;
   }): Promise<string[]> {
-    if (objectNameSingular === PERSON_OBJECT_NAME_SINGULAR) {
-      return [recordId];
-    }
-
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-      ]);
-
-    const relationPaths = findRelationPathsToPerson({
-      rootObjectNameSingular: objectNameSingular,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
-
-    if (relationPaths.length === 0) {
-      return [];
-    }
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personIds = new Set<string>();
+      const readableRoot = await findLiveReadableRecordIdentifiers({
+        workspaceOrmManager: this.workspaceOrmManager,
+        objectNameSingular,
+        recordIds: [recordId],
+      });
+      if (isDefined(readableRoot) && !readableRoot.has(recordId))
+        throw new ForbiddenException('Record is not accessible');
 
+      if (objectNameSingular === PERSON_OBJECT_NAME_SINGULAR) return [recordId];
+
+      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatObjectMetadataMaps',
+          'flatFieldMetadataMaps',
+        ]);
+      const relationPaths = findRelationPathsToPerson({
+        rootObjectNameSingular: objectNameSingular,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+      const personIds = new Set<string>();
       for (const relationPath of relationPaths) {
         const personIdsForPath = await this.walkRelationPath({
           recordId,
           relationPath,
         });
-
         personIdsForPath.forEach((personId) => personIds.add(personId));
       }
-
-      return [...personIds];
-    }, buildSystemAuthContext(workspaceId));
+      const readablePeople = await findLiveReadableRecordIdentifiers({
+        workspaceOrmManager: this.workspaceOrmManager,
+        objectNameSingular: PERSON_OBJECT_NAME_SINGULAR,
+        recordIds: [...personIds],
+      });
+      return [...personIds].filter(
+        (id) => !isDefined(readablePeople) || readablePeople.has(id),
+      );
+    }, getRecordPermissionReadAuthContext(workspaceId));
   }
 
   private async walkRelationPath({
@@ -82,11 +88,10 @@ export class RelatedPersonIdsService {
         return [];
       }
 
-      const repository =
-        this.workspaceOrmManager.getRepository<RelationWalkRecord>(
-          hop.queryObjectNameSingular,
-          { shouldBypassPermissionChecks: true },
-        );
+      const repository = getRecordPermissionReadRepository<RelationWalkRecord>(
+        this.workspaceOrmManager,
+        hop.queryObjectNameSingular,
+      );
 
       if (hop.direction === RelationType.MANY_TO_ONE) {
         const records = await repository.find({

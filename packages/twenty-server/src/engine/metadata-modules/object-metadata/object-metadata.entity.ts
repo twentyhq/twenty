@@ -11,12 +11,14 @@ import {
 } from 'typeorm';
 
 import {
+  type RecordCapabilities,
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
   ObjectSharingReach,
 } from 'twenty-shared/types';
 
+import { ADD_RECORD_PERMISSION_CAPABILITIES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-52/add-record-permission-capabilities-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_SHARING_REACH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-45/add-object-metadata-sharing-reach-upgrade-command-name.constant';
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
 import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
@@ -186,6 +188,12 @@ export class ObjectMetadataEntity
     default: ObjectSharingReach.WORKSPACE,
   })
   sharingReach: ObjectSharingReach;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_RECORD_PERMISSION_CAPABILITIES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  recordCapabilities: JsonbProperty<RecordCapabilities> | null;
 
   @Column({ default: true })
   isAuditLogged: boolean;

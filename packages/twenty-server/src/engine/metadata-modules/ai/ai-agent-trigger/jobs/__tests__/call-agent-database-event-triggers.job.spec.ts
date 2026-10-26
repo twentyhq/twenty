@@ -1,3 +1,4 @@
+import { DataSource } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type AgentTrigger } from 'twenty-shared/application';
@@ -184,6 +185,14 @@ describe('CallAgentDatabaseEventTriggersJob', () => {
       providers: [
         CallAgentDatabaseEventTriggersJob,
         RecordAccessPolicyService,
+        {
+          provide: DataSource,
+          useValue: {
+            getRepository: () => ({
+              findOneBy: jest.fn().mockResolvedValue(null),
+            }),
+          },
+        },
         {
           provide: getQueueToken(MessageQueue.aiQueue),
           useValue: messageQueueService,

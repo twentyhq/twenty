@@ -1,0 +1,8 @@
+{
+  "creationWithExplicitShare": true,
+  "noImplicitOwner": true,
+  "bulkUpdate": true,
+  "unauthorizedCreationSharingRejected": true,
+  "rejectedCreationRolledBack": true,
+  "verifiedAt": "2026-10-26T19:57:13.079Z"
+}

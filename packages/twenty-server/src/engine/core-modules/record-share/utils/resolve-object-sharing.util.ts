@@ -48,19 +48,21 @@ const resolveSharingMode = ({
 export const resolveObjectSharing = ({
   flatObjectMetadata,
   featureFlagsMap,
+  usesRecordPermissionPolicy = false,
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
     'readability' | 'isSystem' | 'sharingReach'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
+  usesRecordPermissionPolicy?: boolean;
 }): ObjectSharing => {
   const isRecordSharingEnabled =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
-  const sharingMode = resolveSharingMode({
-    flatObjectMetadata,
-    isRecordSharingEnabled,
-  });
+  const sharingMode =
+    usesRecordPermissionPolicy && isRecordSharingEnabled
+      ? RecordSharingMode.PRIVATE
+      : resolveSharingMode({ flatObjectMetadata, isRecordSharingEnabled });
   const canShareBeyondRole =
     isRecordSharingEnabled &&
     sharingMode !== RecordSharingMode.ROLE_ONLY &&

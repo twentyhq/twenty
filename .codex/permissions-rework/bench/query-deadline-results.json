@@ -1,0 +1,111 @@
+{
+  "postgres": "PostgreSQL 15.14 (Homebrew) on aarch64-apple-darwin24.4.0, compiled by Apple clang version 17.0.0 (clang-1700.0.13.3), 64-bit",
+  "driverVersion": "8.12.0",
+  "results": [
+    {
+      "case": "driver_query_timeout_100ms",
+      "elapsedMs": 101.34833400000001,
+      "error": "Query read timeout",
+      "backendAfterClientTimeout": {
+        "pid": 54271,
+        "state": "active",
+        "wait_event_type": "Timeout",
+        "wait_event": "PgSleep"
+      },
+      "backendAfterNaturalCompletion": null
+    },
+    {
+      "case": "server_statement_timeout_sleep_200ms",
+      "elapsedMs": 274.46070800000007,
+      "sqlState": "57014",
+      "message": "canceling statement due to statement timeout",
+      "backendAfterServerTimeout": {
+        "pid": 54387,
+        "state": "idle in transaction (aborted)",
+        "wait_event_type": "Client",
+        "wait_event": "ClientRead"
+      },
+      "cleanupMs": 0.24074999999993452,
+      "elapsedUntilRollbackMs": 275.982583,
+      "backendAfterRollback": {
+        "pid": 54387,
+        "state": "idle",
+        "wait_event_type": "Client",
+        "wait_event": "ClientRead"
+      },
+      "recoveryMs": 0.19466699999998127,
+      "sameConnectionRecovered": true,
+      "timeoutAfterRollback": "0"
+    },
+    {
+      "case": "server_statement_timeout_actual_slow_query_200ms",
+      "elapsedMs": 275.4432079999999,
+      "sqlState": "57014",
+      "message": "canceling statement due to statement timeout",
+      "backendAfterServerTimeout": {
+        "pid": 54391,
+        "state": "active",
+        "wait_event_type": "IPC",
+        "wait_event": "BgWorkerShutdown"
+      },
+      "cleanupMs": 0.814542000000074,
+      "elapsedUntilRollbackMs": 277.01595799999996,
+      "backendAfterRollback": {
+        "pid": 54391,
+        "state": "idle",
+        "wait_event_type": "Client",
+        "wait_event": "ClientRead"
+      },
+      "recoveryMs": 0.15695800000003146,
+      "sameConnectionRecovered": true,
+      "timeoutAfterRollback": "0"
+    },
+    {
+      "case": "server_statement_timeout_actual_slow_query_200ms",
+      "elapsedMs": 275.85204199999976,
+      "sqlState": "57014",
+      "message": "canceling statement due to statement timeout",
+      "backendAfterServerTimeout": {
+        "pid": 54402,
+        "state": "active",
+        "wait_event_type": "IPC",
+        "wait_event": "BgWorkerShutdown"
+      },
+      "cleanupMs": 0.7583749999998872,
+      "elapsedUntilRollbackMs": 279.57475,
+      "backendAfterRollback": {
+        "pid": 54402,
+        "state": "idle",
+        "wait_event_type": "Client",
+        "wait_event": "ClientRead"
+      },
+      "recoveryMs": 0.8436670000000959,
+      "sameConnectionRecovered": true,
+      "timeoutAfterRollback": "0"
+    },
+    {
+      "case": "server_statement_timeout_actual_slow_query_200ms",
+      "elapsedMs": 276.19116699999995,
+      "sqlState": "57014",
+      "message": "canceling statement due to statement timeout",
+      "backendAfterServerTimeout": {
+        "pid": 54440,
+        "state": "active",
+        "wait_event_type": "IPC",
+        "wait_event": "BgWorkerShutdown"
+      },
+      "cleanupMs": 3.4096660000000156,
+      "elapsedUntilRollbackMs": 287.094333,
+      "backendAfterRollback": {
+        "pid": 54440,
+        "state": "idle",
+        "wait_event_type": "Client",
+        "wait_event": "ClientRead"
+      },
+      "recoveryMs": 0.3362080000001697,
+      "sameConnectionRecovered": true,
+      "timeoutAfterRollback": "0"
+    }
+  ],
+  "limitation": "Local cancellation and connection-recovery probe. This is not a multi-tenant load test or a hard real-time cancellation guarantee."
+}

@@ -15,6 +15,8 @@ export const isRowAccessExpressionReadingRoleFilter = (
       return expression.operands.some(isRowAccessExpressionReadingRoleFilter);
     case 'roleFilter':
       return true;
+    case 'recordPermission':
+      return true;
     case 'recordShared':
     case 'recordNotRestricted':
     case 'inheritedReadability':

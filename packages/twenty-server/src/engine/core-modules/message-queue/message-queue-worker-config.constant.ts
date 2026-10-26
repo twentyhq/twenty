@@ -28,6 +28,16 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   MessageQueue,
   MessageQueueWorkerConfig
 > = {
+  [MessageQueue.recordPermissionQueue]: {
+    priority: 8,
+    workerOptions: {
+      concurrency: 1,
+      globalConcurrency: 2,
+      lockDuration: 60_000,
+      maxStalledCount: 2,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.recordExportQueue]: {
     priority: 7,
     workerOptions: {

@@ -1,3 +1,4 @@
+import { findLiveReadableRecordIdentifiers } from 'src/engine/core-modules/record-permission/utils/find-live-readable-record-identifiers.util';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -24,7 +25,8 @@ import { MessageCalendarTargetReadinessService } from 'src/engine/core-modules/t
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { getRecordPermissionReadAuthContext } from 'src/engine/core-modules/record-permission/utils/get-record-permission-read-auth-context.util';
+import { getRecordPermissionReadRepository } from 'src/engine/core-modules/record-permission/utils/get-record-permission-read-repository.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
@@ -57,17 +59,15 @@ export class TimelineCalendarEventService {
     pageSize: number;
     targetFilter?: TargetFilter;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const authContext = getRecordPermissionReadAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const offset = (page - 1) * pageSize;
 
-      // System auth context resolves no role, so participant relations would be denied; channel-level redaction below gates access.
-      // TODO: run under the caller's role once unreadable person degrades to redaction https://github.com/twentyhq/core-team-issues/issues/2777
       const calendarEventRepository =
-        this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+        getRecordPermissionReadRepository<CalendarEventWorkspaceEntity>(
+          this.workspaceOrmManager,
           'calendarEvent',
-          { shouldBypassPermissionChecks: true },
         );
 
       const where = isDefined(targetFilter)
@@ -245,7 +245,7 @@ export class TimelineCalendarEventService {
           ({ id }) => !recordCalendarEventIdSet.has(id),
         ),
       };
-    }, buildSystemAuthContext(workspaceId));
+    }, getRecordPermissionReadAuthContext(workspaceId));
   }
 
   private async searchCalendarEventIds({
@@ -277,9 +277,9 @@ export class TimelineCalendarEventService {
     }
 
     const calendarEventRepository =
-      this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+      getRecordPermissionReadRepository<CalendarEventWorkspaceEntity>(
+        this.workspaceOrmManager,
         'calendarEvent',
-        { shouldBypassPermissionChecks: true },
       );
 
     const queryBuilder = calendarEventRepository
@@ -402,9 +402,9 @@ export class TimelineCalendarEventService {
     }
 
     const calendarEventRepository =
-      this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+      getRecordPermissionReadRepository<CalendarEventWorkspaceEntity>(
+        this.workspaceOrmManager,
         'calendarEvent',
-        { shouldBypassPermissionChecks: true },
       );
 
     const [events] = await calendarEventRepository.findAndCount({
@@ -421,9 +421,9 @@ export class TimelineCalendarEventService {
     });
 
     const callRecordingRepository =
-      this.workspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
+      getRecordPermissionReadRepository<CallRecordingWorkspaceEntity>(
+        this.workspaceOrmManager,
         'callRecording',
-        { shouldBypassPermissionChecks: true },
       );
 
     const callRecordings = await callRecordingRepository.find({
@@ -512,12 +512,27 @@ export class TimelineCalendarEventService {
       (a, b) => ids.indexOf(a.id) - ids.indexOf(b.id),
     );
 
+    const readablePeople = await findLiveReadableRecordIdentifiers({
+      workspaceOrmManager: this.workspaceOrmManager,
+      objectNameSingular: 'person',
+      recordIds: orderedEvents
+        .flatMap((event) =>
+          event.calendarEventParticipants.map(
+            (participant) => participant.person?.id,
+          ),
+        )
+        .filter(isDefined),
+    });
     const timelineCalendarEventPromises = orderedEvents.map(async (event) => {
       const participantPromises = event.calendarEventParticipants.map(
         async (participant) => {
           const personAvatarFileUrl =
             await this.fileUrlService.signFirstFilesFieldFileUrl({
-              filesFieldValue: participant.person?.avatarFile,
+              filesFieldValue:
+                !isDefined(readablePeople) ||
+                readablePeople.has(participant.person?.id ?? '')
+                  ? participant.person?.avatarFile
+                  : undefined,
               workspaceId,
             });
 

@@ -1,0 +1,42 @@
+{"scannedRows":250000,"affectedRows":250000,"elapsedMs":43183.222209}
+{"scannedRows":500000,"affectedRows":500000,"elapsedMs":79104.029084}
+{"scannedRows":750000,"affectedRows":750000,"elapsedMs":115841.278375}
+{"scannedRows":1000000,"affectedRows":1000000,"elapsedMs":150945.800417}
+{"scannedRows":1250000,"affectedRows":1250000,"elapsedMs":185020.64887499998}
+{"scannedRows":1500000,"affectedRows":1500000,"elapsedMs":205335.198042}
+{"scannedRows":1750000,"affectedRows":1750000,"elapsedMs":233533.822209}
+{"scannedRows":2000000,"affectedRows":2000000,"elapsedMs":264259.631459}
+{"scannedRows":2250000,"affectedRows":2250000,"elapsedMs":303827.2895}
+{"scannedRows":2500000,"affectedRows":2500000,"elapsedMs":360136.73787500005}
+{"scannedRows":2750000,"affectedRows":2750000,"elapsedMs":414414.028209}
+{"scannedRows":3000000,"affectedRows":3000000,"elapsedMs":457832.176417}
+{"scannedRows":3250000,"affectedRows":3250000,"elapsedMs":503096.048709}
+{"scannedRows":3500000,"affectedRows":3500000,"elapsedMs":546211.8445}
+{"scannedRows":3750000,"affectedRows":3750000,"elapsedMs":588231.6012500001}
+{"scannedRows":4000000,"affectedRows":4000000,"elapsedMs":630521.413084}
+{"scannedRows":4250000,"affectedRows":4250000,"elapsedMs":664700.7831250001}
+{"scannedRows":4500000,"affectedRows":4500000,"elapsedMs":697695.11525}
+error: canceling statement due to statement timeout
+    at /Users/charles/dev/twenty/twenty/node_modules/pg/lib/client.js:526:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async /Users/charles/dev/twenty/twenty/.codex/permissions-rework/bench/on-record-write-run.cjs:91:26
+    at async withReaders (/Users/charles/dev/twenty/twenty/.codex/permissions-rework/bench/on-record-write-run.cjs:55:5)
+    at async main (/Users/charles/dev/twenty/twenty/.codex/permissions-rework/bench/on-record-write-run.cjs:86:5) {
+  length: 109,
+  severity: 'ERROR',
+  code: '57014',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'postgres.c',
+  line: '3321',
+  routine: 'ProcessInterrupts'
+}

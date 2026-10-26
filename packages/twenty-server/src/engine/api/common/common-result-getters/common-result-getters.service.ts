@@ -1,4 +1,7 @@
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { Injectable } from '@nestjs/common';
+import { workspaceContextStorage } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 import {
   FieldMetadataType,
@@ -22,6 +25,7 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type ResultProcessingContext = {
+  fileReadableRecordIds?: Map<string, Set<string>>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   workspaceId: string;
@@ -42,7 +46,10 @@ export class CommonResultGettersService {
     QueryResultGetterHandlerInterface
   >;
 
-  constructor(private readonly fileUrlService: FileUrlService) {
+  constructor(
+    private readonly fileUrlService: FileUrlService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+  ) {
     this.initializeObjectHandlers();
     this.initializeFieldHandlers();
   }
@@ -72,34 +79,125 @@ export class CommonResultGettersService {
     ]);
   }
 
-  public processRecordArray(
+  public async processRecordArray(
     recordArray: ObjectRecord[],
     flatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     workspaceId: string,
   ): Promise<ObjectRecord[]> {
-    return this.processRecordArrayWithContext(recordArray, flatObjectMetadata, {
+    const context: ResultProcessingContext = {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       workspaceId,
       fieldMetadataByNameByObjectMetadataId: new Map(),
-    });
+    };
+    await this.authorizeFileLinks(recordArray, flatObjectMetadata, context);
+    return this.processRecordArrayWithContext(
+      recordArray,
+      flatObjectMetadata,
+      context,
+    );
   }
 
-  public processRecord(
+  public async processRecord(
     record: ObjectRecord,
     flatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     workspaceId: string,
   ): Promise<ObjectRecord> {
-    return this.processRecordWithContext(record, flatObjectMetadata, {
+    const [result] = await this.processRecordArray(
+      [record],
+      flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       workspaceId,
-      fieldMetadataByNameByObjectMetadataId: new Map(),
-    });
+    );
+
+    return result;
+  }
+
+  private async authorizeFileLinks(
+    records: ObjectRecord[],
+    object: FlatObjectMetadata,
+    context: ResultProcessingContext,
+  ): Promise<void> {
+    const workspaceContext = workspaceContextStorage.getStore();
+
+    if (
+      !isDefined(workspaceContext?.recordPermissionContext) ||
+      workspaceContext.authContext.type === 'system'
+    )
+      return;
+    const targets = new Map<
+      string,
+      { object: FlatObjectMetadata; ids: Set<string> }
+    >();
+    const collect = (
+      record: ObjectRecord,
+      currentObject: FlatObjectMetadata,
+    ): void => {
+      const fields = this.getOrBuildFieldMetadataByName(currentObject, context);
+
+      for (const [name, value] of Object.entries(record)) {
+        const field = fields.get(name);
+
+        if (!isDefined(field) || !isDefined(value)) continue;
+        if (
+          [FieldMetadataType.FILES, FieldMetadataType.RICH_TEXT].includes(
+            field.type,
+          )
+        ) {
+          const target = targets.get(currentObject.id) ?? {
+            object: currentObject,
+            ids: new Set<string>(),
+          };
+
+          if (typeof record.id === 'string') target.ids.add(record.id);
+          targets.set(currentObject.id, target);
+        }
+        if (
+          isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) &&
+          isDefined(field.relationTargetObjectMetadataId)
+        ) {
+          const relatedObject = findFlatEntityByIdInFlatEntityMapsOrThrow({
+            flatEntityId: field.relationTargetObjectMetadataId,
+            flatEntityMaps: context.flatObjectMetadataMaps,
+          });
+
+          for (const related of Array.isArray(value) ? value : [value]) {
+            if (isDefined(related)) collect(related, relatedObject);
+          }
+        }
+      }
+    };
+
+    records.forEach((record) => collect(record, object));
+    context.fileReadableRecordIds = new Map();
+    for (const { object: targetObject, ids } of targets.values()) {
+      const repository =
+        this.workspaceOrmManager.getRepositoryWithContextPermissions(
+          targetObject.nameSingular,
+        );
+      const recordIds = [...ids];
+      const allowed = new Set<string>();
+
+      for (
+        let offset = 0;
+        offset < recordIds.length;
+        offset += QUERY_MAX_RECORDS
+      ) {
+        const admitted =
+          await repository.findRecordIdsAllowedForRecordPermissionAction({
+            recordIds: recordIds.slice(offset, offset + QUERY_MAX_RECORDS),
+            action: 'read',
+          });
+
+        for (const id of admitted ?? []) allowed.add(id);
+      }
+      context.fileReadableRecordIds.set(targetObject.id, allowed);
+    }
   }
 
   private processRecordArrayWithContext(
@@ -127,8 +225,13 @@ export class CommonResultGettersService {
       .map((recordFieldName) => fieldMetadataByName.get(recordFieldName))
       .filter(isDefined);
 
+    const canIssueFileLinks =
+      !isDefined(context.fileReadableRecordIds) ||
+      context.fileReadableRecordIds
+        .get(flatObjectMetadata.id)
+        ?.has(record.id) === true;
     const fieldHandlers = new Set(
-      recordFieldMetadataList
+      (canIssueFileLinks ? recordFieldMetadataList : [])
         .map((recordFieldMetadata) =>
           this.fieldHandlers.get(recordFieldMetadata.type),
         )

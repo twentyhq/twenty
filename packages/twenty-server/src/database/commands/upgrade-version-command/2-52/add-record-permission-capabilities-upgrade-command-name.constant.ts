@@ -1,0 +1,2 @@
+export const ADD_RECORD_PERMISSION_CAPABILITIES_UPGRADE_COMMAND_NAME =
+  '2.52.0_AddRecordPermissionRevisionsAndCapabilitiesFastInstanceCommand_1793032106701';

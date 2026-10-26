@@ -1,0 +1,33 @@
+{
+  "shares": 50000,
+  "descendantsPerShare": 30,
+  "descendants": 1500000,
+  "members": 1000,
+  "startedAt": "2026-10-26T19:39:01.039Z",
+  "reads": {
+    "livePoint": {
+      "p50Ms": 3.1989170000015292,
+      "p99Ms": 6.4432919999999285,
+      "samples": 100
+    },
+    "inheritedShares": {
+      "p50Ms": 0.749415999998746,
+      "p99Ms": 1.90849999999773,
+      "samples": 100
+    }
+  },
+  "processed": 1500000,
+  "changed": 1500000,
+  "scan": {
+    "blockCursor": 50000,
+    "blockLimit": 50000,
+    "relationFileNode": 16460
+  },
+  "retries": 0,
+  "elapsedSeconds": 501.546291708,
+  "verified": {
+    "total": 1500000,
+    "projected": 1500000
+  },
+  "error": "Error: Unknown operand IS for TEXT filter"
+}

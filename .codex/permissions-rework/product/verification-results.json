@@ -1,0 +1,30 @@
+{
+  "verifiedAt": "2026-10-26T20:37:25.616147+00:00",
+  "branch": "codex/record-permissions-product",
+  "baseCommit": "4c48997ee70",
+  "server": {
+    "suitesPassed": 41,
+    "testsPassed": 364,
+    "optionalBenchmarkSuitesSkipped": 3,
+    "database": "isolated PostgreSQL test database",
+    "testFileList": "server-test-files.txt"
+  },
+  "frontend": {
+    "suitesPassed": 5,
+    "testsPassed": 18,
+    "testFileList": "front-test-files.txt"
+  },
+  "typecheck": {
+    "server": "passed: direct tsgo --noEmit",
+    "frontend": "passed: direct tsgo --noEmit"
+  },
+  "typeAwareLint": {
+    "server": "passed",
+    "frontend": "passed",
+    "shared": "passed"
+  },
+  "sharedBuild": "passed with --skip-nx-cache",
+  "metadataGraphqlGeneration": "passed",
+  "browser": "sharing, role permissions, field controls, related paths and explanations exercised; final console errors: 0",
+  "runtime": "frontend 3001, server 3000, worker; active original policy restored"
+}

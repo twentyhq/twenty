@@ -2,7 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
-import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
+import {
+  QUERY_MAX_RECORDS,
+  OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS,
+} from 'twenty-shared/constants';
 import {
   compositeTypeDefinitions,
   FieldMetadataType,
@@ -67,7 +70,7 @@ export type SearchCursor = {
   lastRecordIdsPerObject: Record<string, string | undefined>;
 };
 
-const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
+const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 4;
 
 @Injectable()
 export class SearchService {
@@ -129,21 +132,44 @@ export class SearchService {
                   { useReplica: true },
                 );
 
-              return {
-                objectMetadataItem: flatObjectMetadata,
-                records: await this.buildSearchQueryAndGetRecordsWithFallback({
-                  entityManager: repository,
-                  rolePermissionConfig,
-                  flatObjectMetadata,
-                  flatFieldMetadataMaps,
-                  searchInput,
-                  searchTerms: formatSearchTerms(searchInput, 'and'),
-                  searchTermsOr: formatSearchTerms(searchInput, 'or'),
-                  limit: limit as number,
-                  filter: filter ?? ({} as ObjectRecordFilter),
-                  after,
-                }),
-              };
+              const records: (ObjectRecord & {
+                tsRank: number;
+                tsRankCD: number;
+              })[] = await this.buildSearchQueryAndGetRecordsWithFallback({
+                entityManager: repository,
+                rolePermissionConfig,
+                flatObjectMetadata,
+                flatFieldMetadataMaps,
+                searchInput,
+                searchTerms: formatSearchTerms(searchInput, 'and'),
+                searchTermsOr: formatSearchTerms(searchInput, 'or'),
+                limit: limit as number,
+                filter: filter ?? ({} as ObjectRecordFilter),
+                after,
+              });
+              const imageColumns = this.getImageIdentifierColumns(
+                flatObjectMetadata,
+                flatFieldMetadataMaps,
+              );
+              if (imageColumns.length > 0) {
+                for (const batch of chunk(records, QUERY_MAX_RECORDS)) {
+                  const allowedIds =
+                    await repository.findRecordIdsAllowedForRecordPermissionAction(
+                      {
+                        recordIds: batch.map((record) => record.id),
+                        action: 'read',
+                      },
+                    );
+                  if (!isDefined(allowedIds)) break;
+                  const allowed = new Set(allowedIds);
+                  for (const record of batch) {
+                    if (!allowed.has(record.id)) {
+                      for (const column of imageColumns) record[column] = null;
+                    }
+                  }
+                }
+              }
+              return { objectMetadataItem: flatObjectMetadata, records };
             },
           );
         }),
@@ -397,9 +423,12 @@ export class SearchService {
     limit: number;
     filter: ObjectRecordFilterInput;
   }) {
-    const timeoutMs = this.twentyConfigService.get(
+    const configuredTimeoutMs = this.twentyConfigService.get(
       'SEARCH_ILIKE_FALLBACK_TIMEOUT_MS',
     );
+    const timeoutMs = entityManager.internalContext.recordPermissionContext
+      ? Math.min(configuredTimeoutMs, 250)
+      : configuredTimeoutMs;
 
     try {
       return await this.workspaceOrmManager.runInWorkspaceTransaction(

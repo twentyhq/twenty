@@ -16,6 +16,7 @@ import { ListItemIconContainer } from '@/ui/navigation/list-item/components/List
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import {
   type ObjectSharingReach,
+  type RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
   type RecordSharingFieldsFragment,
@@ -30,9 +31,11 @@ const StyledRoleAccessNote = styled.div`
 `;
 
 type SidePanelShareRecordRecipientProps = {
+  allowedAccessLevels?: RecordShareAccessLevel[] | null;
   share: RecordSharingFieldsFragment['shares'][number];
   label: string;
   member: PartialWorkspaceMember | undefined;
+  usesRecordPermissionPolicy?: boolean;
   roles: RecordSharingFieldsFragment['roles'];
   objectLabelPlural: string;
   sharingReach: ObjectSharingReach;
@@ -42,6 +45,8 @@ type SidePanelShareRecordRecipientProps = {
 };
 
 export const SidePanelShareRecordRecipient = ({
+  allowedAccessLevels,
+  usesRecordPermissionPolicy,
   share,
   label,
   member,
@@ -70,12 +75,14 @@ export const SidePanelShareRecordRecipient = ({
       />
     </ListItemIconContainer>
   ) : undefined;
-  const roleAccessNote = getRecordShareRoleAccessNote({
-    accessLevel: share.accessLevel,
-    principalRole: roles.find(({ id }) => id === principalRoleId),
-    sharingReach,
-    objectLabelPlural,
-  });
+  const roleAccessNote = usesRecordPermissionPolicy
+    ? undefined
+    : getRecordShareRoleAccessNote({
+        accessLevel: share.accessLevel,
+        principalRole: roles.find(({ id }) => id === principalRoleId),
+        sharingReach,
+        objectLabelPlural,
+      });
   const isEditable = share.rowCause === RecordShareRowCause.MANUAL;
   const getRecipientItem = () => {
     if (!isEditable) {
@@ -110,6 +117,7 @@ export const SidePanelShareRecordRecipient = ({
         disabled={isSaving}
       >
         <RecordSharingAccessLevelOptions
+          allowedAccessLevels={allowedAccessLevels}
           value={share.accessLevel}
           onChange={(accessLevel) => {
             void setShare({ principal, accessLevel });

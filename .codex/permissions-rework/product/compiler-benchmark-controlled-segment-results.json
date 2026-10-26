@@ -1,0 +1,31 @@
+{
+  "rows": 10000000,
+  "members": 1000,
+  "shares": 50000,
+  "startedAt": "2026-10-26T20:22:36.132Z",
+  "processed": 1001165,
+  "retries": 0,
+  "scan": {
+    "blockCursor": 58615,
+    "blockLimit": 711031,
+    "relationFileNode": 16386
+  },
+  "elapsedSeconds": 335.019038541,
+  "rowsPerSecond": 2988.382453339492,
+  "readErrors": 0,
+  "walBytes": "2413526240",
+  "relationBytesBefore": "8939913216",
+  "relationBytesAfter": "8942157824",
+  "reads": {
+    "maximumMs": 30.382958000001963,
+    "samples": 1648,
+    "errors": 0,
+    "p99Ms": 10.606165999997756
+  },
+  "batches": 815,
+  "maximumBatchMs": 253.33887499999946,
+  "totalBatchMs": 52882.89751099949,
+  "p50BatchMs": 60.99029099999461,
+  "p99BatchMs": 114.65762499999255,
+  "finishedAt": "2026-10-26T20:28:15.138Z"
+}

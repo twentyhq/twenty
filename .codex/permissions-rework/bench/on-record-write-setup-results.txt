@@ -1,0 +1,30 @@
+Timing is on.
+SELECT 10000000
+Time: 179100.196 ms (02:59.100)
+ALTER TABLE
+Time: 23033.056 ms (00:23.033)
+CREATE INDEX
+Time: 11167.225 ms (00:11.167)
+CREATE INDEX
+Time: 20461.363 ms (00:20.461)
+CREATE INDEX
+Time: 14208.704 ms (00:14.209)
+CREATE INDEX
+Time: 6622.491 ms (00:06.622)
+SELECT 1000000
+Time: 10806.336 ms (00:10.806)
+ALTER TABLE
+Time: 1065.751 ms (00:01.066)
+CREATE INDEX
+Time: 390.651 ms
+VACUUM
+Time: 6030.377 ms (00:06.030)
+VACUUM
+Time: 527.845 ms
+         relname          | estimated_rows | heap_size | index_size | total_size
+--------------------------+----------------+-----------+------------+------------
+ permission_write_record  |       10001098 | 6460 MB   | 1671 MB    | 8132 MB
+ permission_write_sidecar |         999988 | 313 MB    | 39 MB      | 351 MB
+(2 rows)
+
+Time: 8.785 ms

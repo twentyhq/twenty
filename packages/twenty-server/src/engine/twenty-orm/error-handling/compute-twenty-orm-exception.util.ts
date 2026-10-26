@@ -74,6 +74,16 @@ export const computeTwentyOrmException = (error: unknown): Error => {
   const errorCode =
     'code' in error && typeof error.code === 'string' ? error.code : undefined;
 
+  if (errorCode === '57014') {
+    return withCause(
+      new TwentyOrmException(
+        error.message,
+        TwentyOrmExceptionCode.QUERY_READ_TIMEOUT,
+      ),
+      error,
+    );
+  }
+
   if (
     error.message.includes(CONNECTION_TERMINATED_MESSAGE) ||
     (isDefined(errorCode) &&

@@ -1,3 +1,4 @@
+import { DataSource } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
@@ -191,6 +192,14 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
       providers: [
         CallDatabaseEventTriggerJobsJob,
         RecordAccessPolicyService,
+        {
+          provide: DataSource,
+          useValue: {
+            getRepository: () => ({
+              findOneBy: jest.fn().mockResolvedValue(null),
+            }),
+          },
+        },
         {
           provide: getQueueToken(MessageQueue.logicFunctionQueue),
           useValue: messageQueueService,

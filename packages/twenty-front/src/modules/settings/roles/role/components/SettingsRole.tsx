@@ -1,3 +1,4 @@
+import { useRecordPermissionPolicy } from '@/settings/record-permissions/hooks/useRecordPermissionPolicy';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -49,6 +50,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
 
   const navigateSettings = useNavigateSettings();
 
+  const recordPermissionPolicy = useRecordPermissionPolicy();
   const [isSaving, setIsSaving] = useState(false);
 
   const settingsDraftRole = useAtomFamilyStateValue(
@@ -111,9 +113,13 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     settingsPersistedRole,
   );
   const isRoleDirty = Object.keys(dirtyFields).length > 0;
-  const isDirty = isRoleDirty || isRoleAgentChatChannelAccessDirty;
+  const isDirty =
+    isRoleDirty ||
+    isRoleAgentChatChannelAccessDirty ||
+    recordPermissionPolicy.isDirty;
 
   const handleCancel = () => {
+    recordPermissionPolicy.reset();
     resetRoleAgentChatChannelAccess();
 
     if (isCreateMode) {
@@ -143,6 +149,8 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         await saveDraftRoleToDB();
         await loadCurrentUser();
       }
+      if (recordPermissionPolicy.isDirty)
+        await recordPermissionPolicy.publish();
       if (isRoleAgentChatChannelAccessDirty) {
         await saveRoleAgentChatChannelAccess();
       } else if (isDefined(dirtyFields.canAccessAllAgentChatChannels)) {

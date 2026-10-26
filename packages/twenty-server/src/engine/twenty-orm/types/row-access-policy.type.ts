@@ -1,4 +1,9 @@
 import { type ObjectLiteral } from 'typeorm';
+import { type RecordPermissionAuthorityIdentity } from 'src/engine/core-modules/record-permission/types/record-permission-authority-identity.type';
+import {
+  type RecordPermissionAuthority,
+  type RecordPermissionContext,
+} from 'src/engine/core-modules/record-permission/types/record-permission-context.type';
 
 import {
   type FeatureFlagKey,
@@ -19,6 +24,12 @@ export type SqlCondition = { sql: string; parameters: ObjectLiteral };
 // and evaluated on records in memory for writes and events, so both always
 // decide the same way
 export type RowAccessExpression =
+  | {
+      kind: 'recordPermission';
+      condition: SqlCondition;
+      tableAlias: string;
+      objectMetadataId: string;
+    }
   | { kind: 'and'; operands: RowAccessExpression[] }
   | { kind: 'or'; operands: RowAccessExpression[] }
   | {
@@ -74,6 +85,10 @@ export type CompiledRowAccessPolicy =
   | { kind: 'gated'; condition: SqlCondition };
 
 export type RowAccessPolicySubject = {
+  recordPermissionAuthorityIdentity?: RecordPermissionAuthorityIdentity;
+  recordPermissionContext?: RecordPermissionContext;
+  recordPermissionRoleIds?: string[];
+  workspaceMember?: RecordPermissionAuthority['workspaceMember'];
   isSystemContext: boolean;
   objectsPermissions: ObjectsPermissions | undefined;
   principalIds: string[] | undefined;
@@ -101,6 +116,7 @@ export type RowAccessPolicyContext = {
 };
 
 export type RowAccessPolicyTarget = {
+  permissionStrategy?: 'live' | 'projected';
   tableAlias: string;
   flatObjectMetadata: FlatObjectMetadata;
   operationType: OperationType;

@@ -5,6 +5,7 @@ import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type RecordPermissionAuthorityIdentity } from 'src/engine/core-modules/record-permission/types/record-permission-authority-identity.type';
 import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -24,6 +25,7 @@ export const buildRoleRowAccessPolicySubject = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   workspaceMember,
+  recordPermissionAuthorityIdentity,
 }: {
   roleId: string | undefined;
   owningApplicationId: string | undefined;
@@ -34,11 +36,15 @@ export const buildRoleRowAccessPolicySubject = ({
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
+  recordPermissionAuthorityIdentity?: RecordPermissionAuthorityIdentity;
 }): RowAccessPolicySubject => {
   const roleIds = isDefined(roleId) ? [roleId] : [];
 
   return {
     isSystemContext: false,
+    recordPermissionAuthorityIdentity,
+    recordPermissionRoleIds: roleIds,
+    workspaceMember,
     objectsPermissions: isDefined(roleId)
       ? rolesPermissions[roleId]
       : undefined,

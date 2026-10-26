@@ -1,3 +1,4 @@
+import { DataSource } from 'typeorm';
 import { Test } from '@nestjs/testing';
 import { MetadataReadability } from 'twenty-shared/types';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -27,6 +28,14 @@ describe('webhook mandatory visibility', () => {
       providers: [
         CallWebhookJobsJob,
         RecordAccessPolicyService,
+        {
+          provide: DataSource,
+          useValue: {
+            getRepository: () => ({
+              findOneBy: jest.fn().mockResolvedValue(null),
+            }),
+          },
+        },
         {
           provide: getQueueToken(MessageQueue.webhookQueue),
           useValue: { add },

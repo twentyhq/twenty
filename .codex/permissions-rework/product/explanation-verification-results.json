@@ -1,0 +1,32 @@
+{
+  "read": {
+    "explainRecordPermission": {
+      "allowed": true,
+      "action": "read",
+      "reason": null,
+      "sources": [
+        {
+          "id": "[\"db399457-b997-52b2-882a-b4dcf989c575\",[]]",
+          "accessGroupId": "db399457-b997-52b2-882a-b4dcf989c575",
+          "ruleUniversalIdentifier": "f81be976-77fb-552d-8141-f33e855aa104",
+          "conditional": false,
+          "kind": "rule",
+          "sourceObjectUniversalIdentifier": "20202020-b374-4779-a561-80086cb2e17f",
+          "fieldUniversalIdentifiers": []
+        }
+      ],
+      "hasMoreSources": false
+    }
+  },
+  "share": {
+    "explainRecordPermission": {
+      "allowed": false,
+      "action": "share",
+      "reason": "noGrant",
+      "sources": [],
+      "hasMoreSources": false
+    }
+  },
+  "unauthorizedCallerRejected": true,
+  "denial": "[{\"message\":\"Sharing permission is required to explain access\",\"extensions\":{\"code\":\"FORBIDDEN\",\"response\":{\"message\":\"Sharing permission is required to explain access\",\"error\":\"Forbidden\",\"statusCode\":403},\"userFriendlyMessage\":\"An error occurred.\"}}]"
+}

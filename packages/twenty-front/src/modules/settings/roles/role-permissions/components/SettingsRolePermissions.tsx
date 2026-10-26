@@ -1,3 +1,4 @@
+import { SettingsRecordPermissions } from '@/settings/record-permissions/components/SettingsRecordPermissions';
 import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection';
 import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
 import { SettingsRolePermissionsSettingsSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection';
@@ -30,6 +31,9 @@ export const SettingsRolePermissions = ({
   isEditable,
   fromAgentId,
 }: SettingsRolePermissionsProps) => {
+  const isRecordPermissionPoliciesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_PERMISSION_POLICIES_ENABLED,
+  );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -46,15 +50,22 @@ export const SettingsRolePermissions = ({
   return (
     <StyledRolePermissionsContainer>
       <SettingsRoleDraftSyncEffect roleId={roleId} />
-      <SettingsRolePermissionsObjectsSection
-        roleId={roleId}
-        isEditable={isEditable}
-      />
-      <SettingsRolePermissionsObjectLevelSection
-        roleId={roleId}
-        fromAgentId={fromAgentId}
-        isEditable={isEditable}
-      />
+      {isRecordPermissionPoliciesEnabled &&
+      settingsDraftRole.universalIdentifier ? (
+        <SettingsRecordPermissions roleId={roleId} isEditable={isEditable} />
+      ) : (
+        <>
+          <SettingsRolePermissionsObjectsSection
+            roleId={roleId}
+            isEditable={isEditable}
+          />
+          <SettingsRolePermissionsObjectLevelSection
+            roleId={roleId}
+            fromAgentId={fromAgentId}
+            isEditable={isEditable}
+          />
+        </>
+      )}
       <SettingsRolePermissionsSettingsSection
         roleId={roleId}
         isEditable={isEditable}

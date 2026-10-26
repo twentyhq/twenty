@@ -1,3 +1,4 @@
+import { createRecordPermissionTestContext } from 'src/engine/core-modules/record-permission/utils/__tests__/record-permission-test-context';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
@@ -45,6 +46,7 @@ const buildObject = ({
     isSystem: false,
     readability,
     readabilityParentFieldUniversalIdentifiers: null,
+    recordCapabilities: null,
   } as Parameters<typeof getFlatObjectMetadataMock>[0]);
 
 const attachment = buildObject({
@@ -170,6 +172,34 @@ describe('buildRowAccessPolicy', () => {
     expect(
       build({ ...readEverything, isOwningApplication: () => true }, object),
     ).toEqual({ kind: 'open' });
+  });
+
+  it('preserves the owning-application gate with an active policy while honoring explicit capabilities', () => {
+    const { context, objects } = createRecordPermissionTestContext();
+    const object = {
+      ...objects.company,
+      readability: MetadataReadability.APPLICATION,
+      writability: MetadataWritability.APPLICATION,
+    };
+    context.flatObjectMetadataMaps.byUniversalIdentifier[
+      object.universalIdentifier
+    ] = object;
+    const owner = {
+      ...readEverything,
+      recordPermissionContext: context,
+      isOwningApplication: () => true,
+    };
+    expect(build(owner, object)).toEqual({ kind: 'open' });
+    object.recordCapabilities = { read: false };
+    expect(build(owner, object)).toEqual({ kind: 'denied' });
+    object.recordCapabilities = null;
+    const outsider = build(
+      { ...owner, isOwningApplication: () => false },
+      object,
+    );
+    expect(outsider.kind).toBe('gated');
+    if (outsider.kind === 'gated')
+      expect(outsider.condition.sql).not.toBe('TRUE');
   });
 
   it('opens an OPEN object to a subject without predicate', () => {

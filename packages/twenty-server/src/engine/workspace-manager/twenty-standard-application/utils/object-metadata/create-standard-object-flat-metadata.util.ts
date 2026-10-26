@@ -135,6 +135,7 @@ export const createStandardObjectFlatMetadata = <
     writability,
     readability,
     readabilityParentFieldUniversalIdentifiers,
+    recordCapabilities: null,
     sharingReach: ObjectSharingReach.WORKSPACE,
     openRecordIn,
     isLabelSyncedWithName: false,

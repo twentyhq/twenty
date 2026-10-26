@@ -1,0 +1,9 @@
+{
+  "members": 1000,
+  "groups": 1000,
+  "records": 100,
+  "changed": 100,
+  "bindingMs": 19.589457999999922,
+  "projectionMs": 99.3191670000001,
+  "finishedAt": "2026-10-26T19:50:19.397Z"
+}

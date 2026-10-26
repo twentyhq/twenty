@@ -33,6 +33,7 @@ const OBJECT_MANIFEST: Required<ObjectManifest> = {
   isUIEditable: false,
   writability: MetadataWritability.APPLICATION,
   readability: MetadataReadability.INHERITED,
+  recordCapabilities: {},
   readabilityParentFieldUniversalIdentifiers: [PARENT_FIELD_UID],
   sharingReach: ObjectSharingReach.WORKSPACE,
   openRecordIn: ObjectOpenRecordIn.RECORD_PAGE,

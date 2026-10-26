@@ -115,6 +115,7 @@ describe('Standard object readability', () => {
     expect(findStandardFlatObjectMetadata('agentChatThread')).toMatchObject({
       readability: MetadataReadability.PRIVATE,
       readabilityParentFieldUniversalIdentifiers: null,
+      recordCapabilities: null,
     });
   });
 

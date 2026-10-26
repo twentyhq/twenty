@@ -1,8 +1,21 @@
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  RecordShareAccessLevel,
+  type RecordPermissionAction,
+} from 'twenty-shared/types';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import {
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/core-modules/record-share/record-share.exception';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordSharingMode } from 'src/engine/core-modules/record-share/enums/record-sharing-mode.enum';
@@ -55,6 +68,22 @@ export class ShareWithService {
     });
   }
 
+  async prepareRecordPermissionSharing({
+    transactionScope,
+    workspaceId,
+    repository,
+  }: {
+    transactionScope: WorkspaceTransactionScope;
+    workspaceId: string;
+    repository: WorkspaceRepository;
+  }): Promise<void> {
+    await transactionScope.executeRawQuery(
+      'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+      [getWorkspaceSchemaName(workspaceId) + ':record-permissions'],
+    );
+    await repository.refreshRecordPermissionContext();
+  }
+
   async insertRecordSharesForCreatedRecords({
     authContext,
     flatObjectMetadata,
@@ -73,6 +102,9 @@ export class ShareWithService {
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
     const workspaceId = authContext.workspace.id;
+    const usesRecordPermissionPolicy = Boolean(
+      getWorkspaceContext().recordPermissionContext,
+    );
 
     // A hard-destroyed record leaves its rows behind, and a client may reuse its id
     await this.recordShareStorageService.deleteByRecordIds({
@@ -82,9 +114,47 @@ export class ShareWithService {
       transactionScope,
     });
 
+    if (
+      usesRecordPermissionPolicy &&
+      isNonEmptyArray(shareWith) &&
+      (isUserAuthContext(authContext) || isApiKeyAuthContext(authContext))
+    ) {
+      const repository = transactionScope.getRepository(
+        flatObjectMetadata.nameSingular,
+      );
+      for (const accessLevel of new Set(
+        shareWith.map((share) => share.accessLevel),
+      )) {
+        if (accessLevel === RecordShareAccessLevel.NONE) continue;
+        const actions: RecordPermissionAction[] = ['share', 'read'];
+        if (
+          accessLevel === RecordShareAccessLevel.READ_WRITE ||
+          accessLevel === RecordShareAccessLevel.FULL
+        )
+          actions.push('update');
+        if (accessLevel === RecordShareAccessLevel.FULL)
+          actions.push('softDelete', 'destroy');
+        for (const action of actions) {
+          const allowed =
+            await repository.findRecordIdsAllowedForRecordPermissionAction({
+              recordIds,
+              action,
+              delegatedAccessLevel:
+                action === 'share' ? accessLevel : undefined,
+            });
+          if (!isDefined(allowed) || allowed.length !== recordIds.length)
+            throw new RecordShareException(
+              'Cannot delegate access that the grantor does not hold',
+              RecordShareExceptionCode.INVALID_SHARE_WITH,
+            );
+        }
+      }
+    }
+
     await this.recordShareStorageService.insertMany({
       workspaceId,
       recordShares: buildRecordShareInputsForCreatedRecords({
+        shouldGrantCreatorAccess: !usesRecordPermissionPolicy,
         recordIds,
         objectMetadataId: flatObjectMetadata.id,
         authContext,
@@ -96,13 +166,16 @@ export class ShareWithService {
       transactionScope,
     });
 
-    await this.recordSharePrincipalService.assertPrincipalsReachRecordsOrThrow({
-      workspaceId,
-      transactionScope,
-      flatObjectMetadata,
-      canShareBeyondRole: objectSharing.canShareBeyondRole,
-      principals: shareWith.map(resolveShareWithPrincipalOrThrow),
-      recordIds,
-    });
+    if (!usesRecordPermissionPolicy)
+      await this.recordSharePrincipalService.assertPrincipalsReachRecordsOrThrow(
+        {
+          workspaceId,
+          transactionScope,
+          flatObjectMetadata,
+          canShareBeyondRole: objectSharing.canShareBeyondRole,
+          principals: shareWith.map(resolveShareWithPrincipalOrThrow),
+          recordIds,
+        },
+      );
   }
 }

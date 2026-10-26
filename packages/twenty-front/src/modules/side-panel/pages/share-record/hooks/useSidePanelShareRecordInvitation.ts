@@ -81,6 +81,8 @@ export const useSidePanelShareRecordInvitation = ({
     (recipient) => recipient.kind === 'everyone',
   );
   const hasInvalidAccessLevel =
+    (isDefined(sharing?.allowedShareAccessLevels) &&
+      !sharing.allowedShareAccessLevels.includes(accessLevel)) ||
     accessLevel === RecordShareAccessLevel.NONE ||
     (hasEveryoneRecipient && accessLevel === RecordShareAccessLevel.FULL);
 

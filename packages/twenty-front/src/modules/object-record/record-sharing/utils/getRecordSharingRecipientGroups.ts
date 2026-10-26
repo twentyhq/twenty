@@ -12,9 +12,11 @@ export const getRecordSharingRecipientGroups = <
 >({
   isInviting,
   matchingShares,
+  usesRecordPermissionPolicy = false,
 }: {
   isInviting: boolean;
   matchingShares: TMatchingShare[];
+  usesRecordPermissionPolicy?: boolean;
 }) => {
   if (isInviting) {
     return [{ heading: msg`Have access`, matchingShares }];
@@ -22,13 +24,13 @@ export const getRecordSharingRecipientGroups = <
 
   return [
     {
-      heading: msg`Roles`,
+      heading: usesRecordPermissionPolicy ? msg`Through roles` : msg`Roles`,
       matchingShares: matchingShares.filter(
         ({ share }) => share.principalType === RecordSharePrincipalType.ROLE,
       ),
     },
     {
-      heading: msg`Users`,
+      heading: usesRecordPermissionPolicy ? msg`Shared directly` : msg`Users`,
       matchingShares: matchingShares.filter(
         ({ share }) =>
           share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER,

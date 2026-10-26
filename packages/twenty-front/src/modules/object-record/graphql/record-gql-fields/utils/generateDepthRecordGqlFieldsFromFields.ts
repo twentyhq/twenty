@@ -37,12 +37,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
             fieldMetadata.relation?.targetObjectMetadata.id,
         );
 
-        if (!targetObjectMetadataItem) {
-          throw new Error(
-            doNotTranslate(
-              `Target object metadata item not found for ${fieldMetadata.name}`,
-            ),
-          );
+        // An inaccessible application target must not make the source record unrenderable.
+        if (!isDefined(targetObjectMetadataItem)) {
+          return recordGqlFields;
         }
 
         const junctionConfig = resolveJunctionConfig({

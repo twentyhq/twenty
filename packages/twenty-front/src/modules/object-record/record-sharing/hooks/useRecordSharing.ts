@@ -23,11 +23,14 @@ export const useRecordSharing = ({
 }) => {
   const { setRecordPermissions } = useRefreshRecordPermissions();
   const { enqueueToast } = useToast();
-  const { data, loading, error, refetch } = useQuery(GetRecordSharingDocument, {
-    variables: { target: recordTarget },
-    fetchPolicy: 'network-only',
-    notifyOnNetworkStatusChange: false,
-  });
+  const { data, loading, error, refetch, fetchMore } = useQuery(
+    GetRecordSharingDocument,
+    {
+      variables: { target: recordTarget },
+      fetchPolicy: 'network-only',
+      notifyOnNetworkStatusChange: false,
+    },
+  );
 
   const writeSharing = (
     cache: ApolloCache,
@@ -119,7 +122,56 @@ export const useRecordSharing = ({
         ).data?.removeRecordShare,
     );
 
+  const loadMoreShares = async () => {
+    const shares = data?.recordSharing.shares;
+    if (!data?.recordSharing.hasMoreShares || !shares?.length) return;
+    try {
+      await fetchMore({
+        variables: { sharesAfter: shares[shares.length - 1].id },
+        updateQuery: (previous, { fetchMoreResult }) => ({
+          ...previous,
+          recordSharing: {
+            ...previous.recordSharing,
+            hasMoreShares: fetchMoreResult.recordSharing.hasMoreShares,
+            shares: [
+              ...previous.recordSharing.shares,
+              ...fetchMoreResult.recordSharing.shares,
+            ],
+          },
+        }),
+      });
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
+    }
+  };
+
+  const loadMoreInheritedShares = async () => {
+    const shares = data?.recordSharing.inheritedShares;
+    if (!data?.recordSharing.hasMoreInheritedShares || !shares?.length) return;
+    try {
+      await fetchMore({
+        variables: { inheritedSharesAfter: shares[shares.length - 1].id },
+        updateQuery: (previous, { fetchMoreResult }) => ({
+          ...previous,
+          recordSharing: {
+            ...fetchMoreResult.recordSharing,
+            shares: previous.recordSharing.shares,
+            hasMoreShares: previous.recordSharing.hasMoreShares,
+            inheritedShares: [
+              ...(previous.recordSharing.inheritedShares ?? []),
+              ...(fetchMoreResult.recordSharing.inheritedShares ?? []),
+            ],
+          },
+        }),
+      });
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
+    }
+  };
+
   return {
+    loadMoreShares,
+    loadMoreInheritedShares,
     sharing: data?.recordSharing,
     loading,
     error,

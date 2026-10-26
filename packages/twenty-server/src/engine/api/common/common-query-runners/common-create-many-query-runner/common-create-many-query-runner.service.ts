@@ -80,7 +80,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const isPrivateObject =
       queryRunnerContext.flatObjectMetadata.readability ===
       MetadataReadability.PRIVATE;
-    const { sharingMode } = resolveObjectSharing(queryRunnerContext);
+    const { sharingMode } = resolveObjectSharing({
+      ...queryRunnerContext,
+      usesRecordPermissionPolicy: isDefined(
+        queryRunnerContext.repository.internalContext.recordPermissionContext,
+      ),
+    });
     const isGatedThroughRecordShares =
       sharingMode === RecordSharingMode.PRIVATE ||
       sharingMode === RecordSharingMode.INHERITED;
@@ -145,6 +150,18 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         CommonQueryRunnerExceptionCode.MISSING_FLAT_INDEX_MAPS,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
+    }
+
+    if (
+      isDefined(repository.internalContext.recordPermissionContext) &&
+      isNonEmptyArray(args.shareWith) &&
+      isDefined(queryRunnerContext.transactionScope)
+    ) {
+      await this.shareWithService.prepareRecordPermissionSharing({
+        transactionScope: queryRunnerContext.transactionScope,
+        workspaceId: authContext.workspace.id,
+        repository,
+      });
     }
 
     const objectRecords = await this.insertOrUpsertRecords({
@@ -614,7 +631,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }): Promise<void> {
     const { authContext, flatObjectMetadata, repository, transactionScope } =
       queryRunnerContext;
-    const objectSharing = resolveObjectSharing(queryRunnerContext);
+    const objectSharing = resolveObjectSharing({
+      ...queryRunnerContext,
+      usesRecordPermissionPolicy: isDefined(
+        queryRunnerContext.repository.internalContext.recordPermissionContext,
+      ),
+    });
     const shareWithToWrite = resolveShareWithToWrite({
       sharingMode: objectSharing.sharingMode,
       shareWith,

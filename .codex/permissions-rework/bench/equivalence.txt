@@ -1,0 +1,4 @@
+ original_count | optimized_count | identical_results
+----------------+-----------------+-------------------
+             50 |              50 | t
+(1 row)

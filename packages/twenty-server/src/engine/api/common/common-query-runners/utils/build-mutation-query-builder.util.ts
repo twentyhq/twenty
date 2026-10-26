@@ -27,6 +27,13 @@ export const buildMutationQueryBuilder = ({
 
   commonQueryParser.applyFilterToBuilder(filteredQueryBuilder, alias, filter);
 
+  repository.applyLiveRecordPermissionsForUniqueLookup(
+    filteredQueryBuilder,
+    Object.fromEntries(
+      Object.entries(filter).map(([name, predicate]) => [name, predicate?.eq]),
+    ),
+  );
+
   const hasRelationTraversal = filteredQueryBuilder.getJoinAliases().length > 0;
 
   if (!hasRelationTraversal) {

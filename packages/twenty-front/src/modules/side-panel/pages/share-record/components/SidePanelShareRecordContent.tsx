@@ -1,3 +1,5 @@
+import { SidePanelInheritedRecordShares } from '@/side-panel/pages/share-record/components/SidePanelInheritedRecordShares';
+import { SidePanelRecordAccessExplanation } from '@/side-panel/pages/share-record/components/SidePanelRecordAccessExplanation';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
@@ -25,6 +27,7 @@ import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFoot
 import {
   ObjectSharingReach,
   RecordSharingMode,
+  type RecordTargetInput,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -55,6 +58,7 @@ const StyledSeparator = styled.div`
 `;
 
 type SidePanelShareRecordContentProps = {
+  recordTarget?: RecordTargetInput;
   recordUrl: string;
   objectLabelPlural: string;
   sharingReach: ObjectSharingReach;
@@ -62,6 +66,7 @@ type SidePanelShareRecordContentProps = {
 };
 
 export const SidePanelShareRecordContent = ({
+  recordTarget,
   recordUrl,
   objectLabelPlural,
   sharingReach,
@@ -104,6 +109,7 @@ export const SidePanelShareRecordContent = ({
   const canManageSharing = sharing?.canManageSharing ?? false;
   const isInitialLoading = loading && !isDefined(sharing) && !isDefined(error);
   const recipientGroups = getRecordSharingRecipientGroups({
+    usesRecordPermissionPolicy: sharing?.usesRecordPermissionPolicy ?? false,
     isInviting,
     matchingShares,
   });
@@ -124,6 +130,7 @@ export const SidePanelShareRecordContent = ({
   };
   const accessPicker = (
     <RecordSharingInvitationAccessPicker
+      allowedAccessLevels={sharing?.allowedShareAccessLevels}
       value={invitation.accessLevel}
       hasEveryoneRecipient={invitation.hasEveryoneRecipient}
       disabled={invitation.isSubmitting}
@@ -174,6 +181,7 @@ export const SidePanelShareRecordContent = ({
                       heading={isInviting ? t`Have access` : t`Everyone`}
                     >
                       <SidePanelShareRecordGeneralAccessItem
+                        allowedAccessLevels={sharing.allowedShareAccessLevels}
                         generalAccessLevel={sharing.generalAccessLevel}
                         defaultGeneralAccessLevel={
                           sharing.defaultGeneralAccessLevel
@@ -196,6 +204,12 @@ export const SidePanelShareRecordContent = ({
                       >
                         {matchingShares.map(({ share, label, member }) => (
                           <SidePanelShareRecordRecipient
+                            allowedAccessLevels={
+                              sharing.allowedShareAccessLevels
+                            }
+                            usesRecordPermissionPolicy={
+                              sharing.usesRecordPermissionPolicy ?? false
+                            }
                             key={share.id}
                             share={share}
                             label={label}
@@ -211,6 +225,17 @@ export const SidePanelShareRecordContent = ({
                       </SidePanelShareRecordGroup>
                     ) : null,
                   )}
+                  {sharing.hasMoreShares && (
+                    <Button
+                      title={t`Load more people and roles`}
+                      variant="ghost"
+                      onClick={() => void sharingState.loadMoreShares()}
+                    />
+                  )}
+                  <SidePanelInheritedRecordShares
+                    sharingState={sharingState}
+                    search={search}
+                  />
                   {isInviting && (
                     <SidePanelShareRecordGroup heading={t`Not shared with`}>
                       {!hasSelection && (
@@ -238,7 +263,19 @@ export const SidePanelShareRecordContent = ({
                   {sharing.sharingMode === RecordSharingMode.INHERITED && (
                     <StyledDescription>{t`Access is also inherited from related records.`}</StyledDescription>
                   )}
-                  {!sharing.hasManagedGeneralAccess &&
+                  {sharing.usesRecordPermissionPolicy && (
+                    <>
+                      <StyledDescription>{t`Sharing opens access when the recipient's role allows Receive. Removing a direct share does not remove access granted by a role or related record.`}</StyledDescription>
+                      {isDefined(recordTarget) && (
+                        <SidePanelRecordAccessExplanation
+                          key={`${recordTarget.recordId}-${saving}`}
+                          target={recordTarget}
+                        />
+                      )}
+                    </>
+                  )}
+                  {!sharing.usesRecordPermissionPolicy &&
+                    !sharing.hasManagedGeneralAccess &&
                     sharing.sharingMode !== RecordSharingMode.INHERITED && (
                       <StyledDescription>
                         {sharingReach === ObjectSharingReach.WORKSPACE
@@ -249,11 +286,14 @@ export const SidePanelShareRecordContent = ({
                 </>
               ) : (
                 <StyledDescription>
-                  {sharing.sharingMode === RecordSharingMode.ROLE_ONLY
-                    ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
-                    : sharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT
-                      ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
-                      : t`Only the creator of this record and people with full access to it can change who has access.`}
+                  {sharing.usesRecordPermissionPolicy
+                    ? t`You need permission to share this record before you can change its access.`
+                    : sharing.sharingMode === RecordSharingMode.ROLE_ONLY
+                      ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
+                      : sharing.sharingMode ===
+                          RecordSharingMode.OPEN_BY_DEFAULT
+                        ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
+                        : t`Only the creator of this record and people with full access to it can change who has access.`}
                 </StyledDescription>
               ))
             )}

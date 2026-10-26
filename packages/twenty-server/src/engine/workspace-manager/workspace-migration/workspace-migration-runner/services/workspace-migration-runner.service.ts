@@ -1,3 +1,6 @@
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { assertRecordPermissionMetadataDependencies } from 'src/engine/core-modules/record-permission/utils/assert-record-permission-metadata-dependencies.util';
+import { enrollRecordPermissionMetadata } from 'src/engine/core-modules/record-permission/utils/enroll-record-permission-metadata.util';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
@@ -112,6 +115,25 @@ export class WorkspaceMigrationRunnerService {
     );
 
     if (hasSchemaMetadataChanged) {
+      const [{ installed }] = await this.coreDataSource.query(
+        `SELECT EXISTS (SELECT 1 FROM core."recordPermissionRevision" WHERE "workspaceId" = $1 AND status IN ('active', 'building')) AS installed`,
+        [workspaceId],
+      );
+      if (installed) {
+        const { flatObjectMetadataMaps, flatFieldMetadataMapsOrm } =
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMapsOrm',
+          ]);
+        await enrollRecordPermissionMetadata({
+          dataSource: this.coreDataSource,
+          workspaceId,
+          metadata: {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+          },
+        });
+      }
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
@@ -390,6 +412,30 @@ export class WorkspaceMigrationRunnerService {
 
     try {
       await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
+      if (
+        hasSchemaMetadataChanged ||
+        actionMetadataNames.some((metadataName) =>
+          [
+            'role',
+            'roleTarget',
+            'application',
+            'objectPermission',
+            'fieldPermission',
+          ].includes(metadataName),
+        )
+      ) {
+        await queryRunner.query(
+          'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+          [getWorkspaceSchemaName(workspaceId) + ':record-permissions'],
+        );
+      }
+      if (hasSchemaMetadataChanged) {
+        await assertRecordPermissionMetadataDependencies({
+          database: queryRunner,
+          workspaceId,
+          actions,
+        });
+      }
 
       for (const action of actions) {
         const actionStart = performance.now();

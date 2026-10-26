@@ -1,3 +1,4 @@
+import { type RecordCapabilities } from '@/types/RecordPermissionAction';
 import { type ObjectFieldManifest } from '@/application/objectFieldManifest.type';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type MetadataReadability } from '@/types/MetadataReadability';
@@ -19,6 +20,7 @@ export type ObjectManifest = SyncableEntityOptions & {
   isUIEditable?: boolean;
   writability?: MetadataWritability;
   readability?: MetadataReadability;
+  recordCapabilities?: RecordCapabilities;
   readabilityParentFieldUniversalIdentifiers?: string[] | null;
   sharingReach?: ObjectSharingReach;
   openRecordIn?: ObjectOpenRecordIn;

@@ -130,6 +130,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       isDefined(executor) ? { ...this.context, executor } : this.context,
     );
 
+    cloned.liveRecordPermissionTarget = this.liveRecordPermissionTarget;
     cloned.whereClauses.push(...this.whereClauses);
     cloned.rowAccessConditions.push(...this.rowAccessConditions);
     cloned.existsFilterClauses.push(
@@ -623,6 +624,26 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       raw: rows,
       entities: this.context.formatResult<T[]>(this.materializeEntities(rows)),
     };
+  }
+
+  private liveRecordPermissionTarget: string | undefined;
+
+  useLiveRecordPermissionsForId(recordId: string): this {
+    this.liveRecordPermissionTarget = recordId;
+    this.andWhere({ id: recordId });
+    return this;
+  }
+
+  useLiveRecordPermissionsForUniqueColumns(
+    equalities: Record<string, unknown>,
+  ): this {
+    this.liveRecordPermissionTarget = 'unique-index';
+    this.andWhere(equalities);
+    return this;
+  }
+
+  hasLiveRecordPermissionTarget(): boolean {
+    return this.liveRecordPermissionTarget !== undefined;
   }
 
   async getOne<T extends ObjectLiteral>(options?: {

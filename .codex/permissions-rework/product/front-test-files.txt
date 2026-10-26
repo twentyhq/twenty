@@ -1,0 +1,5 @@
+packages/twenty-front/src/modules/object-record/graphql/record-gql-fields/utils/__tests__/generateDepthRecordGqlFieldsFromFields.test.ts
+packages/twenty-front/src/modules/settings/record-permissions/components/__tests__/RecordPermissionConditionEditor.test.tsx
+packages/twenty-front/src/modules/settings/record-permissions/utils/__tests__/recordPermissionPolicyEditing.test.ts
+packages/twenty-front/src/modules/side-panel/pages/share-record/components/__tests__/SidePanelRecordAccessExplanation.test.tsx
+packages/twenty-front/src/modules/side-panel/pages/share-record/components/__tests__/SidePanelShareRecordContent.test.tsx

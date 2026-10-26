@@ -96,6 +96,7 @@ export class NavigationMenuItemRecordIdentifierService {
 
         const rawResult = await queryBuilder
           .where(`"${alias}".id = :id`, { id: targetRecordId })
+          .useLiveRecordPermissionsForId(targetRecordId)
           .getRawOne();
 
         if (!isDefined(rawResult)) {

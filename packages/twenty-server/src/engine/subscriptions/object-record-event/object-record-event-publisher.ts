@@ -220,6 +220,7 @@ export class ObjectRecordEventPublisher {
           objectsPermissions,
           permissionsContext,
           flatWorkspaceMemberMaps,
+          workspaceId: workspaceEventBatch.workspaceId,
         }),
       );
 
@@ -497,16 +498,34 @@ export class ObjectRecordEventPublisher {
     objectsPermissions,
     permissionsContext,
     flatWorkspaceMemberMaps,
+    workspaceId,
   }: {
     subscriberAuthContext: SerializableAuthContext;
     roleIds: string[];
     objectsPermissions: ObjectsPermissions;
     permissionsContext: StreamPermissionsContext;
     flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+    workspaceId: string;
   }): RowAccessPolicySubject {
     return {
       isSystemContext: false,
+      recordPermissionAuthorityIdentity: isDefined(
+        subscriberAuthContext.userWorkspaceId,
+      )
+        ? {
+            type: 'user',
+            workspace: { id: workspaceId },
+            userWorkspaceId: subscriberAuthContext.userWorkspaceId,
+            application: isDefined(subscriberAuthContext.applicationId)
+              ? { id: subscriberAuthContext.applicationId }
+              : undefined,
+          }
+        : undefined,
       objectsPermissions,
+      recordPermissionRoleIds: roleIds,
+      workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
+        ? flatWorkspaceMemberMaps.byId[subscriberAuthContext.workspaceMemberId]
+        : undefined,
       principalIds: [
         EVERYONE_PRINCIPAL_ID,
         subscriberAuthContext.workspaceMemberId,

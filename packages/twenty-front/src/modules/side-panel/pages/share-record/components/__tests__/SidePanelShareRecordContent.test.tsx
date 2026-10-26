@@ -85,6 +85,8 @@ const renderSharing = ({
       objectLabelPlural="Companies"
       sharingReach={sharingReach}
       sharingState={{
+        loadMoreShares: async () => undefined,
+        loadMoreInheritedShares: jest.fn(),
         sharing: { ...sharing, ...sharingOverrides },
         setGeneralAccess,
         setShare,

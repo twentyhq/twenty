@@ -46,6 +46,52 @@ const systemAuthContext = {
 const apiKeyRoleMap = { [API_KEY_ID]: API_KEY_ROLE_ID };
 
 describe('buildRecordShareInputsForCreatedRecords', () => {
+  it('does not create implicit creator ownership under record permission policies', () => {
+    const input = {
+      recordIds: ['record-1'],
+      objectMetadataId: OBJECT_METADATA_ID,
+      authContext: userAuthContext,
+      apiKeyRoleMap,
+      shouldGrantCreatorAccess: false,
+    };
+    expect(buildRecordShareInputsForCreatedRecords(input)).toEqual([]);
+    expect(
+      buildRecordShareInputsForCreatedRecords({
+        ...input,
+        shareWith: [
+          {
+            workspaceMemberId: WORKSPACE_MEMBER_ID,
+            accessLevel: RecordShareAccessLevel.READ,
+          },
+        ],
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        principalId: WORKSPACE_MEMBER_ID,
+        accessLevel: RecordShareAccessLevel.READ,
+        rowCause: RecordShareRowCause.MANUAL,
+      }),
+    ]);
+    expect(
+      buildRecordShareInputsForCreatedRecords({
+        ...input,
+        authContext: applicationAuthContext,
+        shareWith: [
+          {
+            roleId: APPLICATION_ROLE_ID,
+            accessLevel: RecordShareAccessLevel.READ,
+          },
+        ],
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        principalId: APPLICATION_ROLE_ID,
+        accessLevel: RecordShareAccessLevel.READ,
+        rowCause: RecordShareRowCause.APPLICATION,
+      }),
+    ]);
+  });
+
   describe('with record sharing enabled', () => {
     it('should give a user a FULL owner row per record', () => {
       expect(

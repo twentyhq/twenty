@@ -21,6 +21,10 @@ type InheritedReadabilityExpression = Extract<
 >;
 
 export type RowAccessEvaluationContext<TRecord extends RowAccessRecord> = {
+  resolveRecordPermissionIds?: (
+    expression: Extract<RowAccessExpression, { kind: 'recordPermission' }>,
+    records: TRecord[],
+  ) => Promise<Set<string>>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   shouldIgnoreSoftDeleteDefaultFilter: boolean;
   fetchRecordShares: (args: {
@@ -77,6 +81,11 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
   const recordIds = records.map((record) => record.id);
 
   switch (expression.kind) {
+    case 'recordPermission':
+      return (
+        context.resolveRecordPermissionIds?.(expression, records) ??
+        new Set<string>()
+      );
     case 'and': {
       let admittedRecords = records;
 

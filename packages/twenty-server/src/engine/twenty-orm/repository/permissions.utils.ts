@@ -1,3 +1,4 @@
+import { RECORD_CAPABILITY_BY_OPERATION } from 'src/engine/core-modules/record-permission/utils/record-permission-action-for-operation.util';
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import {
@@ -32,6 +33,7 @@ export type OperationType =
   | 'soft-delete';
 
 type ValidateOperationIsPermittedOrThrowArgs = {
+  isUsingRecordPermissionPolicy?: boolean;
   entityName: string;
   operationType: OperationType;
   objectsPermissions: ObjectsPermissions;
@@ -55,6 +57,7 @@ export const validateOperationIsPermittedOrThrow = ({
   updatedColumns,
   authContext,
   featureFlagsMap = {},
+  isUsingRecordPermissionPolicy = false,
 }: ValidateOperationIsPermittedOrThrowArgs) => {
   const objectMetadataIdForEntity = objectIdByNameSingular[entityName];
 
@@ -71,6 +74,17 @@ export const validateOperationIsPermittedOrThrow = ({
   });
 
   if (!isDefined(objectMetadata)) {
+    throw new PermissionsException(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+    );
+  }
+
+  if (
+    objectMetadata.recordCapabilities?.[
+      RECORD_CAPABILITY_BY_OPERATION[operationType]
+    ] === false
+  ) {
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,
       PermissionsExceptionCode.PERMISSION_DENIED,
@@ -96,6 +110,7 @@ export const validateOperationIsPermittedOrThrow = ({
   // Records shared by name stay reachable without the object permission; the
   // row access policy then narrows the query to those records
   if (
+    !(isUsingRecordPermissionPolicy && operationType !== 'insert') &&
     (!isDefined(permissionsForEntity) ||
       !isObjectOperationPermitted({
         objectMetadata,

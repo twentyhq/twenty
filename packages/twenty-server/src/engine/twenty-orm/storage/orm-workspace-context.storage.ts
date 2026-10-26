@@ -1,3 +1,4 @@
+import { type RecordPermissionContext } from 'src/engine/core-modules/record-permission/types/record-permission-context.type';
 import { AsyncLocalStorage } from 'async_hooks';
 
 import {
@@ -18,6 +19,7 @@ import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metada
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 
 export type ORMWorkspaceContext = {
+  recordPermissionContext?: RecordPermissionContext;
   authContext: WorkspaceAuthContext;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;

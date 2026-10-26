@@ -1,3 +1,4 @@
+import { type RecordPermissionContext } from 'src/engine/core-modules/record-permission/types/record-permission-context.type';
 import { type DataSource } from 'typeorm';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 
@@ -15,6 +16,7 @@ import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-mo
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export interface WorkspaceInternalContext {
+  recordPermissionContext?: RecordPermissionContext;
   workspaceId: string;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;

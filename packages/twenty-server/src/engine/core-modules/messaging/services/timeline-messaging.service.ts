@@ -1,3 +1,4 @@
+import { findLiveReadableRecordIdentifiers } from 'src/engine/core-modules/record-permission/utils/find-live-readable-record-identifiers.util';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -18,7 +19,8 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { getRecordPermissionReadAuthContext } from 'src/engine/core-modules/record-permission/utils/get-record-permission-read-auth-context.util';
+import { getRecordPermissionReadRepository } from 'src/engine/core-modules/record-permission/utils/get-record-permission-read-repository.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 
@@ -52,13 +54,13 @@ export class TimelineMessagingService {
     messageThreads: TimelineMessageThread[];
     totalNumberOfThreads: number;
   }> {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const authContext = getRecordPermissionReadAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+        getRecordPermissionReadRepository<MessageThreadWorkspaceEntity>(
+          this.workspaceOrmManager,
           'messageThread',
-          { shouldBypassPermissionChecks: true },
         );
 
       const totalQueryBuilder = messageThreadRepository
@@ -127,9 +129,9 @@ export class TimelineMessagingService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+        getRecordPermissionReadRepository<MessageThreadWorkspaceEntity>(
+          this.workspaceOrmManager,
           'messageThread',
-          { shouldBypassPermissionChecks: true },
         );
 
       const queryBuilder = messageThreadRepository
@@ -174,7 +176,7 @@ export class TimelineMessagingService {
       return this.findMessageThreadsByIds(
         threadIdsQuery.map((thread) => thread.id),
       );
-    }, buildSystemAuthContext(workspaceId));
+    }, getRecordPermissionReadAuthContext(workspaceId));
   }
 
   public async getSearchableMessageChannelIds({
@@ -262,9 +264,9 @@ export class TimelineMessagingService {
     }
 
     const messageThreadRepository =
-      this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+      getRecordPermissionReadRepository<MessageThreadWorkspaceEntity>(
+        this.workspaceOrmManager,
         'messageThread',
-        { shouldBypassPermissionChecks: true },
       );
 
     const messageThreads = await messageThreadRepository.find({
@@ -287,6 +289,7 @@ export class TimelineMessagingService {
     );
 
     return messageThreads
+      .filter((thread) => thread.messages.length > 0)
       .sort(
         (a, b) =>
           (messageThreadPositionById.get(a.id) ?? 0) -
@@ -314,13 +317,13 @@ export class TimelineMessagingService {
   ): Promise<{
     [key: string]: MessageParticipantWorkspaceEntity[];
   }> {
-    const authContext = buildSystemAuthContext(workspaceId);
+    const authContext = getRecordPermissionReadAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageParticipantRepository =
-        this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+        getRecordPermissionReadRepository<MessageParticipantWorkspaceEntity>(
+          this.workspaceOrmManager,
           'messageParticipant',
-          { shouldBypassPermissionChecks: true },
         );
 
       const threadParticipants = await messageParticipantRepository
@@ -350,11 +353,22 @@ export class TimelineMessagingService {
           (b.message.receivedAt ?? new Date()).getTime(),
       );
 
+      const readablePeople = await findLiveReadableRecordIdentifiers({
+        workspaceOrmManager: this.workspaceOrmManager,
+        objectNameSingular: 'person',
+        recordIds: orderedThreadParticipants
+          .map((participant) => participant.person?.id)
+          .filter(isDefined),
+      });
       const threadParticipantPromises = orderedThreadParticipants.map(
         async (threadParticipant) => {
           const personAvatarFileUrl =
             await this.fileUrlService.signFirstFilesFieldFileUrl({
-              filesFieldValue: threadParticipant.person?.avatarFile,
+              filesFieldValue:
+                !isDefined(readablePeople) ||
+                readablePeople.has(threadParticipant.person?.id ?? '')
+                  ? threadParticipant.person?.avatarFile
+                  : undefined,
               workspaceId,
             });
 
@@ -431,9 +445,9 @@ export class TimelineMessagingService {
   }> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+        getRecordPermissionReadRepository<MessageThreadWorkspaceEntity>(
+          this.workspaceOrmManager,
           'messageThread',
-          { shouldBypassPermissionChecks: true },
         );
 
       const threadChannelRows = await messageThreadRepository
@@ -526,6 +540,6 @@ export class TimelineMessagingService {
       }
 
       return threadVisibilityByThreadId;
-    }, buildSystemAuthContext(workspaceId));
+    }, getRecordPermissionReadAuthContext(workspaceId));
   }
 }

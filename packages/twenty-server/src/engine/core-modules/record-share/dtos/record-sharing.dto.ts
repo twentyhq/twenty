@@ -54,6 +54,15 @@ export class RecordSharingGrantDTO {
 }
 
 @ObjectType()
+export class InheritedRecordSharingGrantDTO extends RecordSharingGrantDTO {
+  @Field(() => [UUIDScalarType])
+  fieldUniversalIdentifiers: string[];
+
+  @Field(() => UUIDScalarType)
+  sourceObjectMetadataId: string;
+}
+
+@ObjectType()
 export class RecordSharingRoleDTO {
   @Field(() => UUIDScalarType)
   id: string;
@@ -72,6 +81,21 @@ export class RecordSharingRoleDTO {
 
 @ObjectType()
 export class RecordSharingDTO {
+  @Field(() => Boolean, { nullable: true })
+  hasMoreShares?: boolean;
+
+  @Field(() => [RecordShareAccessLevel], { nullable: true })
+  allowedShareAccessLevels?: RecordShareAccessLevel[];
+
+  @Field(() => [InheritedRecordSharingGrantDTO], { nullable: true })
+  inheritedShares?: InheritedRecordSharingGrantDTO[];
+
+  @Field(() => Boolean, { nullable: true })
+  hasMoreInheritedShares?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  usesRecordPermissionPolicy?: boolean;
+
   @Field(() => RecordSharingMode)
   sharingMode: RecordSharingMode;
 

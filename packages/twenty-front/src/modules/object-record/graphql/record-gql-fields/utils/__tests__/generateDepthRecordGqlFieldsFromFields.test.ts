@@ -4,6 +4,22 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 describe('generateDepthRecordGqlFieldsFromFields', () => {
+  it('omits a relation whose target is absent from visible object metadata', () => {
+    const taskMetadata = getMockObjectMetadataItemOrThrow('task');
+    const relationField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: taskMetadata,
+      fieldName: 'taskTargets',
+    });
+    expect(
+      generateDepthRecordGqlFieldsFromFields({
+        objectMetadataItems: [taskMetadata],
+        sourceObjectMetadataItem: taskMetadata,
+        fields: [relationField],
+        depth: 1,
+      }),
+    ).toEqual({});
+  });
+
   it('does not query pivots for an invalid configured junction', () => {
     const taskMetadata = getMockObjectMetadataItemOrThrow('task');
     const taskTargetsField = getMockFieldMetadataItemOrThrow({

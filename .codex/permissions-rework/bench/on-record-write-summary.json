@@ -1,0 +1,128 @@
+{
+  "setup": {
+    "rows": 10000000,
+    "actionColumns": 6,
+    "accessIndexes": 1,
+    "businessIndexes": 4,
+    "batchSize": 1000,
+    "writeStatementTimeoutMs": 2000,
+    "readStatementTimeoutMs": 200
+  },
+  "committedRows": 4701250,
+  "lastSuccessfulBatch": {
+    "first": 4701126,
+    "last": 4701251,
+    "rows": 125,
+    "elapsedMs": 1485.1526669999585
+  },
+  "failure": {
+    "message": "canceling statement due to statement timeout",
+    "code": "57014"
+  },
+  "errors": [
+    {
+      "first": 296001,
+      "last": 297001,
+      "error": "57014",
+      "elapsedMs": 2689.0909170000014
+    },
+    {
+      "first": 1170001,
+      "last": 1170501,
+      "error": "57014",
+      "elapsedMs": 2119.5640830000048
+    },
+    {
+      "first": 2593501,
+      "last": 2593751,
+      "error": "57014",
+      "elapsedMs": 2051.7860420000507
+    },
+    {
+      "first": 4701251,
+      "last": 4701376,
+      "error": "57014",
+      "elapsedMs": 2183.761832999997
+    }
+  ],
+  "phases": {
+    "baseline": {
+      "other_table_dense": {
+        "samples": 100,
+        "errors": 0,
+        "p50Ms": 1.8632079999997586,
+        "p95Ms": 5.963792000000012,
+        "p99Ms": 31.851916000000074,
+        "maxMs": 31.851916000000074,
+        "errorCodes": [],
+        "errorMaxMs": 0
+      },
+      "other_table_sparse": {
+        "samples": 100,
+        "errors": 0,
+        "p50Ms": 19.065791999999874,
+        "p95Ms": 52.57595800000013,
+        "p99Ms": 83.25425000000041,
+        "maxMs": 83.25425000000041,
+        "errorCodes": [],
+        "errorMaxMs": 0
+      },
+      "same_table_sparse_city": {
+        "samples": 100,
+        "errors": 0,
+        "p50Ms": 36.516749999999774,
+        "p95Ms": 69.65195799999992,
+        "p99Ms": 93.16037499999993,
+        "maxMs": 93.16037499999993,
+        "errorCodes": [],
+        "errorMaxMs": 0
+      }
+    },
+    "rebuild": {
+      "other_table_dense": {
+        "samples": 7350,
+        "errors": 0,
+        "p50Ms": 0.7234590000007302,
+        "p95Ms": 2.031542000011541,
+        "p99Ms": 11.069375000079162,
+        "maxMs": 174.52929199999198,
+        "errorCodes": [],
+        "errorMaxMs": 0
+      },
+      "other_table_sparse": {
+        "samples": 7331,
+        "errors": 3,
+        "p50Ms": 8.898874999955297,
+        "p95Ms": 14.263458000001265,
+        "p99Ms": 44.36341700004414,
+        "maxMs": 325.3243750000838,
+        "errorCodes": [
+          "57014"
+        ],
+        "errorMaxMs": 372.40770799992606
+      },
+      "same_table_sparse_city": {
+        "samples": 7295,
+        "errors": 13,
+        "p50Ms": 28.014833999914117,
+        "p95Ms": 41.232709000003524,
+        "p99Ms": 90.65862499992363,
+        "maxMs": 272.24433300003875,
+        "errorCodes": [
+          "57014"
+        ],
+        "errorMaxMs": 411.0744170000544
+      }
+    }
+  },
+  "hardware": {
+    "cpu": "Apple M2 Pro",
+    "logicalCpus": 10,
+    "memoryBytes": 34359738368
+  },
+  "postFailureApproximation": {
+    "clusterWal": "Approximately 24 GiB since the pre-rebuild snapshot",
+    "tableAndIndexes": "Approximately 12 GiB",
+    "note": "psql observation after the failed run, before starting the throttled follow-up. Cluster WAL includes ongoing maintenance and other writes; this is not exact statement attribution."
+  }
+}

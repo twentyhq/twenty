@@ -1,0 +1,43 @@
+Timing is on.
+SELECT 10000000
+Time: 34539.832 ms (00:34.540)
+ALTER TABLE
+Time: 12162.436 ms (00:12.162)
+CREATE INDEX
+Time: 15941.726 ms (00:15.942)
+CREATE INDEX
+Time: 8526.287 ms (00:08.526)
+CREATE INDEX
+Time: 4241.700 ms (00:04.242)
+SELECT 10000000
+Time: 22986.373 ms (00:22.986)
+ALTER TABLE
+Time: 7534.865 ms (00:07.535)
+CREATE INDEX
+Time: 4731.356 ms (00:04.731)
+SELECT 15001000
+Time: 33061.941 ms (00:33.062)
+ALTER TABLE
+Time: 17486.624 ms (00:17.487)
+CREATE INDEX
+Time: 15876.917 ms (00:15.877)
+ALTER TABLE
+Time: 0.590 ms
+ALTER TABLE
+Time: 1073.531 ms (00:01.074)
+ALTER TABLE
+Time: 1078.220 ms (00:01.078)
+VACUUM
+Time: 2563.044 ms (00:02.563)
+VACUUM
+Time: 2045.235 ms (00:02.045)
+VACUUM
+Time: 2205.848 ms (00:02.206)
+            relname             | estimated_rows | heap_size | index_size | total_size
+--------------------------------+----------------+-----------+------------+------------
+ permission_company             |       10000000 | 1281 MB   | 1204 MB    | 2486 MB
+ permission_company_access_row  |       10000000 | 888 MB    | 345 MB     | 1233 MB
+ permission_company_access_edge |       15001000 | 862 MB    | 1422 MB    | 2284 MB
+(3 rows)
+
+Time: 3.285 ms
