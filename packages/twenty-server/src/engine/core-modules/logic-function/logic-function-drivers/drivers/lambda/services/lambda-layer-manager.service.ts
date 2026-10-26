@@ -1,9 +1,9 @@
-import { LambdaDependencyLayerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-dependency-layer.service';
 import * as fs from 'fs/promises';
 
 import {
   DeleteLayerVersionCommand,
   type GetFunctionCommandOutput,
+  InvalidParameterValueException,
   ListLayerVersionsCommand,
   PublishLayerVersionCommand,
   ResourceNotFoundException,
@@ -31,6 +31,10 @@ import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 type LayerAppContext = {
   flatApplication: FlatApplication;
@@ -60,19 +64,41 @@ export class LambdaLayerManagerService {
   ) {}
 
   async ensureDepsLayer(context: LayerAppContext): Promise<string> {
-    const dependencyLayerService = new LambdaDependencyLayerService(
-      this.options.layerBucket,
-      this.awsClient,
-      this.toolFunctions,
-      this.cacheLockService,
-    );
-    return dependencyLayerService.ensureLayer({
-      layerName: getLambdaDepsLayerName({
-        flatApplication: context.flatApplication,
-        namespace: this.options.resourceNamespace,
-      }),
-      readDependencies: () => this.getDependencyContents(context),
+    const layerName = getLambdaDepsLayerName({
+      flatApplication: context.flatApplication,
+      namespace: this.options.resourceNamespace,
     });
+
+    const existingArn = await this.awsClient.getExistingLayerArn(layerName);
+
+    if (isDefined(existingArn)) {
+      return existingArn;
+    }
+
+    return this.cacheLockService.withLock(
+      async () => {
+        const arnCreatedWhileWaiting =
+          await this.awsClient.getExistingLayerArn(layerName);
+
+        if (isDefined(arnCreatedWhileWaiting)) {
+          return arnCreatedWhileWaiting;
+        }
+
+        await this.createDepsLayer({ ...context, layerName });
+
+        const newArn = await this.awsClient.getExistingLayerArn(layerName);
+
+        if (!isDefined(newArn)) {
+          throw new Error(
+            `Layer '${layerName}' was not created by the yarn install Lambda`,
+          );
+        }
+
+        return newArn;
+      },
+      `lambda-deps-layer:${layerName}`,
+      LAYER_LOCK_OPTIONS,
+    );
   }
 
   async ensureSdkLayer(context: LayerAppContext): Promise<string> {
@@ -218,6 +244,71 @@ export class LambdaLayerManagerService {
       layers.some((layer) => layer.Arn?.includes(sdkLayerName)) &&
       isOnCurrentSdkClient
     );
+  }
+
+  private async createDepsLayer({
+    flatApplication,
+    applicationUniversalIdentifier,
+    layerName,
+  }: LayerAppContext & { layerName: string }): Promise<void> {
+    const existingArn = await this.awsClient.getExistingLayerArn(layerName);
+
+    if (isDefined(existingArn)) {
+      return;
+    }
+
+    const { packageJson, yarnLock } = await this.getDependencyContents({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+
+    const s3Key = `lambda-layers/${layerName}.zip`;
+    const presignedUploadUrl =
+      await this.awsClient.generatePresignedUploadUrl(s3Key);
+
+    await this.toolFunctions.runYarnInstallCreateLayer({
+      packageJson,
+      yarnLock,
+      presignedUploadUrl,
+    });
+
+    const lambdaClient = await this.awsClient.getLambdaClient();
+
+    let publishResult;
+
+    try {
+      publishResult = await lambdaClient.send(
+        new PublishLayerVersionCommand({
+          LayerName: layerName,
+          Content: {
+            S3Bucket: this.options.layerBucket,
+            S3Key: s3Key,
+          },
+          CompatibleRuntimes: [
+            LogicFunctionRuntime.NODE18,
+            LogicFunctionRuntime.NODE22,
+          ],
+        }),
+      );
+    } catch (error) {
+      if (
+        error instanceof InvalidParameterValueException &&
+        error.message.toLowerCase().includes('size')
+      ) {
+        throw new LogicFunctionException(
+          `Dependency layer '${layerName}' exceeds the Lambda layer size limit: ${error.message}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED,
+        );
+      }
+
+      throw error;
+    }
+
+    if (!publishResult.LayerVersionArn) {
+      throw new Error(
+        `PublishLayerVersion did not return a LayerVersionArn for layer '${layerName}'`,
+      );
+    }
   }
 
   private async getDependencyContents({
