@@ -4,11 +4,9 @@ import { join } from 'path';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
-  GetFunctionCommand,
   InvokeCommand,
   LogType,
   PublishLayerVersionCommand,
-  ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -55,7 +53,7 @@ export class LambdaToolFunctionsService {
   constructor(
     private readonly options: Pick<
       LambdaDriverOptions,
-      'lambdaRole' | 'resourceNamespace'
+      'lambdaRole' | 'resourceNamespace' | 'resourceTags'
     >,
     private readonly awsClient: LambdaAwsClientService,
   ) {}
@@ -73,16 +71,24 @@ export class LambdaToolFunctionsService {
       ...params,
     };
 
-    const result = await lambdaClient.send(
-      new InvokeCommand({
-        FunctionName: builderFunctionName,
-        Payload: JSON.stringify(payload),
-        LogType: LogType.Tail,
-      }),
-      {
-        abortSignal: AbortSignal.timeout(BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000),
-      },
-    );
+    const result = await lambdaClient
+      .send(
+        new InvokeCommand({
+          FunctionName: builderFunctionName,
+          Payload: JSON.stringify(payload),
+          LogType: LogType.Tail,
+        }),
+        {
+          abortSignal: AbortSignal.timeout(
+            BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000,
+          ),
+        },
+      )
+      .catch(async (error) => {
+        await this.awsClient.clearFunctionCache(builderFunctionName);
+
+        throw error;
+      });
 
     if (result.FunctionError) {
       const parsedResult = result.Payload
@@ -133,18 +139,24 @@ export class LambdaToolFunctionsService {
       ...params,
     };
 
-    const result = await lambdaClient.send(
-      new InvokeCommand({
-        FunctionName: yarnInstallFunctionName,
-        Payload: JSON.stringify(payload),
-        LogType: LogType.Tail,
-      }),
-      {
-        abortSignal: AbortSignal.timeout(
-          YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS * 1000,
-        ),
-      },
-    );
+    const result = await lambdaClient
+      .send(
+        new InvokeCommand({
+          FunctionName: yarnInstallFunctionName,
+          Payload: JSON.stringify(payload),
+          LogType: LogType.Tail,
+        }),
+        {
+          abortSignal: AbortSignal.timeout(
+            YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS * 1000,
+          ),
+        },
+      )
+      .catch(async (error) => {
+        await this.awsClient.clearFunctionCache(yarnInstallFunctionName);
+
+        throw error;
+      });
 
     if (result.FunctionError) {
       const parsedResult = result.Payload
@@ -212,16 +224,8 @@ export class LambdaToolFunctionsService {
     const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    try {
-      await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: yarnInstallFunctionName }),
-      );
-
+    if (isDefined(await this.awsClient.getFunction(yarnInstallFunctionName))) {
       return;
-    } catch (error) {
-      if (!(error instanceof ResourceNotFoundException)) {
-        throw error;
-      }
     }
 
     const commonLayerArn = await this.ensureCommonLayerExists();
@@ -243,6 +247,7 @@ export class LambdaToolFunctionsService {
         Layers: [commonLayerArn],
         Handler: 'index.handler',
         Role: this.options.lambdaRole,
+        Tags: this.options.resourceTags,
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
@@ -261,16 +266,8 @@ export class LambdaToolFunctionsService {
     const builderFunctionName = await this.getBuilderFunctionName();
     const lambdaClient = await this.awsClient.getLambdaClient();
 
-    try {
-      await lambdaClient.send(
-        new GetFunctionCommand({ FunctionName: builderFunctionName }),
-      );
-
+    if (isDefined(await this.awsClient.getFunction(builderFunctionName))) {
       return;
-    } catch (error) {
-      if (!(error instanceof ResourceNotFoundException)) {
-        throw error;
-      }
     }
 
     const commonLayerArn = await this.ensureCommonLayerExists();
@@ -292,6 +289,7 @@ export class LambdaToolFunctionsService {
         Layers: [commonLayerArn],
         Handler: 'index.handler',
         Role: this.options.lambdaRole,
+        Tags: this.options.resourceTags,
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: BUILDER_LAMBDA_MEMORY_MB,

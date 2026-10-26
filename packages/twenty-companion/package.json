@@ -7,7 +7,7 @@
   "license": "AGPL-3.0",
   "type": "module",
   "main": "dist/main.cjs",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.18.1",
   "engines": {
     "node": "^24.5.0"
   },
@@ -51,7 +51,7 @@
     "jsdom": "^30.0.1",
     "sass": "^1.83.0",
     "typescript": "^5.9.3",
-    "vite": "^7.3.0",
+    "vite": "^7.3.7",
     "vite-plugin-svgr": "^4.3.0",
     "vitest": "^4.1.0"
   }

@@ -2,6 +2,7 @@ import { type LambdaClientConfig } from '@aws-sdk/client-lambda';
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -40,6 +41,7 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientArchiveService: SdkClientArchiveService;
   cacheLockService: CacheLockService;
+  cacheStorageService: CacheStorageService;
   workspaceCacheService: WorkspaceCacheService;
   region: string;
   lambdaRole: string;
@@ -47,6 +49,7 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   layerBucket: string;
   layerBucketRegion: string;
   resourceNamespace: string;
+  resourceTags?: Record<string, string>;
 }
 
 export enum LambdaExecutionPhase {

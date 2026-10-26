@@ -1,7 +1,6 @@
 ---
 title: Prezentare generală
 description: Configurează însăși aplicația — identitatea ei, permisiunile implicite și ceea ce rulează în momentul instalării.
-icon: screwdriver-wrench
 ---
 
 **Stratul de configurare** al unei aplicații Twenty este cel care descrie aplicația *pentru platformă* — identitatea ei, permisiunile pe care le deține și codul care rulează în timpul instalării sau actualizării. Aceste declarații nu adaugă noi structuri de date sau comportamente la rulare; ele îi spun lui Twenty *cine este aplicația* și *cum să fie configurată*.
@@ -37,10 +36,10 @@ icon: screwdriver-wrench
   <Card title="Configurația aplicației" icon="rocket" href="/ro/developers/extend/apps/config/application">
     `defineApplication` — identitate, rol implicit, variabile, metadate pentru marketplace.
   </Card>
-  <Card title="Roluri și permisiuni" icon="shield-halved" href="/ro/developers/extend/apps/config/roles">
+  <Card title="Roluri și permisiuni" icon="shield-half" href="/ro/developers/extend/apps/config/roles">
     `defineRole` — declară ce pot citi și scrie funcțiile de logică ale aplicației dvs.
   </Card>
-  <Card title="Hook-uri de instalare" icon="wrench" href="/ro/developers/extend/apps/config/install-hooks">
+  <Card title="Hook-uri de instalare" icon="tool" href="/ro/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction` și `defineUninstallLogicFunction` — fac backup la date, introduc valori implicite, validează actualizările și curăță la eliminare.
   </Card>
 </CardGroup>

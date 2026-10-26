@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps, useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
+import { IconArrowUp } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingPlanComparisonTable } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTable';
@@ -96,6 +97,47 @@ const playBillingPeriodToggle: NonNullable<Story['play']> = async ({
 
 export const BillingPeriod: Story = {
   play: playBillingPeriodToggle,
+};
+
+export const WithLegacyPlan: Story = {
+  args: {
+    comparedPlans: [
+      {
+        action: { disabled: true, title: 'Current', variant: 'outline' },
+        isLegacy: true,
+        planKey: BillingPlanKey.PRO,
+      },
+      {
+        action: {
+          color: 'accent',
+          Icon: IconArrowUp,
+          title: 'Upgrade',
+          variant: 'solid',
+        },
+        planKey: BillingPlanKey.PRO_V2,
+      },
+      {
+        action: {
+          color: 'accent',
+          Icon: IconArrowUp,
+          title: 'Upgrade',
+          variant: 'solid',
+        },
+        planKey: BillingPlanKey.ORGANIZATION_V2,
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvas.getAllByText('Legacy')[0]).toBeVisible();
+    await expect(
+      canvas.getAllByRole('button', { name: 'Upgrade' }),
+    ).toHaveLength(2);
+    await expect(canvas.getByText('Plan essentials')).toBeVisible();
+    await expect(canvas.getByText('5 credits/month')).toBeVisible();
+    await expect(canvas.getByText('≈ 100 AI tasks/week')).toBeVisible();
+  },
 };
 
 export const MobileBillingPeriod: Story = {

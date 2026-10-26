@@ -9,6 +9,7 @@ import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/Workspac
 import { createWorkspaceRouteObjects } from '@/app/routing/utils/createWorkspaceRouteObjects';
 import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
+import { AppRouteErrorFallback } from '@/error-handler/components/AppRouteErrorFallback';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import { OnboardingActivationOutlet } from '@/onboarding/components/OnboardingActivationOutlet';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
@@ -109,6 +110,7 @@ const createWorkspaceAppRouter = ({
       element: (
         <WorkspaceRouteObjectsProvider routeObjects={workspaceRouteObjects} />
       ),
+      errorElement: <AppRouteErrorFallback />,
       children: [
         {
           element: <WorkspaceAppProviders />,

@@ -44,10 +44,6 @@ jest.mock(
   }),
 );
 
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => false,
-}));
-
 jest.mock('@/command-menu-item/engine-command/hooks/useMountCommand', () => ({
   useMountCommand: () => mockMountCommand,
 }));

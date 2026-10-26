@@ -15,22 +15,12 @@ import {
   getRecordTableWidgetLayoutViewType,
   type RecordTableWidgetLayoutViewType,
 } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
-import {
-  getSelectableLayoutViewTypes,
-  isSelectableLayout,
-} from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
+import { isSelectableLayout } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
 import { RecordTableWidgetLayoutMenuItems } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableWidgetLayoutMenuItems';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/components/chart-settings/ChartSettingsDropdownSection';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -40,7 +30,7 @@ import {
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
-import { ListItemButton } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
@@ -91,7 +81,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
     currentNestedRelationFieldMetadataId,
   );
 
-  const availableDisplayModes = fieldMetadataItem
+  const availableDisplayModes = isDefined(fieldMetadataItem)
     ? getFieldWidgetAvailableDisplayModes(
         fieldMetadataItem.type,
         fieldMetadataItem.relation?.type,
@@ -151,15 +141,6 @@ export const FieldWidgetLayoutDropdownContent = () => {
     embeddedWidgetView?.type,
   );
 
-  const dropdownId = useAvailableComponentInstanceIdOrThrow(
-    DropdownComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
@@ -171,15 +152,12 @@ export const FieldWidgetLayoutDropdownContent = () => {
     widgetId: widgetInEditMode?.id ?? '',
   });
 
-  const { closeDropdown } = useCloseDropdown();
-
   const handleSelectDisplayMode = (fieldDisplayMode: FieldDisplayMode) => {
     updateCurrentWidgetConfig({
       configToUpdate: {
         fieldDisplayMode,
       },
     });
-    closeDropdown();
   };
 
   const handleSelectViewLayout = (
@@ -211,7 +189,6 @@ export const FieldWidgetLayoutDropdownContent = () => {
 
     // Draft view creation fails without the target object, so keep the current display mode
     if (!isDefined(viewId)) {
-      closeDropdown();
       return;
     }
 
@@ -227,7 +204,6 @@ export const FieldWidgetLayoutDropdownContent = () => {
       defaultGroupByFieldMetadataItem,
       defaultCalendarFieldMetadataItem,
     });
-    closeDropdown();
   };
 
   const displayModeLabels: Record<string, string> = {
@@ -237,53 +213,34 @@ export const FieldWidgetLayoutDropdownContent = () => {
   };
 
   return (
-    <DropdownMenuItemsContainer>
-      <SelectableList
-        selectableListInstanceId={dropdownId}
-        focusId={dropdownId}
-        selectableItemIdArray={[
-          ...inlineDisplayModes,
-          ...(hasEmbeddedViewLayouts
-            ? getSelectableLayoutViewTypes(layoutOptions)
-            : []),
-        ]}
+    <ChartSettingsDropdownSection>
+      <Dropdown.SelectionGroup
+        aria-label={t`Layout`}
+        value={
+          isTableDisplayMode
+            ? currentEmbeddedViewType
+            : (currentDisplayMode ?? null)
+        }
       >
         {inlineDisplayModes.map((displayMode) => (
-          <SelectableListItem
+          <Dropdown.OptionItem
             key={displayMode}
-            itemId={displayMode}
-            onEnter={() => {
-              handleSelectDisplayMode(displayMode);
-            }}
+            value={displayMode}
+            onSelect={() => handleSelectDisplayMode(displayMode)}
+            startIcon={
+              <SelectOptionIcon Icon={DISPLAY_MODE_ICONS[displayMode]} />
+            }
           >
-            <ListItemButton
-              focused={selectedItemId === displayMode}
-              onClick={() => {
-                handleSelectDisplayMode(displayMode);
-              }}
-              role="option"
-              aria-selected={currentDisplayMode === displayMode}
-              selected={currentDisplayMode === displayMode}
-              indicator="check"
-              startIcon={
-                <SelectOptionIcon Icon={DISPLAY_MODE_ICONS[displayMode]} />
-              }
-            >
-              {displayModeLabels[displayMode]}
-            </ListItemButton>
-          </SelectableListItem>
+            {displayModeLabels[displayMode]}
+          </Dropdown.OptionItem>
         ))}
         {hasEmbeddedViewLayouts && (
           <RecordTableWidgetLayoutMenuItems
             layoutOptions={layoutOptions}
-            selectedViewType={
-              isTableDisplayMode ? currentEmbeddedViewType : undefined
-            }
-            focusedItemId={selectedItemId}
             onSelect={handleSelectViewLayout}
           />
         )}
-      </SelectableList>
-    </DropdownMenuItemsContainer>
+      </Dropdown.SelectionGroup>
+    </ChartSettingsDropdownSection>
   );
 };

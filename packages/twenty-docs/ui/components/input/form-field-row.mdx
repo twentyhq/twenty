@@ -1,0 +1,68 @@
+---
+title: FormFieldRow
+description: Align a field label, content and trailing controls in a shared row.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FormFieldRowReference from '/snippets/ui/generated/components/input/form-field-row.mdx';
+
+## Overview
+
+`FormFieldRow` lays out a field label, optional decorative icon, field content and trailing controls. Use it for composer fields or other aligned field groups. Your application owns field values, validation, permissions and persistence.
+
+<StoryEmbed
+  storyId="ui-input-formfieldrow--display"
+  title="Form field row"
+  height={110}
+/>
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import { FormFieldRow, LightButton } from 'twenty-ui/components/input';
+import { Input } from 'twenty-ui/primitives/input';
+
+export const SubjectField = () => {
+  const [subject, setSubject] = useState('Project update');
+
+  return (
+    <FormFieldRow
+      label="Subject"
+      hasDivider={false}
+      trailing={
+        <LightButton size="sm" onClick={() => setSubject('')}>
+          Clear
+        </LightButton>
+      }
+    >
+      <Input
+        variant="plain"
+        aria-label="Subject"
+        value={subject}
+        onValueChange={setSubject}
+      />
+    </FormFieldRow>
+  );
+};
+```
+
+## Layout and labels
+
+`labelWidth` defaults to 80 pixels and accepts a CSS width. Use the same value on sibling rows to align their labels. The label column is capped at 40% of the row, and content can wrap in narrow layouts. `startIcon` is decorative; the caller supplies its dimensions. Set `hasDivider={false}` on a final row when the surrounding surface provides its border.
+
+The root is a group named by `label`. Supply `aria-label` or `aria-labelledby` when the visible label is omitted, and label each nested input separately. The row does not move focus or disable nested controls. Those controls retain their own keyboard behavior and focus styling.
+
+## Events and customization
+
+Native attributes, event handlers, `className`, `style`, `ref` and `render` apply to the group root. Forward supplied props and ref when replacing the root through `render`. An `onClick` handler shows a pointer cursor. The caller owns click-to-focus behavior and guards events from nested controls or portals when needed. `isHoverable` independently enables a neutral hover background.
+
+`trailingProps` applies native attributes, handlers and ref to the existing trailing wrapper. Its `className` is merged with the shared layout class. Use its `onClick` handler to stop a trailing action from triggering a row click handler. The wrapper exists only when `trailing` has renderable content.
+
+## Props
+
+<FormFieldRowReference />
+
+<PageBanner illustration="page-cover-input" />

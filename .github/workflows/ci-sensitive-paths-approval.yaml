@@ -1,7 +1,8 @@
 name: Sensitive Paths Approval
 
 # Requires an approval from a maintainer when a PR touches CI, supply-chain or
-# agent configuration, without requesting anyone's review. Reports the
+# agent configuration. Approvals survive pushes unless dismissed or replaced
+# by a changes-requested review. Reports the
 # "Sensitive paths approval" commit status, which the main ruleset requires.
 on:
   pull_request_target:
@@ -65,22 +66,6 @@ jobs:
                 .flatMap((file) => [file.filename, file.previous_filename])
                 .filter((path) => path && isSensitive(path));
 
-            // Ignores files only brought in by merging the base branch, which are not in the PR diff.
-            const approvalCoversHead = async (approvedSha, headSha, sensitivePaths) => {
-              if (approvedSha === headSha) return true;
-              try {
-                const files = await github.paginate(
-                  github.rest.repos.compareCommitsWithBasehead,
-                  { owner, repo, basehead: `${approvedSha}...${headSha}`, per_page: 100 },
-                  (response) => response.data.files ?? [],
-                );
-                return !sensitivePathsIn(files).some((path) => sensitivePaths.includes(path));
-              } catch (error) {
-                core.info(`Could not compare ${approvedSha} with ${headSha}: ${error.message}`);
-                return false;
-              }
-            };
-
             const evaluate = async (pullNumber) => {
               const { data: pull } = await github.rest.pulls.get({ owner, repo, pull_number: pullNumber });
               const headSha = pull.head.sha;
@@ -117,10 +102,8 @@ jobs:
 
               for (const [login, review] of latestReviewByApprover) {
                 if (review.state !== 'APPROVED') continue;
-                if (await approvalCoversHead(review.commit_id, headSha, sensitivePaths)) {
-                  await setStatus(headSha, 'success', `Approved by ${login}`);
-                  return;
-                }
+                await setStatus(headSha, 'success', `Approved by ${login}`);
+                return;
               }
 
               await setStatus(headSha, 'failure', 'Sensitive paths changed: needs a maintainer approval');

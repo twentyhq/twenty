@@ -30,6 +30,10 @@ export { evaluateConditionalAvailabilityExpression } from './command-menu-items/
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { buildRecordExportColumns } from './csv/buildRecordExportColumns';
+export { expandRecordExportMorphFields } from './csv/expandRecordExportMorphFields';
+export { formatRecordExportHeader } from './csv/formatRecordExportHeader';
+export { formatRecordExportRow } from './csv/formatRecordExportRow';
 export { formatValueForCSV } from './csv/formatValueForCSV';
 export { sanitizeValueForCSVExport } from './csv/sanitizeValueForCSVExport';
 export { convertCurrencyAmountToCurrencyMicros } from './currency/convertCurrencyAmountToCurrencyMicros';
@@ -255,8 +259,11 @@ export { TEMPLATE_VARIABLE_PATTERN } from './template-variable/template-variable
 export type { TemplateVariableWithFallback } from './template-variable/template-variable-with-fallback';
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
+export { convertBlockNoteToRichTextDocument } from './tiptap/convert-blocknote-to-rich-text-document';
 export { convertEmailBodyToEmailDocument } from './tiptap/convert-email-body-to-email-document';
 export { convertStringBodyToEmailDocument } from './tiptap/convert-string-body-to-email-document';
+export { convertTextToTipTapNodes } from './tiptap/convert-text-to-tiptap-nodes';
+export { convertTipTapBlocksToDocument } from './tiptap/convert-tiptap-blocks-to-document';
 export { convertTipTapBlocksToMarkdown } from './tiptap/convert-tiptap-blocks-to-markdown';
 export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
 export {
@@ -279,9 +286,11 @@ export { emailDocumentSchema } from './tiptap/email-document-schema';
 export type { EmailDocumentStringContext } from './tiptap/email-document-string-context';
 export { EMAIL_TYPOGRAPHY } from './tiptap/email-typography';
 export { getFullHtmlEmailIfWholeBody } from './tiptap/get-full-html-email-if-whole-body';
+export { getTipTapFileUrlAttributeName } from './tiptap/get-tiptap-file-url-attribute-name';
 export { HTML_ELEMENT_NAMES } from './tiptap/html-element-names';
 export { isCanvasTheme } from './tiptap/is-canvas-theme';
 export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
+export { isStorableRichTextUrl } from './tiptap/is-storable-rich-text-url';
 export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';
 export { listCampaignVariablesForFields } from './tiptap/list-campaign-variables-for-fields';
 export { looksLikeHtml } from './tiptap/looks-like-html';
@@ -295,6 +304,15 @@ export {
   parseCanonicalTipTapJsonDocument,
 } from './tiptap/parse-tiptap-json-document';
 export { resolveCanvasTheme } from './tiptap/resolve-canvas-theme';
+export type { RichTextColor } from './tiptap/rich-text-color.type';
+export { RICH_TEXT_COLORS } from './tiptap/rich-text-colors.constant';
+export { richTextDocumentSchema } from './tiptap/rich-text-document-schema';
+export type { RichTextDocument } from './tiptap/rich-text-document.type';
+export { RICH_TEXT_INDENTABLE_NODE_TYPES } from './tiptap/rich-text-indentable-node-types.constant';
+export { RICH_TEXT_MAX_HEADING_LEVEL } from './tiptap/rich-text-max-heading-level.constant';
+export { RICH_TEXT_MAX_INDENT_LEVEL } from './tiptap/rich-text-max-indent-level.constant';
+export { RICH_TEXT_TEXT_ALIGNMENTS } from './tiptap/rich-text-text-alignments.constant';
+export { RICH_TEXT_URL_MAX_LENGTH } from './tiptap/rich-text-url-max-length.constant';
 export { TIPTAP_DOCUMENT_SCHEMA_VERSION } from './tiptap/tiptap-document-schema-version';
 export { tipTapDocumentToMarkdown } from './tiptap/tiptap-document-to-markdown';
 export type { TipTapDocument } from './tiptap/tiptap-document';

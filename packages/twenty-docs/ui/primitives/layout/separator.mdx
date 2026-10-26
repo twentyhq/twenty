@@ -3,9 +3,13 @@ title: Separator
 description: Separate adjacent content with a horizontal or vertical divider.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import SeparatorReference from '/snippets/ui/generated/layout/separator.mdx';
+
+## Overview
 
 `Separator` renders a `div` with `role="separator"` and an accessible orientation. It uses the Base UI separator contract, including native props, refs, and `render` composition. Import `SeparatorProps` from the same entry point.
 
@@ -42,31 +46,20 @@ export const ImportSources = () => (
 
 ## Labeled dividers
 
-Compose text and divider lines in a separate layout. Give the layout an accessible name and make the individual lines presentational.
+Use [LabeledSeparator](/ui/components/layout/labeled-separator) for a text label between divider lines or at the end of a rule. It provides the layout and a single accessible separator name.
 
 ```tsx
-import { Separator } from 'twenty-ui/primitives/layout';
-import { Text } from 'twenty-ui/primitives/typography';
+import { LabeledSeparator } from 'twenty-ui/components/layout';
 
-export const LabeledDivider = () => (
-  <Text
-    role="separator"
-    aria-label="or"
-    style={{ display: 'flex', alignItems: 'center' }}
-  >
-    <Separator aria-hidden style={{ flex: 1, width: 'auto' }} />
-    <Text render={<span />} style={{ marginInline: 'var(--t-spacing-2)' }}>
-      or
-    </Text>
-    <Separator aria-hidden style={{ flex: 1, width: 'auto' }} />
-  </Text>
-);
+export const SignInDivider = () => <LabeledSeparator>Or</LabeledSeparator>;
 ```
 
 ## Migration
 
-Replace the former horizontal helper with `Separator`. Remove `noMargin`, since margins now default to zero. To keep the former default spacing, add `style={{ marginBlock: 'var(--t-spacing-3)' }}`. Replace `color` with `style={{ backgroundColor: color }}`. Move `text` and `textPosition` into a labeled composition. Replace separators used only for invisible spacing with layout spacing.
+Replace the former horizontal helper with `Separator`. Remove `noMargin`, since margins now default to zero. To keep the former default spacing, add `style={{ marginBlock: 'var(--t-spacing-3)' }}`. Replace `color` with `style={{ backgroundColor: color }}`. Use `LabeledSeparator` for labeled dividers, pass the label as children, and rename `textPosition` to `labelPosition`. Replace separators used only for invisible spacing with layout spacing.
 
 ## Props
 
 <SeparatorReference />
+
+<PageBanner illustration="layout" />

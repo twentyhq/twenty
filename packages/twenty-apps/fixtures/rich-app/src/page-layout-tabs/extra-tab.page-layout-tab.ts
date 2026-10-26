@@ -2,13 +2,16 @@ import {
   AggregateOperations,
   definePageLayoutTab,
   PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 export default definePageLayoutTab({
   universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000010',
-  pageLayoutUniversalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000020',
+  pageLayoutUniversalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
   title: 'Extra Tab',
   position: 1000,
   icon: 'IconLayout',
