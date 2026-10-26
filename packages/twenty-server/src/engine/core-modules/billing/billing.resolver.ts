@@ -135,12 +135,13 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const isPaymentMethodRequired =
-      requirePaymentMethod === true ||
-      (await this.billingPortalWorkspaceService.hasReachedNoCardTrialLimit({
+    const isTrialLimitReached =
+      await this.billingPortalWorkspaceService.hasReachedTrialLimit({
         userId: user.id,
         workspaceId: workspace.id,
-      }));
+      });
+
+    const isPaymentMethodRequired = requirePaymentMethod || isTrialLimitReached;
 
     const checkoutSessionParams = {
       user,
@@ -148,6 +149,7 @@ export class BillingResolver {
       successUrlPath,
       plan,
       requirePaymentMethod: isPaymentMethodRequired,
+      isTrialLimitReached,
     };
 
     const billingPricesPerPlan =
@@ -217,11 +219,18 @@ export class BillingResolver {
         interval: recurringInterval,
       });
 
+    const isTrialLimitReached =
+      await this.billingPortalWorkspaceService.hasReachedTrialLimit({
+        userId: user.id,
+        workspaceId: workspace.id,
+      });
+
     return this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
       user,
       workspace,
       plan,
       billingPricesPerPlan,
+      isTrialLimitReached,
       idempotencyKey,
     });
   }

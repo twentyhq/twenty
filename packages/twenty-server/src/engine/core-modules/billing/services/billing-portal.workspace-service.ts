@@ -16,7 +16,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { MAX_UNPAID_WORKSPACES_BEFORE_CARD_REQUIRED } from 'src/engine/core-modules/billing/constants/max-unpaid-workspaces-before-card-required.constant';
+import { MAX_UNPAID_WORKSPACES_WITH_TRIAL } from 'src/engine/core-modules/billing/constants/max-unpaid-workspaces-with-trial.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -50,7 +50,7 @@ export class BillingPortalWorkspaceService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  async hasReachedNoCardTrialLimit({
+  async hasReachedTrialLimit({
     userId,
     workspaceId,
   }: {
@@ -88,10 +88,7 @@ export class BillingPortalWorkspaceService {
       .setParameter('activeStatus', SubscriptionStatus.Active)
       .getCount();
 
-    return (
-      otherUnpaidCreatedWorkspaceCount >=
-      MAX_UNPAID_WORKSPACES_BEFORE_CARD_REQUIRED
-    );
+    return otherUnpaidCreatedWorkspaceCount >= MAX_UNPAID_WORKSPACES_WITH_TRIAL;
   }
 
   async computeCheckoutSessionURL({
@@ -101,6 +98,7 @@ export class BillingPortalWorkspaceService {
     successUrlPath,
     plan,
     requirePaymentMethod,
+    isTrialLimitReached,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const { successUrl, cancelUrl, customer, stripeSubscriptionLineItems } =
       await this.prepareSubscriptionParameters({
@@ -119,7 +117,9 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+        withTrialPeriod:
+          !isTrialLimitReached &&
+          this.isCustomerEligibleForTrialPeriod(customer),
       });
 
     assertIsDefinedOrThrow(
@@ -140,6 +140,7 @@ export class BillingPortalWorkspaceService {
     successUrlPath,
     plan,
     requirePaymentMethod,
+    isTrialLimitReached,
   }: BillingPortalCheckoutSessionParameters): Promise<string> {
     const { successUrl, customer, stripeSubscriptionLineItems } =
       await this.prepareSubscriptionParameters({
@@ -168,7 +169,9 @@ export class BillingPortalWorkspaceService {
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
         requirePaymentMethod,
-        withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+        withTrialPeriod:
+          !isTrialLimitReached &&
+          this.isCustomerEligibleForTrialPeriod(customer),
         idempotencyKey: `${customer?.billingSubscriptions.length ?? 0}`,
       });
 
@@ -185,6 +188,7 @@ export class BillingPortalWorkspaceService {
     workspace,
     billingPricesPerPlan,
     plan,
+    isTrialLimitReached,
     idempotencyKey,
   }: BillingPortalCheckoutSessionParameters & {
     idempotencyKey: string;
@@ -213,7 +217,9 @@ export class BillingPortalWorkspaceService {
           stripeSubscriptionLineItems,
           stripeCustomerId: customer?.stripeCustomerId,
           plan,
-          withTrialPeriod: this.isCustomerEligibleForTrialPeriod(customer),
+          withTrialPeriod:
+            !isTrialLimitReached &&
+            this.isCustomerEligibleForTrialPeriod(customer),
           idempotencyKey,
         },
       );

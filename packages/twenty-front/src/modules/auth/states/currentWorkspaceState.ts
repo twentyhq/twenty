@@ -18,6 +18,7 @@ export type CurrentWorkspace = Pick<
   | 'billingEntitlements'
   | 'billingCustomer'
   | 'currentBillingSubscription'
+  | 'isTrialAvailable'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
   | 'isCampaignClickTrackingEnabled'

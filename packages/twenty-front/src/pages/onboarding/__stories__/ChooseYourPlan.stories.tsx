@@ -69,6 +69,42 @@ export const Default: Story = {
   },
 };
 
+export const TrialLimitReached: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
+          return HttpResponse.json({
+            data: {
+              currentUser: {
+                ...mockedOnboardingUserData(OnboardingStatus.COMPLETED),
+                currentWorkspace: {
+                  ...mockCurrentWorkspace,
+                  billingSubscriptions: [],
+                  isTrialAvailable: false,
+                },
+              },
+            },
+          });
+        }),
+        ...graphqlMocks.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('Start your subscription', undefined, {
+      timeout: 3000,
+    });
+
+    await expect(canvas.queryByText('Basic')).not.toBeInTheDocument();
+    await expect(
+      await canvas.findByRole('button', { name: 'Continue' }),
+    ).toBeInTheDocument();
+  },
+};
+
 export const PlansQueryError: Story = {
   parameters: {
     msw: {

@@ -1,0 +1,1 @@
+export const MAX_UNPAID_WORKSPACES_WITH_TRIAL = 3;
