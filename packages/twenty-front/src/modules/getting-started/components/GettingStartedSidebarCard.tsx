@@ -4,15 +4,17 @@ import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStarte
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { NavigationLink } from '@/ui/input/components/NavigationLink';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { Link } from 'react-router-dom';
+import { useMatch } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components/input';
 import {
   IconChevronRight,
   IconCreditCard,
@@ -35,25 +37,19 @@ const StyledCardBody = styled.div`
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledHeader = styled(Link)`
+const StyledHeader = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[6]};
-  padding: 0 ${themeCssVariables.spacing[1]};
-  text-decoration: none;
+  padding-left: ${themeCssVariables.spacing[1]};
   white-space: nowrap;
 
   &[data-countdown] {
     color: ${themeCssVariables.font.color.secondary};
     height: ${themeCssVariables.spacing[8]};
-  }
-
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
   }
 `;
 
@@ -121,6 +117,7 @@ export const GettingStartedSidebarCard = () => {
   } = useGettingStartedTrial();
   const isNavigationDrawerContentExpanded =
     useIsNavigationDrawerContentExpanded();
+  const isGettingStartedPageOpen = isDefined(useMatch(AppPath.GettingStarted));
 
   if (!isNavigationDrawerContentExpanded || !isDefined(progress)) {
     return null;
@@ -140,10 +137,7 @@ export const GettingStartedSidebarCard = () => {
       <StyledContainer>
         <Card.Root backgroundColor={themeCssVariables.background.primary}>
           <StyledCardBody>
-            <StyledHeader
-              to={AppPath.GettingStarted}
-              data-countdown={isCountdownVisible || undefined}
-            >
+            <StyledHeader data-countdown={isCountdownVisible || undefined}>
               <IconRocket
                 size={theme.icon.size.md}
                 color={
@@ -156,11 +150,20 @@ export const GettingStartedSidebarCard = () => {
               <StyledStepCount>
                 {`${progress.completedSteps.length}/${GETTING_STARTED_STEPS.length}`}
               </StyledStepCount>
-              {isCountdownVisible && (
-                <IconChevronRight
-                  size={theme.icon.size.md}
-                  color={theme.font.color.tertiary}
-                />
+              {!isGettingStartedPageOpen && (
+                <NavigationLink to={AppPath.GettingStarted}>
+                  {({ href, render }) => (
+                    <LightIconButton
+                      nativeButton={false}
+                      role="link"
+                      href={href}
+                      render={render}
+                      aria-label={t`Open Getting started`}
+                    >
+                      <IconChevronRight />
+                    </LightIconButton>
+                  )}
+                </NavigationLink>
               )}
             </StyledHeader>
             {isCountdownVisible ? (
