@@ -135,50 +135,49 @@ export class BillingResolver {
       workspaceActivationStatus: workspace.activationStatus,
     });
 
-    const isTrialLimitReached =
-      await this.billingPortalWorkspaceService.hasReachedTrialLimit({
-        userId: user.id,
-        workspaceId: workspace.id,
-      });
-
-    const isPaymentMethodRequired = requirePaymentMethod || isTrialLimitReached;
-
-    const checkoutSessionParams = {
-      user,
-      workspace,
-      successUrlPath,
-      plan,
-      requirePaymentMethod: isPaymentMethodRequired,
-      isTrialLimitReached,
-    };
-
     const billingPricesPerPlan =
       await this.billingPlanService.getSellablePlanPricesByIntervalOrThrow({
         planKey: plan,
         interval: recurringInterval,
       });
 
-    if (!isPaymentMethodRequired) {
-      const successUrl =
-        await this.billingPortalWorkspaceService.createDirectSubscription({
-          ...checkoutSessionParams,
-          billingPricesPerPlan,
-        });
+    return await this.billingPortalWorkspaceService.withTrialLimitLock(
+      { userId: user.id, workspaceId: workspace.id },
+      async (isTrialLimitReached) => {
+        const isPaymentMethodRequired =
+          requirePaymentMethod || isTrialLimitReached;
 
-      return {
-        url: successUrl,
-      };
-    } else {
-      const checkoutSessionURL =
-        await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
-          ...checkoutSessionParams,
+        const checkoutSessionParams = {
+          user,
+          workspace,
+          successUrlPath,
+          plan,
+          requirePaymentMethod: isPaymentMethodRequired,
+          isTrialLimitReached,
           billingPricesPerPlan,
-        });
+        };
 
-      return {
-        url: checkoutSessionURL,
-      };
-    }
+        if (!isPaymentMethodRequired) {
+          const successUrl =
+            await this.billingPortalWorkspaceService.createDirectSubscription(
+              checkoutSessionParams,
+            );
+
+          return {
+            url: successUrl,
+          };
+        } else {
+          const checkoutSessionURL =
+            await this.billingPortalWorkspaceService.computeCheckoutSessionURL(
+              checkoutSessionParams,
+            );
+
+          return {
+            url: checkoutSessionURL,
+          };
+        }
+      },
+    );
   }
 
   @Mutation(() => BillingPaymentIntentDTO)
@@ -219,20 +218,18 @@ export class BillingResolver {
         interval: recurringInterval,
       });
 
-    const isTrialLimitReached =
-      await this.billingPortalWorkspaceService.hasReachedTrialLimit({
-        userId: user.id,
-        workspaceId: workspace.id,
-      });
-
-    return this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
-      user,
-      workspace,
-      plan,
-      billingPricesPerPlan,
-      isTrialLimitReached,
-      idempotencyKey,
-    });
+    return await this.billingPortalWorkspaceService.withTrialLimitLock(
+      { userId: user.id, workspaceId: workspace.id },
+      (isTrialLimitReached) =>
+        this.billingPortalWorkspaceService.createSubscriptionPaymentIntent({
+          user,
+          workspace,
+          plan,
+          billingPricesPerPlan,
+          isTrialLimitReached,
+          idempotencyKey,
+        }),
+    );
   }
 
   @Mutation(() => BillingPaymentIntentDTO)

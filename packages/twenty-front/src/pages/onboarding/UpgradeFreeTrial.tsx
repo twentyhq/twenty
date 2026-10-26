@@ -42,7 +42,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type Billing,
   type BillingPlanKey,
-  type SubscriptionInterval,
+  SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
 const StyledSubtitleEmphasis = styled.span`
@@ -173,7 +173,7 @@ const UpgradeFreeTrialContent = ({
   const upgradeCreditsReward = useAtomStateValue(
     onboardingCreditsProgressSelector,
   ).rewardCreditsByStep.upgradeTrial;
-  const { numberFormat } = useNumberFormat();
+  const { numberFormat, formatNumber } = useNumberFormat();
   const formattedUpgradeCreditsReward = formatOnboardingCredits(
     upgradeCreditsReward,
     numberFormat,
@@ -235,6 +235,11 @@ const UpgradeFreeTrialContent = ({
 
   const requirePaymentMethod =
     billingCheckoutSession.requirePaymentMethod || !isTrialAvailable;
+  const priceDisplay = formatNumber(baseProductPrice.unitAmount / 100);
+  const chargedTodayNote =
+    billingCheckoutSession.interval === SubscriptionInterval.Year
+      ? t`You'll be charged $${priceDisplay} per user today, then every year.`
+      : t`You'll be charged $${priceDisplay} per user today, then every month.`;
   const hasTrialDurationTag = isDefined(trialDuration);
   const hasUpgradeCreditsTag = upgradeCreditsReward > 0;
 
@@ -274,7 +279,7 @@ const UpgradeFreeTrialContent = ({
             note={
               isTrialAvailable
                 ? t`No charge will be made. You'll receive an email reminder 7 days before it ends.`
-                : t`You'll be charged today.`
+                : chargedTodayNote
             }
             value={true}
           >

@@ -99,6 +99,11 @@ export const TrialLimitReached: Story = {
 
     await expect(canvas.queryByText('Basic')).not.toBeInTheDocument();
     await expect(
+      await canvas.findByText(
+        "You'll be charged $12 per user today, then every month.",
+      ),
+    ).toBeInTheDocument();
+    await expect(
       await canvas.findByRole('button', { name: 'Continue' }),
     ).toBeInTheDocument();
   },
