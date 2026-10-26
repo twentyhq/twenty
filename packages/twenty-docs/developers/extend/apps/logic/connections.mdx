@@ -168,7 +168,7 @@ export const linkedinAuthorizeHandler = async ({
 };
 ```
 
-Hand `callbackUrl` to the service unchanged. Twenty accepts it as a browser redirect (`GET`) and as a server notification (`POST`), and runs `callbackLogicFunction` for each request with its method, query parameters, headers, parsed body and `rawBody` (the exact request bytes, `null` on `GET`). Return the account the request proves, or `null` when it carries none — typically the browser coming back while the account id travels by notification:
+Hand `callbackUrl` to the service unchanged. Twenty accepts it as a browser redirect (`GET`) and as a server notification (`POST`), and runs `callbackLogicFunction` for each request with its method, query parameters (without `state`), headers, parsed body and `rawBody` (the exact request bytes, `null` on `GET`). Return the account the request proves, or `null` when it carries none — typically the browser coming back while the account id travels by notification:
 
 ```ts src/logic-functions/handlers/linkedin-callback-handler.ts
 import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
