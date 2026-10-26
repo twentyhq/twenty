@@ -135,12 +135,19 @@ jobs:
           path: .cache/jest/packages/twenty-server-integration
       - name: Download integration test timings
         if: needs.server-integration-test-timings.outputs.run-id != ''
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: integration-test-timings
-          run-id: ${{ needs.server-integration-test-timings.outputs.run-id }}
-          github-token: ${{ github.token }}
-          path: .cache/integration-test-timings
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ needs.server-integration-test-timings.outputs.run-id }}
+        run: |
+          for attempt in 1 2 3; do
+            rm -rf .cache/integration-test-timings
+            if gh run download "$RUN_ID" --repo "$GITHUB_REPOSITORY" --name integration-test-timings --dir .cache/integration-test-timings; then
+              exit 0
+            fi
+            echo "::warning::Attempt $attempt of 3 to download integration test timings failed"
+            sleep $((attempt * 5))
+          done
+          exit 1
       - name: Server / Run Integration Tests
         if: ${{ !inputs.record-timings }}
         uses: ./.github/actions/nx-affected
