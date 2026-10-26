@@ -1,6 +1,7 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
+import { MainNavigationDrawerContextMenu } from '@/navigation/components/MainNavigationDrawerContextMenu';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
 import { NavigationDrawerHeader } from '@/navigation/components/NavigationDrawerHeader';
 import { NavigationDrawerModeTransition } from '@/navigation/components/NavigationDrawerModeTransition';
@@ -26,20 +27,22 @@ export const AppNavigationDrawer = ({
 
   return (
     <NavigationDrawer className={className} header={<NavigationDrawerHeader />}>
-      {/* Mobile switches modes from the bottom navigation bar instead. */}
-      {!isMobile && (
-        <NavigationDrawerFixedContent>
-          <MainNavigationDrawerModeSwitcher />
-        </NavigationDrawerFixedContent>
-      )}
-
-      <NavigationDrawerModeTransition>
-        {isSettingsDrawer ? (
-          <SettingsNavigationDrawerContent />
-        ) : (
-          <MainNavigationDrawerContent />
+      <MainNavigationDrawerContextMenu>
+        {/* Mobile switches modes from the bottom navigation bar instead. */}
+        {!isMobile && (
+          <NavigationDrawerFixedContent>
+            <MainNavigationDrawerModeSwitcher />
+          </NavigationDrawerFixedContent>
         )}
-      </NavigationDrawerModeTransition>
+
+        <NavigationDrawerModeTransition>
+          {isSettingsDrawer ? (
+            <SettingsNavigationDrawerContent />
+          ) : (
+            <MainNavigationDrawerContent />
+          )}
+        </NavigationDrawerModeTransition>
+      </MainNavigationDrawerContextMenu>
     </NavigationDrawer>
   );
 };
