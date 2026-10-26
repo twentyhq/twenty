@@ -17,7 +17,7 @@ type AiChatUsageMetricRowProps = {
   label: string;
   tooltip?: string;
   usage: Pick<AiChatUsage, 'limitValue' | 'consumedValue' | 'periodEnd'> | null;
-  loading?: boolean;
+  isLoading?: boolean;
   hasError?: boolean;
 };
 
@@ -26,7 +26,7 @@ export const AiChatUsageMetricRow = ({
   label,
   tooltip,
   usage,
-  loading = false,
+  isLoading = false,
   hasError = false,
 }: AiChatUsageMetricRowProps) => {
   const { t } = useLingui();
@@ -37,7 +37,7 @@ export const AiChatUsageMetricRow = ({
     : null;
 
   const usageLabelInput = {
-    loading,
+    loading: isLoading,
     hasError,
     hasUsage: isDefined(usage),
     daysUntilReset: isDefined(usage?.periodEnd)
@@ -49,7 +49,7 @@ export const AiChatUsageMetricRow = ({
   return (
     <MetricRow
       startIcon={<Icon size={theme.icon.size.sm} />}
-      progress={loading || hasError ? 0 : (creditPercentage ?? 0)}
+      progress={isLoading || hasError ? 0 : (creditPercentage ?? 0)}
       value={getAiChatUsageLabel(usageLabelInput)}
       progressValueText={getAiChatUsageLabel({
         ...usageLabelInput,

@@ -20,7 +20,7 @@ export const AiChatUserCreditsExhaustedMessage = ({
     <AiChatErrorMessage
       error={error}
       hint={
-        userCreditsUsage?.isExhausted === true
+        userCreditsUsage?.isExhausted
           ? t`AI credits renew in ${plural(userCreditsUsage.daysUntilReset, { one: '# day', other: '# days' })}.`
           : undefined
       }

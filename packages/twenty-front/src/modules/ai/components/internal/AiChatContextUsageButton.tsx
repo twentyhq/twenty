@@ -119,7 +119,7 @@ export const AiChatContextUsageButton = () => {
       userCreditsUsage.isFallingBackToWorkspaceCredits);
 
   const isAiLimitCharged =
-    creditUsage?.kind === 'limit' && userCreditsUsage?.isExhausted !== true;
+    creditUsage?.kind === 'limit' && !userCreditsUsage?.isExhausted;
 
   const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
     duration: shouldReduceMotion ? 0 : { open: 150, close: 100 },
@@ -187,7 +187,7 @@ export const AiChatContextUsageButton = () => {
                   Icon={IconGauge}
                   label={t`Usage`}
                   usage={creditUsage}
-                  loading={loading}
+                  isLoading={loading}
                   hasError={isDefined(error)}
                 />
               )}

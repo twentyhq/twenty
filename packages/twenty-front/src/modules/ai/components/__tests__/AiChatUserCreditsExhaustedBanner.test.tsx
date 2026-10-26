@@ -7,37 +7,31 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
-import {
-  type CurrentWorkspace,
-  currentWorkspaceState,
-} from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   GetAiChatUsageDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
 const PERIOD_END = new Date(Date.now() + 3 * 86400000).toISOString();
 
-const renderBanner = ({
-  consumedValue,
-  userCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
-}: {
-  consumedValue: number;
-  userCreditsFallback?: UserCreditsFallback;
-}) => {
+const renderBanner = (
+  userCreditsFallback: UserCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
+) => {
   const store = createStore();
 
   store.set(currentWorkspaceState.atom, {
-    id: 'workspace',
+    ...mockCurrentWorkspace,
     billingCustomer: {
       id: 'billing-customer',
       userCreditsFallback,
     },
-  } as CurrentWorkspace);
+  });
 
   render(
     <JotaiProvider store={store}>
@@ -51,7 +45,7 @@ const renderBanner = ({
                 aiChatUserCreditsUsage: {
                   __typename: 'AiChatUserCreditsUsage',
                   limitValue: 4160000,
-                  consumedValue,
+                  consumedValue: 4160000,
                   periodEnd: PERIOD_END,
                 },
               },
@@ -84,14 +78,14 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
   ])(
     'tells the member what happens until renewal with fallback %s',
     async (userCreditsFallback, notice) => {
-      renderBanner({ consumedValue: 4160000, userCreditsFallback });
+      renderBanner(userCreditsFallback);
 
       expect(await screen.findByText(notice)).toBeVisible();
     },
   );
 
   it('stays hidden for the rest of the period once dismissed', async () => {
-    renderBanner({ consumedValue: 4160000 });
+    renderBanner();
 
     await userEvent.click(
       await screen.findByRole('button', { name: 'Dismiss' }),
@@ -102,10 +96,27 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
     ).not.toBeInTheDocument();
     expect(
       JSON.parse(
-        localStorage.getItem(
-          'ai/agentChatUserCreditsBannerDismissedPeriodEnd',
-        ) ?? 'null',
+        localStorage.getItem('ai/agentChatUserCreditsBannerDismissal') ??
+          'null',
       ),
-    ).toBe(PERIOD_END);
+    ).toEqual({ periodEnd: PERIOD_END, isFallingBackToWorkspaceCredits: true });
+  });
+
+  it('shows the stop notice when chats stop after the fallback notice was dismissed', async () => {
+    localStorage.setItem(
+      'ai/agentChatUserCreditsBannerDismissal',
+      JSON.stringify({
+        periodEnd: PERIOD_END,
+        isFallingBackToWorkspaceCredits: true,
+      }),
+    );
+
+    renderBanner(UserCreditsFallback.STOP);
+
+    expect(
+      await screen.findByText(
+        'Personal usage limit reached. Chats resume in 3 days.',
+      ),
+    ).toBeVisible();
   });
 });

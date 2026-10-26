@@ -12,14 +12,12 @@ import {
 } from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AiChatUserCreditsUsage } from '@/ai/types/AiChatUserCreditsUsage';
-import {
-  type CurrentWorkspace,
-  currentWorkspaceState,
-} from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   GetAiChatUsageDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const USAGE: AgentChatUsageState = {
   conversationSize: 200000,
@@ -63,8 +61,9 @@ const UsageStory = ({
     const storyStore = createStore();
     storyStore.set(currentAiChatThreadState.atom, 'story-thread');
     storyStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
       billingCustomer: { id: 'billing-customer', userCreditsFallback },
-    } as CurrentWorkspace);
+    });
     storyStore.set(
       agentChatUsageFamilyState.atomFamily({ threadId: 'story-thread' }),
       usage,

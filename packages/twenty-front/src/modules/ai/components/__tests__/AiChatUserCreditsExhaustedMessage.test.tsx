@@ -23,7 +23,13 @@ jest.mock('@/ai/hooks/useCanRetryCurrentAiChatTurn', () => ({
   useCanRetryCurrentAiChatTurn: () => true,
 }));
 
-const renderError = (error: AiChatError, consumedValue = 830000) => {
+const renderError = ({
+  error,
+  consumedValue = 830000,
+}: {
+  error: AiChatError;
+  consumedValue?: number;
+}) => {
   const getUserCreditsUsageResult = jest.fn(() => ({
     data: {
       aiChatUsage: null,
@@ -58,12 +64,12 @@ const renderError = (error: AiChatError, consumedValue = 830000) => {
 
 describe('AiChatErrorRenderer with spent user credits', () => {
   it('explains a reopened turn that user credits stopped, without a retry', async () => {
-    renderError(
-      createAiChatCodedError(
+    renderError({
+      error: createAiChatCodedError(
         'The member ran out of AI credits.',
         AiChatErrorCode.USER_CREDITS_EXHAUSTED,
       ),
-    );
+    });
 
     expect(screen.getByText('The member ran out of AI credits.')).toBeVisible();
     expect(
@@ -75,13 +81,13 @@ describe('AiChatErrorRenderer with spent user credits', () => {
   });
 
   it('leaves the renewal out of a reopened turn once credits have renewed', async () => {
-    const { getUserCreditsUsageResult } = renderError(
-      createAiChatCodedError(
+    const { getUserCreditsUsageResult } = renderError({
+      error: createAiChatCodedError(
         'The member ran out of AI credits.',
         AiChatErrorCode.USER_CREDITS_EXHAUSTED,
       ),
-      0,
-    );
+      consumedValue: 0,
+    });
 
     await waitFor(() => expect(getUserCreditsUsageResult).toHaveBeenCalled());
     await act(() => Promise.resolve());
@@ -91,8 +97,8 @@ describe('AiChatErrorRenderer with spent user credits', () => {
   });
 
   it('explains a send refused upfront', async () => {
-    renderError(
-      new CombinedGraphQLErrors({
+    renderError({
+      error: new CombinedGraphQLErrors({
         data: null,
         errors: [
           {
@@ -106,7 +112,7 @@ describe('AiChatErrorRenderer with spent user credits', () => {
           },
         ],
       }),
-    );
+    });
 
     expect(
       screen.getByText('Your AI credits for this period are used up.'),

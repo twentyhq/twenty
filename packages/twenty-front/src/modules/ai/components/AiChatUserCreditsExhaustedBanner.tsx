@@ -6,7 +6,7 @@ import { InlineBanner } from 'twenty-ui/components/feedback';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { agentChatUserCreditsBannerDismissedPeriodEndState } from '@/ai/states/agentChatUserCreditsBannerDismissedPeriodEndState';
+import { agentChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const AiChatUserCreditsExhaustedBanner = () => {
@@ -15,23 +15,28 @@ export const AiChatUserCreditsExhaustedBanner = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
   const [
-    agentChatUserCreditsBannerDismissedPeriodEnd,
-    setAgentChatUserCreditsBannerDismissedPeriodEnd,
-  ] = useAtomState(agentChatUserCreditsBannerDismissedPeriodEndState);
+    agentChatUserCreditsBannerDismissal,
+    setAgentChatUserCreditsBannerDismissal,
+  ] = useAtomState(agentChatUserCreditsBannerDismissalState);
 
   const { userCreditsUsage } = useAiChatUserCreditsUsage({
     skip: isWorkspaceSetupChat,
   });
 
-  if (
-    !isDefined(userCreditsUsage) ||
-    !userCreditsUsage.isExhausted ||
-    userCreditsUsage.periodEnd === agentChatUserCreditsBannerDismissedPeriodEnd
-  ) {
+  if (!isDefined(userCreditsUsage) || !userCreditsUsage.isExhausted) {
     return null;
   }
 
-  const { daysUntilReset, isFallingBackToWorkspaceCredits } = userCreditsUsage;
+  const { periodEnd, daysUntilReset, isFallingBackToWorkspaceCredits } =
+    userCreditsUsage;
+
+  if (
+    agentChatUserCreditsBannerDismissal?.periodEnd === periodEnd &&
+    agentChatUserCreditsBannerDismissal.isFallingBackToWorkspaceCredits ===
+      isFallingBackToWorkspaceCredits
+  ) {
+    return null;
+  }
 
   return (
     <AiChatInlineBanner
@@ -39,9 +44,10 @@ export const AiChatUserCreditsExhaustedBanner = () => {
       action={
         <InlineBanner.Action
           onClick={() =>
-            setAgentChatUserCreditsBannerDismissedPeriodEnd(
-              userCreditsUsage.periodEnd,
-            )
+            setAgentChatUserCreditsBannerDismissal({
+              periodEnd,
+              isFallingBackToWorkspaceCredits,
+            })
           }
         >{t`Dismiss`}</InlineBanner.Action>
       }

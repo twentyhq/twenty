@@ -7,10 +7,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import {
-  type CurrentWorkspace,
-  currentWorkspaceState,
-} from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingUserCreditsSection } from '@/settings/billing/components/SettingsBillingUserCreditsSection';
 import {
   PermissionFlagType,
@@ -18,6 +15,7 @@ import {
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -48,14 +46,17 @@ const renderSection = ({
   });
 
   store.set(currentWorkspaceState.atom, {
-    id: 'workspace',
-    currentBillingSubscription: { hasUserCredits },
+    ...mockCurrentWorkspace,
+    currentBillingSubscription: {
+      ...mockCurrentWorkspace.currentBillingSubscription,
+      hasUserCredits,
+    },
     billingCustomer: {
       id: BILLING_CUSTOMER_ID,
       hasPaymentMethod: true,
       userCreditsFallback,
     },
-  } as CurrentWorkspace);
+  });
 
   render(
     <JotaiProvider store={store}>
