@@ -155,10 +155,12 @@ export const AiChatApprovalMergeReviewExample = ({
             const fixture = AI_CHAT_APPROVAL_MERGE_FIXTURES.find(
               ({ id }) => id === pairId,
             );
+            const firstSourceName = fixture?.sources[0].name;
+            const secondSourceName = fixture?.sources[1].name;
 
             return {
               id: pairId,
-              title: `Merge ${fixture?.sources[0].name} and ${fixture?.sources[1].name}`,
+              title: t`Merge ${firstSourceName} and ${secondSourceName}`,
               selectedCount: 2,
               skippedCount: 0,
             };
