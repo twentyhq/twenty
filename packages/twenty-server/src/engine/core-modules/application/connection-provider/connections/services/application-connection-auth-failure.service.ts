@@ -68,7 +68,7 @@ export class ApplicationConnectionAuthFailureService {
           : IsNull(),
       },
       {
-        // keeps when the failure started, so repeated reports don't invalidate a reconnect already under way
+        // wasStateIssuedBeforeAccountChange compares this to a sign-in's start, so it must stay the time the failure began
         authFailedAt: () => 'COALESCE("authFailedAt", NOW())',
         authFailedReason: reason,
       },
