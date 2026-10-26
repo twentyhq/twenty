@@ -34,6 +34,9 @@ const OTHER_IDENTIFIER = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
 const INDEX_IDENTIFIER = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
 const STANDALONE_FIELD_IDENTIFIER = 'abababab-abab-4aba-8aba-abababababab';
 const STANDALONE_FIELD_PATH = 'src/fields/rating.ts';
+const WORKFLOW_IDENTIFIER = 'acacacac-acac-4aca-8aca-acacacacacac';
+const WORKFLOW_TRIGGER_IDENTIFIER = 'adadadad-adad-4ada-8ada-adadadadadad';
+const WORKFLOW_STEP_IDENTIFIER = 'aeaeaeae-aeae-4aea-8aea-aeaeaeaeaeae';
 const TARGET: AppPullTarget = {
   apiUrl: 'https://example.test',
   workspaceId: WORKSPACE_IDENTIFIER,
@@ -704,6 +707,108 @@ export default defineField({
       expect.objectContaining({ relativePath: applicationPath }),
     );
     expect(await read(applicationPath)).toContain('Changed remotely');
+  });
+
+  it('writes workflows, keeps them while unchanged or unsupported and removes confirmed remote deletions', async () => {
+    const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';
+    const workflow = {
+      universalIdentifier: WORKFLOW_IDENTIFIER,
+      name: 'Greet new pets',
+      version: {
+        trigger: {
+          universalIdentifier: WORKFLOW_TRIGGER_IDENTIFIER,
+          type: 'DATABASE_EVENT',
+          nextStepIds: [WORKFLOW_STEP_IDENTIFIER],
+          settings: {
+            action: 'created',
+            filter: {
+              stepFilterGroups: [{ id: 'group', logicalOperator: 'AND' }],
+              stepFilters: [
+                {
+                  id: 'filter',
+                  operand: 'IS_NOT_EMPTY',
+                  stepFilterGroupId: 'group',
+                  stepOutputKey: '{{trigger.properties.after.name}}',
+                  type: 'TEXT',
+                  value: '',
+                },
+              ],
+            },
+            objectUniversalIdentifier: OBJECT_IDENTIFIER,
+          },
+        },
+        steps: [
+          {
+            universalIdentifier: WORKFLOW_STEP_IDENTIFIER,
+            name: 'Greet',
+            type: 'HTTP_REQUEST',
+            nextStepIds: [],
+            input: { method: 'GET', url: 'https://example.test/greet' },
+          },
+        ],
+      },
+    };
+    const withWorkflow = (value: typeof workflow) => {
+      const exported = createExport();
+
+      return {
+        ...exported,
+        manifest: { ...exported.manifest, workflows: [value] },
+      };
+    };
+
+    const created = requireSuccess(await pull(withWorkflow(workflow)));
+    expect(created.writes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          relativePath: workflowPath,
+          kind: 'workflow',
+        }),
+      ]),
+    );
+    expect(await read(workflowPath)).toContain(
+      'operand: ViewFilterOperand.IS_NOT_EMPTY,',
+    );
+
+    const localEdit = (await read(workflowPath)).replace(
+      "name: 'Greet',",
+      "name: 'Greet',\n",
+    );
+    await writeFile(join(appPath, workflowPath), localEdit);
+    expect(requireSuccess(await pull(withWorkflow(workflow))).writes).toEqual(
+      [],
+    );
+    expect(await read(workflowPath)).toBe(localEdit);
+
+    const renamed = { ...workflow, name: 'Welcome new pets' };
+    const changed = requireSuccess(await pull(withWorkflow(renamed)));
+    expect(changed.writes).toEqual([
+      expect.objectContaining({
+        relativePath: workflowPath,
+        isRegeneration: true,
+      }),
+    ]);
+    expect(await read(workflowPath)).toContain("name: 'Welcome new pets',");
+
+    const unsupported = createExport({
+      coverage: [
+        {
+          metadataName: 'workflow',
+          universalIdentifier: WORKFLOW_IDENTIFIER,
+          status: 'UNSUPPORTED',
+          reason: 'workflow changed in the workflow builder',
+        },
+      ],
+    });
+    const kept = requireSuccess(await pull(unsupported));
+    expect(kept.deletions).toEqual([]);
+    expect(await read(workflowPath)).toContain("name: 'Welcome new pets',");
+
+    const removed = requireSuccess(await pull(createExport()));
+    expect(removed.deletions).toEqual([
+      { universalIdentifier: WORKFLOW_IDENTIFIER, relativePath: workflowPath },
+    ]);
+    await expect(read(workflowPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 
   it('retains a covered whole-file base until its remote deletion is confirmed', async () => {

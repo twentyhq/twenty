@@ -15,6 +15,7 @@ import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/
 import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
 import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
+import { reconstructWorkflowsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-workflows-manifest.util';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
@@ -94,6 +95,11 @@ export class ApplicationManifestExportService {
     const exportedObjectUniversalIdentifiers = new Set(
       objects.map(({ universalIdentifier }) => universalIdentifier),
     );
+    const resolvableFieldUniversalIdentifiers =
+      getResolvableReferenceUniversalIdentifiers({
+        coverage: dataModelCoverage,
+        metadataName: 'fieldMetadata',
+      });
     const {
       permissionFlags,
       roles,
@@ -102,11 +108,7 @@ export class ApplicationManifestExportService {
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
-      resolvableFieldUniversalIdentifiers:
-        getResolvableReferenceUniversalIdentifiers({
-          coverage: dataModelCoverage,
-          metadataName: 'fieldMetadata',
-        }),
+      resolvableFieldUniversalIdentifiers,
     });
     const {
       views,
@@ -143,6 +145,13 @@ export class ApplicationManifestExportService {
             metadataName: 'pageLayout',
           }),
       });
+    const { workflows, coverage: workflowsCoverage } =
+      reconstructWorkflowsManifest({
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        exportedObjectUniversalIdentifiers,
+        resolvableFieldUniversalIdentifiers,
+      });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(
           flatApplication.applicationRegistrationId,
@@ -177,6 +186,7 @@ export class ApplicationManifestExportService {
       commandMenuItems: [],
       timelineActivityTypes: [],
       settingsMenuItems: [],
+      workflows,
       ...(isDefined(translations) ? { translations } : {}),
     };
 
@@ -197,6 +207,7 @@ export class ApplicationManifestExportService {
           ...viewsCoverage,
           ...pageLayoutsCoverage,
           ...navigationMenuItemsCoverage,
+          ...workflowsCoverage,
         ],
       }),
       files: [],

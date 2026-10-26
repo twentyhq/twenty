@@ -32,6 +32,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- **`StepLogicalOperator` and `RecordFilterGroupLogicalOperator` in `twenty-sdk/define`.** The logical operators of `defineWorkflow` filter groups: `stepFilterGroups` in record event triggers, `FILTER` and `IF_ELSE` steps, and `recordFilterGroups` in `FIND_RECORDS` steps. Their string values (`'AND'`, `'OR'`) still type-check.
+
 - **`useSelectedRecordsFilter` in `twenty-sdk/front-component`.** Returns a record filter matching exactly the records the user selected, or `null` when there is no selection context. Under Select all, `useSelectedRecordIds()` is empty because the selection is defined by the view's filters, search and unticked rows; query the records with this filter, or pass it to a logic function. Twenty servers that predate it return `null`.
 
   ```tsx
