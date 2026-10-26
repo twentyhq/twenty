@@ -1,6 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type ObjectRecord,
   type ObjectsPermissions,
@@ -155,6 +157,8 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
     work: (transactionalRepository: WorkspaceRepository<TEntity>) => Promise<T>,
   ) => Promise<T>;
 };
+
+const ROW_ACCESS_POLICY_SUBJECT_BATCH_SIZE = 1_000;
 
 export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   readonly objectRecordsPermissions: ObjectsPermissions;
@@ -2184,6 +2188,69 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       .getMany<ObjectRecord>({ noFormatting: true });
 
     return new Set(admittedRecords.map((record) => String(record.id)));
+  }
+
+  async findSubjectIdsAdmittedByRowAccessPolicies({
+    recordId,
+    policiesBySubjectId,
+  }: {
+    recordId: string;
+    policiesBySubjectId: Map<string, RowAccessPolicy>;
+  }): Promise<Set<string>> {
+    const admittedSubjectIds = new Set<string>();
+
+    for (const policies of chunk(
+      [...policiesBySubjectId],
+      ROW_ACCESS_POLICY_SUBJECT_BATCH_SIZE,
+    )) {
+      const subjectIds: string[] = [];
+      const queryBuilder = this.buildBypassingEventSelectQueryBuilder(
+        this.options.tableShape.nameSingular,
+      )
+        .where({ id: recordId })
+        .withDeleted()
+        .select([]);
+
+      for (const [subjectId, policy] of policies) {
+        if (policy.kind === 'denied') {
+          continue;
+        }
+
+        subjectIds.push(subjectId);
+
+        if (policy.kind === 'open') {
+          queryBuilder.addSelect(doNotTranslate('TRUE'), subjectId);
+
+          continue;
+        }
+
+        const condition = this.compileRowAccessExpression(policy.expression);
+        queryBuilder
+          .addSelect(
+            doNotTranslate(
+              `CASE WHEN ${condition.sql} THEN TRUE ELSE FALSE END`,
+            ),
+            subjectId,
+          )
+          .setParameters(condition.parameters);
+      }
+
+      if (subjectIds.length === 0) {
+        continue;
+      }
+
+      const [row] = await queryBuilder.getRawMany<Record<string, unknown>>();
+
+      for (const subjectId of subjectIds) {
+        if (row?.[subjectId] !== true) {
+          continue;
+        }
+
+        admittedSubjectIds.add(subjectId);
+      }
+    }
+
+    return admittedSubjectIds;
   }
 
   private compileRowAccessExpression(
