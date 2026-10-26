@@ -27,9 +27,9 @@ const INBOX_SECTION_DEFINITIONS = [
   STANDARD_NAVIGATION_MENU_ITEMS.inboxTabRecentChats,
 ];
 
-@RegisteredWorkspaceCommand('2.51.0', 1792737550430)
+@RegisteredWorkspaceCommand('2.52.0', 1793025684649)
 @Command({
-  name: 'upgrade:2-51:add-inbox-navigation-menu-tab',
+  name: 'upgrade:2-52:add-inbox-navigation-menu-tab',
   description:
     'Add the Inbox sidebar tab, holding the triage, favorite chats, channels and recent chats sections, to workspaces whose sidebar has none of them',
 })

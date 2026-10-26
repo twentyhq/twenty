@@ -23,9 +23,9 @@ const CONTAINER_TYPES: string[] = [
   NavigationMenuItemType.AI_CHAT_CHANNELS,
 ];
 
-@RegisteredWorkspaceCommand('2.51.0', 1792743446000)
+@RegisteredWorkspaceCommand('2.52.0', 1793025684650)
 @Command({
-  name: 'upgrade:2-51:add-workspace-navigation-menu-section',
+  name: 'upgrade:2-52:add-workspace-navigation-menu-section',
   description:
     'Add the Workspace sidebar section and move the workspace items listed at the root of Home into it',
 })
