@@ -55,6 +55,30 @@ describe('BullMQDriver deduplication', () => {
     );
   });
 
+  describe.each([undefined, 2])('job priority %s', (priority) => {
+    it('passes only the caller priority to add', async () => {
+      await driver.add(MessageQueue.workspaceQueue, 'job', {}, { priority });
+
+      expect(mockAdd).toHaveBeenCalledWith(
+        'job',
+        {},
+        expect.objectContaining({ priority }),
+      );
+    });
+
+    it('passes only the caller priority to bulkAdd', async () => {
+      await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [{ data: {} }], {
+        priority,
+      });
+
+      expect(mockAddBulk).toHaveBeenCalledWith([
+        expect.objectContaining({
+          opts: expect.objectContaining({ priority }),
+        }),
+      ]);
+    });
+  });
+
   describe('add', () => {
     it('skips a job whose id prefix is already waiting', async () => {
       const jobId = await driver.add(
