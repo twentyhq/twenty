@@ -10,6 +10,14 @@ import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
 import { printTypescriptValue } from '@/app/pull/print-typescript-value';
 import { CLI_VERSION } from '@/constants/cli-version.constant';
 
+export const getEnginesTwentyRange = (version: string) => {
+  const isPrerelease = semver.prerelease(version) !== null;
+
+  return isPrerelease
+    ? `>=${version}`
+    : `>=${semver.major(version)}.${semver.minor(version)}.0`;
+};
+
 export const renderAppTemplate = async ({
   appDirectory,
   appName,
@@ -74,7 +82,9 @@ export const renderAppTemplate = async ({
 
   packageJson.name = appName;
   // Patch releases of the CLI can ship without a matching server release.
-  packageJson.engines.twenty = `>=${semver.major(APP_TEMPLATE_PACKAGE_VERSION)}.${semver.minor(APP_TEMPLATE_PACKAGE_VERSION)}.0`;
+  packageJson.engines.twenty = getEnginesTwentyRange(
+    APP_TEMPLATE_PACKAGE_VERSION,
+  );
 
   for (const packageName of APP_TEMPLATE_FIRST_PARTY_PACKAGES) {
     packageJson.devDependencies[packageName] = APP_TEMPLATE_PACKAGE_VERSION;
