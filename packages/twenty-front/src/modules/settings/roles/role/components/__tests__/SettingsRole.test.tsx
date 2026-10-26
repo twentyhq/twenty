@@ -1,12 +1,14 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { act, render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStorePageCommandsComponentState } from '@/context-store/states/contextStorePageCommandsComponentState';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
 import { SettingsRole } from '@/settings/roles/role/components/SettingsRole';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -14,6 +16,7 @@ import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settin
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { RoutedFlowStateScopeContext } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const mockSaveDraftRoleToDB = jest.fn();
 const mockLoadCurrentUser = jest.fn();
@@ -76,14 +79,14 @@ jest.mock('twenty-ui/components/feedback', () => ({
 
 jest.mock('@/settings/components/layout/SettingsPageLayout', () => ({
   SettingsPageLayout: ({
-    actionButton,
+    pageCommands,
     children,
   }: {
-    actionButton?: ReactNode;
+    pageCommands?: ReactNode;
     children: ReactNode;
   }) => (
     <>
-      {actionButton}
+      {pageCommands}
       {children}
     </>
   ),
@@ -169,15 +172,32 @@ const renderSettingsRole = ({
     <I18nProvider i18n={i18n}>
       <MemoryRouter>
         <JotaiProvider store={store}>
-          <RoutedFlowStateScopeContext.Provider value={scopeId}>
-            <SettingsRole roleId={ROLE_ID} isCreateMode={isCreateMode} />
-          </RoutedFlowStateScopeContext.Provider>
+          <ContextStoreComponentInstanceContext.Provider
+            value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+          >
+            <RoutedFlowStateScopeContext.Provider value={scopeId}>
+              <SettingsRole roleId={ROLE_ID} isCreateMode={isCreateMode} />
+            </RoutedFlowStateScopeContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
         </JotaiProvider>
       </MemoryRouter>
     </I18nProvider>,
   );
 
-  return { ...rendered, store };
+  const getPageCommand = (engineComponentKey: EngineComponentKey) =>
+    store.get(
+      contextStorePageCommandsComponentState.atomFamily({
+        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+      }),
+    )[engineComponentKey];
+
+  const runPageCommand = async (engineComponentKey: EngineComponentKey) => {
+    await act(async () => {
+      await getPageCommand(engineComponentKey)?.run();
+    });
+  };
+
+  return { ...rendered, store, getPageCommand, runPageCommand };
 };
 
 describe('SettingsRole', () => {
@@ -188,14 +208,13 @@ describe('SettingsRole', () => {
   it.each([null, 'role-creation-flow'])(
     'should prevent a canceled draft from reopening in scope %s',
     async (scopeId) => {
-      const user = userEvent.setup();
-      const { store, unmount } = renderSettingsRole({
+      const { store, unmount, runPageCommand } = renderSettingsRole({
         draftLabel: 'Canceled role',
         isCreateMode: true,
         scopeId,
       });
 
-      await user.click(screen.getByRole('button', { name: 'Cancel' }));
+      await runPageCommand(EngineComponentKey.CANCEL_PAGE);
 
       expect(mockNavigateSettings).toHaveBeenCalledTimes(1);
       expect(mockNavigateSettings).toHaveBeenCalledWith(SettingsPath.Roles);
@@ -220,10 +239,11 @@ describe('SettingsRole', () => {
   );
 
   it('should restore the persisted role when canceling edits', async () => {
-    const user = userEvent.setup();
-    const { store } = renderSettingsRole({ draftLabel: 'Changed role' });
+    const { store, runPageCommand } = renderSettingsRole({
+      draftLabel: 'Changed role',
+    });
 
-    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+    await runPageCommand(EngineComponentKey.CANCEL_PAGE);
 
     expect(store.get(settingsDraftRoleFamilyState.atomFamily(ROLE_ID))).toEqual(
       PERSISTED_ROLE,
@@ -232,14 +252,12 @@ describe('SettingsRole', () => {
     expect(mockSaveDraftRoleToDB).not.toHaveBeenCalled();
   });
 
-  it('should leave the save button usable when saving is rejected because the role name is empty', async () => {
-    const user = userEvent.setup();
+  it('should leave the save command usable when saving is rejected because the role name is empty', async () => {
+    const { getPageCommand, runPageCommand } = renderSettingsRole({
+      draftLabel: '',
+    });
 
-    renderSettingsRole({ draftLabel: '' });
-
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-
-    await user.click(saveButton);
+    await runPageCommand(EngineComponentKey.SAVE_PAGE);
 
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -248,12 +266,13 @@ describe('SettingsRole', () => {
       }),
     );
     expect(mockSaveDraftRoleToDB).not.toHaveBeenCalled();
-    expect(saveButton).toBeEnabled();
-    expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
+    expect(getPageCommand(EngineComponentKey.SAVE_PAGE)).toMatchObject({
+      isDisabled: false,
+      isLoading: false,
+    });
   });
 
-  it('should show the save button as loading until the role is saved', async () => {
-    const user = userEvent.setup();
+  it('should show the save command as loading until the role is saved', async () => {
     let resolveSave: () => void = () => {};
 
     mockSaveDraftRoleToDB.mockReturnValue(
@@ -262,43 +281,48 @@ describe('SettingsRole', () => {
       }),
     );
 
-    renderSettingsRole({ draftLabel: 'Sales team' });
+    const { getPageCommand } = renderSettingsRole({
+      draftLabel: 'Sales team',
+    });
 
-    const saveButton = screen.getByRole('button', { name: 'Save' });
+    let savePromise: Promise<unknown> | void = undefined;
 
-    await user.click(saveButton);
+    act(() => {
+      savePromise = getPageCommand(EngineComponentKey.SAVE_PAGE)?.run();
+    });
 
-    expect(saveButton).toHaveAttribute('aria-busy', 'true');
+    expect(getPageCommand(EngineComponentKey.SAVE_PAGE)).toMatchObject({
+      isLoading: true,
+    });
 
     await act(async () => {
       resolveSave();
+      await savePromise;
     });
 
-    await waitFor(() => {
-      expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
+    expect(getPageCommand(EngineComponentKey.SAVE_PAGE)).toMatchObject({
+      isLoading: false,
     });
     expect(mockSaveDraftRoleToDB).toHaveBeenCalledTimes(1);
     expect(mockLoadCurrentUser).toHaveBeenCalledTimes(1);
   });
 
-  it('should show an error toast and leave the save button usable when the save fails', async () => {
-    const user = userEvent.setup();
-
+  it('should show an error toast and leave the save command usable when the save fails', async () => {
     mockSaveDraftRoleToDB.mockRejectedValue(new Error('Save failed'));
 
-    renderSettingsRole({ draftLabel: 'Sales team' });
-
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-
-    await user.click(saveButton);
-
-    await waitFor(() => {
-      expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
+    const { getPageCommand, runPageCommand } = renderSettingsRole({
+      draftLabel: 'Sales team',
     });
+
+    await runPageCommand(EngineComponentKey.SAVE_PAGE);
+
+    expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'error' }),
     );
     expect(mockLoadCurrentUser).not.toHaveBeenCalled();
-    expect(saveButton).not.toHaveAttribute('aria-busy', 'true');
+    expect(getPageCommand(EngineComponentKey.SAVE_PAGE)).toMatchObject({
+      isLoading: false,
+    });
   });
 });

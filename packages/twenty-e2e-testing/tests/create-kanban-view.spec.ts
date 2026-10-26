@@ -6,8 +6,8 @@ test.describe.serial('Create Kanban View', () => {
     await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await page.getByRole('link', { name: 'Data model' }).click();
     await page.getByRole('link', { name: 'Opportunities' }).click();
-    await expect(page.getByRole('link', { name: 'New Field' })).toBeVisible();
-    await page.getByRole('link', { name: 'New Field' }).click();
+    await expect(page.getByRole('button', { name: 'New Field' })).toBeVisible();
+    await page.getByRole('button', { name: 'New Field' }).click();
     await page.getByRole('link', { name: 'Select', exact: true }).click();
     await page.getByRole('textbox', { name: 'Employees' }).click();
     await page.getByRole('textbox', { name: 'Employees' }).fill(industryLabel);

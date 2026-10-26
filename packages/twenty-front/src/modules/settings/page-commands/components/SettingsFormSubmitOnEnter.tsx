@@ -1,7 +1,13 @@
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 
-export const SettingsFormSubmitOnEnter = () => (
+type SettingsFormSubmitOnEnterProps = {
+  disabled?: boolean;
+};
+
+export const SettingsFormSubmitOnEnter = ({
+  disabled,
+}: SettingsFormSubmitOnEnterProps) => (
   <VisuallyHidden>
-    <button type="submit" tabIndex={-1} aria-hidden />
+    <button type="submit" tabIndex={-1} aria-hidden disabled={disabled} />
   </VisuallyHidden>
 );

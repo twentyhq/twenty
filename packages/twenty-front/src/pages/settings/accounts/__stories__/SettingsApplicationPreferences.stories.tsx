@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { CommandMenuItemsDecorator } from '~/testing/decorators/CommandMenuItemsDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -27,7 +28,7 @@ import {
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsApplicationPreferences',
   component: SettingsApplicationPreferences,
-  decorators: [PageDecorator],
+  decorators: [CommandMenuItemsDecorator, PageDecorator],
   args: {
     routePath: '/settings/accounts/applications/:applicationId',
     routeParams: { ':applicationId': FATHOM_APPLICATION_ID },
@@ -60,7 +61,7 @@ export const VariablesTabSavesOnlyEditedValues: Story = {
     expect(canvas.getByPlaceholderText('sk-1********')).toHaveValue('');
     expect(canvas.queryByText('Old flag')).not.toBeInTheDocument();
 
-    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
     expect(saveButton).toBeDisabled();
 
@@ -99,7 +100,7 @@ export const ClearedValueFallsBackToTheDefault: Story = {
       undefined,
       { timeout: 3000 },
     );
-    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
     await userEvent.clear(recordMyMeetingsInput);
 
@@ -146,7 +147,7 @@ export const MissingRequiredValueShowsBannerUntilSaved: Story = {
 
     await userEvent.type(within(meetingLanguageRow).getByRole('textbox'), 'fr');
 
-    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
     await waitFor(() => expect(saveButton).toBeEnabled());
     await userEvent.click(saveButton);
@@ -181,7 +182,7 @@ export const SavedSecretIsReplacedNotAppended: Story = {
     expect(personalApiKeyInput).toHaveValue('');
     expect(personalApiKeyInput).toHaveAttribute('type', 'password');
 
-    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
     await userEvent.type(personalApiKeyInput, 'x');
     await userEvent.clear(personalApiKeyInput);
@@ -219,7 +220,7 @@ export const SavedSecretCanBeCleared: Story = {
       undefined,
       { timeout: 3000 },
     );
-    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
     expect(saveButton).toBeDisabled();
 
@@ -270,7 +271,7 @@ export const SettingsTabReplacesVariablesTab: Story = {
       canvas.queryByRole('link', { name: 'Variables' }),
     ).not.toBeInTheDocument();
     expect(
-      canvas.queryByRole('button', { name: 'Save settings' }),
+      canvas.queryByRole('button', { name: 'Save' }),
     ).not.toBeInTheDocument();
 
     await waitFor(() =>

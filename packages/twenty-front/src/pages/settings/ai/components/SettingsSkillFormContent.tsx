@@ -11,11 +11,11 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -134,9 +134,9 @@ export const SettingsSkillFormContent = ({
     <SettingsPageLayout
       title={title}
       icon={<SkillIcon size={theme.icon.size.md} color={theme.color.blue9} />}
-      actionButton={
+      pageCommands={
         isCreateMode ? (
-          <SaveAndCancelButtons
+          <SettingsSaveAndCancelPageCommands
             onSave={handleSave}
             onCancel={handleCancel}
             isSaveDisabled={!canSave}

@@ -1,9 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -43,8 +43,8 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
           },
           { children: t`New Account` },
         ]}
-        actionButton={
-          <SaveAndCancelButtons
+        pageCommands={
+          <SettingsSaveAndCancelPageCommands
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             isLoading={loading}

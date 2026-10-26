@@ -3,6 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { CommandMenuItemsDecorator } from '~/testing/decorators/CommandMenuItemsDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -15,7 +16,7 @@ import { SettingsSubdomainPage } from '~/pages/settings/domains/SettingsSubdomai
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Domains/SettingsSubdomain',
   component: SettingsSubdomainPage,
-  decorators: [PageDecorator],
+  decorators: [CommandMenuItemsDecorator, PageDecorator],
   args: { routePath: '/settings/domains/subdomain' },
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
@@ -47,9 +48,9 @@ export const EmptySubdomain: Story = {
 
     await canvas.findByText('Subdomain cannot be empty');
 
-    const saveButton = canvas.getByText('Save');
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
-    await expect(saveButton.closest('button')).toBeDisabled();
+    await expect(saveButton).toBeDisabled();
   },
 };
 
@@ -68,9 +69,9 @@ export const InvalidCharacters: Story = {
 
     await expect(errorMessage).toBeVisible();
 
-    const saveButton = canvas.getByText('Save');
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
-    await expect(saveButton.closest('button')).toBeDisabled();
+    await expect(saveButton).toBeDisabled();
   },
 };
 
@@ -87,9 +88,9 @@ export const ReservedSubdomain: Story = {
 
     await expect(errorMessage).toBeVisible();
 
-    const saveButton = canvas.getByText('Save');
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
-    await expect(saveButton.closest('button')).toBeDisabled();
+    await expect(saveButton).toBeDisabled();
   },
 };
 
@@ -102,8 +103,8 @@ export const ValidSubdomain: Story = {
     await userEvent.clear(input);
     await userEvent.type(input, 'my-workspace');
 
-    const saveButton = canvas.getByText('Save');
+    const saveButton = await canvas.findByRole('button', { name: 'Save' });
 
-    await expect(saveButton.closest('button')).toBeEnabled();
+    await expect(saveButton).toBeEnabled();
   },
 };

@@ -1,8 +1,8 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
 import { useIsRoleAgentChatChannelAccessDirty } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useIsRoleAgentChatChannelAccessDirty';
@@ -183,10 +183,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           children: settingsDraftRole.label,
         },
       ]}
-      actionButton={
+      pageCommands={
         isRoleEditable &&
         isDirty && (
-          <SaveAndCancelButtons
+          <SettingsSaveAndCancelPageCommands
             onSave={handleSave}
             onCancel={handleCancel}
             isLoading={isSaving}

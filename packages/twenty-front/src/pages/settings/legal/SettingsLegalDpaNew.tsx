@@ -7,7 +7,6 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -20,6 +19,7 @@ import {
   type DpaDocument,
   type GenerateSignedDpaResult,
 } from '@/settings/legal/types/Dpa';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
@@ -123,8 +123,8 @@ export const SettingsLegalDpaNew = () => {
         { children: t`Legal`, href: getSettingsPath(SettingsPath.LegalDpa) },
         { children: t`Generate` },
       ]}
-      actionButton={
-        <SaveAndCancelButtons
+      pageCommands={
+        <SettingsSaveAndCancelPageCommands
           isSaveDisabled={!canSave}
           isLoading={isGenerating}
           onCancel={() => navigateSettings(SettingsPath.LegalDpa)}

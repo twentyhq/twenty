@@ -18,7 +18,6 @@ type SettingsPageLayoutProps = {
   title?: ReactNode;
   pageTitle?: string;
   icon?: ReactNode;
-  actionButton?: ReactNode;
   pageCommands?: ReactNode;
   secondaryBar?: ReactNode;
   children: ReactNode;
@@ -31,7 +30,6 @@ export const SettingsPageLayout = ({
   title,
   pageTitle,
   icon,
-  actionButton,
   pageCommands,
   secondaryBar,
   children,
@@ -80,7 +78,6 @@ export const SettingsPageLayout = ({
             tag={tag}
             actionButton={
               <>
-                {actionButton}
                 <SettingsPageCommandMenu />
                 {isInMainSurface && !isLayoutCustomizationModeEnabled && (
                   <SidePanelToggleButton />

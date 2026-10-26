@@ -3,9 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { Loader } from 'twenty-ui/primitives/feedback';
@@ -77,8 +77,8 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
           },
           { children: t`Edit Account` },
         ]}
-        actionButton={
-          <SaveAndCancelButtons
+        pageCommands={
+          <SettingsSaveAndCancelPageCommands
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             isLoading={loading}

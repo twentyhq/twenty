@@ -1,7 +1,7 @@
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { useCreateUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useCreateUnsubscribeTopic';
 import { SETTINGS_UNSUBSCRIBE_TAB_IDS } from '@/settings/unsubscribers/constants/SettingsUnsubscribeTabIds';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -107,8 +107,8 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
         },
         { children: t`New Unsubscribe Topic` },
       ]}
-      actionButton={
-        <SaveAndCancelButtons
+      pageCommands={
+        <SettingsSaveAndCancelPageCommands
           isSaveDisabled={!canSave}
           isCancelDisabled={loading}
           isLoading={loading}

@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { userEvent, within } from 'storybook/test';
 
+import { CommandMenuItemsDecorator } from '~/testing/decorators/CommandMenuItemsDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -12,7 +13,7 @@ import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsNewObject',
   component: SettingsNewObject,
-  decorators: [PageDecorator],
+  decorators: [CommandMenuItemsDecorator, PageDecorator],
   args: {
     routePath: '/settings/objects/new',
   },
@@ -36,11 +37,10 @@ export const WithStandardSelected: Story = {
     const descriptionInput = await canvas.findByPlaceholderText(
       'Write a description',
     );
-    const saveButton = await canvas.findByText('Save');
     await userEvent.type(listingInput, 'Company');
     await userEvent.type(pluralInput, 'Companies');
     await userEvent.type(descriptionInput, 'Test Description');
 
-    await userEvent.click(saveButton);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Save' }));
   },
 };

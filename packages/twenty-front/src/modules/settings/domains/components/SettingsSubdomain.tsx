@@ -1,6 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID,
@@ -9,6 +8,7 @@ import {
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
@@ -53,8 +53,8 @@ export const SettingsSubdomain = () => {
           },
           { children: <Trans>Subdomain</Trans> },
         ]}
-        actionButton={
-          <SaveAndCancelButtons
+        pageCommands={
+          <SettingsSaveAndCancelPageCommands
             onCancel={() => navigate(SettingsPath.General)}
             isSaveDisabled={isSaveDisabled}
             isLoading={isSubmitting}

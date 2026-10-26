@@ -6,7 +6,6 @@ import { FormProvider } from 'react-hook-form';
 import QRCodeModule from 'react-qr-code';
 
 import { qrCodeState } from '@/auth/states/qrCode';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteTwoFactorAuthentication } from '@/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod';
 import { TwoFactorAuthenticationSetupForSettingsEffect } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupForSettingsEffect';
@@ -15,6 +14,7 @@ import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-f
 import { useTwoFactorVerificationForSettings } from '@/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings';
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
@@ -115,9 +115,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
             children: <Trans>Two-Factor Authentication</Trans>,
           },
         ]}
-        actionButton={
+        pageCommands={
           shouldShowActionButtons ? (
-            <SaveAndCancelButtons
+            <SettingsSaveAndCancelPageCommands
               isSaveDisabled={!verificationForm.canSave}
               isCancelDisabled={verificationForm.isSubmitting}
               isLoading={verificationForm.isLoading}

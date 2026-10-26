@@ -1,4 +1,5 @@
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
+import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -17,10 +18,12 @@ import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconEye, IconTrash } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { IconEye } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
+import {
+  EngineComponentKey,
+  UnsubscribeTopicVisibility,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
 
@@ -144,15 +147,12 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
         },
         { children: topicName },
       ]}
-      actionButton={
-        <Button
-          startIcon={<IconTrash />}
-          size="sm"
-          disabled={deleting}
-          onClick={() => openDialog(DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID)}
-          variant="outline"
-          color="danger"
-        >{t`Delete`}</Button>
+      pageCommands={
+        <PageCommandEffect
+          engineComponentKey={EngineComponentKey.DELETE_PAGE_ITEM}
+          onRun={() => openDialog(DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID)}
+          isDisabled={deleting}
+        />
       }
     >
       <SettingsPageContainer>

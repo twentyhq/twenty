@@ -4,9 +4,9 @@ import { useCreateOneIndexMetadataItem } from '@/object-metadata/hooks/useCreate
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
 import { SettingsObjectIndexFieldsForm } from '@/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm';
 import { SettingsObjectIndexOptionsForm } from '@/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -149,8 +149,8 @@ export const SettingsObjectNewIndex = () => {
           },
           { children: t`New Index` },
         ]}
-        actionButton={
-          <SaveAndCancelButtons
+        pageCommands={
+          <SettingsSaveAndCancelPageCommands
             isLoading={isSubmitting}
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
