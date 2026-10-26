@@ -76,7 +76,7 @@ Key points:
 
 Steps and triggers point at metadata by universal identifier, never by name or id:
 - **Objects and fields**: your app's own, or standard ones through `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`. The example above assumes the app also defines a `leadScore` number field on Company with [`defineField()`](/developers/extend/apps/data/extending-objects): a record step that writes a field missing from the workspace fails the install.
-- **Logic functions**: your app's own, exposed as a [workflow action](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) with `workflowActionTriggerSettings`.
+- **Logic functions**: any function exposed as a [workflow action](/developers/extend/apps/logic/logic-functions#exposing-a-function-as-an-ai-tool-or-workflow-action) with `workflowActionTriggerSettings`, your app's own or one from another app installed in the workspace. Another app's function runs as that app, with its role and billing, so the app that provides it must be installed first.
 - **Agents**: your app's own, from [`defineAgent()`](/developers/extend/apps/logic/skills-and-agents).
 
 A reference Twenty can't resolve fails the install.

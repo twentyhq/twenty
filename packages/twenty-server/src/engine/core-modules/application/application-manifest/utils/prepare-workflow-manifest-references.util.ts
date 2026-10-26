@@ -41,6 +41,33 @@ export const prepareWorkflowManifestReferences = ({
     WorkflowManifestFieldReference
   >();
 
+  // Another installed application's workflow action is public the way its
+  // objects and fields are: it runs as its own application, so referencing it
+  // grants the caller nothing beyond the action's inputs.
+  for (const logicFunction of Object.values(
+    existingAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
+  )) {
+    if (
+      !isDefined(logicFunction) ||
+      logicFunction.applicationId === ownerApplicationId ||
+      isDefined(logicFunction.deletedAt) ||
+      !isDefined(logicFunction.workflowActionTriggerSettings)
+    ) {
+      continue;
+    }
+    const declaredOutputSchema =
+      logicFunction.workflowActionTriggerSettings.outputSchema;
+    if (isDefined(declaredOutputSchema)) {
+      logicFunctionOutputSchemaByUniversalIdentifier.set(
+        logicFunction.universalIdentifier,
+        inputSchemaToOutputSchema(declaredOutputSchema),
+      );
+    }
+    logicFunctionIdByUniversalIdentifier.set(
+      logicFunction.universalIdentifier,
+      logicFunction.id,
+    );
+  }
   for (const logicFunction of Object.values(
     toAllUniversalFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
   )) {
