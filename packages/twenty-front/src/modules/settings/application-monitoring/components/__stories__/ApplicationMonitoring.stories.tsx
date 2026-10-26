@@ -183,6 +183,14 @@ export const Default: Story = {
     expect(await canvas.findByText(/^API requests \([\d,]+\)$/)).toBeVisible();
     expect(canvas.getByText('Code Execution (94)')).toBeVisible();
     expect(canvas.getByText('Agents (90)')).toBeVisible();
+    expect(
+      canvas.getByText(
+        '184 credits by operation type, across every install in this period',
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.getByText('3,525 API requests rejected and trigger jobs skipped'),
+    ).toBeVisible();
     expect(canvas.queryByText(/Your plan shows/)).not.toBeInTheDocument();
   },
 };

@@ -40,6 +40,10 @@ export const ApplicationMonitoringCreditsSection = ({
     );
   }
 
+  const creditsUsedLabel = i18n.number(
+    creditsUsed,
+    getApplicationMonitoringCreditsFormatOptions(creditsUsed),
+  );
   const creditChartData = buildApplicationMonitoringCreditChartData({
     ...monitoring,
     creditUsage,
@@ -51,8 +55,8 @@ export const ApplicationMonitoringCreditsSection = ({
         title={t`Credits used`}
         description={
           isAdminView
-            ? t`By operation type`
-            : t`By operation type, across every install in this period`
+            ? t`${creditsUsedLabel} credits by operation type in this period`
+            : t`${creditsUsedLabel} credits by operation type, across every install in this period`
         }
       />
       {creditUsage.length === 0 ? (
