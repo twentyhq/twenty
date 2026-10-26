@@ -1,8 +1,11 @@
 ---
 title: Page Layouts
 description: Customize record detail pages — tabs, widgets, and where front components render — using definePageLayout, definePageLayoutTab and definePageLayoutWidget.
-icon: 'table-columns'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 A **page layout** controls how a record's detail page is arranged: which tabs appear and what widgets they contain. Use `definePageLayout()` to declare a layout for an object you own, `definePageLayoutTab()` to add a single tab to a layout that already exists (yours or a standard Twenty one), or `definePageLayoutWidget()` to add a single widget to a tab that already exists.
 
@@ -251,3 +254,5 @@ export default definePageLayoutWidget({
 - `configuration` works exactly like a widget defined inline in `definePageLayout` or `definePageLayoutTab`: it references [front components](/developers/extend/apps/layout/front-components), views, fields and so on.
 - Use this instead of `definePageLayoutTab` when the tab already exists and you only want to place one widget on it. Use `definePageLayoutTab` when you want a tab of your own.
 - `twenty app pull` writes a widget you added to a tab you do not own back as a `definePageLayoutWidget()` file, under the same limits as widgets of a `definePageLayout()`.
+
+<PageBanner illustration="card-page-page-layouts" />

@@ -1,8 +1,12 @@
 ---
 title: 'Tutorial: Document Generator'
-icon: 'wand-magic-sparkles'
 description: Build a real Twenty app that generates personalized documents from your CRM data.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## What you'll build
 
 In this tutorial you'll build **Document Generator** — an app that turns reusable
 templates into personalized documents using the data already in your CRM.
@@ -73,10 +77,11 @@ Leave `twenty app dev` running in a terminal for the whole tutorial. Every time
 you add or edit a file under `src/`, it re-syncs to your server within a few
 seconds, so you can watch each capability appear in the UI as you build it.
 
-<Card
-  title="Start building →"
-  icon="database"
-  href="/developers/extend/apps/tutorials/document-generator/data-model"
->
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/banner-icons-v2/data-model.svg">
+  <CardTitle>Start building →</CardTitle>
   Chapter 1: model documents and templates.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="section-document-generator" />
