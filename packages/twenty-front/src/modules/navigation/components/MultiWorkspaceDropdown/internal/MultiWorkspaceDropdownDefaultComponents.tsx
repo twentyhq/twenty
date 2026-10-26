@@ -145,14 +145,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         </>
       )}
       <Dropdown.Section>
-        {isMobile && (
-          <Dropdown.ActionItem
-            startIcon={<IconSettings />}
-            onClick={handleSettings}
-          >
-            {t`Settings`}
-          </Dropdown.ActionItem>
-        )}
         <Dropdown.ActionItem
           startIcon={
             <SelectOptionIcon
@@ -197,6 +189,15 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             {t`Support`}
           </Dropdown.ActionItem>
         )}
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section>
+        <Dropdown.ActionItem
+          startIcon={<IconSettings />}
+          onClick={handleSettings}
+        >
+          {t`Settings`}
+        </Dropdown.ActionItem>
       </Dropdown.Section>
     </>
   );

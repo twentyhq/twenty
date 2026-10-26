@@ -191,17 +191,15 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   it('switches mode from the expanded row', async () => {
     renderModeSwitcher();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    await userEvent.click(screen.getByRole('button', { name: 'AI' }));
 
     expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
     expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
-      NAVIGATION_DRAWER_TABS.SETTINGS,
+      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
     );
   });
 
   it.each([
-    [true, 'Settings', NAVIGATION_DRAWER_TABS.SETTINGS],
-    [false, 'Settings', NAVIGATION_DRAWER_TABS.SETTINGS],
     [true, 'AI', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
     [false, 'AI', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
   ] as const)(
@@ -213,17 +211,17 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       const { store } = renderModeSwitcher({
         isLayoutCustomizationModeEnabled: true,
       });
-      const settingsButton = screen.getByRole('button', { name: label });
+      const modeButton = screen.getByRole('button', { name: label });
 
-      expect(settingsButton).toHaveAttribute('aria-disabled', 'true');
+      expect(modeButton).toHaveAttribute('aria-disabled', 'true');
       expect(screen.getByRole('button', { name: 'Home' })).toBeEnabled();
       expect(screen.getByRole('button', { name: 'Home' })).toHaveAttribute(
         'aria-disabled',
         'false',
       );
 
-      await userEvent.click(settingsButton);
-      expect(settingsButton).toHaveFocus();
+      await userEvent.click(modeButton);
+      expect(modeButton).toHaveFocus();
       await userEvent.keyboard('{Enter} ');
 
       expect(mockSwitchNavigationDrawerMode).not.toHaveBeenCalled();
@@ -232,15 +230,15 @@ describe('MainNavigationDrawerModeSwitcher', () => {
         store.set(isLayoutCustomizationModeEnabledState.atom, false);
       });
 
-      expect(settingsButton).toHaveAttribute('aria-disabled', 'false');
-      await userEvent.click(settingsButton);
+      expect(modeButton).toHaveAttribute('aria-disabled', 'false');
+      await userEvent.click(modeButton);
 
       expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
       expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(mode);
     },
   );
 
-  it('lists custom tabs before Settings and opens them', async () => {
+  it('lists custom tabs after the leading modes and opens them', async () => {
     jest
       .mocked(useWorkspaceNavigationMenuTabs)
       .mockReturnValue([developersTab]);
@@ -251,7 +249,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       .getAllByRole('button')
       .map((button) => button.getAttribute('aria-label'));
 
-    expect(buttonNames).toEqual(['Home', 'AI', 'Developers', 'Settings']);
+    expect(buttonNames).toEqual(['Home', 'AI', 'Developers']);
 
     await userEvent.click(screen.getByRole('button', { name: 'Developers' }));
 
@@ -292,7 +290,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       screen
         .getAllByRole('button')
         .map((button) => button.getAttribute('aria-label')),
-    ).toEqual(['Home', 'Inbox', 'Developers', 'Settings']);
+    ).toEqual(['Home', 'Inbox', 'Developers']);
 
     await userEvent.click(screen.getByRole('button', { name: 'Inbox' }));
 

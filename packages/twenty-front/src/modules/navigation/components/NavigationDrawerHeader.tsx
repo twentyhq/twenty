@@ -3,12 +3,18 @@ import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconSearch } from 'twenty-ui/icon';
+import { IconTool } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
+import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { preloadNavigationMenuItemDndKit } from '@/navigation-menu-item/display/dnd/preloadNavigationMenuItemDndKit';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
-import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
@@ -30,13 +36,24 @@ const StyledHeaderRow = styled.div`
   }
 `;
 
-const StyledCollapsedSearch = styled.div`
+const StyledCollapsedActions = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]}
     ${themeCssVariables.spacing[1]};
+`;
+
+const StyledShownOnDrawerHover = styled.div`
+  display: flex;
+  opacity: 0;
+  transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s);
+
+  [data-click-outside-id='${NAVIGATION_DRAWER_CLICK_OUTSIDE_ID}']:hover &,
+  &:focus-within {
+    opacity: 1;
+  }
 `;
 
 const StyledRightActions = styled.div`
@@ -55,19 +72,27 @@ const StyledWorkspaceDropdownContainer = styled.div`
 
 export const NavigationDrawerHeader = () => {
   const isMobile = useIsMobile();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isExpanded = useIsNavigationDrawerContentExpanded();
-
-  const searchButton = !isMobile && (
-    <LightIconButton
-      emphasis="standard"
-      size={isExpanded ? 'sm' : 'md'}
-      onClick={openRecordsSearchPage}
-      aria-label={t`Search`}
-    >
-      <IconSearch />
-    </LightIconButton>
+  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
+  const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
+
+  const editNavigationButton = !isMobile &&
+    hasLayoutsPermission &&
+    !isLayoutCustomizationModeEnabled && (
+      <StyledShownOnDrawerHover onMouseEnter={preloadNavigationMenuItemDndKit}>
+        <LightIconButton
+          emphasis="standard"
+          size={isExpanded ? 'sm' : 'md'}
+          onClick={enterLayoutCustomizationMode}
+          aria-label={t`Edit navigation`}
+        >
+          <IconTool />
+        </LightIconButton>
+      </StyledShownOnDrawerHover>
+    );
 
   return (
     <StyledContainer>
@@ -78,7 +103,7 @@ export const NavigationDrawerHeader = () => {
         {isExpanded && (
           <StyledRightActions>
             <FrontComponentMediaSessionIndicator />
-            {searchButton}
+            {editNavigationButton}
             <NavigationDrawerCollapseButton
               direction="left"
               size={isMobile ? 'md' : 'sm'}
@@ -87,10 +112,10 @@ export const NavigationDrawerHeader = () => {
         )}
       </StyledHeaderRow>
       {!isExpanded && !isMobile && (
-        <StyledCollapsedSearch>
+        <StyledCollapsedActions>
           <FrontComponentMediaSessionIndicator />
-          {searchButton}
-        </StyledCollapsedSearch>
+          {editNavigationButton}
+        </StyledCollapsedActions>
       )}
     </StyledContainer>
   );

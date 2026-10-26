@@ -23,10 +23,7 @@ import {
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
-import {
-  type NavigationDrawerActiveTab,
-  NAVIGATION_DRAWER_TABS,
-} from '@/ui/navigation/states/navigationDrawerTabs';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
@@ -73,15 +70,10 @@ export const MainNavigationDrawerModeSwitcher = () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
 
-  const getDisabledModeTooltip = (mode: NavigationDrawerActiveTab) => {
-    if (mode === NAVIGATION_DRAWER_TABS.SETTINGS) {
-      return t`Finish editing the layout to open Settings`;
-    }
-
-    return isAiChatInboxEnabled
+  const getDisabledModeTooltip = () =>
+    isAiChatInboxEnabled
       ? t`Finish editing the layout to open Inbox`
       : t`Finish editing the layout to open AI`;
-  };
 
   if (modes.length === 0) {
     return null;
@@ -140,7 +132,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
         Icon={Icon}
         label={label}
         ariaLabel={isUnread ? t`${label}, unread` : label}
-        tooltip={isDisabled ? getDisabledModeTooltip(mode) : label}
+        tooltip={isDisabled ? getDisabledModeTooltip() : label}
         isTooltipDisabled={!shouldShowTooltips && !isDisabled}
         isActive={isActive}
         isExpanded={isExpanded}
@@ -159,9 +151,6 @@ export const MainNavigationDrawerModeSwitcher = () => {
     ({ mode }) =>
       mode !== NAVIGATION_DRAWER_TABS.SETTINGS &&
       (mode !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY || !hasAiChatSections),
-  );
-  const settingsMode = modes.find(
-    ({ mode }) => mode === NAVIGATION_DRAWER_TABS.SETTINGS,
   );
   const visibleTabs = navigationMenuTabs.filter(
     (tab) =>
@@ -203,7 +192,6 @@ export const MainNavigationDrawerModeSwitcher = () => {
           isTooltipDisabled={!shouldShowTooltips}
         />
       )}
-      {isDefined(settingsMode) && renderMode(settingsMode)}
     </StyledSwitcher>
   );
 };
