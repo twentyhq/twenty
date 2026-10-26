@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { billingState } from '@/client-config/states/billingState';
 import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
@@ -22,6 +23,7 @@ export const useGettingStartedTrial = () => {
     billingHasPaymentMethodSelector,
   );
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const billing = useAtomStateValue(billingState);
 
   const currentBillingSubscription =
     currentWorkspace?.currentBillingSubscription;
@@ -38,11 +40,18 @@ export const useGettingStartedTrial = () => {
     ? t(BILLING_PLAN_LABELS[planKey])
     : undefined;
 
+  const daysLeft = isDefined(trialEnd)
+    ? Math.max(0, differenceInCalendarDays(trialEnd, new Date()))
+    : 0;
+  const trialDurationInDays =
+    billing?.trialPeriods.find(
+      (trialPeriod) => !trialPeriod.isCreditCardRequired,
+    )?.duration ?? 0;
+
   return {
     trialEnd,
-    daysLeft: isDefined(trialEnd)
-      ? Math.max(0, differenceInCalendarDays(trialEnd, new Date()))
-      : 0,
+    daysLeft,
+    trialDays: Math.max(trialDurationInDays, daysLeft),
     isCountdownVisible,
     canKeepPlan:
       isCountdownVisible && permissionFlagMap[PermissionFlagType.WORKSPACE],

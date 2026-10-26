@@ -22,13 +22,7 @@ import {
   IconZzz,
 } from 'twenty-ui/icon';
 
-type GettingStartedSnoozeMenuProps = {
-  side?: 'top' | 'bottom';
-};
-
-export const GettingStartedSnoozeMenu = ({
-  side = 'bottom',
-}: GettingStartedSnoozeMenuProps) => {
+export const GettingStartedSnoozeMenu = () => {
   const { t } = useLingui();
   const dropdownId = `getting-started-snooze-${useId()}`;
   const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
@@ -75,7 +69,6 @@ export const GettingStartedSnoozeMenu = ({
       />
       <DropdownContent
         width={GenericDropdownContentWidth.ExtraLarge}
-        side={side}
         align="end"
         aria-label={t`Snooze Getting started`}
       >

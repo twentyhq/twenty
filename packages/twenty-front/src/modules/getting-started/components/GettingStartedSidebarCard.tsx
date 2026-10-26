@@ -1,42 +1,124 @@
-import { GettingStartedSnoozeMenu } from '@/getting-started/components/GettingStartedSnoozeMenu';
 import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStartedSteps';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { Link } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconCreditCard, IconRocket } from 'twenty-ui/icon';
+import {
+  IconChevronRight,
+  IconCreditCard,
+  IconHourglassHigh,
+  IconRocket,
+} from 'twenty-ui/icon';
 import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
-  margin: ${themeCssVariables.spacing[2]};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.light};
 `;
 
 const StyledCardBody = styled.div`
   display: flex;
   flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledHeader = styled(Link)`
+  align-items: center;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing[6]};
+  padding: 0 ${themeCssVariables.spacing[1]};
+  text-decoration: none;
+  white-space: nowrap;
+
+  &[data-countdown] {
+    color: ${themeCssVariables.font.color.secondary};
+    height: ${themeCssVariables.spacing[8]};
+  }
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.light};
+  }
+`;
+
+const StyledStepCount = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  flex: 1;
+  font-weight: ${themeCssVariables.font.weight.regular};
+  text-align: end;
+
+  [data-countdown] > & {
+    color: ${themeCssVariables.font.color.light};
+    text-align: start;
+  }
+`;
+
+const StyledDivider = styled.div`
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+`;
+
+const StyledTrialRow = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledDaysLeft = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  flex: 1;
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+`;
+
+const StyledTrialLabel = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing['1.5']};
-  padding: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledTrialDays = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledTrialDay = styled.span`
+  background: ${themeCssVariables.background.transparent.medium};
+  border-radius: ${themeCssVariables.border.radius.pill};
+  corner-shape: round;
+  flex: 1;
+  height: ${themeCssVariables.spacing['1.5']};
+
+  &[data-remaining] {
+    background: ${themeCssVariables.color.amber10};
+  }
 `;
 
 export const GettingStartedSidebarCard = () => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { progress } = useGettingStartedProgress();
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-  const { isCountdownVisible, daysLeft, canKeepPlan, keepPlanLabel } =
-    useGettingStartedTrial();
+  const {
+    isCountdownVisible,
+    daysLeft,
+    trialDays,
+    canKeepPlan,
+    keepPlanLabel,
+  } = useGettingStartedTrial();
   const isNavigationDrawerContentExpanded =
     useIsNavigationDrawerContentExpanded();
 
@@ -58,29 +140,65 @@ export const GettingStartedSidebarCard = () => {
       <StyledContainer>
         <Card.Root backgroundColor={themeCssVariables.background.primary}>
           <StyledCardBody>
-            <NavigationDrawerItem
-              label={t`Getting started`}
-              secondaryLabel={`${progress.completedSteps.length}/${GETTING_STARTED_STEPS.length}`}
-              Icon={IconRocket}
+            <StyledHeader
               to={AppPath.GettingStarted}
-              rightOptions={<GettingStartedSnoozeMenu side="top" />}
-            />
-            <ProgressBar
-              aria-label={t`Getting started progress`}
-              value={progress.completedSteps.length}
-              max={GETTING_STARTED_STEPS.length}
-              size="sm"
-              backgroundColor={themeCssVariables.background.tertiary}
-              barColor={themeCssVariables.color.blue}
-              withBorderRadius
-            />
-            {isCountdownVisible && (
-              <span>
-                {plural(daysLeft, {
-                  one: '# day left',
-                  other: '# days left',
-                })}
-              </span>
+              data-countdown={isCountdownVisible || undefined}
+            >
+              <IconRocket
+                size={theme.icon.size.md}
+                color={
+                  isCountdownVisible
+                    ? theme.font.color.secondary
+                    : theme.tag.text.purple
+                }
+              />
+              {t`Getting started`}
+              <StyledStepCount>
+                {`${progress.completedSteps.length}/${GETTING_STARTED_STEPS.length}`}
+              </StyledStepCount>
+              {isCountdownVisible && (
+                <IconChevronRight
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
+              )}
+            </StyledHeader>
+            {isCountdownVisible ? (
+              <>
+                <StyledDivider />
+                <StyledTrialRow>
+                  <IconHourglassHigh size={theme.icon.size.md} />
+                  <StyledDaysLeft>
+                    {plural(daysLeft, {
+                      one: '# day left',
+                      other: '# days left',
+                    })}
+                  </StyledDaysLeft>
+                  <StyledTrialLabel>{t`Trial`}</StyledTrialLabel>
+                </StyledTrialRow>
+                <StyledTrialDays aria-hidden>
+                  {Array.from({ length: trialDays }, (_, index) => (
+                    <StyledTrialDay
+                      key={index}
+                      data-remaining={
+                        index >= trialDays - daysLeft || undefined
+                      }
+                    />
+                  ))}
+                </StyledTrialDays>
+              </>
+            ) : (
+              <ProgressBar
+                aria-label={t`Getting started progress`}
+                value={progress.completedSteps.length}
+                max={GETTING_STARTED_STEPS.length}
+                size="sm"
+                backgroundColor={
+                  themeCssVariables.background.transparent.medium
+                }
+                barColor={themeCssVariables.color.blue}
+                withBorderRadius
+              />
             )}
             {canKeepPlan ? (
               <NavigationButton
