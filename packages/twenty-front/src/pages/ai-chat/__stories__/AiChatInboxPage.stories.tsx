@@ -26,6 +26,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
+import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
@@ -527,7 +528,10 @@ export const CloseConversationPane: Story = {
     await user.click(within(firstThreadRow).getByText(FIRST_THREAD_TITLE));
     await canvas.findByRole('button', { name: 'Chat details' });
     await waitFor(() =>
-      expect(list.getBoundingClientRect().width).toBeCloseTo(400, 0),
+      expect(list.getBoundingClientRect().width).toBeCloseTo(
+        AI_CHAT_INBOX_LIST_PANE_WIDTH,
+        0,
+      ),
     );
 
     const splitListWidth = list.getBoundingClientRect().width;

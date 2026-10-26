@@ -26,6 +26,7 @@ import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPa
 import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
 import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
+import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useAgentChatInboxShownThreads } from '@/ai/hooks/useAgentChatInboxShownThreads';
 import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
@@ -58,7 +59,7 @@ import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 
 const StyledInbox = styled.div`
-  --inbox-list-pane-width: 400px;
+  --inbox-list-pane-width: ${AI_CHAT_INBOX_LIST_PANE_WIDTH}px;
 
   display: flex;
   flex: 1;
