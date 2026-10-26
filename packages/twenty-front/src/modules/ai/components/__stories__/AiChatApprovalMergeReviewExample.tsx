@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,6 +41,7 @@ export const AiChatApprovalMergeReviewExample = ({
   onMerge,
   onSkip,
 }: AiChatApprovalMergeReviewExampleProps) => {
+  const { t } = useLingui();
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
   const [statuses, setStatuses] = useState<
     Record<string, AiChatApprovalReviewStatus>
@@ -127,7 +129,7 @@ export const AiChatApprovalMergeReviewExample = ({
         status,
         outcomeMessage:
           status === 'uncertain'
-            ? 'Check the merge result before trying again'
+            ? t`Check the merge result before trying again`
             : undefined,
         progress: status === 'running' ? { completed: 1, total: 2 } : undefined,
       };
