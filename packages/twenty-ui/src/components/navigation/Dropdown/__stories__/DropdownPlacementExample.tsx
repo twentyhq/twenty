@@ -2,6 +2,7 @@ import { type Ref } from 'react';
 
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
+import { themeCssVariables } from '@ui/theme';
 
 import { Dropdown } from '../Dropdown';
 import { useDropdownPlacementOrThrow } from '../hooks/useDropdownPlacementOrThrow';
@@ -27,7 +28,13 @@ const ResolvedDropdownPlacement = () => {
 export const DropdownPlacementExample = ({
   onContentRef,
 }: DropdownPlacementExampleProps) => (
-  <div style={{ position: 'fixed', bottom: 8, left: 40 }}>
+  <div
+    style={{
+      position: 'fixed',
+      bottom: themeCssVariables.spacing[2],
+      left: themeCssVariables.spacing[10],
+    }}
+  >
     <Dropdown.Root type="picker">
       <Dropdown.Trigger render={<Button>Placement picker</Button>} />
       <Dropdown.Content
