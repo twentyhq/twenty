@@ -49,18 +49,33 @@ const StyledHeading = styled.div`
 
 const StyledDigits = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing['1.5']};
 `;
 
 const StyledDigit = styled.span`
-  background: ${themeCssVariables.color.amber3};
-  border: 1px solid ${themeCssVariables.color.amber6};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  align-items: center;
+  background: ${themeCssVariables.color.orange3};
+  border: 1px solid ${themeCssVariables.color.orange6};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
   color: ${themeCssVariables.color.amber11};
+  display: flex;
   font-size: ${themeCssVariables.font.size.xxl};
-  line-height: ${themeCssVariables.spacing[10]};
-  text-align: center;
-  width: ${themeCssVariables.spacing[8]};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  height: ${themeCssVariables.spacing[11]};
+  justify-content: center;
+  position: relative;
+  width: ${themeCssVariables.spacing[9]};
+
+  &::after {
+    background: ${themeCssVariables.color.orange6};
+    content: '';
+    height: 1px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 50%;
+  }
 `;
 
 const StyledGoal = styled.div`
