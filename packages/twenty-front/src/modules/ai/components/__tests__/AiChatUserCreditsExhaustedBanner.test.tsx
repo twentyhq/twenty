@@ -1,3 +1,4 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -6,90 +7,111 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
-import { agentChatUserCreditsExhaustedNoticeState } from '@/ai/states/agentChatUserCreditsExhaustedNoticeState';
+import {
+  type CurrentWorkspace,
+  currentWorkspaceState,
+} from '@/auth/states/currentWorkspaceState';
+import {
+  GetAiChatUserCreditsUsageDocument,
+  UserCreditsFallback,
+} from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const renderBanner = (
-  notice: {
-    renewsAt: string;
-    isFallingBackToWorkspaceCredits: boolean;
-  } | null,
-) => {
+const PERIOD_END = '2026-10-26T00:00:00.000Z';
+
+const renderBanner = ({
+  consumedValue,
+  userCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
+}: {
+  consumedValue: number;
+  userCreditsFallback?: UserCreditsFallback;
+}) => {
   const store = createStore();
 
-  store.set(agentChatUserCreditsExhaustedNoticeState.atom, notice);
+  store.set(currentWorkspaceState.atom, {
+    id: 'workspace',
+    billingCustomer: {
+      id: 'billing-customer',
+      hasUserCredits: true,
+      userCreditsFallback,
+    },
+  } as CurrentWorkspace);
 
   render(
     <JotaiProvider store={store}>
-      <I18nProvider i18n={i18n}>
-        <AiChatUserCreditsExhaustedBanner />
-      </I18nProvider>
+      <MockedProvider
+        mocks={[
+          {
+            request: { query: GetAiChatUserCreditsUsageDocument },
+            result: {
+              data: {
+                aiChatUserCreditsUsage: {
+                  __typename: 'AiChatUserCreditsUsage',
+                  limitValue: 4160000,
+                  consumedValue,
+                  periodEnd: PERIOD_END,
+                },
+              },
+            },
+          },
+        ]}
+      >
+        <I18nProvider i18n={i18n}>
+          <AiChatUserCreditsExhaustedBanner />
+        </I18nProvider>
+      </MockedProvider>
     </JotaiProvider>,
   );
 };
 
 describe('AiChatUserCreditsExhaustedBanner', () => {
   beforeEach(() => {
-    jest.useFakeTimers({ now: new Date('2026-10-23T12:00:00Z') });
+    localStorage.clear();
+    jest.useFakeTimers({
+      now: new Date('2026-10-23T12:00:00Z'),
+      doNotFake: ['setTimeout', 'queueMicrotask', 'nextTick', 'setImmediate'],
+    });
   });
 
   afterEach(() => {
     jest.useRealTimers();
   });
 
-  it('tells the member their chats now use workspace credits until renewal', () => {
-    renderBanner({
-      renewsAt: '2026-10-26T00:00:00Z',
-      isFallingBackToWorkspaceCredits: true,
-    });
+  it.each([
+    [
+      UserCreditsFallback.WORKSPACE_CREDITS,
+      'You have used all your AI credits. Chats use workspace credits until yours renew in 3 days.',
+    ],
+    [
+      UserCreditsFallback.STOP,
+      'You have used all your AI credits. Chats stop until yours renew in 3 days.',
+    ],
+  ])(
+    'tells the member what happens until renewal with fallback %s',
+    async (userCreditsFallback, notice) => {
+      renderBanner({ consumedValue: 4160000, userCreditsFallback });
 
+      expect(await screen.findByText(notice)).toBeVisible();
+    },
+  );
+
+  it('stays hidden for the rest of the period once dismissed', async () => {
+    renderBanner({ consumedValue: 4160000 });
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Dismiss' }),
+    );
+
+    expect(screen.queryByText(/AI credits/)).not.toBeInTheDocument();
     expect(
-      screen.getByText(
-        'You have used all your AI credits. Chats use workspace credits until yours renew in 3 days.',
+      JSON.parse(
+        localStorage.getItem(
+          'ai/agentChatUserCreditsBannerDismissedPeriodEnd',
+        ) ?? 'null',
       ),
-    ).toBeVisible();
-  });
-
-  it('tells the member their chats stop until renewal', () => {
-    renderBanner({
-      renewsAt: '2026-10-26T00:00:00Z',
-      isFallingBackToWorkspaceCredits: false,
-    });
-
-    expect(
-      screen.getByText(
-        'You have used all your AI credits. Chats stop until yours renew in 3 days.',
-      ),
-    ).toBeVisible();
-  });
-
-  it('goes away once dismissed', async () => {
-    jest.useRealTimers();
-    renderBanner({
-      renewsAt: new Date(Date.now() + 3 * 86400000).toISOString(),
-      isFallingBackToWorkspaceCredits: true,
-    });
-
-    await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
-
-    expect(screen.queryByText(/AI credits/)).not.toBeInTheDocument();
-  });
-
-  it('renders nothing once the credits have renewed', () => {
-    renderBanner({
-      renewsAt: '2026-10-23T00:00:00Z',
-      isFallingBackToWorkspaceCredits: true,
-    });
-
-    expect(screen.queryByText(/AI credits/)).not.toBeInTheDocument();
-  });
-
-  it('renders nothing without a notice', () => {
-    renderBanner(null);
-
-    expect(screen.queryByText(/AI credits/)).not.toBeInTheDocument();
+    ).toBe(PERIOD_END);
   });
 });

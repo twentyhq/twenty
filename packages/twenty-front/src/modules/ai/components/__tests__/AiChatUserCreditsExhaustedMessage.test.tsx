@@ -2,7 +2,7 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -23,23 +23,25 @@ jest.mock('@/ai/hooks/useCanRetryCurrentAiChatTurn', () => ({
   useCanRetryCurrentAiChatTurn: () => true,
 }));
 
-const renderError = (error: AiChatError) =>
+const renderError = (error: AiChatError, consumedValue = 830000) => {
+  const resolveUserCreditsUsage = jest.fn(() => ({
+    data: {
+      aiChatUserCreditsUsage: {
+        __typename: 'AiChatUserCreditsUsage',
+        limitValue: 830000,
+        consumedValue,
+        periodEnd: '2026-10-26T00:00:00.000Z',
+      },
+    },
+  }));
+
   render(
     <JotaiProvider store={createStore()}>
       <MockedProvider
         mocks={[
           {
             request: { query: GetAiChatUserCreditsUsageDocument },
-            result: {
-              data: {
-                aiChatUserCreditsUsage: {
-                  __typename: 'AiChatUserCreditsUsage',
-                  limitValue: 830000,
-                  consumedValue: 830000,
-                  periodEnd: '2026-10-26T00:00:00.000Z',
-                },
-              },
-            },
+            result: resolveUserCreditsUsage,
           },
         ]}
       >
@@ -50,11 +52,20 @@ const renderError = (error: AiChatError) =>
     </JotaiProvider>,
   );
 
+  return { resolveUserCreditsUsage };
+};
+
 describe('AiChatErrorRenderer with spent user credits', () => {
   beforeEach(() => {
     jest.useFakeTimers({
       now: new Date('2026-10-23T12:00:00Z'),
-      doNotFake: ['setTimeout', 'queueMicrotask', 'nextTick', 'setImmediate'],
+      doNotFake: [
+        'setTimeout',
+        'setInterval',
+        'queueMicrotask',
+        'nextTick',
+        'setImmediate',
+      ],
     });
   });
 
@@ -77,6 +88,22 @@ describe('AiChatErrorRenderer with spent user credits', () => {
     expect(
       screen.queryByRole('button', { name: 'Retry' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('leaves the renewal out of a reopened turn once credits have renewed', async () => {
+    const { resolveUserCreditsUsage } = renderError(
+      createAiChatCodedError(
+        'The member ran out of AI credits.',
+        AiChatErrorCode.USER_CREDITS_EXHAUSTED,
+      ),
+      0,
+    );
+
+    await waitFor(() => expect(resolveUserCreditsUsage).toHaveBeenCalled());
+    await act(() => Promise.resolve());
+
+    expect(screen.getByText('The member ran out of AI credits.')).toBeVisible();
+    expect(screen.queryByText(/renew in/)).not.toBeInTheDocument();
   });
 
   it('explains a send refused upfront', async () => {

@@ -870,6 +870,7 @@ type Billing {
 
 type BillingCustomer {
   hasPaymentMethod: Boolean
+  hasUserCredits: Boolean!
   id: UUID!
   userCreditsFallback: UserCreditsFallback!
 }

@@ -1955,6 +1955,9 @@ export default {
             "hasPaymentMethod": [
                 4
             ],
+            "hasUserCredits": [
+                4
+            ],
             "id": [
                 517
             ],

@@ -6,6 +6,7 @@ import { AiChatErrorMessage } from '@/ai/components/AiChatErrorMessage';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { computeDaysUntilReset } from '@/ai/utils/computeDaysUntilReset';
+import { isAiChatUserCreditsExhausted } from '@/ai/utils/isAiChatUserCreditsExhausted';
 
 type AiChatUserCreditsExhaustedMessageProps = {
   error: AiChatError;
@@ -18,9 +19,11 @@ export const AiChatUserCreditsExhaustedMessage = ({
 
   const { userCreditsUsage } = useAiChatUserCreditsUsage();
 
-  const daysUntilReset = isDefined(userCreditsUsage)
-    ? computeDaysUntilReset(userCreditsUsage.periodEnd)
-    : null;
+  const daysUntilReset =
+    isDefined(userCreditsUsage) &&
+    isAiChatUserCreditsExhausted(userCreditsUsage)
+      ? computeDaysUntilReset(userCreditsUsage.periodEnd)
+      : null;
 
   return (
     <AiChatErrorMessage

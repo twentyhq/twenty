@@ -11,7 +11,6 @@ import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetche
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatUserCreditsExhaustedNoticeState } from '@/ai/states/agentChatUserCreditsExhaustedNoticeState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
@@ -30,6 +29,10 @@ const subscribe = jest.fn();
 const disconnect = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ refreshAgentChatThreads }),
+}));
+const refreshAiChatUserCreditsUsage = jest.fn();
+jest.mock('@/ai/hooks/useRefreshAiChatUserCreditsUsage', () => ({
+  useRefreshAiChatUserCreditsUsage: () => ({ refreshAiChatUserCreditsUsage }),
 }));
 const key = { threadId: 'thread' };
 const messagesAtom = agentChatMessagesFamilyState.atomFamily(key);
@@ -353,15 +356,7 @@ describe('Message reactions', () => {
 });
 
 describe('User credits exhausted', () => {
-  const renewsAt = '2026-10-26T00:00:00.000Z';
-
-  const sendUserCreditsExhausted = ({
-    workspaceMemberId,
-    isFallingBackToWorkspaceCredits,
-  }: {
-    workspaceMemberId: string;
-    isFallingBackToWorkspaceCredits: boolean;
-  }) =>
+  const sendUserCreditsExhausted = (workspaceMemberId: string) =>
     subscribe.mock.calls[0][1].next({
       data: {
         onAgentChatEvent: {
@@ -369,8 +364,8 @@ describe('User credits exhausted', () => {
           event: {
             type: 'user-credits-exhausted',
             workspaceMemberId,
-            isFallingBackToWorkspaceCredits,
-            renewsAt,
+            isFallingBackToWorkspaceCredits: true,
+            renewsAt: '2026-10-26T00:00:00.000Z',
           },
         },
       },
@@ -386,47 +381,18 @@ describe('User credits exhausted', () => {
     } as never);
   });
 
-  it.each([true, false])(
-    'notices the sender that their credits ran out, falling back: %s',
-    (isFallingBackToWorkspaceCredits) => {
-      const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
-        wrapper: Wrapper,
-      });
-
-      act(() =>
-        sendUserCreditsExhausted({
-          workspaceMemberId: 'julia',
-          isFallingBackToWorkspaceCredits,
-        }),
-      );
-
-      expect(
-        jotaiStore.get(agentChatUserCreditsExhaustedNoticeState.atom),
-      ).toEqual({ renewsAt, isFallingBackToWorkspaceCredits });
-      expect(jotaiStore.get(errorAtom)).toBeNull();
-      unmount();
-    },
-  );
-
-  it('ignores the credits of another member of a shared thread', () => {
+  it('refreshes the user credits of the member who sent the turn only', () => {
     const { unmount } = renderHook(() => useAgentChatSubscription('thread'), {
       wrapper: Wrapper,
     });
 
-    act(() => {
-      sendUserCreditsExhausted({
-        workspaceMemberId: 'tom',
-        isFallingBackToWorkspaceCredits: true,
-      });
-      sendUserCreditsExhausted({
-        workspaceMemberId: 'tom',
-        isFallingBackToWorkspaceCredits: false,
-      });
-    });
+    act(() => sendUserCreditsExhausted('tom'));
 
-    expect(
-      jotaiStore.get(agentChatUserCreditsExhaustedNoticeState.atom),
-    ).toBeNull();
+    expect(refreshAiChatUserCreditsUsage).not.toHaveBeenCalled();
+
+    act(() => sendUserCreditsExhausted('julia'));
+
+    expect(refreshAiChatUserCreditsUsage).toHaveBeenCalledTimes(1);
     expect(jotaiStore.get(errorAtom)).toBeNull();
     unmount();
   });

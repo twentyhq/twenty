@@ -51,7 +51,7 @@ import { isQuotaLimit } from 'src/engine/core-modules/usage-limit/utils/is-quota
 import { splitUserCreditsAcrossEvents } from 'src/engine/core-modules/usage-limit/utils/split-user-credits-across-events.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
@@ -242,6 +242,19 @@ export class UsageLimitQuotaService {
       consumedValue: consumedValue ?? null,
       periodEnd: counter.periodEnd,
     };
+  }
+
+  async hasUserCredits(workspaceId: string): Promise<boolean> {
+    const quotaLimitDefaults = await this.buildQuotaLimitDefaults({
+      workspaceId,
+      resourceType: UsageResourceType.AI,
+    });
+
+    return quotaLimitDefaults.some(
+      (quotaLimitDefault) =>
+        quotaLimitDefault.unit === UsageUnit.USER_CREDIT &&
+        quotaLimitDefault.limitValue > 0,
+    );
   }
 
   async getWorkspaceAllowanceRemainingMicro(

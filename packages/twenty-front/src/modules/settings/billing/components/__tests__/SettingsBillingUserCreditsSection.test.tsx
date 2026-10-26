@@ -13,7 +13,6 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingUserCreditsSection } from '@/settings/billing/components/SettingsBillingUserCreditsSection';
 import {
-  GetAiChatUserCreditsUsageDocument,
   PermissionFlagType,
   UpdateUserCreditsFallbackDocument,
   UserCreditsFallback,
@@ -53,6 +52,7 @@ const renderSection = ({
     billingCustomer: {
       id: BILLING_CUSTOMER_ID,
       hasPaymentMethod: true,
+      hasUserCredits,
       userCreditsFallback,
     },
   } as CurrentWorkspace);
@@ -61,21 +61,6 @@ const renderSection = ({
     <JotaiProvider store={store}>
       <MockedProvider
         mocks={[
-          {
-            request: { query: GetAiChatUserCreditsUsageDocument },
-            result: {
-              data: {
-                aiChatUserCreditsUsage: hasUserCredits
-                  ? {
-                      __typename: 'AiChatUserCreditsUsage',
-                      limitValue: 4160000,
-                      consumedValue: 0,
-                      periodEnd: '2026-10-26T00:00:00.000Z',
-                    }
-                  : null,
-              },
-            },
-          },
           {
             request: {
               query: UpdateUserCreditsFallbackDocument,
@@ -135,18 +120,13 @@ describe('SettingsBillingUserCreditsSection', () => {
   it.each([
     { hasUserCredits: false, hasBillingPermission: true },
     { hasUserCredits: true, hasBillingPermission: false },
-  ])(
-    'stays hidden with %o',
-    async ({ hasUserCredits, hasBillingPermission }) => {
-      renderSection({
-        hasUserCredits,
-        hasBillingPermission,
-        userCreditsFallback: UserCreditsFallback.WORKSPACE_CREDITS,
-      });
+  ])('stays hidden with %o', ({ hasUserCredits, hasBillingPermission }) => {
+    renderSection({
+      hasUserCredits,
+      hasBillingPermission,
+      userCreditsFallback: UserCreditsFallback.WORKSPACE_CREDITS,
+    });
 
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      expect(screen.queryByText('User credits')).not.toBeInTheDocument();
-    },
-  );
+    expect(screen.queryByText('User credits')).not.toBeInTheDocument();
+  });
 });

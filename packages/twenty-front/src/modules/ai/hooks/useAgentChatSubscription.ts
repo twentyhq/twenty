@@ -6,6 +6,7 @@ import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChat
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useRefreshAiChatUserCreditsUsage } from '@/ai/hooks/useRefreshAiChatUserCreditsUsage';
 import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect, useState } from 'react';
 import { t } from '@lingui/core/macro';
@@ -32,7 +33,6 @@ import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamin
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatStreamRecoveryAttemptsState } from '@/ai/states/agentChatStreamRecoveryAttemptsState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatUserCreditsExhaustedNoticeState } from '@/ai/states/agentChatUserCreditsExhaustedNoticeState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { accumulateAgentChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
@@ -63,6 +63,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const { refreshAiChatUserCreditsUsage } = useRefreshAiChatUserCreditsUsage();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const sseClient = useAtomStateValue(sseClientState);
   const [resubscribeNonce, setResubscribeNonce] = useState(0);
@@ -340,19 +341,12 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'user-credits-exhausted': {
-          // A shared thread broadcasts to every viewer, but only the sender's credits ran out
           if (
-            event.workspaceMemberId !==
+            event.workspaceMemberId ===
             store.get(currentWorkspaceMemberState.atom)?.id
           ) {
-            break;
+            refreshAiChatUserCreditsUsage();
           }
-
-          store.set(agentChatUserCreditsExhaustedNoticeState.atom, {
-            renewsAt: event.renewsAt,
-            isFallingBackToWorkspaceCredits:
-              event.isFallingBackToWorkspaceCredits,
-          });
           break;
         }
       }
@@ -503,6 +497,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     store,
     refreshAgentChatThreads,
     refreshAgentChatThreadPermissions,
+    refreshAiChatUserCreditsUsage,
     applyAgentChatThreadUpdate,
     currentUserWorkspace,
   ]);

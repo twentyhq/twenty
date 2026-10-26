@@ -100,6 +100,7 @@ export const USER_QUERY_FRAGMENT = gql`
       billingCustomer {
         id
         hasPaymentMethod
+        hasUserCredits
         userCreditsFallback
       }
       billingSubscriptions {

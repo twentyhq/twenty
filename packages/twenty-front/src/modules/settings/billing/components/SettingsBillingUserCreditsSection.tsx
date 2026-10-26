@@ -4,7 +4,6 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconCoins } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
-import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpdateUserCreditsFallback } from '@/settings/billing/hooks/useUpdateUserCreditsFallback';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
@@ -24,17 +23,17 @@ export const SettingsBillingUserCreditsSection = () => {
     PermissionFlagType.BILLING,
   );
 
-  // User credits come from the plan, the same for every member, so the viewer's own allowance tells whether the plan has any
-  const { userCreditsUsage } = useAiChatUserCreditsUsage({
-    skip: !hasPermissionToManageBilling,
-  });
+  const billingCustomer = currentWorkspace?.billingCustomer;
 
-  const userCreditsFallback =
-    currentWorkspace?.billingCustomer?.userCreditsFallback;
-
-  if (!isDefined(userCreditsUsage) || !isDefined(userCreditsFallback)) {
+  if (
+    !hasPermissionToManageBilling ||
+    !isDefined(billingCustomer) ||
+    !billingCustomer.hasUserCredits
+  ) {
     return null;
   }
+
+  const { userCreditsFallback } = billingCustomer;
 
   return (
     <Section.Root>

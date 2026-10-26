@@ -215,7 +215,7 @@ export const AiChatContextUsageButton = () => {
             >
               {t`Context window`}
             </MetricRow>
-            {!isWorkspaceSetupChat && isDefined(userCreditsUsage) && (
+            {isDefined(userCreditsUsage) && (
               <MetricRow
                 startIcon={<IconUser size={theme.icon.size.sm} />}
                 progress={personalUsagePercentage ?? 0}
