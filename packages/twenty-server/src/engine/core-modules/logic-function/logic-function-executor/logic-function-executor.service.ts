@@ -123,7 +123,7 @@ export class LogicFunctionExecutorService {
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
 
-  // for callers that report a failed run as their own error; executor exceptions such as usage limits pass through
+  // for callers that report a failed run as their own error
   async executeOrThrow({
     toException,
     ...executeArgs
