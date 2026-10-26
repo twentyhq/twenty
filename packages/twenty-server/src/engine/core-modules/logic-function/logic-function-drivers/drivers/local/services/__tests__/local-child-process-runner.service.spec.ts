@@ -29,7 +29,7 @@ describe('LocalChildProcessRunnerService', () => {
 
   it('spawns child process without max-old-space-size when env is not set', () => {
     delete process.env.LOGIC_FUNCTION_LOCAL_MAX_OLD_SPACE_SIZE_MB;
-    runner.runChildWithEnv({
+    void runner.runChildWithEnv({
       runnerPath: '/path/to/runner.js',
       env: {},
       payload: {},
@@ -46,7 +46,7 @@ describe('LocalChildProcessRunnerService', () => {
 
   it('passes --max-old-space-size when valid positive integer is provided in env', () => {
     process.env.LOGIC_FUNCTION_LOCAL_MAX_OLD_SPACE_SIZE_MB = '256';
-    runner.runChildWithEnv({
+    void runner.runChildWithEnv({
       runnerPath: '/path/to/runner.js',
       env: {},
       payload: {},
@@ -63,7 +63,7 @@ describe('LocalChildProcessRunnerService', () => {
 
   it('ignores invalid or non-positive max-old-space-size', () => {
     process.env.LOGIC_FUNCTION_LOCAL_MAX_OLD_SPACE_SIZE_MB = 'invalid';
-    runner.runChildWithEnv({
+    void runner.runChildWithEnv({
       runnerPath: '/path/to/runner.js',
       env: {},
       payload: {},
