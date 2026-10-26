@@ -1,7 +1,7 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
 import { ApiPath } from 'twenty-shared/types';
 
-import { computeOpenApiPath } from 'src/engine/core-modules/open-api/utils/path.utils';
+import { computeOpenApiPath } from 'src/engine/core-modules/open-api/utils/path.util';
 
 export const API_Version = 'v0.1';
 
