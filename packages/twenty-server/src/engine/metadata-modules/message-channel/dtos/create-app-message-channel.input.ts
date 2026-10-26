@@ -37,6 +37,12 @@ export class CreateAppMessageChannelInput {
   @IsNotEmpty()
   visibility: MessageChannelVisibility;
 
+  // set once: handles are stored in this field's canonical form, which a later change would leave inconsistent
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  participantHandleFieldUniversalIdentifier?: string;
+
   @Field(() => UUIDScalarType, { nullable: true })
   @IsOptional()
   @IsUUID()

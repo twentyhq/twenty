@@ -274,7 +274,6 @@ enum AllMetadataName {
   frontComponent
   index
   logicFunction
-  messagingProvider
   navigationMenuItem
   objectMetadata
   objectPermission
@@ -340,7 +339,7 @@ type ApiKeyToken {
 }
 
 type AppConnection {
-  accessToken: String
+  accessToken: String!
   authFailedAt: String
   authFailedReason: String
   externalAccountId: String
@@ -1428,7 +1427,7 @@ input CreateAppMessageChannelInput {
   connectedAccountId: UUID!
   displayName: String
   handle: String!
-  messagingProviderUniversalIdentifier: UUID
+  participantHandleFieldUniversalIdentifier: UUID
   visibility: MessageChannelVisibility!
 }
 
@@ -2932,7 +2931,7 @@ type MessageChannel {
   isContactAutoCreationEnabled: Boolean!
   isSyncEnabled: Boolean!
   messageFolderImportPolicy: MessageFolderImportPolicy!
-  messagingProviderUniversalIdentifier: UUID
+  participantHandleFieldUniversalIdentifier: UUID
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
   syncStage: MessageChannelSyncStage!
   syncStageStartedAt: DateTime
@@ -3323,7 +3322,6 @@ type Mutation {
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
-  sendAppChannelMessage(input: SendAppChannelMessageInput!): SendAppChannelMessageOutput!
   sendChatMessage(browsingContext: JSON, channelId: UUID, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
   sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
@@ -4436,17 +4434,6 @@ type SearchField {
   updatedAt: DateTime!
 }
 
-input SendAppChannelMessageInput {
-  messageChannelId: UUID!
-  messageThreadId: UUID!
-  text: String!
-}
-
-type SendAppChannelMessageOutput {
-  messageId: UUID!
-  messageThreadId: UUID!
-}
-
 type SendChatMessageResult {
   mentionedParticipantWorkspaceMemberIds: [UUID!]
   messageId: String
@@ -4862,7 +4849,6 @@ input UpdateAppMessageChannelInput {
   displayName: String
   id: UUID!
   isSyncEnabled: Boolean
-  messagingProviderUniversalIdentifier: UUID
   visibility: MessageChannelVisibility
 }
 

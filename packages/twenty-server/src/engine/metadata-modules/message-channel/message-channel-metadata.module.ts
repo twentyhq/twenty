@@ -17,6 +17,7 @@ import { ApplicationMessageSendService } from 'src/engine/metadata-modules/messa
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingProviderModule } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -34,6 +35,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ConnectedAccountMetadataModule,
     MessagingImportManagerModule,
     MessagingCommonModule,
+    MatchParticipantModule,
     EmailingDomainModule,
     WorkspaceCacheModule,
     MessagingProviderModule,
