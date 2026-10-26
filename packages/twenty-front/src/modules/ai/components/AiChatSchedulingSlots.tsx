@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { fromZonedTime } from 'date-fns-tz';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconClock } from 'twenty-ui/icon';
@@ -63,8 +64,8 @@ const formatDateLabel = ({
     weekday: 'long',
     month: 'long',
     day: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(`${date}T00:00:00Z`));
+    timeZone: doNotTranslate('UTC'),
+  }).format(new Date(doNotTranslate(`${date}T00:00:00Z`)));
 };
 
 export const AiChatSchedulingSlots = ({
@@ -96,7 +97,7 @@ export const AiChatSchedulingSlots = ({
     }
 
     if (isDefined(date)) {
-      return fromZonedTime(`${date}T12:00:00`, timeZone);
+      return fromZonedTime(doNotTranslate(`${date}T12:00:00`), timeZone);
     }
 
     return undefined;
