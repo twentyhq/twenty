@@ -9,6 +9,7 @@ import {
 import { tmpdir } from 'os';
 import { join, resolve } from 'path';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import semver from 'semver';
 
 import { TWENTY_PREVIOUS_VERSIONS } from '../src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
@@ -42,7 +43,7 @@ export const generateWorkspaceCustomApplicationDependencies = ({
   const yarnConfiguration = readFileSync(yarnConfigurationPath, 'utf8');
   const yarnPath = /^yarnPath:\s*(.+)$/m.exec(yarnConfiguration)?.[1]?.trim();
 
-  if (!yarnPath) {
+  if (!isNonEmptyString(yarnPath)) {
     throw new Error('The application Yarn configuration has no yarnPath');
   }
 

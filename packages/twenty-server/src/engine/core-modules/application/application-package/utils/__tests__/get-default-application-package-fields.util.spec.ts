@@ -1,3 +1,5 @@
+import { SEED_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/seed-dependencies-dirname';
+import { getDefaultApplicationPackageFieldsForApplication } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields-for-application.util';
 import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
 
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
@@ -31,4 +33,30 @@ describe('application dependency defaults', () => {
       ]),
     );
   });
+});
+
+describe('application default dependency selection', () => {
+  it.each<[string, string | null | undefined, string]>([
+    [
+      'workspace-custom',
+      'workspace-custom',
+      WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+    ],
+    ['standard', 'workspace-custom', SEED_DEPENDENCIES_DIRNAME],
+    ['installed', 'workspace-custom', SEED_DEPENDENCIES_DIRNAME],
+    ['installed', null, SEED_DEPENDENCIES_DIRNAME],
+    ['installed', undefined, SEED_DEPENDENCIES_DIRNAME],
+  ])(
+    'loads %s defaults when the Workspace app is %s',
+    async (applicationId, workspaceCustomApplicationId, directory) => {
+      const fields = await getDefaultApplicationPackageFieldsForApplication({
+        applicationId,
+        workspaceCustomApplicationId,
+      });
+
+      expect(fields).toEqual(
+        await getDefaultApplicationPackageFields({ directory }),
+      );
+    },
+  );
 });
