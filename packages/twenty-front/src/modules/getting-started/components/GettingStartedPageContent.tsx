@@ -1,3 +1,4 @@
+import { currentUserState } from '@/auth/states/currentUserState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
@@ -5,22 +6,25 @@ import { GETTING_STARTED_STEPS } from '@/getting-started/constants/GettingStarte
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { getGettingStartedCreditsToEarn } from '@/getting-started/utils/getGettingStartedCreditsToEarn';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
+import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
-import { IconCheck, IconList } from 'twenty-ui/icon';
+import { IconCheck, IconCreditCard, IconListCheck } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
@@ -28,13 +32,13 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 const StyledScroll = styled.div`
   flex: 1;
   overflow: auto;
-  padding: ${themeCssVariables.spacing[12]} ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[10]} ${themeCssVariables.spacing[6]};
 `;
 
 const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
+  gap: ${themeCssVariables.spacing[8]};
   margin: 0 auto;
   max-width: ${GETTING_STARTED_CONTENT_MAX_WIDTH}px;
 `;
@@ -43,13 +47,20 @@ const StyledHeading = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
+  gap: ${themeCssVariables.spacing[5]};
   text-align: center;
+`;
+
+const StyledCountdown = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledDigits = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing['1.5']};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledDigit = styled.span`
@@ -66,7 +77,9 @@ const StyledDigit = styled.span`
   isolation: isolate;
   justify-content: center;
   position: relative;
-  width: ${themeCssVariables.spacing[9]};
+  width: calc(
+    ${themeCssVariables.spacing[8]} + ${themeCssVariables.spacing['0.5']}
+  );
 
   &::after {
     background: ${themeCssVariables.color.amber11};
@@ -83,32 +96,36 @@ const StyledDigit = styled.span`
 
 const StyledGoal = styled.div`
   align-items: center;
+  align-self: center;
+  border: 1px dashed ${themeCssVariables.border.color.strong};
+  border-radius: ${themeCssVariables.border.radius.md};
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  flex-wrap: wrap;
-  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[2]};
-  justify-content: center;
-  margin-top: ${themeCssVariables.spacing[6]};
+  height: calc(
+    ${themeCssVariables.spacing[7]} + ${themeCssVariables.spacing['0.5']}
+  );
+  padding: 0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFooter = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 export const GettingStartedPageContent = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
+  const currentUser = useAtomStateValue(currentUserState);
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { numberFormat } = useNumberFormat();
-  const { timeZone, dateFormat } = useDateTimeFormat();
+  const { timeZone } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const { progress, loading, error, refetch } = useGettingStartedProgress();
   const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
-  const { trialEnd, daysLeft, isCountdownVisible } = useGettingStartedTrial();
+  const { trialEnd, daysLeft, isCountdownVisible, canKeepPlan, keepPlanLabel } =
+    useGettingStartedTrial();
 
   const completedSteps = progress?.completedSteps ?? [];
   const isComplete = GETTING_STARTED_STEPS.every((step) =>
@@ -122,50 +139,87 @@ export const GettingStartedPageContent = () => {
   const isSelectedStepCompleted = completedSteps.includes(selectedStep);
   const creditsEarned = progress?.creditsEarned ?? 0;
 
+  const creditsToEarn = isDefined(onboardingConfig)
+    ? getGettingStartedCreditsToEarn({
+        completedSteps,
+        onboardingConfig,
+        isWorkspaceCreator: currentUser?.isWorkspaceCreator === true,
+      })
+    : 0;
+  const goalCredits = isComplete ? creditsEarned : creditsToEarn;
+  const formattedGoalCredits = formatOnboardingCredits(
+    goalCredits,
+    numberFormat,
+  );
+
   const formattedTrialEnd =
     isCountdownVisible && isDefined(trialEnd)
-      ? formatDateISOStringToDate({
+      ? formatDateISOStringToCustomUnicodeFormat({
           date: trialEnd.toISOString(),
           timeZone,
-          dateFormat,
+          dateFormat: 'EEE, MMM d',
           localeCatalog,
         })
       : undefined;
   const remainingStepCount =
     GETTING_STARTED_STEPS.length - completedSteps.length;
   const remainingStepsLabel = isDefined(formattedTrialEnd)
-    ? plural(remainingStepCount, {
-        one: `Finish # step by ${formattedTrialEnd}`,
-        other: `Finish # steps by ${formattedTrialEnd}`,
-      })
-    : plural(remainingStepCount, {
-        one: 'Finish # step',
-        other: 'Finish # steps',
-      });
-  const goalLabel = isComplete ? t`All steps done` : remainingStepsLabel;
+    ? creditsToEarn > 0
+      ? plural(remainingStepCount, {
+          one: `Finish # step by ${formattedTrialEnd} to earn`,
+          other: `Finish # steps by ${formattedTrialEnd} to earn`,
+        })
+      : plural(remainingStepCount, {
+          one: `Finish # step by ${formattedTrialEnd}`,
+          other: `Finish # steps by ${formattedTrialEnd}`,
+        })
+    : creditsToEarn > 0
+      ? plural(remainingStepCount, {
+          one: 'Finish # step to earn',
+          other: 'Finish # steps to earn',
+        })
+      : plural(remainingStepCount, {
+          one: 'Finish # step',
+          other: 'Finish # steps',
+        });
+  const completedLabel =
+    creditsEarned > 0 ? t`All steps done, you earned` : t`All steps done`;
+  const goalLabel = isComplete ? completedLabel : remainingStepsLabel;
 
   return (
     <StyledScroll>
       <StyledContent>
         <StyledHeading>
-          {isCountdownVisible && (
-            <StyledDigits>
-              {String(daysLeft)
-                .padStart(2, '0')
-                .split('')
-                .map((digit, index) => (
-                  <StyledDigit key={index}>{digit}</StyledDigit>
-                ))}
-            </StyledDigits>
+          <StyledCountdown>
+            {isCountdownVisible && (
+              <StyledDigits>
+                {String(daysLeft)
+                  .padStart(2, '0')
+                  .split('')
+                  .map((digit, index) => (
+                    <StyledDigit key={index}>{digit}</StyledDigit>
+                  ))}
+              </StyledDigits>
+            )}
+            <StyledOnboardingStepTitle>
+              {isCountdownVisible
+                ? plural(daysLeft, {
+                    one: 'day left in your trial',
+                    other: 'days left in your trial',
+                  })
+                : t`Finish your setup`}
+            </StyledOnboardingStepTitle>
+          </StyledCountdown>
+          {canKeepPlan && (
+            <NavigationButton
+              variant="outline"
+              color="accent"
+              startIcon={<IconCreditCard />}
+              to={getSettingsPath(SettingsPath.Billing)}
+            >
+              {keepPlanLabel}
+            </NavigationButton>
           )}
-          <StyledOnboardingStepTitle>
-            {isCountdownVisible
-              ? plural(daysLeft, {
-                  one: 'day left in your trial',
-                  other: 'days left in your trial',
-                })
-              : t`Finish your setup`}
-          </StyledOnboardingStepTitle>
         </StyledHeading>
         {loading && !isDefined(progress) && (
           <Loader role="status" aria-label={t`Loading your progress`} />
@@ -186,17 +240,23 @@ export const GettingStartedPageContent = () => {
           <>
             <StyledGoal>
               {isComplete ? (
-                <IconCheck size={theme.icon.size.sm} />
+                <IconCheck
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
               ) : (
-                <IconList size={theme.icon.size.sm} />
+                <IconListCheck
+                  size={theme.icon.size.md}
+                  color={theme.font.color.tertiary}
+                />
               )}
               <span>{goalLabel}</span>
-              {isDefined(onboardingConfig) && creditsEarned > 0 && (
+              {goalCredits > 0 && (
                 <OnboardingCreditsRewardChip
-                  formattedCreditsReward={formatOnboardingCredits(
-                    creditsEarned,
-                    numberFormat,
-                  )}
+                  formattedCreditsReward={plural(goalCredits, {
+                    one: `${formattedGoalCredits} credit`,
+                    other: `${formattedGoalCredits} credits`,
+                  })}
                 />
               )}
             </StyledGoal>
@@ -211,7 +271,6 @@ export const GettingStartedPageContent = () => {
             {!isComplete && (
               <StyledFooter>
                 <Button
-                  size="sm"
                   variant="ghost"
                   disabled={isSaving}
                   onClick={() =>

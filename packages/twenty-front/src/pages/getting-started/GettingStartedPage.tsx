@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Navigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconRocket } from 'twenty-ui/icon';
+import { IconCreditCard, IconRocket } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -40,6 +40,7 @@ export const GettingStartedPage = () => {
                 {canKeepPlan && (
                   <NavigationButton
                     size="sm"
+                    startIcon={<IconCreditCard />}
                     to={getSettingsPath(SettingsPath.Billing)}
                   >
                     {keepPlanLabel}

@@ -8,8 +8,9 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type GettingStartedStep } from '~/generated-metadata/graphql';
 
-const StyledStack = styled.div`
-  padding-left: ${themeCssVariables.spacing[8]};
+const StyledActiveStep = styled.div`
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.light};
   position: relative;
 `;
 
@@ -18,29 +19,28 @@ const StyledSteps = styled.nav`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  left: 0;
   position: absolute;
-  top: ${themeCssVariables.spacing[6]};
-  width: ${themeCssVariables.spacing[4]};
+  right: calc(100% + ${themeCssVariables.spacing[10]});
+  top: 50%;
+  transform: translateY(-50%);
 `;
 
 const StyledTick = styled.button`
-  background: ${themeCssVariables.border.color.medium};
+  background: ${themeCssVariables.border.color.strong};
   border: 0;
   border-radius: ${themeCssVariables.border.radius.xs};
   cursor: pointer;
   height: ${themeCssVariables.spacing[0.5]};
   padding: 0;
-  width: ${themeCssVariables.spacing[2]};
+  width: ${themeCssVariables.spacing[3]};
 
   &[data-completed] {
     background: ${themeCssVariables.font.color.tertiary};
-    width: ${themeCssVariables.spacing[3]};
   }
 
   &[aria-current='step'] {
     background: ${themeCssVariables.font.color.primary};
-    width: ${themeCssVariables.spacing[4]};
+    width: ${themeCssVariables.spacing[5]};
   }
 
   &::after {
@@ -54,23 +54,25 @@ const StyledTick = styled.button`
 
 const StyledStackedStep = styled.button<{ depth: number }>`
   align-items: center;
-  background: ${({ depth }) =>
-    depth > 1
-      ? themeCssVariables.background.tertiary
-      : themeCssVariables.background.secondary};
+  background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.md}
     ${themeCssVariables.border.radius.md} 0 0;
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${({ depth }) =>
+    depth === 1
+      ? themeCssVariables.font.color.primary
+      : depth === 2
+        ? themeCssVariables.font.color.secondary
+        : themeCssVariables.font.color.tertiary};
   cursor: pointer;
   display: flex;
   font: inherit;
   gap: ${themeCssVariables.spacing[2]};
-  height: ${themeCssVariables.spacing[9]};
-  margin: 0 auto calc(-1 * ${themeCssVariables.spacing[2]});
-  padding: 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]};
+  height: ${themeCssVariables.spacing[11]};
+  margin: 0 auto calc(-1 * ${themeCssVariables.spacing['1.5']});
+  padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing['1.5']};
   width: ${({ depth }) =>
-    `calc(100% - ${depth} * ${themeCssVariables.spacing[6]})`};
+    `calc(100% - ${depth} * ${themeCssVariables.spacing[8]})`};
 
   &:hover {
     color: ${themeCssVariables.font.color.primary};
@@ -99,30 +101,18 @@ export const GettingStartedStepStack = ({
   const theme = useTheme();
 
   const selectedStepIndex = GETTING_STARTED_STEPS.indexOf(selectedStep);
-  const stackedSteps = [2, 1].map((depth) => ({
+  const stackedSteps = [3, 2, 1].map((depth) => ({
     depth,
     step: GETTING_STARTED_STEPS[
-      (selectedStepIndex + depth) % GETTING_STARTED_STEPS.length
+      (selectedStepIndex - depth + GETTING_STARTED_STEPS.length) %
+        GETTING_STARTED_STEPS.length
     ],
   }));
 
   return (
-    <StyledStack>
-      <StyledSteps aria-label={t`Getting started steps`}>
-        {GETTING_STARTED_STEPS.map((step) => (
-          <StyledTick
-            key={step}
-            type="button"
-            aria-label={t(GETTING_STARTED_STEP_CONTENT[step].title)}
-            aria-current={step === selectedStep ? 'step' : undefined}
-            data-completed={completedSteps.includes(step) || undefined}
-            disabled={isSaving}
-            onClick={() => onSelectStep(step)}
-          />
-        ))}
-      </StyledSteps>
+    <div>
       {stackedSteps.map(({ depth, step }) => {
-        const StepIcon = GETTING_STARTED_STEP_CONTENT[step].Icon;
+        const { Icon, iconColor, title } = GETTING_STARTED_STEP_CONTENT[step];
 
         return (
           <StyledStackedStep
@@ -132,10 +122,8 @@ export const GettingStartedStepStack = ({
             disabled={isSaving}
             onClick={() => onSelectStep(step)}
           >
-            <StepIcon size={theme.icon.size.sm} />
-            <StyledStackedStepTitle>
-              {t(GETTING_STARTED_STEP_CONTENT[step].title)}
-            </StyledStackedStepTitle>
+            <Icon size={theme.icon.size.md} color={iconColor} />
+            <StyledStackedStepTitle>{t(title)}</StyledStackedStepTitle>
             <GettingStartedStepRewardChip
               step={step}
               isCompleted={completedSteps.includes(step)}
@@ -143,10 +131,25 @@ export const GettingStartedStepStack = ({
           </StyledStackedStep>
         );
       })}
-      <GettingStartedStepCard
-        step={selectedStep}
-        isCompleted={completedSteps.includes(selectedStep)}
-      />
-    </StyledStack>
+      <StyledActiveStep>
+        <StyledSteps aria-label={t`Getting started steps`}>
+          {GETTING_STARTED_STEPS.map((step) => (
+            <StyledTick
+              key={step}
+              type="button"
+              aria-label={t(GETTING_STARTED_STEP_CONTENT[step].title)}
+              aria-current={step === selectedStep ? 'step' : undefined}
+              data-completed={completedSteps.includes(step) || undefined}
+              disabled={isSaving}
+              onClick={() => onSelectStep(step)}
+            />
+          ))}
+        </StyledSteps>
+        <GettingStartedStepCard
+          step={selectedStep}
+          isCompleted={completedSteps.includes(selectedStep)}
+        />
+      </StyledActiveStep>
+    </div>
   );
 };
