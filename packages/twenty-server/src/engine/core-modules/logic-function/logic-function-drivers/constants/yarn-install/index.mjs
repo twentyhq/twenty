@@ -9,10 +9,22 @@ const YARN_INSTALL_TIMEOUT_MS = 240_000;
 const YARN_ENGINE_DIR = resolve('yarn-engine');
 const YARN_ENGINE_PATH = join(YARN_ENGINE_DIR, '.yarn/releases/yarn-4.9.2.cjs');
 
+const stripLifecycleScripts = (packageJson) => {
+  const parsed = JSON.parse(packageJson);
+
+  delete parsed.scripts;
+
+  return JSON.stringify(parsed);
+};
+
 const writePackageFiles = async (nodejsDir, packageJson, yarnLock) => {
   await fs.mkdir(nodejsDir, { recursive: true });
   await Promise.all([
-    fs.writeFile(join(nodejsDir, 'package.json'), packageJson, 'utf-8'),
+    fs.writeFile(
+      join(nodejsDir, 'package.json'),
+      stripLifecycleScripts(packageJson),
+      'utf-8',
+    ),
     fs.writeFile(join(nodejsDir, 'yarn.lock'), yarnLock, 'utf-8'),
   ]);
 };

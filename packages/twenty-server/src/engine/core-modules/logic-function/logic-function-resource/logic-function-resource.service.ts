@@ -313,6 +313,10 @@ export class LogicFunctionResourceService {
     await this.removeBuildTimeSdkFromDependencies(
       join(inMemoryFolderPath, 'package.json'),
     );
+
+    await this.removeLifecycleScriptsFromPackageJson(
+      join(inMemoryFolderPath, 'package.json'),
+    );
   }
 
   // twenty-sdk is build-time only and twenty-client-sdk is injected at runtime
@@ -346,6 +350,26 @@ export class LogicFunctionResourceService {
     for (const packageName of packagesToRemoveFromDependencies) {
       delete dependencies[packageName];
     }
+
+    await fs.writeFile(
+      packageJsonPath,
+      `${JSON.stringify(packageJson, null, 2)}\n`,
+      'utf-8',
+    );
+  }
+
+  private async removeLifecycleScriptsFromPackageJson(
+    packageJsonPath: string,
+  ): Promise<void> {
+    const packageJson = JSON.parse(
+      await fs.readFile(packageJsonPath, 'utf-8'),
+    ) as { scripts?: Record<string, string> };
+
+    if (!isDefined(packageJson.scripts)) {
+      return;
+    }
+
+    delete packageJson.scripts;
 
     await fs.writeFile(
       packageJsonPath,
