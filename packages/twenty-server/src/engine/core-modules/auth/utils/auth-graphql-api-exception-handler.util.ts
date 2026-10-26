@@ -49,6 +49,7 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
         userFriendlyMessage: exception.userFriendlyMessage,
       });
     case AuthExceptionCode.UNAUTHENTICATED:
+    case AuthExceptionCode.SESSION_SUPERSEDED:
     case AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:
       throw new AuthenticationError(exception.message, {
         userFriendlyMessage: msg`You must be authenticated to perform this action.`,

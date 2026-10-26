@@ -17,7 +17,7 @@ const StyledFilesFieldLabelInputContainer = styled.div`
 type FilesFieldLabelInputProps = {
   file: FieldFilesValue;
   value: string;
-  hasError: boolean;
+  hasError?: boolean;
   onChange: (value: string) => void;
   onEnter: () => void;
   onEscape: () => void;

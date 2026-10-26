@@ -49,6 +49,11 @@ export class MessageChannelDTO {
   @Field(() => MessageChannelType)
   type: MessageChannelType;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  participantHandleFieldUniversalIdentifier: string | null;
+
   @IsBoolean()
   @Field()
   isContactAutoCreationEnabled: boolean;

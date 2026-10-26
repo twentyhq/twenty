@@ -1,6 +1,7 @@
 import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/useLinksField';
+import { LinksFieldDomainFavicon } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldDomainFavicon';
 import { LinksFieldEditInputs } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditInputs';
 import { LinksFieldEditPreview } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldEditPreview';
 import { LinksFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldMenuItem';
@@ -18,6 +19,7 @@ import { useMultiItemSearch } from '@/object-record/record-field/ui/meta-types/i
 import { type LinkRecord } from '@/object-record/record-field/ui/meta-types/input/types/LinkRecord';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { computeUpdatedMultiItemFieldItems } from '@/object-record/record-field/ui/meta-types/input/utils/computeUpdatedMultiItemFieldItems';
+import { validateLinkInput } from '@/object-record/record-field/ui/meta-types/input/utils/validateLinkInput';
 import { getLinkLabelFromDraft } from '@/object-record/record-field/ui/meta-types/input/utils/getLinkLabelFromDraft';
 import { type MultiItemFieldInputSpacing } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemFieldInputSpacing';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
@@ -27,12 +29,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useRef, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
-import {
-  absoluteUrlSchema,
-  isDefined,
-  isNonEmptyArray,
-  isValidDomain,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
@@ -107,12 +104,8 @@ export const LinksFieldInput = () => {
       settings: fieldDefinition.metadata.settings,
     }) === 'domain';
 
-  const validateLink = (input: string) => ({
-    isValid: isDomainField
-      ? isValidDomain(input)
-      : absoluteUrlSchema.safeParse(input).success,
-    errorMessage: '',
-  });
+  const validateLink = (input: string) =>
+    validateLinkInput({ input, isDomainField });
 
   const isSingleItemMode = maxNumberOfValues === 1;
   const isLimitReached = links.length >= maxNumberOfValues;
@@ -274,6 +267,7 @@ export const LinksFieldInput = () => {
       hasPadding={shouldShowInputInFooter && shouldShowItems}
       rightComponent={saveButton}
     >
+      {isDomainField && <LinksFieldDomainFavicon domain={inputValue} />}
       <MultiItemFieldTextInput
         autoFocus
         spacing={inputSpacing}
