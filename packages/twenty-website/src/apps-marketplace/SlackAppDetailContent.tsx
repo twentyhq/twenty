@@ -93,12 +93,6 @@ const ExplainerAside = styled.div`
   & > * + * {
     margin-top: ${spacing(4)};
   }
-
-  ${mediaUp('md')} {
-    align-self: start;
-    position: sticky;
-    top: ${spacing(24)};
-  }
 `;
 
 const Disclaimer = styled.div`
