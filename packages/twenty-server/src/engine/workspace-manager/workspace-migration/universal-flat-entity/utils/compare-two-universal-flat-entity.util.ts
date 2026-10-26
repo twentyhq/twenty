@@ -1,14 +1,12 @@
-import diff from 'microdiff';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
-import { parseJson } from 'twenty-shared/utils';
+import { isEmptyObject } from 'twenty-shared/utils';
 
 import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-universal-flat-entity-properties-to-compare-and-stringify.constant';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { type MetadataUniversalFlatEntityPropertiesToStringify } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-stringify.type';
 import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
+import { diffUniversalFlatEntityProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/diff-universal-flat-entity-properties.util';
 import { findNonUpdatablePropertyDivergences } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/find-non-updatable-property-divergences.util';
-import { transformUniversalFlatEntityForComparison } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/transform-universal-flat-entity-for-comparison.util';
 
 type CompareTwoUniversalFlatEntityArgs<T extends AllMetadataName> = FromTo<
   MetadataUniversalFlatEntity<T>,
@@ -27,24 +25,16 @@ export const compareTwoFlatEntity = <T extends AllMetadataName>({
 }: CompareTwoUniversalFlatEntityArgs<T>):
   | UniversalFlatEntityComparison<T>
   | undefined => {
-  const { propertiesToStringify, propertiesToCompare } =
-    ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[metadataName];
-
-  const [transformedFromUniversalFlatEntity, transformedToUniversalFlatEntity] =
-    [fromUniversalFlatEntity, toUniversalFlatEntity].map(
-      (universalFlatEntity) =>
-        transformUniversalFlatEntityForComparison({
-          metadataName,
-          universalFlatEntity,
-          propertiesToCompare,
-          propertiesToStringify,
-        }),
-    );
-
-  const flatEntityDifferences = diff(
-    transformedFromUniversalFlatEntity,
-    transformedToUniversalFlatEntity,
-  );
+  const update: UniversalFlatEntityUpdate<T> =
+    diffUniversalFlatEntityProperties({
+      fromUniversalFlatEntity,
+      toUniversalFlatEntity,
+      metadataName,
+      properties:
+        ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[
+          metadataName
+        ].propertiesToCompare,
+    });
 
   const nonUpdatablePropertyDivergences = findNonUpdatablePropertyDivergences({
     fromUniversalFlatEntity,
@@ -52,44 +42,9 @@ export const compareTwoFlatEntity = <T extends AllMetadataName>({
     metadataName,
   });
 
-  if (
-    flatEntityDifferences.length === 0 &&
-    nonUpdatablePropertyDivergences.length === 0
-  ) {
+  if (isEmptyObject(update) && nonUpdatablePropertyDivergences.length === 0) {
     return undefined;
   }
-
-  const initialAccumulator: UniversalFlatEntityUpdate<T> = {};
-
-  const update = flatEntityDifferences.reduce((accumulator, difference) => {
-    switch (difference.type) {
-      case 'CHANGE': {
-        const { path, value } = difference;
-        const property = path[0];
-        const isJsonb = propertiesToStringify.includes(
-          property as MetadataUniversalFlatEntityPropertiesToStringify<T>,
-        );
-
-        if (isJsonb) {
-          return {
-            ...accumulator,
-            [property]: parseJson(value),
-          };
-        }
-
-        return {
-          ...accumulator,
-          [property]: value,
-        };
-      }
-      case 'CREATE':
-      case 'REMOVE':
-      default: {
-        // Should never occur, we should only provide null never undefined and so on
-        return accumulator;
-      }
-    }
-  }, initialAccumulator);
 
   return { update, nonUpdatablePropertyDivergences };
 };
