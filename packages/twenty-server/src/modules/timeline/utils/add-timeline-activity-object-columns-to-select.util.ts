@@ -8,7 +8,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { resolveTimelineActivityObjectColumnNames } from 'src/modules/timeline/utils/resolve-timeline-activity-object-column-names.util';
 
-// Redaction needs to know which object the stored diff belongs to
 export const addTimelineActivityObjectColumnsToSelect = ({
   select,
   flatObjectMetadata,
