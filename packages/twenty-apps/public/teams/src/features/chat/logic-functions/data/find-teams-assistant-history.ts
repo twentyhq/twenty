@@ -47,14 +47,21 @@ export const findTeamsAssistantHistory = async ({
     },
   });
 
-  return (queryResult.teamsAssistantRequests?.edges ?? [])
-    .map(({ node }) => ({
+  const history: TeamsAssistantTurn[] = [];
+
+  for (const { node } of queryResult.teamsAssistantRequests?.edges ?? []) {
+    const turn = {
       requestText: node.requestText?.markdown,
       responseText:
         node.status === TEAMS_ASSISTANT_REQUEST_STATUS.FAILED
           ? TEAMS_ASSISTANT_FAILURE_TEXT
           : node.responseText?.markdown,
-    }))
-    .filter(isTeamsAssistantTurn)
-    .reverse();
+    };
+
+    if (isTeamsAssistantTurn(turn)) {
+      history.unshift(turn);
+    }
+  }
+
+  return history;
 };
