@@ -35,37 +35,73 @@ describe('getPermittedFields', () => {
     });
   });
 
-  it('should drop morph relation targets the role cannot read', () => {
+  describe('morph relation fields', () => {
     const targetField = getMockFieldMetadataItemOrThrow({
-      objectMetadataItem: getMockObjectMetadataItemOrThrow('timelineActivity'),
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('taskTarget'),
       fieldName: 'target',
     });
-    const targetNames = (targetField.morphRelations ?? []).map(
-      (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
-    );
-    const companySourceFieldMetadataId = targetField.morphRelations?.find(
-      (morphRelation) =>
-        morphRelation.targetObjectMetadata.nameSingular === 'company',
-    )?.sourceFieldMetadata.id;
+    const morphRelations = targetField.morphRelations ?? [];
+    const [headMorphRelation, secondMorphRelation] = morphRelations;
 
-    expect(targetNames).toContain('company');
+    const getTargetNames = (field: FieldMetadataItem | undefined) =>
+      field?.morphRelations?.map(
+        (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
+      );
 
-    const { readableFields } = getPermittedFields({
-      fields: [targetField],
-      objectPermissions: {
-        restrictedFields: {
-          [companySourceFieldMetadataId as string]: {
-            canRead: false,
-            canUpdate: false,
+    it('should drop only the targets the role cannot read or update', () => {
+      const { readableFields, updatableFields } = getPermittedFields({
+        fields: [targetField],
+        objectPermissions: {
+          restrictedFields: {
+            [secondMorphRelation.sourceFieldMetadata.id]: {
+              canRead: false,
+              canUpdate: false,
+            },
           },
         },
-      },
+      });
+
+      const expectedTargetNames = getTargetNames(targetField)?.filter(
+        (targetName) =>
+          targetName !== secondMorphRelation.targetObjectMetadata.nameSingular,
+      );
+
+      expect(getTargetNames(readableFields[0])).toEqual(expectedTargetNames);
+      expect(getTargetNames(updatableFields[0])).toEqual(expectedTargetNames);
     });
 
-    expect(
-      readableFields[0].morphRelations?.map(
-        (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
-      ),
-    ).toEqual(targetNames.filter((targetName) => targetName !== 'company'));
+    it('should keep the field when only the target sharing its id is restricted', () => {
+      expect(headMorphRelation.sourceFieldMetadata.id).toBe(targetField.id);
+
+      const { readableFields } = getPermittedFields({
+        fields: [targetField],
+        objectPermissions: {
+          restrictedFields: {
+            [targetField.id]: { canRead: false, canUpdate: false },
+          },
+        },
+      });
+
+      expect(getTargetNames(readableFields[0])).toEqual(
+        getTargetNames(targetField)?.slice(1),
+      );
+    });
+
+    it('should drop the field when no target is readable', () => {
+      const { readableFields, updatableFields } = getPermittedFields({
+        fields: [targetField],
+        objectPermissions: {
+          restrictedFields: Object.fromEntries(
+            morphRelations.map((morphRelation) => [
+              morphRelation.sourceFieldMetadata.id,
+              { canRead: false, canUpdate: true },
+            ]),
+          ),
+        },
+      });
+
+      expect(readableFields).toEqual([]);
+      expect(updatableFields).toEqual([targetField]);
+    });
   });
 });
