@@ -668,7 +668,7 @@ export const buildManifest = async (
               resolvedDefaultRoleUniversalIdentifier,
             aboutDescription: readmeContent,
             yarnLockChecksum: null,
-            packageJsonChecksum: null,
+            packageJsonChecksum: '',
             requiredServerVersionRange: getEngineVersionRange(appPath),
             ...(postInstallLogicFunctions.length >= 1
               ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
