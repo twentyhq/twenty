@@ -38,9 +38,16 @@ const INACCESSIBLE_CHANNEL_LABEL_PATTERN = /^Sales\s*·\s*Not open to you$/;
 
 const onOptions = fn();
 
+const CHANNEL_OPTIONS = (
+  <IconButton aria-label="Channel options" onClick={onOptions} size="sm">
+    <IconDotsVertical />
+  </IconButton>
+);
+
 const ChannelNavigationStory = ({
   channel,
   summary,
+  isExpandable,
   rightOptions,
 }: ComponentProps<typeof NavigationDrawerAiChatChannelNavigation>) => {
   const channelView = useAtomStateValue(agentChatChannelViewState);
@@ -52,6 +59,7 @@ const ChannelNavigationStory = ({
         summary={summary}
         channelView={channelView}
         isActive={channelView?.channelId === channel.id}
+        isExpandable={isExpandable}
         rightOptions={rightOptions}
       />
     </StyledNavigation>
@@ -66,6 +74,11 @@ const meta = {
   beforeEach: ({ args }) => {
     jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
     jotaiStore.set(agentChatChannelViewState.atom, args.channelView);
+
+    return () => {
+      jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
+      jotaiStore.set(agentChatChannelViewState.atom, null);
+    };
   },
   args: {
     channel: {
@@ -156,15 +169,11 @@ export const KeyboardAndOptions: Story = {
   args: {
     channelView: null,
     isActive: false,
-    rightOptions: (
-      <IconButton aria-label="Channel options" onClick={onOptions} size="sm">
-        <IconDotsVertical />
-      </IconButton>
-    ),
+    rightOptions: CHANNEL_OPTIONS,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const channel = canvas.getByRole('button', { name: /^Sales/ });
+    const channel = canvas.getByRole('button', { name: 'Sales' });
 
     await userEvent.tab();
     await expect(channel).toHaveFocus();
@@ -221,6 +230,58 @@ export const CollapsedDrawer: Story = {
     const channel = canvas.getByRole('button', { name: 'Sales' });
 
     await expect(channel).toHaveAttribute('aria-current', 'true');
+    await expect(channel).not.toHaveAttribute('aria-expanded');
+    await expect(
+      canvas.queryByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const Favorite: Story = {
+  args: { isExpandable: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const channel = canvas.getByRole('button', { name: 'Sales' });
+
+    await expect(channel).toHaveAttribute('aria-current', 'true');
+    await expect(channel).not.toHaveAttribute('aria-expanded');
+    await userEvent.click(channel);
+    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual(
+      OPEN_VIEW,
+    );
+    await expect(
+      canvas.queryByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const SameViewKeepsCollapsed: Story = {
+  render: (args) => (
+    <>
+      <ChannelNavigationStory
+        channel={args.channel}
+        summary={args.summary}
+        channelView={args.channelView}
+        isActive={args.isActive}
+      />
+      <Button
+        onClick={() =>
+          jotaiStore.set(agentChatChannelViewState.atom, { ...OPEN_VIEW })
+        }
+      >
+        Reselect view
+      </Button>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const channel = canvas.getByRole('button', { name: 'Sales' });
+
+    await userEvent.click(channel);
+    await expect(channel).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Reselect view' }),
+    );
     await expect(channel).toHaveAttribute('aria-expanded', 'false');
     await expect(
       canvas.queryByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
@@ -257,14 +318,22 @@ export const Inaccessible: Story = {
     channelView: null,
     isActive: false,
     summary: undefined,
+    rightOptions: CHANNEL_OPTIONS,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(
-      canvas.getByRole('button', { name: INACCESSIBLE_CHANNEL_LABEL_PATTERN }),
-    );
+    await expect(
+      canvas.queryByRole('button', {
+        name: INACCESSIBLE_CHANNEL_LABEL_PATTERN,
+      }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(canvas.getByText(/Not open to you/));
     await expect(jotaiStore.get(agentChatChannelViewState.atom)).toBeNull();
+    await userEvent.tab();
+    await expect(
+      canvas.getByRole('button', { name: 'Channel options' }),
+    ).toHaveFocus();
     await expect(
       canvas.queryByRole('button', { name: 'Open' }),
     ).not.toBeInTheDocument();

@@ -39,6 +39,7 @@ type NavigationDrawerAiChatChannelItemProps = {
   summary: AgentChatChannelSummary | undefined;
   destinationChannels: AgentChatChannel[];
   canManage: boolean;
+  isExpandable?: boolean;
 };
 
 export const NavigationDrawerAiChatChannelItem = ({
@@ -46,6 +47,7 @@ export const NavigationDrawerAiChatChannelItem = ({
   summary,
   destinationChannels,
   canManage,
+  isExpandable = true,
 }: NavigationDrawerAiChatChannelItemProps) => {
   const { t } = useLingui();
   const location = useLocation();
@@ -147,6 +149,7 @@ export const NavigationDrawerAiChatChannelItem = ({
           isAiChatInboxPath(location.pathname) &&
           agentChatShownChannelView?.channelId === channel.id
         }
+        isExpandable={isExpandable}
         isRightOptionsDropdownOpen={isDropdownOpen}
         rightOptions={
           canManage || channel.isAccessible ? (

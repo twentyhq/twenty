@@ -1,28 +1,29 @@
 import { styled } from '@linaria/react';
+import { Link } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 
-const StyledBreadcrumb = styled.div`
+const StyledBreadcrumbLink = styled(Link)`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  flex-shrink: 0;
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+  text-decoration: none;
   white-space: nowrap;
 `;
 
 export const AiChatInboxBreadcrumb = () => {
   return (
-    <UndecoratedLink to={getAppPath(AppPath.AiChatInbox, { threadId: null })}>
-      <StyledBreadcrumb>
-        <AiChatInboxViewHeading />
-        <span aria-hidden>/</span>
-      </StyledBreadcrumb>
-    </UndecoratedLink>
+    <StyledBreadcrumbLink
+      to={getAppPath(AppPath.AiChatInbox, { threadId: null })}
+    >
+      <AiChatInboxViewHeading />
+      <span aria-hidden>/</span>
+    </StyledBreadcrumbLink>
   );
 };

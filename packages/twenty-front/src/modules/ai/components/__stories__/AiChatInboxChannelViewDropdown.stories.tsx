@@ -15,7 +15,6 @@ import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -104,6 +103,10 @@ const meta = {
       }),
       true,
     );
+
+    return () => {
+      jotaiStore.set(agentChatChannelViewState.atom, null);
+    };
   },
 } satisfies Meta<typeof AiChatInboxChannelViewDropdown>;
 
@@ -171,10 +174,7 @@ export const Snoozed: Story = {
   },
 };
 
-export const CollapsedDrawer: Story = {
-  beforeEach: () => {
-    jotaiStore.set(isNavigationDrawerExpandedState.atom, false);
-  },
+export const EveryView: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);

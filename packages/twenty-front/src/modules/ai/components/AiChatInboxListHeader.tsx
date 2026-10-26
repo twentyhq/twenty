@@ -42,6 +42,10 @@ export const AiChatInboxListHeader = ({
     switchToNewChat();
   };
 
+  const channelViewDropdown = isDefined(agentChatShownChannelView) && (
+    <AiChatInboxChannelViewDropdown channelView={agentChatShownChannelView} />
+  );
+
   return (
     <PageCardHeader
       title={
@@ -58,16 +62,13 @@ export const AiChatInboxListHeader = ({
                 <PinnedCommandMenuItemButtons />
               </AiChatInboxTriageCommandMenuItems>
             </CommandMenuContextProvider>
+            {channelViewDropdown}
             <SidePanelToggleButton />
           </>
         ) : (
           <>
             {!isMobile && <AiChatInboxLayoutDropdown />}
-            {isDefined(agentChatShownChannelView) && (
-              <AiChatInboxChannelViewDropdown
-                channelView={agentChatShownChannelView}
-              />
-            )}
+            {channelViewDropdown}
             <Button
               size="sm"
               variant="solid"

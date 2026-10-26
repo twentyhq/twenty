@@ -116,6 +116,11 @@ const StyledItem = styled.button<StyledItemProps>`
         : themeCssVariables.font.color.primary};
   }
 
+  &:has(.navigation-drawer-item-label:focus-visible) {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
+
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     height: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
   }
@@ -135,6 +140,10 @@ const StyledLabelParent = styled.div`
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
+
+  &:focus-visible {
+    outline: none;
+  }
 `;
 
 const StyledItemLabel = styled.span<{ $isUnread: boolean }>`
@@ -248,9 +257,13 @@ export const NavigationDrawerItem = ({
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = isDefined(modifier) || isDefined(rightOptions);
   const isRowButton =
-    !isDefined(editingContent) && !isDefined(to) && isDefined(rightOptions);
+    !isDefined(editingContent) &&
+    !isDefined(to) &&
+    isDefined(rightOptions) &&
+    isDefined(onClick);
   const isRowKeyboardEnabled =
     isRowButton && !isSoon && variant !== 'placeholder';
+  const ariaCurrentWhenActive = isDefined(to) ? 'page' : true;
 
   const handleMobileNavigation = () => {
     if (isMobile && !preventCollapseOnMobile) {
@@ -319,9 +332,11 @@ export const NavigationDrawerItem = ({
             handleMouseDown(event);
           }}
           active={active}
-          aria-current={active ? (isDefined(to) ? 'page' : true) : undefined}
-          aria-expanded={ariaExpanded}
-          aria-controls={ariaControls}
+          aria-current={
+            active && !isRowButton ? ariaCurrentWhenActive : undefined
+          }
+          aria-expanded={isRowButton ? undefined : ariaExpanded}
+          aria-controls={isRowButton ? undefined : ariaControls}
           isSoon={isSoon}
           variant={variant}
           disabled={variant === 'placeholder'}
@@ -333,20 +348,6 @@ export const NavigationDrawerItem = ({
             isSelectedInEditMode || editingContent?.isSelected
           }
           as={elementType}
-          role={isRowButton ? 'button' : undefined}
-          tabIndex={isRowKeyboardEnabled ? 0 : undefined}
-          onKeyDown={(event) => {
-            const isRowKeyboardActivation =
-              event.target === event.currentTarget &&
-              isRowKeyboardEnabled &&
-              (event.key === 'Enter' || event.key === ' ');
-
-            if (isRowKeyboardActivation) {
-              event.preventDefault();
-              handleMobileNavigation();
-              onClick?.();
-            }
-          }}
           to={isInternalLink ? to : undefined}
           href={isExternalLink ? to : undefined}
           target={isExternalLink ? '_blank' : undefined}
@@ -388,7 +389,35 @@ export const NavigationDrawerItem = ({
               )
             )}
 
-            <StyledLabelParent>
+            <StyledLabelParent
+              className="navigation-drawer-item-label"
+              role={isRowButton ? 'button' : undefined}
+              tabIndex={isRowKeyboardEnabled ? 0 : undefined}
+              aria-current={
+                active && isRowButton ? ariaCurrentWhenActive : undefined
+              }
+              aria-expanded={isRowButton ? ariaExpanded : undefined}
+              aria-controls={isRowButton ? ariaControls : undefined}
+              onKeyDown={(event) => {
+                const isRowKeyboardActivation =
+                  event.target === event.currentTarget &&
+                  isRowKeyboardEnabled &&
+                  (event.key === 'Enter' || event.key === ' ');
+
+                if (!isRowKeyboardActivation) {
+                  return;
+                }
+
+                event.preventDefault();
+
+                if (event.repeat) {
+                  return;
+                }
+
+                handleMobileNavigation();
+                onClick?.();
+              }}
+            >
               {editingContent?.label ?? (
                 <OverflowingTextWithTooltip
                   text={
@@ -415,12 +444,6 @@ export const NavigationDrawerItem = ({
             </StyledLabelParent>
 
             {showStyledSpacer && <StyledSpacer />}
-
-            {isDefined(trailingIcon) && (
-              <NavigationDrawerAnimatedCollapseWrapper>
-                {trailingIcon}
-              </NavigationDrawerAnimatedCollapseWrapper>
-            )}
 
             {isSoon && (
               <NavigationDrawerAnimatedCollapseWrapper>
@@ -489,6 +512,12 @@ export const NavigationDrawerItem = ({
                     {rightOptions}
                   </StyledRightOptionsVisbility>
                 </StyledRightOptionsContainer>
+              </NavigationDrawerAnimatedCollapseWrapper>
+            )}
+
+            {isDefined(trailingIcon) && (
+              <NavigationDrawerAnimatedCollapseWrapper>
+                {trailingIcon}
               </NavigationDrawerAnimatedCollapseWrapper>
             )}
           </StyledItemElementsContainer>
