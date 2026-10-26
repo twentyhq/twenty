@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconTool } from 'twenty-ui/icon';
+import { IconPaint } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -56,7 +56,7 @@ export const MainNavigationDrawerEditButton = ({
         tooltipPlace={isExpanded ? 'bottom' : 'right'}
         tooltipOffset={5}
       >
-        <IconTool />
+        <IconPaint />
       </LightIconButton>
     </StyledShownOnDrawerHover>
   );

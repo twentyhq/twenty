@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconTool } from 'twenty-ui/icon';
+import { IconPaint } from 'twenty-ui/icon';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
@@ -21,7 +21,7 @@ export const NavigationMenuTabCustomizeMenuContent = ({
         item={{
           id: 'customize',
           label: t`Customize sidebar`,
-          Icon: IconTool,
+          Icon: IconPaint,
           onClick: () => {
             onClose();
             enterLayoutCustomizationMode();

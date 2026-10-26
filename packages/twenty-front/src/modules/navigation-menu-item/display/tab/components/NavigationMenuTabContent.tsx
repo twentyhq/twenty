@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconTool } from 'twenty-ui/icon';
+import { IconPaint } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
@@ -61,7 +61,7 @@ export const NavigationMenuTabContent = ({
       {!isLayoutCustomizationModeEnabled && isEmpty && hasLayoutsPermission && (
         <NavigationDrawerSection>
           <NavigationDrawerItem
-            Icon={IconTool}
+            Icon={IconPaint}
             label={t`Customize tab`}
             onClick={() => enterLayoutCustomizationMode()}
             triggerEvent="CLICK"
