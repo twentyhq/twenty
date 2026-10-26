@@ -11,7 +11,7 @@ type GetPermittedFieldsArgs = {
 type FieldPermission = 'canReadField' | 'canUpdateField';
 
 // A head restriction covers every morph target, a target restriction only its own column.
-const restrictFieldToPermission = ({
+const getFieldWithPermittedMorphTargets = ({
   field,
   objectPermissions,
   permission,
@@ -58,12 +58,12 @@ export const getPermittedFields = ({
   const updatableFields: FieldMetadataItem[] = [];
 
   for (const field of fields) {
-    const readableField = restrictFieldToPermission({
+    const readableField = getFieldWithPermittedMorphTargets({
       field,
       objectPermissions,
       permission: 'canReadField',
     });
-    const updatableField = restrictFieldToPermission({
+    const updatableField = getFieldWithPermittedMorphTargets({
       field,
       objectPermissions,
       permission: 'canUpdateField',
