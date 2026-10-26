@@ -1,4 +1,4 @@
-import { type JSX, type ReactNode } from 'react';
+import { type JSX, type ReactElement, type ReactNode } from 'react';
 import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 import { type NavigationDrawerItemIndentationLevel } from './NavigationDrawerItemIndentationLevel';
 import { type NavigationDrawerItemModifier } from './NavigationDrawerItemModifier';
@@ -14,8 +14,10 @@ export type NavigationDrawerItemProps = {
   subItemIndentation?: 'default' | 'compact';
   to?: string;
   onClick?: () => void;
-  Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
-  icon?: ReactNode;
+  Icon?:
+    | IconComponent
+    | ((props: TablerIconsProps) => JSX.Element)
+    | ReactElement;
   trailingIcon?: ReactNode;
   'aria-expanded'?: boolean;
   'aria-controls'?: string;

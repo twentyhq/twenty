@@ -14,7 +14,10 @@ const StyledNavigationDrawerItemBreadcrumbContainer = styled.div<{
 
   margin-inline-end: ${({ isCompact }) =>
     isCompact ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
-  margin-inline-start: ${({ isCompact }) => (isCompact ? '6px' : '7.5px')};
+  margin-inline-start: ${({ isCompact }) =>
+    isCompact
+      ? themeCssVariables.spacing['1.5']
+      : `calc(${themeCssVariables.spacing[2]} - ${themeCssVariables.spacing['0.5']} / 4)`};
   position: relative;
   width: 9px;
 

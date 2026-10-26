@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useId, useState } from 'react';
+import { type ReactElement, type ReactNode, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
@@ -23,7 +23,7 @@ type NavigationDrawerAiChatChannelNavigationProps = {
   summary?: AgentChatChannelSummary;
   channelView: AgentChatChannelView | null;
   isActive: boolean;
-  icon?: ReactNode;
+  icon?: ReactElement;
   rightOptions?: ReactNode;
   isRightOptionsDropdownOpen?: boolean;
   onNavigate: (channelView: AgentChatChannelView) => void;
@@ -87,7 +87,7 @@ export const NavigationDrawerAiChatChannelNavigation = ({
       <NavigationDrawerItem
         label={channel.name}
         secondaryLabel={channel.isAccessible ? undefined : t`Not open to you`}
-        icon={icon ?? <AgentChatChannelIcon channel={channel} />}
+        Icon={icon ?? <AgentChatChannelIcon channel={channel} />}
         variant={channel.isAccessible ? 'default' : 'tertiary'}
         isUnread={summary?.hasUnreadOpen}
         active={isActive && !areChildrenVisible}

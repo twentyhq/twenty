@@ -16,7 +16,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
+import { isValidElement, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 import { Badge } from 'twenty-ui/primitives/data-display';
@@ -207,7 +207,6 @@ export const NavigationDrawerItem = ({
   secondaryLabel,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
-  icon,
   trailingIcon,
   'aria-expanded': ariaExpanded,
   'aria-controls': ariaControls,
@@ -244,6 +243,10 @@ export const NavigationDrawerItem = ({
 
   const showBreadcrumb = indentationLevel === 2;
   const showStyledSpacer = isDefined(modifier) || isDefined(rightOptions);
+  const isRowButton =
+    !isDefined(editingContent) && !isDefined(to) && isDefined(rightOptions);
+  const isRowKeyboardEnabled =
+    isRowButton && !isSoon && variant !== 'placeholder';
 
   const handleMobileNavigation = () => {
     if (isMobile && !preventCollapseOnMobile) {
@@ -326,28 +329,12 @@ export const NavigationDrawerItem = ({
             isSelectedInEditMode || editingContent?.isSelected
           }
           as={elementType}
-          role={
-            !isDefined(editingContent) && !to && isDefined(rightOptions)
-              ? 'button'
-              : undefined
-          }
-          tabIndex={
-            !isDefined(editingContent) &&
-            !to &&
-            isDefined(rightOptions) &&
-            !isSoon &&
-            variant !== 'placeholder'
-              ? 0
-              : undefined
-          }
+          role={isRowButton ? 'button' : undefined}
+          tabIndex={isRowKeyboardEnabled ? 0 : undefined}
           onKeyDown={(event) => {
             const isRowKeyboardActivation =
               event.target === event.currentTarget &&
-              !isDefined(editingContent) &&
-              !isDefined(to) &&
-              isDefined(rightOptions) &&
-              !isSoon &&
-              variant !== 'placeholder' &&
+              isRowKeyboardEnabled &&
               (event.key === 'Enter' || event.key === ' ');
 
             if (isRowKeyboardActivation) {
@@ -375,20 +362,21 @@ export const NavigationDrawerItem = ({
             {editingContent ? (
               <StyledIcon>{editingContent.icon}</StyledIcon>
             ) : (
-              (isDefined(icon) || isDefined(Icon)) && (
+              isDefined(Icon) && (
                 <StyledIcon>
-                  {icon ??
-                    (isDefined(Icon) && (
-                      <Icon
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.md}
-                        color={
-                          showBreadcrumb && !isExpanded
-                            ? theme.font.color.light
-                            : 'currentColor'
-                        }
-                      />
-                    ))}
+                  {isValidElement(Icon) ? (
+                    Icon
+                  ) : (
+                    <Icon
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.md}
+                      color={
+                        showBreadcrumb && !isExpanded
+                          ? theme.font.color.light
+                          : 'currentColor'
+                      }
+                    />
+                  )}
                   {isUnread && !isExpanded && (
                     <StyledNavigationDrawerUnreadDot />
                   )}
