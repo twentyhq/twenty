@@ -8,14 +8,13 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { IconChevronLeft } from 'twenty-ui/icon';
+import { IconChevronLeft, IconX } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatChannelThreadsFetchMoreTrigger } from '@/ai/components/AgentChatChannelThreadsFetchMoreTrigger';
 import { AgentChatChannelThreadsLoadEffect } from '@/ai/components/AgentChatChannelThreadsLoadEffect';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
-import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
 import { AiChatInboxChannelToolbar } from '@/ai/components/AiChatInboxChannelToolbar';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
@@ -32,6 +31,7 @@ import { useAgentChatInboxShownThreads } from '@/ai/hooks/useAgentChatInboxShown
 import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
 import { useFetchMoreAgentChatInboxShownThreads } from '@/ai/hooks/useFetchMoreAgentChatInboxShownThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -160,9 +160,13 @@ const AiChatInboxPageContent = () => {
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
   };
 
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const keyboardCursorThreadId =
+    selectedThreadId ?? currentAiChatThread ?? undefined;
+
   const { navigateWithArrowKey } = useRecordSelectionArrowKeyNavigation({
     selectableItemsContainerRef: threadListContainerRef,
-    activeRecordId: selectedThreadId,
+    activeRecordId: keyboardCursorThreadId,
     onActiveRecordChange: selectThread,
     onEndReached: fetchMoreAgentChatInboxShownThreads,
   });
@@ -341,11 +345,14 @@ const AiChatInboxPageContent = () => {
                             onThreadSelect={selectThread}
                           />
                           {isSplitView && (
-                            <AiChatCloseButton
-                              destinationPath={getAppPath(AppPath.AiChatInbox, {
-                                threadId: null,
-                              })}
-                            />
+                            <IconButton
+                              size="sm"
+                              variant="outline"
+                              onClick={() => selectThread(null)}
+                              aria-label={t`Close`}
+                            >
+                              <IconX />
+                            </IconButton>
                           )}
                         </>
                       )

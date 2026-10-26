@@ -34,6 +34,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AiChatInboxPage } from '~/pages/ai-chat/AiChatInboxPage';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
@@ -550,11 +551,7 @@ export const CloseConversationPane: Story = {
       canvas.getByRole('button', { name: 'Command Menu' }),
     ).toBeVisible();
 
-    await user.click(
-      within(
-        getThreadRow({ canvasElement, title: SECOND_THREAD_TITLE }),
-      ).getByText(SECOND_THREAD_TITLE),
-    );
+    await user.keyboard('{ArrowDown}');
     await canvas.findByRole('button', { name: 'Chat details' });
     await expect(canvas.getAllByText(SECOND_THREAD_TITLE)).toHaveLength(2);
     await waitFor(() =>
@@ -565,11 +562,13 @@ export const CloseConversationPane: Story = {
       name: 'Conversation',
     });
 
+    jotaiStore.set(isSidePanelOpenedState.atom, true);
     await user.click(canvas.getByRole('button', { name: 'Close' }));
     await waitFor(() => {
       expect(reopenedConversation).not.toBeInTheDocument();
       expect(list.getBoundingClientRect().width).toBeCloseTo(fullListWidth, 0);
     });
+    await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
   },
 };
 

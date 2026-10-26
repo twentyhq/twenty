@@ -170,7 +170,7 @@ describe('useProjectAiChatThreadToUrl', () => {
     expect(navigateAppMock).not.toHaveBeenCalled();
   });
 
-  it('opens an explicitly selected chat from the closed inbox', () => {
+  it('opens an explicitly selected chat from the closed inbox in a new history entry', () => {
     window.history.pushState(null, '', '/inbox');
 
     const { result } = renderHook(() => useProjectAiChatThreadToUrl());
@@ -183,7 +183,26 @@ describe('useProjectAiChatThreadToUrl', () => {
       AppPath.AiChatInbox,
       { threadId: THREAD_A },
       undefined,
-      { replace: true, state: null },
+      { replace: false, state: null },
+    );
+  });
+
+  it('opens a new chat from the closed inbox in a new history entry', () => {
+    window.history.pushState(null, '', '/inbox');
+
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+
+    act(() => {
+      result.current.projectAiChatThreadToUrl(
+        getDefaultStore().get(newAiChatThreadIdState.atom),
+      );
+    });
+
+    expect(navigateAppMock).toHaveBeenCalledWith(
+      AppPath.AiChatInbox,
+      { threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT },
+      undefined,
+      { replace: false, state: null },
     );
   });
 });

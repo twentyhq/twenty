@@ -49,7 +49,7 @@ export const useProjectAiChatThreadToUrl = ({
           threadId: isNewChat ? newThreadPathSegment : threadId,
         },
         undefined,
-        { replace: true, state: getCurrentHistoryEntryState() },
+        { replace: !isInboxClosed, state: getCurrentHistoryEntryState() },
       );
     },
     [navigateApp, shouldPreserveClosedInbox, store],
