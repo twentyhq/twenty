@@ -211,9 +211,6 @@ export function AppDetail({ app }: AppDetailProps) {
                 ))}
               </ScreenshotList>
             )}
-            {app.universalIdentifier === SLACK_APP_UNIVERSAL_IDENTIFIER && (
-              <SlackAppDetailContent />
-            )}
           </MainColumn>
 
           <Sidebar>
@@ -248,6 +245,10 @@ export function AppDetail({ app }: AppDetailProps) {
           </Sidebar>
         </ContentGrid>
       </SectionShell>
+
+      {app.universalIdentifier === SLACK_APP_UNIVERSAL_IDENTIFIER && (
+        <SlackAppDetailContent installUrl={installUrl} />
+      )}
     </>
   );
 }
