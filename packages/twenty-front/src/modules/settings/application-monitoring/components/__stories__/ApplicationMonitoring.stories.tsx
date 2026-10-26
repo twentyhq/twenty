@@ -173,11 +173,9 @@ export const Default: Story = {
         name: 'Installs, upgrades and uninstalls',
       }),
     ).toBeVisible();
-    expect(await canvas.findByText('Errors')).toBeVisible();
-    expect(await canvas.findByText('API requests')).toBeVisible();
-    expect(
-      canvas.getByText('184 credits across every install in this period'),
-    ).toBeVisible();
+    expect(await canvas.findByText(/^Errors \([\d,]+\)$/)).toBeVisible();
+    expect(await canvas.findByText(/^API requests \([\d,]+\)$/)).toBeVisible();
+    expect(canvas.getByText('Credits (184)')).toBeVisible();
     expect(canvas.queryByText(/Your plan shows/)).not.toBeInTheDocument();
   },
 };

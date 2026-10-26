@@ -26,7 +26,7 @@ export const ApplicationMonitoringCreditsSection = ({
   axisLabel,
   isAdminView,
 }: ApplicationMonitoringCreditsSectionProps) => {
-  const { t, i18n } = useLingui();
+  const { t } = useLingui();
   const { creditsUsed, creditUsage } = monitoring;
 
   if (!isDefined(creditsUsed) || !isDefined(creditUsage)) {
@@ -38,19 +38,12 @@ export const ApplicationMonitoringCreditsSection = ({
     );
   }
 
-  const creditsUsedLabel = i18n.number(
-    creditsUsed,
-    getApplicationMonitoringCreditsFormatOptions(creditsUsed),
-  );
-
   return (
     <Section.Root>
       <Section.Header
         title={t`Credits used`}
         description={
-          isAdminView
-            ? t`${creditsUsedLabel} credits in this period`
-            : t`${creditsUsedLabel} credits across every install in this period`
+          isAdminView ? undefined : t`Across every install in this period`
         }
       />
       {creditUsage.length === 0 ? (
@@ -63,6 +56,7 @@ export const ApplicationMonitoringCreditsSection = ({
           })}
           series={[{ key: 'creditsUsed', label: t`Credits`, color: 'purple' }]}
           axisLabel={axisLabel}
+          getTotalFormatOptions={getApplicationMonitoringCreditsFormatOptions}
         />
       )}
     </Section.Root>
