@@ -3,6 +3,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { IconChevronRight, IconSearch } from 'twenty-ui/icon';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
@@ -22,6 +24,9 @@ const meta: Meta<typeof NavigationDrawerItem> = {
     Icon: IconSearch,
   },
   argTypes: { Icon: { control: false } },
+  beforeEach: () => {
+    jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
+  },
 };
 
 export default meta;
