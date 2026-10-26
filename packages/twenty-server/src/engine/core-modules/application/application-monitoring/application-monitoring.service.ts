@@ -29,7 +29,6 @@ import {
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { EventLogRetentionService } from 'src/engine/core-modules/event-logs/retention/services/event-log-retention.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -222,7 +221,7 @@ export class ApplicationMonitoringService {
   }): Promise<
     | {
         bucketStart: Date;
-        operationType: UsageOperationType;
+        operationType: string;
         creditsUsedMicro: number;
       }[]
     | null

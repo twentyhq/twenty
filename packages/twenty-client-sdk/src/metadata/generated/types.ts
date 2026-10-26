@@ -1316,7 +1316,7 @@ export default {
                 6
             ],
             "operationType": [
-                601
+                1
             ],
             "__typename": [
                 1

@@ -172,7 +172,7 @@ export class UsageAnalyticsService {
   }): Promise<
     {
       bucketStart: Date;
-      operationType: UsageOperationType;
+      operationType: string;
       creditsUsedMicro: number;
     }[]
   > {
@@ -182,7 +182,7 @@ export class UsageAnalyticsService {
 
     const rows = await this.clickHouseService.selectOrThrow<{
       bucketStart: string;
-      operationType: UsageOperationType;
+      operationType: string;
       creditsUsedMicro: string | number;
     }>(
       `SELECT

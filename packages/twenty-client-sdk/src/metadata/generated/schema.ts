@@ -501,7 +501,7 @@ export interface ApplicationMonitoringActivityBucket {
 export interface ApplicationMonitoringCreditBucket {
     bucketStart: Scalars['DateTime']
     creditsUsed: Scalars['Float']
-    operationType: UsageOperationType
+    operationType: Scalars['String']
     __typename: 'ApplicationMonitoringCreditBucket'
 }
 

@@ -132,7 +132,7 @@ describe('mapApplicationMonitoringRows', () => {
           },
           {
             bucketStart: new Date('2026-10-18T00:00:00.000Z'),
-            operationType: UsageOperationType.AI_CHAT_TOKEN,
+            operationType: 'sendSms',
             creditsUsedMicro: 120_000,
           },
         ],
@@ -152,7 +152,7 @@ describe('mapApplicationMonitoringRows', () => {
         },
         {
           bucketStart: new Date('2026-10-18T00:00:00.000Z'),
-          operationType: UsageOperationType.AI_CHAT_TOKEN,
+          operationType: 'sendSms',
           creditsUsed: 0.12,
         },
       ],

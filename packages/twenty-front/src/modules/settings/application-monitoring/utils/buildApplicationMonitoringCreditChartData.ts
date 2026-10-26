@@ -1,7 +1,9 @@
 import { type ApplicationMonitoringChartDatum } from '@/settings/application-monitoring/types/ApplicationMonitoringChartDatum';
 import { type ApplicationMonitoringData } from '@/settings/application-monitoring/types/ApplicationMonitoringData';
 import { listApplicationMonitoringBucketStarts } from '@/settings/application-monitoring/utils/listApplicationMonitoringBucketStarts';
-import { type UsageOperationType } from '~/generated-metadata/graphql';
+
+// Prefixed so an app-declared operation can never collide with bucketStart
+type ApplicationMonitoringCreditSeriesKey = `operation:${string}`;
 
 export const buildApplicationMonitoringCreditChartData = (
   monitoring: Pick<
@@ -11,10 +13,13 @@ export const buildApplicationMonitoringCreditChartData = (
     creditUsage: NonNullable<ApplicationMonitoringData['creditUsage']>;
   },
 ): {
-  operationTypes: UsageOperationType[];
-  data: ApplicationMonitoringChartDatum<UsageOperationType>[];
+  series: {
+    key: ApplicationMonitoringCreditSeriesKey;
+    operationType: string;
+  }[];
+  data: ApplicationMonitoringChartDatum<ApplicationMonitoringCreditSeriesKey>[];
 } => {
-  const totalByOperationType = new Map<UsageOperationType, number>();
+  const totalByOperationType = new Map<string, number>();
   const creditsUsedByBucketStartAndOperationType = new Map<string, number>();
 
   for (const bucket of monitoring.creditUsage) {
@@ -29,25 +34,28 @@ export const buildApplicationMonitoringCreditChartData = (
     );
   }
 
-  const operationTypes = [...totalByOperationType.entries()]
+  const series = [...totalByOperationType.entries()]
     .sort(([, firstTotal], [, secondTotal]) => secondTotal - firstTotal)
-    .map(([operationType]) => operationType);
+    .map(([operationType]) => ({
+      key: `operation:${operationType}` as const,
+      operationType,
+    }));
 
   return {
-    operationTypes,
+    series,
     data: listApplicationMonitoringBucketStarts(monitoring).map(
       (bucketStart) =>
         ({
           bucketStart,
           ...Object.fromEntries(
-            operationTypes.map((operationType) => [
-              operationType,
+            series.map(({ key, operationType }) => [
+              key,
               creditsUsedByBucketStartAndOperationType.get(
                 `${bucketStart}|${operationType}`,
               ) ?? 0,
             ]),
           ),
-        }) as ApplicationMonitoringChartDatum<UsageOperationType>,
+        }) as ApplicationMonitoringChartDatum<ApplicationMonitoringCreditSeriesKey>,
     ),
   };
 };

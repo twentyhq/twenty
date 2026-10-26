@@ -64,21 +64,23 @@ export const ApplicationMonitoringCreditsSection = ({
       ) : (
         <ApplicationMonitoringLineChart
           data={creditChartData.data}
-          series={creditChartData.operationTypes.map((operationType, index) => {
-            const operationTypeLabel =
-              getUsageOperationTypeLabel(operationType);
+          series={creditChartData.series.map(
+            ({ key, operationType }, index) => {
+              const operationTypeLabel =
+                getUsageOperationTypeLabel(operationType);
 
-            return {
-              key: operationType,
-              label: isDefined(operationTypeLabel)
-                ? i18n._(operationTypeLabel)
-                : operationType,
-              color:
-                APPLICATION_MONITORING_CREDIT_SERIES_COLORS[
-                  index % APPLICATION_MONITORING_CREDIT_SERIES_COLORS.length
-                ],
-            };
-          })}
+              return {
+                key,
+                label: isDefined(operationTypeLabel)
+                  ? i18n._(operationTypeLabel)
+                  : operationType,
+                color:
+                  APPLICATION_MONITORING_CREDIT_SERIES_COLORS[
+                    index % APPLICATION_MONITORING_CREDIT_SERIES_COLORS.length
+                  ],
+              };
+            },
+          )}
           axisLabel={axisLabel}
           getTotalFormatOptions={getApplicationMonitoringCreditsFormatOptions}
         />

@@ -5,7 +5,6 @@ import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-cli
 import { type ApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/application-monitoring.dto';
 import { type ApplicationMonitoringRows } from 'src/engine/core-modules/application/application-monitoring/types/application-monitoring-rows.type';
 import { type ApplicationMonitoringPeriod } from 'src/engine/core-modules/application/application-monitoring/utils/resolve-application-monitoring-period.util';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 const toNumber = (value: number | string | undefined): number =>
@@ -23,7 +22,7 @@ export const mapApplicationMonitoringRows = ({
   creditUsage:
     | {
         bucketStart: Date;
-        operationType: UsageOperationType;
+        operationType: string;
         creditsUsedMicro: number;
       }[]
     | null;

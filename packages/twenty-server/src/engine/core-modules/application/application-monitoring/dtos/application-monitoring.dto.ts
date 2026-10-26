@@ -1,7 +1,5 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-
 @ObjectType('ApplicationMonitoringActivityBucket')
 export class ApplicationMonitoringActivityBucketDTO {
   @Field(() => Date)
@@ -40,8 +38,9 @@ export class ApplicationMonitoringCreditBucketDTO {
   @Field(() => Date)
   bucketStart: Date;
 
-  @Field(() => UsageOperationType)
-  operationType: UsageOperationType;
+  // A string, not the enum: apps record operations they declare themselves
+  @Field(() => String)
+  operationType: string;
 
   @Field(() => Float)
   creditsUsed: number;
