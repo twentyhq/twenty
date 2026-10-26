@@ -6,12 +6,6 @@ import { TEAMS_ASSISTANT_HISTORY_TURN_LIMIT } from 'src/features/chat/logic-func
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
 import { type TeamsAssistantTurn } from 'src/features/chat/logic-functions/types/teams-assistant-turn.type';
 
-const isTeamsAssistantTurn = (turn: {
-  requestText: string | undefined;
-  responseText: string | undefined;
-}): turn is TeamsAssistantTurn =>
-  isNonEmptyString(turn.requestText) && isNonEmptyString(turn.responseText);
-
 export const findTeamsAssistantHistory = async ({
   client,
   teamsConversationId,
@@ -50,16 +44,14 @@ export const findTeamsAssistantHistory = async ({
   const history: TeamsAssistantTurn[] = [];
 
   for (const { node } of queryResult.teamsAssistantRequests?.edges ?? []) {
-    const turn = {
-      requestText: node.requestText?.markdown,
-      responseText:
-        node.status === TEAMS_ASSISTANT_REQUEST_STATUS.FAILED
-          ? TEAMS_ASSISTANT_FAILURE_TEXT
-          : node.responseText?.markdown,
-    };
+    const requestText = node.requestText?.markdown;
+    const responseText =
+      node.status === TEAMS_ASSISTANT_REQUEST_STATUS.FAILED
+        ? TEAMS_ASSISTANT_FAILURE_TEXT
+        : node.responseText?.markdown;
 
-    if (isTeamsAssistantTurn(turn)) {
-      history.unshift(turn);
+    if (isNonEmptyString(requestText) && isNonEmptyString(responseText)) {
+      history.unshift({ requestText, responseText });
     }
   }
 
