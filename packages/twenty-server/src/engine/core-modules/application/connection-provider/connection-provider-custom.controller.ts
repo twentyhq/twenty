@@ -43,7 +43,7 @@ export class ConnectionProviderCustomController {
     let state: string | undefined;
 
     try {
-      const callbackRequest = this.readCallbackRequest(req);
+      const callbackRequest = this.readCallbackRequestOrThrow(req);
 
       state = callbackRequest.state;
 
@@ -83,7 +83,8 @@ export class ConnectionProviderCustomController {
     BillingRestApiExceptionFilter,
   )
   async callbackNotification(@Req() req: Request): Promise<{ success: true }> {
-    const { state, queryStringParameters } = this.readCallbackRequest(req);
+    const { state, queryStringParameters } =
+      this.readCallbackRequestOrThrow(req);
 
     await this.customFlowService.completeAuthorizationFlow({
       state,
@@ -97,7 +98,7 @@ export class ConnectionProviderCustomController {
     return { success: true };
   }
 
-  private readCallbackRequest(req: Request): {
+  private readCallbackRequestOrThrow(req: Request): {
     state: string;
     queryStringParameters: Record<string, string | undefined>;
   } {

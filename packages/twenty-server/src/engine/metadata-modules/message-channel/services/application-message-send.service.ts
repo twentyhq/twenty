@@ -5,7 +5,7 @@ import {
   MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
@@ -205,7 +205,7 @@ export class ApplicationMessageSendService {
 
           const messageIds = latestMessages.map((message) => message.id);
 
-          if (messageIds.length === 0) {
+          if (!isNonEmptyArray(messageIds)) {
             return null;
           }
 
