@@ -24,8 +24,11 @@ const isReproducedBySyncOrThrow = ({
   references,
 }: {
   manifest: WorkflowManifest;
-  flatWorkflow: FlatWorkflow;
-  flatWorkflowVersion: FlatWorkflowVersion;
+  flatWorkflow: Pick<FlatWorkflow, 'applicationUniversalIdentifier'>;
+  flatWorkflowVersion: Pick<
+    FlatWorkflowVersion,
+    'updatedAt' | 'triggers' | 'steps'
+  >;
   references: WorkflowManifestReferences;
 }): boolean => {
   const reproducedVersion = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({

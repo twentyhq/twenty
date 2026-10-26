@@ -10,16 +10,24 @@ import {
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { computeAiAgentOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-ai-agent-output-schema.util';
 
-// Mirrors prepareWorkflowManifestReferences: application metadata resolves only when
-// the exported manifest recreates it, other applications' metadata always resolves.
+// Mirrors prepareWorkflowManifestReferences: own metadata resolves only if exported, foreign always.
 export const buildWorkflowManifestExportReferences = ({
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
   resolvableFieldUniversalIdentifiers,
 }: {
-  applicationAllFlatEntityMaps: AllFlatEntityMaps;
-  allFlatEntityMaps: AllFlatEntityMaps;
+  applicationAllFlatEntityMaps: Pick<
+    AllFlatEntityMaps,
+    | 'flatObjectMetadataMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatLogicFunctionMaps'
+    | 'flatAgentMaps'
+  >;
+  allFlatEntityMaps: Pick<
+    AllFlatEntityMaps,
+    'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+  >;
   exportedObjectUniversalIdentifiers: ReadonlySet<string>;
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
 }): WorkflowManifestReferences => {

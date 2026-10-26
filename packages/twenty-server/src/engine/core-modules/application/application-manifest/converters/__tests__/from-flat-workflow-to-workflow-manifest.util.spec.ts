@@ -166,10 +166,13 @@ const STEP_INPUTS = {
   EMPTY: {},
 };
 
-const buildStep = (
-  type: keyof typeof STEP_INPUTS,
-  overrides: Partial<WorkflowStepManifest> = {},
-): WorkflowStepManifest =>
+const buildStep = ({
+  type,
+  overrides = {},
+}: {
+  type: keyof typeof STEP_INPUTS;
+  overrides?: Partial<WorkflowStepManifest>;
+}): WorkflowStepManifest =>
   ({
     universalIdentifier: STEP_ID,
     name: `${type} step`,
@@ -184,7 +187,7 @@ const buildStep = (
 
 const buildWorkflow = ({
   trigger = MANUAL_TRIGGER,
-  steps = [buildStep('EMPTY')],
+  steps = [buildStep({ type: 'EMPTY' })],
 }: {
   trigger?: WorkflowTriggerManifest;
   steps?: WorkflowStepManifest[];
@@ -203,21 +206,21 @@ const syncWorkflow = (manifest: WorkflowManifest) => {
       ...references,
     });
 
+  const flatWorkflow: FlatWorkflow = {
+    ...workflow,
+    workspaceId: 'workspace-id',
+    applicationId: 'application-id',
+  };
   // Stored versions come back from jsonb, which drops undefined values and reorders keys.
-  return {
-    flatWorkflow: {
-      ...workflow,
+  const flatWorkflowVersion: FlatWorkflowVersion = JSON.parse(
+    JSON.stringify({
+      ...flatUniversalWorkflowVersion,
       workspaceId: 'workspace-id',
       applicationId: 'application-id',
-    } as FlatWorkflow,
-    flatWorkflowVersion: JSON.parse(
-      JSON.stringify({
-        ...flatUniversalWorkflowVersion,
-        workspaceId: 'workspace-id',
-        applicationId: 'application-id',
-      }),
-    ) as FlatWorkflowVersion,
-  };
+    }),
+  );
+
+  return { flatWorkflow, flatWorkflowVersion };
 };
 
 const reverseKeysDeeply = (value: unknown): unknown => {
@@ -255,11 +258,18 @@ const expectRoundTrip = (manifest: WorkflowManifest) => {
   expect(exportWorkflow(synced)).toEqual({ manifest });
 };
 
-const branchingSteps = (
-  type: 'IF_ELSE' | 'ITERATOR',
-): WorkflowStepManifest[] => [
-  type === 'IF_ELSE'
-    ? {
+const AFTER_STEP: WorkflowStepManifest = {
+  universalIdentifier: SECOND_STEP_ID,
+  name: 'After',
+  type: 'EMPTY',
+  nextStepIds: [],
+  input: {},
+};
+
+const BRANCHING_STEPS: Record<'IF_ELSE' | 'ITERATOR', WorkflowStepManifest[]> =
+  {
+    IF_ELSE: [
+      {
         universalIdentifier: STEP_ID,
         name: 'Choose',
         type: 'IF_ELSE',
@@ -275,54 +285,62 @@ const branchingSteps = (
             { id: 'otherwise', nextStepIds: [THIRD_STEP_ID] },
           ],
         },
-      }
-    : {
+      },
+      AFTER_STEP,
+      {
+        universalIdentifier: THIRD_STEP_ID,
+        name: 'Otherwise',
+        type: 'EMPTY',
+        nextStepIds: [],
+        input: {},
+      },
+    ],
+    ITERATOR: [
+      {
         universalIdentifier: STEP_ID,
         name: 'Repeat',
         type: 'ITERATOR',
         nextStepIds: [SECOND_STEP_ID],
         input: { items: ['one', 'two'], initialLoopStepIds: [THIRD_STEP_ID] },
       },
-  {
-    universalIdentifier: SECOND_STEP_ID,
-    name: 'After',
-    type: 'EMPTY',
-    nextStepIds: [],
-    input: {},
-  },
-  {
-    universalIdentifier: THIRD_STEP_ID,
-    name: 'Inside',
-    type: 'EMPTY',
-    nextStepIds: type === 'ITERATOR' ? [STEP_ID] : [],
-    input: {},
-  },
-];
+      AFTER_STEP,
+      {
+        universalIdentifier: THIRD_STEP_ID,
+        name: 'Inside',
+        type: 'EMPTY',
+        nextStepIds: [STEP_ID],
+        input: {},
+      },
+    ],
+  };
 
 describe('fromFlatWorkflowToWorkflowManifest', () => {
   describe('round trip through sync', () => {
     it.each(Object.keys(STEP_INPUTS) as (keyof typeof STEP_INPUTS)[])(
       'exports a %s step as it was declared',
       (type) => {
-        expectRoundTrip(buildWorkflow({ steps: [buildStep(type)] }));
+        expectRoundTrip(buildWorkflow({ steps: [buildStep({ type })] }));
       },
     );
 
     it.each(['IF_ELSE', 'ITERATOR'] as const)('exports %s branches', (type) => {
-      expectRoundTrip(buildWorkflow({ steps: branchingSteps(type) }));
+      expectRoundTrip(buildWorkflow({ steps: BRANCHING_STEPS[type] }));
     });
 
     it('exports a position, outputs and error handling that differ from the defaults', () => {
       expectRoundTrip(
         buildWorkflow({
           steps: [
-            buildStep('HTTP_REQUEST', {
-              position: { x: 40, y: 90 },
-              outputSchema: { response: { isLeaf: true, type: 'string' } },
-              expectedOutputSchema: { ok: true },
-              errorHandlingOptions: {
-                retryOnFailure: { value: 2 },
-                continueOnFailure: { value: true },
+            buildStep({
+              type: 'HTTP_REQUEST',
+              overrides: {
+                position: { x: 40, y: 90 },
+                outputSchema: { response: { isLeaf: true, type: 'string' } },
+                expectedOutputSchema: { ok: true },
+                errorHandlingOptions: {
+                  retryOnFailure: { value: 2 },
+                  continueOnFailure: { value: true },
+                },
               },
             }),
           ],
@@ -335,12 +353,15 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
         syncWorkflow(
           buildWorkflow({
             steps: [
-              buildStep('HTTP_REQUEST', {
-                position: { x: 0, y: 180 },
-                expectedOutputSchema: { ok: true },
-                errorHandlingOptions: {
-                  retryOnFailure: { value: 0 },
-                  continueOnFailure: { value: false },
+              buildStep({
+                type: 'HTTP_REQUEST',
+                overrides: {
+                  position: { x: 0, y: 180 },
+                  expectedOutputSchema: { ok: true },
+                  errorHandlingOptions: {
+                    retryOnFailure: { value: 0 },
+                    continueOnFailure: { value: false },
+                  },
                 },
               }),
             ],
@@ -351,7 +372,10 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       expect(result).toEqual({
         manifest: buildWorkflow({
           steps: [
-            buildStep('HTTP_REQUEST', { expectedOutputSchema: { ok: true } }),
+            buildStep({
+              type: 'HTTP_REQUEST',
+              overrides: { expectedOutputSchema: { ok: true } },
+            }),
           ],
         }),
       });
@@ -431,7 +455,7 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
               filter: STEP_FILTERS,
             },
           },
-          steps: [buildStep('FIND_RECORDS')],
+          steps: [buildStep({ type: 'FIND_RECORDS' })],
         }),
       );
       const reordered = {
@@ -467,7 +491,7 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
 
     it('reports a record filter on a field of a related record', () => {
       const synced = syncWorkflow(
-        buildWorkflow({ steps: [buildStep('FIND_RECORDS')] }),
+        buildWorkflow({ steps: [buildStep({ type: 'FIND_RECORDS' })] }),
       );
       const [step] = synced.flatWorkflowVersion.steps ?? [];
 
@@ -527,7 +551,7 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
     it.each([
       {
         description: 'an object that is not exported',
-        step: buildStep('CREATE_RECORD'),
+        step: buildStep({ type: 'CREATE_RECORD' }),
         exportReferences: {
           ...references,
           objectByUniversalIdentifier: new Map(),
@@ -536,7 +560,7 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       },
       {
         description: 'a field that is not exported',
-        step: buildStep('FILTER'),
+        step: buildStep({ type: 'FILTER' }),
         exportReferences: {
           ...references,
           fieldByUniversalIdentifier: new Map(),
@@ -546,7 +570,7 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       {
         description:
           'a logic function that is not a workflow action of the application',
-        step: buildStep('LOGIC_FUNCTION'),
+        step: buildStep({ type: 'LOGIC_FUNCTION' }),
         exportReferences: {
           ...references,
           logicFunctionIdByUniversalIdentifier: new Map(),
@@ -556,7 +580,7 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       },
       {
         description: 'an agent of another application',
-        step: buildStep('AI_AGENT'),
+        step: buildStep({ type: 'AI_AGENT' }),
         exportReferences: {
           ...references,
           agentIdByUniversalIdentifier: new Map(),
@@ -611,20 +635,6 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
 
       expect(exportWorkflow(synced)).toEqual({
         reason: 'workflow changed in the workflow builder',
-      });
-    });
-
-    it('reports a trigger without a universal identifier', () => {
-      const synced = syncWorkflow(buildWorkflow({}));
-
-      delete (
-        synced.flatWorkflowVersion.triggers?.[0] as {
-          universalIdentifier?: string;
-        }
-      ).universalIdentifier;
-
-      expect(exportWorkflow(synced)).toEqual({
-        reason: 'workflow trigger without a universal identifier',
       });
     });
   });

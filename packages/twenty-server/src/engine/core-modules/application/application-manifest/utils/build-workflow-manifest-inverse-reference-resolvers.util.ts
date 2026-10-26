@@ -1,30 +1,9 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import {
-  type WorkflowManifestFieldReference,
-  type WorkflowManifestReferences,
-} from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { computeWorkflowWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-watched-field-name.util';
 
 const UNRESOLVED_REFERENCE = '';
-
-const computeWatchedFieldName = (
-  field: WorkflowManifestFieldReference,
-): string | undefined => {
-  if (
-    field.type !== FieldMetadataType.RELATION &&
-    field.type !== FieldMetadataType.MORPH_RELATION
-  ) {
-    return field.name;
-  }
-
-  return isDefined(field.universalSettings) &&
-    'relationType' in field.universalSettings &&
-    field.universalSettings.relationType === RelationType.MANY_TO_ONE
-    ? computeMorphOrRelationFieldJoinColumnName({ name: field.name })
-    : undefined;
-};
 
 const toObjectFieldKey = ({
   objectUniversalIdentifier,
@@ -43,8 +22,7 @@ const invertIdentifierMap = (
     ),
   );
 
-// Unresolved references resolve to an empty string and record the first reason,
-// so converters build the whole manifest and report one reason at the end.
+// Unresolved references become '' and record a reason, so converters report it once at the end.
 export const buildWorkflowManifestInverseReferenceResolvers = (
   references: WorkflowManifestReferences,
 ) => {
@@ -75,7 +53,7 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
     field,
   ] of references.fieldByUniversalIdentifier ?? []) {
     const { objectUniversalIdentifier } = field;
-    const watchedFieldName = computeWatchedFieldName(field);
+    const watchedFieldName = computeWorkflowWatchedFieldName(field);
 
     fieldUniversalIdentifierById.set(field.id, universalIdentifier);
     fieldUniversalIdentifierByObjectFieldName.set(

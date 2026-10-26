@@ -234,8 +234,6 @@ export {
   PageLayoutTabLayoutMode,
   PageLayoutWidgetVerticalListHeightBehavior,
   PageLayoutType,
-  RecordFilterGroupLogicalOperator,
-  StepLogicalOperator,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,

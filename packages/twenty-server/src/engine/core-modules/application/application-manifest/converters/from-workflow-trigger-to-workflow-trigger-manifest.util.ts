@@ -2,12 +2,12 @@ import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import {
   isDefined,
   isNonEmptyArray,
-  isPlainObject,
   sortKeysDeeply,
 } from 'twenty-shared/utils';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
+import { type UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
   type WorkflowCronTrigger,
   type WorkflowDatabaseEventTrigger,
@@ -72,10 +72,8 @@ const fromDatabaseEventTriggerSettings = ({
   settings,
   resolvers,
 }: {
-  settings: WorkflowDatabaseEventTrigger['settings'] & {
-    fields?: unknown;
-    filter?: unknown;
-  };
+  settings: WorkflowDatabaseEventTrigger['settings'] &
+    Partial<UpdateEventTriggerSettings>;
   resolvers: WorkflowManifestInverseReferenceResolvers;
 }) => {
   const [objectName, action, ...extraSegments] = settings.eventName.split('.');
@@ -91,7 +89,7 @@ const fromDatabaseEventTriggerSettings = ({
   return {
     objectUniversalIdentifier,
     action,
-    ...(Array.isArray(fields) && isNonEmptyArray(fields)
+    ...(isNonEmptyArray(fields)
       ? {
           fieldUniversalIdentifiers: fields.map((watchedFieldName) =>
             resolvers.watchedFieldUniversalIdentifier({
@@ -101,14 +99,11 @@ const fromDatabaseEventTriggerSettings = ({
           ),
         }
       : {}),
-    ...(isPlainObject(filter)
+    ...(isDefined(filter)
       ? {
           filter: {
             stepFilterGroups: filter.stepFilterGroups,
-            stepFilters: (Array.isArray(filter.stepFilters)
-              ? filter.stepFilters
-              : []
-            ).map(resolvers.fieldReference),
+            stepFilters: filter.stepFilters.map(resolvers.fieldReference),
           },
         }
       : {}),
@@ -138,6 +133,8 @@ const fromTriggerSettings = ({
   trigger: WorkflowTrigger;
   resolvers: WorkflowManifestInverseReferenceResolvers;
 }): unknown => {
+  const triggerType: string = trigger.type;
+
   switch (trigger.type) {
     case WorkflowTriggerType.MANUAL:
       return fromManualTriggerSettings({
@@ -158,7 +155,7 @@ const fromTriggerSettings = ({
       });
     default:
       return resolvers.markUnsupported(
-        `${String((trigger as { type: unknown }).type)} triggers are not supported in application workflows`,
+        `${triggerType} triggers are not supported in application workflows`,
       );
   }
 };

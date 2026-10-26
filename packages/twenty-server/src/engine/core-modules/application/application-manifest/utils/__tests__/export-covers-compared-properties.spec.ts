@@ -36,6 +36,7 @@ import {
   ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
@@ -80,7 +81,6 @@ import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 's
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
 const APP_UID = '11111111-1111-4111-8111-111111111111';
 const OBJECT_UID = '22222222-2222-4222-8222-222222222222';
@@ -368,6 +368,10 @@ const exportWorkflowManifest = (manifest: WorkflowManifest) => {
       now: NOW,
       ...references,
     });
+
+  if (!isDefined(flatUniversalWorkflowVersion)) {
+    throw new Error('Expected the synced workflow version');
+  }
   const conversion = fromFlatWorkflowToWorkflowManifest({
     flatWorkflow: {
       ...universalFlatWorkflow,
@@ -375,7 +379,7 @@ const exportWorkflowManifest = (manifest: WorkflowManifest) => {
       applicationId: 'application-id',
     },
     flatWorkflowVersion: {
-      ...(flatUniversalWorkflowVersion as FlatWorkflowVersion),
+      ...flatUniversalWorkflowVersion,
       workspaceId: 'workspace-id',
       applicationId: 'application-id',
     },

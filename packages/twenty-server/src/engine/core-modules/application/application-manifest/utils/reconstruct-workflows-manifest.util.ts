@@ -85,13 +85,15 @@ export const reconstructWorkflowsManifest = ({
       allFlatEntityMaps,
     });
 
-    return isDefined(flatWorkflowVersion)
-      ? fromFlatWorkflowToWorkflowManifest({
-          flatWorkflow,
-          flatWorkflowVersion,
-          references,
-        })
-      : { reason: WORKFLOW_CHANGED_IN_BUILDER_REASON };
+    if (!isDefined(flatWorkflowVersion)) {
+      return { reason: WORKFLOW_CHANGED_IN_BUILDER_REASON };
+    }
+
+    return fromFlatWorkflowToWorkflowManifest({
+      flatWorkflow,
+      flatWorkflowVersion,
+      references,
+    });
   };
 
   for (const flatWorkflow of sortFlatEntitiesByUniversalIdentifier(

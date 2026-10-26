@@ -1,5 +1,6 @@
 import { type WorkflowManifest } from 'twenty-shared/application';
 import { WorkflowVisibility } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
@@ -172,6 +173,10 @@ const syncWorkflow = ({
       ),
     });
 
+  if (!isDefined(flatUniversalWorkflowVersion)) {
+    throw new Error('Expected the synced workflow version');
+  }
+
   return {
     flatWorkflow: {
       ...universalFlatWorkflow,
@@ -180,7 +185,7 @@ const syncWorkflow = ({
       ...workflowOverrides,
     },
     flatWorkflowVersion: {
-      ...(flatUniversalWorkflowVersion as FlatWorkflowVersion),
+      ...flatUniversalWorkflowVersion,
       workspaceId: WORKSPACE_ID,
       applicationId: APP_ID,
       ...versionOverrides,

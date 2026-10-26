@@ -210,8 +210,7 @@ const buildViewFilterOperandBinding = (path: string[]): EnumBinding => ({
   members: ViewFilterOperand,
 });
 
-// Logical operators stay string literals: SDKs with defineWorkflow accept them,
-// and StepLogicalOperator is only exported by later SDK versions.
+// twenty-sdk/define exports no filter group operator enums, so those stay string literals.
 export const WORKFLOW_ENUM_BINDINGS: EnumBinding[] = [
   buildViewFilterOperandBinding([
     'version',

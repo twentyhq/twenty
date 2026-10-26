@@ -149,7 +149,7 @@ const fromActionInput = ({
   action: WorkflowAction;
   resolvers: WorkflowManifestInverseReferenceResolvers;
 }): unknown => {
-  const input = action.settings.input as unknown;
+  const input: unknown = action.settings.input;
 
   switch (action.type) {
     case WorkflowActionType.LOGIC_FUNCTION:
@@ -226,10 +226,11 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
     return { reason: unsupportedReason };
   }
 
-  const { outputSchema, expectedOutputSchema, errorHandlingOptions } =
-    action.settings as WorkflowAction['settings'] & {
-      expectedOutputSchema?: object;
-    };
+  const { outputSchema, errorHandlingOptions } = action.settings;
+  const expectedOutputSchema =
+    'expectedOutputSchema' in action.settings
+      ? action.settings.expectedOutputSchema
+      : undefined;
   const stepWithoutOutputSchema = {
     universalIdentifier: action.id,
     name: action.name,
