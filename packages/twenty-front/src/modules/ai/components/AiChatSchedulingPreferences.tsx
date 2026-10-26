@@ -26,6 +26,7 @@ import { findAvailableTimeZoneOption } from '@/localization/utils/findAvailableT
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
 import { getValidPlainTimeOrUndefined } from '@/localization/utils/getValidPlainTimeOrUndefined';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
 const FIELD_LABEL_WIDTH_PX = 112;
 const CALENDAR_LIST_MAX_HEIGHT_PX = 240;
@@ -176,7 +177,7 @@ export const AiChatSchedulingPreferences = ({
           <StyledFullWidth>
             <Select
               dropdownId={`${instanceId}-time-zone`}
-              dropdownWidth={400}
+              dropdownWidth={GenericDropdownContentWidth.ExtraExtraLarge}
               fullWidth
               value={listedTimeZoneOption?.value ?? value.timeZone}
               options={timeZoneOptions}
@@ -346,7 +347,7 @@ export const AiChatSchedulingPreferences = ({
           <StyledFullWidth>
             <Select
               dropdownId={`${instanceId}-organizer`}
-              dropdownWidth={320}
+              dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
               fullWidth
               value={value.organizerCalendarId}
               options={calendars.map((calendar) => ({
