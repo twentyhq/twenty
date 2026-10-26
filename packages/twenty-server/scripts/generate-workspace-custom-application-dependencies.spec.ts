@@ -9,16 +9,22 @@ import {
 import { tmpdir } from 'os';
 import { join } from 'path';
 
-import { TWENTY_PREVIOUS_VERSIONS } from '../../src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
-import { generateWorkspaceCustomApplicationDependencies } from '../generate-workspace-custom-application-dependencies';
+import { isString } from '@sniptt/guards';
+
+import { TWENTY_PREVIOUS_VERSIONS } from '../src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
+import { generateWorkspaceCustomApplicationDependencies } from './generate-workspace-custom-application-dependencies';
 
 jest.mock('child_process', () => ({ execFileSync: jest.fn() }));
 
 const originalPackageJson = {
   name: 'workspace-custom-app',
-  dependencies: { axios: '^1.16.1' },
+  dependencies: { axios: '^1.15.0', 'removed-package': '1.0.0' },
   devDependencies: { react: '19.2.0', 'twenty-ui': '2.50.0' },
   frontComponentSharedDependencies: ['react', 'twenty-ui/theme'],
+};
+
+const seedPackageJson = {
+  dependencies: { axios: '^1.16.1', uuid: '^11.1.1' },
 };
 
 const originalLock = 'original lock';
@@ -31,11 +37,19 @@ const readLock = (directory: string) =>
 
 describe('generateWorkspaceCustomApplicationDependencies', () => {
   let dependenciesDirectory: string;
+  let seedDependenciesDirectory: string;
   let installDirectory: string;
 
   beforeEach(() => {
     dependenciesDirectory = mkdtempSync(
       join(tmpdir(), 'workspace-defaults-test-'),
+    );
+    seedDependenciesDirectory = mkdtempSync(
+      join(tmpdir(), 'seed-defaults-test-'),
+    );
+    writeFileSync(
+      join(seedDependenciesDirectory, 'package.json'),
+      JSON.stringify(seedPackageJson),
     );
     writeFileSync(
       join(dependenciesDirectory, 'package.json'),
@@ -43,7 +57,7 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
     );
     writeFileSync(join(dependenciesDirectory, 'yarn.lock'), originalLock);
     jest.mocked(execFileSync).mockImplementation((_file, _args, options) => {
-      if (typeof options?.cwd !== 'string') {
+      if (!isString(options?.cwd)) {
         throw new Error('Missing install directory');
       }
 
@@ -52,6 +66,9 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
         originalPackageJson,
       );
       expect(readLock(installDirectory)).toBe(originalLock);
+      expect(readPackageJson(installDirectory).dependencies).toEqual(
+        seedPackageJson.dependencies,
+      );
 
       const version =
         readPackageJson(installDirectory).devDependencies['twenty-ui'];
@@ -64,6 +81,7 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
 
   afterEach(() => {
     rmSync(dependenciesDirectory, { recursive: true, force: true });
+    rmSync(seedDependenciesDirectory, { recursive: true, force: true });
     jest.resetAllMocks();
   });
 
@@ -74,15 +92,17 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
     },
     { version: '3.14.7', expectedRange: '~3.14.0' },
   ])(
-    'writes a matching pair for $expectedRange',
+    'writes a matching pair for $expectedRange using the seed backend dependencies',
     ({ version, expectedRange }) => {
       generateWorkspaceCustomApplicationDependencies({
         version,
         dependenciesDirectory,
+        seedDependenciesDirectory,
       });
 
       expect(readPackageJson(dependenciesDirectory)).toEqual({
         ...originalPackageJson,
+        dependencies: seedPackageJson.dependencies,
         devDependencies: {
           ...originalPackageJson.devDependencies,
           'twenty-ui': expectedRange,
@@ -95,7 +115,7 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
 
   it('preserves both shipped files and cleans up when Yarn cannot resolve the release', () => {
     jest.mocked(execFileSync).mockImplementation((_file, _args, options) => {
-      if (typeof options?.cwd !== 'string') {
+      if (!isString(options?.cwd)) {
         throw new Error('Missing install directory');
       }
 
@@ -104,7 +124,10 @@ describe('generateWorkspaceCustomApplicationDependencies', () => {
     });
 
     expect(() =>
-      generateWorkspaceCustomApplicationDependencies({ dependenciesDirectory }),
+      generateWorkspaceCustomApplicationDependencies({
+        dependenciesDirectory,
+        seedDependenciesDirectory,
+      }),
     ).toThrow('No published version');
     expect(
       readFileSync(join(dependenciesDirectory, 'package.json'), 'utf8'),
