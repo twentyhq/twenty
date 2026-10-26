@@ -286,6 +286,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     };
   }
 
+  protected getResultRecords(results: CommonFindManyOutput): ObjectRecord[] {
+    return results.records;
+  }
+
   async processQueryResult(
     queryResult: CommonFindManyOutput,
     flatObjectMetadata: FlatObjectMetadata,

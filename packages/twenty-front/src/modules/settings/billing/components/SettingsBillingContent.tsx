@@ -4,6 +4,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
+import { SettingsBillingUserCreditsSection } from '@/settings/billing/components/SettingsBillingUserCreditsSection';
 import { UpdatePaymentMethodModal } from '@/settings/billing/components/UpdatePaymentMethodModal';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { usePaymentMethodFlow } from '@/settings/billing/hooks/usePaymentMethodFlow';
@@ -88,6 +89,9 @@ export const SettingsBillingContent = () => {
             isUpdatePaymentDisabled={isPaymentMethodFlowDisabled}
           />
         )}
+      {hasNotCanceledCurrentSubscription && (
+        <SettingsBillingUserCreditsSection />
+      )}
       <Section.Root>
         <Section.Header
           title={t`Manage billing information`}

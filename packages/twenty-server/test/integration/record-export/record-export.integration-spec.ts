@@ -25,8 +25,6 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { createClient } from 'graphql-sse';
 import { setTimeout } from 'node:timers/promises';
 import { Readable } from 'node:stream';
@@ -43,11 +41,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import {
-  FeatureFlagKey,
-  FileFolder,
-  OrderByDirection,
-} from 'twenty-shared/types';
+import { FileFolder, OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -57,6 +51,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type CreateRecordExportInput } from 'src/engine/core-modules/record-export/dtos/create-record-export.input';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
+import { type RecordExportQueryService } from 'src/engine/core-modules/record-export/services/record-export-query.service';
 import { type RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -97,9 +92,9 @@ describe('record export lifecycle (integration)', () => {
   let cache: CacheStorageService;
   let storage: FileStorageService;
   let query: RecordExportWorkspaceService;
+  let reader: RecordExportQueryService;
   let originalRoleId: string;
   let roleId: string;
-  let wasAsyncCsvExportEnabled: boolean;
   const connections: ReturnType<typeof createClient>[] = [];
   const exportIds = new Set<string>();
   const downloadTokens = new Map<string, string>();
@@ -247,23 +242,13 @@ describe('record export lifecycle (integration)', () => {
   };
 
   beforeAll(async () => {
-    const featureFlagService =
-      getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
-    wasAsyncCsvExportEnabled = await featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      SEED_APPLE_WORKSPACE_ID,
-    );
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
     exports = getAppProviderByClassName('RecordExportWorkspaceService');
     cache = global.app.get<CacheStorageService>(
       CacheStorageNamespace.EngineRecordExport,
     );
     storage = getAppProviderByClassName('FileStorageService');
     query = getAppProviderByClassName('RecordExportWorkspaceService');
+    reader = getAppProviderByClassName('RecordExportQueryService');
     const { objects } = await findManyObjectMetadata({
       input: { filter: {}, paging: { first: 1000 } },
       gqlFields: 'id nameSingular fieldsList { id name }',
@@ -363,11 +348,6 @@ describe('record export lifecycle (integration)', () => {
         expectToFail: false,
       });
     }
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      value: wasAsyncCsvExportEnabled,
-      expectToFail: false,
-    });
     if (isDefined(originalRoleId)) {
       await updateWorkspaceMemberRole({
         input: {
@@ -394,28 +374,6 @@ describe('record export lifecycle (integration)', () => {
       );
     }
   }, 60_000);
-
-  it('rejects new async exports when disabled and still downloads an already prepared file', async () => {
-    const ready = await exportToCompletion();
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-    try {
-      const { events } = subscribe();
-      await expect(nextExport(events)).rejects.toThrow(
-        'Asynchronous CSV export is not enabled for this workspace',
-      );
-      await download(ready).expect(200);
-    } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
-    }
-  });
 
   it('exports every selected page in column and record order, then deletes the download', async () => {
     const recordExport = await exportToCompletion({
@@ -737,12 +695,12 @@ describe('record export lifecycle (integration)', () => {
   });
 
   it('reports progress between pages and rejects a second active export', async () => {
-    const readPage = query.readPage.bind(query);
+    const readPage = reader.readPage.bind(reader);
     let releasePage = () => {};
     const pageGate = new Promise<void>((resolve) => {
       releasePage = resolve;
     });
-    jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+    jest.spyOn(reader, 'readPage').mockImplementation(async (...args) => {
       if (isDefined(args[0].after)) {
         await pageGate;
       }
@@ -819,12 +777,12 @@ describe('record export lifecycle (integration)', () => {
       await enqueueGate;
       return enqueue(recordExport);
     });
-    const readPage = query.readPage.bind(query);
+    const readPage = reader.readPage.bind(reader);
     let releasePage = () => {};
     const pageGate = new Promise<void>((resolve) => {
       releasePage = resolve;
     });
-    jest.spyOn(query, 'readPage').mockImplementation(async (args) => {
+    jest.spyOn(reader, 'readPage').mockImplementation(async (args) => {
       await pageGate;
       return readPage(args);
     });
@@ -1119,7 +1077,7 @@ describe('record export lifecycle (integration)', () => {
   it.each(['export', 'row', 'application'])(
     'stops generation when %s permission changes between pages',
     async (permission) => {
-      const readPage = query.readPage.bind(query);
+      const readPage = reader.readPage.bind(reader);
       let releasePage = () => {};
       let notifyPage = () => {};
       const pageGate = new Promise<void>((resolve) => {
@@ -1128,7 +1086,7 @@ describe('record export lifecycle (integration)', () => {
       const pageStarted = new Promise<void>((resolve) => {
         notifyPage = resolve;
       });
-      jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+      jest.spyOn(reader, 'readPage').mockImplementation(async (...args) => {
         if (isDefined(args[0].after)) {
           notifyPage();
           await pageGate;
@@ -1203,8 +1161,8 @@ describe('record export lifecycle (integration)', () => {
         );
         return writeFileStream(resource);
       });
-    const readPage = query.readPage.bind(query);
-    jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+    const readPage = reader.readPage.bind(reader);
+    jest.spyOn(reader, 'readPage').mockImplementation(async (...args) => {
       if (isDefined(args[0].after)) {
         throw new Error('Interrupted database read');
       }

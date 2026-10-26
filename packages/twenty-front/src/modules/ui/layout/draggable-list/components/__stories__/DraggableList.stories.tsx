@@ -61,7 +61,9 @@ export const Default: Story = {};
 export const KeyboardReorder: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const firstItem = canvas.getByRole('button', { name: 'Draggable item 1' });
+    const firstItem = await canvas.findByRole('button', {
+      name: 'Draggable item 1',
+    });
 
     await userEvent.tab();
     await expect(firstItem).toHaveFocus();
@@ -129,11 +131,15 @@ export const PointerGripReorder: Story = {
       throw new Error('The row action must be a native button');
     }
 
-    const firstItem = rowAction.closest('[aria-roledescription="draggable"]');
+    const firstItem = await waitFor(() => {
+      const dragHost = rowAction.closest('[aria-roledescription="draggable"]');
 
-    if (!(firstItem instanceof HTMLElement)) {
-      throw new Error('The row action must stay inside its drag host');
-    }
+      if (!(dragHost instanceof HTMLElement)) {
+        throw new Error('The row action must stay inside its drag host');
+      }
+
+      return dragHost;
+    });
     const secondItem = canvas.getByRole('button', { name: 'Phone' });
     const firstBounds = firstItem.getBoundingClientRect();
     const secondBounds = secondItem.getBoundingClientRect();

@@ -2,8 +2,11 @@ import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTe
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/AdvancedTextEditorProfile';
+import { type UploadErrorHandler } from '@/advanced-text-editor/types/UploadErrorHandler';
+import { type UploadedFile } from '@/advanced-text-editor/types/UploadedFile';
 import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
+import { syncAdvancedTextEditorState } from '@/advanced-text-editor/utils/syncAdvancedTextEditorState';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
@@ -15,8 +18,10 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isUndefined } from '@sniptt/guards';
 import { type Editor } from '@tiptap/core';
-import { type ComponentType, useEffect, useId, useState } from 'react';
+import { type ComponentType, useCallback, useId, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -93,13 +98,17 @@ type FormAdvancedTextFieldInputProps = {
   label?: string;
   error?: string;
   hint?: string;
-  defaultValue: string | undefined | null;
+  defaultValue?: string | null;
+  value?: string | null;
+  'aria-label'?: string;
   onChange?: (value: string) => void;
   readonly?: boolean;
   placeholder?: string;
   VariablePicker?: VariablePickerComponent;
   onImageUpload?: (file: File) => Promise<UploadedImage>;
-  onImageUploadError?: (error: Error, file: File) => void;
+  onImageUploadError?: UploadErrorHandler;
+  onFileUpload?: (file: File) => Promise<UploadedFile>;
+  onFileUploadError?: UploadErrorHandler;
   profile: AdvancedTextEditorProfile;
   EditorComponent?: ComponentType<AdvancedTextEditorComponentProps>;
   minHeight?: number;
@@ -113,12 +122,16 @@ export const FormAdvancedTextFieldInput = ({
   error,
   hint,
   defaultValue,
+  value,
+  'aria-label': ariaLabel,
   placeholder,
   onChange,
   readonly,
   VariablePicker,
   onImageUpload,
   onImageUploadError,
+  onFileUpload,
+  onFileUploadError,
   profile,
   EditorComponent = AdvancedTextEditor,
   minHeight,
@@ -129,6 +142,7 @@ export const FormAdvancedTextFieldInput = ({
   const { chrome, variant, minHeight: profileMinHeight } = profile;
 
   const editorMinHeight = minHeight ?? profileMinHeight;
+  const accessibleLabel = ariaLabel ?? label;
   const isFullScreenEnabled = enableFullScreen ?? profile.enableFullScreen;
 
   const instanceId = useId();
@@ -148,7 +162,16 @@ export const FormAdvancedTextFieldInput = ({
     profile,
     placeholder: placeholder,
     readonly,
-    defaultValue,
+    defaultValue: isUndefined(value) ? defaultValue : value,
+    editorProps: {
+      attributes: {
+        'aria-multiline': 'true',
+        role: 'textbox',
+        ...(isDefined(accessibleLabel)
+          ? { 'aria-label': accessibleLabel }
+          : {}),
+      },
+    },
     onUpdate: (editor) => {
       onChange?.(serializeAdvancedTextEditorDocument(editor));
     },
@@ -169,22 +192,15 @@ export const FormAdvancedTextFieldInput = ({
     },
     onImageUpload,
     onImageUploadError,
+    onFileUpload,
+    onFileUploadError,
   });
 
-  useEffect(() => {
-    onEditorReady?.(editor);
-
-    return () => {
-      onEditorReady?.(null);
-    };
-  }, [editor, onEditorReady]);
-
-  const handleEnterFullScreen = () => {
-    setIsFullScreen(true);
-  };
-
-  const handleExitFullScreen = () => {
-    setIsFullScreen(false);
+  const handleFullScreenChange = (isFullScreenOpen: boolean) => {
+    flushSync(() => {
+      setIsFullScreen(isFullScreenOpen);
+    });
+    editor?.commands.focus();
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -216,9 +232,32 @@ export const FormAdvancedTextFieldInput = ({
 
   const { renderFullScreenModal } = useFullScreenModal({
     links: breadcrumbLinks,
-    onClose: handleExitFullScreen,
+    onClose: () => handleFullScreenChange(false),
     hasClosePageButton: !isMobile,
   });
+
+  const handleEditorReady = useCallback(
+    (container: HTMLDivElement | null) => {
+      onEditorReady?.(isDefined(container) ? editor : null);
+    },
+    [editor, onEditorReady],
+  );
+
+  const handleEditorContainerChange = useCallback(
+    (container: HTMLDivElement | null) => {
+      if (!isDefined(container) || !isDefined(editor)) {
+        return;
+      }
+
+      syncAdvancedTextEditorState({
+        editor,
+        value,
+        readonly,
+        parseLegacyDocument: profile.parseLegacyDocument,
+      });
+    },
+    [editor, value, readonly, profile.parseLegacyDocument],
+  );
 
   if (!isDefined(editor)) {
     return null;
@@ -243,6 +282,7 @@ export const FormAdvancedTextFieldInput = ({
   return (
     <>
       <StyledAdvancedTextFieldContainerWrapper
+        ref={handleEditorReady}
         hasFieldChrome={chrome === 'field'}
       >
         <FormFieldInputContainer
@@ -256,6 +296,7 @@ export const FormAdvancedTextFieldInput = ({
 
           <StyledAdvancedTextFieldFieldContainer>
             <StyledAdvancedTextFieldInnerContainer
+              ref={handleEditorContainerChange}
               hasFieldChrome={chrome === 'field'}
             >
               {!isFullScreen && (
@@ -274,7 +315,7 @@ export const FormAdvancedTextFieldInput = ({
                   {!readonly && !isFullScreen && (
                     <LightIconButton
                       size="sm"
-                      onClick={handleEnterFullScreen}
+                      onClick={() => handleFullScreenChange(true)}
                       emphasis="subtle"
                       aria-label={t`Expand to full screen`}
                     >

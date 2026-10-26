@@ -3,6 +3,10 @@ title: Forward a Shared Inbox from Microsoft 365
 description: Send mail from a Microsoft 365 shared mailbox into a Twenty email channel.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 An email channel gives your workspace a shared address, like `contact@yourcompany.com`. Mail sent to that address has to reach Twenty somehow. You do that by forwarding the mailbox to the private address Twenty gives you.
 
 Setup has two halves: create the channel in Twenty, then point Microsoft at it.
@@ -137,7 +141,11 @@ Send an email from an outside address (a personal Gmail works) to `contact@yourc
 <Accordion title="The channel receives mail but cannot send">
   Receiving and sending are separate. Sending requires your domain to be
   verified under the channel's **Sending domain** section, which means adding
-  the DNS records Twenty lists there.
+  the **Domain authentication** records Twenty lists there. See [Email
+  Channels](/user-guide/calendar-emails/capabilities/email-channels) for which
+  records each use needs.
 </Accordion>
 
 Using a different provider? See [Google Workspace](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace) or [any other mail provider](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).
+
+<PageBanner illustration="page-cover-email" />

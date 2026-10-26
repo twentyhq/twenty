@@ -20,7 +20,7 @@ const buildStore = () => {
       createdAt: LAST_ACTIVITY_AT,
       updatedAt: LAST_ACTIVITY_AT,
       lastActivityAt: LAST_ACTIVITY_AT,
-    } as never,
+    },
   ]);
 
   return store;

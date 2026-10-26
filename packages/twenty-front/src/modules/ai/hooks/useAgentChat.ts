@@ -31,6 +31,7 @@ import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsAssistantOffState } from '@/ai/states/agentChatIsAssistantOffState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
@@ -64,7 +65,9 @@ export const useAgentChat = () => {
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
+    shouldPreserveClosedInbox: true,
+  });
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const store = useStore();
@@ -215,6 +218,9 @@ export const useAgentChat = () => {
                   ({ workspaceMemberId }) => workspaceMemberId,
                 )
               : undefined,
+          channelId: isNewChat
+            ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
+            : undefined,
           shouldAssistantReply:
             aiModels.length > 0 &&
             (!store.get(agentChatIsAssistantOffState.atom) ||
@@ -263,6 +269,7 @@ export const useAgentChat = () => {
       if (isNewChat) {
         await refreshAgentChatThreadPermissions([threadId]);
         store.set(newAiChatThreadIdState.atom, v4());
+        store.set(agentChatNewThreadChannelIdState.atom, null);
 
         if (store.get(currentAiChatThreadState.atom) === threadId) {
           projectAiChatThreadToUrl(threadId);

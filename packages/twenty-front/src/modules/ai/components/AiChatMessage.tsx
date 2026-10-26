@@ -13,11 +13,11 @@ import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantM
 import { AiChatMessageHeader } from '@/ai/components/AiChatMessageHeader';
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
-import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
 import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
+import { isAgentChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { isSilentAgentChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 import { getAgentChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
@@ -26,10 +26,10 @@ import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { LabeledSeparator } from 'twenty-ui/components/layout';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { LabeledDivider } from '@/ui/layout/line/components/LabeledDivider';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -45,20 +45,37 @@ const StyledMessageBubble = styled.div<{ isRightAligned: boolean }>`
   position: relative;
   width: 100%;
 
-  &:hover .message-footer {
+  &:hover .message-actions,
+  &:focus-within .message-actions {
     opacity: 1;
     pointer-events: auto;
   }
 `;
 
-const StyledMessageText = styled.div<{ isUser?: boolean }>`
-  background: ${({ isUser }) =>
-    isUser ? themeCssVariables.background.tertiary : 'transparent'};
+const StyledMessageText = styled.div<{
+  isUser?: boolean;
+  isOtherMember?: boolean;
+}>`
+  background: ${({ isUser, isOtherMember }) => {
+    if (isOtherMember) {
+      return themeCssVariables.background.secondary;
+    }
+
+    if (isUser) {
+      return themeCssVariables.background.tertiary;
+    }
+
+    return 'transparent';
+  }};
+  border: ${({ isOtherMember }) =>
+    isOtherMember
+      ? `1px solid ${themeCssVariables.border.color.medium}`
+      : 'none'};
   border-radius: ${({ isUser }) =>
     isUser ? themeCssVariables.border.radius.lg : '0'};
   color: ${themeCssVariables.font.color.primary};
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
-  line-height: 1.4em;
+  line-height: ${themeCssVariables.spacing[6]};
   max-width: 100%;
   overflow-wrap: break-word;
   padding: ${({ isUser }) =>
@@ -94,7 +111,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   }
 
   p {
-    line-height: 1.4em;
+    line-height: inherit;
     margin-block: ${({ isUser }) =>
       isUser ? '0' : themeCssVariables.spacing[1]};
   }
@@ -107,20 +124,39 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   }
 `;
 
-const StyledMessageFooter = styled.div<{ isSpreadOut: boolean }>`
+const StyledMessageFooter = styled.div<{
+  isSpreadOut: boolean;
+  isRightAligned: boolean;
+}>`
   align-items: center;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
+  flex-direction: ${({ isRightAligned }) =>
+    isRightAligned ? 'row-reverse' : 'row'};
+  flex-wrap: wrap;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
   justify-content: ${({ isSpreadOut }) =>
     isSpreadOut ? 'space-between' : 'flex-start'};
-  margin-top: ${themeCssVariables.spacing[1]};
+  margin-top: ${themeCssVariables.spacing[2]};
+  width: 100%;
+`;
+
+const StyledMessageActions = styled.div<{ isRightAligned: boolean }>`
+  align-items: center;
+  display: flex;
+  flex-direction: ${({ isRightAligned }) =>
+    isRightAligned ? 'row-reverse' : 'row'};
+  gap: ${themeCssVariables.spacing[1]};
   opacity: 0;
   pointer-events: none;
   transition: opacity calc(${themeCssVariables.animation.duration.normal} * 1s)
     ease-in-out;
-  width: 100%;
+
+  @media (hover: none) {
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 const StyledSender = styled.div`
@@ -150,16 +186,22 @@ const StyledFilesContainer = styled.div`
 type AiChatUserMessageTextProps = {
   messageId: string;
   children: ReactNode;
+  isOtherMember: boolean;
 };
 
 const AiChatUserMessageText = ({
   messageId,
   children,
+  isOtherMember,
 }: AiChatUserMessageTextProps) => {
   const sentMessageHandOffRef = useAiChatSentMessageHandOff(messageId);
 
   return (
-    <StyledMessageText isUser ref={sentMessageHandOffRef}>
+    <StyledMessageText
+      isUser
+      isOtherMember={isOtherMember}
+      ref={sentMessageHandOffRef}
+    >
       {children}
     </StyledMessageText>
   );
@@ -210,19 +252,29 @@ export const AiChatMessage = ({
   const sender = currentWorkspaceMembers.find(
     (member) => isDefined(senderId) && member.id === senderId,
   );
-  const senderLabel = getAgentChatSenderLabel({
-    sender,
-    isCurrentWorkspaceMember: senderId === currentWorkspaceMember?.id,
+  const isOwnMessage = isAgentChatMessageOwn({
+    message: agentChatMessage,
+    currentWorkspaceMemberId: currentWorkspaceMember?.id,
+    isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
   });
+  const senderLabel = isDefined(senderId)
+    ? getAgentChatSenderLabel({
+        sender,
+        isCurrentWorkspaceMember: isOwnMessage,
+      })
+    : t`Unknown sender`;
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
+  const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
+  const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
   const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
-  const hasHeader = isAiChatInboxEnabled && (!isUser || isDefined(senderId));
+  const hasHeader = isAiChatInboxEnabled && !isOwnMessage;
   const shouldShowError =
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
   const messageContent = (
     <AiChatAssistantMessageRenderer
+      isUserMessage={isUser}
       isLastMessageStreaming={isLastMessageStreaming}
       messageParts={agentChatMessage.parts}
       hasError={shouldShowError}
@@ -237,19 +289,19 @@ export const AiChatMessage = ({
   return (
     <>
       {isAiChatInboxEnabled && agentChatFirstUnreadMessageId === messageId && (
-        <LabeledDivider
-          textPosition="end"
-          color={themeCssVariables.tag.text.red}
-          noMargin
-        >{t`New`}</LabeledDivider>
+        <LabeledSeparator
+          labelPosition="end"
+          tone="danger"
+          hasStartMarker
+        >{t`New`}</LabeledSeparator>
       )}
-      <StyledMessageBubble isRightAligned={isUser && !isAiChatInboxEnabled}>
-        {isAiChatInboxEnabled && isUser && isDefined(senderId) && (
+      <StyledMessageBubble isRightAligned={isRightAligned}>
+        {hasHeader && (isUser || isDefined(senderId)) && (
           <AiChatMessageHeader
             avatar={
               <Avatar
                 src={getAbsoluteImageUrl(sender?.avatarUrl)}
-                colorSeed={senderId}
+                colorSeed={senderId ?? messageId}
                 name={senderLabel}
                 size="sm"
                 shape="circle"
@@ -259,10 +311,10 @@ export const AiChatMessage = ({
             createdAt={createdAt}
           />
         )}
-        {isAiChatInboxEnabled && !isUser && (
+        {hasHeader && !isUser && !isDefined(senderId) && (
           <AiChatMessageHeader
             avatar={<AiChatAssistantAvatar />}
-            name={AGENT_CHAT_ASSISTANT_NAME}
+            name={t`Assistant`}
             createdAt={createdAt}
           />
         )}
@@ -271,13 +323,16 @@ export const AiChatMessage = ({
         )}
         <StyledMessageContainer isUser={isUser}>
           {isUser ? (
-            <AiChatUserMessageText messageId={messageId}>
+            <AiChatUserMessageText
+              messageId={messageId}
+              isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
+            >
               {messageContent}
             </AiChatUserMessageText>
           ) : (
             <StyledMessageText>{messageContent}</StyledMessageText>
           )}
-          {fileParts.length > 0 && (
+          {isNonEmptyArray(fileParts) && (
             <StyledFilesContainer>
               {fileParts.map((file) => (
                 <AgentChatFilePreview key={file.filename} file={file} />
@@ -285,29 +340,34 @@ export const AiChatMessage = ({
             </StyledFilesContainer>
           )}
           {shouldShowError && <AiChatErrorRenderer error={error} />}
-          {isAiChatInboxEnabled && (
-            <AiChatMessageReactions messageId={messageId} />
-          )}
         </StyledMessageContainer>
-        {agentChatMessage.parts.length > 0 && (
+        {isNonEmptyArray(agentChatMessage.parts) && (
           <StyledMessageFooter
-            className="message-footer"
             isSpreadOut={!isAiChatInboxEnabled}
+            isRightAligned={shouldMirrorMessageActions}
           >
+            {isAiChatInboxEnabled && (
+              <AiChatMessageReactions messageId={messageId} />
+            )}
             {!hasHeader && (
               <StyledMessageTimestamp>
                 {beautifyPastDateRelativeToNow(createdAt, localeCatalog)}
               </StyledMessageTimestamp>
             )}
-            <LightCopyIconButton
-              copyText={
-                agentChatMessage.parts.find((part) => part.type === 'text')
-                  ?.text ?? ''
-              }
-            />
-            {isAiChatInboxEnabled && !isLastMessageStreaming && (
-              <AiChatMessageReactionPicker messageId={messageId} />
-            )}
+            <StyledMessageActions
+              className="message-actions"
+              isRightAligned={shouldMirrorMessageActions}
+            >
+              {isAiChatInboxEnabled && !isLastMessageStreaming && (
+                <AiChatMessageReactionPicker messageId={messageId} />
+              )}
+              <LightCopyIconButton
+                copyText={
+                  agentChatMessage.parts.find((part) => part.type === 'text')
+                    ?.text ?? ''
+                }
+              />
+            </StyledMessageActions>
           </StyledMessageFooter>
         )}
       </StyledMessageBubble>

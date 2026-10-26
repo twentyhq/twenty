@@ -77,7 +77,7 @@ When adding AI behavior:
 - Keep instructions grounded in available app data and tools.
 - State when the agent should ask for missing workspace or record context.
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
-- A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `yarn twenty apply` fail otherwise, listing the excess grants.
+- A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `twenty app apply` fail otherwise, listing the excess grants.
 
 ## Inbox Messages
 
@@ -100,7 +100,7 @@ For third-party connections:
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
 - When the provider can say which account a token belongs to (team, organization, user), declare `identifyAccountLogicFunction` so a reconnect that authorizes a different account is refused instead of overwriting the connection. Write the handler as one request to the provider's "who am I" endpoint, return the id as a string, and return `{ externalAccountId: null }` when there is no stable id.
-- Set `scope` on `defineConnectionProvider`: `'WORKSPACE'` (default) when the app uses one connection shared with the workspace, `'USER'` when each member connects their own account. One scope per provider; declare two providers when the app needs both. Members cannot add `USER` connections from settings yet (they will from App preferences). Requires `"engines": { "twenty": ">=2.49.0" }`.
+- Set `scope` on `defineConnectionProvider`: `'WORKSPACE'` (default) when the app uses one connection shared with the workspace, `'USER'` when each member connects their own account. One scope per provider; declare two providers when the app needs both. A provider's scope cannot change in a later version: declare a new provider with a new `universalIdentifier` instead, which deletes the old provider's connections on upgrade, and deletes existing `'USER'` connected accounts left on a `'WORKSPACE'` provider. Members cannot add `USER` connections from settings yet (they will from App preferences). Requires `"engines": { "twenty": ">=2.49.0" }`.
 
 ## Post-Install Hooks
 
@@ -115,7 +115,7 @@ Do not write fields Twenty computes elsewhere (workflow `statuses` is computed f
 Dev sync skips install hooks. Invoke locally:
 
 ```bash
-yarn twenty dev:function:exec
+twenty app exec
 ```
 
 Run again after rebuilding to verify idempotency.

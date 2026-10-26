@@ -1,10 +1,11 @@
 ---
 title: 6. Publishing
-icon: "rocket"
 description: Add marketplace metadata and publish your app.
 ---
 
-Your app works. The last step is to describe it for the marketplace and publish.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Add marketplace metadata
 
@@ -31,8 +32,8 @@ export default defineApplication({
 ```
 
 <Tip>
-The default role is declared with `defineApplicationRole()` in its own file — you
-don't pass `defaultRoleUniversalIdentifier` here anymore.
+  The default role is declared with `defineApplicationRole()` in its own file —
+  you don't pass `defaultRoleUniversalIdentifier` here anymore.
 </Tip>
 
 Also add the `twenty-app` keyword to `package.json` so the app is discoverable:
@@ -60,9 +61,9 @@ export default defineApplication({
 ```
 
 <Tip>
-Lead with the payoff: make the first screenshot the finished result (a generated
-document), then show how it's triggered and authored. Use crisp, high-resolution
-captures — they're the first thing a user sees.
+  Lead with the payoff: make the first screenshot the finished result (a
+  generated document), then show how it's triggered and authored. Use crisp,
+  high-resolution captures — they're the first thing a user sees.
 </Tip>
 
 Give `README.md` the same treatment — it's the front page on npm and GitHub.
@@ -77,7 +78,7 @@ Run the same gates CI does:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
 The plan prints exactly what would change on the server without applying it —
@@ -89,19 +90,15 @@ a good final sanity check. See
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-`app:publish` builds and publishes to npm by default; `--private` uploads a
+`twenty app publish` builds and publishes to npm by default; `--private` uploads a
 tarball to a Twenty server's private registry instead. To surface a published app
-in an instance's marketplace, trigger a catalog sync:
-
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
+in an instance's marketplace, wait for the server's marketplace catalog sync.
 
 Full details and the release checklist:
 [Publishing](/developers/extend/apps/operations/publishing).
@@ -121,17 +118,23 @@ The finished app is at
 
 ## Where to go next
 
-<CardGroup cols={2}>
-  <Card title="Data reference" icon="database" href="/developers/extend/apps/data/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>Data reference</CardTitle>
     Every field type, relation, and index option.
   </Card>
-  <Card title="Logic reference" icon="bolt" href="/developers/extend/apps/logic/overview">
+  <Card href="/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>Logic reference</CardTitle>
     Cron and database-event triggers, the key-value store, OAuth connections.
   </Card>
-  <Card title="Layout reference" icon="table-columns" href="/developers/extend/apps/layout/overview">
+  <Card href="/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Layout reference</CardTitle>
     Page layouts, dashboard widgets, and more UI surfaces.
   </Card>
-  <Card title="Operations" icon="rocket" href="/developers/extend/apps/operations/overview">
+  <Card href="/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>Operations</CardTitle>
     CLI, testing, remotes, and CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-tutorial-publishing" />

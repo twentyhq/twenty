@@ -3,8 +3,8 @@ import { WidgetActionCallRecordingSummary } from '@/page-layout/widgets/call-rec
 import { WidgetActionCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript';
 import { WidgetActionChatThreadCreate } from '@/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate';
 import { WidgetFieldActions } from '@/page-layout/widgets/components/WidgetFieldActions';
-import { WidgetActionCalendarEventCreate } from '@/page-layout/widgets/calendar/components/WidgetActionCalendarEventCreate';
-import { WidgetActionEmailCompose } from '@/page-layout/widgets/emails/components/WidgetActionEmailCompose';
+import { WidgetActionCalendar } from '@/page-layout/widgets/calendar/components/WidgetActionCalendar';
+import { WidgetActionEmails } from '@/page-layout/widgets/emails/components/WidgetActionEmails';
 import { WidgetActionFileAttach } from '@/page-layout/widgets/files/components/WidgetActionFileAttach';
 import { WidgetActionNoteCreate } from '@/page-layout/widgets/notes/components/WidgetActionNoteCreate';
 import { WidgetActionTaskCreate } from '@/page-layout/widgets/tasks/components/WidgetActionTaskCreate';
@@ -32,8 +32,8 @@ const widgetHeaderActionComponentByWidgetType: Partial<
   Record<WidgetType, ComponentType<WidgetHeaderActionComponentProps>>
 > = {
   [WidgetType.FIELD]: WidgetFieldActions,
-  [WidgetType.CALENDAR]: WidgetActionCalendarEventCreate,
-  [WidgetType.EMAILS]: WidgetActionEmailCompose,
+  [WidgetType.CALENDAR]: WidgetActionCalendar,
+  [WidgetType.EMAILS]: WidgetActionEmails,
   [WidgetType.TASKS]: WidgetActionTaskCreate,
   [WidgetType.NOTES]: WidgetActionNoteCreate,
   [WidgetType.FILES]: WidgetActionFileAttach,

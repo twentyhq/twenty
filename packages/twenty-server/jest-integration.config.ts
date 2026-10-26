@@ -34,6 +34,7 @@ const jestConfig: JestConfigWithTsJest = {
     '<rootDir>/test/integration/secure-deployment',
   ],
   testRegex: '\\.integration-spec\\.ts$',
+  testSequencer: '<rootDir>/jest-integration-sequencer.cts',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',

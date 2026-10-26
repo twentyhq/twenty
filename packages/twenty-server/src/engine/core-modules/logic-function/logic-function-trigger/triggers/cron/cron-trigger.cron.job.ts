@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -15,8 +16,10 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
+import { buildApplicationJobThrottledLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-throttled-log-entry.util';
 import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
@@ -38,6 +41,7 @@ export class CronTriggerCronJob {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
+    private readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -101,10 +105,27 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
-            applicationId: logicFunction.applicationId,
-            applicationRegistrationId,
-          });
+          try {
+            await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+              applicationId: logicFunction.applicationId,
+              applicationRegistrationId,
+            });
+          } catch (error) {
+            if (!(error instanceof ThrottlerException)) {
+              throw error;
+            }
+
+            if (isDefined(application)) {
+              this.applicationRepeatedEventRecorderService.record({
+                entry: buildApplicationJobThrottledLogEntry({
+                  workspaceId: activeWorkspace.id,
+                  application,
+                }),
+              });
+            }
+
+            continue;
+          }
 
           await this.messageQueueService.add<LogicFunctionTriggerJobData>(
             LogicFunctionTriggerJob.name,

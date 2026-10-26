@@ -6,6 +6,7 @@ export type RecordTableRowContextValue = {
   recordId: string;
   isSelected: boolean;
   isRecordReadOnly?: boolean;
+  restrictedFieldNames: string[];
 };
 
 export const [RecordTableRowContextProvider, useRecordTableRowContextOrThrow] =
