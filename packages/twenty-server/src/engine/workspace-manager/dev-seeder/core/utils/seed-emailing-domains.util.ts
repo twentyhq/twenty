@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
+import { RECIPIENT_LINKS_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/recipient-links-hostname-prefix.constant';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
@@ -53,7 +53,7 @@ export const seedEmailingDomains = async ({
         verificationRecords: [],
         verifiedAt: new Date(),
         tenantStatus: EmailingDomainTenantStatus.ACTIVE,
-        unsubscribeHostname: `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${verified}`,
+        unsubscribeHostname: `${RECIPIENT_LINKS_HOSTNAME_PREFIX}.${verified}`,
         unsubscribeHostnameStatus: UnsubscribeHostnameStatus.ACTIVE,
       },
       {
