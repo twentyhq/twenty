@@ -120,11 +120,15 @@ type PixelBounds = {
   minY: number;
 };
 
-function createRenderTarget(
-  width: number,
-  height: number,
-  type: THREE.TextureDataType = THREE.UnsignedByteType,
-) {
+function createRenderTarget({
+  height,
+  type = THREE.UnsignedByteType,
+  width,
+}: {
+  height: number;
+  type?: THREE.TextureDataType;
+  width: number;
+}) {
   return new THREE.WebGLRenderTarget(width, height, {
     minFilter: THREE.LinearFilter,
     magFilter: THREE.LinearFilter,
@@ -568,29 +572,29 @@ export function HalftoneCanvas({
       const mesh = new THREE.Mesh(currentGeometry, material);
       scene3d.add(mesh);
 
-      const sceneTarget = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-        hdrTargetType,
-      );
-      const transmissionBacksideTarget = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-        hdrTargetType,
-      );
-      const transmissionTarget = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-        hdrTargetType,
-      );
-      const blurTargetA = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-      );
-      const blurTargetB = createRenderTarget(
-        getRenderWidth(),
-        getRenderHeight(),
-      );
+      const sceneTarget = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+        type: hdrTargetType,
+      });
+      const transmissionBacksideTarget = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+        type: hdrTargetType,
+      });
+      const transmissionTarget = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+        type: hdrTargetType,
+      });
+      const blurTargetA = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+      });
+      const blurTargetB = createRenderTarget({
+        width: getRenderWidth(),
+        height: getRenderHeight(),
+      });
       const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
       const orthographicCamera = new THREE.OrthographicCamera(
         -1,
@@ -831,23 +835,29 @@ export function HalftoneCanvas({
         const backgroundColor =
           options?.backgroundColor ?? activeSettings.background.color;
 
-        const snapScene = createRenderTarget(
-          snapshotWidth,
-          snapshotHeight,
-          hdrTargetType,
-        );
-        const snapTransmissionBackside = createRenderTarget(
-          snapshotWidth,
-          snapshotHeight,
-          hdrTargetType,
-        );
-        const snapTransmission = createRenderTarget(
-          snapshotWidth,
-          snapshotHeight,
-          hdrTargetType,
-        );
-        const snapBlurA = createRenderTarget(snapshotWidth, snapshotHeight);
-        const snapBlurB = createRenderTarget(snapshotWidth, snapshotHeight);
+        const snapScene = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+          type: hdrTargetType,
+        });
+        const snapTransmissionBackside = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+          type: hdrTargetType,
+        });
+        const snapTransmission = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+          type: hdrTargetType,
+        });
+        const snapBlurA = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+        });
+        const snapBlurB = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+        });
 
         const prevSize = renderer.getSize(new THREE.Vector2());
 
@@ -928,7 +938,10 @@ export function HalftoneCanvas({
 
         halftoneMaterial.uniforms.tGlow.value = snapBlurB.texture;
 
-        const outputTarget = createRenderTarget(snapshotWidth, snapshotHeight);
+        const outputTarget = createRenderTarget({
+          width: snapshotWidth,
+          height: snapshotHeight,
+        });
         renderer.setRenderTarget(outputTarget);
         renderer.clear();
         renderer.render(postScene, orthographicCamera);

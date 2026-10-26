@@ -6,7 +6,6 @@ import { HALFTONE_MATERIAL_TEXTURE_DATA_URLS } from './material-texture-data';
 import type { HalftoneMaterialTextureImage } from './material-texture-image';
 import { resolveMaterialTextureSources } from './resolve-material-texture-sources';
 import type { HalftoneMaterialSettings } from './studio-settings-types';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import * as THREE from 'three';
 
 export type HalftoneMaterialAssets = {
@@ -470,19 +469,6 @@ function createGlassTransmissionScene() {
   return transmissionScene;
 }
 
-function createEnvironmentTexture(
-  renderer: THREE.WebGLRenderer,
-  equirectangularTexture?: THREE.Texture,
-) {
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  const environmentTexture = equirectangularTexture
-    ? pmremGenerator.fromEquirectangular(equirectangularTexture).texture
-    : pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-  pmremGenerator.dispose();
-
-  return environmentTexture;
-}
-
 function loadTexture(
   url: string,
   renderer: THREE.WebGLRenderer,
@@ -514,10 +500,11 @@ async function loadEnvironmentTexture(renderer: THREE.WebGLRenderer) {
   equirectangularTexture.wrapS = THREE.RepeatWrapping;
   equirectangularTexture.wrapT = THREE.ClampToEdgeWrapping;
 
-  const environmentTexture = createEnvironmentTexture(
-    renderer,
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  const environmentTexture = pmremGenerator.fromEquirectangular(
     equirectangularTexture,
-  );
+  ).texture;
+  pmremGenerator.dispose();
   equirectangularTexture.dispose();
 
   return environmentTexture;
@@ -548,10 +535,10 @@ async function loadImageTextures(
 async function createHalftoneMaterialAssets(
   renderer: THREE.WebGLRenderer,
 ): Promise<HalftoneMaterialAssets> {
-  const imageTextures = await loadImageTextures(renderer).catch(() => ({}));
-  const environmentTexture = await loadEnvironmentTexture(renderer).catch(() =>
-    createEnvironmentTexture(renderer),
-  );
+  const [environmentTexture, imageTextures] = await Promise.all([
+    loadEnvironmentTexture(renderer),
+    loadImageTextures(renderer),
+  ]);
 
   return {
     environmentTexture,
@@ -572,10 +559,10 @@ function applyHalftoneMaterialSettings(
   assets: HalftoneMaterialAssets,
 ) {
   const isGlass = settings.surface === 'glass';
-  const textureSources = resolveMaterialTextureSources(
-    settings.texture,
-    assets.imageTextures,
-  );
+  const textureSources = resolveMaterialTextureSources({
+    sources: assets.imageTextures,
+    texture: settings.texture,
+  });
 
   textureSources.roughness?.repeat.set(
     settings.textureTiling,
@@ -654,7 +641,7 @@ function renderHalftoneMaterialScene(options: {
 
   material.time = elapsedTime;
 
-  if (material.userData.halftoneIsGlass === true) {
+  if (material.userData.halftoneIsGlass) {
     const thickness = material.thickness;
     const envMapIntensity = material.envMapIntensity;
 

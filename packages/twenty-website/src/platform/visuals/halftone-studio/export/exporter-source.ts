@@ -1123,16 +1123,6 @@ function createGlassTransmissionScene() {
   return transmissionScene;
 }
 
-function createEnvironmentTexture(renderer, equirectangularTexture) {
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  const environmentTexture = equirectangularTexture
-    ? pmremGenerator.fromEquirectangular(equirectangularTexture).texture
-    : pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-  pmremGenerator.dispose();
-
-  return environmentTexture;
-}
-
 function loadTexture(url, renderer, colorSpace) {
   const loader = new THREE.TextureLoader();
 
@@ -1160,16 +1150,17 @@ async function loadEnvironmentTexture(renderer) {
   equirectangularTexture.wrapS = THREE.RepeatWrapping;
   equirectangularTexture.wrapT = THREE.ClampToEdgeWrapping;
 
-  const environmentTexture = createEnvironmentTexture(
-    renderer,
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  const environmentTexture = pmremGenerator.fromEquirectangular(
     equirectangularTexture,
-  );
+  ).texture;
+  pmremGenerator.dispose();
   equirectangularTexture.dispose();
 
   return environmentTexture;
 }
 
-async function loadImageTexture(url, renderer) {
+async function loadImageTexture({ renderer, url }) {
   if (!url) {
     return null;
   }
@@ -1182,13 +1173,11 @@ async function loadImageTexture(url, renderer) {
 }
 
 async function createHalftoneMaterialAssets(renderer) {
-  const [roughnessTexture, bumpTexture] = await Promise.all([
-    loadImageTexture(ROUGHNESS_IMAGE_DATA_URL, renderer).catch(() => null),
-    loadImageTexture(BUMP_IMAGE_DATA_URL, renderer).catch(() => null),
+  const [environmentTexture, roughnessTexture, bumpTexture] = await Promise.all([
+    loadEnvironmentTexture(renderer),
+    loadImageTexture({ renderer, url: ROUGHNESS_IMAGE_DATA_URL }),
+    loadImageTexture({ renderer, url: BUMP_IMAGE_DATA_URL }),
   ]);
-  const environmentTexture = await loadEnvironmentTexture(renderer).catch(() =>
-    createEnvironmentTexture(renderer),
-  );
 
   return {
     bumpTexture,
@@ -1267,7 +1256,7 @@ function renderHalftoneMaterialScene({
   transmissionBacksideTarget,
   transmissionTarget,
 }) {
-  if (material.userData.halftoneIsGlass === true) {
+  if (material.userData.halftoneIsGlass) {
     const thickness = material.thickness;
     const envMapIntensity = material.envMapIntensity;
 
@@ -1302,10 +1291,10 @@ function disposeHalftoneMaterialAssets(materialAssets) {
 `;
 
 function createMaterialRuntimeSource(texture: HalftoneMaterialTexture) {
-  const textureSources = resolveMaterialTextureSources(
+  const textureSources = resolveMaterialTextureSources({
+    sources: HALFTONE_MATERIAL_TEXTURE_DATA_URLS,
     texture,
-    HALFTONE_MATERIAL_TEXTURE_DATA_URLS,
-  );
+  });
 
   return `
 /*!

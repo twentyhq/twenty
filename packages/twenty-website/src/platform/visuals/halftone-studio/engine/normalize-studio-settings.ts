@@ -10,21 +10,21 @@ import {
   type HalftoneStudioSettingsOverrides,
 } from './studio-settings-types';
 
-const MATERIAL_TEXTURES = new Set<unknown>([
+const MATERIAL_TEXTURES = new Set<string>([
   'none',
   ...Object.keys(HALFTONE_MATERIAL_TEXTURE_LAYERS),
 ]);
 
-const MATERIAL_SURFACES = new Set<unknown>(
+const MATERIAL_SURFACES = new Set<string>(
   Object.keys(HALFTONE_STUDIO_DEFAULTS.materialBySurface),
 );
 
 function isMaterialTexture(value: unknown): value is HalftoneMaterialTexture {
-  return MATERIAL_TEXTURES.has(value);
+  return typeof value === 'string' && MATERIAL_TEXTURES.has(value);
 }
 
 function isMaterialSurface(value: unknown): value is HalftoneMaterialSurface {
-  return MATERIAL_SURFACES.has(value);
+  return typeof value === 'string' && MATERIAL_SURFACES.has(value);
 }
 
 function getDefaultHalftoneSettings(sourceMode: HalftoneSourceMode) {

@@ -1,35 +1,43 @@
+import { typedObjectEntries } from 'twenty-shared/utils';
+
 import { HALFTONE_STUDIO_DEFAULTS } from './studio-settings-defaults';
 import type {
   HalftoneMaterialSurface,
   HalftoneStudioSettings,
 } from './studio-settings-types';
 
-function matchesSettings<TSettings extends object>(
-  value: TSettings,
-  target: TSettings,
-) {
-  return (Object.keys(target) as Array<keyof TSettings>).every(
-    (key) => value[key] === target[key],
+function matchesSettings<TSettings extends Record<string, unknown>>({
+  target,
+  value,
+}: {
+  target: TSettings;
+  value: TSettings;
+}) {
+  return typedObjectEntries(target).every(
+    ([key, targetValue]) => value[key] === targetValue,
   );
 }
 
-export function getMaterialSurfaceChange(
-  settings: HalftoneStudioSettings,
-  surface: HalftoneMaterialSurface,
-) {
+export function getMaterialSurfaceChange({
+  settings,
+  surface,
+}: {
+  settings: HalftoneStudioSettings;
+  surface: HalftoneMaterialSurface;
+}) {
   const currentSurface = settings.material.surface;
 
   return {
-    animation: matchesSettings(
-      settings.animation,
-      HALFTONE_STUDIO_DEFAULTS.animationBySurface[currentSurface],
-    )
+    animation: matchesSettings({
+      target: HALFTONE_STUDIO_DEFAULTS.animationBySurface[currentSurface],
+      value: settings.animation,
+    })
       ? HALFTONE_STUDIO_DEFAULTS.animationBySurface[surface]
       : null,
-    lighting: matchesSettings(
-      settings.lighting,
-      HALFTONE_STUDIO_DEFAULTS.lightingBySurface[currentSurface],
-    )
+    lighting: matchesSettings({
+      target: HALFTONE_STUDIO_DEFAULTS.lightingBySurface[currentSurface],
+      value: settings.lighting,
+    })
       ? HALFTONE_STUDIO_DEFAULTS.lightingBySurface[surface]
       : null,
     material: HALFTONE_STUDIO_DEFAULTS.materialBySurface[surface],

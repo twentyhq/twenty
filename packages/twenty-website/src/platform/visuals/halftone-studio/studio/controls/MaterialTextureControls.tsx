@@ -21,7 +21,7 @@ const MATERIAL_TEXTURE_OPTIONS: Array<{
 ];
 
 type MaterialTextureControlsProps = {
-  material: HalftoneMaterialSettings;
+  material: Pick<HalftoneMaterialSettings, 'texture' | 'textureTiling'>;
   onMaterialChange: (value: Partial<HalftoneMaterialSettings>) => void;
 };
 

@@ -10,10 +10,13 @@ type MaterialTextureSources<TSource> = {
   roughness: TSource | null;
 };
 
-export function resolveMaterialTextureSources<TSource>(
-  texture: HalftoneMaterialTexture,
-  sources: Partial<Record<HalftoneMaterialTextureImage, TSource>>,
-): MaterialTextureSources<TSource> {
+export function resolveMaterialTextureSources<TSource>({
+  sources,
+  texture,
+}: {
+  sources: Partial<Record<HalftoneMaterialTextureImage, TSource>>;
+  texture: HalftoneMaterialTexture;
+}): MaterialTextureSources<TSource> {
   if (texture === 'none') {
     return { bump: null, bumpScale: 0, roughness: null };
   }

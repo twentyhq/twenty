@@ -6,7 +6,7 @@ import { HALFTONE_FORMATTERS } from './formatters';
 import { SliderControl } from './SliderControl';
 
 type GlassMaterialControlsProps = {
-  material: HalftoneMaterialSettings;
+  material: Pick<HalftoneMaterialSettings, 'refraction' | 'thickness'>;
   onMaterialChange: (value: Partial<HalftoneMaterialSettings>) => void;
 };
 

@@ -45,7 +45,7 @@ export function MaterialControls({
   settings,
 }: MaterialControlsProps) {
   const handleSurfaceChange = (surface: HalftoneMaterialSurface) => {
-    const surfaceChange = getMaterialSurfaceChange(settings, surface);
+    const surfaceChange = getMaterialSurfaceChange({ settings, surface });
 
     onMaterialChange(surfaceChange.material);
 

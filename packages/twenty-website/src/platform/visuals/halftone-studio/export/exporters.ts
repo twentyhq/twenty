@@ -39,7 +39,6 @@ function normalizeReactExportSettings(
 
 function getReactImportBlock(
   exportSettings: ReactExportSettings,
-  isImageMode: boolean,
   shape: ExportedShapeDescriptor,
 ) {
   const imports = new Set<string>();
@@ -49,12 +48,6 @@ function getReactImportBlock(
 
   if (exportSettings.includeStyledMount) {
     imports.add("import { styled } from '@linaria/react';");
-  }
-
-  if (!isImageMode) {
-    imports.add(
-      "import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';",
-    );
   }
 
   const loader = HALFTONE_EXPORT_SOURCE.getExportedShapeLoader(shape);
@@ -85,10 +78,7 @@ function getStandaloneThreeImports(
     return `import * as THREE from 'three';`;
   }
 
-  const imports = [
-    `import * as THREE from 'three';`,
-    `import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';`,
-  ];
+  const imports = [`import * as THREE from 'three';`];
 
   const loader = HALFTONE_EXPORT_SOURCE.getExportedShapeLoader(shape);
 
@@ -241,7 +231,7 @@ ${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.createImportedGeometryRuntime(shape)
 
 ${isImageMode ? '' : HALFTONE_EXPORT_SOURCE.createMaterialRuntime(settings.material.texture)}
 
-function createRenderTarget(width, height, type = THREE.UnsignedByteType) {
+function createRenderTarget({ width, height, type = THREE.UnsignedByteType }) {
   return new THREE.WebGLRenderTarget(width, height, {
     minFilter: THREE.LinearFilter,
     magFilter: THREE.LinearFilter,
@@ -372,20 +362,16 @@ ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup("settings.animation.followDragEnabled ?
   const mesh = new THREE.Mesh(geometry, material);
   scene3d.add(mesh);
 
-  const sceneTarget = createRenderTarget(
-    getVirtualWidth(),
-    getVirtualHeight(),
-    hdrTargetType,
-  );
+  const sceneTarget = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight(), type: hdrTargetType });
   const isGlass = settings.material.surface === 'glass';
   const transmissionBacksideTarget = isGlass
-    ? createRenderTarget(getVirtualWidth(), getVirtualHeight(), hdrTargetType)
+    ? createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight(), type: hdrTargetType })
     : null;
   const transmissionTarget = isGlass
-    ? createRenderTarget(getVirtualWidth(), getVirtualHeight(), hdrTargetType)
+    ? createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight(), type: hdrTargetType })
     : null;
-  const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+  const blurTargetA = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
+  const blurTargetB = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
@@ -837,9 +823,9 @@ ${HALFTONE_MOUNT_FRAGMENTS.rendererSetup('default')}
   imageTexture.colorSpace = THREE.SRGBColorSpace;
   imageTexture.needsUpdate = true;
 
-  const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+  const sceneTarget = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
+  const blurTargetA = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
+  const blurTargetB = createRenderTarget({ width: getVirtualWidth(), height: getVirtualHeight() });
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
@@ -1140,7 +1126,7 @@ function generateReactComponent(
   const defaultImageFilename = options.imageFilename ?? 'image.png';
   const defaultModelUrl = assetUrl ?? `./${defaultModelFilename}`;
   const defaultImageUrl = assetUrl ?? `./${defaultImageFilename}`;
-  const importBlock = getReactImportBlock(exportSettings, isImageMode, shape);
+  const importBlock = getReactImportBlock(exportSettings, shape);
   const headerComment = exportSettings.includeRegistryComment
     ? getTwentyReactHeaderComment(
         normalizedComponentName,
