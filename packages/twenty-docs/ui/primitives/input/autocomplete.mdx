@@ -3,8 +3,12 @@ title: Autocomplete
 description: Suggest values while the user types and keeps focus in the input.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import AutocompleteReference from '/snippets/ui/generated/input/autocomplete.mdx';
+
+## Overview
 
 Use `Autocomplete` for suggestions attached to a text input. The input keeps its caret and keyboard focus while arrow keys highlight suggestions. Use [Select](/ui/primitives/input/select) when the user must choose a value from a fixed list. [Dropdown](/ui/components/navigation/dropdown) remains the higher-level component for menus and pickers.
 
@@ -268,3 +272,5 @@ Inside front components, keep the existing scoped portal policy. This API does n
 The reference is generated from the public component types. Native attributes, accessible names, and event handlers are also accepted on rendered parts.
 
 <AutocompleteReference />
+
+<PageBanner illustration="page-cover-input" />

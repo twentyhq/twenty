@@ -1,8 +1,11 @@
 ---
 title: Views
 description: Ship pre-configured saved views — column order, filters, groups — for objects in your app.
-icon: 'list'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 A **view** is a saved configuration for how records of an object are displayed: which fields appear, their order, whether they're visible, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app.
 
@@ -122,3 +125,5 @@ The `value` field is always a JSON-serializable value, but its expected shape de
 ## How views show up in the UI
 
 A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object gets a default index view auto-generated at creation, so you only need to ship the sidebar entry that opens it.
+
+<PageBanner illustration="card-page-views" />

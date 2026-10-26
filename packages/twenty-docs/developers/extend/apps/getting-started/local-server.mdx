@@ -1,8 +1,11 @@
 ---
 title: Local Server
 description: Connect the standalone CLI to a local Twenty server.
-icon: 'server'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Setup
 
 The standalone CLI connects to a running Twenty server. It does not start or manage Docker containers.
 
@@ -31,3 +34,5 @@ The generated CI workflow provisions an isolated instance through `twentyhq/twen
 ## Project dependencies
 
 Install `twenty-sdk` and `twenty-client-sdk` as project dependencies. Install the `twenty` CLI globally, then run `twenty app typecheck`, `twenty app build`, and `twenty app apply` from the app directory.
+
+<PageBanner illustration="dev-self-host" />

@@ -1,7 +1,11 @@
 ---
 title: Key rotation
-icon: "rotate"
+description: Rotate the JWT signing keys and the at-rest encryption key.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 Twenty has two independent key families:
 
@@ -54,3 +58,5 @@ Every encrypted value is wrapped as `enc:v2:<keyId>:<payload>`, where `<keyId>` 
 ## Legacy `APP_SECRET` support
 
 Older instances that never set `ENCRYPTION_KEY` use `APP_SECRET` as the at-rest encryption key (and as the session-cookie secret, derived from it). This path is preserved for backward compatibility but is **deprecated** — set a dedicated `ENCRYPTION_KEY` and follow the rotation procedure above to migrate off it. `APP_SECRET` itself stays in use to verify legacy HS256 access tokens.
+
+<PageBanner illustration="card-page-sso" />

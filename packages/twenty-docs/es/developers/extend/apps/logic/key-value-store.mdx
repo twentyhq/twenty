@@ -1,7 +1,6 @@
 ---
 title: Almacén de clave-valor
 description: Conserva resultados intermedios, almacena en caché datos y comparte estado entre ejecuciones de funciones lógicas con el almacén de clave-valor integrado de la aplicación.
-icon: database
 ---
 
 Las funciones de lógica se ejecutan aisladas en procesos de Node.js de corta duración; una vez que una ejecución finaliza, nada de lo que se mantuvo en memoria sobrevive. Cuando necesitas **recordar algo entre ejecuciones** (almacenar en caché una respuesta de API costosa, guardar un cursor para sincronizaciones incrementales, aplicar *debounce* al trabajo o traspasar estado de una función a otra), persiste esos datos en el almacén de clave-valor integrado.
