@@ -4,6 +4,8 @@ import { motion, useIsPresent, useReducedMotion } from 'framer-motion';
 import { type ReactNode } from 'react';
 import { ANIMATION } from 'twenty-ui/theme';
 
+import { AiChatInboxConversationCloseEffect } from '@/ai/components/AiChatInboxConversationCloseEffect';
+
 const StyledPane = styled(motion.div)`
   bottom: 0;
   display: flex;
@@ -50,6 +52,7 @@ export const AiChatInboxConversationPane = ({
         ease: 'easeInOut',
       }}
     >
+      <AiChatInboxConversationCloseEffect isPresent={isPresent} />
       {children}
     </StyledPane>
   );

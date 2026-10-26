@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { AnimatePresence } from 'framer-motion';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent, useRef } from 'react';
+import { type MouseEvent, useRef, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
@@ -31,9 +31,9 @@ import { useAgentChatInboxShownThreads } from '@/ai/hooks/useAgentChatInboxShown
 import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
 import { useFetchMoreAgentChatInboxShownThreads } from '@/ai/hooks/useFetchMoreAgentChatInboxShownThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
 import { RecordSelectionRecordIdsEffect } from '@/object-record/record-selection/components/RecordSelectionRecordIdsEffect';
@@ -42,6 +42,8 @@ import { useResetRecordSelection } from '@/object-record/record-selection/hooks/
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
 import { RecordSelectionComponentInstanceContext } from '@/object-record/record-selection/states/contexts/RecordSelectionComponentInstanceContext';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
@@ -106,6 +108,10 @@ const AiChatInboxPageContent = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isSplitView = useIsAiChatInboxSplitView();
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
+  const sidePanelNavigationStack = useAtomStateValue(
+    sidePanelNavigationStackState,
+  );
   const navigate = useNavigateApp();
   const { threadId } = useParams();
   const isNewThreadRoute = threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT;
@@ -160,9 +166,15 @@ const AiChatInboxPageContent = () => {
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
   };
 
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const keyboardCursorThreadId =
-    selectedThreadId ?? currentAiChatThread ?? undefined;
+  const [keyboardCursorThreadId, setKeyboardCursorThreadId] =
+    useState(selectedThreadId);
+
+  if (
+    isDefined(selectedThreadId) &&
+    selectedThreadId !== keyboardCursorThreadId
+  ) {
+    setKeyboardCursorThreadId(selectedThreadId);
+  }
 
   const { navigateWithArrowKey } = useRecordSelectionArrowKeyNavigation({
     selectableItemsContainerRef: threadListContainerRef,
@@ -189,6 +201,12 @@ const AiChatInboxPageContent = () => {
   const isSecondaryPaneShown =
     isSelectionPaneShown || isThreadShown || isNewThreadShown;
   const isListFullWidth = !isSplitView || !isSecondaryPaneShown;
+  const isSidePanelShowingAiChat =
+    isSidePanelOpened &&
+    isSidePanelItemShowingAiChat(sidePanelNavigationStack.at(-1));
+  const shouldRenderConversationPane =
+    !isSelectionPaneShown &&
+    (isSecondaryPaneShown || !isSidePanelShowingAiChat);
 
   const openThreadIds =
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
@@ -294,7 +312,7 @@ const AiChatInboxPageContent = () => {
           />
         )}
       </AiChatInboxCommandMenuScope>
-      {!isSelectionPaneShown && (
+      {shouldRenderConversationPane && (
         <AnimatePresence initial={false}>
           {(isNewThreadShown || isThreadShown) && (
             <AiChatInboxConversationPane isSplitView={isSplitView}>

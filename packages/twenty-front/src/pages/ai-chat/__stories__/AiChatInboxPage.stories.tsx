@@ -9,7 +9,11 @@ import { graphql, HttpResponse } from 'msw';
 import { MotionGlobalConfig } from 'framer-motion';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  SidePanelPages,
+} from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
   getAppPath,
@@ -23,10 +27,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { closingAiChatInboxThreadIdState } from '@/ai/states/closingAiChatInboxThreadIdState';
 import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -34,7 +41,9 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AiChatInboxPage } from '~/pages/ai-chat/AiChatInboxPage';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
@@ -92,6 +101,8 @@ const StyledNavigationControls = styled.div`
 
 const InboxRouteNavigation = () => {
   const navigate = useNavigate();
+  const { openAskAiPage } = useOpenAskAiPageInSidePanel();
+  const { selectAiChatThread } = useSelectAiChatThread();
 
   return (
     <StyledNavigationControls>
@@ -120,6 +131,10 @@ const InboxRouteNavigation = () => {
       </Button>
       <Button onClick={() => navigate(-1)}>Back through history</Button>
       <Button onClick={() => navigate(1)}>Forward through history</Button>
+      <Button onClick={() => openAskAiPage()}>Open Ask AI</Button>
+      <Button onClick={() => selectAiChatThread(FIRST_THREAD_ID)}>
+        Select first chat for Ask AI
+      </Button>
     </StyledNavigationControls>
   );
 };
@@ -528,6 +543,9 @@ export const CloseConversationPane: Story = {
 
     if (!shouldReduceMotion && !MotionGlobalConfig.skipAnimations) {
       await expect(conversation).toBeInTheDocument();
+      await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+        FIRST_THREAD_ID,
+      );
       await expect(conversation).toHaveAttribute('aria-hidden', 'true');
       await waitFor(() => {
         const closingListWidth = list.getBoundingClientRect().width;
@@ -540,6 +558,7 @@ export const CloseConversationPane: Story = {
     await waitFor(() => {
       expect(conversation).not.toBeInTheDocument();
       expect(list.getBoundingClientRect().width).toBeCloseTo(fullListWidth, 0);
+      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
     });
     await expect(
       getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
@@ -567,8 +586,53 @@ export const CloseConversationPane: Story = {
     await waitFor(() => {
       expect(reopenedConversation).not.toBeInTheDocument();
       expect(list.getBoundingClientRect().width).toBeCloseTo(fullListWidth, 0);
+      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
     });
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
+  },
+};
+
+export const AskAiAfterClosingConversation: Story = {
+  beforeEach: () => {
+    jotaiStore.set(
+      aiChatInboxLayoutState.atom,
+      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+
+    await canvas.findByText(FIRST_THREAD_TITLE);
+    loadChatRecordMetadata();
+    await user.click(
+      within(
+        getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
+      ).getByText(FIRST_THREAD_TITLE),
+    );
+    await canvas.findByRole('button', { name: 'Chat details' });
+
+    const conversation = canvas.getByRole('region', { name: 'Conversation' });
+
+    await user.click(canvas.getByRole('button', { name: 'Close' }));
+    await user.click(canvas.getByRole('button', { name: 'Open Ask AI' }));
+    await expect(conversation).not.toBeInTheDocument();
+    await expect(
+      jotaiStore.get(sidePanelNavigationStackState.atom).at(-1)?.page,
+    ).toBe(SidePanelPages.AskAI);
+    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
+    await expect(
+      jotaiStore.get(closingAiChatInboxThreadIdState.atom),
+    ).toBeNull();
+
+    await user.click(
+      canvas.getByRole('button', { name: 'Select first chat for Ask AI' }),
+    );
+    await user.click(canvas.getByRole('button', { name: 'Open Ask AI' }));
+    await waitFor(() => expect(conversation).not.toBeInTheDocument());
+    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+      FIRST_THREAD_ID,
+    );
   },
 };
 
