@@ -11,6 +11,7 @@ export { CountPager } from './CountPager/CountPager';
 export type { CountPagerProps } from './CountPager/types/CountPagerProps';
 export { Dropdown } from './Dropdown/Dropdown';
 export { useDropdownPage } from './Dropdown/hooks/useDropdownPage';
+export { useDropdownPlacementOrThrow } from './Dropdown/hooks/useDropdownPlacementOrThrow';
 export type { DropdownActionItemProps } from './Dropdown/types/DropdownActionItemProps';
 export type { DropdownCloseProps } from './Dropdown/types/DropdownCloseProps';
 export type { DropdownContentProps } from './Dropdown/types/DropdownContentProps';
