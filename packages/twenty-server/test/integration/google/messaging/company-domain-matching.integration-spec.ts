@@ -208,4 +208,25 @@ describe('Gmail contact auto-creation company domain matching (integration)', ()
       mergedCompany.id,
     );
   }, 120000);
+
+  it('does not bump updatedAt on an existing live company when a contact matches it', async () => {
+    const domainName = `no-bump-${randomUUID()}.com`;
+    const company = await createCompany(domainName);
+
+    const [beforeSync] = await findRecordNodesByFilter<{
+      updatedAt: string;
+    }>('company', 'companies', 'updatedAt', {
+      id: { eq: company.id },
+    });
+
+    await syncMessageFrom(`sender@${domainName}`);
+
+    const [afterSync] = await findRecordNodesByFilter<{
+      updatedAt: string;
+    }>('company', 'companies', 'updatedAt', {
+      id: { eq: company.id },
+    });
+
+    expect(afterSync.updatedAt).toBe(beforeSync.updatedAt);
+  }, 120000);
 });
