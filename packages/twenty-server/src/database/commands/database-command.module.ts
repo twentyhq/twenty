@@ -1,4 +1,5 @@
 import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history/agent-history-migration.module';
+import { ApplicationTransferModule } from 'src/database/commands/application-transfer/application-transfer.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -66,6 +67,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
 @Module({
   imports: [
     AgentHistoryMigrationModule,
+    ApplicationTransferModule,
     AiAgentTriggerModule,
     UpgradeVersionCommandModule,
     TypeOrmModule.forFeature([WorkspaceEntity, RoleEntity]),
