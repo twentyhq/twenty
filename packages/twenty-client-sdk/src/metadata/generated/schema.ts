@@ -2045,6 +2045,7 @@ export interface MessageChannel {
     isContactAutoCreationEnabled: Scalars['Boolean']
     isSyncEnabled: Scalars['Boolean']
     messageFolderImportPolicy: MessageFolderImportPolicy
+    participantHandleFieldUniversalIdentifier?: Scalars['UUID']
     pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction
     syncStage: MessageChannelSyncStage
     syncStageStartedAt?: Scalars['DateTime']
@@ -5480,7 +5481,7 @@ export interface CreateAgentInput {description?: (Scalars['String'] | null),icon
 
 export interface CreateApiKeyInput {expiresAt: Scalars['String'],name: Scalars['String'],revokedAt?: (Scalars['String'] | null),roleId: Scalars['UUID']}
 
-export interface CreateAppMessageChannelInput {connectedAccountId: Scalars['UUID'],displayName?: (Scalars['String'] | null),handle: Scalars['String'],visibility: MessageChannelVisibility}
+export interface CreateAppMessageChannelInput {connectedAccountId: Scalars['UUID'],displayName?: (Scalars['String'] | null),handle: Scalars['String'],participantHandleFieldUniversalIdentifier?: (Scalars['UUID'] | null),visibility: MessageChannelVisibility}
 
 export interface CreateApplicationFileUploadsResultGenqlSelection{
     errors?: ApplicationFileUploadErrorGenqlSelection
@@ -6485,6 +6486,7 @@ export interface MessageChannelGenqlSelection{
     isContactAutoCreationEnabled?: boolean | number
     isSyncEnabled?: boolean | number
     messageFolderImportPolicy?: boolean | number
+    participantHandleFieldUniversalIdentifier?: boolean | number
     pendingGroupEmailsAction?: boolean | number
     syncStage?: boolean | number
     syncStageStartedAt?: boolean | number
