@@ -2,6 +2,7 @@ import { useInstalledApplications } from '@/applications/hooks/useInstalledAppli
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -61,11 +62,15 @@ export const SettingsRolesList = () => {
       .map((application) => [application.defaultRoleId, application]),
   );
 
+  // Admin is the standard application's default role but stays a member role
+  const getApplicationOfApplicationRole = (role: RoleWithPartialMembers) =>
+    role.canBeAssignedToUsers
+      ? undefined
+      : installedApplicationByDefaultRoleId.get(role.id);
+
   const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) => {
-    const applicationNameA =
-      installedApplicationByDefaultRoleId.get(a.id)?.name ?? '';
-    const applicationNameB =
-      installedApplicationByDefaultRoleId.get(b.id)?.name ?? '';
+    const applicationNameA = getApplicationOfApplicationRole(a)?.name ?? '';
+    const applicationNameB = getApplicationOfApplicationRole(b)?.name ?? '';
 
     return (
       sortByAscString(applicationNameA, applicationNameB) ||
@@ -74,7 +79,7 @@ export const SettingsRolesList = () => {
   });
 
   const filteredRoles = sortedSettingsAllRoles.filter((role) => {
-    const isApplicationRole = installedApplicationByDefaultRoleId.has(role.id);
+    const isApplicationRole = isDefined(getApplicationOfApplicationRole(role));
 
     const matchesType = isApplicationRole
       ? showApplicationRoles
