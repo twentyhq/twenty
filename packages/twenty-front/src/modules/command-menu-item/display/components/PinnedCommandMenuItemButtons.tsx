@@ -6,6 +6,7 @@ import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/const
 import { PRIMARY_ACTION_ENGINE_COMPONENT_KEYS } from '@/command-menu-item/display/constants/PrimaryActionEngineComponentKeys';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
 import { getLabelledPinnedCommandMenuItemId } from '@/command-menu-item/display/utils/getLabelledPinnedCommandMenuItemId';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
@@ -53,6 +54,7 @@ export const PinnedCommandMenuItemButtons = ({
   const theme = useTheme();
   const { commandMenuItems, containerType } = useContext(CommandMenuContext);
   const isMobile = useIsMobile();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const isSidePanelFooter =
     containerType === CommandMenuItemContainerType.SidePanelFooter;
@@ -82,7 +84,11 @@ export const PinnedCommandMenuItemButtons = ({
     onCommandMenuItemDimensionChange,
   } = usePinnedCommandMenuItemsInlineLayout({
     pinnedCommandMenuItems,
-    layoutKey: isSidePanelFooter ? 'side-panel-footer' : 'page-header',
+    layoutKey: isSidePanelFooter
+      ? 'side-panel-footer'
+      : isInSidePanel
+        ? 'side-panel-header'
+        : 'page-header',
     containerWidth,
   });
 

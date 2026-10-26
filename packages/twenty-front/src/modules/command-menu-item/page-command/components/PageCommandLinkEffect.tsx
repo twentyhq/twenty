@@ -1,4 +1,4 @@
-import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
+import { useRegisterPageCommand } from '@/command-menu-item/page-command/hooks/useRegisterPageCommand';
 import { type LinkProps, useNavigate } from 'react-router-dom';
 import { type EngineComponentKey } from '~/generated-metadata/graphql';
 
@@ -15,11 +15,11 @@ export const PageCommandLinkEffect = ({
 }: PageCommandLinkEffectProps) => {
   const navigate = useNavigate();
 
-  return (
-    <PageCommandEffect
-      engineComponentKey={engineComponentKey}
-      onRun={() => navigate(to)}
-      isDisabled={isDisabled}
-    />
-  );
+  useRegisterPageCommand({
+    engineComponentKey,
+    onRun: () => navigate(to),
+    isDisabled,
+  });
+
+  return null;
 };

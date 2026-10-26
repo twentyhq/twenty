@@ -1,6 +1,7 @@
 import { SettingsPageCommandMenu } from '@/command-menu-item/components/SettingsPageCommandMenu';
 import { ContextStorePageTitleEffect } from '@/context-store/components/ContextStorePageTitleEffect';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecondaryBar';
 import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
@@ -38,6 +39,7 @@ export const SettingsPageLayout = ({
 }: SettingsPageLayoutProps) => {
   const titleInstanceId = useId();
   const isInMainSurface = useWorkspaceSurface().type === 'main';
+  const isSettingsPage = useIsSettingsPage();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -67,7 +69,9 @@ export const SettingsPageLayout = ({
   return (
     <>
       <SidePanelPageTitleSyncEffect pageTitle={resolvedPageTitle} />
-      <ContextStorePageTitleEffect pageTitle={resolvedPageTitle ?? null} />
+      {isSettingsPage && (
+        <ContextStorePageTitleEffect pageTitle={resolvedPageTitle ?? null} />
+      )}
       {pageCommands}
       <PageCardLayout
         header={
@@ -77,12 +81,14 @@ export const SettingsPageLayout = ({
             icon={icon}
             tag={tag}
             actionButton={
-              <>
-                <SettingsPageCommandMenu />
-                {isInMainSurface && !isLayoutCustomizationModeEnabled && (
-                  <SidePanelToggleButton />
-                )}
-              </>
+              isSettingsPage ? (
+                <>
+                  <SettingsPageCommandMenu />
+                  {isInMainSurface && !isLayoutCustomizationModeEnabled && (
+                    <SidePanelToggleButton />
+                  )}
+                </>
+              ) : undefined
             }
             centerTitle
             titleColor={titleColor}
