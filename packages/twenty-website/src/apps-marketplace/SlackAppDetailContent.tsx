@@ -32,7 +32,7 @@ const CAPABILITIES: readonly {
 }[] = [
   {
     title: msg`Ask questions`,
-    body: msg`Mention @Twenty in a channel or send it a direct message. It searches your workspace and replies in the thread.`,
+    body: msg`Ask about a contact, a company or your open deals and get the answer from your Twenty data.`,
   },
   {
     title: msg`Create and update records`,
