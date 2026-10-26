@@ -7,12 +7,15 @@ import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { agentChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const AiChatUserCreditsExhaustedBanner = () => {
   const { t } = useLingui();
 
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const [
     agentChatUserCreditsBannerDismissal,
@@ -23,7 +26,11 @@ export const AiChatUserCreditsExhaustedBanner = () => {
     skip: isWorkspaceSetupChat,
   });
 
-  if (!isDefined(userCreditsUsage) || !userCreditsUsage.isExhausted) {
+  if (
+    !isDefined(currentWorkspaceMember) ||
+    !isDefined(userCreditsUsage) ||
+    !userCreditsUsage.isExhausted
+  ) {
     return null;
   }
 
@@ -31,7 +38,9 @@ export const AiChatUserCreditsExhaustedBanner = () => {
     userCreditsUsage;
 
   if (
-    agentChatUserCreditsBannerDismissal?.periodEnd === periodEnd &&
+    agentChatUserCreditsBannerDismissal?.workspaceMemberId ===
+      currentWorkspaceMember.id &&
+    agentChatUserCreditsBannerDismissal.periodEnd === periodEnd &&
     agentChatUserCreditsBannerDismissal.isFallingBackToWorkspaceCredits ===
       isFallingBackToWorkspaceCredits
   ) {
@@ -45,6 +54,7 @@ export const AiChatUserCreditsExhaustedBanner = () => {
         <InlineBanner.Action
           onClick={() =>
             setAgentChatUserCreditsBannerDismissal({
+              workspaceMemberId: currentWorkspaceMember.id,
               periodEnd,
               isFallingBackToWorkspaceCredits,
             })

@@ -7,13 +7,17 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   GetAiChatUsageDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -25,6 +29,7 @@ const renderBanner = (
 ) => {
   const store = createStore();
 
+  store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
   store.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
     billingCustomer: {
@@ -99,13 +104,37 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
         localStorage.getItem('ai/agentChatUserCreditsBannerDismissal') ??
           'null',
       ),
-    ).toEqual({ periodEnd: PERIOD_END, isFallingBackToWorkspaceCredits: true });
+    ).toEqual({
+      workspaceMemberId: mockedWorkspaceMemberData.id,
+      periodEnd: PERIOD_END,
+      isFallingBackToWorkspaceCredits: true,
+    });
+  });
+
+  it('shows the notice to a member who did not dismiss it in this browser', async () => {
+    localStorage.setItem(
+      'ai/agentChatUserCreditsBannerDismissal',
+      JSON.stringify({
+        workspaceMemberId: 'another-workspace-member-id',
+        periodEnd: PERIOD_END,
+        isFallingBackToWorkspaceCredits: true,
+      }),
+    );
+
+    renderBanner();
+
+    expect(
+      await screen.findByText(
+        'Personal usage limit reached. Using workspace credits until it resets in 3 days.',
+      ),
+    ).toBeVisible();
   });
 
   it('shows the stop notice when chats stop after the fallback notice was dismissed', async () => {
     localStorage.setItem(
       'ai/agentChatUserCreditsBannerDismissal',
       JSON.stringify({
+        workspaceMemberId: mockedWorkspaceMemberData.id,
         periodEnd: PERIOD_END,
         isFallingBackToWorkspaceCredits: true,
       }),
