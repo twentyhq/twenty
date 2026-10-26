@@ -79,7 +79,7 @@ export const NavigationMenuItemAddSectionButton = ({
                 {
                   id: 'actions',
                   label: t`Actions`,
-                  contextualText: t`Search, Ask AI and more`,
+                  contextualText: t`Search, Ask AI, side panel`,
                   Icon: IconBolt,
                   onClick: () =>
                     createSection({ parentId, template: 'actions' }),

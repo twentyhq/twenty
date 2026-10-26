@@ -36,6 +36,7 @@ const INBOX_SECTION_TYPES = [
 const ACTIONS_SECTION_ENGINE_COMPONENT_KEYS = [
   EngineComponentKey.SEARCH_RECORDS,
   EngineComponentKey.ASK_AI,
+  EngineComponentKey.OPEN_SIDE_PANEL,
 ];
 
 export const useCreateNavigationMenuTabOrSection = () => {

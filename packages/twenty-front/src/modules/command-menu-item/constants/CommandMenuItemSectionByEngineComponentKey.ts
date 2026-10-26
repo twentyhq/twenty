@@ -76,6 +76,7 @@ export const COMMAND_MENU_ITEM_SECTION_BY_ENGINE_COMPONENT_KEY = {
   [EngineComponentKey.ASK_AI]: 'ASK_AND_FIND',
   [EngineComponentKey.SEARCH_RECORDS]: 'ASK_AND_FIND',
   [EngineComponentKey.VIEW_PREVIOUS_AI_CHATS]: 'ASK_AND_FIND',
+  [EngineComponentKey.OPEN_SIDE_PANEL]: 'WORKSPACE',
   [EngineComponentKey.NEW_AI_CHAT]: 'ASK_AND_FIND',
 
   [EngineComponentKey.NAVIGATION]: 'GO_TO',
