@@ -63,25 +63,23 @@ export const SettingsRolesList = () => {
   );
 
   // Admin is the standard application's default role but stays a member role
-  const getApplicationOfApplicationRole = (role: RoleWithPartialMembers) =>
-    role.canBeAssignedToUsers
-      ? undefined
-      : installedApplicationByDefaultRoleId.get(role.id);
+  const isApplicationRole = (role: RoleWithPartialMembers) =>
+    !role.canBeAssignedToUsers &&
+    installedApplicationByDefaultRoleId.has(role.id);
 
-  const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) => {
-    const applicationNameA = getApplicationOfApplicationRole(a)?.name ?? '';
-    const applicationNameB = getApplicationOfApplicationRole(b)?.name ?? '';
+  const getApplicationName = (role: RoleWithPartialMembers) =>
+    isApplicationRole(role)
+      ? (installedApplicationByDefaultRoleId.get(role.id)?.name ?? '')
+      : '';
 
-    return (
-      sortByAscString(applicationNameA, applicationNameB) ||
-      sortByAscString(a.label, b.label)
-    );
-  });
+  const sortedSettingsAllRoles = [...settingsAllRoles].sort(
+    (a, b) =>
+      sortByAscString(getApplicationName(a), getApplicationName(b)) ||
+      sortByAscString(a.label, b.label),
+  );
 
   const filteredRoles = sortedSettingsAllRoles.filter((role) => {
-    const isApplicationRole = isDefined(getApplicationOfApplicationRole(role));
-
-    const matchesType = isApplicationRole
+    const matchesType = isApplicationRole(role)
       ? showApplicationRoles
       : role.canBeAssignedToUsers ||
         (showAgentRoles && role.canBeAssignedToAgents) ||
