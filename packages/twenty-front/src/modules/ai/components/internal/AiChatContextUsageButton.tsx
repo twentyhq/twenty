@@ -118,7 +118,6 @@ export const AiChatContextUsageButton = () => {
     (userCreditsUsage.isExhausted &&
       userCreditsUsage.isFallingBackToWorkspaceCredits);
 
-  // A configured AI limit is charged in full, even while user credits remain
   const isAiLimitCharged =
     creditUsage?.kind === 'limit' && userCreditsUsage?.isExhausted !== true;
 

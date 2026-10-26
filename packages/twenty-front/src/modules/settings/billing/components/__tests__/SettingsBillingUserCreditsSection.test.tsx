@@ -90,7 +90,6 @@ const renderSection = ({
 
 describe('SettingsBillingUserCreditsSection', () => {
   beforeAll(() => {
-    // jsdom has no PointerEvent, which the switch dispatches on click
     window.PointerEvent ??= MouseEvent as typeof PointerEvent;
   });
 
