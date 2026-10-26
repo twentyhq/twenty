@@ -94,15 +94,6 @@ export class FlatFieldPermissionValidatorService {
         message: t`Object metadata not found`,
         userFriendlyMessage: msg`Object metadata not found`,
       });
-    } else if (
-      !buildOptions.isSystemBuild &&
-      referencedObjectMetadata.isSystem
-    ) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
-        message: t`Cannot add field permission on a system object`,
-        userFriendlyMessage: msg`You cannot set field permissions on system objects as they are managed by the platform.`,
-      });
     }
 
     const referencedFieldMetadata = findFlatEntityByUniversalIdentifier({
