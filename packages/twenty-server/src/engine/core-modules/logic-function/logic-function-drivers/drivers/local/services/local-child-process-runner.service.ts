@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
 import { join } from 'path';
 
+import { isDefined } from 'twenty-shared/utils';
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -166,7 +167,18 @@ export class LocalChildProcessRunnerService {
       const { NODE_OPTIONS: _n1, ...cleanProcessEnv } = process.env;
       const { NODE_OPTIONS: _n2, ...cleanUserEnv } = env;
 
-      const child = spawn(process.execPath, [runnerPath], {
+      const maxOldSpaceSizeMb =
+        process.env.LOGIC_FUNCTION_LOCAL_MAX_OLD_SPACE_SIZE_MB;
+      const parsedMaxOldSpaceSizeMb = isDefined(maxOldSpaceSizeMb)
+        ? parseInt(maxOldSpaceSizeMb, 10)
+        : undefined;
+      const nodeArgs =
+        Number.isInteger(parsedMaxOldSpaceSizeMb) &&
+        parsedMaxOldSpaceSizeMb! > 0
+          ? [`--max-old-space-size=${parsedMaxOldSpaceSizeMb}`, runnerPath]
+          : [runnerPath];
+
+      const child = spawn(process.execPath, nodeArgs, {
         env: { ...cleanProcessEnv, ...cleanUserEnv },
         stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
       });

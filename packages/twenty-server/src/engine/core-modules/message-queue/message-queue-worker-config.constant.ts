@@ -1,5 +1,21 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+
+export const getLogicFunctionQueueConcurrency = (): number => {
+  const envConcurrency = process.env.LOGIC_FUNCTION_QUEUE_CONCURRENCY;
+
+  if (isDefined(envConcurrency)) {
+    const parsed = parseInt(envConcurrency, 10);
+
+    if (Number.isInteger(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  return 20;
+};
 
 // Single source of truth to pilot worker behavior per queue. Every value is
 // explicit on purpose (Record + Required): adding a queue without declaring
@@ -223,7 +239,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   [MessageQueue.logicFunctionQueue]: {
     priority: 4,
     workerOptions: {
-      concurrency: 20,
+      concurrency: getLogicFunctionQueueConcurrency(),
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
