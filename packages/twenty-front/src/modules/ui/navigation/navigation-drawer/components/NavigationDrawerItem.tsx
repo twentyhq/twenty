@@ -28,6 +28,7 @@ import {
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 const DEFAULT_INDENTATION_LEVEL = 1;
+const INTERACTIVE_OPTIONS_SELECTOR = 'button, a, [role="button"]';
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
@@ -449,7 +450,19 @@ export const NavigationDrawerItem = ({
                     stopPropagation blocks Link's own preventDefault */}
                 <StyledRightOptionsContainer
                   onMouseDown={(e) => e.stopPropagation()}
-                  onClick={(event) => event.stopPropagation()}
+                  onClick={(event) => {
+                    const interactiveOption =
+                      event.target instanceof Element
+                        ? event.target.closest(INTERACTIVE_OPTIONS_SELECTOR)
+                        : null;
+                    const isClickInsideInteractiveOption =
+                      isDefined(interactiveOption) &&
+                      event.currentTarget.contains(interactiveOption);
+
+                    if (isClickInsideInteractiveOption) {
+                      event.stopPropagation();
+                    }
+                  }}
                   onClickCapture={(event) => {
                     const isClickInsideLinkedOptions =
                       isDefined(to) &&

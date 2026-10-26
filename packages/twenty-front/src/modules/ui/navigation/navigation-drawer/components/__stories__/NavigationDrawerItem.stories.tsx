@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { IconSearch } from 'twenty-ui/icon';
+import { IconChevronRight, IconSearch } from 'twenty-ui/icon';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -35,6 +36,23 @@ export const Default: Story = {
     ),
     ComponentWithRouterDecorator,
   ],
+};
+
+export const PassiveRightOptions: Story = {
+  decorators: Default.decorators,
+  args: {
+    label: 'Folder',
+    triggerEvent: 'CLICK',
+    rightOptions: <IconChevronRight role="img" aria-label="Expand folder" />,
+    alwaysShowRightOptions: true,
+    onClick: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByRole('img', { name: 'Expand folder' }));
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
 };
 
 export const Breadcrumb: Story = {
