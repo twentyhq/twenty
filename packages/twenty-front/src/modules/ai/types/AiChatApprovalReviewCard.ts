@@ -7,6 +7,7 @@ export type AiChatApprovalReviewCard = AiChatApprovalReviewSummary & {
   icon: ReactNode;
   content: ReactNode;
   approveLabel: string;
+  denyLabel?: string;
   status: AiChatApprovalReviewStatus;
   isDestructive?: boolean;
   hint?: string;
