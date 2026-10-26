@@ -72,7 +72,7 @@ export const useCreateNavigationMenuTabOrSection = () => {
     setNavigationMenuItemIdToRename(tab.id);
   };
 
-  const createAiSection = ({
+  const createBuiltInSection = ({
     parentId,
     type,
   }: {
@@ -135,5 +135,5 @@ export const useCreateNavigationMenuTabOrSection = () => {
     );
   };
 
-  return { createTab, createSection, createAiSection, pinCommand };
+  return { createTab, createSection, createBuiltInSection, pinCommand };
 };

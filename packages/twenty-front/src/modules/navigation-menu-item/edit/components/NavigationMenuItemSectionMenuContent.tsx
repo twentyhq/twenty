@@ -46,7 +46,8 @@ export const NavigationMenuItemSectionMenuContent = ({
   const parentId = section.folderId ?? null;
 
   const isVisibleItemLimitEditable =
-    section.type !== NavigationMenuItemType.AI_CHAT_TRIAGE;
+    section.type !== NavigationMenuItemType.AI_CHAT_TRIAGE &&
+    section.type !== NavigationMenuItemType.FAVORITES;
   const visibleItemLimit = section.visibleItemLimit ?? null;
 
   const run = (action: () => Promise<void>) => {

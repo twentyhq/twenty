@@ -33,6 +33,8 @@ const PINNED_COMMAND_NAMES = [
   'pinnedCommandsNewChat',
 ] as const;
 
+const HOME_SECTION_NAMES = ['favoritesSection', 'inboxSection'] as const;
+
 const CHATS_TAB_SECTION_NAMES = [
   'chatsTabFavoriteChats',
   'chatsTabChannels',
@@ -98,21 +100,24 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     });
   }
 
-  const inboxSectionDefinition = STANDARD_NAVIGATION_MENU_ITEMS.inboxSection;
+  for (const homeSectionName of HOME_SECTION_NAMES) {
+    const homeSectionDefinition =
+      STANDARD_NAVIGATION_MENU_ITEMS[homeSectionName];
 
-  addFlatNavigationMenuItemToMapsAndUpdateIndex({
-    flatNavigationMenuItem:
-      createStandardNavigationMenuItemContainerFlatMetadata({
-        universalIdentifier: inboxSectionDefinition.universalIdentifier,
-        type: inboxSectionDefinition.type,
-        position: inboxSectionDefinition.position,
-        navigationMenuItemId: v4(),
-        workspaceId,
-        twentyStandardApplicationId,
-        now,
-      }),
-    flatNavigationMenuItemMaps,
-  });
+    addFlatNavigationMenuItemToMapsAndUpdateIndex({
+      flatNavigationMenuItem:
+        createStandardNavigationMenuItemContainerFlatMetadata({
+          universalIdentifier: homeSectionDefinition.universalIdentifier,
+          type: homeSectionDefinition.type,
+          position: homeSectionDefinition.position,
+          navigationMenuItemId: v4(),
+          workspaceId,
+          twentyStandardApplicationId,
+          now,
+        }),
+      flatNavigationMenuItemMaps,
+    });
+  }
 
   const workspaceSectionDefinition =
     STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;

@@ -6,11 +6,13 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isNavigationMenuItemAgentsSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAgentsSection';
 import { isNavigationMenuItemAiChatSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAiChatSection';
+import { isNavigationMenuItemFavoritesSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFavoritesSection';
 import { isNavigationMenuItemSectionAboveContainerItems } from '@/navigation-menu-item/common/utils/isNavigationMenuItemSectionAboveContainerItems';
 import { useWorkspaceNavigationMenuSections } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuSections';
 import { NavigationMenuItemAgentsSection } from '@/navigation-menu-item/display/sections/agents/components/NavigationMenuItemAgentsSection';
 import { NavigationMenuItemAiChatSection } from '@/navigation-menu-item/display/sections/ai-chat/components/NavigationMenuItemAiChatSection';
 import { NavigationMenuItemCustomSection } from '@/navigation-menu-item/display/sections/custom/components/NavigationMenuItemCustomSection';
+import { NavigationMenuItemFavoritesSection } from '@/navigation-menu-item/display/sections/favorites/components/NavigationMenuItemFavoritesSection';
 import { NavigationMenuItemAddSectionButton } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddSectionButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -31,6 +33,10 @@ const renderSectionContent = (section: NavigationMenuItem) => {
 
   if (isNavigationMenuItemAgentsSection(section)) {
     return <NavigationMenuItemAgentsSection section={section} />;
+  }
+
+  if (isNavigationMenuItemFavoritesSection(section)) {
+    return <NavigationMenuItemFavoritesSection section={section} />;
   }
 
   return <NavigationMenuItemCustomSection section={section} />;

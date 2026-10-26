@@ -56,6 +56,7 @@ export const NavigationMenuItemTypeTooltip = ({
     AI_AGENTS: { label: t`Agents`, Icon: IconLego },
     COMMANDS: { label: t`Commands`, Icon: IconCommand },
     COMMAND: { label: t`Command`, Icon: IconCommand },
+    FAVORITES: { label: t`Favorites`, Icon: IconHeart },
   };
 
   const { label, Icon } = labelsByType[type];

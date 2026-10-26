@@ -29,6 +29,7 @@ describe('validateNavigationMenuItemParentType', () => {
     [NavigationMenuItemType.LINK, NavigationMenuItemType.AI_CHAT_FAVORITES],
     [NavigationMenuItemType.AI_AGENTS, NavigationMenuItemType.SECTION],
     [NavigationMenuItemType.AI_CHAT_CHANNELS, NavigationMenuItemType.SECTION],
+    [NavigationMenuItemType.FAVORITES, NavigationMenuItemType.SECTION],
     [NavigationMenuItemType.VIEW, NavigationMenuItemType.AI_AGENTS],
     [NavigationMenuItemType.FOLDER, NavigationMenuItemType.FOLDER],
     [NavigationMenuItemType.RECORD, NavigationMenuItemType.LINK],

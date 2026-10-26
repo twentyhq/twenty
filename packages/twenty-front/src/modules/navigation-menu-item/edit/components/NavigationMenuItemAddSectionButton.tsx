@@ -21,6 +21,11 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 
+const FAVORITES_SECTION_OPTION = {
+  type: NavigationMenuItemType.FAVORITES,
+  Icon: IconHeart,
+};
+
 const AI_SECTION_OPTIONS = [
   { type: NavigationMenuItemType.AI_CHAT_TRIAGE, Icon: IconInbox },
   { type: NavigationMenuItemType.AI_CHAT_FAVORITES, Icon: IconHeart },
@@ -41,8 +46,12 @@ export const NavigationMenuItemAddSectionButton = ({
   const sections = useWorkspaceNavigationMenuSections(parentId);
   const { getDefaultAiChatSectionLabel } =
     useNavigationMenuItemAiChatSectionLabel();
-  const { createSection, createAiSection } =
+  const { createSection, createBuiltInSection } =
     useCreateNavigationMenuTabOrSection();
+  const builtInSectionOptions = [
+    FAVORITES_SECTION_OPTION,
+    ...(hasAiPermission ? AI_SECTION_OPTIONS : []),
+  ];
 
   return (
     <NavigationDrawerSection>
@@ -63,23 +72,21 @@ export const NavigationMenuItemAddSectionButton = ({
           }
           groups={[
             {
-              id: 'ai',
-              options: hasAiPermission
-                ? AI_SECTION_OPTIONS.map(({ type, Icon }) => {
-                    const isAlreadyInSidebar = sections.some(
-                      (section) => section.type === type,
-                    );
+              id: 'built-in',
+              options: builtInSectionOptions.map(({ type, Icon }) => {
+                const isAlreadyInSidebar = sections.some(
+                  (section) => section.type === type,
+                );
 
-                    return {
-                      id: type,
-                      label: getDefaultAiChatSectionLabel(type),
-                      Icon,
-                      isDisabled: isAlreadyInSidebar,
-                      isAlreadyInSidebar,
-                      onClick: () => createAiSection({ parentId, type }),
-                    };
-                  })
-                : [],
+                return {
+                  id: type,
+                  label: getDefaultAiChatSectionLabel(type),
+                  Icon,
+                  isDisabled: isAlreadyInSidebar,
+                  isAlreadyInSidebar,
+                  onClick: () => createBuiltInSection({ parentId, type }),
+                };
+              }),
             },
             {
               id: 'blank',

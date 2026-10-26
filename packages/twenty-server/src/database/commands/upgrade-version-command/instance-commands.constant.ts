@@ -260,6 +260,7 @@ import { AddParticipantHandleFieldToMessageChannelFastInstanceCommand } from 'sr
 import { AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793025684648-add-tab-and-section-navigation-menu-item-types';
 import { AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793029099068-add-visible-item-limit-to-navigation-menu-item';
 import { AddCommandNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793030782730-add-command-navigation-menu-items';
+import { AddFavoritesNavigationMenuItemTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793050419673-add-favorites-navigation-menu-item-type';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -522,4 +523,5 @@ export const INSTANCE_COMMANDS = [
   AddTabAndSectionNavigationMenuItemTypesFastInstanceCommand,
   AddVisibleItemLimitToNavigationMenuItemFastInstanceCommand,
   AddCommandNavigationMenuItemsFastInstanceCommand,
+  AddFavoritesNavigationMenuItemTypeFastInstanceCommand,
 ];

@@ -7,7 +7,6 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 import { themeCssVariables } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -56,17 +55,10 @@ export const MainNavigationDrawerScrollableItems = () => {
     <StyledScrollableItemsContainer>
       <NavigationMenuItemCommands />
       <NavigationDrawerOpenedSection />
-      {isDefined(activeNavigationMenuTab) ? (
-        <NavigationMenuTabContent
-          key={activeNavigationMenuTab.id}
-          tabId={activeNavigationMenuTab.id}
-        />
-      ) : (
-        <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
-          <FavoritesSectionDispatcher />
-          <NavigationMenuTabContent tabId={null} />
-        </Suspense>
-      )}
+      <NavigationMenuTabContent
+        key={activeNavigationMenuTab?.id}
+        tabId={activeNavigationMenuTab?.id ?? null}
+      />
     </StyledScrollableItemsContainer>
   );
 };

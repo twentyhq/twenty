@@ -5097,6 +5097,7 @@ export enum NavigationMenuItemType {
   AI_CHAT_TRIAGE = 'AI_CHAT_TRIAGE',
   COMMAND = 'COMMAND',
   COMMANDS = 'COMMANDS',
+  FAVORITES = 'FAVORITES',
   FOLDER = 'FOLDER',
   LINK = 'LINK',
   OBJECT = 'OBJECT',

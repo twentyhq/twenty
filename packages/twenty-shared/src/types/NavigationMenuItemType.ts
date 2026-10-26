@@ -15,4 +15,5 @@ export enum NavigationMenuItemType {
   AI_CHAT_CHANNELS = 'AI_CHAT_CHANNELS',
   COMMANDS = 'COMMANDS',
   COMMAND = 'COMMAND',
+  FAVORITES = 'FAVORITES',
 }

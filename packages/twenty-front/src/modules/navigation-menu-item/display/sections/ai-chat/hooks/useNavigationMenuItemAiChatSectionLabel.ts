@@ -17,6 +17,8 @@ export const useNavigationMenuItemAiChatSectionLabel = () => {
         return t`Channels`;
       case NavigationMenuItemType.AI_AGENTS:
         return t`Agents`;
+      case NavigationMenuItemType.FAVORITES:
+        return t`Favorites`;
       default:
         return t`Recent chats`;
     }
