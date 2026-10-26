@@ -67,6 +67,10 @@
       {
         "include": "engine/core-modules/dpa/constants/subprocessors.json",
         "outDir": "dist"
+      },
+      {
+        "include": "engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**",
+        "outDir": "dist/assets"
       }
     ]
   },
