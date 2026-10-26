@@ -12,7 +12,7 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import {
-  GetAiChatUserCreditsUsageDocument,
+  GetAiChatUsageDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
@@ -45,9 +45,10 @@ const renderBanner = ({
       <MockedProvider
         mocks={[
           {
-            request: { query: GetAiChatUserCreditsUsageDocument },
+            request: { query: GetAiChatUsageDocument },
             result: {
               data: {
+                aiChatUsage: null,
                 aiChatUserCreditsUsage: {
                   __typename: 'AiChatUserCreditsUsage',
                   limitValue: 4160000,

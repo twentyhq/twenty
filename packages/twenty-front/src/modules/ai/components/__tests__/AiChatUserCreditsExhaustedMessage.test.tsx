@@ -10,7 +10,7 @@ import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { type AiChatError } from '@/ai/types/AiChatError';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
-import { GetAiChatUserCreditsUsageDocument } from '~/generated-metadata/graphql';
+import { GetAiChatUsageDocument } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
@@ -26,6 +26,7 @@ jest.mock('@/ai/hooks/useCanRetryCurrentAiChatTurn', () => ({
 const renderError = (error: AiChatError, consumedValue = 830000) => {
   const getUserCreditsUsageResult = jest.fn(() => ({
     data: {
+      aiChatUsage: null,
       aiChatUserCreditsUsage: {
         __typename: 'AiChatUserCreditsUsage',
         limitValue: 830000,
@@ -40,7 +41,7 @@ const renderError = (error: AiChatError, consumedValue = 830000) => {
       <MockedProvider
         mocks={[
           {
-            request: { query: GetAiChatUserCreditsUsageDocument },
+            request: { query: GetAiChatUsageDocument },
             result: getUserCreditsUsageResult,
           },
         ]}

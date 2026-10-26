@@ -6,7 +6,7 @@ import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChat
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
-import { useRefreshAiChatUserCreditsUsage } from '@/ai/hooks/useRefreshAiChatUserCreditsUsage';
+import { useRefreshAiChatUsage } from '@/ai/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect, useState } from 'react';
 import { t } from '@lingui/core/macro';
@@ -63,7 +63,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
-  const { refreshAiChatUserCreditsUsage } = useRefreshAiChatUserCreditsUsage();
+  const { refreshAiChatUsage } = useRefreshAiChatUsage();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const sseClient = useAtomStateValue(sseClientState);
   const [resubscribeNonce, setResubscribeNonce] = useState(0);
@@ -345,7 +345,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             event.workspaceMemberId ===
             store.get(currentWorkspaceMemberState.atom)?.id
           ) {
-            refreshAiChatUserCreditsUsage();
+            refreshAiChatUsage();
           }
           break;
         }
@@ -497,7 +497,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     store,
     refreshAgentChatThreads,
     refreshAgentChatThreadPermissions,
-    refreshAiChatUserCreditsUsage,
+    refreshAiChatUsage,
     applyAgentChatThreadUpdate,
     currentUserWorkspace,
   ]);

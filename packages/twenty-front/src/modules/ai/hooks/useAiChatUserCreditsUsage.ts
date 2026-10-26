@@ -6,7 +6,7 @@ import { isAiChatUserCreditsExhausted } from '@/ai/utils/isAiChatUserCreditsExha
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
-  GetAiChatUserCreditsUsageDocument,
+  GetAiChatUsageDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
 
@@ -15,7 +15,7 @@ export const useAiChatUserCreditsUsage = ({
 }: { skip?: boolean } = {}) => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const { data } = useQuery(GetAiChatUserCreditsUsageDocument, {
+  const { data } = useQuery(GetAiChatUsageDocument, {
     skip,
     fetchPolicy: 'cache-and-network',
   });

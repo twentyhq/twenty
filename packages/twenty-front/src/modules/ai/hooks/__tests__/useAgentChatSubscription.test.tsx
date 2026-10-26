@@ -30,9 +30,9 @@ const disconnect = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ refreshAgentChatThreads }),
 }));
-const refreshAiChatUserCreditsUsage = jest.fn();
-jest.mock('@/ai/hooks/useRefreshAiChatUserCreditsUsage', () => ({
-  useRefreshAiChatUserCreditsUsage: () => ({ refreshAiChatUserCreditsUsage }),
+const refreshAiChatUsage = jest.fn();
+jest.mock('@/ai/hooks/useRefreshAiChatUsage', () => ({
+  useRefreshAiChatUsage: () => ({ refreshAiChatUsage }),
 }));
 const key = { threadId: 'thread' };
 const messagesAtom = agentChatMessagesFamilyState.atomFamily(key);
@@ -388,11 +388,11 @@ describe('User credits exhausted', () => {
 
     act(() => sendUserCreditsExhausted('tom'));
 
-    expect(refreshAiChatUserCreditsUsage).not.toHaveBeenCalled();
+    expect(refreshAiChatUsage).not.toHaveBeenCalled();
 
     act(() => sendUserCreditsExhausted('julia'));
 
-    expect(refreshAiChatUserCreditsUsage).toHaveBeenCalledTimes(1);
+    expect(refreshAiChatUsage).toHaveBeenCalledTimes(1);
     expect(jotaiStore.get(errorAtom)).toBeNull();
     unmount();
   });

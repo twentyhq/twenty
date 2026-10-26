@@ -18,7 +18,6 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import {
   GetAiChatUsageDocument,
-  GetAiChatUserCreditsUsageDocument,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
 
@@ -94,21 +93,13 @@ const UsageStory = ({
                               periodEnd: null,
                               kind,
                             },
+                      aiChatUserCreditsUsage: userCreditsUsage && {
+                        __typename: 'AiChatUserCreditsUsage',
+                        ...userCreditsUsage,
+                      },
                     },
                   },
                 }),
-          },
-          {
-            request: { query: GetAiChatUserCreditsUsageDocument },
-            maxUsageCount: Infinity,
-            result: {
-              data: {
-                aiChatUserCreditsUsage: userCreditsUsage && {
-                  __typename: 'AiChatUserCreditsUsage',
-                  ...userCreditsUsage,
-                },
-              },
-            },
           },
         ]}
       >
