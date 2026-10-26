@@ -36,6 +36,7 @@ import {
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -388,7 +389,7 @@ export class BullMQDriver
     }
 
     const queueOptions: JobsOptions = {
-      priority: options?.priority,
+      priority: options?.priority ?? DEFAULT_JOB_PRIORITY,
       repeat: options?.repeat,
       removeOnComplete: {
         age: QUEUE_RETENTION.completedMaxAge,
@@ -461,7 +462,7 @@ export class BullMQDriver
       jobId: options?.id
         ? buildQueueJobIdWithSuffix({ jobIdPrefix: options.id, suffix: v4() })
         : undefined,
-      priority: options?.priority,
+      priority: options?.priority ?? DEFAULT_JOB_PRIORITY,
       attempts: 1 + (options?.retryLimit || 0),
       backoff: options?.backoff
         ? {
