@@ -332,6 +332,32 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     ).not.toBeInTheDocument();
   });
 
+  it.each([
+    { tabs: [inboxTab, developersTab], addTabButtonCount: 1 },
+    {
+      tabs: [
+        inboxTab,
+        developersTab,
+        { ...developersTab, id: 'reports-tab', name: 'Reports' },
+      ],
+      addTabButtonCount: 0,
+    },
+  ])(
+    'caps the row at four tabs counting Home ($tabs.length custom tabs)',
+    ({ tabs, addTabButtonCount }) => {
+      jest.mocked(useWorkspaceNavigationMenuTabs).mockReturnValue(tabs);
+
+      renderModeSwitcher({
+        isLayoutCustomizationModeEnabled: true,
+        navigationMenuItems: [triageSection],
+      });
+
+      expect(screen.queryAllByRole('button', { name: 'Add tab' })).toHaveLength(
+        addTabButtonCount,
+      );
+    },
+  );
+
   it('keeps custom tabs reachable while editing the layout', async () => {
     jest
       .mocked(useWorkspaceNavigationMenuTabs)

@@ -172,7 +172,8 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const canAddTab =
     isLayoutCustomizationModeEnabled &&
     !isMobile &&
-    navigationMenuTabs.length < NAVIGATION_MENU_TAB_MAX_COUNT;
+    leadingModes.length + navigationMenuTabs.length <
+      NAVIGATION_MENU_TAB_MAX_COUNT;
 
   return (
     <StyledSwitcher
