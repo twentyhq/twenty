@@ -7,7 +7,9 @@ import { EventRelationFieldDiffValues } from '@/activities/timeline-activities/r
 import { isRelationFieldChangeValue } from '@/activities/timeline-activities/utils/relationFieldChangeValue';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -26,6 +28,7 @@ const StyledEventFieldDiffContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   height: 24px;
   max-width: 100%;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -81,29 +84,62 @@ export const EventFieldDiff = ({
       diffRecord !== null &&
       isObjectEmpty(diffRecord));
 
+  const { t } = useLingui();
+  const emptyLabel = t`Empty`;
+
+  const formatDiffValue = (value: unknown): string => {
+    if (value === null || value === undefined || value === '') {
+      return emptyLabel;
+    }
+    if (typeof value === 'object') {
+      if ('name' in (value as Record<string, unknown>)) {
+        return String((value as any).name);
+      }
+      if ('label' in (value as Record<string, unknown>)) {
+        return String((value as any).label);
+      }
+      if ('primary' in (value as Record<string, unknown>)) {
+        return String((value as any).primary);
+      }
+      return JSON.stringify(value);
+    }
+    return String(value);
+  };
+
+  const beforeText = formatDiffValue(fieldDiff.before);
+  const afterText = formatDiffValue(fieldDiff.after);
+  const tooltipContent = `${beforeText} → ${afterText}`;
+
   return (
     <StyledEventFieldDiffContainer>
       <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />
       <StyledArrowContainer>→</StyledArrowContainer>
-      {isUpdatedToEmpty ? (
-        <StyledEmptyValue>
-          <Trans>Empty</Trans>
-        </StyledEmptyValue>
-      ) : (
-        <>
-          <EventFieldDiffValueEffect
-            diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-            mainObjectMetadataItem={mainObjectMetadataItem}
-            fieldMetadataItem={fieldMetadataItem}
-            diffRecord={diffRecord}
-          />
-          <EventFieldDiffValue
-            diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-            mainObjectMetadataItem={mainObjectMetadataItem}
-            fieldMetadataItem={fieldMetadataItem}
-          />
-        </>
-      )}
+      <Tooltip
+        content={tooltipContent}
+        delay={TooltipDelay.shortDelay}
+        side="bottom"
+        positionMethod="fixed"
+      >
+        {isUpdatedToEmpty ? (
+          <StyledEmptyValue>
+            <Trans>Empty</Trans>
+          </StyledEmptyValue>
+        ) : (
+          <>
+            <EventFieldDiffValueEffect
+              diffArtificialRecordStoreId={diffArtificialRecordStoreId}
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              fieldMetadataItem={fieldMetadataItem}
+              diffRecord={diffRecord}
+            />
+            <EventFieldDiffValue
+              diffArtificialRecordStoreId={diffArtificialRecordStoreId}
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              fieldMetadataItem={fieldMetadataItem}
+            />
+          </>
+        )}
+      </Tooltip>
     </StyledEventFieldDiffContainer>
   );
 };
