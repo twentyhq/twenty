@@ -1,8 +1,12 @@
 ---
 title: Overview
 description: Place your app inside Twenty's UI — sidebar entries, saved views, record page tabs, and sandboxed React components.
-icon: "table-columns"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## What the layout layer covers
 
 A Twenty app's **layout layer** is everything the user sees: where the app surfaces in the sidebar, which list views it ships, how its record detail pages are arranged, and which custom React components render inside those pages.
 
@@ -25,20 +29,25 @@ A Twenty app's **layout layer** is everything the user sees: where the app surfa
 
 ## In this section
 
-<CardGroup cols={2}>
-  <Card title="Views" icon="list" href="/developers/extend/apps/layout/views">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/developers/extend/apps/layout/views" img="/images/documentation/section-overview-icons-v1/views-pipelines.svg">
+    <CardTitle>Views</CardTitle>
     `defineView` — saved list configurations: visible columns, filters, groups.
   </Card>
-  <Card title="Navigation Menu Items" icon="bars" href="/developers/extend/apps/layout/navigation-menu-items">
+  <Card href="/developers/extend/apps/layout/navigation-menu-items" img="/images/user-guide/halftone/card-page-navigation.svg">
+    <CardTitle>Navigation Menu Items</CardTitle>
     `defineNavigationMenuItem` — sidebar entries pointing at views or external URLs.
   </Card>
-  <Card title="Page Layouts" icon="table-columns" href="/developers/extend/apps/layout/page-layouts">
+  <Card href="/developers/extend/apps/layout/page-layouts" img="/images/user-guide/halftone/card-page-page-layouts.svg">
+    <CardTitle>Page Layouts</CardTitle>
     `definePageLayout`, `definePageLayoutTab` and `definePageLayoutWidget` — tabs and widgets on a record's detail page.
   </Card>
-  <Card title="Front Components" icon="window-maximize" href="/developers/extend/apps/layout/front-components">
+  <Card href="/developers/extend/apps/layout/front-components" img="/images/user-guide/halftone/card-page-front-components.svg">
+    <CardTitle>Front Components</CardTitle>
     `defineFrontComponent` — sandboxed React components that render inside Twenty.
   </Card>
-  <Card title="Command Menu Items" icon="terminal" href="/developers/extend/apps/layout/command-menu-items">
+  <Card href="/developers/extend/apps/layout/command-menu-items" img="/images/user-guide/halftone/card-page-command-menu.svg">
+    <CardTitle>Command Menu Items</CardTitle>
     `defineCommandMenuItem` — register front components as Cmd+K entries and quick actions.
   </Card>
 </CardGroup>
@@ -57,3 +66,5 @@ A Twenty app's **layout layer** is everything the user sees: where the app surfa
 Front components run inside an isolated Web Worker using Remote DOM — they render *natively* in the page (not inside an iframe), but cannot reach the host page or DOM directly. Communication with Twenty happens through a message-passing host API.
 
 They are still under active development: the sandbox implements a partial DOM, so advanced usages can fail. See [Current limitations](/developers/extend/apps/layout/front-components#current-limitations).
+
+<PageBanner illustration="section-apps-layout" />

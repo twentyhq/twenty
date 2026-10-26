@@ -1,7 +1,6 @@
 ---
 title: Обзор
 description: Настройте само приложение — его идентичность, разрешения по умолчанию и то, что выполняется во время установки.
-icon: screwdriver-wrench
 ---
 
 **Конфигурационный слой** приложения Twenty описывает приложение *для платформы* — его идентичность, разрешения, которыми оно обладает, и код, который выполняется при установке или обновлении. Эти декларации не добавляют новых структур данных или поведения во время выполнения; они сообщают Twenty, *что это за приложение* и *как его настроить*.
@@ -37,10 +36,10 @@ icon: screwdriver-wrench
   <Card title="Конфигурация приложения" icon="rocket" href="/ru/developers/extend/apps/config/application">
     `defineApplication` — идентичность, роль по умолчанию, переменные, метаданные маркетплейса.
   </Card>
-  <Card title="Роли и разрешения" icon="shield-halved" href="/ru/developers/extend/apps/config/roles">
+  <Card title="Роли и разрешения" icon="shield-half" href="/ru/developers/extend/apps/config/roles">
     `defineRole` — определите, что логические функции вашего приложения могут читать и записывать.
   </Card>
-  <Card title="Установочные хуки" icon="wrench" href="/ru/developers/extend/apps/config/install-hooks">
+  <Card title="Установочные хуки" icon="tool" href="/ru/developers/extend/apps/config/install-hooks">
     `definePreInstallLogicFunction`, `definePostInstallLogicFunction` и `defineUninstallLogicFunction` — создавайте резервные копии данных, заполняйте значения по умолчанию, проверяйте обновления, выполняйте очистку при удалении.
   </Card>
 </CardGroup>

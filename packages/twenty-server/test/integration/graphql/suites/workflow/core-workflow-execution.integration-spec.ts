@@ -27,6 +27,8 @@ import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { type WorkspaceWorkflowAutomatedTriggerMapCacheService } from 'src/engine/core-modules/workflow/services/workspace-workflow-automated-trigger-map-cache.service';
+import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import {
@@ -556,18 +558,28 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
     const { workspaceCache, upgradeState, backfill } =
       global.workflowTestServices;
+    const triggerMapCacheService =
+      getAppProviderByClassName<WorkspaceWorkflowAutomatedTriggerMapCacheService>(
+        'WorkspaceWorkflowAutomatedTriggerMapCacheService',
+      );
+    const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
+      global.workflowTestServices.coreDataSource,
+      workspaceId,
+    );
     const hiddenColumns = jest
       .spyOn(upgradeState, 'getHiddenColumnPropertyNames')
       .mockReturnValue(new Set(['workspaceWorkflowVersionId']));
 
+    await rowsBatchLoader.loadRows([triggerMapCacheService.rowsRequirement]);
+    const duringUpgrade = await triggerMapCacheService.computeForCache({
+      workspaceId,
+      rows: rowsBatchLoader.readRows(triggerMapCacheService.rowsRequirement),
+    });
+
+    expect(duringUpgrade.byWorkflowId).toEqual({});
     await workspaceCache.invalidateAndRecompute(workspaceId, [
       'workflowAutomatedTriggerMaps',
     ]);
-    const duringUpgrade = await workspaceCache.getOrRecompute(workspaceId, [
-      'workflowAutomatedTriggerMaps',
-    ]);
-
-    expect(duringUpgrade.workflowAutomatedTriggerMaps.byWorkflowId).toEqual({});
     hiddenColumns.mockRestore();
     await backfill.runOnWorkspace({
       workspaceId,
@@ -576,15 +588,19 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       index: 0,
       total: 1,
     });
-    const afterUpgrade = await workspaceCache.getOrRecompute(workspaceId, [
-      'workflowAutomatedTriggerMaps',
-    ]);
+    await expectEventually(async () => {
+      const afterUpgrade = await workspaceCache.getOrRecompute(workspaceId, [
+        'workflowAutomatedTriggerMaps',
+      ]);
 
-    expect(
-      afterUpgrade.workflowAutomatedTriggerMaps.byWorkflowId[
-        fixture.coreWorkflowId
-      ],
-    ).toMatchObject({ coreWorkflowVersionId: fixture.coreWorkflowVersionId });
+      expect(
+        afterUpgrade.workflowAutomatedTriggerMaps.byWorkflowId[
+          fixture.coreWorkflowId
+        ],
+      ).toMatchObject({
+        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+      });
+    });
   });
 
   it('normalizes overlapping old and core cron caches without duplicate runs', async () => {

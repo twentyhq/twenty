@@ -1,8 +1,11 @@
 ---
 title: Charging Credits
 description: Declare what your app bills for and charge workspace credits from a logic function.
-icon: "coins"
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 <Warning>
   Not live yet. Credit charging for apps launches officially in October. This page is published early for partners who want to experiment with it.
@@ -179,3 +182,5 @@ await chargeCredits({
 Where to get one: `context.userWorkspaceId` on a triggered run, or [`listConnections()`](/developers/extend/apps/logic/connections), which returns the `userWorkspaceId` of each connection's owner.
 
 Recurring charges have no triggering person, so they are reported against the app only, never against a member.
+
+<PageBanner illustration="card-page-charging-credits" />

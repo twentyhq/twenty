@@ -53,6 +53,7 @@ export type LambdaConnectionOptions = LambdaClientConfig & {
   layerBucket: string;
   layerBucketRegion: string;
   resourceNamespace: string;
+  resourceTags?: Record<string, string>;
 };
 
 export enum LambdaExecutionPhase {

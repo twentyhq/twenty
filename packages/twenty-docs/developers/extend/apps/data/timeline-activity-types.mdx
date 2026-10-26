@@ -1,8 +1,11 @@
 ---
 title: Timeline Activity Types
 description: Define automatic audit events and explicit app events that render in record timelines.
-icon: 'clock-rotate-left'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 A timeline activity type defines the stable vocabulary for an event shown in a record's timeline. Standard objects and app objects use the same contract: a type has a label and icon, can optionally declare when it is emitted, and can optionally render through one of your app's [front components](/developers/extend/apps/layout/front-components).
 
@@ -179,3 +182,5 @@ mutation ResetTimelineActivityType($id: UUID!) {
 | `replacesTimelineActivityTypeUniversalIdentifier` | No        | Existing emit type replaced; requires `emit`                                                               |
 
 Twenty snapshots semantic identity and durable presentation fallbacks when an event is created. Historical rows keep their original action and object meaning. While the type is installed, its current translated label, icon, and front component render live; after uninstall, the snapshot fallback keeps the row readable. Resolution uses the universal identifier, so presentation also survives reinstalling the app.
+
+<PageBanner illustration="card-page-timeline" />

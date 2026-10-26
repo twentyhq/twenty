@@ -1,8 +1,11 @@
 ---
 title: Public Assets
 description: Ship static files — images, icons, fonts — alongside your app via the public/ folder.
-icon: 'folder-open'
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 The `public/` folder at the root of your app holds static files — images, icons, fonts, or any other assets your app needs at runtime. These files are automatically included in builds, synced during dev mode, and uploaded to the server.
 
@@ -65,3 +68,5 @@ export default defineFrontComponent({
 ```
 
 The `path` argument is relative to your app's `public/` folder. Both `getPublicAssetUrl('logo.png')` and `getPublicAssetUrl('public/logo.png')` resolve to the same URL — the `public/` prefix is stripped automatically if present.
+
+<PageBanner illustration="page-cover-image" />

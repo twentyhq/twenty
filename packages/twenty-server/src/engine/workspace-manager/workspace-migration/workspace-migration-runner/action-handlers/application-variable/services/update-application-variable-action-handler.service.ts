@@ -47,8 +47,6 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
     };
   }
 
-  // Value is always encrypted regardless of isSecret, so toggling
-  // isSecret does not require re-encrypting or decrypting the stored value.
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateApplicationVariableAction>,
   ): Promise<void> {

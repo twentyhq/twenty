@@ -3,6 +3,7 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
 import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
@@ -11,6 +12,7 @@ import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/work
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
@@ -24,6 +26,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 type UseWorkflowAiAgentPermissionActionsParams = {
+  stepId: string;
   readonly: boolean;
   objectPermissions: ObjectPermission[];
   permissionFlagKeys: string[];
@@ -31,12 +34,15 @@ type UseWorkflowAiAgentPermissionActionsParams = {
 };
 
 export const useWorkflowAiAgentPermissionActions = ({
+  stepId,
   readonly,
   objectPermissions,
   permissionFlagKeys,
   refetchAgentAndRoles,
 }: UseWorkflowAiAgentPermissionActionsParams) => {
   const { enqueueToast } = useToast();
+  const { getUpdatableWorkflowVersionStepOrThrow } =
+    useGetUpdatableWorkflowVersionOrThrow();
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
   const { activeObjectMetadataItems: objectMetadataItems } =
@@ -87,6 +93,17 @@ export const useWorkflowAiAgentPermissionActions = ({
       return undefined;
     }
 
+    const updatableStep = await getUpdatableWorkflowVersionStepOrThrow({
+      stepId,
+      stepType: 'AI_AGENT',
+    });
+
+    const updatableAgentId = updatableStep.settings.input.agentId;
+
+    if (!isDefined(updatableAgentId)) {
+      throw new Error(doNotTranslate('The AI agent step has no agent'));
+    }
+
     const agentDisplayName =
       workflowAiAgentActionAgent.label ??
       workflowAiAgentActionAgent.name ??
@@ -117,7 +134,7 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     await assignRoleToAgent({
       variables: {
-        agentId: workflowAiAgentActionAgent.id,
+        agentId: updatableAgentId,
         roleId: generatedRoleId,
       },
     });
