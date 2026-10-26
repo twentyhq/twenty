@@ -11,6 +11,7 @@ import { NavigationDrawerAiChatChannelNavigation } from '@/ai/components/Navigat
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
@@ -22,8 +23,9 @@ import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecora
 
 const StyledNavigation = styled.div`
   background: ${themeCssVariables.background.secondary};
+  box-sizing: border-box;
   padding: ${themeCssVariables.spacing[2]};
-  width: 204px;
+  width: ${NAVIGATION_DRAWER_CONSTRAINTS.default}px;
 `;
 
 const OPEN_VIEW: AgentChatChannelView = {
