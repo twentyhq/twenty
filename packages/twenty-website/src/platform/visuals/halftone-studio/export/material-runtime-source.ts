@@ -1,0 +1,643 @@
+import { HALFTONE_ENVIRONMENT_DATA_URL } from '../engine/environment-data';
+import { HALFTONE_MATERIAL_CONSTANTS } from '../engine/material-constants';
+import type { HalftoneMaterialTexture } from '../engine/material-texture';
+import { HALFTONE_MATERIAL_TEXTURE_DATA_URLS } from '../engine/material-texture-data';
+import { resolveMaterialTextureSources } from '../engine/resolve-material-texture-sources';
+import { DREI_LICENSE_NOTICE } from '@/platform/visuals/three-runtime/drei-license-notice';
+
+// Adapted from MeshTransmissionMaterial in @react-three/drei (MIT): see DREI_LICENSE_NOTICE.
+const HALFTONE_TRANSMISSION_SHADER_PREFIX = String.raw`
+uniform float chromaticAberration;
+uniform float anisotropicBlur;
+uniform float time;
+uniform float distortion;
+uniform float distortionScale;
+uniform float temporalDistortion;
+uniform sampler2D buffer;
+
+vec3 random3(vec3 c) {
+  float j = 4096.0 * sin(dot(c, vec3(17.0, 59.4, 15.0)));
+  vec3 r;
+  r.z = fract(512.0 * j);
+  j *= 0.125;
+  r.x = fract(512.0 * j);
+  j *= 0.125;
+  r.y = fract(512.0 * j);
+  return r - 0.5;
+}
+
+uint hash(uint x) {
+  x += (x << 10u);
+  x ^= (x >> 6u);
+  x += (x << 3u);
+  x ^= (x >> 11u);
+  x += (x << 15u);
+  return x;
+}
+
+uint hash(uvec2 v) { return hash(v.x ^ hash(v.y)); }
+uint hash(uvec3 v) { return hash(v.x ^ hash(v.y) ^ hash(v.z)); }
+uint hash(uvec4 v) {
+  return hash(v.x ^ hash(v.y) ^ hash(v.z) ^ hash(v.w));
+}
+
+float floatConstruct(uint m) {
+  const uint ieeeMantissa = 0x007FFFFFu;
+  const uint ieeeOne = 0x3F800000u;
+  m &= ieeeMantissa;
+  m |= ieeeOne;
+  float f = uintBitsToFloat(m);
+  return f - 1.0;
+}
+
+float randomBase(float x) {
+  return floatConstruct(hash(floatBitsToUint(x)));
+}
+float randomBase(vec2 v) {
+  return floatConstruct(hash(floatBitsToUint(v)));
+}
+float randomBase(vec3 v) {
+  return floatConstruct(hash(floatBitsToUint(v)));
+}
+float randomBase(vec4 v) {
+  return floatConstruct(hash(floatBitsToUint(v)));
+}
+
+float rand(float seed) {
+  return randomBase(vec3(gl_FragCoord.xy, seed));
+}
+
+const float F3 = 0.3333333;
+const float G3 = 0.1666667;
+
+float snoise(vec3 p) {
+  vec3 s = floor(p + dot(p, vec3(F3)));
+  vec3 x = p - s + dot(s, vec3(G3));
+  vec3 e = step(vec3(0.0), x - x.yzx);
+  vec3 i1 = e * (1.0 - e.zxy);
+  vec3 i2 = 1.0 - e.zxy * (1.0 - e);
+  vec3 x1 = x - i1 + G3;
+  vec3 x2 = x - i2 + 2.0 * G3;
+  vec3 x3 = x - 1.0 + 3.0 * G3;
+  vec4 w;
+  vec4 d;
+  w.x = dot(x, x);
+  w.y = dot(x1, x1);
+  w.z = dot(x2, x2);
+  w.w = dot(x3, x3);
+  w = max(0.6 - w, 0.0);
+  d.x = dot(random3(s), x);
+  d.y = dot(random3(s + i1), x1);
+  d.z = dot(random3(s + i2), x2);
+  d.w = dot(random3(s + 1.0), x3);
+  w *= w;
+  w *= w;
+  d *= w;
+  return dot(d, vec4(52.0));
+}
+
+float snoiseFractal(vec3 m) {
+  return 0.5333333 * snoise(m)
+    + 0.2666667 * snoise(2.0 * m)
+    + 0.1333333 * snoise(4.0 * m)
+    + 0.0666667 * snoise(8.0 * m);
+}
+`;
+
+const HALFTONE_TRANSMISSION_PARS_FRAGMENT = String.raw`
+#ifdef USE_TRANSMISSION
+  uniform float _transmission;
+  uniform float thickness;
+  uniform float attenuationDistance;
+  uniform vec3 attenuationColor;
+  uniform sampler2D refractionEnvMap;
+  uniform float useEnvMapRefraction;
+  #ifdef USE_TRANSMISSIONMAP
+    uniform sampler2D transmissionMap;
+  #endif
+  #ifdef USE_THICKNESSMAP
+    uniform sampler2D thicknessMap;
+  #endif
+  uniform vec2 transmissionSamplerSize;
+  uniform sampler2D transmissionSamplerMap;
+  uniform mat4 modelMatrix;
+  uniform mat4 projectionMatrix;
+  varying vec3 vWorldPosition;
+
+  vec3 getVolumeTransmissionRay(
+    const in vec3 n,
+    const in vec3 v,
+    const in float thicknessValue,
+    const in float ior,
+    const in mat4 modelMatrix
+  ) {
+    vec3 refractionVector = refract(-v, normalize(n), 1.0 / ior);
+    vec3 modelScale;
+    modelScale.x = length(vec3(modelMatrix[0].xyz));
+    modelScale.y = length(vec3(modelMatrix[1].xyz));
+    modelScale.z = length(vec3(modelMatrix[2].xyz));
+    return normalize(refractionVector) * thicknessValue * modelScale;
+  }
+
+  float applyIorToRoughness(
+    const in float roughnessValue,
+    const in float ior
+  ) {
+    return roughnessValue * clamp(ior * 2.0 - 2.0, 0.0, 1.0);
+  }
+
+  vec2 directionToEquirectUv(const in vec3 direction) {
+    vec3 dir = normalize(direction);
+    vec2 uv = vec2(
+      atan(dir.z, dir.x) * 0.15915494309189535 + 0.5,
+      asin(clamp(dir.y, -1.0, 1.0)) * 0.3183098861837907 + 0.5
+    );
+
+    return vec2(fract(uv.x), 1.0 - clamp(uv.y, 0.0, 1.0));
+  }
+
+  vec4 getTransmissionSample(
+    const in vec2 fragCoord,
+    const in vec3 transmissionDirection,
+    const in float roughnessValue,
+    const in float ior
+  ) {
+    if (useEnvMapRefraction > 0.5) {
+      return texture2D(
+        refractionEnvMap,
+        directionToEquirectUv(transmissionDirection)
+      );
+    }
+
+    float framebufferLod =
+      log2(transmissionSamplerSize.x) *
+      applyIorToRoughness(roughnessValue, ior);
+    return texture2D(buffer, fragCoord.xy);
+  }
+
+  vec3 applyVolumeAttenuation(
+    const in vec3 radiance,
+    const in float transmissionDistance,
+    const in vec3 attenuationColorValue,
+    const in float attenuationDistanceValue
+  ) {
+    if (isinf(attenuationDistanceValue)) {
+      return radiance;
+    }
+
+    vec3 attenuationCoefficient =
+      -log(attenuationColorValue) / attenuationDistanceValue;
+    vec3 transmittance =
+      exp(-attenuationCoefficient * transmissionDistance);
+
+    return transmittance * radiance;
+  }
+
+  vec4 getIBLVolumeRefraction(
+    const in vec3 n,
+    const in vec3 v,
+    const in float roughnessValue,
+    const in vec3 diffuseColor,
+    const in vec3 specularColor,
+    const in float specularF90,
+    const in vec3 position,
+    const in mat4 modelMatrix,
+    const in mat4 viewMatrix,
+    const in mat4 projMatrix,
+    const in float ior,
+    const in float thicknessValue,
+    const in vec3 attenuationColorValue,
+    const in float attenuationDistanceValue
+  ) {
+    vec3 transmissionRay = getVolumeTransmissionRay(
+      n,
+      v,
+      thicknessValue,
+      ior,
+      modelMatrix
+    );
+    vec3 refractedRayExit = position + transmissionRay;
+    vec4 ndcPos =
+      projMatrix * viewMatrix * vec4(refractedRayExit, 1.0);
+    vec2 refractionCoords = ndcPos.xy / ndcPos.w;
+    refractionCoords += 1.0;
+    refractionCoords /= 2.0;
+    vec3 transmissionDirection = normalize(transmissionRay);
+    vec4 transmittedLight = getTransmissionSample(
+      refractionCoords,
+      transmissionDirection,
+      roughnessValue,
+      ior
+    );
+    vec3 attenuatedColor = applyVolumeAttenuation(
+      transmittedLight.rgb,
+      length(transmissionRay),
+      attenuationColorValue,
+      attenuationDistanceValue
+    );
+    vec3 F = EnvironmentBRDF(
+      n,
+      v,
+      specularColor,
+      specularF90,
+      roughnessValue
+    );
+    return vec4(
+      (1.0 - F) * attenuatedColor * diffuseColor,
+      transmittedLight.a
+    );
+  }
+#endif
+`;
+
+const HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE = String.raw`
+material.transmission = _transmission;
+material.transmissionAlpha = 1.0;
+material.thickness = thickness;
+material.attenuationDistance = attenuationDistance;
+material.attenuationColor = attenuationColor;
+#ifdef USE_TRANSMISSIONMAP
+  material.transmission *= texture2D(transmissionMap, vUv).r;
+#endif
+#ifdef USE_THICKNESSMAP
+  material.thickness *= texture2D(thicknessMap, vUv).g;
+#endif
+
+vec3 pos = vWorldPosition;
+float runningSeed = 0.0;
+vec3 v = normalize(cameraPosition - pos);
+vec3 n = inverseTransformDirection(normal, viewMatrix);
+vec3 transmission = vec3(0.0);
+float transmissionR;
+float transmissionG;
+float transmissionB;
+float randomCoords = rand(runningSeed++);
+float thicknessSmear =
+  thickness * max(pow(roughnessFactor, 0.33), anisotropicBlur);
+vec3 distortionNormal = vec3(0.0);
+vec3 temporalOffset = vec3(time, -time, -time) * temporalDistortion;
+
+if (distortion > 0.0) {
+  distortionNormal = distortion * vec3(
+    snoiseFractal(vec3(pos * distortionScale + temporalOffset)),
+    snoiseFractal(vec3(pos.zxy * distortionScale - temporalOffset)),
+    snoiseFractal(vec3(pos.yxz * distortionScale + temporalOffset))
+  );
+}
+
+for (float i = 0.0; i < __SAMPLES__.0; i++) {
+  vec3 sampleNorm = normalize(
+    n +
+    roughnessFactor * roughnessFactor * 2.0 *
+    normalize(
+      vec3(
+        rand(runningSeed++) - 0.5,
+        rand(runningSeed++) - 0.5,
+        rand(runningSeed++) - 0.5
+      )
+    ) *
+    pow(rand(runningSeed++), 0.33) +
+    distortionNormal
+  );
+
+  transmissionR = getIBLVolumeRefraction(
+    sampleNorm,
+    v,
+    material.roughness,
+    material.diffuseColor,
+    material.specularColor,
+    material.specularF90,
+    pos,
+    modelMatrix,
+    viewMatrix,
+    projectionMatrix,
+    material.ior,
+    material.thickness + thicknessSmear * (i + randomCoords) / float(__SAMPLES__),
+    material.attenuationColor,
+    material.attenuationDistance
+  ).r;
+
+  transmissionG = getIBLVolumeRefraction(
+    sampleNorm,
+    v,
+    material.roughness,
+    material.diffuseColor,
+    material.specularColor,
+    material.specularF90,
+    pos,
+    modelMatrix,
+    viewMatrix,
+    projectionMatrix,
+    material.ior * (1.0 + chromaticAberration * (i + randomCoords) / float(__SAMPLES__)),
+    material.thickness + thicknessSmear * (i + randomCoords) / float(__SAMPLES__),
+    material.attenuationColor,
+    material.attenuationDistance
+  ).g;
+
+  transmissionB = getIBLVolumeRefraction(
+    sampleNorm,
+    v,
+    material.roughness,
+    material.diffuseColor,
+    material.specularColor,
+    material.specularF90,
+    pos,
+    modelMatrix,
+    viewMatrix,
+    projectionMatrix,
+    material.ior * (1.0 + 2.0 * chromaticAberration * (i + randomCoords) / float(__SAMPLES__)),
+    material.thickness + thicknessSmear * (i + randomCoords) / float(__SAMPLES__),
+    material.attenuationColor,
+    material.attenuationDistance
+  ).b;
+
+  transmission.r += transmissionR;
+  transmission.g += transmissionG;
+  transmission.b += transmissionB;
+}
+
+transmission /= __SAMPLES__.0;
+totalDiffuse = mix(totalDiffuse, transmission.rgb, material.transmission);
+`;
+
+const MATERIAL_RUNTIME_SOURCE = String.raw`
+const ENVIRONMENT_DATA_URL = ${JSON.stringify(HALFTONE_ENVIRONMENT_DATA_URL)};
+const GLASS_THICKNESS_TO_WORLD_UNITS = ${HALFTONE_MATERIAL_CONSTANTS.glassThicknessToWorldUnits};
+const GLASS_BACKSIDE_ENVIRONMENT_INTENSITY = ${HALFTONE_MATERIAL_CONSTANTS.glassBacksideEnvironmentIntensity};
+const GLASS_TRANSMISSION_BACKGROUND = ${HALFTONE_MATERIAL_CONSTANTS.glassTransmissionBackground};
+const MAX_TEXTURE_ANISOTROPY = 8;
+const HALFTONE_TRANSMISSION_SHADER_PREFIX = ${JSON.stringify(
+  HALFTONE_TRANSMISSION_SHADER_PREFIX,
+)};
+const HALFTONE_TRANSMISSION_PARS_FRAGMENT = ${JSON.stringify(
+  HALFTONE_TRANSMISSION_PARS_FRAGMENT,
+)};
+const HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE = ${JSON.stringify(
+  HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE,
+)};
+
+class HalftoneTransmissionMaterial extends THREE.MeshPhysicalMaterial {
+  constructor(samples = 10) {
+    super();
+
+    this.halftoneUniforms = {
+      chromaticAberration: { value: 0.05 },
+      transmission: { value: 0 },
+      _transmission: { value: 1 },
+      transmissionMap: { value: null },
+      refractionEnvMap: { value: null },
+      useEnvMapRefraction: { value: 0 },
+      roughness: { value: 0 },
+      thickness: { value: 0 },
+      thicknessMap: { value: null },
+      attenuationDistance: { value: Infinity },
+      attenuationColor: { value: new THREE.Color('white') },
+      anisotropicBlur: { value: 0.1 },
+      time: { value: 0 },
+      distortion: { value: 0 },
+      distortionScale: { value: 0.5 },
+      temporalDistortion: { value: 0 },
+      buffer: { value: null },
+    };
+
+    this.customProgramCacheKey = () => 'halftone-transmission-' + samples;
+
+    this.onBeforeCompile = (shader) => {
+      shader.uniforms = {
+        ...shader.uniforms,
+        ...this.halftoneUniforms,
+      };
+      shader.defines ??= {};
+
+      if (this.anisotropy > 0) {
+        shader.defines.USE_ANISOTROPY = '';
+      }
+
+      shader.defines.USE_TRANSMISSION = '';
+      shader.fragmentShader =
+        HALFTONE_TRANSMISSION_SHADER_PREFIX + shader.fragmentShader;
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <transmission_pars_fragment>',
+        HALFTONE_TRANSMISSION_PARS_FRAGMENT,
+      );
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <transmission_fragment>',
+        HALFTONE_TRANSMISSION_FRAGMENT_TEMPLATE.replaceAll(
+          '__SAMPLES__',
+          String(samples),
+        ),
+      );
+    };
+
+    Object.keys(this.halftoneUniforms).forEach((key) => {
+      Object.defineProperty(this, key, {
+        configurable: true,
+        enumerable: true,
+        get: () => this.halftoneUniforms[key]?.value,
+        set: (value) => {
+          this.halftoneUniforms[key].value = value;
+        },
+      });
+    });
+  }
+}
+
+function setTextureSampling(texture, renderer) {
+  texture.generateMipmaps = true;
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.anisotropy = Math.min(
+    renderer.capabilities.getMaxAnisotropy(),
+    MAX_TEXTURE_ANISOTROPY,
+  );
+}
+
+function createGlassTransmissionScene() {
+  const transmissionScene = new THREE.Scene();
+  transmissionScene.background = new THREE.Color(GLASS_TRANSMISSION_BACKGROUND);
+
+  return transmissionScene;
+}
+
+function loadTexture(url, renderer, colorSpace) {
+  const loader = new THREE.TextureLoader();
+
+  return new Promise((resolve, reject) => {
+    loader.load(
+      url,
+      (texture) => {
+        texture.colorSpace = colorSpace;
+        setTextureSampling(texture, renderer);
+        resolve(texture);
+      },
+      undefined,
+      reject,
+    );
+  });
+}
+
+async function loadEnvironmentTexture(renderer) {
+  const equirectangularTexture = await loadTexture(
+    ENVIRONMENT_DATA_URL,
+    renderer,
+    THREE.SRGBColorSpace,
+  );
+  equirectangularTexture.mapping = THREE.EquirectangularReflectionMapping;
+  equirectangularTexture.wrapS = THREE.RepeatWrapping;
+  equirectangularTexture.wrapT = THREE.ClampToEdgeWrapping;
+
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  const environmentTexture = pmremGenerator.fromEquirectangular(
+    equirectangularTexture,
+  ).texture;
+  pmremGenerator.dispose();
+  equirectangularTexture.dispose();
+
+  return environmentTexture;
+}
+
+async function loadImageTexture({ renderer, url }) {
+  if (url === null) {
+    return null;
+  }
+
+  const texture = await loadTexture(url, renderer, THREE.NoColorSpace);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+
+  return texture;
+}
+
+async function createHalftoneMaterialAssets(renderer) {
+  const [environmentTexture, roughnessTexture, bumpTexture] = await Promise.all([
+    loadEnvironmentTexture(renderer),
+    loadImageTexture({ renderer, url: ROUGHNESS_IMAGE_DATA_URL }),
+    loadImageTexture({ renderer, url: BUMP_IMAGE_DATA_URL }),
+  ]);
+
+  return {
+    bumpTexture,
+    environmentTexture,
+    glassTransmissionScene: createGlassTransmissionScene(),
+    roughnessTexture,
+  };
+}
+
+function createHalftoneMaterial() {
+  return new HalftoneTransmissionMaterial();
+}
+
+function applyHalftoneMaterialSettings(material, materialSettings, materialAssets) {
+  const isGlass = materialSettings.surface === 'glass';
+  const { bumpTexture, roughnessTexture } = materialAssets;
+
+  roughnessTexture?.repeat.set(
+    materialSettings.textureTiling,
+    materialSettings.textureTiling,
+  );
+  bumpTexture?.repeat.set(
+    materialSettings.textureTiling,
+    materialSettings.textureTiling,
+  );
+
+  material.color.set(materialSettings.color);
+  material.roughness = materialSettings.roughness;
+  material.metalness = materialSettings.metalness;
+  material.envMap = materialAssets.environmentTexture;
+  material.envMapIntensity = materialSettings.environmentPower;
+  material.envMapRotation.set(
+    0,
+    THREE.MathUtils.degToRad(materialSettings.environmentRotation),
+    0,
+  );
+  material.clearcoat = isGlass ? 1 : 0;
+  material.clearcoatRoughness = isGlass
+    ? Math.max(materialSettings.roughness * 0.25, 0.01)
+    : 0.08;
+  material.reflectivity = isGlass ? 0.98 : 0.5;
+  material.transmission = 0;
+  material._transmission = isGlass ? 1 : 0;
+  material.refractionEnvMap = null;
+  material.useEnvMapRefraction = 0;
+  material.thickness = isGlass
+    ? materialSettings.thickness * GLASS_THICKNESS_TO_WORLD_UNITS
+    : 0;
+  material.ior = isGlass ? materialSettings.refraction : 1.5;
+  material.buffer = null;
+  material.roughnessMap = roughnessTexture;
+  material.bumpMap = bumpTexture;
+  material.bumpScale = bumpTexture === null ? 0 : BUMP_SCALE;
+  material.side = THREE.FrontSide;
+  material.attenuationColor.set('white');
+  material.attenuationDistance = Infinity;
+  material.anisotropicBlur = isGlass
+    ? THREE.MathUtils.lerp(0.03, 0.12, materialSettings.roughness)
+    : 0.1;
+  material.chromaticAberration = isGlass ? 0 : 0.05;
+  material.distortion = 0;
+  material.distortionScale = 0.5;
+  material.temporalDistortion = 0;
+  material.userData.halftoneIsGlass = isGlass;
+
+  material.needsUpdate = true;
+}
+
+function renderHalftoneMaterialScene({
+  camera,
+  material,
+  outputTarget,
+  renderer,
+  scene,
+  transmissionScene,
+  transmissionBacksideTarget,
+  transmissionTarget,
+}) {
+  if (material.userData.halftoneIsGlass) {
+    const thickness = material.thickness;
+    const envMapIntensity = material.envMapIntensity;
+
+    renderer.setRenderTarget(transmissionBacksideTarget);
+    renderer.clear();
+    renderer.render(transmissionScene, camera);
+
+    material.buffer = transmissionBacksideTarget.texture;
+    material.thickness = 0;
+    material.side = THREE.BackSide;
+    material.envMapIntensity = GLASS_BACKSIDE_ENVIRONMENT_INTENSITY;
+    renderer.setRenderTarget(transmissionTarget);
+    renderer.clear();
+    renderer.render(scene, camera);
+
+    material.buffer = transmissionTarget.texture;
+    material.thickness = thickness;
+    material.side = THREE.FrontSide;
+    material.envMapIntensity = envMapIntensity;
+  }
+
+  renderer.setRenderTarget(outputTarget);
+  renderer.clear();
+  renderer.render(scene, camera);
+}
+
+function disposeHalftoneMaterialAssets(materialAssets) {
+  materialAssets.environmentTexture.dispose();
+  materialAssets.roughnessTexture?.dispose();
+  materialAssets.bumpTexture?.dispose();
+}
+`;
+
+export function createMaterialRuntimeSource(texture: HalftoneMaterialTexture) {
+  const textureSources = resolveMaterialTextureSources({
+    sources: HALFTONE_MATERIAL_TEXTURE_DATA_URLS,
+    texture,
+  });
+
+  return `
+/*!
+${DREI_LICENSE_NOTICE}
+*/
+const ROUGHNESS_IMAGE_DATA_URL = ${JSON.stringify(textureSources.roughness)};
+const BUMP_IMAGE_DATA_URL = ${JSON.stringify(textureSources.bump)};
+const BUMP_SCALE = ${textureSources.bumpScale};
+${MATERIAL_RUNTIME_SOURCE}`;
+}

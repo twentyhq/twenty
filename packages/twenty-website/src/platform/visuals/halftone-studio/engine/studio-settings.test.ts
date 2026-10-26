@@ -16,13 +16,11 @@ describe('halftone studio state defaults', () => {
   it.each(['solid', 'glass', 'metal'] as const)(
     'fills missing nested fields from the selected %s surface defaults',
     (surface) => {
-      const normalized = normalizeHalftoneStudioSettings(
-        JSON.parse(`{
-          "material": { "surface": "${surface}" },
-          "lighting": { "height": 4 },
-          "animation": { "hoverReturn": false }
-        }`) as HalftoneStudioSettingsOverrides,
-      );
+      const normalized = normalizeHalftoneStudioSettings({
+        material: { surface },
+        lighting: { height: 4 },
+        animation: { hoverReturn: false },
+      });
 
       expect(normalized.material).toEqual(
         HALFTONE_STUDIO_DEFAULTS.materialBySurface[surface],
@@ -39,20 +37,16 @@ describe('halftone studio state defaults', () => {
   );
 
   it('resets environment power only for presets saved before environment rotation', () => {
-    const legacy = normalizeHalftoneStudioSettings(
-      JSON.parse(`{
-        "material": { "surface": "solid", "environmentPower": 5 }
-      }`) as HalftoneStudioSettingsOverrides,
-    );
-    const current = normalizeHalftoneStudioSettings(
-      JSON.parse(`{
-        "material": {
-          "surface": "solid",
-          "environmentPower": 2.2,
-          "environmentRotation": 90
-        }
-      }`) as HalftoneStudioSettingsOverrides,
-    );
+    const legacy = normalizeHalftoneStudioSettings({
+      material: { surface: 'solid', environmentPower: 5 },
+    });
+    const current = normalizeHalftoneStudioSettings({
+      material: {
+        surface: 'solid',
+        environmentPower: 2.2,
+        environmentRotation: 90,
+      },
+    });
 
     expect(legacy.material.environmentPower).toBe(
       HALFTONE_STUDIO_DEFAULTS.solidMaterial.environmentPower,
@@ -63,15 +57,13 @@ describe('halftone studio state defaults', () => {
 
   it('falls back to the surface texture when a preset names an unknown one', () => {
     const unknown = normalizeHalftoneStudioSettings(
-      JSON.parse(`{
-        "material": { "surface": "metal", "texture": "frosted" }
-      }`) as HalftoneStudioSettingsOverrides,
+      JSON.parse(
+        '{ "material": { "surface": "metal", "texture": "frosted" } }',
+      ),
     );
-    const none = normalizeHalftoneStudioSettings(
-      JSON.parse(`{
-        "material": { "surface": "metal", "texture": "none" }
-      }`) as HalftoneStudioSettingsOverrides,
-    );
+    const none = normalizeHalftoneStudioSettings({
+      material: { surface: 'metal', texture: 'none' },
+    });
 
     expect(unknown.material.texture).toBe(
       HALFTONE_STUDIO_DEFAULTS.metalMaterial.texture,
